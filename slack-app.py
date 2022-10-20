@@ -30,16 +30,30 @@ def handle_goburei2_evnts(client, context):
     title, msg = goburei_record()
     post_upload(client, context.channel_id, title, msg)
 
-@app.message(re.compile(r"^御無礼グラフ$"))
-def handle_goburei3_evnts(client, context):
-    starttime, endtime = scope_coverage() # グラフ描写範囲
-    count = goburei_graph(starttime, endtime)
-    file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
-    if count <= 0:
-        msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
-        post_message(client, context.channel_id, msg)
+@app.message(re.compile(r"^御無礼グラフ"))
+def handle_goburei3_evnts(client, context, body):
+    v = body["event"]["text"].split()
+    if len(v) == 1:
+        starttime, endtime = scope_coverage()
+    elif len(v) == 2:
+        if re.match(r"^[0-9]{8}$", v[1]):
+            starttime, endtime = scope_coverage(v[1])
+        else:
+            return
     else:
-        post_fileupload(client, context.channel_id, "御無礼グラフ", file)
+        return
+
+    if starttime or endtime:
+        count = goburei_graph(starttime, endtime)
+        file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
+        if count <= 0:
+            msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
+            post_message(client, context.channel_id, msg)
+        else:
+            post_fileupload(client, context.channel_id, "御無礼グラフ", file)
+    else:
+        msg = f"？"
+        post_message(client, context.channel_id, msg)
 
 @app.message(re.compile(r"御無礼"))
 def handle_goburei_check_evnts(client, body):
@@ -125,7 +139,7 @@ def goburei_command(ack, body, client):
                                 count_lose += 1 if float(data[i][seki]["point"]) < 0 else 0
                                 count_draw += 1 if float(data[i][seki]["point"]) == 0 else 0
                                 msg2 += "{}： {}位 {:>5}00点 ({:>+5.1f}) {}\n".format(
-                                    data[i]["日付"].strftime("%Y/%m/%d %H:%M"),
+                                    data[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
                                     data[i][seki]["rank"], eval(data[i][seki]["rpoint"]), float(data[i][seki]["point"]),
                                     "※" if [data[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count("ゲスト１") >= 2 else "",
                                 ).replace("-", "▲")
@@ -144,7 +158,7 @@ def goburei_command(ack, body, client):
                         )
                     else:
                         msg2 += f"記録なし\n"
-                    msg2 += datetime.datetime.now().strftime(f"\n_(%Y/%m/%d %H:%M 集計)_")
+                    msg2 += datetime.datetime.now().strftime(f"\n_(%Y/%m/%d %H:%M:%S 集計)_")
                 else:
                     msg1 = f"「{pname}」は登録されていません。"
                     msg2 = ""
@@ -341,18 +355,20 @@ def scope_coverage(keyword = None):
         startday = currenttime
         endday = currenttime + datetime.timedelta(days = 1)
 
-    if keyword in ("today", "今日", "本日"):
-        startday = currenttime
-        endday = currenttime + datetime.timedelta(days = 1)
-    if keyword in ("yesterday", "昨日"):
-        startday = currenttime - datetime.timedelta(days = 1)
-        endday = currenttime
-    if keyword == "今月":
-        startday = currenttime.replace(day = 1)
-        endday = (currenttime + datetime.timedelta(days = 31)).replace(day = 1)
-    if keyword == "先月":
-        startday = (currenttime - datetime.timedelta(days = 31)).replace(day = 1)
-        endday = currenttime.replace(day = 1)
+    if keyword:
+        if re.match(r"^[0-9]{8}$", keyword):
+            try:
+                targettime = datetime.datetime(int(keyword[0:4]), int(keyword[4:6]), int(keyword[6:8]))
+                startday = targettime
+                endday = targettime + datetime.timedelta(days = 1)
+            except:
+                return(False, False)
+        if keyword == "今月":
+            startday = currenttime.replace(day = 1)
+            endday = (currenttime + datetime.timedelta(days = 31)).replace(day = 1)
+        if keyword == "先月":
+            startday = (currenttime - datetime.timedelta(days = 31)).replace(day = 1)
+            endday = currenttime.replace(day = 1)
 
     return(
         startday.replace(hour = 12, minute = 0, second = 0, microsecond = 0), # starttime
@@ -374,7 +390,7 @@ def configsave(config, configfile):
         config.write(f)
 
 def goburei_results(name_replace = True, guest_skip = True, tmonth = True): # 御無礼成績
-    title = datetime.datetime.now().strftime("今月の成績 [%Y/%m/%d %H:%M 集計]")
+    title = datetime.datetime.now().strftime("今月の成績 [%Y/%m/%d %H:%M:%S 集計]")
     data = goburei_search(name_replace = name_replace, guest_skip = guest_skip, tmonth = tmonth)
 
     r = {}
@@ -464,7 +480,7 @@ def goburei_graph(starttime, endtime): # 御無礼グラフ
     )
     fig = plt.figure()
     plt.title(
-        f"ポイント推移({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})",
+        f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})",
         fontproperties = fp,
         fontsize = 12,
     )
@@ -472,6 +488,10 @@ def goburei_graph(starttime, endtime): # 御無礼グラフ
     plt.hlines(y = 0, xmin = -1, xmax = 100, linewidth = 0.5, linestyles="dashed", color = "grey")
     plt.ylabel("累計ポイント", fontproperties = fp)
     plt.xticks(rotation = 45)
+    if len(geme_time) > 6:
+        plt.xticks(rotation = 90)
+    if len(geme_time) == 1:
+        plt.xticks(rotation = 0)
     for name, total in ranking:
         label = f"{name} ({str(total)})".replace("-", "▲")
         plt.plot(geme_time, stacked_point[name], marker = "o", markersize = 3, label = label)
