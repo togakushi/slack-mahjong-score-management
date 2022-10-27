@@ -40,7 +40,7 @@ def handle_goburei3_evnts(client, context, body):
     if len(v) == 1:
         starttime, endtime = scope_coverage()
     elif len(v) == 2:
-        if re.match(r"^(今月|先月|先々月)$", v[1]):
+        if re.match(r"^(今月|先月|先々月|全部)$", v[1]):
             starttime, endtime = scope_coverage(v[1])
         if re.match(r"^[0-9]{8}$", v[1]):
             starttime, endtime = scope_coverage(v[1])
@@ -175,7 +175,7 @@ def goburei_command(ack, body, client):
             if len(v) == 1:
                 starttime, endtime = scope_coverage()
             elif len(v) == 2:
-                if re.match(r"^(今月|先月|先々月)$", v[1]):
+                if re.match(r"^(今月|先月|先々月|全部)$", v[1]):
                     starttime, endtime = scope_coverage(v[1])
                 if re.match(r"^[0-9]{8}$", v[1]):
                     starttime, endtime = scope_coverage(v[1])
@@ -398,6 +398,9 @@ def scope_coverage(keyword = None):
         if keyword == "先々月":
             startday = (currenttime - relativedelta(months = 2)).replace(day = 1)
             endday = (currenttime - relativedelta(months = 1)).replace(day = 1)
+        if keyword == "全部":
+            startday = (currenttime - relativedelta(months = 3)).replace(day = 1)
+            endday = (currenttime + relativedelta(months = 1)).replace(day = 1)
 
     return(
         startday.replace(hour = 12, minute = 0, second = 0, microsecond = 0), # starttime
@@ -507,23 +510,26 @@ def goburei_graph(starttime, endtime): # 御無礼グラフ
         fname = os.path.join(os.path.realpath(os.path.curdir), "ipaexg.ttf"),
         size = 9,
     )
+
     fig = plt.figure()
-    plt.xticks(rotation = 45)
     plt.style.use("ggplot")
+    plt.xticks(rotation = 45)
+
     # サイズ、表記調整
     if len(geme_time) > 20:
-        fig = plt.figure(figsize = (12 + 6 * int(len(geme_time) / 30), 6))
+        fig = plt.figure(figsize = (8 + 0.5 * int(len(geme_time) / 5), 8))
+        plt.xlim(-1, len(geme_time))
     if len(geme_time) > 6:
         plt.xticks(rotation = 90)
     if len(geme_time) == 1:
         plt.xticks(rotation = 0)
 
+    plt.hlines(y = 0, xmin = -1, xmax = len(geme_time), linewidth = 0.5, linestyles="dashed", color = "grey")
     plt.title(
         f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})",
         fontproperties = fp,
         fontsize = 12,
     )
-    plt.hlines(y = 0, xmin = -100, xmax = 100, linewidth = 0.5, linestyles="dashed", color = "grey")
     plt.ylabel("累計ポイント", fontproperties = fp)
 
     for name, total in ranking:
@@ -531,6 +537,7 @@ def goburei_graph(starttime, endtime): # 御無礼グラフ
         plt.plot(geme_time, stacked_point[name], marker = "o", markersize = 3, label = label)
     plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
     plt.tight_layout()
+    fig.tight_layout()
     fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png"))
     return(len(gdata))
 
