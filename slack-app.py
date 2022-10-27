@@ -33,15 +33,15 @@ def handle_goburei2_evnts(client, context):
 @app.message(re.compile(r"^御無礼グラフ"))
 def handle_goburei3_evnts(client, context, body):
     v = body["event"]["text"].split()
+    starttime = False
+    endtime = False
     if len(v) == 1:
         starttime, endtime = scope_coverage()
     elif len(v) == 2:
+        if re.match(r"^(今月|先月)$", v[1]):
+            starttime, endtime = scope_coverage(v[1])
         if re.match(r"^[0-9]{8}$", v[1]):
             starttime, endtime = scope_coverage(v[1])
-        else:
-            return
-    else:
-        return
 
     if starttime or endtime:
         count = goburei_graph(starttime, endtime)
@@ -169,7 +169,30 @@ def goburei_command(ack, body, client):
             return
 
         if subcom.lower() in ("graph", "グラフ"):
-            currenttime = datetime.datetime.now()
+            v = body["text"].split()
+            if len(v) == 1:
+                starttime, endtime = scope_coverage()
+            elif len(v) == 2:
+                if re.match(r"^(今月|先月)$", v[1]):
+                    starttime, endtime = scope_coverage(v[1])
+                if re.match(r"^[0-9]{8}$", v[1]):
+                    starttime, endtime = scope_coverage(v[1])
+                if not (starttime or endtime):
+                    return
+            else:
+                return
+
+            if starttime or endtime:
+                count = goburei_graph(starttime, endtime)
+                file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
+                if count <= 0:
+                    msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
+                    post_message(client, user_id, msg)
+                else:
+                    post_fileupload(client, user_id, "御無礼グラフ", file)
+            else:
+                msg = f"？"
+                post_message(client, user_id, msg)
 
             return
 
@@ -259,6 +282,7 @@ def goburei_command(ack, body, client):
     msg += "`{} {}` {}\n".format(body["command"], "results", "今月の成績")
     msg += "`{} {}` {}\n".format(body["command"], "record", "張り付け用集計済みデータ出力")
     msg += "`{} {}` {}\n".format(body["command"], "allrecord", "集計済み全データ出力(名前ブレ修正なし)")
+    msg += "`{} {}` {}\n".format(body["command"], "graph", "ポイント推移グラフを表示")
     msg += "`{} {} <名前>` {}\n".format(body["command"], "details", "2ゲスト戦含む個人成績出力")
     msg += "`{} {}` {}\n".format(body["command"], "member | userlist", "登録されているメンバー")
     msg += "`{} {}` {}\n".format(body["command"], "add", "メンバーの追加")
@@ -306,7 +330,7 @@ def CalculationPoint(rpoint, rank): # 順位点計算
 
     return(float(f"{point:>.1f}"))
 
-def len_count(text):
+def len_count(text): # 文字数
     count = 0
     for c in text:
         if unicodedata.east_asian_width(c) in "FWA":
@@ -479,19 +503,24 @@ def goburei_graph(starttime, endtime): # 御無礼グラフ
         size = 9,
     )
     fig = plt.figure()
+    plt.xticks(rotation = 45)
+    plt.style.use("ggplot")
+    # サイズ、表記調整
+    if len(geme_time) > 20:
+        fig = plt.figure(figsize = (12 + 6 * int(len(geme_time) / 30), 6))
+    if len(geme_time) > 6:
+        plt.xticks(rotation = 90)
+    if len(geme_time) == 1:
+        plt.xticks(rotation = 0)
+
     plt.title(
         f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})",
         fontproperties = fp,
         fontsize = 12,
     )
-    plt.style.use("ggplot")
-    plt.hlines(y = 0, xmin = -1, xmax = 100, linewidth = 0.5, linestyles="dashed", color = "grey")
+    plt.hlines(y = 0, xmin = -100, xmax = 100, linewidth = 0.5, linestyles="dashed", color = "grey")
     plt.ylabel("累計ポイント", fontproperties = fp)
-    plt.xticks(rotation = 45)
-    if len(geme_time) > 6:
-        plt.xticks(rotation = 90)
-    if len(geme_time) == 1:
-        plt.xticks(rotation = 0)
+
     for name, total in ranking:
         label = f"{name} ({str(total)})".replace("-", "▲")
         plt.plot(geme_time, stacked_point[name], marker = "o", markersize = 3, label = label)
