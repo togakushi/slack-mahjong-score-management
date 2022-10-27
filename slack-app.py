@@ -4,10 +4,12 @@ import logging
 import sys
 import os
 import re
-import datetime
 import unicodedata
 import random
 import configparser
+
+import datetime
+from dateutil.relativedelta import relativedelta
 
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
@@ -38,7 +40,7 @@ def handle_goburei3_evnts(client, context, body):
     if len(v) == 1:
         starttime, endtime = scope_coverage()
     elif len(v) == 2:
-        if re.match(r"^(今月|先月)$", v[1]):
+        if re.match(r"^(今月|先月|先々月)$", v[1]):
             starttime, endtime = scope_coverage(v[1])
         if re.match(r"^[0-9]{8}$", v[1]):
             starttime, endtime = scope_coverage(v[1])
@@ -173,7 +175,7 @@ def goburei_command(ack, body, client):
             if len(v) == 1:
                 starttime, endtime = scope_coverage()
             elif len(v) == 2:
-                if re.match(r"^(今月|先月)$", v[1]):
+                if re.match(r"^(今月|先月|先々月)$", v[1]):
                     starttime, endtime = scope_coverage(v[1])
                 if re.match(r"^[0-9]{8}$", v[1]):
                     starttime, endtime = scope_coverage(v[1])
@@ -389,10 +391,13 @@ def scope_coverage(keyword = None):
                 return(False, False)
         if keyword == "今月":
             startday = currenttime.replace(day = 1)
-            endday = (currenttime + datetime.timedelta(days = 31)).replace(day = 1)
+            endday = (currenttime + relativedelta(months = 1)).replace(day = 1)
         if keyword == "先月":
-            startday = (currenttime - datetime.timedelta(days = 31)).replace(day = 1)
+            startday = (currenttime - relativedelta(months = 1)).replace(day = 1)
             endday = currenttime.replace(day = 1)
+        if keyword == "先々月":
+            startday = (currenttime - relativedelta(months = 2)).replace(day = 1)
+            endday = (currenttime - relativedelta(months = 1)).replace(day = 1)
 
     return(
         startday.replace(hour = 12, minute = 0, second = 0, microsecond = 0), # starttime
