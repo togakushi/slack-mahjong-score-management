@@ -35,18 +35,28 @@ def handle_goburei2_evnts(client, context):
 @app.message(re.compile(r"^御無礼グラフ"))
 def handle_goburei3_evnts(client, context, body):
     v = body["event"]["text"].split()
+    msg = f"えっ？"
     starttime = False
     endtime = False
+    target_player = []
+
+    if not re.match(r"^御無礼グラフ$", v[0]):
+        post_message(client, context.channel_id, msg)
+        return
+
     if len(v) == 1:
         starttime, endtime = scope_coverage()
-    elif len(v) == 2:
-        if re.match(r"^(今月|先月|先々月|全部)$", v[1]):
-            starttime, endtime = scope_coverage(v[1])
-        if re.match(r"^[0-9]{8}$", v[1]):
-            starttime, endtime = scope_coverage(v[1])
+
+    for i in v:
+        if re.match(r"^(今月|先月|先々月|全部)$", i):
+            starttime, endtime = scope_coverage(i)
+        if re.match(r"^[0-9]{8}$", i):
+            starttime, endtime = scope_coverage(i)
+        if ExsistPlayer(i):
+            target_player.append(ExsistPlayer(i))
 
     if starttime or endtime:
-        count = goburei_graph(starttime, endtime)
+        count = goburei_graph(starttime, endtime, target_player)
         file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
         if count <= 0:
             msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
@@ -54,7 +64,6 @@ def handle_goburei3_evnts(client, context, body):
         else:
             post_fileupload(client, context.channel_id, "御無礼グラフ", file)
     else:
-        msg = f"？"
         post_message(client, context.channel_id, msg)
 
 @app.message(re.compile(r"御無礼"))
@@ -172,20 +181,24 @@ def goburei_command(ack, body, client):
 
         if subcom.lower() in ("graph", "グラフ"):
             v = body["text"].split()
+            msg = f"えっ？"
+            starttime = False
+            endtime = False
+            target_player = []
+
             if len(v) == 1:
                 starttime, endtime = scope_coverage()
-            elif len(v) == 2:
-                if re.match(r"^(今月|先月|先々月|全部)$", v[1]):
-                    starttime, endtime = scope_coverage(v[1])
-                if re.match(r"^[0-9]{8}$", v[1]):
-                    starttime, endtime = scope_coverage(v[1])
-                if not (starttime or endtime):
-                    return
-            else:
-                return
+
+            for i in v:
+                if re.match(r"^(今月|先月|先々月|全部)$", i):
+                    starttime, endtime = scope_coverage(i)
+                if re.match(r"^[0-9]{8}$", i):
+                    starttime, endtime = scope_coverage(i)
+                if ExsistPlayer(i):
+                    target_player.append(ExsistPlayer(i))
 
             if starttime or endtime:
-                count = goburei_graph(starttime, endtime)
+                count = goburei_graph(starttime, endtime, target_player)
                 file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
                 if count <= 0:
                     msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
@@ -193,7 +206,6 @@ def goburei_command(ack, body, client):
                 else:
                     post_fileupload(client, user_id, "御無礼グラフ", file)
             else:
-                msg = f"？"
                 post_message(client, user_id, msg)
 
             return
@@ -372,6 +384,13 @@ def NameReplace(pname, name_replace = True, guest = True): # 表記ブレ修正
 
     return("ゲスト１" if guest else pname)
 
+def ExsistPlayer(name): # 登録済みメンバーかチェック
+    name = NameReplace(name)
+    if player_list.has_section(name):
+        return(name)
+    else:
+        return(False)
+
 def scope_coverage(keyword = None):
     currenttime = datetime.datetime.now()
     if currenttime.hour < 12:
@@ -474,19 +493,29 @@ def goburei_record(name_replace = True, guest_skip = True, tmonth = False): # �
 
     return(title, msg)
 
-def goburei_graph(starttime, endtime): # 御無礼グラフ
+def goburei_graph(starttime, endtime, target_player): # 御無礼グラフ
     data = goburei_search(name_replace = True, guest_skip = True, tmonth = False)
     gdata = {}
-    geme_time = []
+    game_time = []
     player_list = []
     for i in range(len(data)):
         if starttime < data[i]["日付"] and endtime > data[i]["日付"]:
-            gdata[data[i]["日付"]] = []
-            geme_time.append(data[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
-            for seki in ("東家", "南家", "西家", "北家"):
-                gdata[data[i]["日付"]].append((data[i][seki]["name"], data[i][seki]["point"]))
-                if not data[i][seki]["name"] in player_list:
-                    player_list.append(data[i][seki]["name"])
+            if target_player: # 特定プレーヤーのみ抽出
+                for seki in ("東家", "南家", "西家", "北家"):
+                    if data[i][seki]["name"] in target_player:
+                        if not data[i]["日付"] in gdata:
+                            gdata[data[i]["日付"]] = []
+                            game_time.append(data[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
+                        gdata[data[i]["日付"]].append((data[i][seki]["name"], data[i][seki]["point"]))
+                        if not data[i][seki]["name"] in player_list:
+                            player_list.append(data[i][seki]["name"])
+            else: # 全員分
+                gdata[data[i]["日付"]] = []
+                game_time.append(data[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
+                for seki in ("東家", "南家", "西家", "北家"):
+                    gdata[data[i]["日付"]].append((data[i][seki]["name"], data[i][seki]["point"]))
+                    if not data[i][seki]["name"] in player_list:
+                        player_list.append(data[i][seki]["name"])
 
     stacked_point = {}
     for name in player_list:
@@ -516,15 +545,15 @@ def goburei_graph(starttime, endtime): # 御無礼グラフ
     plt.xticks(rotation = 45)
 
     # サイズ、表記調整
-    if len(geme_time) > 20:
-        fig = plt.figure(figsize = (8 + 0.5 * int(len(geme_time) / 5), 8))
-        plt.xlim(-1, len(geme_time))
-    if len(geme_time) > 6:
+    if len(game_time) > 20:
+        fig = plt.figure(figsize = (8 + 0.5 * int(len(game_time) / 5), 8))
+        plt.xlim(-1, len(game_time))
+    if len(game_time) > 6:
         plt.xticks(rotation = 90)
-    if len(geme_time) == 1:
+    if len(game_time) == 1:
         plt.xticks(rotation = 0)
 
-    plt.hlines(y = 0, xmin = -1, xmax = len(geme_time), linewidth = 0.5, linestyles="dashed", color = "grey")
+    plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
     plt.title(
         f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})",
         fontproperties = fp,
@@ -534,7 +563,7 @@ def goburei_graph(starttime, endtime): # 御無礼グラフ
 
     for name, total in ranking:
         label = f"{name} ({str(total)})".replace("-", "▲")
-        plt.plot(geme_time, stacked_point[name], marker = "o", markersize = 3, label = label)
+        plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
     plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
     plt.tight_layout()
     fig.tight_layout()
