@@ -44,9 +44,6 @@ def handle_goburei3_evnts(client, context, body):
         post_message(client, context.channel_id, msg)
         return
 
-    if len(v) == 1:
-        starttime, endtime = scope_coverage()
-
     for i in v:
         if re.match(r"^(今月|先月|先々月|全部)$", i):
             starttime, endtime = scope_coverage(i)
@@ -54,6 +51,11 @@ def handle_goburei3_evnts(client, context, body):
             starttime, endtime = scope_coverage(i)
         if ExsistPlayer(i):
             target_player.append(ExsistPlayer(i))
+
+    if len(v) == 1:
+        starttime, endtime = scope_coverage()
+    if not (starttime or endtime) and target_player:
+        starttime, endtime = scope_coverage()
 
     if starttime or endtime:
         count = goburei_graph(starttime, endtime, target_player)
@@ -186,9 +188,6 @@ def goburei_command(ack, body, client):
             endtime = False
             target_player = []
 
-            if len(v) == 1:
-                starttime, endtime = scope_coverage()
-
             for i in v:
                 if re.match(r"^(今月|先月|先々月|全部)$", i):
                     starttime, endtime = scope_coverage(i)
@@ -196,6 +195,11 @@ def goburei_command(ack, body, client):
                     starttime, endtime = scope_coverage(i)
                 if ExsistPlayer(i):
                     target_player.append(ExsistPlayer(i))
+
+            if len(v) == 1:
+                starttime, endtime = scope_coverage()
+            if not (starttime or endtime) and target_player:
+                starttime, endtime = scope_coverage()
 
             if starttime or endtime:
                 count = goburei_graph(starttime, endtime, target_player)
