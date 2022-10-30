@@ -4,6 +4,7 @@ import datetime
 from function import global_value as g
 from function import common
 from function import slack_api
+from goburei import search
 from goburei import member
 
 
