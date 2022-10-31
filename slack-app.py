@@ -72,7 +72,7 @@ def goburei_command(ack, body, client):
             return
 
         if subcom.lower() in ("graph", "グラフ"):
-            graph.parser(client, user_id, body["text"].split()[1:])
+            graph.slackpost(client, user_id, body["text"].split()[1:])
             return
 
         if subcom.lower() in ("load"):

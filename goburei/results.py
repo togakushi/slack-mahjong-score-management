@@ -6,7 +6,6 @@ from function import common
 from function import slack_api
 from goburei import search
 
-### 御無礼成績 ###
 
 # イベントAPI
 @g.app.message(re.compile(r"^御無礼成績$"))
@@ -16,8 +15,29 @@ def handle_goburei_results_evnts(client, context):
 
 
 def getdata(name_replace = True, guest_skip = True):
+    """
+    各プレイヤーの累積ポイントを取得
+
+    Parameters
+    ----------
+    name_replace : bool, default True
+        プレイヤー名の表記ゆれを修正
+
+    guest_skip : bool, default True
+        2ゲスト戦の除外
+
+    Returns
+    -------
+    title : str
+        slackにポストするタイトル
+
+    msg : text
+        slackにポストする内容
+    """
+
     results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
     starttime, endtime = common.scope_coverage("今月")
+
     if name_replace:
         title = datetime.datetime.now().strftime("今月の成績 [%Y/%m/%d %H:%M:%S 集計]")
     else:

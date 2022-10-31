@@ -21,10 +21,24 @@ def handle_goburei_graph_evnts(client, context, body):
     if not re.match(r"^御無礼グラフ$", v[0]):
         return
 
-    parser(client, context.channel_id, v[1:])
+    slackpost(client, context.channel_id, v[1:])
 
 
-def parser(client, channel, keyword):
+def slackpost(client, channel, keyword):
+    """
+    ポイント推移グラフをslackにポストする
+
+    Parameters
+    ----------
+    client : obj
+
+    channel : str
+        ポスト先のチャンネルID or ユーザーID
+
+    keyword : list
+        解析対象のプレイヤー、集計期間
+    """
+
     starttime = False
     endtime = False
     target_player = []
@@ -57,6 +71,32 @@ def parser(client, channel, keyword):
 
 
 def plot(starttime, endtime, target_player, name_replace = True, guest_skip = True): # 御無礼グラフ
+    """
+    ポイント推移グラフを生成する
+
+    Parameters
+    ----------
+    starttime : date
+        集計開始日時
+
+    endtime : date
+        集計終了日時
+
+    target_player : list
+        集計対象プレイヤー（空のときは全プレイヤーを対象にする）
+
+    name_replace : bool, default True
+        プレイヤー名の表記ゆれを修正
+
+    guest_skip : bool, default True
+        2ゲスト戦の除外
+
+    Returns
+    -------
+    int : int
+        グラフにプロットしたゲーム数
+    """
+
     results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
     gdata = {}
     game_time = []

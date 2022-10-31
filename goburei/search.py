@@ -21,6 +21,23 @@ def pattern(text):
 
 
 def getdata(name_replace = True, guest_skip = True):
+    """
+    過去ログからスコアを検索して返す
+
+    Parameters
+    ----------
+    name_replace : bool, default True
+        プレイヤー名の表記ゆれを修正
+
+    guest_skip : bool, default True
+        2ゲスト戦の除外
+
+    Returns
+    -------
+    data : dict
+        検索した結果
+    """
+
     ### データ取得 ###
     response = g.webclient.search_messages(
         query = "御無礼 in:#麻雀やろうぜ",

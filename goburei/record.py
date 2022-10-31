@@ -14,7 +14,28 @@ def handle_goburei_record_evnts(client, context):
 
 
 def getdata(name_replace = True, guest_skip = True): # 御無礼結果
+    """
+    半荘単位の成績を取得
+
+    Parameters
+    ----------
+    name_replace : bool, default True
+        プレイヤー名の表記ゆれを修正
+
+    guest_skip : bool, default True
+        2ゲスト戦の除外
+
+    Returns
+    -------
+    title : str
+        slackにポストするタイトル
+
+    msg : text
+        slackにポストする内容
+    """
+
     results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
+
     if name_replace:
         title = f"張り付け用集計済みデータ"
     else:

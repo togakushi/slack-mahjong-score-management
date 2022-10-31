@@ -9,6 +9,20 @@ from goburei import member
 
 
 def getdata(opt):
+    """
+    個人成績を集計して返す
+
+    Parameters
+    ----------
+    opt : list
+        解析対象のプレイヤー
+
+    Returns
+    -------
+    msg : text
+        slackにpostする内容
+    """
+
     if len(opt) == 1:
         pname = member.NameReplace(opt[0], guest = False)
         if pname in g.player_list.sections():
