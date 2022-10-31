@@ -41,17 +41,23 @@ def scope_coverage(keyword = None):
             except:
                 return(False, False)
         if keyword == "今月":
-            startday = currenttime.replace(day = 1)
-            endday = (currenttime + relativedelta(months = 1)).replace(day = 1)
+            startday = startday.replace(day = 1)
+            endday = endday.replace(day = 1)
         if keyword == "先月":
-            startday = (currenttime - relativedelta(months = 1)).replace(day = 1)
-            endday = currenttime.replace(day = 1)
+            startday = (startday - relativedelta(months = 1)).replace(day = 1)
+            endday = (endday - relativedelta(months = 1)).replace(day = 1)
         if keyword == "先々月":
-            startday = (currenttime - relativedelta(months = 2)).replace(day = 1)
-            endday = (currenttime - relativedelta(months = 1)).replace(day = 1)
+            startday = (startday - relativedelta(months = 2)).replace(day = 1)
+            endday = (endday - relativedelta(months = 2)).replace(day = 1)
         if keyword == "全部":
-            startday = (currenttime - relativedelta(months = 3)).replace(day = 1)
-            endday = (currenttime + relativedelta(months = 1)).replace(day = 1)
+            startday = (startday - relativedelta(months = 2)).replace(day = 1)
+            endday = (endday + relativedelta(months = 1)).replace(day = 1)
+
+    #print(
+    #    keyword,
+    #    startday.replace(hour = 12, minute = 0, second = 0, microsecond = 0),
+    #    endday.replace(hour = 11, minute = 59, second = 59, microsecond = 999999),
+    #)
 
     return(
         startday.replace(hour = 12, minute = 0, second = 0, microsecond = 0), # starttime
