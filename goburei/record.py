@@ -1,4 +1,5 @@
 import re
+import datetime
 
 from function import global_value as g
 from function import common
@@ -43,13 +44,20 @@ def getdata(name_replace = True, guest_skip = True): # 御無礼結果
 
     msg = ""
     for i in range(len(results)):
+        if results[i]["日付"].hour < 12:
+            aggregate_date = results[i]["日付"] - datetime.timedelta(days = 1)
+        else:
+            aggregate_date = results[i]["日付"]
+
         deposit = 1000 - eval(results[i]["東家"]["rpoint"]) - eval(results[i]["南家"]["rpoint"]) - eval(results[i]["西家"]["rpoint"]) - eval(results[i]["北家"]["rpoint"])
-        msg += "{},<場所>,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+
+        msg += "{},<場所>,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
             results[i]["日付"].strftime("%Y/%m/%d %H:%M"), deposit,
             results[i]["東家"]["name"], eval(results[i]["東家"]["rpoint"]), results[i]["東家"]["rank"], results[i]["東家"]["point"],
             results[i]["南家"]["name"], eval(results[i]["南家"]["rpoint"]), results[i]["南家"]["rank"], results[i]["南家"]["point"],
             results[i]["西家"]["name"], eval(results[i]["西家"]["rpoint"]), results[i]["西家"]["rank"], results[i]["西家"]["point"],
             results[i]["北家"]["name"], eval(results[i]["北家"]["rpoint"]), results[i]["北家"]["rank"], results[i]["北家"]["point"],
+            aggregate_date.strftime("%Y/%m/%d"),
         )
 
     return(title, msg)
