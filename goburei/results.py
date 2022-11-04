@@ -37,7 +37,7 @@ def getdata(name_replace = True, guest_skip = True):
 
     results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
     starttime, endtime = common.scope_coverage("今月")
-    title = f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')}  ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    title = ""
 
     r = {}
     game_count = 0
@@ -78,8 +78,9 @@ def getdata(name_replace = True, guest_skip = True):
             r[u]["tobi"],
         )
 
-    footer = "\n" + "-" * 10 + "\n"
+    footer = "\n" + "-" * 20 + "\n"
     footer += f"ゲーム数： {game_count} 回 / トバされた人： {tobi_count} 人\n"
+    footer += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')}  ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     if not name_replace:
         footer += "特記事項：名前ブレ修正なし\n"
     footer += datetime.datetime.now().strftime("集計日時：%Y/%m/%d %H:%M:%S")
