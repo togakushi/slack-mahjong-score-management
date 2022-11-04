@@ -3,18 +3,27 @@ import datetime
 
 from function import global_value as g
 from function import common
+from function import error
 from function import slack_api
 from goburei import search
 
 
 # イベントAPI
-@g.app.message(re.compile(r"^御無礼成績$"))
-def handle_goburei_results_evnts(client, context):
-    title, msg = getdata(name_replace = True, guest_skip = True)
-    slack_api.post_text(client, context.channel_id, title, msg)
+@g.app.message(re.compile(r"^御無礼成績"))
+def handle_goburei_results_evnts(client, context, body):
+    v = body["event"]["text"].split()
+
+    if not re.match(r"^御無礼成績$", v[0]):
+        return
+
+    title, msg = getdata(v[1:], name_replace = True, guest_skip = True)
+    if title or msg:
+        slack_api.post_text(client, context.channel_id, title, msg)
+    else:
+        slack_api.post_message(client, context.channel_id, error.message())
 
 
-def getdata(name_replace = True, guest_skip = True):
+def getdata(keyword, name_replace = True, guest_skip = True):
     """
     各プレイヤーの累積ポイントを取得
 
@@ -26,6 +35,9 @@ def getdata(name_replace = True, guest_skip = True):
     guest_skip : bool, default True
         2ゲスト戦の除外
 
+    keyword : list
+        解析対象のプレイヤー、集計期間
+
     Returns
     -------
     title : str
@@ -35,9 +47,23 @@ def getdata(name_replace = True, guest_skip = True):
         slackにポストする内容
     """
 
+    starttime = False
+    endtime = False
+    target_player = []
+
+    for i in keyword:
+        if re.match(r"^(今月|先月|先々月|全部)$", i):
+            starttime, endtime = common.scope_coverage(i)
+        if re.match(r"^[0-9]{8}$", i):
+            starttime, endtime = common.scope_coverage(i)
+
+    if len(keyword) == 0:
+        starttime, endtime = common.scope_coverage("今月")
+
+    if not (starttime or endtime):
+        return(False, False)
+
     results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
-    starttime, endtime = common.scope_coverage("今月")
-    title = ""
 
     r = {}
     game_count = 0
@@ -88,4 +114,4 @@ def getdata(name_replace = True, guest_skip = True):
     if not msg:
         msg = "御無礼なし"
 
-    return(title, header + msg + footer)
+    return("", header + msg + footer)

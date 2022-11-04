@@ -47,7 +47,7 @@ def goburei_command(ack, body, client):
             return
 
         if subcom.lower() in ("results", "成績"):
-            title, msg = results.getdata(name_replace = True, guest_skip = True)
+            title, msg = results.getdata(body["text"].split()[1:], name_replace = True, guest_skip = True)
             slack_api.post_text(client, user_id, title, msg)
             return
 
