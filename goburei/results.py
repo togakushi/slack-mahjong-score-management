@@ -37,27 +37,33 @@ def getdata(name_replace = True, guest_skip = True):
 
     results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
     starttime, endtime = common.scope_coverage("今月")
-
-    if name_replace:
-        title = datetime.datetime.now().strftime("今月の成績 [%Y/%m/%d %H:%M:%S 集計]")
-    else:
-        title = datetime.datetime.now().strftime("今月の成績(名前ブレ修正なし) [%Y/%m/%d %H:%M 集計]")
+    title = f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')}  ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
 
     r = {}
+    game_count = 0
+    tobi_count = 0
+
     for i in range(len(results)):
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
+            game_count += 1
             for seki in ("東家", "南家", "西家", "北家"): # 成績計算
                 name = results[i][seki]["name"]
                 if not name in r:
                     r[name] = {
                         "total": 0,
                         "rank": [0, 0, 0, 0],
+                        "tobi": 0,
                     }
                 r[name]["total"] += round(results[i][seki]["point"], 2)
                 r[name]["rank"][results[i][seki]["rank"] -1] += 1
+                if eval(results[i][seki]["rpoint"]) < 0:
+                    r[name]["tobi"] += 1
+                    tobi_count += 1
 
     tmp_r = {}
     msg = ""
+    header = "# 名前 : 積算 (平均) / 順位分布 (平均) / トビ\n"
+
     for i in r.keys():
         tmp_r[i] = r[i]["total"]
     for u,p in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
@@ -66,12 +72,19 @@ def getdata(name_replace = True, guest_skip = True):
             r[u]["total"],
             r[u]["total"] / sum(r[u]["rank"]),
         ).replace("-", "▲")
-        msg += " / {}-{}-{}-{} ({:1.2f})\n".format(
+        msg += " / {}-{}-{}-{} ({:1.2f}) / {}\n".format(
             r[u]["rank"][0], r[u]["rank"][1], r[u]["rank"][2], r[u]["rank"][3],
             sum([r[u]["rank"][i] * (i + 1) for i in range(4)]) / sum(r[u]["rank"]),
+            r[u]["tobi"],
         )
+
+    footer = "\n" + "-" * 10 + "\n"
+    footer += f"ゲーム数： {game_count} 回 / トバされた人： {tobi_count} 人\n"
+    if not name_replace:
+        footer += "特記事項：名前ブレ修正なし\n"
+    footer += datetime.datetime.now().strftime("集計日時：%Y/%m/%d %H:%M:%S")
 
     if not msg:
         msg = "御無礼なし"
 
-    return(title, msg)
+    return(title, header + msg + footer)
