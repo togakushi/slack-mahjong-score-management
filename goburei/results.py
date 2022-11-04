@@ -79,7 +79,7 @@ def getdata(name_replace = True, guest_skip = True):
         )
 
     footer = "\n" + "-" * 20 + "\n"
-    footer += f"ゲーム数： {game_count} 回 / トバされた人： {tobi_count} 人\n"
+    footer += f"ゲーム数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
     footer += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')}  ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     if not name_replace:
         footer += "特記事項：名前ブレ修正なし\n"
