@@ -42,6 +42,7 @@ def slackpost(client, channel, keyword):
     starttime = False
     endtime = False
     target_player = []
+    target_day = []
     msg = error.message()
 
     for i in keyword:
@@ -54,6 +55,12 @@ def slackpost(client, channel, keyword):
 
     if len(keyword) == 0:
         starttime, endtime = common.scope_coverage()
+
+    if len(target_day) == 1:
+        starttime, endtime = common.scope_coverage(target_day[0])
+    if len(target_day) >= 2:
+        starttime, dummy = common.scope_coverage(min(target_day))
+        dummy, endtime = common.scope_coverage(max(target_day))
 
     if not (starttime or endtime) and target_player:
         starttime, endtime = common.scope_coverage()

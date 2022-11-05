@@ -49,16 +49,22 @@ def getdata(keyword, name_replace = True, guest_skip = True):
 
     starttime = False
     endtime = False
-    target_player = []
+    target_day = []
 
     for i in keyword:
         if re.match(r"^(今月|先月|先々月|全部)$", i):
             starttime, endtime = common.scope_coverage(i)
         if re.match(r"^[0-9]{8}$", i):
-            starttime, endtime = common.scope_coverage(i)
+            target_day.append(i)
 
     if len(keyword) == 0:
         starttime, endtime = common.scope_coverage("今月")
+
+    if len(target_day) == 1:
+        starttime, endtime = common.scope_coverage(target_day[0])
+    if len(target_day) >= 2:
+        starttime, dummy = common.scope_coverage(min(target_day))
+        dummy, endtime = common.scope_coverage(max(target_day))
 
     if not (starttime or endtime):
         return(False, False)
