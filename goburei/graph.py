@@ -48,8 +48,8 @@ def slackpost(client, channel, keyword):
     for i in keyword:
         if re.match(r"^(今月|先月|先々月|全部)$", i):
             starttime, endtime = common.scope_coverage(i)
-        if re.match(r"^[0-9]{8}$", i):
-            starttime, endtime = common.scope_coverage(i)
+        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(i)):
+            target_day.append(common.ZEN2HAN(i))
         if member.ExsistPlayer(i):
             target_player.append(member.ExsistPlayer(i))
 

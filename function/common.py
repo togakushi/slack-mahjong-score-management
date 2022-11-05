@@ -23,6 +23,14 @@ def HAN2ZEN(text): # 全角変換(数字のみ)
     return(text.translate(trans_table))
 
 
+def ZEN2HAN(text): # 半角変換(数字のみ)
+    ZEN = "".join(chr(0xff10 + i) for i in range(10))
+    HAN = "".join(chr(0x30 + i) for i in range(10))
+    trans_table = str.maketrans(ZEN, HAN)
+
+    return(text.translate(trans_table))
+
+
 def scope_coverage(keyword = None):
     currenttime = datetime.datetime.now()
     if currenttime.hour < 12:

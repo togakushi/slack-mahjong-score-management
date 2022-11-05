@@ -54,8 +54,8 @@ def getdata(keyword, name_replace = True, guest_skip = True):
     for i in keyword:
         if re.match(r"^(今月|先月|先々月|全部)$", i):
             starttime, endtime = common.scope_coverage(i)
-        if re.match(r"^[0-9]{8}$", i):
-            target_day.append(i)
+        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(i)):
+            target_day.append(common.ZEN2HAN(i))
 
     if len(keyword) == 0:
         starttime, endtime = common.scope_coverage("今月")
