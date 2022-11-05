@@ -36,7 +36,7 @@ def getdata(keyword, name_replace = True, guest_skip = True):
         2ゲスト戦の除外
 
     keyword : list
-        解析対象のプレイヤー、集計期間
+        集計対象の集計期間
 
     Returns
     -------
