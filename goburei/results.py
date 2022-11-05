@@ -74,9 +74,14 @@ def getdata(keyword, name_replace = True, guest_skip = True):
     r = {}
     game_count = 0
     tobi_count = 0
+    first_game = False
+    last_game = False
 
     for i in range(len(results)):
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
+            if not first_game:
+                first_game = results[i]["日付"]
+            last_game = results[i]["日付"]
             game_count += 1
             for seki in ("東家", "南家", "西家", "北家"): # 成績計算
                 name = results[i][seki]["name"]
@@ -94,7 +99,7 @@ def getdata(keyword, name_replace = True, guest_skip = True):
 
     tmp_r = {}
     msg = ""
-    header = "# 名前 : 積算 (平均) / 順位分布 (平均) / トビ\n"
+    header = "## 名前 : 積算 (平均) / 順位分布 (平均) / トビ ##\n"
 
     for i in r.keys():
         tmp_r[i] = r[i]["total"]
@@ -110,12 +115,13 @@ def getdata(keyword, name_replace = True, guest_skip = True):
             r[u]["tobi"],
         )
 
-    footer = "\n" + "-" * 20 + "\n"
-    footer += f"ゲーム数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
-    footer += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')}  ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    footer = "-" * 5 + "\n"
+    footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M')}\n"
+    footer += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M')}\n"
+    footer += f"ゲーム回数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
     if not name_replace:
         footer += "特記事項：名前ブレ修正なし\n"
-    footer += datetime.datetime.now().strftime("集計日時：%Y/%m/%d %H:%M:%S")
 
     if not msg:
         msg = "御無礼なし"
