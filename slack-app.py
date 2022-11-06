@@ -114,6 +114,12 @@ def goburei_command(ack, body, client):
 def handle_message_events():
     pass
 
+
+@g.app.event("app_home_opened")
+def handle_home_events():
+    pass
+
+
 if __name__ == "__main__":
     g.player_list = member.configload(sys.argv[1])
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])
