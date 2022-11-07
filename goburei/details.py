@@ -43,6 +43,7 @@ def getdata(opt):
     if not (starttime or endtime):
         if len(target_day) == 0:
             starttime, endtime = common.scope_coverage("今月")
+            option.append("戦績")
         if len(target_day) == 1:
             starttime, endtime = common.scope_coverage(target_day[0])
         if len(target_day) >= 2:
