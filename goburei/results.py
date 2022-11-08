@@ -99,7 +99,7 @@ def getdata(keyword, name_replace = True, guest_skip = True):
 
     tmp_r = {}
     msg = ""
-    header = "## 名前 : 積算 (平均) / 順位分布 (平均) / トビ ##\n"
+    header = "## 名前 : 累計 (平均) / 順位分布 (平均) / トビ ##\n"
 
     for i in r.keys():
         tmp_r[i] = r[i]["total"]
