@@ -23,6 +23,10 @@ logging.basicConfig(level = logging.ERROR)
 # イベントAPI
 @g.app.message(re.compile(r"御無礼"))
 def handle_goburei_check_evnts(client, body):
+    """
+    postされた素点合計が10万点になっているかチェックする
+    """
+
     user_id = body["event"]["user"]
     channel_id = body["event"]["channel"]
     msg = search.pattern(body["event"]["text"])
@@ -31,6 +35,7 @@ def handle_goburei_check_evnts(client, body):
         if not score == 1000:
             msg = error.invalid_score(user_id, score)
             slack_api.post_message(client, channel_id, msg)
+
 
 @g.app.command("/goburei")
 def goburei_command(ack, body, client):
@@ -109,6 +114,7 @@ def goburei_command(ack, body, client):
     msg += "`{} {}` {}\n".format(body["command"], "save", "メンバーリストの保存")
 
     slack_api.post_message(client, user_id, msg)
+
 
 @g.app.event("message")
 def handle_message_events():

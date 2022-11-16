@@ -26,14 +26,14 @@ def handle_goburei_graph_evnts(client, context, body):
 
 def slackpost(client, channel, keyword):
     """
-    ポイント推移グラフをslackにポストする
+    ポイント推移グラフをslackにpostする
 
     Parameters
     ----------
     client : obj
 
     channel : str
-        ポスト先のチャンネルID or ユーザーID
+        post先のチャンネルID or ユーザーID
 
     keyword : list
         slackから受け取った引数

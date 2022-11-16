@@ -42,10 +42,10 @@ def getdata(keyword, name_replace = True, guest_skip = True):
     Returns
     -------
     title : str
-        slackにポストするタイトル
+        slackにpostするタイトル
 
     msg : text
-        slackにポストする内容
+        slackにpostする内容
     """
 
     starttime = False

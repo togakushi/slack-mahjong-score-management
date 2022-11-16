@@ -29,10 +29,10 @@ def getdata(name_replace = True, guest_skip = True): # 御無礼結果
     Returns
     -------
     title : str
-        slackにポストするタイトル
+        slackにpostするタイトル
 
     msg : text
-        slackにポストする内容
+        slackにpostする内容
     """
 
     results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
