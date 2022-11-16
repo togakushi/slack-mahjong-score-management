@@ -36,7 +36,8 @@ def getdata(keyword, name_replace = True, guest_skip = True):
         2ゲスト戦の除外
 
     keyword : list
-        集計対象の期間
+        slackから受け取った引数
+        集計対象の期間などが指定される
 
     Returns
     -------

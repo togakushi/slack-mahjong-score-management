@@ -15,7 +15,8 @@ def getdata(opt):
     Parameters
     ----------
     opt : list
-        解析対象のプレイヤー、集計期間
+        slackから受け取った引数
+        解析対象のプレイヤー、集計期間などが指定される
 
     Returns
     -------
