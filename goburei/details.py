@@ -30,9 +30,8 @@ def getdata(opt):
     option = []
 
     for i in opt:
-        pname = member.NameReplace(i, guest = False)
-        if pname in g.player_list.sections():
-            target_player = pname
+        if member.ExsistPlayer(i):
+            target_player = member.ExsistPlayer(i)
         if re.match(r"^(今月|先月|先々月|全部)$", i):
             starttime, endtime = common.scope_coverage(i)
         if re.match(r"^[0-9]{8}$", common.ZEN2HAN(i)):
@@ -53,7 +52,7 @@ def getdata(opt):
     if target_player:
         results = search.getdata(name_replace = True, guest_skip = False)
  
-        msg1 = f"*【個人成績(※2ゲスト戦含む)】*\n"
+        msg1 = f"*【個人成績】* (※2ゲスト戦含む)\n"
         msg2 = f"\n*【戦績】*\n"
 
         point = 0

@@ -55,7 +55,6 @@ def slackpost(client, channel, keyword):
 
     if len(keyword) == 0:
         starttime, endtime = common.scope_coverage()
-
     if len(target_day) == 1:
         starttime, endtime = common.scope_coverage(target_day[0])
     if len(target_day) >= 2:
@@ -112,7 +111,7 @@ def plot(starttime, endtime, target_player, name_replace = True, guest_skip = Tr
     ### データ抽出 ###
     for i in range(len(results)):
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-            if target_player: # 特定プレーヤーのみ抽出
+            if target_player: # 指定プレーヤーのみ抽出
                 for seki in ("東家", "南家", "西家", "北家"):
                     if results[i][seki]["name"] in target_player:
                         if not results[i]["日付"] in gdata:

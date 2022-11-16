@@ -80,10 +80,8 @@ def getdata(name_replace = True, guest_skip = True):
                     if name_replace: # 表記ブレの修正
                         for x in (0, 2, 4, 6):
                             msg[x] = member.NameReplace(msg[x])
-
-                    if guest_skip: # 2ゲスト戦の除外
-                        if msg.count("ゲスト１") >= 2:
-                            continue
+                    if guest_skip and msg.count("ゲスト１") >= 2: # 2ゲスト戦の除外
+                        continue
 
                     data[count] = {
                         "日付": dt,
