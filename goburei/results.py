@@ -3,7 +3,7 @@ import datetime
 
 from function import global_value as g
 from function import common
-from function import error
+from function import message
 from function import slack_api
 from goburei import search
 
@@ -20,7 +20,7 @@ def handle_goburei_results_evnts(client, context, body):
     if title or msg:
         slack_api.post_text(client, context.channel_id, title, msg)
     else:
-        slack_api.post_message(client, context.channel_id, error.message())
+        slack_api.post_message(client, context.channel_id, message.invalid_argument())
 
 
 def getdata(keyword, name_replace = True, guest_skip = True):

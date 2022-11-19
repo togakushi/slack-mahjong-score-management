@@ -7,7 +7,7 @@ from matplotlib.font_manager import FontProperties
 
 from function import global_value as g
 from function import common
-from function import error
+from function import message
 from function import slack_api
 from goburei import search
 from goburei import member
@@ -44,7 +44,7 @@ def slackpost(client, channel, keyword):
     endtime = False
     target_player = []
     target_day = []
-    msg = error.message()
+    msg = message.invalid_argument()
 
     for i in keyword:
         if re.match(r"^(今月|先月|先々月|全部)$", i):

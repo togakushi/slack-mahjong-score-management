@@ -9,7 +9,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from function import global_value as g
 from function import common
-from function import error
+from function import message
 from function import slack_api
 from goburei import member
 from goburei import search
@@ -33,7 +33,7 @@ def handle_goburei_check_evnts(client, body):
     if msg:
         score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
         if not score == 1000:
-            msg = error.invalid_score(user_id, score)
+            msg = message.invalid_score(user_id, score)
             slack_api.post_message(client, channel_id, msg)
 
 
@@ -46,9 +46,9 @@ def goburei_command(ack, body, client):
     if body["text"]:
         subcom = body["text"].split()[0]
         argument = body["text"].split()[1:]
-        details_flag = False
 
         if subcom.lower() in ("results", "details", "成績", "個人"):
+            details_flag = False
             for i in argument:
                 if member.ExsistPlayer(i):
                     details_flag = True
@@ -104,20 +104,7 @@ def goburei_command(ack, body, client):
             slack_api.post_message(client, user_id, msg)
             return
 
-    msg = "使い方：\n"
-    msg += "`{} {}` {}\n".format(body["command"], "help", "このメッセージ")
-    msg += "`{} {}` {}\n".format(body["command"], "results", "今月の成績")
-    msg += "`{} {}` {}\n".format(body["command"], "record", "張り付け用集計済みデータ出力")
-    msg += "`{} {}` {}\n".format(body["command"], "allrecord", "集計済み全データ出力(名前ブレ修正なし)")
-    msg += "`{} {}` {}\n".format(body["command"], "graph", "ポイント推移グラフを表示")
-    msg += "`{} {} <名前>` {}\n".format(body["command"], "details", "2ゲスト戦含む個人成績出力")
-    msg += "`{} {}` {}\n".format(body["command"], "member | userlist", "登録されているメンバー")
-    msg += "`{} {}` {}\n".format(body["command"], "add", "メンバーの追加")
-    msg += "`{} {}` {}\n".format(body["command"], "del", "メンバーの削除")
-    msg += "`{} {}` {}\n".format(body["command"], "load", "メンバーリストの再読み込み")
-    msg += "`{} {}` {}\n".format(body["command"], "save", "メンバーリストの保存")
-
-    slack_api.post_message(client, user_id, msg)
+    slack_api.post_message(client, user_id, message.help(body["command"]))
 
 
 @g.app.event("message")
