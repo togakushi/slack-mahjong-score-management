@@ -15,7 +15,6 @@ from goburei import member
 from goburei import search
 from goburei import results
 from goburei import record
-from goburei import details
 from goburei import graph
 
 logging.basicConfig(level = logging.ERROR)
@@ -53,11 +52,11 @@ def goburei_command(ack, body, client):
                 if member.ExsistPlayer(i):
                     details_flag = True
             if details_flag:
-                msg = details.getdata(argument)
-                slack_api.post_message(client, user_id, msg)
+                msg, score = results.details(argument)
+                slack_api.post_message(client, user_id, msg + score)
             else:
-                title, msg = results.getdata(argument, name_replace = True, guest_skip = True)
-                slack_api.post_text(client, user_id, title, msg)
+                msg = results.summary(argument, name_replace = True, guest_skip = True)
+                slack_api.post_text(client, user_id, "", msg)
             return
 
         if subcom.lower() in ("member", "userlist", "メンバー", "リスト"):
@@ -66,8 +65,8 @@ def goburei_command(ack, body, client):
             return
 
         if subcom.lower() in ("allresults", "全成績"):
-            title, msg = results.getdata(name_replace = False, guest_skip = False)
-            slack_api.post_text(client, user_id, title, msg)
+            msg = results.summary(argument, name_replace = False, guest_skip = False)
+            slack_api.post_text(client, user_id, "", msg)
             return
 
         if subcom.lower() in ("record", "記録", "結果"):
