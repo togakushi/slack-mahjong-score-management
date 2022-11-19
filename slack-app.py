@@ -46,10 +46,12 @@ def goburei_command(ack, body, client):
     if body["text"]:
         subcom = body["text"].split()[0]
         argument = body["text"].split()[1:]
+        details_flag = False
 
         if subcom.lower() in ("results", "details", "成績", "個人"):
             for i in argument:
-                details_flag = member.ExsistPlayer(i):
+                if member.ExsistPlayer(i):
+                    details_flag = True
             if details_flag:
                 msg = details.getdata(argument)
                 slack_api.post_message(client, user_id, msg)
