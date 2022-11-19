@@ -60,13 +60,11 @@ def getdata(keyword, name_replace = True, guest_skip = True):
 
     if len(keyword) == 0:
         starttime, endtime = common.scope_coverage("今月")
-
     if len(target_day) == 1:
         starttime, endtime = common.scope_coverage(target_day[0])
     if len(target_day) >= 2:
         starttime, dummy = common.scope_coverage(min(target_day))
         dummy, endtime = common.scope_coverage(max(target_day))
-
     if not (starttime or endtime):
         return(False, False)
 
