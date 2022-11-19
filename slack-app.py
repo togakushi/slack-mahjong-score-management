@@ -45,14 +45,21 @@ def goburei_command(ack, body, client):
 
     if body["text"]:
         subcom = body["text"].split()[0]
+        argument = body["text"].split()[1:]
+
+        if subcom.lower() in ("results", "details", "成績", "個人"):
+            for i in argument:
+                details_flag = member.ExsistPlayer(i):
+            if details_flag:
+                msg = details.getdata(argument)
+                slack_api.post_message(client, user_id, msg)
+            else:
+                title, msg = results.getdata(argument, name_replace = True, guest_skip = True)
+                slack_api.post_text(client, user_id, title, msg)
+            return
 
         if subcom.lower() in ("member", "userlist", "メンバー", "リスト"):
             title, msg = member.list()
-            slack_api.post_text(client, user_id, title, msg)
-            return
-
-        if subcom.lower() in ("results", "成績"):
-            title, msg = results.getdata(body["text"].split()[1:], name_replace = True, guest_skip = True)
             slack_api.post_text(client, user_id, title, msg)
             return
 
@@ -71,13 +78,8 @@ def goburei_command(ack, body, client):
             slack_api.post_upload(client, user_id, title, msg)
             return
 
-        if subcom.lower() in ("details", "詳細", "個人", "個人成績"):
-            msg = details.getdata(body["text"].split()[1:])
-            slack_api.post_message(client, user_id, msg)
-            return
-
         if subcom.lower() in ("graph", "グラフ"):
-            graph.slackpost(client, user_id, body["text"].split()[1:])
+            graph.slackpost(client, user_id, argument)
             return
 
         if subcom.lower() in ("load"):
