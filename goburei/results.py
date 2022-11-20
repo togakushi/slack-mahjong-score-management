@@ -37,7 +37,7 @@ def handle_goburei_results_evnts(client, context, body):
             slack_api.post_message(client, context.channel_id, message.invalid_argument())
 
 
-def summary(keyword, name_replace = True, guest_skip = True):
+def summary(argument, name_replace = True, guest_skip = True):
     """
     各プレイヤーの累積ポイントを取得
 
@@ -49,7 +49,7 @@ def summary(keyword, name_replace = True, guest_skip = True):
     guest_skip : bool, default True
         2ゲスト戦の除外
 
-    keyword : list
+    argument : list
         slackから受け取った引数
         集計対象の期間などが指定される
 
@@ -63,13 +63,15 @@ def summary(keyword, name_replace = True, guest_skip = True):
     endtime = False
     target_day = []
 
-    for i in keyword:
-        if re.match(r"^(今月|先月|先々月|全部)$", i):
-            starttime, endtime = common.scope_coverage(i)
-        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(i)):
-            target_day.append(common.ZEN2HAN(i))
+    for keyword in argument:
+        if re.match(r"^(今月|先月|先々月|全部)$", keyword):
+            starttime, endtime = common.scope_coverage(keyword)
+        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(keyword)):
+            target_day.append(common.ZEN2HAN(keyword))
+        if re.match(r"^ゲスト(なし|ナシ|無し|除外)$", keyword):
+            guest_skip = False
 
-    if len(keyword) == 0:
+    if len(target_day) == 0 and not (starttime or endtime):
         starttime, endtime = common.scope_coverage("今月")
     if len(target_day) == 1:
         starttime, endtime = common.scope_coverage(target_day[0])
@@ -113,39 +115,50 @@ def summary(keyword, name_replace = True, guest_skip = True):
 
     for i in r.keys():
         tmp_r[i] = r[i]["total"]
-    for u,p in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
+
+    for name, p in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
+        if not guest_skip and name == "ゲスト１":
+            continue
         msg += "{}{}： {:>+6.1f} ({:>+5.1f})".format(
-            u, " " * (9 - common.len_count(u)),
-            r[u]["total"],
-            r[u]["total"] / sum(r[u]["rank"]),
+            name, " " * (9 - common.len_count(name)),
+            r[name]["total"],
+            r[name]["total"] / sum(r[name]["rank"]),
         ).replace("-", "▲")
         msg += " / {}-{}-{}-{} ({:1.2f}) / {}\n".format(
-            r[u]["rank"][0], r[u]["rank"][1], r[u]["rank"][2], r[u]["rank"][3],
-            sum([r[u]["rank"][i] * (i + 1) for i in range(4)]) / sum(r[u]["rank"]),
-            r[u]["tobi"],
+            r[name]["rank"][0], r[name]["rank"][1], r[name]["rank"][2], r[name]["rank"][3],
+            sum([r[name]["rank"][i] * (i + 1) for i in range(4)]) / sum(r[name]["rank"]),
+            r[name]["tobi"],
         )
 
     if not (first_game or last_game):
         msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
         return(msg)
 
+
     footer = "-" * 5 + "\n"
     footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
-    footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M')}\n"
-    footer += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M')}\n"
+    footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
+    footer += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
     footer += f"ゲーム回数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
+
+    remarks = []
     if not name_replace:
-        footer += "特記事項：名前ブレ修正なし\n"
+        remarks.append("名前ブレ修正なし")
+    if not guest_skip:
+        remarks.append("2ゲスト戦を含む")
+    if remarks:
+        footer += f"特記事項：" + "、".join(remarks)
+
     return(header + msg + footer)
 
 
-def details(opt):
+def details(argument):
     """
     個人成績を集計して返す
 
     Parameters
     ----------
-    opt : list
+    argument : list
         slackから受け取った引数
         解析対象のプレイヤー、集計期間などが指定される
 
@@ -164,15 +177,15 @@ def details(opt):
     target_day = []
     option = []
 
-    for i in opt:
-        if member.ExsistPlayer(i):
-            target_player = member.ExsistPlayer(i)
-        if re.match(r"^(今月|先月|先々月|全部)$", i):
-            starttime, endtime = common.scope_coverage(i)
-        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(i)):
-            target_day.append(common.ZEN2HAN(i))
-        if re.match(r"^(戦績)$", i):
-            option.append(i)
+    for keyword in argument:
+        if member.ExsistPlayer(keyword):
+            target_player = member.ExsistPlayer(keyword)
+        if re.match(r"^(今月|先月|先々月|全部)$", keyword):
+            starttime, endtime = common.scope_coverage(keyword)
+        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(keyword)):
+            target_day.append(common.ZEN2HAN(keyword))
+        if re.match(r"^(戦績)$", keyword):
+            option.append(keyword)
 
     if not (starttime or endtime):
         if len(target_day) == 0:
