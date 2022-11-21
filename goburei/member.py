@@ -16,7 +16,7 @@ def check_namepattern(name): # 登録制限チェック
 
 
 def NameReplace(pname, name_replace = True, guest = True): # 表記ブレ修正
-    pname = pname.replace("さん", "")
+    pname = re.sub(r"さん$", "", pname)
     pname = common.HAN2ZEN(pname)
 
     if not name_replace:
