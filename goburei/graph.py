@@ -67,9 +67,9 @@ def slackpost(client, channel, argument):
         starttime, endtime = common.scope_coverage()
 
     if starttime or endtime:
-        if len(target_player) == 1: # 描写対象がひとり
+        if len(target_player) == 1: # 描写対象がひとり → 個人成績
             count = plot_personal(starttime, endtime, target_player)
-        else: # 描写対象が複数
+        else: # 描写対象が複数 → 比較
             count = plot(starttime, endtime, target_player)
         file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
         if count <= 0:
@@ -211,7 +211,7 @@ def plot_personal(starttime, endtime, target_player, name_replace = True, guest_
     name_replace : bool, default True
         プレイヤー名の表記ゆれを修正
 
-    guest_skip : bool, default True
+    guest_skip : bool, default False
         2ゲスト戦の除外
 
     Returns
@@ -289,10 +289,10 @@ def plot_personal(starttime, endtime, target_player, name_replace = True, guest_
     point_ax.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
     point_ax.plot(game_time, stacked_point, marker = "o", markersize = 3, label = f"累計ポイント({str(total_point)})".replace("-", "▲"))
     point_ax.bar(game_time, game_point, color = "dodgerblue", label = f"獲得ポイント")
-    point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white")
+    point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white") # 背景色と同じにして見えなくする
     point_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
 
-    # 着順分布
+    # 順位分布
     rank_ax = fig.add_subplot(grid[1], sharex = point_ax)
     rank_ax.invert_yaxis()
     rank_ax.set_ylabel("順位", fontproperties = fp)
