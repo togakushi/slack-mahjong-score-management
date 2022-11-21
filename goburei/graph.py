@@ -294,9 +294,10 @@ def plot_personal(starttime, endtime, target_player, name_replace = True, guest_
 
     # 着順分布
     rank_ax = fig.add_subplot(grid[1], sharex = point_ax)
+    rank_ax.invert_yaxis()
     rank_ax.set_ylabel("順位", fontproperties = fp)
     rank_ax.set_xlim(-1, len(game_time))
-    rank_ax.set_ylim(0.8, 4.2)
+    rank_ax.set_ylim(4.2, 0.8)
     rank_ax.hlines(y = 2.5, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
     rank_ax.plot(game_time, game_rank, marker = "o", markersize = 3, label = f"獲得順位")
     rank_ax.plot(game_time, rank_avg, marker = "o", markersize = 3, label = f"平均順位({rank_avg[-1]})")
