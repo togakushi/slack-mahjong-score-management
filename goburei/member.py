@@ -24,7 +24,9 @@ def NameReplace(pname, name_replace = True, guest = True): # 表記ブレ修正
 
     for player in g.player_list.sections():
         for alias in g.player_list.get(player, "alias").split(","):
-            if pname == alias:
+            if common.KANA2HIRA(pname) == alias:
+                return(player)
+            if common.HIRA2KANA(pname) == alias:
                 return(player)
 
     return("ゲスト１" if guest else pname)
@@ -32,10 +34,11 @@ def NameReplace(pname, name_replace = True, guest = True): # 表記ブレ修正
 
 def ExsistPlayer(name): # 登録済みメンバーかチェック
     name = NameReplace(name)
+
     if g.player_list.has_section(name):
         return(name)
-    else:
-        return(False)
+
+    return(False)
 
 
 def list():
