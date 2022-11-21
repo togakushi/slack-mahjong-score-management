@@ -274,7 +274,7 @@ def plot_personal(starttime, endtime, target_player, name_replace = True, guest_
         rotation = 0
         position = "center"
 
-    grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [2, 1])
+    grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [3, 1])
 
     fig.suptitle(
         f"『{target_player[0]}』の成績 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})",
