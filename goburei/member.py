@@ -31,7 +31,7 @@ def check_namepattern(name):
     return(True)
 
 
-def NameReplace(pname, name_replace = True, guest = True):
+def NameReplace(pname, name_replace = True, guest_skip = True):
     """
     表記ブレ修正
 
@@ -54,7 +54,7 @@ def NameReplace(pname, name_replace = True, guest = True):
             if common.HIRA2KANA(pname) == alias:
                 return(player)
 
-    return("ゲスト１" if guest else pname)
+    return("ゲスト１" if guest_skip else pname)
 
 
 def ExsistPlayer(name):
