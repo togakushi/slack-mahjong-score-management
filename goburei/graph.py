@@ -49,7 +49,7 @@ def slackpost(client, channel, argument):
     msg = message.invalid_argument()
 
     for keyword in argument:
-        if re.match(r"^(昨日|今月|先月|先々月|全部)$", keyword):
+        if re.match(r"^(今日|昨日|今月|先月|先々月|全部)$", keyword):
             starttime, endtime = common.scope_coverage(keyword)
         if re.match(r"^[0-9]{8}$", common.ZEN2HAN(keyword)):
             target_day.append(common.ZEN2HAN(keyword))

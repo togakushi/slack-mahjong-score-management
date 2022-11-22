@@ -60,6 +60,9 @@ def scope_coverage(keyword = None):
                 endday = targettime + datetime.timedelta(days = 1)
             except:
                 return(False, False)
+        if keyword == "今日":
+            startday = currenttime
+            endday = currenttime + datetime.timedelta(days = 1)
         if keyword == "昨日":
             startday = currenttime - datetime.timedelta(days = 1)
             endday = currenttime
