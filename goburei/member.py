@@ -41,8 +41,7 @@ def NameReplace(pname, name_replace = True, guest_skip = True):
         対象文字列（プレイヤー名）
     """
 
-    pname = re.sub(r"さん$", "", pname)
-    pname = common.HAN2ZEN(pname)
+    pname = re.sub(r"さん$", "", common.HAN2ZEN(pname))
 
     if not name_replace:
         return(pname)
@@ -88,18 +87,18 @@ def list():
     return(title, msg)
 
 
-def Append(v):
+def Append(argument):
     """
     メンバー追加
 
     Parameters
     ----------
-    v : list
+    argument : list
         登録プレイヤー名
     """
 
-    if len(v) == 2: # 新規追加
-        new_name = common.HAN2ZEN(v[1])
+    if len(argument) == 1: # 新規追加
+        new_name = common.HAN2ZEN(argument[0])
         if g.player_list.has_section(new_name):
             msg = f"「{new_name}」はすでに登録されています。"
         else:
@@ -112,9 +111,9 @@ def Append(v):
                 g.player_list.set(new_name, "alias", new_name)
                 msg = f"「{new_name}」を登録しました。"
 
-    if len(v) == 3: # 別名登録
-        new_name = common.HAN2ZEN(v[1])
-        nic_name = common.HAN2ZEN(v[2])
+    if len(argument) == 2: # 別名登録
+        new_name = common.HAN2ZEN(argument[0])
+        nic_name = common.HAN2ZEN(argument[1])
         # ダブりチェック
         checklist = []
         for player in g.player_list.sections():
@@ -138,37 +137,37 @@ def Append(v):
     return(msg if "msg" in locals() else "使い方が間違っています。")
 
 
-def Remove(v):
+def Remove(argument):
     """
     メンバー削除
 
     Parameters
     ----------
-    v : list
+    argument : list
         削除プレイヤー名
     """
 
-    if len(v) == 2: # メンバー削除
-        if g.player_list.has_section(v[1]):
-            g.player_list.remove_section(v[1])
-            msg = f"「{v[1]}」を削除しました。"
+    if len(argument) == 1: # メンバー削除
+        if g.player_list.has_section(argument[0]):
+            g.player_list.remove_section(argument[0])
+            msg = f"「{argument[0]}」を削除しました。"
 
-    if len(v) == 3: # 別名削除
-        if g.player_list.has_section(v[1]):
-            alias = g.player_list.get(v[1], "alias").split(",")
-            if v[1] == v[2]:
-                g.player_list.remove_section(v[1])
-                msg = f"「{v[1]}」を削除しました。"
-            if v[2] in alias:
-                alias.remove(v[2])
+    if len(argument) == 2: # 別名削除
+        if g.player_list.has_section(argument[0]):
+            alias = g.player_list.get(argument[0], "alias").split(",")
+            if argument[0] == argument[1]:
+                g.player_list.remove_section(argument[0])
+                msg = f"「{argument[0]}」を削除しました。"
+            if argument[1] in alias:
+                alias.remove(argument[1])
                 if len(alias) == 0:
-                    g.player_list.remove_section(v[1])
-                    msg = f"「{v[1]}」を削除しました。"
+                    g.player_list.remove_section(argument[0])
+                    msg = f"「{argument[0]}」を削除しました。"
                 else:
-                    g.player_list.set(v[1], "alias", ",".join(alias))
-                    msg = f"「{v[1]}」から「{v[2]}」を削除しました。"
+                    g.player_list.set(argument[0], "alias", ",".join(alias))
+                    msg = f"「{argument[0]}」から「{argument[1]}」を削除しました。"
             else:
-                msg = f"「{v[1]}」に「{v[2]}」は登録されていません。"
+                msg = f"「{argument[0]}」に「{argument[1]}」は登録されていません。"
 
     return(msg if "msg" in locals() else "使い方が間違っています。")
 

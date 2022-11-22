@@ -94,12 +94,12 @@ def goburei_command(ack, body, client):
             return
 
         if subcom.lower() in ("add", "追加"):
-            msg = member.Append(body["text"].split())
+            msg = member.Append(argument)
             slack_api.post_message(client, user_id, msg)
             return
 
         if subcom.lower() in ("del", "削除"):
-            msg = member.Remove(body["text"].split())
+            msg = member.Remove(argument)
             slack_api.post_message(client, user_id, msg)
             return
 
