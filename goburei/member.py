@@ -5,17 +5,40 @@ from function import global_value as g
 from function import common
 
 
-def check_namepattern(name): # 登録制限チェック
+def check_namepattern(name):
+    """
+    登録制限チェック
+
+    Parameters
+    ----------
+    name : str
+        対象文字列（プレイヤー名）
+    """
+
     if len(name) > 8:
         return(False)
-    if re.search("[\\\;:<>,!@#*?/`\"']", name):
+    if re.match(r"ゲスト", name):
+        return(False)
+    if re.match(r"^(今月|先月|先々月|全部|[0-9]{8})$", name): # NGワード（サブコマンド引数）
+        return(False)
+    if re.search("[\\\;:<>,!@#*?/`\"']", name): # 禁則記号
         return(False)
     if not name.isprintable():
         return(False)
+
     return(True)
 
 
-def NameReplace(pname, name_replace = True, guest = True): # 表記ブレ修正
+def NameReplace(pname, name_replace = True, guest = True):
+    """
+    表記ブレ修正
+
+    Parameters
+    ----------
+    name : str
+        対象文字列（プレイヤー名）
+    """
+
     pname = re.sub(r"さん$", "", pname)
     pname = common.HAN2ZEN(pname)
 
@@ -32,7 +55,16 @@ def NameReplace(pname, name_replace = True, guest = True): # 表記ブレ修正
     return("ゲスト１" if guest else pname)
 
 
-def ExsistPlayer(name): # 登録済みメンバーかチェック
+def ExsistPlayer(name):
+    """
+    登録済みメンバーかチェック
+
+    Parameters
+    ----------
+    name : str
+        対象プレイヤー名
+    """
+
     name = NameReplace(name)
 
     if g.player_list.has_section(name):
@@ -55,6 +87,15 @@ def list():
 
 
 def Append(v):
+    """
+    メンバー追加
+
+    Parameters
+    ----------
+    v : list
+        登録プレイヤー名
+    """
+
     if len(v) == 2: # 新規追加
         new_name = common.HAN2ZEN(v[1])
         if g.player_list.has_section(new_name):
@@ -96,6 +137,15 @@ def Append(v):
 
 
 def Remove(v):
+    """
+    メンバー削除
+
+    Parameters
+    ----------
+    v : list
+        削除プレイヤー名
+    """
+
     if len(v) == 2: # メンバー削除
         if g.player_list.has_section(v[1]):
             g.player_list.remove_section(v[1])
