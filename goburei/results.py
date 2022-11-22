@@ -64,7 +64,7 @@ def summary(argument, name_replace = True, guest_skip = True):
     target_day = []
 
     for keyword in argument:
-        if re.match(r"^(今月|先月|先々月|全部)$", keyword):
+        if re.match(r"^(昨日|今月|先月|先々月|全部)$", keyword):
             starttime, endtime = common.scope_coverage(keyword)
         if re.match(r"^[0-9]{8}$", common.ZEN2HAN(keyword)):
             target_day.append(common.ZEN2HAN(keyword))
@@ -180,7 +180,7 @@ def details(argument):
     for keyword in argument:
         if member.ExsistPlayer(keyword):
             target_player = member.ExsistPlayer(keyword)
-        if re.match(r"^(今月|先月|先々月|全部)$", keyword):
+        if re.match(r"^(昨日|今月|先月|先々月|全部)$", keyword):
             starttime, endtime = common.scope_coverage(keyword)
         if re.match(r"^[0-9]{8}$", common.ZEN2HAN(keyword)):
             target_day.append(common.ZEN2HAN(keyword))
