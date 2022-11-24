@@ -76,7 +76,7 @@ def slackpost(client, channel, argument):
             msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
             slack_api.post_message(client, channel, msg)
         else:
-            slack_api.post_fileupload(client, channel, "御無礼グラフ", file)
+            slack_api.post_fileupload(client, channel, "成績グラフ", file)
     else:
         slack_api.post_message(client, channel, msg)
 
