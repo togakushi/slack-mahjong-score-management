@@ -71,6 +71,8 @@ def getdata(name_replace = True, guest_skip = True):
             if "elements" in matches[i]["blocks"][0]:
                 msg = ""
                 tmp = matches[i]["blocks"][0]["elements"][0]["elements"]
+                # print("[DEBUG]>", dt, tmp)
+
                 for x in range(len(tmp)):
                     if tmp[x]["type"] == "text":
                         msg += tmp[x]["text"]
