@@ -127,7 +127,7 @@ def argument_analysis(argument, command_option):
 
         if re.match(r"^ゲスト(なし|ナシ|無し|除外)$", keyword):
             command_option["guest_skip"] = False
-        if re.match(r"^修正(なし|ナシ|無し)$", keyword):
+        if re.match(r"^(修正|変換)(なし|ナシ|無し)$", keyword):
             command_option["name_replace"] = False
         if re.match(r"^(戦績)$", keyword):
             command_option["results"] = True
