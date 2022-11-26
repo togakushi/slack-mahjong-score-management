@@ -65,11 +65,6 @@ def goburei_command(ack, body, client):
             slack_api.post_upload(client, user_id, title, msg)
             return
 
-        if subcom.lower() in ("allrecord", "全記録", "全結果"):
-            title, msg = record.getdata(name_replace = False, guest_skip = False)
-            slack_api.post_upload(client, user_id, title, msg)
-            return
-
         if subcom.lower() in ("graph", "グラフ"):
             command_option["default_action"] = ["当日"]
             logging.info(f"[subcommand({subcom})] {command_option} {argument}")
