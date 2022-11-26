@@ -1,3 +1,4 @@
+import logging
 import re
 import datetime
 
@@ -7,6 +8,8 @@ from function import message
 from function import slack_api
 from goburei import member
 from goburei import search
+
+logging.basicConfig(level = g.logging_level)
 
 
 # イベントAPI
@@ -18,40 +21,52 @@ def handle_goburei_results_evnts(client, context, body):
     if not re.match(r"^御無礼成績$", command):
         return
 
-    details_flag = False
-    for i in argument:
-        if member.ExsistPlayer(i):
-            details_flag = True
+    command_option = {
+        "default_action": ["今月"],
+        "name_replace": True, # 表記ブレ修正
+        "guest_rename": True, # 未登録をゲストに置き換え
+        "guest_skip": True, # 2ゲスト戦除外
+        "results": False, # 戦績表示
+        "recursion": True,
+    }
 
-    if details_flag: # 個人成績
-        msg, score = details(argument)
-        if msg:
-            slack_api.post_message(client, context.channel_id, msg) # 戦績は出さない
-        else:
-            slack_api.post_message(client, context.channel_id, message.invalid_argument())
-    else: # 成績サマリ
-        msg = summary(argument, name_replace = True, guest_skip = True)
-        if msg:
-            slack_api.post_text(client, context.channel_id, "", msg)
-        else:
-            slack_api.post_message(client, context.channel_id, message.invalid_argument())
+    logging.info(f"[{command}] {command_option} {argument}")
+    slackpost(client, context.channel_id, argument, command_option)
 
 
-def summary(argument, name_replace = True, guest_skip = True):
+def slackpost(client, channel, argument, command_option):
+    target_days, target_player, command_option = common.argument_analysis(argument, command_option)
+    starttime, endtime = common.scope_coverage(target_days)
+
+    if starttime and endtime:
+        if len(target_player) == 1: # 個人成績
+            msg, score = details(starttime, endtime, target_player, command_option)
+            if command_option["results"]:
+                slack_api.post_message(client, channel, msg + score)
+            else: # 戦績は出さない
+                    slack_api.post_message(client, channel, msg)
+        else: # 成績サマリ
+            msg = summary(starttime, endtime, target_player, command_option)
+            slack_api.post_text(client, channel, "", msg)
+
+
+def summary(starttime, endtime, target_player, command_option):
     """
     各プレイヤーの累積ポイントを取得
 
     Parameters
     ----------
-    name_replace : bool, default True
-        プレイヤー名の表記ゆれを修正
+    starttime : date
+        集計開始日時
 
-    guest_skip : bool, default True
-        2ゲスト戦の除外
+    endtime : date
+        集計終了日時
 
-    argument : list
-        slackから受け取った引数
-        集計対象の期間などが指定される
+    target_player : list
+        集計対象プレイヤー（空のときは全プレイヤーを対象にする）
+
+    command_option : dict
+        コマンドオプション
 
     Returns
     -------
@@ -59,29 +74,8 @@ def summary(argument, name_replace = True, guest_skip = True):
         slackにpostする内容
     """
 
-    starttime = False
-    endtime = False
-    target_day = []
-
-    for keyword in argument:
-        if re.match(r"^(今日|昨日|今月|先月|先々月|全部)$", keyword):
-            starttime, endtime = common.scope_coverage(keyword)
-        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(keyword)):
-            target_day.append(common.ZEN2HAN(keyword))
-        if re.match(r"^ゲスト(なし|ナシ|無し|除外)$", keyword):
-            guest_skip = False
-
-    if len(target_day) == 0 and not (starttime or endtime):
-        starttime, endtime = common.scope_coverage("今月")
-    if len(target_day) == 1:
-        starttime, endtime = common.scope_coverage(target_day[0])
-    if len(target_day) >= 2:
-        starttime, dummy = common.scope_coverage(min(target_day))
-        dummy, endtime = common.scope_coverage(max(target_day))
-    if not (starttime or endtime):
-        return(False)
-
-    results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
+    logging.info(f"[results.summary] {command_option} {target_player}")
+    results = search.getdata(command_option)
 
     r = {}
     game_count = 0
@@ -117,7 +111,7 @@ def summary(argument, name_replace = True, guest_skip = True):
         tmp_r[i] = r[i]["total"]
 
     for name, p in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
-        if not guest_skip and name == "ゲスト１":
+        if not command_option["guest_skip"] and name == "ゲスト１":
             continue
         msg += "{}{}： {:>+6.1f} ({:>+5.1f})".format(
             name, " " * (9 - common.len_count(name)),
@@ -134,7 +128,6 @@ def summary(argument, name_replace = True, guest_skip = True):
         msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
         return(msg)
 
-
     footer = "-" * 5 + "\n"
     footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
@@ -142,9 +135,9 @@ def summary(argument, name_replace = True, guest_skip = True):
     footer += f"ゲーム回数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
 
     remarks = []
-    if not name_replace:
+    if not command_option["name_replace"]:
         remarks.append("名前ブレ修正なし")
-    if not guest_skip:
+    if not command_option["guest_skip"]:
         remarks.append("2ゲスト戦を含む")
     if remarks:
         footer += f"特記事項：" + "、".join(remarks)
@@ -152,15 +145,23 @@ def summary(argument, name_replace = True, guest_skip = True):
     return(header + msg + footer)
 
 
-def details(argument):
+def details(starttime, endtime, target_player, command_option):
     """
     個人成績を集計して返す
 
     Parameters
     ----------
-    argument : list
-        slackから受け取った引数
-        解析対象のプレイヤー、集計期間などが指定される
+    starttime : date
+        集計開始日時
+
+    endtime : date
+        集計終了日時
+
+    target_player : list
+        集計対象プレイヤー（空のときは全プレイヤーを対象にする）
+
+    command_option : dict
+        コマンドオプション
 
     Returns
     -------
@@ -171,82 +172,50 @@ def details(argument):
         slackにpostする内容(戦績データ)
     """
 
-    starttime = False
-    endtime = False
-    target_player = ""
-    target_day = []
-    option = []
+    logging.info(f"[results.details] {command_option} {target_player}")
+    results = search.getdata(command_option)
 
-    for keyword in argument:
-        if member.ExsistPlayer(keyword):
-            target_player = member.ExsistPlayer(keyword)
-        if re.match(r"^(今日|昨日|今月|先月|先々月|全部)$", keyword):
-            starttime, endtime = common.scope_coverage(keyword)
-        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(keyword)):
-            target_day.append(common.ZEN2HAN(keyword))
-        if re.match(r"^(戦績)$", keyword):
-            option.append(keyword)
+    msg1 = f"*【個人成績】* (※2ゲスト戦含む)\n"
+    msg2 = f"\n*【戦績】*\n"
 
-    if not (starttime or endtime):
-        if len(target_day) == 0:
-            starttime, endtime = common.scope_coverage("今月")
-            option.append("戦績")
-        if len(target_day) == 1:
-            starttime, endtime = common.scope_coverage(target_day[0])
-        if len(target_day) >= 2:
-            starttime, dummy = common.scope_coverage(min(target_day))
-            dummy, endtime = common.scope_coverage(max(target_day))
+    point = 0
+    count_rank = [0, 0, 0, 0]
+    count_tobi = 0
+    count_win = 0
+    count_lose = 0
+    count_draw = 0
 
-    if target_player:
-        results = search.getdata(name_replace = True, guest_skip = False)
- 
-        msg1 = f"*【個人成績】* (※2ゲスト戦含む)\n"
-        msg2 = f"\n*【戦績】*\n"
+    for i in range(len(results)):
+        if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
+            for seki in ("東家", "南家", "西家", "北家"):
+                if target_player[0] == results[i][seki]["name"]:
+                    count_rank[results[i][seki]["rank"] -1] += 1
+                    point += float(results[i][seki]["point"])
+                    count_tobi += 1 if eval(results[i][seki]["rpoint"]) < 0 else 0
+                    count_win += 1 if float(results[i][seki]["point"]) > 0 else 0
+                    count_lose += 1 if float(results[i][seki]["point"]) < 0 else 0
+                    count_draw += 1 if float(results[i][seki]["point"]) == 0 else 0
+                    msg2 += "{}： {}位 {:>5}00点 ({:>+5.1f}) {}\n".format(
+                        results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
+                        results[i][seki]["rank"], eval(results[i][seki]["rpoint"]), float(results[i][seki]["point"]),
+                        "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count("ゲスト１") >= 2 else "",
+                    ).replace("-", "▲")
 
-        point = 0
-        count_rank = [0, 0, 0, 0]
-        count_tobi = 0
-        count_win = 0
-        count_lose = 0
-        count_draw = 0
+    msg1 += f"プレイヤー名： {target_player[0]}\n"
+    msg1 += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分)\n"
 
-        for i in range(len(results)):
-            if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-                for seki in ("東家", "南家", "西家", "北家"):
-                    if target_player == results[i][seki]["name"]:
-                        count_rank[results[i][seki]["rank"] -1] += 1
-                        point += float(results[i][seki]["point"])
-                        count_tobi += 1 if eval(results[i][seki]["rpoint"]) < 0 else 0
-                        count_win += 1 if float(results[i][seki]["point"]) > 0 else 0
-                        count_lose += 1 if float(results[i][seki]["point"]) < 0 else 0
-                        count_draw += 1 if float(results[i][seki]["point"]) == 0 else 0
-                        msg2 += "{}： {}位 {:>5}00点 ({:>+5.1f}) {}\n".format(
-                            results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
-                            results[i][seki]["rank"], eval(results[i][seki]["rpoint"]), float(results[i][seki]["point"]),
-                            "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count("ゲスト１") >= 2 else "",
-                        ).replace("-", "▲")
-
-        msg1 += f"プレイヤー名： {target_player}\n"
-        msg1 += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
-        msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分)\n"
-
-        if sum(count_rank) > 0:
-            msg1 += "累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
-                point, point / sum(count_rank),
-            ).replace("-", "▲")
-            for i in range(4):
-                msg1 += "{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
-            msg1 += "トビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
-            msg1 += "平均順位： {:1.2f}\n".format(
-                sum([count_rank[i] * (i + 1) for i in range(4)]) / sum(count_rank),
-            )
-        else:
-            msg2 += f"記録なし\n"
+    if sum(count_rank) > 0:
+        msg1 += "累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
+            point, point / sum(count_rank),
+        ).replace("-", "▲")
+        for i in range(4):
+            msg1 += "{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
+        msg1 += "トビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
+        msg1 += "平均順位： {:1.2f}\n".format(
+            sum([count_rank[i] * (i + 1) for i in range(4)]) / sum(count_rank),
+        )
     else:
-        msg1 = f"集計対象プレイヤーが見つかりません。"
-        msg2 = ""
-
-    if not "戦績" in option:
-        msg2 = ""
+        msg2 += f"記録なし\n"
 
     return(msg1, msg2)

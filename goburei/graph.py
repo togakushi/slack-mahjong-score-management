@@ -1,3 +1,4 @@
+import logging
 import re
 import os
 import datetime
@@ -13,6 +14,10 @@ from function import slack_api
 from goburei import search
 from goburei import member
 
+logging.basicConfig(level = g.logging_level)
+mlogger = logging.getLogger("matplotlib")
+mlogger.setLevel(logging.WARNING)
+
 
 # イベントAPI
 @g.app.message(re.compile(r"^御無礼グラフ"))
@@ -23,10 +28,20 @@ def handle_goburei_graph_evnts(client, context, body):
     if not re.match(r"^御無礼グラフ$", command):
         return
 
-    slackpost(client, context.channel_id, argument)
+    command_option = {
+        "default_action": ["当日"],
+        "name_replace": True, # 表記ブレ修正
+        "guest_rename": True, # 未登録をゲストに置き換え
+        "guest_skip": True, # 2ゲスト戦除外
+        "results": False, # 戦績表示
+        "recursion": True,
+    }
+
+    logging.info(f"[{command}] {command_option} {argument}")
+    slackpost(client, context.channel_id, argument, command_option)
 
 
-def slackpost(client, channel, argument):
+def slackpost(client, channel, argument, command_option):
     """
     ポイント推移グラフをslackにpostする
 
@@ -40,37 +55,21 @@ def slackpost(client, channel, argument):
     argument : list
         slackから受け取った引数
         解析対象のプレイヤー、集計期間などが指定される
+
+    command_option : dict
+        コマンドオプション
     """
 
-    starttime = False
-    endtime = False
-    target_player = []
-    target_day = []
     msg = message.invalid_argument()
-
-    for keyword in argument:
-        if re.match(r"^(今日|昨日|今月|先月|先々月|全部)$", keyword):
-            starttime, endtime = common.scope_coverage(keyword)
-        if re.match(r"^[0-9]{8}$", common.ZEN2HAN(keyword)):
-            target_day.append(common.ZEN2HAN(keyword))
-        if member.ExsistPlayer(keyword):
-            target_player.append(member.ExsistPlayer(keyword))
-
-    if len(target_day) == 0 and not (starttime or endtime):
-        starttime, endtime = common.scope_coverage()
-    if len(target_day) == 1:
-        starttime, endtime = common.scope_coverage(target_day[0])
-    if len(target_day) >= 2:
-        starttime, dummy = common.scope_coverage(min(target_day))
-        dummy, endtime = common.scope_coverage(max(target_day))
-    if not (starttime or endtime) and target_player:
-        starttime, endtime = common.scope_coverage()
+    target_days, target_player, command_option = common.argument_analysis(argument, command_option)
+    starttime, endtime = common.scope_coverage(target_days)
 
     if starttime or endtime:
         if len(target_player) == 1: # 描写対象がひとり → 個人成績
-            count = plot_personal(starttime, endtime, target_player)
+            command_option["guest_skip"] = False
+            count = plot_personal(starttime, endtime, target_player, command_option)
         else: # 描写対象が複数 → 比較
-            count = plot(starttime, endtime, target_player)
+            count = plot(starttime, endtime, target_player, command_option)
         file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
         if count <= 0:
             msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
@@ -81,7 +80,7 @@ def slackpost(client, channel, argument):
         slack_api.post_message(client, channel, msg)
 
 
-def plot(starttime, endtime, target_player, name_replace = True, guest_skip = True):
+def plot(starttime, endtime, target_player, command_option):
     """
     ポイント推移グラフを生成する
 
@@ -96,11 +95,8 @@ def plot(starttime, endtime, target_player, name_replace = True, guest_skip = Tr
     target_player : list
         集計対象プレイヤー（空のときは全プレイヤーを対象にする）
 
-    name_replace : bool, default True
-        プレイヤー名の表記ゆれを修正
-
-    guest_skip : bool, default True
-        2ゲスト戦の除外
+    command_option : dict
+        コマンドオプション
 
     Returns
     -------
@@ -108,7 +104,7 @@ def plot(starttime, endtime, target_player, name_replace = True, guest_skip = Tr
         グラフにプロットしたゲーム数
     """
 
-    results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
+    results = search.getdata(command_option)
 
     ### データ抽出 ###
     gdata = {}
@@ -130,6 +126,8 @@ def plot(starttime, endtime, target_player, name_replace = True, guest_skip = Tr
                 gdata[results[i]["日付"]] = []
                 game_time.append(results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
                 for seki in ("東家", "南家", "西家", "北家"):
+                    if not command_option["guest_skip"] and results[i][seki]["name"] == "ゲスト１":
+                        continue
                     gdata[results[i]["日付"]].append((results[i][seki]["name"], results[i][seki]["point"]))
                     if not results[i][seki]["name"] in player_list:
                         player_list.append(results[i][seki]["name"])
@@ -193,7 +191,7 @@ def plot(starttime, endtime, target_player, name_replace = True, guest_skip = Tr
     return(len(gdata))
 
 
-def plot_personal(starttime, endtime, target_player, name_replace = True, guest_skip = False):
+def plot_personal(starttime, endtime, target_player, command_option):
     """
     個人成績のグラフを生成する
 
@@ -208,11 +206,8 @@ def plot_personal(starttime, endtime, target_player, name_replace = True, guest_
     target_player : list
         集計対象プレイヤー（空のときは全プレイヤーを対象にする）
 
-    name_replace : bool, default True
-        プレイヤー名の表記ゆれを修正
-
-    guest_skip : bool, default False
-        2ゲスト戦の除外
+    command_option : dict
+        コマンドオプション
 
     Returns
     -------
@@ -220,7 +215,8 @@ def plot_personal(starttime, endtime, target_player, name_replace = True, guest_
         グラフにプロットしたゲーム数
     """
 
-    results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
+    logging.info(f"[graph.plot_personal] {command_option}")
+    results = search.getdata(command_option)
 
     ### データ抽出 ###
     game_point = []

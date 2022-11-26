@@ -1,8 +1,11 @@
+import logging
 import re
 import configparser
 
 from function import global_value as g
 from function import common
+
+logging.basicConfig(level = g.logging_level)
 
 
 def check_namepattern(name):
@@ -19,7 +22,7 @@ def check_namepattern(name):
         return(False)
     if re.match(r"ゲスト", name): # 登録NGプレイヤー名
         return(False)
-    if re.match(r"^(今日|昨日|今月|先月|先々月|全部)$", name): # NGワード（サブコマンド引数）
+    if re.match(r"^(当日|今日|昨日|今月|先月|先々月|全部)$", name): # NGワード（サブコマンド引数）
         return(False)
     if re.match(r"^[0-9]{8}$", common.ZEN2HAN(name)): # NGワード（日付形式）
         return(False)
@@ -31,19 +34,27 @@ def check_namepattern(name):
     return(True)
 
 
-def NameReplace(pname, name_replace = True, guest_skip = True):
+def NameReplace(pname, command_option):
     """
     表記ブレ修正
 
     Parameters
     ----------
-    name : str
+    pname : str
         対象文字列（プレイヤー名）
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    str : str
+        表記ブレ修正後のプレイヤー名
     """
 
     pname = re.sub(r"さん$", "", common.HAN2ZEN(pname))
 
-    if not name_replace:
+    if not command_option["name_replace"]:
         return(pname)
 
     for player in g.player_list.sections():
@@ -53,7 +64,7 @@ def NameReplace(pname, name_replace = True, guest_skip = True):
             if common.HIRA2KANA(pname) == alias:
                 return(player)
 
-    return("ゲスト１" if guest_skip else pname)
+    return("ゲスト１" if command_option["guest_rename"] else pname)
 
 
 def ExsistPlayer(name):
@@ -64,9 +75,18 @@ def ExsistPlayer(name):
     ----------
     name : str
         対象プレイヤー名
+
+    Returns
+    -------
+    bool : False
+    name : str
     """
 
-    name = NameReplace(name)
+    command_option = {
+        "name_replace": True,
+        "guest_rename": True,
+    }
+    name = NameReplace(name, command_option)
 
     if g.player_list.has_section(name):
         return(name)

@@ -17,7 +17,8 @@ from goburei import results
 from goburei import record
 from goburei import graph
 
-logging.basicConfig(level = logging.ERROR)
+logging.basicConfig(level = g.logging_level)
+
 
 # イベントAPI
 @g.app.message(re.compile(r"御無礼"))
@@ -40,33 +41,23 @@ def handle_goburei_check_evnts(client, body):
 def goburei_command(ack, body, client):
     ack()
     user_id = body["user_id"]
-    msg = ""
+
+    command_option = {
+        "default_action": ["今月"],
+         "name_replace": True, # 表記ブレ修正
+        "guest_rename": True, # 未登録をゲストに置き換え
+        "guest_skip": True, # 2ゲスト戦除外
+        "results": True, # 戦績表示
+        "recursion": True,
+    }
 
     if body["text"]:
         subcom = body["text"].split()[0]
         argument = body["text"].split()[1:]
 
-        if subcom.lower() in ("results", "details", "成績", "個人"):
-            details_flag = False
-            for i in argument:
-                if member.ExsistPlayer(i):
-                    details_flag = True
-            if details_flag:
-                msg, score = results.details(argument)
-                slack_api.post_message(client, user_id, msg + score)
-            else:
-                msg = results.summary(argument, name_replace = True, guest_skip = True)
-                slack_api.post_text(client, user_id, "", msg)
-            return
-
-        if subcom.lower() in ("member", "userlist", "メンバー", "リスト"):
-            title, msg = member.list()
-            slack_api.post_text(client, user_id, title, msg)
-            return
-
-        if subcom.lower() in ("allresults", "全成績"):
-            msg = results.summary(argument, name_replace = False, guest_skip = False)
-            slack_api.post_text(client, user_id, "", msg)
+        if subcom.lower() in ("results", "details", "成績"):
+            logging.info(f"[subcommand({subcom})] {command_option} {argument}")
+            results.slackpost(client, user_id, argument, command_option)
             return
 
         if subcom.lower() in ("record", "記録", "結果"):
@@ -80,17 +71,14 @@ def goburei_command(ack, body, client):
             return
 
         if subcom.lower() in ("graph", "グラフ"):
-            graph.slackpost(client, user_id, argument)
+            command_option["default_action"] = ["当日"]
+            logging.info(f"[subcommand({subcom})] {command_option} {argument}")
+            graph.slackpost(client, user_id, argument, command_option)
             return
 
-        if subcom.lower() in ("load"):
-            g.player_list = member.configload(sys.argv[1])
-            slack_api.post_message(client, user_id, f"メンバーリストを再読み込みしました。")
-            return
-
-        if subcom.lower() in ("save"):
-            member.configsave(g.player_list, sys.argv[1])
-            slack_api.post_message(client, user_id, f"メンバーリストを保存しました。")
+        if subcom.lower() in ("member", "userlist", "メンバー", "リスト"):
+            title, msg = member.list()
+            slack_api.post_text(client, user_id, title, msg)
             return
 
         if subcom.lower() in ("add", "追加"):
@@ -101,6 +89,16 @@ def goburei_command(ack, body, client):
         if subcom.lower() in ("del", "削除"):
             msg = member.Remove(argument)
             slack_api.post_message(client, user_id, msg)
+            return
+
+        if subcom.lower() in ("load"):
+            g.player_list = member.configload(sys.argv[1])
+            slack_api.post_message(client, user_id, f"メンバーリストを再読み込みしました。")
+            return
+
+        if subcom.lower() in ("save"):
+            member.configsave(g.player_list, sys.argv[1])
+            slack_api.post_message(client, user_id, f"メンバーリストを保存しました。")
             return
 
     slack_api.post_message(client, user_id, message.help(body["command"]))

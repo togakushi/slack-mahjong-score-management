@@ -1,3 +1,4 @@
+import logging
 import re
 import datetime
 
@@ -6,25 +7,42 @@ from function import common
 from function import slack_api
 from goburei import search
 
+logging.basicConfig(level = g.logging_level)
+
 
 # イベントAPI
-@g.app.message(re.compile(r"^御無礼(記録|結果)$"))
-def handle_goburei_record_evnts(client, context):
-    title, msg = getdata(name_replace = True, guest_skip = True)
+@g.app.message(re.compile(r"^御無礼(記録|結果)"))
+def handle_goburei_record_evnts(client, context, body):
+    command = body["event"]["text"].split()[0]
+    argument = body["event"]["text"].split()[1:]
+
+    if not re.match(r"^御無礼(記録|結果)$", command):
+        return
+
+    command_option = {
+        "default_action": ["全部"],
+        "name_replace": True, # 名前揺らぎ修正
+        "guest_rename": True, # 未登録をゲストに置き換え
+        "guest_skip": True, # 2ゲスト戦除外
+        "results": False,
+        "recursion": True,
+    }
+
+    logging.info(f"[{command}] {command_option} {argument}")
+    target_days, target_player, command_option = common.argument_analysis(argument, command_option)
+
+    title, msg = getdata(command_option)
     slack_api.post_upload(client, context.channel_id, title, msg)
 
 
-def getdata(name_replace = True, guest_skip = True): # 御無礼結果
+def getdata(command_option): # 御無礼結果
     """
     半荘単位の成績を取得
 
     Parameters
     ----------
-    name_replace : bool, default True
-        プレイヤー名の表記ゆれを修正
-
-    guest_skip : bool, default True
-        2ゲスト戦の除外
+    command_option : dict
+        コマンドオプション
 
     Returns
     -------
@@ -35,9 +53,9 @@ def getdata(name_replace = True, guest_skip = True): # 御無礼結果
         slackにpostする内容
     """
 
-    results = search.getdata(name_replace = name_replace, guest_skip = guest_skip)
+    results = search.getdata(command_option)
 
-    if name_replace:
+    if command_option["name_replace"]:
         title = f"張り付け用集計済みデータ"
     else:
         title = f"集計済みデータ(名前ブレ修正なし)"

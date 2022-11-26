@@ -1,3 +1,4 @@
+import logging
 import re
 import datetime
 
@@ -5,6 +6,8 @@ from function import global_value as g
 from function import common
 from function import score
 from goburei import member
+
+logging.basicConfig(level = g.logging_level)
 
 
 def pattern(text):
@@ -20,23 +23,22 @@ def pattern(text):
     return(ret if "ret" in locals() else False)
 
 
-def getdata(name_replace = True, guest_skip = True):
+def getdata(command_option):
     """
     過去ログからスコアを検索して返す
 
     Parameters
     ----------
-    name_replace : bool, default True
-        プレイヤー名の表記ゆれを修正
-
-    guest_skip : bool, default True
-        2ゲスト戦の除外
+    command_option : dict
+        コマンドオプション
 
     Returns
     -------
     data : dict
         検索した結果
     """
+
+    logging.info(f"[serach] {command_option}")
 
     ### データ取得 ###
     response = g.webclient.search_messages(
@@ -79,10 +81,10 @@ def getdata(name_replace = True, guest_skip = True):
                 msg = pattern(msg)
 
                 if msg:
-                    if name_replace: # 表記ブレの修正
+                    if command_option["name_replace"]: # 表記ブレの修正
                         for x in (0, 2, 4, 6):
-                            msg[x] = member.NameReplace(msg[x])
-                    if guest_skip and msg.count("ゲスト１") >= 2: # 2ゲスト戦の除外
+                            msg[x] = member.NameReplace(msg[x], command_option)
+                    if command_option["guest_skip"] and msg.count("ゲスト１") >= 2: # 2ゲスト戦の除外
                         continue
 
                     data[count] = {

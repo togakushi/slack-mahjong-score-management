@@ -5,9 +5,7 @@
 ```
 /goburei results		成績を表示
 /goburei record			スプレッドシート貼り付け用集計済みデータ出力
-/goburei allrecord		集計済み全データ出力(名前ブレ修正なし)
 /goburei graph			ポイント推移グラフを表示
-/goburei details <登録名> 	2ゲスト戦含む個人成績出力
 /goburei member			登録されているメンバーを表示
 /goburei userlist		登録されているメンバーを表示
 /goburei add <登録名>		メンバーの追加
@@ -16,7 +14,7 @@
 /goburei save			メンバーリストの保存
 ```
 ## 成績管理
-### results / details
+### results
 - 概要：
   - 成績を表示
 - 構文：
@@ -27,7 +25,7 @@
   - 検索範囲：省略時は「今月」
   - 戦績：個人成績出力時、検索範囲未指定時でも戦績の結果を出力
 - エイリアス：
-  - 成績、個人
+  - details、成績
 - 補足説明：  
 detailsは廃止予定。  
 登録名の指定を省略した場合は、検索範囲内の成績サマリの出力。  
