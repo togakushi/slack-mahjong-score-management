@@ -210,7 +210,16 @@ def details(starttime, endtime, target_player, command_option):
                         "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count("ゲスト１") >= 2 else "",
                     ).replace("-", "▲")
 
-    msg1 += f"プレイヤー名： {target_player[0]}\n"
+    if g.config.getboolean("degree", "display"):
+        degree_badge = g.config.get("degree", "badge").split(",")
+        degree_counter = [x for x in map(int, g.config.get("degree", "counter").split(","))]
+        for i in range(len(degree_counter)):
+            if sum(count_rank) >= degree_counter[i]:
+                badge = degree_badge[i]
+        msg1 += f"プレイヤー名： {target_player[0]} {badge}\n"
+    else:
+        msg1 += f"プレイヤー名： {target_player[0]}\n"
+
     msg1 += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
 
     if g.config.getboolean("status", "display"):
