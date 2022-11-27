@@ -13,9 +13,17 @@ def parser():
     )
 
     p.add_argument(
+        "-c", "--config",
+        required = True,
+        metavar = "config.ini",
+        help = "設定ファイル",
+    )
+
+    p.add_argument(
         "-m", "--member",
         required = True,
         metavar = "member.ini",
         help = "メンバー情報ファイル",
     )
+
     return(p.parse_args())

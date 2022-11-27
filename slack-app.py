@@ -48,7 +48,7 @@ def goburei_command(ack, body, client):
         "guest_rename": True, # 未登録をゲストに置き換え
         "guest_skip": True, # 2ゲスト戦除外(サマリ用)
         "guest_skip2": False, # 2ゲスト戦除外(個人成績用)
-        "results": True, # 戦績表示
+        "results": False, # 戦績表示
         "recursion": True,
     }
 
@@ -112,5 +112,11 @@ def handle_home_events():
 
 if __name__ == "__main__":
     g.player_list = member.configload(g.args.member)
+    g.config = common.configload(g.args.config)
+
+    logging.info(f"member: {g.player_list.sections()}")
+    logging.info(f"config: {g.config.sections()}")
+
+    print(g.config.getboolean("status", "display"))
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])
     handler.start()

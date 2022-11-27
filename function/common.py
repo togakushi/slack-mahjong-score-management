@@ -1,4 +1,5 @@
 import logging
+import configparser
 import re
 import unicodedata
 from datetime import datetime
@@ -8,6 +9,17 @@ from function import global_value as g
 from goburei import member
 
 logging.basicConfig(level = g.logging_level)
+
+
+def configload(configfile):
+    config = configparser.ConfigParser()
+
+    try:
+        config.read(configfile, encoding="utf-8")
+    except:
+        sys.exit()
+
+    return(config)
 
 
 def len_count(text): # 文字数

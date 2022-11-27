@@ -212,7 +212,23 @@ def details(starttime, endtime, target_player, command_option):
 
     msg1 += f"プレイヤー名： {target_player[0]}\n"
     msg1 += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
-    msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分)\n"
+
+    if g.config.getboolean("status", "display"):
+        status_emoji = g.config.get("status", "emoji").split(",")
+        status_step = float(g.config.get("status", "step"))
+
+        if sum(count_rank) == 0:
+            index = 0
+        else:
+            winper = count_win / sum(count_rank) * 100
+            for i in (1, 2, 3):
+                if winper < 50 - status_step * i:
+                    index = 4 - i
+                if winper > 50 + status_step * i:
+                    index = 2 + i
+        msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {status_emoji[index]}\n"
+    else:
+        msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分)\n"
 
     if sum(count_rank) > 0:
         msg1 += "累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
