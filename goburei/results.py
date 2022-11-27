@@ -212,7 +212,7 @@ def details(starttime, endtime, target_player, command_option):
                     ).replace("-", "▲")
 
     msg1 += f"プレイヤー名： {target_player[0]}\n"
-    msg1 += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    msg1 += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分)\n"
 
     if sum(count_rank) > 0:
