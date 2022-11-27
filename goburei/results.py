@@ -214,7 +214,7 @@ def details(starttime, endtime, target_player, command_option):
     msg1 += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
 
     if g.config.getboolean("status", "display"):
-        status_emoji = g.config.get("status", "emoji").split(",")
+        status_badge = g.config.get("status", "badge").split(",")
         status_step = float(g.config.get("status", "step"))
 
         if sum(count_rank) == 0:
@@ -227,7 +227,7 @@ def details(starttime, endtime, target_player, command_option):
                     index = 4 - i
                 if winper >= 50 + status_step * i:
                     index = 2 + i
-        msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {status_emoji[index]}\n"
+        msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {status_badge[index]}\n"
     else:
         msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分)\n"
 
