@@ -221,10 +221,11 @@ def details(starttime, endtime, target_player, command_option):
             index = 0
         else:
             winper = count_win / sum(count_rank) * 100
+            index = 3
             for i in (1, 2, 3):
-                if winper < 50 - status_step * i:
+                if winper <= 50 - status_step * i:
                     index = 4 - i
-                if winper > 50 + status_step * i:
+                if winper >= 50 + status_step * i:
                     index = 2 + i
         msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {status_emoji[index]}\n"
     else:
