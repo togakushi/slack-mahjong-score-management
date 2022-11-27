@@ -114,6 +114,8 @@ def summary(starttime, endtime, target_player, command_option):
     for name, p in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
         if not command_option["guest_skip"] and name == "ゲスト１":
             continue
+        if not len(target_player) == 0 and not name in target_player:
+            continue
         msg += "{}{}： {:>+6.1f} ({:>+5.1f})".format(
             name, " " * (9 - common.len_count(name)),
             r[name]["total"],
@@ -130,10 +132,10 @@ def summary(starttime, endtime, target_player, command_option):
         return(msg)
 
     footer = "-" * 5 + "\n"
-    footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    footer += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
     footer += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
-    footer += f"ゲーム回数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
+    footer += f"総ゲーム回数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
 
     remarks = []
     if not command_option["name_replace"]:
