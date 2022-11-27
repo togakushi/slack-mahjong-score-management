@@ -20,11 +20,11 @@ def check_namepattern(name):
 
     if len(name) > 8:
         return(False)
-    if re.match(r"ゲスト", name): # 登録NGプレイヤー名
+    if re.match(r"(ゲスト|^[0-9]+$)", common.ZEN2HAN(name)): # 登録NGプレイヤー名
         return(False)
-    if re.match(r"^(当日|今日|昨日|今月|先月|先々月|全部)$", name): # NGワード（サブコマンド引数）
+    if re.match(r"^((当|今|昨)日|(今|先|先々)月|全部)$", name): # NGワード（サブコマンド引数）
         return(False)
-    if re.match(r"^[0-9]{8}$", common.ZEN2HAN(name)): # NGワード（日付形式）
+    if re.match(r"^(戦績|((修正|変換)(なし|ナシ|無し|あり)))$", name): # NGワード（サブコマンド引数）
         return(False)
     if re.search("[\\\;:<>,!@#*?/`\"']", name): # 禁則記号
         return(False)
