@@ -32,7 +32,8 @@ def handle_goburei_graph_evnts(client, context, body):
         "default_action": ["当日"],
         "name_replace": True, # 表記ブレ修正
         "guest_rename": True, # 未登録をゲストに置き換え
-        "guest_skip": True, # 2ゲスト戦除外
+        "guest_skip": True, # 2ゲスト戦除外(サマリ用)
+        "guest_skip2": True, # 2ゲスト戦除外(個人成績用)
         "results": False, # 戦績表示
         "recursion": True,
     }
@@ -214,6 +215,9 @@ def plot_personal(starttime, endtime, target_player, command_option):
     int : int
         グラフにプロットしたゲーム数
     """
+
+    # 検索動作を合わせる
+    command_option["guest_skip"] = command_option["guest_skip2"]
 
     logging.info(f"[graph.plot_personal] {command_option}")
     results = search.getdata(command_option)

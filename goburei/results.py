@@ -25,7 +25,8 @@ def handle_goburei_results_evnts(client, context, body):
         "default_action": ["今月"],
         "name_replace": True, # 表記ブレ修正
         "guest_rename": True, # 未登録をゲストに置き換え
-        "guest_skip": True, # 2ゲスト戦除外
+        "guest_skip": True, # 2ゲスト戦除外(サマリ用)
+        "guest_skip2": False, # 2ゲスト戦除外(個人成績用)
         "results": False, # 戦績表示
         "recursion": True,
     }
@@ -172,10 +173,17 @@ def details(starttime, endtime, target_player, command_option):
         slackにpostする内容(戦績データ)
     """
 
+    # 検索動作を合わせる
+    command_option["guest_skip"] = command_option["guest_skip2"]
+
     logging.info(f"[results.details] {command_option} {target_player}")
     results = search.getdata(command_option)
 
-    msg1 = f"*【個人成績】* (※2ゲスト戦含む)\n"
+    if command_option["guest_skip"]:
+        msg1 = f"*【個人成績】*\n"
+    else:
+        msg1 = f"*【個人成績】* (※2ゲスト戦含む)\n"
+
     msg2 = f"\n*【戦績】*\n"
 
     point = 0

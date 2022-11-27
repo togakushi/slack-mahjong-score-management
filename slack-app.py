@@ -46,7 +46,8 @@ def goburei_command(ack, body, client):
         "default_action": ["今月"],
          "name_replace": True, # 表記ブレ修正
         "guest_rename": True, # 未登録をゲストに置き換え
-        "guest_skip": True, # 2ゲスト戦除外
+        "guest_skip": True, # 2ゲスト戦除外(サマリ用)
+        "guest_skip2": False, # 2ゲスト戦除外(個人成績用)
         "results": True, # 戦績表示
         "recursion": True,
     }
