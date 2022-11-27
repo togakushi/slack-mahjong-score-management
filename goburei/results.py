@@ -1,6 +1,5 @@
 import logging
 import re
-import datetime
 
 from function import global_value as g
 from function import common

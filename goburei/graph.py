@@ -1,7 +1,6 @@
 import logging
 import re
 import os
-import datetime
 
 import matplotlib.pyplot as plt
 from matplotlib import gridspec

@@ -1,7 +1,7 @@
 import logging
 import re
 import unicodedata
-import datetime
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from function import global_value as g
@@ -54,8 +54,8 @@ def scope_coverage(target_days):
     endday = max(target_days)
 
     try:
-        startday = datetime.datetime.fromisoformat(f"{startday[0:4]}-{startday[4:6]}-{startday[6:8]}")
-        endday = datetime.datetime.fromisoformat(f"{endday[0:4]}-{endday[4:6]}-{endday[6:8]}") + relativedelta(days = 1)
+        startday = datetime.fromisoformat(f"{startday[0:4]}-{startday[4:6]}-{startday[6:8]}")
+        endday = datetime.fromisoformat(f"{endday[0:4]}-{endday[4:6]}-{endday[6:8]}") + relativedelta(days = 1)
     except:
         return(False, False)
 
@@ -93,11 +93,11 @@ def argument_analysis(argument, command_option):
     target_days = []
     target_player = []
 
-    currenttime = datetime.datetime.now()
+    currenttime = datetime.now()
     for keyword in argument:
         if re.match(r"^[0-9]{8}$", keyword):
             try:
-                trytime = datetime.datetime.fromisoformat(f"{keyword[0:4]}-{keyword[4:6]}-{keyword[6:8]}")
+                trytime = datetime.fromisoformat(f"{keyword[0:4]}-{keyword[4:6]}-{keyword[6:8]}")
                 target_days.append(trytime.strftime("%Y%m%d"))
             except:
                 pass

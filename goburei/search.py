@@ -1,6 +1,6 @@
 import logging
 import re
-import datetime
+from datetime import datetime 
 
 from function import global_value as g
 from function import common
@@ -68,7 +68,7 @@ def getdata(command_option):
     count = 0
     for i in range(len(matches)):
         if "blocks" in matches[i]:
-            dt = datetime.datetime.fromtimestamp(float(matches[i]["ts"]))
+            dt = datetime.fromtimestamp(float(matches[i]["ts"]))
 
             if "elements" in matches[i]["blocks"][0]:
                 msg = ""
