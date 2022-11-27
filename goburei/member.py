@@ -18,7 +18,7 @@ def check_namepattern(name):
         対象文字列（プレイヤー名）
     """
 
-    if len(name) > 8:
+    if len(name) > int(g.config.get("member", "character_limit")):
         return(False)
     if re.match(r"(ゲスト|^[0-9]+$)", common.ZEN2HAN(name)): # 登録NGプレイヤー名
         return(False)
@@ -122,7 +122,7 @@ def Append(argument):
         if g.player_list.has_section(new_name):
             msg = f"「{new_name}」はすでに登録されています。"
         else:
-            if len(g.player_list.keys()) > 255: # 登録上限チェック
+            if len(g.player_list.keys()) > int(g.config.get("member", "registration_limit")):
                 msg = f"登録上限を超えています。"
             elif not check_namepattern(new_name):
                 msg = f"命名規則に違反しているので登録できません。"
@@ -146,7 +146,7 @@ def Append(argument):
         else:
             if g.player_list.has_section(new_name):
                 alias = g.player_list.get(new_name, "alias")
-                if len(alias.split(",")) > 16:
+                if len(alias.split(",")) > int(g.config.get("member", "alias_limit")):
                     msg = f"登録上限を超えています。"
                 else:
                     g.player_list.set(new_name, "alias", ",".join([alias, nic_name]))
