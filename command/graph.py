@@ -109,25 +109,30 @@ def plot(starttime, endtime, target_player, command_option):
     player_list = []
 
     for i in range(len(results)):
-        if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
+        pdate = results[i]["日付"]
+        if starttime < pdate and endtime > pdate:
             if target_player: # 指定プレーヤーのみ抽出
                 for seki in ("東家", "南家", "西家", "北家"):
-                    if results[i][seki]["name"] in target_player:
-                        if not results[i]["日付"] in gdata:
-                            gdata[results[i]["日付"]] = []
-                            game_time.append(results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
-                        gdata[results[i]["日付"]].append((results[i][seki]["name"], results[i][seki]["point"]))
-                        if not results[i][seki]["name"] in player_list:
-                            player_list.append(results[i][seki]["name"])
+                    pname = results[i][seki]["name"]
+                    if pname in target_player:
+                        if not pdate in gdata:
+                            gdata[pdate] = []
+                            game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
+                        gdata[pdate].append((pname, results[i][seki]["point"]))
+                        if not pname in player_list:
+                            player_list.append(pname)
             else: # 全員分
-                gdata[results[i]["日付"]] = []
-                game_time.append(results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
+                gdata[pdate] = []
+                game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
                 for seki in ("東家", "南家", "西家", "北家"):
-                    if not command_option["guest_skip"] and results[i][seki]["name"] == g.guest_name:
+                    pname = results[i][seki]["name"]
+                    if not command_option["guest_skip"] and pname == g.guest_name:
                         continue
-                    gdata[results[i]["日付"]].append((results[i][seki]["name"], results[i][seki]["point"]))
-                    if not results[i][seki]["name"] in player_list:
-                        player_list.append(results[i][seki]["name"])
+                    if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(pname):
+                        pname = pname + "(※)"
+                    gdata[pdate].append((pname, results[i][seki]["point"]))
+                    if not pname in player_list:
+                        player_list.append(pname)
 
     if len(game_time) == 0:
         return(len(game_time))
