@@ -194,6 +194,7 @@ def details(starttime, endtime, target_player, command_option):
     count_lose = 0
     count_draw = 0
 
+    ### 集計 ###
     for i in range(len(results)):
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
             for seki in ("東家", "南家", "西家", "北家"):
@@ -210,18 +211,16 @@ def details(starttime, endtime, target_player, command_option):
                         "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count("ゲスト１") >= 2 else "",
                     ).replace("-", "▲")
 
+    ### 表示オプション ###
+    badge_degree = ""
     if g.config.getboolean("degree", "display"):
         degree_badge = g.config.get("degree", "badge").split(",")
         degree_counter = [x for x in map(int, g.config.get("degree", "counter").split(","))]
         for i in range(len(degree_counter)):
             if sum(count_rank) >= degree_counter[i]:
-                badge = degree_badge[i]
-        msg1 += f"プレイヤー名： {target_player[0]} {badge}\n"
-    else:
-        msg1 += f"プレイヤー名： {target_player[0]}\n"
+                badge_degree = degree_badge[i]
 
-    msg1 += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
-
+    badge_status = ""
     if g.config.getboolean("status", "display"):
         status_badge = g.config.get("status", "badge").split(",")
         status_step = float(g.config.get("status", "step"))
@@ -236,9 +235,12 @@ def details(starttime, endtime, target_player, command_option):
                     index = 4 - i
                 if winper >= 50 + status_step * i:
                     index = 2 + i
-        msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {status_badge[index]}\n"
-    else:
-        msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分)\n"
+        badge_status = status_badge[index]
+
+    ### 表示内容 ###
+    msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
+    msg1 += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
 
     if sum(count_rank) > 0:
         msg1 += "累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
