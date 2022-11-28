@@ -98,6 +98,8 @@ def argument_analysis(argument, command_option):
         if keyword == "全部":
             target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
+        if keyword == "最初":
+            target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
         if c.member.ExsistPlayer(keyword):
             target_player.append(c.member.ExsistPlayer(keyword))
 
