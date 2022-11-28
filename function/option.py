@@ -1,4 +1,7 @@
 import argparse
+import configparser
+
+from function import global_value as g
 
 def parser():
     p = argparse.ArgumentParser(
@@ -27,3 +30,20 @@ def parser():
     )
 
     return(p.parse_args())
+
+
+def configload(configfile):
+    config = configparser.ConfigParser()
+
+    try:
+        config.read(configfile, encoding="utf-8")
+    except:
+        sys.exit()
+
+    g.logging.info(f"configload: {configfile} -> {config.sections()}")
+    return(config)
+
+
+def configsave(config, configfile):
+    with open(configfile, "w") as f:
+        config.write(f)

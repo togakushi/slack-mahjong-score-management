@@ -1,11 +1,8 @@
-import logging
 import re
 import configparser
 
 from function import global_value as g
 from function import common
-
-logging.basicConfig(level = g.logging_level)
 
 
 def check_namepattern(name):
@@ -190,19 +187,3 @@ def Remove(argument):
                 msg = f"「{argument[0]}」に「{argument[1]}」は登録されていません。"
 
     return(msg if "msg" in locals() else "使い方が間違っています。")
-
-
-def configload(configfile):
-    config = configparser.ConfigParser()
-
-    try:
-        config.read(configfile, encoding="utf-8")
-    except:
-        sys.exit()
-
-    return(config)
-
-
-def configsave(config, configfile):
-    with open(configfile, "w") as f:
-        config.write(f)

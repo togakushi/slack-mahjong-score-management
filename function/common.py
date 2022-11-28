@@ -1,4 +1,3 @@
-import logging
 import configparser
 import re
 import unicodedata
@@ -7,19 +6,6 @@ from dateutil.relativedelta import relativedelta
 
 from function import global_value as g
 from goburei import member
-
-logging.basicConfig(level = g.logging_level)
-
-
-def configload(configfile):
-    config = configparser.ConfigParser()
-
-    try:
-        config.read(configfile, encoding="utf-8")
-    except:
-        sys.exit()
-
-    return(config)
 
 
 def len_count(text): # 文字数
@@ -152,5 +138,5 @@ def argument_analysis(argument, command_option):
         command_option["recursion"] = False
         target_days, dummy, dummy = argument_analysis(command_option["default_action"], command_option)
 
-    logging.info(f"[argument_analysis]return: {target_days} {target_player} {command_option}")
+    g.logging.info(f"[argument_analysis]return: {target_days} {target_player} {command_option}")
     return(target_days, target_player, command_option)
