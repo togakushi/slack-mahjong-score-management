@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 import command as c
 from function import global_value as g
 
+
 def configload(configfile):
     config = configparser.ConfigParser()
 
@@ -107,13 +108,44 @@ def argument_analysis(argument, command_option):
             command_option["guest_skip"] = True
             command_option["guest_skip2"] = True
         if re.match(r"^(修正|変換)(なし|ナシ|無し)$", keyword):
-            command_option["name_replace"] = False
+            command_option["playername_replace"] = False
         if re.match(r"^(戦績)$", keyword):
-            command_option["results"] = True
+            command_option["game_results"] = True
 
     if command_option["recursion"] and len(target_days) == 0:
         command_option["recursion"] = False
-        target_days, dummy, dummy = argument_analysis(command_option["default_action"], command_option)
+        target_days, dummy, dummy = argument_analysis(command_option["aggregation_range"], command_option)
 
     g.logging.info(f"[argument_analysis]return: {target_days} {target_player} {command_option}")
     return(target_days, target_player, command_option)
+
+
+def command_option_initialization(command):
+    """
+    設定ファイルからコマンドのオプションのデフォルト値を読み込む
+
+    Parameters
+    ----------
+    command : str
+        読み込むコマンド名
+
+    Returns
+    -------
+    option : dict
+        初期化されたオプション
+    """
+
+    option = {
+        "aggregation_range": [],
+        "recursion": True,
+    }
+
+    option["aggregation_range"].append(g.config[command].get("aggregation_range", "当日"))
+    option["playername_replace"] = g.config[command].getboolean("playername_replace", True)
+    option["unregistered_replace"] = g.config[command].getboolean("unregistered_replace", True)
+    option["guest_skip"] = g.config[command].getboolean("guest_skip", True)
+    option["guest_skip2"] = g.config[command].getboolean("guest_skip2", True)
+    option["game_results"] = g.config[command].getboolean("game_results", False)
+
+    return(option)
+

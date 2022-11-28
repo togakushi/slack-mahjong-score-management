@@ -14,16 +14,7 @@ def handle_goburei_results_evnts(client, context, body):
     if not re.match(r"^御無礼成績$", command):
         return
 
-    command_option = {
-        "default_action": ["今月"],
-        "name_replace": True, # 表記ブレ修正
-        "guest_rename": True, # 未登録をゲストに置き換え
-        "guest_skip": True, # 2ゲスト戦除外(サマリ用)
-        "guest_skip2": False, # 2ゲスト戦除外(個人成績用)
-        "results": False, # 戦績表示
-        "recursion": True,
-    }
-
+    command_option = f.command_option_initialization("results")
     g.logging.info(f"[{command}] {command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
@@ -35,7 +26,7 @@ def slackpost(client, channel, argument, command_option):
     if starttime and endtime:
         if len(target_player) == 1: # 個人成績
             msg, score = details(starttime, endtime, target_player, command_option)
-            if command_option["results"]:
+            if command_option["game_results"]:
                 f.slack_api.post_message(client, channel, msg + score)
             else: # 戦績は出さない
                     f.slack_api.post_message(client, channel, msg)
@@ -68,7 +59,7 @@ def summary(starttime, endtime, target_player, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"[results.summary] {command_option} {target_player}")
+    g.logging.info(f"[results.summary] {starttime} {endtime} {target_player} {command_option}")
     results = c.search.getdata(command_option)
 
     r = {}
@@ -110,7 +101,7 @@ def summary(starttime, endtime, target_player, command_option):
         if not len(target_player) == 0 and not name in target_player:
             continue
         msg += "{}{}： {:>+6.1f} ({:>+5.1f})".format(
-            name, " " * (9 - f.common.len_count(name)),
+            name, " " * (9 - f.translation.len_count(name)),
             r[name]["total"],
             r[name]["total"] / sum(r[name]["rank"]),
         ).replace("-", "▲")
@@ -131,7 +122,7 @@ def summary(starttime, endtime, target_player, command_option):
     footer += f"総ゲーム回数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
 
     remarks = []
-    if not command_option["name_replace"]:
+    if not command_option["playername_replace"]:
         remarks.append("名前ブレ修正なし")
     if not command_option["guest_skip"]:
         remarks.append("2ゲスト戦を含む")
@@ -171,7 +162,7 @@ def details(starttime, endtime, target_player, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    g.logging.info(f"[results.details] {command_option} {target_player}")
+    g.logging.info(f"[results.details] {starttime} {endtime} {target_player} {command_option}")
     results = c.search.getdata(command_option)
 
     if command_option["guest_skip"]:
@@ -207,7 +198,7 @@ def details(starttime, endtime, target_player, command_option):
 
     ### 表示オプション ###
     badge_degree = ""
-    if g.config.getboolean("degree", "display"):
+    if g.config["degree"].getboolean("display", False):
         degree_badge = g.config.get("degree", "badge").split(",")
         degree_counter = [x for x in map(int, g.config.get("degree", "counter").split(","))]
         for i in range(len(degree_counter)):
@@ -215,9 +206,9 @@ def details(starttime, endtime, target_player, command_option):
                 badge_degree = degree_badge[i]
 
     badge_status = ""
-    if g.config.getboolean("status", "display"):
+    if g.config["status"].getboolean("display", False):
         status_badge = g.config.get("status", "badge").split(",")
-        status_step = float(g.config.get("status", "step"))
+        status_step = g.config.getfloat("status", "step")
 
         if sum(count_rank) == 0:
             index = 0

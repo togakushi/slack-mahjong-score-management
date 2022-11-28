@@ -15,15 +15,7 @@ def handle_goburei_record_evnts(client, context, body):
     if not re.match(r"^御無礼(記録|結果)$", command):
         return
 
-    command_option = {
-        "default_action": ["全部"],
-        "name_replace": True, # 名前揺らぎ修正
-        "guest_rename": True, # 未登録をゲストに置き換え
-        "guest_skip": True, # 2ゲスト戦除外
-        "results": False,
-        "recursion": True,
-    }
-
+    command_option = f.command_option_initialization("record")
     g.logging.info(f"[{command}] {command_option} {argument}")
     target_days, target_player, command_option = f.common.argument_analysis(argument, command_option)
 
@@ -49,9 +41,10 @@ def getdata(command_option): # 御無礼結果
         slackにpostする内容
     """
 
+    g.logging.info(f"[record] {command_option}")
     results = c.search.getdata(command_option)
 
-    if command_option["name_replace"]:
+    if command_option["playername_replace"]:
         title = f"張り付け用集計済みデータ"
     else:
         title = f"集計済みデータ(名前ブレ修正なし)"

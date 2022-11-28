@@ -24,9 +24,9 @@ def handle_goburei_graph_evnts(client, context, body):
         return
 
     command_option = {
-        "default_action": ["当日"],
-        "name_replace": True, # 表記ブレ修正
-        "guest_rename": True, # 未登録をゲストに置き換え
+        "aggregation_range": ["当日"],
+        "playername_replace": True, # 表記ブレ修正
+        "unregistered_replace": True, # 未登録をゲストに置き換え
         "guest_skip": True, # 2ゲスト戦除外(サマリ用)
         "guest_skip2": True, # 2ゲスト戦除外(個人成績用)
         "results": False, # 戦績表示
@@ -100,6 +100,7 @@ def plot(starttime, endtime, target_player, command_option):
         グラフにプロットしたゲーム数
     """
 
+    g.logging.info(f"[graph.plot] {starttime} {endtime} {target_player} {command_option}")
     results = c.search.getdata(command_option)
 
     ### データ抽出 ###
@@ -214,7 +215,7 @@ def plot_personal(starttime, endtime, target_player, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    g.logging.info(f"[graph.plot_personal] {command_option}")
+    g.logging.info(f"[graph.plot_personal] {starttime} {endtime} {target_player} {command_option}")
     results = c.search.getdata(command_option)
 
     ### データ抽出 ###

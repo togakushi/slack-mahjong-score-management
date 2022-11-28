@@ -51,7 +51,7 @@ def NameReplace(pname, command_option):
 
     pname = re.sub(r"さん$", "", f.translation.HAN2ZEN(pname))
 
-    if not command_option["name_replace"]:
+    if not command_option["playername_replace"]:
         return(pname)
 
     for player in g.player_list.sections():
@@ -61,7 +61,7 @@ def NameReplace(pname, command_option):
             if f.translation.HIRA2KANA(pname) == alias:
                 return(player)
 
-    return("ゲスト１" if command_option["guest_rename"] else pname)
+    return("ゲスト１" if command_option["unregistered_replace"] else pname)
 
 
 def ExsistPlayer(name):
@@ -80,8 +80,8 @@ def ExsistPlayer(name):
     """
 
     command_option = {
-        "name_replace": True,
-        "guest_rename": True,
+        "playername_replace": True,
+        "unregistered_replace": True,
     }
     name = NameReplace(name, command_option)
 

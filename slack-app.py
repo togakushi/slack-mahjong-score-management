@@ -32,32 +32,24 @@ def goburei_command(ack, body, client):
     ack()
     user_id = body["user_id"]
 
-    command_option = {
-        "default_action": ["今月"],
-         "name_replace": True, # 表記ブレ修正
-        "guest_rename": True, # 未登録をゲストに置き換え
-        "guest_skip": True, # 2ゲスト戦除外(サマリ用)
-        "guest_skip2": False, # 2ゲスト戦除外(個人成績用)
-        "results": False, # 戦績表示
-        "recursion": True,
-    }
-
     if body["text"]:
         subcom = body["text"].split()[0]
         argument = body["text"].split()[1:]
 
         if subcom.lower() in ("results", "details", "成績"):
+            command_option = f.command_option_initialization("results")
             g.logging.info(f"[subcommand({subcom})] {command_option} {argument}")
             c.results.slackpost(client, user_id, argument, command_option)
             return
 
         if subcom.lower() in ("record", "記録", "結果"):
-            title, msg = c.record.getdata(name_replace = True, guest_skip = True)
+            command_option = f.command_option_initialization("record")
+            title, msg = c.record.getdata(playername_replace = True, guest_skip = True)
             f.slack_api.post_upload(client, user_id, title, msg)
             return
 
         if subcom.lower() in ("graph", "グラフ"):
-            command_option["default_action"] = ["当日"]
+            command_option = f.command_option_initialization("graph")
             g.logging.info(f"[subcommand({subcom})] {command_option} {argument}")
             c.graph.slackpost(client, user_id, argument, command_option)
             return
