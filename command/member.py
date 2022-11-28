@@ -17,7 +17,7 @@ def check_namepattern(name):
 
     if len(name) > int(g.config.get("member", "character_limit")):
         return(False)
-    if re.match(r"(ゲスト|^[0-9]+$)", f.common.ZEN2HAN(name)): # 登録NGプレイヤー名
+    if re.match(r"(ゲスト|^[0-9]+$)", f.translation.ZEN2HAN(name)): # 登録NGプレイヤー名
         return(False)
     if re.match(r"^((当|今|昨)日|(今|先|先々)月|全部)$", name): # NGワード（サブコマンド引数）
         return(False)
@@ -49,16 +49,16 @@ def NameReplace(pname, command_option):
         表記ブレ修正後のプレイヤー名
     """
 
-    pname = re.sub(r"さん$", "", f.common.HAN2ZEN(pname))
+    pname = re.sub(r"さん$", "", f.translation.HAN2ZEN(pname))
 
     if not command_option["name_replace"]:
         return(pname)
 
     for player in g.player_list.sections():
         for alias in g.player_list.get(player, "alias").split(","):
-            if f.common.KANA2HIRA(pname) == alias:
+            if f.translation.KANA2HIRA(pname) == alias:
                 return(player)
-            if f.common.HIRA2KANA(pname) == alias:
+            if f.translation.HIRA2KANA(pname) == alias:
                 return(player)
 
     return("ゲスト１" if command_option["guest_rename"] else pname)
@@ -115,7 +115,7 @@ def Append(argument):
     """
 
     if len(argument) == 1: # 新規追加
-        new_name = f.common.HAN2ZEN(argument[0])
+        new_name = f.translation.HAN2ZEN(argument[0])
         if g.player_list.has_section(new_name):
             msg = f"「{new_name}」はすでに登録されています。"
         else:
@@ -129,8 +129,8 @@ def Append(argument):
                 msg = f"「{new_name}」を登録しました。"
 
     if len(argument) == 2: # 別名登録
-        new_name = f.common.HAN2ZEN(argument[0])
-        nic_name = f.common.HAN2ZEN(argument[1])
+        new_name = f.translation.HAN2ZEN(argument[0])
+        nic_name = f.translation.HAN2ZEN(argument[1])
         # ダブりチェック
         checklist = []
         for player in g.player_list.sections():
