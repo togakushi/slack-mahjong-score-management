@@ -123,7 +123,7 @@ def plot(starttime, endtime, target_player, command_option):
                 gdata[results[i]["日付"]] = []
                 game_time.append(results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
                 for seki in ("東家", "南家", "西家", "北家"):
-                    if not command_option["guest_skip"] and results[i][seki]["name"] == "ゲスト１":
+                    if not command_option["guest_skip"] and results[i][seki]["name"] == g.guest_name:
                         continue
                     gdata[results[i]["日付"]].append((results[i][seki]["name"], results[i][seki]["point"]))
                     if not results[i][seki]["name"] in player_list:

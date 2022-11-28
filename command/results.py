@@ -90,18 +90,29 @@ def summary(starttime, endtime, target_player, command_option):
 
     tmp_r = {}
     msg = ""
+    guest_flag = ""
     header = "## 名前 : 累計 (平均) / 順位分布 (平均) / トビ ##\n"
+
+    if command_option["unregistered_replace"]:
+        padding = 10
+    else:
+        padding = 16
 
     for i in r.keys():
         tmp_r[i] = r[i]["total"]
 
     for name, p in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
-        if not command_option["guest_skip"] and name == "ゲスト１":
+        if not command_option["guest_skip"] and name == g.guest_name:
             continue
         if not len(target_player) == 0 and not name in target_player:
             continue
+        if not command_option["unregistered_replace"]:
+            if c.member.ExsistPlayer(name):
+                guest_flag = ""
+            else:
+                guest_flag = "(※)"
         msg += "{}{}： {:>+6.1f} ({:>+5.1f})".format(
-            name, " " * (9 - f.translation.len_count(name)),
+            name + guest_flag, " " * (padding - f.translation.len_count(name + guest_flag)),
             r[name]["total"],
             r[name]["total"] / sum(r[name]["rank"]),
         ).replace("-", "▲")
@@ -126,6 +137,8 @@ def summary(starttime, endtime, target_player, command_option):
         remarks.append("名前ブレ修正なし")
     if not command_option["guest_skip"]:
         remarks.append("2ゲスト戦を含む")
+    if not command_option["unregistered_replace"]:
+        remarks.append("ゲスト置換なし(※：未登録プレイヤー)")
     if remarks:
         footer += f"特記事項：" + "、".join(remarks)
 
@@ -193,7 +206,7 @@ def details(starttime, endtime, target_player, command_option):
                     msg2 += "{}： {}位 {:>5}00点 ({:>+5.1f}) {}\n".format(
                         results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
                         results[i][seki]["rank"], eval(results[i][seki]["rpoint"]), float(results[i][seki]["point"]),
-                        "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count("ゲスト１") >= 2 else "",
+                        "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count(g.guest_name) >= 2 else "",
                     ).replace("-", "▲")
 
     ### 表示オプション ###

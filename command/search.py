@@ -79,7 +79,7 @@ def getdata(command_option):
                     if command_option["playername_replace"]: # 表記ブレの修正
                         for x in (0, 2, 4, 6):
                             msg[x] = c.member.NameReplace(msg[x], command_option)
-                    if command_option["guest_skip"] and msg.count("ゲスト１") >= 2: # 2ゲスト戦の除外
+                    if command_option["guest_skip"] and msg.count(g.guest_name) >= 2: # 2ゲスト戦の除外
                         continue
 
                     data[count] = {

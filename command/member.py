@@ -61,7 +61,7 @@ def NameReplace(pname, command_option):
             if f.translation.HIRA2KANA(pname) == alias:
                 return(player)
 
-    return("ゲスト１" if command_option["unregistered_replace"] else pname)
+    return(g.guest_name if command_option["unregistered_replace"] else pname)
 
 
 def ExsistPlayer(name):
