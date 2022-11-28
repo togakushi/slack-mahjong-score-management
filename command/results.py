@@ -1,11 +1,8 @@
 import re
 
+import function as f
+import command as c
 from function import global_value as g
-from function import common
-from function import message
-from function import slack_api
-from goburei import member
-from goburei import search
 
 
 # イベントAPI
@@ -32,19 +29,19 @@ def handle_goburei_results_evnts(client, context, body):
 
 
 def slackpost(client, channel, argument, command_option):
-    target_days, target_player, command_option = common.argument_analysis(argument, command_option)
-    starttime, endtime = common.scope_coverage(target_days)
+    target_days, target_player, command_option = f.common.argument_analysis(argument, command_option)
+    starttime, endtime = f.common.scope_coverage(target_days)
 
     if starttime and endtime:
         if len(target_player) == 1: # 個人成績
             msg, score = details(starttime, endtime, target_player, command_option)
             if command_option["results"]:
-                slack_api.post_message(client, channel, msg + score)
+                f.slack_api.post_message(client, channel, msg + score)
             else: # 戦績は出さない
-                    slack_api.post_message(client, channel, msg)
+                    f.slack_api.post_message(client, channel, msg)
         else: # 成績サマリ
             msg = summary(starttime, endtime, target_player, command_option)
-            slack_api.post_text(client, channel, "", msg)
+            f.slack_api.post_text(client, channel, "", msg)
 
 
 def summary(starttime, endtime, target_player, command_option):
@@ -72,7 +69,7 @@ def summary(starttime, endtime, target_player, command_option):
     """
 
     g.logging.info(f"[results.summary] {command_option} {target_player}")
-    results = search.getdata(command_option)
+    results = c.search.getdata(command_option)
 
     r = {}
     game_count = 0
@@ -113,7 +110,7 @@ def summary(starttime, endtime, target_player, command_option):
         if not len(target_player) == 0 and not name in target_player:
             continue
         msg += "{}{}： {:>+6.1f} ({:>+5.1f})".format(
-            name, " " * (9 - common.len_count(name)),
+            name, " " * (9 - f.common.len_count(name)),
             r[name]["total"],
             r[name]["total"] / sum(r[name]["rank"]),
         ).replace("-", "▲")
@@ -175,7 +172,7 @@ def details(starttime, endtime, target_player, command_option):
     command_option["guest_skip"] = command_option["guest_skip2"]
 
     g.logging.info(f"[results.details] {command_option} {target_player}")
-    results = search.getdata(command_option)
+    results = c.search.getdata(command_option)
 
     if command_option["guest_skip"]:
         msg1 = f"*【個人成績】*\n"

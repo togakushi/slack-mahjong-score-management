@@ -4,8 +4,24 @@ import unicodedata
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+import command as c
 from function import global_value as g
-from goburei import member
+
+def configload(configfile):
+    config = configparser.ConfigParser()
+
+    try:
+        config.read(configfile, encoding="utf-8")
+    except:
+        sys.exit()
+
+    g.logging.info(f"configload: {configfile} -> {config.sections()}")
+    return(config)
+
+
+def configsave(config, configfile):
+    with open(configfile, "w") as f:
+        config.write(f)
 
 
 def len_count(text): # 文字数
@@ -120,8 +136,8 @@ def argument_analysis(argument, command_option):
         if keyword == "全部":
             target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
-        if member.ExsistPlayer(keyword):
-            target_player.append(member.ExsistPlayer(keyword))
+        if c.member.ExsistPlayer(keyword):
+            target_player.append(c.member.ExsistPlayer(keyword))
 
         if re.match(r"^ゲスト(なし|ナシ|無し|除外)$", keyword):
             command_option["guest_skip"] = False

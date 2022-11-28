@@ -1,10 +1,9 @@
 import re
 import datetime
 
+import function as f
+import command as c
 from function import global_value as g
-from function import common
-from function import slack_api
-from goburei import search
 
 
 # イベントAPI
@@ -26,10 +25,10 @@ def handle_goburei_record_evnts(client, context, body):
     }
 
     g.logging.info(f"[{command}] {command_option} {argument}")
-    target_days, target_player, command_option = common.argument_analysis(argument, command_option)
+    target_days, target_player, command_option = f.common.argument_analysis(argument, command_option)
 
     title, msg = getdata(command_option)
-    slack_api.post_upload(client, context.channel_id, title, msg)
+    f.slack_api.post_upload(client, context.channel_id, title, msg)
 
 
 def getdata(command_option): # 御無礼結果
@@ -50,7 +49,7 @@ def getdata(command_option): # 御無礼結果
         slackにpostする内容
     """
 
-    results = search.getdata(command_option)
+    results = c.search.getdata(command_option)
 
     if command_option["name_replace"]:
         title = f"張り付け用集計済みデータ"

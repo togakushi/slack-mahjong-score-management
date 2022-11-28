@@ -5,12 +5,10 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib.font_manager import FontProperties
 
+import function as f
+import command as c
 from function import global_value as g
-from function import common
-from function import message
-from function import slack_api
-from goburei import search
-from goburei import member
+
 
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
@@ -58,9 +56,9 @@ def slackpost(client, channel, argument, command_option):
         コマンドオプション
     """
 
-    msg = message.invalid_argument()
-    target_days, target_player, command_option = common.argument_analysis(argument, command_option)
-    starttime, endtime = common.scope_coverage(target_days)
+    msg = f.message.invalid_argument()
+    target_days, target_player, command_option = f.common.argument_analysis(argument, command_option)
+    starttime, endtime = f.common.scope_coverage(target_days)
 
     if starttime or endtime:
         if len(target_player) == 1: # 描写対象がひとり → 個人成績
@@ -71,11 +69,11 @@ def slackpost(client, channel, argument, command_option):
         file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
         if count <= 0:
             msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
-            slack_api.post_message(client, channel, msg)
+            f.slack_api.post_message(client, channel, msg)
         else:
-            slack_api.post_fileupload(client, channel, "成績グラフ", file)
+            f.slack_api.post_fileupload(client, channel, "成績グラフ", file)
     else:
-        slack_api.post_message(client, channel, msg)
+        f.slack_api.post_message(client, channel, msg)
 
 
 def plot(starttime, endtime, target_player, command_option):
@@ -102,7 +100,7 @@ def plot(starttime, endtime, target_player, command_option):
         グラフにプロットしたゲーム数
     """
 
-    results = search.getdata(command_option)
+    results = c.search.getdata(command_option)
 
     ### データ抽出 ###
     gdata = {}
@@ -217,7 +215,7 @@ def plot_personal(starttime, endtime, target_player, command_option):
     command_option["guest_skip"] = command_option["guest_skip2"]
 
     g.logging.info(f"[graph.plot_personal] {command_option}")
-    results = search.getdata(command_option)
+    results = c.search.getdata(command_option)
 
     ### データ抽出 ###
     game_point = []

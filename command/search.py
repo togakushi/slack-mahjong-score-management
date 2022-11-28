@@ -1,10 +1,9 @@
 import re
 from datetime import datetime 
 
+import function as f
+import command as c
 from function import global_value as g
-from function import common
-from function import score
-from goburei import member
 
 
 def pattern(text):
@@ -79,7 +78,7 @@ def getdata(command_option):
                 if msg:
                     if command_option["name_replace"]: # 表記ブレの修正
                         for x in (0, 2, 4, 6):
-                            msg[x] = member.NameReplace(msg[x], command_option)
+                            msg[x] = c.member.NameReplace(msg[x], command_option)
                     if command_option["guest_skip"] and msg.count("ゲスト１") >= 2: # 2ゲスト戦の除外
                         continue
 
@@ -104,7 +103,7 @@ def getdata(command_option):
                     for x, y in [("東家", 1), ("南家", 3), ("西家", 5), ("北家", 7)]:
                         p = eval(msg[y]) + seat[x]
                         data[count][x]["rank"] = rank.index(p) + 1
-                        data[count][x]["point"] = score.CalculationPoint(eval(msg[y]), rank.index(p) + 1)
+                        data[count][x]["point"] = f.score.CalculationPoint(eval(msg[y]), rank.index(p) + 1)
 
                     count += 1
 
