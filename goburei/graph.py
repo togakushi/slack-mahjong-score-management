@@ -1,4 +1,3 @@
-import logging
 import re
 import os
 
@@ -13,9 +12,8 @@ from function import slack_api
 from goburei import search
 from goburei import member
 
-logging.basicConfig(level = g.logging_level)
-mlogger = logging.getLogger("matplotlib")
-mlogger.setLevel(logging.WARNING)
+mlogger = g.logging.getLogger("matplotlib")
+mlogger.setLevel(g.logging.WARNING)
 
 
 # イベントAPI
@@ -37,7 +35,7 @@ def handle_goburei_graph_evnts(client, context, body):
         "recursion": True,
     }
 
-    logging.info(f"[{command}] {command_option} {argument}")
+    g.logging.info(f"[{command}] {command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -218,7 +216,7 @@ def plot_personal(starttime, endtime, target_player, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    logging.info(f"[graph.plot_personal] {command_option}")
+    g.logging.info(f"[graph.plot_personal] {command_option}")
     results = search.getdata(command_option)
 
     ### データ抽出 ###

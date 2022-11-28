@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-
-import logging
 import sys
 import os
 import re
@@ -9,6 +7,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from function import global_value as g
 from function import common
+from function import option
 from function import message
 from function import slack_api
 from goburei import member
@@ -16,8 +15,6 @@ from goburei import search
 from goburei import results
 from goburei import record
 from goburei import graph
-
-logging.basicConfig(level = g.logging_level)
 
 
 # イベントAPI
@@ -57,7 +54,7 @@ def goburei_command(ack, body, client):
         argument = body["text"].split()[1:]
 
         if subcom.lower() in ("results", "details", "成績"):
-            logging.info(f"[subcommand({subcom})] {command_option} {argument}")
+            g.logging.info(f"[subcommand({subcom})] {command_option} {argument}")
             results.slackpost(client, user_id, argument, command_option)
             return
 
@@ -68,7 +65,7 @@ def goburei_command(ack, body, client):
 
         if subcom.lower() in ("graph", "グラフ"):
             command_option["default_action"] = ["当日"]
-            logging.info(f"[subcommand({subcom})] {command_option} {argument}")
+            g.logging.info(f"[subcommand({subcom})] {command_option} {argument}")
             graph.slackpost(client, user_id, argument, command_option)
             return
 
@@ -88,12 +85,12 @@ def goburei_command(ack, body, client):
             return
 
         if subcom.lower() in ("load"):
-            g.player_list = member.configload(sys.argv[1])
+            g.player_list = option.configload(g.args.member)
             slack_api.post_message(client, user_id, f"メンバーリストを再読み込みしました。")
             return
 
         if subcom.lower() in ("save"):
-            member.configsave(g.player_list, sys.argv[1])
+            option.configsave(g.player_list, g.args.member)
             slack_api.post_message(client, user_id, f"メンバーリストを保存しました。")
             return
 
@@ -111,12 +108,8 @@ def handle_home_events():
 
 
 if __name__ == "__main__":
-    g.player_list = member.configload(g.args.member)
-    g.config = common.configload(g.args.config)
+    g.player_list = option.configload(g.args.member)
+    g.config = option.configload(g.args.config)
 
-    logging.info(f"member: {g.player_list.sections()}")
-    logging.info(f"config: {g.config.sections()}")
-
-    print(g.config.getboolean("status", "display"))
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])
     handler.start()

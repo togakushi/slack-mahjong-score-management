@@ -1,4 +1,3 @@
-import logging
 import re
 
 from function import global_value as g
@@ -7,8 +6,6 @@ from function import message
 from function import slack_api
 from goburei import member
 from goburei import search
-
-logging.basicConfig(level = g.logging_level)
 
 
 # イベントAPI
@@ -30,7 +27,7 @@ def handle_goburei_results_evnts(client, context, body):
         "recursion": True,
     }
 
-    logging.info(f"[{command}] {command_option} {argument}")
+    g.logging.info(f"[{command}] {command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -74,7 +71,7 @@ def summary(starttime, endtime, target_player, command_option):
         slackにpostする内容
     """
 
-    logging.info(f"[results.summary] {command_option} {target_player}")
+    g.logging.info(f"[results.summary] {command_option} {target_player}")
     results = search.getdata(command_option)
 
     r = {}
@@ -177,7 +174,7 @@ def details(starttime, endtime, target_player, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    logging.info(f"[results.details] {command_option} {target_player}")
+    g.logging.info(f"[results.details] {command_option} {target_player}")
     results = search.getdata(command_option)
 
     if command_option["guest_skip"]:

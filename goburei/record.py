@@ -1,4 +1,3 @@
-import logging
 import re
 import datetime
 
@@ -6,8 +5,6 @@ from function import global_value as g
 from function import common
 from function import slack_api
 from goburei import search
-
-logging.basicConfig(level = g.logging_level)
 
 
 # イベントAPI
@@ -28,7 +25,7 @@ def handle_goburei_record_evnts(client, context, body):
         "recursion": True,
     }
 
-    logging.info(f"[{command}] {command_option} {argument}")
+    g.logging.info(f"[{command}] {command_option} {argument}")
     target_days, target_player, command_option = common.argument_analysis(argument, command_option)
 
     title, msg = getdata(command_option)

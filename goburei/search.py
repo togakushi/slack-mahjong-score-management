@@ -1,4 +1,3 @@
-import logging
 import re
 from datetime import datetime 
 
@@ -6,8 +5,6 @@ from function import global_value as g
 from function import common
 from function import score
 from goburei import member
-
-logging.basicConfig(level = g.logging_level)
 
 
 def pattern(text):
@@ -37,7 +34,7 @@ def getdata(command_option):
         検索した結果
     """
 
-    logging.info(f"[serach] {command_option}")
+    g.logging.info(f"[serach] {command_option}")
 
     ### データ取得 ###
     response = g.webclient.search_messages(

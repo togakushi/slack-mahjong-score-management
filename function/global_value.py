@@ -13,6 +13,7 @@ webclient = WebClient(token = os.environ["SLACK_WEB_TOKEN"])
 
 if args.debug:
     print("DEBUG MODE")
-    logging_level = logging.INFO
+    logging.basicConfig(level = logging.INFO)
 else:
-    logging_level = logging.WARNING
+    logging.basicConfig(level = logging.WARNING)
+
