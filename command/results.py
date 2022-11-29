@@ -5,13 +5,15 @@ import function as f
 from function import global_value as g
 
 
+commandword = g.config["results"].get("commandword", "御無礼成績")
+
 # イベントAPI
-@g.app.message(re.compile(r"^御無礼成績"))
+@g.app.message(re.compile(rf"^{commandword}"))
 def handle_goburei_results_evnts(client, context, body):
     command = body["event"]["text"].split()[0]
     argument = body["event"]["text"].split()[1:]
 
-    if not re.match(r"^御無礼成績$", command):
+    if not re.match(rf"^{commandword}$", command):
         return
 
     command_option = f.command_option_initialization("results")

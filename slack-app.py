@@ -93,8 +93,6 @@ def handle_home_events():
 
 
 if __name__ == "__main__":
-    g.player_list = f.common.configload(g.args.member)
-    g.config = f.common.configload(g.args.config)
     f.common.parameter_load()
 
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])

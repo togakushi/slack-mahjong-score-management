@@ -12,26 +12,18 @@ from function import global_value as g
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
+commandword = g.config["graph"].get("commandword", "御無礼グラフ")
 
 # イベントAPI
-@g.app.message(re.compile(r"^御無礼グラフ"))
+@g.app.message(re.compile(rf"^{commandword}"))
 def handle_goburei_graph_evnts(client, context, body):
     command = body["event"]["text"].split()[0]
     argument = body["event"]["text"].split()[1:]
 
-    if not re.match(r"^御無礼グラフ$", command):
+    if not re.match(rf"^{commandword}$", command):
         return
 
-    command_option = {
-        "aggregation_range": ["当日"],
-        "playername_replace": True, # 表記ブレ修正
-        "unregistered_replace": True, # 未登録をゲストに置き換え
-        "guest_skip": True, # 2ゲスト戦除外(サマリ用)
-        "guest_skip2": True, # 2ゲスト戦除外(個人成績用)
-        "results": False, # 戦績表示
-        "recursion": True,
-    }
-
+    command_option = f.command_option_initialization("graph")
     g.logging.info(f"[{command}] {command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
