@@ -155,4 +155,4 @@ def command_option_initialization(command):
 
 
 def parameter_load():
-    g.guest_name = g.config["search"].get("guest_name", "ゲスト")
+    g.guest_name = g.config["member"].get("guest_name", "ゲスト")
