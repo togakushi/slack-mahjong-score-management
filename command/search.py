@@ -33,11 +33,13 @@ def getdata(command_option):
         検索した結果
     """
 
-    g.logging.info(f"[serach] {command_option}")
+    keyword = g.config["search"].get("keyword", "御無礼")
+    channel = g.config["search"].get("channel", "#麻雀やろうぜ")
+    g.logging.info(f"[serach] query:'{keyword} in:{channel}' {command_option}")
 
     ### データ取得 ###
     response = g.webclient.search_messages(
-        query = "御無礼 in:#麻雀やろうぜ",
+        query = f"{keyword} in:{channel}",
         sort = "timestamp",
         sort_dir = "asc",
         count = 100
@@ -46,7 +48,7 @@ def getdata(command_option):
 
     for p in range(2, response["messages"]["paging"]["pages"] + 1):
         response = g.webclient.search_messages(
-            query = "御無礼 in:#麻雀やろうぜ",
+            query = f"{keyword} in:{channel}",
             sort = "timestamp",
             sort_dir = "asc",
             count = 100,
