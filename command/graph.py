@@ -1,14 +1,13 @@
-import re
 import os
+import re
 
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib.font_manager import FontProperties
 
-import function as f
 import command as c
+import function as f
 from function import global_value as g
-
 
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)

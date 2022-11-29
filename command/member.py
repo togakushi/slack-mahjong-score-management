@@ -1,5 +1,5 @@
-import re
 import configparser
+import re
 
 import function as f
 from function import global_value as g

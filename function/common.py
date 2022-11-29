@@ -2,6 +2,7 @@ import configparser
 import re
 import unicodedata
 from datetime import datetime
+
 from dateutil.relativedelta import relativedelta
 
 import command as c

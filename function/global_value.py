@@ -1,9 +1,10 @@
-import logging
 import argparse
+import logging
 import os
 
-from slack_sdk import WebClient
 from slack_bolt import App
+from slack_sdk import WebClient
+
 
 def parser():
     p = argparse.ArgumentParser(
