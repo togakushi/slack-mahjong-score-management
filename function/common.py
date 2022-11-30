@@ -70,7 +70,7 @@ def argument_analysis(argument, command_option):
     target_days = []
     target_player = []
 
-    currenttime = datetime.now()
+    currenttime = datetime.now() + relativedelta(hours = -12)
     for keyword in argument:
         if re.match(r"^[0-9]{8}$", keyword):
             try:
