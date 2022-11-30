@@ -24,12 +24,12 @@ def invalid_argument():
     ]))
 
 
-def invalid_score(user_id, score):
+def invalid_score(user_id, score, pointsum):
     return(random.choice([
-        f"<@{user_id}> {abs(1000-score)*100}点合わないようです。",
-        f"<@{user_id}> {abs(1000-score)*100}点合いませんよ。",
-        f"<@{user_id}> {abs(1000-score)*100}点合いません。ご確認を。",
-        f"<@{user_id}> {abs(1000-score)*100}点合ってませんね。",
+        f"<@{user_id}> {abs(pointsum - score) * 100}点合わないようです。",
+        f"<@{user_id}> {abs(pointsum - score) * 100}点合いませんよ。",
+        f"<@{user_id}> {abs(pointsum - score) * 100}点合いません。ご確認を。",
+        f"<@{user_id}> {abs(pointsum - score) * 100}点合ってませんね。",
     ]))
 
 

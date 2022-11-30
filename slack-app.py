@@ -15,16 +15,18 @@ keyword = g.config["search"].get("keyword", "御無礼")
 @g.app.message(re.compile(rf"{keyword}"))
 def handle_goburei_check_evnts(client, body):
     """
-    postされた素点合計が10万点になっているかチェックする
+    postされた素点合計が配給原点と同じかチェックする
     """
 
     user_id = body["event"]["user"]
     channel_id = body["event"]["channel"]
     msg = c.search.pattern(body["event"]["text"])
     if msg:
+        pointsum = g.config["mahjong"].getint("point", 250) * 4
+
         score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
-        if not score == 1000:
-            msg = f.message.invalid_score(user_id, score)
+        if not score == pointsum:
+            msg = f.message.invalid_score(user_id, score, pointsum)
             f.slack_api.post_message(client, channel_id, msg)
 
 
