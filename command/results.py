@@ -126,11 +126,10 @@ def summary(starttime, endtime, target_player, command_option):
                     r[name]["total"],
                 ).replace("-", "▲").replace("*", "-")
             else:
-                up_target = name_list[name_list.index(name) - 1]
                 msg += "{} {}： {:>+6.1f} / {:>+6.1f}\n".format(
                     name, " " * (padding - f.translation.len_count(name)),
                     r[name]["total"],
-                    r[up_target]["total"] - r[name]["total"],
+                    r[name]["total"] - r[name_list[name_list.index(name) - 1]]["total"],
                 ).replace("-", "▲")
     else:
         header = "## 名前 : 累積 (平均) / 順位分布 (平均) / トビ ##\n"
