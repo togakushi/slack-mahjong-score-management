@@ -170,7 +170,7 @@ def plot(starttime, endtime, target_player, command_option):
         fontproperties = fp,
         fontsize = 12,
     )
-    plt.ylabel("累計ポイント", fontproperties = fp)
+    plt.ylabel("累積ポイント", fontproperties = fp)
 
     for name, total in ranking:
         label = f"{name} ({str(total)})".replace("-", "▲")
@@ -278,7 +278,7 @@ def plot_personal(starttime, endtime, target_player, command_option):
     point_ax.set_ylabel("ポイント", fontproperties = fp)
     point_ax.set_xlim(-1, len(game_time))
     point_ax.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-    point_ax.plot(game_time, stacked_point, marker = "o", markersize = 3, label = f"累計ポイント({str(total_point)})".replace("-", "▲"))
+    point_ax.plot(game_time, stacked_point, marker = "o", markersize = 3, label = f"累積ポイント({str(total_point)})".replace("-", "▲"))
     point_ax.bar(game_time, game_point, color = "dodgerblue", label = f"獲得ポイント")
     point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white") # 背景色と同じにして見えなくする
     point_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)

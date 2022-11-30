@@ -116,7 +116,7 @@ def summary(starttime, endtime, target_player, command_option):
     msg = ""
 
     if command_option["score_comparisons"]:
-        header = "## 名前 (累計) ： △ / ▽ ##\n"
+        header = "## 名前 (累積) ： △ / ▽ ##\n"
         for name in name_list:
             if name_list.index(name) == 0:
                 down_target = name_list[name_list.index(name) + 1]
@@ -142,7 +142,7 @@ def summary(starttime, endtime, target_player, command_option):
                     r[down_target]["total"] - r[name]["total"]
                 ).replace("-", "▲").replace("*", "-")
     else:
-        header = "## 名前 : 累計 (平均) / 順位分布 (平均) / トビ ##\n"
+        header = "## 名前 : 累積 (平均) / 順位分布 (平均) / トビ ##\n"
         for name in name_list:
             msg += "{} {}： {:>+6.1f} ({:>+5.1f})".format(
                 name, " " * (padding - f.translation.len_count(name)),
