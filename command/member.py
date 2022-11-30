@@ -21,9 +21,13 @@ def check_namepattern(name):
         return(False)
     if re.match(r"^((当|今|昨)日|(今|先|先々)月|全部|最初)$", name): # NGワード（サブコマンド引数）
         return(False)
-    if re.match(r"^(戦績|((修正|変換)(なし|ナシ|無し|あり)))$", name): # NGワード（サブコマンド引数）
+    if re.match(r"^(戦績|比較|点差)$", name): # NGワード（サブコマンド引数）
+        return(False)
+    if re.match(r"^(修正|変換)(なし|ナシ|無し|あり)$", name): # NGワード（サブコマンド引数）
         return(False)
     if re.search("[\\\;:<>,!@#*?/`\"']", name): # 禁則記号
+        return(False)
+    if name == g.guest_name:
         return(False)
     if not name.isprintable():
         return(False)

@@ -116,7 +116,7 @@ def summary(starttime, endtime, target_player, command_option):
     msg = ""
 
     if command_option["score_comparisons"]:
-        header = "{} {}： 累積    / 差分 ##\n".format(
+        header = "{} {}： 累積    / 点差 ##\n".format(
             "## 名前", " " * (padding - f.translation.len_count(name) - 2),
         )
         for name in name_list:
