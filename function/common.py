@@ -104,15 +104,15 @@ def argument_analysis(argument, command_option):
         if c.member.ExsistPlayer(keyword):
             target_player.append(c.member.ExsistPlayer(keyword))
 
-        if re.match(r"^ゲスト(なし|ナシ|無し|除外)$", keyword):
+        if re.match(r"^ゲスト(なし|ナシ)$", keyword):
             command_option["guest_skip"] = False
             command_option["guest_skip2"] = False
-        if re.match(r"^ゲスト(あり|アリ含む)$", keyword):
+        if re.match(r"^ゲスト(あり|アリ)$", keyword):
             command_option["guest_skip"] = True
             command_option["guest_skip2"] = True
         if re.match(r"^ゲスト無効$", keyword):
             command_option["unregistered_replace"] = False
-        if re.match(r"^(修正|変換)(なし|ナシ|無し)$", keyword):
+        if re.match(r"^(修正|変換)(なし|ナシ)$", keyword):
             command_option["playername_replace"] = False
         if re.match(r"^(戦績)$", keyword):
             command_option["game_results"] = True
