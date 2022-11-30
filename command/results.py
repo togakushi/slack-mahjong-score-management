@@ -116,31 +116,22 @@ def summary(starttime, endtime, target_player, command_option):
     msg = ""
 
     if command_option["score_comparisons"]:
-        header = "## 名前 (累積) ： △ / ▽ ##\n"
+        header = "{} {}： 累積    / 差分 ##\n".format(
+            "## 名前", " " * (padding - f.translation.len_count(name) - 2),
+        )
         for name in name_list:
             if name_list.index(name) == 0:
-                down_target = name_list[name_list.index(name) + 1]
-                msg += "{} {}({:>+6.1f}) ： ****** / {:>+6.1f}\n".format(
+                msg += "{} {}： {:>+6.1f} / ******\n".format(
                     name, " " * (padding - f.translation.len_count(name)),
                     r[name]["total"],
-                    r[down_target]["total"] - r[name]["total"],
-                ).replace("-", "▲").replace("*", "-")
-            elif name_list.index(name) == len(name_list) - 1:
-                up_target = name_list[name_list.index(name) - 1]
-                msg += "{} {}({:>+6.1f}) ： {:>+6.1f} / ******\n".format(
-                    name, " " * (padding - f.translation.len_count(name)),
-                    r[name]["total"],
-                    r[up_target]["total"] - r[name]["total"],
                 ).replace("-", "▲").replace("*", "-")
             else:
                 up_target = name_list[name_list.index(name) - 1]
-                down_target = name_list[name_list.index(name) + 1]
-                msg += "{} {}({:>+6.1f}) ： {:>+6.1f} / {:>+6.1f}\n".format(
+                msg += "{} {}： {:>+6.1f} / {:>+6.1f}\n".format(
                     name, " " * (padding - f.translation.len_count(name)),
                     r[name]["total"],
                     r[up_target]["total"] - r[name]["total"],
-                    r[down_target]["total"] - r[name]["total"]
-                ).replace("-", "▲").replace("*", "-")
+                ).replace("-", "▲")
     else:
         header = "## 名前 : 累積 (平均) / 順位分布 (平均) / トビ ##\n"
         for name in name_list:
