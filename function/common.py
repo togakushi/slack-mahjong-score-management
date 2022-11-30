@@ -113,7 +113,7 @@ def argument_analysis(argument, command_option):
             command_option["unregistered_replace"] = False
         if re.match(r"^(修正|変換)(なし|ナシ)$", keyword):
             command_option["playername_replace"] = False
-        if re.match(r"^(比較|点差)$", keyword):
+        if re.match(r"^(比較|点差|差分)$", keyword):
             command_option["score_comparisons"] = True
         if re.match(r"^(戦績)$", keyword):
             command_option["game_results"] = True
