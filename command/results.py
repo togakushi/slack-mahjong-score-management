@@ -121,15 +121,15 @@ def summary(starttime, endtime, target_player, command_option):
         )
         for name in name_list:
             if name_list.index(name) == 0:
-                msg += "{} {}： {:>+6.1f} / ******\n".format(
+                msg += "{} {}： {:>+6.1f} / *****\n".format(
                     name, " " * (padding - f.translation.len_count(name)),
                     r[name]["total"],
                 ).replace("-", "▲").replace("*", "-")
             else:
-                msg += "{} {}： {:>+6.1f} / {:>+6.1f}\n".format(
+                msg += "{} {}： {:>+6.1f} / {:>5.1f}\n".format(
                     name, " " * (padding - f.translation.len_count(name)),
                     r[name]["total"],
-                    r[name]["total"] - r[name_list[name_list.index(name) - 1]]["total"],
+                    r[name_list[name_list.index(name) - 1]]["total"] - r[name]["total"],
                 ).replace("-", "▲")
     else:
         header = "## 名前 : 累積 (平均) / 順位分布 (平均) / トビ ##\n"
