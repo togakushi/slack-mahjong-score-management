@@ -7,13 +7,14 @@ from function import global_value as g
 
 
 def pattern(text):
-    pattern1 = re.compile(r"^御無礼([^0-9+-]+[0-9+-]+){4}")
-    pattern2 = re.compile(r"([^0-9+-]+[0-9+-]+){4}御無礼$")
+    keyword = g.config["search"].get("keyword", "御無礼")
+    pattern1 = re.compile(rf"^{keyword}([^0-9+-]+[0-9+-]+){{4}}")
+    pattern2 = re.compile(rf"([^0-9+-]+[0-9+-]+){{4}}{keyword}$")
 
     text = "".join(text.split())
     if pattern1.search(text) or pattern2.search(text):
-        ret = re.sub(r"^御無礼|御無礼$", "", text)
-        ret = re.sub(r"([^0-9+-]+)([0-9+-]+)" * 4, r"\1 \2 \3 \4 \5 \6 \7 \8", ret).split()
+        ret = re.sub(rf"^{keyword}|{keyword}$", "", text)
+        ret = re.sub(rf"([^0-9+-]+)([0-9+-]+)" * 4, r"\1 \2 \3 \4 \5 \6 \7 \8", ret).split()
 
     return(ret if "ret" in locals() else False)
 
