@@ -38,7 +38,7 @@ def slackpost(client, channel, argument, command_option):
 
 def summary(starttime, endtime, target_player, command_option):
     """
-    各プレイヤーの累積ポイントを取得
+    各プレイヤーの累積ポイントを表示
 
     Parameters
     ----------
@@ -77,6 +77,11 @@ def summary(starttime, endtime, target_player, command_option):
             game_count += 1
             for seki in ("東家", "南家", "西家", "北家"): # 成績計算
                 name = results[i][seki]["name"]
+
+                if not command_option["unregistered_replace"]:
+                    if not c.member.ExsistPlayer(name):
+                        name = name + "(※)"
+
                 if not name in r:
                     r[name] = {
                         "total": 0,
@@ -89,42 +94,63 @@ def summary(starttime, endtime, target_player, command_option):
                     r[name]["tobi"] += 1
                     tobi_count += 1
 
-    tmp_r = {}
-    msg = ""
-    guest_flag = ""
-    header = "## 名前 : 累計 (平均) / 順位分布 (平均) / トビ ##\n"
+    if not (first_game or last_game):
+        return(f.message.no_hits(starttime, endtime))
 
-    if command_option["unregistered_replace"]:
-        padding = 10
-    else:
-        padding = 16
+    # 獲得ポイント順にソート
+    tmp_r = {}
+    name_list = []
 
     for i in r.keys():
         tmp_r[i] = r[i]["total"]
-
-    for name, p in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
+    for name, point in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
         if not command_option["guest_skip"] and name == g.guest_name:
             continue
         if not len(target_player) == 0 and not name in target_player:
             continue
-        if not command_option["unregistered_replace"]:
-            if c.member.ExsistPlayer(name):
-                guest_flag = ""
-            else:
-                guest_flag = "(※)"
-        msg += "{}{}： {:>+6.1f} ({:>+5.1f})".format(
-            name + guest_flag, " " * (padding - f.translation.len_count(name + guest_flag)),
-            r[name]["total"],
-            r[name]["total"] / sum(r[name]["rank"]),
-        ).replace("-", "▲")
-        msg += " / {}-{}-{}-{} ({:1.2f}) / {}\n".format(
-            r[name]["rank"][0], r[name]["rank"][1], r[name]["rank"][2], r[name]["rank"][3],
-            sum([r[name]["rank"][i] * (i + 1) for i in range(4)]) / sum(r[name]["rank"]),
-            r[name]["tobi"],
-        )
+        name_list.append(name)
+    g.logging.info(f"[results.summary] {name_list}")
 
-    if not (first_game or last_game):
-        return(f.message.no_hits(starttime, endtime))
+    # 表示
+    padding = max([f.translation.len_count(x) for x in name_list])
+    msg = ""
+
+    if target_player:
+        header = "## 名前 (累計) ： △ / ▽ ##\n"
+        for name in name_list:
+            if name_list.index(name) == 0:
+                down_target = name_list[name_list.index(name) + 1]
+                rankup = 0
+                rankdown = r[down_target]["total"] - r[name]["total"]
+            elif name_list.index(name) == len(name_list) - 1:
+                up_target = name_list[name_list.index(name) - 1]
+                rankup = r[up_target]["total"] - r[name]["total"]
+                rankdown = 0
+            else:
+                up_target = name_list[name_list.index(name) - 1]
+                down_target = name_list[name_list.index(name) + 1]
+                rankup = r[up_target]["total"] - r[name]["total"]
+                rankdown = r[down_target]["total"] - r[name]["total"]
+
+            msg += "{} {}({:>+6.1f}) ： {:>+6.1f} / {:>+6.1f}\n".format(
+                name, " " * (padding - f.translation.len_count(name)),
+                r[name]["total"],
+                rankup,
+                rankdown
+            )
+    else:
+        header = "## 名前 : 累計 (平均) / 順位分布 (平均) / トビ ##\n"
+        for name in name_list:
+            msg += "{} {}： {:>+6.1f} ({:>+5.1f})".format(
+                name, " " * (padding - f.translation.len_count(name)),
+                r[name]["total"],
+                r[name]["total"] / sum(r[name]["rank"]),
+            ).replace("-", "▲")
+            msg += " / {}-{}-{}-{} ({:1.2f}) / {}\n".format(
+                r[name]["rank"][0], r[name]["rank"][1], r[name]["rank"][2], r[name]["rank"][3],
+                sum([r[name]["rank"][i] * (i + 1) for i in range(4)]) / sum(r[name]["rank"]),
+                r[name]["tobi"],
+            )
 
     footer = "-" * 5 + "\n"
     footer += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
