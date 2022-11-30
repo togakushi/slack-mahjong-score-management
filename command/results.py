@@ -120,24 +120,27 @@ def summary(starttime, endtime, target_player, command_option):
         for name in name_list:
             if name_list.index(name) == 0:
                 down_target = name_list[name_list.index(name) + 1]
-                rankup = 0
-                rankdown = r[down_target]["total"] - r[name]["total"]
+                msg += "{} {}({:>+6.1f}) ： ****** / {:>+6.1f}\n".format(
+                    name, " " * (padding - f.translation.len_count(name)),
+                    r[name]["total"],
+                    r[down_target]["total"] - r[name]["total"],
+                ).replace("-", "▲").replace("*", "-")
             elif name_list.index(name) == len(name_list) - 1:
                 up_target = name_list[name_list.index(name) - 1]
-                rankup = r[up_target]["total"] - r[name]["total"]
-                rankdown = 0
+                msg += "{} {}({:>+6.1f}) ： {:>+6.1f} / ******\n".format(
+                    name, " " * (padding - f.translation.len_count(name)),
+                    r[name]["total"],
+                    r[up_target]["total"] - r[name]["total"],
+                ).replace("-", "▲").replace("*", "-")
             else:
                 up_target = name_list[name_list.index(name) - 1]
                 down_target = name_list[name_list.index(name) + 1]
-                rankup = r[up_target]["total"] - r[name]["total"]
-                rankdown = r[down_target]["total"] - r[name]["total"]
-
-            msg += "{} {}({:>+6.1f}) ： {:>+6.1f} / {:>+6.1f}\n".format(
-                name, " " * (padding - f.translation.len_count(name)),
-                r[name]["total"],
-                rankup,
-                rankdown
-            )
+                msg += "{} {}({:>+6.1f}) ： {:>+6.1f} / {:>+6.1f}\n".format(
+                    name, " " * (padding - f.translation.len_count(name)),
+                    r[name]["total"],
+                    r[up_target]["total"] - r[name]["total"],
+                    r[down_target]["total"] - r[name]["total"]
+                ).replace("-", "▲").replace("*", "-")
     else:
         header = "## 名前 : 累計 (平均) / 順位分布 (平均) / トビ ##\n"
         for name in name_list:
