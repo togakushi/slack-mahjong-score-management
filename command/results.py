@@ -115,7 +115,7 @@ def summary(starttime, endtime, target_player, command_option):
     padding = max([f.translation.len_count(x) for x in name_list])
     msg = ""
 
-    if target_player:
+    if command_option["score_comparisons"]:
         header = "## 名前 (累計) ： △ / ▽ ##\n"
         for name in name_list:
             if name_list.index(name) == 0:

@@ -72,6 +72,7 @@ def argument_analysis(argument, command_option):
 
     currenttime = datetime.now() + relativedelta(hours = -12)
     for keyword in argument:
+        # 日付取得
         if re.match(r"^[0-9]{8}$", keyword):
             try:
                 trytime = datetime.fromisoformat(f"{keyword[0:4]}-{keyword[4:6]}-{keyword[6:8]}")
@@ -79,14 +80,11 @@ def argument_analysis(argument, command_option):
             except:
                 pass
         if keyword == "当日":
-            if currenttime.hour < 12:
-                target_days.append((currenttime + relativedelta(days = -1)).strftime("%Y%m%d"))
-            else:
-                target_days.append(currenttime.strftime("%Y%m%d"))
-        if keyword == "今日":
             target_days.append(currenttime.strftime("%Y%m%d"))
+        if keyword == "今日":
+            target_days.append(datetime.now().strftime("%Y%m%d"))
         if keyword == "昨日":
-            target_days.append((currenttime + relativedelta(days = -1)).strftime("%Y%m%d"))
+            target_days.append((datetime.now() + relativedelta(days = -1)).strftime("%Y%m%d"))
         if keyword == "今月":
             target_days.append((currenttime + relativedelta(day = 1, months = 0)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 1, months = 1, days = -1,)).strftime("%Y%m%d"))
@@ -104,6 +102,7 @@ def argument_analysis(argument, command_option):
         if c.member.ExsistPlayer(keyword):
             target_player.append(c.member.ExsistPlayer(keyword))
 
+        # コマンドオプションフラグ変更
         if re.match(r"^ゲスト(なし|ナシ)$", keyword):
             command_option["guest_skip"] = False
             command_option["guest_skip2"] = False
@@ -114,6 +113,8 @@ def argument_analysis(argument, command_option):
             command_option["unregistered_replace"] = False
         if re.match(r"^(修正|変換)(なし|ナシ)$", keyword):
             command_option["playername_replace"] = False
+        if re.match(r"^(比較)$", keyword):
+            command_option["score_comparisons"] = True
         if re.match(r"^(戦績)$", keyword):
             command_option["game_results"] = True
 
@@ -150,6 +151,7 @@ def command_option_initialization(command):
     option["unregistered_replace"] = g.config[command].getboolean("unregistered_replace", True)
     option["guest_skip"] = g.config[command].getboolean("guest_skip", True)
     option["guest_skip2"] = g.config[command].getboolean("guest_skip2", True)
+    option["score_comparisons"] = g.config[command].getboolean("score_comparisons", False)
     option["game_results"] = g.config[command].getboolean("game_results", False)
 
     return(option)
