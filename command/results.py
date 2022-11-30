@@ -124,8 +124,7 @@ def summary(starttime, endtime, target_player, command_option):
         )
 
     if not (first_game or last_game):
-        msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
-        return(msg)
+        return(f.message.no_hits(starttime, endtime))
 
     footer = "-" * 5 + "\n"
     footer += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"

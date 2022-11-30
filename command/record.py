@@ -24,7 +24,7 @@ def handle_goburei_record_evnts(client, context, body):
     f.slack_api.post_upload(client, context.channel_id, title, msg)
 
 
-def getdata(command_option): # 御無礼結果
+def getdata(command_option):
     """
     半荘単位の成績を取得
 

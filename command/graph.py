@@ -59,8 +59,7 @@ def slackpost(client, channel, argument, command_option):
             count = plot(starttime, endtime, target_player, command_option)
         file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
         if count <= 0:
-            msg = f"{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')} に御無礼はありません。"
-            f.slack_api.post_message(client, channel, msg)
+            f.slack_api.post_message(client, channel, f.message.no_hits(starttime, endtime))
         else:
             f.slack_api.post_fileupload(client, channel, "成績グラフ", file)
     else:
