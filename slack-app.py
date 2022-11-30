@@ -27,61 +27,6 @@ def handle_goburei_check_evnts(client, body):
             f.slack_api.post_message(client, channel_id, msg)
 
 
-@g.app.command("/goburei")
-def goburei_command(ack, body, client):
-    ack()
-    user_id = body["user_id"]
-
-    if body["text"]:
-        subcom = body["text"].split()[0]
-        argument = body["text"].split()[1:]
-
-        if subcom.lower() in ("results", "details", "成績"):
-            command_option = f.command_option_initialization("results")
-            g.logging.info(f"[subcommand({subcom})] {command_option} {argument}")
-            c.results.slackpost(client, user_id, argument, command_option)
-            return
-
-        if subcom.lower() in ("record", "記録", "結果"):
-            command_option = f.command_option_initialization("record")
-            title, msg = c.record.getdata(playername_replace = True, guest_skip = True)
-            f.slack_api.post_upload(client, user_id, title, msg)
-            return
-
-        if subcom.lower() in ("graph", "グラフ"):
-            command_option = f.command_option_initialization("graph")
-            g.logging.info(f"[subcommand({subcom})] {command_option} {argument}")
-            c.graph.slackpost(client, user_id, argument, command_option)
-            return
-
-        if subcom.lower() in ("member", "userlist", "メンバー", "リスト"):
-            title, msg = c.member.list()
-            f.slack_api.post_text(client, user_id, title, msg)
-            return
-
-        if subcom.lower() in ("add", "追加"):
-            msg = c.member.Append(argument)
-            f.slack_api.post_message(client, user_id, msg)
-            return
-
-        if subcom.lower() in ("del", "削除"):
-            msg = c.member.Remove(argument)
-            f.slack_api.post_message(client, user_id, msg)
-            return
-
-        if subcom.lower() in ("load"):
-            g.player_list = f.options.configload(g.args.member)
-            f.slack_api.post_message(client, user_id, f"メンバーリストを再読み込みしました。")
-            return
-
-        if subcom.lower() in ("save"):
-            f.options.configsave(g.player_list, g.args.member)
-            f.slack_api.post_message(client, user_id, f"メンバーリストを保存しました。")
-            return
-
-    slack_api.post_message(client, user_id, f.message.help(body["command"]))
-
-
 @g.app.event("message")
 def handle_message_events():
     pass
