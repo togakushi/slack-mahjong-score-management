@@ -13,7 +13,7 @@ keyword = g.config["search"].get("keyword", "御無礼")
 
 # イベントAPI
 @g.app.message(re.compile(rf"{keyword}"))
-def handle_goburei_check_evnts(client, body):
+def handle_score_check_evnts(client, body):
     """
     postされた素点合計が配給原点と同じかチェックする
     """
