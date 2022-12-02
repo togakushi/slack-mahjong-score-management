@@ -51,8 +51,7 @@ def slash_command(ack, body, client):
         if subcom.lower() in subcommand_list("record"):
             command_option = f.command_option_initialization("record")
             g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
-            title, msg = c.record.getdata(command_option)
-            f.slack_api.post_upload(client, user_id, title, msg)
+            c.record.slackpost(client, user_id, argument, command_option)
             return
 
         # メンバー管理系コマンド
