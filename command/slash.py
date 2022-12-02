@@ -27,7 +27,7 @@ def subcommand_list(subcommand):
 
 
 @g.app.command(commandname)
-def goburei_command(ack, body, client):
+def slash_command(ack, body, client):
     ack()
     user_id = body["user_id"]
 

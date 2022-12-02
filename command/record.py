@@ -9,7 +9,7 @@ commandword = g.config["record"].get("commandword", "御無礼記録")
 
 # イベントAPI
 @g.app.message(re.compile(rf"^{commandword}"))
-def handle_goburei_record_evnts(client, context, body):
+def handle_record_evnts(client, context, body):
     command = body["event"]["text"].split()[0]
     argument = body["event"]["text"].split()[1:]
 

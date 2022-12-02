@@ -16,7 +16,7 @@ commandword = g.config["graph"].get("commandword", "御無礼グラフ")
 
 # イベントAPI
 @g.app.message(re.compile(rf"^{commandword}"))
-def handle_goburei_graph_evnts(client, context, body):
+def handle_graph_evnts(client, context, body):
     command = body["event"]["text"].split()[0]
     argument = body["event"]["text"].split()[1:]
 
@@ -57,7 +57,7 @@ def slackpost(client, channel, argument, command_option):
             count = plot_personal(starttime, endtime, target_player, command_option)
         else: # 描写対象が複数 → 比較
             count = plot(starttime, endtime, target_player, command_option)
-        file = os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png")
+        file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
         if count <= 0:
             f.slack_api.post_message(client, channel, f.message.no_hits(starttime, endtime))
         else:
@@ -178,7 +178,7 @@ def plot(starttime, endtime, target_player, command_option):
     plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
     plt.tight_layout()
     fig.tight_layout()
-    fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png"))
+    fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "graph.png"))
 
     return(len(gdata))
 
@@ -296,6 +296,6 @@ def plot_personal(starttime, endtime, target_player, command_option):
 
     plt.setp(rank_ax.get_xticklabels(), rotation = rotation, ha = position)
     fig.tight_layout()
-    fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "goburei_graph.png"))
+    fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "graph.png"))
 
     return(len(game_time))
