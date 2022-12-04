@@ -29,7 +29,7 @@ def getdata(command_option):
     if command_option["archive"]:
         conn = sqlite3.connect(g.dbfile, detect_types=sqlite3.PARSE_DECLTYPES)
         cur = conn.cursor()
-        data = db.common.select_table(cur)
+        data = db.common.select_table(cur, command_option)
         conn.close()
     else:
         data = slack_search(command_option)
