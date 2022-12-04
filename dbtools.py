@@ -6,6 +6,7 @@ import database as db
 import function as f
 from function import global_value as g
 
+
 f.common.parameter_load()
 conn = sqlite3.connect(g.dbfile)
 cur = conn.cursor()
