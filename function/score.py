@@ -17,7 +17,7 @@ def CalculationPoint(rpoint, rank):
         素点
 
     rank : int
-        着順（1位→0、2位→1、、、）
+        着順（1位→1、2位→2、、、）
 
     Returns
     -------
