@@ -102,25 +102,25 @@ def plot(starttime, endtime, target_player, command_option):
         pdate = results[i]["日付"]
         if starttime < pdate and endtime > pdate:
             if target_player: # 指定プレーヤーのみ抽出
-                for seki in ("東家", "南家", "西家", "北家"):
-                    pname = results[i][seki]["name"]
+                for wind in ("東家", "南家", "西家", "北家"):
+                    pname = results[i][wind]["name"]
                     if pname in target_player:
                         if not pdate in gdata:
                             gdata[pdate] = []
                             game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
-                        gdata[pdate].append((pname, results[i][seki]["point"]))
+                        gdata[pdate].append((pname, results[i][wind]["point"]))
                         if not pname in player_list:
                             player_list.append(pname)
             else: # 全員分
                 gdata[pdate] = []
                 game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
-                for seki in ("東家", "南家", "西家", "北家"):
-                    pname = results[i][seki]["name"]
+                for wind in ("東家", "南家", "西家", "北家"):
+                    pname = results[i][wind]["name"]
                     if not command_option["guest_skip"] and pname == g.guest_name:
                         continue
                     if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(pname):
                         pname = pname + "(※)"
-                    gdata[pdate].append((pname, results[i][seki]["point"]))
+                    gdata[pdate].append((pname, results[i][wind]["point"]))
                     if not pname in player_list:
                         player_list.append(pname)
 
@@ -220,11 +220,11 @@ def plot_personal(starttime, endtime, target_player, command_option):
 
     for i in range(len(results)):
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-            for seki in ("東家", "南家", "西家", "北家"):
-                if results[i][seki]["name"] in target_player:
+            for wind in ("東家", "南家", "西家", "北家"):
+                if results[i][wind]["name"] in target_player:
                     game_time.append(results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
-                    game_point.append(results[i][seki]["point"])
-                    game_rank.append(results[i][seki]["rank"])
+                    game_point.append(results[i][wind]["point"])
+                    game_rank.append(results[i][wind]["rank"])
 
     if len(game_time) == 0:
         return(len(game_time))

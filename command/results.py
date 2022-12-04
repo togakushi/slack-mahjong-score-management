@@ -76,8 +76,8 @@ def summary(starttime, endtime, target_player, command_option):
             last_game = results[i]["日付"]
             game_count += 1
 
-            for seki in ("東家", "南家", "西家", "北家"): # 成績計算
-                name = results[i][seki]["name"]
+            for wind in ("東家", "南家", "西家", "北家"): # 成績計算
+                name = results[i][wind]["name"]
 
                 if not command_option["unregistered_replace"]:
                     if not c.member.ExsistPlayer(name):
@@ -89,10 +89,10 @@ def summary(starttime, endtime, target_player, command_option):
                         "rank": [0, 0, 0, 0],
                         "tobi": 0,
                     }
-                r[name]["total"] += round(results[i][seki]["point"], 2)
-                r[name]["rank"][results[i][seki]["rank"] -1] += 1
+                r[name]["total"] += round(results[i][wind]["point"], 2)
+                r[name]["rank"][results[i][wind]["rank"] -1] += 1
 
-                if eval(str(results[i][seki]["rpoint"])) < 0:
+                if eval(str(results[i][wind]["rpoint"])) < 0:
                     r[name]["tobi"] += 1
                     tobi_count += 1
 
@@ -216,17 +216,17 @@ def details(starttime, endtime, target_player, command_option):
     ### 集計 ###
     for i in range(len(results)):
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-            for seki in ("東家", "南家", "西家", "北家"):
-                if target_player[0] == results[i][seki]["name"]:
-                    count_rank[results[i][seki]["rank"] -1] += 1
-                    point += float(results[i][seki]["point"])
-                    count_tobi += 1 if eval(str(results[i][seki]["rpoint"])) < 0 else 0
-                    count_win += 1 if float(results[i][seki]["point"]) > 0 else 0
-                    count_lose += 1 if float(results[i][seki]["point"]) < 0 else 0
-                    count_draw += 1 if float(results[i][seki]["point"]) == 0 else 0
+            for wind in ("東家", "南家", "西家", "北家"):
+                if target_player[0] == results[i][wind]["name"]:
+                    count_rank[results[i][wind]["rank"] -1] += 1
+                    point += float(results[i][wind]["point"])
+                    count_tobi += 1 if eval(str(results[i][wind]["rpoint"])) < 0 else 0
+                    count_win += 1 if float(results[i][wind]["point"]) > 0 else 0
+                    count_lose += 1 if float(results[i][wind]["point"]) < 0 else 0
+                    count_draw += 1 if float(results[i][wind]["point"]) == 0 else 0
                     msg2 += "{}： {}位 {:>5}00点 ({:>+5.1f}) {}\n".format(
                         results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
-                        results[i][seki]["rank"], eval(str(results[i][seki]["rpoint"])), float(results[i][seki]["point"]),
+                        results[i][wind]["rank"], eval(str(results[i][wind]["rpoint"])), float(results[i][wind]["point"]),
                         "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count(g.guest_name) >= 2 else "",
                     ).replace("-", "▲")
 
