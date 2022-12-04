@@ -16,7 +16,7 @@ if g.args.init:
     conn.commit()
 
 if g.args.csvimport:
-    db.initialization.csvimport(cur, g.args.infile)
+    db.initialization.csv_import(cur, g.args.csvimport)
     conn.commit()
 
 if g.args.export:

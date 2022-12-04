@@ -26,7 +26,7 @@ def select_table(cur):
         if row[1] == 3:
             count += 1
 
-    for i in range(len(data)):
-        g.logging.info(f"{i}: {data[i]}")
+    #for i in range(len(data)):
+    #    g.logging.info(f"{i}: {data[i]}")
     
     return(data)

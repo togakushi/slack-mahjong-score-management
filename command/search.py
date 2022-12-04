@@ -1,7 +1,9 @@
 import re
+import sqlite3
 from datetime import datetime
 
 import command as c
+import database as db
 import function as f
 from function import global_value as g
 
@@ -20,6 +22,22 @@ def pattern(text):
 
 
 def getdata(command_option):
+    """
+    データソースの切り替え
+    """
+
+    if command_option["archive"]:
+        conn = sqlite3.connect(g.dbfile, detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = conn.cursor()
+        data = db.common.select_table(cur)
+        conn.close()
+    else:
+        data = slack_search(command_option)
+
+    return(data)
+
+
+def slack_search(command_option):
     """
     過去ログからスコアを検索して返す
 
@@ -108,7 +126,7 @@ def getdata(command_option):
                         data[count][x]["rank"] = rank.index(p) + 1
                         data[count][x]["point"] = f.score.CalculationPoint(eval(msg[y]), rank.index(p) + 1)
 
-                    g.logging.info(f"[serach] debug: {data[count]}")
+                    #g.logging.info(f"[serach] debug: {data[count]}")
                     count += 1
 
     return(data)

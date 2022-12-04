@@ -118,6 +118,8 @@ def argument_analysis(argument, command_option):
             command_option["score_comparisons"] = True
         if re.match(r"^(戦績)$", keyword):
             command_option["game_results"] = True
+        if re.match(r"^(アーカイブ|一昔|archive)$", keyword):
+            command_option["archive"] = True
 
     if command_option["recursion"] and len(target_days) == 0:
         command_option["recursion"] = False
@@ -153,6 +155,7 @@ def command_option_initialization(command):
     option["guest_skip"] = g.config[command].getboolean("guest_skip", True)
     option["guest_skip2"] = g.config[command].getboolean("guest_skip2", True)
     option["score_comparisons"] = g.config[command].getboolean("score_comparisons", False)
+    option["archive"] = g.config[command].getboolean("archive", False) 
     option["game_results"] = g.config[command].getboolean("game_results", False)
 
     return(option)
