@@ -66,12 +66,12 @@ def getdata(command_option):
     count = 0
     for i in range(len(matches)):
         if "blocks" in matches[i]:
-            dt = datetime.fromtimestamp(float(matches[i]["ts"]))
+            dt = datetime.fromtimestamp(float(matches[i]["ts"])).replace(microsecond = 0)
 
             if "elements" in matches[i]["blocks"][0]:
                 msg = ""
                 tmp = matches[i]["blocks"][0]["elements"][0]["elements"]
-                # print("[DEBUG]>", dt, tmp)
+                #g.logging.info(f"[serach] debug: {dt}, {tmp}")
 
                 for x in range(len(tmp)):
                     if tmp[x]["type"] == "text":
@@ -108,6 +108,7 @@ def getdata(command_option):
                         data[count][x]["rank"] = rank.index(p) + 1
                         data[count][x]["point"] = f.score.CalculationPoint(eval(msg[y]), rank.index(p) + 1)
 
+                    g.logging.info(f"[serach] debug: {data[count]}")
                     count += 1
 
     return(data)
