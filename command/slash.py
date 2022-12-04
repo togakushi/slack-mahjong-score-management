@@ -80,4 +80,11 @@ def slash_command(ack, body, client):
             f.slack_api.post_message(client, user_id, f"メンバーリストを保存しました。")
             return
 
+        #if subcom.lower() in subcommand_list("export"):
+        #    command_option = f.command_option_initialization("record") # 一旦recordに合わせる
+        #    g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
+        #    exportfile = f.score.csv_export(argument, command_option)
+        #    f.slack_api.post_message(client, user_id, f"{exportfile}に保存しました。")
+        #    return
+
     f.slack_api.post_message(client, user_id, f.message.help(body["command"]))

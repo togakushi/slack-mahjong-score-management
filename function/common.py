@@ -38,7 +38,7 @@ def scope_coverage(target_days):
 
     return(
         startday.replace(hour = 12, minute = 0, second = 0, microsecond = 0), # starttime
-        endday.replace(hour = 11, minute = 59, second = 59, microsecond = 999999), # endtime
+        endday.replace(hour = 11, minute = 59, second = 59, microsecond = 0), # endtime
     )
 
 

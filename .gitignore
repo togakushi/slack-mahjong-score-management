@@ -1,5 +1,9 @@
 .*/
 **/__pycache__/
-**.ini
 **.pyc
+*.ini
+*.db
+*.csv
+*.txt
+!requirements.txt
 !config.ini

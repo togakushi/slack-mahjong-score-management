@@ -33,6 +33,31 @@ def parser():
         help = "メンバー情報ファイル",
     )
 
+    p.add_argument(
+        "--database",
+        required = True,
+        metavar = "score.db",
+        help = "スコア保存用DB",
+    )
+
+    p.add_argument(
+        "--init",
+        action = "store_true",
+        help = "DB初期化",
+    )
+
+    p.add_argument(
+        "-i", "--csvimport",
+        metavar = "import.csv",
+        help = "CSVファイルから成績をDBにインポート",
+    )
+
+    p.add_argument(
+        "-e", "--export",
+        action = "store_true",
+        help = "CSVファイルに成績をエクスポート",
+    )
+
     return(p.parse_args())
 
 
