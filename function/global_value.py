@@ -28,31 +28,24 @@ def parser():
 
     p.add_argument(
         "-m", "--member",
-        required = True,
         metavar = "member.ini",
         help = "メンバー情報ファイル",
     )
 
-    p.add_argument(
-        "--database",
-        required = True,
-        metavar = "score.db",
-        help = "スコア保存用DB",
-    )
-
-    p.add_argument(
+    db = p.add_argument_group("DATABASE関連オプション")
+    db.add_argument(
         "--init",
         action = "store_true",
         help = "DB初期化",
     )
 
-    p.add_argument(
+    db.add_argument(
         "-i", "--csvimport",
         metavar = "import.csv",
         help = "CSVファイルから成績をDBにインポート",
     )
 
-    p.add_argument(
+    db.add_argument(
         "-e", "--export",
         action = "store_true",
         help = "CSVファイルに成績をエクスポート",
@@ -74,13 +67,6 @@ try:
     config = configparser.ConfigParser()
     config.read(args.config, encoding="utf-8")
     logging.info(f"configload: {args.config} -> {config.sections()}")
-except:
-    sys.exit()
-
-try:
-    player_list = configparser.ConfigParser()
-    player_list.read(args.member, encoding="utf-8")
-    logging.info(f"configload: {args.member} -> {player_list.sections()}")
 except:
     sys.exit()
 

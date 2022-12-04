@@ -71,12 +71,12 @@ def slash_command(ack, body, client):
             return
 
         if subcom.lower() in subcommand_list("load"):
-            g.player_list = f.options.configload(g.args.member)
+            g.player_list = f.common.configload(g.memberfile)
             f.slack_api.post_message(client, user_id, f"メンバーリストを再読み込みしました。")
             return
 
         if subcom.lower() in subcommand_list("save"):
-            f.options.configsave(g.player_list, g.args.member)
+            f.common.configsave(g.player_list, g.memberfile)
             f.slack_api.post_message(client, user_id, f"メンバーリストを保存しました。")
             return
 

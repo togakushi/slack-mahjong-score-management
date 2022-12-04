@@ -1,5 +1,6 @@
 import configparser
 import re
+import sys
 import unicodedata
 from datetime import datetime
 
@@ -158,4 +159,18 @@ def command_option_initialization(command):
 
 
 def parameter_load():
+    # メンバー登録ファイル
+    if g.args.member:
+        g.memberfile = g.args.member
+    else:
+        g.memberfile = g.config["member"].get("filename", "member.ini")
+
+    try:
+        g.player_list = configparser.ConfigParser()
+        g.player_list.read(g.memberfile, encoding="utf-8")
+        g.logging.info(f"configload: {g.memberfile} -> {g.player_list.sections()}")
+    except:
+        sys.exit(f"{g.memberfile}: file not found")
+
     g.guest_name = g.config["member"].get("guest_name", "ゲスト")
+    g.dbfile = g.config["database"].get("filename", "score.db")
