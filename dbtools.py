@@ -2,10 +2,9 @@
 import argparse
 import sqlite3
 
-import function as f
 import database as db
+import function as f
 from function import global_value as g
-
 
 f.common.parameter_load()
 conn = sqlite3.connect(g.dbfile)
