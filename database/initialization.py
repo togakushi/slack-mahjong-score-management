@@ -2,9 +2,9 @@ import csv
 import sqlite3
 
 
-def create_tb(cur):
+def create_table(cur):
     cur.execute(\
-        "CREATE TABLE 'gameresults' (\
+        "CREATE TABLE IF NOT EXISTS 'gameresults' (\
             'id'            INTEGER NOT NULL UNIQUE,\
             'game_day'      TIMESTAMP,\
             'game_count'    INTEGER,\
