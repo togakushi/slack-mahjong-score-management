@@ -118,7 +118,7 @@ def argument_analysis(argument, command_option):
             command_option["score_comparisons"] = True
         if re.match(r"^(戦績)$", keyword):
             command_option["game_results"] = True
-        if re.match(r"^(アーカイブ|一昔|archive)$", keyword):
+        if re.match(r"^(アーカイブ|一昔|過去|archive)$", keyword):
             command_option["archive"] = True
 
     if command_option["recursion"] and len(target_days) == 0:

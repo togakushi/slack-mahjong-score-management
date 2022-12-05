@@ -25,7 +25,7 @@ def check_namepattern(name):
         return(False)
     if re.match(r"^(修正|変換)(なし|ナシ|無し|あり)$", name): # NGワード（サブコマンド引数）
         return(False)
-    if re.match(r"^(アーカイブ|一昔|archive)$", name): # NGワード（サブコマンド引数）
+    if re.match(r"^(アーカイブ|一昔|過去|archive)$", name): # NGワード（サブコマンド引数）
         return(False)
     if re.search("[\\\;:<>,!@#*?/`\"']", name): # 禁則記号
         return(False)
