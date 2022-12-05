@@ -69,7 +69,7 @@ def summary(starttime, endtime, target_player, command_option):
     first_game = False
     last_game = False
 
-    for i in range(len(results)):
+    for i in results.keys():
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
             if not first_game:
                 first_game = results[i]["日付"]

@@ -23,16 +23,47 @@ def pattern(text):
 
 def getdata(command_option):
     """
-    データソースの切り替え
+    成績データ取得
+
+    Parameters
+    ----------
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    data : dict
+        変換、修正後の成績データ
     """
 
+    # データソースの切り替え
     if command_option["archive"]:
         conn = sqlite3.connect(g.dbfile, detect_types=sqlite3.PARSE_DECLTYPES)
         cur = conn.cursor()
-        data = db.common.select_table(cur, command_option)
+        tmp_data = db.common.select_table(cur, command_option)
         conn.close()
     else:
-        data = slack_search(command_option)
+        tmp_data = slack_search(command_option)
+
+    # プレイヤー名の正規化、2ゲスト戦除外
+    data = {}
+    for count in range(len(tmp_data)):
+        data[count] = {}
+        guest_count = 0
+        data[count]["日付"] = tmp_data[count]["日付"]
+        for wind in ["東家", "南家", "西家", "北家"]:
+            data[count][wind] = {}
+            data[count][wind]["name"] = c.member.NameReplace(tmp_data[count][wind]["name"], command_option)
+            data[count][wind]["rpoint"] = tmp_data[count][wind]["rpoint"]
+            data[count][wind]["rank"] = tmp_data[count][wind]["rank"]
+            data[count][wind]["point"] = tmp_data[count][wind]["point"]
+
+            if g.guest_name in data[count][wind]["name"]:
+                guest_count += 1
+
+        if command_option["guest_skip"] and guest_count >= 2:
+            pop = data.pop(count)
+            g.logging.info(f"[2ゲスト戦除外] {pop}")
 
     return(data)
 
@@ -97,18 +128,12 @@ def slack_search(command_option):
                 msg = pattern(msg)
 
                 if msg:
-                    if command_option["playername_replace"]: # 表記ブレの修正
-                        for x in (0, 2, 4, 6):
-                            msg[x] = c.member.NameReplace(msg[x], command_option)
-                    if command_option["guest_skip"] and msg.count(g.guest_name) >= 2: # 2ゲスト戦の除外
-                        continue
-
                     data[count] = {
                         "日付": dt,
-                        "東家": {"name": msg[0], "rpoint": msg[1], "rank": None, "point": 0},
-                        "南家": {"name": msg[2], "rpoint": msg[3], "rank": None, "point": 0},
-                        "西家": {"name": msg[4], "rpoint": msg[5], "rank": None, "point": 0},
-                        "北家": {"name": msg[6], "rpoint": msg[7], "rank": None, "point": 0},
+                        "東家": {"name": msg[0], "rpoint": msg[1], "rank": None, "point": None},
+                        "南家": {"name": msg[2], "rpoint": msg[3], "rank": None, "point": None},
+                        "西家": {"name": msg[4], "rpoint": msg[5], "rank": None, "point": None},
+                        "北家": {"name": msg[6], "rpoint": msg[7], "rank": None, "point": None},
                     }
 
                     ### 順位取得 ###

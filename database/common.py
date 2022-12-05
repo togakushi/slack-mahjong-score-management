@@ -1,5 +1,4 @@
 import function as f
-import command as c
 from function import global_value as g
 
 
@@ -18,7 +17,7 @@ def select_table(cur, command_option):
 
         data[count]["日付"] = row[0]
         data[count][wind[row[1]]] = {
-            "name": c.member.NameReplace(row[2], command_option),
+            "name": row[2],
             "rpoint": row[3],
             "rank": row[4],
             "point": f.score.CalculationPoint(row[3], row[4]),
@@ -26,12 +25,5 @@ def select_table(cur, command_option):
 
         if row[1] == 3:
             count += 1
-
-    for i in range(len(data)):
-        guest_count = 0
-        for x in wind:
-            if g.guest_name in data[i][x]["name"]:
-                guest_count += 1
-        g.logging.info(f"{i}: {data[i]} ({guest_count})")
     
     return(data)
