@@ -57,7 +57,7 @@ def csv_export(argument, command_option):
         writer = csv.writer(csvfile)
         game_day = ""
         game_count = 0
-        for i in range(len(results)):
+        for i in results.keys():
             if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
                 previous_game_day = (results[i]["日付"] + relativedelta(hours = -12)).strftime("%Y-%m-%d")
                 if game_day == previous_game_day:

@@ -98,7 +98,7 @@ def plot(starttime, endtime, target_player, command_option):
     game_time = []
     player_list = []
 
-    for i in range(len(results)):
+    for i in results.keys():
         pdate = results[i]["日付"]
         if starttime < pdate and endtime > pdate:
             if target_player: # 指定プレーヤーのみ抽出
@@ -218,7 +218,7 @@ def plot_personal(starttime, endtime, target_player, command_option):
     game_rank = []
     game_time = []
 
-    for i in range(len(results)):
+    for i in results.keys():
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
             for wind in ("東家", "南家", "西家", "北家"):
                 if results[i][wind]["name"] in target_player:

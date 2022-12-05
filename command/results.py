@@ -214,7 +214,7 @@ def details(starttime, endtime, target_player, command_option):
     count_draw = 0
 
     ### 集計 ###
-    for i in range(len(results)):
+    for i in results.keys():
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
             for wind in ("東家", "南家", "西家", "北家"):
                 if target_player[0] == results[i][wind]["name"]:

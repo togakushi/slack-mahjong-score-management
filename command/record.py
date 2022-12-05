@@ -62,7 +62,7 @@ def getdata(starttime, endtime, command_option):
     title = f"張り付け用集計済みデータ"
     pointsum = g.config["mahjong"].getint("point", 250) * 4
 
-    for i in range(len(results)):
+    for i in results.keys():
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
         
             deposit = pointsum - eval(results[i]["東家"]["rpoint"]) - eval(results[i]["南家"]["rpoint"]) - eval(results[i]["西家"]["rpoint"]) - eval(results[i]["北家"]["rpoint"])
