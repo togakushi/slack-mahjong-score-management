@@ -95,6 +95,12 @@ def argument_analysis(argument, command_option):
         if keyword == "先々月":
             target_days.append((currenttime + relativedelta(day = 1, months = -2)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 1, months = -1, days = -1,)).strftime("%Y%m%d"))
+        if keyword == "去年":
+            target_days.append((currenttime + relativedelta(day = 1, month = 1, years = -1)).strftime("%Y%m%d"))
+            target_days.append((currenttime + relativedelta(day = 31, month = 12, years = -1)).strftime("%Y%m%d"))
+        if keyword == "今年":
+            target_days.append((currenttime + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
+            target_days.append((currenttime + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
         if keyword == "全部":
             target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
