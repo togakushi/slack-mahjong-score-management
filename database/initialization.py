@@ -39,35 +39,44 @@ def csv_import(cur, csvfile):
     ]
 
     with open(csvfile) as f:
+        count = 0 # インポートしたレコード数
         for row in csv.DictReader(f, csv_header):
-            print(row)
-            cur.execute(\
-                "INSERT INTO 'gameresults' (\
-                    'serial',\
-                    'game_day',\
-                    'game_count',\
-                    'playtime',\
-                    'seat',\
-                    'player',\
-                    'rpoint',\
-                    'rank',\
-                    'gestflg',\
-                    'rule_version',\
-                    'raw_name',\
-                    'comment'\
-                ) VALUES (\
-                    :serial,\
-                    :game_day,\
-                    :game_count,\
-                    :playtime,\
-                    :seat,\
-                    :player,\
-                    :rpoint,\
-                    :rank,\
-                    :gestflg,\
-                    :rule_version,\
-                    :raw_name,\
-                    :comment\
-                );",
-                row
-            )
+            try:
+                cur.execute(\
+                    "INSERT INTO 'gameresults' (\
+                        'serial',\
+                        'game_day',\
+                        'game_count',\
+                        'playtime',\
+                        'seat',\
+                        'player',\
+                        'rpoint',\
+                        'rank',\
+                        'gestflg',\
+                        'rule_version',\
+                        'raw_name',\
+                        'comment'\
+                    ) VALUES (\
+                        :serial,\
+                        :game_day,\
+                        :game_count,\
+                        :playtime,\
+                        :seat,\
+                        :player,\
+                        :rpoint,\
+                        :rank,\
+                        :gestflg,\
+                        :rule_version,\
+                        :raw_name,\
+                        :comment\
+                    );",
+                    row
+                )
+
+                count += 1
+                if g.args.std:
+                    print("import ->", row)
+            except:
+                pass
+                
+    return(count)

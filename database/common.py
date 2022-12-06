@@ -18,15 +18,18 @@ def select_table(cur, command_option):
         if not count in data:
             data[count] = {}
 
-        data[count]["日付"] = row[0]
-        data[count][wind[row[1]]] = {
-            "name": row[2],
-            "rpoint": row[3],
-            "rank": row[4],
-            "point": f.score.CalculationPoint(row[3], row[4]),
+        data[count]["日付"] = row["playtime"]
+        data[count][wind[row["seat"]]] = {
+            "name": row["player"],
+            "rpoint": row["rpoint"],
+            "rank": row["rank"],
+            "point": f.score.CalculationPoint(row["rpoint"], row["rank"]),
         }
 
-        if row[1] == 3:
+        if row["seat"] == 3:
             count += 1
     
+    if g.args.debug:
+        print(data)
+
     return(data)

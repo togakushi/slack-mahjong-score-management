@@ -9,7 +9,10 @@ from function import global_value as g
 f.common.parameter_load()
 command_option = f.command_option_initialization("record") # 一旦recordに合わせる
 
-conn = sqlite3.connect(g.dbfile, detect_types=sqlite3.PARSE_DECLTYPES)
+channel = g.config["database"].get("notification", None)
+
+conn = sqlite3.connect(g.dbfile, detect_types = sqlite3.PARSE_DECLTYPES)
+conn.row_factory = sqlite3.Row
 cur = conn.cursor()
 
 if g.args.init:
@@ -17,8 +20,9 @@ if g.args.init:
     conn.commit()
 
 if g.args.csvimport:
-    db.initialization.csv_import(cur, g.args.csvimport)
+    count = db.initialization.csv_import(cur, g.args.csvimport)
     conn.commit()
+    print(f"import : {count}")
 
 if g.args.export:
     g.logging.info(f"[dbtools] {command_option}")
