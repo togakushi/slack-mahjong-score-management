@@ -6,7 +6,6 @@ import database as db
 import function as f
 from function import global_value as g
 
-
 f.common.parameter_load()
 command_option = f.command_option_initialization("record") # 一旦recordに合わせる
 
