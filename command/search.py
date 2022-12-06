@@ -51,7 +51,7 @@ def getdata(command_option):
         data[count] = {}
         guest_count = 0
         data[count]["日付"] = tmp_data[count]["日付"]
-        for wind in ["東家", "南家", "西家", "北家"]:
+        for wind in ("東家", "南家", "西家", "北家"):
             data[count][wind] = {}
             data[count][wind]["name"] = c.member.NameReplace(tmp_data[count][wind]["name"], command_option)
             data[count][wind]["rpoint"] = tmp_data[count][wind]["rpoint"]

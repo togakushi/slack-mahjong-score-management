@@ -148,7 +148,7 @@ def summary(starttime, endtime, target_player, command_option):
             )
 
     footer = "-" * 5 + "\n"
-    footer += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
     footer += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
     footer += f"総ゲーム回数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
@@ -258,7 +258,7 @@ def details(starttime, endtime, target_player, command_option):
 
     ### 表示内容 ###
     msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
-    msg1 += f"集計期間：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    msg1 += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
 
     if sum(count_rank) > 0:

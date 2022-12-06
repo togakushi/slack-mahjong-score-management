@@ -41,7 +41,7 @@ def slackpost(client, channel, argument, command_option):
 
     argument : list
         slackから受け取った引数
-        解析対象のプレイヤー、集計期間などが指定される
+        解析対象のプレイヤー、検索範囲などが指定される
 
     command_option : dict
         コマンドオプション
