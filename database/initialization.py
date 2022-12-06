@@ -5,25 +5,26 @@ import sqlite3
 def create_table(cur):
     cur.execute(\
         "CREATE TABLE IF NOT EXISTS 'gameresults' (\
-            'id'            INTEGER NOT NULL UNIQUE,\
+            'serial'        INTEGER NOT NULL UNIQUE,\
             'game_day'      TIMESTAMP,\
             'game_count'    INTEGER,\
             'playtime'      TIMESTAMP,\
             'seat'          INTEGER,\
-            'player'          TEXT,\
+            'player'        TEXT,\
             'rpoint'        INTEGER,\
             'rank'          INTEGER,\
             'gestflg'       INTEGER,\
             'rule_version'  TEXT,\
-            'raw_name'       TEXT,\
+            'raw_name'      TEXT,\
             'comment'       TEXT,\
-            PRIMARY KEY('id' AUTOINCREMENT)\
+            PRIMARY KEY('serial')\
         );"
     )
 
 
 def csv_import(cur, csvfile):
     csv_header = [
+        "serial",
         "game_day",
         "game_count",
         "playtime",
@@ -42,6 +43,7 @@ def csv_import(cur, csvfile):
             print(row)
             cur.execute(\
                 "INSERT INTO 'gameresults' (\
+                    'serial',\
                     'game_day',\
                     'game_count',\
                     'playtime',\
@@ -54,6 +56,7 @@ def csv_import(cur, csvfile):
                     'raw_name',\
                     'comment'\
                 ) VALUES (\
+                    :serial,\
                     :game_day,\
                     :game_count,\
                     :playtime,\

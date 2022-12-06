@@ -72,6 +72,7 @@ def csv_export(argument, command_option):
                     gestflg = 0 if c.member.ExsistPlayer(player) else 1
 
                     writer.writerow([
+                        f"{game_day}{game_count:02}{wind_no}".replace("-", ""),
                         game_day,
                         game_count,
                         results[i]["日付"].strftime("%Y-%m-%d %H:%M:%S"),
