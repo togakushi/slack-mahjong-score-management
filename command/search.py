@@ -120,7 +120,9 @@ def slack_search(command_option):
             if "elements" in matches[i]["blocks"][0]:
                 msg = ""
                 tmp = matches[i]["blocks"][0]["elements"][0]["elements"]
-                #g.logging.info(f"[serach] debug: {dt}, {tmp}")
+
+                if g.args.verbose:
+                    g.logging.info(f"[serach] debug: {dt}, {tmp}")
 
                 for x in range(len(tmp)):
                     if tmp[x]["type"] == "text":
@@ -151,7 +153,9 @@ def slack_search(command_option):
                         data[count][x]["rank"] = rank.index(p) + 1
                         data[count][x]["point"] = f.score.CalculationPoint(eval(msg[y]), rank.index(p) + 1)
 
-                    #g.logging.info(f"[serach] debug: {data[count]}")
+                    if g.args.verbose:
+                        g.logging.info(f"[serach] debug: {data[count]}")
+
                     count += 1
 
     return(data)

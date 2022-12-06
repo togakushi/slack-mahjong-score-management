@@ -20,6 +20,12 @@ def parser():
     )
 
     p.add_argument(
+        "--verbose",
+        action = "store_true",
+        help = "詳細デバッグ情報表示",
+    )
+
+    p.add_argument(
         "-c", "--config",
         required = True,
         metavar = "config.ini",
@@ -37,6 +43,12 @@ def parser():
         "--init",
         action = "store_true",
         help = "DB初期化",
+    )
+
+    db.add_argument(
+        "--std",
+        action = "store_true",
+        help = "結果を標準出力に出す",
     )
 
     db.add_argument(

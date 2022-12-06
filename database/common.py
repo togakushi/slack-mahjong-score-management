@@ -3,15 +3,18 @@ from function import global_value as g
 
 
 def select_table(cur, command_option):
-    ret = cur.execute(\
+    ret = cur.execute(
         "SELECT playtime, seat, player, rpoint, rank FROM 'gameresults';"
     )
 
     data = {}
     count = 0
-    wind = ["東家", "南家", "西家", "北家"]
+    wind = ("東家", "南家", "西家", "北家")
 
     for row in ret.fetchall():
+        if g.args.std:
+            print(row)
+
         if not count in data:
             data[count] = {}
 
