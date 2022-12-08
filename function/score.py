@@ -67,22 +67,16 @@ def csv_export(argument, command_option):
                     game_count = 1
 
                 for wind, wind_no in [("東家", 0), ("南家", 1), ("西家", 2), ("北家", 3)]:
-                    raw_name = results[i][wind]["name"]
-                    player = c.member.NameReplace(raw_name, command_option)
-                    gestflg = 0 if c.member.ExsistPlayer(player) else 1
-
                     writer.writerow([
                         f"{game_day}{game_count:02}{wind_no}".replace("-", ""),
                         game_day,
                         game_count,
                         results[i]["日付"].strftime("%Y-%m-%d %H:%M:%S"),
                         wind_no,
-                        player,
+                        results[i][wind]["name"],
                         eval(results[i][wind]["rpoint"]),
                         results[i][wind]["rank"],
-                        gestflg,
                         rule_version,
-                        raw_name,
                         "",
                     ])
 

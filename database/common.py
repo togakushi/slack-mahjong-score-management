@@ -12,9 +12,6 @@ def select_table(cur, command_option):
     wind = ("東家", "南家", "西家", "北家")
 
     for row in ret.fetchall():
-        if g.args.std:
-            print(row)
-
         if not count in data:
             data[count] = {}
 
@@ -29,7 +26,7 @@ def select_table(cur, command_option):
         if row["seat"] == 3:
             count += 1
     
-    if g.args.debug:
+    if g.args.std:
         print(data)
 
     return(data)

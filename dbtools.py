@@ -27,6 +27,7 @@ if g.args.csvimport:
 if g.args.export:
     g.logging.info(f"[dbtools] {command_option}")
     exportfile = f.score.csv_export(["先月"], command_option)
+    #exportfile = f.score.csv_export(["先々月"], command_option)
 
 db.common.select_table(cur, command_option)
 

@@ -39,6 +39,7 @@ def getdata(command_option):
     # データソースの切り替え
     if command_option["archive"]:
         conn = sqlite3.connect(g.dbfile, detect_types = sqlite3.PARSE_DECLTYPES)
+        conn.row_factory = sqlite3.Row
         cur = conn.cursor()
         data = db.common.select_table(cur, command_option)
         conn.close()

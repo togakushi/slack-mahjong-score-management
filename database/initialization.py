@@ -13,9 +13,7 @@ def create_table(cur):
             'player'        TEXT,\
             'rpoint'        INTEGER,\
             'rank'          INTEGER,\
-            'gestflg'       INTEGER,\
             'rule_version'  TEXT,\
-            'raw_name'      TEXT,\
             'comment'       TEXT,\
             PRIMARY KEY('serial')\
         );"
@@ -32,9 +30,7 @@ def csv_import(cur, csvfile):
         "player",
         "rpoint",
         "rank",
-        "gestflg",
         "rule_version",
-        "raw_name",
         "comment",
     ]
 
@@ -52,9 +48,7 @@ def csv_import(cur, csvfile):
                         'player',\
                         'rpoint',\
                         'rank',\
-                        'gestflg',\
                         'rule_version',\
-                        'raw_name',\
                         'comment'\
                     ) VALUES (\
                         :serial,\
@@ -65,9 +59,7 @@ def csv_import(cur, csvfile):
                         :player,\
                         :rpoint,\
                         :rank,\
-                        :gestflg,\
                         :rule_version,\
-                        :raw_name,\
                         :comment\
                     );",
                     row
