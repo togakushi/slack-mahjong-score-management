@@ -134,24 +134,35 @@ def summary(starttime, endtime, target_player, command_option):
                     r[name_list[name_list.index(name) - 1]]["total"] - r[name]["total"],
                 ).replace("-", "▲")
     else:
-        header = "## 名前 : 累積 (平均) / 順位分布 (平均) / トビ ##\n"
+        header = "## 名前 : 累積 (平均) / 順位分布 (平均)"
+        if g.config["mahjong"].getboolean("ignore_flying", False):
+            header += " ##\n"
+        else:
+            header +=" / トビ ##\n"
         for name in name_list:
             msg += "{} {}： {:>+6.1f} ({:>+5.1f})".format(
                 name, " " * (padding - f.translation.len_count(name)),
                 r[name]["total"],
                 r[name]["total"] / sum(r[name]["rank"]),
             ).replace("-", "▲")
-            msg += " / {}-{}-{}-{} ({:1.2f}) / {}\n".format(
+            msg += " / {}-{}-{}-{} ({:1.2f})".format(
                 r[name]["rank"][0], r[name]["rank"][1], r[name]["rank"][2], r[name]["rank"][3],
                 sum([r[name]["rank"][i] * (i + 1) for i in range(4)]) / sum(r[name]["rank"]),
-                r[name]["tobi"],
             )
+            if g.config["mahjong"].getboolean("ignore_flying", False):
+                msg += "\n"
+            else:
+                msg += f" / {r[name]['tobi']}\n"
 
     footer = "-" * 5 + "\n"
     footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
     footer += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
-    footer += f"総ゲーム回数： {game_count} 回 / トバされた人（延べ）： {tobi_count} 人\n"
+    footer += f"総ゲーム回数： {game_count} 回"
+    if g.config["mahjong"].getboolean("ignore_flying", False):
+        footer += "\n"
+    else:
+        footer += f" / トバされた人（延べ）： {tobi_count} 人\n"
 
     remarks = []
     if not command_option["playername_replace"]:
@@ -267,7 +278,8 @@ def details(starttime, endtime, target_player, command_option):
         ).replace("-", "▲")
         for i in range(4):
             msg1 += "{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
-        msg1 += "トビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
+        if not g.config["mahjong"].getboolean("ignore_flying", False):
+            msg1 += "トビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
         msg1 += "平均順位： {:1.2f}\n".format(
             sum([count_rank[i] * (i + 1) for i in range(4)]) / sum(count_rank),
         )
