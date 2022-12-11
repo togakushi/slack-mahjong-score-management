@@ -37,19 +37,19 @@ def slash_command(ack, body, client):
 
         # 成績管理系コマンド
         if subcom.lower() in subcommand_list("results"):
-            command_option = f.command_option_initialization("results")
+            command_option = f.configure.command_option_initialization("results")
             g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
             c.results.slackpost(client, user_id, argument, command_option)
             return
 
         if subcom.lower() in subcommand_list("graph"):
-            command_option = f.command_option_initialization("graph")
+            command_option = f.configure.command_option_initialization("graph")
             g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
             c.graph.slackpost(client, user_id, argument, command_option)
             return
 
         if subcom.lower() in subcommand_list("record"):
-            command_option = f.command_option_initialization("record")
+            command_option = f.configure.command_option_initialization("record")
             g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
             c.record.slackpost(client, user_id, argument, command_option)
             return
@@ -71,17 +71,17 @@ def slash_command(ack, body, client):
             return
 
         if subcom.lower() in subcommand_list("load"):
-            g.player_list = f.common.configload(g.memberfile)
+            g.player_list = f.configure.load(g.memberfile)
             f.slack_api.post_message(client, user_id, f"メンバーリストを再読み込みしました。")
             return
 
         if subcom.lower() in subcommand_list("save"):
-            f.common.configsave(g.player_list, g.memberfile)
+            f.configure.save(g.player_list, g.memberfile)
             f.slack_api.post_message(client, user_id, f"メンバーリストを保存しました。")
             return
 
         #if subcom.lower() in subcommand_list("export"):
-        #    command_option = f.command_option_initialization("record") # 一旦recordに合わせる
+        #    command_option = f.configure.command_option_initialization("record") # 一旦recordに合わせる
         #    g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
         #    exportfile = f.score.csv_export(argument, command_option)
         #    f.slack_api.post_message(client, user_id, f"{exportfile}に保存しました。")

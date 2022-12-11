@@ -23,7 +23,7 @@ def handle_graph_evnts(client, context, body):
     if not re.match(rf"^{commandword}$", command):
         return
 
-    command_option = f.command_option_initialization("graph")
+    command_option = f.configure.command_option_initialization("graph")
     g.logging.info(f"[{command}] {command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
