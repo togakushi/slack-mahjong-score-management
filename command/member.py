@@ -1,4 +1,3 @@
-import configparser
 import re
 
 import function as f
@@ -15,26 +14,26 @@ def check_namepattern(name):
         対象文字列（プレイヤー名）
     """
 
-    if len(name) > int(g.config.get("member", "character_limit")):
-        return(False)
+    if len(name) > g.config.getint("member", "character_limit"):
+        return(False, "登録可能文字数を超えています。")
     if re.match(r"(ゲスト|^[0-9]+$)", f.translation.ZEN2HAN(name)): # 登録NGプレイヤー名
-        return(False)
+        return(False, "使用できない名前です。")
     if re.match(r"^((当|今|昨)日|(今|先|先々)月|(今|去)年|全部|最初)$", name): # NGワード（サブコマンド引数）
-        return(False)
+        return(False, "コマンドに使用される単語では登録できません。")
     if re.match(r"^(戦績|比較|点差|差分)$", name): # NGワード（サブコマンド引数）
-        return(False)
+        return(False, "コマンドに使用される単語では登録できません。")
     if re.match(r"^(修正|変換)(なし|ナシ|無し|あり)$", name): # NGワード（サブコマンド引数）
-        return(False)
+        return(False, "コマンドに使用される単語では登録できません。")
     if re.match(r"^(アーカイブ|一昔|過去|archive)$", name): # NGワード（サブコマンド引数）
-        return(False)
+        return(False, "コマンドに使用される単語では登録できません。")
     if re.search("[\\\;:<>,!@#*?/`\"']", name): # 禁則記号
-        return(False)
+        return(False, "使用できない記号が含まれています。")
     if name == g.guest_name:
-        return(False)
+        return(False, "使用できない名前です。")
     if not name.isprintable():
-        return(False)
+        return(False, "使用できない記号が含まれています。")
 
-    return(True)
+    return(True, "OK")
 
 
 def NameReplace(pname, command_option):
@@ -117,19 +116,29 @@ def Append(argument):
     Parameters
     ----------
     argument : list
-        登録プレイヤー名
+        argument[0] = 登録するプレイヤー名
+        argument[1] = 登録する別名
+    
+    Returns
+    -------
+    msg : text
+        slackにpostする内容
     """
+
+    ret = False
+    msg = "使い方が間違っています。"
 
     if len(argument) == 1: # 新規追加
         new_name = f.translation.HAN2ZEN(argument[0])
+
         if g.player_list.has_section(new_name):
             msg = f"「{new_name}」はすでに登録されています。"
         else:
-            if len(g.player_list.keys()) > int(g.config.get("member", "registration_limit")):
+            if len(g.player_list.keys()) > g.config.getint("member", "registration_limit"):
                 msg = f"登録上限を超えています。"
-            elif not check_namepattern(new_name):
-                msg = f"命名規則に違反しているので登録できません。"
-            else:
+
+            ret, msg = check_namepattern(new_name)
+            if ret:
                 g.player_list.add_section(new_name)
                 g.player_list.set(new_name, "alias", new_name)
                 msg = f"「{new_name}」を登録しました。"
@@ -137,16 +146,18 @@ def Append(argument):
     if len(argument) == 2: # 別名登録
         new_name = f.translation.HAN2ZEN(argument[0])
         nic_name = f.translation.HAN2ZEN(argument[1])
+
         # ダブりチェック
         checklist = []
         for player in g.player_list.sections():
             checklist.append(player)
             checklist += g.player_list.get(player, "alias").split(",")
+
         if nic_name in checklist:
             msg = f"「{nic_name}」はすでに登録されています。"
-        elif not check_namepattern(nic_name):
-            msg = f"命名規則に違反しているので登録できません。"
-        else:
+
+        ret, msg = check_namepattern(nic_name)
+        if ret:
             if g.player_list.has_section(new_name):
                 alias = g.player_list.get(new_name, "alias")
                 if len(alias.split(",")) > int(g.config.get("member", "alias_limit")):
@@ -155,9 +166,9 @@ def Append(argument):
                     g.player_list.set(new_name, "alias", ",".join([alias, nic_name]))
                     msg = f"「{new_name}」に「{nic_name}」を追加しました。"
             else:
-                msg = f"「{new_name}」は登録されていません。"
+                msg = f"「{new_name}」はまだ登録されていません。"
 
-    return(msg if "msg" in locals() else "使い方が間違っています。")
+    return(msg)
 
 
 def Remove(argument):
@@ -167,29 +178,44 @@ def Remove(argument):
     Parameters
     ----------
     argument : list
-        削除プレイヤー名
+        argument[0] = 削除するプレイヤー名
+        argument[1] = 削除する別名
+
+    Returns
+    -------
+    msg : text
+        slackにpostする内容
     """
 
+    msg = "使い方が間違っています。"
+
     if len(argument) == 1: # メンバー削除
-        if g.player_list.has_section(argument[0]):
-            g.player_list.remove_section(argument[0])
-            msg = f"「{argument[0]}」を削除しました。"
+        new_name = f.translation.HAN2ZEN(argument[0])
+
+        if g.player_list.has_section(new_name):
+            g.player_list.remove_section(new_name)
+            msg = f"「{new_name}」を削除しました。"
 
     if len(argument) == 2: # 別名削除
-        if g.player_list.has_section(argument[0]):
-            alias = g.player_list.get(argument[0], "alias").split(",")
-            if argument[0] == argument[1]:
-                g.player_list.remove_section(argument[0])
-                msg = f"「{argument[0]}」を削除しました。"
-            if argument[1] in alias:
-                alias.remove(argument[1])
-                if len(alias) == 0:
-                    g.player_list.remove_section(argument[0])
-                    msg = f"「{argument[0]}」を削除しました。"
-                else:
-                    g.player_list.set(argument[0], "alias", ",".join(alias))
-                    msg = f"「{argument[0]}」から「{argument[1]}」を削除しました。"
-            else:
-                msg = f"「{argument[0]}」に「{argument[1]}」は登録されていません。"
+        new_name = f.translation.HAN2ZEN(argument[0])
+        new_name = f.translation.HAN2ZEN(argument[1])
 
-    return(msg if "msg" in locals() else "使い方が間違っています。")
+        if g.player_list.has_section(new_name):
+            alias = g.player_list.get(new_name, "alias").split(",")
+
+            if new_name == new_name:
+                g.player_list.remove_section(new_name)
+                msg = f"「{new_name}」を削除しました。"
+
+            if new_name in alias:
+                alias.remove(new_name)
+                if len(alias) == 0:
+                    g.player_list.remove_section(new_name)
+                    msg = f"「{new_name}」を削除しました。"
+                else:
+                    g.player_list.set(new_name, "alias", ",".join(alias))
+                    msg = f"「{new_name}」から「{new_name}」を削除しました。"
+            else:
+                msg = f"「{new_name}」に「{new_name}」は登録されていません。"
+
+    return(msg)
