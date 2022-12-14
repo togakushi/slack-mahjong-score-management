@@ -73,7 +73,7 @@ def getdata(starttime, endtime, command_option):
                 results[i]["南家"]["name"], eval(results[i]["南家"]["rpoint"]), results[i]["南家"]["rank"], results[i]["南家"]["point"],
                 results[i]["西家"]["name"], eval(results[i]["西家"]["rpoint"]), results[i]["西家"]["rank"], results[i]["西家"]["point"],
                 results[i]["北家"]["name"], eval(results[i]["北家"]["rpoint"]), results[i]["北家"]["rank"], results[i]["北家"]["point"],
-                (datetime.now() + relativedelta(hours = -12)).strftime("%Y/%m/%d"),
+                (results[i]["日付"] + relativedelta(hours = -12)).strftime("%Y/%m/%d"),
             )
 
     return(title, msg)
