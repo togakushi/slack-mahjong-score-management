@@ -53,7 +53,7 @@ def argument_analysis(argument, command_option):
     target_days = []
     target_player = []
 
-    currenttime = datetime.now() + relativedelta(hours = -12)
+    currenttime = datetime.now()
     for keyword in argument:
         # 日付取得
         if re.match(r"^[0-9]{8}$", keyword):
@@ -63,11 +63,11 @@ def argument_analysis(argument, command_option):
             except:
                 pass
         if keyword == "当日":
-            target_days.append(currenttime.strftime("%Y%m%d"))
+            target_days.append((currenttime + relativedelta(hours = -12)).strftime("%Y%m%d"))
         if keyword == "今日":
-            target_days.append(datetime.now().strftime("%Y%m%d"))
+            target_days.append(currenttime.strftime("%Y%m%d"))
         if keyword == "昨日":
-            target_days.append((datetime.now() + relativedelta(days = -1)).strftime("%Y%m%d"))
+            target_days.append((currenttime + relativedelta(days = -1)).strftime("%Y%m%d"))
         if keyword == "今月":
             target_days.append((currenttime + relativedelta(day = 1, months = 0)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 1, months = 1, days = -1,)).strftime("%Y%m%d"))
@@ -83,11 +83,10 @@ def argument_analysis(argument, command_option):
         if keyword == "今年":
             target_days.append((currenttime + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
-        if keyword == "全部":
-            target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
-            target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
         if keyword == "最初":
             target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
+        if keyword == "最後":
+            target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
         if c.member.ExsistPlayer(keyword):
             target_player.append(c.member.ExsistPlayer(keyword))
 
