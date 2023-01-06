@@ -87,6 +87,9 @@ def argument_analysis(argument, command_option):
             target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
         if keyword == "最後":
             target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
+        if keyword == "全部":
+            target_days.append("20200101")
+            target_days.append("20301231")
         if c.member.ExsistPlayer(keyword):
             target_player.append(c.member.ExsistPlayer(keyword))
 
