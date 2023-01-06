@@ -94,7 +94,6 @@ def summary(starttime, endtime, target_player, command_option):
 
                 if eval(str(results[i][wind]["rpoint"])) < 0:
                     r[name]["tobi"] += 1
-                    tobi_count += 1
 
     if not (first_game or last_game):
         return(f.message.no_hits(starttime, endtime))
@@ -153,6 +152,7 @@ def summary(starttime, endtime, target_player, command_option):
                 msg += "\n"
             else:
                 msg += f" / {r[name]['tobi']}\n"
+                tobi_count += r[name]["tobi"]
 
     footer = "-" * 5 + "\n"
     footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
