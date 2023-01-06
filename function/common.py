@@ -91,7 +91,7 @@ def argument_analysis(argument, command_option):
             target_player.append(c.member.ExsistPlayer(keyword))
 
         # コマンドオプションフラグ変更
-        if re.match(r"^ゲスト(なし|ナシ)$", keyword):
+        if re.match(r"^ゲスト(なし|ナシ|無し)$", keyword):
             command_option["guest_skip"] = False
             command_option["guest_skip2"] = False
         if re.match(r"^ゲスト(あり|アリ)$", keyword):
@@ -99,7 +99,7 @@ def argument_analysis(argument, command_option):
             command_option["guest_skip2"] = True
         if re.match(r"^ゲスト無効$", keyword):
             command_option["unregistered_replace"] = False
-        if re.match(r"^(修正|変換)(なし|ナシ)$", keyword):
+        if re.match(r"^(修正|変換)(なし|ナシ|無し)$", keyword):
             command_option["playername_replace"] = False
         if re.match(r"^(比較|点差|差分)$", keyword):
             command_option["score_comparisons"] = True
@@ -114,5 +114,3 @@ def argument_analysis(argument, command_option):
 
     g.logging.info(f"[argument_analysis]return: {target_days} {target_player} {command_option}")
     return(target_days, target_player, command_option)
-
-
