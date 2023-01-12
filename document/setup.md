@@ -49,7 +49,7 @@ Features -> OAuth & Permissions
 - User Token Scopes
   - channels:history
 
-追加する。トークン発効後は不要なので削除可。
+追加する。トークン発行後は不要なので削除可。
 
 
 ### アプリ設定
