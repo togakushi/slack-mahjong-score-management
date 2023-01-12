@@ -93,7 +93,7 @@ $ source ./venv-mahjong-score-management/bin/activate
 (venv-mahjong-score-management) $ export SLACK_WEB_TOKEN=xoxp-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 (venv-mahjong-score-management) $ export SLACK_APP_TOKEN=xapp-x-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 (venv-mahjong-score-management) $ export SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
-(venv-mahjong-score-management) $ nohup python3 slack-app.py -c config.ini -m member.ini & > /dev/null
+(venv-mahjong-score-management) $ nohup python3 slack-app.py -c config.ini & > /dev/null
 ```
 
 ### 停止
