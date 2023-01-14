@@ -50,6 +50,7 @@ Features -> OAuth & Permissions
 
 - Bot Token Scopes
   - commands
+  - channels:history
   - chat:write
   - files:write
 
