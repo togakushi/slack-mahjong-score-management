@@ -15,7 +15,7 @@ https://api.slack.com/
 
 Settings -> Socket Mode
 
-- Enable Socket Mode (有効化)
+- Enable Socket Mode (有効)
 - Token Name (任意)
 - [Generate]
 
@@ -67,9 +67,10 @@ Features -> App Home
   - Display Name (Bot Name)
   - Default username (任意)
   - [add]
-- Show Tabs (無効)
-- Messages Tab (有効)
-- Allow users to send Slash commands and messages from the messages tab (チェック)
+- Show Tabs
+  - Home Tab (無効)
+  - Messages Tab (有効)
+    - Allow users to send Slash commands and messages from the messages tab (チェック)
 
 ### インストール
 
