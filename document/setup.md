@@ -56,9 +56,9 @@ Features -> OAuth & Permissions
 追加する。
 
 - User Token Scopes
-  - channels:history
+  - search:read
 
-追加する。トークン発行後は不要なので削除可。
+追加する。
 
 ### アプリ設定
 
