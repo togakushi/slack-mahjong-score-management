@@ -40,7 +40,7 @@ Features -> Event Subscriptions
     - message.channels
     - [Save Changes]
 
-追加する。
+`message.channels` を追加する。
 
 ### 権限設定
 
@@ -50,10 +50,9 @@ Features -> OAuth & Permissions
   - commands
   - channels:history
   - chat:write
-  - chat:write.customize
   - files:write
 
-追加する。
+足りないものは追加する。
 
 - User Token Scopes
   - search:read
@@ -71,6 +70,7 @@ Features -> App Home
 - Show Tabs (無効)
 - Messages Tab (有効)
 - Allow users to send Slash commands and messages from the messages tab (チェック)
+
 ### インストール
 
 Settings -> Install App
