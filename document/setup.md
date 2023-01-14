@@ -68,7 +68,9 @@ Features -> App Home
   - Display Name (Bot Name)
   - Default username (任意)
   - [add]
-
+- Show Tabs (無効)
+- Messages Tab (有効)
+- Allow users to send Slash commands and messages from the messages tab (チェック)
 ### インストール
 
 Settings -> Install App
