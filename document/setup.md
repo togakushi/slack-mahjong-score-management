@@ -26,7 +26,9 @@ Settings -> Socket Mode
 Features -> Slash Commands
 
 - [Create New Command]
-  - Command (config.iniと合わせる)
+  - Command (任意)
+    - config.iniと合わせる
+    - 既存のコマンドと被らないように
   - Short Description  (任意)
   - [Save]
 
@@ -129,11 +131,11 @@ PIDを調べてプロセスをkill。
 ## 初期設定
 
 ### チャンネルにアプリを登録
-Integrations -> Add apps
+Integrations -> Add apps  
 忘れがち。
 
 ### メンバーの登録
-スラッシュコマンドで追加。
+スラッシュコマンドで追加。  
 saveを忘れずに。
 
 ### アーカイブ機能を使う場合はDBの初期化
