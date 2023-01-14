@@ -48,7 +48,6 @@ Features -> OAuth & Permissions
 
 - Bot Token Scopes
   - commands
-  - channels:history
   - chat:write
   - files:write
 
@@ -107,7 +106,7 @@ $ source ./venv-mahjong-score-management/bin/activate
 ```
 
 ### グラフ描写用の日本語フォント
-IPAexフォント（ipaexg.tt）を `slack-app.py` と同じディレクトリに配置
+IPAexフォント（ipaexg.ttf）を `slack-app.py` と同じディレクトリに配置
 
 https://moji.or.jp/ipafont/ipafontdownload/
 
@@ -131,6 +130,7 @@ PIDを調べてプロセスをkill。
 
 ### チャンネルにアプリを登録
 Integrations -> Add apps
+忘れがち。
 
 ### メンバーの登録
 スラッシュコマンドで追加。
