@@ -54,6 +54,12 @@ def slash_command(ack, body, client):
             c.record.slackpost(client, user_id, argument, command_option)
             return
 
+        if subcom.lower() in subcommand_list("versus"):
+            command_option = f.configure.command_option_initialization("versus")
+            g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
+            c.versus.slackpost(client, user_id, argument, command_option)
+            return
+
         # メンバー管理系コマンド
         if subcom.lower() in subcommand_list("member"):
             title, msg = c.member.list()
