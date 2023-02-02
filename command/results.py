@@ -26,11 +26,8 @@ def slackpost(client, channel, argument, command_option):
 
     if starttime and endtime:
         if len(target_player) == 1: # 個人成績
-            msg, score = details(starttime, endtime, target_player, command_option)
-            if command_option["game_results"]:
-                f.slack_api.post_message(client, channel, msg + score)
-            else: # 戦績は出さない
-                    f.slack_api.post_message(client, channel, msg)
+            msg = details(starttime, endtime, target_player, command_option)
+            f.slack_api.post_message(client, channel, msg)
         else: # 成績サマリ
             msg = summary(starttime, endtime, target_player, command_option)
             f.slack_api.post_text(client, channel, "", msg)
@@ -197,11 +194,8 @@ def details(starttime, endtime, target_player, command_option):
 
     Returns
     -------
-    msg1 : text
-        slackにpostする内容(成績データ)
-
-    msg2 : text
-        slackにpostする内容(戦績データ)
+    msg : text
+        slackにpostする内容戦績データ)
     """
 
     # 検索動作を合わせる
@@ -210,12 +204,9 @@ def details(starttime, endtime, target_player, command_option):
     g.logging.info(f"[results.details] {starttime} {endtime} {target_player} {command_option}")
     results = c.search.getdata(command_option)
 
-    if command_option["guest_skip"]:
-        msg1 = f"*【個人成績】*\n"
-    else:
-        msg1 = f"*【個人成績】* (※2ゲスト戦含む)\n"
-
+    msg1 = f"*【個人成績】*\n"
     msg2 = f"\n*【戦績】*\n"
+    msg3 = f"\n*【対戦結果】*\n"
 
     point = 0
     count_rank = [0, 0, 0, 0]
@@ -223,12 +214,16 @@ def details(starttime, endtime, target_player, command_option):
     count_win = 0
     count_lose = 0
     count_draw = 0
+    versus_matrix = {}
 
     ### 集計 ###
     for i in results.keys():
         if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
+            myrank = None
+
             for wind in ("東家", "南家", "西家", "北家"):
                 if target_player[0] == results[i][wind]["name"]:
+                    myrank = results[i][wind]["rank"]
                     count_rank[results[i][wind]["rank"] -1] += 1
                     point += float(results[i][wind]["point"])
                     count_tobi += 1 if eval(str(results[i][wind]["rpoint"])) < 0 else 0
@@ -240,6 +235,27 @@ def details(starttime, endtime, target_player, command_option):
                         results[i][wind]["rank"], eval(str(results[i][wind]["rpoint"])), float(results[i][wind]["point"]),
                         "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count(g.guest_name) >= 2 else "",
                     ).replace("-", "▲")
+
+            if myrank: # 対戦結果保存
+                for wind in ("東家", "南家", "西家", "北家"):
+                    vs_player = results[i][wind]["name"]
+                    vs_rank = results[i][wind]["rank"]
+                    if vs_player == target_player[0]: # 自分の成績はスキップ
+                        continue
+
+                    if not command_option["unregistered_replace"]:
+                        if not c.member.ExsistPlayer(vs_player):
+                            vs_player = vs_player + "(※)"
+
+                    if not vs_player in versus_matrix.keys():
+                        versus_matrix[vs_player] = {"total":0, "win":0, "lose":0}
+
+                    versus_matrix[vs_player]["total"] += 1
+                    if myrank < vs_rank:
+                        versus_matrix[vs_player]["win"] += 1
+                    else:
+                        versus_matrix[vs_player]["lose"] += 1
+
 
     ### 表示オプション ###
     badge_degree = ""
@@ -286,4 +302,46 @@ def details(starttime, endtime, target_player, command_option):
     else:
         msg2 += f"記録なし\n"
 
-    return(msg1, msg2)
+    msg = msg1
+    if command_option["game_results"]:
+        if not command_option["guest_skip"]:
+            msg2 += "※：2ゲスト戦\n"
+        msg += msg2
+    if command_option["versus_matrix"]:
+        if len(versus_matrix) == 0:
+            msg3 += f"記録なし\n"
+        else:
+            # 対戦数順にソート
+            tmp_v = {}
+            name_list = []
+
+            for i in versus_matrix.keys():
+                tmp_v[i] = versus_matrix[i]["total"]
+            for name, total_count in sorted(tmp_v.items(), key=lambda x:x[1], reverse=True):
+                name_list.append(name)
+
+            padding = max([f.translation.len_count(x) for x in versus_matrix.keys()])
+            msg3 += "\n```\n"
+            for i in name_list:
+                msg3 += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>7.2%})\n".format(
+                i, " " * (padding - f.translation.len_count(i)),
+                versus_matrix[i]["total"],
+                versus_matrix[i]["win"],
+                versus_matrix[i]["lose"],
+                versus_matrix[i]["win"] / (versus_matrix[i]["total"]),
+            )
+            msg3 += "```\n"
+        msg += msg3
+
+    remarks = []
+    footer = ""
+    if not command_option["playername_replace"]:
+        remarks.append("名前ブレ修正なし")
+    if not command_option["guest_skip"]:
+        remarks.append("2ゲスト戦を含む")
+    if not command_option["unregistered_replace"]:
+        remarks.append("ゲスト置換なし(※：未登録プレイヤー)")
+    if remarks:
+        footer += "特記事項：" + "、".join(remarks)
+
+    return(msg + footer)

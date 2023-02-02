@@ -66,5 +66,6 @@ def command_option_initialization(command):
     option["score_comparisons"] = g.config[command].getboolean("score_comparisons", False)
     option["archive"] = g.config[command].getboolean("archive", False) 
     option["game_results"] = g.config[command].getboolean("game_results", False)
+    option["versus_matrix"] = g.config[command].getboolean("versus_matrix", False)
 
     return(option)

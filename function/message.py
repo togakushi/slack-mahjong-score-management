@@ -9,7 +9,6 @@ def help(command):
     msg += f"\n\t{command} results       成績出力"
     msg += f"\n\t{command} record        張り付け用集計済みデータ出力"
     msg += f"\n\t{command} graph         ポイント推移グラフを表示"
-    msg += f"\n\t{command} versus        対個人の対戦結果を表示"
     msg += f"\n\t{command} member        登録されているメンバー"
     msg += f"\n\t{command} add | del     メンバーの追加/削除"
     msg += f"\n\t{command} load | save   メンバーリストの再読み込み/保存"
