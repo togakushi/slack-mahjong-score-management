@@ -6,4 +6,3 @@
 *.csv
 *.txt
 !requirements.txt
-!config.ini
