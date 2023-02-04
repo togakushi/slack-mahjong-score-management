@@ -14,23 +14,22 @@ ignore_flying = False
 
 ### 検索オプション ###
 [search]
-keyword = 御無礼
-channel = #麻雀やろうぜ
+keyword = 終局
+channel = #麻雀部
 
 
 ### スラッシュコマンドオプション ###
 [slash] # コマンド名
-commandname = /goburei
+commandname = /mahjong 
 
 [alias] # サブコマンドエイリアス(カンマ区切り)
 results = 成績
 graph = グラフ
 record = 記録,結果
-versus = 対戦
 
 member = userlist,メンバー,リスト
-add = 追加
-del = 削除
+add = 追加,入部届
+del = 削除,退部届
 #load = 
 #save = 
 
@@ -47,7 +46,7 @@ del = 削除
 # versus_matrix        : 対局対戦マトリックス表示(未定義時：False)
 
 [results] # 成績出力
-commandword = 御無礼成績
+commandword = 麻雀成績
 aggregation_range = 今月
 playername_replace = True
 unregistered_replace = True
@@ -59,7 +58,7 @@ game_results = False
 versus_matrix = False
 
 [graph] # グラフ出力
-commandword = 御無礼グラフ
+commandword = 麻雀グラフ
 aggregation_range = 当日
 playername_replace = True
 unregistered_replace = True
@@ -68,7 +67,7 @@ guest_skip2 = False
 archive = False
 
 [record] # 保存用データ出力
-commandword = 御無礼(記録|結果)
+commandword = 麻雀(記録|結果)
 aggregation_range = 全部
 playername_replace = True
 unregistered_replace = True
