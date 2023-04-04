@@ -67,7 +67,7 @@ def remarks(command_option, starttime):
         limittime = datetime.now() - relativedelta(days = retention_period)
 
         if  starttime < limittime:
-            if not ret:
+            if ret:
                 ret += "\n"
             ret += f"注記：検索開始日がログの保存期間を越えています"
 
