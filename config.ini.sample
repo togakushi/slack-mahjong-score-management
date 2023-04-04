@@ -16,7 +16,8 @@ ignore_flying = False
 [search]
 keyword = 終局
 channel = #麻雀部
-
+# slackログ保存期間(0=無制限)(未定義時：0)
+retention_period = 90
 
 ### スラッシュコマンドオプション ###
 [slash] # コマンド名
@@ -44,6 +45,7 @@ del = 削除,退部届
 # archive              : データソースをdatabaseに切り替え(未指定時：False)
 # game_results         : 戦績表示(未定義時：False)
 # versus_matrix        : 対局対戦マトリックス表示(未定義時：False)
+
 
 [results] # 成績出力
 commandword = 麻雀成績

@@ -76,9 +76,8 @@ def summary(starttime, endtime, target_player, command_option):
             for wind in ("東家", "南家", "西家", "北家"): # 成績計算
                 name = results[i][wind]["name"]
 
-                if not command_option["unregistered_replace"]:
-                    if not c.member.ExsistPlayer(name):
-                        name = name + "(※)"
+                if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(name):
+                    name = name + "(※)"
 
                 if not name in r:
                     r[name] = {
@@ -101,6 +100,7 @@ def summary(starttime, endtime, target_player, command_option):
 
     for i in r.keys():
         tmp_r[i] = r[i]["total"]
+
     for name, point in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
         if not command_option["guest_skip"] and name == g.guest_name:
             continue
@@ -118,6 +118,7 @@ def summary(starttime, endtime, target_player, command_option):
             "## 名前", " " * (padding - f.translation.len_count(name) - 2),
         )
         for name in name_list:
+            tobi_count += r[name]["tobi"]
             if name_list.index(name) == 0:
                 msg += "{} {}： {:>+6.1f} / *****\n".format(
                     name, " " * (padding - f.translation.len_count(name)),
@@ -136,6 +137,7 @@ def summary(starttime, endtime, target_player, command_option):
         else:
             header +=" / トビ ##\n"
         for name in name_list:
+            tobi_count += r[name]["tobi"]
             msg += "{} {}： {:>+6.1f} ({:>+5.1f})".format(
                 name, " " * (padding - f.translation.len_count(name)),
                 r[name]["total"],
@@ -149,7 +151,6 @@ def summary(starttime, endtime, target_player, command_option):
                 msg += "\n"
             else:
                 msg += f" / {r[name]['tobi']}\n"
-                tobi_count += r[name]["tobi"]
 
     footer = "-" * 5 + "\n"
     footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
@@ -161,15 +162,7 @@ def summary(starttime, endtime, target_player, command_option):
     else:
         footer += f" / トバされた人（延べ）： {tobi_count} 人\n"
 
-    remarks = []
-    if not command_option["playername_replace"]:
-        remarks.append("名前ブレ修正なし")
-    if not command_option["guest_skip"]:
-        remarks.append("2ゲスト戦を含む")
-    if not command_option["unregistered_replace"]:
-        remarks.append("ゲスト置換なし(※：未登録プレイヤー)")
-    if remarks:
-        footer += f"特記事項：" + "、".join(remarks)
+    footer += f.remarks(command_option, starttime)
 
     return(header + msg + footer)
 
@@ -243,9 +236,8 @@ def details(starttime, endtime, target_player, command_option):
                     if vs_player == target_player[0]: # 自分の成績はスキップ
                         continue
 
-                    if not command_option["unregistered_replace"]:
-                        if not c.member.ExsistPlayer(vs_player):
-                            vs_player = vs_player + "(※)"
+                    if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(vs_player):
+                        vs_player = vs_player + "(※)"
 
                     if not vs_player in versus_matrix.keys():
                         versus_matrix[vs_player] = {"total":0, "win":0, "lose":0}
@@ -286,7 +278,7 @@ def details(starttime, endtime, target_player, command_option):
     ### 表示内容 ###
     msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
     msg1 += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
-    msg1 += f"対戦数： {sum(count_rank)} 半荘 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
+    msg1 += f"対戦数： {sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
 
     if sum(count_rank) > 0:
         msg1 += "累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
@@ -333,15 +325,6 @@ def details(starttime, endtime, target_player, command_option):
             msg3 += "```\n"
         msg += msg3
 
-    remarks = []
-    footer = ""
-    if not command_option["playername_replace"]:
-        remarks.append("名前ブレ修正なし")
-    if not command_option["guest_skip"]:
-        remarks.append("2ゲスト戦を含む")
-    if not command_option["unregistered_replace"]:
-        remarks.append("ゲスト置換なし(※：未登録プレイヤー)")
-    if remarks:
-        footer += "特記事項：" + "、".join(remarks)
+    footer = f.remarks(command_option, starttime)
 
     return(msg + footer)

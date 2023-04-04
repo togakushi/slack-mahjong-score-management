@@ -1,4 +1,7 @@
 import random
+from datetime import datetime
+
+from dateutil.relativedelta import relativedelta
 
 from function import global_value as g
 
@@ -45,3 +48,25 @@ def no_hits(starttime, endtime):
         )
     else:
         return("見つかりません。")
+
+def remarks(command_option, starttime):
+    ret = ""
+    remark = []
+
+    if not command_option["playername_replace"]:
+        remark.append("名前ブレ修正なし")
+    if not command_option["guest_skip"]:
+        remark.append("2ゲスト戦の結果を含む")
+    if not command_option["unregistered_replace"]:
+        remark.append("ゲスト置換なし(※：未登録プレイヤー)")
+    if remark:
+        ret = f"特記：" + "、".join(remark)
+
+    retention_period = g.config["search"].getint("retention_period", 0)
+    if not command_option["archive"] and retention_period != 0:
+        limittime = datetime.now() - relativedelta(days = retention_period)
+
+        if  starttime < limittime:
+            ret += f"\n注記：検索開始日がログの保存期間を越えています"
+
+    return(ret)
