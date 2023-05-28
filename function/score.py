@@ -41,7 +41,7 @@ def csv_export(argument, command_option):
     command_option["playername_replace"] = False
     command_option["unregistered_replace"] = False
 
-    target_days, target_player, command_option = f.common.argument_analysis(argument, command_option)
+    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
     rule_version = g.config["mahjong"].get("rule_version", "未定義")
 

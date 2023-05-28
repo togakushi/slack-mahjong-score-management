@@ -46,12 +46,16 @@ def argument_analysis(argument, command_option):
     target_player : list
         キーワードから見つかったプレイヤー名を格納
 
+    target_count : int
+        集計するゲーム数
+
     command_option : dict
         更新されたコマンドオプション
     """
 
     target_days = []
     target_player = []
+    target_count = 0
 
     currenttime = datetime.now()
     for keyword in argument:
@@ -113,9 +117,12 @@ def argument_analysis(argument, command_option):
         if re.match(r"^(アーカイブ|一昔|過去|archive)$", keyword):
             command_option["archive"] = True
 
+        if re.match(r"^(直近)([0-9]+)$", keyword):
+            target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
+
     if command_option["recursion"] and len(target_days) == 0:
         command_option["recursion"] = False
-        target_days, dummy, dummy = argument_analysis(command_option["aggregation_range"], command_option)
+        target_days, dummy, dummy, dummy = argument_analysis(command_option["aggregation_range"], command_option)
 
-    g.logging.info(f"[argument_analysis]return: {target_days} {target_player} {command_option}")
-    return(target_days, target_player, command_option)
+    g.logging.info(f"[argument_analysis]return: {target_days} {target_player} {target_count} {command_option}")
+    return(target_days, target_player, target_count, command_option)

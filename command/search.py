@@ -153,3 +153,59 @@ def slack_search(command_option):
                     count += 1
 
     return(data)
+
+
+def game_select(starttime, endtime, target_player, target_count, results):
+    """
+    集計対象のゲームを選択
+
+    Parameters
+    ----------
+    starttime : date
+        集計開始日時
+
+    endtime : date
+        集計終了日時
+
+    target_player : list
+        集計対象プレイヤー（空のときは全プレイヤーを対象にする）
+
+    target_count: int
+        集計するゲーム数
+
+    results: dict
+        チェック対象の結果
+
+    Returns
+    -------
+    ret : dict
+        条件に合致したゲーム結果
+    """
+
+    g.logging.info(f"[game_select] {starttime} {endtime} {target_player} {target_count}")
+
+    ret = {}
+    if target_count == 0:
+        for i in results.keys():
+            if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
+                ret[i] = results[i]
+    else:
+        chk_count = 0
+        for i in range(len(results) - 1, -1, -1):
+            if len(target_player) == 0:
+                ret[i] = results[i]
+                chk_count += 1
+            else:
+                for name in target_player:
+                    if name in [results[i][wind]["name"] for wind in ("東家", "南家", "西家", "北家")]:
+                        ret[i] = results[i]
+                        chk_count += 1
+                        break
+            if chk_count >= target_count:
+                tmp = {}
+                for i in sorted(ret):
+                    tmp[i] = ret[i]
+                ret = tmp
+                break
+
+    return(ret)

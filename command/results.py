@@ -21,19 +21,19 @@ def handle_results_evnts(client, context, body):
 
 
 def slackpost(client, channel, argument, command_option):
-    target_days, target_player, command_option = f.common.argument_analysis(argument, command_option)
+    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
     if starttime and endtime:
         if len(target_player) == 1: # 個人成績
-            msg = details(starttime, endtime, target_player, command_option)
+            msg = details(starttime, endtime, target_player, target_count, command_option)
             f.slack_api.post_message(client, channel, msg)
         else: # 成績サマリ
-            msg = summary(starttime, endtime, target_player, command_option)
+            msg = summary(starttime, endtime, target_player, target_count, command_option)
             f.slack_api.post_text(client, channel, "", msg)
 
 
-def summary(starttime, endtime, target_player, command_option):
+def summary(starttime, endtime, target_player, target_count, command_option):
     """
     各プレイヤーの累積ポイントを表示
 
@@ -48,6 +48,9 @@ def summary(starttime, endtime, target_player, command_option):
     target_player : list
         集計対象プレイヤー（空のときは全プレイヤーを対象にする）
 
+    target_count: int
+        集計するゲーム数
+
     command_option : dict
         コマンドオプション
 
@@ -57,8 +60,9 @@ def summary(starttime, endtime, target_player, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"[results.summary] {starttime} {endtime} {target_player} {command_option}")
-    results = c.search.getdata(command_option)
+    g.logging.info(f"[results.summary] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    tmpdate = c.search.getdata(command_option)
+    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
     r = {}
     game_count = 0
@@ -67,29 +71,28 @@ def summary(starttime, endtime, target_player, command_option):
     last_game = False
 
     for i in results.keys():
-        if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-            if not first_game:
-                first_game = results[i]["日付"]
-            last_game = results[i]["日付"]
-            game_count += 1
+        if not first_game:
+            first_game = results[i]["日付"]
+        last_game = results[i]["日付"]
+        game_count += 1
 
-            for wind in ("東家", "南家", "西家", "北家"): # 成績計算
-                name = results[i][wind]["name"]
+        for wind in ("東家", "南家", "西家", "北家"): # 成績計算
+            name = results[i][wind]["name"]
 
-                if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(name):
-                    name = name + "(※)"
+            if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(name):
+                name = name + "(※)"
 
-                if not name in r:
-                    r[name] = {
-                        "total": 0,
-                        "rank": [0, 0, 0, 0],
-                        "tobi": 0,
-                    }
-                r[name]["total"] += round(results[i][wind]["point"], 2)
-                r[name]["rank"][results[i][wind]["rank"] -1] += 1
+            if not name in r:
+                r[name] = {
+                    "total": 0,
+                    "rank": [0, 0, 0, 0],
+                    "tobi": 0,
+                }
+            r[name]["total"] += round(results[i][wind]["point"], 2)
+            r[name]["rank"][results[i][wind]["rank"] -1] += 1
 
-                if eval(str(results[i][wind]["rpoint"])) < 0:
-                    r[name]["tobi"] += 1
+            if eval(str(results[i][wind]["rpoint"])) < 0:
+                r[name]["tobi"] += 1
 
     if not (first_game or last_game):
         return(f.message.no_hits(starttime, endtime))
@@ -153,7 +156,8 @@ def summary(starttime, endtime, target_player, command_option):
                 msg += f" / {r[name]['tobi']}\n"
 
     footer = "-" * 5 + "\n"
-    footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    if target_count == 0:
+        footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
     footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
     footer += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
     footer += f"総ゲーム回数： {game_count} 回"
@@ -167,7 +171,7 @@ def summary(starttime, endtime, target_player, command_option):
     return(header + msg + footer)
 
 
-def details(starttime, endtime, target_player, command_option):
+def details(starttime, endtime, target_player, target_count, command_option):
     """
     個人成績を集計して返す
 
@@ -182,6 +186,9 @@ def details(starttime, endtime, target_player, command_option):
     target_player : list
         集計対象プレイヤー（空のときは全プレイヤーを対象にする）
 
+    target_count: int
+        集計するゲーム数
+
     command_option : dict
         コマンドオプション
 
@@ -194,8 +201,9 @@ def details(starttime, endtime, target_player, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    g.logging.info(f"[results.details] {starttime} {endtime} {target_player} {command_option}")
-    results = c.search.getdata(command_option)
+    g.logging.info(f"[results.summary] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    tmpdate = c.search.getdata(command_option)
+    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
     msg1 = f"*【個人成績】*\n"
     msg2 = f"\n*【戦績】*\n"
@@ -211,42 +219,41 @@ def details(starttime, endtime, target_player, command_option):
 
     ### 集計 ###
     for i in results.keys():
-        if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-            myrank = None
+        myrank = None
 
+        for wind in ("東家", "南家", "西家", "北家"):
+            if target_player[0] == results[i][wind]["name"]:
+                myrank = results[i][wind]["rank"]
+                count_rank[results[i][wind]["rank"] -1] += 1
+                point += float(results[i][wind]["point"])
+                count_tobi += 1 if eval(str(results[i][wind]["rpoint"])) < 0 else 0
+                count_win += 1 if float(results[i][wind]["point"]) > 0 else 0
+                count_lose += 1 if float(results[i][wind]["point"]) < 0 else 0
+                count_draw += 1 if float(results[i][wind]["point"]) == 0 else 0
+                msg2 += "{}： {}位 {:>5}00点 ({:>+5.1f}) {}\n".format(
+                    results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
+                    results[i][wind]["rank"], eval(str(results[i][wind]["rpoint"])), float(results[i][wind]["point"]),
+                    "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count(g.guest_name) >= 2 else "",
+                ).replace("-", "▲")
+
+        if myrank: # 対戦結果保存
             for wind in ("東家", "南家", "西家", "北家"):
-                if target_player[0] == results[i][wind]["name"]:
-                    myrank = results[i][wind]["rank"]
-                    count_rank[results[i][wind]["rank"] -1] += 1
-                    point += float(results[i][wind]["point"])
-                    count_tobi += 1 if eval(str(results[i][wind]["rpoint"])) < 0 else 0
-                    count_win += 1 if float(results[i][wind]["point"]) > 0 else 0
-                    count_lose += 1 if float(results[i][wind]["point"]) < 0 else 0
-                    count_draw += 1 if float(results[i][wind]["point"]) == 0 else 0
-                    msg2 += "{}： {}位 {:>5}00点 ({:>+5.1f}) {}\n".format(
-                        results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
-                        results[i][wind]["rank"], eval(str(results[i][wind]["rpoint"])), float(results[i][wind]["point"]),
-                        "※" if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count(g.guest_name) >= 2 else "",
-                    ).replace("-", "▲")
+                vs_player = results[i][wind]["name"]
+                vs_rank = results[i][wind]["rank"]
+                if vs_player == target_player[0]: # 自分の成績はスキップ
+                    continue
 
-            if myrank: # 対戦結果保存
-                for wind in ("東家", "南家", "西家", "北家"):
-                    vs_player = results[i][wind]["name"]
-                    vs_rank = results[i][wind]["rank"]
-                    if vs_player == target_player[0]: # 自分の成績はスキップ
-                        continue
+                if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(vs_player):
+                    vs_player = vs_player + "(※)"
 
-                    if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(vs_player):
-                        vs_player = vs_player + "(※)"
+                if not vs_player in versus_matrix.keys():
+                    versus_matrix[vs_player] = {"total":0, "win":0, "lose":0}
 
-                    if not vs_player in versus_matrix.keys():
-                        versus_matrix[vs_player] = {"total":0, "win":0, "lose":0}
-
-                    versus_matrix[vs_player]["total"] += 1
-                    if myrank < vs_rank:
-                        versus_matrix[vs_player]["win"] += 1
-                    else:
-                        versus_matrix[vs_player]["lose"] += 1
+                versus_matrix[vs_player]["total"] += 1
+                if myrank < vs_rank:
+                    versus_matrix[vs_player]["win"] += 1
+                else:
+                    versus_matrix[vs_player]["lose"] += 1
 
 
     ### 表示オプション ###
@@ -276,8 +283,10 @@ def details(starttime, endtime, target_player, command_option):
         badge_status = status_badge[index]
 
     ### 表示内容 ###
+    stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
+    etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
     msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
-    msg1 += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    msg1 += f"集計範囲：{stime} ～ {etime}\n"
     msg1 += f"対戦数： {sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
 
     if sum(count_rank) > 0:

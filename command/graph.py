@@ -48,15 +48,15 @@ def slackpost(client, channel, argument, command_option):
     """
 
     msg = f.message.invalid_argument()
-    target_days, target_player, command_option = f.common.argument_analysis(argument, command_option)
+    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
     if starttime or endtime:
         if len(target_player) == 1: # 描写対象がひとり → 個人成績
             command_option["guest_skip"] = False
-            count = plot_personal(starttime, endtime, target_player, command_option)
+            count = plot_personal(starttime, endtime, target_player, target_count, command_option)
         else: # 描写対象が複数 → 比較
-            count = plot(starttime, endtime, target_player, command_option)
+            count = plot(starttime, endtime, target_player, target_count, command_option)
         file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
         if count <= 0:
             f.slack_api.post_message(client, channel, f.message.no_hits(starttime, endtime))
@@ -66,7 +66,7 @@ def slackpost(client, channel, argument, command_option):
         f.slack_api.post_message(client, channel, msg)
 
 
-def plot(starttime, endtime, target_player, command_option):
+def plot(starttime, endtime, target_player, target_count, command_option):
     """
     ポイント推移グラフを生成する
 
@@ -90,8 +90,11 @@ def plot(starttime, endtime, target_player, command_option):
         グラフにプロットしたゲーム数
     """
 
-    g.logging.info(f"[graph.plot] {starttime} {endtime} {target_player} {command_option}")
-    results = c.search.getdata(command_option)
+    g.logging.info(f"[graph.plot] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    tmpdate = c.search.getdata(command_option)
+    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+
+    print(">>>", results)
 
     ### データ抽出 ###
     gdata = {}
@@ -100,29 +103,28 @@ def plot(starttime, endtime, target_player, command_option):
 
     for i in results.keys():
         pdate = results[i]["日付"]
-        if starttime < pdate and endtime > pdate:
-            if target_player: # 指定プレーヤーのみ抽出
-                for wind in ("東家", "南家", "西家", "北家"):
-                    pname = results[i][wind]["name"]
-                    if pname in target_player:
-                        if not pdate in gdata:
-                            gdata[pdate] = []
-                            game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
-                        gdata[pdate].append((pname, results[i][wind]["point"]))
-                        if not pname in player_list:
-                            player_list.append(pname)
-            else: # 全員分
-                gdata[pdate] = []
-                game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
-                for wind in ("東家", "南家", "西家", "北家"):
-                    pname = results[i][wind]["name"]
-                    if not command_option["guest_skip"] and pname == g.guest_name:
-                        continue
-                    if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(pname):
-                        pname = pname + "(※)"
+        if target_player: # 指定プレーヤーのみ抽出
+            for wind in ("東家", "南家", "西家", "北家"):
+                pname = results[i][wind]["name"]
+                if pname in target_player:
+                    if not pdate in gdata:
+                        gdata[pdate] = []
+                        game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
                     gdata[pdate].append((pname, results[i][wind]["point"]))
                     if not pname in player_list:
                         player_list.append(pname)
+        else: # 全員分
+            gdata[pdate] = []
+            game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
+            for wind in ("東家", "南家", "西家", "北家"):
+                pname = results[i][wind]["name"]
+                if not command_option["guest_skip"] and pname == g.guest_name:
+                    continue
+                if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(pname):
+                    pname = pname + "(※)"
+                gdata[pdate].append((pname, results[i][wind]["point"]))
+                if not pname in player_list:
+                    player_list.append(pname)
 
     if len(game_time) == 0:
         return(len(game_time))
@@ -164,12 +166,13 @@ def plot(starttime, endtime, target_player, command_option):
     if len(game_time) == 1:
         plt.xticks(rotation = 0, ha = "center")
 
+    if target_count == 0:
+        title_text = f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+    else:
+        title_text = f"ポイント推移 (直近 {target_count} 戦)"
+
     plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-    plt.title(
-        f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})",
-        fontproperties = fp,
-        fontsize = 12,
-    )
+    plt.title(title_text, fontproperties = fp, fontsize = 12)
     plt.ylabel("累積ポイント", fontproperties = fp)
 
     for name, total in ranking:
@@ -183,7 +186,7 @@ def plot(starttime, endtime, target_player, command_option):
     return(len(gdata))
 
 
-def plot_personal(starttime, endtime, target_player, command_option):
+def plot_personal(starttime, endtime, target_player, target_count, command_option):
     """
     個人成績のグラフを生成する
 
@@ -210,8 +213,9 @@ def plot_personal(starttime, endtime, target_player, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    g.logging.info(f"[graph.plot_personal] {starttime} {endtime} {target_player} {command_option}")
-    results = c.search.getdata(command_option)
+    g.logging.info(f"[graph.plot_personal] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    tmpdate = c.search.getdata(command_option)
+    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
     ### データ抽出 ###
     game_point = []
@@ -219,12 +223,11 @@ def plot_personal(starttime, endtime, target_player, command_option):
     game_time = []
 
     for i in results.keys():
-        if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-            for wind in ("東家", "南家", "西家", "北家"):
-                if results[i][wind]["name"] in target_player:
-                    game_time.append(results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
-                    game_point.append(results[i][wind]["point"])
-                    game_rank.append(results[i][wind]["rank"])
+        for wind in ("東家", "南家", "西家", "北家"):
+            if results[i][wind]["name"] in target_player:
+                game_time.append(results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
+                game_point.append(results[i][wind]["point"])
+                game_rank.append(results[i][wind]["rank"])
 
     if len(game_time) == 0:
         return(len(game_time))
@@ -264,14 +267,13 @@ def plot_personal(starttime, endtime, target_player, command_option):
     if len(game_time) == 1:
         rotation = 0
         position = "center"
+    if target_count == 0:
+        title_text = f"『{target_player[0]}』の成績 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+    else:
+        title_text = f"『{target_player[0]}』の成績 (直近 {target_count} 戦)"
 
     grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [3, 1])
-
-    fig.suptitle(
-        f"『{target_player[0]}』の成績 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})",
-        fontproperties = fp,
-        fontsize = 12,
-    )
+    fig.suptitle(title_text, fontproperties = fp, fontsize = 12)
 
     # 累積推移
     point_ax = fig.add_subplot(grid[0])
