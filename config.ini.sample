@@ -36,7 +36,7 @@ del = 削除,退部届
 
 ### 成績管理コマンド デフォルトオプション ###
 # commandword          : コマンド呼び出しキーワード(複数定義する場合は正規表現で)
-# aggregation_range    : 集計範囲(未定義時：当日)
+# aggregation_range    : コマンド呼び出し時に集計範囲が指定されていない場合の範囲(未定義時：当日)
 # playername_replace   : 名前表記ブレ修正(未定義時：True)
 # unregistered_replace : 未登録プレイヤーをゲストに置き換え(未定義時：True)
 # guest_skip           : 2ゲスト戦除外/サマリ用(未定義時：True)
