@@ -149,8 +149,8 @@ def slack_search(command_option):
                         data[count][x]["rank"] = rank.index(p) + 1
                         data[count][x]["point"] = f.score.CalculationPoint(eval(msg[y]), rank.index(p) + 1)
 
-                    if g.args.verbose:
-                        g.logging.info(f"[serach] debug: {data[count]}")
+                    #if g.args.verbose:
+                    #    g.logging.info(f"[serach] debug: {data[count]}")
 
                     count += 1
 
@@ -193,7 +193,7 @@ def game_select(starttime, endtime, target_player, target_count, results):
                 ret[i] = results[i]
     else:
         chk_count = 0
-        for i in range(len(results) - 1, -1, -1):
+        for i in sorted(results.keys(), reverse = True):
             if len(target_player) == 0:
                 ret[i] = results[i]
                 chk_count += 1
