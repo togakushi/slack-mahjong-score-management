@@ -45,6 +45,8 @@ def getdata(command_option):
         conn.close()
     else:
         data = slack_search(command_option)
+    g.logging.info(f"[getdata] return record: {len(data)}")
+
 
     # プレイヤー名の正規化、2ゲスト戦除外
     for count in list(data.keys()):
