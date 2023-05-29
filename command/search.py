@@ -204,10 +204,11 @@ def game_select(starttime, endtime, target_player, target_count, results):
                         chk_count += 1
                         break
             if chk_count >= target_count:
-                tmp = {}
-                for i in sorted(ret):
-                    tmp[i] = ret[i]
-                ret = tmp
                 break
+
+        tmp = {}
+        for i in sorted(ret):
+            tmp[i] = ret[i]
+        ret = tmp
 
     return(ret)
