@@ -3,6 +3,7 @@ import function as f
 from function import global_value as g
 
 commandname = g.config["slash"].get("commandname", "/goburei")
+g.logging.info(f"[import] slash command {commandname}")
 
 
 def subcommand_list(subcommand):

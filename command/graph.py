@@ -13,6 +13,8 @@ mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
 commandword = g.config["graph"].get("commandword", "御無礼グラフ")
+g.logging.info(f"[import] graph {commandword}")
+
 
 # イベントAPI
 @g.app.message(re.compile(rf"^{commandword}"))

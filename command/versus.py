@@ -5,6 +5,8 @@ import function as f
 from function import global_value as g
 
 commandword = g.config["versus"].get("commandword", "御無礼対戦")
+g.logging.info(f"[import] versus {commandword}")
+
 
 # イベントAPI
 @g.app.message(re.compile(rf"^{commandword}"))
