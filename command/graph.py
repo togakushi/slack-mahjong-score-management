@@ -94,8 +94,6 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
-    print(">>>", results)
-
     ### データ抽出 ###
     gdata = {}
     game_time = []
@@ -174,9 +172,8 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     plt.ylabel("累積ポイント", fontproperties = fp)
 
     for name, total in ranking:
-        print("debug:", name, len(game_time), len(stacked_point[name]))
+        #print("debug:", name, len(game_time), len(stacked_point[name]))
         label = f"{name} ({str(total)})".replace("-", "▲")
-        # ToDo: 「全部」指定時にstacked_pointの最後が欠ける
         plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
     plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
     plt.tight_layout()
