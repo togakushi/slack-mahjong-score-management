@@ -158,7 +158,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
             ranking_data[name]['r2'] += 1 if results[i][wind]['rank'] == 2 else 0
             ranking_data[name]['r3'] += 1 if results[i][wind]['rank'] == 3 else 0
             ranking_data[name]['r4'] += 1 if results[i][wind]['rank'] == 4 else 0
-            ranking_data[name]['tobi'] += 1 if results[i][wind]['rpoint'] < 0 else 0
+            ranking_data[name]['tobi'] += 1 if eval(results[i][wind]['rpoint']) < 0 else 0
 
     msg = ""
     msg += "\n*ゲーム参加率*\n"
