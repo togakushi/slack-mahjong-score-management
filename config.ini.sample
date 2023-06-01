@@ -45,6 +45,7 @@ del = 削除,退部届
 # archive              : データソースをdatabaseに切り替え(未指定時：False)
 # game_results         : 戦績表示(未定義時：False)
 # versus_matrix        : 対局対戦マトリックス表示(未定義時：False)
+# count                : ランキングに出力する順位(未定義時：3)
 
 
 [results] # 成績出力
@@ -75,6 +76,13 @@ playername_replace = True
 unregistered_replace = True
 guest_skip = True
 
+[ranking] # ランキング出力
+commandword = 麻雀ランキング
+aggregation_range = 全部
+playername_replace = True
+unregistered_replace = True
+guest_skip = True
+count = 3
 
 ### メンバー管理 ###
 [member]

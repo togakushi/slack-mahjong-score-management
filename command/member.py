@@ -38,7 +38,7 @@ def check_namepattern(name):
 
 def NameReplace(pname, command_option):
     """
-    表記ブレ修正
+    表記ブレ修正(正規化)
 
     Parameters
     ----------
@@ -50,7 +50,7 @@ def NameReplace(pname, command_option):
 
     Returns
     -------
-    str : str
+    pname : str
         表記ブレ修正後のプレイヤー名
     """
 
@@ -59,14 +59,24 @@ def NameReplace(pname, command_option):
     if not command_option["playername_replace"]:
         return(pname)
 
+    break_flg = False
     for player in g.player_list.sections():
+        if break_flg:
+            break
         for alias in g.player_list.get(player, "alias").split(","):
-            if f.translation.KANA2HIRA(pname) == alias:
-                return(player)
-            if f.translation.HIRA2KANA(pname) == alias:
-                return(player)
+            if alias in [f.translation.KANA2HIRA(pname), f.translation.HIRA2KANA(pname)]:
+                pname = player
+                break_flg = True
+                break
 
-    return(g.guest_name if command_option["unregistered_replace"] else pname)
+    if not command_option["unregistered_replace"]:
+      if not ExsistPlayer(pname):
+        pname = pname + "(※)"
+    else:
+      if not ExsistPlayer(pname):
+        pname = g.guest_name
+
+    return(pname)
 
 
 def ExsistPlayer(name):
@@ -76,7 +86,7 @@ def ExsistPlayer(name):
     Parameters
     ----------
     name : str
-        対象プレイヤー名
+        対象プレイヤー名(正規化後)
 
     Returns
     -------
@@ -88,7 +98,6 @@ def ExsistPlayer(name):
         "playername_replace": True,
         "unregistered_replace": True,
     }
-    name = NameReplace(name, command_option)
 
     if g.player_list.has_section(name):
         return(name)

@@ -45,6 +45,7 @@ def getdata(command_option):
         conn.close()
     else:
         data = slack_search(command_option)
+
     g.logging.info(f"[getdata] return record: {len(data)}")
 
 
@@ -59,7 +60,8 @@ def getdata(command_option):
 
         if command_option["guest_skip"] and guest_count >= 2:
             pop = data.pop(count)
-            g.logging.info(f"[2ゲスト戦除外] {pop}")
+            if g.args.verbose:
+                g.logging.info(f"[2ゲスト戦除外] {pop}")
 
     return(data)
 
@@ -184,14 +186,15 @@ def game_select(starttime, endtime, target_player, target_count, results):
         条件に合致したゲーム結果
     """
 
-    g.logging.info(f"[game_select] {starttime} {endtime} {target_player} {target_count}")
-
     ret = {}
     if target_count == 0:
+        g.logging.info(f"[game_select] {starttime} {endtime} {target_player}")
         for i in results.keys():
             if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
+                g.logging.info(f"{i}: {results[i]}")
                 ret[i] = results[i]
     else:
+        g.logging.info(f"[game_select] {target_count} {target_player}")
         chk_count = 0
         for i in sorted(results.keys(), reverse = True):
             if len(target_player) == 0:
@@ -210,5 +213,7 @@ def game_select(starttime, endtime, target_player, target_count, results):
         for i in sorted(ret):
             tmp[i] = ret[i]
         ret = tmp
+
+    g.logging.info(f"[game_select] return record: {len(ret)}")
 
     return(ret)

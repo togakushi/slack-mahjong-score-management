@@ -120,8 +120,6 @@ def plot(starttime, endtime, target_player, target_count, command_option):
                 pname = results[i][wind]["name"]
                 if not command_option["guest_skip"] and pname == g.guest_name:
                     continue
-                if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(pname):
-                    pname = pname + "(※)"
                 gdata[pdate].append((pname, results[i][wind]["point"]))
                 if not pname in player_list:
                     player_list.append(pname)
@@ -176,7 +174,9 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     plt.ylabel("累積ポイント", fontproperties = fp)
 
     for name, total in ranking:
+        print("debug:", name, len(game_time), len(stacked_point[name]))
         label = f"{name} ({str(total)})".replace("-", "▲")
+        # ToDo: 「全部」指定時にstacked_pointの最後が欠ける
         plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
     plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
     plt.tight_layout()

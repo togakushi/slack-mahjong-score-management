@@ -79,9 +79,6 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         for wind in ("東家", "南家", "西家", "北家"): # 成績計算
             name = results[i][wind]["name"]
 
-            if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(name):
-                name = name + "(※)"
-
             if not name in r:
                 r[name] = {
                     "total": 0,
@@ -242,9 +239,6 @@ def details(starttime, endtime, target_player, target_count, command_option):
                 vs_rank = results[i][wind]["rank"]
                 if vs_player == target_player[0]: # 自分の成績はスキップ
                     continue
-
-                if not command_option["unregistered_replace"] and not c.member.ExsistPlayer(vs_player):
-                    vs_player = vs_player + "(※)"
 
                 if not vs_player in versus_matrix.keys():
                     versus_matrix[vs_player] = {"total":0, "win":0, "lose":0}

@@ -72,9 +72,6 @@ def getdata(starttime, endtime, target_player, command_option):
                 for wind in ("東家", "南家", "西家", "北家"):
                     vs_player = results[i][wind]["name"]
                     vs_rank = results[i][wind]["rank"]
-                    if not command_option["unregistered_replace"]:
-                        if not c.member.ExsistPlayer(vs_player):
-                            vs_player = vs_player + "(※)"
 
                     if len(target_player) == 1: # 全員分
                         if vs_player == target_player[0]: # 自分の成績は比較しない
