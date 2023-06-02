@@ -120,6 +120,9 @@ def argument_analysis(argument, command_option):
         if re.match(r"^(直近)([0-9]+)$", keyword):
             target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
 
+        if re.match(r"^(トップ|上位|top)([0-9]+)$", keyword):
+            command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
+
     if command_option["recursion"] and len(target_days) == 0:
         command_option["recursion"] = False
         target_days, dummy, dummy, dummy = argument_analysis(command_option["aggregation_range"], command_option)
