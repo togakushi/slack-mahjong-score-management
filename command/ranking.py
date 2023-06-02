@@ -46,7 +46,7 @@ def ranking(ranking_type, results, ranking_data, keyword, rank = 3):
     # 規定打数チェック
     popcounter = 0
     for i in range(len(namelist)):
-        if len(results) * 0.05 > game_count[i - popcounter]:
+        if int(len(results) * 0.05 + 1) >= game_count[i - popcounter]:
             namelist.pop(i - popcounter)
             data.pop(i - popcounter)
             raw_data.pop(i - popcounter)
@@ -193,24 +193,13 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
     etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
     msg = "\n*【ランキング(テスト中)】*\n"
     msg += f"\t集計範囲：{stime} ～ {etime}\n"
-    msg += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * 0.05 + 1)})\n"
+    msg += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * 0.05 + 1)}以上)\n"
 
-    msg += "\n*ゲーム参加率*\n"
-    msg += ranking(4, results, ranking_data, "game_count")
-
-    msg += "\n*総合ポイント*\n"
-    msg += ranking(2, results, ranking_data, "total_point")
-
-    msg +="\n*平均ポイント*\n"
-    msg += ranking(1, results, ranking_data, "total_point")
-
-    msg += "\n*トップ率*\n"
-    msg += ranking(0, results, ranking_data, "r1")
-
-    msg += "\n*連対率*\n"
-    msg += ranking(0, results, ranking_data, "success")
-
-    msg += "\n*平均順位*\n"
-    msg += ranking2(0, results, ranking_data, "ranksum")
+    msg += "\n*ゲーム参加率*\n" + ranking(4, results, ranking_data, "game_count")
+    msg += "\n*総合ポイント*\n" + ranking(2, results, ranking_data, "total_point")
+    msg +="\n*平均ポイント*\n" + ranking(1, results, ranking_data, "total_point")
+    msg += "\n*トップ率*\n" + ranking(0, results, ranking_data, "r1")
+    msg += "\n*連対率*\n" + ranking(0, results, ranking_data, "success")
+    msg += "\n*平均順位*\n" + ranking2(0, results, ranking_data, "ranksum")
 
     return(msg)
