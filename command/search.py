@@ -191,7 +191,7 @@ def game_select(starttime, endtime, target_player, target_count, results):
         g.logging.info(f"[game_select] {starttime} {endtime} {target_player}")
         for i in results.keys():
             if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-                g.logging.info(f"{i}: {results[i]}")
+                #g.logging.info(f"{i}: {results[i]}")
                 ret[i] = results[i]
     else:
         g.logging.info(f"[game_select] {target_count} {target_player}")
