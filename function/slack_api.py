@@ -1,35 +1,52 @@
 import re
 
 
-def post_message(client, channel, msg):
-    client.chat_postMessage(
-        channel = channel,
-        text = f"{msg.strip()}",
-    )
+def post_message(client, channel, msg, ts = False):
+    if ts:
+        res = client.chat_postMessage(
+            channel = channel,
+            text = f"{msg.strip()}",
+            thread_ts = ts,
+        )
+    else:
+        res = client.chat_postMessage(
+            channel = channel,
+            text = f"{msg.strip()}",
+        )
+
+    return(res)
+
 
 def post_text(client, channel, title, msg):
     if len(re.sub(r'\n+', '\n', f"{msg.strip()}").splitlines()) == 1:
-        client.chat_postMessage(
+        res = client.chat_postMessage(
             channel = channel,
             text = f"{title}\n{msg.strip()}",
         )
     else:
-        client.chat_postMessage(
+        res = client.chat_postMessage(
             channel = channel,
             text = f"\n{title}\n\n```{msg.strip()}```",
         )
 
+    return(res)
+
+
 def post_upload(client, channel, title, msg):
-    client.files_upload(
+    res = client.files_upload(
         channels = channel,
         title = title,
         content = f"{msg.strip()}",
     )
 
+    return(res)
+
+
 def post_fileupload(client, channel, title, file):
-    client.files_upload(
+    res = client.files_upload(
         channels = channel,
         title = title,
         file = file,
     )
 
+    return(res)
