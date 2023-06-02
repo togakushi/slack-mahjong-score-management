@@ -30,7 +30,7 @@ def slackpost(client, channel, argument, command_option):
     f.slack_api.post_message(client, channel, msg)
 
 
-def ranking(ranking_type, results, ranking_data, keyword, rank = 3):
+def ranking(ranking_type, results, ranking_data, keyword):
     msg = ""
     namelist = [i for i in ranking_data.keys()]
     raw_data = [ranking_data[i][keyword] for i in ranking_data.keys()]
@@ -46,14 +46,14 @@ def ranking(ranking_type, results, ranking_data, keyword, rank = 3):
     # 規定打数チェック
     popcounter = 0
     for i in range(len(namelist)):
-        if int(len(results) * 0.05 + 1) >= game_count[i - popcounter]:
+        if int(len(results) * command_option["stipulated_rate"] + 1) >= game_count[i - popcounter]:
             namelist.pop(i - popcounter)
             data.pop(i - popcounter)
             raw_data.pop(i - popcounter)
             game_count.pop(i - popcounter)
             popcounter += 1
 
-    for juni in range(1, rank + 1):
+    for juni in range(1, command_option["ranked"] + 1):
         top =  [i for i, j in enumerate(data) if j == max(data)]
 
         for i in top:
@@ -95,7 +95,7 @@ def ranking(ranking_type, results, ranking_data, keyword, rank = 3):
 
     return(msg)
 
-def ranking2(ranking_type, results, ranking_data, keyword, rank = 3):
+def ranking2(ranking_type, results, ranking_data, keyword):
     msg = ""
     namelist = [i for i in ranking_data.keys()]
     raw_data = [ranking_data[i][keyword] for i in ranking_data.keys()]
@@ -106,14 +106,14 @@ def ranking2(ranking_type, results, ranking_data, keyword, rank = 3):
     # 規定打数チェック
     popcounter = 0
     for i in range(len(namelist)):
-        if len(results) * 0.05 > game_count[i - popcounter]:
+        if int(len(results) * command_option["stipulated_rate"] + 1) >= game_count[i - popcounter]:
             namelist.pop(i - popcounter)
             data.pop(i - popcounter)
             raw_data.pop(i - popcounter)
             game_count.pop(i - popcounter)
             popcounter += 1
 
-    for juni in range(1, rank + 1):
+    for juni in range(1, command_option["ranked"] + 1):
         top =  [i for i, j in enumerate(data) if j == min(data)]
 
         for i in top:
