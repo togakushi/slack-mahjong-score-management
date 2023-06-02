@@ -27,6 +27,7 @@ commandname = /mahjong
 results = 成績
 graph = グラフ
 record = 記録,結果
+ranking = ランキング
 
 member = userlist,メンバー,リスト
 add = 追加,入部届
@@ -82,7 +83,12 @@ aggregation_range = 全部
 playername_replace = True
 unregistered_replace = True
 guest_skip = True
-count = 3
+### ランキング専用オプション
+# 表示順位(未定義時：3)
+ranked = 3
+# ランキング規定ゲーム数(未定義時：0.05)
+## 集計対象ゲーム数 * stipulated_rate + 1 
+stipulated_rate = 0.05
 
 ### メンバー管理 ###
 [member]
