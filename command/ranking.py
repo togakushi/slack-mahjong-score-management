@@ -26,17 +26,18 @@ def slackpost(client, channel, argument, command_option):
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
-    msg = getdata(starttime, endtime, target_player, target_count, command_option)
-    f.slack_api.post_message(client, channel, msg)
+    msg1, msg2 = getdata(starttime, endtime, target_player, target_count, command_option)
+    res = f.slack_api.post_message(client, channel, msg1)
+    res = f.slack_api.post_message(client, channel, msg2, res["ts"])
 
 
-def ranking(ranking_type, results, ranking_data, keyword):
+def ranking(ranking_type, reversed, results, ranking_data, keyword, command_option):
     msg = ""
     namelist = [i for i in ranking_data.keys()]
     raw_data = [ranking_data[i][keyword] for i in ranking_data.keys()]
     game_count = [ranking_data[i]["game_count"] for i in ranking_data.keys()]
 
-    if ranking_type == 0 or ranking_type == 1:
+    if ranking_type in [0, 1, 5]:
         data = [raw_data[i] / game_count[i] for i in range(len(ranking_data.keys()))]
     elif ranking_type == 4:
         data = [raw_data[i] / len(results) for i in range(len(ranking_data.keys()))]
@@ -54,7 +55,10 @@ def ranking(ranking_type, results, ranking_data, keyword):
             popcounter += 1
 
     for juni in range(1, command_option["ranked"] + 1):
-        top =  [i for i, j in enumerate(data) if j == max(data)]
+        if reversed:
+            top =  [i for i, j in enumerate(data) if j == min(data)]
+        else:
+            top =  [i for i, j in enumerate(data) if j == max(data)]
 
         for i in top:
             if ranking_type == 0: # プレイゲーム数に対する割合
@@ -84,41 +88,8 @@ def ranking(ranking_type, results, ranking_data, keyword):
                     round(raw_data[i], 1),
                     len(results),
                 )
-
-        popcounter = 0
-        for i in top:
-            namelist.pop(i - popcounter)
-            data.pop(i - popcounter)
-            raw_data.pop(i - popcounter)
-            game_count.pop(i - popcounter)
-            popcounter += 1
-
-    return(msg)
-
-def ranking2(ranking_type, results, ranking_data, keyword):
-    msg = ""
-    namelist = [i for i in ranking_data.keys()]
-    raw_data = [ranking_data[i][keyword] for i in ranking_data.keys()]
-    game_count = [ranking_data[i]["game_count"] for i in ranking_data.keys()]
-
-    data = [raw_data[i] / game_count[i] for i in range(len(ranking_data.keys()))]
-
-    # 規定打数チェック
-    popcounter = 0
-    for i in range(len(namelist)):
-        if int(len(results) * command_option["stipulated_rate"] + 1) >= game_count[i - popcounter]:
-            namelist.pop(i - popcounter)
-            data.pop(i - popcounter)
-            raw_data.pop(i - popcounter)
-            game_count.pop(i - popcounter)
-            popcounter += 1
-
-    for juni in range(1, command_option["ranked"] + 1):
-        top =  [i for i, j in enumerate(data) if j == min(data)]
-
-        for i in top:
-            if ranking_type == 0:
-                msg += "\t{}: {}\t{:1.2f}\n".format(
+            if ranking_type == 5: # 平均順位専用専用
+                msg += "\t{}: {}\t{:1.3f}\n".format(
                     juni, namelist[i],
                     data[i],
                 )
@@ -160,7 +131,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
 
     g.logging.info(f"[ranking] {starttime} {endtime} {target_player} {target_count} {command_option}")
     tmpdate = c.search.getdata(command_option)
-    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+    results = c.search.game_select(starttime, endtime, target_player, target_count, tmpdate)
 
     ranking_data = {}
     for i in results.keys():
@@ -170,36 +141,34 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
                 ranking_data[name] = {
                     "game_count": 0,
                     "total_point": 0,
-                    "r1": 0,
-                    "r2": 0,
-                    "r3": 0,
-                    "r4": 0,
+                    "r1": 0, "r2": 0, "r3": 0, "r4": 0,
                     "ranksum": 0,
                     "success": 0,
                     'tobi': 0,
                 }
 
-            ranking_data[name]['game_count'] += 1
-            ranking_data[name]['total_point'] += results[i][wind]['point']
-            ranking_data[name]['r1'] += 1 if results[i][wind]['rank'] == 1 else 0
-            ranking_data[name]['r2'] += 1 if results[i][wind]['rank'] == 2 else 0
-            ranking_data[name]['r3'] += 1 if results[i][wind]['rank'] == 3 else 0
-            ranking_data[name]['r4'] += 1 if results[i][wind]['rank'] == 4 else 0
-            ranking_data[name]["ranksum"] += results[i][wind]['rank']
+            ranking_data[name]["game_count"] += 1
+            ranking_data[name]["total_point"] += results[i][wind]["point"]
+            ranking_data[name]["r1"] += 1 if results[i][wind]["rank"] == 1 else 0
+            ranking_data[name]["r2"] += 1 if results[i][wind]["rank"] == 2 else 0
+            ranking_data[name]["r3"] += 1 if results[i][wind]["rank"] == 3 else 0
+            ranking_data[name]["r4"] += 1 if results[i][wind]["rank"] == 4 else 0
+            ranking_data[name]["ranksum"] += results[i][wind]["rank"]
             ranking_data[name]["success"] += 1 if results[i][wind]['rank'] <= 2 else 0 # 連対率
-            #ranking_data[name]['tobi'] += 1 if eval(results[i][wind]['rpoint']) < 0 else 0
+            #ranking_data[name]["tobi"] += 1 if eval(results[i][wind]["rpoint"]) < 0 else 0
 
     stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
     etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
-    msg = "\n*【ランキング(テスト中)】*\n"
-    msg += f"\t集計範囲：{stime} ～ {etime}\n"
-    msg += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * 0.05 + 1)}以上)\n"
+    msg1 = "\n*【ランキング】*\n"
+    msg1 += f"\t集計範囲：{stime} ～ {etime}\n"
+    msg1 += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * command_option['stipulated_rate'] + 1)} 以上)"
 
-    msg += "\n*ゲーム参加率*\n" + ranking(4, results, ranking_data, "game_count")
-    msg += "\n*総合ポイント*\n" + ranking(2, results, ranking_data, "total_point")
-    msg +="\n*平均ポイント*\n" + ranking(1, results, ranking_data, "total_point")
-    msg += "\n*トップ率*\n" + ranking(0, results, ranking_data, "r1")
-    msg += "\n*連対率*\n" + ranking(0, results, ranking_data, "success")
-    msg += "\n*平均順位*\n" + ranking2(0, results, ranking_data, "ranksum")
+    msg2 = ""
+    msg2 += "\n*ゲーム参加率*\n" + ranking(4, False, results, ranking_data, "game_count", command_option)
+    msg2 += "\n*総合ポイント*\n" + ranking(2, False, results, ranking_data, "total_point", command_option)
+    msg2 += "\n*平均ポイント*\n" + ranking(1, False, results, ranking_data, "total_point", command_option)
+    msg2 += "\n*トップ率*\n" + ranking(0, False, results, ranking_data, "r1", command_option)
+    msg2 += "\n*連対率*\n" + ranking(0, False, results, ranking_data, "success", command_option)
+    msg2 += "\n*平均順位*\n" + ranking(5, True, results, ranking_data, "ranksum", command_option)
 
-    return(msg)
+    return(msg1, msg2)
