@@ -19,13 +19,15 @@ def check_namepattern(name):
     if re.match(r"(ゲスト|^[0-9]+$)", f.translation.ZEN2HAN(name)): # 登録NGプレイヤー名
         return(False, "使用できない名前です。")
     if re.match(r"^((当|今|昨)日|(今|先|先々)月|(今|去)年|全部|最初)$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語では登録できません。")
-    if re.match(r"^(戦績|比較|点差|差分|対戦|対戦結果|直近)$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語では登録できません。")
+        return(False, "コマンドに使用される単語は登録できません。")
+    if re.match(r"^(戦績|比較|点差|差分|対戦|対戦結果|直近[0-9]+)$", name): # NGワード（サブコマンド引数）
+        return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(修正|変換)(なし|ナシ|無し|あり)$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語では登録できません。")
+        return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(アーカイブ|一昔|過去|archive)$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語では登録できません。")
+        return(False, "コマンドに使用される単語は登録できません。")
+    if re.match(r"^(トップ|上位|top)[0-9]+$", name): # NGワード（サブコマンド引数）
+        return(False, "コマンドに使用される単語は登録できません。")
     if re.search("[\\\;:<>,!@#*?/`\"']", name): # 禁則記号
         return(False, "使用できない記号が含まれています。")
     if name == g.guest_name:
