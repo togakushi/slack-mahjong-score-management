@@ -68,13 +68,15 @@ def parser():
     return(p.parse_args())
 
 
+### デバッグ用ログレベル追加 ###
+logging.trace = partial(logging.log, 19)
+logging.addLevelName(19, "TRACE")
+
 ### コマンドラインオプション解析 ###
 args = parser()
 if args.debug:
     if args.verbose:
         print("DEBUG MODE(verbose)")
-        logging.trace = partial(logging.log, 19)
-        logging.addLevelName(19, "TRACE")
         logging.basicConfig(level = 19)
     else:
         print("DEBUG MODE")
