@@ -136,6 +136,8 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
     results = c.search.game_select(starttime, endtime, target_player, target_count, tmpdate)
 
     ranking_data = {}
+    origin_point = g.config["mahjong"].getint("point", 250) # 配給原点
+    return_point = g.config["mahjong"].getint("return", 300) # 返し点
     for i in results.keys():
         g.logging.trace(results[i])
         for wind in ("東家", "南家", "西家", "北家"):
@@ -162,7 +164,8 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
             ranking_data[name]["success"] += 1 if results[i][wind]["rank"] <= 2 else 0 # 連対率
             ranking_data[name]["not_las"] += 1 if results[i][wind]["rank"] != 4 else 0 # ラス回避
             ranking_data[name]["tobi"] += 1 if eval(str(results[i][wind]["rpoint"])) < 0 else 0
-            ranking_data[name]["in_exp"] += eval(str(results[i][wind]["rpoint"])) - 250 # 収支
+            ranking_data[name]["in_exp1"] += eval(str(results[i][wind]["rpoint"])) - origin_point # 収支1
+            ranking_data[name]["in_exp2"] += eval(str(results[i][wind]["rpoint"])) - return_point # 収支2
 
     if len(results) == 0:
         msg1 = f.message.no_hits(starttime, endtime)
@@ -178,7 +181,8 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
         msg2 += "\n*ゲーム参加率*\n" + put_ranking(4, False, results, ranking_data, "game_count", command_option)
         msg2 += "\n*総合ポイント*\n" + put_ranking(2, False, results, ranking_data, "total_point", command_option)
         msg2 += "\n*平均ポイント*\n" + put_ranking(1, False, results, ranking_data, "total_point", command_option)
-        msg2 += "\n*平均収支* (最終素点-250)/ゲーム数\n" + put_ranking(1, False, results, ranking_data, "in_exp", command_option)
+        msg2 += "\n*平均収支1* (最終素点-配給原点)/ゲーム数\n" + put_ranking(1, False, results, ranking_data, "in_exp1", command_option)
+        msg2 += "\n*平均収支2* (最終素点-返し点)/ゲーム数\n" + put_ranking(1, False, results, ranking_data, "in_exp2", command_option)
         msg2 += "\n*トップ率*\n" + put_ranking(0, False, results, ranking_data, "r1", command_option)
         msg2 += "\n*連対率*\n" + put_ranking(0, False, results, ranking_data, "success", command_option)
         msg2 += "\n*ラス回避率*\n" + put_ranking(0, False, results, ranking_data, "not_las", command_option)
