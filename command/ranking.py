@@ -161,8 +161,8 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
             ranking_data[name]["ranksum"] += results[i][wind]["rank"] # 平均順位
             ranking_data[name]["success"] += 1 if results[i][wind]["rank"] <= 2 else 0 # 連対率
             ranking_data[name]["not_las"] += 1 if results[i][wind]["rank"] != 4 else 0 # ラス回避
-            ranking_data[name]["tobi"] += 1 if results[i][wind]["rpoint"] < 0 else 0
-            ranking_data[name]["in_exp"] += results[i][wind]["rpoint"] - 250 # 収支
+            ranking_data[name]["tobi"] += 1 if eval(str(results[i][wind]["rpoint"])) < 0 else 0
+            ranking_data[name]["in_exp"] += eval(str(results[i][wind]["rpoint"])) - 250 # 収支
 
     if len(results) == 0:
         msg1 = f.message.no_hits(starttime, endtime)
