@@ -28,10 +28,11 @@ def slackpost(client, channel, argument, command_option):
 
     msg1, msg2 = getdata(starttime, endtime, target_player, target_count, command_option)
     res = f.slack_api.post_message(client, channel, msg1)
-    res = f.slack_api.post_message(client, channel, msg2, res["ts"])
+    if msg2:
+        f.slack_api.post_message(client, channel, msg2, res["ts"])
 
 
-def ranking(ranking_type, reversed, results, ranking_data, keyword, command_option):
+def put_ranking(ranking_type, reversed, results, ranking_data, keyword, command_option):
     msg = ""
     namelist = [i for i in ranking_data.keys()]
     raw_data = [ranking_data[i][keyword] for i in ranking_data.keys()]
@@ -157,18 +158,22 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
             ranking_data[name]["success"] += 1 if results[i][wind]['rank'] <= 2 else 0 # 連対率
             #ranking_data[name]["tobi"] += 1 if eval(results[i][wind]["rpoint"]) < 0 else 0
 
-    stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
-    etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
-    msg1 = "\n*【ランキング】*\n"
-    msg1 += f"\t集計範囲：{stime} ～ {etime}\n"
-    msg1 += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * command_option['stipulated_rate'] + 1)} 以上)"
+    if len(results) == 0:
+        msg1 = f.message.no_hits(starttime, endtime)
+        msg2 = None
+    else:
+        stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
+        etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
+        msg1 = "\n*【ランキング】*\n"
+        msg1 += f"\t集計範囲：{stime} ～ {etime}\n"
+        msg1 += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * command_option['stipulated_rate'] + 1)} 以上)"
 
-    msg2 = ""
-    msg2 += "\n*ゲーム参加率*\n" + ranking(4, False, results, ranking_data, "game_count", command_option)
-    msg2 += "\n*総合ポイント*\n" + ranking(2, False, results, ranking_data, "total_point", command_option)
-    msg2 += "\n*平均ポイント*\n" + ranking(1, False, results, ranking_data, "total_point", command_option)
-    msg2 += "\n*トップ率*\n" + ranking(0, False, results, ranking_data, "r1", command_option)
-    msg2 += "\n*連対率*\n" + ranking(0, False, results, ranking_data, "success", command_option)
-    msg2 += "\n*平均順位*\n" + ranking(5, True, results, ranking_data, "ranksum", command_option)
+        msg2 = ""
+        msg2 += "\n*ゲーム参加率*\n" + put_ranking(4, False, results, ranking_data, "game_count", command_option)
+        msg2 += "\n*総合ポイント*\n" + put_ranking(2, False, results, ranking_data, "total_point", command_option)
+        msg2 += "\n*平均ポイント*\n" + put_ranking(1, False, results, ranking_data, "total_point", command_option)
+        msg2 += "\n*トップ率*\n" + put_ranking(0, False, results, ranking_data, "r1", command_option)
+        msg2 += "\n*連対率*\n" + put_ranking(0, False, results, ranking_data, "success", command_option)
+        msg2 += "\n*平均順位*\n" + put_ranking(5, True, results, ranking_data, "ranksum", command_option)
 
     return(msg1, msg2)
