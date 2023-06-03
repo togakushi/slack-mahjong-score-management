@@ -90,9 +90,10 @@ def put_ranking(ranking_type, reversed, results, ranking_data, keyword, command_
                     len(results),
                 )
             if ranking_type == 5: # 平均順位専用専用
-                msg += "\t{}: {}\t{:1.3f}\n".format(
+                msg += "\t{}: {}\t{:1.3f}\t({}ゲーム)\n".format(
                     juni, namelist[i],
                     data[i],
+                    game_count[i],
                 )
 
         popcounter = 0
@@ -136,16 +137,19 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
 
     ranking_data = {}
     for i in results.keys():
+        g.logging.trace(results[i])
         for wind in ("東家", "南家", "西家", "北家"):
             name = results[i][wind]["name"]
             if not name in ranking_data:
                 ranking_data[name] = {
                     "game_count": 0,
                     "total_point": 0,
-                    "r1": 0, "r2": 0, "r3": 0, "r4": 0,
-                    "ranksum": 0,
-                    "success": 0,
-                    'tobi': 0,
+                    "r1": 0, "r2": 0, "r3": 0, "r4": 0, # 獲得順位
+                    "ranksum": 0, # 平均順位
+                    "success": 0, # 連対率
+                    "not_las": 0, # ラス回避
+                    "tobi": 0,
+                    "in_exp": 0,
                 }
 
             ranking_data[name]["game_count"] += 1
@@ -154,9 +158,11 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
             ranking_data[name]["r2"] += 1 if results[i][wind]["rank"] == 2 else 0
             ranking_data[name]["r3"] += 1 if results[i][wind]["rank"] == 3 else 0
             ranking_data[name]["r4"] += 1 if results[i][wind]["rank"] == 4 else 0
-            ranking_data[name]["ranksum"] += results[i][wind]["rank"]
-            ranking_data[name]["success"] += 1 if results[i][wind]['rank'] <= 2 else 0 # 連対率
-            #ranking_data[name]["tobi"] += 1 if eval(results[i][wind]["rpoint"]) < 0 else 0
+            ranking_data[name]["ranksum"] += results[i][wind]["rank"] # 平均順位
+            ranking_data[name]["success"] += 1 if results[i][wind]["rank"] <= 2 else 0 # 連対率
+            ranking_data[name]["not_las"] += 1 if results[i][wind]["rank"] != 4 else 0 # ラス回避
+            ranking_data[name]["tobi"] += 1 if results[i][wind]["rpoint"] < 0 else 0
+            ranking_data[name]["in_exp"] += results[i][wind]["rpoint"] - 250 # 収支
 
     if len(results) == 0:
         msg1 = f.message.no_hits(starttime, endtime)
@@ -172,8 +178,11 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
         msg2 += "\n*ゲーム参加率*\n" + put_ranking(4, False, results, ranking_data, "game_count", command_option)
         msg2 += "\n*総合ポイント*\n" + put_ranking(2, False, results, ranking_data, "total_point", command_option)
         msg2 += "\n*平均ポイント*\n" + put_ranking(1, False, results, ranking_data, "total_point", command_option)
+        msg2 += "\n*平均収支* (最終素点-250)/ゲーム数\n" + put_ranking(1, False, results, ranking_data, "in_exp", command_option)
         msg2 += "\n*トップ率*\n" + put_ranking(0, False, results, ranking_data, "r1", command_option)
         msg2 += "\n*連対率*\n" + put_ranking(0, False, results, ranking_data, "success", command_option)
+        msg2 += "\n*ラス回避率*\n" + put_ranking(0, False, results, ranking_data, "not_las", command_option)
+        msg2 += "\n*トビ率*\n" + put_ranking(0, True, results, ranking_data, "tobi", command_option)
         msg2 += "\n*平均順位*\n" + put_ranking(5, True, results, ranking_data, "ranksum", command_option)
 
     return(msg1, msg2)
