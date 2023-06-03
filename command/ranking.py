@@ -151,7 +151,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
                     "success": 0, # 連対率
                     "not_las": 0, # ラス回避
                     "tobi": 0,
-                    "in_exp": 0,
+                    "in_exp1": 0, "in_exp2": 0,
                 }
 
             ranking_data[name]["game_count"] += 1
