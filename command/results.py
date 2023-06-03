@@ -28,8 +28,12 @@ def slackpost(client, channel, argument, command_option):
 
     if starttime and endtime:
         if len(target_player) == 1: # 個人成績
-            msg = details(starttime, endtime, target_player, target_count, command_option)
-            f.slack_api.post_message(client, channel, msg)
+            msg1, msg2, msg3 = details(starttime, endtime, target_player, target_count, command_option)
+            res = f.slack_api.post_message(client, channel, msg1)
+            if msg2:
+                f.slack_api.post_message(client, channel, msg2, res["ts"])
+            if msg3:
+                f.slack_api.post_message(client, channel, msg3, res["ts"])
         else: # 成績サマリ
             msg = summary(starttime, endtime, target_player, target_count, command_option)
             f.slack_api.post_text(client, channel, "", msg)
@@ -279,35 +283,37 @@ def details(starttime, endtime, target_player, target_count, command_option):
         badge_status = status_badge[index]
 
     ### 表示内容 ###
-    stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
-    etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
-    msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
-    msg1 += f"集計範囲：{stime} ～ {etime}\n"
-    msg1 += f"対戦数： {sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
-
-    if sum(count_rank) > 0:
-        msg1 += "累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
-            point, point / sum(count_rank),
-        ).replace("-", "▲")
-        for i in range(4):
-            msg1 += "{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
-        if not g.config["mahjong"].getboolean("ignore_flying", False):
-            msg1 += "トビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
-        msg1 += "平均順位： {:1.2f}\n".format(
-            sum([count_rank[i] * (i + 1) for i in range(4)]) / sum(count_rank),
-        )
+    if len(results) == 0:
+        msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
+        msg1 += f"対戦数：{sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
+        msg2 = ""
+        msg3 = ""
     else:
-        msg2 += f"記録なし\n"
+        stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
+        etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
+        msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
+        msg1 += f"集計範囲：{stime} ～ {etime}\n"
+        msg1 += f"対戦数：{sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
 
-    msg = msg1
-    if command_option["game_results"]:
-        if not command_option["guest_skip"]:
-            msg2 += "※：2ゲスト戦\n"
-        msg += msg2
-    if command_option["versus_matrix"]:
-        if len(versus_matrix) == 0:
-            msg3 += f"記録なし\n"
+        if sum(count_rank) > 0:
+            msg1 += "累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
+                point, point / sum(count_rank),
+            ).replace("-", "▲")
+            for i in range(4):
+                msg1 += "{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
+            if not g.config["mahjong"].getboolean("ignore_flying", False):
+                msg1 += "トビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
+            msg1 += "平均順位： {:1.2f}\n".format(
+                sum([count_rank[i] * (i + 1) for i in range(4)]) / sum(count_rank),
+            )
+
+        if command_option["game_results"]:
+            if not command_option["guest_skip"]:
+                msg2 += "※：2ゲスト戦\n"
         else:
+            msg2 = ""
+
+        if command_option["versus_matrix"]:
             # 対戦数順にソート
             tmp_v = {}
             name_list = []
@@ -327,9 +333,10 @@ def details(starttime, endtime, target_player, target_count, command_option):
                 versus_matrix[i]["lose"],
                 versus_matrix[i]["win"] / (versus_matrix[i]["total"]),
             )
-            msg3 += "```\n"
-        msg += msg3
+            msg3 += "```"
+        else:
+            msg3 = ""
 
-    footer = f.remarks(command_option, starttime)
+        msg1 += "\n" + f.remarks(command_option, starttime)
 
-    return(msg + footer)
+    return(msg1, msg2, msg3)
