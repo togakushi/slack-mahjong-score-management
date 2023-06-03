@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 import re
-import sys
 
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 

@@ -60,8 +60,7 @@ def getdata(command_option):
 
         if command_option["guest_skip"] and guest_count >= 2:
             pop = data.pop(count)
-            if g.args.verbose:
-                g.logging.info(f"[2ゲスト戦除外] {pop}")
+            g.logging.trace(f"[2ゲスト戦除外] {pop}")
 
     return(data)
 
@@ -119,8 +118,7 @@ def slack_search(command_option):
                 msg = ""
                 tmp = matches[i]["blocks"][0]["elements"][0]["elements"]
 
-                if g.args.verbose:
-                    g.logging.info(f"[serach] debug: {dt}, {tmp}")
+                g.logging.trace(f"[serach] debug: {dt}, {tmp}")
 
                 for x in range(len(tmp)):
                     if tmp[x]["type"] == "text":
@@ -151,8 +149,7 @@ def slack_search(command_option):
                         data[count][x]["rank"] = rank.index(p) + 1
                         data[count][x]["point"] = f.score.CalculationPoint(eval(msg[y]), rank.index(p) + 1)
 
-                    #if g.args.verbose:
-                    #    g.logging.info(f"[serach] debug: {data[count]}")
+                    g.logging.trace(f"[serach] debug: {data[count]}")
 
                     count += 1
 
@@ -191,7 +188,7 @@ def game_select(starttime, endtime, target_player, target_count, results):
         g.logging.info(f"[game_select] {starttime} {endtime} {target_player}")
         for i in results.keys():
             if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-                #g.logging.info(f"{i}: {results[i]}")
+                g.logging.trace(f"{i}: {results[i]}")
                 ret[i] = results[i]
     else:
         g.logging.info(f"[game_select] {target_count} {target_player}")

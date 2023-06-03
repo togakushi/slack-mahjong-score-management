@@ -4,6 +4,7 @@ import logging
 import sys
 import os
 
+from functools import partial
 from slack_bolt import App
 from slack_sdk import WebClient
 
@@ -70,10 +71,17 @@ def parser():
 ### コマンドラインオプション解析 ###
 args = parser()
 if args.debug:
-    print("DEBUG MODE")
-    logging.basicConfig(level = logging.INFO)
+    if args.verbose:
+        print("DEBUG MODE(verbose)")
+        logging.trace = partial(logging.log, 19)
+        logging.addLevelName(19, "TRACE")
+        logging.basicConfig(level = 19)
+    else:
+        print("DEBUG MODE")
+        logging.basicConfig(level = logging.INFO)
 else:
     logging.basicConfig(level = logging.WARNING)
+
 
 ### 設定ファイル読み込み ###
 try:
