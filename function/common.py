@@ -134,11 +134,9 @@ def argument_analysis(argument, command_option):
         if re.match(r"^(アーカイブ|一昔|過去|archive)$", keyword):
             command_option["archive"] = True
             continue
-
         if re.match(r"^(直近)([0-9]+)$", keyword):
             target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
             continue
-
         if re.match(r"^(トップ|上位|top)([0-9]+)$", keyword):
             command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
             continue
