@@ -64,64 +64,87 @@ def argument_analysis(argument, command_option):
             try:
                 trytime = datetime.fromisoformat(f"{keyword[0:4]}-{keyword[4:6]}-{keyword[6:8]}")
                 target_days.append(trytime.strftime("%Y%m%d"))
+                continue
             except:
-                pass
+                continue
         if keyword == "当日":
             target_days.append((currenttime + relativedelta(hours = -12)).strftime("%Y%m%d"))
+            continue
         if keyword == "今日":
             target_days.append(currenttime.strftime("%Y%m%d"))
+            continue
         if keyword == "昨日":
             target_days.append((currenttime + relativedelta(days = -1)).strftime("%Y%m%d"))
+            continue
         if keyword == "今月":
             target_days.append((currenttime + relativedelta(day = 1, months = 0)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 1, months = 1, days = -1,)).strftime("%Y%m%d"))
+            continue
         if keyword == "先月":
             target_days.append((currenttime + relativedelta(day = 1, months = -1)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 1, months = 0, days = -1,)).strftime("%Y%m%d"))
+            continue
         if keyword == "先々月":
             target_days.append((currenttime + relativedelta(day = 1, months = -2)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 1, months = -1, days = -1,)).strftime("%Y%m%d"))
+            continue
         if keyword == "去年":
             target_days.append((currenttime + relativedelta(day = 1, month = 1, years = -1)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 31, month = 12, years = -1)).strftime("%Y%m%d"))
+            continue
         if keyword == "今年":
             target_days.append((currenttime + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
+            continue
         if keyword == "最初":
             target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
+            continue
         if keyword == "最後":
             target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
+            continue
         if keyword == "全部":
             target_days.append("20200101")
             target_days.append("20301231")
-        if c.member.ExsistPlayer(keyword):
-            target_player.append(c.member.ExsistPlayer(keyword))
+            continue
 
         # コマンドオプションフラグ変更
         if re.match(r"^ゲスト(なし|ナシ|無し)$", keyword):
             command_option["guest_skip"] = False
             command_option["guest_skip2"] = False
+            continue
         if re.match(r"^ゲスト(あり|アリ)$", keyword):
             command_option["guest_skip"] = True
             command_option["guest_skip2"] = True
+            continue
         if re.match(r"^ゲスト無効$", keyword):
             command_option["unregistered_replace"] = False
+            continue
         if re.match(r"^(修正|変換)(なし|ナシ|無し)$", keyword):
             command_option["playername_replace"] = False
+            continue
         if re.match(r"^(比較|点差|差分)$", keyword):
             command_option["score_comparisons"] = True
+            continue
         if re.match(r"^(戦績)$", keyword):
             command_option["game_results"] = True
+            continue
         if re.match(r"^(対戦|対戦結果)$", keyword):
             command_option["versus_matrix"] = True
+            continue
         if re.match(r"^(アーカイブ|一昔|過去|archive)$", keyword):
             command_option["archive"] = True
+            continue
 
         if re.match(r"^(直近)([0-9]+)$", keyword):
             target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
+            continue
 
         if re.match(r"^(トップ|上位|top)([0-9]+)$", keyword):
             command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
+            continue
+
+        # プレイヤー名
+        target_player.append(c.member.NameReplace(keyword, command_option))
 
     if command_option["recursion"] and len(target_days) == 0:
         command_option["recursion"] = False
