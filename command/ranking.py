@@ -175,11 +175,11 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
         etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
         msg1 = "\n*【ランキング】*\n"
         msg1 += f"\t集計範囲：{stime} ～ {etime}\n"
-        msg1 += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * command_option['stipulated_rate'] + 1)} 以上)"
+        msg1 += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * command_option['stipulated_rate'] + 2)} 以上)"
 
         msg2 = ""
         msg2 += "\n*ゲーム参加率*\n" + put_ranking(4, False, results, ranking_data, "game_count", command_option)
-        msg2 += "\n*総合ポイント*\n" + put_ranking(2, False, results, ranking_data, "total_point", command_option)
+        msg2 += "\n*累積ポイント*\n" + put_ranking(2, False, results, ranking_data, "total_point", command_option)
         msg2 += "\n*平均ポイント*\n" + put_ranking(1, False, results, ranking_data, "total_point", command_option)
         msg2 += "\n*平均収支1* (最終素点-配給原点)/ゲーム数\n" + put_ranking(1, False, results, ranking_data, "in_exp1", command_option)
         msg2 += "\n*平均収支2* (最終素点-返し点)/ゲーム数\n" + put_ranking(1, False, results, ranking_data, "in_exp2", command_option)
