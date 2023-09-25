@@ -34,6 +34,11 @@ def slackpost(client, channel, argument, command_option):
                 f.slack_api.post_message(client, channel, msg2, res["ts"])
             if msg3:
                 f.slack_api.post_message(client, channel, msg3, res["ts"])
+        elif len(target_player) != 0 and command_option["versus_matrix"]: # 直接対戦結果
+            msg1, msg2 = versus(starttime, endtime, target_player, target_count, command_option)
+            res = f.slack_api.post_message(client, channel, msg1)
+            if msg2:
+                f.slack_api.post_message(client, channel, msg2, res["ts"])
         else: # 成績サマリ
             msg = summary(starttime, endtime, target_player, target_count, command_option)
             f.slack_api.post_text(client, channel, "", msg)
@@ -340,3 +345,110 @@ def details(starttime, endtime, target_player, target_count, command_option):
         msg1 += "\n" + f.remarks(command_option, starttime)
 
     return(msg1, msg2, msg3)
+
+
+def versus(starttime, endtime, target_player, target_count, command_option):
+    """
+    直接対戦結果を集計して返す
+
+    Parameters
+    ----------
+    starttime : date
+        集計開始日時
+
+    endtime : date
+        集計終了日時
+
+    target_player : list
+        集計対象プレイヤー
+
+    target_count: int
+        集計するゲーム数
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    msg1 : text
+        slackにpostするデータ
+
+    msg2 : text
+        slackにpostするデータ(スレッドに返す)
+    """
+
+    # 検索動作を合わせる
+    command_option["guest_skip"] = command_option["guest_skip2"]
+
+    g.logging.info(f"[results.versus] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    tmpdate = c.search.getdata(command_option)
+    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+
+    stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
+    etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
+    
+    msg1 = f"*【直接対戦結果】(テスト中)*\n"
+    msg1 += f"プレイヤー名： {target_player[0]}\n"
+    msg1 += "対戦相手：" + ", ".join(target_player[1:]) + "\n"
+    msg1 += f"集計範囲：{stime} ～ {etime}\n"
+    msg2 = ""
+
+    for versus_player in target_player[1:]:
+        # 同卓したゲームの抽出
+        vs_game = []
+        for i in results.keys():
+            vs_flag = [False, False]
+            for wind in ("東家", "南家", "西家", "北家"):
+                if target_player[0] == results[i][wind]["name"]:
+                    vs_flag[0] = True
+                if versus_player == results[i][wind]["name"]:
+                    vs_flag[1] = True
+            if vs_flag[0] and vs_flag[1]:
+                vs_game.append(i)
+
+        # 対戦結果集計
+        win = 0
+        rp_m = 0
+        rp_v = 0
+        game_details = {}
+        msg2 += "[ {} vs {} ]\n".format(target_player[0], versus_player)
+
+        for i in vs_game:
+            for wind in ("東家", "南家", "西家", "北家"):
+                if target_player[0] == results[i][wind]["name"]:
+                    r_m = results[i][wind]
+                    rp_m += results[i][wind]["rpoint"]
+                if versus_player == results[i][wind]["name"]:
+                    r_v = results[i][wind]
+                    rp_v += results[i][wind]["rpoint"]
+
+            if r_m["rank"] < r_v["rank"]:
+                win += 1
+
+        if len(vs_game) == 0:
+            msg2 += versus_player + " との対戦結果はありません。\n"
+        else:
+            msg2 += "対戦数： {} 戦 ({} 勝 {} 敗)\n".format(len(vs_game), win, len(vs_game) - win)
+            msg2 += "平均素点差：{:+.1f}\n".format((rp_m - rp_v) / len(vs_game))
+            msg2 += "\n[ゲーム結果詳細]\n"
+            for i in vs_game:
+                msg2 += results[i]["日付"].strftime("%Y/%m/%d %H:%M\n")
+                for wind in ("東家", "南家", "西家", "北家"):
+                    if target_player[0] == results[i][wind]["name"]:
+                        msg2 += "　{}:{} / {}00点 / {}位 / {}p\n".format(
+                            wind,
+                            results[i][wind]["name"],
+                            results[i][wind]["rpoint"],
+                            results[i][wind]["rank"],
+                            results[i][wind]["point"],
+                        )
+                    if versus_player == results[i][wind]["name"]:
+                        msg2 += "　{}:{} / {}00点 / {}位 / {}p\n".format(
+                            wind,
+                            results[i][wind]["name"],
+                            results[i][wind]["rpoint"],
+                            results[i][wind]["rank"],
+                            results[i][wind]["point"],
+                        )
+
+        return(msg1, msg2)
