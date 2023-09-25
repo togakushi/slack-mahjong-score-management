@@ -426,7 +426,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                 win += 1
 
         if len(vs_game) == 0:
-            msg2 += versus_player + " との対戦結果はありません。\n"
+            msg2 += versus_player + " との対戦結果はありません。\n\n"
         else:
             msg2 += "対戦数： {} 戦 ({} 勝 {} 敗)\n".format(len(vs_game), win, len(vs_game) - win)
             msg2 += "平均素点差：{:+.1f}\n".format((rp_m - rp_v) * 100 / len(vs_game))
@@ -438,7 +438,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                         msg2 += "　{}:{} / {}00点 / {}位 / {}p\n".format(
                             wind,
                             results[i][wind]["name"],
-                            results[i][wind]["rpoint"],
+                            eval(str(results[i][wind]["rpoint"])),
                             results[i][wind]["rank"],
                             results[i][wind]["point"],
                         )
@@ -446,9 +446,10 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                         msg2 += "　{}:{} / {}00点 / {}位 / {}p\n".format(
                             wind,
                             results[i][wind]["name"],
-                            results[i][wind]["rpoint"],
+                            eval(str(results[i][wind]["rpoint"])),
                             results[i][wind]["rank"],
                             results[i][wind]["point"],
                         )
+            msg2 += "\n"
 
     return(msg1, msg2)
