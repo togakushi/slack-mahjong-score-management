@@ -417,10 +417,10 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             for wind in ("東家", "南家", "西家", "北家"):
                 if target_player[0] == results[i][wind]["name"]:
                     r_m = results[i][wind]
-                    rp_m += int(results[i][wind]["rpoint"])
+                    rp_m += eval(str(results[i][wind]["rpoint"]))
                 if versus_player == results[i][wind]["name"]:
                     r_v = results[i][wind]
-                    rp_v += int(results[i][wind]["rpoint"])
+                    rp_v += eval(str(results[i][wind]["rpoint"]))
 
             if r_m["rank"] < r_v["rank"]:
                 win += 1
