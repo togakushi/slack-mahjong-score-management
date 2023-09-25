@@ -429,7 +429,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             msg2 += versus_player + " との対戦結果はありません。\n"
         else:
             msg2 += "対戦数： {} 戦 ({} 勝 {} 敗)\n".format(len(vs_game), win, len(vs_game) - win)
-            msg2 += "平均素点差：{:+.1f}\n".format((rp_m - rp_v) / len(vs_game))
+            msg2 += "平均素点差：{:+.1f}\n".format((rp_m - rp_v) * 100 / len(vs_game))
             msg2 += "\n[ゲーム結果詳細]\n"
             for i in vs_game:
                 msg2 += results[i]["日付"].strftime("%Y/%m/%d %H:%M\n")
@@ -451,4 +451,4 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                             results[i][wind]["point"],
                         )
 
-        return(msg1, msg2)
+    return(msg1, msg2)
