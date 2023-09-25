@@ -407,10 +407,9 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                 vs_game.append(i)
 
         # 対戦結果集計
-        win = 0
-        rp_m = 0
-        rp_v = 0
-        game_details = {}
+        win = 0 # 勝ち越し数
+        rp_m = 0 # 自分の素点合計
+        rp_v = 0 # 相手の素点合計
         msg2 += "[ {} vs {} ]\n".format(target_player[0], versus_player)
 
         for i in vs_game:
@@ -425,8 +424,9 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             if r_m["rank"] < r_v["rank"]:
                 win += 1
 
+        # 集計結果出力
         if len(vs_game) == 0:
-            msg2 += versus_player + " との対戦結果はありません。\n\n"
+            msg2 += "対戦結果はありません。\n\n"
         else:
             msg2 += "対戦数： {} 戦 ({} 勝 {} 敗)\n".format(len(vs_game), win, len(vs_game) - win)
             msg2 += "平均素点差：{:+.1f}\n".format((rp_m - rp_v) * 100 / len(vs_game))
@@ -434,22 +434,13 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             for i in vs_game:
                 msg2 += results[i]["日付"].strftime("%Y/%m/%d %H:%M\n")
                 for wind in ("東家", "南家", "西家", "北家"):
-                    if target_player[0] == results[i][wind]["name"]:
-                        msg2 += "　{}:{} / {}00点 / {}位 / {}p\n".format(
-                            wind,
-                            results[i][wind]["name"],
+                    if results[i][wind]["name"] in (target_player[0], versus_player):
+                        msg2 += "　{}:{} / {}00点 ({}位) / {}p\n".format(
+                            wind, results[i][wind]["name"],
                             eval(str(results[i][wind]["rpoint"])),
                             results[i][wind]["rank"],
                             results[i][wind]["point"],
-                        )
-                    if versus_player == results[i][wind]["name"]:
-                        msg2 += "　{}:{} / {}00点 / {}位 / {}p\n".format(
-                            wind,
-                            results[i][wind]["name"],
-                            eval(str(results[i][wind]["rpoint"])),
-                            results[i][wind]["rank"],
-                            results[i][wind]["point"],
-                        )
-            msg2 += "\n"
+                        ).replace("-", "▲")
+            msg2 += "\n\n"
 
     return(msg1, msg2)
