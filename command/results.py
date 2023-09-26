@@ -25,22 +25,26 @@ def handle_results_evnts(client, context, body):
 def slackpost(client, channel, argument, command_option):
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
-    versus_flag = False
 
     if starttime and endtime:
-        if len(target_player) >= 2:
+        # 直接対戦モードに入るオプションの組み合わせ判定
+        versus_flag = False
+        if command_option["all_member"] and command_option["versus_matrix"]:
             versus_flag = True
-        if len(target_player) != 0 and command_option["all_member"]:
+        if len(target_player) >= 2 and command_option["versus_matrix"]:
             versus_flag = True
+        if len(target_player) == 0:
+            versus_flag = False
 
-        if not versus_flag and len(target_player) == 1: # 個人成績
+        # モード切り替え
+        if len(target_player) == 1 and not command_option["versus_matrix"]: # 個人成績
             msg1, msg2, msg3 = details(starttime, endtime, target_player, target_count, command_option)
             res = f.slack_api.post_message(client, channel, msg1)
             if msg2:
                 f.slack_api.post_message(client, channel, msg2, res["ts"])
             if msg3:
                 f.slack_api.post_message(client, channel, msg3, res["ts"])
-        elif versus_flag and command_option["versus_matrix"]: # 直接対戦結果
+        elif versus_flag: # 直接対戦
             msg1, msg2 = versus(starttime, endtime, target_player, target_count, command_option)
             res = f.slack_api.post_message(client, channel, msg1)
             if msg2:
