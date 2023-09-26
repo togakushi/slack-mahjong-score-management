@@ -25,16 +25,22 @@ def handle_results_evnts(client, context, body):
 def slackpost(client, channel, argument, command_option):
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
+    versus_flag = False
 
     if starttime and endtime:
-        if len(target_player) == 1: # 個人成績
+        if len(target_player) >= 2:
+            versus_flag = True
+        if len(target_player) != 0 and command_option["all_member"]:
+            versus_flag = True
+
+        if not versus_flag and len(target_player) == 1: # 個人成績
             msg1, msg2, msg3 = details(starttime, endtime, target_player, target_count, command_option)
             res = f.slack_api.post_message(client, channel, msg1)
             if msg2:
                 f.slack_api.post_message(client, channel, msg2, res["ts"])
             if msg3:
                 f.slack_api.post_message(client, channel, msg3, res["ts"])
-        elif len(target_player) != 0 and command_option["versus_matrix"]: # 直接対戦結果
+        elif versus_flag and command_option["versus_matrix"]: # 直接対戦結果
             msg1, msg2 = versus(starttime, endtime, target_player, target_count, command_option)
             res = f.slack_api.post_message(client, channel, msg1)
             if msg2:
@@ -113,6 +119,8 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         tmp_r[i] = r[i]["total"]
 
     for name, point in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
+        if name in ("全員", "all"):
+            continue
         if not command_option["guest_skip"] and name == g.guest_name:
             continue
         if not len(target_player) == 0 and not name in target_player:
@@ -391,11 +399,17 @@ def versus(starttime, endtime, target_player, target_count, command_option):
 
     msg1 = "*【直接対戦結果】(テスト中)*\n"
     msg1 += f"プレイヤー名： {target_player[0]}\n"
-    msg1 += f"対戦相手：{', '.join(target_player[1:])}\n"
+    if command_option["all_member"]:
+        vs_list = c.GetMemberName(target_player[0])
+        msg1 += f"対戦相手：全員\n"
+    else:
+        vs_list = target_player[1:]
+        msg1 += f"対戦相手：{', '.join(vs_list)}\n"
     msg1 += f"集計範囲：{stime} ～ {etime}\n"
     msg2 = ""
+    g.logging.info(f"[results.versus] vs_list: {vs_list}")
 
-    for versus_player in target_player[1:]:
+    for versus_player in vs_list:
         # 同卓したゲームの抽出
         vs_game = []
         for i in results.keys():
@@ -458,14 +472,19 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                 for i in vs_game:
                     msg2 += results[i]["日付"].strftime("%Y/%m/%d %H:%M\n")
                     for wind in ("東家", "南家", "西家", "北家"):
-                        if results[i][wind]["name"] in (target_player[0], versus_player):
-                            msg2 += "  {}:{}{} / {}位  {:>5}00点 ({}p)\n".format(
-                                wind, results[i][wind]["name"],
-                                " " * (padding - f.translation.len_count(results[i][wind]["name"])),
-                                results[i][wind]["rank"],
-                                eval(str(results[i][wind]["rpoint"])),
-                                results[i][wind]["point"],
-                            ).replace("-", "▲")
+                        tmp_msg = "  {}:{}{} / {}位  {:>5}00点 ({}p)\n".format(
+                            wind, results[i][wind]["name"],
+                            " " * (padding - f.translation.len_count(results[i][wind]["name"])),
+                            results[i][wind]["rank"],
+                            eval(str(results[i][wind]["rpoint"])),
+                            results[i][wind]["point"],
+                        ).replace("-", "▲")
+
+                        if command_option["verbose"]:
+                            msg2 += tmp_msg
+                        elif results[i][wind]["name"] in (target_player[0], versus_player):
+                            msg2 += tmp_msg
+
             msg2 += "\n\n"
 
     return(msg1, msg2)
