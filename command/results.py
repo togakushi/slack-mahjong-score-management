@@ -386,7 +386,9 @@ def versus(starttime, endtime, target_player, target_count, command_option):
 
     stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
     etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
-    
+
+    padding = max([f.translation.len_count(x) for x in target_player])
+
     msg1 = "*【直接対戦結果】(テスト中)*\n"
     msg1 += f"プレイヤー名： {target_player[0]}\n"
     msg1 += f"対戦相手：{', '.join(target_player[1:])}\n"
@@ -406,8 +408,17 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             if vs_flag[0] and vs_flag[1]:
                 vs_game.append(i)
 
-        # 対戦結果集計
+        ### 対戦結果集計 ###
         win = 0 # 勝ち越し数
+        my_aggr = {
+            "p_total": 0, # 素点合計
+            "rank": [0, 0, 0, 0],
+        }
+        vs_aggr = {
+            "p_total": 0, # 素点合計
+            "rank": [0, 0, 0, 0],
+        }
+
         rp_m = 0 # 自分の素点合計
         rp_v = 0 # 相手の素点合計
         msg2 += "[ {} vs {} ]\n".format(target_player[0], versus_player)
@@ -416,31 +427,45 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             for wind in ("東家", "南家", "西家", "北家"):
                 if target_player[0] == results[i][wind]["name"]:
                     r_m = results[i][wind]
-                    rp_m += eval(str(results[i][wind]["rpoint"])) * 100
+                    my_aggr["p_total"] += eval(str(results[i][wind]["rpoint"])) * 100
+                    my_aggr["rank"][results[i][wind]["rank"] -1] += 1
                 if versus_player == results[i][wind]["name"]:
                     r_v = results[i][wind]
-                    rp_v += eval(str(results[i][wind]["rpoint"])) * 100
+                    vs_aggr["p_total"] += eval(str(results[i][wind]["rpoint"])) * 100
+                    vs_aggr["rank"][results[i][wind]["rank"] -1] += 1
 
             if r_m["rank"] < r_v["rank"]:
                 win += 1
 
-        # 集計結果出力
+        ### 集計結果出力 ###
         if len(vs_game) == 0:
             msg2 += "対戦結果はありません。\n\n"
         else:
             msg2 += "対戦数： {} 戦 ({} 勝 {} 敗)\n".format(len(vs_game), win, len(vs_game) - win)
-            msg2 += "平均素点差：{:+.1f}\n".format((rp_m - rp_v) / len(vs_game)).replace("-", "▲")
-            msg2 += "\n[ゲーム結果詳細]\n"
-            for i in vs_game:
-                msg2 += results[i]["日付"].strftime("%Y/%m/%d %H:%M\n")
-                for wind in ("東家", "南家", "西家", "北家"):
-                    if results[i][wind]["name"] in (target_player[0], versus_player):
-                        msg2 += "　{}:{} / {}位 ({}00点) / {}p\n".format(
-                            wind, results[i][wind]["name"],
-                            results[i][wind]["rank"],
-                            eval(str(results[i][wind]["rpoint"])),
-                            results[i][wind]["point"],
-                        ).replace("-", "▲")
+            msg2 += "平均素点差：{:+.1f}\n".format(
+                (my_aggr["p_total"] - vs_aggr["p_total"]) / len(vs_game)
+            ).replace("-", "▲")
+            msg2 += "順位分布(自分)： {}-{}-{}-{} ({:1.2f})\n".format(
+                my_aggr["rank"][0], my_aggr["rank"][1], my_aggr["rank"][2], my_aggr["rank"][3],
+                sum([my_aggr["rank"][i] * (i + 1) for i in range(4)]) / sum(my_aggr["rank"]),
+            )
+            msg2 += "順位分布(相手)： {}-{}-{}-{} ({:1.2f})\n".format(
+                vs_aggr["rank"][0], vs_aggr["rank"][1], vs_aggr["rank"][2], vs_aggr["rank"][3],
+                sum([vs_aggr["rank"][i] * (i + 1) for i in range(4)]) / sum(vs_aggr["rank"]),
+            )
+            if command_option["game_results"]:
+                msg2 += "\n[ゲーム結果詳細]\n"
+                for i in vs_game:
+                    msg2 += results[i]["日付"].strftime("%Y/%m/%d %H:%M\n")
+                    for wind in ("東家", "南家", "西家", "北家"):
+                        if results[i][wind]["name"] in (target_player[0], versus_player):
+                            msg2 += "  {}:{}{} / {}位  {:>5}00点 ({}p)\n".format(
+                                wind, results[i][wind]["name"],
+                                " " * (padding - f.translation.len_count(results[i][wind]["name"])),
+                                results[i][wind]["rank"],
+                                eval(str(results[i][wind]["rpoint"])),
+                                results[i][wind]["point"],
+                            ).replace("-", "▲")
             msg2 += "\n\n"
 
     return(msg1, msg2)
