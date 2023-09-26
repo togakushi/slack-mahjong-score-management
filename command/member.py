@@ -16,7 +16,7 @@ def check_namepattern(name):
 
     if len(name) > g.config.getint("member", "character_limit"):
         return(False, "登録可能文字数を超えています。")
-    if re.match(r"(ゲスト|^[0-9]+$)", f.translation.ZEN2HAN(name)): # 登録NGプレイヤー名
+    if re.match(r"(ゲスト|^[0-9]+$)|DEFAULT", f.translation.ZEN2HAN(name)): # 登録NGプレイヤー名
         return(False, "使用できない名前です。")
     if re.match(r"^((当|今|昨)日|(今|先|先々)月|(今|去)年|全部|最初)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
@@ -25,6 +25,8 @@ def check_namepattern(name):
     if re.match(r"^(修正|変換)(なし|ナシ|無し|あり)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(アーカイブ|一昔|過去|archive)$", name): # NGワード（サブコマンド引数）
+        return(False, "コマンドに使用される単語は登録できません。")
+    if re.match(r"^(詳細|verbose)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(トップ|上位|top)[0-9]+$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
@@ -105,6 +107,19 @@ def ExsistPlayer(name):
         return(name)
 
     return(False)
+
+
+def GetMemberName(myname = None):
+    ret = []
+    for player in g.player_list.sections():
+        if player == "DEFAULT":
+            continue
+        ret.append(player)
+
+    if myname in ret:
+        ret.remove(myname)
+
+    return(ret)
 
 
 def list():

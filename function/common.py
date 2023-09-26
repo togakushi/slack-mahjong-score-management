@@ -122,6 +122,9 @@ def argument_analysis(argument, command_option):
         if re.match(r"^(修正|変換)(なし|ナシ|無し)$", keyword):
             command_option["playername_replace"] = False
             continue
+        if re.match(r"^(全員|all)$", keyword):
+            command_option["all_member"] = True
+            continue
         if re.match(r"^(比較|点差|差分)$", keyword):
             command_option["score_comparisons"] = True
             continue
@@ -130,6 +133,9 @@ def argument_analysis(argument, command_option):
             continue
         if re.match(r"^(対戦|対戦結果)$", keyword):
             command_option["versus_matrix"] = True
+            continue
+        if re.match(r"^(詳細|verbose)$", keyword):
+            command_option["verbose"] = True
             continue
         if re.match(r"^(アーカイブ|一昔|過去|archive)$", keyword):
             command_option["archive"] = True

@@ -57,6 +57,8 @@ def command_option_initialization(command):
     option = {
         "aggregation_range": [],
         "recursion": True,
+        "all_member": False,
+        "verbose": False,
     }
 
     option["aggregation_range"].append(g.config[command].get("aggregation_range", "当日"))
