@@ -122,6 +122,26 @@ def GetMemberName(myname = None):
     return(ret)
 
 
+def CountPadding(data):
+    """
+    """
+    name_list = []
+
+    if type(data) is list:
+        name_list = data
+
+    if type(data) is dict:
+        for i in data.keys():
+            for name in [data[i][x]["name"] for x in ("東家", "南家", "西家", "北家")]:
+                if name not in name_list:
+                    name_list.append(name)
+
+    if name_list:
+        return(max([f.translation.len_count(x) for x in name_list]))
+    else:
+        return(0)
+
+
 def list():
     title = "登録されているメンバー"
     msg = ""
