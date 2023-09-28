@@ -1,0 +1,26 @@
+{
+  "name": "天鳳",
+  "table": [
+    { "class": "新人", "point": [0,    30  ], "acquisition": [30, 15, 0, 0  ] },
+    { "class": "9級",  "point": [0,    30  ], "acquisition": [30, 15, 0, 0  ] },
+    { "class": "8級",  "point": [0,    30  ], "acquisition": [30, 15, 0, 0  ] },
+    { "class": "7級",  "point": [0,    60  ], "acquisition": [30, 15, 0, 0  ] },
+    { "class": "6級",  "point": [0,    60  ], "acquisition": [30, 15, 0, 0  ] },
+    { "class": "5級",  "point": [0,    60  ], "acquisition": [30, 15, 0, 0  ] },
+    { "class": "4級",  "point": [0,    90  ], "acquisition": [30, 15, 0, 0  ] },
+    { "class": "3級",  "point": [0,    90  ], "acquisition": [30, 15, 0, 0  ] },
+    { "class": "2級",  "point": [0,    100 ], "acquisition": [30, 15, 0, -15 ] },
+    { "class": "1級",  "point": [0,    100 ], "acquisition": [30, 15, 0, -30 ] },
+    { "class": "初段", "point": [200,  400 ], "acquisition": [60, 15, 0, -45 ] },
+    { "class": "二段", "point": [400,  800 ], "acquisition": [60, 15, 0, -60 ] },
+    { "class": "三段", "point": [600,  1200], "acquisition": [60, 15, 0, -75 ] },
+    { "class": "四段", "point": [800,  1600], "acquisition": [75, 30, 0, -90 ] },
+    { "class": "五段", "point": [1000, 2000], "acquisition": [75, 30, 0, -105] },
+    { "class": "六段", "point": [1200, 2400], "acquisition": [75, 30, 0, -120] },
+    { "class": "七段", "point": [1400, 2800], "acquisition": [90, 45, 0, -135] },
+    { "class": "八段", "point": [1600, 3200], "acquisition": [90, 45, 0, -150] },
+    { "class": "九段", "point": [1800, 3600], "acquisition": [90, 45, 0, -165] },
+    { "class": "十段", "point": [2000, 4000], "acquisition": [90, 45, 0, -180] },
+    { "class": "天鳳位", "point": [0, 0], "acquisition": [0, 0, 0, 0] }
+  ]
+}
