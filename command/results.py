@@ -447,8 +447,8 @@ def versus(starttime, endtime, target_player, target_count, command_option):
 
         return(msg1, msg2)
 
-    g.logging.info(f"[results.versus] vs_list: {vs_list}")
-    padding = c.CountPadding(target_player)
+    padding = c.CountPadding(vs_list)
+    g.logging.info(f"[results.versus] vs_list: {vs_list} padding: {padding}")
 
     for versus_player in vs_list:
         # 同卓したゲームの抽出
@@ -523,5 +523,8 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                             msg2[versus_player] += tmp_msg
                         elif results[i][wind]["name"] in (target_player[0], versus_player):
                             msg2[versus_player] += tmp_msg
+
+    if not msg2:
+        msg2[""] = "直接対決はありません。\n"
 
     return(msg1, msg2)
