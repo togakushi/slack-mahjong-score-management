@@ -28,24 +28,22 @@ def slackpost(client, channel, argument, command_option):
     starttime, endtime = f.common.scope_coverage(target_days)
 
     if starttime and endtime:
-        # 直接対戦モードに入るオプションの組み合わせ判定
-        versus_flag = False
-        if command_option["all_player"] and command_option["versus_matrix"]:
-            versus_flag = True
-        if len(target_player) >= 2 and command_option["versus_matrix"]:
-            versus_flag = True
-        if len(target_player) == 0:
-            versus_flag = False
-
         # モード切り替え
-        if len(target_player) == 1 and not command_option["versus_matrix"]: # 個人成績
+        versus_mode = False
+        if command_option["versus_matrix"]:
+            versus_mode = True
+            if len(target_player) == 0:
+                versus_mode = False
+            if len(target_player) == 1 and not command_option["all_player"]:
+                versus_mode = False
+        if len(target_player) == 1 and not versus_mode: # 個人成績
             msg1, msg2, msg3 = details(starttime, endtime, target_player, target_count, command_option)
             res = f.slack_api.post_message(client, channel, msg1)
             if msg2:
                 f.slack_api.post_message(client, channel, msg2, res["ts"])
             if msg3:
                 f.slack_api.post_message(client, channel, msg3, res["ts"])
-        elif versus_flag: # 直接対戦
+        elif versus_mode: # 直接対戦
             msg1, msg2 = versus(starttime, endtime, target_player, target_count, command_option)
             res = f.slack_api.post_message(client, channel, msg1)
             for m in msg2.keys():
@@ -82,7 +80,10 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"[results.summary] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    g.logging.info(f"[results.summary] {starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"[results.summary] target_player: {target_player}")
+    g.logging.info(f"[results.summary] command_option: {command_option}")
+
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
@@ -425,13 +426,12 @@ def versus(starttime, endtime, target_player, target_count, command_option):
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
-    #target_player.append(c.member.NameReplace(keyword, command_option))
     msg2 = {}
     msg1 = "*【直接対戦結果】(テスト中)*\n"
     msg1 += f"プレイヤー名： {target_player[0]}\n"
 
     if command_option["all_player"]:
-        vs_list = c.GetMemberName(target_player[0])
+        vs_list = f.all_player_list(results, target_player[0])
         msg1 += f"対戦相手：全員\n"
     else:
         vs_list = target_player[1:]
@@ -472,13 +472,18 @@ def versus(starttime, endtime, target_player, target_count, command_option):
         ### 対戦結果集計 ###
         win = 0 # 勝ち越し数
         my_aggr = { # 自分の集計結果
-            "p_total": 0, # 素点合計
+            "r_total": 0, # 素点合計
+            "total": 0, # ポイント合計
             "rank": [0, 0, 0, 0],
         }
         vs_aggr = { # 相手の集計結果
-            "p_total": 0, # 素点合計
+            "r_total": 0, # 素点合計
+            "total": 0, # ポイント合計
             "rank": [0, 0, 0, 0],
         }
+
+        if target_player[0] == versus_player:
+            continue
 
         msg2[versus_player] = "[ {} vs {} ]\n".format(target_player[0], versus_player)
 
@@ -486,11 +491,13 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             for wind in ("東家", "南家", "西家", "北家"):
                 if target_player[0] == results[i][wind]["name"]:
                     r_m = results[i][wind]
-                    my_aggr["p_total"] += eval(str(results[i][wind]["rpoint"])) * 100
+                    my_aggr["r_total"] += eval(str(results[i][wind]["rpoint"])) * 100
+                    my_aggr["total"] += results[i][wind]["point"]
                     my_aggr["rank"][results[i][wind]["rank"] -1] += 1
                 if versus_player == results[i][wind]["name"]:
                     r_v = results[i][wind]
-                    vs_aggr["p_total"] += eval(str(results[i][wind]["rpoint"])) * 100
+                    vs_aggr["r_total"] += eval(str(results[i][wind]["rpoint"])) * 100
+                    vs_aggr["total"] += results[i][wind]["point"]
                     vs_aggr["rank"][results[i][wind]["rank"] -1] += 1
 
             if r_m["rank"] < r_v["rank"]:
@@ -501,8 +508,14 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             msg2.pop(versus_player)
         else:
             msg2[versus_player] += "対戦数： {} 戦 {} 勝 {} 敗\n".format(len(vs_game), win, len(vs_game) - win)
-            msg2[versus_player] += "平均素点差： {:+.1f}\n".format(
-                (my_aggr["p_total"] - vs_aggr["p_total"]) / len(vs_game)
+            msg2[versus_player] += "平均素点差： {:+.1f}点\n".format(
+                (my_aggr["r_total"] - vs_aggr["r_total"]) / len(vs_game)
+            ).replace("-", "▲")
+            msg2[versus_player] += "獲得ポイント(自分)： {:+.1f}pt\n".format(
+                my_aggr["total"]
+            ).replace("-", "▲")
+            msg2[versus_player] += "獲得ポイント(相手)： {:+.1f}pt\n".format(
+                vs_aggr["total"]
             ).replace("-", "▲")
             msg2[versus_player] += "順位分布(自分)： {}-{}-{}-{} ({:1.2f})\n".format(
                 my_aggr["rank"][0], my_aggr["rank"][1], my_aggr["rank"][2], my_aggr["rank"][3],
@@ -517,7 +530,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                 for i in vs_game:
                     msg2[versus_player] += results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S\n")
                     for wind in ("東家", "南家", "西家", "北家"):
-                        tmp_msg = "  {}： {}{} / {}位 {:>5}00点 ({}p)\n".format(
+                        tmp_msg = "  {}： {}{} / {}位 {:>5}00点 ({}pt)\n".format(
                             wind, results[i][wind]["name"],
                             " " * (padding - f.translation.len_count(results[i][wind]["name"])),
                             results[i][wind]["rank"],
@@ -531,6 +544,6 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                             msg2[versus_player] += tmp_msg
 
     if not msg2:
-        msg2[""] = "直接対決はありません。\n"
+        msg2[""] = "直接対戦はありません。\n"
 
     return(msg1, msg2)

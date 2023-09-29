@@ -158,3 +158,18 @@ def argument_analysis(argument, command_option):
     g.logging.info(f"[argument_analysis:return] target_player: {target_player}")
     g.logging.info(f"[argument_analysis:return] command_option: {command_option}")
     return(target_days, target_player, target_count, command_option)
+
+
+def all_player_list(results, myname = None):
+    ret = []
+    for i in results.keys():
+        for wind in ("東家", "南家", "西家", "北家"):
+            chkname = results[i][wind]["name"]
+            if not chkname in ret:
+                ret.append(chkname)
+
+    if not myname:
+        if myname in ret:
+            ret.remove(myname)
+
+    return(ret)
