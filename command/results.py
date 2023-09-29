@@ -30,7 +30,7 @@ def slackpost(client, channel, argument, command_option):
     if starttime and endtime:
         # 直接対戦モードに入るオプションの組み合わせ判定
         versus_flag = False
-        if command_option["all_member"] and command_option["versus_matrix"]:
+        if command_option["all_player"] and command_option["versus_matrix"]:
             versus_flag = True
         if len(target_player) >= 2 and command_option["versus_matrix"]:
             versus_flag = True
@@ -430,7 +430,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
     msg1 = "*【直接対戦結果】(テスト中)*\n"
     msg1 += f"プレイヤー名： {target_player[0]}\n"
 
-    if command_option["all_member"]:
+    if command_option["all_player"]:
         vs_list = c.GetMemberName(target_player[0])
         msg1 += f"対戦相手：全員\n"
     else:

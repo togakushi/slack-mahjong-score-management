@@ -123,7 +123,7 @@ def argument_analysis(argument, command_option):
             command_option["playername_replace"] = False
             continue
         if re.match(r"^(全員|all)$", keyword):
-            command_option["all_member"] = True
+            command_option["all_player"] = True
             continue
         if re.match(r"^(比較|点差|差分)$", keyword):
             command_option["score_comparisons"] = True
