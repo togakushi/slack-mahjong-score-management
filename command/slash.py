@@ -63,7 +63,7 @@ def slash_command(ack, body, client):
 
         # メンバー管理系コマンド
         if subcom.lower() in subcommand_list("member"):
-            title, msg = c.member.list()
+            title, msg = c.member.GetList()
             f.slack_api.post_text(client, user_id, title, msg)
             return
 
