@@ -557,7 +557,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                 for i in vs_game:
                     msg2[versus_player] += results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S\n")
                     for wind in g.wind[0:4]:
-                        tmp_msg = "  {}： {}{} / {}位 {:>5}00点 ({}pt)\n".format(
+                        tmp_msg = "\t{}： {}{} / {}位 {:>5}00点 ({}pt)\n".format(
                             wind, results[i][wind]["name"],
                             " " * (padding - f.translation.len_count(results[i][wind]["name"])),
                             results[i][wind]["rank"],
