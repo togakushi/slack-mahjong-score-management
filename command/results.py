@@ -511,10 +511,10 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             msg2[versus_player] += "平均素点差： {:+.1f}点\n".format(
                 (my_aggr["r_total"] - vs_aggr["r_total"]) / len(vs_game)
             ).replace("-", "▲")
-            msg2[versus_player] += "獲得ポイント(自分)： {:+.1f}pt\n".format(
+            msg2[versus_player] += "獲得ポイント合計(自分)： {:+.1f}pt\n".format(
                 my_aggr["total"]
             ).replace("-", "▲")
-            msg2[versus_player] += "獲得ポイント(相手)： {:+.1f}pt\n".format(
+            msg2[versus_player] += "獲得ポイント合計(相手)： {:+.1f}pt\n".format(
                 vs_aggr["total"]
             ).replace("-", "▲")
             msg2[versus_player] += "順位分布(自分)： {}-{}-{}-{} ({:1.2f})\n".format(
