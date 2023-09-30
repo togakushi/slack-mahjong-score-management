@@ -99,7 +99,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         last_game = results[i]["日付"]
         game_count += 1
 
-        for wind in ("東家", "南家", "西家", "北家"): # 成績計算
+        for wind in g.wind[0:4]: # 成績計算
             name = results[i][wind]["name"]
 
             if not name in r:
@@ -246,7 +246,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
     ### 集計 ###
     for i in results.keys():
         myrank = None
-        if [results[i][x]["name"] for x in ("東家", "南家", "西家", "北家")].count(g.guest_name) >= 2:
+        if [results[i][x]["name"] for x in g.wind[0:4]].count(g.guest_name) >= 2:
             gg_flag = " ※"
         else:
             gg_flag = ""
@@ -254,7 +254,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
         tmp_msg1 = results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S") + gg_flag + "\n"
         tmp_msg2 = ""
 
-        for wind in ("東家", "南家", "西家", "北家"):
+        for wind in g.wind[0:4]:
             tmp_msg1 += "  {}:{}{} / {}位  {:>5}00点 ({}p)\n".format(
                 wind, results[i][wind]["name"],
                 " " * (padding - f.translation.len_count(results[i][wind]["name"])),
@@ -284,7 +284,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
             msg2 += tmp_msg2
 
         if myrank: # 対戦結果保存
-            for wind in ("東家", "南家", "西家", "北家"):
+            for wind in g.wind[0:4]:
                 vs_player = results[i][wind]["name"]
                 vs_rank = results[i][wind]["rank"]
                 if vs_player == target_player[0]: # 自分の成績はスキップ
@@ -461,7 +461,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
         vs_game = []
         for i in results.keys():
             vs_flag = [False, False]
-            for wind in ("東家", "南家", "西家", "北家"):
+            for wind in g.wind[0:4]:
                 if target_player[0] == results[i][wind]["name"]:
                     vs_flag[0] = True
                 if versus_player == results[i][wind]["name"]:
@@ -488,7 +488,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
         msg2[versus_player] = "[ {} vs {} ]\n".format(target_player[0], versus_player)
 
         for i in vs_game:
-            for wind in ("東家", "南家", "西家", "北家"):
+            for wind in g.wind[0:4]:
                 if target_player[0] == results[i][wind]["name"]:
                     r_m = results[i][wind]
                     my_aggr["r_total"] += eval(str(results[i][wind]["rpoint"])) * 100
@@ -529,7 +529,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
                 msg2[versus_player] += "\n[ゲーム結果]\n"
                 for i in vs_game:
                     msg2[versus_player] += results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S\n")
-                    for wind in ("東家", "南家", "西家", "北家"):
+                    for wind in g.wind[0:4]:
                         tmp_msg = "  {}： {}{} / {}位 {:>5}00点 ({}pt)\n".format(
                             wind, results[i][wind]["name"],
                             " " * (padding - f.translation.len_count(results[i][wind]["name"])),

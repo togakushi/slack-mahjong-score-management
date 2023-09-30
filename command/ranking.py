@@ -140,7 +140,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
     return_point = g.config["mahjong"].getint("return", 300) # 返し点
     for i in results.keys():
         g.logging.trace(results[i])
-        for wind in ("東家", "南家", "西家", "北家"):
+        for wind in g.wind[0:4]:
             name = results[i][wind]["name"]
             if not name in ranking_data:
                 ranking_data[name] = {

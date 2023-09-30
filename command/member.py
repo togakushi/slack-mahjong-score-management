@@ -132,7 +132,7 @@ def CountPadding(data):
 
     if type(data) is dict:
         for i in data.keys():
-            for name in [data[i][x]["name"] for x in ("東家", "南家", "西家", "北家")]:
+            for name in [data[i][x]["name"] for x in g.wind[0:4]]:
                 if name not in name_list:
                     name_list.append(name)
 

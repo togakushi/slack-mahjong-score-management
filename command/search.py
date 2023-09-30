@@ -52,7 +52,7 @@ def getdata(command_option):
     # プレイヤー名の正規化、2ゲスト戦除外
     for count in list(data.keys()):
         guest_count = 0
-        for wind in ("東家", "南家", "西家", "北家"):
+        for wind in g.wind[0:4]:
             data[count][wind]["name"] = c.member.NameReplace(data[count][wind]["name"], command_option)
 
             if g.guest_name in data[count][wind]["name"]:
@@ -199,7 +199,7 @@ def game_select(starttime, endtime, target_player, target_count, results):
                 chk_count += 1
             else:
                 for name in target_player:
-                    if name in [results[i][wind]["name"] for wind in ("東家", "南家", "西家", "北家")]:
+                    if name in [results[i][wind]["name"] for wind in g.wind[0:4]]:
                         ret[i] = results[i]
                         chk_count += 1
                         break

@@ -104,7 +104,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     for i in results.keys():
         pdate = results[i]["日付"]
         if target_player: # 指定プレーヤーのみ抽出
-            for wind in ("東家", "南家", "西家", "北家"):
+            for wind in g.wind[0:4]:
                 pname = results[i][wind]["name"]
                 if pname in target_player:
                     if not pdate in gdata:
@@ -116,7 +116,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         else: # 全員分
             gdata[pdate] = []
             game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
-            for wind in ("東家", "南家", "西家", "北家"):
+            for wind in g.wind[0:4]:
                 pname = results[i][wind]["name"]
                 if not command_option["guest_skip"] and pname == g.guest_name:
                     continue
@@ -222,7 +222,7 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     game_time = []
 
     for i in results.keys():
-        for wind in ("東家", "南家", "西家", "北家"):
+        for wind in g.wind[0:4]:
             if results[i][wind]["name"] in target_player:
                 game_time.append(results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"))
                 game_point.append(results[i][wind]["point"])

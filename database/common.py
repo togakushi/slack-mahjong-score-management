@@ -9,14 +9,13 @@ def select_table(cur, command_option):
 
     data = {}
     count = 0
-    wind = ("東家", "南家", "西家", "北家")
 
     for row in ret.fetchall():
         if not count in data:
             data[count] = {}
 
         data[count]["日付"] = row["playtime"]
-        data[count][wind[row["seat"]]] = {
+        data[count][g.wind[row["seat"]]] = {
             "name": row["player"],
             "rpoint": row["rpoint"],
             "rank": row["rank"],

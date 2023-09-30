@@ -163,7 +163,7 @@ def argument_analysis(argument, command_option):
 def all_player_list(results, myname = None):
     ret = []
     for i in results.keys():
-        for wind in ("東家", "南家", "西家", "北家"):
+        for wind in g.wind[0:4]:
             chkname = results[i][wind]["name"]
             if not chkname in ret:
                 ret.append(chkname)

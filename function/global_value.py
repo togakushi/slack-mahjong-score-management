@@ -93,6 +93,9 @@ try:
 except:
     sys.exit()
 
+### 固定値 ###
+wind = ("東家", "南家", "西家", "北家")
+
 ### slack api ###
 app = App(token = os.environ["SLACK_BOT_TOKEN"])
 webclient = WebClient(token = os.environ["SLACK_WEB_TOKEN"])
