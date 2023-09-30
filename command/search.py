@@ -13,7 +13,7 @@ def pattern(text):
     pattern1 = re.compile(rf"^{keyword}([^0-9+-]+[0-9+-]+){{4}}")
     pattern2 = re.compile(rf"([^0-9+-]+[0-9+-]+){{4}}{keyword}$")
 
-    text = "".join(text.split())
+    text = "".join(text.split()).replace(chr(0x2212),'-')
     if pattern1.search(text) or pattern2.search(text):
         ret = re.sub(rf"^{keyword}|{keyword}$", "", text)
         ret = re.sub(rf"([^0-9+-]+)([0-9+-]+)" * 4, r"\1 \2 \3 \4 \5 \6 \7 \8", ret).split()
