@@ -37,6 +37,7 @@ def put_ranking(ranking_type, reversed, results, ranking_data, keyword, command_
     namelist = [i for i in ranking_data.keys()]
     raw_data = [ranking_data[i][keyword] for i in ranking_data.keys()]
     game_count = [ranking_data[i]["game_count"] for i in ranking_data.keys()]
+    padding = c.CountPadding(results)
 
     if ranking_type in [0, 1, 5]:
         data = [raw_data[i] / game_count[i] for i in range(len(ranking_data.keys()))]
@@ -63,35 +64,40 @@ def put_ranking(ranking_type, reversed, results, ranking_data, keyword, command_
 
         for i in top:
             if ranking_type == 0: # プレイゲーム数に対する割合
-                msg += "\t{}: {}\t{:.2%}\t({}/{}ゲーム)\n".format(
+                msg += "\t{}: {}{} {:.2%}\t({}/{}ゲーム)\n".format(
                     juni, namelist[i],
+                    " " * (padding - f.translation.len_count(namelist[i])),
                     data[i],
                     round(raw_data[i], 1),
                     game_count[i],
                 )
             if ranking_type == 1: # プレイゲーム数に対する平均
-                msg += "\t{}: {}\t{}\t({}/{}ゲーム)\n".format(
+                msg += "\t{}: {}{} {}\t({}/{}ゲーム)\n".format(
                     juni, namelist[i],
+                    " " * (padding - f.translation.len_count(namelist[i])),
                     round(data[i], 1),
                     round(raw_data[i], 1),
                     game_count[i],
-                )
+                ).replace("-", "▲")
             if ranking_type == 2: # プレイゲーム数に対する回数
-                msg += "\t{}: {}\t{}\t({}ゲーム)\n".format(
+                msg += "\t{}: {}{} {}\t({}ゲーム)\n".format(
                     juni, namelist[i],
+                    " " * (padding - f.translation.len_count(namelist[i])),
                     round(raw_data[i], 1),
                     game_count[i],
-                )
+                ).replace("-", "▲")
             if ranking_type == 4: # 総ゲーム数に対する割合
-                msg += "\t{}: {}\t{:.2%}\t({}/{}ゲーム)\n".format(
+                msg += "\t{}: {}{} {:.2%}\t({}/{}ゲーム)\n".format(
                     juni, namelist[i],
+                    " " * (padding - f.translation.len_count(namelist[i])),
                     data[i],
                     round(raw_data[i], 1),
                     len(results),
                 )
             if ranking_type == 5: # 平均順位専用専用
-                msg += "\t{}: {}\t{:1.3f}\t({}ゲーム)\n".format(
+                msg += "\t{}: {}{} {:1.3f}\t({}ゲーム)\n".format(
                     juni, namelist[i],
+                    " " * (padding - f.translation.len_count(namelist[i])),
                     data[i],
                     game_count[i],
                 )
@@ -131,7 +137,10 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"[ranking] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    g.logging.info(f"[ranking] {starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"[ranking] target_player: {target_player}")
+    g.logging.info(f"[ranking] command_option: {command_option}")
+
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count, tmpdate)
 
@@ -151,7 +160,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
                     "success": 0, # 連対率
                     "not_las": 0, # ラス回避
                     "tobi": 0,
-                    "in_exp1": 0, "in_exp2": 0,
+                    "in_exp1": 0, "in_exp2": 0, # 半荘収支
                 }
 
             ranking_data[name]["game_count"] += 1
