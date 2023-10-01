@@ -24,10 +24,22 @@ def post_text(client, channel, title, msg):
             text = f"{title}\n{msg.strip()}",
         )
     else:
-        res = client.chat_postMessage(
-            channel = channel,
-            text = f"\n{title}\n\n```{msg.strip()}```",
-        )
+        # ポスト予定のメッセージをstep行単位のブロックに分割
+        step = 50
+        post_msg = []
+        for count in range(int(len(msg.splitlines()) / step) + 1):
+            post_msg.append('\n'.join(msg.splitlines()[count * step:(count + 1) * step]))
+
+        # 最終ブロックがstepの半分以下なら直前のブロックにまとめる
+        if len(post_msg) > 1 and step / 2 > len(post_msg[count].splitlines()):
+            post_msg[count - 1] += "\n" + post_msg.pop(count)
+
+        # ブロック単位でポスト
+        for i in range(len(post_msg)):
+            res = client.chat_postMessage(
+                channel = channel,
+                text = f"\n{title}\n\n```{post_msg[i].strip()}```",
+            )
 
     return(res)
 
