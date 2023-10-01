@@ -11,8 +11,10 @@ g.logging.info(f"[import] results {commandword}")
 # イベントAPI
 @g.app.message(re.compile(rf"^{commandword}"))
 def handle_results_evnts(client, context, body):
+    g.logging.trace(f"{body['event']}")
     command = body["event"]["text"].split()[0]
     argument = body["event"]["text"].split()[1:]
+    event_ts = body['event']['ts']
 
     if not re.match(rf"^{commandword}$", command):
         return
@@ -20,10 +22,10 @@ def handle_results_evnts(client, context, body):
     command_option = f.configure.command_option_initialization("results")
     g.logging.info(f"[{command}:arg] {argument}")
     g.logging.info(f"[{command}:opt] {command_option}")
-    slackpost(client, context.channel_id, argument, command_option)
+    slackpost(client, context.channel_id, event_ts, argument, command_option)
 
 
-def slackpost(client, channel, argument, command_option):
+def slackpost(client, channel, event_ts, argument, command_option):
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
@@ -48,7 +50,7 @@ def slackpost(client, channel, argument, command_option):
                 f.slack_api.post_message(client, channel, msg2[m] + '\n', res["ts"])
         else: # 成績サマリ
             msg = summary(starttime, endtime, target_player, target_count, command_option)
-            f.slack_api.post_text(client, channel, "", msg)
+            f.slack_api.post_text(client, channel, event_ts, "", msg)
 
 
 def summary(starttime, endtime, target_player, target_count, command_option):

@@ -30,8 +30,10 @@ def subcommand_list(subcommand):
 @g.app.command(commandname)
 def slash_command(ack, body, client):
     ack()
+    g.logging.trace(f"{body}")
     user_id = body["user_id"]
-
+    event_ts = 0
+    
     if body["text"]:
         subcom = body["text"].split()[0]
         argument = body["text"].split()[1:]
@@ -40,7 +42,7 @@ def slash_command(ack, body, client):
         if subcom.lower() in subcommand_list("results"):
             command_option = f.configure.command_option_initialization("results")
             g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
-            c.results.slackpost(client, user_id, argument, command_option)
+            c.results.slackpost(client, user_id, event_ts, argument, command_option)
             return
 
         if subcom.lower() in subcommand_list("graph"):
@@ -64,7 +66,7 @@ def slash_command(ack, body, client):
         # メンバー管理系コマンド
         if subcom.lower() in subcommand_list("member"):
             title, msg = c.member.GetList()
-            f.slack_api.post_text(client, user_id, title, msg)
+            f.slack_api.post_text(client, user_id, event_ts, title, msg)
             return
 
         if subcom.lower() in subcommand_list("add"):
