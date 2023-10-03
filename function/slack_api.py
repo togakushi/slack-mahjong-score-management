@@ -19,11 +19,17 @@ def post_message(client, channel, msg, ts = False):
 
 def post_text(client, channel, event_ts, title, msg):
     if len(re.sub(r'\n+', '\n', f"{msg.strip()}").splitlines()) == 1:
-        res = client.chat_postMessage(
-            channel = channel,
-            text = f"{title}\n{msg.strip()}",
-            thread_ts = event_ts,
-        )
+        if event_ts:
+            res = client.chat_postMessage(
+                channel = channel,
+                text = f"{title}\n{msg.strip()}",
+            )
+        else:
+            res = client.chat_postMessage(
+                channel = channel,
+                text = f"{title}\n{msg.strip()}",
+                thread_ts = event_ts,
+            )
     else:
         # ポスト予定のメッセージをstep行単位のブロックに分割
         step = 50
@@ -37,11 +43,17 @@ def post_text(client, channel, event_ts, title, msg):
 
         # ブロック単位でポスト
         for i in range(len(post_msg)):
-            res = client.chat_postMessage(
-                channel = channel,
-                text = f"\n{title}\n\n```{post_msg[i].strip()}```",
-                thread_ts = event_ts,
-            )
+            if event_ts:
+                res = client.chat_postMessage(
+                    channel = channel,
+                    text = f"\n{title}\n\n```{post_msg[i].strip()}```",
+                )
+            else:
+                res = client.chat_postMessage(
+                    channel = channel,
+                    text = f"\n{title}\n\n```{post_msg[i].strip()}```",
+                    thread_ts = event_ts,
+                )
 
     return(res)
 
