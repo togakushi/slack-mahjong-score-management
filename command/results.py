@@ -365,7 +365,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
             )
 
             for wind in g.wind[0:4]:
-                if sum(seat_rank[wind]) => 1:
+                if sum(seat_rank[wind]) >= 1:
                     msg2["座席"] += "{}： {}-{}-{}-{} ({:1.2f})".format(
                         wind,
                         seat_rank[wind][0],
