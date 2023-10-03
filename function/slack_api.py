@@ -12,7 +12,6 @@ def post_message(client, channel, msg, ts = False):
         res = client.chat_postMessage(
             channel = channel,
             text = f"{msg.strip()}",
-            thread_ts = event_ts,
         )
 
     return(res)
