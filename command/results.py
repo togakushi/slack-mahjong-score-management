@@ -365,19 +365,22 @@ def details(starttime, endtime, target_player, target_count, command_option):
             )
 
             for wind in g.wind[0:4]:
-                msg2["座席"] += "{}： {}-{}-{}-{} ({:1.2f})".format(
-                    wind,
-                    seat_rank[wind][0],
-                    seat_rank[wind][1],
-                    seat_rank[wind][2],
-                    seat_rank[wind][3],
-                    sum([seat_rank[wind][i] * (i + 1) for i in range(4)]) / sum(seat_rank[wind]),
-                    seat_tobi[g.wind.index(wind)],
-                )
-                if not g.config["mahjong"].getboolean("ignore_flying", False):
-                    msg2["座席"] += " / トビ： {} 回\n".format(seat_tobi[g.wind.index(wind)])
+                if sum(seat_rank[wind]) => 1:
+                    msg2["座席"] += "{}： {}-{}-{}-{} ({:1.2f})".format(
+                        wind,
+                        seat_rank[wind][0],
+                        seat_rank[wind][1],
+                        seat_rank[wind][2],
+                        seat_rank[wind][3],
+                        sum([seat_rank[wind][i] * (i + 1) for i in range(4)]) / sum(seat_rank[wind]),
+                        seat_tobi[g.wind.index(wind)],
+                    )
+                    if not g.config["mahjong"].getboolean("ignore_flying", False):
+                        msg2["座席"] += " / トビ： {} 回\n".format(seat_tobi[g.wind.index(wind)])
+                    else:
+                        msg2["座席"] += "\n"
                 else:
-                    msg2["座席"] += "\n"
+                    msg2.pop("座席")
 
         if command_option["game_results"]:
             if not command_option["guest_skip"]:
