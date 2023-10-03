@@ -380,7 +380,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
                     else:
                         msg2["座席"] += "\n"
                 else:
-                    msg2.pop("座席")
+                    msg2["座席"] += "{}： 0-0-0-0".format(wind)
 
         if command_option["game_results"]:
             if not command_option["guest_skip"]:
