@@ -95,6 +95,7 @@ except:
 
 ### 固定値 ###
 wind = ("東家", "南家", "西家", "北家")
+guest_mark = "※"
 
 ### slack api ###
 app = App(token = os.environ["SLACK_BOT_TOKEN"])

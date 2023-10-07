@@ -75,7 +75,7 @@ def NameReplace(pname, command_option):
 
     if not command_option["unregistered_replace"]:
       if not ExsistPlayer(pname):
-        pname = pname + "(※)"
+        pname = pname + "(" + g.guest_mark + ")"
     else:
       if not ExsistPlayer(pname):
         pname = g.guest_name

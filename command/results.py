@@ -258,7 +258,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
     for i in results.keys():
         myrank = None
         if [results[i][x]["name"] for x in g.wind[0:4]].count(g.guest_name) >= 2:
-            gg_flag = " ※"
+            gg_flag = " " + g.guest_mark
         else:
             gg_flag = ""
 
@@ -380,11 +380,13 @@ def details(starttime, endtime, target_player, target_count, command_option):
                 if g.config["mahjong"].getboolean("ignore_flying", False):
                     msg2["座席"] += "\n"
                 else:
-                    msg2["座席"] += " / トビ： {} 回\n".format(seat_tobi[g.wind.index(wind)])
+                    msg2["座席"] += " / トビ： {} 回\n".format(
+                         "--" if sum(seat_rank[wind]) == 0 else seat_tobi[g.wind.index(wind)]
+                    )
 
         if command_option["game_results"]:
             if not command_option["guest_skip"]:
-                msg2["戦績"] += gg_flag.strip() + "：2ゲスト戦\n"
+                msg2["戦績"] += g.guest_mark.strip() + "：2ゲスト戦\n"
         else:
             msg2.pop("戦績")
 

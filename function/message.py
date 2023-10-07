@@ -59,7 +59,7 @@ def remarks(command_option, starttime):
     if not command_option["guest_skip"]:
         remark.append("2ゲスト戦の結果を含む")
     if not command_option["unregistered_replace"]:
-        remark.append("ゲスト置換なし(※：未登録プレイヤー)")
+        remark.append("ゲスト置換なし("+ g.guest_mark + "：未登録プレイヤー)")
     if remark:
         ret = f"特記：" + "、".join(remark)
 
