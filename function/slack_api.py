@@ -23,12 +23,12 @@ def post_text(client, channel, event_ts, title, msg):
             res = client.chat_postMessage(
                 channel = channel,
                 text = f"{title}\n{msg.strip()}",
+                thread_ts = event_ts,
             )
         else:
             res = client.chat_postMessage(
                 channel = channel,
                 text = f"{title}\n{msg.strip()}",
-                thread_ts = event_ts,
             )
     else:
         # ポスト予定のメッセージをstep行単位のブロックに分割
@@ -47,12 +47,12 @@ def post_text(client, channel, event_ts, title, msg):
                 res = client.chat_postMessage(
                     channel = channel,
                     text = f"\n{title}\n\n```{post_msg[i].strip()}```",
+                    thread_ts = event_ts,
                 )
             else:
                 res = client.chat_postMessage(
                     channel = channel,
                     text = f"\n{title}\n\n```{post_msg[i].strip()}```",
-                    thread_ts = event_ts,
                 )
 
     return(res)
