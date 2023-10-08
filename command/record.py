@@ -7,7 +7,7 @@ import command as c
 import function as f
 from function import global_value as g
 
-commandword = g.config["record"].get("commandword", "御無礼記録")
+commandword = g.config["record"].get("commandword", "麻雀記録")
 g.logging.info(f"[import] record {commandword}")
 
 

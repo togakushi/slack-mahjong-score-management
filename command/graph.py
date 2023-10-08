@@ -12,7 +12,7 @@ from function import global_value as g
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
-commandword = g.config["graph"].get("commandword", "御無礼グラフ")
+commandword = g.config["graph"].get("commandword", "麻雀グラフ")
 g.logging.info(f"[import] graph {commandword}")
 
 

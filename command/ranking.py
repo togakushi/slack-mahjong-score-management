@@ -4,7 +4,7 @@ import command as c
 import function as f
 from function import global_value as g
 
-commandword = g.config["ranking"].get("commandword", "御無礼ランキング")
+commandword = g.config["ranking"].get("commandword", "麻雀ランキング")
 g.logging.info(f"[import] ranking {commandword}")
 
 
