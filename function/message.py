@@ -10,6 +10,7 @@ def help(command):
     msg = f"```使い方："
     msg += f"\n\t{command} help          このメッセージ"
     msg += f"\n\t{command} results       成績出力"
+    msg += f"\n\t{command} ranking       ランキング出力"
     msg += f"\n\t{command} record        張り付け用集計済みデータ出力"
     msg += f"\n\t{command} graph         ポイント推移グラフを表示"
     msg += f"\n\t{command} ranking       ランキングを表示"
