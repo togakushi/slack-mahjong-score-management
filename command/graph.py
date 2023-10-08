@@ -178,6 +178,12 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         label = f"{name} ({str(total)})".replace("-", "▲")
         plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
     plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
+
+    # Y軸修正
+    ylocs, ylabs = plt.yticks()
+    new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
+    plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
+
     plt.tight_layout()
     fig.tight_layout()
     fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "graph.png"))
