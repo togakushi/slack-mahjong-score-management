@@ -30,12 +30,14 @@ def invalid_argument():
 
 
 def invalid_score(user_id, score, pointsum):
-    return(random.choice([
-        f"<@{user_id}> {abs(pointsum - score) * 100}点合わないようです。",
-        f"<@{user_id}> {abs(pointsum - score) * 100}点合いませんよ。",
-        f"<@{user_id}> {abs(pointsum - score) * 100}点合いません。ご確認を。",
-        f"<@{user_id}> {abs(pointsum - score) * 100}点合ってませんね。",
-    ]))
+    rpoint_diff = abs(pointsum - score) * 100
+    if "invalid_score" in g.config.sections():
+        select_msg = [random.choice([i for i in g.config["invalid_score"]])][0]
+        msg = g.config["invalid_score"][select_msg]
+    else:
+        msg = "{rpoint_diff}点合っていません。"
+
+    return(f"<@{user_id}> " + msg.format(rpoint_diff = rpoint_diff))
 
 
 def no_hits(starttime, endtime):

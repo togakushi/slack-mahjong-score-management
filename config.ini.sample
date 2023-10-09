@@ -125,3 +125,13 @@ display = True
 badge = :status_oyasumi:,:status_zeffutyou:,:status_futyou:,:status_futuu:,:status_koutyou:,:status_zekkoutyou:
 # 刻み幅（50%を普通としてステータスが変動する幅）
 step = 5.0
+
+
+### カスタムメッセージ ###
+[invalid_score] # 持ち点合計と配給原点合計に差分がある場合
+# {rpoint_diff} → 得点差分の絶対値に置き換えられる
+# キーはセクション内でユニークであれば任意の名前でよい
+# 内容は投稿者にメンションされる
+msg01 = {rpoint_diff}点合わないよ？
+msg02 = あれ？{rpoint_diff}点間違ってない？
+msg03 = {rpoint_diff}点…あって…ないです……。
