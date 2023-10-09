@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import re
+from datetime import datetime
 
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
@@ -50,6 +51,7 @@ def handle_home_events(client, event):
                     "block_id": "block_id-sday",
                     "element": {
                         "type": "datepicker",
+                        "initial_date": datetime.now().strftime("%Y-%m-%d"),
                         "placeholder": {
                             "type": "plain_text",
                             "text": "Select a date"
@@ -66,6 +68,7 @@ def handle_home_events(client, event):
                     "block_id": "block_id-eday",
                     "element": {
                         "type": "datepicker",
+                        "initial_date": datetime.now().strftime("%Y-%m-%d"),
                         "placeholder": {
                             "type": "plain_text",
                             "text": "Select a date"
@@ -89,7 +92,14 @@ def handle_home_events(client, event):
                                     "text": "ゲスト無効"
                                 },
                                 "value": "unregistered_replace"
-                            }
+                            },
+                            {
+                                "text": {
+                                    "type": "plain_text",
+                                    "text": "アーカイブ"
+                                },
+                                "value": "archive"
+                            },
                         ],
                         "initial_options": [
                             {
@@ -137,6 +147,7 @@ def handle_some_action(ack, body, client):
     user_id = body["user"]["id"]
     sday = body["view"]["state"]["values"]["block_id-sday"]["sday"]["selected_date"]
     eday = body["view"]["state"]["values"]["block_id-eday"]["eday"]["selected_date"]
+    selected_options = body["view"]["state"]["values"]["block_id-checkboxes"]["checkboxes"]["selected_options"]
 
     if sday != None:
         command_option["aggregation_range"] = []
@@ -144,13 +155,22 @@ def handle_some_action(ack, body, client):
     if eday != None:
         command_option["aggregation_range"].append(eday.replace("-",""))
 
+    for i in range(len(selected_options)):
+        flag = selected_options[i]["value"]
+        if flag == "unregistered_replace":
+            command_option[flag] = False
+        if flag == "archive":
+            command_option[flag] = True
+
     g.logging.info(command_option)
     target_days, target_player, target_count, command_option = f.common.argument_analysis("", command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
+
+    msg = ""
     if starttime and endtime:
         msg = c.results.summary(starttime, endtime, target_player, target_count, command_option)
-
-    g.logging.info(body["view"]["state"]["values"]["block_id-checkboxes"]["checkboxes"])
+        if len(msg.strip().splitlines()) >= 2:
+            msg = "```" + msg + "```"
 
     client.views_publish(
         user_id = user_id,
@@ -161,7 +181,7 @@ def handle_some_action(ack, body, client):
                     "type": "section",
                     "block_id": "PlainText",
                     "text": {
-                        "type": "plain_text",
+                        "type": "mrkdwn",
                         "text": msg
                     }
                 }
