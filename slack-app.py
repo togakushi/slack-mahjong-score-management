@@ -17,15 +17,18 @@ def handle_score_check_evnts(client, body):
     postされた素点合計が配給原点と同じかチェックする
     """
 
+    g.logging.trace(body["event"])
     user_id = body["event"]["user"]
     channel_id = body["event"]["channel"]
+    ts = body["event"]["ts"]
     msg = c.search.pattern(body["event"]["text"])
+
     if msg:
         pointsum = g.config["mahjong"].getint("point", 250) * 4
         score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
         if not score == pointsum:
             msg = f.message.invalid_score(user_id, score, pointsum)
-            f.slack_api.post_message(client, channel_id, msg)
+            f.slack_api.post_message(client, channel_id, msg, ts)
 
 
 @g.app.event("message")
