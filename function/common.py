@@ -1,6 +1,4 @@
 import re
-import sys
-import unicodedata
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
