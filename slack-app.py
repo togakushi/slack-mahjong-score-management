@@ -3,6 +3,7 @@ import os
 import re
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 import command as c
@@ -41,6 +42,7 @@ def handle_message_events():
 def handle_home_events(client, event):
     user_id = event["user"]
 
+    initial_date = (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d")
     result = client.views_publish(
         user_id = user_id,
         view = {
@@ -51,7 +53,7 @@ def handle_home_events(client, event):
                     "block_id": "block_id-sday",
                     "element": {
                         "type": "datepicker",
-                        "initial_date": datetime.now().strftime("%Y-%m-%d"),
+                        "initial_date": initial_date,
                         "placeholder": {
                             "type": "plain_text",
                             "text": "Select a date"
@@ -68,7 +70,7 @@ def handle_home_events(client, event):
                     "block_id": "block_id-eday",
                     "element": {
                         "type": "datepicker",
-                        "initial_date": datetime.now().strftime("%Y-%m-%d"),
+                        "initial_date": initial_date,
                         "placeholder": {
                             "type": "plain_text",
                             "text": "Select a date"
