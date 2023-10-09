@@ -87,7 +87,7 @@ guest_skip = True
 # 表示順位(未定義時：3)
 ranked = 3
 # ランキング規定ゲーム数(未定義時：0.05)
-## 集計対象ゲーム数 * stipulated_rate + 1 
+## 集計対象ゲーム数 * stipulated_rate + 2
 stipulated_rate = 0.05
 
 ### メンバー管理 ###
