@@ -8,7 +8,7 @@ import command as c
 import function as f
 from function import global_value as g
 
-keyword = g.config["search"].get("keyword", "御無礼")
+keyword = g.config["search"].get("keyword", "麻雀成績")
 
 # イベントAPI
 @g.app.message(re.compile(rf"{keyword}"))
@@ -22,7 +22,6 @@ def handle_score_check_evnts(client, body):
     msg = c.search.pattern(body["event"]["text"])
     if msg:
         pointsum = g.config["mahjong"].getint("point", 250) * 4
-
         score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
         if not score == pointsum:
             msg = f.message.invalid_score(user_id, score, pointsum)
