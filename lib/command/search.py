@@ -2,7 +2,7 @@ import re
 import sqlite3
 from datetime import datetime
 
-import command as c
+import lib.command as c
 import lib.database as db
 import lib.function as f
 from lib.function import global_value as g
