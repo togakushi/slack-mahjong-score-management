@@ -1,5 +1,5 @@
-import function as f
-from function import global_value as g
+import lib.function as f
+from lib.function import global_value as g
 
 
 def select_table(cur, command_option):

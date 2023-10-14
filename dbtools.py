@@ -3,8 +3,8 @@ import argparse
 import sqlite3
 
 import lib.database as db
-import function as f
-from function import global_value as g
+import lib.function as f
+from lib.function import global_value as g
 
 f.configure.parameter_load()
 command_option = f.configure.command_option_initialization("record") # 一旦recordに合わせる

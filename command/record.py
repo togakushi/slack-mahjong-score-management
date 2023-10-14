@@ -3,8 +3,8 @@ import re
 from dateutil.relativedelta import relativedelta
 
 import command as c
-import function as f
-from function import global_value as g
+import lib.function as f
+from lib.function import global_value as g
 
 commandword = g.config["record"].get("commandword", "麻雀記録")
 g.logging.info(f"[import] record {commandword}")

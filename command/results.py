@@ -1,8 +1,8 @@
 import re
 
 import command as c
-import function as f
-from function import global_value as g
+import lib.function as f
+from lib.function import global_value as g
 
 commandword = g.config["results"].get("commandword", "麻雀成績")
 g.logging.info(f"[import] results {commandword}")

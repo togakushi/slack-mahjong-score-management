@@ -6,8 +6,8 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 import lib.event
 import command as c
-import function as f
-from function import global_value as g
+import lib.function as f
+from lib.function import global_value as g
 
 keyword = g.config["search"].get("keyword", "麻雀成績")
 

@@ -4,8 +4,8 @@ from datetime import datetime
 
 import command as c
 import lib.database as db
-import function as f
-from function import global_value as g
+import lib.function as f
+from lib.function import global_value as g
 
 
 def pattern(text):

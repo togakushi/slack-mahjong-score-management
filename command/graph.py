@@ -6,8 +6,8 @@ from matplotlib import gridspec
 from matplotlib.font_manager import FontProperties
 
 import command as c
-import function as f
-from function import global_value as g
+import lib.function as f
+from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
