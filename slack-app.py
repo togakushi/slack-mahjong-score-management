@@ -5,7 +5,7 @@ import re
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 import lib.event
-import command as c
+import lib.command as c
 import lib.function as f
 from lib.function import global_value as g
 
