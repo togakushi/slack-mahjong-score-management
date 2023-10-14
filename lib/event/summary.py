@@ -1,118 +1,17 @@
-from datetime import datetime
-
-from dateutil.relativedelta import relativedelta
-
-import command as c
-import function as f
-from function import global_value as g
+import lib.command as c
+import lib.function as f
+import lib.event as e
+from lib.function import global_value as g
 
 
-@g.app.action("actionId-summary_menu")
+@g.app.action("summary_menu")
 def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
-    user_id = body["user"]["id"]
-    initial_date = (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d")
     result = client.views_publish(
-        user_id = user_id,
-        view = {
-            "type": "home",
-            "blocks": [
-                {
-                    "type": "header",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "集計期間"
-                    }
-                },
-                {
-                    "type": "input",
-                    "block_id": "block_id-sday",
-                    "element": {
-                        "type": "datepicker",
-                        "initial_date": initial_date,
-                        "placeholder": {
-                            "type": "plain_text",
-                            "text": "Select a date"
-                        },
-                        "action_id": "sday"
-                    },
-                    "label": {
-                        "type": "plain_text",
-                        "text": "開始日"
-                    },
-                },
-                {
-                    "type": "input",
-                    "block_id": "block_id-eday",
-                    "element": {
-                        "type": "datepicker",
-                        "initial_date": initial_date,
-                        "placeholder": {
-                            "type": "plain_text",
-                            "text": "Select a date"
-                        },
-                        "action_id": "eday"
-                    },
-                    "label": {
-                        "type": "plain_text",
-                        "text": "終了日"
-                    }
-                },
-                {
-                    "type": "input",
-                    "block_id": "block_id-checkboxes",
-                    "element": {
-                        "type": "checkboxes",
-                        "options": [
-                            {
-                                "text": {
-                                    "type": "plain_text",
-                                    "text": "ゲスト無効"
-                                },
-                                "value": "unregistered_replace"
-                            },
-                            {
-                                "text": {
-                                    "type": "plain_text",
-                                    "text": "アーカイブ"
-                                },
-                                "value": "archive"
-                            },
-                        ],
-                        "initial_options": [
-                            {
-                                "text": {
-                                    "type": "plain_text",
-                                    "text": "ゲスト無効"
-                                },
-                                "value": "unregistered_replace"
-                            }
-                        ],
-                        "action_id": "checkboxes"
-                    },
-                    "label": {
-                        "type": "plain_text",
-                        "text": "検索オプション"
-                    }
-                },
-                {
-                    "type": "actions",
-                    "elements": [
-                        {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": "集計開始"
-                            },
-                            "value": "gobrei_search",
-                            "action_id": "actionId-search"
-                        }
-                    ]
-                }
-            ]
-        }
+        user_id = body["user"]["id"],
+        view = e.DispSummryMenu(),
     )
 
     g.logging.trace(result)
@@ -122,12 +21,17 @@ def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
-    command_option = f.configure.command_option_initialization("results")
-
     user_id = body["user"]["id"]
-    sday = body["view"]["state"]["values"]["block_id-sday"]["sday"]["selected_date"]
-    eday = body["view"]["state"]["values"]["block_id-eday"]["eday"]["selected_date"]
-    selected_options = body["view"]["state"]["values"]["block_id-checkboxes"]["checkboxes"]["selected_options"]
+    sday = body["view"]["state"]["values"]["bid-sday"]["aid-sday"]["selected_date"]
+    eday = body["view"]["state"]["values"]["bid-eday"]["aid-eday"]["selected_date"]
+    selected_options = body["view"]["state"]["values"]["bid-checkboxes"]["aid-checkboxes"]["selected_options"]
+
+    client.views_publish(
+        user_id = user_id,
+        view = e.PlainText(f"{sday} ～ {eday} の結果を集計中…"),
+    )
+
+    command_option = f.configure.command_option_initialization("results")
 
     if sday != None:
         command_option["aggregation_range"] = []
@@ -146,22 +50,6 @@ def handle_some_action(ack, body, client):
     target_days, target_player, target_count, command_option = f.common.argument_analysis("", command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
-    client.views_publish(
-        user_id = user_id,
-        view = {
-            "type": "home",
-            "blocks": [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "集計中…"
-                    }
-                }
-            ]
-        }
-    )
-
     msg = ""
     if starttime and endtime:
         msg = c.results.summary(starttime, endtime, target_player, target_count, command_option)
@@ -169,16 +57,5 @@ def handle_some_action(ack, body, client):
 
     client.views_publish(
         user_id = user_id,
-        view = {
-            "type": "home",
-            "blocks": [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "plain_text",
-                        "text": "集計完了"
-                    }
-                }
-            ]
-        }
+        view = e.PlainText(f"集計完了"),
     )

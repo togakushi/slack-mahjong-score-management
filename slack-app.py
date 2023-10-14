@@ -5,6 +5,7 @@ import re
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 import lib.command as c
+import lib.event as e
 import lib.function as f
 from lib.function import global_value as g
 
@@ -29,6 +30,16 @@ def handle_score_check_evnts(client, body):
         if not score == pointsum:
             msg = f.message.invalid_score(user_id, score, pointsum)
             f.slack_api.post_message(client, channel_id, msg, ts)
+
+
+@g.app.event("app_home_opened")
+def handle_home_events(client, event):
+    result = client.views_publish(
+        user_id = event["user"],
+        view = e.DispMainMenu()
+    )
+
+    g.logging.trace(result)
 
 
 @g.app.event("message")
