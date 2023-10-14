@@ -2,7 +2,7 @@
 import argparse
 import sqlite3
 
-import database as db
+import lib.database as db
 import function as f
 from function import global_value as g
 
