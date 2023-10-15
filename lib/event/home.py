@@ -43,9 +43,12 @@ def SetCommandOption(command_option, body):
                 command_option[flag] = True
 
     if "bid-ranked" in search_options:
-        ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
-        if ranked > 0:
-            command_option["ranked"] = ranked
+        if "value" in search_options["bid-ranked"]["aid-ranked"]:
+            ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
+            if ranked > 0:
+                command_option["ranked"] = ranked
+        else:
+            command_option["ranked"] = g.config["ranking"].getint("ranked", 3)
 
     g.logging.info(command_option)
     return(command_option, app_msg)
