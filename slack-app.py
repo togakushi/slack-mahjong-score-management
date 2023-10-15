@@ -34,9 +34,15 @@ def handle_score_check_evnts(client, body):
 
 @g.app.event("app_home_opened")
 def handle_home_events(client, event):
+    g.app_var["user_id"] = event["user"]
+    if "view" in event:
+        g.app_var["view_id"] = event["view"]["id"]
+
+    g.logging.info(f"[home_opened] {g.app_var}")
+
     result = client.views_publish(
-        user_id = event["user"],
-        view = e.DispMainMenu()
+        user_id = g.app_var["user_id"],
+        view = e.BuildMainMenu(),
     )
 
     g.logging.trace(result)

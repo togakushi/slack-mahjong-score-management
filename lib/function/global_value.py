@@ -4,6 +4,9 @@ import logging
 import sys
 import os
 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from functools import partial
 from slack_bolt import App
 from slack_sdk import WebClient
@@ -100,3 +103,11 @@ guest_mark = "※"
 ### slack api ###
 app = App(token = os.environ["SLACK_BOT_TOKEN"])
 webclient = WebClient(token = os.environ["SLACK_WEB_TOKEN"])
+app_var = {
+    "user_id": None,
+    "view_id": None,
+    "screen": None,
+    "sday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
+    "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
+    "ranked": config["ranking"].getint("ranked", 3),
+}

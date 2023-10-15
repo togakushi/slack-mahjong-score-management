@@ -8,13 +8,17 @@ from lib.function import global_value as g
 
 
 def PlainText(msg):
-    view = {}
-    view["type"] = "home"
-    view["blocks"] = []
+    view = {"type": "home", "blocks": []}
     view["blocks"].append({"type": "section", "text": {}})
     view["blocks"][0]["text"] = {"type": "plain_text", "text": msg}
 
     return(view)
+
+
+def Divider(view, no):
+    view["blocks"].append({"type": "divider",})
+
+    return(view, no + 1)
 
 
 def Header(view, no, text = "dummy"):
@@ -24,7 +28,7 @@ def Header(view, no, text = "dummy"):
     return(view, no + 1)
 
 
-def Button(view, no, text = "dummy", value = "dummy", action_id = False):
+def Button(view, no, text = "Click Me", value = "dummy", action_id = False):
     view["blocks"].append({"type": "actions", "elements": [{}]})
     view["blocks"][no]["elements"][0] = {"type": "button", "text": {}, "value": value, "action_id": action_id}
     view["blocks"][no]["elements"][0]["text"] = {"type": "plain_text", "text": text}
@@ -40,7 +44,7 @@ def SearchOptions(view, no, block_id = False):
 
     view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索オプション"}
     view["blocks"][no]["element"]["type"] = "checkboxes"
-    view["blocks"][no]["element"]["action_id"] =  "aid-checkboxes"
+    view["blocks"][no]["element"]["action_id"] =  "aid-option"
 
     view["blocks"][no]["element"]["options"] = []
     view["blocks"][no]["element"]["options"].append(
@@ -84,14 +88,17 @@ def UserSelect(view, no, text = "dummy", block_id = False, add_list = False):
     return(view, no + 1)
 
 
-def PeriodSelection(view, no, text = "dummy", block_id = False, action_id = "dummy"):
+def PeriodSelection(view, no, text = "dummy", block_id = False, action_id = "dummy", initial_date = False):
+    if not initial_date:
+        initial_date = (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d")
+ 
     if block_id:
         view["blocks"].append({"type": "input", "block_id": block_id, "element": {}})
     else:
         view["blocks"].append({"type": "input", "element": {}})
 
     view["blocks"][no]["element"]["type"] = "datepicker"
-    view["blocks"][no]["element"]["initial_date"] = (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d")
+    view["blocks"][no]["element"]["initial_date"] = initial_date
     view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select a date"}
     view["blocks"][no]["element"]["action_id"] =  action_id
     view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
@@ -99,27 +106,74 @@ def PeriodSelection(view, no, text = "dummy", block_id = False, action_id = "dum
     return(view, no + 1)
 
 
-def SearchRangeChoice(view, no):
-    view["blocks"].append({"type": "input", "element": {}})
+def SearchRangeChoice(view, no, block_id = False):
+    days = f"{g.app_var['sday']} ～ {g.app_var['eday']}"
+    if block_id:
+        view["blocks"].append({"type": "input", "block_id": block_id, "element": {}})
+    else:
+        view["blocks"].append({"type": "input", "element": {}})
+
     view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索範囲"}
     view["blocks"][no]["element"]["type"] = "radio_buttons"
-    view["blocks"][no]["element"]["action_id"] = "radio_buttons"
-    view["blocks"][no]["element"]["initial_option"] = {}
-    view["blocks"][no]["element"]["initial_option"]["text"] = {"type": "plain_text", "text": "範囲選択 / 回数指定"}
-    view["blocks"][no]["element"]["initial_option"]["value"] = "選択"
+    view["blocks"][no]["element"]["action_id"] = "aid-range"
 
+    view["blocks"][no]["element"]["initial_option"] = {}
+    view["blocks"][no]["element"]["initial_option"]["text"] = {"type": "plain_text", "text": f"範囲指定： {days}"}
+    view["blocks"][no]["element"]["initial_option"]["value"] = "指定"
     view["blocks"][no]["element"]["options"] = []
-    view["blocks"][no]["element"]["options"].append(
-        {"text": {"type": "plain_text", "text": "範囲選択 / 回数指定"}, "value": "選択"}
-    )
     view["blocks"][no]["element"]["options"].append(
         {"text": {"type": "plain_text", "text": "今月"}, "value": "今月"}
     )
     view["blocks"][no]["element"]["options"].append(
+        {"text": {"type": "plain_text", "text": "先月"}, "value": "先月"}
+    )
+    view["blocks"][no]["element"]["options"].append(
         {"text": {"type": "plain_text", "text": "全部"}, "value": "全部"}
+    )
+    view["blocks"][no]["element"]["options"].append(
+        {"text": {"type": "plain_text", "text": f"範囲指定： {days}"}, "value": "指定"}
     )
 
     return(view, no + 1)
+
+
+def InputRanked(view, no, block_id = False):
+    if block_id:
+        view["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
+    else:
+        view["blocks"].append({"type": "input", "element": {}, "label": {}})
+
+    view["blocks"][no]["element"].update({"type": "number_input"})
+    view["blocks"][no]["element"].update({"is_decimal_allowed": True})
+    view["blocks"][no]["element"].update({"initial_value": str(g.app_var["ranked"])})
+    view["blocks"][no]["element"].update({"action_id": "aid-ranked"})
+    view["blocks"][no]["label"].update({"type": "plain_text", "text": "出力順位"})
+
+    return(view, no + 1)
+
+
+def ModalPeriodSelection():
+    view = {"type": "modal", "callback_id": f"{g.app_var['screen']}_ModalPeriodSelection"}
+    view["title"] = {"type": "plain_text", "text": "検索範囲指定"}
+    view["submit"] = {"type": "plain_text", "text": "決定"}
+    view["close"] = {"type": "plain_text", "text": "取消"}
+
+    view["blocks"] = []
+    view["blocks"].append({"type": "input", "element": {}, "label": {}})
+    view["blocks"][0]["element"].update({"type": "datepicker"})
+    view["blocks"][0]["element"].update({"initial_date": g.app_var["sday"]})
+    view["blocks"][0]["element"].update({"placeholder": {"type": "plain_text", "text": "Select a date"}})
+    view["blocks"][0]["element"].update({"action_id": "aid-sday"})
+    view["blocks"][0]["label"].update({"type": "plain_text", "text": "開始日"})
+    view["blocks"].append({"type": "input", "element": {}, "label": {}})
+    view["blocks"][1]["element"].update({"type": "datepicker"})
+    view["blocks"][1]["element"].update({"initial_date": g.app_var["eday"]})
+    view["blocks"][1]["element"].update({"placeholder": {"type": "plain_text", "text": "Select a date"}})
+    view["blocks"][1]["element"].update({"action_id": "aid-eday"})
+    view["blocks"][1]["label"].update({"type": "plain_text", "text": "終了日"})
+
+    return(view)
+
 
 #		{
 #			"type": "input",

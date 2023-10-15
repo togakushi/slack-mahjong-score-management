@@ -2,24 +2,43 @@ import lib.event as e
 from lib.function import global_value as g
 
 
+def BuildVersusMenu():
+    g.app_var["screen"] = "VersusMenu"
+    no = 0
+    view = {"type": "home", "blocks": []}
+
+    view, no = e.Header(view, no, "【直接対戦】")
+    # プレイヤー選択リスト
+    view, no = e.UserSelect(view, no, block_id = "target_player", text = "対象プレイヤー")
+    view, no = e.UserSelect(view, no, block_id = "vs_player", text = "対戦相手", add_list = ["全員"])
+
+    view, no = e.Divider(view, no)
+    view, no = e.SearchRangeChoice(view, no)
+    view, no = e.Button(view, no, text = "検索範囲設定", value = "click_versus", action_id = "modal-open-period")
+
+    view, no = e.Divider(view, no)
+    view, no = e.Button(view, no, text = "集計開始", value = "click_personal", action_id = "actionId-versus")
+    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back")
+
+    return(view)
+
+
 @g.app.action("versus_menu")
 def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
-    result = client.views_publish(
-        user_id = body["user"]["id"],
-        #view = e.DispVersusMenu(),
-        view = e.PlainText(f"作成中"),
+    g.logging.info(f"[global var] {g.app_var}")
+
+    client.views_update(
+        view_id = g.app_var["view_id"],
+        view = BuildVersusMenu(),
     )
 
-    g.logging.trace(result)
-
-@g.app.action("actionId-personal")
-def handle_some_action(ack, body, view, client):
+@g.app.action("actionId-versus")
+def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
-    g.logging.info(body)
 
     b = body['view']['state']['values']
     p1 = list(b['target_player'].values())[0]['selected_option']['value']
@@ -27,78 +46,24 @@ def handle_some_action(ack, body, view, client):
 
     #command_option = f.configure.command_option_initialization("results")
 
-    client.views_publish(
-        user_id = body["user"]["id"],
+    client.views_update(
+        view_id = g.app_var["view_id"],
         view = e.PlainText(f"{p1} vs {p2} の直接対戦を集計中…"),
     )
 
-
-@g.app.action("actionId-test")
-def handle_some_action(ack, body, client):
+@g.app.view("VersusMenu_ModalPeriodSelection")
+def handle_view_submission(ack, view, client):
     ack()
-    g.logging.trace(body)
 
-    result = client.views_open(
-        user_id = body["user"]["id"],
-        trigger_id=body["trigger_id"],
+    for i in view["state"]["values"].keys():
+        if "aid-sday" in view["state"]["values"][i]:
+            g.app_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
+        if "aid-eday" in view["state"]["values"][i]:
+            g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
-        view = {
-            "type": "modal",
-            "callback_id": "modal-id",
-            "title": {
-                "type": "plain_text",
-                "text": "検索範囲指定"
-            },
-            "submit": {
-                "type": "plain_text",
-                "text": "Submit"
-            },
-            "close": {
-                "type": "plain_text",
-                "text": "Cancel"
-            },
-            "blocks": [
-                {
-                    "type": "input",
-                    "element": {
-                        "type": "datepicker",
-                        "placeholder": {
-                            "type": "plain_text",
-                            "text": "Select a date"
-                        },
-                        "action_id": "datepicker-action1"
-                    },
-                    "label": {
-                        "type": "plain_text",
-                        "text": "Label"
-                    }
-                },
-                {
-                    "type": "input",
-                    "element": {
-                        "type": "datepicker",
-                        "placeholder": {
-                            "type": "plain_text",
-                            "text": "Select a date"
-                        },
-                        "action_id": "datepicker-action2"
-                    },
-                    "label": {
-                        "type": "plain_text",
-                        "text": "Label"
-                    }
-                }
-            ]
-        }
+    g.logging.info(f"[global var] {g.app_var}")
+
+    client.views_update(
+        view_id = g.app_var["view_id"],
+        view = BuildVersusMenu(),
     )
-
-    g.logging.trace(result)
-
-@g.app.view("modal-id")
-def handle_view_submission(ack, view):
-    ack()
-    # state.values.{block_id}.{action_id}
-    g.logging.info(f'[sub] {view["state"]["values"]}')
-
-    print(view)
-    return(view["state"]["values"])
