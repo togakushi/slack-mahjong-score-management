@@ -49,8 +49,9 @@ def slackpost(client, channel, event_ts, argument, command_option):
             for m in msg2.keys():
                 f.slack_api.post_message(client, channel, msg2[m] + '\n', res["ts"])
         else: # 成績サマリ
-            msg = summary(starttime, endtime, target_player, target_count, command_option)
-            f.slack_api.post_text(client, channel, event_ts, "", msg)
+            msg1, msg2 = summary(starttime, endtime, target_player, target_count, command_option)
+            res = f.slack_api.post_message(client, channel, msg2)
+            f.slack_api.post_text(client, channel, res["ts"], "", msg1)
 
 
 def summary(starttime, endtime, target_player, target_count, command_option):
@@ -76,7 +77,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
 
     Returns
     -------
-    msg : text
+    msg1, msg2: text
         slackにpostする内容
     """
 
@@ -136,7 +137,8 @@ def summary(starttime, endtime, target_player, target_count, command_option):
 
     # 表示
     padding = max([f.translation.len_count(x) for x in name_list])
-    msg = ""
+    msg1 = ""
+    msg2 = "*【成績サマリ】*\n"
 
     if command_option["score_comparisons"]:
         header = "{} {}： 累積    / 点差 ##\n".format(
@@ -145,12 +147,12 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         for name in name_list:
             tobi_count += r[name]["tobi"]
             if name_list.index(name) == 0:
-                msg += "{} {}： {:>+6.1f} / *****\n".format(
+                msg1 += "{} {}： {:>+6.1f} / *****\n".format(
                     name, " " * (padding - f.translation.len_count(name)),
                     r[name]["total"],
                 ).replace("-", "▲").replace("*", "-")
             else:
-                msg += "{} {}： {:>+6.1f} / {:>5.1f}\n".format(
+                msg1 += "{} {}： {:>+6.1f} / {:>5.1f}\n".format(
                     name, " " * (padding - f.translation.len_count(name)),
                     r[name]["total"],
                     r[name_list[name_list.index(name) - 1]]["total"] - r[name]["total"],
@@ -163,34 +165,33 @@ def summary(starttime, endtime, target_player, target_count, command_option):
             header +=" / トビ ##\n"
         for name in name_list:
             tobi_count += r[name]["tobi"]
-            msg += "{} {}： {:>+6.1f} ({:>+5.1f})".format(
+            msg1 += "{} {}： {:>+6.1f} ({:>+5.1f})".format(
                 name, " " * (padding - f.translation.len_count(name)),
                 r[name]["total"],
                 r[name]["total"] / sum(r[name]["rank"]),
             ).replace("-", "▲")
-            msg += " / {}-{}-{}-{} ({:1.2f})".format(
+            msg1 += " / {}-{}-{}-{} ({:1.2f})".format(
                 r[name]["rank"][0], r[name]["rank"][1], r[name]["rank"][2], r[name]["rank"][3],
                 sum([r[name]["rank"][i] * (i + 1) for i in range(4)]) / sum(r[name]["rank"]),
             )
             if g.config["mahjong"].getboolean("ignore_flying", False):
-                msg += "\n"
+                msg1 += "\n"
             else:
-                msg += f" / {r[name]['tobi']}\n"
+                msg1 += f" / {r[name]['tobi']}\n"
 
-    footer = "-" * 5 + "\n"
     if target_count == 0:
-        footer += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
-    footer += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
-    footer += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
-    footer += f"総ゲーム回数： {game_count} 回"
+        msg2 += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    msg2 += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
+    msg2 += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
+    msg2 += f"総ゲーム回数： {game_count} 回"
     if g.config["mahjong"].getboolean("ignore_flying", False):
-        footer += "\n"
+        msg2 += "\n"
     else:
-        footer += f" / トバされた人（延べ）： {tobi_count} 人\n"
+        msg2 += f" / トバされた人（延べ）： {tobi_count} 人\n"
 
-    footer += f.remarks(command_option, starttime)
+    msg2 += f.remarks(command_option, starttime)
 
-    return(header + msg + footer)
+    return(header + msg1, msg2)
 
 
 def details(starttime, endtime, target_player, target_count, command_option):
