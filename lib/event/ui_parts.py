@@ -36,39 +36,52 @@ def Button(view, no, text = "Click Me", value = "dummy", action_id = False):
     return(view, no + 1)
 
 
-def SearchOptions(view, no, block_id = False):
-    if block_id:
-        view["blocks"].append({"type": "input", "block_id": block_id, "element": {}})
-    else:
-        view["blocks"].append({"type": "input", "element": {}})
-
+def SearchOptions(view, no, flag = []):
+    view["blocks"].append(
+        {"type": "input", "block_id": "bid-search_option", "optional": False, "element": {}}
+    )
     view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索オプション"}
     view["blocks"][no]["element"]["type"] = "checkboxes"
     view["blocks"][no]["element"]["action_id"] =  "aid-option"
 
     view["blocks"][no]["element"]["options"] = []
-    view["blocks"][no]["element"]["options"].append(
-        {"text": {"type": "plain_text", "text": "ゲスト無効"}, "value": "unregistered_replace"}
-    )
-    view["blocks"][no]["element"]["options"].append(
-        {"text": {"type": "plain_text", "text": "アーカイブ"}, "value": "archive"}
-    )
-
     view["blocks"][no]["element"]["initial_options"] = []
-    view["blocks"][no]["element"]["initial_options"].append(
-        {"text": {"type": "plain_text", "text": "ゲスト無効"}, "value": "unregistered_replace"}
-    )
+
+    if "unregistered_replace" in flag:
+        view["blocks"][no]["element"]["options"].append(
+            {"text": {"type": "plain_text", "text": "ゲスト無効"}, "value": "unregistered_replace"}
+        )
+        view["blocks"][no]["element"]["initial_options"].append(
+            {"text": {"type": "plain_text", "text": "ゲスト無効"}, "value": "unregistered_replace"}
+        )
+
+    if "archive" in flag:
+        view["blocks"][no]["element"]["options"].append(
+            {"text": {"type": "plain_text", "text": "アーカイブ"}, "value": "archive"}
+        )
+
+    if "versus_matrix" in flag:
+        view["blocks"][no]["element"]["options"].append(
+            {"text": {"type": "plain_text", "text": "対戦結果"}, "value": "versus_matrix"}
+        )
+
+    if "game_results" in flag:
+        view["blocks"][no]["element"]["options"].append(
+            {"text": {"type": "plain_text", "text": "戦績(簡易)"}, "value": "game_results"}
+        )
+
+    if "verbose" in flag:
+        view["blocks"][no]["element"]["options"].append(
+            {"text": {"type": "plain_text", "text": "戦績(詳細)"}, "value": "verbose"}
+        )
 
     return(view, no + 1)
 
 
-def UserSelect(view, no, text = "dummy", block_id = False, add_list = False):
-    if block_id:
-        view["blocks"].append({"type": "input", "block_id": block_id, "element": {}})
-    else:
-        view["blocks"].append({"type": "input", "element": {}})
-
+def UserSelect(view, no, text = "dummy", add_list = False):
+    view["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     view["blocks"][no]["element"]["type"] = "static_select"
+    view["blocks"][no]["element"]["action_id"] = "player"
     view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
     view["blocks"][no]["element"]["options"] = []
 
@@ -106,13 +119,9 @@ def PeriodSelection(view, no, text = "dummy", block_id = False, action_id = "dum
     return(view, no + 1)
 
 
-def SearchRangeChoice(view, no, block_id = False):
+def SearchRangeChoice(view, no):
     days = f"{g.app_var['sday']} ～ {g.app_var['eday']}"
-    if block_id:
-        view["blocks"].append({"type": "input", "block_id": block_id, "element": {}})
-    else:
-        view["blocks"].append({"type": "input", "element": {}})
-
+    view["blocks"].append({"type": "input", "block_id": "bid-search_range", "element": {}})
     view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索範囲"}
     view["blocks"][no]["element"]["type"] = "radio_buttons"
     view["blocks"][no]["element"]["action_id"] = "aid-range"

@@ -7,17 +7,18 @@ from lib.function import global_value as g
 def BuildSummryMenu():
     g.app_var["screen"] = "SummryMenu"
     no = 0
+    flag = ["unregistered_replace", "archive"]
     view = {"type": "home", "blocks": []}
     view, no = e.Header(view, no, "【成績サマリ】")
 
     # 検索範囲設定
     view, no = e.Divider(view, no)
-    view, no = e.SearchRangeChoice(view, no, block_id = "bid-range")
+    view, no = e.SearchRangeChoice(view, no)
     view, no = e.Button(view, no, text = "検索範囲設定", action_id = "modal-open-period")
 
     # 検索オプション
     view, no = e.Divider(view, no)
-    view, no = e.SearchOptions(view, no, block_id = "bid-option")
+    view, no = e.SearchOptions(view, no, flag)
 
     view, no = e.Divider(view, no)
     view, no = e.Button(view, no, text = "集計開始", value = "search", action_id = "search_summary")
@@ -59,12 +60,15 @@ def handle_some_action(ack, body, client):
     starttime, endtime = f.common.scope_coverage(target_days)
 
     if starttime and endtime:
-        msg = c.results.summary(starttime, endtime, target_player, target_count, command_option)
-        f.slack_api.post_text(client, body["user"]["id"], False, "", msg)
+        msg1, msg2 = c.results.summary(starttime, endtime, target_player, target_count, command_option)
+        res = f.slack_api.post_message(client, body["user"]["id"], msg2)
+        if msg1:
+            f.slack_api.post_text(client, body["user"]["id"], res["ts"], "", msg1)
+
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{app_msg}\n集計完了"),
+        view = e.PlainText(f"{app_msg}\n集計完了\n\n{msg2}"),
     )
 
 

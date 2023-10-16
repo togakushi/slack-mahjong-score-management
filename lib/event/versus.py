@@ -9,8 +9,8 @@ def BuildVersusMenu():
 
     view, no = e.Header(view, no, "【直接対戦】")
     # プレイヤー選択リスト
-    view, no = e.UserSelect(view, no, block_id = "target_player", text = "対象プレイヤー")
-    view, no = e.UserSelect(view, no, block_id = "vs_player", text = "対戦相手", add_list = ["全員"])
+    view, no = e.UserSelect(view, no, text = "対象プレイヤー")
+    #view, no = e.UserSelect(view, no, text = "対戦相手", add_list = ["全員"])
 
     view, no = e.Divider(view, no)
     view, no = e.SearchRangeChoice(view, no)

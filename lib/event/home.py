@@ -8,7 +8,7 @@ def BuildMainMenu():
     view = {"type": "home", "blocks": []}
     view, no = e.Button(view, no, text = "成績サマリ", value = "click_summary_menu", action_id = "menu_summary")
     view, no = e.Button(view, no, text = "ランキング", value = "click_ranking_menu", action_id = "menu_ranking")
-    #view, no = e.Button(view, no, text = "個人成績", value = "click_personal_menu", action_id = "personal_menu")
+    view, no = e.Button(view, no, text = "個人成績", value = "click_personal_menu", action_id = "menu_personal")
     #view, no = e.Button(view, no, text = "直接対戦", value = "click_versus_menu", action_id = "versus_menu")
 
     return(view)
@@ -22,8 +22,14 @@ def SetCommandOption(command_option, body):
 
     app_msg = "集計中…"
 
-    if "bid-range" in search_options:
-        select_item = search_options["bid-range"]["aid-range"]["selected_option"]["value"]
+    if "bid-user_select" in search_options:
+        user_select = search_options["bid-user_select"]["player"]["selected_option"]
+        if user_select != None:
+            if "value" in user_select:
+                argument.append(user_select["value"])
+
+    if "bid-search_range" in search_options:
+        select_item = search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]
         if select_item == "指定":
             app_msg = f"{g.app_var['sday']} ～ {g.app_var['eday']} の結果を集計中…"
             argument.append(g.app_var["sday"].replace("-",""))
@@ -34,13 +40,20 @@ def SetCommandOption(command_option, body):
             app_msg = f"{select_item}の結果を集計中…"
             argument.append(select_item)
 
-    if "bid-option" in search_options:
-        selected_options = search_options["bid-option"]["aid-option"]["selected_options"]
+    if "bid-search_option" in search_options:
+        selected_options = search_options["bid-search_option"]["aid-option"]["selected_options"]
         for i in range(len(selected_options)):
             flag = selected_options[i]["value"]
             if flag == "unregistered_replace":
                 command_option[flag] = False
             if flag == "archive":
+                command_option[flag] = True
+            if flag == "versus_matrix":
+                command_option[flag] = True
+            if flag == "game_results":
+                command_option[flag] = True
+            if flag == "verbose":
+                command_option["game_results"] = True
                 command_option[flag] = True
 
     return(argument, command_option, app_msg)

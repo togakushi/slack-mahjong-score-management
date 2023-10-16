@@ -7,17 +7,18 @@ from lib.function import global_value as g
 def BuildRankingMenu():
     g.app_var["screen"] = "RankingMenu"
     no = 0
+    flag = ["unregistered_replace", "archive"]
     view = {"type": "home", "blocks": []}
     view, no = e.Header(view, no, "【ランキング】")
 
     # 検索範囲設定
     view, no = e.Divider(view, no)
-    view, no = e.SearchRangeChoice(view, no, block_id = "bid-range")
+    view, no = e.SearchRangeChoice(view, no)
     view, no = e.Button(view, no, text = "検索範囲設定", action_id = "modal-open-period")
 
     # 検索オプション
     view, no = e.Divider(view, no)
-    view, no = e.SearchOptions(view, no, block_id = "bid-option")
+    view, no = e.SearchOptions(view, no, flag)
 
     view, no = e.InputRanked(view, no, block_id = "bid-ranked")
 
