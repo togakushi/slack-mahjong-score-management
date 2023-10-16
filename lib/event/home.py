@@ -20,24 +20,27 @@ def SetCommandOption(command_option, body):
     search_options = body["view"]["state"]["values"]
     g.logging.info(f"[app:search options] {search_options}")
 
-    app_msg = "集計中…"
+    app_msg = ["集計中…"]
 
     if "bid-user_select" in search_options:
         user_select = search_options["bid-user_select"]["player"]["selected_option"]
         if user_select != None:
             if "value" in user_select:
-                argument.append(user_select["value"])
+                player = user_select["value"]
+                app_msg.append(f"対象プレイヤー： {player}")
+                argument.append(player)
 
     if "bid-search_range" in search_options:
         select_item = search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]
         if select_item == "指定":
-            app_msg = f"{g.app_var['sday']} ～ {g.app_var['eday']} の結果を集計中…"
+            app_msg.append(f"\t集計期間： {g.app_var['sday']} ～ {g.app_var['eday']}")
             argument.append(g.app_var["sday"].replace("-",""))
             argument.append(g.app_var["eday"].replace("-",""))
         elif select_item == "全部":
+            app_msg.append("\t集計期間： 全部")
             argument.append("全部")
         else:
-            app_msg = f"{select_item}の結果を集計中…"
+            app_msg.append(f"\t集計期間： {select_item}")
             argument.append(select_item)
 
     if "bid-search_option" in search_options:
@@ -56,7 +59,7 @@ def SetCommandOption(command_option, body):
                 command_option["game_results"] = True
                 command_option[flag] = True
 
-    return(argument, command_option, app_msg)
+    return(argument, command_option, "\n".join(app_msg))
 
 
 @g.app.action("actionId-back")

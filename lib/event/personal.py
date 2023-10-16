@@ -56,17 +56,15 @@ def handle_some_action(ack, body, client):
 
     g.logging.info(f"[app:search_personal] {argument}, {command_option}")
 
-    res = body["view"]["state"]["values"]
-    if res["bid-user_select"]["player"]["selected_option"] != None:
-        if "value" in res:
-            player = res["bid-user_select"]["player"]["selected_option"]["value"]
-            argument.append(player)
-    else:
-        return
+    search_options = body["view"]["state"]["values"]
+    if "bid-user_select" in search_options:
+        user_select = search_options["bid-user_select"]["player"]["selected_option"]
+        if user_select == None:
+            return
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{player} の成績を集計中…")
+        view = e.PlainText(f"{app_msg}")
     )
 
     g.logging.info(f"[app:search_personal] {argument}, {command_option}")
