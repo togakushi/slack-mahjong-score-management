@@ -45,7 +45,7 @@ def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
-    command_option, app_msg = e.SetCommandOption(
+    argument, command_option, app_msg = e.SetCommandOption(
         f.configure.command_option_initialization("results"),
         body,
     )
@@ -55,7 +55,7 @@ def handle_some_action(ack, body, client):
         view = e.PlainText(f"{app_msg}"),
     )
 
-    target_days, target_player, target_count, command_option = f.common.argument_analysis("", command_option)
+    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
     if starttime and endtime:

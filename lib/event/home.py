@@ -16,6 +16,7 @@ def BuildMainMenu():
 
 def SetCommandOption(command_option, body):
     # 検索設定
+    argument = []
     search_options = body["view"]["state"]["values"]
     g.logging.info(f"[app:search options] {search_options}")
 
@@ -25,13 +26,13 @@ def SetCommandOption(command_option, body):
         select_item = search_options["bid-range"]["aid-range"]["selected_option"]["value"]
         if select_item == "指定":
             app_msg = f"{g.app_var['sday']} ～ {g.app_var['eday']} の結果を集計中…"
-            command_option["aggregation_range"].append(g.app_var["sday"].replace("-",""))
-            command_option["aggregation_range"].append(g.app_var["eday"].replace("-",""))
+            argument.append(g.app_var["sday"].replace("-",""))
+            argument.append(g.app_var["eday"].replace("-",""))
         elif select_item == "全部":
-            command_option["aggregation_range"].append("全部")
+            argument.append("全部")
         else:
             app_msg = f"{select_item}の結果を集計中…"
-            command_option["aggregation_range"].append(select_item)
+            argument.append(select_item)
 
     if "bid-option" in search_options:
         selected_options = search_options["bid-option"]["aid-option"]["selected_options"]
@@ -42,16 +43,7 @@ def SetCommandOption(command_option, body):
             if flag == "archive":
                 command_option[flag] = True
 
-    if "bid-ranked" in search_options:
-        if "value" in search_options["bid-ranked"]["aid-ranked"]:
-            ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
-            if ranked > 0:
-                command_option["ranked"] = ranked
-        else:
-            command_option["ranked"] = g.config["ranking"].getint("ranked", 3)
-
-    g.logging.info(command_option)
-    return(command_option, app_msg)
+    return(argument, command_option, app_msg)
 
 
 @g.app.action("actionId-back")

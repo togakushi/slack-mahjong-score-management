@@ -109,5 +109,4 @@ app_var = {
     "screen": None,
     "sday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
     "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
-    "ranked": config["ranking"].getint("ranked", 3),
 }
