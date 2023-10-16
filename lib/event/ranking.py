@@ -48,15 +48,6 @@ def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
-    search_options = body["view"]["state"]["values"]
-    if "bid-ranked" in search_options:
-        if "value" in search_options["bid-ranked"]["aid-ranked"]:
-            ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
-        if ranked <= 0:
-            ranked = g.config["ranking"].getint("ranked", 3)
-
-    g.logging.info(command_option)
-
     argument, command_option, app_msg = e.SetCommandOption(
         f.configure.command_option_initialization("ranking"),
         body,
@@ -66,6 +57,13 @@ def handle_some_action(ack, body, client):
         view_id = g.app_var["view_id"],
         view = e.PlainText(f"{app_msg}"),
     )
+
+    search_options = body["view"]["state"]["values"]
+    if "bid-ranked" in search_options:
+        if "value" in search_options["bid-ranked"]["aid-ranked"]:
+            ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
+            if ranked > 0:
+                argument.append(f"トップ{ranked}")
 
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
@@ -91,8 +89,6 @@ def handle_view_submission(ack, view, client):
             g.app_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
         if "aid-eday" in view["state"]["values"][i]:
             g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
-
-    g.logging.info(f"[global var] {g.app_var}")
 
     client.views_update(
         view_id = g.app_var["view_id"],
