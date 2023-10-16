@@ -180,10 +180,10 @@ def summary(starttime, endtime, target_player, target_count, command_option):
                 msg1 += f" / {r[name]['tobi']}\n"
 
     if target_count == 0:
-        msg2 += f"検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
-    msg2 += f"最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
-    msg2 += f"最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
-    msg2 += f"総ゲーム回数： {game_count} 回"
+        msg2 += f"\t検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
+    msg2 += f"\t最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
+    msg2 += f"\t最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
+    msg2 += f"\t総ゲーム回数： {game_count} 回"
     if g.config["mahjong"].getboolean("ignore_flying", False):
         msg2 += "\n"
     else:
