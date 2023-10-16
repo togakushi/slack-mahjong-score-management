@@ -116,7 +116,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
                 r[name]["tobi"] += 1
 
     if not (first_game or last_game):
-        return(f.message.no_hits(starttime, endtime))
+        return(None, f.message.no_hits(starttime, endtime))
 
     # 獲得ポイント順にソート
     tmp_r = {}
