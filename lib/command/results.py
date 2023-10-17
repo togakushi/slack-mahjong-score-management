@@ -419,7 +419,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
         msg1 += "\n" + f.remarks(command_option, starttime)
 
-    return(msg1, msg2)
+    return(msg1.strip(), msg2)
 
 
 def versus(starttime, endtime, target_player, target_count, command_option):
@@ -581,4 +581,4 @@ def versus(starttime, endtime, target_player, target_count, command_option):
     if not msg2:
         msg2[""] = "直接対戦はありません。\n"
 
-    return(msg1, msg2)
+    return(msg1.strip(), msg2)
