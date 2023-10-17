@@ -28,10 +28,13 @@ def Header(view, no, text = "dummy"):
     return(view, no + 1)
 
 
-def Button(view, no, text = "Click Me", value = "dummy", action_id = False):
+def Button(view, no, text = "Click Me", value = "dummy", action_id = False, style = False):
     view["blocks"].append({"type": "actions", "elements": [{}]})
     view["blocks"][no]["elements"][0] = {"type": "button", "text": {}, "value": value, "action_id": action_id}
     view["blocks"][no]["elements"][0]["text"] = {"type": "plain_text", "text": text}
+
+    if style:
+        view["blocks"][no]["elements"][0].update({"style": style})
 
     return(view, no + 1)
 

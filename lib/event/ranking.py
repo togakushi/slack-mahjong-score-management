@@ -23,9 +23,8 @@ def BuildRankingMenu():
     view, no = e.InputRanked(view, no, block_id = "bid-ranked")
 
     view, no = e.Divider(view, no)
-    view, no = e.Button(view, no, text = "集計開始", value = "search", action_id = "search_ranking")
-    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back")
-    #view, no = e.Button(view, no, text = "てすと", action_id = "debug")
+    view, no = e.Button(view, no, text = "集計開始", value = "click_personal", action_id = "search_ranking", style = "primary")
+    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back", style = "danger")
 
     return(view)
 

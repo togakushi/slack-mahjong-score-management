@@ -21,8 +21,8 @@ def BuildSummryMenu():
     view, no = e.SearchOptions(view, no, flag)
 
     view, no = e.Divider(view, no)
-    view, no = e.Button(view, no, text = "集計開始", value = "search", action_id = "search_summary")
-    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back")
+    view, no = e.Button(view, no, text = "集計開始", value = "click_personal", action_id = "search_summary", style = "primary")
+    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back", style = "danger")
 
     return(view)
 
