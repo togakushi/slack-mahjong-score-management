@@ -61,6 +61,7 @@ def handle_some_action(ack, body, client):
         if user_select == None:
             return
 
+
     client.views_update(
         view_id = g.app_var["view_id"],
         view = e.PlainText(f"{chr(10).join(app_msg)}")
@@ -81,4 +82,22 @@ def handle_some_action(ack, body, client):
     client.views_update(
         view_id = g.app_var["view_id"],
         view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+    )
+
+
+@g.app.view("PersonalMenu_ModalPeriodSelection")
+def handle_view_submission(ack, view, client):
+    ack()
+
+    for i in view["state"]["values"].keys():
+        if "aid-sday" in view["state"]["values"][i]:
+            g.app_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
+        if "aid-eday" in view["state"]["values"][i]:
+            g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
+
+    g.logging.info(f"[global var] {g.app_var}")
+
+    client.views_update(
+        view_id = g.app_var["view_id"],
+        view = BuildPersonalMenu(),
     )
