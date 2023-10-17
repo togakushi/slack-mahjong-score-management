@@ -64,7 +64,7 @@ def remarks(command_option, starttime):
     if not command_option["unregistered_replace"]:
         remark.append("ゲスト置換なし("+ g.guest_mark + "：未登録プレイヤー)")
     if remark:
-        ret = f"特記：" + "、".join(remark)
+        ret = f"\t特記：" + "、".join(remark)
 
     retention_period = g.config["search"].getint("retention_period", 0)
     if not command_option["archive"] and retention_period != 0:
@@ -73,6 +73,6 @@ def remarks(command_option, starttime):
         if  starttime < limittime:
             if ret:
                 ret += "\n"
-            ret += f"注記：検索開始日がログの保存期間を越えています"
+            ret += f"\t注記：検索開始日がログの保存期間を越えています"
 
     return(ret)
