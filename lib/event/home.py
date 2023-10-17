@@ -9,7 +9,7 @@ def BuildMainMenu():
     view, no = e.Button(view, no, text = "成績サマリ", value = "click_summary_menu", action_id = "menu_summary")
     view, no = e.Button(view, no, text = "ランキング", value = "click_ranking_menu", action_id = "menu_ranking")
     view, no = e.Button(view, no, text = "個人成績", value = "click_personal_menu", action_id = "menu_personal")
-    #view, no = e.Button(view, no, text = "直接対戦", value = "click_versus_menu", action_id = "versus_menu")
+    view, no = e.Button(view, no, text = "直接対戦", value = "click_versus_menu", action_id = "menu_versus")
 
     return(view)
 
@@ -29,6 +29,11 @@ def SetCommandOption(command_option, body):
                 player = user_select["value"]
                 app_msg.append(f"対象プレイヤー： {player}")
                 argument.append(player)
+
+    if "bid-multi_select" in search_options:
+        user_list = search_options["bid-multi_select"]["player"]["selected_options"]
+        for i in range(len(user_list)):
+            argument.append(user_list[i]["value"])
 
     if "bid-search_range" in search_options:
         select_item = search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]

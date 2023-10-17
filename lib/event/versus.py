@@ -1,3 +1,5 @@
+import lib.command as c
+import lib.function as f
 import lib.event as e
 from lib.function import global_value as g
 
@@ -5,51 +7,85 @@ from lib.function import global_value as g
 def BuildVersusMenu():
     g.app_var["screen"] = "VersusMenu"
     no = 0
+    flag = ["unregistered_replace", "archive", "game_results", "verbose"]
     view = {"type": "home", "blocks": []}
-
     view, no = e.Header(view, no, "【直接対戦】")
+
     # プレイヤー選択リスト
     view, no = e.UserSelect(view, no, text = "対象プレイヤー")
-    #view, no = e.UserSelect(view, no, text = "対戦相手", add_list = ["全員"])
+    view, no = e.MultiSelect(view, no, text = "対戦相手", add_list = ["全員"])
 
     view, no = e.Divider(view, no)
     view, no = e.SearchRangeChoice(view, no)
     view, no = e.Button(view, no, text = "検索範囲設定", value = "click_versus", action_id = "modal-open-period")
 
+    # 検索オプション
     view, no = e.Divider(view, no)
-    view, no = e.Button(view, no, text = "集計開始", value = "click_personal", action_id = "actionId-versus")
-    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back")
+    view, no = e.SearchOptions(view, no, flag)
+    view, no = e.DisplayOptions(view, no, flag)
+
+    view, no = e.Divider(view, no)
+    view, no = e.Button(view, no, text = "集計開始", value = "click_versus", action_id = "search_versus", style = "primary")
+    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back", style = "danger")
+
 
     return(view)
 
 
-@g.app.action("versus_menu")
+@g.app.action("menu_versus")
 def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
-    g.logging.info(f"[global var] {g.app_var}")
+    g.app_var["view_id"] = body["view"]["id"]
+    g.logging.info(f"[menu_versus] {g.app_var}")
 
     client.views_update(
         view_id = g.app_var["view_id"],
         view = BuildVersusMenu(),
     )
 
-@g.app.action("actionId-versus")
+@g.app.action("search_versus")
 def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
-    b = body['view']['state']['values']
-    p1 = list(b['target_player'].values())[0]['selected_option']['value']
-    p2 = list(b['vs_player'].values())[0]['selected_option']['value']
+    argument, command_option, app_msg = e.SetCommandOption(
+        f.configure.command_option_initialization("results"),
+        body,
+    )
 
-    #command_option = f.configure.command_option_initialization("results")
+    search_options = body["view"]["state"]["values"]
+    if "bid-user_select" in search_options:
+        user_select = search_options["bid-user_select"]["player"]["selected_option"]
+        if user_select == None:
+            return
+    if "bid-multi_select" in search_options:
+        if len(search_options["bid-multi_select"]["player"]["selected_options"]) == 0:
+            return
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{p1} vs {p2} の直接対戦を集計中…"),
+        view = e.PlainText(f"{chr(10).join(app_msg)}")
     )
+
+    g.logging.info(f"[app:search_personal] {argument}, {command_option}")
+    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
+    starttime, endtime = f.common.scope_coverage(target_days)
+
+    if starttime and endtime:
+        msg1, msg2 = c.results.versus(starttime, endtime, target_player, target_count, command_option)
+        res = f.slack_api.post_message(client, body["user"]["id"], msg1)
+        for m in msg2.keys():
+            f.slack_api.post_message(client, body["user"]["id"], msg2[m] + '\n', res["ts"])
+
+    app_msg.pop()
+    app_msg.append("集計完了")
+    client.views_update(
+        view_id = g.app_var["view_id"],
+        view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+    )
+
 
 @g.app.view("VersusMenu_ModalPeriodSelection")
 def handle_view_submission(ack, view, client):

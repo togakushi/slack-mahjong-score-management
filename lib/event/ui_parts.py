@@ -94,9 +94,33 @@ def DisplayOptions(view, no, flag = []):
 
     return(view, no + 1)
 
+
 def UserSelect(view, no, text = "dummy", add_list = False):
     view["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     view["blocks"][no]["element"]["type"] = "static_select"
+    view["blocks"][no]["element"]["action_id"] = "player"
+    view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
+    view["blocks"][no]["element"]["options"] = []
+
+    if add_list:
+        for i in range(len(add_list)):
+            view["blocks"][no]["element"]["options"].append(
+                {"text": {"type": "plain_text", "text": add_list[i]}, "value": add_list[i]}
+            )
+
+    for name in c.GetMemberName():
+        view["blocks"][no]["element"]["options"].append(
+            {"text": {"type": "plain_text", "text": name}, "value": name}
+        )
+
+    view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
+
+    return(view, no + 1)
+
+
+def MultiSelect(view, no, text = "dummy", add_list = False):
+    view["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
+    view["blocks"][no]["element"]["type"] = "multi_static_select"
     view["blocks"][no]["element"]["action_id"] = "player"
     view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
     view["blocks"][no]["element"]["options"] = []
