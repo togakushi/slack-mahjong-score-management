@@ -20,7 +20,7 @@ def SetCommandOption(command_option, body):
     search_options = body["view"]["state"]["values"]
     g.logging.info(f"[app:search options] {search_options}")
 
-    app_msg = ["集計中…"]
+    app_msg = []
 
     if "bid-user_select" in search_options:
         user_select = search_options["bid-user_select"]["player"]["selected_option"]
@@ -33,24 +33,29 @@ def SetCommandOption(command_option, body):
     if "bid-search_range" in search_options:
         select_item = search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]
         if select_item == "指定":
-            app_msg.append(f"\t集計期間： {g.app_var['sday']} ～ {g.app_var['eday']}")
+            app_msg.append(f"集計期間： {g.app_var['sday']} ～ {g.app_var['eday']}")
             argument.append(g.app_var["sday"].replace("-",""))
             argument.append(g.app_var["eday"].replace("-",""))
         elif select_item == "全部":
-            app_msg.append("\t集計期間： 全部")
+            app_msg.append("集計期間： 全部")
             argument.append("全部")
         else:
-            app_msg.append(f"\t集計期間： {select_item}")
+            app_msg.append(f"集計期間： {select_item}")
             argument.append(select_item)
 
     if "bid-search_option" in search_options:
-        selected_options = search_options["bid-search_option"]["aid-option"]["selected_options"]
+        selected_options = search_options["bid-search_option"]["aid-search"]["selected_options"]
         for i in range(len(selected_options)):
             flag = selected_options[i]["value"]
             if flag == "unregistered_replace":
                 command_option[flag] = False
             if flag == "archive":
                 command_option[flag] = True
+
+    if "bid-display_option" in search_options:
+        selected_options = search_options["bid-display_option"]["aid-display"]["selected_options"]
+        for i in range(len(selected_options)):
+            flag = selected_options[i]["value"]
             if flag == "versus_matrix":
                 command_option[flag] = True
             if flag == "game_results":
@@ -59,7 +64,8 @@ def SetCommandOption(command_option, body):
                 command_option["game_results"] = True
                 command_option[flag] = True
 
-    return(argument, command_option, "\n".join(app_msg))
+    app_msg.append("集計中…")
+    return(argument, command_option, app_msg)
 
 
 @g.app.action("actionId-back")

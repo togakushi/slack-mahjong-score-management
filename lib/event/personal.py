@@ -22,6 +22,7 @@ def BuildPersonalMenu():
     # 検索オプション
     view, no = e.Divider(view, no)
     view, no = e.SearchOptions(view, no, flag)
+    view, no = e.DisplayOptions(view, no, flag)
 
     view, no = e.Divider(view, no)
     view, no = e.Button(view, no, text = "集計開始", value = "click_personal", action_id = "search_personal")
@@ -54,8 +55,6 @@ def handle_some_action(ack, body, client):
         body,
     )
 
-    g.logging.info(f"[app:search_personal] {argument}, {command_option}")
-
     search_options = body["view"]["state"]["values"]
     if "bid-user_select" in search_options:
         user_select = search_options["bid-user_select"]["player"]["selected_option"]
@@ -64,7 +63,7 @@ def handle_some_action(ack, body, client):
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{app_msg}")
+        view = e.PlainText(f"{chr(10).join(app_msg)}")
     )
 
     g.logging.info(f"[app:search_personal] {argument}, {command_option}")
@@ -77,7 +76,9 @@ def handle_some_action(ack, body, client):
         for m in msg2.keys():
             f.slack_api.post_message(client, body["user"]["id"], msg2[m] + '\n', res["ts"])
 
+    app_msg.pop()
+    app_msg.append("集計完了")
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{app_msg}\n集計完了\n\n{msg1}"),
+        view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )

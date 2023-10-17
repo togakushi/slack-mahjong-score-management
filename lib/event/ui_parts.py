@@ -10,7 +10,7 @@ from lib.function import global_value as g
 def PlainText(msg):
     view = {"type": "home", "blocks": []}
     view["blocks"].append({"type": "section", "text": {}})
-    view["blocks"][0]["text"] = {"type": "plain_text", "text": msg}
+    view["blocks"][0]["text"] = {"type": "mrkdwn", "text": msg}
 
     return(view)
 
@@ -42,7 +42,7 @@ def SearchOptions(view, no, flag = []):
     )
     view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索オプション"}
     view["blocks"][no]["element"]["type"] = "checkboxes"
-    view["blocks"][no]["element"]["action_id"] =  "aid-option"
+    view["blocks"][no]["element"]["action_id"] =  "aid-search"
 
     view["blocks"][no]["element"]["options"] = []
     view["blocks"][no]["element"]["initial_options"] = []
@@ -60,6 +60,20 @@ def SearchOptions(view, no, flag = []):
             {"text": {"type": "plain_text", "text": "アーカイブ"}, "value": "archive"}
         )
 
+    return(view, no + 1)
+
+
+def DisplayOptions(view, no, flag = []):
+    view["blocks"].append(
+        {"type": "input", "block_id": "bid-display_option", "optional": False, "element": {}}
+    )
+    view["blocks"][no]["label"] = {"type": "plain_text", "text": "表示オプション"}
+    view["blocks"][no]["element"]["type"] = "checkboxes"
+    view["blocks"][no]["element"]["action_id"] =  "aid-display"
+
+    view["blocks"][no]["element"]["options"] = []
+    #view["blocks"][no]["element"]["initial_options"] = []
+
     if "versus_matrix" in flag:
         view["blocks"][no]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": "対戦結果"}, "value": "versus_matrix"}
@@ -67,16 +81,15 @@ def SearchOptions(view, no, flag = []):
 
     if "game_results" in flag:
         view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "戦績(簡易)"}, "value": "game_results"}
+            {"text": {"type": "plain_text", "text": "戦績（簡易）"}, "value": "game_results"}
         )
 
     if "verbose" in flag:
         view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "戦績(詳細)"}, "value": "verbose"}
+            {"text": {"type": "plain_text", "text": "戦績（詳細）"}, "value": "verbose"}
         )
 
     return(view, no + 1)
-
 
 def UserSelect(view, no, text = "dummy", add_list = False):
     view["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
