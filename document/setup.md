@@ -30,7 +30,7 @@ Features -> Slash Commands
     - config.iniと合わせる
     - 既存のコマンドと被らないように
   - Short Description  (任意)
-  - [Save]
+- [Save]
 
 ### イベント設定
 
@@ -40,7 +40,8 @@ Features -> Event Subscriptions
 - Subscribe to bot events
   - [Add Bot User Event]
     - message.channels
-    - [Save Changes]
+    - app_home_opened ※Home Appを使うときのみ
+  - [Save Changes]
 
 `message.channels` を追加する。
 
@@ -70,7 +71,7 @@ Features -> App Home
   - Default username (任意)
   - [add]
 - Show Tabs
-  - Home Tab (無効)
+  - Home Tab (有効) ※Home Appを使うときのみ
   - Messages Tab (有効)
     - Allow users to send Slash commands and messages from the messages tab (チェック)
 
@@ -96,16 +97,16 @@ $ git clone https://github.com/togakushi/slack-mahjong-score-management.git
 作成するディレクトリ名は任意。
 
 ```
-$ python3 -m venv venv-mahjong-score-management
-$ source ./venv-mahjong-score-management/bin/activate
+$ python3 -m venv venv
+$ source ./venv/bin/activate
 ```
 
 ### 依存パッケージのインストール
 
 ```
-(venv-mahjong-score-management) $ cd slack-mahjong-score-management
-(venv-mahjong-score-management) $ pip install -U pip
-(venv-mahjong-score-management) $ pip install -r requirements.txt
+(venv) $ cd slack-mahjong-score-management
+(venv) $ pip install -U pip
+(venv) $ pip install -r requirements.txt
 ```
 
 ### グラフ描写用の日本語フォント
@@ -117,13 +118,13 @@ https://moji.or.jp/ipafont/ipafontdownload/
 ### 起動
 発行されたトークンを環境変数にセット
 ```
-(venv-mahjong-score-management) $ export SLACK_APP_TOKEN=xapp-x-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-(venv-mahjong-score-management) $ export SLACK_WEB_TOKEN=xoxp-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-(venv-mahjong-score-management) $ export SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
+(venv) $ export SLACK_APP_TOKEN=xapp-x-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+(venv) $ export SLACK_WEB_TOKEN=xoxp-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+(venv) $ export SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 動かしっぱなしにする
 ```
-(venv-mahjong-score-management) $ nohup python3 slack-app.py -c config.ini > /dev/null 2>&1 &
+(venv) $ nohup python3 slack-app.py -c config.ini > /dev/null 2>&1 &
 ```
 
 ### 停止
