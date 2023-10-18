@@ -66,7 +66,7 @@ def handle_some_action(ack, body, client):
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg)}")
+        view = e.PlainText(f"{chr(10).join(app_msg).replace("\t", "")}")
     )
 
     g.logging.info(f"[app:search_personal] {argument}, {command_option}")
@@ -83,7 +83,7 @@ def handle_some_action(ack, body, client):
     app_msg.append("集計完了")
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        view = e.PlainText(f"{chr(10).join(app_msg).replace("\t", "")}\n\n{msg1}"),
     )
 
 
