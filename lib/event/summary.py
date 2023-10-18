@@ -52,7 +52,7 @@ def handle_some_action(ack, body, client):
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg).replace(chr(9), "")}"),
+        view = e.PlainText(f"{chr(10).join(app_msg).replace(chr(9), '')}"),
     )
 
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
@@ -68,7 +68,7 @@ def handle_some_action(ack, body, client):
     app_msg.append("集計完了")
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg).replace(chr(9), "")}\n\n{msg2}"),
+        view = e.PlainText(f"{chr(10).join(app_msg).replace(chr(9), '')}\n\n{msg2}"),
     )
 
 
