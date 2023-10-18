@@ -43,7 +43,7 @@ Features -> Event Subscriptions
     - app_home_opened ※Home Appを使うときのみ
   - [Save Changes]
 
-`message.channels` を追加する。
+`message.channels` と `app_home_opened` を追加する。
 
 ### 権限設定
 
@@ -97,16 +97,16 @@ $ git clone https://github.com/togakushi/slack-mahjong-score-management.git
 作成するディレクトリ名は任意。
 
 ```
-$ python3 -m venv venv
-$ source ./venv/bin/activate
+$ python3 -m venv venvdir
+$ source ./venvdir/bin/activate
 ```
 
 ### 依存パッケージのインストール
 
 ```
-(venv) $ cd slack-mahjong-score-management
-(venv) $ pip install -U pip
-(venv) $ pip install -r requirements.txt
+(venvdir) $ cd slack-mahjong-score-management
+(venvdir) $ pip install -U pip
+(venvdir) $ pip install -r requirements.txt
 ```
 
 ### グラフ描写用の日本語フォント
@@ -118,13 +118,13 @@ https://moji.or.jp/ipafont/ipafontdownload/
 ### 起動
 発行されたトークンを環境変数にセット
 ```
-(venv) $ export SLACK_APP_TOKEN=xapp-x-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-(venv) $ export SLACK_WEB_TOKEN=xoxp-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-(venv) $ export SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
+(venvdir) $ export SLACK_APP_TOKEN=xapp-x-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+(venvdir) $ export SLACK_WEB_TOKEN=xoxp-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+(venvdir) $ export SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 動かしっぱなしにする
 ```
-(venv) $ nohup python3 slack-app.py -c config.ini > /dev/null 2>&1 &
+(venvdir) $ nohup python3 slack-app.py -c config.ini > /dev/null 2>&1 &
 ```
 
 ### 停止
