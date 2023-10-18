@@ -462,24 +462,24 @@ def versus(starttime, endtime, target_player, target_count, command_option):
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
     msg2 = {}
-    msg1 = "*【直接対戦結果】(テスト中)*\n"
-    msg1 += f"プレイヤー名： {target_player[0]}\n"
+    msg1 = "*【直接対戦結果】*\n"
+    msg1 += f"\tプレイヤー名： {target_player[0]}\n"
 
     if command_option["all_player"]:
         vs_list = f.all_player_list(results, target_player[0])
-        msg1 += f"対戦相手：全員\n"
+        msg1 += f"\t対戦相手：全員\n"
     else:
         vs_list = target_player[1:]
-        msg1 += f"対戦相手：{', '.join(vs_list)}\n"
+        msg1 += f"\t対戦相手：{', '.join(vs_list)}\n"
 
     if results.keys():
-        msg1 += "集計範囲：{} ～ {}\n".format(
+        msg1 += "\t集計範囲：{} ～ {}\n".format(
             results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M'),
             results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M'),
         )
         msg1 += f.remarks(command_option, starttime)
     else:
-        msg1 += "集計範囲：{} ～ {}\n".format(
+        msg1 += "\t集計範囲：{} ～ {}\n".format(
             starttime.strftime('%Y/%m/%d %H:%M'),
             endtime.strftime('%Y/%m/%d %H:%M'),
         )

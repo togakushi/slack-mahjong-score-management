@@ -55,7 +55,7 @@ def handle_some_action(ack, body, client):
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg).replace(chr(9), '')}"),
+        view = e.PlainText(f"{chr(10).join(app_msg)}"),
     )
 
     search_options = body["view"]["state"]["values"]
@@ -78,7 +78,7 @@ def handle_some_action(ack, body, client):
     app_msg.append("集計完了")
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg).replace(chr(9), '')}\n\n{msg1}"),
+        view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )
 
 
