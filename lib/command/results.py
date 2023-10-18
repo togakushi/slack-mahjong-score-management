@@ -354,9 +354,8 @@ def details(starttime, endtime, target_player, target_count, command_option):
         msg1 += f"\t対戦数：{sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
 
         if sum(count_rank) > 0:
-            msg1 += "\t累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
-                point, point / sum(count_rank),
-            ).replace("-", "▲")
+            msg1 += "\t累積ポイント： {:+.1f}\n".format(point).replace("-", "▲")
+            msg1 += "\t平均ポイント： {:+.1f}\n".format(point / sum(count_rank)).replace("-", "▲")
             for i in range(4):
                 msg1 += "\t{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
             if not g.config["mahjong"].getboolean("ignore_flying", False):
@@ -367,9 +366,9 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
             for wind in g.wind[0:4]:
                 if sum(seat_rank[wind]) == 0:
-                    msg2["座席"] += "{}： 0-0-0-0 (-.--)".format(wind)
+                    msg2["座席"] += "\t{}： 0-0-0-0 (-.--)".format(wind)
                 else:
-                    msg2["座席"] += "{}： {}-{}-{}-{} ({:1.2f})".format(
+                    msg2["座席"] += "\t{}： {}-{}-{}-{} ({:1.2f})".format(
                         wind,
                         seat_rank[wind][0],
                         seat_rank[wind][1],
@@ -387,7 +386,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
         if command_option["game_results"]:
             if not command_option["guest_skip"]:
-                msg2["戦績"] += g.guest_mark.strip() + "：2ゲスト戦\n"
+                msg2["戦績"] += f"\t\t{g.guest_mark.strip()}：2ゲスト戦\n"
         else:
             msg2.pop("戦績")
 
