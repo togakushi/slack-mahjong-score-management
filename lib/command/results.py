@@ -343,25 +343,25 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
     ### 表示内容 ###
     if len(results) == 0:
-        msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
-        msg1 += f"対戦数：{sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
+        msg1 += f"\tプレイヤー名： {target_player[0]} {badge_degree}\n"
+        msg1 += f"\t対戦数：{sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
         msg2.clear()
     else:
         stime = results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
         etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
-        msg1 += f"プレイヤー名： {target_player[0]} {badge_degree}\n"
-        msg1 += f"集計範囲：{stime} ～ {etime}\n"
-        msg1 += f"対戦数：{sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
+        msg1 += f"\tプレイヤー名： {target_player[0]} {badge_degree}\n"
+        msg1 += f"\t集計範囲：{stime} ～ {etime}\n"
+        msg1 += f"\t対戦数：{sum(count_rank)} 戦 ({count_win} 勝 {count_lose} 敗 {count_draw} 分) {badge_status}\n"
 
         if sum(count_rank) > 0:
-            msg1 += "累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
+            msg1 += "\t累積ポイント： {:+.1f}\n平均ポイント： {:+.1f}\n".format(
                 point, point / sum(count_rank),
             ).replace("-", "▲")
             for i in range(4):
-                msg1 += "{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
+                msg1 += "\t{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
             if not g.config["mahjong"].getboolean("ignore_flying", False):
-                msg1 += "トビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
-            msg1 += "平均順位： {:1.2f}\n".format(
+                msg1 += "\tトビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
+            msg1 += "\t平均順位： {:1.2f}\n".format(
                 sum([count_rank[i] * (i + 1) for i in range(4)]) / sum(count_rank),
             )
 
