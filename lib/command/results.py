@@ -51,7 +51,8 @@ def slackpost(client, channel, event_ts, argument, command_option):
         else: # 成績サマリ
             msg1, msg2 = summary(starttime, endtime, target_player, target_count, command_option)
             res = f.slack_api.post_message(client, channel, msg2)
-            f.slack_api.post_text(client, channel, res["ts"], "", msg1)
+            if msg1:
+                f.slack_api.post_text(client, channel, res["ts"], "", msg1)
 
 
 def summary(starttime, endtime, target_player, target_count, command_option):
