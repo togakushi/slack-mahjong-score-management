@@ -58,7 +58,11 @@ def NameReplace(pname, command_option):
         表記ブレ修正後のプレイヤー名
     """
 
-    pname = re.sub(r"さん$", "", f.translation.HAN2ZEN(pname))
+    # 敬称削除
+    honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
+    if re.match(fr".*{honor}$", pname):
+        if not re.match(fr".*(っ|ッ){honor}$", pname):
+            pname = re.sub(fr"{honor}$", "", f.translation.HAN2ZEN(pname))
 
     if not command_option["playername_replace"]:
         return(pname)
