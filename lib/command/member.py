@@ -73,12 +73,11 @@ def NameReplace(pname, command_option):
                 break_flg = True
                 break
 
-    if not command_option["unregistered_replace"]:
-      if not ExsistPlayer(pname):
-        pname = pname + "(" + g.guest_mark + ")"
-    else:
-      if not ExsistPlayer(pname):
-        pname = g.guest_name
+    if not ExsistPlayer(pname):
+        if command_option["unregistered_replace"]:
+            pname = g.guest_name
+        else:
+            pname = f"{pname}({g.guest_mark})"
 
     return(pname)
 
@@ -98,18 +97,26 @@ def ExsistPlayer(name):
     name : str
     """
 
-    command_option = {
-        "playername_replace": True,
-        "unregistered_replace": True,
-    }
-
     if g.player_list.has_section(name):
         return(name)
 
     return(False)
 
 
-def GetMemberName(myname = None):
+def GetMemberList(myname = None):
+    """
+    メンバーリストの取得
+
+    Parameters
+    ----------
+    myname : str
+        リストから除外するプレイヤー名(正規化後)
+
+    Returns
+    -------
+    ret : list
+    """
+
     ret = []
     for player in g.player_list.sections():
         if player == "DEFAULT":
