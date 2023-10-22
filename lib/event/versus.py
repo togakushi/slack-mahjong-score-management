@@ -37,11 +37,12 @@ def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
+    g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
     g.logging.info(f"[menu_versus] {g.app_var}")
 
-    client.views_update(
-        view_id = g.app_var["view_id"],
+    client.views_publish(
+        user_id = g.app_var["user_id"],
         view = BuildVersusMenu(),
     )
 
