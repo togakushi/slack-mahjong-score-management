@@ -68,6 +68,8 @@ def SetCommandOption(command_option, body):
             if flag == "verbose":
                 command_option["game_results"] = True
                 command_option[flag] = True
+            if flag == "score_comparisons":
+                command_option["score_comparisons"] = True
 
     app_msg.append("集計中…")
     return(argument, command_option, app_msg)

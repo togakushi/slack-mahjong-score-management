@@ -92,6 +92,11 @@ def DisplayOptions(view, no, flag = []):
             {"text": {"type": "plain_text", "text": "戦績（詳細）"}, "value": "verbose"}
         )
 
+    if "score_comparisons" in flag:
+        view["blocks"][no]["element"]["options"].append(
+            {"text": {"type": "plain_text", "text": "累積ポイント比較"}, "value": "score_comparisons"}
+        )
+
     return(view, no + 1)
 
 

@@ -7,7 +7,7 @@ from lib.function import global_value as g
 def BuildSummryMenu():
     g.app_var["screen"] = "SummryMenu"
     no = 0
-    flag = ["unregistered_replace", "archive"]
+    flag = ["unregistered_replace", "archive", "score_comparisons"]
     view = {"type": "home", "blocks": []}
     view, no = e.Header(view, no, "【成績サマリ】")
 
@@ -19,6 +19,7 @@ def BuildSummryMenu():
     # 検索オプション
     view, no = e.Divider(view, no)
     view, no = e.SearchOptions(view, no, flag)
+    view, no = e.DisplayOptions(view, no, flag)
 
     view, no = e.Divider(view, no)
     view, no = e.Button(view, no, text = "集計開始", value = "click_summary", action_id = "search_summary", style = "primary")
