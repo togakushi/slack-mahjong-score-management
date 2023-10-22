@@ -18,7 +18,7 @@ def post_message(client, channel, msg, ts = False):
 
 
 def post_text(client, channel, event_ts, title, msg):
-    if len(re.sub(r'\n+', '\n', f"{msg.strip()}").splitlines()) == 1:
+    if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
         if event_ts:
             res = client.chat_postMessage(
                 channel = channel,
@@ -35,7 +35,7 @@ def post_text(client, channel, event_ts, title, msg):
         step = 50
         post_msg = []
         for count in range(int(len(msg.splitlines()) / step) + 1):
-            post_msg.append('\n'.join(msg.splitlines()[count * step:(count + 1) * step]))
+            post_msg.append("\n".join(msg.splitlines()[count * step:(count + 1) * step]))
 
         # 最終ブロックがstepの半分以下なら直前のブロックにまとめる
         if len(post_msg) > 1 and step / 2 > len(post_msg[count].splitlines()):
