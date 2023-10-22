@@ -1,35 +1,67 @@
 import re
 
+from lib.function import global_value as g
+
+def Call_chat_postMessage(client, **kwargs):
+    res = None
+    try:
+        if kwargs["thread_ts"]:
+            res = client.chat_postMessage(
+                channel = kwargs["channel"],
+                text = kwargs["text"],
+                thread_ts = kwargs["thread_ts"],
+            )
+        else:
+            res = client.chat_postMessage(
+                channel = kwargs["channel"],
+                text = kwargs["text"],
+            )
+    except g.SlackApiError as e:
+        g.logging.error(e)
+
+    return(res)
+
+
+def Call_files_upload(client, **kwargs):
+    res = None
+    try:
+        if "file" in kwargs:
+            res = client.files_upload(
+                channels = kwargs["channels"],
+                title = kwargs["title"],
+                file = kwargs["file"],
+            )
+        if "content" in kwargs:
+            res = client.files_upload(
+                channels = kwargs["channels"],
+                title = kwargs["title"],
+                content = kwargs["content"],
+            )
+    except g.SlackApiError as e:
+        g.logging.error(e)
+
+    return(res)
+
 
 def post_message(client, channel, msg, ts = False):
-    if ts:
-        res = client.chat_postMessage(
-            channel = channel,
-            text = f"{msg.strip()}",
-            thread_ts = ts,
-        )
-    else:
-        res = client.chat_postMessage(
-            channel = channel,
-            text = f"{msg.strip()}",
-        )
+    res = Call_chat_postMessage(
+        client,
+        channel = channel,
+        text = f"{msg.strip()}",
+        thread_ts = ts,
+    )
 
     return(res)
 
 
 def post_text(client, channel, event_ts, title, msg):
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
-        if event_ts:
-            res = client.chat_postMessage(
-                channel = channel,
-                text = f"{title}\n{msg.strip()}",
-                thread_ts = event_ts,
-            )
-        else:
-            res = client.chat_postMessage(
-                channel = channel,
-                text = f"{title}\n{msg.strip()}",
-            )
+        res = Call_chat_postMessage(
+            client,
+            channel = channel,
+            text = f"{title}\n{msg.strip()}",
+            thread_ts = event_ts,
+        )
     else:
         # ポスト予定のメッセージをstep行単位のブロックに分割
         step = 50
@@ -43,23 +75,19 @@ def post_text(client, channel, event_ts, title, msg):
 
         # ブロック単位でポスト
         for i in range(len(post_msg)):
-            if event_ts:
-                res = client.chat_postMessage(
-                    channel = channel,
-                    text = f"\n{title}\n\n```{post_msg[i].strip()}```",
-                    thread_ts = event_ts,
-                )
-            else:
-                res = client.chat_postMessage(
-                    channel = channel,
-                    text = f"\n{title}\n\n```{post_msg[i].strip()}```",
-                )
+            res = Call_chat_postMessage(
+                client,
+                channel = channel,
+                text = f"\n{title}\n\n```{post_msg[i].strip()}```",
+                thread_ts = event_ts,
+            )
 
     return(res)
 
 
 def post_upload(client, channel, title, msg):
-    res = client.files_upload(
+    res = Call_files_upload(
+        client,
         channels = channel,
         title = title,
         content = f"{msg.strip()}",
@@ -69,7 +97,8 @@ def post_upload(client, channel, title, msg):
 
 
 def post_fileupload(client, channel, title, file):
-    res = client.files_upload(
+    res = Call_files_upload(
+        client,
         channels = channel,
         title = title,
         file = file,
