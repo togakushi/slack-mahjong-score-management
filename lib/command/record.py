@@ -68,7 +68,7 @@ def getdata(starttime, endtime, command_option):
             deposit = pointsum - sum([eval(str(results[i][x]["rpoint"])) for x in g.wind])
 
             msg += "{},<場所>,{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
-                results[i]["日付"].strftime("%Y/%m/%d %H:%M"), deposit,
+                results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"), deposit,
                 results[i]["東家"]["name"], eval(str(results[i]["東家"]["rpoint"])), results[i]["東家"]["rank"], results[i]["東家"]["point"],
                 results[i]["南家"]["name"], eval(str(results[i]["南家"]["rpoint"])), results[i]["南家"]["rank"], results[i]["南家"]["point"],
                 results[i]["西家"]["name"], eval(str(results[i]["西家"]["rpoint"])), results[i]["西家"]["rank"], results[i]["西家"]["point"],
