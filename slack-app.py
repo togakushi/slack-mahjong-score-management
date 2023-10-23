@@ -18,33 +18,26 @@ def handle_message_events(client, body):
     postされた素点合計が配給原点と同じかチェックする
     """
 
-    bot_id = None
-    if body["authorizations"][0]["is_bot"]:
-        bot_id = body["authorizations"][0]["user_id"]
-
-    if "subtype" in body["event"]:
-        if body["event"]["subtype"] == "message_changed":
-            data = body["event"]["message"]
-            data.update({"channel": body["event"]["channel"]})
-    else:
-        data = body["event"]
-
-    user_id = data["user"]
+    data = body["event"]
     channel_id = data["channel"]
-    ts = data["ts"]
-
-    # リアクションデータ取得
-    res = client.reactions_get(
-        channel = channel_id,
-        timestamp = ts,
-    )
-    if "reactions" in res["message"]:
-        reaction = res["message"]["reactions"]
-    else:
-        reaction = None
+    if "subtype" in data:
+        if data["subtype"] == "message_deleted":
+            return
+        if data["subtype"] == "message_changed":
+            data = body["event"]["message"]
 
     msg = c.search.pattern(data["text"])
     if msg:
+        # リアクションデータ取得
+        res = client.reactions_get(
+            channel = channel_id,
+            timestamp = data["ts"],
+        )
+        if "reactions" in res["message"]:
+            reaction = res["message"]["reactions"]
+        else:
+            reaction = None
+
         pointsum = g.config["mahjong"].getint("point", 250) * 4
         score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
 
@@ -53,26 +46,26 @@ def handle_message_events(client, body):
                 client.reactions_remove(
                     channel = channel_id,
                     name = g.reaction_NG,
-                    timestamp = ts,
+                    timestamp = data["ts"],
                 )
             client.reactions_add(
                 channel = channel_id,
                 name = g.reaction_OK,
-                timestamp = ts,
+                timestamp = data["ts"],
             )
         else:
-            msg = f.message.invalid_score(user_id, score, pointsum)
-            f.slack_api.post_message(client, channel_id, msg, ts)
+            msg = f.message.invalid_score(data["user"], score, pointsum)
+            f.slack_api.post_message(client, channel_id, msg, data["ts"])
             if reaction:
                 client.reactions_remove(
                     channel = channel_id,
                     name = g.reaction_OK,
-                    timestamp = ts,
+                    timestamp = data["ts"],
                 )
             client.reactions_add(
                 channel = channel_id,
                 name = g.reaction_NG,
-                timestamp = ts,
+                timestamp = data["ts"],
             )
 
 
