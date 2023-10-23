@@ -12,18 +12,24 @@ from lib.function import global_value as g
 keyword = g.config["search"].get("keyword", "麻雀成績")
 
 # イベントAPI
-@g.app.message(re.compile(rf"{keyword}"))
-def handle_score_check_evnts(client, body):
+@g.app.event("message")
+def handle_message_events(client, event):
     """
     postされた素点合計が配給原点と同じかチェックする
     """
 
-    g.logging.trace(body["event"])
-    user_id = body["event"]["user"]
-    channel_id = body["event"]["channel"]
-    ts = body["event"]["ts"]
-    msg = c.search.pattern(body["event"]["text"])
+    if "subtype" in event:
+        if event["subtype"] == "message_changed":
+            data = event["message"]
+            data.update({"channel": event["channel"]})
+    else:
+        data = event
 
+    user_id = data["user"]
+    channel_id = data["channel"]
+    ts = data["ts"]
+
+    msg = c.search.pattern(data["text"])
     if msg:
         pointsum = g.config["mahjong"].getint("point", 250) * 4
         score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
@@ -46,11 +52,6 @@ def handle_home_events(client, event):
     )
 
     g.logging.trace(result)
-
-
-@g.app.event("message")
-def handle_message_events():
-    pass
 
 
 if __name__ == "__main__":
