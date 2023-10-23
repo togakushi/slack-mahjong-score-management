@@ -99,6 +99,8 @@ except:
 ### 固定値 ###
 wind = ("東家", "南家", "西家", "北家")
 guest_mark = "※"
+reaction_OK = "ok"
+reaction_NG = "ng"
 
 ### slack api ###
 try:
