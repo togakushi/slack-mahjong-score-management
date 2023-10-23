@@ -39,11 +39,13 @@ Features -> Event Subscriptions
 - Enable Events (On)
 - Subscribe to bot events
   - [Add Bot User Event]
-    - message.channels
     - app_home_opened ※Home Appを使うときのみ
+    - message.channels
+    - reactions:read
+    - reactions:write
   - [Save Changes]
 
-`message.channels` と `app_home_opened` を追加する。
+必要な権限を追加する。
 
 ### 権限設定
 
