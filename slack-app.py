@@ -20,6 +20,11 @@ def handle_message_events(client, body):
 
     data = body["event"]
     channel_id = data["channel"]
+    if body["authorizations"][0]["is_bot"]:
+        bot_id = body["authorizations"][0]["user_id"]
+    else:
+        bot_id = ""
+
     if "subtype" in data:
         if data["subtype"] == "message_deleted":
             return
@@ -33,8 +38,16 @@ def handle_message_events(client, body):
             channel = channel_id,
             timestamp = data["ts"],
         )
+
+        chk = False
         if "reactions" in res["message"]:
             reaction = res["message"]["reactions"]
+            for i in range(len(reaction)):
+                if bot_id in reaction[i]["users"]:
+                    chk = True
+                    break
+            if not chk:
+                reaction = None
         else:
             reaction = None
 
