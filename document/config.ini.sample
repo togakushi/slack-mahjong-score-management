@@ -12,6 +12,12 @@ rank_point = 20,10,-10,-20
 ignore_flying = False
 
 
+### 設定 ###
+[setting]
+guest_mark = ※
+reaction_ok = ok
+reaction_ng = ng
+
 ### 検索オプション ###
 [search]
 keyword = 終局
