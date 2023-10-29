@@ -170,11 +170,9 @@ def SearchRangeChoice(view, no):
     view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索範囲"}
     view["blocks"][no]["element"]["type"] = "radio_buttons"
     view["blocks"][no]["element"]["action_id"] = "aid-range"
-
-    view["blocks"][no]["element"]["initial_option"] = {}
-    view["blocks"][no]["element"]["initial_option"]["text"] = {"type": "plain_text", "text": f"範囲指定： {days}"}
-    view["blocks"][no]["element"]["initial_option"]["value"] = "指定"
     view["blocks"][no]["element"]["options"] = []
+    view["blocks"][no]["element"]["initial_option"] = {}
+
     view["blocks"][no]["element"]["options"].append(
         {"text": {"type": "plain_text", "text": "今月"}, "value": "今月"}
     )
@@ -186,6 +184,9 @@ def SearchRangeChoice(view, no):
     )
     view["blocks"][no]["element"]["options"].append(
         {"text": {"type": "plain_text", "text": f"範囲指定： {days}"}, "value": "指定"}
+    )
+    view["blocks"][no]["element"]["initial_option"].update(
+        {"text": {"type": "plain_text", "text": "今月"}, "value": "今月"}
     )
 
     return(view, no + 1)

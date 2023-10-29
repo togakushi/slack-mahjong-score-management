@@ -99,8 +99,8 @@ except:
 ### 固定値 ###
 wind = ("東家", "南家", "西家", "北家")
 guest_mark = config["setting"].get("guest_mark", "※")
-reaction_OK = config["setting"].get("reaction_ok", "ok")
-reaction_NG = config["setting"].get("reaction_ng", "ng")
+reaction_ok = config["setting"].get("reaction_ok", "ok")
+reaction_ng = config["setting"].get("reaction_ng", "ng")
 
 ### slack api ###
 try:

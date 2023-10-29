@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import os
-import re
 
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
@@ -9,7 +8,6 @@ import lib.event as e
 import lib.function as f
 from lib.function import global_value as g
 
-keyword = g.config["search"].get("keyword", "麻雀成績")
 
 # イベントAPI
 @g.app.event("message")
@@ -23,7 +21,7 @@ def handle_message_events(client, body):
     if body["authorizations"][0]["is_bot"]:
         bot_id = body["authorizations"][0]["user_id"]
     else:
-        bot_id = ""
+        bot_id = None
 
     if "subtype" in data:
         if data["subtype"] == "message_deleted":
@@ -39,17 +37,14 @@ def handle_message_events(client, body):
             timestamp = data["ts"],
         )
 
-        chk = False
+        reaction = None
         if "reactions" in res["message"]:
             reaction = res["message"]["reactions"]
             for i in range(len(reaction)):
                 if bot_id in reaction[i]["users"]:
-                    chk = True
                     break
-            if not chk:
+            else:
                 reaction = None
-        else:
-            reaction = None
 
         pointsum = g.config["mahjong"].getint("point", 250) * 4
         score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
@@ -58,12 +53,12 @@ def handle_message_events(client, body):
             if reaction:
                 client.reactions_remove(
                     channel = channel_id,
-                    name = g.reaction_NG,
+                    name = g.reaction_ng,
                     timestamp = data["ts"],
                 )
             client.reactions_add(
                 channel = channel_id,
-                name = g.reaction_OK,
+                name = g.reaction_ok,
                 timestamp = data["ts"],
             )
         else:
@@ -72,12 +67,12 @@ def handle_message_events(client, body):
             if reaction:
                 client.reactions_remove(
                     channel = channel_id,
-                    name = g.reaction_OK,
+                    name = g.reaction_ok,
                     timestamp = data["ts"],
                 )
             client.reactions_add(
                 channel = channel_id,
-                name = g.reaction_NG,
+                name = g.reaction_ng,
                 timestamp = data["ts"],
             )
 
