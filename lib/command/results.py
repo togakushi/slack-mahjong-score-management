@@ -484,7 +484,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             endtime.strftime('%Y/%m/%d %H:%M'),
         )
         msg1 += f.remarks(command_option, starttime)
-        msg2[""] = "記録が見つかりませんでした。\n"
+        msg2[""] = "対戦記録が見つかりませんでした。\n"
 
         return(msg1, msg2)
 
