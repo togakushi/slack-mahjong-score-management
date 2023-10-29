@@ -58,17 +58,20 @@ def handle_some_action(ack, body, client):
         view = e.PlainText(f"{chr(10).join(app_msg)}"),
     )
 
+    g.logging.info(f"[app:search_summary] {argument}, {command_option}")
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
-    if starttime and endtime:
-        msg1, msg2 = c.results.summary(starttime, endtime, target_player, target_count, command_option)
-        res = f.slack_api.post_message(client, body["user"]["id"], msg2)
-        if msg1:
-            f.slack_api.post_text(client, body["user"]["id"], res["ts"], "", msg1)
-
     app_msg.pop()
     app_msg.append("集計完了")
+    msg2 = f.message.no_hits(starttime, endtime)
+
+    if starttime and endtime:
+        msg1, msg2 = c.results.summary(starttime, endtime, target_player, target_count, command_option)
+        if msg1:
+            res = f.slack_api.post_message(client, body["user"]["id"], msg2)
+            f.slack_api.post_text(client, body["user"]["id"], res["ts"], "", msg1)
+
     client.views_update(
         view_id = g.app_var["view_id"],
         view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg2}"),
