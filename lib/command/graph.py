@@ -174,10 +174,17 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     plt.ylabel("累積ポイント", fontproperties = fp)
 
     for name, total in ranking:
-        #print("debug:", name, len(game_time), len(stacked_point[name]))
         label = f"{name} ({str(total)})".replace("-", "▲")
         plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
-    plt.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
+
+    # 凡例
+    plt.legend(
+        bbox_to_anchor = (1.03, 1),
+        loc = "upper left",
+        borderaxespad = 0,
+        ncol = int(len(player_list) / 30 + 1),
+        prop = fp,
+    )
 
     # Y軸修正
     ylocs, ylabs = plt.yticks()
