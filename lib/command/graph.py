@@ -217,7 +217,10 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         for name, total in ranking:
             label = f"{str(interim_rank[name][-1])}位：{name} / {str(total)}p".replace("-", "▲")
             plt.plot(game_time, interim_rank[name], marker = "o", markersize = 3, label = label)
-        plt.yticks([1] + [i for i in range(2, len(interim_rank), 4)] + [len(interim_rank) + 1])
+        if len(interim_rank) < 10:
+            plt.yticks([i for i in range(len(interim_rank) + 2)])
+        else:
+            plt.yticks([i for i in range(-2, len(interim_rank) + 4, 3)])
         plt.ylim(0.2, len(interim_rank) + 0.8)
         plt.gca().invert_yaxis()
 
