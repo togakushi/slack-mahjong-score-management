@@ -201,14 +201,16 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         plt.title(title_text, fontproperties = fp, fontsize = 12)
         plt.ylabel("順位 (累積ポイント順)", fontproperties = fp)
 
+        p = len(interim_rank)
         for name, total in ranking:
             label = f"{str(interim_rank[name][-1])}位：{name} / {str(total)}p".replace("-", "▲")
             plt.plot(game_time, interim_rank[name], marker = "o", markersize = 3, label = label)
-        if len(interim_rank) < 10:
-            plt.yticks([i for i in range(len(interim_rank) + 2)])
+        if p < 10:
+            plt.yticks([i for i in range(p + 2)])
         else:
-            plt.yticks([i for i in range(-2, len(interim_rank) + 4, int(len(interim_rank) / 15) + 2)])
-        plt.ylim(0.2, len(interim_rank) + 0.8)
+            
+            plt.yticks([i for i in range(-(int(p / 20) + 1), int(p * 1.1) + 2, int(p / 20) + 2)])
+        plt.ylim(0.2, p + 0.8)
         plt.gca().invert_yaxis()
     else:
         if target_count == 0:
