@@ -71,7 +71,7 @@ def slackpost(client, channel, argument, command_option):
 
 def plot(starttime, endtime, target_player, target_count, command_option):
     """
-    ポイント推移グラフを生成する
+    ポイント推移/順位変動グラフを生成する
 
     Parameters
     ----------
@@ -193,9 +193,9 @@ def plot(starttime, endtime, target_player, target_count, command_option):
 
     if command_option["order"]:
         if target_count == 0:
-            title_text = f"順位推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+            title_text = f"順位変動 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
         else:
-            title_text = f"順位推移 (直近 {target_count} 戦)"
+            title_text = f"順位変動 (直近 {target_count} 戦)"
 
         plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
         plt.title(title_text, fontproperties = fp, fontsize = 12)
