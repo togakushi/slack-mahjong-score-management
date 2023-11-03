@@ -191,7 +191,26 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     if len(game_time) == 1:
         plt.xticks(rotation = 0, ha = "center")
 
-    if not command_option["order"]:
+    if command_option["order"]:
+        if target_count == 0:
+            title_text = f"順位推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+        else:
+            title_text = f"順位推移 (直近 {target_count} 戦)"
+
+        plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
+        plt.title(title_text, fontproperties = fp, fontsize = 12)
+        plt.ylabel("順位 (累積ポイント順)", fontproperties = fp)
+
+        for name, total in ranking:
+            label = f"{str(interim_rank[name][-1])}位：{name} / {str(total)}p".replace("-", "▲")
+            plt.plot(game_time, interim_rank[name], marker = "o", markersize = 3, label = label)
+        if len(interim_rank) < 10:
+            plt.yticks([i for i in range(len(interim_rank) + 2)])
+        else:
+            plt.yticks([i for i in range(-2, len(interim_rank) + 4, int(len(interim_rank) / 15) + 2)])
+        plt.ylim(0.2, len(interim_rank) + 0.8)
+        plt.gca().invert_yaxis()
+    else:
         if target_count == 0:
             title_text = f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
         else:
@@ -202,27 +221,9 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         plt.ylabel("累積ポイント", fontproperties = fp)
 
         for name, total in ranking:
-            label = f"{name} ({str(total)})".replace("-", "▲")
+            label = f"{name} ({str(total)}p)".replace("-", "▲")
             plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
-    else:
-        if target_count == 0:
-            title_text = f"順位推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
-        else:
-            title_text = f"順位推移 (直近 {target_count} 戦)"
 
-        plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-        plt.title(title_text, fontproperties = fp, fontsize = 12)
-        plt.ylabel("順位", fontproperties = fp)
-
-        for name, total in ranking:
-            label = f"{str(interim_rank[name][-1])}位：{name} / {str(total)}p".replace("-", "▲")
-            plt.plot(game_time, interim_rank[name], marker = "o", markersize = 3, label = label)
-        if len(interim_rank) < 10:
-            plt.yticks([i for i in range(len(interim_rank) + 2)])
-        else:
-            plt.yticks([i for i in range(-2, len(interim_rank) + 4, 3)])
-        plt.ylim(0.2, len(interim_rank) + 0.8)
-        plt.gca().invert_yaxis()
 
     # 凡例
     plt.legend(
@@ -339,7 +340,7 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     point_ax.set_ylabel("ポイント", fontproperties = fp)
     point_ax.set_xlim(-1, len(game_time))
     point_ax.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-    point_ax.plot(game_time, stacked_point, marker = "o", markersize = 3, label = f"累積ポイント({str(total_point)})".replace("-", "▲"))
+    point_ax.plot(game_time, stacked_point, marker = "o", markersize = 3, label = f"累積ポイント({str(total_point)}p)".replace("-", "▲"))
     point_ax.bar(game_time, game_point, color = "dodgerblue", label = f"獲得ポイント")
     point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white") # 背景色と同じにして見えなくする
     point_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
