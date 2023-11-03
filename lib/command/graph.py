@@ -208,8 +208,10 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         if p < 10:
             plt.yticks([i for i in range(p + 2)])
         else:
-            
-            plt.yticks([i for i in range(-(int(p / 20) + 1), int(p * 1.1) + 2, int(p / 20) + 2)])
+            yl = [i for i in range(-(int(p / 20) + 1), int(p * 1.5), int(p / 20) + 2)]
+            while yl[-2] > p:
+                yl.pop()
+            plt.yticks(yl)
         plt.ylim(0.2, p + 0.8)
         plt.gca().invert_yaxis()
     else:
