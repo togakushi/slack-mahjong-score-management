@@ -26,7 +26,7 @@ def check_namepattern(name):
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(アーカイブ|一昔|過去|archive)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
-    if re.match(r"^(詳細|verbose)$", name): # NGワード（サブコマンド引数）
+    if re.match(r"^(順位|詳細|verbose)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(トップ|上位|top)[0-9]+$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")

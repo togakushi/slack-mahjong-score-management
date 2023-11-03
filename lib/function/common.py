@@ -135,6 +135,9 @@ def argument_analysis(argument, command_option):
         if re.match(r"^(詳細|verbose)$", keyword):
             command_option["verbose"] = True
             continue
+        if re.match(r"^(順位)$", keyword):
+            command_option["order"] = True
+            continue
         if re.match(r"^(アーカイブ|一昔|過去|archive)$", keyword):
             command_option["archive"] = True
             continue

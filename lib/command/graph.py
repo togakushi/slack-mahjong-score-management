@@ -1,5 +1,6 @@
 import os
 import re
+import inspect
 
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
@@ -92,7 +93,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         グラフにプロットしたゲーム数
     """
 
-    g.logging.info(f"[graph.plot] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    g.logging.info(f"[graph.{inspect.currentframe().f_code.co_name}] {starttime} {endtime} {target_player} {target_count} {command_option}")
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
@@ -133,17 +134,43 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         stacked_point[name] = []
         total_point = 0
         for i in gdata:
-            point = 0
             for n, p in gdata[i]:
                 if name == n:
-                    point = p
-            total_point = round(total_point + point, 2)
-            stacked_point[name].append(total_point)
-    # sort
+                    total_point = round(total_point + p, 2)
+                    stacked_point[name].append(total_point)
+                    break
+            else:
+                if stacked_point[name]:
+                    stacked_point[name].append(stacked_point[name][-1])
+                else:
+                    stacked_point[name].append(None)
+
+    # 最終順位
     rank = {}
     for name in player_list:
         rank[name] = stacked_point[name][-1]
-    ranking = sorted(rank.items(), key=lambda x:x[1], reverse=True)
+    ranking = sorted(rank.items(), key = lambda x:x[1], reverse = True)
+
+    # 中間順位
+    interim_rank = {}
+    point_data = {}
+    count = 0
+    for name in player_list:
+        interim_rank[name] = []
+    for i in gdata:
+        point_data[i] = []
+        for name in stacked_point.keys():
+            if stacked_point[name][count]:
+                point_data[i].append(stacked_point[name][count])
+        point_data[i].sort(reverse = True)
+
+        for name in stacked_point.keys():
+            if stacked_point[name][count]:
+                interim_rank[name].append(point_data[i].index(stacked_point[name][count]) + 1)
+            else:
+                interim_rank[name].append(None)
+
+        count += 1
 
     ### グラフ生成 ###
     fp = FontProperties(
@@ -164,18 +191,35 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     if len(game_time) == 1:
         plt.xticks(rotation = 0, ha = "center")
 
-    if target_count == 0:
-        title_text = f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+    if not command_option["order"]:
+        if target_count == 0:
+            title_text = f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+        else:
+            title_text = f"ポイント推移 (直近 {target_count} 戦)"
+
+        plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
+        plt.title(title_text, fontproperties = fp, fontsize = 12)
+        plt.ylabel("累積ポイント", fontproperties = fp)
+
+        for name, total in ranking:
+            label = f"{name} ({str(total)})".replace("-", "▲")
+            plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
     else:
-        title_text = f"ポイント推移 (直近 {target_count} 戦)"
+        if target_count == 0:
+            title_text = f"順位推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+        else:
+            title_text = f"順位推移 (直近 {target_count} 戦)"
 
-    plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-    plt.title(title_text, fontproperties = fp, fontsize = 12)
-    plt.ylabel("累積ポイント", fontproperties = fp)
+        plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
+        plt.title(title_text, fontproperties = fp, fontsize = 12)
+        plt.ylabel("順位", fontproperties = fp)
 
-    for name, total in ranking:
-        label = f"{name} ({str(total)})".replace("-", "▲")
-        plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
+        for name, total in ranking:
+            label = f"{str(interim_rank[name][-1])}位：{name} / {str(total)}p".replace("-", "▲")
+            plt.plot(game_time, interim_rank[name], marker = "o", markersize = 3, label = label)
+        plt.yticks([1] + [i for i in range(2, len(interim_rank), 4)] + [len(interim_rank) + 1])
+        plt.ylim(0.2, len(interim_rank) + 0.8)
+        plt.gca().invert_yaxis()
 
     # 凡例
     plt.legend(
@@ -313,3 +357,44 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "graph.png"))
 
     return(len(game_time))
+
+
+def plot_rank(starttime, endtime, target_player, target_count, command_option):
+
+
+    g.logging.info(f"[graph.{inspect.currentframe().f_code.co_name}] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    tmpdate = c.search.getdata(command_option)
+    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+
+    ### データ抽出 ###
+    gdata = {}
+    game_time = []
+    player_list = []
+
+    for i in results.keys():
+        pdate = results[i]["日付"]
+        if target_player: # 指定プレーヤーのみ抽出
+            for wind in g.wind[0:4]:
+                pname = results[i][wind]["name"]
+                if pname in target_player:
+                    if not pdate in gdata:
+                        gdata[pdate] = []
+                        game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
+                    gdata[pdate].append((pname, results[i][wind]["point"]))
+                    if not pname in player_list:
+                        player_list.append(pname)
+        else: # 全員分
+            gdata[pdate] = []
+            game_time.append(pdate.strftime("%Y/%m/%d %H:%M:%S"))
+            for wind in g.wind[0:4]:
+                pname = results[i][wind]["name"]
+                if not command_option["guest_skip"] and pname == g.guest_name:
+                    continue
+                gdata[pdate].append((pname, results[i][wind]["point"]))
+                if not pname in player_list:
+                    player_list.append(pname)
+
+    if len(game_time) == 0:
+        return(len(game_time))
+    
+    ### 集計 ###
