@@ -1,4 +1,5 @@
 import re
+import math
 
 import lib.command as c
 import lib.function as f
@@ -49,7 +50,7 @@ def put_ranking(ranking_type, reversed, results, ranking_data, keyword, command_
     # 規定打数チェック
     popcounter = 0
     for i in range(len(namelist)):
-        if int(len(results) * command_option["stipulated_rate"] + 1) >= game_count[i - popcounter]:
+        if math.ceil(len(results) * command_option["stipulated_rate"]) >= game_count[i - popcounter]:
             namelist.pop(i - popcounter)
             data.pop(i - popcounter)
             raw_data.pop(i - popcounter)
@@ -184,7 +185,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
         etime = results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M')
         msg1 = "\n*【ランキング】*\n"
         msg1 += f"\t集計範囲：{stime} ～ {etime}\n"
-        msg1 += f"\t集計ゲーム数：{len(results)}\t(規定数：{int(len(results) * command_option['stipulated_rate'] + 2)} 以上)\n"
+        msg1 += f"\t集計ゲーム数：{len(results)}\t(規定数：{math.ceil(len(results) * command_option['stipulated_rate'])+1} 以上)\n"
         msg1 += f.remarks(command_option, starttime)
 
         msg2 = ""
