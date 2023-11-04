@@ -1,5 +1,6 @@
 import re
 import sqlite3
+import inspect
 from datetime import datetime
 
 import lib.command as c
@@ -9,7 +10,21 @@ from lib.function import global_value as g
 
 
 def pattern(text):
-    keyword = g.config["search"].get("keyword", "御無礼")
+    """
+    成績記録用フォーマットチェック
+
+    Parameters
+    ----------
+    text : text
+        slackにポストされた内容
+
+    Returns
+    -------
+    ret : text / False
+        フォーマットに一致すればスペース区切りの名前と素点のペア
+    """
+
+    keyword = g.config["search"].get("keyword", "終局")
     pattern1 = re.compile(rf"^{keyword}([^0-9+-]+[0-9+-]+){{4}}")
     pattern2 = re.compile(rf"([^0-9+-]+[0-9+-]+){{4}}{keyword}$")
 
@@ -37,6 +52,9 @@ def getdata(command_option):
         変換、修正後の成績データ
     """
 
+    _fname = f"search.{inspect.currentframe().f_code.co_name}"
+    command_option = f.configure.command_option_initialization("graph")
+
     # データソースの切り替え
     if command_option["archive"]:
         conn = sqlite3.connect(g.dbfile, detect_types = sqlite3.PARSE_DECLTYPES)
@@ -47,7 +65,7 @@ def getdata(command_option):
     else:
         data = slack_search(command_option)
 
-    g.logging.info(f"[getdata] return record: {len(data)}")
+    g.logging.info(f"[{_fname}] return record: {len(data)}")
 
 
     # プレイヤー名の正規化、2ゲスト戦除外
@@ -81,9 +99,11 @@ def slack_search(command_option):
         検索した結果
     """
 
+    _fname = f"search.{inspect.currentframe().f_code.co_name}"
+
     keyword = g.config["search"].get("keyword", "御無礼")
     channel = g.config["search"].get("channel", "#麻雀やろうぜ")
-    g.logging.info(f"[serach] query:'{keyword} in:{channel}' {command_option}")
+    g.logging.info(f"[{_fname}] query:'{keyword} in:{channel}' {command_option}")
 
     ### データ取得 ###
     response = g.webclient.search_messages(
@@ -150,7 +170,7 @@ def slack_search(command_option):
                         data[count][x]["rank"] = rank.index(p) + 1
                         data[count][x]["point"] = f.score.CalculationPoint(eval(msg[y]), rank.index(p) + 1)
 
-                    g.logging.trace(f"[serach] debug: {data[count]}")
+                    g.logging.trace(f"[{_fname}] debug: {data[count]}")
 
                     count += 1
 
@@ -184,15 +204,17 @@ def game_select(starttime, endtime, target_player, target_count, results):
         条件に合致したゲーム結果
     """
 
+    _fname = f"search.{inspect.currentframe().f_code.co_name}"
+
     ret = {}
     if target_count == 0:
-        g.logging.info(f"[game_select] {starttime} {endtime} {target_player}")
+        g.logging.info(f"[{_fname}] {starttime} {endtime} {target_player}")
         for i in results.keys():
             if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
                 g.logging.trace(f"{i}: {results[i]}")
                 ret[i] = results[i]
     else:
-        g.logging.info(f"[game_select] {target_count} {target_player}")
+        g.logging.info(f"[{_fname}] {target_count} {target_player}")
         chk_count = 0
         for i in sorted(results.keys(), reverse = True):
             if len(target_player) == 0:
@@ -212,6 +234,6 @@ def game_select(starttime, endtime, target_player, target_count, results):
             tmp[i] = ret[i]
         ret = tmp
 
-    g.logging.info(f"[game_select] return record: {len(ret)}")
+    g.logging.info(f"[{_fname}] return record: {len(ret)}")
 
     return(ret)
