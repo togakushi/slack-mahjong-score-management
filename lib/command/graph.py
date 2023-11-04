@@ -26,8 +26,9 @@ def handle_graph_evnts(client, context, body):
     if not re.match(rf"^{commandword}$", command):
         return
 
+    _fname = f"graph.{inspect.currentframe().f_code.co_name}"
     command_option = f.configure.command_option_initialization("graph")
-    g.logging.info(f"[{command}] {command_option} {argument}")
+    g.logging.info(f"[{_fname}:{command}] {command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -93,7 +94,8 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         グラフにプロットしたゲーム数
     """
 
-    g.logging.info(f"[graph.{inspect.currentframe().f_code.co_name}] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    _fname = f"graph.{inspect.currentframe().f_code.co_name}"
+    g.logging.info(f"[{_fname}] {starttime} {endtime} {target_player} {target_count} {command_option}")
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
@@ -172,7 +174,6 @@ def plot(starttime, endtime, target_player, target_count, command_option):
                 interim_rank[name].append(point_data[i].index(stacked_point[name][count]) + 1)
             else:
                 interim_rank[name].append(None)
-
         count += 1
 
     ### グラフ生成 ###
@@ -194,16 +195,25 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     if len(game_time) == 1:
         plt.xticks(rotation = 0, ha = "center")
 
+    # タイトルと軸ラベル
     if command_option["order"]:
+        _ylabel = "順位 (累積ポイント順)"
         if target_count == 0:
             title_text = f"順位変動 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
         else:
             title_text = f"順位変動 (直近 {target_count} ゲーム)"
+    else:
+        _ylabel = "累積ポイント"
+        if target_count == 0:
+            title_text = f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+        else:
+            title_text = f"ポイント推移 (直近 {target_count} ゲーム)"
 
-        plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-        plt.title(title_text, fontproperties = fp, fontsize = 12)
-        plt.ylabel("順位 (累積ポイント順)", fontproperties = fp)
+    plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
+    plt.title(title_text, fontproperties = fp, fontsize = 12)
+    plt.ylabel(_ylabel, fontproperties = fp)
 
+    if command_option["order"]:
         p = len(interim_rank)
         for name, total in ranking:
             label = f"{str(interim_rank[name][-1])}位：{name} ({str(total)}p/{str(game_count[name])}G)".replace("-", "▲")
@@ -211,7 +221,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         if p < 10:
             plt.yticks([i for i in range(p + 2)])
         else:
-            # Y軸のラベル設定(多めにリストを作って描写範囲まで削る)
+            # Y軸の目盛り設定(多めにリストを作って描写範囲まで削る)
             yl = [i for i in range(-(int(p / 20) + 1), int(p * 1.5), int(p / 20) + 2)]
             while yl[-2] > p:
                 yl.pop()
@@ -219,19 +229,9 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         plt.ylim(0.2, p + 0.8)
         plt.gca().invert_yaxis()
     else:
-        if target_count == 0:
-            title_text = f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
-        else:
-            title_text = f"ポイント推移 (直近 {target_count} ゲーム)"
-
-        plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-        plt.title(title_text, fontproperties = fp, fontsize = 12)
-        plt.ylabel("累積ポイント", fontproperties = fp)
-
         for name, total in ranking:
             label = f"{name} ({str(total)}p/{str(game_count[name])}G)".replace("-", "▲")
             plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
-
 
     # 凡例
     plt.legend(
@@ -281,7 +281,8 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    g.logging.info(f"[graph.plot_personal] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    _fname = f"graph.{inspect.currentframe().f_code.co_name}"
+    g.logging.info(f"[{_fname}] {starttime} {endtime} {target_player} {target_count} {command_option}")
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
@@ -338,7 +339,7 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     if target_count == 0:
         title_text = f"『{target_player[0]}』の成績 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
     else:
-        title_text = f"『{target_player[0]}』の成績 (直近 {target_count} 戦)"
+        title_text = f"『{target_player[0]}』の成績 (直近 {target_count} ゲーム)"
 
     grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [3, 1])
     fig.suptitle(title_text, fontproperties = fp, fontsize = 12)
