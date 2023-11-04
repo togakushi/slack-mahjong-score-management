@@ -130,14 +130,17 @@ def plot(starttime, endtime, target_player, target_count, command_option):
 
     ### 集計 ###
     stacked_point = {}
+    game_count = {}
     for name in player_list:
         stacked_point[name] = []
+        game_count[name] = 0
         total_point = 0
         for i in gdata:
             for n, p in gdata[i]:
                 if name == n:
                     total_point = round(total_point + p, 2)
                     stacked_point[name].append(total_point)
+                    game_count[name] += 1
                     break
             else:
                 if stacked_point[name]:
@@ -159,12 +162,12 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         interim_rank[name] = []
     for i in gdata:
         point_data[i] = []
-        for name in stacked_point.keys():
+        for name in stacked_point.keys(): # 評価用リスト生成(ゲーム内のポイントの降順)
             if stacked_point[name][count]:
                 point_data[i].append(stacked_point[name][count])
         point_data[i].sort(reverse = True)
 
-        for name in stacked_point.keys():
+        for name in stacked_point.keys(): # 順位付け
             if stacked_point[name][count]:
                 interim_rank[name].append(point_data[i].index(stacked_point[name][count]) + 1)
             else:
@@ -195,7 +198,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         if target_count == 0:
             title_text = f"順位変動 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
         else:
-            title_text = f"順位変動 (直近 {target_count} 戦)"
+            title_text = f"順位変動 (直近 {target_count} ゲーム)"
 
         plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
         plt.title(title_text, fontproperties = fp, fontsize = 12)
@@ -203,11 +206,12 @@ def plot(starttime, endtime, target_player, target_count, command_option):
 
         p = len(interim_rank)
         for name, total in ranking:
-            label = f"{str(interim_rank[name][-1])}位：{name} / {str(total)}p".replace("-", "▲")
+            label = f"{str(interim_rank[name][-1])}位：{name} ({str(total)}p/{str(game_count[name])}G)".replace("-", "▲")
             plt.plot(game_time, interim_rank[name], marker = "o", markersize = 3, label = label)
         if p < 10:
             plt.yticks([i for i in range(p + 2)])
         else:
+            # Y軸のラベル設定(多めにリストを作って描写範囲まで削る)
             yl = [i for i in range(-(int(p / 20) + 1), int(p * 1.5), int(p / 20) + 2)]
             while yl[-2] > p:
                 yl.pop()
@@ -218,14 +222,14 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         if target_count == 0:
             title_text = f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
         else:
-            title_text = f"ポイント推移 (直近 {target_count} 戦)"
+            title_text = f"ポイント推移 (直近 {target_count} ゲーム)"
 
         plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
         plt.title(title_text, fontproperties = fp, fontsize = 12)
         plt.ylabel("累積ポイント", fontproperties = fp)
 
         for name, total in ranking:
-            label = f"{name} ({str(total)}p)".replace("-", "▲")
+            label = f"{name} ({str(total)}p/{str(game_count[name])}G)".replace("-", "▲")
             plt.plot(game_time, stacked_point[name], marker = "o", markersize = 3, label = label)
 
 
