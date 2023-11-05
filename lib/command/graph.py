@@ -196,6 +196,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         plt.xticks(rotation = 0, ha = "center")
 
     # タイトルと軸ラベル
+    _xlabel = f"ゲーム終了日時（総数：{len(game_time)}）"
     if command_option["order"]:
         _ylabel = "順位 (累積ポイント順)"
         if target_count == 0:
@@ -212,6 +213,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
     plt.title(title_text, fontproperties = fp, fontsize = 12)
     plt.ylabel(_ylabel, fontproperties = fp)
+    plt.xlabel(_xlabel, fontproperties = fp)
 
     if command_option["order"]:
         p = len(interim_rank)
