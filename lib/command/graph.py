@@ -196,7 +196,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         plt.xticks(rotation = 0, ha = "center")
 
     # タイトルと軸ラベル
-    _xlabel = f"ゲーム終了日時（総数：{len(game_time)}）"
+    _xlabel = f"ゲーム終了日時（総数：{len(game_time)} ゲーム）"
     if command_option["order"]:
         _ylabel = "順位 (累積ポイント順)"
         if target_count == 0:
@@ -338,6 +338,8 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     if len(game_time) == 1:
         rotation = 0
         position = "center"
+
+    _xlabel = f"ゲーム終了日時（総数：{len(game_time)} ゲーム）"
     if target_count == 0:
         title_text = f"『{target_player[0]}』の成績 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
     else:
@@ -356,10 +358,16 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white") # 背景色と同じにして見えなくする
     point_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
 
+    ticks = point_ax.get_yticks()
+    point_ax.set_yticks(ticks[1:-1])
+    new_ticks = [str(int(i)).replace("-", "▲") for i in ticks]
+    point_ax.set_yticklabels(new_ticks[1:-1])
+
     # 順位分布
     rank_ax = fig.add_subplot(grid[1], sharex = point_ax)
     rank_ax.invert_yaxis()
     rank_ax.set_ylabel("順位", fontproperties = fp)
+    rank_ax.set_xlabel(_xlabel, fontproperties = fp)
     rank_ax.set_xlim(-1, len(game_time))
     rank_ax.set_ylim(4.2, 0.8)
     rank_ax.hlines(y = 2.5, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
