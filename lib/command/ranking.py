@@ -177,6 +177,10 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
             ranking_data[name]["in_exp1"] += eval(str(results[i][wind]["rpoint"])) - origin_point # 収支1
             ranking_data[name]["in_exp2"] += eval(str(results[i][wind]["rpoint"])) - return_point # 収支2
 
+    # ゲストプレイヤーの結果を除外
+    if not command_option["guest_skip"]:
+        ranking_data.pop(g.guest_name)
+
     if len(results) == 0:
         msg1 = f.message.no_hits(starttime, endtime)
         msg2 = None
