@@ -47,16 +47,6 @@ def put_ranking(ranking_type, reversed, results, ranking_data, keyword, command_
     else:
         data = [ranking_data[i][keyword] for i in ranking_data.keys()]
 
-    # 規定打数チェック
-    popcounter = 0
-    for i in range(len(namelist)):
-        if math.ceil(len(results) * command_option["stipulated_rate"]) >= game_count[i - popcounter]:
-            namelist.pop(i - popcounter)
-            data.pop(i - popcounter)
-            raw_data.pop(i - popcounter)
-            game_count.pop(i - popcounter)
-            popcounter += 1
-
     for juni in range(1, command_option["ranked"] + 1):
         if reversed:
             top =  [i for i, j in enumerate(data) if j == min(data)]
@@ -116,7 +106,7 @@ def put_ranking(ranking_type, reversed, results, ranking_data, keyword, command_
 
 def getdata(starttime, endtime, target_player, target_count, command_option):
     """
-    xxxを取得
+    ランキングデータを取得
 
     Parameters
     ----------
@@ -134,7 +124,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
 
     Returns
     -------
-    msg : text
+    msg1, msg2 : text
         slackにpostする内容
     """
 
@@ -177,8 +167,14 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
             ranking_data[name]["in_exp1"] += eval(str(results[i][wind]["rpoint"])) - origin_point # 収支1
             ranking_data[name]["in_exp2"] += eval(str(results[i][wind]["rpoint"])) - return_point # 収支2
 
+    # 規定打数に満たないプレイヤーを除外
+    stipulated_count = math.ceil(len(results) * command_option["stipulated_rate"])
+    for name in list(ranking_data):
+        if stipulated_count >= ranking_data[name]["game_count"]:
+            ranking_data.pop(name)
+
     # ゲストプレイヤーの結果を除外
-    if not command_option["guest_skip"]:
+    if not command_option["guest_skip"] and g.guest_name in ranking_data:
         ranking_data.pop(g.guest_name)
 
     if len(results) == 0:
