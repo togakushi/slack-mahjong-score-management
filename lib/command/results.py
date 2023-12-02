@@ -238,7 +238,10 @@ def details(starttime, endtime, target_player, target_count, command_option):
     msg1 = "*【個人成績】*\n"
     msg2 = {}
     msg2["座席"] = "*【座席順位分布】*\n"
-    msg2["戦績"] = "*【戦績】*\n"
+    if command_option["guest_skip"]:
+        msg2["戦績"] = "*【戦績】*\n"
+    else:
+        msg2["戦績"] = f"*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
     msg2["対戦"] = "*【対戦結果】*\n"
 
     point = 0
@@ -269,7 +272,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
         # 戦績
         for wind in g.wind[0:4]:
-            tmp_msg1 += "  {}:{}{} / {}位  {:>5}00点 ({}p)\n".format(
+            tmp_msg1 += "  {}： {}{} / {}位  {:>5}00点 ({}p)\n".format(
                 wind, results[i][wind]["name"],
                 " " * (padding - f.translation.len_count(results[i][wind]["name"])),
                 results[i][wind]["rank"],
@@ -385,10 +388,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
                          "--" if sum(seat_rank[wind]) == 0 else seat_tobi[g.wind.index(wind)]
                     )
 
-        if command_option["game_results"]:
-            if not command_option["guest_skip"]:
-                msg2["戦績"] += f"\t\t{g.guest_mark.strip()}：2ゲスト戦\n"
-        else:
+        if not command_option["game_results"]:
             msg2.pop("戦績")
 
         # 対戦結果
