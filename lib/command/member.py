@@ -40,7 +40,7 @@ def check_namepattern(name):
     return(True, "OK")
 
 
-def NameReplace(pname, command_option):
+def NameReplace(pname, command_option, add_mark = True):
     """
     表記ブレ修正(正規化)
 
@@ -81,7 +81,8 @@ def NameReplace(pname, command_option):
         if command_option["unregistered_replace"]:
             pname = g.guest_name
         else:
-            pname = f"{pname}({g.guest_mark})"
+            if add_mark:
+                pname = f"{pname}({g.guest_mark})"
 
     return(pname)
 
