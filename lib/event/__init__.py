@@ -4,3 +4,4 @@ from lib.event.summary import *
 from lib.event.ranking import *
 from lib.event.personal import *
 from lib.event.versus import *
+from lib.event.event import *
