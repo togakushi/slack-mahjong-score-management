@@ -117,3 +117,37 @@ app_var = {
     "sday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
     "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
 }
+
+### DB設定 ###
+database_path = config["setting"].get("database_path", "mahjong.db")
+sql_result_insert = """
+    insert into
+        result (
+            ts, playtime,
+            p1_name, p1_str, p1_rpoint, p1_rank, p1_point,
+            p2_name, p2_str, p2_rpoint, p2_rank, p2_point,
+            p3_name, p3_str, p3_rpoint, p3_rank, p3_point,
+            p4_name, p4_str, p4_rpoint, p4_rank, p4_point,
+            deposit,
+            rule_version, comment
+        )
+        values (
+            ?, ?,
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?,
+            ?,
+            ?, ?
+        )
+"""
+sql_result_update = """
+    update result set
+        p1_name=?, p1_str=?, p1_rpoint=?, p1_rank=?, p1_point=?,
+        p2_name=?, p2_str=?, p2_rpoint=?, p2_rank=?, p2_point=?,
+        p3_name=?, p3_str=?, p3_rpoint=?, p3_rank=?, p3_point=?,
+        p4_name=?, p4_str=?, p4_rpoint=?, p4_rank=?, p4_point=?,
+        deposit=?
+    where ts=?
+"""
+sql_result_delete = "delete from result where ts=?"
