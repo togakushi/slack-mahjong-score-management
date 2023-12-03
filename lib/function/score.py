@@ -36,6 +36,21 @@ def CalculationPoint(rpoint, rank):
 
     return(float(f"{point:>.1f}"))
 
+def CalculationPoint2(rpoint_data, rpoint, seat):
+    """
+    素点データと獲得素点から獲得ポイントと順位を返す
+    """
+
+    temp_data = []
+    correction = [0.000004, 0.000003, 0.000002, 0.000001]
+    for i in range(len(rpoint_data)):
+        temp_data.append(rpoint_data[i] + correction[i])
+
+    rank = temp_data.index(rpoint + correction[seat]) + 1
+    point = CalculationPoint(rpoint, rank)
+
+    return(rank, point)
+
 
 def csv_export(argument, command_option):
     command_option["playername_replace"] = False
