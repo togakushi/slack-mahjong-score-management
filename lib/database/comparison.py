@@ -23,6 +23,8 @@ def slack_search(command_option):
 
     keyword = g.config["search"].get("keyword", "終局")
     channel = g.config["search"].get("channel", "#麻雀部")
+    command_option = f.configure.command_option_initialization("results")
+    command_option["unregistered_replace"] = False # ゲスト無効
     g.logging.info(f"[serach] query:'{keyword} in:{channel}' {command_option}")
 
     ### データ取得 ###
