@@ -66,13 +66,4 @@ def remarks(command_option, starttime):
     if remark:
         ret = f"\t特記：" + "、".join(remark)
 
-    retention_period = g.config["search"].getint("retention_period", 0)
-    if not command_option["archive"] and retention_period != 0:
-        limittime = datetime.now() - relativedelta(days = retention_period)
-
-        if  starttime < limittime:
-            if ret:
-                ret += "\n"
-            ret += f"\t注記：検索開始日がログの保存期間を越えています"
-
     return(ret)

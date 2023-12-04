@@ -1,4 +1,5 @@
 import re
+import sqlite3
 
 import lib.function as f
 from lib.function import global_value as g
@@ -23,8 +24,6 @@ def check_namepattern(name):
     if re.match(r"^(戦績|比較|点差|差分|対戦|対戦結果|直近[0-9]+)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(修正|変換)(なし|ナシ|無し|あり)$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語は登録できません。")
-    if re.match(r"^(アーカイブ|一昔|過去|archive)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(順位|詳細|verbose)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
@@ -132,6 +131,22 @@ def GetMemberList(myname = None):
         ret.remove(myname)
 
     return(ret)
+
+
+def GetFullMemberList():
+    reslutdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+    reslutdb.row_factory = sqlite3.Row
+    rows = reslutdb.execute("select name, member from alias;")
+
+    member_list = {}
+    for row in rows.fetchall():
+        if not row["member"] in member_list:
+            member_list[row["member"]] = row["member"]
+        if not row["name"] in member_list:
+            member_list[row["name"]] = row["member"]
+
+    reslutdb.close()
+    return(member_list)
 
 
 def CountPadding(data):

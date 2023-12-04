@@ -7,7 +7,7 @@ from lib.function import global_value as g
 def BuildVersusMenu():
     g.app_var["screen"] = "VersusMenu"
     no = 0
-    flag = ["unregistered_replace", "archive", "game_results", "verbose"]
+    flag = ["unregistered_replace", "game_results", "verbose"]
     view = {"type": "home", "blocks": []}
     view, no = e.Header(view, no, "【直接対戦】")
 

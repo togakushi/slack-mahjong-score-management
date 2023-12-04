@@ -58,11 +58,6 @@ def SearchOptions(view, no, flag = []):
             {"text": {"type": "plain_text", "text": "ゲスト無効"}, "value": "unregistered_replace"}
         )
 
-    if "archive" in flag:
-        view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "アーカイブ"}, "value": "archive"}
-        )
-
     return(view, no + 1)
 
 

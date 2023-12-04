@@ -54,8 +54,7 @@ def SetCommandOption(command_option, body):
             flag = selected_options[i]["value"]
             if flag == "unregistered_replace":
                 command_option[flag] = False
-            if flag == "archive":
-                command_option[flag] = True
+
 
     if "bid-display_option" in search_options:
         selected_options = search_options["bid-display_option"]["aid-display"]["selected_options"]

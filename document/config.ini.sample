@@ -23,8 +23,6 @@ reaction_ng = ng
 [search]
 keyword = 終局
 channel = #麻雀部
-# slackログ保存期間(0=無制限)(未定義時：0)
-retention_period = 90
 
 ### スラッシュコマンドオプション ###
 [slash] # コマンド名
@@ -39,8 +37,7 @@ ranking = ランキング
 member = userlist,メンバー,リスト
 add = 追加,入部届
 del = 削除,退部届
-#load = 
-#save = 
+
 
 ### 成績管理コマンド デフォルトオプション ###
 # commandword          : コマンド呼び出しキーワード(複数定義する場合は正規表現で)
@@ -50,11 +47,9 @@ del = 削除,退部届
 # guest_skip           : 2ゲスト戦除外/サマリ用(未定義時：True)
 # guest_skip2          : 2ゲスト戦除外/個人成績用(未定義時：True)
 # score_comparisons    : ポイント比較モード(未定義時：False)
-# archive              : データソースをdatabaseに切り替え(未指定時：False)
 # game_results         : 戦績表示(未定義時：False)
 # versus_matrix        : 対局対戦マトリックス表示(未定義時：False)
 # count                : ランキングに出力する順位(未定義時：3)
-
 
 [results] # 成績出力
 commandword = 麻雀成績
@@ -64,7 +59,6 @@ unregistered_replace = True
 guest_skip = True
 guest_skip2 = False
 score_comparisons = False
-archive = False
 game_results = False
 versus_matrix = False
 
@@ -75,7 +69,6 @@ playername_replace = True
 unregistered_replace = True
 guest_skip = True
 guest_skip2 = False
-archive = False
 
 [record] # 保存用データ出力
 commandword = 麻雀(記録|結果)
@@ -109,11 +102,6 @@ character_limit = 8
 alias_limit = 16
 # 未登録プレイヤーを置き換える名前
 guest_name = ゲスト１
-
-
-### DATABASE関連オプション ###
-[database]
-filename = score.db
 
 
 ### 装飾オプション ###

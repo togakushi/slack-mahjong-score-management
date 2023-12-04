@@ -7,7 +7,7 @@ from lib.function import global_value as g
 def BuildRankingMenu():
     g.app_var["screen"] = "RankingMenu"
     no = 0
-    flag = ["unregistered_replace", "archive"]
+    flag = ["unregistered_replace"]
     view = {"type": "home", "blocks": []}
     view, no = e.Header(view, no, "【ランキング】")
 

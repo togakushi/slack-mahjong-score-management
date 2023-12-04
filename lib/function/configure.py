@@ -68,7 +68,6 @@ def command_option_initialization(command):
     option["guest_skip"] = g.config[command].getboolean("guest_skip", True)
     option["guest_skip2"] = g.config[command].getboolean("guest_skip2", True)
     option["score_comparisons"] = g.config[command].getboolean("score_comparisons", False)
-    option["archive"] = g.config[command].getboolean("archive", False) 
     option["game_results"] = g.config[command].getboolean("game_results", False)
     option["versus_matrix"] = g.config[command].getboolean("versus_matrix", False)
     option["ranked"] = g.config[command].getint("ranked", 3)
