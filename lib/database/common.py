@@ -39,7 +39,7 @@ def ExsistRecord(ts):
     resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
     row = resultdb.execute("select ts from result where ts=?", (ts,))
     line = len(row.fetchall())
-    resultdb.commit()
+    resultdb.close()
 
     if line:
         return(True)
