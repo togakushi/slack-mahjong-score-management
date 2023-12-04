@@ -46,6 +46,7 @@ def CalculationPoint2(rpoint_data, rpoint, seat):
     for i in range(len(rpoint_data)):
         temp_data.append(rpoint_data[i] + correction[i])
 
+    temp_data.sort(reverse = True)
     rank = temp_data.index(rpoint + correction[seat]) + 1
     point = CalculationPoint(rpoint, rank)
 
