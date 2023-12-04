@@ -49,7 +49,7 @@ def slack_search(command_option):
         if "blocks" in matches[i]:
             ts = matches[i]["ts"]
             if "elements" in matches[i]["blocks"][0]:
-                msg = ""
+                tmp_msg = ""
                 elements = matches[i]["blocks"][0]["elements"][0]["elements"]
 
                 for x in range(len(elements)):
@@ -59,18 +59,22 @@ def slack_search(command_option):
                 # 結果報告フォーマットに一致したポストの処理
                 msg = c.search.pattern(tmp_msg)
                 if msg:
+                    p1_name = c.NameReplace(msg[0], command_option, add_mark = False)
+                    p2_name = c.NameReplace(msg[2], command_option, add_mark = False)
+                    p3_name = c.NameReplace(msg[4], command_option, add_mark = False)
+                    p4_name = c.NameReplace(msg[6], command_option, add_mark = False)
                     g.logging.info("post data:[{} {} {}][{} {} {}][{} {} {}][{} {} {}]".format(
-                        "東家", msg[0], msg[1], "南家", msg[2], msg[3],
-                        "西家", msg[4], msg[5], "北家", msg[6], msg[7],
+                        "東家", p1_name, msg[1], "南家", p2_name, msg[3],
+                        "西家", p3_name, msg[5], "北家", p4_name, msg[7],
                         )
                     )
-                    data[ts] = [msg[x] for x in msg]
+                    data[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
 
     # slackのログに記録が1件もない場合は何もしない
     if len(data) == 0:
-        return
+        return(None)
     else:
-        print(data)
+        return(data)
 
     # ToDo:
     # 見つかったログの最小 ts を起点にDBをselect
