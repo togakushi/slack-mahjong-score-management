@@ -68,6 +68,11 @@ def parser():
         help = "CSVファイルに成績をエクスポート",
     )
 
+    db.add_argument(
+        "--input",
+        help = "インポートDB",
+    )
+
     return(p.parse_args())
 
 
@@ -110,6 +115,7 @@ except SlackApiError as e:
     logging.error(e)
     sys.exit(e)
 
+### Home App Var ###
 app_var = {
     "user_id": None,
     "view_id": None,
