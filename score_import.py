@@ -64,11 +64,11 @@ if os.path.exists(g.args.input):
             rpoint_data.append(p4_rpoint)
 
             #
-            deposit = pointsum - (int(p1_rpoint) + int(p2_rpoint) + int(p3_rpoint) + int(p4_rpoint))
-            p1_rank, p1_point = f.CalculationPoint2(rpoint_data, int(p1_rpoint), 0)
-            p2_rank, p2_point = f.CalculationPoint2(rpoint_data, int(p2_rpoint), 1)
-            p3_rank, p3_point = f.CalculationPoint2(rpoint_data, int(p3_rpoint), 2)
-            p4_rank, p4_point = f.CalculationPoint2(rpoint_data, int(p4_rpoint), 3)
+            deposit = pointsum - (round(float(p1_rpoint),1) + round(float(p2_rpoint),1) + round(float(p3_rpoint),1) + round(float(p4_rpoint),1))
+            p1_rank, p1_point = f.CalculationPoint2(rpoint_data, round(float(p1_rpoint),1), 0)
+            p2_rank, p2_point = f.CalculationPoint2(rpoint_data, round(float(p2_rpoint),1), 1)
+            p3_rank, p3_point = f.CalculationPoint2(rpoint_data, round(float(p3_rpoint),1), 2)
+            p4_rank, p4_point = f.CalculationPoint2(rpoint_data, round(float(p4_rpoint),1), 3)
             print("{} {} [{} {} {} {} {}][{} {} {} {} {}][{} {} {} {} {}][{} {} {} {} {}] {}".format(
                 str(playtime.timestamp()), playtime,
                 p1_name, str(p1_rpoint), p1_rpoint, p1_point, p1_rank,
