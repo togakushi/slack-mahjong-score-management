@@ -36,7 +36,6 @@ def parameter_load():
         sys.exit(f"{g.memberfile}: file not found")
 
     g.guest_name = g.config["member"].get("guest_name", "ゲスト")
-    g.dbfile = g.config["database"].get("filename", "score.db")
 
 
 def command_option_initialization(command):
