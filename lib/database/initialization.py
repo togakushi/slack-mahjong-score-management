@@ -1,25 +1,6 @@
-import csv
 import sqlite3
 
 from lib.function import global_value as g
-
-def create_table(cur):
-    cur.execute(\
-        "CREATE TABLE IF NOT EXISTS 'gameresults' (\
-            'serial'        INTEGER NOT NULL UNIQUE,\
-            'game_day'      TIMESTAMP,\
-            'game_count'    INTEGER,\
-            'playtime'      TIMESTAMP,\
-            'seat'          INTEGER,\
-            'player'        TEXT,\
-            'rpoint'        INTEGER,\
-            'rank'          INTEGER,\
-            'rule_version'  TEXT,\
-            'comment'       TEXT,\
-            PRIMARY KEY('serial')\
-        );"
-    )
-
 
 def initialization_resultdb():
     resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
@@ -29,9 +10,9 @@ def initialization_resultdb():
             "id"        INTEGER,
             "name"      TEXT NOT NULL,
             "slack_id"  INTEGER,
-            "flg1"      INTEGER DEFAULT 0,
-            "flg2"      INTEGER DEFAULT 0,
-            "flg3"      INTEGER DEFAULT 0,
+            "flying"    INTEGER DEFAULT 0,
+            "reward"    INTEGER DEFAULT 0,
+            "abuse"     INTEGER DEFAULT 0,
             PRIMARY KEY("id" AUTOINCREMENT)
         );"""
     )
@@ -80,66 +61,13 @@ def initialization_resultdb():
     data = ret.fetchall()
 
     if len(data) == 0:
-        print("ゲスト設定", g.guest_name)
+        g.logging.info(f"[DATABASE:ゲスト設定] {g.guest_name}")
         sql = "insert into member (id, name) values (?, ?)"
         resultdb.execute(sql, [0, g.guest_name])
     elif data[0][1] != g.guest_name:
-        print("ゲスト修正", data[0][1], "->", g.guest_name)
+        g.logging.info(f"[DATABASE:ゲスト修正] {data[0][1]} -> {g.guest_name}")
         sql = "update member set name=? where id=0"
         resultdb.execute(sql, [g.guest_name])
 
     resultdb.commit()
     resultdb.close()
-
-def csv_import(cur, csvfile):
-    csv_header = [
-        "serial",
-        "game_day",
-        "game_count",
-        "playtime",
-        "seat",
-        "player",
-        "rpoint",
-        "rank",
-        "rule_version",
-        "comment",
-    ]
-
-    with open(csvfile) as f:
-        count = 0 # インポートしたレコード数
-        for row in csv.DictReader(f, csv_header):
-            try:
-                cur.execute(\
-                    "INSERT INTO 'gameresults' (\
-                        'serial',\
-                        'game_day',\
-                        'game_count',\
-                        'playtime',\
-                        'seat',\
-                        'player',\
-                        'rpoint',\
-                        'rank',\
-                        'rule_version',\
-                        'comment'\
-                    ) VALUES (\
-                        :serial,\
-                        :game_day,\
-                        :game_count,\
-                        :playtime,\
-                        :seat,\
-                        :player,\
-                        :rpoint,\
-                        :rank,\
-                        :rule_version,\
-                        :comment\
-                    );",
-                    row
-                )
-
-                count += 1
-                if g.args.std:
-                    print("import ->", row)
-            except:
-                pass
-                
-    return(count)
