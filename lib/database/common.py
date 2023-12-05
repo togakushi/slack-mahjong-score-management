@@ -47,7 +47,6 @@ def ExsistRecord(ts):
 
 
 def resultdb_insert(msg, ts):
-    g.logging.info(f"DATABASE: INSERT -> {ts}")
     command_option = f.configure.command_option_initialization("results")
     command_option["unregistered_replace"] = False # ゲスト無効
 
@@ -73,11 +72,11 @@ def resultdb_insert(msg, ts):
         )
     )
     resultdb.commit()
+    g.logging.info(f"[DATABASE:INSERT] {ts}: {array}")
     resultdb.close()
 
 
 def resultdb_update(msg, ts):
-    g.logging.info(f"DATABASE: UPDATE -> {ts}")
     command_option = f.configure.command_option_initialization("results")
     command_option["unregistered_replace"] = False # ゲスト無効
 
@@ -102,12 +101,13 @@ def resultdb_update(msg, ts):
         )
     )
     resultdb.commit()
+    g.logging.info(f"DATABASE:UPDATE] {ts}: {array}")
     resultdb.close()
 
 
 def resultdb_delete(ts):
-    g.logging.info(f"DATABASE: DELETE -> {ts}")
     resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(g.sql_result_delete, (ts,))
     resultdb.commit()
+    g.logging.info(f"[DATABASE:DELETE] {ts}")
     resultdb.close()
