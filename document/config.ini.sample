@@ -18,6 +18,8 @@ database_file = mahjong.db
 guest_mark = ※
 reaction_ok = ok
 reaction_ng = ng
+# INSERT/UPDATE/DELETEを発行できるチャンネルの制限(カンマ区切り、空欄は無制限)
+channel_limitations =
 
 ### 検索オプション ###
 [search]
