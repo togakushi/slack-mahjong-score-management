@@ -63,9 +63,6 @@ def NameReplace(pname, command_option, add_mark = True):
         if not re.match(fr".*(っ|ッ){honor}", pname):
             pname = re.sub(fr"{honor}", "", f.translation.HAN2ZEN(pname))
 
-    if not command_option["playername_replace"]:
-        return(pname)
-
     break_flg = False
     for player in g.player_list.sections():
         if break_flg:

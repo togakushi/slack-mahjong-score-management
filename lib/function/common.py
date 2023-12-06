@@ -117,9 +117,6 @@ def argument_analysis(argument, command_option):
         if re.match(r"^ゲスト無効$", keyword):
             command_option["unregistered_replace"] = False
             continue
-        if re.match(r"^(修正|変換)(なし|ナシ|無し)$", keyword):
-            command_option["playername_replace"] = False
-            continue
         if re.match(r"^(全員|all)$", keyword):
             command_option["all_player"] = True
             continue

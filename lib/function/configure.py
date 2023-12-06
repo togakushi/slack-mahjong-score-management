@@ -62,7 +62,6 @@ def command_option_initialization(command):
     }
 
     option["aggregation_range"].append(g.config[command].get("aggregation_range", "当日"))
-    option["playername_replace"] = g.config[command].getboolean("playername_replace", True)
     option["unregistered_replace"] = g.config[command].getboolean("unregistered_replace", True)
     option["guest_skip"] = g.config[command].getboolean("guest_skip", True)
     option["guest_skip2"] = g.config[command].getboolean("guest_skip2", True)

@@ -42,7 +42,6 @@ del = 削除,退部届
 ### 成績管理コマンド デフォルトオプション ###
 # commandword          : コマンド呼び出しキーワード(複数定義する場合は正規表現で)
 # aggregation_range    : コマンド呼び出し時に集計範囲が指定されていない場合の範囲(未定義時：当日)
-# playername_replace   : 名前表記ブレ修正(未定義時：True)
 # unregistered_replace : 未登録プレイヤーをゲストに置き換え(未定義時：True)
 # guest_skip           : 2ゲスト戦除外/サマリ用(未定義時：True)
 # guest_skip2          : 2ゲスト戦除外/個人成績用(未定義時：True)
@@ -54,7 +53,6 @@ del = 削除,退部届
 [results] # 成績出力
 commandword = 麻雀成績
 aggregation_range = 今月
-playername_replace = True
 unregistered_replace = True
 guest_skip = True
 guest_skip2 = False
@@ -65,7 +63,6 @@ versus_matrix = False
 [graph] # グラフ出力
 commandword = 麻雀グラフ
 aggregation_range = 当日
-playername_replace = True
 unregistered_replace = True
 guest_skip = True
 guest_skip2 = False
@@ -73,14 +70,12 @@ guest_skip2 = False
 [record] # 保存用データ出力
 commandword = 麻雀(記録|結果)
 aggregation_range = 全部
-playername_replace = True
 unregistered_replace = True
 guest_skip = True
 
 [ranking] # ランキング出力
 commandword = 麻雀ランキング
 aggregation_range = 全部
-playername_replace = True
 unregistered_replace = True
 guest_skip = True
 ### ランキング専用オプション

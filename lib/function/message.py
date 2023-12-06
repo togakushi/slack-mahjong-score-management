@@ -57,8 +57,6 @@ def remarks(command_option, starttime):
     ret = ""
     remark = []
 
-    if not command_option["playername_replace"]:
-        remark.append("名前ブレ修正なし")
     if not command_option["guest_skip"]:
         remark.append("2ゲスト戦の結果を含む")
     if not command_option["unregistered_replace"]:

@@ -54,7 +54,6 @@ def CalculationPoint2(rpoint_data, rpoint, seat):
 
 
 def csv_export(argument, command_option):
-    command_option["playername_replace"] = False
     command_option["unregistered_replace"] = False
 
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
@@ -65,7 +64,6 @@ def csv_export(argument, command_option):
     results = c.search.getdata(command_option)
 
     # csv出力 
-    command_option["playername_replace"] = True
     filename = "{}-{}.csv".format(
         starttime.strftime("%Y%m%d"), endtime.strftime("%Y%m%d"))
 
