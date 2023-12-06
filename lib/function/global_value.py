@@ -106,6 +106,7 @@ wind = ("東家", "南家", "西家", "北家")
 guest_mark = config["setting"].get("guest_mark", "※")
 reaction_ok = config["setting"].get("reaction_ok", "ok")
 reaction_ng = config["setting"].get("reaction_ng", "ng")
+channel_limitations = config["setting"].get("channel_limitations", "")
 
 ### slack api ###
 try:

@@ -17,10 +17,16 @@ def handle_message_events(client, body):
     else:
         bot_id = None
 
+    # DB更新可能チャンネルのポストかチェック
+    updatable = False
+    if not len(g.channel_limitations) or channel_id in g.channel_limitations.split(","):
+        updatable = True
+
     existence = False # DB投入済みデータ判別フラグ
     if "subtype" in data:
         if data["subtype"] == "message_deleted":
-            d.resultdb_delete(data["deleted_ts"])
+            if updatable:
+                d.resultdb_delete(data["deleted_ts"])
             return
         if data["subtype"] == "message_changed":
             data = body["event"]["message"]
@@ -60,9 +66,11 @@ def handle_message_events(client, body):
 
         # DB更新
         if existence:
-            d.resultdb_update(msg, data["ts"])
+            if updatable:
+                d.resultdb_update(msg, data["ts"])
         else:
-            d.resultdb_insert(msg, data["ts"])
+            if updatable:
+                d.resultdb_insert(msg, data["ts"])
 
         # postされた素点合計が配給原点と同じかチェック
         pointsum = g.config["mahjong"].getint("point", 250) * 4
@@ -84,4 +92,5 @@ def handle_message_events(client, body):
             )
     else:
         if existence: # DB投入済みデータが削除された場合
-            d.resultdb_delete(data["ts"])
+            if updatable:
+                d.resultdb_delete(data["ts"])
