@@ -36,7 +36,7 @@ def select_table(cur, command_option):
 
 
 def ExsistRecord(ts):
-    resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     row = resultdb.execute("select ts from result where ts=?", (ts,))
     line = len(row.fetchall())
     resultdb.close()
@@ -60,7 +60,7 @@ def resultdb_insert(msg, ts):
         array[i1]["rpoint"] = rpoint_data[i2]
         array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
 
-    resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(g.sql_result_insert, (
         ts, datetime.fromtimestamp(float(ts)),
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
@@ -90,7 +90,7 @@ def resultdb_update(msg, ts):
         array[i1]["rpoint"] = rpoint_data[i2]
         array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
 
-    resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(g.sql_result_update, (
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
@@ -106,7 +106,7 @@ def resultdb_update(msg, ts):
 
 
 def resultdb_delete(ts):
-    resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(g.sql_result_delete, (ts,))
     resultdb.commit()
     g.logging.info(f"[DATABASE:DELETE] {ts}")

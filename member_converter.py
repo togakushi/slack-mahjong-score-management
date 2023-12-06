@@ -7,8 +7,8 @@ from lib.function import global_value as g
 
 f.configure.parameter_load()
 
-if os.path.exists(g.database_path):
-    resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+if os.path.exists(g.database_file):
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
 
     # 登録済みメンバーを削除
     resultdb.execute("delete from member where id > 0")
@@ -28,4 +28,4 @@ if os.path.exists(g.database_path):
     resultdb.commit()
     resultdb.close()
 else:
-    sys.exit(f"No such file: {g.database_path}")
+    sys.exit(f"No such file: {g.database_file}")

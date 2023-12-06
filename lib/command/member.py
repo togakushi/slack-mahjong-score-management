@@ -131,7 +131,7 @@ def GetMemberList(myname = None):
 
 
 def GetFullMemberList():
-    reslutdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+    reslutdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     reslutdb.row_factory = sqlite3.Row
     rows = reslutdb.execute("select name, member from alias;")
 

@@ -14,7 +14,7 @@ ignore_flying = False
 
 ### 設定 ###
 [setting]
-database_path = mahjong.db
+database_file = mahjong.db
 guest_mark = ※
 reaction_ok = ok
 reaction_ng = ng

@@ -17,8 +17,8 @@ def name_normalization(player_list, name):
 
 f.configure.parameter_load()
 
-if os.path.exists(g.database_path):
-    outputdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+if os.path.exists(g.database_file):
+    outputdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     outputdb.row_factory = sqlite3.Row
     rows = outputdb.execute("select name, member from alias;")
 
@@ -90,7 +90,7 @@ if os.path.exists(g.args.input):
 
 inputdb.close()
 
-outputdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+outputdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
 for i in post_data:
     outputdb.execute(g.sql_result_insert, post_data[i])
 

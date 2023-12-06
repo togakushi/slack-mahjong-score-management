@@ -78,8 +78,8 @@ f.configure.parameter_load()
 command_option = f.configure.command_option_initialization("record")
 
 # メンバーリスト
-if os.path.exists(g.database_path):
-    outputdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+if os.path.exists(g.database_file):
+    outputdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     outputdb.row_factory = sqlite3.Row
     rows = outputdb.execute("select name, member from alias;")
 
@@ -100,7 +100,7 @@ fts = list(slack_data.keys())[0]
 
 # --- database
 db_data ={}
-resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
 resultdb.row_factory = sqlite3.Row
 
 rows = resultdb.execute(f"select * from result where ts > ?", (fts.split(".")[0],))

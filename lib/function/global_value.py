@@ -125,7 +125,7 @@ app_var = {
 }
 
 ### DB設定 ###
-database_path = config["setting"].get("database_path", "mahjong.db")
+database_file = config["setting"].get("database_file", "mahjong.db")
 sql_result_insert = """
     insert into
         result (

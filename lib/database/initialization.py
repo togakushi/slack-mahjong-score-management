@@ -3,7 +3,7 @@ import sqlite3
 from lib.function import global_value as g
 
 def initialization_resultdb():
-    resultdb = sqlite3.connect(g.database_path, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
 
     resultdb.execute(
         """create table if not exists "member" (
