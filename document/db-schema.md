@@ -2,14 +2,14 @@
 
 ```mermaid
 erDiagram
-	member {
-		INTEGER id
-		TEXT name
-		TEXT slack_id
-		INTEGER flying
-		INTEGER reward
-		INTEGER abuse
-	}
+    member {
+        INTEGER id
+        TEXT name
+        TEXT slack_id
+        INTEGER flying
+        INTEGER reward
+        INTEGER abuse
+    }
 
     result {
         TEXT ts
@@ -39,8 +39,8 @@ erDiagram
         TEXT comment
     }
 
-	alias {
-		TEXT name
-		TEXT member
-	}
+    alias {
+        TEXT name
+        TEXT member
+    }
 ```
