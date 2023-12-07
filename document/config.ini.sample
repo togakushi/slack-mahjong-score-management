@@ -14,6 +14,7 @@ ignore_flying = False
 
 ### 設定 ###
 [setting]
+slash_commandname = /mahjong 
 database_file = mahjong.db
 guest_mark = ※
 reaction_ok = ok
@@ -25,10 +26,6 @@ channel_limitations =
 [search]
 keyword = 終局
 channel = #麻雀部
-
-### スラッシュコマンドオプション ###
-[slash] # コマンド名
-commandname = /mahjong 
 
 [alias] # サブコマンドエイリアス(カンマ区切り)
 results = 成績
