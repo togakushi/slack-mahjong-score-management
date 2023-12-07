@@ -108,7 +108,7 @@ def UserSelect(view, no, text = "dummy", add_list = False):
                 {"text": {"type": "plain_text", "text": add_list[i]}, "value": add_list[i]}
             )
 
-    for name in c.GetMemberList():
+    for name in set(g.member_list.values()):
         view["blocks"][no]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": name}, "value": name}
         )
@@ -131,7 +131,7 @@ def MultiSelect(view, no, text = "dummy", add_list = False):
                 {"text": {"type": "plain_text", "text": add_list[i]}, "value": add_list[i]}
             )
 
-    for name in c.GetMemberList():
+    for name in set(g.member_list.values()):
         view["blocks"][no]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": name}, "value": name}
         )

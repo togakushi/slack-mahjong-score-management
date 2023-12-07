@@ -1,4 +1,5 @@
 import sys
+import sqlite3
 import configparser
 
 from lib.function import global_value as g
@@ -23,19 +24,36 @@ def save(config, configfile):
 
 def parameter_load():
     # メンバー登録ファイル
-    if g.args.member:
-        g.memberfile = g.args.member
-    else:
-        g.memberfile = g.config["member"].get("filename", "member.ini")
+    #if g.args.member:
+    #    g.memberfile = g.args.member
+    #else:
+    #    g.memberfile = g.config["member"].get("filename", "member.ini")
 
-    try:
-        g.player_list = configparser.ConfigParser()
-        g.player_list.read(g.memberfile, encoding="utf-8")
-        g.logging.info(f"configload: {g.memberfile} -> {g.player_list.sections()}")
-    except:
-        sys.exit(f"{g.memberfile}: file not found")
+    #try:
+    #    g.player_list = configparser.ConfigParser()
+    #    g.player_list.read(g.memberfile, encoding="utf-8")
+    #except:
+    #    sys.exit(f"{g.memberfile}: file not found")
 
-    g.guest_name = g.config["member"].get("guest_name", "ゲスト")
+    # database読み込み
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+
+    rows = resultdb.execute("select name from member where id=0")
+    g.guest_name = rows.fetchone()[0]
+
+    g.member_list = {}
+    rows = resultdb.execute("select name, member from alias")
+    for row in rows.fetchall():
+        if not row["member"] in g.member_list:
+            g.member_list[row["member"]] = row["member"]
+        if not row["name"] in g.member_list:
+            g.member_list[row["name"]] = row["member"]
+
+    resultdb.close()
+
+    g.logging.info(f"configload: guest_name {g.guest_name}")
+    g.logging.info(f"configload: member_list {set(g.member_list.values())}")
 
 
 def command_option_initialization(command):
