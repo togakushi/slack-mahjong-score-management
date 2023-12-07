@@ -39,6 +39,17 @@ def handle_results_evnts(client, context, body):
     if db_data == None:
         return
 
+    mismatch, missing, delete = data_comparison(cur, slack_data, db_data, command_option)
+
+    g.logging.info(f"mismatch:{mismatch}, missing:{missing}, delete:{delete}")
+    msg = f"不一致: {mismatch}件\n取りこぼし:{missing}件\n削除漏れ:{delete}件"
+    f.slack_api.post_message(client, context.channel_id, msg, event_ts)
+
+    resultdb.commit()
+    resultdb.close()
+
+
+def data_comparison(cur, slack_data, db_data, command_option):
     # 突合処理
     mismatch = 0
     missing = 0
@@ -92,13 +103,7 @@ def handle_results_evnts(client, context, body):
         g.logging.info("f[delete  ]: {key}, {db_data[key]}")
         db_delete(cur, key)
 
-    g.logging.info(f"mismatch:{mismatch}, missing:{missing}, delete:{delete}")
-    msg = f"不一致: {mismatch}件\n取りこぼし:{missing}件\n削除漏れ:{delete}件"
-    f.slack_api.post_message(client, context.channel_id, msg, event_ts)
-
-    resultdb.commit()
-    resultdb.close()
-
+    return(mismatch, missing, delete)
 
 
 def slack_search(command_option):
