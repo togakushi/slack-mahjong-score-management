@@ -40,10 +40,6 @@ def handle_results_evnts(client, context, body):
         return
 
     # 突合処理
-    #resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    #resultdb.row_factory = sqlite3.Row
-    #cur = resultdb.cursor()
-
     mismatch = 0
     missing = 0
     delete = 0
@@ -57,6 +53,7 @@ def handle_results_evnts(client, context, body):
         flg = False
         if skey1 in db_data.keys():
             if slack_data[key] == db_data[skey1]:
+                print(f"OK: {key} -> [{skey1}] {skey2}")
                 continue
             else:
                 flg = True
@@ -64,25 +61,25 @@ def handle_results_evnts(client, context, body):
 
         if skey2 in db_data.keys():
             if slack_data[key] == db_data[skey2]:
+                print(f"OK: {key} -> {skey1} [{skey2}]")
                 continue
             else:
                 flg = True
                 skey = skey2
 
-
         if flg:
             mismatch += 1
             #更新
-            print("[mismatch]:", skey)
-            print(" * [slack]:", slack_data[key])
-            print(" * [   db]:", db_data[skey])
-            db_update(cur, skey, slack_data[key])
+            g.logging.info(f"[mismatch]: {skey}")
+            g.logging.info(f" * [slack]: {slack_data[key]}")
+            g.logging.info(f" * [   db]: {db_data[skey]}")
+            db_update(cur, skey, slack_data[key], command_option)
             continue
 
         #追加
         missing += 1
-        print("[missing ]:", key, slack_data[key])
-        db_insert(cur, key, slack_data[key])
+        g.logging.info(f"[missing ]: {key}, {slack_data[key]}")
+        db_insert(cur, key, slack_data[key], command_option)
 
     for key in db_data.keys():
         skey1 = key
@@ -92,11 +89,12 @@ def handle_results_evnts(client, context, body):
         if skey2 in slack_data2:
             continue
 
-        print("[delete  ]:", key, db_data[key])
+        # 削除
         delete += 1
+        g.logging.info("f[delete  ]: {key}, {db_data[key]}")
         db_delete(cur, key)
 
-    print(f">>> mismatch:{mismatch}, missing:{missing}, delete:{delete}")
+    g.logging.info(f"mismatch:{mismatch}, missing:{missing}, delete:{delete}")
     msg = f"不一致: {mismatch}件\n取りこぼし:{missing}件\n削除漏れ:{delete}件"
     f.slack_api.post_message(client, context.channel_id, msg, event_ts)
 
@@ -182,9 +180,6 @@ def databese_search(cur, first_ts = False):
     if not first_ts:
         return(None)
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
-
     data ={}
     rows = cur.execute(f"select * from result where ts > ?", (first_ts,))
     for row in rows.fetchall():
@@ -202,10 +197,7 @@ def databese_search(cur, first_ts = False):
     return(data)
 
 
-def db_update(cur, ts, msg): # 突合処理専用
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
-
+def db_update(cur, ts, msg, command_option): # 突合処理専用
     # ポイント計算
     rpoint_data =[eval(msg[1]), eval(msg[3]), eval(msg[5]), eval(msg[7])]
     deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
@@ -227,10 +219,7 @@ def db_update(cur, ts, msg): # 突合処理専用
     )
 
 
-def db_insert(cur, ts, msg): # 突合処理専用
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
-
+def db_insert(cur, ts, msg, command_option): # 突合処理専用
     # ポイント計算
     rpoint_data =[eval(msg[1]), eval(msg[3]), eval(msg[5]), eval(msg[7])]
     deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
