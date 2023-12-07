@@ -106,7 +106,7 @@ wind = ("東家", "南家", "西家", "北家")
 guest_mark = config["setting"].get("guest_mark", "※")
 reaction_ok = config["setting"].get("reaction_ok", "ok")
 reaction_ng = config["setting"].get("reaction_ng", "ng")
-channel_limitations = config["setting"].get("channel_limitations", "")
+channel_limitations = config["database"].get("channel_limitations", "")
 
 ### slack api ###
 try:
@@ -126,7 +126,7 @@ app_var = {
 }
 
 ### DB設定 ###
-database_file = config["setting"].get("database_file", "mahjong.db")
+database_file = config["database"].get("database_file", "mahjong.db")
 sql_result_insert = """
     insert into
         result (
