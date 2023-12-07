@@ -53,7 +53,6 @@ def handle_results_evnts(client, context, body):
         flg = False
         if skey1 in db_data.keys():
             if slack_data[key] == db_data[skey1]:
-                print(f"OK: {key} -> [{skey1}] {skey2}")
                 continue
             else:
                 flg = True
@@ -61,7 +60,6 @@ def handle_results_evnts(client, context, body):
 
         if skey2 in db_data.keys():
             if slack_data[key] == db_data[skey2]:
-                print(f"OK: {key} -> {skey1} [{skey2}]")
                 continue
             else:
                 flg = True
@@ -181,7 +179,7 @@ def databese_search(cur, first_ts = False):
         return(None)
 
     data ={}
-    rows = cur.execute(f"select * from result where ts > ?", (first_ts,))
+    rows = cur.execute(f"select * from result where ts >= ?", (first_ts,))
     for row in rows.fetchall():
         ts = row["ts"]
         data[ts] = []
