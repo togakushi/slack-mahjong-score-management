@@ -15,15 +15,13 @@ def check_namepattern(name):
         対象文字列（プレイヤー名）
     """
 
-    if len(name) > g.config.getint("member", "character_limit"):
+    if len(name) > g.config["member"].getint("character_limit", 8):
         return(False, "登録可能文字数を超えています。")
     if re.match(r"(ゲスト|^[0-9]+$)|DEFAULT", f.translation.ZEN2HAN(name)): # 登録NGプレイヤー名
         return(False, "使用できない名前です。")
     if re.match(r"^((当|今|昨)日|(今|先|先々)月|(今|去)年|全部|最初)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(戦績|比較|点差|差分|対戦|対戦結果|直近[0-9]+)$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語は登録できません。")
-    if re.match(r"^(修正|変換)(なし|ナシ|無し|あり)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(順位|詳細|verbose)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
@@ -53,9 +51,11 @@ def NameReplace(pname, command_option, add_mark = True):
 
     Returns
     -------
-    pname : str
+    name : str
         表記ブレ修正後のプレイヤー名
     """
+
+    check_list = list(set(g.member_list.keys()))
 
     # 敬称削除
     honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
@@ -63,87 +63,23 @@ def NameReplace(pname, command_option, add_mark = True):
         if not re.match(fr".*(っ|ッ){honor}", pname):
             pname = re.sub(fr"{honor}", "", f.translation.HAN2ZEN(pname))
 
-    break_flg = False
-    for player in g.player_list.sections():
-        if break_flg:
-            break
-        for alias in g.player_list.get(player, "alias").split(","):
-            if alias in [f.translation.KANA2HIRA(pname), f.translation.HIRA2KANA(pname)]:
-                pname = player
-                break_flg = True
-                break
+    if pname in check_list:
+        return(g.member_list[pname])
 
-    if not ExsistPlayer(pname):
-        if command_option["unregistered_replace"]:
-            pname = g.guest_name
+    # ひらがな、カタカナでチェック
+    if f.KANA2HIRA(pname) in check_list:
+        return(g.member_list[f.KANA2HIRA(pname)])
+    if f.HIRA2KANA(pname) in check_list:
+        return(g.member_list[f.HIRA2KANA(pname)])
+
+    # メンバーリストに見つからない場合
+    if command_option["unregistered_replace"]:
+        return(g.guest_name)
+    else:
+        if add_mark:
+            return(f"{pname}({g.guest_mark})")
         else:
-            if add_mark:
-                pname = f"{pname}({g.guest_mark})"
-
-    return(pname)
-
-
-def ExsistPlayer(name):
-    """
-    登録済みメンバーかチェック
-
-    Parameters
-    ----------
-    name : str
-        対象プレイヤー名(正規化後)
-
-    Returns
-    -------
-    bool : False
-    name : str
-    """
-
-    if g.player_list.has_section(name):
-        return(name)
-
-    return(False)
-
-
-def GetMemberList(myname = None):
-    """
-    メンバーリストの取得
-
-    Parameters
-    ----------
-    myname : str
-        リストから除外するプレイヤー名(正規化後)
-
-    Returns
-    -------
-    ret : list
-    """
-
-    ret = []
-    for player in g.player_list.sections():
-        if player == "DEFAULT":
-            continue
-        ret.append(player)
-
-    if myname in ret:
-        ret.remove(myname)
-
-    return(ret)
-
-
-def GetFullMemberList():
-    reslutdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    reslutdb.row_factory = sqlite3.Row
-    rows = reslutdb.execute("select name, member from alias;")
-
-    member_list = {}
-    for row in rows.fetchall():
-        if not row["member"] in member_list:
-            member_list[row["member"]] = row["member"]
-        if not row["name"] in member_list:
-            member_list[row["name"]] = row["member"]
-
-    reslutdb.close()
-    return(member_list)
+            return(pname)
 
 
 def CountPadding(data):
@@ -170,12 +106,13 @@ def GetList():
     title = "登録されているメンバー"
     msg = ""
 
-    for player in g.player_list.sections():
-        if player == "DEFAULT":
-            continue
-        alias = g.player_list.get(player, "alias")
-        msg += f"{player} -> {alias.split(',')}\n"
-    
+    for pname in set(g.member_list.values()):
+        name_list = []
+        for alias in g.member_list.keys():
+            if g.member_list[alias] == pname:
+                name_list.append(alias)
+        msg += f"{pname}: {name_list}\n"
+
     return(title, msg)
 
 
@@ -195,48 +132,53 @@ def Append(argument):
         slackにpostする内容
     """
 
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+
     ret = False
     msg = "使い方が間違っています。"
 
     if len(argument) == 1: # 新規追加
         new_name = f.translation.HAN2ZEN(argument[0])
+        g.logging.info(f"[member add:new] {new_name}")
 
-        if g.player_list.has_section(new_name):
+        if new_name in g.member_list: # ダブりチェック
             msg = f"「{new_name}」はすでに登録されています。"
         else:
-            if len(g.player_list.keys()) > g.config.getint("member", "registration_limit"):
+            rows = resultdb.execute("select count(*) from member")
+            count = rows.fetchone()[0]
+            if count > g.config["member"].getint("registration_limit", 255):
                 msg = f"登録上限を超えています。"
-
-            ret, msg = check_namepattern(new_name)
-            if ret:
-                g.player_list.add_section(new_name)
-                g.player_list.set(new_name, "alias", new_name)
-                msg = f"「{new_name}」を登録しました。"
+            else: # 登録処理
+                ret, msg = check_namepattern(new_name)
+                if ret:
+                    resultdb.execute(f"insert into member(name) values (?)", (new_name,))
+                    resultdb.execute(f"insert into alias(name, member) values (?,?)", (new_name, new_name))
+                    msg = f"「{new_name}」を登録しました。"
 
     if len(argument) == 2: # 別名登録
         new_name = f.translation.HAN2ZEN(argument[0])
         nic_name = f.translation.HAN2ZEN(argument[1])
+        g.logging.info(f"[member add:alias] {new_name} -> {nic_name}")
 
-        # ダブりチェック
-        checklist = []
-        for player in g.player_list.sections():
-            checklist.append(player)
-            checklist += g.player_list.get(player, "alias").split(",")
-
-        if nic_name in checklist:
+        if nic_name in g.member_list: # ダブりチェック
             msg = f"「{nic_name}」はすでに登録されています。"
-
-        ret, msg = check_namepattern(nic_name)
-        if ret:
-            if g.player_list.has_section(new_name):
-                alias = g.player_list.get(new_name, "alias")
-                if len(alias.split(",")) > int(g.config.get("member", "alias_limit")):
-                    msg = f"登録上限を超えています。"
-                else:
-                    g.player_list.set(new_name, "alias", ",".join([alias, nic_name]))
-                    msg = f"「{new_name}」に「{nic_name}」を追加しました。"
-            else:
+        else:
+            rows = resultdb.execute("select count(*) from alias where member=?", (new_name,))
+            count = rows.fetchone()[0]
+            if count == 0:
                 msg = f"「{new_name}」はまだ登録されていません。"
+            elif count > g.config["member"].getint("alias_limit", 16):
+                msg = f"登録上限を超えています。"
+            else: # 登録処理
+                ret, msg = check_namepattern(nic_name)
+                if ret:
+                    resultdb.execute(f"insert into alias(name, member) values (?,?)", (nic_name, new_name))
+                    msg = f"「{new_name}」に「{nic_name}」を追加しました。"
+
+    resultdb.commit()
+    resultdb.close()
+    f.parameter_load()
 
     return(msg)
 
@@ -257,35 +199,35 @@ def Remove(argument):
         slackにpostする内容
     """
 
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+
     msg = "使い方が間違っています。"
 
     if len(argument) == 1: # メンバー削除
         new_name = f.translation.HAN2ZEN(argument[0])
+        g.logging.info(f"[member del] {new_name}")
 
-        if g.player_list.has_section(new_name):
-            g.player_list.remove_section(new_name)
+        if new_name in g.member_list:
+            resultdb.execute("delete from member where name=?", (new_name,))
+            resultdb.execute("delete from alias where member=?",(new_name,))
             msg = f"「{new_name}」を削除しました。"
+        else:
+            msg = f"「{new_name}」は登録されていません。"
 
     if len(argument) == 2: # 別名削除
         new_name = f.translation.HAN2ZEN(argument[0])
-        new_name = f.translation.HAN2ZEN(argument[1])
+        nic_name = f.translation.HAN2ZEN(argument[1])
+        g.logging.info(f"[member del:alias] {new_name} -> {nic_name}")
 
-        if g.player_list.has_section(new_name):
-            alias = g.player_list.get(new_name, "alias").split(",")
+        if nic_name in g.member_list:
+            resultdb.execute("delete from alias where name=? and member=?",(nic_name, new_name))
+            msg = f"「{new_name}」から「{nic_name}」を削除しました。"
+        else:
+            msg = f"「{new_name}」に「{nic_name}」は登録されていません。"
 
-            if new_name == new_name:
-                g.player_list.remove_section(new_name)
-                msg = f"「{new_name}」を削除しました。"
-
-            if new_name in alias:
-                alias.remove(new_name)
-                if len(alias) == 0:
-                    g.player_list.remove_section(new_name)
-                    msg = f"「{new_name}」を削除しました。"
-                else:
-                    g.player_list.set(new_name, "alias", ",".join(alias))
-                    msg = f"「{new_name}」から「{new_name}」を削除しました。"
-            else:
-                msg = f"「{new_name}」に「{new_name}」は登録されていません。"
+    resultdb.commit()
+    resultdb.close()
+    f.parameter_load()
 
     return(msg)
