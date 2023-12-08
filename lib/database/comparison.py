@@ -39,11 +39,26 @@ def handle_results_evnts(client, context, body):
     if db_data == None:
         return
 
+    # 突合処理
     mismatch, missing, delete = data_comparison(cur, slack_data, db_data, command_option)
-
     g.logging.info(f"mismatch:{mismatch}, missing:{missing}, delete:{delete}")
-    msg = f"不一致: {mismatch}件\n取りこぼし:{missing}件\n削除漏れ:{delete}件"
-    f.slack_api.post_message(client, context.channel_id, msg, event_ts)
+    msg = f"【データ突合】\n\t不一致： {mismatch}件\n\t取りこぼし： {missing}件\n\t削除漏れ： {delete}件\n"
+
+    # 素点合計の再チェック
+    msg2 =""
+    for i in slack_data.keys():
+        rpoint_data =[eval(slack_data[i][1]), eval(slack_data[i][3]), eval(slack_data[i][5]), eval(slack_data[i][7])]
+        deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
+        if not deposit == 0:
+            msg2 += "\t{}\t供託：{}\n\t[{} {}][{} {}][{} {}][{} {}]\n\n".format(
+                datetime.fromtimestamp(float(i)).strftime('%Y/%m/%d %H:%M:%S'), deposit,
+                slack_data[i][0], slack_data[i][1], slack_data[i][2], slack_data[i][3],
+                slack_data[i][4], slack_data[i][5], slack_data[i][6], slack_data[i][7],
+            )
+    if msg2:
+        msg2 = "\n【素点合計不一致】\n" + msg2
+
+    f.slack_api.post_message(client, context.channel_id, msg + msg2, event_ts)
 
     resultdb.commit()
     resultdb.close()
