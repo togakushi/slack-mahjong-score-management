@@ -82,22 +82,24 @@ logging.addLevelName(19, "TRACE")
 
 ### コマンドラインオプション解析 ###
 args = parser()
+fmt = "[%(asctime)s][%(levelname)s][%(name)s:%(funcName)s:%(module)s] %(message)s"
+
 if args.debug:
     if args.verbose:
         print("DEBUG MODE(verbose)")
-        logging.basicConfig(level = 19)
+        logging.basicConfig(level = 19, format = fmt)
     else:
         print("DEBUG MODE")
-        logging.basicConfig(level = logging.INFO)
+        logging.basicConfig(level = logging.INFO, format = fmt)
 else:
-    logging.basicConfig(level = logging.WARNING)
+    logging.basicConfig(level = logging.WARNING, format = fmt)
 
 
 ### 設定ファイル読み込み ###
 try:
     config = configparser.ConfigParser()
     config.read(args.config, encoding="utf-8")
-    logging.info(f"configload: {args.config} -> {config.sections()}")
+    logging.info(f"{args.config} -> {config.sections()}")
 except:
     sys.exit()
 

@@ -1,6 +1,5 @@
 import os
 import re
-import inspect
 
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
@@ -14,7 +13,7 @@ mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
 commandword = g.config["graph"].get("commandword", "麻雀グラフ")
-g.logging.info(f"[import] graph {commandword}")
+g.logging.info(f"commandword: {commandword}")
 
 
 # イベントAPI
@@ -26,9 +25,8 @@ def handle_graph_evnts(client, context, body):
     if not re.match(rf"^{commandword}$", command):
         return
 
-    _fname = f"graph.{inspect.currentframe().f_code.co_name}"
     command_option = f.configure.command_option_initialization("graph")
-    g.logging.info(f"[{_fname}:{command}] {command_option} {argument}")
+    g.logging.info(f"{command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -94,8 +92,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         グラフにプロットしたゲーム数
     """
 
-    _fname = f"graph.{inspect.currentframe().f_code.co_name}"
-    g.logging.info(f"[{_fname}] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    g.logging.info(f"{starttime} {endtime} {target_player} {target_count} {command_option}")
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
@@ -283,8 +280,7 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    _fname = f"graph.{inspect.currentframe().f_code.co_name}"
-    g.logging.info(f"[{_fname}] {starttime} {endtime} {target_player} {target_count} {command_option}")
+    g.logging.info(f"{starttime} {endtime} {target_player} {target_count} {command_option}")
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 

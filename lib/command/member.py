@@ -143,7 +143,7 @@ def Append(argument):
 
     if len(argument) == 1: # 新規追加
         new_name = f.HAN2ZEN(argument[0])
-        g.logging.info(f"[member add:new] {new_name}")
+        g.logging.info(f"name: {new_name}")
 
         if new_name in check_list: # ダブりチェック
             msg = f"「{new_name}」はすでに登録されています。"
@@ -162,7 +162,7 @@ def Append(argument):
     if len(argument) == 2: # 別名登録
         new_name = f.HAN2ZEN(argument[0])
         nic_name = f.HAN2ZEN(argument[1])
-        g.logging.info(f"[member add:alias] {new_name} -> {nic_name}")
+        g.logging.info(f"alias: {new_name} -> {nic_name}")
 
         if nic_name in check_list: # ダブりチェック
             msg = f"「{nic_name}」はすでに登録されています。"
@@ -209,7 +209,7 @@ def Remove(argument):
 
     if len(argument) == 1: # メンバー削除
         new_name = f.HAN2ZEN(argument[0])
-        g.logging.info(f"[member del] {new_name}")
+        g.logging.info(f"name: {new_name}")
 
         if new_name in g.member_list:
             resultdb.execute("delete from member where name=?", (new_name,))
@@ -221,7 +221,7 @@ def Remove(argument):
     if len(argument) == 2: # 別名削除
         new_name = f.HAN2ZEN(argument[0])
         nic_name = f.HAN2ZEN(argument[1])
-        g.logging.info(f"[member del:alias] {new_name} -> {nic_name}")
+        g.logging.info(f"alias: {new_name} -> {nic_name}")
 
         if nic_name in g.member_list:
             resultdb.execute("delete from alias where name=? and member=?",(nic_name, new_name))

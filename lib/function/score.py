@@ -60,7 +60,7 @@ def csv_export(argument, command_option):
     starttime, endtime = f.common.scope_coverage(target_days)
     rule_version = g.config["mahjong"].get("rule_version", "未定義")
 
-    g.logging.info(f"[export] {command_option}")
+    g.logging.info(f"{command_option}")
     results = c.search.getdata(command_option)
 
     # csv出力 
@@ -94,5 +94,5 @@ def csv_export(argument, command_option):
                         "",
                     ])
 
-    g.logging.info(f"[export] done -> {filename}")
+    g.logging.info(f"done: {filename}")
     return(filename)

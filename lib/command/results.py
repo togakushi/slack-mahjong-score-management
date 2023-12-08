@@ -5,7 +5,7 @@ import lib.function as f
 from lib.function import global_value as g
 
 commandword = g.config["results"].get("commandword", "麻雀成績")
-g.logging.info(f"[import] results {commandword}")
+g.logging.info(f"commandword: {commandword}")
 
 
 # イベントAPI
@@ -20,8 +20,8 @@ def handle_results_evnts(client, context, body):
         return
 
     command_option = f.configure.command_option_initialization("results")
-    g.logging.info(f"[{command}:arg] {argument}")
-    g.logging.info(f"[{command}:opt] {command_option}")
+    g.logging.info(f"{command}:arg {argument}")
+    g.logging.info(f"{command}:opt {command_option}")
     slackpost(client, context.channel_id, event_ts, argument, command_option)
 
 
@@ -82,9 +82,9 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"[results.summary] {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"[results.summary] target_player: {target_player}")
-    g.logging.info(f"[results.summary] command_option: {command_option}")
+    g.logging.info(f"{starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"target_player: {target_player}")
+    g.logging.info(f"command_option: {command_option}")
 
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
@@ -134,7 +134,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         if not len(target_player) == 0 and not name in target_player:
             continue
         name_list.append(name)
-    g.logging.info(f"[results.summary] {name_list}")
+    g.logging.info(f"name_list: {name_list}")
 
     # 表示
     padding = max([f.translation.len_count(x) for x in name_list])
@@ -227,9 +227,9 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
-    g.logging.info(f"[results.details] {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"[results.details] target_player: {target_player}")
-    g.logging.info(f"[results.details] command_option: {command_option}")
+    g.logging.info(f"{starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"target_player: {target_player}")
+    g.logging.info(f"command_option: {command_option}")
 
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
@@ -454,9 +454,9 @@ def versus(starttime, endtime, target_player, target_count, command_option):
 
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
-    g.logging.info(f"[results.versus] {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"[results.versus] target_player: {target_player}")
-    g.logging.info(f"[results.versus] command_option: {command_option}")
+    g.logging.info(f"{starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"target_player: {target_player}")
+    g.logging.info(f"command_option: {command_option}")
 
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
@@ -489,7 +489,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
         return(msg1, msg2)
 
     padding = c.CountPadding(vs_list)
-    g.logging.info(f"[results.versus] vs_list: {vs_list} padding: {padding}")
+    g.logging.info(f"vs_list: {vs_list} padding: {padding}")
 
     for versus_player in vs_list:
         # 同卓したゲームの抽出

@@ -6,7 +6,7 @@ import lib.function as f
 from lib.function import global_value as g
 
 commandword = g.config["ranking"].get("commandword", "麻雀ランキング")
-g.logging.info(f"[import] ranking {commandword}")
+g.logging.info(f"commandword: {commandword}")
 
 
 # イベントAPI
@@ -19,7 +19,7 @@ def handle_ranking_evnts(client, context, body):
         return
 
     command_option = f.configure.command_option_initialization("ranking")
-    g.logging.info(f"[{command}] {command_option} {argument}")
+    g.logging.info(f"{command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -128,9 +128,9 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"[ranking] {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"[ranking] target_player: {target_player}")
-    g.logging.info(f"[ranking] command_option: {command_option}")
+    g.logging.info(f"{starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"target_player: {target_player}")
+    g.logging.info(f"command_option: {command_option}")
 
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count, tmpdate)

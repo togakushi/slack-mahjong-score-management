@@ -13,28 +13,11 @@ def load(configfile):
     except:
         sys.exit()
 
-    g.logging.info(f"configload: {configfile} -> {config.sections()}")
+    g.logging.info(f"{configfile} -> {config.sections()}")
     return(config)
 
 
-def save(config, configfile):
-    with open(configfile, "w") as f:
-        config.write(f)
-
-
 def parameter_load():
-    # メンバー登録ファイル
-    #if g.args.member:
-    #    g.memberfile = g.args.member
-    #else:
-    #    g.memberfile = g.config["member"].get("filename", "member.ini")
-
-    #try:
-    #    g.player_list = configparser.ConfigParser()
-    #    g.player_list.read(g.memberfile, encoding="utf-8")
-    #except:
-    #    sys.exit(f"{g.memberfile}: file not found")
-
     # database読み込み
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
@@ -52,8 +35,8 @@ def parameter_load():
 
     resultdb.close()
 
-    g.logging.info(f"configload: guest_name {g.guest_name}")
-    g.logging.info(f"configload: member_list {set(g.member_list.values())}")
+    g.logging.info(f"guest_name: {g.guest_name}")
+    g.logging.info(f"member_list: {set(g.member_list.values())}")
 
 
 def command_option_initialization(command):

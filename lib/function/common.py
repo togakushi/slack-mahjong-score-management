@@ -149,9 +149,9 @@ def argument_analysis(argument, command_option):
         command_option["recursion"] = False
         target_days, dummy, dummy, dummy = argument_analysis(command_option["aggregation_range"], command_option)
 
-    g.logging.info(f"[argument_analysis:return] target_days: {target_days} target_count: {target_count}")
-    g.logging.info(f"[argument_analysis:return] target_player: {target_player}")
-    g.logging.info(f"[argument_analysis:return] command_option: {command_option}")
+    g.logging.info(f"return: target_days: {target_days} target_count: {target_count}")
+    g.logging.info(f"return: target_player: {target_player}")
+    g.logging.info(f"return: command_option: {command_option}")
     return(target_days, target_player, target_count, command_option)
 
 

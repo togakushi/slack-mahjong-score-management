@@ -72,7 +72,7 @@ def resultdb_insert(msg, ts):
         )
     )
     resultdb.commit()
-    g.logging.info(f"[DATABASE:INSERT] {ts}: {array}")
+    g.logging.info(f"{ts}: {array}")
     resultdb.close()
 
 
@@ -101,7 +101,7 @@ def resultdb_update(msg, ts):
         )
     )
     resultdb.commit()
-    g.logging.info(f"DATABASE:UPDATE] {ts}: {array}")
+    g.logging.info(f"{ts}: {array}")
     resultdb.close()
 
 
@@ -109,5 +109,5 @@ def resultdb_delete(ts):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(g.sql_result_delete, (ts,))
     resultdb.commit()
-    g.logging.info(f"[DATABASE:DELETE] {ts}")
+    g.logging.info(f"{ts}")
     resultdb.close()

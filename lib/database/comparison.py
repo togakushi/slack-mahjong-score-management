@@ -8,7 +8,7 @@ from lib.function import global_value as g
 
 
 commandword = g.config["database"].get("commandword", "麻雀成績チェック")
-g.logging.info(f"[import] results {commandword}")
+g.logging.info(f"commandword: {commandword}")
 
 
 # イベントAPI
@@ -24,7 +24,7 @@ def handle_results_evnts(client, context, body):
 
     command_option = f.configure.command_option_initialization("record")
     command_option["unregistered_replace"] = False # ゲスト無効
-    g.logging.info(f"[{command}] {command_option} {argument}")
+    g.logging.info(f"{command}: {command_option} {argument}")
 
     slack_data = slack_search(command_option)
     if slack_data == None:
@@ -140,7 +140,7 @@ def slack_search(command_option):
     channel = g.config["search"].get("channel", "#麻雀部")
     command_option = f.configure.command_option_initialization("results")
     command_option["unregistered_replace"] = False # ゲスト無効
-    g.logging.info(f"[serach] query:'{keyword} in:{channel}' {command_option}")
+    g.logging.info(f"query:'{keyword} in:{channel}' {command_option}")
 
     ### データ取得 ###
     response = g.webclient.search_messages(

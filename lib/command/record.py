@@ -7,7 +7,7 @@ import lib.function as f
 from lib.function import global_value as g
 
 commandword = g.config["record"].get("commandword", "麻雀記録")
-g.logging.info(f"[import] record {commandword}")
+g.logging.info(f"commandword: {commandword}")
 
 
 # イベントAPI
@@ -20,7 +20,7 @@ def handle_record_evnts(client, context, body):
         return
 
     command_option = f.configure.command_option_initialization("record")
-    g.logging.info(f"[{command}] {command_option} {argument}")
+    g.logging.info(f"{command_option} {argument}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -56,7 +56,7 @@ def getdata(starttime, endtime, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"[record] {command_option}")
+    g.logging.info(f"{command_option}")
     results = c.search.getdata(command_option)
 
     msg = ""

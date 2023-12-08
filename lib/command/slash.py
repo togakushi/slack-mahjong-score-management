@@ -3,7 +3,7 @@ import lib.function as f
 from lib.function import global_value as g
 
 commandname = g.config["setting"].get("slash_commandname", "/mahjong")
-g.logging.info(f"[import] slash command {commandname}")
+g.logging.info(f"slash command: {commandname}")
 
 
 def subcommand_list(subcommand):
@@ -41,25 +41,25 @@ def slash_command(ack, body, client):
         # 成績管理系コマンド
         if subcom.lower() in subcommand_list("results"):
             command_option = f.configure.command_option_initialization("results")
-            g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
+            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
             c.results.slackpost(client, user_id, event_ts, argument, command_option)
             return
 
         if subcom.lower() in subcommand_list("graph"):
             command_option = f.configure.command_option_initialization("graph")
-            g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
+            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
             c.graph.slackpost(client, user_id, argument, command_option)
             return
 
         if subcom.lower() in subcommand_list("record"):
             command_option = f.configure.command_option_initialization("record")
-            g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
+            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
             c.record.slackpost(client, user_id, argument, command_option)
             return
 
         if subcom.lower() in subcommand_list("ranking"):
             command_option = f.configure.command_option_initialization("ranking")
-            g.logging.info(f"[subcommand({subcom})] {argument} {command_option}")
+            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
             c.ranking.slackpost(client, user_id, argument, command_option)
             return
 

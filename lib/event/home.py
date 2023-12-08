@@ -18,7 +18,7 @@ def SetCommandOption(command_option, body):
     # 検索設定
     argument = []
     search_options = body["view"]["state"]["values"]
-    g.logging.info(f"[app:search options] {search_options}")
+    g.logging.info(f"search options: {search_options}")
 
     app_msg = []
 
