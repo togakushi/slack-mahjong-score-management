@@ -17,7 +17,7 @@ def check_namepattern(name):
 
     if len(name) > g.config["member"].getint("character_limit", 8):
         return(False, "登録可能文字数を超えています。")
-    if re.match(r"(ゲスト|^[0-9]+$)|DEFAULT", f.translation.ZEN2HAN(name)): # 登録NGプレイヤー名
+    if re.match(r"(ゲスト|^[0-9]+$)", f.ZEN2HAN(name)): # 登録NGプレイヤー名
         return(False, "使用できない名前です。")
     if re.match(r"^((当|今|昨)日|(今|先|先々)月|(今|去)年|全部|最初)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
@@ -61,7 +61,7 @@ def NameReplace(pname, command_option, add_mark = True):
     honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
     if re.match(fr".*{honor}", pname):
         if not re.match(fr".*(っ|ッ){honor}", pname):
-            pname = re.sub(fr"{honor}", "", f.translation.HAN2ZEN(pname))
+            pname = re.sub(fr"{honor}", "", f.HAN2ZEN(pname))
 
     if pname in check_list:
         return(g.member_list[pname])
@@ -97,7 +97,7 @@ def CountPadding(data):
                     name_list.append(name)
 
     if name_list:
-        return(max([f.translation.len_count(x) for x in name_list]))
+        return(max([f.len_count(x) for x in name_list]))
     else:
         return(0)
 
@@ -137,12 +137,15 @@ def Append(argument):
 
     ret = False
     msg = "使い方が間違っています。"
+    check_list = list(g.member_list.keys())
+    check_list += [f.KANA2HIRA(i) for i in g.member_list.keys()]
+    check_list += [f.HIRA2KANA(i) for i in g.member_list.keys()]
 
     if len(argument) == 1: # 新規追加
-        new_name = f.translation.HAN2ZEN(argument[0])
+        new_name = f.HAN2ZEN(argument[0])
         g.logging.info(f"[member add:new] {new_name}")
 
-        if new_name in g.member_list: # ダブりチェック
+        if new_name in check_list: # ダブりチェック
             msg = f"「{new_name}」はすでに登録されています。"
         else:
             rows = resultdb.execute("select count(*) from member")
@@ -157,11 +160,11 @@ def Append(argument):
                     msg = f"「{new_name}」を登録しました。"
 
     if len(argument) == 2: # 別名登録
-        new_name = f.translation.HAN2ZEN(argument[0])
-        nic_name = f.translation.HAN2ZEN(argument[1])
+        new_name = f.HAN2ZEN(argument[0])
+        nic_name = f.HAN2ZEN(argument[1])
         g.logging.info(f"[member add:alias] {new_name} -> {nic_name}")
 
-        if nic_name in g.member_list: # ダブりチェック
+        if nic_name in check_list: # ダブりチェック
             msg = f"「{nic_name}」はすでに登録されています。"
         else:
             rows = resultdb.execute("select count(*) from alias where member=?", (new_name,))
@@ -205,7 +208,7 @@ def Remove(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1: # メンバー削除
-        new_name = f.translation.HAN2ZEN(argument[0])
+        new_name = f.HAN2ZEN(argument[0])
         g.logging.info(f"[member del] {new_name}")
 
         if new_name in g.member_list:
@@ -216,8 +219,8 @@ def Remove(argument):
             msg = f"「{new_name}」は登録されていません。"
 
     if len(argument) == 2: # 別名削除
-        new_name = f.translation.HAN2ZEN(argument[0])
-        nic_name = f.translation.HAN2ZEN(argument[1])
+        new_name = f.HAN2ZEN(argument[0])
+        nic_name = f.HAN2ZEN(argument[1])
         g.logging.info(f"[member del:alias] {new_name} -> {nic_name}")
 
         if nic_name in g.member_list:
