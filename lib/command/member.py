@@ -116,7 +116,7 @@ def GetList():
     return(title, msg)
 
 
-def Append(argument):
+def MemberAppend(argument):
     """
     メンバー追加
 
@@ -186,7 +186,7 @@ def Append(argument):
     return(msg)
 
 
-def Remove(argument):
+def MemberRemove(argument):
     """
     メンバー削除
 
