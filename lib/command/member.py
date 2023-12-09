@@ -55,14 +55,17 @@ def NameReplace(pname, command_option, add_mark = True):
         表記ブレ修正後のプレイヤー名
     """
 
+    pname = f.HAN2ZEN(pname)
     check_list = list(set(g.member_list.keys()))
+
+    if pname in check_list:
+        return(g.member_list[pname])
 
     # 敬称削除
     honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
     if re.match(fr".*{honor}", pname):
         if not re.match(fr".*(っ|ッ){honor}", pname):
-            pname = re.sub(fr"{honor}", "", f.HAN2ZEN(pname))
-
+            pname = re.sub(fr"{honor}", "", pname)
     if pname in check_list:
         return(g.member_list[pname])
 
