@@ -54,6 +54,7 @@ def argument_analysis(argument, command_option):
     target_days = []
     target_player = []
     target_count = 0
+    player_candidates = []
 
     currenttime = datetime.now()
     for keyword in argument:
@@ -142,9 +143,13 @@ def argument_analysis(argument, command_option):
             command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
             continue
 
-        # プレイヤー名
-        target_player.append(c.member.NameReplace(keyword, command_option))
+        player_candidates.append(keyword)
 
+    # プレイヤー名
+    for name in player_candidates:
+        target_player.append(c.member.NameReplace(name, command_option))
+
+    # 日付再取得のために再帰呼び出し
     if command_option["recursion"] and len(target_days) == 0:
         command_option["recursion"] = False
         target_days, dummy, dummy, dummy = argument_analysis(command_option["aggregation_range"], command_option)
