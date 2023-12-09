@@ -24,7 +24,8 @@ def handle_results_evnts(client, context, body):
 
     command_option = f.configure.command_option_initialization("record")
     command_option["unregistered_replace"] = False # ゲスト無効
-    g.logging.info(f"{command}: {command_option} {argument}")
+    g.logging.info(f"{command}:arg {argument}")
+    g.logging.info(f"{command}:opt {command_option}")
 
     slack_data = slack_search(command_option)
     if slack_data == None:
@@ -115,7 +116,7 @@ def data_comparison(cur, slack_data, db_data, command_option):
 
         # 削除
         delete += 1
-        g.logging.info("f[delete  ]: {key}, {db_data[key]}")
+        g.logging.info(f"[delete  ]: {key}, {db_data[key]}")
         db_delete(cur, key)
 
     return(mismatch, missing, delete)

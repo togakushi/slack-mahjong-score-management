@@ -19,7 +19,8 @@ def handle_ranking_evnts(client, context, body):
         return
 
     command_option = f.configure.command_option_initialization("ranking")
-    g.logging.info(f"{command_option} {argument}")
+    g.logging.info(f"{command}:arg {argument}")
+    g.logging.info(f"{command}:opt {command_option}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -128,7 +129,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"{starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 

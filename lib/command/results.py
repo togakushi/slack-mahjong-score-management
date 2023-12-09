@@ -82,7 +82,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"{starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
@@ -227,7 +227,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
-    g.logging.info(f"{starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
@@ -454,7 +454,7 @@ def versus(starttime, endtime, target_player, target_count, command_option):
 
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
-    g.logging.info(f"{starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 

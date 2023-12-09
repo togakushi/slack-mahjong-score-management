@@ -26,7 +26,8 @@ def handle_graph_evnts(client, context, body):
         return
 
     command_option = f.configure.command_option_initialization("graph")
-    g.logging.info(f"{command_option} {argument}")
+    g.logging.info(f"{command}:arg {argument}")
+    g.logging.info(f"{command}:opt {command_option}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -92,7 +93,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         グラフにプロットしたゲーム数
     """
 
-    g.logging.info(f"{starttime} {endtime} {target_player} {target_count} {command_option}")
+    g.logging.info(f"date range: {starttime} {endtime} {target_player} {target_count} {command_option}")
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
@@ -280,7 +281,7 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    g.logging.info(f"{starttime} {endtime} {target_player} {target_count} {command_option}")
+    g.logging.info(f"date range: {starttime} {endtime} {target_player} {target_count} {command_option}")
     tmpdate = c.search.getdata(command_option)
     results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 

@@ -50,7 +50,7 @@ def getdata(command_option):
         変換、修正後の成績データ
     """
 
-    g.logging.info(f"{command_option}")
+    g.logging.info(f"command_option: {command_option}")
 
     data = {}
     count = 0
@@ -117,13 +117,13 @@ def game_select(starttime, endtime, target_player, target_count, results):
 
     ret = {}
     if target_count == 0:
-        g.logging.info(f"{starttime} {endtime} {target_player}")
+        g.logging.info(f"date range: {starttime} {endtime} target_player: {target_player}")
         for i in results.keys():
             if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
                 g.logging.trace(f"{i}: {results[i]}")
                 ret[i] = results[i]
     else:
-        g.logging.info(f"{target_count} {target_player}")
+        g.logging.info(f"target_count: {target_count} target_player: {target_player}")
         chk_count = 0
         for i in sorted(results.keys(), reverse = True):
             if len(target_player) == 0:

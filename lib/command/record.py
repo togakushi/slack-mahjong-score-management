@@ -20,7 +20,8 @@ def handle_record_evnts(client, context, body):
         return
 
     command_option = f.configure.command_option_initialization("record")
-    g.logging.info(f"{command_option} {argument}")
+    g.logging.info(f"{command}:arg {argument}")
+    g.logging.info(f"{command}:opt {command_option}")
     slackpost(client, context.channel_id, argument, command_option)
 
 
@@ -56,7 +57,7 @@ def getdata(starttime, endtime, command_option):
         slackにpostする内容
     """
 
-    g.logging.info(f"{command_option}")
+    g.logging.info(f"command_option: {command_option}")
     results = c.search.getdata(command_option)
 
     msg = ""
