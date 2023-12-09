@@ -388,34 +388,36 @@ def details(starttime, endtime, target_player, target_count, command_option):
                          "--" if sum(seat_rank[wind]) == 0 else seat_tobi[g.wind.index(wind)]
                     )
 
-        if not command_option["game_results"]:
-            msg2.pop("戦績")
+            if not command_option["game_results"]:
+                msg2.pop("戦績")
 
-        # 対戦結果
-        if command_option["versus_matrix"]:
-            # 対戦数順にソート
-            tmp_v = {}
-            name_list = []
+            # 対戦結果
+            if command_option["versus_matrix"]:
+                # 対戦数順にソート
+                tmp_v = {}
+                name_list = []
 
-            for i in versus_matrix.keys():
-                tmp_v[i] = versus_matrix[i]["total"]
-            for name, total_count in sorted(tmp_v.items(), key=lambda x:x[1], reverse=True):
-                name_list.append(name)
+                for i in versus_matrix.keys():
+                    tmp_v[i] = versus_matrix[i]["total"]
+                for name, total_count in sorted(tmp_v.items(), key=lambda x:x[1], reverse=True):
+                    name_list.append(name)
 
-            padding = c.CountPadding(list(versus_matrix.keys()))
+                padding = c.CountPadding(list(versus_matrix.keys()))
 
-            msg2["対戦"] += "\n```\n"
-            for i in name_list:
-                msg2["対戦"] += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>7.2%})\n".format(
-                i, " " * (padding - f.translation.len_count(i)),
-                versus_matrix[i]["total"],
-                versus_matrix[i]["win"],
-                versus_matrix[i]["lose"],
-                versus_matrix[i]["win"] / (versus_matrix[i]["total"]),
-            )
-            msg2["対戦"] += "```"
+                msg2["対戦"] += "\n```\n"
+                for i in name_list:
+                    msg2["対戦"] += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>7.2%})\n".format(
+                    i, " " * (padding - f.translation.len_count(i)),
+                    versus_matrix[i]["total"],
+                    versus_matrix[i]["win"],
+                    versus_matrix[i]["lose"],
+                    versus_matrix[i]["win"] / (versus_matrix[i]["total"]),
+                )
+                msg2["対戦"] += "```"
+            else:
+                msg2.pop("対戦")
         else:
-            msg2.pop("対戦")
+            msg2.clear()
 
         msg1 += "\n" + f.remarks(command_option, starttime)
 
