@@ -1,5 +1,8 @@
 import re
+import os
+import shutil
 import sqlite3
+from datetime import datetime
 
 import lib.function as f
 from lib.function import global_value as g
@@ -139,6 +142,7 @@ def MemberAppend(argument):
     resultdb.row_factory = sqlite3.Row
 
     ret = False
+    dbupdate_flg = False
     msg = "使い方が間違っています。"
     check_list = list(g.member_list.keys())
     check_list += [f.KANA2HIRA(i) for i in g.member_list.keys()]
@@ -167,6 +171,7 @@ def MemberAppend(argument):
         nic_name = f.HAN2ZEN(argument[1])
         g.logging.info(f"alias: {new_name} -> {nic_name}")
 
+        registration_flg = True
         if nic_name in check_list: # ダブりチェック
             msg = f"「{nic_name}」はすでに登録されています。"
         else:
@@ -174,13 +179,28 @@ def MemberAppend(argument):
             count = rows.fetchone()[0]
             if count == 0:
                 msg = f"「{new_name}」はまだ登録されていません。"
-            elif count > g.config["member"].getint("alias_limit", 16):
+                registration_flg = False
+            if count > g.config["member"].getint("alias_limit", 16):
                 msg = f"登録上限を超えています。"
-            else: # 登録処理
+                registration_flg = False
+
+            if registration_flg: # 登録処理
                 ret, msg = check_namepattern(nic_name)
                 if ret:
-                    resultdb.execute(f"insert into alias(name, member) values (?,?)", (nic_name, new_name))
+                    resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
                     msg = f"「{new_name}」に「{nic_name}」を追加しました。"
+                    dbupdate_flg = True
+
+        if dbupdate_flg:
+            rows = resultdb.execute("select count(*) from result where ? in (p1_name, p2_name, p3_name, p4_name)", (nic_name,))
+            count = rows.fetchone()[0]
+            if count != 0: # 過去成績更新
+                database_backup()
+                resultdb.execute("update result set p1_name=? where p1_name=?", (new_name, nic_name))
+                resultdb.execute("update result set p2_name=? where p2_name=?", (new_name, nic_name))
+                resultdb.execute("update result set p3_name=? where p3_name=?", (new_name, nic_name))
+                resultdb.execute("update result set p4_name=? where p4_name=?", (new_name, nic_name))
+                msg += "\nデータベースを更新しました。"
 
     resultdb.commit()
     resultdb.close()
@@ -237,3 +257,27 @@ def MemberRemove(argument):
     f.parameter_load()
 
     return(msg)
+
+
+def database_backup():
+    backup_dir = g.config["database"].get("backup_dir", "")
+    fname = os.path.splitext(g.database_file)[0]
+    fext = os.path.splitext(g.database_file)[1]
+    bktime = datetime.now().strftime('%Y%m%d-%H%M%S')
+    bkfname = os.path.join(backup_dir, f"{fname}_{bktime}{fext}")
+
+    if not backup_dir: # バックアップ設定がされていない場合は何もしない
+        return
+
+    if not os.path.isdir(backup_dir): # バックアップディレクトリ作成
+        try:
+            os.mkdir(backup_dir)
+        except:
+            g.logging.ERROR("Database backup directory creation failed !!!")
+
+    # バックアップディレクトリにコピー
+    try:
+        shutil.copyfile(g.database_file, bkfname)
+        g.logging.info(f"database backup: {bkfname}")
+    except:
+        g.logging.ERROR("Database backup failed !!!")

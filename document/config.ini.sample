@@ -25,6 +25,8 @@ reaction_ng = ng
 [database]
 # 成績管理データベースファイル
 database_file = mahjong.db
+# 自動バックアップ保存先(空欄時はバックアップしない)
+backup_dir =
 # INSERT/UPDATE/DELETEを発行できるチャンネルの制限(チャンネルIDで指定、カンマ区切り、空欄は制限なし)
 channel_limitations =
 # 突合処理呼び出しキーワード
