@@ -82,7 +82,7 @@ logging.addLevelName(19, "TRACE")
 
 ### コマンドラインオプション解析 ###
 args = parser()
-fmt = "[%(asctime)s][%(levelname)s][%(name)s:%(funcName)s:%(module)s] %(message)s"
+fmt = "[%(asctime)s][%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
 
 if args.debug:
     if args.verbose:
