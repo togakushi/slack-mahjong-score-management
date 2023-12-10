@@ -1,4 +1,5 @@
 import lib.command as c
+import lib.database as d
 import lib.function as f
 from lib.function import global_value as g
 
@@ -61,6 +62,13 @@ def slash_command(ack, body, client):
             command_option = f.configure.command_option_initialization("ranking")
             g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
             c.ranking.slackpost(client, user_id, argument, command_option)
+            return
+        
+        if subcom.lower() in subcommand_list("check"):
+            command_option = f.configure.command_option_initialization("record")
+            command_option["unregistered_replace"] = False # ゲスト無効
+            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
+            d.comparison.slackpost(client, user_id, event_ts, argument, command_option)
             return
 
         # メンバー管理系コマンド

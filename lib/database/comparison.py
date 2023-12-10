@@ -26,7 +26,10 @@ def handle_results_evnts(client, context, body):
     command_option["unregistered_replace"] = False # ゲスト無効
     g.logging.info(f"{command}:arg {argument}")
     g.logging.info(f"{command}:opt {command_option}")
+    slackpost(client, context.channel_id, event_ts, argument, command_option)
 
+
+def slackpost(client, channel, event_ts, argument, command_option):
     slack_data = slack_search(command_option)
     if slack_data == None:
         return
@@ -59,14 +62,13 @@ def handle_results_evnts(client, context, body):
     if msg2:
         msg2 = "\n【素点合計不一致】\n" + msg2
 
-    f.slack_api.post_message(client, context.channel_id, msg + msg2, event_ts)
+    f.slack_api.post_message(client, channel, msg + msg2, event_ts)
 
     resultdb.commit()
     resultdb.close()
 
 
 def data_comparison(cur, slack_data, db_data, command_option):
-    # 突合処理
     mismatch = 0
     missing = 0
     delete = 0
