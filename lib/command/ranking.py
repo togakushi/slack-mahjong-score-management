@@ -187,7 +187,7 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
         msg1 = "\n*【ランキング】*\n"
         msg1 += f"\t集計範囲：{stime} ～ {etime}\n"
         msg1 += f"\t集計ゲーム数：{len(results)}\t(規定数：{math.ceil(len(results) * command_option['stipulated_rate'])+1} 以上)\n"
-        msg1 += f.remarks(command_option, starttime)
+        msg1 += f.remarks(command_option)
 
         msg2 = ""
         msg2 += "\n*ゲーム参加率*\n" + put_ranking(4, False, results, ranking_data, "game_count", command_option)

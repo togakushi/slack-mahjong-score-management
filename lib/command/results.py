@@ -190,7 +190,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     else:
         msg2 += f" / トバされた人（延べ）： {tobi_count} 人\n"
 
-    msg2 += f.remarks(command_option, starttime)
+    msg2 += f.(command_option, starttime)
 
     return(header + msg1, msg2)
 
@@ -419,7 +419,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
         else:
             msg2.clear()
 
-        msg1 += "\n" + f.remarks(command_option, starttime)
+        msg1 += "\n" + f.remarks(command_option)
 
     return(msg1.strip(), msg2)
 
@@ -479,13 +479,13 @@ def versus(starttime, endtime, target_player, target_count, command_option):
             results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M'),
             results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M'),
         )
-        msg1 += f.remarks(command_option, starttime)
+        msg1 += f.remarks(command_option)
     else:
         msg1 += "\t集計範囲：{} ～ {}\n".format(
             starttime.strftime('%Y/%m/%d %H:%M'),
             endtime.strftime('%Y/%m/%d %H:%M'),
         )
-        msg1 += f.remarks(command_option, starttime)
+        msg1 += f.remarks(command_option)
         msg2[""] = "対戦記録が見つかりませんでした。\n"
 
         return(msg1, msg2)

@@ -53,7 +53,7 @@ def no_hits(starttime, endtime):
     else:
         return("見つかりません。")
 
-def remarks(command_option, starttime):
+def remarks(command_option):
     ret = ""
     remark = []
 
