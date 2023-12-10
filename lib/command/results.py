@@ -190,7 +190,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     else:
         msg2 += f" / トバされた人（延べ）： {tobi_count} 人\n"
 
-    msg2 += f.(command_option, starttime)
+    msg2 += f.remarks(command_option)
 
     return(header + msg1, msg2)
 
