@@ -46,7 +46,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
     # 突合処理
     mismatch, missing, delete = data_comparison(cur, slack_data, db_data, command_option)
     g.logging.info(f"mismatch:{mismatch}, missing:{missing}, delete:{delete}")
-    msg = f"【データ突合】\n\t不一致： {mismatch}件\n\t取りこぼし： {missing}件\n\t削除漏れ： {delete}件\n"
+    msg = f"*【データ突合】*\n\t不一致： {mismatch}件\n\t取りこぼし： {missing}件\n\t削除漏れ： {delete}件\n"
 
     # 素点合計の再チェック
     msg2 =""
@@ -60,7 +60,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
                 slack_data[i][4], slack_data[i][5], slack_data[i][6], slack_data[i][7],
             )
     if msg2:
-        msg2 = "\n【素点合計不一致】\n" + msg2
+        msg2 = "\n*【素点合計不一致】*\n" + msg2
 
     f.slack_api.post_message(client, channel, msg + msg2, event_ts)
 
