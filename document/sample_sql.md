@@ -41,40 +41,36 @@ SELECT
             END
         ), 1
     ) AS 平均ポイント,
-    sum(
+    count(
         CASE
             WHEN p1_name = "<Player Name>" AND p1_rank = 1 THEN 1
             WHEN p2_name = "<Player Name>" AND p2_rank = 1 THEN 1
             WHEN p3_name = "<Player Name>" AND p3_rank = 1 THEN 1
             WHEN p4_name = "<Player Name>" AND p4_rank = 1 THEN 1
-            ELSE 0
         END
     ) AS "1位",
-    sum(
+    count(
         CASE
             WHEN p1_name = "<Player Name>" AND p1_rank = 2 THEN 1
             WHEN p2_name = "<Player Name>" AND p2_rank = 2 THEN 1
             WHEN p3_name = "<Player Name>" AND p3_rank = 2 THEN 1
             WHEN p4_name = "<Player Name>" AND p4_rank = 2 THEN 1
-            ELSE 0
         END
     ) AS "2位",
-    sum(
+    count(
         CASE
             WHEN p1_name = "<Player Name>" AND p1_rank = 3 THEN 1
             WHEN p2_name = "<Player Name>" AND p2_rank = 3 THEN 1
             WHEN p3_name = "<Player Name>" AND p3_rank = 3 THEN 1
             WHEN p4_name = "<Player Name>" AND p4_rank = 3 THEN 1
-            ELSE 0
         END
     ) AS "3位",
-    sum(
+    count(
         CASE
             WHEN p1_name = "<Player Name>" AND p1_rank = 4 THEN 1
             WHEN p2_name = "<Player Name>" AND p2_rank = 4 THEN 1
             WHEN p3_name = "<Player Name>" AND p3_rank = 4 THEN 1
             WHEN p4_name = "<Player Name>" AND p4_rank = 4 THEN 1
-            ELSE 0
         END
     ) AS "4位",
     round(
