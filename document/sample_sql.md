@@ -28,7 +28,7 @@ SELECT
             WHEN p1_name = "<Player Name>" THEN p1_point
             WHEN p2_name = "<Player Name>" THEN p2_point
             WHEN p3_name = "<Player Name>" THEN p3_point
-            WHEN p4_name = "<Player Name>" THEN p4_point 
+            WHEN p4_name = "<Player Name>" THEN p4_point
         END
     ) AS 累積ポイント,
     round(
@@ -37,7 +37,7 @@ SELECT
                 WHEN p1_name = "<Player Name>" THEN p1_point
                 WHEN p2_name = "<Player Name>" THEN p2_point
                 WHEN p3_name = "<Player Name>" THEN p3_point
-                WHEN p4_name = "<Player Name>" THEN p4_point 
+                WHEN p4_name = "<Player Name>" THEN p4_point
             END
         ), 1
     ) AS 平均ポイント,
@@ -46,7 +46,8 @@ SELECT
             WHEN p1_name = "<Player Name>" AND p1_rank = 1 THEN 1
             WHEN p2_name = "<Player Name>" AND p2_rank = 1 THEN 1
             WHEN p3_name = "<Player Name>" AND p3_rank = 1 THEN 1
-            WHEN p4_name = "<Player Name>" AND p4_rank = 1 THEN 1 
+            WHEN p4_name = "<Player Name>" AND p4_rank = 1 THEN 1
+            ELSE 0
         END
     ) AS "1位",
     sum(
@@ -54,7 +55,8 @@ SELECT
             WHEN p1_name = "<Player Name>" AND p1_rank = 2 THEN 1
             WHEN p2_name = "<Player Name>" AND p2_rank = 2 THEN 1
             WHEN p3_name = "<Player Name>" AND p3_rank = 2 THEN 1
-            WHEN p4_name = "<Player Name>" AND p4_rank = 2 THEN 1 
+            WHEN p4_name = "<Player Name>" AND p4_rank = 2 THEN 1
+            ELSE 0
         END
     ) AS "2位",
     sum(
@@ -62,7 +64,8 @@ SELECT
             WHEN p1_name = "<Player Name>" AND p1_rank = 3 THEN 1
             WHEN p2_name = "<Player Name>" AND p2_rank = 3 THEN 1
             WHEN p3_name = "<Player Name>" AND p3_rank = 3 THEN 1
-            WHEN p4_name = "<Player Name>" AND p4_rank = 3 THEN 1 
+            WHEN p4_name = "<Player Name>" AND p4_rank = 3 THEN 1
+            ELSE 0
         END
     ) AS "3位",
     sum(
@@ -70,7 +73,8 @@ SELECT
             WHEN p1_name = "<Player Name>" AND p1_rank = 4 THEN 1
             WHEN p2_name = "<Player Name>" AND p2_rank = 4 THEN 1
             WHEN p3_name = "<Player Name>" AND p3_rank = 4 THEN 1
-            WHEN p4_name = "<Player Name>" AND p4_rank = 4 THEN 1 
+            WHEN p4_name = "<Player Name>" AND p4_rank = 4 THEN 1
+            ELSE 0
         END
     ) AS "4位",
     round(
