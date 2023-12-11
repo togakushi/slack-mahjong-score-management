@@ -24,7 +24,7 @@ SELECT
     プレイヤー名,
     count() AS ゲーム数,
     round(sum(ポイント), 1) AS 累積ポイント,
-    round(CAST(sum(ポイント) AS REAL)/CAST(count() AS REAL),1) AS 平均ポイント,
+    round(CAST(sum(ポイント) AS REAL) / CAST(count() AS REAL),1) AS 平均ポイント,
     count(CASE WHEN 順位 = 1 THEN 1 END) AS "1位",
     count(CASE WHEN 順位 = 2 THEN 1 END) AS "2位",
     count(CASE WHEN 順位 = 3 THEN 1 END) AS "3位",
@@ -57,7 +57,7 @@ WHERE
 GROUP BY
     プレイヤー名
 HAVING
-    ゲーム数 > (SELECT count()*0.01 FROM result WHERE playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59")
+    ゲーム数 > (SELECT count() * 0.01 FROM result WHERE playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59")
 ORDER BY
     累積ポイント DESC
 ```
@@ -134,3 +134,4 @@ WHERE
     playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59"
     AND "<Player Name>" IN (p1_name, p2_name, p3_name, p4_name)
 ```
+全体成績サマリのHAVING句で絞る方がラク
