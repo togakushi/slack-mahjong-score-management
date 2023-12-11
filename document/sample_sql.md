@@ -23,7 +23,7 @@ ORDER BY
 SELECT
     プレイヤー名,
     count() AS ゲーム数,
-    sum(ポイント) AS 累積ポイント,
+    round(sum(ポイント), 1) AS 累積ポイント,
     round(CAST(sum(ポイント) AS REAL)/CAST(count() AS REAL),1) AS 平均ポイント,
     count(CASE WHEN 順位 = 1 THEN 1 END) AS "1位",
     count(CASE WHEN 順位 = 2 THEN 1 END) AS "2位",
@@ -31,11 +31,14 @@ SELECT
     count(CASE WHEN 順位 = 4 THEN 1 END) AS "4位",
     round(avg(順位),2) AS 平均順位,
     count(CASE WHEN 素点 < -1  THEN 1 END) AS トビ,
-    round(CAST(count(CASE WHEN 素点 < -1  THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS トビ率,
-    round(CAST(count(CASE WHEN 順位 = 1 THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS トップ率,
-    round(CAST(count(CASE WHEN 順位 <= 2 THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS 連対率,
-    round(CAST(count(CASE WHEN 順位 <= 3 THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS ラス回避率,
-    round(CAST(count(CASE WHEN 順位 = 4 THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS ラス率
+    round(CAST(count(CASE WHEN 素点 < -1  THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS トビ率,
+    round(CAST(count(CASE WHEN 順位 = 1 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS トップ率,
+    round(CAST(count(CASE WHEN 順位 <= 2 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS 連対率,
+    round(CAST(count(CASE WHEN 順位 <= 3 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS ラス回避率,
+    round(CAST(count(CASE WHEN 順位 = 4 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS ラス率,
+    max(素点) AS 最大素点,
+    min(素点) AS 最小素点,
+    round(avg(素点), 1) AS 平均素点
 FROM (
     SELECT
         playtime,
