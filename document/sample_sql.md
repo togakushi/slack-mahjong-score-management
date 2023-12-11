@@ -67,7 +67,7 @@ ORDER BY
 ```
 SELECT
     "<Player Name>" AS プレイヤー名, 
-    count(*) AS ゲーム数,
+    count() AS ゲーム数,
     sum(
         CASE
             WHEN p1_name = "<Player Name>" THEN p1_point
