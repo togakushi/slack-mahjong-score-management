@@ -57,7 +57,7 @@ WHERE
 GROUP BY
     プレイヤー名
 HAVING
-    ゲーム数 > (SELECT count()*0.01 FROM result)
+    ゲーム数 > (SELECT count()*0.01 FROM result WHERE playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59")
 ORDER BY
     累積ポイント DESC
 ```
