@@ -22,32 +22,32 @@ ORDER BY
 ```
 SELECT
     プレイヤー名,
+    count() AS ゲーム数,
     sum(ポイント) AS 累積ポイント,
+    round(CAST(sum(ポイント) AS REAL)/CAST(count() AS REAL),1) AS 平均ポイント,
     count(CASE WHEN 順位 = 1 THEN 1 END) AS "1位",
     count(CASE WHEN 順位 = 2 THEN 1 END) AS "2位",
     count(CASE WHEN 順位 = 3 THEN 1 END) AS "3位",
     count(CASE WHEN 順位 = 4 THEN 1 END) AS "4位",
-    round(avg(順位),2) AS 平均順位
+    round(avg(順位),2) AS 平均順位,
+    count(CASE WHEN 素点 < -1  THEN 1 END) AS トビ,
+    round(CAST(count(CASE WHEN 素点 < -1  THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS トビ率,
+    round(CAST(count(CASE WHEN 順位 = 1 THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS トップ率,
+    round(CAST(count(CASE WHEN 順位 <= 2 THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS 連対率,
+    round(CAST(count(CASE WHEN 順位 <= 3 THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS ラス回避率,
+    round(CAST(count(CASE WHEN 順位 = 4 THEN 1 END) AS REAL)/CAST(count() AS REAL)*100,2) AS ラス率
 FROM (
     SELECT
         playtime,
         p1_name AS プレイヤー名,
+        p1_rpoint AS 素点,
         p1_rank AS 順位,
         p1_point AS ポイント
     FROM
-        result 
-    UNION SELECT
-        playtime, p2_name, p2_rank, p2_point
-    FROM
         result
-    UNION SELECT
-        playtime, p3_name, p3_rank,p3_point
-    FROM
-        result 
-    UNION SELECT
-        playtime, p4_name, p4_rank,p4_point
-    FROM
-        result
+    UNION SELECT playtime, p2_name, p2_rpoint, p2_rank, p2_point FROM result
+    UNION SELECT playtime, p3_name, p3_rpoint, p3_rank, p3_point FROM result
+    UNION SELECT playtime, p4_name, p4_rpoint, p4_rank, p4_point FROM result
 )
 WHERE
     playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59"
