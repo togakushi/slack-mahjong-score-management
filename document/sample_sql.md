@@ -36,9 +36,18 @@ FROM (
         p1_point AS ポイント
     FROM
         result 
-    UNION SELECT playtime, p2_name, p2_rank, p2_point FROM result
-    UNION SELECT playtime, p3_name, p3_rank,p3_point  FROM result 
-    UNION SELECT playtime, p4_name, p4_rank,p4_point  FROM result
+    UNION SELECT
+        playtime, p2_name, p2_rank, p2_point
+    FROM
+        result
+    UNION SELECT
+        playtime, p3_name, p3_rank,p3_point
+    FROM
+        result 
+    UNION SELECT
+        playtime, p4_name, p4_rank,p4_point
+    FROM
+        result
 )
 WHERE
     playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59"
