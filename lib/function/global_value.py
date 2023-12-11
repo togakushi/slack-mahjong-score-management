@@ -106,6 +106,7 @@ except:
 ### 固定値 ###
 wind = ("東家", "南家", "西家", "北家")
 member_list = {}
+guest_name = config["member"].get("guest_name", "ゲスト")
 guest_mark = config["setting"].get("guest_mark", "※")
 reaction_ok = config["setting"].get("reaction_ok", "ok")
 reaction_ng = config["setting"].get("reaction_ng", "ng")
