@@ -17,6 +17,37 @@ ORDER BY
     playtime DESC
 ```
 
+## 全体成績サマリ
+
+```
+SELECT
+    プレイヤー名,
+    sum(ポイント) AS 累積ポイント,
+    count(CASE WHEN 順位 = 1 THEN 1 END) AS "1位",
+    count(CASE WHEN 順位 = 2 THEN 1 END) AS "2位",
+    count(CASE WHEN 順位 = 3 THEN 1 END) AS "3位",
+    count(CASE WHEN 順位 = 4 THEN 1 END) AS "4位",
+    round(avg(順位),2) AS 平均順位
+FROM (
+    SELECT
+        playtime,
+        p1_name AS プレイヤー名,
+        p1_rank AS 順位,
+        p1_point AS ポイント
+    FROM
+        result 
+    UNION SELECT playtime, p2_name, p2_rank, p2_point FROM result
+    UNION SELECT playtime, p3_name, p3_rank,p3_point  FROM result 
+    UNION SELECT playtime, p4_name, p4_rank,p4_point  FROM result
+)
+WHERE
+    playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59"
+GROUP BY
+    プレイヤー名
+ORDER BY
+    累積ポイント DESC
+```
+
 ## 個人成績
 
 ```
