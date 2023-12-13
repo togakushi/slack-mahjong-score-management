@@ -195,7 +195,7 @@ def MemberAppend(argument):
             rows = resultdb.execute("select count(*) from result where ? in (p1_name, p2_name, p3_name, p4_name)", (nic_name,))
             count = rows.fetchone()[0]
             if count != 0: # 過去成績更新
-                database_backup()
+                msg += database_backup()
                 resultdb.execute("update result set p1_name=? where p1_name=?", (new_name, nic_name))
                 resultdb.execute("update result set p2_name=? where p2_name=?", (new_name, nic_name))
                 resultdb.execute("update result set p3_name=? where p3_name=?", (new_name, nic_name))
@@ -267,13 +267,14 @@ def database_backup():
     bkfname = os.path.join(backup_dir, f"{fname}_{bktime}{fext}")
 
     if not backup_dir: # バックアップ設定がされていない場合は何もしない
-        return
+        return("")
 
     if not os.path.isdir(backup_dir): # バックアップディレクトリ作成
         try:
             os.mkdir(backup_dir)
         except:
             g.logging.ERROR("Database backup directory creation failed !!!")
+            return("\nバックアップ用ディレクトリ作成の作成に失敗しました。")
 
     # バックアップディレクトリにコピー
     try:
@@ -281,3 +282,4 @@ def database_backup():
         g.logging.info(f"database backup: {bkfname}")
     except:
         g.logging.ERROR("Database backup failed !!!")
+        return("\nデータベースのバックアップに失敗しました。")
