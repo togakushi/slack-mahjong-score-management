@@ -62,6 +62,7 @@ def initialization_resultdb():
         """
     )
 
+    resultdb.execute("drop view individual;")
     resultdb.execute(
         """
         create view if not exists individual as
@@ -77,7 +78,8 @@ def initialization_resultdb():
                             then date(playtime, "-1 days")
                             else date(playtime)
                     end, 1, 7
-                ) as collection
+                ) as collection,
+                rule_version
             from
                 result
             union select 
@@ -92,7 +94,8 @@ def initialization_resultdb():
                             then date(playtime, "-1 days")
                             else date(playtime)
                     end, 1, 7
-                )
+                ),
+                rule_version
             from
                 result
             union select
@@ -107,7 +110,8 @@ def initialization_resultdb():
                             then date(playtime, "-1 days")
                             else date(playtime)
                     end, 1, 7
-                )
+                ),
+                rule_version
             from
                 result
             union select
@@ -122,9 +126,11 @@ def initialization_resultdb():
                             then date(playtime, "-1 days")
                             else date(playtime)
                     end, 1, 7
-                )
+                ),
+                rule_version
             from
                 result
+            ;
         """
     )
 
