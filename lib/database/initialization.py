@@ -62,7 +62,7 @@ def initialization_resultdb():
         """
     )
 
-    resultdb.execute("drop view individual;")
+    resultdb.execute("drop view if exists individual;")
     resultdb.execute(
         """
         create view if not exists individual as
