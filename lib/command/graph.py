@@ -194,7 +194,7 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         plt.xticks(rotation = 0, ha = "center")
 
     # タイトルと軸ラベル
-    _xlabel = f"ゲーム終了日時（総数：{len(game_time)} ゲーム）"
+    _xlabel = f"ゲーム終了日時（{len(game_time)} ゲーム）"
     if command_option["order"]:
         _ylabel = "順位 (累積ポイント順)"
         if target_count == 0:
@@ -336,7 +336,7 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
         rotation = 0
         position = "center"
 
-    _xlabel = f"ゲーム終了日時（総数：{len(game_time)} ゲーム）"
+    _xlabel = f"ゲーム終了日時（{len(game_time)} ゲーム）"
     if target_count == 0:
         title_text = f"『{target_player[0]}』の成績 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
     else:
