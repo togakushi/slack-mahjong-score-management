@@ -55,44 +55,38 @@ ORDER BY
 
 ```
 SELECT
-    集計月,
-    max(CASE WHEN 順位 = 1 THEN プレイヤー名 END) AS "1位",
-    max(CASE WHEN 順位 = 1 THEN 累積ポイント END) AS "ポイント",
-    max(CASE WHEN 順位 = 1 THEN ゲーム数 END) AS "ゲーム数",
-    max(CASE WHEN 順位 = 2 THEN プレイヤー名 END) AS "2位",
-    max(CASE WHEN 順位 = 2 THEN 累積ポイント END) AS "ポイント",
-    max(CASE WHEN 順位 = 2 THEN ゲーム数 END) AS "ゲーム数",
-    max(CASE WHEN 順位 = 3 THEN プレイヤー名 END) AS "3位",
-    max(CASE WHEN 順位 = 3 THEN 累積ポイント END) AS "ポイント",
-    max(CASE WHEN 順位 = 3 THEN ゲーム数 END) AS "ゲーム数",
-    max(CASE WHEN 順位 = 4 THEN プレイヤー名 END) AS "4位",
-    max(CASE WHEN 順位 = 4 THEN 累積ポイント END) AS "ポイント",
-    max(CASE WHEN 順位 = 4 THEN ゲーム数 END) AS "ゲーム数",
-    max(CASE WHEN 順位 = 5 THEN プレイヤー名 END) AS "5位",
-    max(CASE WHEN 順位 = 5 THEN 累積ポイント END) AS "ポイント",
-    max(CASE WHEN 順位 = 5 THEN ゲーム数 END) AS "ゲーム数"
+    collection AS "集計月",
+    max(CASE WHEN rank = 1 THEN name END) AS "1位",
+    max(CASE WHEN rank = 1 THEN total END) AS "ポイント",
+    max(CASE WHEN rank = 1 THEN geme_count END) AS "ゲーム数",
+    max(CASE WHEN rank = 2 THEN name END) AS "2位",
+    max(CASE WHEN rank = 2 THEN total END) AS "ポイント",
+    max(CASE WHEN rank = 2 THEN geme_count END) AS "ゲーム数",
+    max(CASE WHEN rank = 3 THEN name END) AS "3位",
+    max(CASE WHEN rank = 3 THEN total END) AS "ポイント",
+    max(CASE WHEN rank = 3 THEN geme_count END) AS "ゲーム数",
+    max(CASE WHEN rank = 4 THEN name END) AS "4位",
+    max(CASE WHEN rank = 4 THEN total END) AS "ポイント",
+    max(CASE WHEN rank = 4 THEN geme_count END) AS "ゲーム数",
+    max(CASE WHEN rank = 5 THEN name END) AS "5位",
+    max(CASE WHEN rank = 5 THEN total END) AS "ポイント",
+    max(CASE WHEN rank = 5 THEN geme_count END) AS "ゲーム数"
 FROM (
     SELECT
-        集計月,
-        rank() OVER (PARTITION BY 集計月 ORDER BY 累積ポイント DESC) AS 順位,
-        プレイヤー名,
-        累積ポイント,
-        ゲーム数
-    FROM (
-        SELECT
-            name AS プレイヤー名,
-            round(sum(point), 1) AS 累積ポイント,
-            round(CAST(sum(point) AS REAL) / CAST(count() AS REAL), 1) AS 平均ポイント,
-            count() AS ゲーム数,
-            collection AS 集計月
-        FROM
-            individual
-        GROUP BY
-            プレイヤー名, 集計月
-    )
+        collection,
+        rank() OVER (PARTITION BY collection ORDER BY round(sum(point), 1) DESC) AS rank,
+        name,
+        round(sum(point), 1) AS total,
+        count() AS geme_count
+    FROM
+        individual
+    GROUP BY
+        name, collection
 )
 GROUP BY
-    集計月
+    collection
+HAVING
+    collection LIKE "2023-%"
 ```
 
 ## 個人成績
