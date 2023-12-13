@@ -57,7 +57,7 @@ def getdata(command_option):
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-    rows = resultdb.execute("select * from result;")
+    rows = resultdb.execute("select * from result where rule_version=?;", (g.rule_version,))
 
     for row in rows.fetchall():
         data[count] = {
