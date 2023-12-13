@@ -80,42 +80,15 @@ FROM (
         ゲーム数
     FROM (
         SELECT
-            プレイヤー名,
-            round(sum(ポイント), 1) AS 累積ポイント,
-            round(CAST(sum(ポイント) AS REAL) / CAST(count() AS REAL), 1) AS 平均ポイント,
-            round(avg(順位), 2) AS 平均順位,
+            name AS プレイヤー名,
+            round(sum(point), 1) AS 累積ポイント,
+            round(CAST(sum(point) AS REAL) / CAST(count() AS REAL), 1) AS 平均ポイント,
             count() AS ゲーム数,
-            CASE
-                WHEN playtime BETWEEN "2023-01-01 12:00:00" AND "2023-02-01 11:59:59" THEN "2023年01月"
-                WHEN playtime BETWEEN "2023-02-01 12:00:00" AND "2023-03-01 11:59:59" THEN "2023年02月"
-                WHEN playtime BETWEEN "2023-03-01 12:00:00" AND "2023-04-01 11:59:59" THEN "2023年03月"
-                WHEN playtime BETWEEN "2023-04-01 12:00:00" AND "2023-05-01 11:59:59" THEN "2023年04月"
-                WHEN playtime BETWEEN "2023-05-01 12:00:00" AND "2023-06-01 11:59:59" THEN "2023年05月"
-                WHEN playtime BETWEEN "2023-06-01 12:00:00" AND "2023-07-01 11:59:59" THEN "2023年06月"
-                WHEN playtime BETWEEN "2023-07-01 12:00:00" AND "2023-08-01 11:59:59" THEN "2023年07月"
-                WHEN playtime BETWEEN "2023-08-01 12:00:00" AND "2023-09-01 11:59:59" THEN "2023年08月"
-                WHEN playtime BETWEEN "2023-09-01 12:00:00" AND "2023-10-01 11:59:59" THEN "2023年09月"
-                WHEN playtime BETWEEN "2023-10-01 12:00:00" AND "2023-11-01 11:59:59" THEN "2023年10月"
-                WHEN playtime BETWEEN "2023-11-01 12:00:00" AND "2023-12-01 11:59:59" THEN "2023年11月"
-                WHEN playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59" THEN "2023年12月"
-            END AS 集計月
-        FROM (
-            SELECT
-                playtime,
-                p1_name AS プレイヤー名,
-                p1_rpoint AS 素点,
-                p1_rank AS 順位,
-                p1_point AS ポイント
-            FROM
-                result
-            UNION SELECT playtime, p2_name, p2_rpoint, p2_rank, p2_point FROM result
-            UNION SELECT playtime, p3_name, p3_rpoint, p3_rank, p3_point FROM result
-            UNION SELECT playtime, p4_name, p4_rpoint, p4_rank, p4_point FROM result
-        )
+            collection AS 集計月
+        FROM
+            individual
         GROUP BY
             プレイヤー名, 集計月
-        HAVING
-            NOT 集計月 ISNULL
     )
 )
 GROUP BY
