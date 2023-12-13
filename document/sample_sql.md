@@ -21,43 +21,32 @@ ORDER BY
 
 ```
 SELECT
-    プレイヤー名,
+    name AS プレイヤー名,
     count() AS ゲーム数,
-    round(sum(ポイント), 1) AS 累積ポイント,
-    round(CAST(sum(ポイント) AS REAL) / CAST(count() AS REAL),1) AS 平均ポイント,
-    count(CASE WHEN 順位 = 1 THEN 1 END) AS "1位",
-    count(CASE WHEN 順位 = 2 THEN 1 END) AS "2位",
-    count(CASE WHEN 順位 = 3 THEN 1 END) AS "3位",
-    count(CASE WHEN 順位 = 4 THEN 1 END) AS "4位",
-    round(avg(順位),2) AS 平均順位,
-    count(CASE WHEN 素点 < -1  THEN 1 END) AS トビ,
-    round(CAST(count(CASE WHEN 素点 < -1  THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS トビ率,
-    round(CAST(count(CASE WHEN 順位 = 1 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS トップ率,
-    round(CAST(count(CASE WHEN 順位 <= 2 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS 連対率,
-    round(CAST(count(CASE WHEN 順位 <= 3 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS ラス回避率,
-    round(CAST(count(CASE WHEN 順位 = 4 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS ラス率,
-    max(素点) AS 最大素点,
-    min(素点) AS 最小素点,
-    round(avg(素点), 1) AS 平均素点
-FROM (
-    SELECT
-        playtime,
-        p1_name AS プレイヤー名,
-        p1_rpoint AS 素点,
-        p1_rank AS 順位,
-        p1_point AS ポイント
-    FROM
-        result
-    UNION SELECT playtime, p2_name, p2_rpoint, p2_rank, p2_point FROM result
-    UNION SELECT playtime, p3_name, p3_rpoint, p3_rank, p3_point FROM result
-    UNION SELECT playtime, p4_name, p4_rpoint, p4_rank, p4_point FROM result
-)
+    round(sum(point), 1) AS 累積ポイント,
+    round(CAST(sum(point) AS REAL) / CAST(count() AS REAL), 1) AS 平均ポイント,
+    count(CASE WHEN rank = 1 THEN 1 END) AS "1位",
+    count(CASE WHEN rank = 2 THEN 1 END) AS "2位",
+    count(CASE WHEN rank = 3 THEN 1 END) AS "3位",
+    count(CASE WHEN rank = 4 THEN 1 END) AS "4位",
+    printf("%.2f", round(avg(rank), 2)) AS 平均順位,
+    printf("%.2f%", round(CAST(count(CASE WHEN rank = 1 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS トップ率,
+    printf("%.2f%", round(CAST(count(CASE WHEN rank <= 2 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS 連対率,
+    printf("%.2f%", round(CAST(count(CASE WHEN rank <= 3 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS ラス回避率,
+    printf("%.2f%", round(CAST(count(CASE WHEN rank = 4 THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS ラス率,
+    count(CASE WHEN rpoint < -1  THEN 1 END) AS トビ,
+    printf("%.2f%", round(CAST(count(CASE WHEN rpoint < -1  THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS トビ率,
+    max(rpoint) AS 最大素点,
+    min(rpoint) AS 最小素点,
+    round(avg(rpoint), 1) AS 平均素点
+FROM
+    individual
 WHERE
-    playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59"
+    playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59" -- 集計期間
 GROUP BY
-    プレイヤー名
+    name
 HAVING
-    ゲーム数 > (SELECT count() * 0.01 FROM result WHERE playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59")
+    ゲーム数 > (SELECT count() * 0.01 FROM result WHERE playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59") -- 規定打数
 ORDER BY
     累積ポイント DESC
 ```
