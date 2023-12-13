@@ -8,6 +8,7 @@
 /mahjong record			スプレッドシート貼り付け用集計済みデータ出力
 /mahjong graph			ポイント推移グラフを表示
 /mahjong check			突合コマンド
+/mahjong download		データベースをダウンロード
 /mahjong member			登録されているメンバーを表示
 /mahjong userlist		登録されているメンバーを表示
 /mahjong add <登録名>		メンバーの追加
@@ -81,6 +82,15 @@
   - データベースの突合
 - 書式：
   - `/mahjong check`
+- 引数：
+  - なし
+
+### download
+
+- 概要：
+  - データベースのダウンロード
+- 書式：
+  - `/mahjong download`
 - 引数：
   - なし
 

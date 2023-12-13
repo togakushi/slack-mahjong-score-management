@@ -15,6 +15,7 @@ def help(command):
     msg += f"\n\t{command} graph         ポイント推移グラフを表示"
     msg += f"\n\t{command} ranking       ランキングを表示"
     msg += f"\n\t{command} check         データ突合"
+    msg += f"\n\t{command} download      データベースダウンロード"
     msg += f"\n\t{command} member        登録されているメンバー"
     msg += f"\n\t{command} add | del     メンバーの追加/削除"
     msg += f"```"
