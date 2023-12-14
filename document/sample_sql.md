@@ -123,5 +123,5 @@ SELECT * FROM (
     LIMIT 30 -- 直近のゲーム数
 )
 ORDER BY
-	playtime
+    playtime
 ```
