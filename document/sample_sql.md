@@ -40,7 +40,7 @@ SELECT
     min(rpoint) AS 最小素点,
     round(avg(rpoint), 1) AS 平均素点
 FROM
-    individual
+    individual_results
 WHERE
     playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59" -- 集計期間
 GROUP BY
@@ -79,7 +79,7 @@ FROM (
         round(sum(point), 1) AS total,
         count() AS geme_count
     FROM
-        individual
+        individual_results
     GROUP BY
         name, collection
 )
@@ -103,9 +103,25 @@ SELECT
     count(CASE WHEN rank = 4 THEN 1 END) AS "4位",
     round(avg(rank), 2) AS 平均順位
 FROM
-    individual
+    individual_results
 WHERE
     playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59"
     AND name = "<Player Name>"
 ```
 全体成績サマリのHAVING句で絞るでも。
+
+## 直近のN回
+
+```
+SELECT * FROM (
+    SELECT * FROM
+        game_results
+    WHERE
+        "<Player Name>" IN (p1_name, p2_name, p3_name, p4_name)
+    ORDER BY
+        playtime DESC
+    LIMIT 30 -- 直近のゲーム数
+)
+ORDER BY
+	playtime
+```
