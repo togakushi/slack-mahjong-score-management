@@ -68,10 +68,12 @@ def initialization_resultdb():
         create view if not exists individual as
             select
                 datetime(playtime) as playtime,
+                0 as seat,
                 p1_name as name,
                 p1_rpoint as rpoint,
                 p1_rank as rank,
                 p1_point as point,
+                name isnull as guest,
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -82,12 +84,16 @@ def initialization_resultdb():
                 rule_version
             from
                 result
+            left outer join
+                member on p1_name = name
             union select 
                 datetime(playtime),
+                1,
                 p2_name,
                 p2_rpoint,
                 p2_rank,
                 p2_point,
+                name isnull,
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -98,12 +104,16 @@ def initialization_resultdb():
                 rule_version
             from
                 result
+            left outer join
+                member on p2_name = name
             union select
                 datetime(playtime),
+                2,
                 p3_name,
                 p3_rpoint,
                 p3_rank,
                 p3_point,
+                name isnull,
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -114,12 +124,16 @@ def initialization_resultdb():
                 rule_version
             from
                 result
+            left outer join
+                member on p3_name = name
             union select
                 datetime(playtime),
+                3,
                 p4_name,
                 p4_rpoint,
                 p4_rank,
                 p4_point,
+                name isnull,
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -130,6 +144,8 @@ def initialization_resultdb():
                 rule_version
             from
                 result
+            left outer join
+                member on p4_name = name
             ;
         """
     )
