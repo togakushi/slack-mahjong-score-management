@@ -17,9 +17,9 @@ def handle_results_evnts(client, context, body):
     g.logging.trace(f"{body['event']}")
     command = body["event"]["text"].split()[0]
     argument = body["event"]["text"].split()[1:]
-    event_ts = body['event']['ts']
+    event_ts = body["event"]["ts"]
 
-    if not re.match(rf"^{commandword}$", command):
+    if re.match(rf"^{commandword}$", command):
         return
 
     command_option = f.configure.command_option_initialization("record")
