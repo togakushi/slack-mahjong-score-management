@@ -1,3 +1,5 @@
+import re
+
 import lib.command as c
 import lib.function as f
 import lib.database as d
@@ -16,6 +18,15 @@ def handle_message_events(client, body):
         bot_id = body["authorizations"][0]["user_id"]
     else:
         bot_id = None
+
+    # Reminderによる突合
+    commandword = g.config["database"].get("commandword", "麻雀成績チェック")
+    if re.match(rf"^Reminder: {commandword}$", body["event"]["text"]):
+        command_option = f.configure.command_option_initialization("record")
+        command_option["unregistered_replace"] = False # ゲスト無効
+        g.logging.info(f"Reminder: {commandword}")
+        d.comparison.slackpost(client, channel_id, data["ts"], None, command_option)
+        return
 
     # DB更新可能チャンネルのポストかチェック
     updatable = False
