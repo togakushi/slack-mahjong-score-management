@@ -108,7 +108,7 @@ def CountPadding(data):
         return(0)
 
 
-def GetList():
+def GetMemberList():
     title = "登録されているメンバー"
     msg = ""
 

@@ -224,7 +224,7 @@ def db_update(cur, ts, msg, command_option): # 突合処理専用
     deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
     array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
     for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
+        array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
         array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
@@ -246,7 +246,7 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
     deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
     array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
     for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
+        array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
         array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)

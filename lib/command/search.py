@@ -75,7 +75,7 @@ def getdata(command_option):
     for count in list(data.keys()):
         guest_count = 0
         for wind in g.wind[0:4]:
-            data[count][wind]["name"] = c.member.NameReplace(data[count][wind]["name"], command_option)
+            data[count][wind]["name"] = c.NameReplace(data[count][wind]["name"], command_option)
 
             if g.guest_name in data[count][wind]["name"]:
                 guest_count += 1

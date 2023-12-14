@@ -147,7 +147,7 @@ def argument_analysis(argument, command_option):
 
     # プレイヤー名
     for name in player_candidates:
-        target_player.append(c.member.NameReplace(name, command_option))
+        target_player.append(c.NameReplace(name, command_option))
 
     # 日付再取得のために再帰呼び出し
     if command_option["recursion"] and len(target_days) == 0:

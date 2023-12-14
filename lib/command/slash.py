@@ -79,17 +79,17 @@ def slash_command(ack, body, client):
 
         # メンバー管理系コマンド
         if subcom.lower() in subcommand_list("member"):
-            title, msg = c.member.GetList()
+            title, msg = c.GetMemberList()
             f.slack_api.post_text(client, user_id, event_ts, title, msg)
             return
 
         if subcom.lower() in subcommand_list("add"):
-            msg = c.member.MemberAppend(argument)
+            msg = c.MemberAppend(argument)
             f.slack_api.post_message(client, user_id, msg)
             return
 
         if subcom.lower() in subcommand_list("del"):
-            msg = c.member.MemberRemove(argument)
+            msg = c.MemberRemove(argument)
             f.slack_api.post_message(client, user_id, msg)
             return
 
