@@ -6,7 +6,7 @@ def initialization_resultdb():
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
 
     resultdb.execute(
-        """
+        """ 
         create table if not exists "member" (
             "id"        INTEGER,
             "name"      TEXT NOT NULL UNIQUE,
@@ -15,7 +15,7 @@ def initialization_resultdb():
             "reward"    INTEGER DEFAULT 0,
             "abuse"     INTEGER DEFAULT 0,
             PRIMARY KEY("id" AUTOINCREMENT)
-        );
+        )
         """
     )
 
@@ -25,7 +25,7 @@ def initialization_resultdb():
             "name"      TEXT,
             "member"    TEXT NOT NULL,
             PRIMARY KEY("name")
-        );
+        )
         """
     )
 
@@ -58,14 +58,14 @@ def initialization_resultdb():
             "rule_version"  TEXT,
             "comment"       TEXT,
             PRIMARY KEY("ts")
-        );
+        )
         """
     )
 
-    resultdb.execute("drop view if exists individual;")
+    resultdb.execute("drop view if exists individual_results")
     resultdb.execute(
         """
-        create view if not exists individual as
+        create view if not exists individual_results as
             select
                 datetime(playtime) as playtime,
                 0 as seat,
@@ -146,7 +146,38 @@ def initialization_resultdb():
                 result
             left outer join
                 member on p4_name = name
-            ;
+        """
+    )
+
+    resultdb.execute("drop view if exists game_results")
+    resultdb.execute(
+        """
+        create view if not exists game_results as
+            select
+                datetime(playtime) as playtime,
+                p1_name, p1.name isnull as p1_guest, p1_rpoint, p1_rank, p1_point,
+                p2_name, p2.name isnull as p2_guest, p2_rpoint, p2_rank, p2_point,
+                p3_name, p3.name isnull as p3_guest, p3_rpoint, p3_rank, p3_point,
+                p4_name, p4.name isnull as p4_guest, p4_rpoint, p4_rank, p4_point,
+                deposit,
+                substr(
+                    case when
+                        time(playtime) between "00:00:00" and "11:59:59"
+                            then date(playtime, "-1 days")
+                            else date(playtime)
+                    end, 1, 7
+                ) as collection,
+                rule_version
+            from
+                result
+            left outer join
+                member as p1 on p1_name = p1.name
+            left outer join
+                member as p2 on p2_name = p2.name
+            left outer join
+                member as p3 on p3_name = p3.name
+            left outer join
+                member as p4 on p4_name = p4.name
         """
     )
 
