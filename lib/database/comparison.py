@@ -8,15 +8,35 @@ from lib.function import global_value as g
 
 
 def slackpost(client, channel, event_ts, argument, command_option):
+    """
+    データ突合の実施、その結果をslackにpostする
+
+    Parameters
+    ----------
+    client : obj
+
+    channel : str
+        post先のチャンネルID or ユーザーID
+
+    argument : list
+        slackから受け取った引数
+        解析対象のプレイヤー、検索範囲などが指定される
+
+    command_option : dict
+        コマンドオプション
+    """
+
+    # slackのログを取得
     slack_data = slack_search(command_option)
     if slack_data == None:
         return
 
+    # データベースからデータを取得
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     cur = resultdb.cursor()
 
-    fts = list(slack_data.keys())[0]
+    fts = list(slack_data.keys())[0] # slackのログの先頭の時刻
     db_data = databese_search(cur, fts.split(".")[0] + ".0")
     if db_data == None:
         return
@@ -176,6 +196,23 @@ def slack_search(command_option):
 
 
 def databese_search(cur, first_ts = False):
+    """
+    データベースからスコアを検索して返す
+
+    Parameters
+    ----------
+    cur: obj
+        データベースのカーソル
+
+    first_ts: float
+        検索を開始する時刻
+
+    Returns
+    -------
+    data : dict
+        検索した結果
+    """
+    
     if not first_ts:
         return(None)
 
