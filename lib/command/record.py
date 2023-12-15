@@ -6,24 +6,6 @@ import lib.command as c
 import lib.function as f
 from lib.function import global_value as g
 
-commandword = g.config["record"].get("commandword", "麻雀記録")
-g.logging.info(f"commandword: {commandword}")
-
-
-# イベントAPI
-@g.app.message(re.compile(rf"^{commandword}"))
-def handle_record_evnts(client, context, body):
-    command = body["event"]["text"].split()[0]
-    argument = body["event"]["text"].split()[1:]
-
-    if not re.match(rf"^{commandword}$", command):
-        return
-
-    command_option = f.configure.command_option_initialization("record")
-    g.logging.info(f"{command}:arg {argument}")
-    g.logging.info(f"{command}:opt {command_option}")
-    slackpost(client, context.channel_id, argument, command_option)
-
 
 def slackpost(client, channel, argument, command_option):
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)

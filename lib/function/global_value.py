@@ -113,6 +113,14 @@ reaction_ng = config["setting"].get("reaction_ng", "ng")
 rule_version = config["mahjong"].get("rule_version", "")
 channel_limitations = config["database"].get("channel_limitations", "")
 
+commandword = {
+    "results": config["results"].get("commandword", "麻雀成績"),
+    "graph": config["graph"].get("commandword", "麻雀グラフ"),
+    "ranking": config["ranking"].get("commandword", "麻雀ランキング"),
+    "record": config["record"].get("commandword", "麻雀記録"),
+    "check": config["database"].get("commandword", "麻雀成績チェック"),
+}
+
 ### slack api ###
 try:
     app = App(token = os.environ["SLACK_BOT_TOKEN"])

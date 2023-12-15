@@ -51,3 +51,32 @@ def CalculationPoint2(rpoint_data, rpoint, seat):
     point = CalculationPoint(rpoint, rank)
 
     return(rank, point)
+
+
+def check_score(client, channel_id, event_ts, user, msg):
+
+
+    g.logging.info("post data:[{} {} {}][{} {} {}][{} {} {}][{} {} {}]".format(
+        "東家", msg[0], msg[1], "南家", msg[2], msg[3],
+        "西家", msg[4], msg[5], "北家", msg[6], msg[7],
+        )
+    )
+
+    # postされた素点合計が配給原点と同じかチェック
+    pointsum = g.config["mahjong"].getint("point", 250) * 4
+    score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
+
+    if score == pointsum:
+        client.reactions_add(
+            channel = channel_id,
+            name = g.reaction_ok,
+            timestamp = event_ts,
+        )
+    else:
+        msg = f.message.invalid_score(user, score, pointsum)
+        f.slack_api.post_message(client, channel_id, msg, event_ts)
+        client.reactions_add(
+            channel = channel_id,
+            name = g.reaction_ng,
+            timestamp = event_ts,
+        )

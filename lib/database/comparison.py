@@ -7,28 +7,6 @@ import lib.function as f
 from lib.function import global_value as g
 
 
-commandword = g.config["database"].get("commandword", "麻雀成績チェック")
-g.logging.info(f"commandword: {commandword}")
-
-
-# イベントAPI
-@g.app.message(re.compile(rf"^{commandword}"))
-def handle_results_evnts(client, context, body):
-    g.logging.trace(f"{body['event']}")
-    command = body["event"]["text"].split()[0]
-    argument = body["event"]["text"].split()[1:]
-    event_ts = body["event"]["ts"]
-
-    if re.match(rf"^{commandword}$", command):
-        return
-
-    command_option = f.configure.command_option_initialization("record")
-    command_option["unregistered_replace"] = False # ゲスト無効
-    g.logging.info(f"{command}:arg {argument}")
-    g.logging.info(f"{command}:opt {command_option}")
-    slackpost(client, context.channel_id, event_ts, argument, command_option)
-
-
 def slackpost(client, channel, event_ts, argument, command_option):
     slack_data = slack_search(command_option)
     if slack_data == None:
@@ -235,7 +213,7 @@ def db_update(cur, ts, msg, command_option): # 突合処理専用
         array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
         array["p4"]["name"], array["p4"]["str"], array["p4"]["rpoint"], array["p4"]["rank"], array["p4"]["point"],
         deposit,
-        ts
+        ts,
         )
     )
 
@@ -257,7 +235,7 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
         array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
         array["p4"]["name"], array["p4"]["str"], array["p4"]["rpoint"], array["p4"]["rank"], array["p4"]["point"],
-        deposit, g.rule_version
+        deposit, g.rule_version, "",
         )
     )
 
