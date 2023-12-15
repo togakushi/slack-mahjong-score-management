@@ -7,15 +7,6 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def name_normalization(player_list, name):
-    if f.HIRA2KANA(name) in player_list:
-        return(player_list[f.HIRA2KANA(name)])
-    if f.KANA2HIRA(name) in player_list:
-        return(player_list[f.KANA2HIRA(name)])
-
-    return(name)
-
-
 # ---
 f.configure.parameter_load()
 command_option = f.configure.command_option_initialization("record")
