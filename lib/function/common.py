@@ -95,9 +95,6 @@ def argument_analysis(argument, command_option):
             target_days.append((currenttime + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
             continue
-        if keyword == "最初":
-            target_days.append((currenttime + relativedelta(days = -91)).strftime("%Y%m%d"))
-            continue
         if keyword == "最後":
             target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
             continue
