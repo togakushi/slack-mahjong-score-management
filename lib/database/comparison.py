@@ -257,8 +257,7 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
         array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
         array["p4"]["name"], array["p4"]["str"], array["p4"]["rpoint"], array["p4"]["rank"], array["p4"]["point"],
-        deposit,
-        g.config["mahjong"].get("rule_version", ""), ""
+        deposit, g.rule_version
         )
     )
 
