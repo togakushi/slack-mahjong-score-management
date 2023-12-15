@@ -42,9 +42,13 @@ def slackpost(client, channel, event_ts, argument, command_option):
         return
 
     # 突合処理
-    mismatch, missing, delete = data_comparison(cur, slack_data, db_data, command_option)
-    g.logging.info(f"mismatch:{mismatch}, missing:{missing}, delete:{delete}")
-    msg = f"*【データ突合】*\n\t不一致： {mismatch}件\n\t取りこぼし： {missing}件\n\t削除漏れ： {delete}件\n"
+    msg1 = {"mismatch": "", "missing": "", "delete": ""}
+    count, msg1 = data_comparison(cur, slack_data, db_data, command_option, msg1)
+    g.logging.info(f"mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
+
+    msg1["mismatch"] = "＊ 不一致： {}件\n{}".format(count["mismatch"], msg1["mismatch"])
+    msg1["missing"] = "＊ 取りこぼし：{}件\n{}".format(count["missing"], msg1["missing"])
+    msg1["delete"] = "＊ 削除漏れ： {}件\n{}".format(count["delete"], msg1["delete"])
 
     # 素点合計の再チェック
     msg2 =""
@@ -52,24 +56,23 @@ def slackpost(client, channel, event_ts, argument, command_option):
         rpoint_data =[eval(slack_data[i][1]), eval(slack_data[i][3]), eval(slack_data[i][5]), eval(slack_data[i][7])]
         deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
         if not deposit == 0:
-            msg2 += "\t{}\t供託：{}\n\t[{} {}][{} {}][{} {}][{} {}]\n\n".format(
-                datetime.fromtimestamp(float(i)).strftime('%Y/%m/%d %H:%M:%S'), deposit,
-                slack_data[i][0], slack_data[i][1], slack_data[i][2], slack_data[i][3],
-                slack_data[i][4], slack_data[i][5], slack_data[i][6], slack_data[i][7],
+            msg2 += "\t{} [供託：{}] {}\n".format(
+                datetime.fromtimestamp(float(i)).strftime('%Y/%m/%d %H:%M:%S'),
+                deposit, textformat(slack_data[i])
             )
     if msg2:
         msg2 = "\n*【素点合計不一致】*\n" + msg2
 
-    f.slack_api.post_message(client, channel, msg + msg2, event_ts)
+    msg = f"*【データ突合】*\n" + msg1["mismatch"] + msg1["missing"] + msg1["delete"] + msg2
+
+    f.slack_api.post_message(client, channel, msg, event_ts)
 
     resultdb.commit()
     resultdb.close()
 
 
-def data_comparison(cur, slack_data, db_data, command_option):
-    mismatch = 0
-    missing = 0
-    delete = 0
+def data_comparison(cur, slack_data, db_data, command_option, msg1):
+    count = {"mismatch": 0, "missing": 0, "delete": 0}
 
     slack_data2 = []
     for key in slack_data.keys():
@@ -93,17 +96,25 @@ def data_comparison(cur, slack_data, db_data, command_option):
                 skey = skey2
 
         if flg:
-            mismatch += 1
+            count["mismatch"] += 1
             #更新
             g.logging.info(f"[mismatch]: {skey}")
             g.logging.info(f" * [slack]: {slack_data[key]}")
             g.logging.info(f" * [   db]: {db_data[skey]}")
+            msg1["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
+                datetime.fromtimestamp(float(skey)).strftime('%Y/%m/%d %H:%M:%S'),
+                textformat(db_data[skey]), textformat(slack_data[key]),
+            )
             db_update(cur, skey, slack_data[key], command_option)
             continue
 
         #追加
-        missing += 1
+        count["missing"] += 1
         g.logging.info(f"[missing ]: {key}, {slack_data[key]}")
+        msg1["missing"] += "\t{} {}\n".format(
+            datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+            textformat(slack_data[key])
+         )
         db_insert(cur, key, slack_data[key], command_option)
 
     for key in db_data.keys():
@@ -115,11 +126,15 @@ def data_comparison(cur, slack_data, db_data, command_option):
             continue
 
         # 削除
-        delete += 1
+        count["delete"] += 1
         g.logging.info(f"[delete  ]: {key}, {db_data[key]}")
+        msg1["delete"] += "\t{} {}\n".format(
+            datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+            textformat(db_data[key])
+         )
         db_delete(cur, key)
 
-    return(mismatch, missing, delete)
+    return(count, msg1)
 
 
 def slack_search(command_option):
@@ -279,3 +294,15 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
 
 def db_delete(cur, ts): # 突合処理専用
     cur.execute(g.sql_result_delete, (ts,))
+
+
+def textformat(text):
+    """
+    メッセージを整形する
+    """
+
+    ret = ""
+    for i in range(0,len(text),2):
+        ret += f"[{text[i]} {str(text[i + 1])}]"
+    
+    return(ret)

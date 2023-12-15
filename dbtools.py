@@ -11,29 +11,20 @@ from lib.function import global_value as g
 f.configure.parameter_load()
 command_option = f.configure.command_option_initialization("record")
 command_option["unregistered_replace"] = False # ゲスト無効
+
 resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
 resultdb.row_factory = sqlite3.Row
 cur = resultdb.cursor()
 
-# メンバーリスト
-if os.path.exists(g.database_file):
-    rows = cur.execute("select name, member from alias;")
-
-    player_list = {}
-    for row in rows.fetchall():
-        if not row["member"] in player_list:
-            player_list[row["member"]] = row["member"]
-        if not row["name"] in player_list:
-            player_list[row["name"]] = row["member"]
-
-# --- data
+# --- 比較データ取得
 slack_data = d.slack_search(command_option)
 fts = list(slack_data.keys())[0]
 db_data = d.databese_search(cur, fts.split(".")[0] + ".0")
 
 # --- 突合
-mismatch, missing, delete = d.data_comparison(cur, slack_data, db_data, command_option)
-print(f">>> mismatch:{mismatch}, missing:{missing}, delete:{delete}")
+msg = {"mismatch": "", "missing": "", "delete": ""}
+count, msg = d.data_comparison(cur, slack_data, db_data, command_option, msg)
+print(f">>> mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
 
 resultdb.commit()
 resultdb.close()
