@@ -468,7 +468,8 @@ def versus(starttime, endtime, target_player, target_count, command_option):
     msg1 += f"\tプレイヤー名： {target_player[0]}\n"
 
     if command_option["all_player"]:
-        vs_list = f.all_player_list(results, target_player[0])
+        vs_list = list(set(g.member_list.values()))
+        vs_list.remove(target_player[0]) # 自分を除外
         msg1 += f"\t対戦相手：全員\n"
     else:
         vs_list = target_player[1:]
