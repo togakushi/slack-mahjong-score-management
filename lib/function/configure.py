@@ -5,7 +5,7 @@ import configparser
 from lib.function import global_value as g
 
 
-def read_memberlist():
+def read_memberslist():
     # メンバーリスト読み込み
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row

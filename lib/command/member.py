@@ -108,7 +108,7 @@ def CountPadding(data):
         return(0)
 
 
-def GetMemberList():
+def Getmemberslist():
     title = "登録されているメンバー"
     msg = ""
 
@@ -131,7 +131,7 @@ def MemberAppend(argument):
     argument : list
         argument[0] = 登録するプレイヤー名
         argument[1] = 登録する別名
-    
+
     Returns
     -------
     msg : text
@@ -204,7 +204,7 @@ def MemberAppend(argument):
 
     resultdb.commit()
     resultdb.close()
-    f.read_memberlist()
+    f.read_memberslist()
 
     return(msg)
 
@@ -254,7 +254,7 @@ def MemberRemove(argument):
 
     resultdb.commit()
     resultdb.close()
-    f.read_memberlist()
+    f.read_memberslist()
 
     return(msg)
 

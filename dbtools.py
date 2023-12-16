@@ -8,7 +8,7 @@ from lib.function import global_value as g
 
 
 # ---
-f.configure.read_memberlist()
+f.configure.read_memberslist()
 command_option = f.configure.command_option_initialization("record")
 command_option["unregistered_replace"] = False # ゲスト無効
 

@@ -6,19 +6,19 @@ import sqlite3
 import lib.function as f
 from lib.function import global_value as g
 
-f.configure.read_memberlist()
+f.configure.read_memberslist()
 
 if g.args.member:
-    g.memberfile = g.args.member
+    g.membersfile = g.args.member
 else:
-    g.memberfile = g.config["member"].get("filename", "member.ini")
+    g.membersfile = g.config["member"].get("filename", "member.ini")
 
 try:
     g.player_list = configparser.ConfigParser()
-    g.player_list.read(g.memberfile, encoding="utf-8")
-    g.logging.info(f"configload: {g.memberfile} -> {g.player_list.sections()}")
+    g.player_list.read(g.membersfile, encoding="utf-8")
+    g.logging.info(f"configload: {g.membersfile} -> {g.player_list.sections()}")
 except:
-    sys.exit(f"{g.memberfile}: file not found")
+    sys.exit(f"{g.membersfile}: file not found")
 
 
 if os.path.exists(g.database_file):

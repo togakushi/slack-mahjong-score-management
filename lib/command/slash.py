@@ -15,7 +15,7 @@ def subcommand_list(subcommand):
     ----------
     subcommand : str
         サブコマンド名
-    
+
     Returns
     -------
     commandlist : list
@@ -34,7 +34,7 @@ def slash_command(ack, body, client):
     g.logging.trace(f"{body}")
     user_id = body["user_id"]
     event_ts = 0
-    
+
     if body["text"]:
         subcom = body["text"].split()[0]
         argument = body["text"].split()[1:]
@@ -79,7 +79,7 @@ def slash_command(ack, body, client):
 
         # メンバー管理系コマンド
         if subcom.lower() in subcommand_list("member"):
-            title, msg = c.GetMemberList()
+            title, msg = c.Getmemberslist()
             f.slack_api.post_text(client, user_id, event_ts, title, msg)
             return
 
