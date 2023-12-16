@@ -62,7 +62,6 @@ logging.addLevelName(25, "NOTICE")
 args = parser()
 fmt = "[%(asctime)s][%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
 
-
 if args.debug:
     if args.verbose:
         print("DEBUG MODE(verbose)")
