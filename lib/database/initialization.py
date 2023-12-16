@@ -6,7 +6,7 @@ def initialization_resultdb():
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
 
     resultdb.execute(
-        """ 
+        """
         create table if not exists "member" (
             "id"        INTEGER,
             "name"      TEXT NOT NULL UNIQUE,
@@ -86,7 +86,7 @@ def initialization_resultdb():
                 result
             left outer join
                 member on p1_name = name
-            union select 
+            union select
                 datetime(playtime),
                 2,
                 p2_name,
