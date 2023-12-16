@@ -6,7 +6,7 @@ import sqlite3
 import lib.function as f
 from lib.function import global_value as g
 
-f.configure.parameter_load()
+f.configure.read_memberlist()
 
 if g.args.member:
     g.memberfile = g.args.member

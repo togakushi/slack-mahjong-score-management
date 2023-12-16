@@ -5,8 +5,8 @@ import configparser
 from lib.function import global_value as g
 
 
-def parameter_load():
-    # database読み込み
+def read_memberlist():
+    # メンバーリスト読み込み
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
@@ -23,8 +23,8 @@ def parameter_load():
 
     resultdb.close()
 
-    g.logging.info(f"guest_name: {g.guest_name}")
-    g.logging.info(f"member_list: {set(g.member_list.values())}")
+    g.logging.notice(f"guest_name: {g.guest_name}")
+    g.logging.notice(f"member_list: {set(g.member_list.values())}")
 
 
 def command_option_initialization(command):

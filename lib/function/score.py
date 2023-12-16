@@ -54,15 +54,15 @@ def CalculationPoint2(rpoint_data, rpoint, seat):
 
 
 def check_score(client, channel_id, event_ts, user, msg):
+    """
+    postされた素点合計が配給原点と同じかチェック
+    """
 
-
-    g.logging.info("post data:[{} {} {}][{} {} {}][{} {} {}][{} {} {}]".format(
-        "東家", msg[0], msg[1], "南家", msg[2], msg[3],
-        "西家", msg[4], msg[5], "北家", msg[6], msg[7],
+    g.logging.notice("post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}]".format(
+        msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7],
         )
     )
 
-    # postされた素点合計が配給原点と同じかチェック
     pointsum = g.config["mahjong"].getint("point", 250) * 4
     score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
 

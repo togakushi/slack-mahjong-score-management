@@ -186,11 +186,11 @@ def initialization_resultdb():
     data = ret.fetchall()
 
     if len(data) == 0:
-        g.logging.info(f"ゲスト設定: {g.guest_name}")
+        g.logging.notice(f"ゲスト設定: {g.guest_name}")
         sql = "insert into member (id, name) values (0, ?)"
         resultdb.execute(sql, (g.guest_name,))
     elif data[0][1] != g.guest_name:
-        g.logging.info(f"ゲスト修正: {data[0][1]} -> {g.guest_name}")
+        g.logging.notice(f"ゲスト修正: {data[0][1]} -> {g.guest_name}")
         sql = "update member set name=? where id=0"
         resultdb.execute(sql, (g.guest_name,))
 

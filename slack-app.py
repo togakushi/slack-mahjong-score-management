@@ -28,7 +28,7 @@ def handle_home_events(client, event):
 
 if __name__ == "__main__":
     d.initialization_resultdb()
-    f.configure.parameter_load()
+    f.configure.read_memberlist()
 
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])
     handler.start()

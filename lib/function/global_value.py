@@ -76,9 +76,11 @@ def parser():
     return(p.parse_args())
 
 
-### デバッグ用ログレベル追加 ###
+### ログレベル追加 ###
 logging.trace = partial(logging.log, 19)
 logging.addLevelName(19, "TRACE")
+logging.notice = partial(logging.log, 25)
+logging.addLevelName(25, "NOTICE")
 
 ### コマンドラインオプション解析 ###
 args = parser()
@@ -92,14 +94,14 @@ if args.debug:
         print("DEBUG MODE")
         logging.basicConfig(level = logging.INFO, format = fmt)
 else:
-    logging.basicConfig(level = logging.WARNING, format = fmt)
+    logging.basicConfig(level = 25, format = fmt)
 
 
 ### 設定ファイル読み込み ###
 try:
     config = configparser.ConfigParser()
     config.read(args.config, encoding="utf-8")
-    logging.info(f"{args.config} -> {config.sections()}")
+    logging.notice(f"{args.config} -> {config.sections()}")
 except:
     sys.exit()
 

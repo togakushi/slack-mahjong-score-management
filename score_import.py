@@ -15,7 +15,7 @@ def name_normalization(player_list, name):
     return(name)
 
 
-f.configure.parameter_load()
+f.configure.read_memberlist()
 
 if os.path.exists(g.database_file):
     outputdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)

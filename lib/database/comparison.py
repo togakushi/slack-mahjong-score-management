@@ -43,7 +43,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
 
     # 突合処理
     count, msg1 = data_comparison(cur, slack_data, db_data, command_option)
-    g.logging.info(f"mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
+    g.logging.notice(f"mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
 
     msg1["mismatch"] = "＊ 不一致： {}件\n{}".format(count["mismatch"], msg1["mismatch"])
     msg1["missing"] = "＊ 取りこぼし：{}件\n{}".format(count["missing"], msg1["missing"])
