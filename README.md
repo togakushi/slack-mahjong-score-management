@@ -27,16 +27,16 @@ slackに投稿されたスコアを集計するツール
 - 引数でプレイヤー名を複数指定することで、対象のプレイヤーの比較を容易にする
 - プレイヤー名を1名だけ指定した場合は、個人成績のサマリを出力する
   
-### グラフ生成機能（[詳細](document/graph.md)）
+### グラフ生成機能（[詳細](docs/functions/graph.md)）
 
 - 獲得ポイントの推移グラフを出力する
 - サマリと同様に複数名での比較などが可能
 
-### ランキング出力機能（[詳細](document/ranking.md)）
+### ランキング出力機能（[詳細](docs/functions/ranking.md)）
 
 - 連対率などの成績データをランキング形式で出力する
 
-### スラッシュコマンド（[使い方](document/command.md)）
+### スラッシュコマンド（[使い方](docs/functions/command.md)）
 
 - 出力結果をボットから直接DMで受け取る
 
@@ -67,4 +67,4 @@ slackに投稿されたスコアを集計するツール
   - 1名 → 個人成績
   - 複数名 → 絞り込み(比較用)
 
-引数についての[詳細](document/argument_keyword.md)
+引数についての[詳細](docs/functions/argument_keyword.md)
