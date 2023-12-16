@@ -4,8 +4,8 @@ import lib.event as e
 from lib.function import global_value as g
 
 
-def BuildSummryMenu():
-    g.app_var["screen"] = "SummryMenu"
+def BuildSummaryMenu():
+    g.app_var["screen"] = "SummaryMenu"
     no = 0
     flag = ["unregistered_replace", "score_comparisons"]
     view = {"type": "home", "blocks": []}
@@ -39,7 +39,7 @@ def handle_some_action(ack, body, client):
 
     client.views_publish(
         user_id = g.app_var["user_id"],
-        view = BuildSummryMenu(),
+        view = BuildSummaryMenu(),
     )
 
 
@@ -78,7 +78,7 @@ def handle_some_action(ack, body, client):
     )
 
 
-@g.app.view("SummryMenu_ModalPeriodSelection")
+@g.app.view("SummaryMenu_ModalPeriodSelection")
 def handle_view_submission(ack, view, client):
     ack()
 
@@ -92,5 +92,5 @@ def handle_view_submission(ack, view, client):
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = BuildSummryMenu(),
+        view = BuildSummaryMenu(),
     )
