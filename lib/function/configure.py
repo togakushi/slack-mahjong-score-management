@@ -5,18 +5,6 @@ import configparser
 from lib.function import global_value as g
 
 
-def load(configfile):
-    config = configparser.ConfigParser()
-
-    try:
-        config.read(configfile, encoding="utf-8")
-    except:
-        sys.exit()
-
-    g.logging.info(f"{configfile} -> {config.sections()}")
-    return(config)
-
-
 def parameter_load():
     # database読み込み
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
