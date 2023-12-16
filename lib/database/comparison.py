@@ -26,6 +26,9 @@ def slackpost(client, channel, event_ts, argument, command_option):
         コマンドオプション
     """
 
+    g.logging.info(f"arg: {argument}")
+    g.logging.info(f"opt: {command_option}")
+
     # slackのログを取得
     slack_data = slack_search(command_option)
     if slack_data == None:
@@ -227,7 +230,7 @@ def databese_search(cur, first_ts = False):
     data : dict
         検索した結果
     """
-    
+
     if not first_ts:
         return(None)
 
@@ -304,5 +307,5 @@ def textformat(text):
     ret = ""
     for i in range(0,len(text),2):
         ret += f"[{text[i]} {str(text[i + 1])}]"
-    
+
     return(ret)

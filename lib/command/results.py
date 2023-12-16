@@ -26,6 +26,8 @@ def slackpost(client, channel, event_ts, argument, command_option):
 
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
+    g.logging.info(f"arg: {argument}")
+    g.logging.info(f"opt: {command_option}")
 
     if starttime and endtime:
         # モード切り替え

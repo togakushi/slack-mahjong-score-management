@@ -6,6 +6,7 @@ import lib.database as d
 from lib.function import global_value as g
 
 
+# イベントAPI
 @g.app.event("message")
 def handle_message_events(client, body):
     """
@@ -42,26 +43,18 @@ def handle_message_events(client, body):
     # 成績管理系コマンド
     if re.match(rf"^{g.commandword['results']}", text):
         command_option = f.configure.command_option_initialization("results")
-        g.logging.info(f"{command}:arg {argument}")
-        g.logging.info(f"{command}:opt {command_option}")
         c.results.slackpost(client, channel_id, event_ts, argument, command_option)
         return
     if re.match(rf"^{g.commandword['graph']}", text):
         command_option = f.configure.command_option_initialization("graph")
-        g.logging.info(f"{command}:arg {argument}")
-        g.logging.info(f"{command}:opt {command_option}")
         c.graph.slackpost(client, channel_id, argument, command_option)
         return
     if re.match(rf"^{g.commandword['ranking']}", text):
         command_option = f.configure.command_option_initialization("ranking")
-        g.logging.info(f"{command}:arg {argument}")
-        g.logging.info(f"{command}:opt {command_option}")
         c.ranking.slackpost(client, channel_id, argument, command_option)
         return
     if re.match(rf"{g.commandword['record']}", text):
         command_option = f.configure.command_option_initialization("record")
-        g.logging.info(f"{command}:arg {argument}")
-        g.logging.info(f"{command}:opt {command_option}")
         c.record.slackpost(client, channel_id, argument, command_option)
         return
 
@@ -69,8 +62,6 @@ def handle_message_events(client, body):
     if re.match(rf"^{g.commandword['check']}", text):
         command_option = f.configure.command_option_initialization("record")
         command_option["unregistered_replace"] = False # ゲスト無効
-        g.logging.info(f"{command}:arg {argument}")
-        g.logging.info(f"{command}:opt {command_option}")
         d.comparison.slackpost(client, channel_id, event_ts, argument, command_option)
         return
     if re.match(rf"^Reminder: {g.commandword['check']}$", text): # Reminderによる突合
