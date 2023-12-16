@@ -42,8 +42,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
         return
 
     # 突合処理
-    msg1 = {"mismatch": "", "missing": "", "delete": ""}
-    count, msg1 = data_comparison(cur, slack_data, db_data, command_option, msg1)
+    count, msg1 = data_comparison(cur, slack_data, db_data, command_option)
     g.logging.info(f"mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
 
     msg1["mismatch"] = "＊ 不一致： {}件\n{}".format(count["mismatch"], msg1["mismatch"])
@@ -71,7 +70,8 @@ def slackpost(client, channel, event_ts, argument, command_option):
     resultdb.close()
 
 
-def data_comparison(cur, slack_data, db_data, command_option, msg1):
+def data_comparison(cur, slack_data, db_data, command_option):
+    ret_msg = {"mismatch": "", "missing": "", "delete": ""}
     count = {"mismatch": 0, "missing": 0, "delete": 0}
 
     slack_data2 = []
@@ -101,7 +101,7 @@ def data_comparison(cur, slack_data, db_data, command_option, msg1):
             g.logging.info(f"[mismatch]: {skey}")
             g.logging.info(f" * [slack]: {slack_data[key]}")
             g.logging.info(f" * [   db]: {db_data[skey]}")
-            msg1["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
+            ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
                 datetime.fromtimestamp(float(skey)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(db_data[skey]), textformat(slack_data[key]),
             )
@@ -111,7 +111,7 @@ def data_comparison(cur, slack_data, db_data, command_option, msg1):
         #追加
         count["missing"] += 1
         g.logging.info(f"[missing ]: {key}, {slack_data[key]}")
-        msg1["missing"] += "\t{} {}\n".format(
+        ret_msg["missing"] += "\t{} {}\n".format(
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(slack_data[key])
          )
@@ -128,13 +128,13 @@ def data_comparison(cur, slack_data, db_data, command_option, msg1):
         # 削除
         count["delete"] += 1
         g.logging.info(f"[delete  ]: {key}, {db_data[key]}")
-        msg1["delete"] += "\t{} {}\n".format(
+        ret_msg["delete"] += "\t{} {}\n".format(
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(db_data[key])
          )
         db_delete(cur, key)
 
-    return(count, msg1)
+    return(count, ret_msg)
 
 
 def slack_search(command_option):

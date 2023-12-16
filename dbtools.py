@@ -22,7 +22,6 @@ fts = list(slack_data.keys())[0]
 db_data = d.databese_search(cur, fts.split(".")[0] + ".0")
 
 # --- 突合
-msg = {"mismatch": "", "missing": "", "delete": ""}
 count, msg = d.data_comparison(cur, slack_data, db_data, command_option, msg)
 print(f">>> mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
 
