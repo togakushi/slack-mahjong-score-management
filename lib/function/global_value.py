@@ -31,6 +31,12 @@ def parser():
     )
 
     p.add_argument(
+        "--quiet",
+        action = "store_true",
+        help = "ログレベルがエラー以下のもを非表示",
+    )
+
+    p.add_argument(
         "-c", "--config",
         required = True,
         metavar = "config.ini",
@@ -41,36 +47,6 @@ def parser():
         "-m", "--member",
         metavar = "member.ini",
         help = "メンバー情報ファイル",
-    )
-
-    db = p.add_argument_group("DATABASE関連オプション")
-    db.add_argument(
-        "--init",
-        action = "store_true",
-        help = "DB初期化",
-    )
-
-    db.add_argument(
-        "--std",
-        action = "store_true",
-        help = "結果を標準出力に出す",
-    )
-
-    db.add_argument(
-        "-i", "--csvimport",
-        metavar = "import.csv",
-        help = "CSVファイルから成績をDBにインポート",
-    )
-
-    db.add_argument(
-        "-e", "--export",
-        action = "store_true",
-        help = "CSVファイルに成績をエクスポート",
-    )
-
-    db.add_argument(
-        "--input",
-        help = "インポートDB",
     )
 
     return(p.parse_args())
@@ -86,6 +62,7 @@ logging.addLevelName(25, "NOTICE")
 args = parser()
 fmt = "[%(asctime)s][%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
 
+
 if args.debug:
     if args.verbose:
         print("DEBUG MODE(verbose)")
@@ -94,7 +71,10 @@ if args.debug:
         print("DEBUG MODE")
         logging.basicConfig(level = logging.INFO, format = fmt)
 else:
-    logging.basicConfig(level = 25, format = fmt)
+    if args.quiet:
+        logging.basicConfig(level = logging.WARNING, format = fmt)
+    else:
+        logging.basicConfig(level = 25, format = fmt)
 
 
 ### 設定ファイル読み込み ###
