@@ -98,9 +98,9 @@ def data_comparison(cur, slack_data, db_data, command_option):
         if flg:
             count["mismatch"] += 1
             #更新
-            g.logging.info(f"[mismatch]: {skey}")
-            g.logging.info(f" * [slack]: {slack_data[key]}")
-            g.logging.info(f" * [   db]: {db_data[skey]}")
+            g.logging.notice(f"[mismatch]: {skey}")
+            g.logging.info(f"   * [slack]: {slack_data[key]}")
+            g.logging.info(f"   * [   db]: {db_data[skey]}")
             ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
                 datetime.fromtimestamp(float(skey)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(db_data[skey]), textformat(slack_data[key]),
@@ -110,7 +110,7 @@ def data_comparison(cur, slack_data, db_data, command_option):
 
         #追加
         count["missing"] += 1
-        g.logging.info(f"[missing ]: {key}, {slack_data[key]}")
+        g.logging.notice(f"[missing]: {key}, {slack_data[key]}")
         ret_msg["missing"] += "\t{} {}\n".format(
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(slack_data[key])
@@ -127,7 +127,7 @@ def data_comparison(cur, slack_data, db_data, command_option):
 
         # 削除
         count["delete"] += 1
-        g.logging.info(f"[delete  ]: {key}, {db_data[key]}")
+        g.logging.notice(f"[delete]: {key}, {db_data[key]}")
         ret_msg["delete"] += "\t{} {}\n".format(
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(db_data[key])
