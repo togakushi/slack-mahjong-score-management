@@ -9,8 +9,9 @@ from lib.function import global_value as g
 
 # ---
 f.configure.read_memberslist()
-command_option = f.configure.command_option_initialization("record")
+command_option = f.configure.command_option_initialization("results")
 command_option["unregistered_replace"] = False # ゲスト無効
+command_option["aggregation_range"] = "全部" # 検索範囲
 
 resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
 resultdb.row_factory = sqlite3.Row

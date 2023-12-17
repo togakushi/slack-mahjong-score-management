@@ -53,20 +53,18 @@ def handle_message_events(client, body):
         command_option = f.configure.command_option_initialization("ranking")
         c.ranking.slackpost(client, channel_id, argument, command_option)
         return
-    if re.match(rf"{g.commandword['record']}", text):
-        command_option = f.configure.command_option_initialization("record")
-        c.record.slackpost(client, channel_id, argument, command_option)
-        return
 
     # データベース関連コマンド
     if re.match(rf"^{g.commandword['check']}", text):
-        command_option = f.configure.command_option_initialization("record")
+        command_option = f.configure.command_option_initialization("results")
         command_option["unregistered_replace"] = False # ゲスト無効
+        command_option["aggregation_range"] = "全部" # 検索範囲
         d.comparison.slackpost(client, channel_id, event_ts, argument, command_option)
         return
     if re.match(rf"^Reminder: {g.commandword['check']}$", text): # Reminderによる突合
-        command_option = f.configure.command_option_initialization("record")
+        command_option = f.configure.command_option_initialization("results")
         command_option["unregistered_replace"] = False # ゲスト無効
+        command_option["aggregation_range"] = "全部" # 検索範囲
         g.logging.info(f'Reminder: {g.commandword["check"]}')
         d.comparison.slackpost(client, channel_id, event_ts, None, command_option)
         return

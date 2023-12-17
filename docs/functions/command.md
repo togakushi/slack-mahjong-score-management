@@ -5,7 +5,6 @@
 ```
 /mahjong results		成績を表示
 /mahjong ranking		ランキングを表示
-/mahjong record			スプレッドシート貼り付け用集計済みデータ出力
 /mahjong graph			ポイント推移グラフを表示
 /mahjong check			突合コマンド
 /mahjong download		データベースをダウンロード

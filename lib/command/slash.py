@@ -52,12 +52,6 @@ def slash_command(ack, body, client):
             c.graph.slackpost(client, user_id, argument, command_option)
             return
 
-        if subcom.lower() in subcommand_list("record"):
-            command_option = f.configure.command_option_initialization("record")
-            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
-            c.record.slackpost(client, user_id, argument, command_option)
-            return
-
         if subcom.lower() in subcommand_list("ranking"):
             command_option = f.configure.command_option_initialization("ranking")
             g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
@@ -66,8 +60,9 @@ def slash_command(ack, body, client):
 
         # データベース関連コマンド
         if subcom.lower() in subcommand_list("check"):
-            command_option = f.configure.command_option_initialization("record")
+            command_option = f.configure.command_option_initialization("results")
             command_option["unregistered_replace"] = False # ゲスト無効
+            command_option["aggregation_range"] = "全部" # 検索範囲
             g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
             d.comparison.slackpost(client, user_id, event_ts, argument, command_option)
             return

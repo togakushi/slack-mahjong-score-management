@@ -15,7 +15,7 @@ ignore_flying = False
 ### 設定 ###
 [setting]
 # スラッシュコマンド名(先頭のスラッシュも含める)
-slash_commandname = /mahjong 
+slash_commandname = /mahjong
 guest_mark = ※
 # 素点合計チェックで付けるリアクション
 reaction_ok = ok
@@ -40,7 +40,6 @@ channel = #麻雀部
 [alias] # サブコマンドエイリアス(カンマ区切り)
 results = 成績
 graph = グラフ
-record = 記録,結果
 ranking = ランキング
 check = チェック
 download = dbget,ダウンロード
@@ -59,7 +58,7 @@ del = 削除,退部届
 # score_comparisons    : ポイント比較モード(未定義時：False)
 # game_results         : 戦績表示(未定義時：False)
 # versus_matrix        : 対局対戦マトリックス表示(未定義時：False)
-# count                : ランキングに出力する順位(未定義時：3)
+# ranked               : ランキングに出力する順位(未定義時：3)
 
 [results] # 成績出力
 commandword = 麻雀成績
@@ -77,12 +76,6 @@ aggregation_range = 当日
 unregistered_replace = True
 guest_skip = True
 guest_skip2 = False
-
-[record] # 保存用データ出力
-commandword = 麻雀(記録|結果)
-aggregation_range = 全部
-unregistered_replace = True
-guest_skip = True
 
 [ranking] # ランキング出力
 commandword = 麻雀ランキング
