@@ -76,7 +76,7 @@
 
 ## 名前  ： 累積   / 点差 ##
 ひと     ： +xxx.x / -----
-さる     ： +xxx.x / xx.x
+さる     ： +xxx.x /  xx.x
 いぬ     ：  +xx.x /  xx.x
 とり     ：  ▲xx.x /  xx.x
 おに(※) ： ▲xxx.x /  xx.x
