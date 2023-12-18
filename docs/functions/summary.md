@@ -30,7 +30,7 @@
 
 ### 共通オプション
 
-- [検索範囲指定](docs/functions/argument_keyword.md#検索範囲指定)
+- [検索範囲指定](argument_keyword.md#検索範囲指定)
 - ゲスト関連
   - ゲストあり/ゲストなし
   - ゲスト無効
