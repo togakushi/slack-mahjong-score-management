@@ -10,11 +10,9 @@ SELECT
     p4_name AS 北家, p4_rpoint * 100 AS 素点, p4_rank AS 順位, p4_point AS ポイント,
     deposit AS 供託
 FROM
-    result
+    game_results
 WHERE
     playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59"
-ORDER BY
-    playtime DESC
 ```
 
 ## 全体成績サマリ
