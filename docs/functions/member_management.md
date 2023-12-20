@@ -11,8 +11,8 @@
 ```
 削除
 ```
-/commandname add <削除するプレイヤー名>
-/commandname add <プレイヤー名> <削除する別名>
+/commandname del <削除するプレイヤー名>
+/commandname del <プレイヤー名> <削除する別名>
 ```
 - プレイヤー削除時、そのプレイヤーに追加されている別名もすべて削除される。
 
