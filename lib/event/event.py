@@ -13,6 +13,7 @@ def handle_message_events(client, body):
     ポストされた内容で処理を分岐
     """
 
+    g.logging.trace(body)
     data = body["event"]
     channel_id = data["channel"]
     if "subtype" in body["event"]:
@@ -22,6 +23,10 @@ def handle_message_events(client, body):
             text = "delete"
         if body["event"]["subtype"] == "message_changed":
             data = data["message"]
+            user = data["user"]
+            event_ts = data["ts"]
+            text = data["text"]
+        if body["event"]["subtype"] == "file_share":
             user = data["user"]
             event_ts = data["ts"]
             text = data["text"]
