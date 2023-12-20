@@ -91,7 +91,7 @@ HAVING
 
 ```
 SELECT
-    name AS プレイヤー名, 
+    collection AS 集計月, 
     count() AS ゲーム数,
     round(sum(point), 1) AS 累積ポイント,
     round(avg(point), 1) AS 平均ポイント,
@@ -99,12 +99,20 @@ SELECT
     count(CASE WHEN rank = 2 THEN 1 END) AS "2位",
     count(CASE WHEN rank = 3 THEN 1 END) AS "3位",
     count(CASE WHEN rank = 4 THEN 1 END) AS "4位",
-    round(avg(rank), 2) AS 平均順位
+    round(avg(rank), 2) AS 平均順位,
+    count(CASE WHEN rpoint < -1  THEN 1 END) AS トビ,
+    round(CAST(count(CASE WHEN rpoint < -1  THEN 1 END) AS REAL) / CAST(count() AS REAL) * 100, 2) AS トビ率,
+    max(rpoint) AS 最大素点,
+    min(rpoint) AS 最小素点,
+    round(avg(rpoint), 1) AS 平均素点
 FROM
     individual_results
 WHERE
-    playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59"
-    AND name = "<Player Name>"
+    name = "<Player Name>"
+GROUP BY
+    collection
+HAVING
+    collection LIKE "2023-%"
 ```
 全体成績サマリのHAVING句で絞るでも。
 
