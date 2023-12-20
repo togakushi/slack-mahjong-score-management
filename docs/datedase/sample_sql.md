@@ -87,7 +87,7 @@ HAVING
     collection LIKE "2023-%"
 ```
 
-## 個人成績
+## 対戦結果（対個人）
 
 ```
 SELECT
