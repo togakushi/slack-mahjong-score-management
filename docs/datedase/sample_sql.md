@@ -135,3 +135,23 @@ SELECT * FROM (
 ORDER BY
     playtime
 ```
+
+## 対個人勝敗
+```
+SELECT
+    my.name AS プレイヤー,
+    vs.name AS 対戦相手,
+    count() AS 対戦数,
+    count(my.rank < vs.rank OR NULL) AS 勝ち,
+    count(my.rank > vs.rank OR NULL) AS 負け,
+    round(CAST(count(my.rank < vs.rank OR NULL) AS REAL) / CAST(count() AS REAL) * 100, 2) AS 勝率
+FROM
+    individual_results my
+INNER JOIN
+    individual_results vs
+        ON (my.playtime = vs.playtime AND my.name != vs.name)
+GROUP BY
+    my.name, vs.name
+ORDER BY
+    my.name, 対戦数 DESC, 勝率 DESC
+```
