@@ -87,8 +87,7 @@ HAVING
     collection LIKE "2023-%"
 ```
 
-## 対戦結果（対個人）
-
+## 個人成績
 ```
 SELECT
     collection AS 集計月, 
@@ -136,7 +135,7 @@ ORDER BY
     playtime
 ```
 
-## 対個人勝敗
+## 対戦結果（対個人）
 ```
 SELECT
     my.name AS プレイヤー,
