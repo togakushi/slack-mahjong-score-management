@@ -1,6 +1,6 @@
 # サンプルSQL
 
-## ゲーム結果
+## ゲーム結果(月間)
 ```
 SELECT
     datetime(playtime) AS 日時,
@@ -15,7 +15,7 @@ WHERE
     playtime BETWEEN datetime(strftime('%Y-%m-01 12:00:00')) AND datetime(strftime('%Y-%m-01 12:00:00'), '1 month', '-1 second')
 ```
 
-## 全体成績サマリ
+## 全体成績サマリ(年間)
 ```
 SELECT
     name AS プレイヤー名,
@@ -39,11 +39,11 @@ SELECT
 FROM
     individual_results
 WHERE
-    playtime BETWEEN datetime(strftime('%Y-%m-01 12:00:00')) AND datetime(strftime('%Y-%m-01 12:00:00'), '1 month', '-1 second') -- 集計期間
+    playtime BETWEEN datetime(strftime('%Y-01-01 12:00:00')) AND datetime(strftime('%Y-12-01 12:00:00'), '1 month', '-1 second') -- 集計期間
 GROUP BY
     name
 HAVING
-    ゲーム数 > (SELECT count() * 0.01 FROM result WHERE playtime BETWEEN datetime(strftime('%Y-%m-01 12:00:00')) AND datetime(strftime('%Y-%m-01 12:00:00'), '1 month', '-1 second')) -- 規定打数
+    ゲーム数 > (SELECT count() * 0.01 FROM result WHERE playtime BETWEEN datetime(strftime('%Y-01-01 12:00:00')) AND datetime(strftime('%Y-12-01 12:00:00'), '1 month', '-1 second')) -- 規定打数
 ORDER BY
     累積ポイント DESC
 ```
