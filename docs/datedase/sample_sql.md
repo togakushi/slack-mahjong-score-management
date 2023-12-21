@@ -12,7 +12,7 @@ SELECT
 FROM
     game_results
 WHERE
-    playtime BETWEEN "2023-12-01 12:00:00" AND "2024-01-01 11:59:59"
+    playtime BETWEEN datetime(strftime('%Y-%m-01 12:00:00')) AND datetime(strftime('%Y-%m-01 12:00:00'), '1 month', '-1 second')
 ```
 
 ## 全体成績サマリ
@@ -39,11 +39,11 @@ SELECT
 FROM
     individual_results
 WHERE
-    playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59" -- 集計期間
+    playtime BETWEEN datetime(strftime('%Y-%m-01 12:00:00')) AND datetime(strftime('%Y-%m-01 12:00:00'), '1 month', '-1 second') -- 集計期間
 GROUP BY
     name
 HAVING
-    ゲーム数 > (SELECT count() * 0.01 FROM result WHERE playtime BETWEEN "2023-01-01 12:00:00" AND "2024-01-01 11:59:59") -- 規定打数
+    ゲーム数 > (SELECT count() * 0.01 FROM result WHERE playtime BETWEEN datetime(strftime('%Y-%m-01 12:00:00')) AND datetime(strftime('%Y-%m-01 12:00:00'), '1 month', '-1 second')) -- 規定打数
 ORDER BY
     累積ポイント DESC
 ```
