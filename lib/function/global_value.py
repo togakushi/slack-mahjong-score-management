@@ -4,10 +4,10 @@ import logging
 import sys
 import os
 
+from functools import partial
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from functools import partial
 from slack_bolt import App
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -31,9 +31,15 @@ def parser():
     )
 
     p.add_argument(
-        "--quiet",
+        "--moderate",
         action = "store_true",
         help = "ログレベルがエラー以下のもを非表示",
+    )
+
+    p.add_argument(
+        "--notime",
+        action = "store_true",
+        help = "ログフォーマットから日時を削除",
     )
 
     p.add_argument(
@@ -53,27 +59,35 @@ def parser():
 
 
 ### ログレベル追加 ###
-logging.trace = partial(logging.log, 19)
-logging.addLevelName(19, "TRACE")
-logging.notice = partial(logging.log, 25)
-logging.addLevelName(25, "NOTICE")
+# TRACE
+logging.TRACE = 19
+logging.trace = partial(logging.log, logging.TRACE)
+logging.addLevelName(logging.TRACE, "TRACE")
+# NOTICE
+logging.NOTICE = 25
+logging.notice = partial(logging.log, logging.NOTICE)
+logging.addLevelName(logging.NOTICE, "NOTICE")
 
 ### コマンドラインオプション解析 ###
 args = parser()
-fmt = "[%(asctime)s][%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
+
+if args.notime:
+    fmt = "[%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
+else:
+    fmt = "[%(asctime)s][%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
 
 if args.debug:
     if args.verbose:
         print("DEBUG MODE(verbose)")
-        logging.basicConfig(level = 19, format = fmt)
+        logging.basicConfig(level = logging.TRACE, format = fmt)
     else:
         print("DEBUG MODE")
         logging.basicConfig(level = logging.INFO, format = fmt)
 else:
-    if args.quiet:
+    if args.moderate:
         logging.basicConfig(level = logging.WARNING, format = fmt)
     else:
-        logging.basicConfig(level = 25, format = fmt)
+        logging.basicConfig(level = logging.NOTICE, format = fmt)
 
 
 ### 設定ファイル読み込み ###
