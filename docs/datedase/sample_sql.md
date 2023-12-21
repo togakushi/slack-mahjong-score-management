@@ -82,7 +82,7 @@ FROM (
 GROUP BY
     collection
 HAVING
-    collection LIKE "2023-%"
+    collection LIKE strftime("%Y-%%")
 ```
 
 ## ゲーム傾向
@@ -100,7 +100,7 @@ FROM
 GROUP BY
     collection
 HAVING
-    collection LIKE "2023-%"
+    collection LIKE strftime("%Y-%%")
 ```
 
 ## 個人成績
@@ -131,7 +131,7 @@ WHERE
 GROUP BY
     collection
 HAVING
-    collection LIKE "2023-%"
+    collection LIKE strftime("%Y-%%")
 ```
 全体成績サマリのHAVING句で絞るでも。
 
