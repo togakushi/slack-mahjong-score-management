@@ -92,7 +92,7 @@ SELECT
     count() / 4 AS ゲーム数,
     round(sum(point), 1) AS 供託,
     count(rpoint < -1 OR NULL) AS "飛んだ人数(延べ)",
-    round(CAST(count(rpoint < -1 OR NULL) AS REAL) / (CAST(count() AS REAL) / 4) * 100, 2) AS トビ終了率,
+    round(CAST(count(rpoint < -1 OR NULL) AS REAL) / CAST(count() / 4 AS REAL) * 100, 2) AS トビ終了率,
     max(rpoint) AS 最大素点,
     min(rpoint) AS 最小素点
 FROM
