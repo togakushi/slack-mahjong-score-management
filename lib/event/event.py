@@ -16,32 +16,33 @@ def handle_message_events(client, body):
     g.logging.trace(body)
     data = body["event"]
     channel_id = data["channel"]
+
     if "subtype" in body["event"]:
-        if body["event"]["subtype"] == "message_deleted":
-            user = data["previous_message"]["user"]
-            event_ts = data["deleted_ts"]
-            text = "delete"
-        if body["event"]["subtype"] == "message_changed":
-            data = data["message"]
-            user = data["user"]
-            event_ts = data["ts"]
-            text = data["text"]
-        if body["event"]["subtype"] == "file_share":
-            user = data["user"]
-            event_ts = data["ts"]
-            text = data["text"]
+        match body["event"]["subtype"]:
+            case "message_deleted":
+                user = data["previous_message"]["user"]
+                event_ts = data["deleted_ts"]
+                text = "delete"
+            case "message_changed":
+                data = data["message"]
+                user = data["user"]
+                event_ts = data["ts"]
+                text = data["text"]
+            case _:
+                user = data["user"]
+                event_ts = data["ts"]
+                text = data["text"]
     else:
         user = data["user"]
         event_ts = data["ts"]
         text = data["text"]
 
-    command = text.split()[0]
-    argument = text.split()[1:]
-
     if body["authorizations"][0]["is_bot"]:
         bot_id = body["authorizations"][0]["user_id"]
     else:
         bot_id = None
+
+    argument = text.split()[1:] # 最初のスペース以降はコマンド引数扱い
 
     g.logging.info(f"channel_id: {channel_id}, event_ts: {event_ts}, user: {user}, bot_id: {bot_id}")
 
