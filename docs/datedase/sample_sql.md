@@ -16,7 +16,6 @@ WHERE
 ```
 
 ## 全体成績サマリ
-
 ```
 SELECT
     name AS プレイヤー名,
@@ -50,7 +49,6 @@ ORDER BY
 ```
 
 ## 月間ランキング
-
 ```
 SELECT
     collection AS "集計月",
@@ -81,6 +79,24 @@ FROM (
     GROUP BY
         name, collection
 )
+GROUP BY
+    collection
+HAVING
+    collection LIKE "2023-%"
+```
+
+## ゲーム傾向
+```
+SELECT
+    collection AS 集計月, 
+    count() / 4 AS ゲーム数,
+    round(sum(point), 1) AS 供託,
+    count(rpoint < -1 OR NULL) AS "飛んだ人数(延べ)",
+    round(CAST(count(rpoint < -1 OR NULL) AS REAL) / (CAST(count() AS REAL) / 4) * 100, 2) AS トビ終了率,
+    max(rpoint) AS 最大素点,
+    min(rpoint) AS 最小素点
+FROM
+    individual_results
 GROUP BY
     collection
 HAVING
@@ -120,7 +136,6 @@ HAVING
 全体成績サマリのHAVING句で絞るでも。
 
 ## 直近のN回
-
 ```
 SELECT * FROM (
     SELECT * FROM
