@@ -137,7 +137,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"name_list: {name_list}")
 
     # 表示
-    padding = max([f.translation.len_count(x) for x in name_list])
+    padding = c.CountPadding([f.translation.len_count(x) for x in name_list])
     msg1 = ""
     msg2 = "*【成績サマリ】*\n"
 
