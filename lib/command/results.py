@@ -203,11 +203,14 @@ def summary(starttime, endtime, target_player, target_count, command_option):
         (starttime.timestamp(), endtime.timestamp())
     )
     for row in rows.fetchall():
-        msg3 += "\t{}： {} （{}）\n".format(
-            datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M'),
-            row["matter"],
-            row["name"],
-        )
+        name = c.NameReplace(row["name"], command_option)
+        if name in name_list:
+            msg3 += "\t{}： {} （{}）\n".format(
+                datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M'),
+                row["matter"],
+                name,
+            )
+
     if msg3:
         msg3 = "*【メモ】*\n" + msg3
 
