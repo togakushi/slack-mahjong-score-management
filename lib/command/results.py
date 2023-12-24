@@ -57,6 +57,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
             if msg3:
                 f.slack_api.post_message(client, channel, msg3, res["ts"])
 
+
 def summary(starttime, endtime, target_player, target_count, command_option):
     """
     各プレイヤーの累積ポイントを表示
@@ -195,7 +196,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
 
     msg2 += f.remarks(command_option)
 
-    # カウント表示
+    # メモ表示
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
