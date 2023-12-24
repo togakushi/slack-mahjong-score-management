@@ -205,8 +205,8 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     for row in rows.fetchall():
         msg3 += "\t{}： {} （{}）\n".format(
             datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M'),
-            row["name"],
             row["matter"],
+            row["name"],
         )
     if msg3:
         msg3 = "*【メモ】*\n" + msg3
