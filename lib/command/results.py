@@ -198,7 +198,8 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     # カウント表示
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-    rows = resultdb.execute("select * from counter where thread_ts between ? and ?",
+    rows = resultdb.execute(
+        "select * from counter where thread_ts between ? and ? order by thread_ts",
         (starttime.timestamp(), endtime.timestamp())
     )
     for row in rows.fetchall():
