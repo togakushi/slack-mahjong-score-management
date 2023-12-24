@@ -64,12 +64,11 @@ def initialization_resultdb():
 
     resultdb.execute(
         """
-        create table if not exists "counter" (
+        create table if not exists "remarks" (
             "thread_ts" TEXT NOT NULL,
             "event_ts"  TEXT NOT NULL,
             "name"      TEXT NOT NULL,
-            "matter"    TEXT NOT NULL,
-            "type"      INTEGER DEFAULT 0
+            "matter"    TEXT NOT NULL
         )
         """
     )

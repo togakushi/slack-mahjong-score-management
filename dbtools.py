@@ -13,6 +13,6 @@ command_option["aggregation_range"] = "全部" # 検索範囲
 # --- 突合
 count, msg, fts = d.score_comparison(command_option)
 if fts:
-    d.counter_comparison(fts)
+    d.remarks_comparison(fts)
 
 print(f">>> mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")

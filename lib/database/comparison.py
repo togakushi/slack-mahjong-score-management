@@ -37,7 +37,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
 
     # カウンター突合
     if fts: # slackからスコア記録のログが見つかった場合のみチェック
-        counter_comparison(fts)
+        remarks_comparison(fts)
 
     g.logging.notice("mismatch:{}, missing:{}, delete:{}, invalid_score: {}".format(
         count["mismatch"],
@@ -263,7 +263,7 @@ def textformat(text):
     return(ret)
 
 
-def counter_comparison(fts):
+def remarks_comparison(fts):
     """
     カウンター突合
     """
@@ -275,7 +275,7 @@ def counter_comparison(fts):
 
     # slackからデータ取得
     matches = c.search.slack_search(
-        g.commandword["count"],
+        g.commandword["remarks_word"],
         g.config["search"].get("channel", "#麻雀部"),
     )
 
@@ -289,7 +289,7 @@ def counter_comparison(fts):
         else:
             thread_ts = None
 
-        if re.match(rf"^{g.commandword['count']}", text):
+        if re.match(rf"^{g.commandword['remarks_word']}", text):
             if thread_ts:
                 for name, val in zip(text.split()[1:][0::2], text.split()[1:][1::2]):
                     slack_data[count] = {
@@ -309,7 +309,7 @@ def counter_comparison(fts):
     cur = resultdb.cursor()
 
     count = 0
-    rows = cur.execute(f"select * from counter where thread_ts >= ?", (fts,))
+    rows = cur.execute(f"select * from remarks where thread_ts >= ?", (fts,))
     for row in rows.fetchall():
         db_data[count] = {
             "thread_ts": row["thread_ts"],
@@ -345,9 +345,9 @@ def counter_comparison(fts):
             if check_data_src == check_data_dst:
                 continue
             else:
-                cur.execute(g.sql_counter_delete_one, (str(x),))
+                cur.execute(g.sql_remarks_delete_one, (str(x),))
                 for update_data in check_data_src:
-                    cur.execute(g.sql_counter_insert, (
+                    cur.execute(g.sql_remarks_insert, (
                         update_data["thread_ts"],
                         update_data["event_ts"],
                         c.NameReplace(update_data["name"], command_option, add_mark = False),
@@ -355,12 +355,12 @@ def counter_comparison(fts):
                     ))
                     g.logging.info(f"update: {update_data}")
         else: # スレッド元がないデータは不要
-            cur.execute(g.sql_counter_delete_one, (str(x),))
+            cur.execute(g.sql_remarks_delete_one, (str(x),))
             g.logging.info(f"delete: {x} (No thread origin)")
 
     for x in db_ts:
         if x not in slack_ts: # データベースにあってslackにない → 削除
-            cur.execute(g.sql_counter_delete_one, (str(x),))
+            cur.execute(g.sql_remarks_delete_one, (str(x),))
             g.logging.info(f"delete: {x} (Only database)")
 
     resultdb.commit()

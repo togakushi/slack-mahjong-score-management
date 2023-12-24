@@ -78,7 +78,7 @@ def resultdb_update(msg, ts):
 def resultdb_delete(ts):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(g.sql_result_delete, (ts,))
-    resultdb.execute(g.sql_counter_delete_all, (ts,))
+    resultdb.execute(g.sql_remarks_delete_all, (ts,))
     resultdb.commit()
     g.logging.notice(f"{ts}")
     resultdb.close()

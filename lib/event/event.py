@@ -103,8 +103,8 @@ def handle_message_events(client, body):
         d.comparison.slackpost(client, parameter["channel_id"], parameter["event_ts"], None, command_option)
         return
 
-    # カウント処理
-    if re.match(rf"^{g.commandword['count']}", parameter["text"]) and parameter["thread_ts"]:
+    # 追加メモ
+    if re.match(rf"^{g.commandword['remarks_word']}", parameter["text"]) and parameter["thread_ts"]:
         if d.ExsistRecord(parameter["thread_ts"]) and updatable:
             command_option = f.configure.command_option_initialization("results")
             command_option["unregistered_replace"] = False # ゲスト無効
@@ -113,17 +113,17 @@ def handle_message_events(client, body):
                 case "message_append":
                     for name, val in zip(argument[0::2], argument[1::2]):
                         g.logging.info(f"insert: {name}, {val}")
-                        resultdb.execute(g.sql_counter_insert, (
+                        resultdb.execute(g.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
                             c.NameReplace(name, command_option, add_mark = False),
                             val,
                         ))
                 case "message_changed":
-                    resultdb.execute(g.sql_counter_delete_one, (parameter["event_ts"],))
+                    resultdb.execute(g.sql_remarks_delete_one, (parameter["event_ts"],))
                     for name, val in zip(argument[0::2], argument[1::2]):
                         g.logging.info(f"update: {name}, {val}")
-                        resultdb.execute(g.sql_counter_insert, (
+                        resultdb.execute(g.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
                             c.NameReplace(name, command_option, add_mark = False),
@@ -131,7 +131,7 @@ def handle_message_events(client, body):
                         ))
                 case "message_deleted":
                     g.logging.info(f"delete one")
-                    resultdb.execute(g.sql_counter_delete_one, (parameter["event_ts"],))
+                    resultdb.execute(g.sql_remarks_delete_one, (parameter["event_ts"],))
 
             resultdb.commit()
             resultdb.close()

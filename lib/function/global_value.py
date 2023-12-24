@@ -112,7 +112,7 @@ commandword = { # チャンネル内呼び出しキーワード
     "graph": config["graph"].get("commandword", "麻雀グラフ"),
     "ranking": config["ranking"].get("commandword", "麻雀ランキング"),
     "check": config["database"].get("commandword", "麻雀成績チェック"),
-    "count": config["setting"].get("count_word", "麻雀成績カウント"),
+    "remarks_word": config["setting"].get("remarks_word", "麻雀成績メモ"),
 }
 
 app_var = { # ホームタブ用
@@ -163,13 +163,13 @@ sql_result_update = """
     where ts=?
 """
 sql_result_delete = "delete from result where ts=?"
-sql_counter_insert = """
+sql_remarks_insert = """
     insert into
-        counter (
+        remarks (
             thread_ts, event_ts, name, matter
         ) values (
             ?, ?, ?, ?
         )
 """
-sql_counter_delete_all = "delete from counter where thread_ts=?"
-sql_counter_delete_one = "delete from counter where event_ts=?"
+sql_remarks_delete_all = "delete from remarks where thread_ts=?"
+sql_remarks_delete_one = "delete from remarks where event_ts=?"
