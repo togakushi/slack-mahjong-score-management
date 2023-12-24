@@ -88,8 +88,8 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
-    tmpdate = c.search.getdata(command_option)
-    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+    tmpdate = f.search.getdata(command_option)
+    results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
     r = {}
     game_count = 0
@@ -253,8 +253,8 @@ def details(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
-    tmpdate = c.search.getdata(command_option)
-    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+    tmpdate = f.search.getdata(command_option)
+    results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
     padding = c.CountPadding(results)
     msg1 = "*【個人成績】*\n"
@@ -482,8 +482,8 @@ def versus(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
-    tmpdate = c.search.getdata(command_option)
-    results = c.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+    tmpdate = f.search.getdata(command_option)
+    results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
     msg2 = {}
     msg1 = "*【直接対戦結果】*\n"

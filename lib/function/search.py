@@ -3,6 +3,7 @@ import sqlite3
 from datetime import datetime
 
 import lib.command as c
+import lib.function as f
 from lib.function import global_value as g
 
 
@@ -220,7 +221,7 @@ def game_result(data, command_option):
                         tmp_msg += elements[x]["text"]
 
                 # 結果報告フォーマットに一致したポストの処理
-                msg = c.search.pattern(tmp_msg)
+                msg = f.search.pattern(tmp_msg)
                 if msg:
                     p1_name = c.NameReplace(msg[0], command_option, add_mark = False)
                     p2_name = c.NameReplace(msg[2], command_option, add_mark = False)

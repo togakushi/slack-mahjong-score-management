@@ -160,7 +160,7 @@ def handle_message_events(client, body):
                         )
 
     # 結果報告フォーマットに一致したポストの処理
-    msg = c.search.pattern(parameter["text"])
+    msg = f.search.pattern(parameter["text"])
     if msg:
         if not parameter["status"] == "message_deleted":
             f.check_score(client, parameter["channel_id"], parameter["event_ts"], parameter["user"], msg)

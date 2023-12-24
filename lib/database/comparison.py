@@ -67,13 +67,13 @@ def score_comparison(command_option):
     fts = None # slackのログの先頭の時刻
 
     # slackからログを取得
-    matches = c.search.slack_search(
+    matches = f.search.slack_search(
         g.config["search"].get("keyword", "終局"),
         g.config["search"].get("channel", "#麻雀部"),
     )
     command_option = f.configure.command_option_initialization("results")
     command_option["unregistered_replace"] = False # ゲスト無効
-    slack_data = c.search.game_result(matches, command_option)
+    slack_data = f.search.game_result(matches, command_option)
     if slack_data == None:
         return(count, ret_msg, fts)
 
@@ -274,7 +274,7 @@ def remarks_comparison(fts):
     db_data = {}
 
     # slackからデータ取得
-    matches = c.search.slack_search(
+    matches = f.search.slack_search(
         g.commandword["remarks_word"],
         g.config["search"].get("channel", "#麻雀部"),
     )
