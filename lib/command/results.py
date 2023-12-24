@@ -276,6 +276,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
     count_win = 0
     count_lose = 0
     count_draw = 0
+    count_gs = 0 # 役満(Grand Slum)
     versus_matrix = {}
     seat_rank = {
         "東家": [0, 0, 0, 0],
@@ -324,6 +325,8 @@ def details(starttime, endtime, target_player, target_count, command_option):
                 if eval(str(results[i][wind]["rpoint"])) < 0:
                     count_tobi += 1
                     seat_tobi[g.wind.index(wind)] += 1
+                if game_remarks:
+                    count_gs += 1
 
                 tmp_msg2 = "{}： {}位 {:>5}00点 ({:>+5.1f}){} {}\n".format(
                     results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
@@ -398,6 +401,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
             msg1 += "\t平均ポイント： {:+.1f}\n".format(point / sum(count_rank)).replace("-", "▲")
             for i in range(4):
                 msg1 += "\t{}位： {:2} 回 ({:.2%})\n".format(i + 1, count_rank[i], count_rank[i] / sum(count_rank))
+            msg1 += "\t役満： {:2} 回 ({:.2%})\n".format(count_gs, count_gs / sum(count_rank))
             if not g.config["mahjong"].getboolean("ignore_flying", False):
                 msg1 += "\tトビ： {} 回 ({:.2%})\n".format(count_tobi, count_tobi / sum(count_rank))
             msg1 += "\t平均順位： {:1.2f}\n".format(
