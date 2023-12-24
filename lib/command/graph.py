@@ -1,5 +1,4 @@
 import os
-import re
 
 import matplotlib.pyplot as plt
 from matplotlib import gridspec

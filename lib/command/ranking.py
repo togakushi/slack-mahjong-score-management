@@ -1,4 +1,3 @@
-import re
 import math
 
 import lib.command as c
