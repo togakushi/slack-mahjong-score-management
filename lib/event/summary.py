@@ -67,10 +67,12 @@ def handle_some_action(ack, body, client):
     msg2 = f.message.no_hits(starttime, endtime)
 
     if starttime and endtime:
-        msg1, msg2 = c.results.summary(starttime, endtime, target_player, target_count, command_option)
+        msg1, msg2, msg3 = c.results.summary(starttime, endtime, target_player, target_count, command_option)
         if msg1:
             res = f.slack_api.post_message(client, body["user"]["id"], msg2)
             f.slack_api.post_text(client, body["user"]["id"], res["ts"], "", msg1)
+        if msg3:
+            f.slack_api.post_message(client, body["user"]["id"], msg3, res["ts"])
 
     client.views_update(
         view_id = g.app_var["view_id"],
