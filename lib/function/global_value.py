@@ -112,7 +112,9 @@ commandword = { # チャンネル内呼び出しキーワード
     "graph": config["graph"].get("commandword", "麻雀グラフ"),
     "ranking": config["ranking"].get("commandword", "麻雀ランキング"),
     "check": config["database"].get("commandword", "麻雀成績チェック"),
+    "count": config["setting"].get("count_word", "麻雀成績カウント"),
 }
+
 app_var = { # ホームタブ用
     "user_id": None,
     "view_id": None,
@@ -120,6 +122,7 @@ app_var = { # ホームタブ用
     "sday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
     "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
 }
+
 ### slack api ###
 try:
     app = App(token = os.environ["SLACK_BOT_TOKEN"])
@@ -140,8 +143,7 @@ sql_result_insert = """
             p4_name, p4_str, p4_rpoint, p4_rank, p4_point,
             deposit,
             rule_version, comment
-        )
-        values (
+        ) values (
             ?, ?,
             ?, ?, ?, ?, ?,
             ?, ?, ?, ?, ?,
@@ -161,3 +163,13 @@ sql_result_update = """
     where ts=?
 """
 sql_result_delete = "delete from result where ts=?"
+sql_counter_insert = """
+    insert into
+        counter (
+            thread_ts, event_ts, name, matter
+        ) values (
+            ?, ?, ?, ?
+        )
+"""
+sql_counter_delete_all = "delete from counter where thread_ts=?"
+sql_counter_delete_one = "delete from counter where event_ts=?"

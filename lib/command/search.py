@@ -145,3 +145,95 @@ def game_select(starttime, endtime, target_player, target_count, results):
     g.logging.info(f"return record: {len(ret)}")
 
     return(ret)
+
+
+def slack_search(keyword, channel):
+    """
+    過去ログからキーワードを検索して返す
+
+    Parameters
+    ----------
+    keyword : text
+        検索キーワード
+
+    channel : text
+        チャンネルID
+
+    Returns
+    -------
+    matches : dict
+        検索した結果
+    """
+
+    g.logging.info(f"query:'{keyword} in:{channel}'")
+
+    ### データ取得 ###
+    response = g.webclient.search_messages(
+        query = f"{keyword} in:{channel}",
+        sort = "timestamp",
+        sort_dir = "asc",
+        count = 100
+    )
+    matches = response["messages"]["matches"] # 1ページ目
+
+    for p in range(2, response["messages"]["paging"]["pages"] + 1):
+        response = g.webclient.search_messages(
+            query = f"{keyword} in:{channel}",
+            sort = "timestamp",
+            sort_dir = "asc",
+            count = 100,
+            page = p
+        )
+        matches += response["messages"]["matches"] # 2ページ目以降
+
+    return(matches)
+
+
+def game_result(data, command_option):
+    """
+    slackの検索ログからゲームの結果を返す
+
+    Parameters
+    ----------
+    data : dict
+        slackの検索ログ
+
+    command_option : dict
+        検索オプション
+
+    Returns
+    -------
+    matches : dict
+        検索した結果
+    """
+
+    result = {}
+    for i in range(len(data)):
+        if "blocks" in data[i]:
+            ts = data[i]["ts"]
+            if "elements" in data[i]["blocks"][0]:
+                tmp_msg = ""
+                elements = data[i]["blocks"][0]["elements"][0]["elements"]
+
+                for x in range(len(elements)):
+                    if elements[x]["type"] == "text":
+                        tmp_msg += elements[x]["text"]
+
+                # 結果報告フォーマットに一致したポストの処理
+                msg = c.search.pattern(tmp_msg)
+                if msg:
+                    p1_name = c.NameReplace(msg[0], command_option, add_mark = False)
+                    p2_name = c.NameReplace(msg[2], command_option, add_mark = False)
+                    p3_name = c.NameReplace(msg[4], command_option, add_mark = False)
+                    p4_name = c.NameReplace(msg[6], command_option, add_mark = False)
+                    #g.logging.info("post data:[{} {} {}][{} {} {}][{} {} {}][{} {} {}]".format(
+                    #    "東家", p1_name, msg[1], "南家", p2_name, msg[3],
+                    #    "西家", p3_name, msg[5], "北家", p4_name, msg[7],
+                    #    )
+                    #)
+                    result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
+
+    if len(result) == 0:
+        return(None)
+    else:
+        return(result)

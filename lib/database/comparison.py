@@ -18,6 +18,9 @@ def slackpost(client, channel, event_ts, argument, command_option):
     channel : str
         post先のチャンネルID or ユーザーID
 
+    event_ts: text
+        スレッドに返す場合の返し先
+
     argument : list
         slackから受け取った引数
         解析対象のプレイヤー、検索範囲などが指定される
@@ -29,54 +32,62 @@ def slackpost(client, channel, event_ts, argument, command_option):
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 
-    # slackのログを取得
-    slack_data = slack_search(command_option)
+    # スコア突合
+    count, msg, fts = score_comparison(command_option)
+
+    # カウンター突合
+    if fts: # slackからスコア記録のログが見つかった場合のみチェック
+        counter_comparison(fts)
+
+    g.logging.notice("mismatch:{}, missing:{}, delete:{}, invalid_score: {}".format(
+        count["mismatch"],
+        count["missing"],
+        count["delete"],
+        count["invalid_score"],
+    ))
+
+    ret = f"*【データ突合】*\n"
+    ret += "＊ 不一致： {}件\n{}".format(count["mismatch"], msg["mismatch"])
+    ret += "＊ 取りこぼし：{}件\n{}".format(count["missing"], msg["missing"])
+    ret += "＊ 削除漏れ： {}件\n{}".format(count["delete"], msg["delete"])
+    if count["invalid_score"] > 0:
+        ret += "\n*【素点合計不一致】*\n"
+        ret += msg["invalid_score"]
+
+    f.slack_api.post_message(client, channel, ret, event_ts)
+
+
+def score_comparison(command_option):
+    """
+    スコア突合
+    """
+
+    ret_msg = {"mismatch": "", "missing": "", "delete": "", "invalid_score": ""}
+    count = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0}
+    fts = None # slackのログの先頭の時刻
+
+    # slackからログを取得
+    matches = c.search.slack_search(
+        g.config["search"].get("keyword", "終局"),
+        g.config["search"].get("channel", "#麻雀部"),
+    )
+    command_option = f.configure.command_option_initialization("results")
+    command_option["unregistered_replace"] = False # ゲスト無効
+    slack_data = c.search.game_result(matches, command_option)
     if slack_data == None:
-        return
+        return(count, ret_msg, fts)
 
     # データベースからデータを取得
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     cur = resultdb.cursor()
 
-    fts = list(slack_data.keys())[0] # slackのログの先頭の時刻
-    db_data = databese_search(cur, fts.split(".")[0] + ".0")
+    fts = list(slack_data.keys())[0]
+    db_data = database_search(cur, fts.split(".")[0] + ".0")
     if db_data == None:
-        return
+        return(count, ret_msg, fts)
 
     # 突合処理
-    count, msg1 = data_comparison(cur, slack_data, db_data, command_option)
-    g.logging.notice(f"mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
-
-    msg1["mismatch"] = "＊ 不一致： {}件\n{}".format(count["mismatch"], msg1["mismatch"])
-    msg1["missing"] = "＊ 取りこぼし：{}件\n{}".format(count["missing"], msg1["missing"])
-    msg1["delete"] = "＊ 削除漏れ： {}件\n{}".format(count["delete"], msg1["delete"])
-
-    # 素点合計の再チェック
-    msg2 =""
-    for i in slack_data.keys():
-        rpoint_data =[eval(slack_data[i][1]), eval(slack_data[i][3]), eval(slack_data[i][5]), eval(slack_data[i][7])]
-        deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
-        if not deposit == 0:
-            msg2 += "\t{} [供託：{}] {}\n".format(
-                datetime.fromtimestamp(float(i)).strftime('%Y/%m/%d %H:%M:%S'),
-                deposit, textformat(slack_data[i])
-            )
-    if msg2:
-        msg2 = "\n*【素点合計不一致】*\n" + msg2
-
-    msg = f"*【データ突合】*\n" + msg1["mismatch"] + msg1["missing"] + msg1["delete"] + msg2
-
-    f.slack_api.post_message(client, channel, msg, event_ts)
-
-    resultdb.commit()
-    resultdb.close()
-
-
-def data_comparison(cur, slack_data, db_data, command_option):
-    ret_msg = {"mismatch": "", "missing": "", "delete": ""}
-    count = {"mismatch": 0, "missing": 0, "delete": 0}
-
     slack_data2 = []
     for key in slack_data.keys():
         skey1 = key
@@ -101,7 +112,7 @@ def data_comparison(cur, slack_data, db_data, command_option):
         if flg:
             count["mismatch"] += 1
             #更新
-            g.logging.notice(f"[mismatch]: {skey}")
+            g.logging.notice(f"mismatch: {skey}")
             g.logging.info(f"   * [slack]: {slack_data[key]}")
             g.logging.info(f"   * [   db]: {db_data[skey]}")
             ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
@@ -113,7 +124,7 @@ def data_comparison(cur, slack_data, db_data, command_option):
 
         #追加
         count["missing"] += 1
-        g.logging.notice(f"[missing]: {key}, {slack_data[key]}")
+        g.logging.notice(f"missing: {key}, {slack_data[key]}")
         ret_msg["missing"] += "\t{} {}\n".format(
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(slack_data[key])
@@ -130,90 +141,31 @@ def data_comparison(cur, slack_data, db_data, command_option):
 
         # 削除
         count["delete"] += 1
-        g.logging.notice(f"[delete]: {key}, {db_data[key]}")
+        g.logging.notice(f"delete: {key}, {db_data[key]} (Only database)")
         ret_msg["delete"] += "\t{} {}\n".format(
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(db_data[key])
          )
         db_delete(cur, key)
 
-    return(count, ret_msg)
+    # 素点合計の再チェック
+    for i in slack_data.keys():
+        rpoint_data =[eval(slack_data[i][1]), eval(slack_data[i][3]), eval(slack_data[i][5]), eval(slack_data[i][7])]
+        deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
+        if not deposit == 0:
+            count["invalid_score"] += 1
+            ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(
+                datetime.fromtimestamp(float(i)).strftime('%Y/%m/%d %H:%M:%S'),
+                deposit, textformat(slack_data[i])
+            )
+
+    resultdb.commit()
+    resultdb.close()
+
+    return(count, ret_msg, fts)
 
 
-def slack_search(command_option):
-    """
-    過去ログからスコアを検索して返す
-
-    Parameters
-    ----------
-    command_option : dict
-        コマンドオプション
-
-    Returns
-    -------
-    data : dict
-        検索した結果
-    """
-
-    keyword = g.config["search"].get("keyword", "終局")
-    channel = g.config["search"].get("channel", "#麻雀部")
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
-    g.logging.info(f"query:'{keyword} in:{channel}' {command_option}")
-
-    ### データ取得 ###
-    response = g.webclient.search_messages(
-        query = f"{keyword} in:{channel}",
-        sort = "timestamp",
-        sort_dir = "asc",
-        count = 100
-    )
-    matches = response["messages"]["matches"] # 1ページ目
-
-    for p in range(2, response["messages"]["paging"]["pages"] + 1):
-        response = g.webclient.search_messages(
-            query = f"{keyword} in:{channel}",
-            sort = "timestamp",
-            sort_dir = "asc",
-            count = 100,
-            page = p
-        )
-        matches += response["messages"]["matches"] # 2ページ目以降
-
-    data = {}
-    for i in range(len(matches)):
-        if "blocks" in matches[i]:
-            ts = matches[i]["ts"]
-            if "elements" in matches[i]["blocks"][0]:
-                tmp_msg = ""
-                elements = matches[i]["blocks"][0]["elements"][0]["elements"]
-
-                for x in range(len(elements)):
-                    if elements[x]["type"] == "text":
-                        tmp_msg += elements[x]["text"]
-
-                # 結果報告フォーマットに一致したポストの処理
-                msg = c.search.pattern(tmp_msg)
-                if msg:
-                    p1_name = c.NameReplace(msg[0], command_option, add_mark = False)
-                    p2_name = c.NameReplace(msg[2], command_option, add_mark = False)
-                    p3_name = c.NameReplace(msg[4], command_option, add_mark = False)
-                    p4_name = c.NameReplace(msg[6], command_option, add_mark = False)
-                    #g.logging.info("post data:[{} {} {}][{} {} {}][{} {} {}][{} {} {}]".format(
-                    #    "東家", p1_name, msg[1], "南家", p2_name, msg[3],
-                    #    "西家", p3_name, msg[5], "北家", p4_name, msg[7],
-                    #    )
-                    #)
-                    data[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
-
-    # slackのログに記録が1件もない場合は何もしない
-    if len(data) == 0:
-        return(None)
-    else:
-        return(data)
-
-
-def databese_search(cur, first_ts = False):
+def database_search(cur, first_ts = False):
     """
     データベースからスコアを検索して返す
 
@@ -309,3 +261,107 @@ def textformat(text):
         ret += f"[{text[i]} {str(text[i + 1])}]"
 
     return(ret)
+
+
+def counter_comparison(fts):
+    """
+    カウンター突合
+    """
+
+    command_option = f.configure.command_option_initialization("results")
+    command_option["unregistered_replace"] = False # ゲスト無効
+    slack_data = {}
+    db_data = {}
+
+    # slackからデータ取得
+    matches = c.search.slack_search(
+        g.commandword["count"],
+        g.config["search"].get("channel", "#麻雀部"),
+    )
+
+    count = 0
+    for i in range(len(matches)):
+        event_ts = matches[i]["ts"]
+        text = matches[i]["text"]
+        permalink = matches[i]["permalink"]
+        if permalink.split("?thread_ts=")[1:]:
+            thread_ts = permalink.split("?thread_ts=")[1:][0]
+        else:
+            thread_ts = None
+
+        if re.match(rf"^{g.commandword['count']}", text):
+            if thread_ts:
+                for name, val in zip(text.split()[1:][0::2], text.split()[1:][1::2]):
+                    slack_data[count] = {
+                        "thread_ts": thread_ts,
+                        "event_ts": event_ts,
+                        "name": name,
+                        "matter": val,
+                    }
+                    g.logging.trace(f"slack: {slack_data[count]}")
+                    count += 1
+
+    slack_ts = set([slack_data[i]["event_ts"] for i in slack_data.keys()])
+
+    # データベースからデータ取得
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+    cur = resultdb.cursor()
+
+    count = 0
+    rows = cur.execute(f"select * from counter where thread_ts >= ?", (fts,))
+    for row in rows.fetchall():
+        db_data[count] = {
+            "thread_ts": row["thread_ts"],
+            "event_ts": row["event_ts"],
+            "name": row["name"],
+            "matter": row["matter"],
+        }
+        g.logging.trace(f"database: {db_data[count]}")
+        count += 1
+
+    db_ts = set([db_data[i]["event_ts"] for i in db_data.keys()])
+
+    # 突合処理
+    for x in slack_ts:
+        check_data_src = []
+        for i in slack_data.keys():
+            if slack_data[i]["event_ts"] == x:
+                check_data_src.append(slack_data[i])
+
+        check_data_dst = []
+        for i in db_data.keys():
+            if db_data[i]["event_ts"] == x:
+                check_data_dst.append(db_data[i])
+
+        # スレッド元をデータベースから検索
+        find_ts = []
+        for i in check_data_src:
+            rows = cur.execute("select ts from result where ts=?", (str(i["thread_ts"]),))
+            for row in rows.fetchall():
+                find_ts.append(row["ts"])
+
+        if find_ts: # スレッド元がある
+            if check_data_src == check_data_dst:
+                continue
+            else:
+                cur.execute(g.sql_counter_delete_one, (str(x),))
+                for update_data in check_data_src:
+                    cur.execute(g.sql_counter_insert, (
+                        update_data["thread_ts"],
+                        update_data["event_ts"],
+                        c.NameReplace(update_data["name"], command_option, add_mark = False),
+                        update_data["matter"],
+                    ))
+                    g.logging.info(f"update: {update_data}")
+        else: # スレッド元がないデータは不要
+            cur.execute(g.sql_counter_delete_one, (str(x),))
+            g.logging.info(f"delete: {x} (No thread origin)")
+
+    for x in db_ts:
+        if x not in slack_ts: # データベースにあってslackにない → 削除
+            cur.execute(g.sql_counter_delete_one, (str(x),))
+            g.logging.info(f"delete: {x} (Only database)")
+
+    resultdb.commit()
+    resultdb.close()

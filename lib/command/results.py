@@ -1,4 +1,5 @@
-import re
+import sqlite3
+from datetime import datetime
 
 import lib.command as c
 import lib.function as f
@@ -49,11 +50,12 @@ def slackpost(client, channel, event_ts, argument, command_option):
             for m in msg2.keys():
                 f.slack_api.post_message(client, channel, msg2[m] + '\n', res["ts"])
         else: # 成績サマリ
-            msg1, msg2 = summary(starttime, endtime, target_player, target_count, command_option)
+            msg1, msg2, msg3 = summary(starttime, endtime, target_player, target_count, command_option)
             res = f.slack_api.post_message(client, channel, msg2)
             if msg1:
                 f.slack_api.post_text(client, channel, res["ts"], "", msg1)
-
+            if msg3:
+                f.slack_api.post_message(client, channel, msg3, res["ts"])
 
 def summary(starttime, endtime, target_player, target_count, command_option):
     """
@@ -70,7 +72,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     target_player : list
         集計対象プレイヤー（空のときは全プレイヤーを対象にする）
 
-    target_count: int
+    target_count : int
         集計するゲーム数
 
     command_option : dict
@@ -78,7 +80,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
 
     Returns
     -------
-    msg1, msg2: text
+    msg1, msg2, msg3 : text
         slackにpostする内容
     """
 
@@ -117,7 +119,7 @@ def summary(starttime, endtime, target_player, target_count, command_option):
                 r[name]["tobi"] += 1
 
     if not (first_game or last_game):
-        return(None, f.message.no_hits(starttime, endtime))
+        return(None, f.message.no_hits(starttime, endtime), None)
 
     # 獲得ポイント順にソート
     tmp_r = {}
@@ -137,9 +139,10 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"name_list: {name_list}")
 
     # 表示
-    padding = c.CountPadding([f.translation.len_count(x) for x in name_list])
+    padding = c.CountPadding(name_list)
     msg1 = ""
     msg2 = "*【成績サマリ】*\n"
+    msg3 = ""
 
     if command_option["score_comparisons"]:
         header = "{} {}： 累積    / 点差 ##\n".format(
@@ -192,7 +195,22 @@ def summary(starttime, endtime, target_player, target_count, command_option):
 
     msg2 += f.remarks(command_option)
 
-    return(header + msg1, msg2)
+    # カウント表示
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+    rows = resultdb.execute("select * from counter where thread_ts between ? and ?",
+        (starttime.timestamp(), endtime.timestamp())
+    )
+    for row in rows.fetchall():
+        msg3 += "\t{}： {} （{}）\n".format(
+            datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M'),
+            row["name"],
+            row["matter"],
+        )
+    if msg3:
+        msg3 = "*【メモ】*\n" + msg3
+
+    return(header + msg1, msg2, msg3)
 
 
 def details(starttime, endtime, target_player, target_count, command_option):
