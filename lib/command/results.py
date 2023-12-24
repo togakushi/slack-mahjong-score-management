@@ -254,6 +254,9 @@ def details(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+
     tmpdate = f.search.getdata(command_option)
     results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
@@ -295,12 +298,19 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
         # 戦績
         for wind in g.wind[0:4]:
-            tmp_msg1 += "  {}： {}{} / {}位  {:>5}00点 ({}p)\n".format(
+            rows = resultdb.execute(
+                "select matter from remarks where thread_ts=? and name=?",
+                (str(results[i]["日付"].timestamp()), results[i][wind]["name"])
+            )
+            game_remarks = [row["matter"] for row in rows.fetchall()]
+
+            tmp_msg1 += "\t{}： {}{} / {}位 {:>5}00点 ({}p) {}\n".format(
                 wind, results[i][wind]["name"],
                 " " * (padding - f.translation.len_count(results[i][wind]["name"])),
                 results[i][wind]["rank"],
                 eval(str(results[i][wind]["rpoint"])),
                 results[i][wind]["point"],
+                ",".join(game_remarks),
             ).replace("-", "▲")
 
             if target_player[0] == results[i][wind]["name"]:
@@ -315,10 +325,13 @@ def details(starttime, endtime, target_player, target_count, command_option):
                     count_tobi += 1
                     seat_tobi[g.wind.index(wind)] += 1
 
-                tmp_msg2 = "{}： {}位 {:>5}00点 ({:>+5.1f}){}\n".format(
+                tmp_msg2 = "{}： {}位 {:>5}00点 ({:>+5.1f}){} {}\n".format(
                     results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S"),
-                    results[i][wind]["rank"], eval(str(results[i][wind]["rpoint"])), float(results[i][wind]["point"]),
+                    results[i][wind]["rank"],
+                    eval(str(results[i][wind]["rpoint"])),
+                    float(results[i][wind]["point"]),
                     gg_flag,
+                    ",".join(game_remarks),
                 ).replace("-", "▲")
 
         if command_option["verbose"] and tmp_msg2:
@@ -444,6 +457,7 @@ def details(starttime, endtime, target_player, target_count, command_option):
 
         msg1 += "\n" + f.remarks(command_option)
 
+    resultdb.close()
     return(msg1.strip(), msg2)
 
 

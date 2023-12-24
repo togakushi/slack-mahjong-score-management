@@ -61,7 +61,7 @@ def getdata(command_option):
 
     for row in rows.fetchall():
         data[count] = {
-            "日付": datetime.fromtimestamp(float(row["ts"])).replace(microsecond = 0),
+            "日付": datetime.fromtimestamp(float(row["ts"])),
             "東家": {"name": row["p1_name"], "rpoint": row["p1_rpoint"], "rank": row["p1_rank"], "point": row["p1_point"]},
             "南家": {"name": row["p2_name"], "rpoint": row["p2_rpoint"], "rank": row["p2_rank"], "point": row["p2_point"]},
             "西家": {"name": row["p3_name"], "rpoint": row["p3_rpoint"], "rank": row["p3_rank"], "point": row["p3_point"]},
