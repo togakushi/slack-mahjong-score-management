@@ -200,14 +200,14 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        "select * from remarks where thread_ts between ? and ? order by thread_ts",
+        "select * from remarks where thread_ts between ? and ? order by thread_ts,event_ts",
         (starttime.timestamp(), endtime.timestamp())
     )
     for row in rows.fetchall():
         name = c.NameReplace(row["name"], command_option)
         if name in name_list:
             msg3 += "\t{}： {} （{}）\n".format(
-                datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M'),
+                datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M:%S'),
                 row["matter"],
                 name,
             )
