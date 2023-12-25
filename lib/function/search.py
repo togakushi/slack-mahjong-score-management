@@ -52,39 +52,33 @@ def getdata(command_option):
 
     g.logging.info(f"command_option: {command_option}")
 
-    data = {}
-    count = 0
-
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute("select * from result where rule_version=?;", (g.rule_version,))
 
+    data = {}
+    count = 0
     for row in rows.fetchall():
-        data[count] = {
-            "日付": datetime.fromtimestamp(float(row["ts"])),
-            "東家": {"name": row["p1_name"], "rpoint": row["p1_rpoint"], "rank": row["p1_rank"], "point": row["p1_point"]},
-            "南家": {"name": row["p2_name"], "rpoint": row["p2_rpoint"], "rank": row["p2_rank"], "point": row["p2_point"]},
-            "西家": {"name": row["p3_name"], "rpoint": row["p3_rpoint"], "rank": row["p3_rank"], "point": row["p3_point"]},
-            "北家": {"name": row["p4_name"], "rpoint": row["p4_rpoint"], "rank": row["p4_rank"], "point": row["p4_point"]},
-        }
-        count += 1
-
-    resultdb.close()
-    g.logging.info(f"return record: {len(data)}")
-
-    # プレイヤー名の正規化、2ゲスト戦除外
-    for count in list(data.keys()):
-        guest_count = 0
-        for wind in g.wind[0:4]:
-            data[count][wind]["name"] = c.NameReplace(data[count][wind]["name"], command_option)
-
-            if g.guest_name in data[count][wind]["name"]:
-                guest_count += 1
+        p1_name = c.NameReplace(row["p1_name"], command_option)
+        p2_name = c.NameReplace(row["p2_name"], command_option)
+        p3_name = c.NameReplace(row["p3_name"], command_option)
+        p4_name = c.NameReplace(row["p4_name"], command_option)
+        guest_count = [p1_name, p2_name, p3_name, p4_name].count(g.guest_name)
 
         if command_option["guest_skip"] and guest_count >= 2:
-            pop = data.pop(count)
-            g.logging.trace(f"2ゲスト戦除外: {pop}")
+            g.logging.trace(f"2ゲスト戦除外: {row['ts']}, {p1_name}, {p2_name}, {p3_name}, {p4_name}")
+        else:
+            data[count] = {
+                "日付": datetime.fromtimestamp(float(row["ts"])),
+                "東家": {"name": p1_name, "rpoint": row["p1_rpoint"], "rank": row["p1_rank"], "point": row["p1_point"]},
+                "南家": {"name": p2_name, "rpoint": row["p2_rpoint"], "rank": row["p2_rank"], "point": row["p2_point"]},
+                "西家": {"name": p3_name, "rpoint": row["p3_rpoint"], "rank": row["p3_rank"], "point": row["p3_point"]},
+                "北家": {"name": p4_name, "rpoint": row["p4_rpoint"], "rank": row["p4_rank"], "point": row["p4_point"]},
+            }
+            count += 1
 
+    g.logging.info(f"return record: {len(data)}")
+    resultdb.close()
     return(data)
 
 
