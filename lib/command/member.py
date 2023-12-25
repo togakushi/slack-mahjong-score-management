@@ -40,7 +40,7 @@ def check_namepattern(name):
     return(True, "OK")
 
 
-def NameReplace(pname, command_option, add_mark = True):
+def NameReplace(pname, command_option, add_mark = False):
     """
     表記ブレ修正(正規化)
 

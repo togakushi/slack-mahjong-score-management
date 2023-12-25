@@ -116,7 +116,7 @@ def handle_message_events(client, body):
                         resultdb.execute(g.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
-                            c.NameReplace(name, command_option, add_mark = False),
+                            c.NameReplace(name, command_option),
                             val,
                         ))
                 case "message_changed":
@@ -126,7 +126,7 @@ def handle_message_events(client, body):
                         resultdb.execute(g.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
-                            c.NameReplace(name, command_option, add_mark = False),
+                            c.NameReplace(name, command_option),
                             val,
                         ))
                 case "message_deleted":

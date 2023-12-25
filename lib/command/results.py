@@ -89,8 +89,9 @@ def summary(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
-    tmpdate = f.search.getdata(command_option)
-    results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+    results = f.search.game_select(starttime, endtime, target_player, target_count, command_option)
+    target_player = [c.NameReplace(name, command_option, add_mark = True) for name in target_player] # ゲストマーク付きリストに更新
+    g.logging.info(f"target_player(update):  {target_player}")
 
     r = {}
     game_count = 0
@@ -254,11 +255,12 @@ def details(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
+    results = f.search.game_select(starttime, endtime, target_player, target_count, command_option)
+    target_player = [c.NameReplace(name, command_option, add_mark = True) for name in target_player] # ゲストマーク付きリストに更新
+    g.logging.info(f"target_player(update):  {target_player}")
+
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-
-    tmpdate = f.search.getdata(command_option)
-    results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
 
     padding = c.CountPadding(results)
     msg1 = "*【個人成績】*\n"
@@ -501,8 +503,9 @@ def versus(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
-    tmpdate = f.search.getdata(command_option)
-    results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+    results = f.search.game_select(starttime, endtime, target_player, target_count, command_option)
+    target_player = [c.NameReplace(name, command_option, add_mark = True) for name in target_player] # ゲストマーク付きリストに更新
+    g.logging.info(f"target_player(update):  {target_player}")
 
     msg2 = {}
     msg1 = "*【直接対戦結果】*\n"

@@ -35,54 +35,7 @@ def pattern(text):
     return(ret if "ret" in locals() else False)
 
 
-def getdata(command_option):
-    """
-    成績データ取得
-
-    Parameters
-    ----------
-    command_option : dict
-        コマンドオプション
-
-    Returns
-    -------
-    data : dict
-        変換、修正後の成績データ
-    """
-
-    g.logging.info(f"command_option: {command_option}")
-
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
-    rows = resultdb.execute("select * from result where rule_version=?;", (g.rule_version,))
-
-    data = {}
-    count = 0
-    for row in rows.fetchall():
-        p1_name = c.NameReplace(row["p1_name"], command_option)
-        p2_name = c.NameReplace(row["p2_name"], command_option)
-        p3_name = c.NameReplace(row["p3_name"], command_option)
-        p4_name = c.NameReplace(row["p4_name"], command_option)
-        guest_count = [p1_name, p2_name, p3_name, p4_name].count(g.guest_name)
-
-        if command_option["guest_skip"] and guest_count >= 2:
-            g.logging.trace(f"2ゲスト戦除外: {row['ts']}, {p1_name}, {p2_name}, {p3_name}, {p4_name}")
-        else:
-            data[count] = {
-                "日付": datetime.fromtimestamp(float(row["ts"])),
-                "東家": {"name": p1_name, "rpoint": row["p1_rpoint"], "rank": row["p1_rank"], "point": row["p1_point"]},
-                "南家": {"name": p2_name, "rpoint": row["p2_rpoint"], "rank": row["p2_rank"], "point": row["p2_point"]},
-                "西家": {"name": p3_name, "rpoint": row["p3_rpoint"], "rank": row["p3_rank"], "point": row["p3_point"]},
-                "北家": {"name": p4_name, "rpoint": row["p4_rpoint"], "rank": row["p4_rank"], "point": row["p4_point"]},
-            }
-            count += 1
-
-    g.logging.info(f"return record: {len(data)}")
-    resultdb.close()
-    return(data)
-
-
-def game_select(starttime, endtime, target_player, target_count, results):
+def game_select(starttime, endtime, target_player, target_count, command_option):
     """
     集計対象のゲームを選択
 
@@ -100,8 +53,8 @@ def game_select(starttime, endtime, target_player, target_count, results):
     target_count: int
         集計するゲーム数
 
-    results: dict
-        チェック対象の結果
+    command_option : dict
+        コマンドオプション
 
     Returns
     -------
@@ -109,37 +62,57 @@ def game_select(starttime, endtime, target_player, target_count, results):
         条件に合致したゲーム結果
     """
 
-    ret = {}
-    if target_count == 0:
-        g.logging.info(f"date range: {starttime} {endtime} target_player: {target_player}")
-        for i in results.keys():
-            if starttime < results[i]["日付"] and endtime > results[i]["日付"]:
-                g.logging.trace(f"{i}: {results[i]}")
-                ret[i] = results[i]
-    else:
-        g.logging.info(f"target_count: {target_count} target_player: {target_player}")
-        chk_count = 0
-        for i in sorted(results.keys(), reverse = True):
-            if len(target_player) == 0:
-                ret[i] = results[i]
-                chk_count += 1
-            else:
-                for name in target_player:
-                    if name in [results[i][wind]["name"] for wind in g.wind[0:4]]:
-                        ret[i] = results[i]
-                        chk_count += 1
-                        break
-            if chk_count >= target_count:
-                break
+    g.logging.info(f"date range: {starttime} {endtime}, target_count: {target_count}")
+    g.logging.info(f"target_player: {target_player}")
 
-        tmp = {}
-        for i in sorted(ret):
-            tmp[i] = ret[i]
-        ret = tmp
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
 
-    g.logging.info(f"return record: {len(ret)}")
+    if target_count != 0 and len(target_player) == 0: # プレイヤー指定なしの直近N回
+        sql = "select * from (select * from result where rule_version=? order by playtime desc limit ?) order by playtime"
+        placeholder = [g.rule_version, target_count]
+    elif target_count != 0 and len(target_player) != 0: # プレイヤー指定ありの直近N回
+        sql = "select * from (select * from result where rule_version=? and ("
+        sql += " or".join([" ? in (p1_name, p2_name, p3_name, p4_name)" for i in target_player])
+        sql += ") order by playtime desc limit ?) order by playtime"
+        placeholder = [g.rule_version] + target_player + [target_count]
+    elif target_count == 0 and len(target_player) != 0: # プレイヤー指定あり
+        sql = "select * from result where rule_version=? and playtime between ? and ? and ("
+        sql += " or".join([" ? in (p1_name, p2_name, p3_name, p4_name)" for i in target_player]) + ")"
+        placeholder = [g.rule_version, starttime, endtime] + target_player
+    else: # 条件なし
+        sql = "select * from result where rule_version=? and playtime between ? and ?"
+        placeholder = [g.rule_version, starttime, endtime]
 
-    return(ret)
+    g.logging.trace(f"sql: {sql}")
+    g.logging.trace(f"placeholder: {placeholder}")
+    rows = resultdb.execute(sql, placeholder)
+
+    data = {}
+    count = 0
+    for row in rows.fetchall():
+        p1_name = c.NameReplace(row["p1_name"], command_option, add_mark = True)
+        p2_name = c.NameReplace(row["p2_name"], command_option, add_mark = True)
+        p3_name = c.NameReplace(row["p3_name"], command_option, add_mark = True)
+        p4_name = c.NameReplace(row["p4_name"], command_option, add_mark = True)
+        guest_count = [p1_name, p2_name, p3_name, p4_name].count(g.guest_name)
+
+        if command_option["guest_skip"] and guest_count >= 2:
+            g.logging.trace(f"2ゲスト戦除外: {row['ts']}, {p1_name}, {p2_name}, {p3_name}, {p4_name}")
+        else:
+            data[count] = {
+                "日付": datetime.fromtimestamp(float(row["ts"])),
+                "東家": {"name": p1_name, "rpoint": row["p1_rpoint"], "rank": row["p1_rank"], "point": row["p1_point"]},
+                "南家": {"name": p2_name, "rpoint": row["p2_rpoint"], "rank": row["p2_rank"], "point": row["p2_point"]},
+                "西家": {"name": p3_name, "rpoint": row["p3_rpoint"], "rank": row["p3_rank"], "point": row["p3_point"]},
+                "北家": {"name": p4_name, "rpoint": row["p4_rpoint"], "rank": row["p4_rank"], "point": row["p4_point"]},
+            }
+            g.logging.trace(f"{count}: {data[count]}")
+            count += 1
+
+    g.logging.info(f"return record: {len(data)}")
+    resultdb.close()
+    return(data)
 
 
 def slack_search(keyword, channel):
@@ -217,10 +190,10 @@ def game_result(data, command_option):
                 # 結果報告フォーマットに一致したポストの処理
                 msg = f.search.pattern(tmp_msg)
                 if msg:
-                    p1_name = c.NameReplace(msg[0], command_option, add_mark = False)
-                    p2_name = c.NameReplace(msg[2], command_option, add_mark = False)
-                    p3_name = c.NameReplace(msg[4], command_option, add_mark = False)
-                    p4_name = c.NameReplace(msg[6], command_option, add_mark = False)
+                    p1_name = c.NameReplace(msg[0], command_option)
+                    p2_name = c.NameReplace(msg[2], command_option)
+                    p3_name = c.NameReplace(msg[4], command_option)
+                    p4_name = c.NameReplace(msg[6], command_option)
                     #g.logging.info("post data:[{} {} {}][{} {} {}][{} {} {}][{} {} {}]".format(
                     #    "東家", p1_name, msg[1], "南家", p2_name, msg[3],
                     #    "西家", p3_name, msg[5], "北家", p4_name, msg[7],

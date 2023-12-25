@@ -350,7 +350,7 @@ def remarks_comparison(fts):
                     cur.execute(g.sql_remarks_insert, (
                         update_data["thread_ts"],
                         update_data["event_ts"],
-                        c.NameReplace(update_data["name"], command_option, add_mark = False),
+                        c.NameReplace(update_data["name"], command_option),
                         update_data["matter"],
                     ))
                     g.logging.info(f"update: {update_data}")

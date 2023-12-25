@@ -134,8 +134,9 @@ def getdata(starttime, endtime, target_player, target_count, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
-    tmpdate = f.search.getdata(command_option)
-    results = f.search.game_select(starttime, endtime, target_player, target_count, tmpdate)
+    results = f.search.game_select(starttime, endtime, target_player, target_count, command_option)
+    target_player = [c.NameReplace(name, command_option, add_mark = True) for name in target_player] # ゲストマーク付きリストに更新
+    g.logging.info(f"target_player(update):  {target_player}")
 
     ranking_data = {}
     origin_point = g.config["mahjong"].getint("point", 250) # 配給原点

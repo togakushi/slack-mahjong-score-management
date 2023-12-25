@@ -74,9 +74,13 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         グラフにプロットしたゲーム数
     """
 
-    g.logging.info(f"date range: {starttime} {endtime} {target_player} {target_count} {command_option}")
-    tmpdate = f.search.getdata(command_option)
-    results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"target_player: {target_player}")
+    g.logging.info(f"command_option: {command_option}")
+
+    results = f.search.game_select(starttime, endtime, target_player, target_count, command_option)
+    target_player = [c.NameReplace(name, command_option, add_mark = True) for name in target_player] # ゲストマーク付きリストに更新
+    g.logging.info(f"target_player(update):  {target_player}")
 
     ### データ抽出 ###
     gdata = {}
@@ -261,10 +265,13 @@ def plot_personal(starttime, endtime, target_player, target_count, command_optio
 
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
+    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"target_player: {target_player}")
+    g.logging.info(f"command_option: {command_option}")
 
-    g.logging.info(f"date range: {starttime} {endtime} {target_player} {target_count} {command_option}")
-    tmpdate = f.search.getdata(command_option)
-    results = f.search.game_select(starttime, endtime, target_player, target_count,tmpdate)
+    results = f.search.game_select(starttime, endtime, target_player, target_count, command_option)
+    target_player = [c.NameReplace(name, command_option, add_mark = True) for name in target_player] # ゲストマーク付きリストに更新
+    g.logging.info(f"target_player(update):  {target_player}")
 
     ### データ抽出 ###
     game_point = []
