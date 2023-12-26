@@ -21,7 +21,7 @@ SELECT
     name AS プレイヤー名,
     count() AS ゲーム数,
     round(sum(point), 1) AS 累積ポイント,
-    round(CAST(sum(point) AS REAL) / CAST(count() AS REAL), 1) AS 平均ポイント,
+    round(avg(point), 1) AS 平均ポイント,
     count(rank = 1 OR NULL) AS "1位",
     count(rank = 2 OR NULL) AS "2位",
     count(rank = 3 OR NULL) AS "3位",
