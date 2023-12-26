@@ -31,8 +31,8 @@ SELECT
     printf("%.2f%", round(CAST(count(rank <= 2 OR NULL) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS 連対率,
     printf("%.2f%", round(CAST(count(rank <= 3 OR NULL) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS ラス回避率,
     printf("%.2f%", round(CAST(count(rank = 4  OR NULL) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS ラス率,
-    count(CASE WHEN rpoint < -1  THEN 1 END) AS トビ,
-    printf("%.2f%", round(CAST(count(rpoint < -1 OR NULL) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS トビ率,
+    count(rpoint < 0 OR NULL) AS トビ,
+    printf("%.2f%", round(CAST(count(rpoint < 0 OR NULL) AS REAL) / CAST(count() AS REAL) * 100, 2)) AS トビ率,
     max(rpoint) AS 最大素点,
     min(rpoint) AS 最小素点,
     round(avg(rpoint), 1) AS 平均素点
