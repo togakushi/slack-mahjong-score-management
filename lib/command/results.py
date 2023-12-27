@@ -14,7 +14,7 @@ def __select_game__(argument, command_option):
     g.logging.info(f"target_player: {target_player}")
     g.logging.info(f"command_option: {command_option}")
 
-    sql = f"""
+    sql = """
         --[recent] select * from (
         select
             name,
@@ -140,8 +140,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
             for m in msg2.keys():
                 f.slack_api.post_message(client, channel, msg2[m] + '\n', res["ts"])
         else: # 成績サマリ
-            #msg1, msg2, msg3 = summary(starttime, endtime, target_player, target_count, command_option)
-            msg1, msg2, msg3 = summary2(argument, command_option)
+            msg1, msg2, msg3 = summary(argument, command_option)
             res = f.slack_api.post_message(client, channel, msg2)
             if msg1:
                 f.slack_api.post_text(client, channel, res["ts"], "", msg1)
@@ -149,168 +148,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
                 f.slack_api.post_message(client, channel, msg3, res["ts"])
 
 
-def summary(starttime, endtime, target_player, target_count, command_option):
-    """
-    各プレイヤーの累積ポイントを表示
-
-    Parameters
-    ----------
-    starttime : date
-        集計開始日時
-
-    endtime : date
-        集計終了日時
-
-    target_player : list
-        集計対象プレイヤー（空のときは全プレイヤーを対象にする）
-
-    target_count : int
-        集計するゲーム数
-
-    command_option : dict
-        コマンドオプション
-
-    Returns
-    -------
-    msg1, msg2, msg3 : text
-        slackにpostする内容
-    """
-
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
-
-    results = f.search.game_select(starttime, endtime, target_player, target_count, command_option)
-    target_player = [c.NameReplace(name, command_option, add_mark = True) for name in target_player] # ゲストマーク付きリストに更新
-    g.logging.info(f"target_player(update):  {target_player}")
-
-    r = {}
-    game_count = 0
-    tobi_count = 0
-    first_game = False
-    last_game = False
-
-    for i in results.keys():
-        if not first_game:
-            first_game = results[i]["日付"]
-        last_game = results[i]["日付"]
-        game_count += 1
-
-        for wind in g.wind[0:4]: # 成績計算
-            name = results[i][wind]["name"]
-
-            if not name in r:
-                r[name] = {
-                    "total": 0,
-                    "rank": [0, 0, 0, 0],
-                    "tobi": 0,
-                }
-            r[name]["total"] += round(results[i][wind]["point"], 2)
-            r[name]["rank"][results[i][wind]["rank"] -1] += 1
-
-            if eval(str(results[i][wind]["rpoint"])) < 0:
-                r[name]["tobi"] += 1
-
-    if not (first_game or last_game):
-        return(None, f.message.no_hits(starttime, endtime), None)
-
-    # 獲得ポイント順にソート
-    tmp_r = {}
-    name_list = []
-
-    for i in r.keys():
-        tmp_r[i] = r[i]["total"]
-
-    for name, point in sorted(tmp_r.items(), key=lambda x:x[1], reverse=True):
-        if name in ("全員", "all"):
-            continue
-        if not command_option["guest_skip"] and name == g.guest_name:
-            continue
-        if not len(target_player) == 0 and not name in target_player:
-            continue
-        name_list.append(name)
-    g.logging.info(f"name_list: {name_list}")
-
-    # 表示
-    padding = c.CountPadding(name_list)
-    msg1 = ""
-    msg2 = "*【成績サマリ】*\n"
-    msg3 = ""
-
-    if command_option["score_comparisons"]:
-        header = "{} {}： 累積    / 点差 ##\n".format(
-            "## 名前", " " * (padding - f.translation.len_count(name) - 2),
-        )
-        for name in name_list:
-            tobi_count += r[name]["tobi"]
-            if name_list.index(name) == 0:
-                msg1 += "{} {}： {:>+6.1f} / *****\n".format(
-                    name, " " * (padding - f.translation.len_count(name)),
-                    r[name]["total"],
-                ).replace("-", "▲").replace("*", "-")
-            else:
-                msg1 += "{} {}： {:>+6.1f} / {:>5.1f}\n".format(
-                    name, " " * (padding - f.translation.len_count(name)),
-                    r[name]["total"],
-                    r[name_list[name_list.index(name) - 1]]["total"] - r[name]["total"],
-                ).replace("-", "▲")
-    else:
-        header = "## 名前 : 累積 (平均) / 順位分布 (平均)"
-        if g.config["mahjong"].getboolean("ignore_flying", False):
-            header += " ##\n"
-        else:
-            header +=" / トビ ##\n"
-        for name in name_list:
-            tobi_count += r[name]["tobi"]
-            msg1 += "{} {}： {:>+6.1f} ({:>+5.1f})".format(
-                name, " " * (padding - f.translation.len_count(name)),
-                r[name]["total"],
-                r[name]["total"] / sum(r[name]["rank"]),
-            ).replace("-", "▲")
-            msg1 += " / {}-{}-{}-{} ({:1.2f})".format(
-                r[name]["rank"][0], r[name]["rank"][1], r[name]["rank"][2], r[name]["rank"][3],
-                sum([r[name]["rank"][i] * (i + 1) for i in range(4)]) / sum(r[name]["rank"]),
-            )
-            if g.config["mahjong"].getboolean("ignore_flying", False):
-                msg1 += "\n"
-            else:
-                msg1 += f" / {r[name]['tobi']}\n"
-
-    if target_count == 0:
-        msg2 += f"\t検索範囲：{starttime.strftime('%Y/%m/%d %H:%M')} ～ {endtime.strftime('%Y/%m/%d %H:%M')}\n"
-    msg2 += f"\t最初のゲーム：{first_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
-    msg2 += f"\t最後のゲーム：{last_game.strftime('%Y/%m/%d %H:%M:%S')}\n"
-    msg2 += f"\t総ゲーム回数： {game_count} 回"
-    if g.config["mahjong"].getboolean("ignore_flying", False):
-        msg2 += "\n"
-    else:
-        msg2 += f" / トバされた人（延べ）： {tobi_count} 人\n"
-
-    msg2 += f.remarks(command_option)
-
-    # メモ表示
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
-    rows = resultdb.execute(
-        "select * from remarks where thread_ts between ? and ? order by thread_ts,event_ts",
-        (starttime.timestamp(), endtime.timestamp())
-    )
-    for row in rows.fetchall():
-        name = c.NameReplace(row["name"], command_option)
-        if name in name_list:
-            msg3 += "\t{}： {} （{}）\n".format(
-                datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M:%S'),
-                row["matter"],
-                name,
-            )
-
-    if msg3:
-        msg3 = "*【メモ】*\n" + msg3
-
-    return(header + msg1, msg2, msg3)
-
-
-def summary2(argument, command_option):
+def summary(argument, command_option):
     """
     各プレイヤーの累積ポイントを表示
 
@@ -357,8 +195,11 @@ def summary2(argument, command_option):
     if len(results) == 0: # 結果が0件のとき
         return(None, f.message.no_hits(ret["starttime"], ret["endtime"]), None)
 
-    # --- 情報ヘッダ
+    msg1 = ""
     msg2 = "*【成績サマリ】*\n"
+    msg3 = ""
+
+    # --- 情報ヘッダ
     if ret["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
         msg2 += "\t検索範囲：{} ～ {}\n".format(
             ret["starttime"].strftime('%Y/%m/%d %H:%M'), ret["endtime"].strftime('%Y/%m/%d %H:%M'),
@@ -386,7 +227,6 @@ def summary2(argument, command_option):
 
     # --- 集計結果
     padding = c.CountPadding(list(set(name_list)))
-    msg1 = ""
     if command_option["score_comparisons"]: # 差分表示
         header = "## {} {}： 累積    / 点差 ##\n".format(
             "名前", " " * (padding - f.translation.len_count("名前") - 4),
@@ -430,20 +270,20 @@ def summary2(argument, command_option):
             else:
                 msg1 += f" / {results[name]['flying']}\n"
 
-    # --- メモ表示
-    msg3 = ""
-    rows = resultdb.execute(
-        "select * from remarks where thread_ts between ? and ? order by thread_ts,event_ts",
-        (ret["starttime"].timestamp(), ret["endtime"].timestamp())
-    )
-    for row in rows.fetchall():
-        name = c.NameReplace(row["name"], command_option)
-        if name in name_list:
-            msg3 += "\t{}： {} （{}）\n".format(
-                datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M:%S'),
-                row["matter"],
-                name,
-            )
+        # --- メモ表示
+        rows = resultdb.execute(
+            "select * from remarks where thread_ts between ? and ? order by thread_ts,event_ts",
+            (ret["starttime"].timestamp(), ret["endtime"].timestamp())
+        )
+        for row in rows.fetchall():
+            name = c.NameReplace(row["name"], command_option)
+            if name in name_list:
+                msg3 += "\t{}： {} （{}）\n".format(
+                    datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M:%S'),
+                    row["matter"],
+                    name,
+                )
+
     if msg3:
         msg3 = "*【メモ】*\n" + msg3
 
