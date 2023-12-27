@@ -148,8 +148,9 @@ def argument_analysis(argument, command_option):
 
     # 日付再取得のために再帰呼び出し
     if command_option["recursion"] and len(target_days) == 0:
-        command_option["recursion"] = False
+        command_option["recursion"] = False # ループ防止
         target_days, dummy, dummy, dummy = argument_analysis(command_option["aggregation_range"], command_option)
+        command_option["recursion"] = True # 元に戻す
 
     g.logging.info(f"return: target_days: {target_days} target_count: {target_count}")
     g.logging.info(f"return: target_player: {target_player}")
