@@ -77,7 +77,7 @@ def handle_message_events(client, body):
     # 成績管理系コマンド
     if re.match(rf"^{g.commandword['results']}", parameter["text"]):
         command_option = f.configure.command_option_initialization("results")
-        c.results.slackpost(client, parameter["channel_id"], parameter["event_ts"], argument, command_option)
+        c.results.__main__.slackpost(client, parameter["channel_id"], parameter["event_ts"], argument, command_option)
         return
     if re.match(rf"^{g.commandword['graph']}", parameter["text"]):
         command_option = f.configure.command_option_initialization("graph")

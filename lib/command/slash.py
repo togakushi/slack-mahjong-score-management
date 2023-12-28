@@ -43,7 +43,7 @@ def slash_command(ack, body, client):
         if subcom.lower() in subcommand_list("results"):
             command_option = f.configure.command_option_initialization("results")
             g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
-            c.results.slackpost(client, user_id, event_ts, argument, command_option)
+            c.results.__main__.slackpost(client, user_id, event_ts, argument, command_option)
             return
 
         if subcom.lower() in subcommand_list("graph"):
