@@ -163,7 +163,7 @@ def count_game(argument, command_option):
     }
 
 
-def summary(argument, command_option):
+def aggregation(argument, command_option):
     """
     各プレイヤーの累積ポイントを表示
 

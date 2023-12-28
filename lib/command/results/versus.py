@@ -6,7 +6,7 @@ import lib.function as f
 from lib.function import global_value as g
 
 
-def versus(starttime, endtime, target_player, target_count, command_option):
+def aggregation(starttime, endtime, target_player, target_count, command_option):
     """
     直接対戦結果を集計して返す
 

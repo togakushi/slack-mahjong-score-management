@@ -67,7 +67,7 @@ def handle_some_action(ack, body, client):
     msg2 = f.message.no_hits(starttime, endtime)
 
     if starttime and endtime:
-        msg1, msg2, msg3 = c.results.summary.summary(argument, command_option)
+        msg1, msg2, msg3 = c.results.summary.aggregation(argument, command_option)
         if msg1:
             res = f.slack_api.post_message(client, body["user"]["id"], msg2)
             f.slack_api.post_text(client, body["user"]["id"], res["ts"], "", msg1)
