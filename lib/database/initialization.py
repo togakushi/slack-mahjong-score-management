@@ -79,6 +79,7 @@ def initialization_resultdb():
         create view if not exists individual_results as
             select
                 datetime(playtime) as playtime,
+                ts,
                 1 as seat,
                 p1_name as name,
                 p1_rpoint as rpoint,
@@ -99,6 +100,7 @@ def initialization_resultdb():
                 member on p1_name = name
             union select
                 datetime(playtime),
+                ts,
                 2,
                 p2_name,
                 p2_rpoint,
@@ -119,6 +121,7 @@ def initialization_resultdb():
                 member on p2_name = name
             union select
                 datetime(playtime),
+                ts,
                 3,
                 p3_name,
                 p3_rpoint,
@@ -139,6 +142,7 @@ def initialization_resultdb():
                 member on p3_name = name
             union select
                 datetime(playtime),
+                ts,
                 4,
                 p4_name,
                 p4_rpoint,
@@ -166,6 +170,7 @@ def initialization_resultdb():
         create view if not exists game_results as
             select
                 datetime(playtime) as playtime,
+                ts,
                 p1_name, p1.name isnull as p1_guest, p1_rpoint, p1_rank, p1_point,
                 p2_name, p2.name isnull as p2_guest, p2_rpoint, p2_rank, p2_point,
                 p3_name, p3.name isnull as p3_guest, p3_rpoint, p3_rank, p3_point,
