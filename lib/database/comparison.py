@@ -295,7 +295,7 @@ def remarks_comparison(fts):
                     slack_data[count] = {
                         "thread_ts": thread_ts,
                         "event_ts": event_ts,
-                        "name": name,
+                        "name": c.NameReplace(name, command_option),
                         "matter": val,
                     }
                     g.logging.trace(f"slack: {slack_data[count]}")
