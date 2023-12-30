@@ -105,6 +105,7 @@ guest_name = config["member"].get("guest_name", "ゲスト")
 guest_mark = config["setting"].get("guest_mark", "※")
 reaction_ok = config["setting"].get("reaction_ok", "ok")
 reaction_ng = config["setting"].get("reaction_ng", "ng")
+font_file = config["setting"].get("font_file", "ipaexg.ttf")
 rule_version = config["mahjong"].get("rule_version", "")
 channel_limitations = config["database"].get("channel_limitations", "")
 commandword = { # チャンネル内呼び出しキーワード

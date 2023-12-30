@@ -1,8 +1,8 @@
 import os
 
+import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-from matplotlib.font_manager import FontProperties
 
 import lib.command as c
 import lib.function as f
@@ -75,10 +75,11 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         rank_avg.append(round(rank_sum / (len(rank_avg) + 1), 2))
 
     ### グラフ生成 ###
-    fp = FontProperties(
-        fname = os.path.join(os.path.realpath(os.path.curdir), "ipaexg.ttf"),
-        size = 9,
-    )
+    # --- グラフフォント設定
+    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
+    fm.fontManager.addfont(font_path)
+    font_prop = fm.FontProperties(fname = font_path)
+    plt.rcParams["font.family"] = font_prop.get_name()
 
     plt.style.use("ggplot")
 
@@ -104,17 +105,17 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         title_text = f"『{target_player[0]}』の成績 (直近 {target_count} ゲーム)"
 
     grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [3, 1])
-    fig.suptitle(title_text, fontproperties = fp, fontsize = 12)
+    fig.suptitle(title_text, fontsize = 12)
 
     # 累積推移
     point_ax = fig.add_subplot(grid[0])
-    point_ax.set_ylabel("ポイント", fontproperties = fp)
+    point_ax.set_ylabel("ポイント")
     point_ax.set_xlim(-1, len(game_time))
     point_ax.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-    point_ax.plot(game_time, stacked_point, marker = "o", markersize = 3, label = f"累積ポイント({str(total_point)}p)".replace("-", "▲"))
+    point_ax.plot(game_time, stacked_point, marker = "o", markersize = 3, label = f"累積ポイント({str(total_point)}pt)".replace("-", "▲"))
     point_ax.bar(game_time, game_point, color = "dodgerblue", label = f"獲得ポイント")
     point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white") # 背景色と同じにして見えなくする
-    point_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
+    point_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0)
 
     ticks = point_ax.get_yticks()
     point_ax.set_yticks(ticks[1:-1])
@@ -124,14 +125,14 @@ def plot(starttime, endtime, target_player, target_count, command_option):
     # 順位分布
     rank_ax = fig.add_subplot(grid[1], sharex = point_ax)
     rank_ax.invert_yaxis()
-    rank_ax.set_ylabel("順位", fontproperties = fp)
-    rank_ax.set_xlabel(_xlabel, fontproperties = fp)
+    rank_ax.set_ylabel("順位")
+    rank_ax.set_xlabel(_xlabel)
     rank_ax.set_xlim(-1, len(game_time))
     rank_ax.set_ylim(4.2, 0.8)
     rank_ax.hlines(y = 2.5, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
     rank_ax.plot(game_time, game_rank, marker = "o", markersize = 3, label = f"獲得順位")
     rank_ax.plot(game_time, rank_avg, marker = "o", markersize = 3, label = f"平均順位({rank_avg[-1]})")
-    rank_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0, prop = fp)
+    rank_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0)
 
     plt.setp(rank_ax.get_xticklabels(), rotation = rotation, ha = position)
     fig.tight_layout()

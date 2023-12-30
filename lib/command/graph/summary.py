@@ -1,8 +1,8 @@
 import os
 
+import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-from matplotlib.font_manager import FontProperties
 
 import lib.command as c
 import lib.function as f
@@ -122,10 +122,11 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         count += 1
 
     ### グラフ生成 ###
-    fp = FontProperties(
-        fname = os.path.join(os.path.realpath(os.path.curdir), "ipaexg.ttf"),
-        size = 9,
-    )
+    # --- グラフフォント設定
+    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
+    fm.fontManager.addfont(font_path)
+    font_prop = fm.FontProperties(fname = font_path)
+    plt.rcParams["font.family"] = font_prop.get_name()
 
     fig = plt.figure()
     plt.style.use("ggplot")
@@ -156,9 +157,9 @@ def plot(starttime, endtime, target_player, target_count, command_option):
             title_text = f"ポイント推移 (直近 {target_count} ゲーム)"
 
     plt.hlines(y = 0, xmin = -1, xmax = len(game_time), linewidth = 0.5, linestyles="dashed", color = "grey")
-    plt.title(title_text, fontproperties = fp, fontsize = 12)
-    plt.ylabel(_ylabel, fontproperties = fp)
-    plt.xlabel(_xlabel, fontproperties = fp)
+    plt.title(title_text, fontsize = 12)
+    plt.ylabel(_ylabel)
+    plt.xlabel(_xlabel)
 
     if command_option["order"]:
         p = len(interim_rank)
@@ -186,7 +187,6 @@ def plot(starttime, endtime, target_player, target_count, command_option):
         loc = "upper left",
         borderaxespad = 0,
         ncol = int(len(player_list) / 30 + 1),
-        prop = fp,
     )
 
     # Y軸修正
