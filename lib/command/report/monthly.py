@@ -62,20 +62,23 @@ def plot(argument, command_option):
     ret = select_data(argument, command_option)
     rows = resultdb.execute(ret["sql"], ret["placeholder"])
 
-    # ---
+    # --- データ収集
     results = {}
     for row in rows.fetchall():
         results[row["集計月"]] = dict(row)
         g.logging.trace(f"{row['集計月']}: {results[row['集計月']]}")
     g.logging.info(f"return record: {len(results)}")
 
+    resultdb.close()
+
+    # --- グラフフォント設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), "ipaexg.ttf") #IPAexGothic
     fm.fontManager.addfont(font_path)
-    font_prop = fm.FontProperties(fname=font_path)
+    font_prop = fm.FontProperties(fname = font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
 
     column_labels = list(results[list(results.keys())[0]].keys())
-    column_color = ["#00ced1" for i in results.keys()]
+    column_color = ["#000080" for i in column_labels]
 
     cell_param = []
     cell_color = []
@@ -84,25 +87,29 @@ def plot(argument, command_option):
         line_count += 1
         cell_param.append([results[x][y] for y in column_labels])
         if int(line_count % 2):
-            cell_color.append(["#FFFFFF" for i in column_labels])
+            cell_color.append(["#ffffff" for i in column_labels])
         else:
-            cell_color.append(["#afeeee" for i in column_labels])
+            cell_color.append(["#dddddd" for i in column_labels])
 
     report_file_path = os.path.join(os.path.realpath(os.path.curdir), "report.png")
-    fig = plt.figure(figsize=(6, 3), dpi=200)
+    fig = plt.figure(figsize = (6, 3), dpi = 200, tight_layout = True)
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
 
-    plt.title("なにかのひょうをひょうじするてすと", fontsize = 12)
-    plt.table(
+    plt.title("月別ゲーム統計", fontsize = 12)
+    tb = plt.table(
         colLabels = column_labels,
         colColours = column_color,
         cellText = cell_param,
         cellColours = cell_color,
-        loc = "center")
-    plt.tight_layout()
+        loc = "center",
+    )
 
-    fig.tight_layout()
+    for i in range(len(column_labels)):
+        tb[0, i].set_text_props(color = "#FFFFFF")
+    for i in range(len(results.keys()) + 1):
+        tb[i, 0].set_text_props(ha = "center")
+
     fig.savefig(report_file_path)
 
     return(report_file_path)
