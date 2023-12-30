@@ -194,13 +194,13 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "\n*ゲーム参加率*\n"
     for name, val in ranking:
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break
         pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>6.2%} ({:3d} / {:3d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val / total_game_count, val, total_game_count,
         )
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # 累積ポイント
     tmp = {}
@@ -212,13 +212,12 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "\n*累積ポイント*\n"
     for name, val in ranking:
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break        pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>7.1f}pt ({:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["ゲーム数"],
         ).replace("-", "▲")
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # 平均ポイント
     tmp = {}
@@ -230,13 +229,12 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "\n*平均ポイント*\n"
     for name, val in ranking:
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break        pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>5.1f}pt ({:>7.1f}pt / {:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["累積ポイント"], results[name]["ゲーム数"],
         ).replace("-", "▲")
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # 平均収支1
     tmp = {}
@@ -248,13 +246,12 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "\n*平均収支1* (最終素点-配給原点)/ゲーム数\n"
     for name, val in ranking:
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break        pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # 平均収支2
     tmp = {}
@@ -266,13 +263,13 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "*平均収支2* (最終素点-返し点)/ゲーム数\n"
     for name, val in ranking:
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break
         pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # トップ率
     tmp = {}
@@ -284,13 +281,12 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "\n*トップ率*\n"
     for name, val in ranking:
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break        pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["1位"], results[name]["ゲーム数"],
         )
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # 連対率
     tmp = {}
@@ -302,13 +298,12 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "\n*連対率*\n"
     for name, val in ranking:
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break        pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"], results[name]["ゲーム数"],
         )
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # ラス回避率
     tmp = {}
@@ -320,13 +315,12 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "\n*ラス回避率*\n"
     for name, val in ranking:
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break        pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"] + results[name]["3位"], results[name]["ゲーム数"],
         )
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # トビ率
     tmp = {}
@@ -338,13 +332,13 @@ def aggregation(argument, command_option):
     juni.sort()
     msg2 += "\n*トビ率*\n"
     for name, val in ranking:
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break
         pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["トビ回数"], results[name]["ゲーム数"],
         )
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # 平均順位
     tmp = {}
@@ -356,13 +350,12 @@ def aggregation(argument, command_option):
     juni.sort()
     msg2 += "\n*平均順位*\n"
     for name, val in ranking:
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break        pname = c.NameReplace(name, command_option, add_mark = True)
         msg2 += "{:3d}： {}{} {:>4.2f} ({:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["ゲーム数"],
         )
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     # 役満和了率
     tmp = {}
@@ -374,14 +367,13 @@ def aggregation(argument, command_option):
     juni.sort(reverse = True)
     msg2 += "\n*役満和了率*\n"
     for name, val in ranking:
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        if juni.index(val) + 1 > command_option["ranked"]:
+            break        pname = c.NameReplace(name, command_option, add_mark = True)
         if results[name]["役満和了"] == 0:
             continue
         msg2 += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["役満和了"], results[name]["ゲーム数"],
         )
-        if juni.index(val) + 1 > command_option["ranked"] - 1:
-            break
 
     return(msg1, msg2)
