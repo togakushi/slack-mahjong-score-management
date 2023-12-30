@@ -81,7 +81,7 @@ def handle_message_events(client, body):
         return
     if re.match(rf"^{g.commandword['graph']}", parameter["text"]):
         command_option = f.configure.command_option_initialization("graph")
-        c.graph.slackpost(client, parameter["channel_id"], argument, command_option)
+        c.graph.__main__.slackpost(client, parameter["channel_id"], argument, command_option)
         return
     if re.match(rf"^{g.commandword['ranking']}", parameter["text"]):
         command_option = f.configure.command_option_initialization("ranking")

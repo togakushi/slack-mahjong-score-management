@@ -49,7 +49,7 @@ def slash_command(ack, body, client):
         if subcom.lower() in subcommand_list("graph"):
             command_option = f.configure.command_option_initialization("graph")
             g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
-            c.graph.slackpost(client, user_id, argument, command_option)
+            c.graph.__main__.slackpost(client, user_id, argument, command_option)
             return
 
         if subcom.lower() in subcommand_list("ranking"):
