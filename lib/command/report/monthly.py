@@ -24,11 +24,11 @@ def select_data(argument, command_option):
         select
             collection as 集計月,
             count() / 4 as ゲーム数,
-            round(sum(point), 1) as 供託,
+            replace(printf("%.1f", round(sum(point) , 1)), "-", "▲") as 供託,
             count(rpoint < -1 or null) as "飛んだ人数(延べ)",
-            round(cast(count(rpoint < -1 or null) as real) / cast(count() / 4 as real) * 100, 2) as トビ終了率,
-            max(rpoint) as 最大素点,
-            min(rpoint) as 最小素点
+            printf("%.2f%",	round(cast(count(rpoint < -1 or null) as real) / cast(count() / 4 as real) * 100, 2)) as トビ終了率,
+            replace(printf("%s", max(rpoint)), "-", "▲") as 最大素点,
+            replace(printf("%s", min(rpoint)), "-", "▲") as 最小素点
         from
             individual_results
         group by
@@ -56,7 +56,6 @@ def select_data(argument, command_option):
 
 
 def plot(argument, command_option):
-
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
@@ -70,35 +69,40 @@ def plot(argument, command_option):
         g.logging.trace(f"{row['集計月']}: {results[row['集計月']]}")
     g.logging.info(f"return record: {len(results)}")
 
-    print(">", results)
-
     font_path = os.path.join(os.path.realpath(os.path.curdir), "ipaexg.ttf") #IPAexGothic
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname=font_path)
-    plt.rcParams['font.family'] = font_prop.get_name()
+    plt.rcParams["font.family"] = font_prop.get_name()
 
-    column_labels = [
-        "集計月",
-        "ゲーム数",
-        "供託",
-        "飛んだ人数(延べ)",
-        "トビ終了率",
-        "最大素点",
-        "最小素点",
-    ]
+    column_labels = list(results[list(results.keys())[0]].keys())
+    column_color = ["#00ced1" for i in results.keys()]
 
-    param = []
+    cell_param = []
+    cell_color = []
+    line_count = 0
     for x in results.keys():
-        param.append([results[x][y] for y in column_labels])
+        line_count += 1
+        cell_param.append([results[x][y] for y in column_labels])
+        if int(line_count % 2):
+            cell_color.append(["#FFFFFF" for i in column_labels])
+        else:
+            cell_color.append(["#afeeee" for i in column_labels])
 
     report_file_path = os.path.join(os.path.realpath(os.path.curdir), "report.png")
     fig = plt.figure(figsize=(6, 3), dpi=200)
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
+
     plt.title("なにかのひょうをひょうじするてすと", fontsize = 12)
-    plt.table(cellText = param, colLabels = column_labels, loc = "center")
-    fig.savefig(report_file_path)
+    plt.table(
+        colLabels = column_labels,
+        colColours = column_color,
+        cellText = cell_param,
+        cellColours = cell_color,
+        loc = "center")
     plt.tight_layout()
+
     fig.tight_layout()
+    fig.savefig(report_file_path)
 
     return(report_file_path)
