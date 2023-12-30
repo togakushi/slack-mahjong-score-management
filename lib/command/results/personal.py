@@ -157,13 +157,13 @@ def select_versus_matrix(argument, command_option):
         select
             my_name, vs_name,
             count() as game,
-            count(my_ramk < vs_rank or null) as win,
-            count(my_ramk > vs_rank or null) as lose,
-            round(cast(count(my_ramk < vs_rank or null) AS real) / count() * 100, 2) as 'win%'
+            count(my_rank < vs_rank or null) as win,
+            count(my_rank > vs_rank or null) as lose,
+            round(cast(count(my_rank < vs_rank or null) AS real) / count() * 100, 2) as 'win%'
         from (
             select
                 my.name as my_name,
-                my.rank as my_ramk,
+                my.rank as my_rank,
                 vs.name as vs_name,
                 vs.rank as vs_rank
             from
