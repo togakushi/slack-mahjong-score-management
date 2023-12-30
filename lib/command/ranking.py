@@ -199,6 +199,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val / total_game_count, val, total_game_count,
         )
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # 累積ポイント
     tmp = {}
@@ -215,7 +217,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["ゲーム数"],
         ).replace("-", "▲")
-
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # 平均ポイント
     tmp = {}
@@ -232,6 +235,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["累積ポイント"], results[name]["ゲーム数"],
         ).replace("-", "▲")
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # 平均収支1
     tmp = {}
@@ -248,6 +253,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # 平均収支2
     tmp = {}
@@ -264,6 +271,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # トップ率
     tmp = {}
@@ -280,6 +289,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["1位"], results[name]["ゲーム数"],
         )
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # 連対率
     tmp = {}
@@ -296,6 +307,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"], results[name]["ゲーム数"],
         )
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # ラス回避率
     tmp = {}
@@ -312,6 +325,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"] + results[name]["3位"], results[name]["ゲーム数"],
         )
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # トビ率
     tmp = {}
@@ -328,6 +343,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["トビ回数"], results[name]["ゲーム数"],
         )
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # 平均順位
     tmp = {}
@@ -344,6 +361,8 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["ゲーム数"],
         )
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     # 役満和了率
     tmp = {}
@@ -362,5 +381,7 @@ def aggregation(argument, command_option):
             juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
             val, results[name]["役満和了"], results[name]["ゲーム数"],
         )
+        if juni.index(val) + 1 > command_option["ranked"] - 1:
+            break
 
     return(msg1, msg2)
