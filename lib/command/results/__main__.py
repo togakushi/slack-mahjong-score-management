@@ -2,7 +2,7 @@ import lib.function as f
 from lib.function import global_value as g
 
 from lib.command.results import summary
-from lib.command.results import details
+from lib.command.results import personal
 from lib.command.results import versus
 
 
@@ -40,7 +40,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
             if len(target_player) == 1 and not command_option["all_player"]:
                 versus_mode = False
         if len(target_player) == 1 and not versus_mode: # 個人成績
-            msg1, msg2 = details.aggregation(argument, command_option)
+            msg1, msg2 = personal.aggregation(argument, command_option)
             res = f.slack_api.post_message(client, channel, msg1)
             for m in msg2.keys():
                 f.slack_api.post_message(client, channel, msg2[m] + '\n', res["ts"])
