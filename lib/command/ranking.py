@@ -261,7 +261,7 @@ def aggregation(argument, command_option):
         juni.append(results[name]["平均収支2"])
     ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
     juni.sort(reverse = True)
-    msg2 += "*平均収支2* (最終素点-返し点)/ゲーム数\n"
+    msg2 += "\n*平均収支2* (最終素点-返し点)/ゲーム数\n"
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
