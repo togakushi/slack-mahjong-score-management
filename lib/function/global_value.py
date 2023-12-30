@@ -111,6 +111,7 @@ commandword = { # チャンネル内呼び出しキーワード
     "results": config["results"].get("commandword", "麻雀成績"),
     "graph": config["graph"].get("commandword", "麻雀グラフ"),
     "ranking": config["ranking"].get("commandword", "麻雀ランキング"),
+    "report": config["report"].get("commandword", "麻雀成績レポート"),
     "check": config["database"].get("commandword", "麻雀成績チェック"),
     "remarks_word": config["setting"].get("remarks_word", "麻雀成績メモ"),
 }

@@ -87,6 +87,10 @@ def handle_message_events(client, body):
         command_option = f.configure.command_option_initialization("ranking")
         c.ranking.slackpost(client, parameter["channel_id"], argument, command_option)
         return
+    if re.match(rf"^{g.commandword['report']}", parameter["text"]):
+        command_option = f.configure.command_option_initialization("report")
+        c.report.__main__.slackpost(client, parameter["channel_id"], argument, command_option)
+        return
 
     # データベース関連コマンド
     if re.match(rf"^{g.commandword['check']}", parameter["text"]):

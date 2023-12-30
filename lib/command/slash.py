@@ -58,6 +58,12 @@ def slash_command(ack, body, client):
             c.ranking.slackpost(client, user_id, argument, command_option)
             return
 
+        if subcom.lower() in subcommand_list("report"):
+            command_option = f.configure.command_option_initialization("report")
+            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
+            c.report.__main__.slackpost(client, user_id, argument, command_option)
+            return
+
         # データベース関連コマンド
         if subcom.lower() in subcommand_list("check"):
             command_option = f.configure.command_option_initialization("results")
