@@ -201,13 +201,8 @@ def aggregation(argument, command_option):
     results = {}
     name_list = []
     for row in rows.fetchall():
+        results[row["name"]] = dict(row)
         name_list.append(c.NameReplace(row["name"], command_option, add_mark = True))
-        results[row["name"]] = {
-            "count": row["count"], "first_game": row["first_game"], "last_game": row["last_game"],
-            "pt_total": row["pt_total"], "pt_avg": row["pt_avg"],
-            "1st": row["1st"], "2nd": row["2nd"], "3rd": row["3rd"], "4th": row["4th"],
-            "rank_avg": row["rank_avg"], "flying": row["flying"],
-        }
         g.logging.trace(f"{row['name']}: {results[row['name']]}")
     g.logging.info(f"return record: {len(results)}")
 
