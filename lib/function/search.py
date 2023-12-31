@@ -22,7 +22,7 @@ def pattern(text):
         フォーマットに一致すればスペース区切りの名前と素点のペア
     """
 
-    keyword = g.config["search"].get("keyword", "御無礼")
+    keyword = g.config["search"].get("keyword", "終局")
     pattern1 = re.compile(rf"^{keyword}([^0-9+-]+[0-9+-]+){{4}}")
     pattern2 = re.compile(rf"([^0-9+-]+[0-9+-]+){{4}}{keyword}$")
 
