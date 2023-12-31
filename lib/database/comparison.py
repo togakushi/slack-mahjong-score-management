@@ -7,7 +7,7 @@ import lib.function as f
 from lib.function import global_value as g
 
 
-def slackpost(client, channel, event_ts, argument, command_option):
+def slackpost(client, channel, event_ts, argument):
     """
     データ突合の実施、その結果をslackにpostする
 
@@ -31,7 +31,7 @@ def slackpost(client, channel, event_ts, argument, command_option):
 
     command_option = f.configure.command_option_initialization("results")
     command_option["unregistered_replace"] = False # ゲスト無効
-    command_option["aggregation_range"] = "全部" # 検索範囲    
+    command_option["aggregation_range"] = "全部" # 検索範囲
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 
