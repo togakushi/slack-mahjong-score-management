@@ -21,7 +21,7 @@ def slackpost(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    f.command_option_initialization("report")
+    command_option = f.command_option_initialization("report")
     _, _, _, command_option = f.common.argument_analysis(argument, command_option)
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
