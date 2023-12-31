@@ -176,7 +176,7 @@ def plot(argument, command_option):
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
 
-    plt.title("個人成績レポート", fontsize = 12)
+    plt.title("個人成績", fontsize = 12)
 
     tb = plt.table(
         colLabels = column_labels,
@@ -191,9 +191,6 @@ def plot(argument, command_option):
         tb[0, i].set_text_props(color = "#FFFFFF", weight = "bold")
     for i in range(len(results.keys()) + 1):
         tb[i, 0].set_text_props(ha = "center")
-
-    tb.auto_set_font_size(False)
-
 
     # 追加テキスト
     remark_text =  f.remarks(command_option).replace("\t", "")
