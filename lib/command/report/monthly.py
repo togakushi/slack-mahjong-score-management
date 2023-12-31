@@ -95,7 +95,7 @@ def plot(argument, command_option):
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
 
-    plt.title("月別ゲーム統計", fontsize = 12)
+    plt.title("月別ゲーム統計レポート", fontsize = 12)
     tb = plt.table(
         colLabels = column_labels,
         colColours = column_color,
