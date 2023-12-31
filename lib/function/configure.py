@@ -1,6 +1,4 @@
-import sys
 import sqlite3
-import configparser
 
 from lib.function import global_value as g
 
