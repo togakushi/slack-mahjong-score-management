@@ -8,6 +8,21 @@ from lib.function import global_value as g
 
 
 def scope_coverage(target_days):
+    """
+    日付リストから期間(最小値と最大値)を返す
+
+    Parameters
+    ----------
+    target_days : list
+
+    Returns
+    -------
+    startday : datetime
+        最小日
+
+    endday : datetime
+        最大日
+    """
     startday = min(target_days)
     endday = max(target_days)
 
