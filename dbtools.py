@@ -2,17 +2,17 @@
 
 import lib.function as f
 import lib.database as d
-from lib.function import global_value as g
 
-# ---
-f.configure.read_memberslist()
-command_option = f.configure.command_option_initialization("results")
-command_option["unregistered_replace"] = False # ゲスト無効
-command_option["aggregation_range"] = "全部" # 検索範囲
+if __name__ == "__main__":
+    # ---
+    f.configure.read_memberslist()
+    command_option = f.configure.command_option_initialization("results")
+    command_option["unregistered_replace"] = False # ゲスト無効
+    command_option["aggregation_range"] = "全部" # 検索範囲
 
-# --- 突合
-count, msg, fts = d.score_comparison(command_option)
-if fts:
-    d.remarks_comparison(fts)
+    # --- 突合
+    count, msg, fts = d.score_comparison(command_option)
+    if fts:
+        d.remarks_comparison(fts)
 
-print(f">>> mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
+    print(f">>> mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
