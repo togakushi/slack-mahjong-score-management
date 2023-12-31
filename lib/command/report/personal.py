@@ -175,7 +175,7 @@ def plot(argument, command_option):
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
 
-    plt.title("個人成績", fontsize = 12)
+    plt.title("個人成績レポート", fontsize = 12)
 
     tb = plt.table(
         colLabels = column_labels,
