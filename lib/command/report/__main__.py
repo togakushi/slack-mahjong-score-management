@@ -23,8 +23,7 @@ def slackpost(client, channel, argument):
     """
 
     command_option = f.command_option_initialization("report")
-    target_days, _, _, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
+    _, _, _, command_option = f.common.argument_analysis(argument, command_option)
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
@@ -34,16 +33,16 @@ def slackpost(client, channel, argument):
         if report_file_path:
             f.slack_api.post_fileupload(client, channel, "月別ゲーム統計", report_file_path)
         else:
-            f.slack_api.post_message(client, channel, f.message.no_hits(starttime, endtime))
+            f.slack_api.post_message(client, channel, f.message.no_hits2(argument, command_option))
     elif command_option["personal"]:
         report_file_path = personal.plot(argument, command_option)
         if report_file_path:
             f.slack_api.post_fileupload(client, channel, "個人成績", report_file_path)
         else:
-            f.slack_api.post_message(client, channel, f.message.no_hits(starttime, endtime))
+            f.slack_api.post_message(client, channel, f.message.no_hits2(argument, command_option))
     else:
         report_file_path = winner.plot(argument, command_option)
         if report_file_path:
             f.slack_api.post_fileupload(client, channel, "成績上位者", report_file_path)
         else:
-            f.slack_api.post_message(client, channel, f.message.no_hits(starttime, endtime))
+            f.slack_api.post_message(client, channel, f.message.no_hits2(argument, command_option))

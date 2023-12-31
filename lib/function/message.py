@@ -1,5 +1,6 @@
 import random
 
+import lib.function as f
 from lib.function import global_value as g
 
 
@@ -62,6 +63,26 @@ def no_hits(starttime, endtime):
             msg = g.config["custom_message"][random.choice(key_list)]
 
     return(msg.format(keyword = keyword, start = start, end = end))
+
+
+def no_hits2(argument, command_option):
+    target_days, _, _, command_option = f.common.argument_analysis(argument, command_option)
+    starttime, endtime = f.common.scope_coverage(target_days)
+    keyword = g.config["search"].get("keyword", "終局")
+    start = starttime.strftime("%Y/%m/%d %H:%M")
+    end = endtime.strftime("%Y/%m/%d %H:%M")
+    msg = f"{start} ～ {end} に≪{keyword}≫はありません。"
+
+    if "custom_message" in g.config.sections():
+        key_list = []
+        for i in g.config["custom_message"]:
+            if i.startswith("no_hits"):
+                key_list.append(i)
+        if key_list:
+            msg = g.config["custom_message"][random.choice(key_list)]
+
+    return(msg.format(keyword = keyword, start = start, end = end))
+
 
 def remarks(command_option):
     ret = ""
