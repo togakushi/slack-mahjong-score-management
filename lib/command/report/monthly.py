@@ -4,7 +4,6 @@ import sqlite3
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
-import lib.command as c
 import lib.function as f
 from lib.function import global_value as g
 
@@ -72,7 +71,7 @@ def plot(argument, command_option):
     resultdb.close()
 
     # --- グラフフォント設定
-    font_path = os.path.join(os.path.realpath(os.path.curdir), "ipaexg.ttf") #IPAexGothic
+    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname = font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
@@ -106,7 +105,7 @@ def plot(argument, command_option):
     )
 
     for i in range(len(column_labels)):
-        tb[0, i].set_text_props(color = "#FFFFFF")
+        tb[0, i].set_text_props(color = "#FFFFFF", weight = "bold")
     for i in range(len(results.keys()) + 1):
         tb[i, 0].set_text_props(ha = "center")
 
