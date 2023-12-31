@@ -69,7 +69,7 @@ def handle_some_action(ack, body, client):
     )
 
     g.logging.info(f"[app:search_personal] {argument}, {command_option}")
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
+    target_days, _, _, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
     app_msg.pop()
