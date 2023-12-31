@@ -7,7 +7,7 @@ from lib.command.report import personal
 
 def slackpost(client, channel, argument):
     """
-    レポートをslackにポストする
+    レポートをslackにpostする
 
     Parameters
     ----------
