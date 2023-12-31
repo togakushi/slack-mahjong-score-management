@@ -43,6 +43,7 @@ channel = #麻雀部
 results = 成績
 graph = グラフ
 ranking = ランキング
+report = レポート
 check = チェック
 download = dbget,ダウンロード
 
@@ -90,6 +91,13 @@ ranked = 3
 # ランキング規定ゲーム数(未定義時：0.05)
 ## 集計対象ゲーム数 * stipulated_rate + 2
 stipulated_rate = 0.05
+
+[report] # レポート出力
+commandword = 麻雀成績レポート
+aggregation_range = 全部
+unregistered_replace = True
+guest_skip = True
+
 
 ### メンバー管理 ###
 [member]
