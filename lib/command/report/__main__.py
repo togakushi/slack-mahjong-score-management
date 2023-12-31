@@ -3,6 +3,7 @@ from lib.function import global_value as g
 
 from lib.command.report import monthly
 from lib.command.report import personal
+from lib.command.report import winner
 
 
 def slackpost(client, channel, argument):
@@ -28,8 +29,11 @@ def slackpost(client, channel, argument):
 
     if command_option["statistics"]:
         report_file_path = monthly.plot(argument, command_option)
-        f.slack_api.post_fileupload(client, channel, "月別ゲーム統計レポート", report_file_path)
+        f.slack_api.post_fileupload(client, channel, "月別ゲーム統計", report_file_path)
 
     if command_option["personal"]:
         report_file_path = personal.plot(argument, command_option)
-        f.slack_api.post_fileupload(client, channel, "個人成績レポート", report_file_path)
+        f.slack_api.post_fileupload(client, channel, "個人成績", report_file_path)
+
+    report_file_path = winner.plot(argument, command_option)
+    f.slack_api.post_fileupload(client, channel, "成績上位者", report_file_path)
