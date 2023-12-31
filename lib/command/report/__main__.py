@@ -30,10 +30,9 @@ def slackpost(client, channel, argument):
     if command_option["statistics"]:
         report_file_path = monthly.plot(argument, command_option)
         f.slack_api.post_fileupload(client, channel, "月別ゲーム統計", report_file_path)
-
-    if command_option["personal"]:
+    elif command_option["personal"]:
         report_file_path = personal.plot(argument, command_option)
         f.slack_api.post_fileupload(client, channel, "個人成績", report_file_path)
-
-    report_file_path = winner.plot(argument, command_option)
-    f.slack_api.post_fileupload(client, channel, "成績上位者", report_file_path)
+    else:
+        report_file_path = winner.plot(argument, command_option)
+        f.slack_api.post_fileupload(client, channel, "成績上位者", report_file_path)
