@@ -19,36 +19,49 @@ def help(command):
 
 
 def invalid_argument():
-    return(random.choice([
-        f"えっ？",
-        f"すみません、よくわかりません。",
-        f"困らせないでください。",
-    ]))
+    msg = f"使い方が間違っています。"
+
+    if "custom_message" in g.config.sections():
+        key_list = []
+        for i in g.config["custom_message"]:
+            if i.startswith("invalid_argument"):
+                key_list.append(i)
+        if key_list:
+            msg = g.config["custom_message"][random.choice(key_list)]
+
+    return(msg)
 
 
 def invalid_score(user_id, score, pointsum):
     rpoint_diff = abs(pointsum - score) * 100
-    if "invalid_score" in g.config.sections():
-        select_msg = [random.choice([i for i in g.config["invalid_score"]])][0]
-        msg = g.config["invalid_score"][select_msg]
-    else:
-        msg = "{rpoint_diff}点合っていません。"
+    msg = f"{rpoint_diff}点合っていません。"
+
+    if "custom_message" in g.config.sections():
+        key_list = []
+        for i in g.config["custom_message"]:
+            if i.startswith("invalid_score"):
+                key_list.append(i)
+        if key_list:
+            msg = g.config["custom_message"][random.choice(key_list)]
 
     return(f"<@{user_id}> " + msg.format(rpoint_diff = rpoint_diff))
 
 
 def no_hits(starttime, endtime):
-    keyword = g.config["search"].get("keyword", False)
-    if keyword:
-        return(
-            "{} ～ {} に{}はありません。".format(
-                starttime.strftime('%Y/%m/%d %H:%M'),
-                endtime.strftime('%Y/%m/%d %H:%M'),
-                keyword,
-            )
-        )
-    else:
-        return("見つかりません。")
+    keyword = g.config["search"].get("keyword", "終局")
+    start = starttime.strftime("%Y/%m/%d %H:%M")
+    end = endtime.strftime("%Y/%m/%d %H:%M")
+    msg = f"{start} ～ {end} に≪{keyword}≫はありません。"
+
+    if "custom_message" in g.config.sections():
+        key_list = []
+        for i in g.config["custom_message"]:
+            if i.startswith("no_hits"):
+                key_list.append(i)
+        if key_list:
+            msg = g.config["custom_message"][random.choice(key_list)]
+
+    return(msg.format(keyword = keyword, start = start, end = end))
 
 def remarks(command_option):
     ret = ""
