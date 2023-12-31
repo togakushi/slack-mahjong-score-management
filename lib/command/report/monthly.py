@@ -71,6 +71,9 @@ def plot(argument, command_option):
 
     resultdb.close()
 
+    if len(results) == 0:
+        return(False)
+
     # --- グラフフォント設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     fm.fontManager.addfont(font_path)
