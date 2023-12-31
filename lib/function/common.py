@@ -150,10 +150,10 @@ def argument_analysis(argument, command_option):
             command_option["verbose"] = True
             continue
         if re.match(r"^(順位)$", keyword):
-            command_option["statistics"] = True
+            command_option["order"] = True
             continue
         if re.match(r"^(統計)$", keyword):
-            command_option["order"] = True
+            command_option["statistics"] = True
             continue
         if re.match(r"^(個人)$", keyword):
             command_option["personal"] = True
