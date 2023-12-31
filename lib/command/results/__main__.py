@@ -6,7 +6,7 @@ from lib.command.results import personal
 from lib.command.results import versus
 
 
-def slackpost(client, channel, event_ts, argument, command_option):
+def slackpost(client, channel, argument):
     """
     成績の集計結果をslackにpostする
 
@@ -20,11 +20,9 @@ def slackpost(client, channel, event_ts, argument, command_option):
     argument : list
         slackから受け取った引数
         解析対象のプレイヤー、検索範囲などが指定される
-
-    command_option : dict
-        コマンドオプション
     """
 
+    command_option = f.configure.command_option_initialization("results")
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 

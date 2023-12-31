@@ -76,35 +76,25 @@ def handle_message_events(client, body):
 
     # 成績管理系コマンド
     if re.match(rf"^{g.commandword['results']}", parameter["text"]):
-        command_option = f.configure.command_option_initialization("results")
-        c.results.__main__.slackpost(client, parameter["channel_id"], parameter["event_ts"], argument, command_option)
+        c.results.__main__.slackpost(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['graph']}", parameter["text"]):
-        command_option = f.configure.command_option_initialization("graph")
-        c.graph.__main__.slackpost(client, parameter["channel_id"], argument, command_option)
+        c.graph.__main__.slackpost(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['ranking']}", parameter["text"]):
-        command_option = f.configure.command_option_initialization("ranking")
-        c.ranking.slackpost(client, parameter["channel_id"], argument, command_option)
+        c.ranking.slackpost(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['report']}", parameter["text"]):
-        command_option = f.configure.command_option_initialization("report")
-        c.report.__main__.slackpost(client, parameter["channel_id"], argument, command_option)
+        c.report.__main__.slackpost(client, parameter["channel_id"], argument)
         return
 
     # データベース関連コマンド
     if re.match(rf"^{g.commandword['check']}", parameter["text"]):
-        command_option = f.configure.command_option_initialization("results")
-        command_option["unregistered_replace"] = False # ゲスト無効
-        command_option["aggregation_range"] = "全部" # 検索範囲
-        d.comparison.slackpost(client, parameter["channel_id"], parameter["event_ts"], argument, command_option)
+        d.comparison.slackpost(client, parameter["channel_id"], parameter["event_ts"], argument)
         return
     if re.match(rf"^Reminder: {g.commandword['check']}$", parameter["text"]): # Reminderによる突合
-        command_option = f.configure.command_option_initialization("results")
-        command_option["unregistered_replace"] = False # ゲスト無効
-        command_option["aggregation_range"] = "全部" # 検索範囲
         g.logging.info(f'Reminder: {g.commandword["check"]}')
-        d.comparison.slackpost(client, parameter["channel_id"], parameter["event_ts"], None, command_option)
+        d.comparison.slackpost(client, parameter["channel_id"], parameter["event_ts"], None)
         return
 
     # 追加メモ

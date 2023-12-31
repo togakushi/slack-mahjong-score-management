@@ -106,7 +106,7 @@ def select_data(argument, command_option):
     }
 
 
-def slackpost(client, channel, argument, command_option):
+def slackpost(client, channel, argument):
     """
     ランキングをslackにpostする
 
@@ -120,11 +120,9 @@ def slackpost(client, channel, argument, command_option):
     argument : list
         slackから受け取った引数
         解析対象のプレイヤー、検索範囲などが指定される
-
-    command_option : dict
-        コマンドオプション
     """
 
+    command_option = f.configure.command_option_initialization("ranking")
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 

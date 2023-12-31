@@ -5,7 +5,7 @@ from lib.command.report import monthly
 from lib.command.report import personal
 
 
-def slackpost(client, channel, argument, command_option):
+def slackpost(client, channel, argument):
     """
     レポートをslackにポストする
 
@@ -19,11 +19,10 @@ def slackpost(client, channel, argument, command_option):
     argument : list
         slackから受け取った引数
         解析対象のプレイヤー、検索範囲などが指定される
-
-    command_option : dict
-        コマンドオプション
     """
 
+    f.command_option_initialization("report")
+    _, _, _, command_option = f.common.argument_analysis(argument, command_option)
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 

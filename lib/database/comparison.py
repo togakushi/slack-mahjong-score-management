@@ -29,6 +29,9 @@ def slackpost(client, channel, event_ts, argument, command_option):
         コマンドオプション
     """
 
+    command_option = f.configure.command_option_initialization("results")
+    command_option["unregistered_replace"] = False # ゲスト無効
+    command_option["aggregation_range"] = "全部" # 検索範囲    
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 

@@ -41,36 +41,29 @@ def slash_command(ack, body, client):
 
         # 成績管理系コマンド
         if subcom.lower() in subcommand_list("results"):
-            command_option = f.configure.command_option_initialization("results")
-            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
-            c.results.__main__.slackpost(client, user_id, event_ts, argument, command_option)
+            g.logging.info(f"subcommand({subcom}): {argument}")
+            c.results.__main__.slackpost(client, user_id, argument)
             return
 
         if subcom.lower() in subcommand_list("graph"):
-            command_option = f.configure.command_option_initialization("graph")
-            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
-            c.graph.__main__.slackpost(client, user_id, argument, command_option)
+            g.logging.info(f"subcommand({subcom}): {argument}")
+            c.graph.__main__.slackpost(client, user_id, argument)
             return
 
         if subcom.lower() in subcommand_list("ranking"):
-            command_option = f.configure.command_option_initialization("ranking")
-            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
-            c.ranking.slackpost(client, user_id, argument, command_option)
+            g.logging.info(f"subcommand({subcom}): {argument}")
+            c.ranking.slackpost(client, user_id, argument)
             return
 
         if subcom.lower() in subcommand_list("report"):
-            command_option = f.configure.command_option_initialization("report")
-            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
-            c.report.__main__.slackpost(client, user_id, argument, command_option)
+            g.logging.info(f"subcommand({subcom}): {argument}")
+            c.report.__main__.slackpost(client, user_id, argument)
             return
 
         # データベース関連コマンド
         if subcom.lower() in subcommand_list("check"):
-            command_option = f.configure.command_option_initialization("results")
-            command_option["unregistered_replace"] = False # ゲスト無効
-            command_option["aggregation_range"] = "全部" # 検索範囲
-            g.logging.info(f"subcommand({subcom}): {argument} {command_option}")
-            d.comparison.slackpost(client, user_id, event_ts, argument, command_option)
+            g.logging.info(f"subcommand({subcom}): {argument}")
+            d.comparison.slackpost(client, user_id, event_ts, argument)
             return
 
         if subcom.lower() in subcommand_list("download"):

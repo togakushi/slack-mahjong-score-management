@@ -1,12 +1,13 @@
 import os
 
 import lib.function as f
+from lib.function import global_value as g
 
 from lib.command.graph import summary
 from lib.command.graph import personal
 
 
-def slackpost(client, channel, argument, command_option):
+def slackpost(client, channel, argument):
     """
     ポイント推移グラフをslackにpostする
 
@@ -20,12 +21,10 @@ def slackpost(client, channel, argument, command_option):
     argument : list
         slackから受け取った引数
         解析対象のプレイヤー、検索範囲などが指定される
-
-    command_option : dict
-        コマンドオプション
     """
 
     msg = f.message.invalid_argument()
+    command_option = f.configure.command_option_initialization("graph")
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
