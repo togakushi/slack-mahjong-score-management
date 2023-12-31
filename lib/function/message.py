@@ -1,7 +1,4 @@
 import random
-from datetime import datetime
-
-from dateutil.relativedelta import relativedelta
 
 from lib.function import global_value as g
 
