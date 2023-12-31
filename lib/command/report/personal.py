@@ -155,6 +155,7 @@ def plot(argument, command_option):
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname = font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
+    plt.rcParams["font.size"] = 6
 
     column_labels = list(results[list(results.keys())[0]].keys())
     column_color = ["#000080" for i in column_labels]
@@ -184,16 +185,22 @@ def plot(argument, command_option):
         cellColours = cell_color,
         loc = "center",
     )
+
+    tb.auto_set_font_size(False)
     for i in range(len(column_labels)):
         tb[0, i].set_text_props(color = "#FFFFFF", weight = "bold")
     for i in range(len(results.keys()) + 1):
         tb[i, 0].set_text_props(ha = "center")
 
+    tb.auto_set_font_size(False)
+
+
     # 追加テキスト
     remark_text =  f.remarks(command_option).replace("\t", "")
-    add_text = "［集計期間：{} - {}］［規定数：{} ゲーム以上］{}".format(
+    add_text = "［集計期間：{} - {}］［総ゲーム数：{}］［規定数：{} ゲーム以上］{}".format(
         min(playtime),
         max(playtime),
+        total_game_count,
         command_option["stipulated"],
         f"［{remark_text}］" if remark_text else "",
     )
