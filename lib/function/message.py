@@ -12,7 +12,7 @@ def help(command):
     msg += f"\n\t{command} results       成績出力"
     msg += f"\n\t{command} ranking       ランキング出力"
     msg += f"\n\t{command} graph         ポイント推移グラフを表示"
-    msg += f"\n\t{command} ranking       ランキングを表示"
+    msg += f"\n\t{command} report        レポート表示"
     msg += f"\n\t{command} check         データ突合"
     msg += f"\n\t{command} download      データベースダウンロード"
     msg += f"\n\t{command} member        登録されているメンバー"
