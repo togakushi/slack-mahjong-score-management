@@ -75,7 +75,7 @@ def handle_some_action(ack, body, client):
     msg1 = f.message.no_hits(starttime, endtime)
 
     if starttime and endtime:
-        msg1, msg2 = c.ranking.getdata(starttime, endtime, target_player, target_count, command_option)
+        msg1, msg2 = c.ranking.aggregation(argument, command_option)
         if msg2:
             res = f.slack_api.post_message(client, body["user"]["id"], msg1)
             f.slack_api.post_message(client, body["user"]["id"], msg2, res["ts"])
