@@ -102,20 +102,24 @@ def argument_analysis(argument, command_option):
             target_days.append((currenttime + relativedelta(day = 1, months = -2)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 1, months = -1, days = -1,)).strftime("%Y%m%d"))
             continue
+        if keyword == "今年":
+            target_days.append((currenttime + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
+            target_days.append((currenttime + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
+            continue
         if keyword == "去年":
             target_days.append((currenttime + relativedelta(day = 1, month = 1, years = -1)).strftime("%Y%m%d"))
             target_days.append((currenttime + relativedelta(day = 31, month = 12, years = -1)).strftime("%Y%m%d"))
             continue
-        if keyword == "今年":
-            target_days.append((currenttime + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
-            target_days.append((currenttime + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
+        if keyword == "一昨年":
+            target_days.append((currenttime + relativedelta(day = 1, month = 1, years = -2)).strftime("%Y%m%d"))
+            target_days.append((currenttime + relativedelta(day = 31, month = 12, years = -2)).strftime("%Y%m%d"))
             continue
         if keyword == "最後":
             target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
             continue
         if keyword == "全部":
             target_days.append("20200101")
-            target_days.append("20301231")
+            target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
             continue
 
         # コマンドオプションフラグ変更
@@ -146,7 +150,13 @@ def argument_analysis(argument, command_option):
             command_option["verbose"] = True
             continue
         if re.match(r"^(順位)$", keyword):
+            command_option["statistics"] = True
+            continue
+        if re.match(r"^(統計)$", keyword):
             command_option["order"] = True
+            continue
+        if re.match(r"^(個人)$", keyword):
+            command_option["personal"] = True
             continue
         if re.match(r"^(直近)([0-9]+)$", keyword):
             target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))

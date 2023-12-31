@@ -50,6 +50,8 @@ def command_option_initialization(command):
         "recursion": True,
         "all_player": False,
         "order": False,
+        "statistics": False,
+        "personal": False,
         "stipulated": 0,
         "verbose": False,
     }
