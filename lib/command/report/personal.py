@@ -198,14 +198,14 @@ def plot(argument, command_option):
     # 追加テキスト
     remark_text =  f.remarks(command_option).replace("\t", "")
     add_text = "［集計期間：{} - {}］［総ゲーム数：{}］［規定数：{} ゲーム以上］{}".format(
-        min(playtime),
-        max(playtime),
+        min(playtime).replace("-", "/"),
+        max(playtime).replace("-", "/"),
         total_game_count,
         command_option["stipulated"],
         f"［{remark_text}］" if remark_text else "",
     )
 
-    fig.text(0.02, 0.02, # 表示位置(左下0,0 右下0.1)
+    fig.text(0.01, 0.02, # 表示位置(左下0,0 右下0,1)
         add_text,
         transform = fig.transFigure,
         fontsize = 6,
