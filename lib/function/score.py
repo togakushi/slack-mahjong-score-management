@@ -1,8 +1,3 @@
-import csv
-
-from dateutil.relativedelta import relativedelta
-
-import lib.command as c
 import lib.function as f
 from lib.function import global_value as g
 
@@ -39,6 +34,26 @@ def CalculationPoint(rpoint, rank):
 def CalculationPoint2(rpoint_data, rpoint, seat):
     """
     素点データと獲得素点から獲得ポイントと順位を返す
+
+    Parameters
+    ----------
+    rpoint_data : list
+        全員分の素点リスト
+
+    rpoint : int
+        対象プレイヤーの素点
+
+    seat : int
+        対象プレイヤーの座席
+        (0:東家 1:南家 2:西家 3:北家)
+
+    Returns
+    -------
+    rank : int
+        獲得順位
+
+    point : float
+        獲得ポイント
     """
 
     temp_data = []
