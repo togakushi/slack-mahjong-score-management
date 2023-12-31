@@ -75,6 +75,7 @@ def select_personal_data(argument, command_option):
                 and playtime between ? and ?
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
+                --[target_player] and individual_results.name in (<<target_player>>) -- 対象プレイヤー
             order by
                 playtime desc
             --[recent] limit ? * 4 -- 直近N(縦持ちなので4倍する)
@@ -87,7 +88,15 @@ def select_personal_data(argument, command_option):
             並び変え用カラム desc
     """
 
-    placeholder = [g.guest_name, g.rule_version, starttime, endtime, command_option["stipulated"]]
+    placeholder = [g.guest_name, g.rule_version, starttime, endtime]
+
+    if target_player:
+        sql = sql.replace("--[target_player] ", "")
+        p = []
+        for i in target_player:
+            p.append("?")
+            placeholder.append(i)
+        sql = sql.replace("<<target_player>>", ",".join([i for i in p]))
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")
@@ -105,6 +114,8 @@ def select_personal_data(argument, command_option):
         placeholder.pop(placeholder.index(starttime))
         placeholder.pop(placeholder.index(endtime))
         placeholder.insert(1, target_count)
+
+    placeholder.append(command_option["stipulated"])
 
     g.logging.trace(f"sql: {sql}")
     g.logging.trace(f"placeholder: {placeholder}")
