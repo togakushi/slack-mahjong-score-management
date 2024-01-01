@@ -166,10 +166,10 @@ def plot(argument, command_option):
 
     # 追加テキスト
     remark_text =  f.remarks(command_option).replace("\t", "")
-    add_text = "［検索期間：{} - {}］{}".format(
+    add_text = "[検索期間：{} - {}] {}".format(
         ret["starttime"].strftime('%Y/%m/%d %H:%M'),
         ret["endtime"].strftime('%Y/%m/%d %H:%M'),
-        f"［{remark_text}］" if remark_text else "",
+        f"[{remark_text}]" if remark_text else "",
     )
 
     fig.text(0.01, 0.02, # 表示位置(左下0,0 右下0,1)
