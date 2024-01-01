@@ -69,9 +69,9 @@ def argument_analysis(argument, command_option):
     target_days = []
     target_player = []
     target_count = 0
-    player_candidates = []
 
-    currenttime = datetime.now()
+    current_time = datetime.now()
+    appointed_time = current_time + relativedelta(hours = -12)
     for keyword in argument:
         # 日付取得
         if re.match(r"^[0-9]{8}$", keyword):
@@ -79,47 +79,47 @@ def argument_analysis(argument, command_option):
                 trytime = datetime.fromisoformat(f"{keyword[0:4]}-{keyword[4:6]}-{keyword[6:8]}")
                 target_days.append(trytime.strftime("%Y%m%d"))
                 continue
-            except:
+            except: # 日付変換できない数値は無視
                 continue
         if keyword == "当日":
-            target_days.append((currenttime + relativedelta(hours = -12)).strftime("%Y%m%d"))
+            target_days.append(appointed_time.strftime("%Y%m%d"))
             continue
         if keyword == "今日":
-            target_days.append(currenttime.strftime("%Y%m%d"))
+            target_days.append(current_time.strftime("%Y%m%d"))
             continue
         if keyword == "昨日":
-            target_days.append((currenttime + relativedelta(days = -1)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(days = -1)).strftime("%Y%m%d"))
             continue
         if keyword == "今月":
-            target_days.append((currenttime + relativedelta(day = 1, months = 0)).strftime("%Y%m%d"))
-            target_days.append((currenttime + relativedelta(day = 1, months = 1, days = -1,)).strftime("%Y%m%d"))
+            target_days.append((appointed_time + relativedelta(day = 1, months = 0)).strftime("%Y%m%d"))
+            target_days.append((appointed_time + relativedelta(day = 1, months = 1, days = -1,)).strftime("%Y%m%d"))
             continue
         if keyword == "先月":
-            target_days.append((currenttime + relativedelta(day = 1, months = -1)).strftime("%Y%m%d"))
-            target_days.append((currenttime + relativedelta(day = 1, months = 0, days = -1,)).strftime("%Y%m%d"))
+            target_days.append((appointed_time + relativedelta(day = 1, months = -1)).strftime("%Y%m%d"))
+            target_days.append((appointed_time + relativedelta(day = 1, months = 0, days = -1,)).strftime("%Y%m%d"))
             continue
         if keyword == "先々月":
-            target_days.append((currenttime + relativedelta(day = 1, months = -2)).strftime("%Y%m%d"))
-            target_days.append((currenttime + relativedelta(day = 1, months = -1, days = -1,)).strftime("%Y%m%d"))
+            target_days.append((appointed_time + relativedelta(day = 1, months = -2)).strftime("%Y%m%d"))
+            target_days.append((appointed_time + relativedelta(day = 1, months = -1, days = -1,)).strftime("%Y%m%d"))
             continue
         if keyword == "今年":
-            target_days.append((currenttime + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
-            target_days.append((currenttime + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
             continue
         if keyword == "去年":
-            target_days.append((currenttime + relativedelta(day = 1, month = 1, years = -1)).strftime("%Y%m%d"))
-            target_days.append((currenttime + relativedelta(day = 31, month = 12, years = -1)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(day = 1, month = 1, years = -1)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(day = 31, month = 12, years = -1)).strftime("%Y%m%d"))
             continue
         if keyword == "一昨年":
-            target_days.append((currenttime + relativedelta(day = 1, month = 1, years = -2)).strftime("%Y%m%d"))
-            target_days.append((currenttime + relativedelta(day = 31, month = 12, years = -2)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(day = 1, month = 1, years = -2)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(day = 31, month = 12, years = -2)).strftime("%Y%m%d"))
             continue
         if keyword == "最後":
-            target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(days = 1)).strftime("%Y%m%d"))
             continue
         if keyword == "全部":
             target_days.append("20200101")
-            target_days.append((currenttime + relativedelta(days = 1)).strftime("%Y%m%d"))
+            target_days.append((current_time + relativedelta(days = 1)).strftime("%Y%m%d"))
             continue
 
         # コマンドオプションフラグ変更
@@ -155,7 +155,7 @@ def argument_analysis(argument, command_option):
         if re.match(r"^(統計)$", keyword):
             command_option["statistics"] = True
             continue
-        if re.match(r"^(個人)$", keyword):
+        if re.match(r"^(個人|個人成績)$", keyword):
             command_option["personal"] = True
             continue
         if re.match(r"^(直近)([0-9]+)$", keyword):
@@ -165,17 +165,8 @@ def argument_analysis(argument, command_option):
             command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
             continue
 
-        player_candidates.append(keyword)
-
-    # プレイヤー名
-    for name in player_candidates:
-        target_player.append(c.NameReplace(name, command_option))
-
-    # 日付再取得のために再帰呼び出し
-    if command_option["recursion"] and len(target_days) == 0:
-        command_option["recursion"] = False # ループ防止
-        target_days, _, _, _ = argument_analysis(command_option["aggregation_range"], command_option)
-        command_option["recursion"] = True # 元に戻す
+        # どのオプションにもマッチしないものはプレイヤー名
+        target_player.append(c.NameReplace(keyword, command_option))
 
     g.logging.info(f"return: target_days: {target_days} target_count: {target_count}")
     g.logging.info(f"return: target_player: {target_player}")
