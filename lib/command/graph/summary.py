@@ -5,8 +5,9 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.command as c
-import lib.command.graph.query as query
+import lib.command.graph._query as query
 from lib.function import global_value as g
+
 
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)

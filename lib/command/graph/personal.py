@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
 import lib.command as c
-import lib.function as f
-import lib.command.graph.query as query
+import lib.command.graph._query as query
 from lib.function import global_value as g
+
 
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
