@@ -13,7 +13,7 @@ def select_data(argument, command_option):
     sql = """
         select
             count() over moving as count,
-            playtime,
+            replace(playtime, "-", "/") as playtime,
             name,
             rank,
             point,

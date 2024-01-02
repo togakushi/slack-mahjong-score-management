@@ -25,7 +25,7 @@ def slackpost(client, channel, argument):
 
     msg = f.message.invalid_argument()
     command_option = f.configure.command_option_initialization("graph")
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
+    target_days, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
     g.logging.info(f"arg: {argument}")
@@ -33,8 +33,7 @@ def slackpost(client, channel, argument):
 
     if starttime or endtime:
         if len(target_player) == 1: # 描写対象がひとり → 個人成績
-            command_option["guest_skip"] = False
-            count = personal.plot(starttime, endtime, target_player, target_count, command_option)
+            count = personal.plot(argument, command_option)
         else: # 描写対象が複数 → 比較
             count = summary.plot(argument, command_option)
         file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
