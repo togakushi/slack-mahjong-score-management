@@ -36,7 +36,7 @@ def slackpost(client, channel, argument):
             command_option["guest_skip"] = False
             count = personal.plot(starttime, endtime, target_player, target_count, command_option)
         else: # 描写対象が複数 → 比較
-            count = summary.plot(starttime, endtime, target_player, target_count, command_option)
+            count = summary.plot(argument, command_option)
         file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
         if count <= 0:
             f.slack_api.post_message(client, channel, f.message.no_hits(starttime, endtime))
