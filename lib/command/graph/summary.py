@@ -49,7 +49,6 @@ def plot(argument, command_option):
 
     # --- データ収集
     tmp_results = {}
-    playtime = []
     for row in rows.fetchall():
         if not row["name"] in tmp_results:
             tmp_results[row["name"]] = {
@@ -58,24 +57,23 @@ def plot(argument, command_option):
                 "interim_rank": [],
                 "count": 0,
             }
-        playtime.append(row["playtime"])
         tmp_results[row["name"]]["playtime"].append(row["playtime"])
         tmp_results[row["name"]]["point_sum"].append(row["point_sum"])
         tmp_results[row["name"]]["count"] = row["count"]
         g.logging.trace(f"{row['name']}: {tmp_results[row['name']]}")
     g.logging.info(f"return record: {len(tmp_results)}")
 
-    playtime = list(set(playtime))
-    playtime.sort()
-    game_count = len(playtime)
-
-    if game_count == 0:
-        return(game_count, f.message.no_hits(ret["starttime"], ret["endtime"]))
-
     # 規定打数足切り
     for name in list(tmp_results):
         if not tmp_results[name]["count"] >= command_option["stipulated"]:
             tmp_results.pop(name)
+
+    if len(tmp_results) == 0: # 描写対象が0人の場合は終了
+        return(len(tmp_results), f.message.no_hits(ret["starttime"], ret["endtime"]))
+
+    playtime = list(set([tmp_results[name]["playtime"] for name in tmp_results.keys()][0]))
+    playtime.sort()
+    game_count = len(playtime)
 
     # 累積ポイント推移
     results = {}
@@ -158,7 +156,8 @@ def plot(argument, command_option):
     plt.ylabel(_ylabel)
     plt.xlabel(_xlabel)
 
-    if command_option["order"]:
+    # プロット
+    if command_option["order"]: # 順位変動
         for name, _ in ranking_rank:
             label = "{}位：{} {}pt / {}G)".format(
                 str(results[name]["interim_rank"][-1]),
@@ -177,7 +176,7 @@ def plot(argument, command_option):
             plt.yticks(yl)
         plt.ylim(0.2, len(results) + 0.8)
         plt.gca().invert_yaxis()
-    else:
+    else: # ポイント推移
         for name, _ in ranking_point:
             label = "{} ({}pt / {}G)".format(
                 c.NameReplace(name, command_option, add_mark = True),
