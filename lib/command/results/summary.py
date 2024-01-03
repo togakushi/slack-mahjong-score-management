@@ -4,95 +4,8 @@ from datetime import datetime
 import lib.command as c
 import lib.function as f
 import lib.database as d
+import lib.command.results._query as query
 from lib.function import global_value as g
-
-
-def select_game(argument, command_option):
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
-
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
-
-    sql = """
-        --[recent] select * from (
-        select
-            name,
-            count() as count,
-            round(sum(point), 1) as pt_total,
-            round(avg(point), 1) as pt_avg,
-            count(rank = 1 or null) as "1st",
-            count(rank = 2 or null) as "2nd",
-            count(rank = 3 or null) as "3rd",
-            count(rank = 4 or null) as "4th",
-            round(avg(rank), 2) as rank_avg,
-            count(rpoint < 0 or null) as flying,
-            min(playtime) as first_game,
-            max(playtime) as last_game
-        from (
-            select
-                playtime,
-                --[unregistered_replace] case when guest = 0 then name else ? end as name, -- ゲスト有効
-                --[unregistered_not_replace] name, -- ゲスト無効
-                rpoint, rank, point, guest, rule_version
-            from
-                individual_results
-            where
-                rule_version = ?
-                and playtime between ? and ? -- 検索範囲
-                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
-                --[guest_skip] and guest = 0 -- ゲストなし
-                --[target_player] and name in (<<target_player>>) -- 対象プレイヤー
-            order by
-                playtime desc
-            --[recent] limit ?
-        )
-        group by
-            name
-        order by
-            pt_total desc
-        --[recent] )
-    """
-
-    placeholder = [g.guest_name, g.rule_version, starttime, endtime]
-
-    if command_option["unregistered_replace"]:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-        placeholder.pop(placeholder.index(g.guest_name))
-    if target_player:
-        sql = sql.replace("--[target_player] ", "")
-        p = []
-        for i in target_player:
-            p.append("?")
-            placeholder.append(i)
-        sql = sql.replace("<<target_player>>", ",".join([i for i in p]))
-
-    if target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-        placeholder.pop(placeholder.index(starttime))
-        placeholder.pop(placeholder.index(endtime))
-        placeholder += [target_count]
-
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
-
-    return {
-        "target_days": target_days,
-        "target_player": target_player,
-        "target_count": target_count,
-        "starttime": starttime,
-        "endtime": endtime,
-        "sql": sql,
-        "placeholder": placeholder,
-    }
 
 
 def aggregation(argument, command_option):
@@ -126,7 +39,7 @@ def aggregation(argument, command_option):
     rows = resultdb.execute(ret["sql"], ret["placeholder"])
     total_game_count = rows.fetchone()[0]
 
-    ret = select_game(argument, command_option)
+    ret = query.select_game(argument, command_option)
     rows = resultdb.execute(ret["sql"], ret["placeholder"])
 
     # ---

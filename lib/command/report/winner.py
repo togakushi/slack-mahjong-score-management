@@ -6,96 +6,11 @@ import matplotlib.pyplot as plt
 
 import lib.function as f
 import lib.command as c
+import lib.command.report._query as query
 from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
-
-
-def select_data(argument, command_option):
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
-
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
-
-    sql = """
-        select
-            collection as "集計月",
-            printf("%s (%.1fpt)",
-                max(case when rank = 1 then name end),
-                max(case when rank = 1 then total end)
-            ) as "1位",
-            printf("%s (%.1fpt)",
-                max(case when rank = 2 then name end),
-                max(case when rank = 2 then total end)
-            ) as "2位",
-            printf("%s (%.1fpt)",
-                max(case when rank = 3 then name end),
-                max(case when rank = 3 then total end)
-            ) as "3位",
-            printf("%s (%.1fpt)",
-                max(case when rank = 4 then name end),
-                max(case when rank = 4 then total end)
-            ) as "4位",
-            printf("%s (%.1fpt)",
-                max(case when rank = 5 then name end),
-                max(case when rank = 5 then total end)
-            ) as "5位"
-        from (
-            select
-                collection,
-                rank() over (partition by collection order by round(sum(point), 1) desc) as rank,
-                name,
-                round(sum(point), 1) as total
-            from (
-                select
-                    collection,
-                    --[unregistered_replace] case when guest = 0 then name else ? end as name, -- ゲスト有効
-                    --[unregistered_not_replace] name, -- ゲスト無効
-                    point
-                from
-                    individual_results
-                where
-                    rule_version = ?
-                    and playtime between ? and ?
-                    --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
-                    --[guest_skip] and guest = 0 -- ゲストなし
-            )
-            group by
-                name, collection
-        )
-        group by
-            collection
-        order by
-            collection desc
-    """
-
-    placeholder = [g.guest_name, g.rule_version, starttime, endtime]
-
-    if command_option["unregistered_replace"]:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-        placeholder.pop(placeholder.index(g.guest_name))
-
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
-
-    return {
-        "target_days": target_days,
-        "target_player": target_player,
-        "target_count": target_count,
-        "starttime": starttime,
-        "endtime": endtime,
-        "sql": sql,
-        "placeholder": placeholder,
-    }
 
 
 def plot(argument, command_option):
@@ -103,7 +18,7 @@ def plot(argument, command_option):
     resultdb.row_factory = sqlite3.Row
 
     # --- データ取得
-    ret = select_data(argument, command_option)
+    ret = query.select_winner(argument, command_option)
     rows = resultdb.execute(ret["sql"], ret["placeholder"])
 
     results = {}
