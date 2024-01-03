@@ -10,7 +10,6 @@ def query_count_game(argument, command_option):
     g.logging.info(f"command_option: {command_option}")
 
     sql = """
-        --[recent] select * from (
         select
             count() as count
         from (
@@ -29,7 +28,6 @@ def query_count_game(argument, command_option):
                 playtime desc
             --[recent] limit ?
         )
-        --[recent] )
     """
 
     placeholder = [g.rule_version, starttime, endtime]
