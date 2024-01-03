@@ -101,7 +101,7 @@ def plot(argument, command_option):
         f"[{remark_text}]" if remark_text else "",
     )
 
-    fig.text(0.01, 0.02, # 表示位置(左下0,0 右下0,1)
+    fig.text(0.01, 0.01, # 表示位置(左下0,0 右下0,1)
         add_text,
         transform = fig.transFigure,
         fontsize = 6,
