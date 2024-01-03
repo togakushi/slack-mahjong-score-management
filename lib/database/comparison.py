@@ -4,6 +4,7 @@ from datetime import datetime
 
 import lib.command as c
 import lib.function as f
+import lib.database as d
 from lib.function import global_value as g
 
 
@@ -217,7 +218,7 @@ def db_update(cur, ts, msg, command_option): # 突合処理専用
         array[i1]["rpoint"] = rpoint_data[i2]
         array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
 
-    cur.execute(g.sql_result_update, (
+    cur.execute(d.sql_result_update, (
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
         array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
@@ -239,7 +240,7 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
         array[i1]["rpoint"] = rpoint_data[i2]
         array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
 
-    cur.execute(g.sql_result_insert, (
+    cur.execute(d.sql_result_insert, (
         ts, datetime.fromtimestamp(float(ts)),
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
@@ -251,7 +252,7 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
 
 
 def db_delete(cur, ts): # 突合処理専用
-    cur.execute(g.sql_result_delete, (ts,))
+    cur.execute(d.sql_result_delete, (ts,))
 
 
 def textformat(text):
@@ -348,9 +349,9 @@ def remarks_comparison(fts):
             if check_data_src == check_data_dst:
                 continue
             else:
-                cur.execute(g.sql_remarks_delete_one, (str(x),))
+                cur.execute(d.sql_remarks_delete_one, (str(x),))
                 for update_data in check_data_src:
-                    cur.execute(g.sql_remarks_insert, (
+                    cur.execute(d.sql_remarks_insert, (
                         update_data["thread_ts"],
                         update_data["event_ts"],
                         c.NameReplace(update_data["name"], command_option),
@@ -358,12 +359,12 @@ def remarks_comparison(fts):
                     ))
                     g.logging.info(f"update: {update_data}")
         else: # スレッド元がないデータは不要
-            cur.execute(g.sql_remarks_delete_one, (str(x),))
+            cur.execute(d.sql_remarks_delete_one, (str(x),))
             g.logging.info(f"delete: {x} (No thread origin)")
 
     for x in db_ts:
         if x not in slack_ts: # データベースにあってslackにない → 削除
-            cur.execute(g.sql_remarks_delete_one, (str(x),))
+            cur.execute(d.sql_remarks_delete_one, (str(x),))
             g.logging.info(f"delete: {x} (Only database)")
 
     resultdb.commit()

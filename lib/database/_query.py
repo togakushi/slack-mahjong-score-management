@@ -1,6 +1,54 @@
 import lib.function as f
 from lib.function import global_value as g
 
+
+sql_result_insert = """
+    insert into
+        result (
+            ts, playtime,
+            p1_name, p1_str, p1_rpoint, p1_rank, p1_point,
+            p2_name, p2_str, p2_rpoint, p2_rank, p2_point,
+            p3_name, p3_str, p3_rpoint, p3_rank, p3_point,
+            p4_name, p4_str, p4_rpoint, p4_rank, p4_point,
+            deposit,
+            rule_version, comment
+        ) values (
+            ?, ?,
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?, ?,
+            ?,
+            ?, ?
+        )
+"""
+
+sql_result_update = """
+    update result set
+        p1_name=?, p1_str=?, p1_rpoint=?, p1_rank=?, p1_point=?,
+        p2_name=?, p2_str=?, p2_rpoint=?, p2_rank=?, p2_point=?,
+        p3_name=?, p3_str=?, p3_rpoint=?, p3_rank=?, p3_point=?,
+        p4_name=?, p4_str=?, p4_rpoint=?, p4_rank=?, p4_point=?,
+        deposit=?
+    where ts=?
+"""
+
+sql_result_delete = "delete from result where ts=?"
+
+sql_remarks_insert = """
+    insert into
+        remarks (
+            thread_ts, event_ts, name, matter
+        ) values (
+            ?, ?, ?, ?
+        )
+"""
+
+sql_remarks_delete_all = "delete from remarks where thread_ts=?"
+
+sql_remarks_delete_one = "delete from remarks where event_ts=?"
+
+
 def query_count_game(argument, command_option):
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
