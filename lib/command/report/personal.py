@@ -23,7 +23,8 @@ def plot(argument, command_option):
     ret = d.query_count_game(argument, command_option)
     rows = resultdb.execute(ret["sql"], ret["placeholder"])
     total_game_count = rows.fetchone()[0]
-    command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
+    if command_option["stipulated"] == 0:
+        command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
 
     ret = query.select_personal_data(argument, command_option)
     rows = resultdb.execute(ret["sql"], ret["placeholder"])

@@ -164,6 +164,9 @@ def argument_analysis(argument, command_option):
         if re.match(r"^(トップ|上位|top)([0-9]+)$", keyword):
             command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
             continue
+        if re.match(r"^(規定数|規定打数)([0-9]+)$", keyword):
+            command_option["stipulated"] = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
+            continue
 
         # どのオプションにもマッチしないものはプレイヤー名
         target_player.append(c.NameReplace(keyword, command_option))

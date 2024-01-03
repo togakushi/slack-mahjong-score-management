@@ -305,7 +305,6 @@ def select_game(argument, command_option):
     g.logging.info(f"command_option: {command_option}")
 
     sql = """
-        --[recent] select * from (
         select
             name,
             count() as count,
@@ -339,12 +338,13 @@ def select_game(argument, command_option):
         )
         group by
             name
+        having
+            count() >= ? -- 規定打数
         order by
             pt_total desc
-        --[recent] )
     """
 
-    placeholder = [g.guest_name, g.rule_version, starttime, endtime]
+    placeholder = [g.guest_name, g.rule_version, starttime, endtime, command_option["stipulated"]]
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")
