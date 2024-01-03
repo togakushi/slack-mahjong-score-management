@@ -72,6 +72,11 @@ def plot(argument, command_option):
     if game_count == 0:
         return(game_count, f.message.no_hits(ret["starttime"], ret["endtime"]))
 
+    # 規定打数足切り
+    for name in list(tmp_results):
+        if not tmp_results[name]["count"] >= command_option["stipulated"]:
+            tmp_results.pop(name)
+
     # 累積ポイント推移
     results = {}
     for name in tmp_results.keys():
