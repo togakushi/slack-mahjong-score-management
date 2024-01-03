@@ -156,13 +156,34 @@ def select_versus_matrix(argument, command_option):
             count() as game,
             count(my_rank < vs_rank or null) as win,
             count(my_rank > vs_rank or null) as lose,
-            round(cast(count(my_rank < vs_rank or null) AS real) / count() * 100, 2) as 'win%'
+            round(cast(count(my_rank < vs_rank or null) AS real) / count() * 100, 2) as 'win%',
+            round(sum(my_point),1 ) as my_point_sum,
+            round(avg(my_point),1 ) as my_point_avg,
+            round(sum(vs_point), 1) as vs_point_sum,
+            round(avg(vs_point), 1) as vs_point_avg,
+            round(avg(my_rpoint), 1) as my_rpoint_avg,
+            round(avg(vs_rpoint), 1) as vs_rpoint_avg,
+            count(my_rank = 1 or null) as my_1st,
+            count(my_rank = 2 or null) as my_2nd,
+            count(my_rank = 3 or null) as my_3rd,
+            count(my_rank = 4 or null) as my_4th,
+            round(avg(my_rank), 2) as my_rank_avg,
+            count(vs_rank = 1 or null) as vs_1st,
+            count(vs_rank = 2 or null) as vs_2nd,
+            count(vs_rank = 3 or null) as vs_3rd,
+            count(vs_rank = 4 or null) as vs_4th,
+            round(avg(vs_rank), 2) as vs_rank_avg
         from (
             select
                 my.name as my_name,
                 my.rank as my_rank,
-                vs.name as vs_name,
-                vs.rank as vs_rank
+                my.rpoint as my_rpoint,
+                my.point as my_point,
+                --[unregistered_replace] case when guest = 0 then vs.name else ? end as vs_name, -- ゲスト有効
+                --[unregistered_not_replace] vs.name as vs_name, -- ゲスト無効
+                vs.rank as vs_rank,
+                vs.rpoint as vs_rpoint,
+                vs.point as vs_point
             from
                 individual_results my
             inner join
@@ -172,6 +193,8 @@ def select_versus_matrix(argument, command_option):
                 my.rule_version = ?
                 and my.playtime between ? and ?
                 and my.name = ?
+                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
+                --[guest_skip] and guest = 0 -- ゲストなし
             order by
                 my.playtime desc
             --[recent] limit ?
@@ -182,12 +205,22 @@ def select_versus_matrix(argument, command_option):
             game desc
     """
 
-    if target_count == 0:
-        placeholder = [g.rule_version, starttime, endtime, target_player[0]]
+    placeholder = [g.guest_name, g.rule_version, starttime, endtime, target_player[0]]
+
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
     else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+        placeholder.pop(placeholder.index(g.guest_name))
+
+    if target_count != 0:
         sql = sql.replace("and my.playtime between", "-- and my.playtime between")
         sql = sql.replace("--[recent] ", "")
-        placeholder = [g.rule_version, target_player[0], target_count]
+        placeholder.append(target_count)
 
     g.logging.trace(f"sql: {sql}")
     g.logging.trace(f"placeholder: {placeholder}")
