@@ -1,28 +1,19 @@
 import sqlite3
-from datetime import datetime
 
 import lib.command as c
 import lib.function as f
+import lib.command.results._query as query
 from lib.function import global_value as g
 
 
-def aggregation(starttime, endtime, target_player, target_count, command_option):
+def aggregation(argument, command_option):
     """
     直接対戦結果を集計して返す
 
     Parameters
     ----------
-    starttime : date
-        集計開始日時
-
-    endtime : date
-        集計終了日時
-
-    target_player : list
-        集計対象プレイヤー
-
-    target_count: int
-        集計するゲーム数
+    argument : list
+        slackから受け取った引数
 
     command_option : dict
         コマンドオプション
@@ -38,133 +29,119 @@ def aggregation(starttime, endtime, target_player, target_count, command_option)
 
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
 
-    results = f.search.game_select(starttime, endtime, target_player, target_count, command_option)
-    target_player = [c.NameReplace(name, command_option, add_mark = True) for name in target_player] # ゲストマーク付きリストに更新
-    g.logging.info(f"target_player(update):  {target_player}")
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
 
+    # --- データ収集
+    ret = query.select_versus_matrix(argument, command_option)
+    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+
+    my_name = ret["target_player"][0]
+    starttime = ret["starttime"]
+    endtime = ret["endtime"]
+
+    results = {}
+    for row in rows.fetchall():
+        results[row["vs_name"]] = dict(row)
+        g.logging.trace(f"{row['vs_name']}: {results[row['vs_name']]}")
+    g.logging.info(f"return record: {len(results)}")
+
+    # ヘッダ情報
     msg2 = {}
     msg1 = "*【直接対戦結果】*\n"
-    msg1 += f"\tプレイヤー名： {target_player[0]}\n"
+    msg1 += f"\tプレイヤー名： {my_name}\n"
 
     if command_option["all_player"]:
-        vs_list = list(set(g.member_list.values()))
-        vs_list.remove(target_player[0]) # 自分を除外
+        vs_list = list(results.keys())
         msg1 += f"\t対戦相手：全員\n"
     else:
-        vs_list = target_player[1:]
+        vs_list = ret["target_player"][1:]
         msg1 += f"\t対戦相手：{', '.join(vs_list)}\n"
 
-    if results.keys():
-        msg1 += "\t集計範囲：{} ～ {}\n".format(
-            results[min(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M'),
-            results[max(results.keys())]["日付"].strftime('%Y/%m/%d %H:%M'),
-        )
-        msg1 += f.remarks(command_option)
-    else:
-        msg1 += "\t集計範囲：{} ～ {}\n".format(
-            starttime.strftime('%Y/%m/%d %H:%M'),
-            endtime.strftime('%Y/%m/%d %H:%M'),
-        )
-        msg1 += f.remarks(command_option)
-        msg2[""] = "対戦記録が見つかりませんでした。\n"
+    msg1 += "\t検索範囲：{} ～ {}\n".format(
+        starttime.strftime("%Y/%m/%d %H:%M"),
+        endtime.strftime("%Y/%m/%d %H:%M"),
+    )
+    msg1 += f.remarks(command_option)
 
+    if len(results) == 0:
+        msg2[""] = "対戦記録が見つかりませんでした。\n"
         return(msg1, msg2)
 
-    padding = c.CountPadding(vs_list)
+    # 表示内容
+    padding = c.CountPadding(
+        [c.NameReplace(i, command_option, add_mark = True) for i in vs_list + [my_name]]
+    )
     g.logging.info(f"vs_list: {vs_list} padding: {padding}")
 
-    for versus_player in vs_list:
-        # 同卓したゲームの抽出
-        vs_game = []
-        for i in results.keys():
-            vs_flag = [False, False]
-            for wind in g.wind[0:4]:
-                if target_player[0] == results[i][wind]["name"]:
-                    vs_flag[0] = True
-                if versus_player == results[i][wind]["name"]:
-                    vs_flag[1] = True
-            if vs_flag[0] and vs_flag[1]:
-                vs_game.append(i)
+    for vs_name in vs_list:
+        msg2[vs_name] = "[ {} vs {} ]\n".format(
+            c.NameReplace(my_name, command_option, add_mark = True),
+            c.NameReplace(vs_name, command_option, add_mark = True),
+        )
 
-        ### 対戦結果集計 ###
-        win = 0 # 勝ち越し数
-        my_aggr = { # 自分の集計結果
-            "r_total": 0, # 素点合計
-            "total": 0, # ポイント合計
-            "rank": [0, 0, 0, 0],
-        }
-        vs_aggr = { # 相手の集計結果
-            "r_total": 0, # 素点合計
-            "total": 0, # ポイント合計
-            "rank": [0, 0, 0, 0],
-        }
+        msg2[vs_name] += "対戦数： {} 戦 {} 勝 {} 敗\n".format(
+            results[vs_name]["game"],
+            results[vs_name]["win"],
+            results[vs_name]["game"] - results[vs_name]["win"],
+        )
 
-        if target_player[0] == versus_player:
-            continue
+        msg2[vs_name] += "平均素点差： {:+.0f}点\n".format(
+            (results[vs_name]["my_rpoint_avg"] - results[vs_name]["vs_rpoint_avg"]) * 100
+        ).replace("-", "▲")
 
-        msg2[versus_player] = "[ {} vs {} ]\n".format(target_player[0], versus_player)
+        msg2[vs_name] += "獲得ポイント合計(自分)： {:+.1f}pt\n".format(results[vs_name]["my_point_sum"]).replace("-", "▲")
+        msg2[vs_name] += "獲得ポイント合計(相手)： {:+.1f}pt\n".format(results[vs_name]["vs_point_sum"]).replace("-", "▲")
 
-        for i in vs_game:
-            for wind in g.wind[0:4]:
-                if target_player[0] == results[i][wind]["name"]:
-                    r_m = results[i][wind]
-                    my_aggr["r_total"] += eval(str(results[i][wind]["rpoint"])) * 100
-                    my_aggr["total"] += results[i][wind]["point"]
-                    my_aggr["rank"][results[i][wind]["rank"] -1] += 1
-                if versus_player == results[i][wind]["name"]:
-                    r_v = results[i][wind]
-                    vs_aggr["r_total"] += eval(str(results[i][wind]["rpoint"])) * 100
-                    vs_aggr["total"] += results[i][wind]["point"]
-                    vs_aggr["rank"][results[i][wind]["rank"] -1] += 1
+        msg2[vs_name] += "順位分布(自分)： {}-{}-{}-{} ({:1.2f})\n".format(
+            results[vs_name]["my_1st"],
+            results[vs_name]["my_2nd"],
+            results[vs_name]["my_3rd"],
+            results[vs_name]["my_4th"],
+            results[vs_name]["my_rank_avg"],
+        )
+        msg2[vs_name] += "順位分布(相手)： {}-{}-{}-{} ({:1.2f})\n".format(
+            results[vs_name]["vs_1st"],
+            results[vs_name]["vs_2nd"],
+            results[vs_name]["vs_3rd"],
+            results[vs_name]["vs_4th"],
+            results[vs_name]["vs_rank_avg"],
+        )
 
-            if r_m["rank"] < r_v["rank"]:
-                win += 1
+        # ゲーム結果
+        if command_option["game_results"]:
+            msg2[vs_name] += "\n[ゲーム結果]\n"
+            ret = query.select_game_vs_results(argument, command_option, my_name, vs_name)
+            rows = resultdb.execute(ret["sql"], ret["placeholder"])
 
-        ### 集計結果出力 ###
-        if len(vs_game) == 0:
-            msg2.pop(versus_player)
-        else:
-            msg2[versus_player] += "対戦数： {} 戦 {} 勝 {} 敗\n".format(len(vs_game), win, len(vs_game) - win)
-            msg2[versus_player] += "平均素点差： {:+.1f}点\n".format(
-                (my_aggr["r_total"] - vs_aggr["r_total"]) / len(vs_game)
-            ).replace("-", "▲")
-            msg2[versus_player] += "獲得ポイント合計(自分)： {:+.1f}pt\n".format(
-                my_aggr["total"]
-            ).replace("-", "▲")
-            msg2[versus_player] += "獲得ポイント合計(相手)： {:+.1f}pt\n".format(
-                vs_aggr["total"]
-            ).replace("-", "▲")
-            msg2[versus_player] += "順位分布(自分)： {}-{}-{}-{} ({:1.2f})\n".format(
-                my_aggr["rank"][0], my_aggr["rank"][1], my_aggr["rank"][2], my_aggr["rank"][3],
-                sum([my_aggr["rank"][i] * (i + 1) for i in range(4)]) / sum(my_aggr["rank"]),
-            )
-            msg2[versus_player] += "順位分布(相手)： {}-{}-{}-{} ({:1.2f})\n".format(
-                vs_aggr["rank"][0], vs_aggr["rank"][1], vs_aggr["rank"][2], vs_aggr["rank"][3],
-                sum([vs_aggr["rank"][i] * (i + 1) for i in range(4)]) / sum(vs_aggr["rank"]),
-            )
-            if command_option["game_results"]:
-                msg2[versus_player] += "\n[ゲーム結果]\n"
-                for i in vs_game:
-                    msg2[versus_player] += results[i]["日付"].strftime("%Y/%m/%d %H:%M:%S\n")
-                    for wind in g.wind[0:4]:
-                        tmp_msg = "\t{}： {}{} / {}位 {:>5}00点 ({}pt)\n".format(
-                            wind, results[i][wind]["name"],
-                            " " * (padding - f.translation.len_count(results[i][wind]["name"])),
-                            results[i][wind]["rank"],
-                            eval(str(results[i][wind]["rpoint"])),
-                            results[i][wind]["point"],
+            for row in rows.fetchall():
+                g.logging.trace(dict(row))
+                tmp_msg_v = "{}{}\n".format(
+                    row["playtime"],
+                    "\t(2ゲスト戦)" if row["guest_count"] >= 2 else "",
+                )
+                for wind, pre in [("東家", "p1"), ("南家", "p2"), ("西家", "p3"), ("北家", "p4")]:
+                    pname = c.NameReplace(row[f"{pre}_name"], command_option, add_mark = True)
+                    tmp_msg_v += "\t{}： {}{} / {}位 {:>5}点 ({}pt)\n".format(
+                        wind, pname, " " * (padding - f.translation.len_count(pname)),
+                        row[f"{pre}_rank"],
+                        row[f"{pre}_rpoint"],
+                        row[f"{pre}_point"],
+                    ).replace("-", "▲")
+                    if row[f"{pre}_name"] == my_name:
+                        tmp_msg_p = "{}： {}位 {:>5}点 ({}pt){}\n".format(
+                            row["playtime"],
+                            row[f"{pre}_rank"],
+                            row[f"{pre}_rpoint"],
+                            row[f"{pre}_point"],
+                            g.guest_mark if row["guest_count"] >= 2 else "",
                         ).replace("-", "▲")
 
-                        if command_option["verbose"]:
-                            msg2[versus_player] += tmp_msg
-                        elif results[i][wind]["name"] in (target_player[0], versus_player):
-                            msg2[versus_player] += tmp_msg
+                if command_option["verbose"]:
+                    msg2[vs_name] += tmp_msg_v
+                else:
+                    msg2[vs_name] += tmp_msg_p
 
-    if not msg2:
-        msg2[""] = "直接対戦はありません。\n"
-
+    resultdb.close()
     return(msg1.strip(), msg2)

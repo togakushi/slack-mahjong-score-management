@@ -81,7 +81,7 @@ def select_personal_data(argument, command_option):
 
     return {
         "target_days": target_days,
-        "target_player": target_player[0],
+        "target_player": target_player,
         "target_count": target_count,
         "starttime": starttime,
         "endtime": endtime,
@@ -112,7 +112,7 @@ def select_game_results(argument, command_option):
             where
                 rule_version = ?
                 and playtime between ? and ?
-                and ? in (p1_name, p2_name, p3_name, p4_name)
+                --<<select player>>--
             order by
                 playtime desc
             --[recent] limit ?
@@ -121,9 +121,15 @@ def select_game_results(argument, command_option):
             playtime
         """
 
-    if target_count == 0:
-        placeholder = [g.rule_version, starttime, endtime, target_player[0]]
-    else:
+    placeholder = [g.rule_version, starttime, endtime]
+
+    s = ""
+    for i in target_player:
+        s += "and ? in (p1_name, p2_name, p3_name, p4_name)\n"
+        placeholder.append(i)
+    sql = sql.replace("--<<select player>>--", s)
+
+    if target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
         placeholder = [g.rule_version, target_player[0], target_count]
@@ -133,13 +139,67 @@ def select_game_results(argument, command_option):
 
     return {
         "target_days": target_days,
-        "target_player": target_player[0],
+        "target_player": target_player,
         "target_count": target_count,
         "starttime": starttime,
         "endtime": endtime,
         "sql": sql,
         "placeholder": placeholder,
     }
+
+
+def select_game_vs_results(argument, command_option, my_name, vs_name):
+    target_days, _, target_count, command_option = f.common.argument_analysis(argument, command_option)
+    starttime, endtime = f.common.scope_coverage(target_days)
+
+    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"target: {my_name} vs {vs_name}")
+    g.logging.info(f"command_option: {command_option}")
+
+    sql = """
+        select * from (
+            select
+                replace(playtime, "-", "/") as playtime,
+                p1_guest + p2_guest + p3_guest + p4_guest as guest_count,
+                p1_name, p1_rpoint * 100 as p1_rpoint, p1_rank, p1_point,
+                p2_name, p2_rpoint * 100 as p2_rpoint, p2_rank, p2_point,
+                p3_name, p3_rpoint * 100 as p3_rpoint, p3_rank, p3_point,
+                p4_name, p4_rpoint * 100 as p4_rpoint, p4_rank, p4_point
+            from
+                game_results
+            where
+                rule_version = ?
+                and playtime between ? and ?
+                and ? in (p1_name, p2_name, p3_name, p4_name)
+                and ? in (p1_name, p2_name, p3_name, p4_name)
+            order by
+                playtime desc
+            --[recent] limit ?
+        )
+        order by
+            playtime
+        """
+
+    placeholder = [g.rule_version, starttime, endtime, my_name, vs_name]
+
+    if target_count != 0:
+        sql = sql.replace("and playtime between", "-- and playtime between")
+        sql = sql.replace("--[recent] ", "")
+        placeholder = [g.rule_version, my_name, vs_name, target_count]
+
+    g.logging.trace(f"sql: {sql}")
+    g.logging.trace(f"placeholder: {placeholder}")
+
+    return {
+        "target_days": target_days,
+        "target_player": [my_name, vs_name],
+        "target_count": target_count,
+        "starttime": starttime,
+        "endtime": endtime,
+        "sql": sql,
+        "placeholder": placeholder,
+    }
+
 
 
 def select_versus_matrix(argument, command_option):
@@ -179,7 +239,7 @@ def select_versus_matrix(argument, command_option):
                 my.rank as my_rank,
                 my.rpoint as my_rpoint,
                 my.point as my_point,
-                --[unregistered_replace] case when guest = 0 then vs.name else ? end as vs_name, -- ゲスト有効
+                --[unregistered_replace] case when vs.guest = 0 then vs.name else ? end as vs_name, -- ゲスト有効
                 --[unregistered_not_replace] vs.name as vs_name, -- ゲスト無効
                 vs.rank as vs_rank,
                 vs.rpoint as vs_rpoint,
@@ -193,8 +253,8 @@ def select_versus_matrix(argument, command_option):
                 my.rule_version = ?
                 and my.playtime between ? and ?
                 and my.name = ?
-                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
-                --[guest_skip] and guest = 0 -- ゲストなし
+                --[guest_not_skip] and vs.playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
+                --[guest_skip] and vs.guest = 0 -- ゲストなし
             order by
                 my.playtime desc
             --[recent] limit ?
@@ -227,7 +287,7 @@ def select_versus_matrix(argument, command_option):
 
     return {
         "target_days": target_days,
-        "target_player": target_player[0],
+        "target_player": target_player,
         "target_count": target_count,
         "starttime": starttime,
         "endtime": endtime,

@@ -41,7 +41,7 @@ def aggregation(argument, command_option):
         g.logging.trace(dict(data))
     else:
         data = {
-            "name": ret["target_player"],
+            "name": ret["target_player"][0],
             "game": 0, "win": 0, "lose": 0, "draw": 0,
         }
 
