@@ -4,6 +4,7 @@ import sqlite3
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
+import lib.function as f
 import lib.command as c
 import lib.command.graph._query as query
 from lib.function import global_value as g
@@ -29,6 +30,10 @@ def plot(argument, command_option):
     -------
     game_count : int
         グラフにプロットしたゲーム数
+
+    text : text
+        検索結果が0件のときのメッセージ or
+        グラフ画像保存パス
     """
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
@@ -63,6 +68,9 @@ def plot(argument, command_option):
     playtime = list(set(playtime))
     playtime.sort()
     game_count = len(playtime)
+
+    if game_count == 0:
+        return(game_count, f.message.no_hits(ret["starttime"], ret["endtime"]))
 
     # 累積ポイント推移
     results = {}
@@ -105,7 +113,8 @@ def plot(argument, command_option):
     ranking_rank = sorted(ranking_rank.items(), key = lambda x:x[1])
 
     ### グラフ生成 ###
-    # --- グラフフォント設定
+    save_file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
+    # グラフフォント設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname = font_path)
@@ -187,6 +196,6 @@ def plot(argument, command_option):
 
     plt.tight_layout()
     fig.tight_layout()
-    fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "graph.png"))
+    fig.savefig(save_file)
 
-    return(game_count)
+    return(game_count, save_file)

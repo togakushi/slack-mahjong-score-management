@@ -5,6 +5,7 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
+import lib.function as f
 import lib.command as c
 import lib.command.graph._query as query
 from lib.function import global_value as g
@@ -35,6 +36,10 @@ def plot(argument, command_option):
     -------
     game_count : int
         グラフにプロットしたゲーム数
+
+    text : text
+        検索結果が0件のときのメッセージ or
+        グラフ画像保存パス
     """
 
     # 検索動作を合わせる
@@ -68,8 +73,12 @@ def plot(argument, command_option):
 
     game_count = len(playtime)
 
+    if game_count == 0:
+        return(game_count, f.message.no_hits(ret["starttime"], ret["endtime"]))
+
     ### グラフ生成 ###
-    # --- グラフフォント設定
+    save_file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
+    # グラフフォント設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname = font_path)
@@ -130,6 +139,6 @@ def plot(argument, command_option):
 
     plt.setp(rank_ax.get_xticklabels(), rotation = rotation, ha = position)
     fig.tight_layout()
-    fig.savefig(os.path.join(os.path.realpath(os.path.curdir), "graph.png"))
+    fig.savefig(save_file)
 
-    return(game_count)
+    return(game_count, save_file)

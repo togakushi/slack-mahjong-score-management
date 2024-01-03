@@ -23,23 +23,18 @@ def slackpost(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    msg = f.message.invalid_argument()
     command_option = f.configure.command_option_initialization("graph")
-    target_days, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
+    _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 
-    if starttime or endtime:
-        if len(target_player) == 1: # 描写対象がひとり → 個人成績
-            count = personal.plot(argument, command_option)
-        else: # 描写対象が複数 → 比較
-            count = summary.plot(argument, command_option)
-        file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
-        if count <= 0:
-            f.slack_api.post_message(client, channel, f.message.no_hits(starttime, endtime))
-        else:
-            f.slack_api.post_fileupload(client, channel, "成績グラフ", file)
+    if len(target_player) == 1: # 対象がひとり → 個人成績
+        count, ret = personal.plot(argument, command_option)
+    else: # 対象が複数 → 比較
+        count, ret = summary.plot(argument, command_option)
+
+    if count == 0:
+        f.slack_api.post_message(client, channel, ret)
     else:
-        f.slack_api.post_message(client, channel, msg)
+        f.slack_api.post_fileupload(client, channel, "成績グラフ", ret)
