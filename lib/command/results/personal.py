@@ -71,7 +71,10 @@ def aggregation(argument, command_option):
         badge_status = status_badge[index]
 
     ### 表示内容 ###
-    msg1 = f"*【個人成績】*\n\tプレイヤー名： {data['name']} {badge_degree}\n"
+    msg1 = "*【個人成績】*\n\tプレイヤー名： {} {}\n".format(
+        c.NameReplace(data["name"], command_option, add_mark = True),
+        badge_degree,
+    )
     msg2 = {}
     msg2["座席"] = "*【座席データ】*\n"
     if command_option["guest_skip"]:
