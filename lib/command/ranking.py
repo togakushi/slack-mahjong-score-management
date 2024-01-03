@@ -24,6 +24,8 @@ def slackpost(client, channel, argument):
     """
 
     command_option = f.configure.command_option_initialization("ranking")
+    _, _, _, command_option = f.common.argument_analysis(argument, command_option)
+
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 
