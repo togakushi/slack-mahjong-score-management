@@ -59,6 +59,7 @@ def plot(argument, command_option):
     playtime = []
     point = []
     point_sum = []
+    point_avg = []
     rank = []
     rank_avg = []
     for row in rows.fetchall():
@@ -66,6 +67,7 @@ def plot(argument, command_option):
         playtime.append(row["playtime"])
         point.append(row["point"])
         point_sum.append(row["point_sum"])
+        point_avg.append(row["point_avg"])
         rank.append(row["rank"])
         rank_avg.append(row["rank_avg"])
         g.logging.trace(f"{dict(row)}")
@@ -116,6 +118,7 @@ def plot(argument, command_option):
     point_ax.set_xlim(-1, game_count)
     point_ax.hlines(y = 0, xmin = -1, xmax = game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
     point_ax.plot(playtime, point_sum, marker = "o", markersize = 3, label = f"累積ポイント({str(point_sum[-1])}pt)".replace("-", "▲"))
+    point_ax.plot(playtime, point_avg, marker = "o", markersize = 3, label = f"平均ポイント({str(point_avg[-1])}pt)".replace("-", "▲"))
     point_ax.bar(playtime, point, color = "dodgerblue", label = f"獲得ポイント")
     point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white") # 背景色と同じにして見えなくする
     point_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0)
