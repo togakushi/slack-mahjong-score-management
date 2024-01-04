@@ -216,6 +216,8 @@ def select_winner(argument, command_option):
             )
             group by
                 name, collection
+            having
+                count() >= ? -- 規定打数
         )
         group by
             collection
@@ -223,7 +225,7 @@ def select_winner(argument, command_option):
             collection desc
     """
 
-    placeholder = [g.guest_name, g.rule_version, starttime, endtime]
+    placeholder = [g.guest_name, g.rule_version, starttime, endtime, command_option["stipulated"]]
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")

@@ -25,8 +25,12 @@ def plot(argument, command_option):
     for row in rows.fetchall():
         results[row["集計月"]] = dict(row)
         for i in ("1位", "2位", "3位", "4位", "5位"):
-            name, pt = row[i].split()
-            name = c.NameReplace(name, command_option, add_mark = True)
+            if len(row[i].split()) == 1:
+                name = "該当者なし"
+                pt = ""
+            else:
+                name, pt = row[i].split()
+                name = c.NameReplace(name, command_option, add_mark = True)
             results[row["集計月"]].update({i: f"{name} {pt}"})
         g.logging.trace(f"{row['集計月']}: {results[row['集計月']]}")
     g.logging.info(f"return record: {len(results)}")
@@ -81,9 +85,10 @@ def plot(argument, command_option):
 
     # 追加テキスト
     remark_text =  f.remarks(command_option).replace("\t", "")
-    add_text = "[検索期間：{} - {}] {}".format(
+    add_text = "[検索期間：{} - {}] {} {}".format(
         ret["starttime"].strftime('%Y/%m/%d %H:%M'),
         ret["endtime"].strftime('%Y/%m/%d %H:%M'),
+        f"[規定数：{command_option['stipulated']} ゲーム以上]" if command_option["stipulated"] != 0 else "",
         f"[{remark_text}]" if remark_text else "",
     )
 
