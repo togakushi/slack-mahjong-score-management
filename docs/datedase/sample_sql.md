@@ -177,7 +177,7 @@ ORDER BY
 ## ゲーム毎の累計ポイント(移動累計)、平均ポイント（移動平均）
 ```
 SELECT
-    count() OVER moving as count,
+    count() OVER moving AS count,
     playtime,
     rank,
     point,
