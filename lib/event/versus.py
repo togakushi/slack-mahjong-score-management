@@ -71,18 +71,15 @@ def handle_some_action(ack, body, client):
     )
 
     g.logging.info(f"[app:search_personal] {argument}, {command_option}")
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
 
     app_msg.pop()
     app_msg.append("集計完了")
     msg1 = f.message.no_hits(argument, command_option)
 
-    if starttime and endtime:
-        msg1, msg2 = c.results.versus.aggregation(starttime, endtime, target_player, target_count, command_option)
-        res = f.slack_api.post_message(client, body["user"]["id"], msg1)
-        for m in msg2.keys():
-            f.slack_api.post_message(client, body["user"]["id"], msg2[m] + '\n', res["ts"])
+    msg1, msg2 = c.results.versus.aggregation(argument, command_option)
+    res = f.slack_api.post_message(client, body["user"]["id"], msg1)
+    for m in msg2.keys():
+        f.slack_api.post_message(client, body["user"]["id"], msg2[m] + '\n', res["ts"])
 
     client.views_update(
         view_id = g.app_var["view_id"],
