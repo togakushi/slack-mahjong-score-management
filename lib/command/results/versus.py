@@ -57,6 +57,8 @@ def aggregation(argument, command_option):
         msg1 += f"\t対戦相手：全員\n"
     else:
         vs_list = ret["target_player"][1:]
+        if my_name in vs_list:
+            vs_list.remove(my_name)
         msg1 += f"\t対戦相手：{', '.join(vs_list)}\n"
 
     msg1 += "\t検索範囲：{} ～ {}\n".format(
@@ -64,6 +66,10 @@ def aggregation(argument, command_option):
         endtime.strftime("%Y/%m/%d %H:%M"),
     )
     msg1 += f.remarks(command_option)
+
+    if len(vs_list) == 0:
+        msg2[""] = "対戦相手が見つかりませんでした。\n"
+        return(msg1, msg2)
 
     if len(results) == 0:
         msg2[""] = "対戦記録が見つかりませんでした。\n"
