@@ -74,7 +74,7 @@ def handle_some_action(ack, body, client):
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.no_hits(starttime, endtime)
+    msg1 = f.message.no_hits(argument, command_option)
 
     if starttime and endtime:
         msg1, msg2 = c.results.personal.aggregation(argument, command_option)

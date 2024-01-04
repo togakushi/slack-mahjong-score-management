@@ -69,7 +69,7 @@ def plot(argument, command_option):
             tmp_results.pop(name)
 
     if len(tmp_results) == 0: # 描写対象が0人の場合は終了
-        return(len(tmp_results), f.message.no_hits(ret["starttime"], ret["endtime"]))
+        return(len(tmp_results), f.message.no_hits(argument, command_option))
 
     playtime = list(set([tmp_results[name]["playtime"] for name in tmp_results.keys()][0]))
     playtime.sort()

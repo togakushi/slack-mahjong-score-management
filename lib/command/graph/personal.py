@@ -76,7 +76,7 @@ def plot(argument, command_option):
     game_count = len(playtime)
 
     if game_count == 0:
-        return(game_count, f.message.no_hits(ret["starttime"], ret["endtime"]))
+        return(game_count, f.message.no_hits(argument, command_option))
 
     ### グラフ生成 ###
     save_file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")

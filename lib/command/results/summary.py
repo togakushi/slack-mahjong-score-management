@@ -53,7 +53,7 @@ def aggregation(argument, command_option):
 
     ### 表示 ###
     if len(results) == 0: # 結果が0件のとき
-        return(None, f.message.no_hits(ret["starttime"], ret["endtime"]), None)
+        return(None, f.message.no_hits(argument, command_option), None)
 
     msg1 = ""
     msg2 = "*【成績サマリ】*\n"

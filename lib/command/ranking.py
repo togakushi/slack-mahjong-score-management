@@ -74,7 +74,7 @@ def aggregation(argument, command_option):
     g.logging.info(f"return record: {len(results)}")
 
     if len(results) == 0: # 結果が0件のとき
-        return(f.message.no_hits(ret["starttime"], ret["endtime"]), None)
+        return(f.message.no_hits(argument, command_option), None)
 
     padding = c.CountPadding(list(set(name_list)))
     first_game = min([results[name]["first_game"] for name in results.keys()])

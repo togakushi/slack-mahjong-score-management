@@ -67,12 +67,12 @@ def handle_some_action(ack, body, client):
                 argument.append(f"トップ{ranked}")
 
     g.logging.info(f"[app:search_ranking] {argument}, {command_option}")
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
+    target_days, _, _, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.no_hits(starttime, endtime)
+    msg1 = f.message.no_hits(argument, command_option)
 
     if starttime and endtime:
         msg1, msg2 = c.ranking.aggregation(argument, command_option)
