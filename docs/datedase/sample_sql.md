@@ -177,17 +177,17 @@ ORDER BY
 ## ゲーム毎の累計ポイント(移動累計)、平均ポイント（移動平均）
 ```
 SELECT
-    count() OVER moving as count,
+    count() OVER moving AS count,
     playtime,
     rank,
     point,
-    round(sum(point) OVER moving, 1) as point_sum,
-    round(avg(point) OVER moving, 1) as point_avg,
-    round(avg(rank) OVER moving, 2) as rank_avg
+    round(sum(point) OVER moving, 1) AS point_sum,
+    round(avg(point) OVER moving, 1) AS point_avg,
+    round(avg(rank) OVER moving, 2) AS rank_avg
 FROM
     individual_results
 WHERE
     name = "<Player Name>"
 WINDOW
-    moving as (PARTITION by name ORDER by playtime)
+    moving AS (PARTITION BY name ORDER BY playtime)
 ```
