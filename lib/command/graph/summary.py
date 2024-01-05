@@ -1,4 +1,5 @@
 import os
+import itertools
 import sqlite3
 
 import matplotlib.font_manager as fm
@@ -71,11 +72,8 @@ def plot(argument, command_option):
     if len(tmp_results) == 0: # 描写対象が0人の場合は終了
         return(len(tmp_results), f.message.no_hits(argument, command_option))
 
-    # 各プレイヤーのplaytimeからゲーム数をカウント
-    playtime = []
-    for name in tmp_results.keys():
-        playtime += tmp_results[name]["playtime"]
-    playtime = list(set(playtime))
+    # 各プレイヤーのplaytimeから総ゲーム数をカウント
+    playtime = list(set(itertools.chain.from_iterable([tmp_results[name]["playtime"] for name in results.key()])))
     playtime.sort()
     game_count = len(playtime)
 
