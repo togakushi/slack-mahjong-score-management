@@ -132,10 +132,24 @@ step = 5.0
 
 
 ### カスタムメッセージ ###
-[invalid_score] # 持ち点合計と配給原点合計に差分がある場合
+[custom_message]
+# 使用シーン別のプレフィックスが付いたキーに表示メッセージを定義
+# プレフィックス以降の文字列は任意
+# 定義されたメッセージをランダムに表示する
+
+## invalid_argument オプション解析に失敗した場合
+invalid_argument_01 = えっ？
+invalid_argument_02 = すみません、よくわかりません。
+invalid_argument_03 = 困らせないでください。
+
+## invalid_score 持ち点合計と配給原点合計に差分がある場合
 # {rpoint_diff} → 得点差分の絶対値に置き換えられる
-# キーはセクション内でユニークであれば任意の名前でよい
-# 内容は投稿者にメンションされる
-msg01 = {rpoint_diff}点合わないよ？
-msg02 = あれ？{rpoint_diff}点間違ってない？
-msg03 = {rpoint_diff}点…あって…ないです……。
+invalid_score_01 = {rpoint_diff}点合わないよ？
+invalid_score_02 = あれ？{rpoint_diff}点間違ってない？
+invalid_score_03 = {rpoint_diff}点…あって…ないです……。
+
+## no_hits 検索指定範囲にゲーム結果が見つからない場合
+# {start} / {end} 検索開始、終了指定範囲
+# {keyword} 成績記録のキーワード
+no_hits_01 = {start} から {end} までに {keyword} はありません。
+no_hits_02 = 見つかりません。
