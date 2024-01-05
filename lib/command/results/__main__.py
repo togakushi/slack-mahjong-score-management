@@ -40,12 +40,12 @@ def slackpost(client, channel, argument):
         msg1, msg2 = personal.aggregation(argument, command_option)
         res = f.slack_api.post_message(client, channel, msg1)
         for m in msg2.keys():
-            f.slack_api.post_message(client, channel, msg2[m] + '\n', res["ts"])
+            f.slack_api.post_message(client, channel, msg2[m] + "\n", res["ts"])
     elif versus_mode: # 直接対戦
         msg1, msg2 = versus.aggregation(argument, command_option)
         res = f.slack_api.post_message(client, channel, msg1)
         for m in msg2.keys():
-            f.slack_api.post_message(client, channel, msg2[m] + '\n', res["ts"])
+            f.slack_api.post_message(client, channel, msg2[m] + "\n", res["ts"])
     else: # 成績サマリ
         msg1, msg2, msg3 = summary.aggregation(argument, command_option)
         res = f.slack_api.post_message(client, channel, msg2)
