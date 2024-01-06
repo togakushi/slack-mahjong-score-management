@@ -1,6 +1,6 @@
 import os
-import itertools
 import sqlite3
+from itertools import chain
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -73,8 +73,7 @@ def plot(argument, command_option):
         return(len(tmp_results), f.message.no_hits(argument, command_option))
 
     # 各プレイヤーのplaytimeから総ゲーム数をカウント
-    playtime = list(set(itertools.chain.from_iterable([tmp_results[name]["playtime"] for name in results.key()])))
-    playtime.sort()
+    playtime = sorted(set(chain.from_iterable([tmp_results[i]["playtime"] for i in tmp_results.keys()])))
     game_count = len(playtime)
 
     # 累積ポイント推移
