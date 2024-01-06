@@ -22,8 +22,8 @@ def check_namepattern(name):
         return(False, "登録可能文字数を超えています。")
     if re.match(r"(ゲスト|^[0-9]+$)", f.ZEN2HAN(name)): # 登録NGプレイヤー名
         return(False, "使用できない名前です。")
-    if re.match(r"^((当|今|昨)日|(今|先|先々)月|(今|去)年|全部)$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語は登録できません。")
+    if re.match(r"^((当|今|昨)日|(今|先|先々)月|(今|去|昨|一昨)年|全部)$", name): # NGワード（サブコマンド引数）
+        return(False, "期間指定に使用される単語は登録できません。")
     if re.match(r"^(戦績|比較|点差|差分|対戦|対戦結果|統計|個人|直近[0-9]+)$", name): # NGワード（サブコマンド引数）
         return(False, "コマンドに使用される単語は登録できません。")
     if re.match(r"^(順位|詳細|verbose)$", name): # NGワード（サブコマンド引数）

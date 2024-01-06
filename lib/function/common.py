@@ -106,7 +106,7 @@ def argument_analysis(argument, command_option):
             target_days.append((current_time + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
             target_days.append((current_time + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
             continue
-        if keyword == "去年":
+        if keyword in ("去年", "昨年"):
             target_days.append((current_time + relativedelta(day = 1, month = 1, years = -1)).strftime("%Y%m%d"))
             target_days.append((current_time + relativedelta(day = 31, month = 12, years = -1)).strftime("%Y%m%d"))
             continue
