@@ -33,8 +33,8 @@ def invalid_argument():
     return(msg)
 
 
-def invalid_score(user_id, score, pointsum):
-    rpoint_diff = abs(pointsum - score) * 100
+def invalid_score(user_id, rpoint_sum, correct_score):
+    rpoint_diff = abs(correct_score - rpoint_sum)
     msg = f"{rpoint_diff}点合っていません。"
 
     if "custom_message" in g.config.sections():
@@ -45,7 +45,10 @@ def invalid_score(user_id, score, pointsum):
         if key_list:
             msg = g.config["custom_message"][random.choice(key_list)]
 
-    return(f"<@{user_id}> " + msg.format(rpoint_diff = rpoint_diff))
+    return(f"<@{user_id}> " + msg.format(
+        rpoint_diff = rpoint_diff * 100,
+        rpoint_sum = rpoint_sum * 100,
+    ))
 
 
 def no_hits(argument, command_option):

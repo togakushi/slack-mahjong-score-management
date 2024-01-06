@@ -73,23 +73,25 @@ def check_score(client, channel_id, event_ts, user, msg):
     postされた素点合計が配給原点と同じかチェック
     """
 
-    g.logging.notice("post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}]".format(
+
+    correct_score = g.config["mahjong"].getint("point", 250) * 4
+    rpoint_sum = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
+
+    g.logging.notice("post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
         msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7],
+        correct_score - rpoint_sum,
         )
     )
 
-    pointsum = g.config["mahjong"].getint("point", 250) * 4
-    score = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
-
-    if score == pointsum:
+    if rpoint_sum == correct_score: # 合計が一致している場合
         client.reactions_add(
             channel = channel_id,
             name = g.reaction_ok,
             timestamp = event_ts,
         )
-    else:
-        msg = f.message.invalid_score(user, score, pointsum)
-        f.slack_api.post_message(client, channel_id, msg, event_ts)
+    else: # 合計が不一致の場合
+        msg = f.message.invalid_score(user, rpoint_sum, correct_score)
+        f.slack_api.post_message(client, channel_id, msg, event_ts) #
         client.reactions_add(
             channel = channel_id,
             name = g.reaction_ng,
