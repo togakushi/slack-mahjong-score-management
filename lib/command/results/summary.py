@@ -135,7 +135,7 @@ def aggregation(argument, command_option):
             )
         )
         for row in rows.fetchall():
-            name = c.NameReplace(row["name"], command_option)
+            name = c.NameReplace(row["name"], command_option, add_mark = True)
             if name in name_list:
                 msg3 += "\t{}： {} （{}）\n".format(
                     datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M:%S'),
