@@ -91,7 +91,7 @@ def aggregation(argument, command_option):
         msg1 += f"\t対戦数：{data['game']} 戦 ({data['win']} 勝 {data['lose']} 敗 {data['draw']} 分) {badge_status}\n"
         msg2.clear()
     else:
-        msg1 += "\t集計範囲：{} ～ {}\n".format(
+        msg1 += "\t集計期間：{} ～ {}\n".format(
             data["first_game"].replace("-", "/"), data["last_game"].replace("-", "/"),
         )
         msg1 += f"\t対戦数：{data['game']} 戦 ({data['win']} 勝 {data['lose']} 敗 {data['draw']} 分) {badge_status}\n"

@@ -88,7 +88,7 @@ HAVING
 ## ゲーム傾向
 ```
 SELECT
-    collection AS 集計月, 
+    collection AS 集計月,
     count() / 4 AS ゲーム数,
     round(sum(point), 1) AS 供託,
     count(rpoint < -1 OR NULL) AS "飛んだ人数(延べ)",
@@ -106,7 +106,7 @@ HAVING
 ## 個人成績
 ```
 SELECT
-    collection AS 集計月, 
+    collection AS 集計月,
     count() AS ゲーム数,
     round(sum(point), 1) AS 累積ポイント,
     round(avg(point), 1) AS 平均ポイント,

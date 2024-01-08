@@ -86,7 +86,7 @@ def HIRA2KANA(text):
     HIRA = "".join(chr(0x3041 + i) for i in range(86))
     KANA = "".join(chr(0x30a1 + i) for i in range(86))
     trans_table = str.maketrans(HIRA, KANA)
-    return(text.translate(trans_table)) 
+    return(text.translate(trans_table))
 
 
 def KANA2HIRA(text):
@@ -107,4 +107,4 @@ def KANA2HIRA(text):
     HIRA = "".join(chr(0x3041 + i) for i in range(86))
     KANA = "".join(chr(0x30a1 + i) for i in range(86))
     trans_table = str.maketrans(KANA, HIRA)
-    return(text.translate(trans_table)) 
+    return(text.translate(trans_table))

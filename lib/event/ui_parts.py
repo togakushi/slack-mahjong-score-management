@@ -144,7 +144,7 @@ def MultiSelect(view, no, text = "dummy", add_list = False):
 def PeriodSelection(view, no, text = "dummy", block_id = False, action_id = "dummy", initial_date = False):
     if not initial_date:
         initial_date = (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d")
- 
+
     if block_id:
         view["blocks"].append({"type": "input", "block_id": block_id, "element": {}})
     else:

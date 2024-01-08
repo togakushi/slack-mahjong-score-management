@@ -29,7 +29,7 @@ Features -> Slash Commands
   - Command (任意)
     - config.iniと合わせる
     - 既存のコマンドと被らないように
-  - Short Description  (任意)
+  - Short Description (任意)
 - [Save]
 
 ### イベント設定
@@ -135,8 +135,8 @@ PIDを調べてプロセスをkill。
 ## 初期設定
 
 ### チャンネルにアプリを登録
-Integrations -> Add apps  
+Integrations -> Add apps<br />
 忘れがち。
 
 ### メンバーの登録
-スラッシュコマンドで追加。  
+スラッシュコマンドで追加。
