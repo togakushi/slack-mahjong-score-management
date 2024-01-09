@@ -317,10 +317,11 @@ def select_game(argument, command_option):
             round(avg(rank), 2) as rank_avg,
             count(rpoint < 0 or null) as flying,
             min(playtime) as first_game,
-            max(playtime) as last_game
+            max(playtime) as last_game,
+            max(ts) as max_ts
         from (
             select
-                playtime,
+                playtime, ts,
                 --[unregistered_replace] case when guest = 0 then name else ? end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
                 rpoint, rank, point, guest, rule_version

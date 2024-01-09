@@ -131,10 +131,11 @@ def aggregation(argument, command_option):
         rows = resultdb.execute(
             "select * from remarks where thread_ts between ? and ? order by thread_ts,event_ts", (
                 datetime.fromisoformat(first_game).timestamp(),
-                datetime.fromisoformat(last_game).timestamp(),
+                max([results[i]["max_ts"] for i in results.keys()]),
             )
         )
         for row in rows.fetchall():
+            g.logging.trace(dict(row))
             name = c.NameReplace(row["name"], command_option, add_mark = True)
             if name in name_list:
                 msg3 += "\t{}： {} （{}）\n".format(
