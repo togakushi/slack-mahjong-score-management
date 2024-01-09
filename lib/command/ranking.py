@@ -274,16 +274,17 @@ def aggregation(argument, command_option):
         juni.append(results[name]["役満和了率"])
     ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
     juni.sort(reverse = True)
-    msg2 += "\n*役満和了率*\n"
+    tmp_msg = ""
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
         pname = c.NameReplace(name, command_option, add_mark = True)
-        if results[name]["役満和了"] == 0:
-            continue
-        msg2 += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
-            val, results[name]["役満和了"], results[name]["ゲーム数"],
-        )
+        if results[name]["役満和了"] != 0:
+            tmp_msg += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
+                juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+                val, results[name]["役満和了"], results[name]["ゲーム数"],
+            )
+    if tmp_msg:
+        msg2 += "\n*役満和了率*\n" + tmp_msg
 
     return(msg1, msg2)
