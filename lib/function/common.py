@@ -172,7 +172,7 @@ def argument_analysis(argument, command_option = {}):
         target_player.append(c.NameReplace(keyword, command_option))
 
     # 日付再取得のために再帰呼び出し
-    if command_option["recursion"] and not target_days:
+    if command_option.get("recursion") and not target_days:
         if "aggregation_range" in command_option:
             command_option["recursion"] = False # ループ防止
             target_days, _, _, _ = argument_analysis(command_option["aggregation_range"], command_option)
