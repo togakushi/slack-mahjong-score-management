@@ -35,7 +35,7 @@ def invalid_argument():
 
 def invalid_score(user_id, rpoint_sum, correct_score):
     rpoint_diff = abs(correct_score - rpoint_sum)
-    msg = f"{rpoint_diff}点合っていません。"
+    msg = f"素点合計： {rpoint_sum}\n点数差分： {rpoint_diff}"
 
     if "custom_message" in g.config.sections():
         key_list = []
