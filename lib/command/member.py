@@ -3,6 +3,7 @@ import os
 import shutil
 import sqlite3
 from datetime import datetime
+from itertools import chain
 
 import lib.function as f
 from lib.function import global_value as g
@@ -18,24 +19,29 @@ def check_namepattern(name):
         対象文字列（プレイヤー名）
     """
 
-    if len(name) > g.config["member"].getint("character_limit", 8):
+    # 登録規定チェック
+    if len(name) > g.config["member"].getint("character_limit", 8): # 文字制限
         return(False, "登録可能文字数を超えています。")
-    if re.match(r"(ゲスト|^[0-9]+$)", f.ZEN2HAN(name)): # 登録NGプレイヤー名
+    if name == g.guest_name: # 登録NGプレイヤー名
         return(False, "使用できない名前です。")
-    if re.match(r"^((当|今|昨)日|(今|先|先々)月|(今|去|昨|一昨)年|全部)$", name): # NGワード（サブコマンド引数）
+    if re.search("[\\\;:<>,!@#*?/`\"']", name) or not name.isprintable(): # 禁則記号
+        return(False, "使用できない記号が含まれています。")
+
+    # コマンドと同じ名前かチェック
+    chk_target_days, _, _, chk_command_option = f.common.argument_analysis([name])
+    if chk_target_days:
         return(False, "期間指定に使用される単語は登録できません。")
-    if re.match(r"^(戦績|比較|点差|差分|対戦|対戦結果|統計|個人|直近[0-9]+)$", name): # NGワード（サブコマンド引数）
+    if chk_command_option:
+        return(False, "オプションに使用される単語は登録できません。")
+
+    commandlist = [g.config[x].get("commandword") for x in g.config.sections()] # None入り
+    commandlist.extend([g.config["setting"].get("slash_commandname")])
+    commandlist.extend([g.config["setting"].get("remarks_word")])
+    commandlist.extend([g.config["search"].get("keyword")])
+    commandlist.extend([x for x, _ in g.config.items("alias")])
+    commandlist.extend(chain.from_iterable([y.split(",") for _, y in g.config.items("alias")]))
+    if name in set(commandlist):
         return(False, "コマンドに使用される単語は登録できません。")
-    if re.match(r"^(順位|詳細|verbose)$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語は登録できません。")
-    if re.match(r"^(規定(数|打数)|トップ|上位|top)[0-9]+$", name): # NGワード（サブコマンド引数）
-        return(False, "コマンドに使用される単語は登録できません。")
-    if re.search("[\\\;:<>,!@#*?/`\"']", name): # 禁則記号
-        return(False, "使用できない記号が含まれています。")
-    if name == g.guest_name:
-        return(False, "使用できない名前です。")
-    if not name.isprintable():
-        return(False, "使用できない記号が含まれています。")
 
     return(True, "OK")
 
@@ -79,7 +85,7 @@ def NameReplace(pname, command_option, add_mark = False):
         return(g.member_list[f.HIRA2KANA(pname)])
 
     # メンバーリストに見つからない場合
-    if command_option["unregistered_replace"]:
+    if command_option.get("unregistered_replace"):
         return(g.guest_name)
     else:
         if add_mark:
