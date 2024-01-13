@@ -174,26 +174,26 @@ def select_winner(argument, command_option):
     sql = """
         select
             collection as "集計月",
-            printf("%s (%.1fpt)",
+            replace(printf("%s (%.1fpt)",
                 max(case when rank = 1 then name end),
                 max(case when rank = 1 then total end)
-            ) as "1位",
-            printf("%s (%.1fpt)",
+            ), "-", "▲") as "1位",
+            replace(printf("%s (%.1fpt)",
                 max(case when rank = 2 then name end),
                 max(case when rank = 2 then total end)
-            ) as "2位",
-            printf("%s (%.1fpt)",
+            ), "-", "▲") as "2位",
+            replace(printf("%s (%.1fpt)",
                 max(case when rank = 3 then name end),
                 max(case when rank = 3 then total end)
-            ) as "3位",
-            printf("%s (%.1fpt)",
+            ), "-", "▲") as "3位",
+            replace(printf("%s (%.1fpt)",
                 max(case when rank = 4 then name end),
                 max(case when rank = 4 then total end)
-            ) as "4位",
-            printf("%s (%.1fpt)",
+            ), "-", "▲") as "4位",
+            replace(printf("%s (%.1fpt)",
                 max(case when rank = 5 then name end),
                 max(case when rank = 5 then total end)
-            ) as "5位"
+            ), "-", "▲") as "5位"
         from (
             select
                 collection,
