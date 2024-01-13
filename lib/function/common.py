@@ -38,7 +38,7 @@ def scope_coverage(target_days):
     )
 
 
-def argument_analysis(argument, command_option):
+def argument_analysis(argument, command_option = {}):
     """
     引数の内容を解析し、日付とプレイヤー名を返す
 
@@ -172,10 +172,11 @@ def argument_analysis(argument, command_option):
         target_player.append(c.NameReplace(keyword, command_option))
 
     # 日付再取得のために再帰呼び出し
-    if command_option["recursion"] and len(target_days) == 0:
-        command_option["recursion"] = False # ループ防止
-        target_days, _, _, _ = argument_analysis(command_option["aggregation_range"], command_option)
-        command_option["recursion"] = True # 元に戻す
+    if command_option["recursion"] and not target_days:
+        if "aggregation_range" in command_option:
+            command_option["recursion"] = False # ループ防止
+            target_days, _, _, _ = argument_analysis(command_option["aggregation_range"], command_option)
+            command_option["recursion"] = True # 元に戻す
 
     g.logging.info(f"return: target_days: {target_days} target_count: {target_count}")
     g.logging.info(f"return: target_player: {target_player}")
