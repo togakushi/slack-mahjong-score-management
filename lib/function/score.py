@@ -1,37 +1,10 @@
+import math
+
 import lib.function as f
 from lib.function import global_value as g
 
 
-def CalculationPoint(rpoint, rank):
-    """
-    順位点を計算して獲得ポイントを返す
-
-    Parameters
-    ----------
-    rpoint : int
-        素点
-
-    rank : int
-        着順（1位→1、2位→2、、、）
-
-    Returns
-    -------
-    float : float
-        獲得ポイント
-    """
-
-    p = g.config["mahjong"].getint("point", 250)
-    r = g.config["mahjong"].getint("return", 300)
-    u = g.config["mahjong"].get("rank_point", "30,10,-10,-30")
-
-    oka = (r - p) * 4 / 10
-    uma = [int(x) for x in u.split(",")]
-    uma[0] = uma[0] + oka
-    point = (rpoint - r) / 10 + uma[rank - 1]
-
-    return(float(f"{point:>.1f}"))
-
-def CalculationPoint2(rpoint_data, rpoint, seat):
+def calculation_point(rpoint_data, rpoint, seat):
     """
     素点データと獲得素点から獲得ポイントと順位を返す
 
@@ -56,14 +29,26 @@ def CalculationPoint2(rpoint_data, rpoint, seat):
         獲得ポイント
     """
 
+    # 同点のときに席順で順位に差が付くように小さい数字を足す
     temp_data = []
     correction = [0.000004, 0.000003, 0.000002, 0.000001]
     for i in range(len(rpoint_data)):
         temp_data.append(rpoint_data[i] + correction[i])
-
     temp_data.sort(reverse = True)
+
+    # 獲得順位
     rank = temp_data.index(rpoint + correction[seat]) + 1
-    point = CalculationPoint(rpoint, rank)
+
+    # ポイント計算
+    p = g.config["mahjong"].getint("point", 250) # 配給原点
+    r = g.config["mahjong"].getint("return", 300) # 返し点
+    u = g.config["mahjong"].get("rank_point", "30,10,-10,-30") # 順位点
+
+    oka = (r - p) * 4 / 10
+    uma = [int(x) for x in u.split(",")]
+    uma[0] = uma[0] + oka
+
+    point = math.floor((rpoint - r) + uma[rank - 1] * 10) / 10
 
     return(rank, point)
 

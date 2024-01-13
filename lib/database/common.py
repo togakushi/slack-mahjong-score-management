@@ -30,7 +30,7 @@ def resultdb_insert(msg, ts):
         array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
+        array[i1]["rank"], array[i1]["point"] = f.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(d.sql_result_insert, (
@@ -59,7 +59,7 @@ def resultdb_update(msg, ts):
         array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
+        array[i1]["rank"], array[i1]["point"] = f.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(d.sql_result_update, (

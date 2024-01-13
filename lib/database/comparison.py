@@ -216,7 +216,7 @@ def db_update(cur, ts, msg, command_option): # 突合処理専用
         array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
+        array[i1]["rank"], array[i1]["point"] = f.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
     cur.execute(d.sql_result_update, (
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
@@ -238,7 +238,7 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
         array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.CalculationPoint2(rpoint_data, rpoint_data[i2], i2)
+        array[i1]["rank"], array[i1]["point"] = f.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
     cur.execute(d.sql_result_insert, (
         ts, datetime.fromtimestamp(float(ts)),
