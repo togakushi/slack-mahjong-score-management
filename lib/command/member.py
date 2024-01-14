@@ -6,6 +6,7 @@ from datetime import datetime
 from itertools import chain
 
 import lib.function as f
+import lib.command as c
 from lib.function import global_value as g
 
 
@@ -115,15 +116,20 @@ def CountPadding(data):
 
 
 def Getmemberslist():
-    title = "登録されているメンバー"
-    msg = ""
+    title = "登録済みメンバー一覧"
+    padding = c.CountPadding(list(set(g.member_list.values())))
+    msg = "# 表示名{}： 登録されている別名 #\n".format(" " * (padding - 8))
 
     for pname in set(g.member_list.values()):
         name_list = []
         for alias in g.member_list.keys():
             if g.member_list[alias] == pname:
                 name_list.append(alias)
-        msg += f"{pname}: {name_list}\n"
+        msg += "{}{}： {}\n".format(
+            pname,
+            " " * (padding - f.translation.len_count(pname)),
+            ", ".join(name_list),
+        )
 
     return(title, msg)
 
