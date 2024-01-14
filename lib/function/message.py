@@ -22,7 +22,7 @@ def help(command):
 def invalid_argument():
     msg = f"使い方が間違っています。"
 
-    if "custom_message" in g.config.sections():
+    if g.config.has_section("custom_message"):
         key_list = []
         for i in g.config["custom_message"]:
             if i.startswith("invalid_argument"):
@@ -37,7 +37,7 @@ def invalid_score(user_id, rpoint_sum, correct_score):
     rpoint_diff = abs(correct_score - rpoint_sum)
     msg = f"素点合計： {rpoint_sum}\n点数差分： {rpoint_diff}"
 
-    if "custom_message" in g.config.sections():
+    if g.config.has_section("custom_message"):
         key_list = []
         for i in g.config["custom_message"]:
             if i.startswith("invalid_score"):
@@ -59,7 +59,7 @@ def no_hits(argument, command_option):
     end = endtime.strftime("%Y/%m/%d %H:%M")
     msg = f"{start} ～ {end} に≪{keyword}≫はありません。"
 
-    if "custom_message" in g.config.sections():
+    if g.config.has_section("custom_message"):
         key_list = []
         for i in g.config["custom_message"]:
             if i.startswith("no_hits"):
