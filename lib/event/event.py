@@ -74,6 +74,15 @@ def handle_message_events(client, body):
         updatable,
     ))
 
+    # ヘルプ
+    if re.match(rf"^{g.commandword['help']}", parameter["text"]):
+        msg = f.help_message()
+        f.slack_api.post_message(client, parameter["channel_id"], msg, parameter["event_ts"])
+
+        title, msg = c.Getmemberslist()
+        f.slack_api.post_text(client, parameter["channel_id"], parameter["event_ts"], title, msg)
+        return
+
     # 成績管理系コマンド
     if re.match(rf"^{g.commandword['results']}", parameter["text"]):
         c.results.__main__.slackpost(client, parameter["channel_id"], argument)
