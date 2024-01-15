@@ -118,7 +118,7 @@ def CountPadding(data):
 def Getmemberslist():
     title = "登録済みメンバー一覧"
     padding = c.CountPadding(list(set(g.member_list.values())))
-    msg = "# 表示名{}： 登録されている別名 #\n".format(" " * (padding - 8))
+    msg = "# 表示名{}： 登録されている名前 #\n".format(" " * (padding - 8))
 
     for pname in set(g.member_list.values()):
         name_list = []
