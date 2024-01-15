@@ -91,5 +91,28 @@
 ```
 
 ## 個人成績サマリ詳細
+個人成績サマリ出力サンプル
+```
+【個人成績】
+    プレイヤー名： ひと
+    集計範囲：yyyy/mm/dd HH:MM:SS ～ yyyy/mm/dd HH:MM:SS
+    対戦数：xxx 戦 (xx 勝 xx 敗 xx 分)
+    累積ポイント： +xxx.x
+    平均ポイント： +x.x
+    平均順位： x.xx
+    1位： xx 回 (xx.xx%)
+    2位： xx 回 (xx.xx%)
+    3位： xx 回 (xx.xx%)
+    4位： xx 回 (xx.xx%)
+    トビ： xx 回 (x.xx%)
+    役満： xx 回 (x.xx%)
+    特記：2ゲスト戦の結果を含む
 
+【座席データ】
+    # 席：順位分布(平順) / トビ / 役満 #
+    東家： xx-xx-xx-xx (x.xx) / x 回 / x 回
+    南家： xx-xx-xx-xx (x.xx) / x 回 / x 回
+    西家： xx-xx-xx-xx (x.xx) / x 回 / x 回
+    北家： xx-xx-xx-xx (x.xx) / x 回 / x 回
+```
 ## 直接対決サマリ詳細
