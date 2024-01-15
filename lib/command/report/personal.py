@@ -18,7 +18,7 @@ mlogger.setLevel(g.logging.WARNING)
 def plot(argument, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
-    
+
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
@@ -96,7 +96,7 @@ def plot(argument, command_option):
 
     # 追加テキスト
     remark_text =  f.remarks(command_option).replace("\t", "")
-    add_text = "[集計期間：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
+    add_text = "[集計範囲：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
         min(playtime).replace("-", "/"),
         max(playtime).replace("-", "/"),
         total_game_count,

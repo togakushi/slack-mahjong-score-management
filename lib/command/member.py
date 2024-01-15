@@ -31,7 +31,7 @@ def check_namepattern(name):
     # コマンドと同じ名前かチェック
     chk_target_days, _, _, chk_command_option = f.common.argument_analysis([name])
     if chk_target_days:
-        return(False, "期間指定に使用される単語は登録できません。")
+        return(False, "検索範囲指定に使用される単語は登録できません。")
     if chk_command_option:
         return(False, "オプションに使用される単語は登録できません。")
 

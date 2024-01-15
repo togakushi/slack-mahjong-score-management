@@ -94,7 +94,7 @@ def aggregation(argument, command_option):
     last_game = max([results[name]["last_game"] for name in results.keys()])
 
     msg1 = "\n*【ランキング】*\n"
-    msg1 += f"\t集計期間：{first_game} ～ {last_game}\n".replace("-", "/")
+    msg1 += f"\t集計範囲：{first_game} ～ {last_game}\n".replace("-", "/")
     msg1 += f"\t集計ゲーム数：{total_game_count}\t(規定数：{command_option['stipulated']} 以上)\n"
     msg1 += f.remarks(command_option)
     msg2 = {

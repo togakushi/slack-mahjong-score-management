@@ -85,7 +85,7 @@ def plot(argument, command_option):
 
     # 追加テキスト
     remark_text =  f.remarks(command_option).replace("\t", "")
-    add_text = "[検索期間：{} - {}] {} {}".format(
+    add_text = "[検索範囲：{} - {}] {} {}".format(
         ret["starttime"].strftime('%Y/%m/%d %H:%M'),
         ret["endtime"].strftime('%Y/%m/%d %H:%M'),
         f"[規定数：{command_option['stipulated']} ゲーム以上]" if command_option["stipulated"] != 0 else "",

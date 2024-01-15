@@ -72,7 +72,7 @@ def plot(argument, command_option):
         tb[i, 0].set_text_props(ha = "center")
 
     # 追加テキスト
-    add_text = "[検索期間：{} - {}] [特記：すべてのゲーム結果を含む]".format(
+    add_text = "[検索範囲：{} - {}] [特記：すべてのゲーム結果を含む]".format(
         ret["starttime"].strftime('%Y/%m/%d %H:%M'),
         ret["endtime"].strftime('%Y/%m/%d %H:%M'),
     )

@@ -38,14 +38,14 @@ def SetCommandOption(command_option, body):
     if "bid-search_range" in search_options:
         select_item = search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]
         if select_item == "指定":
-            app_msg.append(f"集計期間： {g.app_var['sday']} ～ {g.app_var['eday']}")
+            app_msg.append(f"集計範囲： {g.app_var['sday']} ～ {g.app_var['eday']}")
             argument.append(g.app_var["sday"].replace("-",""))
             argument.append(g.app_var["eday"].replace("-",""))
         elif select_item == "全部":
-            app_msg.append("集計期間： 全部")
+            app_msg.append("集計範囲： 全部")
             argument.append("全部")
         else:
-            app_msg.append(f"集計期間： {select_item}")
+            app_msg.append(f"集計範囲： {select_item}")
             argument.append(select_item)
 
     if "bid-search_option" in search_options:
