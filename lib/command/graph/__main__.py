@@ -7,6 +7,23 @@ from lib.command.graph import summary
 from lib.command.graph import personal
 
 
+def help_message():
+    graph_option = f.configure.command_option_initialization("graph")
+
+    msg = [
+        "*成績グラフヘルプ*",
+        f"\t呼び出しキーワード： {g.commandword['graph']}",
+        f"\t検索範囲デフォルト： {graph_option['aggregation_range'][0]}",
+        "\tモード切替",
+        "\t\t全体成績： 対象プレイヤー指定 0人",
+        "\t\t個人成績： 対象プレイヤー指定 1人",
+        "\t\t成績比較： 対象プレイヤー指定 2人以上",
+        "\n*専用オプション*",
+        "\t・順位",
+    ]
+    return("\n".join(msg))
+
+
 def slackpost(client, channel, argument):
     """
     ポイント推移グラフをslackにpostする
@@ -28,6 +45,10 @@ def slackpost(client, channel, argument):
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
+
+    # ヘルプ表示
+    if command_option["help"]:
+        return(help_message())
 
     if len(target_player) == 1: # 対象がひとり → 個人成績
         count, ret = personal.plot(argument, command_option)

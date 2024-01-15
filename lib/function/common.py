@@ -4,6 +4,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 import lib.command as c
+import lib.function as f
 from lib.function import global_value as g
 
 
@@ -123,6 +124,9 @@ def argument_analysis(argument, command_option = {}):
             continue
 
         # コマンドオプションフラグ変更
+        if re.match(r"^(ヘルプ|help)$", f.HIRA2KANA(keyword)):
+            command_option["help"] = True
+            continue
         if re.match(r"^ゲスト(なし|ナシ|無し)$", keyword):
             command_option["guest_skip"] = False
             command_option["guest_skip2"] = False

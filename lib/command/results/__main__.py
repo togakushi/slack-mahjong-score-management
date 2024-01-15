@@ -6,6 +6,28 @@ from lib.command.results import personal
 from lib.command.results import versus
 
 
+def help_message():
+    results_option = f.configure.command_option_initialization("results")
+
+    msg = [
+        "*成績サマリヘルプ*",
+        f"\t呼び出しキーワード： {g.commandword['results']}",
+        f"\t検索範囲デフォルト： {results_option['aggregation_range'][0]}",
+        "\tモード切替",
+        "\t\t全体成績： 対象プレイヤー指定 0人",
+        "\t\t個人成績： 対象プレイヤー指定 1人",
+        "\t\t\t追加オプション",
+        "\t\t\t・戦績",
+        "\t\t\t・詳細",
+        "\t\t\t・対戦 / 対戦結果",
+        "\t\t成績比較： 対象プレイヤー指定 2人以上",
+        "\t\t\t追加オプション",
+        "\t\t\t・対戦 / 対戦結果",
+        "\t\t\t・全員",
+    ]
+    return("\n".join(msg))
+
+
 def slackpost(client, channel, argument):
     """
     成績の集計結果をslackにpostする
@@ -27,6 +49,10 @@ def slackpost(client, channel, argument):
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
+
+    # ヘルプ表示
+    if command_option["help"]:
+        return(help_message())
 
     # モード切り替え
     versus_mode = False
