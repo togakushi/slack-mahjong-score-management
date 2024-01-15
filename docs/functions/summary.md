@@ -115,4 +115,29 @@
     西家： xx-xx-xx-xx (x.xx) / x 回 / x 回
     北家： xx-xx-xx-xx (x.xx) / x 回 / x 回
 ```
+
 ## 直接対決サマリ詳細
+直接対決サマリ出力サンプル
+```
+【直接対戦結果】
+    プレイヤー名： ひと
+    対戦相手：さる、いぬ
+    検索範囲：yyyy/mm/dd HH:MM ～ yyyy/mm/dd HH:MM
+    特記：2ゲスト戦の結果を含む
+
+[ ひと vs さる ]
+対戦数： xx 戦 xx 勝 xx 敗
+平均素点差： +xxxx点
+獲得ポイント合計(自分)： +xxx.xpt
+獲得ポイント合計(相手)： ▲xxx.xpt
+順位分布(自分)： xx-xx-xx-xx (x.xx)
+順位分布(相手)： xx-xx-xx-xx (x.xx)
+
+[ ひと vs いぬ ]
+対戦数： xx 戦 xx 勝 xx 敗
+平均素点差： +xxxx点
+獲得ポイント合計(自分)： +xxx.xpt
+獲得ポイント合計(相手)： ▲xxx.xpt
+順位分布(自分)： xx-xx-xx-xx (x.xx)
+順位分布(相手)： xx-xx-xx-xx (x.xx)
+```
