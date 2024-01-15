@@ -20,31 +20,43 @@ def help(command):
 
 
 def help_message():
+    results_option = f.configure.command_option_initialization("results")
+    graph_option = f.configure.command_option_initialization("graph")
+    ranking_option = f.configure.command_option_initialization("ranking")
+    report_option = f.configure.command_option_initialization("report")
+
     msg = [
         "*機能呼び出し構文*",
-        "\t`呼び出しキーワード [検索範囲] [対象プレイヤー] [オプション]`",
+        "\t`呼び出しキーワード [検索範囲] [対象メンバー] [オプション]`",
+
         "\n" + "-" * 30,
 
-        "\n*呼び出しキーワード*",
-        f"\t成績サマリ： {g.commandword['results']}",
-        f"\t成績グラフ： {g.commandword['graph']}",
-        f"\t成績ランキング： {g.commandword['ranking']}",
-        f"\t成績レポート： {g.commandword['report']}",
+        "\n*成績サマリ*",
+        f"\t呼び出しキーワード： {g.commandword['results']}",
+        f"\t検索範囲デフォルト： {results_option['aggregation_range'][0]}",
+        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/summary.md",
 
-        "\n*検索範囲オプション*",
-        "\t今月",
-        "\t先月",
-        "\t当日",
-        "\t直近",
-        "\t...etc",
+        "\n*成績グラフ*",
+        f"\t呼び出しキーワード： {g.commandword['graph']}",
+        f"\t検索範囲デフォルト： {graph_option['aggregation_range'][0]}",
+        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/graph.md",
 
-        "\n*ゲスト関連オプション*",
-        "\tゲスト無効",
-        "\tゲストあり",
-        "\tゲストなし",
+        "\n*ランキング*",
+        f"\t呼び出しキーワード： {g.commandword['ranking']}",
+        f"\t検索範囲デフォルト： {ranking_option['aggregation_range'][0]}",
+        f"\t規定打数デフォルト： 全体ゲーム数 × {ranking_option['stipulated_rate']} ＋ 1",
+        f"\t出力制限デフォルト： 上位 {ranking_option['ranked']} 名",
+        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/ranking.md",
 
-        "\n*絞り込みオプション*",
-        "\t規定数 / 規定打数",
+        "\n*レポート*",
+        f"\t呼び出しキーワード： {g.commandword['report']}",
+        f"\t検索範囲デフォルト： {report_option['aggregation_range'][0]}",
+        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/report.md",
+
+        "\n" + "-" * 30,
+
+        "*オプション*",
+        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/argument_keyword.md",
     ]
     return("\n".join(msg))
 

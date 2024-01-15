@@ -7,21 +7,6 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def help_message():
-    ranking_option = f.configure.command_option_initialization("ranking")
-
-    msg = [
-        "*成績ランキングヘルプ*",
-        f"\t呼び出しキーワード： {g.commandword['ranking']}",
-        f"\t検索範囲デフォルト： {ranking_option['aggregation_range'][0]}",
-        f"\t規定打数デフォルト： 全体ゲーム数 × {ranking_option['stipulated_rate']} ＋ 1",
-        f"\t出力制限デフォルト： 上位 {ranking_option['ranked']} 名",
-        "\n*専用オプション*",
-        "\t・トップ / 上位： 出力制限人数の変更",
-    ]
-    return("\n".join(msg))
-
-
 def slackpost(client, channel, argument):
     """
     ランキングをslackにpostする
@@ -43,10 +28,6 @@ def slackpost(client, channel, argument):
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
-
-    # ヘルプ表示
-    if command_option["help"]:
-        return(help_message())
 
     msg1, msg2 = aggregation(argument, command_option)
     res = f.slack_api.post_message(client, channel, msg1)

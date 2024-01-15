@@ -85,24 +85,16 @@ def handle_message_events(client, body):
 
     # 成績管理系コマンド
     if re.match(rf"^{g.commandword['results']}", parameter["text"]):
-        msg = c.results.__main__.slackpost(client, parameter["channel_id"], argument)
-        if msg:
-            f.slack_api.post_message(client, parameter["channel_id"], msg, parameter["event_ts"])
+        c.results.__main__.slackpost(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['graph']}", parameter["text"]):
-        msg = c.graph.__main__.slackpost(client, parameter["channel_id"], argument)
-        if msg:
-            f.slack_api.post_message(client, parameter["channel_id"], msg, parameter["event_ts"])
+        c.graph.__main__.slackpost(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['ranking']}", parameter["text"]):
-        msg = c.ranking.slackpost(client, parameter["channel_id"], argument)
-        if msg:
-            f.slack_api.post_message(client, parameter["channel_id"], msg, parameter["event_ts"])
+        c.ranking.slackpost(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['report']}", parameter["text"]):
-        msg = c.report.__main__.slackpost(client, parameter["channel_id"], argument)
-        if msg:
-            f.slack_api.post_message(client, parameter["channel_id"], msg, parameter["event_ts"])
+        c.report.__main__.slackpost(client, parameter["channel_id"], argument)
         return
 
     # データベース関連コマンド

@@ -53,7 +53,6 @@ def command_option_initialization(command):
         "fourfold": False, # 縦持ちデータの直近Nを4倍で取るか
         "stipulated": 0, # 規定打数
         "verbose": False, # 戦績詳細
-        "help": False, # ヘルプ呼び出しフラグ
     }
 
     option["aggregation_range"].append(g.config[command].get("aggregation_range", "当日"))
