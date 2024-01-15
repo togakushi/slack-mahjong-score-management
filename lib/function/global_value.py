@@ -118,9 +118,9 @@ commandword = { # チャンネル内呼び出しキーワード
     "remarks_word": config["setting"].get("remarks_word", "麻雀成績メモ"),
 }
 if config.has_section("help"):
-    commandword.update(help = config["help"].get("commandword", "ヘルプ$"))
+    commandword.update(help = config["help"].get("commandword", "ヘルプ"))
 else:
-    commandword.update(help = "ヘルプ$")
+    commandword.update(help = "ヘルプ")
 
 app_var = { # ホームタブ用
     "user_id": None,

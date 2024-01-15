@@ -35,7 +35,7 @@ def check_namepattern(name):
     if chk_command_option:
         return(False, "オプションに使用される単語は登録できません。")
 
-    commandlist = [g.config[x].get("commandword") for x in g.config.sections()] # None入り
+    commandlist = list(g.commandword.values())
     commandlist.extend([g.config["setting"].get("slash_commandname")])
     commandlist.extend([g.config["setting"].get("remarks_word")])
     commandlist.extend([g.config["search"].get("keyword")])

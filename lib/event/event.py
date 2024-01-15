@@ -75,10 +75,12 @@ def handle_message_events(client, body):
     ))
 
     # ヘルプ
-    if re.match(rf"^{g.commandword['help']}", parameter["text"]):
+    if re.match(rf"^{g.commandword['help']}$", parameter["text"]):
+        # ヘルプメッセージ
         msg = f.help_message()
         f.slack_api.post_message(client, parameter["channel_id"], msg, parameter["event_ts"])
 
+        #メンバーリスト
         title, msg = c.Getmemberslist()
         f.slack_api.post_text(client, parameter["channel_id"], parameter["event_ts"], title, msg)
         return
