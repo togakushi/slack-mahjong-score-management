@@ -94,13 +94,14 @@ else:
 try:
     config = configparser.ConfigParser()
     config.read(args.config, encoding="utf-8")
-    logging.notice(f"{args.config} -> {config.sections()}")
+    logging.notice(f"config read: {args.config} -> {config.sections()}")
 except:
     sys.exit()
 
 ### 固定値 ###
 wind = ("東家", "南家", "西家", "北家")
 member_list = {}
+slash_command = config["setting"].get("slash_commandname", "/mahjong")
 guest_name = config["member"].get("guest_name", "ゲスト")
 guest_mark = config["setting"].get("guest_mark", "※")
 reaction_ok = config["setting"].get("reaction_ok", "ok")
@@ -129,6 +130,8 @@ app_var = { # ホームタブ用
     "sday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
     "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
 }
+
+logging.notice(f"slash command: {slash_command}")
 
 ### slack api ###
 try:

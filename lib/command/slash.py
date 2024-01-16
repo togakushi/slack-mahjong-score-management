@@ -3,9 +3,6 @@ import lib.database as d
 import lib.function as f
 from lib.function import global_value as g
 
-commandname = g.config["setting"].get("slash_commandname", "/mahjong")
-g.logging.info(f"slash command: {commandname}")
-
 
 def subcommand_list(subcommand):
     """
@@ -28,7 +25,7 @@ def subcommand_list(subcommand):
     return(commandlist)
 
 
-@g.app.command(commandname)
+@g.app.command(g.slash_command)
 def slash_command(ack, body, client):
     ack()
     g.logging.trace(f"{body}")
