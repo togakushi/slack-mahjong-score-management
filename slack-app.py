@@ -20,7 +20,7 @@ def handle_home_events(client, event):
 
     result = client.views_publish(
         user_id = g.app_var["user_id"],
-        view = e.BuildMainMenu(),
+        view = e.build_main_menu(),
     )
 
     g.logging.trace(result)

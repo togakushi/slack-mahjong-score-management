@@ -2,7 +2,7 @@ import re
 
 from lib.function import global_value as g
 
-def Call_chat_postMessage(client, **kwargs):
+def call_chat_postMessage(client, **kwargs):
     res = None
     try:
         if kwargs["thread_ts"]:
@@ -22,7 +22,7 @@ def Call_chat_postMessage(client, **kwargs):
     return(res)
 
 
-def Call_files_upload(client, **kwargs):
+def call_files_upload(client, **kwargs):
     res = None
     try:
         if "file" in kwargs:
@@ -44,7 +44,7 @@ def Call_files_upload(client, **kwargs):
 
 
 def post_message(client, channel, msg, ts = False):
-    res = Call_chat_postMessage(
+    res = call_chat_postMessage(
         client,
         channel = channel,
         text = f"{msg.strip()}",
@@ -56,7 +56,7 @@ def post_message(client, channel, msg, ts = False):
 
 def post_text(client, channel, event_ts, title, msg):
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
-        res = Call_chat_postMessage(
+        res = call_chat_postMessage(
             client,
             channel = channel,
             text = f"{title}\n{msg.strip()}",
@@ -75,7 +75,7 @@ def post_text(client, channel, event_ts, title, msg):
 
         # ブロック単位でポスト
         for i in range(len(post_msg)):
-            res = Call_chat_postMessage(
+            res = call_chat_postMessage(
                 client,
                 channel = channel,
                 text = f"\n{title}\n\n```{post_msg[i].strip()}```",
@@ -86,7 +86,7 @@ def post_text(client, channel, event_ts, title, msg):
 
 
 def post_upload(client, channel, title, msg):
-    res = Call_files_upload(
+    res = call_files_upload(
         client,
         channels = channel,
         title = title,
@@ -97,7 +97,7 @@ def post_upload(client, channel, title, msg):
 
 
 def post_fileupload(client, channel, title, file):
-    res = Call_files_upload(
+    res = call_files_upload(
         client,
         channels = channel,
         title = title,

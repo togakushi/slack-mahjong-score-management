@@ -2,7 +2,7 @@ import lib.event as e
 from lib.function import global_value as g
 
 
-def BuildMainMenu():
+def build_main_menu():
     g.app_var["screen"] = "MainMenu"
     no = 0
     view = {"type": "home", "blocks": []}
@@ -14,7 +14,7 @@ def BuildMainMenu():
     return(view)
 
 
-def SetCommandOption(command_option, body):
+def set_command_option(command_option, body):
     # 検索設定
     argument = []
     search_options = body["view"]["state"]["values"]
@@ -81,7 +81,7 @@ def handle_some_action(ack, body, client):
 
     client.views_publish(
         user_id = g.app_var["user_id"],
-        view = BuildMainMenu(),
+        view = build_main_menu(),
     )
 
 
