@@ -76,17 +76,8 @@ def handle_some_action(ack, body, client):
     msg1, msg2 = c.ranking.aggregation(argument, command_option)
     if msg2:
         res = f.slack_api.post_message(client, body["user"]["id"], msg1)
-        # ブロック単位で分割ポスト
-        key_list = list(msg2.keys())
-        msg = msg2[key_list[0]]
-        for i in key_list[1:]:
-            if len((msg + msg2[i]).splitlines()) < 95: # 95行を超える直前までまとめる
-                msg += msg2[i]
-            else:
-                f.slack_api.post_message(client, body["user"]["id"], msg, res["ts"])
-                msg = msg2[i]
-        else:
-            f.slack_api.post_message(client, body["user"]["id"], msg, res["ts"])
+        f.slack_api.post_multi_message(client, body["user"]["id"], msg2, res["ts"])
+
     client.views_update(
         view_id = g.app_var["view_id"],
         view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),

@@ -54,6 +54,20 @@ def post_message(client, channel, msg, ts = False):
     return(res)
 
 
+def post_multi_message(client, channel, msg, ts = False):
+    # ブロック単位で分割ポスト
+    key_list = list(msg.keys())
+    post_msg = msg[key_list[0]]
+    for i in key_list[1:]:
+        if len((post_msg + msg[i]).splitlines()) < 95: # 95行を超える直前までまとめる
+            post_msg += msg[i]
+        else:
+            post_message(client, channel, post_msg, ts)
+            post_msg = msg[i]
+    else:
+        post_message(client, channel, post_msg, ts)
+
+
 def post_text(client, channel, event_ts, title, msg):
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
         res = call_chat_postMessage(

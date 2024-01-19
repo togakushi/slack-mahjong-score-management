@@ -32,17 +32,7 @@ def slackpost(client, channel, argument):
     msg1, msg2 = aggregation(argument, command_option)
     res = f.slack_api.post_message(client, channel, msg1)
     if msg2:
-        # ブロック単位で分割ポスト
-        key_list = list(msg2.keys())
-        msg = msg2[key_list[0]]
-        for i in key_list[1:]:
-            if len((msg + msg2[i]).splitlines()) < 95: # 95行を超える直前までまとめる
-                msg += msg2[i]
-            else:
-                f.slack_api.post_message(client, channel, msg, res["ts"])
-                msg = msg2[i]
-        else:
-            f.slack_api.post_message(client, channel, msg, res["ts"])
+        f.slack_api.post_multi_message(client, channel, msg2, res["ts"])
 
 
 def aggregation(argument, command_option):
