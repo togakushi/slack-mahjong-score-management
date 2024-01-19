@@ -4,7 +4,7 @@ import lib.event as e
 from lib.function import global_value as g
 
 
-def BuildSummaryMenu():
+def build_summary_enu():
     g.app_var["screen"] = "SummaryMenu"
     no = 0
     flag = ["unregistered_replace", "score_comparisons"]
@@ -39,7 +39,7 @@ def handle_some_action(ack, body, client):
 
     client.views_publish(
         user_id = g.app_var["user_id"],
-        view = BuildSummaryMenu(),
+        view = build_summary_enu(),
     )
 
 
@@ -48,7 +48,7 @@ def handle_some_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
-    argument, command_option, app_msg = e.SetCommandOption(
+    argument, command_option, app_msg = e.set_command_option(
         f.configure.command_option_initialization("results"),
         body,
     )
@@ -91,5 +91,5 @@ def handle_view_submission(ack, view, client):
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = BuildSummaryMenu(),
+        view = build_summary_enu(),
     )
