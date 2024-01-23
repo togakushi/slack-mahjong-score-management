@@ -75,8 +75,8 @@ def handle_some_action(ack, body, client):
 
     msg1, msg2 = c.ranking.aggregation(argument, command_option)
     if msg2:
-        res = f.slack_api.post_message(client, body["user"]["id"], msg1)
-        f.slack_api.post_multi_message(client, body["user"]["id"], msg2, res["ts"])
+        res = f.post_message(client, body["user"]["id"], msg1)
+        f.post_multi_message(client, body["user"]["id"], msg2, res["ts"])
 
     client.views_update(
         view_id = g.app_var["view_id"],

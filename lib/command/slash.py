@@ -65,23 +65,23 @@ def slash_command(ack, body, client):
 
         if subcom.lower() in subcommand_list("download"):
             g.logging.info(f"subcommand({subcom}): {g.database_file}")
-            f.slack_api.post_fileupload(client, user_id, "resultdb", g.database_file)
+            f.post_fileupload(client, user_id, "resultdb", g.database_file)
             return
 
         # メンバー管理系コマンド
         if subcom.lower() in subcommand_list("member"):
             title, msg = c.Getmemberslist()
-            f.slack_api.post_text(client, user_id, event_ts, title, msg)
+            f.post_text(client, user_id, event_ts, title, msg)
             return
 
         if subcom.lower() in subcommand_list("add"):
             msg = c.MemberAppend(argument)
-            f.slack_api.post_message(client, user_id, msg)
+            f.post_message(client, user_id, msg)
             return
 
         if subcom.lower() in subcommand_list("del"):
             msg = c.MemberRemove(argument)
-            f.slack_api.post_message(client, user_id, msg)
+            f.post_message(client, user_id, msg)
             return
 
-    f.slack_api.post_message(client, user_id, f.message.help(body["command"]))
+    f.post_message(client, user_id, f.message.help(body["command"]))

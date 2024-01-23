@@ -130,7 +130,7 @@ def aggregation(argument, command_option):
                 for wind, pre in [("東家", "p1"), ("南家", "p2"), ("西家", "p3"), ("北家", "p4")]:
                     pname = c.NameReplace(row[f"{pre}_name"], command_option, add_mark = True)
                     tmp_msg_v += "\t{}： {}{} / {}位 {:>5}点 ({}pt)\n".format(
-                        wind, pname, " " * (padding - f.translation.len_count(pname)),
+                        wind, pname, " " * (padding - f.len_count(pname)),
                         row[f"{pre}_rank"],
                         row[f"{pre}_rpoint"],
                         row[f"{pre}_point"],

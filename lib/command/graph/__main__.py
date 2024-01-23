@@ -21,8 +21,8 @@ def slackpost(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    command_option = f.configure.command_option_initialization("graph")
-    _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
+    command_option = f.command_option_initialization("graph")
+    _, target_player, _, command_option = f.argument_analysis(argument, command_option)
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
@@ -33,6 +33,6 @@ def slackpost(client, channel, argument):
         count, ret = summary.plot(argument, command_option)
 
     if count == 0:
-        f.slack_api.post_message(client, channel, ret)
+        f.post_message(client, channel, ret)
     else:
-        f.slack_api.post_fileupload(client, channel, "成績グラフ", ret)
+        f.post_fileupload(client, channel, "成績グラフ", ret)

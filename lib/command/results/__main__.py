@@ -22,8 +22,8 @@ def slackpost(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    command_option = f.configure.command_option_initialization("results")
-    _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
+    command_option = f.command_option_initialization("results")
+    _, target_player, _, command_option = f.argument_analysis(argument, command_option)
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
@@ -38,18 +38,18 @@ def slackpost(client, channel, argument):
             versus_mode = False
     if len(target_player) == 1 and not versus_mode: # 個人成績
         msg1, msg2 = personal.aggregation(argument, command_option)
-        res = f.slack_api.post_message(client, channel, msg1)
+        res = f.post_message(client, channel, msg1)
         for m in msg2.keys():
-            f.slack_api.post_message(client, channel, msg2[m] + "\n", res["ts"])
+            f.post_message(client, channel, msg2[m] + "\n", res["ts"])
     elif versus_mode: # 直接対戦
         msg1, msg2 = versus.aggregation(argument, command_option)
-        res = f.slack_api.post_message(client, channel, msg1)
+        res = f.post_message(client, channel, msg1)
         for m in msg2.keys():
-            f.slack_api.post_message(client, channel, msg2[m] + "\n", res["ts"])
+            f.post_message(client, channel, msg2[m] + "\n", res["ts"])
     else: # 成績サマリ
         msg1, msg2, msg3 = summary.aggregation(argument, command_option)
-        res = f.slack_api.post_message(client, channel, msg2)
+        res = f.post_message(client, channel, msg2)
         if msg1:
-            f.slack_api.post_text(client, channel, res["ts"], "", msg1)
+            f.post_text(client, channel, res["ts"], "", msg1)
         if msg3:
-            f.slack_api.post_message(client, channel, msg3, res["ts"])
+            f.post_message(client, channel, msg3, res["ts"])

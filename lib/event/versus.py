@@ -77,9 +77,9 @@ def handle_some_action(ack, body, client):
     msg1 = f.message.no_hits(argument, command_option)
 
     msg1, msg2 = c.results.versus.aggregation(argument, command_option)
-    res = f.slack_api.post_message(client, body["user"]["id"], msg1)
+    res = f.post_message(client, body["user"]["id"], msg1)
     for m in msg2.keys():
-        f.slack_api.post_message(client, body["user"]["id"], msg2[m] + "\n", res["ts"])
+        f.post_message(client, body["user"]["id"], msg2[m] + "\n", res["ts"])
 
     client.views_update(
         view_id = g.app_var["view_id"],

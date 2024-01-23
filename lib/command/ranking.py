@@ -23,16 +23,16 @@ def slackpost(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    command_option = f.configure.command_option_initialization("ranking")
-    _, _, _, command_option = f.common.argument_analysis(argument, command_option)
+    command_option = f.command_option_initialization("ranking")
+    _, _, _, command_option = f.argument_analysis(argument, command_option)
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 
     msg1, msg2 = aggregation(argument, command_option)
-    res = f.slack_api.post_message(client, channel, msg1)
+    res = f.post_message(client, channel, msg1)
     if msg2:
-        f.slack_api.post_multi_message(client, channel, msg2, res["ts"])
+        f.post_multi_message(client, channel, msg2, res["ts"])
 
 
 def aggregation(argument, command_option):

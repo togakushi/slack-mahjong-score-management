@@ -76,7 +76,7 @@ def check_score(client, channel_id, event_ts, user, msg):
         )
     else: # 合計が不一致の場合
         msg = f.message.invalid_score(user, rpoint_sum, correct_score)
-        f.slack_api.post_message(client, channel_id, msg, event_ts) #
+        f.post_message(client, channel_id, msg, event_ts) #
         client.reactions_add(
             channel = channel_id,
             name = g.reaction_ng,
