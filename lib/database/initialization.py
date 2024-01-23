@@ -4,13 +4,16 @@ from lib.function import global_value as g
 
 def initialization_resultdb():
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
 
+    # --- メンバー登録テーブル
     resultdb.execute(
         """
         create table if not exists "member" (
             "id"        INTEGER,
             "name"      TEXT NOT NULL UNIQUE,
             "slack_id"  TEXT,
+            "team_id"   INTEGER,
             "flying"    INTEGER DEFAULT 0,
             "reward"    INTEGER DEFAULT 0,
             "abuse"     INTEGER DEFAULT 0,
@@ -19,6 +22,15 @@ def initialization_resultdb():
         """
     )
 
+    # 追加したカラム
+    rows = resultdb.execute("pragma table_info(member);")
+    for row in rows.fetchall():
+        if row["name"] == "team_id":
+            break
+    else:
+        resultdb.execute("alter table member add column team_id INTEGER;")
+
+    # --- 別名定義テーブル
     resultdb.execute(
         """
         create table if not exists "alias" (
@@ -29,6 +41,18 @@ def initialization_resultdb():
         """
     )
 
+    # --- チーム定義テーブル
+    resultdb.execute(
+        """
+        create table if not exists "team" (
+            "id"        INTEGER,
+            "name"      TEXT NOT NULL UNIQUE,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        )
+        """
+    )
+
+    # --- データ取り込みテーブル
     resultdb.execute(
         """
         create table if not exists "result" (
