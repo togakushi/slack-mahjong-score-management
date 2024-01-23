@@ -17,8 +17,23 @@ def check_namepattern(name):
     Parameters
     ----------
     name : str
-        対象文字列（プレイヤー名）
+        チェック対象文字列
+
+    Returns
+    -------
+    bool : True / False
+        制限チェック結果
+
+    msg : text
+        制限理由
     """
+
+    # 登録済みメンバーかチェック
+    check_list = list(g.member_list.keys())
+    check_list += [f.KANA2HIRA(i) for i in g.member_list.keys()] # ひらがな
+    check_list += [f.HIRA2KANA(i) for i in g.member_list.keys()] # カタカナ
+    if name in check_list:
+        return(False, f"「{name}」はすでに使用されています。")
 
     # 登録規定チェック
     if len(name) > g.config["member"].getint("character_limit", 8): # 文字制限
@@ -29,7 +44,7 @@ def check_namepattern(name):
         return(False, "使用できない記号が含まれています。")
 
     # コマンドと同じ名前かチェック
-    chk_target_days, _, _, chk_command_option = f.common.argument_analysis([name])
+    chk_target_days, _, _, chk_command_option = f.argument_analysis([name])
     if chk_target_days:
         return(False, "検索範囲指定に使用される単語は登録できません。")
     if chk_command_option:
@@ -127,7 +142,7 @@ def Getmemberslist():
                 name_list.append(alias)
         msg += "{}{}： {}\n".format(
             pname,
-            " " * (padding - f.translation.len_count(pname)),
+            " " * (padding - f.len_count(pname)),
             ", ".join(name_list),
         )
 
@@ -156,27 +171,21 @@ def MemberAppend(argument):
     ret = False
     dbupdate_flg = False
     msg = "使い方が間違っています。"
-    check_list = list(g.member_list.keys())
-    check_list += [f.KANA2HIRA(i) for i in g.member_list.keys()]
-    check_list += [f.HIRA2KANA(i) for i in g.member_list.keys()]
 
     if len(argument) == 1: # 新規追加
         new_name = f.HAN2ZEN(argument[0])
         g.logging.notice(f"new member: {new_name}")
 
-        if new_name in check_list: # ダブりチェック
-            msg = f"「{new_name}」はすでに登録されています。"
-        else:
-            rows = resultdb.execute("select count(*) from member")
-            count = rows.fetchone()[0]
-            if count > g.config["member"].getint("registration_limit", 255):
-                msg = f"登録上限を超えています。"
-            else: # 登録処理
-                ret, msg = check_namepattern(new_name)
-                if ret:
-                    resultdb.execute(f"insert into member(name) values (?)", (new_name,))
-                    resultdb.execute(f"insert into alias(name, member) values (?,?)", (new_name, new_name))
-                    msg = f"「{new_name}」を登録しました。"
+        rows = resultdb.execute("select count() from member")
+        count = rows.fetchone()[0]
+        if count > g.config["member"].getint("registration_limit", 255):
+            msg = f"登録上限を超えています。"
+        else: # 登録処理
+            ret, msg = check_namepattern(new_name)
+            if ret:
+                resultdb.execute(f"insert into member(name) values (?)", (new_name,))
+                resultdb.execute(f"insert into alias(name, member) values (?,?)", (new_name, new_name))
+                msg = f"「{new_name}」を登録しました。"
 
     if len(argument) == 2: # 別名登録
         new_name = f.HAN2ZEN(argument[0])
@@ -184,27 +193,24 @@ def MemberAppend(argument):
         g.logging.notice(f"alias: {new_name} -> {nic_name}")
 
         registration_flg = True
-        if nic_name in check_list: # ダブりチェック
-            msg = f"「{nic_name}」はすでに登録されています。"
-        else:
-            rows = resultdb.execute("select count(*) from alias where member=?", (new_name,))
-            count = rows.fetchone()[0]
-            if count == 0:
-                msg = f"「{new_name}」はまだ登録されていません。"
-                registration_flg = False
-            if count > g.config["member"].getint("alias_limit", 16):
-                msg = f"登録上限を超えています。"
-                registration_flg = False
+        rows = resultdb.execute("select count() from alias where member=?", (new_name,))
+        count = rows.fetchone()[0]
+        if count == 0:
+            msg = f"「{new_name}」はまだ登録されていません。"
+            registration_flg = False
+        if count > g.config["member"].getint("alias_limit", 16):
+            msg = f"登録上限を超えています。"
+            registration_flg = False
 
-            if registration_flg: # 登録処理
-                ret, msg = check_namepattern(nic_name)
-                if ret:
-                    resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
-                    msg = f"「{new_name}」に「{nic_name}」を追加しました。"
-                    dbupdate_flg = True
+        if registration_flg: # 登録処理
+            ret, msg = check_namepattern(nic_name)
+            if ret:
+                resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
+                msg = f"「{new_name}」に「{nic_name}」を追加しました。"
+                dbupdate_flg = True
 
         if dbupdate_flg:
-            rows = resultdb.execute("select count(*) from result where ? in (p1_name, p2_name, p3_name, p4_name)", (nic_name,))
+            rows = resultdb.execute("select count() from result where ? in (p1_name, p2_name, p3_name, p4_name)", (nic_name,))
             count = rows.fetchone()[0]
             if count != 0: # 過去成績更新
                 msg += database_backup()
