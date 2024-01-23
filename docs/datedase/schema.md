@@ -2,7 +2,7 @@
 
 ## result
 
-ポストされたデータを管理するテーブル。p1～p4は東家～北家を表している。
+ポストされたデータを管理するテーブル。*p1* ～ *p4* は東家～北家を表している。
 
 *p?_str* に素点の情報（文字列、記号があるものはそのまま）が記録される。
 *p?_str* の式を評価した値は *p?_rpoint* に、素点から計算した獲得ポイントと順位が *p?_point* 、 *p?_rank* に記録される。
@@ -52,6 +52,7 @@
 | id       | PRIMARY KEY | INTEGER |                      |
 | name     | NOT NULL    | TEXT    | プレイヤー名         |
 | slack_id |             | TEXT    | 未使用               |
+| team_id  |             | INTEGER | 所属チームID(未使用) |
 | flying   |             | INTEGER | 拡張用フラグ(未使用) |
 | reward   |             | INTEGER | 拡張用フラグ(未使用) |
 | abuse    |             | INTEGER | 拡張用フラグ(未使用) |
@@ -60,7 +61,7 @@
 
 メンバーの別名を管理するテーブル。
 Python側で *{ name: member }* という辞書を生成するのに利用される。
-メンバー名も *name* に存在する。
+別名ではないメンバー名も *name* に存在する。
 
 ### 内容
 
@@ -68,6 +69,15 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | -------- | ----------- | ---- | ------------------ |
 | name     | PRIMARY KEY | TEXT | 別名(ニックネーム) |
 | member   | NOT NULL    | TEXT | プレイヤー名       |
+
+## team
+
+チーム名を管理するテーブル。内容
+
+| カラム名 | 制約            | 型      | 内容     |
+| -------- | --------------- | ------- | -------- |
+| id       | PRIMARY KEY     | INTEGER | チームID |
+| name     | NOT NULL UNIQUE | TEXT    | チーム名 |
 
 ## remarks
 
