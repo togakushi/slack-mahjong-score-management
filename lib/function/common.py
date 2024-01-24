@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from itertools import chain
 
 from dateutil.relativedelta import relativedelta
 
@@ -182,3 +183,55 @@ def argument_analysis(argument, command_option = {}):
     g.logging.info(f"return: target_player: {target_player}")
     g.logging.info(f"return: command_option: {command_option}")
     return(target_days, target_player, target_count, command_option)
+
+
+def check_namepattern(name):
+    """
+    登録制限チェック
+
+    Parameters
+    ----------
+    name : str
+        チェック対象文字列
+
+    Returns
+    -------
+    bool : True / False
+        制限チェック結果
+
+    msg : text
+        制限理由
+    """
+
+    # 登録済みメンバーかチェック
+    check_list = list(g.member_list.keys())
+    check_list += [f.KANA2HIRA(i) for i in g.member_list.keys()] # ひらがな
+    check_list += [f.HIRA2KANA(i) for i in g.member_list.keys()] # カタカナ
+    if name in check_list:
+        return(False, f"「{name}」はすでに使用されています。")
+
+    # 登録規定チェック
+    if len(name) > g.config["member"].getint("character_limit", 8): # 文字制限
+        return(False, "登録可能文字数を超えています。")
+    if name == g.guest_name: # 登録NGプレイヤー名
+        return(False, "使用できない名前です。")
+    if re.search("[\\\;:<>,!@#*?/`\"']", name) or not name.isprintable(): # 禁則記号
+        return(False, "使用できない記号が含まれています。")
+
+    # コマンドと同じ名前かチェック
+    chk_target_days, _, _, chk_command_option = f.argument_analysis([name])
+    if chk_target_days:
+        return(False, "検索範囲指定に使用される単語は登録できません。")
+    if chk_command_option:
+        return(False, "オプションに使用される単語は登録できません。")
+
+    commandlist = list(g.commandword.values())
+    commandlist.extend([g.config["setting"].get("slash_commandname")])
+    commandlist.extend([g.config["setting"].get("remarks_word")])
+    commandlist.extend([g.config["search"].get("keyword")])
+    commandlist.extend([x for x, _ in g.config.items("alias")])
+    commandlist.extend(chain.from_iterable([y.split(",") for _, y in g.config.items("alias")]))
+    if name in set(commandlist):
+        return(False, "コマンドに使用される単語は登録できません。")
+
+    return(True, "OK")

@@ -1,3 +1,5 @@
+import os
+import shutil
 import sqlite3
 from datetime import datetime
 
@@ -83,3 +85,29 @@ def resultdb_delete(ts):
     resultdb.commit()
     g.logging.notice(f"{ts}")
     resultdb.close()
+
+
+def database_backup():
+    backup_dir = g.config["database"].get("backup_dir", "")
+    fname = os.path.splitext(g.database_file)[0]
+    fext = os.path.splitext(g.database_file)[1]
+    bktime = datetime.now().strftime('%Y%m%d-%H%M%S')
+    bkfname = os.path.join(backup_dir, f"{fname}_{bktime}{fext}")
+
+    if not backup_dir: # バックアップ設定がされていない場合は何もしない
+        return("")
+
+    if not os.path.isdir(backup_dir): # バックアップディレクトリ作成
+        try:
+            os.mkdir(backup_dir)
+        except:
+            g.logging.ERROR("Database backup directory creation failed !!!")
+            return("\nバックアップ用ディレクトリ作成の作成に失敗しました。")
+
+    # バックアップディレクトリにコピー
+    try:
+        shutil.copyfile(g.database_file, bkfname)
+        g.logging.notice(f"database backup: {bkfname}")
+    except:
+        g.logging.ERROR("Database backup failed !!!")
+        return("\nデータベースのバックアップに失敗しました。")

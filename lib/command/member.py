@@ -1,65 +1,10 @@
 import re
-import os
-import shutil
 import sqlite3
-from datetime import datetime
-from itertools import chain
 
 import lib.function as f
 import lib.command as c
+import lib.database as d
 from lib.function import global_value as g
-
-
-def check_namepattern(name):
-    """
-    登録制限チェック
-
-    Parameters
-    ----------
-    name : str
-        チェック対象文字列
-
-    Returns
-    -------
-    bool : True / False
-        制限チェック結果
-
-    msg : text
-        制限理由
-    """
-
-    # 登録済みメンバーかチェック
-    check_list = list(g.member_list.keys())
-    check_list += [f.KANA2HIRA(i) for i in g.member_list.keys()] # ひらがな
-    check_list += [f.HIRA2KANA(i) for i in g.member_list.keys()] # カタカナ
-    if name in check_list:
-        return(False, f"「{name}」はすでに使用されています。")
-
-    # 登録規定チェック
-    if len(name) > g.config["member"].getint("character_limit", 8): # 文字制限
-        return(False, "登録可能文字数を超えています。")
-    if name == g.guest_name: # 登録NGプレイヤー名
-        return(False, "使用できない名前です。")
-    if re.search("[\\\;:<>,!@#*?/`\"']", name) or not name.isprintable(): # 禁則記号
-        return(False, "使用できない記号が含まれています。")
-
-    # コマンドと同じ名前かチェック
-    chk_target_days, _, _, chk_command_option = f.argument_analysis([name])
-    if chk_target_days:
-        return(False, "検索範囲指定に使用される単語は登録できません。")
-    if chk_command_option:
-        return(False, "オプションに使用される単語は登録できません。")
-
-    commandlist = list(g.commandword.values())
-    commandlist.extend([g.config["setting"].get("slash_commandname")])
-    commandlist.extend([g.config["setting"].get("remarks_word")])
-    commandlist.extend([g.config["search"].get("keyword")])
-    commandlist.extend([x for x, _ in g.config.items("alias")])
-    commandlist.extend(chain.from_iterable([y.split(",") for _, y in g.config.items("alias")]))
-    if name in set(commandlist):
-        return(False, "コマンドに使用される単語は登録できません。")
-
-    return(True, "OK")
 
 
 def NameReplace(pname, command_option, add_mark = False):
@@ -181,7 +126,7 @@ def MemberAppend(argument):
         if count > g.config["member"].getint("registration_limit", 255):
             msg = f"登録上限を超えています。"
         else: # 登録処理
-            ret, msg = check_namepattern(new_name)
+            ret, msg = f.check_namepattern(new_name)
             if ret:
                 resultdb.execute(f"insert into member(name) values (?)", (new_name,))
                 resultdb.execute(f"insert into alias(name, member) values (?,?)", (new_name, new_name))
@@ -203,7 +148,7 @@ def MemberAppend(argument):
             registration_flg = False
 
         if registration_flg: # 登録処理
-            ret, msg = check_namepattern(nic_name)
+            ret, msg = f.check_namepattern(nic_name)
             if ret:
                 resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
                 msg = f"「{new_name}」に「{nic_name}」を追加しました。"
@@ -213,7 +158,7 @@ def MemberAppend(argument):
             rows = resultdb.execute("select count() from result where ? in (p1_name, p2_name, p3_name, p4_name)", (nic_name,))
             count = rows.fetchone()[0]
             if count != 0: # 過去成績更新
-                msg += database_backup()
+                msg += d.database_backup()
                 resultdb.execute("update result set p1_name=? where p1_name=?", (new_name, nic_name))
                 resultdb.execute("update result set p2_name=? where p2_name=?", (new_name, nic_name))
                 resultdb.execute("update result set p3_name=? where p3_name=?", (new_name, nic_name))
@@ -275,29 +220,3 @@ def MemberRemove(argument):
     f.read_memberslist()
 
     return(msg)
-
-
-def database_backup():
-    backup_dir = g.config["database"].get("backup_dir", "")
-    fname = os.path.splitext(g.database_file)[0]
-    fext = os.path.splitext(g.database_file)[1]
-    bktime = datetime.now().strftime('%Y%m%d-%H%M%S')
-    bkfname = os.path.join(backup_dir, f"{fname}_{bktime}{fext}")
-
-    if not backup_dir: # バックアップ設定がされていない場合は何もしない
-        return("")
-
-    if not os.path.isdir(backup_dir): # バックアップディレクトリ作成
-        try:
-            os.mkdir(backup_dir)
-        except:
-            g.logging.ERROR("Database backup directory creation failed !!!")
-            return("\nバックアップ用ディレクトリ作成の作成に失敗しました。")
-
-    # バックアップディレクトリにコピー
-    try:
-        shutil.copyfile(g.database_file, bkfname)
-        g.logging.notice(f"database backup: {bkfname}")
-    except:
-        g.logging.ERROR("Database backup failed !!!")
-        return("\nデータベースのバックアップに失敗しました。")
