@@ -101,16 +101,18 @@ guest_skip = True
 
 ### メンバー管理 ###
 [member]
-# メンバー登録ファイル
-filename = member.ini
-# 登録メンバー上限
+# 登録メンバー数上限
 registration_limit = 255
-# 文字数上限
+# メンバー名文字数上限
 character_limit = 8
-# 別名登録上限
+# メンバー別名登録上限
 alias_limit = 16
-# 未登録プレイヤーを置き換える名前
+# 未登録メンバーを置き換える名前
 guest_name = ゲスト１
+# 登録チーム数上限
+team_registration_limit = 8
+# チーム名文字数上限
+team_character_limit = 16
 
 
 ### 装飾オプション ###
