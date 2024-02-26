@@ -23,7 +23,7 @@ def pattern(text):
     """
 
     keyword = g.config["search"].get("keyword", "終局")
-    pattern1 = re.compile(rf"^{keyword}([^0-9+-]+[0-9+-]+){{4}}")
+    pattern1 = re.compile(rf"^{keyword}([^0-9+-]+[0-9+-]+){{4}}$")
     pattern2 = re.compile(rf"([^0-9+-]+[0-9+-]+){{4}}{keyword}$")
 
     # 全角マイナス符号(0x2212)は半角に置換
