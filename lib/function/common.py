@@ -5,6 +5,7 @@ from itertools import chain
 from dateutil.relativedelta import relativedelta
 
 import lib.command as c
+import lib.function as f
 from lib.function import global_value as g
 
 
