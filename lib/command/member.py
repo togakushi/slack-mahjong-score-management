@@ -155,14 +155,19 @@ def MemberAppend(argument):
                 dbupdate_flg = True
 
         if dbupdate_flg:
-            rows = resultdb.execute("select count() from result where ? in (p1_name, p2_name, p3_name, p4_name)", (nic_name,))
+            rows = resultdb.execute(
+                """select count() from result
+                    where ? in (p1_name, p2_name, p3_name, p4_name)
+                    or ? in (p1_name, p2_name, p3_name, p4_name)
+                    or ? in (p1_name, p2_name, p3_name, p4_name)
+                """, (nic_name, f.KANA2HIRA(nic_name), f.HIRA2KANA(nic_name)))
             count = rows.fetchone()[0]
             if count != 0: # 過去成績更新
                 msg += d.database_backup()
-                resultdb.execute("update result set p1_name=? where p1_name=?", (new_name, nic_name))
-                resultdb.execute("update result set p2_name=? where p2_name=?", (new_name, nic_name))
-                resultdb.execute("update result set p3_name=? where p3_name=?", (new_name, nic_name))
-                resultdb.execute("update result set p4_name=? where p4_name=?", (new_name, nic_name))
+                for col in ("p1_name", "p2_name", "p3_name", "p4_name"):
+                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, nic_name))
+                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.KANA2HIRA(nic_name)))
+                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.HIRA2KANA(nic_name)))
                 msg += "\nデータベースを更新しました。"
 
     resultdb.commit()
