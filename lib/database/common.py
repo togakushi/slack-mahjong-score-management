@@ -108,6 +108,7 @@ def database_backup():
     try:
         shutil.copyfile(g.database_file, bkfname)
         g.logging.notice(f"database backup: {bkfname}")
+        return("\nデータベースをバックアップしました。")
     except:
         g.logging.ERROR("Database backup failed !!!")
         return("\nデータベースのバックアップに失敗しました。")
