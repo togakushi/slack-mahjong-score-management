@@ -178,6 +178,10 @@ def game_result(data, command_option):
     result = {}
     for i in range(len(data)):
         if "blocks" in data[i]:
+            if data[i]["user"] in g.ignore_userid: # 除外ユーザからのポストは集計対象から外す
+                g.logging.info(f"skip: {data[i]}")
+                continue
+
             ts = data[i]["ts"]
             if "elements" in data[i]["blocks"][0]:
                 tmp_msg = ""
@@ -188,18 +192,14 @@ def game_result(data, command_option):
                         tmp_msg += elements[x]["text"]
 
                 # 結果報告フォーマットに一致したポストの処理
-                msg = f.search.pattern(tmp_msg)
+                msg = f.pattern(tmp_msg)
                 if msg:
                     p1_name = c.NameReplace(msg[0], command_option)
                     p2_name = c.NameReplace(msg[2], command_option)
                     p3_name = c.NameReplace(msg[4], command_option)
                     p4_name = c.NameReplace(msg[6], command_option)
-                    #g.logging.info("post data:[{} {} {}][{} {} {}][{} {} {}][{} {} {}]".format(
-                    #    "東家", p1_name, msg[1], "南家", p2_name, msg[3],
-                    #    "西家", p3_name, msg[5], "北家", p4_name, msg[7],
-                    #    )
-                    #)
                     result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
+                    g.logging.trace(result[ts])
 
     if len(result) == 0:
         return(None)

@@ -98,30 +98,40 @@ try:
 except:
     sys.exit()
 
-### 固定値 ###
-wind = ("東家", "南家", "西家", "北家")
-member_list = {}
-slash_command = config["setting"].get("slash_commandname", "/mahjong")
-guest_name = config["member"].get("guest_name", "ゲスト")
-guest_mark = config["setting"].get("guest_mark", "※")
-reaction_ok = config["setting"].get("reaction_ok", "ok")
-reaction_ng = config["setting"].get("reaction_ng", "ng")
-font_file = config["setting"].get("font_file", "ipaexg.ttf")
-rule_version = config["mahjong"].get("rule_version", "")
-database_file = config["database"].get("database_file", "mahjong.db")
-channel_limitations = config["database"].get("channel_limitations", "")
+# 必須セクションチェック
+for x in ("mahjong", "setting"):
+    if not x in config.sections():
+        sys.exit()
+
+# オプションセクションチェック
+for x in ("results", "graph", "ranking", "report", "member", "database", "help"):
+    if not x in config.sections():
+        config.add_section(x)
+
 commandword = { # チャンネル内呼び出しキーワード
     "results": config["results"].get("commandword", "麻雀成績"),
     "graph": config["graph"].get("commandword", "麻雀グラフ"),
     "ranking": config["ranking"].get("commandword", "麻雀ランキング"),
     "report": config["report"].get("commandword", "麻雀成績レポート"),
-    "check": config["database"].get("commandword", "麻雀成績チェック"),
-    "remarks_word": config["setting"].get("remarks_word", "麻雀成績メモ"),
 }
-if config.has_section("help"):
-    commandword.update(help = config["help"].get("commandword", "ヘルプ"))
-else:
-    commandword.update(help = "ヘルプ")
+
+rule_version = config["mahjong"].get("rule_version", "")
+slash_command = config["setting"].get("slash_commandname", "/mahjong")
+guest_mark = config["setting"].get("guest_mark", "※")
+reaction_ok = config["setting"].get("reaction_ok", "ok")
+reaction_ng = config["setting"].get("reaction_ng", "ng")
+font_file = config["setting"].get("font_file", "ipaexg.ttf")
+ignore_userid = [x.strip() for x in config["setting"].get("ignore_userid", "").split(",")]
+commandword.update(remarks_word = config["setting"].get("remarks_word", "麻雀成績メモ"))
+guest_name = config["member"].get("guest_name", "ゲスト")
+database_file = config["database"].get("database_file", "mahjong.db")
+channel_limitations = config["database"].get("channel_limitations", "")
+commandword.update(check = config["database"].get("commandword", "麻雀成績チェック"))
+commandword.update(help = config["help"].get("commandword", "ヘルプ"))
+
+### 固定値 ###
+wind = ("東家", "南家", "西家", "北家")
+member_list = {}
 
 app_var = { # ホームタブ用
     "user_id": None,
@@ -131,7 +141,10 @@ app_var = { # ホームタブ用
     "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
 }
 
-logging.notice(f"slash command: {slash_command}")
+logging.trace(f"commandword: {commandword}")
+logging.info(f"slash command: {slash_command}")
+logging.info(f"ignore_userid: {ignore_userid}")
+logging.info(f"channel_limitations: {channel_limitations}")
 
 ### slack api ###
 try:

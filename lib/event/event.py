@@ -61,6 +61,11 @@ def handle_message_events(client, body):
 
     argument = parameter["text"].split()[1:] # 最初のスペース以降はコマンド引数扱い
 
+    # 許可されていないユーザのポストは処理しない
+    if parameter["user"] in g.ignore_userid:
+        g.logging.trace(f"event skip[ignore userid]: {parameter['user']}")
+        return
+
     # DB更新可能チャンネルのポストかチェック
     if not len(g.channel_limitations) or parameter["channel_id"] in g.channel_limitations.split(","):
         updatable = True
