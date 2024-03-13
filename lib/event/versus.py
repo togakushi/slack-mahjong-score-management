@@ -33,7 +33,7 @@ def build_versus_menu():
 
 
 @g.app.action("menu_versus")
-def handle_some_action(ack, body, client):
+def handle_menu_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
@@ -47,7 +47,7 @@ def handle_some_action(ack, body, client):
     )
 
 @g.app.action("search_versus")
-def handle_some_action(ack, body, client):
+def handle_search_action(ack, body, client):
     ack()
     g.logging.trace(body)
 

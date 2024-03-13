@@ -75,7 +75,7 @@ def set_command_option(command_option, body):
 
 
 @g.app.action("actionId-back")
-def handle_some_action(ack, body, client):
+def handle_action(ack, body, client):
     ack()
     g.logging.trace(body)
 
@@ -96,7 +96,7 @@ def handle_open_modal_button_clicks(ack, body, client):
 
 
 @g.app.action("debug")
-def handle_some_action(ack, body):
+def handle_debug_action(ack, body):
     ack()
 
     x = body['view']['state']['values']
