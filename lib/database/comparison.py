@@ -30,25 +30,21 @@ def main(client, channel, event_ts, argument):
         コマンドオプション
     """
 
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
-    command_option["aggregation_range"] = "全部" # 検索範囲
-    g.logging.info(f"arg: {argument}")
-    g.logging.info(f"opt: {command_option}")
-
     # スコア突合
-    count, msg, fts = score_comparison(command_option)
+    count, msg, fts = score_comparison()
 
-    # カウンター突合
+    # メモ突合
     if fts: # slackからスコア記録のログが見つかった場合のみチェック
         remarks_comparison(fts)
 
-    g.logging.notice("mismatch:{}, missing:{}, delete:{}, invalid_score: {}".format( # type: ignore
-        count["mismatch"],
-        count["missing"],
-        count["delete"],
-        count["invalid_score"],
-    ))
+    g.logging.notice( # type: ignore
+        "mismatch:{}, missing:{}, delete:{}, invalid_score: {}".format(
+            count["mismatch"],
+            count["missing"],
+            count["delete"],
+            count["invalid_score"],
+        )
+    )
 
     ret = f"*【データ突合】*\n"
     ret += "＊ 不一致： {}件\n{}".format(count["mismatch"], msg["mismatch"])
@@ -61,100 +57,99 @@ def main(client, channel, event_ts, argument):
     f.slack_api.post_message(client, channel, ret, event_ts)
 
 
-def score_comparison(command_option):
+def score_comparison():
     """
     スコア突合
+
+    Parameters
+    ----------
+    unnecessary
+
+    Returns
+    -------
+    count : dict
+        処理された更新/追加/削除の件数
+
+    ret_msg : dict
+        slackに返すメッセージ
+
+    fts : str or None
+        slackのログの先頭の時刻
+        見つからない場合は None
     """
 
-    ret_msg = {"mismatch": "", "missing": "", "delete": "", "invalid_score": ""}
     count = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0}
+    ret_msg = {"mismatch": "", "missing": "", "delete": "", "invalid_score": ""}
     fts = None # slackのログの先頭の時刻
 
-    # slackからログを取得
+    # 検索パラメータ
+    command_option = f.configure.command_option_initialization("results")
+    command_option["unregistered_replace"] = False # ゲスト無効
+    command_option["aggregation_range"] = "全部" # 検索範囲
+
+    # slackログからデータを取得
     matches = f.search.slack_search(
         g.config["search"].get("keyword", "終局"),
         g.config["search"].get("channel", "#麻雀部"),
     )
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
     slack_data = f.search.game_result(matches, command_option)
     if slack_data == None:
         return(count, ret_msg, fts)
 
     # データベースからデータを取得
+    fts = list(slack_data.keys())[0]
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     cur = resultdb.cursor()
-
-    fts = list(slack_data.keys())[0]
-    db_data = database_search(cur, fts.split(".")[0] + ".0")
+    db_data = database_search(cur, fts)
     if db_data == None:
         return(count, ret_msg, fts)
 
-    # 突合処理
-    slack_data2 = []
+    # --- 突合処理
+    # slackだけにあるパターン
     for key in slack_data.keys():
-        skey1 = key
-        skey2 = key.split(".")[0] + ".0"
-        slack_data2.append(skey2)
-
-        flg = False
-        if skey1 in db_data.keys():
-            if slack_data[key] == db_data[skey1]:
+        if key in db_data.keys():
+            if slack_data[key] == db_data[key]:
                 continue
-            else:
-                flg = True
-                skey = skey1
-
-        if skey2 in db_data.keys():
-            if slack_data[key] == db_data[skey2]:
+            else: #更新
+                count["mismatch"] += 1
+                g.logging.notice(f"mismatch: {key}") # type: ignore
+                g.logging.info(f"   * [slack]: {slack_data[key]}")
+                g.logging.info(f"   * [   db]: {db_data[key]}")
+                ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
+                    datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+                    textformat(db_data[key]), textformat(slack_data[key]),
+                )
+                db_update(cur, key, slack_data[key], command_option)
                 continue
-            else:
-                flg = True
-                skey = skey2
-
-        if flg:
-            count["mismatch"] += 1
-            #更新
-            g.logging.notice(f"mismatch: {skey}") # type: ignore
-            g.logging.info(f"   * [slack]: {slack_data[key]}")
-            g.logging.info(f"   * [   db]: {db_data[skey]}")
-            ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
-                datetime.fromtimestamp(float(skey)).strftime('%Y/%m/%d %H:%M:%S'),
-                textformat(db_data[skey]), textformat(slack_data[key]),
+        else: #追加
+            count["missing"] += 1
+            g.logging.notice(f"missing: {key}, {slack_data[key]}") # type: ignore
+            ret_msg["missing"] += "\t{} {}\n".format(
+                datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+                textformat(slack_data[key])
             )
-            db_update(cur, skey, slack_data[key], command_option)
-            continue
+            db_insert(cur, key, slack_data[key], command_option)
 
-        #追加
-        count["missing"] += 1
-        g.logging.notice(f"missing: {key}, {slack_data[key]}") # type: ignore
-        ret_msg["missing"] += "\t{} {}\n".format(
-            datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-            textformat(slack_data[key])
-         )
-        db_insert(cur, key, slack_data[key], command_option)
-
+    # DBだけにあるパターン
     for key in db_data.keys():
-        skey1 = key
-        skey2 = key.split(".")[0] + ".0"
-        if skey1 in slack_data.keys():
+        if key in slack_data.keys():
             continue
-        if skey2 in slack_data2:
-            continue
+        else: # 削除
+            count["delete"] += 1
+            g.logging.notice(f"delete: {key}, {db_data[key]} (Only database)") # type: ignore
+            ret_msg["delete"] += "\t{} {}\n".format(
+                datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+                textformat(db_data[key])
+            )
+            db_delete(cur, key)
 
-        # 削除
-        count["delete"] += 1
-        g.logging.notice(f"delete: {key}, {db_data[key]} (Only database)") # type: ignore
-        ret_msg["delete"] += "\t{} {}\n".format(
-            datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-            textformat(db_data[key])
-         )
-        db_delete(cur, key)
-
-    # 素点合計の再チェック
+    # 素点合計の再チェック(修正可能なslack側のみチェック)
     for i in slack_data.keys():
-        rpoint_data =[eval(slack_data[i][1]), eval(slack_data[i][3]), eval(slack_data[i][5]), eval(slack_data[i][7])]
+        rpoint_data =[
+            eval(slack_data[i][1]), eval(slack_data[i][3]),
+            eval(slack_data[i][5]), eval(slack_data[i][7]),
+        ]
         deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
         if not deposit == 0:
             count["invalid_score"] += 1
@@ -269,15 +264,27 @@ def textformat(text):
 
 def remarks_comparison(fts):
     """
-    カウンター突合
+    メモ突合
+
+    Parameters
+    ----------
+    fts : datetime
+        検索開始時刻
+
+    Returns
+    -------
+    なし
     """
 
+    # 検索パラメータ
     command_option = f.configure.command_option_initialization("results")
     command_option["unregistered_replace"] = False # ゲスト無効
+    command_option["aggregation_range"] = "全部" # 検索範囲
+
     slack_data = {}
     db_data = {}
 
-    # slackからデータ取得
+    # slackログからデータを取得
     matches = f.search.slack_search(
         g.commandword["remarks_word"],
         g.config["search"].get("channel", "#麻雀部"),
@@ -326,7 +333,7 @@ def remarks_comparison(fts):
 
     db_ts = set([db_data[i]["event_ts"] for i in db_data.keys()])
 
-    # 突合処理
+    # --- 突合処理
     for x in slack_ts:
         check_data_src = []
         for i in slack_data.keys():
