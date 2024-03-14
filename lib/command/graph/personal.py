@@ -63,14 +63,14 @@ def plot(argument, command_option):
     rank = []
     rank_avg = []
     for row in rows.fetchall():
-        target_player = c.NameReplace(row["name"], command_option, add_mark = True)
+        target_player = c.member.NameReplace(row["name"], command_option, add_mark = True)
         playtime.append(row["playtime"])
         point.append(row["point"])
         point_sum.append(row["point_sum"])
         point_avg.append(row["point_avg"])
         rank.append(row["rank"])
         rank_avg.append(row["rank_avg"])
-        g.logging.trace(f"{dict(row)}")
+        g.logging.trace(f"{dict(row)}") # type: ignore
     g.logging.info(f"return record: {len(playtime)}")
 
     game_count = len(playtime)

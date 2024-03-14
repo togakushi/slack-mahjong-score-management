@@ -24,8 +24,8 @@ def read_memberslist():
 
     resultdb.close()
 
-    g.logging.notice(f"guest_name: {g.guest_name}")
-    g.logging.notice(f"member_list: {set(g.member_list.values())}")
+    g.logging.notice(f"guest_name: {g.guest_name}") # type: ignore
+    g.logging.notice(f"member_list: {set(g.member_list.values())}") # type: ignore
 
 
 def command_option_initialization(command):

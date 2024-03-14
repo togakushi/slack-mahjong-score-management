@@ -77,7 +77,7 @@ def set_command_option(command_option, body):
 @g.app.action("actionId-back")
 def handle_action(ack, body, client):
     ack()
-    g.logging.trace(body)
+    g.logging.trace(body) # type: ignore
 
     client.views_publish(
         user_id = g.app_var["user_id"],

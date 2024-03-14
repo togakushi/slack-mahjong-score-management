@@ -30,9 +30,9 @@ def plot(argument, command_option):
                 pt = ""
             else:
                 name, pt = row[i].split()
-                name = c.NameReplace(name, command_option, add_mark = True)
+                name = c.member.NameReplace(name, command_option, add_mark = True)
             results[row["集計月"]].update({i: f"{name} {pt}"})
-        g.logging.trace(f"{row['集計月']}: {results[row['集計月']]}")
+        g.logging.trace(f"{row['集計月']}: {results[row['集計月']]}") # type: ignore
     g.logging.info(f"return record: {len(results)}")
 
     resultdb.close()
@@ -84,7 +84,7 @@ def plot(argument, command_option):
             tb[i, j].set_text_props(ha = "center")
 
     # 追加テキスト
-    remark_text =  f.remarks(command_option).replace("\t", "")
+    remark_text =  f.message.remarks(command_option).replace("\t", "")
     add_text = "[検索範囲：{} - {}] {} {}".format(
         ret["starttime"].strftime('%Y/%m/%d %H:%M'),
         ret["endtime"].strftime('%Y/%m/%d %H:%M'),

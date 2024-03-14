@@ -44,7 +44,7 @@ def aggregation(argument, command_option):
     results = {}
     for row in rows.fetchall():
         results[row["vs_name"]] = dict(row)
-        g.logging.trace(f"{row['vs_name']}: {results[row['vs_name']]}")
+        g.logging.trace(f"{row['vs_name']}: {results[row['vs_name']]}") # type: ignore
     g.logging.info(f"return record: {len(results)}")
 
     # ヘッダ情報
@@ -65,7 +65,7 @@ def aggregation(argument, command_option):
         starttime.strftime("%Y/%m/%d %H:%M"),
         endtime.strftime("%Y/%m/%d %H:%M"),
     )
-    msg1 += f.remarks(command_option)
+    msg1 += f.message.remarks(command_option)
 
     if len(vs_list) == 0:
         msg2[""] = "対戦相手が見つかりませんでした。\n"
@@ -76,15 +76,15 @@ def aggregation(argument, command_option):
         return(msg1, msg2)
 
     # 表示内容
-    padding = c.CountPadding(
-        [c.NameReplace(i, command_option, add_mark = True) for i in vs_list + [my_name]]
+    padding = c.member.CountPadding(
+        [c.member.NameReplace(i, command_option, add_mark = True) for i in vs_list + [my_name]]
     )
     g.logging.info(f"vs_list: {vs_list} padding: {padding}")
 
     for vs_name in vs_list:
         msg2[vs_name] = "[ {} vs {} ]\n".format(
-            c.NameReplace(my_name, command_option, add_mark = True),
-            c.NameReplace(vs_name, command_option, add_mark = True),
+            c.member.NameReplace(my_name, command_option, add_mark = True),
+            c.member.NameReplace(vs_name, command_option, add_mark = True),
         )
 
         msg2[vs_name] += "対戦数： {} 戦 {} 勝 {} 敗\n".format(
@@ -122,15 +122,15 @@ def aggregation(argument, command_option):
             rows = resultdb.execute(ret["sql"], ret["placeholder"])
 
             for row in rows.fetchall():
-                g.logging.trace(dict(row))
+                g.logging.trace(dict(row)) # type: ignore
                 tmp_msg_v = "{}{}\n".format(
                     row["playtime"],
                     "\t(2ゲスト戦)" if row["guest_count"] >= 2 else "",
                 )
                 for wind, pre in [("東家", "p1"), ("南家", "p2"), ("西家", "p3"), ("北家", "p4")]:
-                    pname = c.NameReplace(row[f"{pre}_name"], command_option, add_mark = True)
+                    pname = c.member.NameReplace(row[f"{pre}_name"], command_option, add_mark = True)
                     tmp_msg_v += "\t{}： {}{} / {}位 {:>5}点 ({}pt)\n".format(
-                        wind, pname, " " * (padding - f.len_count(pname)),
+                        wind, pname, " " * (padding - f.translation.len_count(pname)),
                         row[f"{pre}_rank"],
                         row[f"{pre}_rpoint"],
                         row[f"{pre}_point"],

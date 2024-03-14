@@ -7,7 +7,7 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def slackpost(client, channel, argument):
+def main(client, channel, argument):
     """
     ランキングをslackにpostする
 
@@ -23,16 +23,16 @@ def slackpost(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    command_option = f.command_option_initialization("ranking")
-    _, _, _, command_option = f.argument_analysis(argument, command_option)
+    command_option = f.configure.command_option_initialization("ranking")
+    _, _, _, command_option = f.common.argument_analysis(argument, command_option)
 
     g.logging.info(f"arg: {argument}")
     g.logging.info(f"opt: {command_option}")
 
     msg1, msg2 = aggregation(argument, command_option)
-    res = f.post_message(client, channel, msg1)
+    res = f.slack_api.post_message(client, channel, msg1)
     if msg2:
-        f.post_multi_message(client, channel, msg2, res["ts"])
+        f.slack_api.post_multi_message(client, channel, msg2, res["ts"])
 
 
 def aggregation(argument, command_option):
@@ -60,33 +60,33 @@ def aggregation(argument, command_option):
     resultdb.row_factory = sqlite3.Row
 
     # --- データ取得
-    ret = d.query_count_game(argument, command_option)
+    ret = d._query.query_count_game(argument, command_option)
     rows = resultdb.execute(ret["sql"], ret["placeholder"])
     total_game_count = rows.fetchone()[0]
     if command_option["stipulated"] == 0:
         command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
 
-    ret = d.query_get_personal_data(argument, command_option)
+    ret = d._query.query_get_personal_data(argument, command_option)
     rows = resultdb.execute(ret["sql"], ret["placeholder"])
     results = {}
     name_list = []
     for row in rows.fetchall():
         results[row["プレイヤー"]] = dict(row)
-        name_list.append(c.NameReplace(row["プレイヤー"], command_option, add_mark = True))
-        g.logging.trace(f"{row['プレイヤー']}: {results[row['プレイヤー']]}")
+        name_list.append(c.member.NameReplace(row["プレイヤー"], command_option, add_mark = True))
+        g.logging.trace(f"{row['プレイヤー']}: {results[row['プレイヤー']]}") # type: ignore
     g.logging.info(f"return record: {len(results)}")
 
     if len(results) == 0: # 結果が0件のとき
         return(f.message.no_hits(argument, command_option), None)
 
-    padding = c.CountPadding(list(set(name_list)))
+    padding = c.member.CountPadding(list(set(name_list)))
     first_game = min([results[name]["first_game"] for name in results.keys()])
     last_game = max([results[name]["last_game"] for name in results.keys()])
 
     msg1 = "\n*【ランキング】*\n"
     msg1 += f"\t集計範囲：{first_game} ～ {last_game}\n".replace("-", "/")
     msg1 += f"\t集計ゲーム数：{total_game_count}\t(規定数：{command_option['stipulated']} 以上)\n"
-    msg1 += f.remarks(command_option)
+    msg1 += f.message.remarks(command_option)
     msg2 = {
         "ゲーム参加率": "\n*ゲーム参加率*\n",
         "累積ポイント": "\n*累積ポイント*\n",
@@ -112,9 +112,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["ゲーム参加率"] += "{:3d}： {}{} {:>6.2%} ({:3d} / {:3d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val / total_game_count, val, total_game_count,
         )
 
@@ -129,9 +129,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["累積ポイント"] += "{:3d}： {}{} {:>7.1f}pt ({:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
@@ -146,9 +146,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["平均ポイント"] += "{:3d}： {}{} {:>5.1f}pt ({:>7.1f}pt / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["累積ポイント"], results[name]["ゲーム数"],
         ).replace("-", "▲")
 
@@ -163,9 +163,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["平均収支1"] += "{:3d}： {}{} {:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
@@ -180,9 +180,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["平均収支2"] += "{:3d}： {}{} {:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
@@ -197,9 +197,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["トップ率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["1位"], results[name]["ゲーム数"],
         )
 
@@ -214,9 +214,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["連対率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"], results[name]["ゲーム数"],
         )
 
@@ -231,9 +231,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["ラス回避率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"] + results[name]["3位"], results[name]["ゲーム数"],
         )
 
@@ -248,9 +248,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["トビ率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["トビ回数"], results[name]["ゲーム数"],
         )
 
@@ -265,9 +265,9 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["平均順位"] += "{:3d}： {}{} {:>4.2f} ({:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["ゲーム数"],
         )
 
@@ -282,10 +282,10 @@ def aggregation(argument, command_option):
     for name, val in ranking:
         if juni.index(val) + 1 > command_option["ranked"]:
             break
-        pname = c.NameReplace(name, command_option, add_mark = True)
+        pname = c.member.NameReplace(name, command_option, add_mark = True)
         if results[name]["役満和了"] != 0:
             msg2["役満和了率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-                juni.index(val) + 1, pname, " " * (padding - f.len_count(pname)),
+                juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
                 val, results[name]["役満和了"], results[name]["ゲーム数"],
             )
     if msg2["役満和了率"].strip().count("\n") == 0: # 対象者がいなければ削除

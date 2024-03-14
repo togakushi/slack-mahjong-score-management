@@ -32,7 +32,7 @@ def build_ranking_menu():
 @g.app.action("menu_ranking")
 def handle_menu_action(ack, body, client):
     ack()
-    g.logging.trace(body)
+    g.logging.trace(body) # type: ignore
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
@@ -47,7 +47,7 @@ def handle_menu_action(ack, body, client):
 @g.app.action("search_ranking")
 def handle_search_action(ack, body, client):
     ack()
-    g.logging.trace(body)
+    g.logging.trace(body) # type: ignore
 
     argument, command_option, app_msg = e.set_command_option(
         f.configure.command_option_initialization("ranking"),
@@ -73,10 +73,10 @@ def handle_search_action(ack, body, client):
     app_msg.append("集計完了")
     msg1 = f.message.no_hits(argument, command_option)
 
-    msg1, msg2 = c.ranking.aggregation(argument, command_option)
+    msg1, msg2 = c.ranking.slackpost.aggregation(argument, command_option)
     if msg2:
-        res = f.post_message(client, body["user"]["id"], msg1)
-        f.post_multi_message(client, body["user"]["id"], msg2, res["ts"])
+        res = f.slack_api.post_message(client, body["user"]["id"], msg1)
+        f.slack_api.post_multi_message(client, body["user"]["id"], msg2, res["ts"])
 
     client.views_update(
         view_id = g.app_var["view_id"],

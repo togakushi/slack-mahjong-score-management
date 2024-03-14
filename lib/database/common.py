@@ -29,13 +29,13 @@ def resultdb_insert(msg, ts):
     deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
     array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
     for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
+        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.calculation_point(rpoint_data, rpoint_data[i2], i2)
+        array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.execute(d.sql_result_insert, (
+    resultdb.execute(d._query.sql_result_insert, (
         ts, datetime.fromtimestamp(float(ts)),
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
@@ -45,7 +45,7 @@ def resultdb_insert(msg, ts):
         )
     )
     resultdb.commit()
-    g.logging.notice(f"{ts}: {array}")
+    g.logging.notice(f"{ts}: {array}") # type: ignore
     resultdb.close()
 
 
@@ -58,13 +58,13 @@ def resultdb_update(msg, ts):
     deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
     array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
     for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
+        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.calculation_point(rpoint_data, rpoint_data[i2], i2)
+        array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.execute(d.sql_result_update, (
+    resultdb.execute(d._query.sql_result_update, (
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
         array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
@@ -74,16 +74,16 @@ def resultdb_update(msg, ts):
         )
     )
     resultdb.commit()
-    g.logging.notice(f"{ts}: {array}")
+    g.logging.notice(f"{ts}: {array}") # type: ignore
     resultdb.close()
 
 
 def resultdb_delete(ts):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.execute(d.sql_result_delete, (ts,))
-    resultdb.execute(d.sql_remarks_delete_all, (ts,))
+    resultdb.execute(d._query.sql_result_delete, (ts,))
+    resultdb.execute(d._query.sql_remarks_delete_all, (ts,))
     resultdb.commit()
-    g.logging.notice(f"{ts}")
+    g.logging.notice(f"{ts}") # type: ignore
     resultdb.close()
 
 
@@ -101,14 +101,14 @@ def database_backup():
         try:
             os.mkdir(backup_dir)
         except:
-            g.logging.ERROR("Database backup directory creation failed !!!")
+            g.logging.error("Database backup directory creation failed !!!")
             return("\nバックアップ用ディレクトリ作成の作成に失敗しました。")
 
     # バックアップディレクトリにコピー
     try:
         shutil.copyfile(g.database_file, bkfname)
-        g.logging.notice(f"database backup: {bkfname}")
+        g.logging.notice(f"database backup: {bkfname}") # type: ignore
         return("\nデータベースをバックアップしました。")
     except:
-        g.logging.ERROR("Database backup failed !!!")
+        g.logging.error("Database backup failed !!!")
         return("\nデータベースのバックアップに失敗しました。")

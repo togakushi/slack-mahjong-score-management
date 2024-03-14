@@ -16,18 +16,18 @@ def handle_home_events(client, event):
     if "view" in event:
         g.app_var["view_id"] = event["view"]["id"]
 
-    g.logging.trace(f"{g.app_var}")
+    g.logging.trace(f"{g.app_var}") # type: ignore
 
     result = client.views_publish(
         user_id = g.app_var["user_id"],
         view = e.build_main_menu(),
     )
 
-    g.logging.trace(result)
+    g.logging.trace(result) # type: ignore
 
 
 if __name__ == "__main__":
-    d.initialization_resultdb()
+    d.initialization.initialization_resultdb()
     f.configure.read_memberslist()
 
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])

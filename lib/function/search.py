@@ -84,21 +84,21 @@ def game_select(starttime, endtime, target_player, target_count, command_option)
         sql = "select * from result where rule_version=? and playtime between ? and ?"
         placeholder = [g.rule_version, starttime, endtime]
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
     rows = resultdb.execute(sql, placeholder)
 
     data = {}
     count = 0
     for row in rows.fetchall():
-        p1_name = c.NameReplace(row["p1_name"], command_option, add_mark = True)
-        p2_name = c.NameReplace(row["p2_name"], command_option, add_mark = True)
-        p3_name = c.NameReplace(row["p3_name"], command_option, add_mark = True)
-        p4_name = c.NameReplace(row["p4_name"], command_option, add_mark = True)
+        p1_name = c.member.NameReplace(row["p1_name"], command_option, add_mark = True)
+        p2_name = c.member.NameReplace(row["p2_name"], command_option, add_mark = True)
+        p3_name = c.member.NameReplace(row["p3_name"], command_option, add_mark = True)
+        p4_name = c.member.NameReplace(row["p4_name"], command_option, add_mark = True)
         guest_count = [p1_name, p2_name, p3_name, p4_name].count(g.guest_name)
 
         if command_option["guest_skip"] and guest_count >= 2:
-            g.logging.trace(f"2ゲスト戦除外: {row['ts']}, {p1_name}, {p2_name}, {p3_name}, {p4_name}")
+            g.logging.trace(f"2ゲスト戦除外: {row['ts']}, {p1_name}, {p2_name}, {p3_name}, {p4_name}") # type: ignore
         else:
             data[count] = {
                 "日付": datetime.fromtimestamp(float(row["ts"])),
@@ -107,7 +107,7 @@ def game_select(starttime, endtime, target_player, target_count, command_option)
                 "西家": {"name": p3_name, "rpoint": row["p3_rpoint"], "rank": row["p3_rank"], "point": row["p3_point"]},
                 "北家": {"name": p4_name, "rpoint": row["p4_rpoint"], "rank": row["p4_rank"], "point": row["p4_point"]},
             }
-            g.logging.trace(f"{count}: {data[count]}")
+            g.logging.trace(f"{count}: {data[count]}") # type: ignore
             count += 1
 
     g.logging.info(f"return record: {len(data)}")
@@ -192,14 +192,14 @@ def game_result(data, command_option):
                         tmp_msg += elements[x]["text"]
 
                 # 結果報告フォーマットに一致したポストの処理
-                msg = f.pattern(tmp_msg)
+                msg = f.search.pattern(tmp_msg)
                 if msg:
-                    p1_name = c.NameReplace(msg[0], command_option)
-                    p2_name = c.NameReplace(msg[2], command_option)
-                    p3_name = c.NameReplace(msg[4], command_option)
-                    p4_name = c.NameReplace(msg[6], command_option)
+                    p1_name = c.member.NameReplace(msg[0], command_option)
+                    p2_name = c.member.NameReplace(msg[2], command_option)
+                    p3_name = c.member.NameReplace(msg[4], command_option)
+                    p4_name = c.member.NameReplace(msg[6], command_option)
                     result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
-                    g.logging.trace(result[ts])
+                    g.logging.trace(result[ts]) # type: ignore
 
     if len(result) == 0:
         return(None)

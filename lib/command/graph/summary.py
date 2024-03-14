@@ -61,7 +61,7 @@ def plot(argument, command_option):
         tmp_results[row["name"]]["playtime"].append(row["playtime"])
         tmp_results[row["name"]]["point_sum"].append(row["point_sum"])
         tmp_results[row["name"]]["count"] = row["count"]
-        g.logging.trace(f"{row['name']}: {tmp_results[row['name']]}")
+        g.logging.trace(f"{row['name']}: {tmp_results[row['name']]}") # type: ignore
     g.logging.info(f"return record: {len(tmp_results)}")
 
     # 規定打数足切り
@@ -162,7 +162,7 @@ def plot(argument, command_option):
         for name, _ in ranking_rank:
             label = "{}位：{} {}pt / {}G)".format(
                 str(results[name]["interim_rank"][-1]),
-                c.NameReplace(name, command_option, add_mark = True),
+                c.member.NameReplace(name, command_option, add_mark = True),
                 str(results[name]["point_sum"][-1]),
                 str(results[name]["count"]),
             ).replace("-", "▲")
@@ -180,7 +180,7 @@ def plot(argument, command_option):
     else: # ポイント推移
         for name, _ in ranking_point:
             label = "{} ({}pt / {}G)".format(
-                c.NameReplace(name, command_option, add_mark = True),
+                c.member.NameReplace(name, command_option, add_mark = True),
                 str(results[name]["point_sum"][-1]),
                 str(results[name]["count"]),
             ).replace("-", "▲")

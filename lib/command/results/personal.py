@@ -38,7 +38,7 @@ def aggregation(argument, command_option):
     data = rows.fetchone()
 
     if data:
-        g.logging.trace(dict(data))
+        g.logging.trace(dict(data)) # type: ignore
     else:
         data = {
             "name": ret["target_player"][0],
@@ -72,7 +72,7 @@ def aggregation(argument, command_option):
 
     ### 表示内容 ###
     msg1 = "*【個人成績】*\n\tプレイヤー名： {} {}\n".format(
-        c.NameReplace(data["name"], command_option, add_mark = True),
+        c.member.NameReplace(data["name"], command_option, add_mark = True),
         badge_degree,
     )
     msg2 = {}
@@ -105,7 +105,7 @@ def aggregation(argument, command_option):
         if not g.config["mahjong"].getboolean("ignore_flying", False):
             msg1 += "\tトビ： {} 回 ({:.2f}%)\n".format(data["flying"], data["flying%"])
         msg1 += "\t役満： {:2} 回 ({:.2f}%)\n".format(data["gs"], data["gs%"])
-        msg1 += "\n" + f.remarks(command_option)
+        msg1 += "\n" + f.message.remarks(command_option)
 
         # 座席
         msg2["座席"] += "\t# 席：順位分布(平順) / トビ / 役満 #\n"
@@ -142,8 +142,8 @@ def aggregation(argument, command_option):
         for i in results.keys():
             timestamp.append(results[i]["ts"])
             for p in ("p1", "p2", "p3", "p4"):
-                name_list.append(c.NameReplace(results[i][f"{p}_name"], command_option, add_mark = True))
-        padding = c.CountPadding(list(set(name_list)))
+                name_list.append(c.member.NameReplace(results[i][f"{p}_name"], command_option, add_mark = True))
+        padding = c.member.CountPadding(list(set(name_list)))
 
         # 戦績表示
         if command_option["game_results"]:
@@ -170,9 +170,9 @@ def aggregation(argument, command_option):
                         if name in game_remarks:
                             if results[i]["ts"] in game_remarks[name]:
                                 matter = ",".join(game_remarks[name][results[i]["ts"]])
-                        pname = c.NameReplace(results[i][f"{p}_name"], command_option, add_mark = True)
+                        pname = c.member.NameReplace(results[i][f"{p}_name"], command_option, add_mark = True)
                         msg2["戦績"] += "\t{}： {}{} / {}位 {:>7}点 ({}pt) {}\n".format(
-                            n, pname, " " * (padding - f.len_count(pname)),
+                            n, pname, " " * (padding - f.translation.len_count(pname)),
                             results[i][f"{p}_rank"], results[i][f"{p}_rpoint"], results[i][f"{p}_point"], matter,
                         )
                 else:
@@ -199,9 +199,9 @@ def aggregation(argument, command_option):
 
             msg2["対戦"] += "\n```\n"
             for row in rows.fetchall():
-                pname = c.NameReplace(row["vs_name"], command_option, add_mark = True)
+                pname = c.member.NameReplace(row["vs_name"], command_option, add_mark = True)
                 msg2["対戦"] += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>6.2f}%)\n".format(
-                    pname, " " * (padding - f.len_count(pname)),
+                    pname, " " * (padding - f.translation.len_count(pname)),
                     row["game"], row["win"], row["lose"], row["win%"]
                 )
             msg2["対戦"] += "```"

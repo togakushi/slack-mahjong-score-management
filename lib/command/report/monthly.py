@@ -22,7 +22,7 @@ def plot(argument, command_option):
     results = {}
     for row in rows.fetchall():
         results[row["集計月"]] = dict(row)
-        g.logging.trace(f"{row['集計月']}: {results[row['集計月']]}")
+        g.logging.trace(f"{row['集計月']}: {results[row['集計月']]}") # type: ignore
     g.logging.info(f"return record: {len(results)}")
 
     resultdb.close()

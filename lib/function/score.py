@@ -46,7 +46,7 @@ def calculation_point(rpoint_data, rpoint, seat):
 
     oka = (r - p) * 4 / 10
     uma = [int(x) for x in u.split(",")]
-    uma[0] = uma[0] + oka
+    uma[0] = uma[0] + int(oka)
 
     point = math.floor((rpoint - r) + uma[rank - 1] * 10) / 10
 
@@ -62,7 +62,7 @@ def check_score(client, channel_id, event_ts, user, msg):
     correct_score = g.config["mahjong"].getint("point", 250) * 4
     rpoint_sum = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
 
-    g.logging.notice("post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
+    g.logging.notice("post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format( # type: ignore
         msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7],
         correct_score - rpoint_sum,
         )
@@ -76,7 +76,7 @@ def check_score(client, channel_id, event_ts, user, msg):
         )
     else: # 合計が不一致の場合
         msg = f.message.invalid_score(user, rpoint_sum, correct_score)
-        f.post_message(client, channel_id, msg, event_ts) #
+        f.slack_api.post_message(client, channel_id, msg, event_ts) #
         client.reactions_add(
             channel = channel_id,
             name = g.reaction_ng,

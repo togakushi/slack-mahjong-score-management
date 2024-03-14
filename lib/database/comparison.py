@@ -8,7 +8,7 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def slackpost(client, channel, event_ts, argument):
+def main(client, channel, event_ts, argument):
     """
     データ突合の実施、その結果をslackにpostする
 
@@ -43,7 +43,7 @@ def slackpost(client, channel, event_ts, argument):
     if fts: # slackからスコア記録のログが見つかった場合のみチェック
         remarks_comparison(fts)
 
-    g.logging.notice("mismatch:{}, missing:{}, delete:{}, invalid_score: {}".format(
+    g.logging.notice("mismatch:{}, missing:{}, delete:{}, invalid_score: {}".format( # type: ignore
         count["mismatch"],
         count["missing"],
         count["delete"],
@@ -58,7 +58,7 @@ def slackpost(client, channel, event_ts, argument):
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]
 
-    f.post_message(client, channel, ret, event_ts)
+    f.slack_api.post_message(client, channel, ret, event_ts)
 
 
 def score_comparison(command_option):
@@ -116,7 +116,7 @@ def score_comparison(command_option):
         if flg:
             count["mismatch"] += 1
             #更新
-            g.logging.notice(f"mismatch: {skey}")
+            g.logging.notice(f"mismatch: {skey}") # type: ignore
             g.logging.info(f"   * [slack]: {slack_data[key]}")
             g.logging.info(f"   * [   db]: {db_data[skey]}")
             ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
@@ -128,7 +128,7 @@ def score_comparison(command_option):
 
         #追加
         count["missing"] += 1
-        g.logging.notice(f"missing: {key}, {slack_data[key]}")
+        g.logging.notice(f"missing: {key}, {slack_data[key]}") # type: ignore
         ret_msg["missing"] += "\t{} {}\n".format(
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(slack_data[key])
@@ -145,7 +145,7 @@ def score_comparison(command_option):
 
         # 削除
         count["delete"] += 1
-        g.logging.notice(f"delete: {key}, {db_data[key]} (Only database)")
+        g.logging.notice(f"delete: {key}, {db_data[key]} (Only database)") # type: ignore
         ret_msg["delete"] += "\t{} {}\n".format(
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(db_data[key])
@@ -213,12 +213,12 @@ def db_update(cur, ts, msg, command_option): # 突合処理専用
     deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
     array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
     for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
+        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.calculation_point(rpoint_data, rpoint_data[i2], i2)
+        array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
-    cur.execute(d.sql_result_update, (
+    cur.execute(d._query.sql_result_update, (
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
         array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
@@ -235,12 +235,12 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
     deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
     array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
     for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.NameReplace(msg[i2 * 2], command_option, False)
+        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
         array[i1]["str"] = msg[i2 * 2 + 1]
         array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.calculation_point(rpoint_data, rpoint_data[i2], i2)
+        array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
-    cur.execute(d.sql_result_insert, (
+    cur.execute(d._query.sql_result_insert, (
         ts, datetime.fromtimestamp(float(ts)),
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
@@ -252,7 +252,7 @@ def db_insert(cur, ts, msg, command_option): # 突合処理専用
 
 
 def db_delete(cur, ts): # 突合処理専用
-    cur.execute(d.sql_result_delete, (ts,))
+    cur.execute(d._query.sql_result_delete, (ts,))
 
 
 def textformat(text):
@@ -299,10 +299,10 @@ def remarks_comparison(fts):
                     slack_data[count] = {
                         "thread_ts": thread_ts,
                         "event_ts": event_ts,
-                        "name": c.NameReplace(name, command_option),
+                        "name": c.member.NameReplace(name, command_option),
                         "matter": val,
                     }
-                    g.logging.trace(f"slack: {slack_data[count]}")
+                    g.logging.trace(f"slack: {slack_data[count]}") # type: ignore
                     count += 1
 
     slack_ts = set([slack_data[i]["event_ts"] for i in slack_data.keys()])
@@ -321,7 +321,7 @@ def remarks_comparison(fts):
             "name": row["name"],
             "matter": row["matter"],
         }
-        g.logging.trace(f"database: {db_data[count]}")
+        g.logging.trace(f"database: {db_data[count]}") # type: ignore
         count += 1
 
     db_ts = set([db_data[i]["event_ts"] for i in db_data.keys()])
@@ -349,22 +349,22 @@ def remarks_comparison(fts):
             if check_data_src == check_data_dst:
                 continue
             else:
-                cur.execute(d.sql_remarks_delete_one, (str(x),))
+                cur.execute(d._query.sql_remarks_delete_one, (str(x),))
                 for update_data in check_data_src:
-                    cur.execute(d.sql_remarks_insert, (
+                    cur.execute(d._query.sql_remarks_insert, (
                         update_data["thread_ts"],
                         update_data["event_ts"],
-                        c.NameReplace(update_data["name"], command_option),
+                        c.member.NameReplace(update_data["name"], command_option),
                         update_data["matter"],
                     ))
                     g.logging.info(f"update: {update_data}")
         else: # スレッド元がないデータは不要
-            cur.execute(d.sql_remarks_delete_one, (str(x),))
+            cur.execute(d._query.sql_remarks_delete_one, (str(x),))
             g.logging.info(f"delete: {x} (No thread origin)")
 
     for x in db_ts:
         if x not in slack_ts: # データベースにあってslackにない → 削除
-            cur.execute(d.sql_remarks_delete_one, (str(x),))
+            cur.execute(d._query.sql_remarks_delete_one, (str(x),))
             g.logging.info(f"delete: {x} (Only database)")
 
     resultdb.commit()

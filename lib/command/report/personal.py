@@ -23,7 +23,7 @@ def plot(argument, command_option):
     resultdb.row_factory = sqlite3.Row
 
     # --- データ取得
-    ret = d.query_count_game(argument, command_option)
+    ret = d._query.query_count_game(argument, command_option)
     rows = resultdb.execute(ret["sql"], ret["placeholder"])
     total_game_count = rows.fetchone()[0]
     if command_option["stipulated"] == 0:
@@ -37,14 +37,14 @@ def plot(argument, command_option):
     for row in rows.fetchall():
         name = row["プレイヤー"]
         results[name] = dict(row)
-        results[name].update({"プレイヤー": c.NameReplace(name, command_option, add_mark = True)})
+        results[name].update({"プレイヤー": c.member.NameReplace(name, command_option, add_mark = True)})
         playtime.append(row["first_game"])
         playtime.append(row["last_game"])
         # 描写しないカラムを削除
         results[name].pop("first_game")
         results[name].pop("last_game")
         results[name].pop("並び変え用カラム")
-        g.logging.trace(f"{row['プレイヤー']}: {results[name]}")
+        g.logging.trace(f"{row['プレイヤー']}: {results[name]}") # type: ignore
     g.logging.info(f"return record: {len(results)}")
 
     resultdb.close()
@@ -95,7 +95,7 @@ def plot(argument, command_option):
         tb[i, 0].set_text_props(ha = "center")
 
     # 追加テキスト
-    remark_text =  f.remarks(command_option).replace("\t", "")
+    remark_text =  f.message.remarks(command_option).replace("\t", "")
     add_text = "[集計範囲：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
         min(playtime).replace("-", "/"),
         max(playtime).replace("-", "/"),

@@ -60,13 +60,13 @@ def parser():
 
 ### ログレベル追加 ###
 # TRACE
-logging.TRACE = 19
-logging.trace = partial(logging.log, logging.TRACE)
-logging.addLevelName(logging.TRACE, "TRACE")
+logging.TRACE = 19  # type: ignore
+logging.trace = partial(logging.log, logging.TRACE) # type: ignore
+logging.addLevelName(logging.TRACE, "TRACE") # type: ignore
 # NOTICE
-logging.NOTICE = 25
-logging.notice = partial(logging.log, logging.NOTICE)
-logging.addLevelName(logging.NOTICE, "NOTICE")
+logging.NOTICE = 25 # type: ignore
+logging.notice = partial(logging.log, logging.NOTICE) # type: ignore
+logging.addLevelName(logging.NOTICE, "NOTICE") # type: ignore
 
 ### コマンドラインオプション解析 ###
 args = parser()
@@ -79,7 +79,7 @@ else:
 if args.debug:
     if args.verbose:
         print("DEBUG MODE(verbose)")
-        logging.basicConfig(level = logging.TRACE, format = fmt)
+        logging.basicConfig(level = logging.TRACE, format = fmt) # type: ignore
     else:
         print("DEBUG MODE")
         logging.basicConfig(level = logging.INFO, format = fmt)
@@ -87,14 +87,14 @@ else:
     if args.moderate:
         logging.basicConfig(level = logging.WARNING, format = fmt)
     else:
-        logging.basicConfig(level = logging.NOTICE, format = fmt)
+        logging.basicConfig(level = logging.NOTICE, format = fmt) # type: ignore
 
 
 ### 設定ファイル読み込み ###
 try:
     config = configparser.ConfigParser()
     config.read(args.config, encoding="utf-8")
-    logging.notice(f"config read: {args.config} -> {config.sections()}")
+    logging.notice(f"config read: {args.config} -> {config.sections()}") # type: ignore
 except:
     sys.exit()
 
@@ -141,7 +141,7 @@ app_var = { # ホームタブ用
     "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
 }
 
-logging.trace(f"commandword: {commandword}")
+logging.trace(f"commandword: {commandword}") # type: ignore
 logging.info(f"slash command: {slash_command}")
 logging.info(f"ignore_userid: {ignore_userid}")
 logging.info(f"channel_limitations: {channel_limitations}")
@@ -152,4 +152,4 @@ try:
     webclient = WebClient(token = os.environ["SLACK_WEB_TOKEN"])
 except SlackApiError as e:
     logging.error(e)
-    sys.exit(e)
+    sys.exit()

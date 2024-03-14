@@ -27,7 +27,7 @@ def handle_message_events(client, body):
     ポストされた内容で処理を分岐
     """
 
-    g.logging.trace(body)
+    g.logging.trace(body) # type: ignore
 
     # 各種パラメータ取得
     existence = False
@@ -46,7 +46,7 @@ def handle_message_events(client, body):
             case "message_changed":
                 parameter["status"] = "message_changed"
                 parameter = param_retrieving(parameter, body["event"]["message"])
-                existence = d.ExsistRecord(parameter["event_ts"])
+                existence = d.common.ExsistRecord(parameter["event_ts"])
             case "message_deleted":
                 parameter["status"] = "message_deleted"
                 parameter = param_retrieving(parameter, body["event"]["previous_message"])
@@ -63,7 +63,7 @@ def handle_message_events(client, body):
 
     # 許可されていないユーザのポストは処理しない
     if parameter["user"] in g.ignore_userid:
-        g.logging.trace(f"event skip[ignore userid]: {parameter['user']}")
+        g.logging.trace(f"event skip[ignore userid]: {parameter['user']}") # type: ignore
         return
 
     # DB更新可能チャンネルのポストかチェック
@@ -82,40 +82,40 @@ def handle_message_events(client, body):
     # ヘルプ
     if re.match(rf"^{g.commandword['help']}$", parameter["text"]):
         # ヘルプメッセージ
-        msg = f.help_message()
-        f.post_message(client, parameter["channel_id"], msg, parameter["event_ts"])
+        msg = f.message.help_message()
+        f.slack_api.post_message(client, parameter["channel_id"], msg, parameter["event_ts"])
 
         #メンバーリスト
-        title, msg = c.Getmemberslist()
-        f.post_text(client, parameter["channel_id"], parameter["event_ts"], title, msg)
+        title, msg = c.member.Getmemberslist()
+        f.slack_api.post_text(client, parameter["channel_id"], parameter["event_ts"], title, msg)
         return
 
     # 成績管理系コマンド
     if re.match(rf"^{g.commandword['results']}", parameter["text"]):
-        c.results.__main__.slackpost(client, parameter["channel_id"], argument)
+        c.results.slackpost.main(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['graph']}", parameter["text"]):
-        c.graph.__main__.slackpost(client, parameter["channel_id"], argument)
+        c.graph.slackpost.main(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['ranking']}", parameter["text"]):
-        c.ranking.slackpost(client, parameter["channel_id"], argument)
+        c.ranking.slackpost.main(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['report']}", parameter["text"]):
-        c.report.__main__.slackpost(client, parameter["channel_id"], argument)
+        c.report.slackpost.main(client, parameter["channel_id"], argument)
         return
 
     # データベース関連コマンド
     if re.match(rf"^{g.commandword['check']}", parameter["text"]):
-        d.comparison.slackpost(client, parameter["channel_id"], parameter["event_ts"], argument)
+        d.comparison.main(client, parameter["channel_id"], parameter["event_ts"], argument)
         return
     if re.match(rf"^Reminder: {g.commandword['check']}$", parameter["text"]): # Reminderによる突合
         g.logging.info(f'Reminder: {g.commandword["check"]}')
-        d.comparison.slackpost(client, parameter["channel_id"], parameter["event_ts"], None)
+        d.comparison.main(client, parameter["channel_id"], parameter["event_ts"], None)
         return
 
     # 追加メモ
     if re.match(rf"^{g.commandword['remarks_word']}", parameter["text"]) and parameter["thread_ts"]:
-        if d.ExsistRecord(parameter["thread_ts"]) and updatable:
+        if d.common.ExsistRecord(parameter["thread_ts"]) and updatable:
             command_option = f.configure.command_option_initialization("results")
             command_option["unregistered_replace"] = False # ゲスト無効
             resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
@@ -123,25 +123,25 @@ def handle_message_events(client, body):
                 case "message_append":
                     for name, val in zip(argument[0::2], argument[1::2]):
                         g.logging.info(f"insert: {name}, {val}")
-                        resultdb.execute(d.sql_remarks_insert, (
+                        resultdb.execute(d._query.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
-                            c.NameReplace(name, command_option),
+                            c.member.NameReplace(name, command_option),
                             val,
                         ))
                 case "message_changed":
-                    resultdb.execute(d.sql_remarks_delete_one, (parameter["event_ts"],))
+                    resultdb.execute(d._query.sql_remarks_delete_one, (parameter["event_ts"],))
                     for name, val in zip(argument[0::2], argument[1::2]):
                         g.logging.info(f"update: {name}, {val}")
-                        resultdb.execute(d.sql_remarks_insert, (
+                        resultdb.execute(d._query.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
-                            c.NameReplace(name, command_option),
+                            c.member.NameReplace(name, command_option),
                             val,
                         ))
                 case "message_deleted":
                     g.logging.info(f"delete one")
-                    resultdb.execute(d.sql_remarks_delete_one, (parameter["event_ts"],))
+                    resultdb.execute(d._query.sql_remarks_delete_one, (parameter["event_ts"],))
 
             resultdb.commit()
             resultdb.close()
@@ -173,18 +173,18 @@ def handle_message_events(client, body):
     msg = f.search.pattern(parameter["text"])
     if msg:
         if not parameter["status"] == "message_deleted":
-            f.check_score(client, parameter["channel_id"], parameter["event_ts"], parameter["user"], msg)
+            f.score.check_score(client, parameter["channel_id"], parameter["event_ts"], parameter["user"], msg)
         if updatable:
             match parameter["status"]:
                 case "message_append":
-                    d.resultdb_insert(msg, parameter["event_ts"])
+                    d.common.resultdb_insert(msg, parameter["event_ts"])
                 case "message_changed":
                     if existence:
-                        d.resultdb_update(msg, parameter["event_ts"])
+                        d.common.resultdb_update(msg, parameter["event_ts"])
                     else:
-                        d.resultdb_insert(msg, parameter["event_ts"])
+                        d.common.resultdb_insert(msg, parameter["event_ts"])
                 case "message_deleted":
-                    d.resultdb_delete(parameter["event_ts"])
+                    d.common.resultdb_delete(parameter["event_ts"])
     else:
         if updatable and existence: # データベース投入済みデータが削除された場合
-            d.resultdb_delete(parameter["event_ts"])
+            d.common.resultdb_delete(parameter["event_ts"])

@@ -32,8 +32,8 @@ def select_game_data(argument, command_option):
 
     placeholder = [g.rule_version, starttime, endtime]
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,
@@ -149,8 +149,8 @@ def select_personal_data(argument, command_option):
 
     placeholder.append(command_option["stipulated"])
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,
@@ -237,8 +237,8 @@ def select_winner(argument, command_option):
         sql = sql.replace("--[unregistered_not_replace] ", "")
         placeholder.pop(placeholder.index(g.guest_name))
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,

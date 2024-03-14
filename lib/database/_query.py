@@ -103,8 +103,8 @@ def query_count_game(argument, command_option):
         placeholder.pop(placeholder.index(endtime))
         placeholder += [target_count]
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,
@@ -202,8 +202,8 @@ def query_get_personal_data(argument, command_option):
         placeholder.pop(placeholder.index(endtime))
         placeholder += [target_count]
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,

@@ -76,8 +76,8 @@ def select_personal_data(argument, command_option):
         sql = sql.replace("--[recent] ", "")
         placeholder = [target_player[0], target_count, g.rule_version]
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,
@@ -134,8 +134,8 @@ def select_game_results(argument, command_option):
         sql = sql.replace("--[recent] ", "")
         placeholder = [g.rule_version, target_player[0], target_count]
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,
@@ -187,8 +187,8 @@ def select_game_vs_results(argument, command_option, my_name, vs_name):
         sql = sql.replace("--[recent] ", "")
         placeholder = [g.rule_version, my_name, vs_name, target_count]
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,
@@ -282,8 +282,8 @@ def select_versus_matrix(argument, command_option):
         sql = sql.replace("--[recent] ", "")
         placeholder.append(target_count)
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,
@@ -371,8 +371,8 @@ def select_game(argument, command_option):
         placeholder.pop(placeholder.index(endtime))
         placeholder += [target_count]
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,

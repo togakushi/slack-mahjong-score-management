@@ -171,7 +171,7 @@ def argument_analysis(argument, command_option = {}):
             continue
 
         # どのオプションにもマッチしないものはプレイヤー名
-        target_player.append(c.NameReplace(keyword, command_option))
+        target_player.append(c.member.NameReplace(keyword, command_option))
 
     # 日付再取得のために再帰呼び出し
     if command_option.get("recursion") and not target_days:
@@ -206,8 +206,8 @@ def check_namepattern(name):
 
     # 登録済みメンバーかチェック
     check_list = list(g.member_list.keys())
-    check_list += [f.KANA2HIRA(i) for i in g.member_list.keys()] # ひらがな
-    check_list += [f.HIRA2KANA(i) for i in g.member_list.keys()] # カタカナ
+    check_list += [f.translation.KANA2HIRA(i) for i in g.member_list.keys()] # ひらがな
+    check_list += [f.translation.HIRA2KANA(i) for i in g.member_list.keys()] # カタカナ
     if name in check_list:
         return(False, f"「{name}」はすでに使用されています。")
 
@@ -220,7 +220,7 @@ def check_namepattern(name):
         return(False, "使用できない記号が含まれています。")
 
     # コマンドと同じ名前かチェック
-    chk_target_days, _, _, chk_command_option = f.argument_analysis([name])
+    chk_target_days, _, _, chk_command_option = f.common.argument_analysis([name])
     if chk_target_days:
         return(False, "検索範囲指定に使用される単語は登録できません。")
     if chk_command_option:

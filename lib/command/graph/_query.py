@@ -75,8 +75,8 @@ def select_data(argument, command_option):
         else:
             placeholder.append(target_count)
 
-    g.logging.trace(f"sql: {sql}")
-    g.logging.trace(f"placeholder: {placeholder}")
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
     return {
         "target_days": target_days,

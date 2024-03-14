@@ -34,7 +34,7 @@ def build_personal_menu():
 @g.app.action("menu_personal")
 def handle_menu_action(ack, body, client):
     ack()
-    g.logging.trace(body)
+    g.logging.trace(body) # type: ignore
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
@@ -49,7 +49,7 @@ def handle_menu_action(ack, body, client):
 @g.app.action("search_personal")
 def handle_search_action(ack, body, client):
     ack()
-    g.logging.trace(body)
+    g.logging.trace(body) # type: ignore
 
     argument, command_option, app_msg = e.set_command_option(
         f.configure.command_option_initialization("results"),
@@ -75,9 +75,9 @@ def handle_search_action(ack, body, client):
     msg1 = f.message.no_hits(argument, command_option)
 
     msg1, msg2 = c.results.personal.aggregation(argument, command_option)
-    res = f.post_message(client, body["user"]["id"], msg1)
+    res = f.slack_api.post_message(client, body["user"]["id"], msg1)
     for m in msg2.keys():
-        f.post_message(client, body["user"]["id"], msg2[m] + "\n", res["ts"])
+        f.slack_api.post_message(client, body["user"]["id"], msg2[m] + "\n", res["ts"])
 
     client.views_update(
         view_id = g.app_var["view_id"],

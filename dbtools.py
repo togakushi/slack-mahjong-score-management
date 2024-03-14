@@ -11,8 +11,8 @@ if __name__ == "__main__":
     command_option["aggregation_range"] = "全部" # 検索範囲
 
     # --- 突合
-    count, msg, fts = d.score_comparison(command_option)
+    count, msg, fts = d.comparison.score_comparison(command_option)
     if fts:
-        d.remarks_comparison(fts)
+        d.comparison.remarks_comparison(fts)
 
     print(f">>> mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
