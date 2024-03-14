@@ -49,12 +49,6 @@ def parser():
         help = "設定ファイル",
     )
 
-    p.add_argument(
-        "-m", "--member",
-        metavar = "member.ini",
-        help = "メンバー情報ファイル",
-    )
-
     return(p.parse_args())
 
 
