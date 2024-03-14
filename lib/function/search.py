@@ -199,7 +199,7 @@ def game_result(data, command_option):
                     p3_name = c.member.NameReplace(msg[4], command_option)
                     p4_name = c.member.NameReplace(msg[6], command_option)
                     result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
-                    g.logging.trace(result[ts]) # type: ignore
+                    g.logging.trace(f"{ts}: {result[ts]}") # type: ignore
 
     if len(result) == 0:
         return(None)
