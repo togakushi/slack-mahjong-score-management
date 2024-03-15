@@ -26,16 +26,18 @@ def call_files_upload(client, **kwargs):
     res = None
     try:
         if "file" in kwargs:
-            res = client.files_upload(
-                channels = kwargs["channels"],
+            res = client.files_upload_v2(
+                channel = kwargs["channels"],
                 title = kwargs["title"],
                 file = kwargs["file"],
+                request_file_info = False,
             )
         if "content" in kwargs:
-            res = client.files_upload(
-                channels = kwargs["channels"],
+            res = client.files_upload_v2(
+                channel = kwargs["channels"],
                 title = kwargs["title"],
                 content = kwargs["content"],
+                request_file_info = False,
             )
     except g.SlackApiError as e:
         g.logging.error(e)
