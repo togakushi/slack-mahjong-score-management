@@ -180,9 +180,19 @@ def argument_analysis(argument, command_option = {}):
             target_days, _, _, _ = argument_analysis(command_option["aggregation_range"], command_option)
             command_option["recursion"] = True # 元に戻す
 
+    # 重複排除(setで順序が変わるので先頭を固定する)
+    top_player = target_player[0] # str
+    left_over = target_player[1:] # list
+    if top_player in left_over:
+        left_over = list(set(left_over.remove(top_player)))
+    else:
+        left_over = list(set(left_over))
+    target_player = [top_player] + left_over
+
     g.logging.info(f"return: target_days: {target_days} target_count: {target_count}")
     g.logging.info(f"return: target_player: {target_player}")
     g.logging.info(f"return: command_option: {command_option}")
+
     return(target_days, target_player, target_count, command_option)
 
 
