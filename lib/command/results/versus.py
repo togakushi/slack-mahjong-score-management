@@ -87,6 +87,10 @@ def aggregation(argument, command_option):
             c.member.NameReplace(vs_name, command_option, add_mark = True),
         )
 
+        if not vs_name in results:
+            msg2[vs_name] += "対戦記録が見つかりませんでした。\n"
+            continue
+
         msg2[vs_name] += "対戦数： {} 戦 {} 勝 {} 敗\n".format(
             results[vs_name]["game"],
             results[vs_name]["win"],
