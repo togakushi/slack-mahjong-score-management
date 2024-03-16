@@ -102,193 +102,169 @@ def aggregation(argument, command_option):
     }
 
     # ゲーム参加率
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["ゲーム数"]
-        juni.append(results[name]["ゲーム数"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "ゲーム数")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["ゲーム参加率"] += "{:3d}： {}{} {:>6.2%} ({:3d} / {:3d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["ゲーム参加率"] += "{:3d}： {}{} \t{:>6.2%} ({:3d} / {:3d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val / total_game_count, val, total_game_count,
         )
 
     # 累積ポイント
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["累積ポイント"]
-        juni.append(results[name]["累積ポイント"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "累積ポイント")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["累積ポイント"] += "{:3d}： {}{} {:>7.1f}pt ({:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["累積ポイント"] += "{:3d}： {}{} \t{:>7.1f}pt ({:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
     # 平均ポイント
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["平均ポイント"]
-        juni.append(results[name]["平均ポイント"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "平均ポイント")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["平均ポイント"] += "{:3d}： {}{} {:>5.1f}pt ({:>7.1f}pt / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["平均ポイント"] += "{:3d}： {}{} \t{:>5.1f}pt ({:>7.1f}pt / {:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["累積ポイント"], results[name]["ゲーム数"],
         ).replace("-", "▲")
 
     # 平均収支1
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["平均収支1"]
-        juni.append(results[name]["平均収支1"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "平均収支1")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["平均収支1"] += "{:3d}： {}{} {:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["平均収支1"] += "{:3d}： {}{} \t{:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
     # 平均収支2
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["平均収支2"]
-        juni.append(results[name]["平均収支2"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "平均収支2")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["平均収支2"] += "{:3d}： {}{} {:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["平均収支2"] += "{:3d}： {}{} \t{:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
     # トップ率
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["トップ率"]
-        juni.append(results[name]["トップ率"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "トップ率")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["トップ率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["トップ率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["1位"], results[name]["ゲーム数"],
         )
 
     # 連対率
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["連対率"]
-        juni.append(results[name]["連対率"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "連対率")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["連対率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["連対率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"], results[name]["ゲーム数"],
         )
 
     # ラス回避率
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["ラス回避率"]
-        juni.append(results[name]["ラス回避率"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "ラス回避率")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["ラス回避率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["ラス回避率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"] + results[name]["3位"], results[name]["ゲーム数"],
         )
 
     # トビ率
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["トビ率"]
-        juni.append(results[name]["トビ率"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1])
-    juni.sort()
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "トビ率", False)
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["トビ率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["トビ率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["トビ回数"], results[name]["ゲーム数"],
         )
 
     # 平均順位
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["平均順位"]
-        juni.append(results[name]["平均順位"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1])
-    juni.sort()
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "平均順位", False)
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["平均順位"] += "{:3d}： {}{} {:>4.2f} ({:2d}ゲーム)\n".format(
-            juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+        msg2["平均順位"] += "{:3d}： {}{} \t{:>4.2f} ({:2d}ゲーム)\n".format(
+            ranking_data.index((name, val)) + 1,
+            pname, " " * (padding - f.translation.len_count(pname)),
             val, results[name]["ゲーム数"],
         )
 
     # 役満和了率
-    tmp = {}
-    juni = []
-    for name in results.keys():
-        tmp[name] = results[name]["役満和了率"]
-        juni.append(results[name]["役満和了率"])
-    ranking = sorted(tmp.items(), key = lambda x:x[1], reverse = True)
-    juni.sort(reverse = True)
-    for name, val in ranking:
-        if juni.index(val) + 1 > command_option["ranked"]:
+    ranking_data = ranking_sort(results, "役満和了率")
+    for name, val in ranking_data:
+        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
             break
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         if results[name]["役満和了"] != 0:
-            msg2["役満和了率"] += "{:3d}： {}{} {:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-                juni.index(val) + 1, pname, " " * (padding - f.translation.len_count(pname)),
+            msg2["役満和了率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
+                ranking_data.index((name, val)) + 1,
+                pname, " " * (padding - f.translation.len_count(pname)),
                 val, results[name]["役満和了"], results[name]["ゲーム数"],
             )
-    if msg2["役満和了率"].strip().count("\n") == 0: # 対象者がいなければ削除
+    if msg2["役満和了率"].strip().count("\n") == 0: # 対象者がいなければ項目を削除
         msg2.pop("役満和了率")
 
     return(msg1, msg2)
+
+
+def ranking_sort(data, keyword, reverse = True):
+    """
+    指定項目のデータを順位順で返す
+
+    Parameters
+    ----------
+    data : dict
+        対象データ
+
+    keyword : str
+        対象項目
+
+    reverse : bool
+        昇順/降順
+
+    Returns
+    -------
+    ranking_data : list
+        並べ変えられた結果(名前, 値のタプル)
+    """
+
+    tmp_data = {}
+    for name in data.keys():
+        tmp_data[name] = data[name][keyword]
+
+    ranking_data = sorted(tmp_data.items(), key = lambda x:x[1], reverse = reverse)
+    g.logging.trace(f"{keyword}: {ranking_data}") # type: ignore
+
+    return(ranking_data)
