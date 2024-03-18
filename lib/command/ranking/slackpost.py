@@ -109,7 +109,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["ゲーム参加率"] += "{:3d}： {}{} \t{:>6.2%} ({:3d} / {:3d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val / total_game_count, val, total_game_count,
         )
 
@@ -121,7 +121,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["累積ポイント"] += "{:3d}： {}{} \t{:>7.1f}pt ({:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
@@ -133,7 +133,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["平均ポイント"] += "{:3d}： {}{} \t{:>5.1f}pt ({:>7.1f}pt / {:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val, results[name]["累積ポイント"], results[name]["ゲーム数"],
         ).replace("-", "▲")
 
@@ -145,7 +145,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["平均収支1"] += "{:3d}： {}{} \t{:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
@@ -157,7 +157,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["平均収支2"] += "{:3d}： {}{} \t{:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
         ).replace("-", "▲")
 
@@ -169,7 +169,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["トップ率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val, results[name]["1位"], results[name]["ゲーム数"],
         )
 
@@ -181,7 +181,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["連対率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"], results[name]["ゲーム数"],
         )
 
@@ -193,7 +193,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["ラス回避率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val, results[name]["1位"] + results[name]["2位"] + results[name]["3位"], results[name]["ゲーム数"],
         )
 
@@ -205,7 +205,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["トビ率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val, results[name]["トビ回数"], results[name]["ゲーム数"],
         )
 
@@ -217,7 +217,7 @@ def aggregation(argument, command_option):
         pname = c.member.NameReplace(name, command_option, add_mark = True)
         msg2["平均順位"] += "{:3d}： {}{} \t{:>4.2f} ({:2d}ゲーム)\n".format(
             ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.translation.len_count(pname)),
+            pname, " " * (padding - f.common.len_count(pname)),
             val, results[name]["ゲーム数"],
         )
 
@@ -230,7 +230,7 @@ def aggregation(argument, command_option):
         if results[name]["役満和了"] != 0:
             msg2["役満和了率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
                 ranking_data.index((name, val)) + 1,
-                pname, " " * (padding - f.translation.len_count(pname)),
+                pname, " " * (padding - f.common.len_count(pname)),
                 val, results[name]["役満和了"], results[name]["ゲーム数"],
             )
     if msg2["役満和了率"].strip().count("\n") == 0: # 対象者がいなければ項目を削除

@@ -35,6 +35,136 @@ def pattern(text):
     return(ret if "ret" in locals() else False)
 
 
+def for_slack(keyword, channel):
+    """
+    過去ログからキーワードを検索して返す
+
+    Parameters
+    ----------
+    keyword : text
+        検索キーワード
+
+    channel : text
+        チャンネルID
+
+    Returns
+    -------
+    matches : dict
+        検索した結果
+    """
+
+    g.logging.info(f"query:'{keyword} in:{channel}'")
+
+    ### データ取得 ###
+    response = g.webclient.search_messages(
+        query = f"{keyword} in:{channel}",
+        sort = "timestamp",
+        sort_dir = "asc",
+        count = 100
+    )
+    matches = response["messages"]["matches"] # 1ページ目
+
+    for p in range(2, response["messages"]["paging"]["pages"] + 1):
+        response = g.webclient.search_messages(
+            query = f"{keyword} in:{channel}",
+            sort = "timestamp",
+            sort_dir = "asc",
+            count = 100,
+            page = p
+        )
+        matches += response["messages"]["matches"] # 2ページ目以降
+
+    return(matches)
+
+
+def for_database(cur, first_ts = False):
+    """
+    データベースからスコアを検索して返す
+
+    Parameters
+    ----------
+    cur: obj
+        データベースのカーソル
+
+    first_ts: float
+        検索を開始する時刻
+
+    Returns
+    -------
+    data : dict
+        検索した結果
+    """
+
+    if not first_ts:
+        return(None)
+
+    data ={}
+    rows = cur.execute(f"select * from result where ts >= ?", (first_ts,))
+    for row in rows.fetchall():
+        ts = row["ts"]
+        data[ts] = []
+        data[ts].append(row["p1_name"])
+        data[ts].append(row["p1_str"])
+        data[ts].append(row["p2_name"])
+        data[ts].append(row["p2_str"])
+        data[ts].append(row["p3_name"])
+        data[ts].append(row["p3_str"])
+        data[ts].append(row["p4_name"])
+        data[ts].append(row["p4_str"])
+
+    return(data)
+
+
+def game_result(data, command_option):
+    """
+    slackの検索ログからゲームの結果を返す
+
+    Parameters
+    ----------
+    data : dict
+        slackの検索ログ
+
+    command_option : dict
+        検索オプション
+
+    Returns
+    -------
+    matches : dict
+        検索した結果
+    """
+
+    result = {}
+    for i in range(len(data)):
+        if "blocks" in data[i]:
+            if data[i]["user"] in g.ignore_userid: # 除外ユーザからのポストは集計対象から外す
+                g.logging.info(f"skip: {data[i]}")
+                continue
+
+            ts = data[i]["ts"]
+            if "elements" in data[i]["blocks"][0]:
+                tmp_msg = ""
+                elements = data[i]["blocks"][0]["elements"][0]["elements"]
+
+                for x in range(len(elements)):
+                    if elements[x]["type"] == "text":
+                        tmp_msg += elements[x]["text"]
+
+                # 結果報告フォーマットに一致したポストの処理
+                msg = f.search.pattern(tmp_msg)
+                if msg:
+                    p1_name = c.member.NameReplace(msg[0], command_option)
+                    p2_name = c.member.NameReplace(msg[2], command_option)
+                    p3_name = c.member.NameReplace(msg[4], command_option)
+                    p4_name = c.member.NameReplace(msg[6], command_option)
+                    result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
+                    g.logging.trace(f"{ts}: {result[ts]}") # type: ignore
+
+    if len(result) == 0:
+        return(None)
+    else:
+        return(result)
+
+
 def game_select(starttime, endtime, target_player, target_count, command_option):
     """
     集計対象のゲームを選択
@@ -113,95 +243,3 @@ def game_select(starttime, endtime, target_player, target_count, command_option)
     g.logging.info(f"return record: {len(data)}")
     resultdb.close()
     return(data)
-
-
-def slack_search(keyword, channel):
-    """
-    過去ログからキーワードを検索して返す
-
-    Parameters
-    ----------
-    keyword : text
-        検索キーワード
-
-    channel : text
-        チャンネルID
-
-    Returns
-    -------
-    matches : dict
-        検索した結果
-    """
-
-    g.logging.info(f"query:'{keyword} in:{channel}'")
-
-    ### データ取得 ###
-    response = g.webclient.search_messages(
-        query = f"{keyword} in:{channel}",
-        sort = "timestamp",
-        sort_dir = "asc",
-        count = 100
-    )
-    matches = response["messages"]["matches"] # 1ページ目
-
-    for p in range(2, response["messages"]["paging"]["pages"] + 1):
-        response = g.webclient.search_messages(
-            query = f"{keyword} in:{channel}",
-            sort = "timestamp",
-            sort_dir = "asc",
-            count = 100,
-            page = p
-        )
-        matches += response["messages"]["matches"] # 2ページ目以降
-
-    return(matches)
-
-
-def game_result(data, command_option):
-    """
-    slackの検索ログからゲームの結果を返す
-
-    Parameters
-    ----------
-    data : dict
-        slackの検索ログ
-
-    command_option : dict
-        検索オプション
-
-    Returns
-    -------
-    matches : dict
-        検索した結果
-    """
-
-    result = {}
-    for i in range(len(data)):
-        if "blocks" in data[i]:
-            if data[i]["user"] in g.ignore_userid: # 除外ユーザからのポストは集計対象から外す
-                g.logging.info(f"skip: {data[i]}")
-                continue
-
-            ts = data[i]["ts"]
-            if "elements" in data[i]["blocks"][0]:
-                tmp_msg = ""
-                elements = data[i]["blocks"][0]["elements"][0]["elements"]
-
-                for x in range(len(elements)):
-                    if elements[x]["type"] == "text":
-                        tmp_msg += elements[x]["text"]
-
-                # 結果報告フォーマットに一致したポストの処理
-                msg = f.search.pattern(tmp_msg)
-                if msg:
-                    p1_name = c.member.NameReplace(msg[0], command_option)
-                    p2_name = c.member.NameReplace(msg[2], command_option)
-                    p3_name = c.member.NameReplace(msg[4], command_option)
-                    p4_name = c.member.NameReplace(msg[6], command_option)
-                    result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
-                    g.logging.trace(f"{ts}: {result[ts]}") # type: ignore
-
-    if len(result) == 0:
-        return(None)
-    else:
-        return(result)

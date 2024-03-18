@@ -1,6 +1,7 @@
 import re
+import unicodedata
+
 from datetime import datetime
-from itertools import chain
 
 from dateutil.relativedelta import relativedelta
 
@@ -190,53 +191,110 @@ def argument_analysis(argument, command_option = {}):
     return(target_days, target_player, target_count, command_option)
 
 
-def check_namepattern(name):
+def len_count(text):
     """
-    登録制限チェック
+    文字数をカウント(全角文字は2)
 
     Parameters
     ----------
-    name : str
-        チェック対象文字列
+    text : text
+        判定文字列
 
     Returns
     -------
-    bool : True / False
-        制限チェック結果
-
-    msg : text
-        制限理由
+    count : int
+        文字数
     """
 
-    # 登録済みメンバーかチェック
-    check_list = list(g.member_list.keys())
-    check_list += [f.translation.KANA2HIRA(i) for i in g.member_list.keys()] # ひらがな
-    check_list += [f.translation.HIRA2KANA(i) for i in g.member_list.keys()] # カタカナ
-    if name in check_list:
-        return(False, f"「{name}」はすでに使用されています。")
+    count = 0
+    for c in text:
+        if unicodedata.east_asian_width(c) in "FWA":
+            count += 2
+        else:
+            count += 1
 
-    # 登録規定チェック
-    if len(name) > g.config["member"].getint("character_limit", 8): # 文字制限
-        return(False, "登録可能文字数を超えています。")
-    if name == g.guest_name: # 登録NGプレイヤー名
-        return(False, "使用できない名前です。")
-    if re.search("[\\;:<>,!@#*?/`\"']", name) or not name.isprintable(): # 禁則記号
-        return(False, "使用できない記号が含まれています。")
+    return(count)
 
-    # コマンドと同じ名前かチェック
-    chk_target_days, _, _, chk_command_option = f.common.argument_analysis([name])
-    if chk_target_days:
-        return(False, "検索範囲指定に使用される単語は登録できません。")
-    if chk_command_option:
-        return(False, "オプションに使用される単語は登録できません。")
 
-    commandlist = list(g.commandword.values())
-    commandlist.extend([g.config["setting"].get("slash_commandname")])
-    commandlist.extend([g.config["setting"].get("remarks_word")])
-    commandlist.extend([g.config["search"].get("keyword")])
-    commandlist.extend([x for x, _ in g.config.items("alias")])
-    commandlist.extend(chain.from_iterable([y.split(",") for _, y in g.config.items("alias")]))
-    if name in set(commandlist):
-        return(False, "コマンドに使用される単語は登録できません。")
+def HAN2ZEN(text):
+    """
+    半角文字を全角文字に変換(数字のみ)
 
-    return(True, "OK")
+    Parameters
+    ----------
+    text : text
+        変換対象文字列
+
+    Returns
+    -------
+    text : text
+        変換後の文字列
+    """
+
+    ZEN = "".join(chr(0xff10 + i) for i in range(10))
+    HAN = "".join(chr(0x30 + i) for i in range(10))
+    trans_table = str.maketrans(HAN, ZEN)
+    return(text.translate(trans_table))
+
+
+def ZEN2HAN(text):
+    """
+    全角文字を半角文字に変換(数字のみ)
+
+    Parameters
+    ----------
+    text : text
+        変換対象文字列
+
+    Returns
+    -------
+    text : text
+        変換後の文字列
+    """
+
+    ZEN = "".join(chr(0xff10 + i) for i in range(10))
+    HAN = "".join(chr(0x30 + i) for i in range(10))
+    trans_table = str.maketrans(ZEN, HAN)
+    return(text.translate(trans_table))
+
+
+def HIRA2KANA(text):
+    """
+    ひらがなをカタカナに変換
+
+    Parameters
+    ----------
+    text : text
+        変換対象文字列
+
+    Returns
+    -------
+    text : text
+        変換後の文字列
+    """
+
+    HIRA = "".join(chr(0x3041 + i) for i in range(86))
+    KANA = "".join(chr(0x30a1 + i) for i in range(86))
+    trans_table = str.maketrans(HIRA, KANA)
+    return(text.translate(trans_table))
+
+
+def KANA2HIRA(text):
+    """
+    カタカナをひらがなに変換
+
+    Parameters
+    ----------
+    text : text
+        変換対象文字列
+
+    Returns
+    -------
+    text : text
+        変換後の文字列
+    """
+
+    HIRA = "".join(chr(0x3041 + i) for i in range(86))
+    KANA = "".join(chr(0x30a1 + i) for i in range(86))
+    trans_table = str.maketrans(KANA, HIRA)
+    return(text.translate(trans_table))

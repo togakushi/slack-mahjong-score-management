@@ -86,26 +86,26 @@ def aggregation(argument, command_option):
     padding = c.member.CountPadding(list(set(name_list)))
     if command_option["score_comparisons"]: # 差分表示
         header = "## {} {}： 累積    / 点差 ##\n".format(
-            "名前", " " * (padding - f.translation.len_count("名前") - 4),
+            "名前", " " * (padding - f.common.len_count("名前") - 4),
         )
         previous_point = None
         for name in results.keys():
             pname = c.member.NameReplace(name, command_option, add_mark = True)
             if previous_point == None:
                 msg1 += "{} {}： {:>+6.1f} / *****\n".format(
-                    pname, " " * (padding - f.translation.len_count(pname)),
+                    pname, " " * (padding - f.common.len_count(pname)),
                     results[name]["pt_total"],
                 ).replace("-", "▲").replace("*", "-")
             else:
                 msg1 += "{} {}： {:>+6.1f} / {:>5.1f}\n".format(
-                    pname, " " * (padding - f.translation.len_count(pname)),
+                    pname, " " * (padding - f.common.len_count(pname)),
                     results[name]["pt_total"],
                     previous_point - results[name]["pt_total"],
                 ).replace("-", "▲")
             previous_point = results[name]["pt_total"]
     else: # 通常表示
         header = "## {} {} : 累積 (平均) / 順位分布 (平均)".format(
-            "名前", " " * (padding - f.translation.len_count("名前") - 4),
+            "名前", " " * (padding - f.common.len_count("名前") - 4),
         )
         if g.config["mahjong"].getboolean("ignore_flying", False):
             header += " ##\n"
@@ -114,7 +114,7 @@ def aggregation(argument, command_option):
         for name in results.keys():
             pname = c.member.NameReplace(name, command_option, add_mark = True)
             msg1 += "{} {}： {:>+6.1f} ({:>+5.1f})".format(
-                pname, " " * (padding - f.translation.len_count(pname)),
+                pname, " " * (padding - f.common.len_count(pname)),
                 results[name]["pt_total"], results[name]["pt_avg"],
             ).replace("-", "▲")
             msg1 += " / {}-{}-{}-{} ({:1.2f})".format(

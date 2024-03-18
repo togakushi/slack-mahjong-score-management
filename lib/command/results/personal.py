@@ -172,7 +172,7 @@ def aggregation(argument, command_option):
                                 matter = ",".join(game_remarks[name][results[i]["ts"]])
                         pname = c.member.NameReplace(results[i][f"{p}_name"], command_option, add_mark = True)
                         msg2["戦績"] += "\t{}： {}{} / {}位 {:>7}点 ({}pt) {}\n".format(
-                            n, pname, " " * (padding - f.translation.len_count(pname)),
+                            n, pname, " " * (padding - f.common.len_count(pname)),
                             results[i][f"{p}_rank"], results[i][f"{p}_rpoint"], results[i][f"{p}_point"], matter,
                         )
                 else:
@@ -201,7 +201,7 @@ def aggregation(argument, command_option):
             for row in rows.fetchall():
                 pname = c.member.NameReplace(row["vs_name"], command_option, add_mark = True)
                 msg2["対戦"] += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>6.2f}%)\n".format(
-                    pname, " " * (padding - f.translation.len_count(pname)),
+                    pname, " " * (padding - f.common.len_count(pname)),
                     row["game"], row["win"], row["lose"], row["win%"]
                 )
             msg2["対戦"] += "```"

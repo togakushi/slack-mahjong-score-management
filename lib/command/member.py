@@ -1,5 +1,6 @@
 import re
 import sqlite3
+from itertools import chain
 
 import lib.function as f
 import lib.command as c
@@ -25,7 +26,7 @@ def NameReplace(pname, command_option, add_mark = False):
         表記ブレ修正後のプレイヤー名
     """
 
-    pname = f.translation.HAN2ZEN(pname)
+    pname = f.common.HAN2ZEN(pname)
     check_list = list(set(g.member_list.keys()))
 
     if pname in check_list:
@@ -40,10 +41,10 @@ def NameReplace(pname, command_option, add_mark = False):
         return(g.member_list[pname])
 
     # ひらがな、カタカナでチェック
-    if f.translation.KANA2HIRA(pname) in check_list:
-        return(g.member_list[f.translation.KANA2HIRA(pname)])
-    if f.translation.HIRA2KANA(pname) in check_list:
-        return(g.member_list[f.translation.HIRA2KANA(pname)])
+    if f.common.KANA2HIRA(pname) in check_list:
+        return(g.member_list[f.common.KANA2HIRA(pname)])
+    if f.common.HIRA2KANA(pname) in check_list:
+        return(g.member_list[f.common.HIRA2KANA(pname)])
 
     # メンバーリストに見つからない場合
     if command_option.get("unregistered_replace"):
@@ -70,7 +71,7 @@ def CountPadding(data):
                     name_list.append(name)
 
     if name_list:
-        return(max([f.translation.len_count(x) for x in name_list]))
+        return(max([f.common.len_count(x) for x in name_list]))
     else:
         return(0)
 
@@ -87,7 +88,7 @@ def Getmemberslist():
                 name_list.append(alias)
         msg += "{}{}： {}\n".format(
             pname,
-            " " * (padding - f.translation.len_count(pname)),
+            " " * (padding - f.common.len_count(pname)),
             ", ".join(name_list),
         )
 
@@ -118,7 +119,7 @@ def MemberAppend(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1: # 新規追加
-        new_name = f.translation.HAN2ZEN(argument[0])
+        new_name = f.common.HAN2ZEN(argument[0])
         g.logging.notice(f"new member: {new_name}") # type: ignore
 
         rows = resultdb.execute("select count() from member")
@@ -126,15 +127,15 @@ def MemberAppend(argument):
         if count > g.config["member"].getint("registration_limit", 255):
             msg = f"登録上限を超えています。"
         else: # 登録処理
-            ret, msg = f.common.check_namepattern(new_name)
+            ret, msg = check_namepattern(new_name)
             if ret:
                 resultdb.execute(f"insert into member(name) values (?)", (new_name,))
                 resultdb.execute(f"insert into alias(name, member) values (?,?)", (new_name, new_name))
                 msg = f"「{new_name}」を登録しました。"
 
     if len(argument) == 2: # 別名登録
-        new_name = f.translation.HAN2ZEN(argument[0])
-        nic_name = f.translation.HAN2ZEN(argument[1])
+        new_name = f.common.HAN2ZEN(argument[0])
+        nic_name = f.common.HAN2ZEN(argument[1])
         g.logging.notice(f"alias: {new_name} -> {nic_name}") # type: ignore
 
         registration_flg = True
@@ -148,7 +149,7 @@ def MemberAppend(argument):
             registration_flg = False
 
         if registration_flg: # 登録処理
-            ret, msg = f.common.check_namepattern(nic_name)
+            ret, msg = check_namepattern(nic_name)
             if ret:
                 resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
                 msg = f"「{new_name}」に「{nic_name}」を追加しました。"
@@ -160,14 +161,14 @@ def MemberAppend(argument):
                     where ? in (p1_name, p2_name, p3_name, p4_name)
                     or ? in (p1_name, p2_name, p3_name, p4_name)
                     or ? in (p1_name, p2_name, p3_name, p4_name)
-                """, (nic_name, f.translation.KANA2HIRA(nic_name), f.translation.HIRA2KANA(nic_name)))
+                """, (nic_name, f.common.KANA2HIRA(nic_name), f.common.HIRA2KANA(nic_name)))
             count = rows.fetchone()[0]
             if count != 0: # 過去成績更新
                 msg += d.common.database_backup()
                 for col in ("p1_name", "p2_name", "p3_name", "p4_name"):
                     resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, nic_name))
-                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.translation.KANA2HIRA(nic_name)))
-                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.translation.HIRA2KANA(nic_name)))
+                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.KANA2HIRA(nic_name)))
+                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.HIRA2KANA(nic_name)))
                 msg += "\nデータベースを更新しました。"
 
     resultdb.commit()
@@ -199,7 +200,7 @@ def MemberRemove(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1: # メンバー削除
-        new_name = f.translation.HAN2ZEN(argument[0])
+        new_name = f.common.HAN2ZEN(argument[0])
         g.logging.notice(f"remove member: {new_name}") # type: ignore
 
         if new_name in g.member_list:
@@ -210,8 +211,8 @@ def MemberRemove(argument):
             msg = f"「{new_name}」は登録されていません。"
 
     if len(argument) == 2: # 別名削除
-        new_name = f.translation.HAN2ZEN(argument[0])
-        nic_name = f.translation.HAN2ZEN(argument[1])
+        new_name = f.common.HAN2ZEN(argument[0])
+        nic_name = f.common.HAN2ZEN(argument[1])
         g.logging.notice(f"alias remove: {new_name} -> {nic_name}") # type: ignore
 
         if nic_name in g.member_list:
@@ -225,3 +226,56 @@ def MemberRemove(argument):
     f.configure.read_memberslist()
 
     return(msg)
+
+
+
+def check_namepattern(name):
+    """
+    登録制限チェック
+
+    Parameters
+    ----------
+    name : str
+        チェック対象文字列
+
+    Returns
+    -------
+    bool : True / False
+        制限チェック結果
+
+    msg : text
+        制限理由
+    """
+
+    # 登録済みメンバーかチェック
+    check_list = list(g.member_list.keys())
+    check_list += [f.common.KANA2HIRA(i) for i in g.member_list.keys()] # ひらがな
+    check_list += [f.common.HIRA2KANA(i) for i in g.member_list.keys()] # カタカナ
+    if name in check_list:
+        return(False, f"「{name}」はすでに使用されています。")
+
+    # 登録規定チェック
+    if len(name) > g.config["member"].getint("character_limit", 8): # 文字制限
+        return(False, "登録可能文字数を超えています。")
+    if name == g.guest_name: # 登録NGプレイヤー名
+        return(False, "使用できない名前です。")
+    if re.search("[\\;:<>,!@#*?/`\"']", name) or not name.isprintable(): # 禁則記号
+        return(False, "使用できない記号が含まれています。")
+
+    # コマンドと同じ名前かチェック
+    chk_target_days, _, _, chk_command_option = f.common.argument_analysis([name])
+    if chk_target_days:
+        return(False, "検索範囲指定に使用される単語は登録できません。")
+    if chk_command_option:
+        return(False, "オプションに使用される単語は登録できません。")
+
+    commandlist = list(g.commandword.values())
+    commandlist.extend([g.config["setting"].get("slash_commandname")])
+    commandlist.extend([g.config["setting"].get("remarks_word")])
+    commandlist.extend([g.config["search"].get("keyword")])
+    commandlist.extend([x for x, _ in g.config.items("alias")])
+    commandlist.extend(chain.from_iterable([y.split(",") for _, y in g.config.items("alias")]))
+    if name in set(commandlist):
+        return(False, "コマンドに使用される単語は登録できません。")
+
+    return(True, "OK")

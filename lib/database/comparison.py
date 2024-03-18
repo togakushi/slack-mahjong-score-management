@@ -88,7 +88,7 @@ def score_comparison():
     command_option["aggregation_range"] = "全部" # 検索範囲
 
     # slackログからデータを取得
-    matches = f.search.slack_search(
+    matches = f.search.for_slack(
         g.config["search"].get("keyword", "終局"),
         g.config["search"].get("channel", "#麻雀部"),
     )
@@ -101,7 +101,7 @@ def score_comparison():
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     cur = resultdb.cursor()
-    db_data = database_search(cur, fts)
+    db_data = f.search.for_database(cur, fts)
     if db_data == None:
         return(count, ret_msg, fts)
 
@@ -162,44 +162,6 @@ def score_comparison():
     resultdb.close()
 
     return(count, ret_msg, fts)
-
-
-def database_search(cur, first_ts = False):
-    """
-    データベースからスコアを検索して返す
-
-    Parameters
-    ----------
-    cur: obj
-        データベースのカーソル
-
-    first_ts: float
-        検索を開始する時刻
-
-    Returns
-    -------
-    data : dict
-        検索した結果
-    """
-
-    if not first_ts:
-        return(None)
-
-    data ={}
-    rows = cur.execute(f"select * from result where ts >= ?", (first_ts,))
-    for row in rows.fetchall():
-        ts = row["ts"]
-        data[ts] = []
-        data[ts].append(row["p1_name"])
-        data[ts].append(row["p1_str"])
-        data[ts].append(row["p2_name"])
-        data[ts].append(row["p2_str"])
-        data[ts].append(row["p3_name"])
-        data[ts].append(row["p3_str"])
-        data[ts].append(row["p4_name"])
-        data[ts].append(row["p4_str"])
-
-    return(data)
 
 
 def db_update(cur, ts, msg, command_option): # 突合処理専用
@@ -285,7 +247,7 @@ def remarks_comparison(fts):
     db_data = {}
 
     # slackログからデータを取得
-    matches = f.search.slack_search(
+    matches = f.search.for_slack(
         g.commandword["remarks_word"],
         g.config["search"].get("channel", "#麻雀部"),
     )
