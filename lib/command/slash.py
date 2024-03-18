@@ -29,7 +29,7 @@ def subcommand_list(subcommand):
 def slash_command(ack, body, client):
     ack()
     g.logging.trace(f"{body}") # type: ignore
-    user_id = body["user_id"]
+    channel_id = body["channel_id"]
     event_ts = 0
 
     if body["text"]:
@@ -39,49 +39,49 @@ def slash_command(ack, body, client):
         # 成績管理系コマンド
         if subcom.lower() in subcommand_list("results"):
             g.logging.info(f"subcommand({subcom}): {argument}")
-            c.results.slackpost.main(client, user_id, argument)
+            c.results.slackpost.main(client, channel_id, argument)
             return
 
         if subcom.lower() in subcommand_list("graph"):
             g.logging.info(f"subcommand({subcom}): {argument}")
-            c.graph.slackpost.main(client, user_id, argument)
+            c.graph.slackpost.main(client, channel_id, argument)
             return
 
         if subcom.lower() in subcommand_list("ranking"):
             g.logging.info(f"subcommand({subcom}): {argument}")
-            c.ranking.slackpost.main(client, user_id, argument)
+            c.ranking.slackpost.main(client, channel_id, argument)
             return
 
         if subcom.lower() in subcommand_list("report"):
             g.logging.info(f"subcommand({subcom}): {argument}")
-            c.report.slackpost.main(client, user_id, argument)
+            c.report.slackpost.main(client, channel_id, argument)
             return
 
         # データベース関連コマンド
         if subcom.lower() in subcommand_list("check"):
             g.logging.info(f"subcommand({subcom}): {argument}")
-            d.comparison.main(client, user_id, event_ts, argument)
+            d.comparison.main(client, channel_id, event_ts, argument)
             return
 
         if subcom.lower() in subcommand_list("download"):
             g.logging.info(f"subcommand({subcom}): {g.database_file}")
-            f.slack_api.post_fileupload(client, user_id, "resultdb", g.database_file)
+            f.slack_api.post_fileupload(client, channel_id, "resultdb", g.database_file)
             return
 
         # メンバー管理系コマンド
         if subcom.lower() in subcommand_list("member"):
             title, msg = c.member.Getmemberslist()
-            f.slack_api.post_text(client, user_id, event_ts, title, msg)
+            f.slack_api.post_text(client, channel_id, event_ts, title, msg)
             return
 
         if subcom.lower() in subcommand_list("add"):
             msg = c.member.MemberAppend(argument)
-            f.slack_api.post_message(client, user_id, msg)
+            f.slack_api.post_message(client, channel_id, msg)
             return
 
         if subcom.lower() in subcommand_list("del"):
             msg = c.member.MemberRemove(argument)
-            f.slack_api.post_message(client, user_id, msg)
+            f.slack_api.post_message(client, channel_id, msg)
             return
 
-    f.slack_api.post_message(client, user_id, f.message.help(body["command"]))
+    f.slack_api.post_message(client, channel_id, f.message.help(body["command"]))
