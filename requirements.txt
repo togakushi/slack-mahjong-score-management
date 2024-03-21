@@ -1,4 +1,6 @@
 slack-bolt
 slack-sdk
 matplotlib
+reportlab
+pandas
 python-dateutil
