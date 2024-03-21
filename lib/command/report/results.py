@@ -210,7 +210,7 @@ def gen_pdf(argument, command_option):
         labels = ["1位率", "2位率", "3位率", "4位率"],
         autopct = "%.2f%%",
     )
-    plt.title("順位分布")
+    plt.title("順位分布", fontsize = 18)
     plt.savefig(imgdata, format = "jpg")
 
     elements.append(Spacer(1,5*mm))
@@ -256,11 +256,14 @@ def gen_pdf(argument, command_option):
 
     gdata.plot(
         kind = "bar",
-        title = "順位分布(月別)",
         stacked = True,
         figsize = (12, 7),
         fontsize = 14,
     )
+    for ax in plt.gcf().get_axes():
+        ax.set_axisbelow(True)
+        plt.grid(axis="y")
+    plt.title("順位分布(月別)", fontsize = 18)
     plt.xticks(rotation = 45)
     plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
     plt.savefig(imgdata, format = "jpg")
@@ -308,11 +311,14 @@ def gen_pdf(argument, command_option):
 
     gdata.plot(
         kind = "bar",
-        title = "順位分布(年別)",
         stacked = True,
         figsize = (12, 7),
         fontsize = 14,
     )
+    for ax in plt.gcf().get_axes():
+        ax.set_axisbelow(True)
+        plt.grid(axis="y")
+    plt.title("順位分布(年別)", fontsize = 18)
     plt.xticks(rotation = 45)
     plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
     plt.savefig(imgdata, format = "jpg")
@@ -357,11 +363,14 @@ def gen_pdf(argument, command_option):
         imgdata = BytesIO()
         gdata.plot(
             kind = "bar",
-            title = "順位分布(区間 短期)",
             stacked = True,
             figsize = (12, 5),
             fontsize = 14,
         )
+        for ax in plt.gcf().get_axes():
+            ax.set_axisbelow(True)
+            plt.grid(axis="y")
+        plt.title("順位分布(区間 短期)", fontsize = 18)
         plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
         plt.savefig(imgdata, format = "jpg")
 
@@ -404,11 +413,14 @@ def gen_pdf(argument, command_option):
         imgdata = BytesIO()
         gdata.plot(
             kind = "bar",
-            title = "順位分布(区間 中期)",
             stacked = True,
             figsize = (12, 5),
             fontsize = 14,
         )
+        for ax in plt.gcf().get_axes():
+            ax.set_axisbelow(True)
+            plt.grid(axis="y")
+        plt.title("順位分布(区間 中期)", fontsize = 18)
         plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
         plt.savefig(imgdata, format = "jpg")
 
@@ -451,11 +463,14 @@ def gen_pdf(argument, command_option):
         imgdata = BytesIO()
         gdata.plot(
             kind = "bar",
-            title = "順位分布(区間 長期)",
             stacked = True,
             figsize = (12, 5),
             fontsize = 14,
         )
+        for ax in plt.gcf().get_axes():
+            ax.set_axisbelow(True)
+            plt.grid(axis="y")
+        plt.title("順位分布(区間 長期)", fontsize = 18)
         plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
         plt.savefig(imgdata, format = "jpg")
 
