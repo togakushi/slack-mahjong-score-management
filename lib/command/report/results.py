@@ -200,24 +200,33 @@ def gen_pdf(argument, command_option):
     elements.append(tt)
 
     imgdata = BytesIO()
-    plt.pie(
-        [
+    gdata = pd.DataFrame({
+        "順位分布": [
             float(data[1][4].replace("%", "")),
             float(data[1][6].replace("%", "")),
             float(data[1][8].replace("%", "")),
             float(data[1][10].replace("%", "")),
-        ],
-        labels = ["1位率", "2位率", "3位率", "4位率"],
+            ],
+        }, index = ["1位率", "2位率", "3位率", "4位率"]
+    )
+    gdata.plot(
+        kind = "pie",
+        y = "順位分布",
+        labels = None,
+        figsize = (8, 6),
+        fontsize = 14,
         autopct = "%.2f%%",
     )
     plt.title("順位分布", fontsize = 18)
+    plt.ylabel(None)
+    plt.legend(list(gdata.index), bbox_to_anchor = (0.5, -0.1), loc = "lower center", ncol = 4, fontsize = 12)
     plt.savefig(imgdata, format = "jpg")
 
     elements.append(Spacer(1,5*mm))
     elements.append(
         Image(imgdata,
-        width = 640 * 0.7,
-        height = 480 * 0.7,
+        width = 800 * 0.5,
+        height = 600 * 0.5,
     ))
     plt.close()
     elements.append(PageBreak())
@@ -265,7 +274,7 @@ def gen_pdf(argument, command_option):
         plt.grid(axis="y")
     plt.title("順位分布(月別)", fontsize = 18)
     plt.xticks(rotation = 45)
-    plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
+    plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
     plt.savefig(imgdata, format = "jpg")
 
     elements.append(Spacer(1,5*mm))
@@ -320,7 +329,7 @@ def gen_pdf(argument, command_option):
         plt.grid(axis="y")
     plt.title("順位分布(年別)", fontsize = 18)
     plt.xticks(rotation = 45)
-    plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
+    plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
     plt.savefig(imgdata, format = "jpg")
 
     elements.append(Spacer(1,5*mm))
@@ -364,21 +373,21 @@ def gen_pdf(argument, command_option):
         gdata.plot(
             kind = "bar",
             stacked = True,
-            figsize = (12, 5),
+            figsize = (12, 6),
             fontsize = 14,
         )
         for ax in plt.gcf().get_axes():
             ax.set_axisbelow(True)
             plt.grid(axis="y")
         plt.title("順位分布(区間 短期)", fontsize = 18)
-        plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
+        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
         plt.savefig(imgdata, format = "jpg")
 
         elements.append(Spacer(1,5*mm))
         elements.append(
             Image(imgdata,
             width = 1200 * 0.5,
-            height = 500 * 0.5,
+            height = 600 * 0.5,
         ))
         plt.close()
         elements.append(PageBreak())
@@ -421,7 +430,7 @@ def gen_pdf(argument, command_option):
             ax.set_axisbelow(True)
             plt.grid(axis="y")
         plt.title("順位分布(区間 中期)", fontsize = 18)
-        plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
+        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
         plt.savefig(imgdata, format = "jpg")
 
         elements.append(Spacer(1,5*mm))
@@ -471,7 +480,7 @@ def gen_pdf(argument, command_option):
             ax.set_axisbelow(True)
             plt.grid(axis="y")
         plt.title("順位分布(区間 長期)", fontsize = 18)
-        plt.legend(bbox_to_anchor = (1.01, 1.0), loc = "upper left")
+        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
         plt.savefig(imgdata, format = "jpg")
 
         elements.append(Spacer(1,5*mm))
