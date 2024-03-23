@@ -166,7 +166,7 @@ def count_report(data, title):
             ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ])
-        if len(data) > 5:
+        if len(data) > 4:
             for i in range(len(data) - 2):
                 if i % 2 == 0:
                     ts.add("BACKGROUND",(0, i + 2), (-1, i + 2), colors.lightgrey)
@@ -333,7 +333,7 @@ def gen_pdf(argument, command_option):
             ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ])
-        if len(data) > 5:
+        if len(data) > 4:
             for i in range(len(data) - 2):
                 if i % 2 == 0:
                     ts.add("BACKGROUND",(0, i + 2), (-1, i + 2), colors.lightgrey)
@@ -371,7 +371,7 @@ def gen_pdf(argument, command_option):
         elements.append(PageBreak())
 
     # 区間集計
-    pattern = [ # 区切り回数, 閾値, 表タイトル, グラフタイトル
+    pattern = [ # 区切り回数, 閾値, タイトル
         (80, 100, "短期"),
         (200, 240, "中期"),
         (400, 500, "長期"),
@@ -386,7 +386,7 @@ def gen_pdf(argument, command_option):
             elements.append(Spacer(1, 5*mm))
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5,))
 
-            # 移動累積
+            # 累積
             data = get_count_moving(argument, command_option, count)
             tmp_df = pd.DataFrame.from_dict(data)
             df = pd.DataFrame()
@@ -403,9 +403,9 @@ def gen_pdf(argument, command_option):
             )
             plt.grid(axis = "y")
             plt.title(f"累積ポイント推移(区間 {title})", fontsize = 18)
-            plt.legend(title="開始 - 終了")
+            plt.legend(title="開始 - 終了", ncol = int(len(tmp_df["interval"].unique().tolist())) / 5 + 1)
             plt.ylabel("獲得ポイント(累積)", fontsize = 14)
-            plt.xlabel("ゲーム回数", fontsize = 14)
+            plt.xlabel("ゲーム数", fontsize = 14)
 
             # Y軸修正
             ylocs, ylabs = plt.yticks()
@@ -415,6 +415,36 @@ def gen_pdf(argument, command_option):
             plt.savefig(imgdata, format = "jpg")
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5,))
             plt.close()
+
+            # 平均順位
+            df = pd.DataFrame()
+            for i in sorted(tmp_df["interval"].unique().tolist()):
+                list_data = tmp_df[tmp_df.interval == i]["rank_avg"].to_list()
+                game_count = tmp_df[tmp_df.interval == i]["total_count"].to_list()
+                df[f"{min(game_count)} - {max(game_count)}"] = [None] * (count - len(list_data)) + list_data
+
+            imgdata = BytesIO()
+            df.plot(
+                kind = "line",
+                figsize = (12, 5),
+                fontsize = 14,
+            )
+            plt.grid(axis = "y")
+            plt.title(f"平均順位推移(区間 {title})", fontsize = 18)
+            plt.legend(title="開始 - 終了")
+            plt.yticks([4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0])
+            plt.ylabel("平均順位", fontsize = 14)
+            plt.xlabel("ゲーム数", fontsize = 14)
+            plt.legend(title="開始 - 終了", ncol = int(len(tmp_df["interval"].unique().tolist())) / 5 + 1)
+
+            # Y軸修正
+            for ax in plt.gcf().get_axes(): # 逆向きにする
+                ax.invert_yaxis()
+
+            plt.savefig(imgdata, format = "jpg")
+            elements.append(Image(imgdata, width = 1200 * 0.5, height = 500 * 0.5,))
+            plt.close()
+
 
             elements.append(PageBreak())
 
