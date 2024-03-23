@@ -116,7 +116,7 @@ def plot(argument, command_option):
     point_ax.plot(playtime, point_avg, marker = "o", markersize = 3, label = f"平均ポイント({str(point_avg[-1])}pt)".replace("-", "▲"))
     point_ax.bar(playtime, point, color = "dodgerblue", label = f"獲得ポイント")
     point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white") # 背景色と同じにして見えなくする
-    point_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0)
+    point_ax.legend(bbox_to_anchor = (1, 1), loc = "upper left", borderaxespad = 0.5)
 
     ticks = point_ax.get_yticks()
     point_ax.set_yticks(ticks[1:-1])
@@ -133,7 +133,7 @@ def plot(argument, command_option):
     rank_ax.hlines(y = 2.5, xmin = -1, xmax = game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
     rank_ax.plot(playtime, rank, marker = "o", markersize = 3, label = f"獲得順位")
     rank_ax.plot(playtime, rank_avg, marker = "o", markersize = 3, label = f"平均順位({rank_avg[-1]})")
-    rank_ax.legend(bbox_to_anchor = (1.05, 1), loc = "upper left", borderaxespad = 0)
+    rank_ax.legend(bbox_to_anchor = (1, 1), loc = "upper left", borderaxespad = 0.5)
 
     plt.setp(rank_ax.get_xticklabels(), rotation = rotation, ha = position)
     fig.tight_layout()
