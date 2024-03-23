@@ -21,11 +21,6 @@ def plot(argument, command_option):
 
     Parameters
     ----------
-    starttime : date
-        集計開始日時
-
-    Parameters
-    ----------
     argument : list
         slackから受け取った引数
 
