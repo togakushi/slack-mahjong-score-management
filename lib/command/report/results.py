@@ -258,6 +258,7 @@ def gen_pdf(argument, command_option):
         figsize = (8, 6),
         fontsize = 14,
         autopct = "%.2f%%",
+        wedgeprops = {"linewidth": 1, "edgecolor": "white"}
     )
     plt.title("順位分布", fontsize = 18)
     plt.ylabel(None)
@@ -327,10 +328,11 @@ def gen_pdf(argument, command_option):
         )
         plt.title(graph_title, fontsize = 18)
         plt.yticks([0, 25, 50, 75, 100])
+        plt.ylabel("（％）", fontsize = 14)
         for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
             ax.set_axisbelow(True)
             plt.grid(axis = "y")
-        plt.xticks(rotation = 45)
+        plt.xticks(rotation = 45, ha = "right")
         plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
         plt.savefig(imgdata, format = "jpg")
 
@@ -391,10 +393,11 @@ def gen_pdf(argument, command_option):
             )
             plt.title(f"順位分布(区間 {title})", fontsize = 18)
             plt.yticks([0, 25, 50, 75, 100])
+            plt.ylabel("（％）", fontsize = 14)
             for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
                 ax.set_axisbelow(True)
                 plt.grid(axis = "y")
-            plt.xticks(rotation = 45)
+            plt.xticks(rotation = 45, ha = "right")
             plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
             plt.savefig(imgdata, format = "jpg")
             plt.close()
