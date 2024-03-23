@@ -30,9 +30,9 @@ def main(client, channel, argument):
     g.logging.info(f"opt: {command_option}")
 
     if len(target_player) == 1: # 個人成績レポート
-        pdf_file = results.gen_pdf(argument, command_option)
+        name, pdf_file = results.gen_pdf(argument, command_option)
         if pdf_file:
-            f.slack_api.post_fileupload(client, channel, f"成績レポート({target_player[0]})", pdf_file)
+            f.slack_api.post_fileupload(client, channel, f"成績レポート({name})", pdf_file)
         else:
             f.slack_api.post_message(client, channel, f.message.invalid_argument())
     elif command_option["statistics"]:

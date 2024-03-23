@@ -129,7 +129,6 @@ def get_count_results(argument, command_option, game_count):
     return(results)
 
 
-
 def get_count_moving(argument, command_option, game_count):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
@@ -150,62 +149,32 @@ def get_count_moving(argument, command_option, game_count):
 
     return(results)
 
-def count_report(data, title):
-        tt = LongTable(data, repeatRows = 1)
-        ts = TableStyle([
-            ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ('SPAN', (5, 0), (6, 0)),
-            ('SPAN', (7, 0), (8, 0)),
-            ('SPAN', (9, 0), (10, 0)),
-            ('SPAN', (11, 0), (12, 0)),
-            ('SPAN', (14, 0), (15, 0)),
-            # ヘッダ行
-            ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ])
-        if len(data) > 4:
-            for i in range(len(data) - 2):
-                if i % 2 == 0:
-                    ts.add("BACKGROUND",(0, i + 2), (-1, i + 2), colors.lightgrey)
-        tt.setStyle(ts)
-
-        gdata = pd.DataFrame({
-            "1位率": [float(data[x + 1][6].replace("%", "")) for x in range(len(data) - 1)],
-            "2位率": [float(data[x + 1][8].replace("%", "")) for x in range(len(data) - 1)],
-            "3位率": [float(data[x + 1][10].replace("%", "")) for x in range(len(data) - 1)],
-            "4位率": [float(data[x + 1][12].replace("%", "")) for x in range(len(data) - 1)],
-            }, index = [f"{str(data[x + 1][0])} - {str(data[x + 1][1])}" for x in range(len(data) - 1)]
-        )
-
-        imgdata = BytesIO()
-        gdata.plot(
-            kind = "bar",
-            stacked = True,
-            figsize = (12, 8),
-            fontsize = 14,
-        )
-        plt.title(title, fontsize = 18)
-        plt.yticks([0, 25, 50, 75, 100])
-        for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
-            ax.set_axisbelow(True)
-            plt.grid(axis = "y")
-        plt.xticks(rotation = 45)
-        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
-        plt.savefig(imgdata, format = "jpg")
-        plt.close()
-
-        return(tt, imgdata)
-
 
 def gen_pdf(argument, command_option):
+    """
+    成績レポートを生成する
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    name : str
+        レポート対象プレイヤー名
+
+    pdf_path : file path
+        レポート保存パス
+    """
+
     _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
 
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
-
     # --- レポート作成
+    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     pdf_path = os.path.join(os.path.realpath(os.path.curdir), "Results.pdf")
     pdfmetrics.registerFont(TTFont("ReportFont", font_path))
 
@@ -223,7 +192,6 @@ def gen_pdf(argument, command_option):
     style["Left"] = ParagraphStyle(name = "Left", fontName = "ReportFont", fontSize = 14, alignment = TA_LEFT)
     style["Right"] = ParagraphStyle(name = "Right", fontName = "ReportFont", fontSize = 14, alignment = TA_RIGHT)
 
-
     # グラフフォント設定
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname = font_path)
@@ -233,7 +201,7 @@ def gen_pdf(argument, command_option):
     # 全体のデータ
     tmp_data = get_game_results(argument, command_option, flag = "A") # 0件のときはFalseが返る
     if not tmp_data:
-        return(False)
+        return(False, False)
 
     total_game_count = int(tmp_data[1][1]) # トータルゲーム数
     game_first = tmp_data[1][15] # 最初のゲーム日時
@@ -250,7 +218,7 @@ def gen_pdf(argument, command_option):
     elements.append(PageBreak())
 
     # 全期間
-    elements.append(Paragraph("全期間", style["Normal"]))
+    elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5*mm))
     data = []
     for x in range(len(tmp_data)): # ゲーム数と日時を除外
@@ -273,12 +241,13 @@ def gen_pdf(argument, command_option):
     elements.append(tt)
 
     imgdata = BytesIO()
-    gdata = pd.DataFrame({
-        "順位分布": [
-            float(data[1][4].replace("%", "")),
-            float(data[1][6].replace("%", "")),
-            float(data[1][8].replace("%", "")),
-            float(data[1][10].replace("%", "")),
+    gdata = pd.DataFrame(
+        {
+            "順位分布": [
+                float(data[1][4].replace("%", "")),
+                float(data[1][6].replace("%", "")),
+                float(data[1][8].replace("%", "")),
+                float(data[1][10].replace("%", "")),
             ],
         }, index = ["1位率", "2位率", "3位率", "4位率"]
     )
@@ -378,15 +347,61 @@ def gen_pdf(argument, command_option):
     ]
     for count, threshold, title in pattern:
         if total_game_count > threshold:
-            elements.append(Paragraph(f"区間集計({title})", style["Normal"]))
+            # --- テーブル
+            elements.append(Paragraph(f"区間集計({title})", style["Left"]))
             elements.append(Spacer(1,5*mm))
             data = get_count_results(argument, command_option, count)
-            tt, imgdata = count_report(data, f"順位分布(区間 {title})")
+            tt = LongTable(data, repeatRows = 1)
+            ts = TableStyle([
+                ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
+                ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ('SPAN', (5, 0), (6, 0)),
+                ('SPAN', (7, 0), (8, 0)),
+                ('SPAN', (9, 0), (10, 0)),
+                ('SPAN', (11, 0), (12, 0)),
+                ('SPAN', (14, 0), (15, 0)),
+                # ヘッダ行
+                ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ])
+            if len(data) > 4:
+                for i in range(len(data) - 2):
+                    if i % 2 == 0:
+                        ts.add("BACKGROUND",(0, i + 2), (-1, i + 2), colors.lightgrey)
+            tt.setStyle(ts)
             elements.append(tt)
+
+            # --- 順位分布
+            imgdata = BytesIO()
+            gdata = pd.DataFrame(
+                {
+                    "1位率": [float(data[x + 1][6].replace("%", "")) for x in range(len(data) - 1)],
+                    "2位率": [float(data[x + 1][8].replace("%", "")) for x in range(len(data) - 1)],
+                    "3位率": [float(data[x + 1][10].replace("%", "")) for x in range(len(data) - 1)],
+                    "4位率": [float(data[x + 1][12].replace("%", "")) for x in range(len(data) - 1)],
+                }, index = [f"{str(data[x + 1][0])} - {str(data[x + 1][1])}" for x in range(len(data) - 1)]
+            )
+            gdata.plot(
+                kind = "bar",
+                stacked = True,
+                figsize = (12, 8),
+                fontsize = 14,
+            )
+            plt.title(f"順位分布(区間 {title})", fontsize = 18)
+            plt.yticks([0, 25, 50, 75, 100])
+            for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
+                ax.set_axisbelow(True)
+                plt.grid(axis = "y")
+            plt.xticks(rotation = 45)
+            plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
+            plt.savefig(imgdata, format = "jpg")
+            plt.close()
             elements.append(Spacer(1, 5*mm))
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5,))
 
-            # 累積
+            # --- 累積ポイント推移
             data = get_count_moving(argument, command_option, count)
             tmp_df = pd.DataFrame.from_dict(data)
             df = pd.DataFrame()
@@ -416,7 +431,7 @@ def gen_pdf(argument, command_option):
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5,))
             plt.close()
 
-            # 平均順位
+            # --- 平均順位
             df = pd.DataFrame()
             for i in sorted(tmp_df["interval"].unique().tolist()):
                 list_data = tmp_df[tmp_df.interval == i]["rank_avg"].to_list()
@@ -445,8 +460,9 @@ def gen_pdf(argument, command_option):
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 500 * 0.5,))
             plt.close()
 
-
             elements.append(PageBreak())
 
     doc.build(elements)
-    return(pdf_path)
+    g.logging.notice(f"report generation: {target_player[0]}") # type: ignore
+
+    return(str(target_player[0]), pdf_path)
