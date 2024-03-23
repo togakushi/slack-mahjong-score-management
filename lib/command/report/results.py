@@ -10,6 +10,7 @@ from reportlab.platypus import Paragraph, PageBreak, Spacer
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.enums import TA_RIGHT, TA_LEFT
 from reportlab.lib.units import mm
 
 import pandas as pd
@@ -128,6 +129,77 @@ def get_count_results(argument, command_option, game_count):
     return(results)
 
 
+
+def get_count_moving(argument, command_option, game_count):
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+
+    ret = query.for_report_count_moving(argument, command_option, game_count)
+    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+
+    # --- データ収集
+    results = []
+    for row in rows.fetchall():
+        results.append(dict(row))
+
+    g.logging.info(f"return record: {len(results)}")
+    resultdb.close()
+
+    if len(results) == 0:
+        return(False)
+
+    return(results)
+
+def count_report(data, title):
+        tt = LongTable(data, repeatRows = 1)
+        ts = TableStyle([
+            ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
+            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ('SPAN', (5, 0), (6, 0)),
+            ('SPAN', (7, 0), (8, 0)),
+            ('SPAN', (9, 0), (10, 0)),
+            ('SPAN', (11, 0), (12, 0)),
+            ('SPAN', (14, 0), (15, 0)),
+            # ヘッダ行
+            ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ])
+        if len(data) > 5:
+            for i in range(len(data) - 2):
+                if i % 2 == 0:
+                    ts.add("BACKGROUND",(0, i + 2), (-1, i + 2), colors.lightgrey)
+        tt.setStyle(ts)
+
+        gdata = pd.DataFrame({
+            "1位率": [float(data[x + 1][6].replace("%", "")) for x in range(len(data) - 1)],
+            "2位率": [float(data[x + 1][8].replace("%", "")) for x in range(len(data) - 1)],
+            "3位率": [float(data[x + 1][10].replace("%", "")) for x in range(len(data) - 1)],
+            "4位率": [float(data[x + 1][12].replace("%", "")) for x in range(len(data) - 1)],
+            }, index = [f"{str(data[x + 1][0])} - {str(data[x + 1][1])}" for x in range(len(data) - 1)]
+        )
+
+        imgdata = BytesIO()
+        gdata.plot(
+            kind = "bar",
+            stacked = True,
+            figsize = (12, 8),
+            fontsize = 14,
+        )
+        plt.title(title, fontsize = 18)
+        plt.yticks([0, 25, 50, 75, 100])
+        for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
+            ax.set_axisbelow(True)
+            plt.grid(axis = "y")
+        plt.xticks(rotation = 45)
+        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
+        plt.savefig(imgdata, format = "jpg")
+        plt.close()
+
+        return(tt, imgdata)
+
+
 def gen_pdf(argument, command_option):
     _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
 
@@ -140,19 +212,17 @@ def gen_pdf(argument, command_option):
     doc = SimpleDocTemplate(
         pdf_path,
         pagesize = landscape(A4),
+        topMargin = 10.0*mm,
+        bottomMargin = 10.0*mm,
+        #leftMargin = 1.5*mm,
+        #rightMargin = 1.5*mm,
     )
+    style = {}
+    style["Title"] = ParagraphStyle(name = "Title", fontName = "ReportFont", fontSize = 24)
+    style["Normal"] = ParagraphStyle(name = "Normal", fontName = "ReportFont", fontSize = 14)
+    style["Left"] = ParagraphStyle(name = "Left", fontName = "ReportFont", fontSize = 14, alignment = TA_LEFT)
+    style["Right"] = ParagraphStyle(name = "Right", fontName = "ReportFont", fontSize = 14, alignment = TA_RIGHT)
 
-    style = ParagraphStyle(
-        name = "Normal",
-        fontName = "ReportFont",
-        fontSize = 14,
-    )
-
-    style_title = ParagraphStyle(
-        name = "Title",
-        fontName = "ReportFont",
-        fontSize = 24,
-    )
 
     # グラフフォント設定
     fm.fontManager.addfont(font_path)
@@ -160,30 +230,30 @@ def gen_pdf(argument, command_option):
     plt.rcParams["font.family"] = font_prop.get_name()
 
     elements = []
-    # 全件のデータ
-    tmp_data = get_game_results(argument, command_option, flag = "A") # todo: 0件のときはFalseが返る
+    # 全体のデータ
+    tmp_data = get_game_results(argument, command_option, flag = "A") # 0件のときはFalseが返る
     if not tmp_data:
         return(False)
 
     total_game_count = int(tmp_data[1][1]) # トータルゲーム数
-    game_first = tmp_data[1][15] # 最初のゲーム
-    game_last = tmp_data[1][16] # 最後のゲーム
+    game_first = tmp_data[1][15] # 最初のゲーム日時
+    game_last = tmp_data[1][16] # 最後のゲーム日時
     g.logging.info(f"total: {total_game_count}, first: {game_first}, last: {game_last}")
 
     # タイトル
-    elements.append(Paragraph(f"成績レポート：{target_player[0]}", style_title))
-    elements.append(Spacer(1,10*mm))
-    elements.append(Paragraph(f"集計期間：{game_first} - {game_last}", style))
-    elements.append(Spacer(1,3*mm))
-    elements.append(Paragraph(f"作成日：{datetime.now().strftime('%Y-%m-%d')}", style))
-    elements.append(Spacer(1,15*mm))
+    elements.append(Spacer(1, 40*mm))
+    elements.append(Paragraph(f"成績レポート：{target_player[0]}", style["Title"]))
+    elements.append(Spacer(1, 10*mm))
+    elements.append(Paragraph(f"集計期間：{game_first} - {game_last}", style["Normal"]))
+    elements.append(Spacer(1, 100*mm))
+    elements.append(Paragraph(f"作成日：{datetime.now().strftime('%Y-%m-%d')}", style["Right"]))
     elements.append(PageBreak())
 
-    # トータル
-    elements.append(Paragraph("全期間", style))
-    elements.append(Spacer(1,5*mm))
+    # 全期間
+    elements.append(Paragraph("全期間", style["Normal"]))
+    elements.append(Spacer(1, 5*mm))
     data = []
-    for x in range(len(tmp_data)):
+    for x in range(len(tmp_data)): # ゲーム数と日時を除外
         data.append(tmp_data[x][1:15])
     tt = LongTable(data, repeatRows = 1)
     tt.setStyle(TableStyle([
@@ -196,6 +266,9 @@ def gen_pdf(argument, command_option):
         ('SPAN', (7, 0), (8, 0)),
         ('SPAN', (9, 0), (10, 0)),
         ('SPAN', (12, 0), (13, 0)),
+        # ヘッダ行
+        ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
     ]))
     elements.append(tt)
 
@@ -222,7 +295,7 @@ def gen_pdf(argument, command_option):
     plt.legend(list(gdata.index), bbox_to_anchor = (0.5, -0.1), loc = "lower center", ncol = 4, fontsize = 12)
     plt.savefig(imgdata, format = "jpg")
 
-    elements.append(Spacer(1,5*mm))
+    elements.append(Spacer(1, 5*mm))
     elements.append(
         Image(imgdata,
         width = 800 * 0.5,
@@ -231,266 +304,119 @@ def gen_pdf(argument, command_option):
     plt.close()
     elements.append(PageBreak())
 
-    # 月別集計
-    elements.append(Paragraph("月別集計", style))
-    elements.append(Spacer(1,5*mm))
-    data = []
-    tmp_data = get_game_results(argument, command_option, flag = "M") # todo: 0件のときはFalseが返る
-    for x in range(len(tmp_data)):
-        data.append(tmp_data[x][:15])
+    # 期間集計
+    pattern = [ # 表タイトル, グラフタイトル, フラグ
+        ("月別集計", "順位分布(月別)", "M"),
+        ("年別集計", "順位分布(年別)", "Y"),
+    ]
+    for table_title, graph_title, flag in pattern:
+        elements.append(Paragraph(table_title, style["Left"]))
+        elements.append(Spacer(1, 5*mm))
 
-    tt = LongTable(data, repeatRows = 1)
-    tt.setStyle(TableStyle([
-        ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-        ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ('SPAN', (4, 0), (5, 0)),
-        ('SPAN', (6, 0), (7, 0)),
-        ('SPAN', (8, 0), (9, 0)),
-        ('SPAN', (10, 0), (11, 0)),
-        ('SPAN', (13, 0), (14, 0)),
-    ]))
-    elements.append(tt)
-    elements.append(Spacer(1,10*mm))
+        data = []
+        tmp_data = get_game_results(argument, command_option, flag)
+        for x in range(len(tmp_data)): # 日時を除外
+            data.append(tmp_data[x][:15])
 
-    imgdata = BytesIO()
-    gdata = pd.DataFrame({
-        "1位率": [float(data[x + 1][5].replace("%", "")) for x in range(len(data) - 1)],
-        "2位率": [float(data[x + 1][7].replace("%", "")) for x in range(len(data) - 1)],
-        "3位率": [float(data[x + 1][9].replace("%", "")) for x in range(len(data) - 1)],
-        "4位率": [float(data[x + 1][11].replace("%", "")) for x in range(len(data) - 1)],
-        }, index = [data[x + 1][0] for x in range(len(data) - 1)]
-    )
+        tt = LongTable(data, repeatRows = 1)
+        ts = TableStyle([
+            ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
+            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ('SPAN', (4, 0), (5, 0)),
+            ('SPAN', (6, 0), (7, 0)),
+            ('SPAN', (8, 0), (9, 0)),
+            ('SPAN', (10, 0), (11, 0)),
+            ('SPAN', (13, 0), (14, 0)),
+            # ヘッダ行
+            ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ])
+        if len(data) > 5:
+            for i in range(len(data) - 2):
+                if i % 2 == 0:
+                    ts.add("BACKGROUND",(0, i + 2), (-1, i + 2), colors.lightgrey)
+        tt.setStyle(ts)
+        elements.append(tt)
+        elements.append(Spacer(1, 10*mm))
 
-    gdata.plot(
-        kind = "bar",
-        stacked = True,
-        figsize = (12, 7),
-        fontsize = 14,
-    )
-    for ax in plt.gcf().get_axes():
-        ax.set_axisbelow(True)
-        plt.grid(axis="y")
-    plt.title("順位分布(月別)", fontsize = 18)
-    plt.xticks(rotation = 45)
-    plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
-    plt.savefig(imgdata, format = "jpg")
+        imgdata = BytesIO()
+        gdata = pd.DataFrame({
+            "1位率": [float(data[x + 1][5].replace("%", "")) for x in range(len(data) - 1)],
+            "2位率": [float(data[x + 1][7].replace("%", "")) for x in range(len(data) - 1)],
+            "3位率": [float(data[x + 1][9].replace("%", "")) for x in range(len(data) - 1)],
+            "4位率": [float(data[x + 1][11].replace("%", "")) for x in range(len(data) - 1)],
+            }, index = [data[x + 1][0] for x in range(len(data) - 1)]
+        )
 
-    elements.append(Spacer(1,5*mm))
-    elements.append(
-        Image(imgdata,
-        width = 1200 * 0.5,
-        height = 700 * 0.5,
-    ))
-    plt.close()
-    elements.append(PageBreak())
+        gdata.plot(
+            kind = "bar",
+            stacked = True,
+            figsize = (12, 7),
+            fontsize = 14,
+        )
+        plt.title(graph_title, fontsize = 18)
+        plt.yticks([0, 25, 50, 75, 100])
+        for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
+            ax.set_axisbelow(True)
+            plt.grid(axis = "y")
+        plt.xticks(rotation = 45)
+        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
+        plt.savefig(imgdata, format = "jpg")
 
-    # 年別集計
-    elements.append(Paragraph("年別集計", style))
-    elements.append(Spacer(1,5*mm))
-    data = []
-    tmp_data = get_game_results(argument, command_option, flag = "Y") # todo: 0件のときはFalseが返る
-    for x in range(len(tmp_data)):
-        data.append(tmp_data[x][:15])
-
-    tt = LongTable(data, repeatRows = 1)
-    tt.setStyle(TableStyle([
-        ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-        ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ('SPAN', (4, 0), (5, 0)),
-        ('SPAN', (6, 0), (7, 0)),
-        ('SPAN', (8, 0), (9, 0)),
-        ('SPAN', (10, 0), (11, 0)),
-        ('SPAN', (13, 0), (14, 0)),
-    ]))
-    elements.append(tt)
-    elements.append(Spacer(1,10*mm))
-
-    imgdata = BytesIO()
-    gdata = pd.DataFrame({
-        "1位率": [float(data[x + 1][5].replace("%", "")) for x in range(len(data) - 1)],
-        "2位率": [float(data[x + 1][7].replace("%", "")) for x in range(len(data) - 1)],
-        "3位率": [float(data[x + 1][9].replace("%", "")) for x in range(len(data) - 1)],
-        "4位率": [float(data[x + 1][11].replace("%", "")) for x in range(len(data) - 1)],
-        }, index = [data[x + 1][0] for x in range(len(data) - 1)]
-    )
-
-    gdata.plot(
-        kind = "bar",
-        stacked = True,
-        figsize = (12, 7),
-        fontsize = 14,
-    )
-    for ax in plt.gcf().get_axes():
-        ax.set_axisbelow(True)
-        plt.grid(axis="y")
-    plt.title("順位分布(年別)", fontsize = 18)
-    plt.xticks(rotation = 45)
-    plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
-    plt.savefig(imgdata, format = "jpg")
-
-    elements.append(Spacer(1,5*mm))
-    elements.append(
-        Image(imgdata,
-        width = 1200 * 0.5,
-        height = 700 * 0.5,
-    ))
-    plt.close()
-    elements.append(PageBreak())
+        elements.append(Spacer(1,5*mm))
+        elements.append(Image(imgdata, width = 1200 * 0.5, height = 700 * 0.5))
+        plt.close()
+        elements.append(PageBreak())
 
     # 区間集計
-    if total_game_count > 100:
-        elements.append(Paragraph("区間集計(短期)", style))
-        elements.append(Spacer(1,5*mm))
-        data = get_count_results(argument, command_option, 80) # todo: 0件のときはFalseが返る
-        tt = LongTable(data, repeatRows = 1)
-        tt.setStyle(TableStyle([
-            ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ('SPAN', (5, 0), (6, 0)),
-            ('SPAN', (7, 0), (8, 0)),
-            ('SPAN', (9, 0), (10, 0)),
-            ('SPAN', (11, 0), (12, 0)),
-            ('SPAN', (14, 0), (15, 0)),
-        ]))
-        elements.append(tt)
-        elements.append(Spacer(1,10*mm))
+    pattern = [ # 区切り回数, 閾値, 表タイトル, グラフタイトル
+        (80, 100, "短期"),
+        (200, 240, "中期"),
+        (400, 500, "長期"),
+    ]
+    for count, threshold, title in pattern:
+        if total_game_count > threshold:
+            elements.append(Paragraph(f"区間集計({title})", style["Normal"]))
+            elements.append(Spacer(1,5*mm))
+            data = get_count_results(argument, command_option, count)
+            tt, imgdata = count_report(data, f"順位分布(区間 {title})")
+            elements.append(tt)
+            elements.append(Spacer(1, 5*mm))
+            elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5,))
 
-        gdata = pd.DataFrame({
-            "1位率": [float(data[x + 1][6].replace("%", "")) for x in range(len(data) - 1)],
-            "2位率": [float(data[x + 1][8].replace("%", "")) for x in range(len(data) - 1)],
-            "3位率": [float(data[x + 1][10].replace("%", "")) for x in range(len(data) - 1)],
-            "4位率": [float(data[x + 1][12].replace("%", "")) for x in range(len(data) - 1)],
-            }, index = [data[x + 1][0] for x in range(len(data) - 1)]
-        )
+            # 移動累積
+            data = get_count_moving(argument, command_option, count)
+            tmp_df = pd.DataFrame.from_dict(data)
+            df = pd.DataFrame()
+            for i in sorted(tmp_df["interval"].unique().tolist()):
+                list_data = tmp_df[tmp_df.interval == i]["point_sum"].to_list()
+                game_count = tmp_df[tmp_df.interval == i]["total_count"].to_list()
+                df[f"{min(game_count)} - {max(game_count)}"] = [None] * (count - len(list_data)) + list_data
 
-        imgdata = BytesIO()
-        gdata.plot(
-            kind = "bar",
-            stacked = True,
-            figsize = (12, 6),
-            fontsize = 14,
-        )
-        for ax in plt.gcf().get_axes():
-            ax.set_axisbelow(True)
-            plt.grid(axis="y")
-        plt.title("順位分布(区間 短期)", fontsize = 18)
-        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
-        plt.savefig(imgdata, format = "jpg")
+            imgdata = BytesIO()
+            df.plot(
+                kind = "line",
+                figsize = (12, 8),
+                fontsize = 14,
+            )
+            plt.grid(axis = "y")
+            plt.title(f"累積ポイント推移(区間 {title})", fontsize = 18)
+            plt.legend(title="開始 - 終了")
+            plt.ylabel("獲得ポイント(累積)", fontsize = 14)
+            plt.xlabel("ゲーム回数", fontsize = 14)
 
-        elements.append(Spacer(1,5*mm))
-        elements.append(
-            Image(imgdata,
-            width = 1200 * 0.5,
-            height = 600 * 0.5,
-        ))
-        plt.close()
-        elements.append(PageBreak())
+            # Y軸修正
+            ylocs, ylabs = plt.yticks()
+            new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
+            plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
 
-    if total_game_count > 240:
-        elements.append(Paragraph("区間集計(中期)", style))
-        elements.append(Spacer(1,5*mm))
-        data = get_count_results(argument, command_option, 200) # todo: 0件のときはFalseが返る
-        tt = LongTable(data, repeatRows = 1)
-        tt.setStyle(TableStyle([
-            ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ('SPAN', (5, 0), (6, 0)),
-            ('SPAN', (7, 0), (8, 0)),
-            ('SPAN', (9, 0), (10, 0)),
-            ('SPAN', (11, 0), (12, 0)),
-            ('SPAN', (14, 0), (15, 0)),
-        ]))
-        elements.append(tt)
-        elements.append(Spacer(1,10*mm))
+            plt.savefig(imgdata, format = "jpg")
+            elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5,))
+            plt.close()
 
-        gdata = pd.DataFrame({
-            "1位率": [float(data[x + 1][6].replace("%", "")) for x in range(len(data) - 1)],
-            "2位率": [float(data[x + 1][8].replace("%", "")) for x in range(len(data) - 1)],
-            "3位率": [float(data[x + 1][10].replace("%", "")) for x in range(len(data) - 1)],
-            "4位率": [float(data[x + 1][12].replace("%", "")) for x in range(len(data) - 1)],
-            }, index = [data[x + 1][0] for x in range(len(data) - 1)]
-        )
-
-        imgdata = BytesIO()
-        gdata.plot(
-            kind = "bar",
-            stacked = True,
-            figsize = (12, 5),
-            fontsize = 14,
-        )
-        for ax in plt.gcf().get_axes():
-            ax.set_axisbelow(True)
-            plt.grid(axis="y")
-        plt.title("順位分布(区間 中期)", fontsize = 18)
-        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
-        plt.savefig(imgdata, format = "jpg")
-
-        elements.append(Spacer(1,5*mm))
-        elements.append(
-            Image(imgdata,
-            width = 1200 * 0.5,
-            height = 500 * 0.5,
-        ))
-        plt.close()
-        elements.append(PageBreak())
-
-    if total_game_count > 500:
-        elements.append(Paragraph("区間集計(長期)", style))
-        elements.append(Spacer(1,5*mm))
-        data = get_count_results(argument, command_option, 400) # todo: 0件のときはFalseが返る
-        tt = LongTable(data, repeatRows = 1)
-        tt.setStyle(TableStyle([
-            ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ('SPAN', (5, 0), (6, 0)),
-            ('SPAN', (7, 0), (8, 0)),
-            ('SPAN', (9, 0), (10, 0)),
-            ('SPAN', (11, 0), (12, 0)),
-            ('SPAN', (14, 0), (15, 0)),
-        ]))
-        elements.append(tt)
-        elements.append(Spacer(1,10*mm))
-
-        gdata = pd.DataFrame({
-            "1位率": [float(data[x + 1][6].replace("%", "")) for x in range(len(data) - 1)],
-            "2位率": [float(data[x + 1][8].replace("%", "")) for x in range(len(data) - 1)],
-            "3位率": [float(data[x + 1][10].replace("%", "")) for x in range(len(data) - 1)],
-            "4位率": [float(data[x + 1][12].replace("%", "")) for x in range(len(data) - 1)],
-            }, index = [data[x + 1][0] for x in range(len(data) - 1)]
-        )
-
-        imgdata = BytesIO()
-        gdata.plot(
-            kind = "bar",
-            stacked = True,
-            figsize = (12, 5),
-            fontsize = 14,
-        )
-        for ax in plt.gcf().get_axes():
-            ax.set_axisbelow(True)
-            plt.grid(axis="y")
-        plt.title("順位分布(区間 長期)", fontsize = 18)
-        plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
-        plt.savefig(imgdata, format = "jpg")
-
-        elements.append(Spacer(1,5*mm))
-        elements.append(
-            Image(imgdata,
-            width = 1200 * 0.5,
-            height = 500 * 0.5,
-        ))
-        plt.close()
+            elements.append(PageBreak())
 
     doc.build(elements)
-
     return(pdf_path)

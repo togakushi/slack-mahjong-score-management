@@ -321,7 +321,7 @@ def for_report_personal_data(argument, command_option, flag = "M"):
     }
 
 
-def for_report_count_data(argument, command_option, game_count = 40):
+def for_report_count_data(argument, command_option, interval = 40):
     target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
 
@@ -367,9 +367,61 @@ def for_report_count_data(argument, command_option, game_count = 40):
         group by interval
     """
 
-    placeholder = [game_count, g.rule_version, target_player[0]]
+    placeholder = [interval, g.rule_version, target_player[0]]
+
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
+
+    return {
+        "target_days": target_days,
+        "target_player": target_player,
+        "target_count": target_count,
+        "starttime": starttime,
+        "endtime": endtime,
+        "sql": sql,
+        "placeholder": placeholder,
+    }
 
 
+def for_report_count_moving(argument, command_option, interval = 40):
+    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
+    starttime, endtime = f.common.scope_coverage(target_days)
+
+    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
+    g.logging.info(f"target_player: {target_player}")
+    g.logging.info(f"command_option: {command_option}")
+
+    sql = """
+        select
+            interval,
+            row_number() over (partition by interval) as game_no,
+            total_count,
+            round(sum(point) over moving, 1) as point_sum,
+            round(avg(rank) over moving, 2) as rank_avg
+        from (
+            select
+                (row_number() over (order by total_count desc) - 1) / ? as interval,
+                total_count, rank, point
+            from (
+                select
+                    row_number() over (order by playtime) as total_count,
+                    rank, point
+                from
+                    individual_results
+                where
+                    rule_version = ?
+                    and name = ?
+            )
+            order by
+                total_count desc
+        )
+        window
+            moving as (partition by interval order by total_count)
+        order by
+            total_count
+    """
+
+    placeholder = [interval, g.rule_version, target_player[0]]
 
     g.logging.trace(f"sql: {sql}") # type: ignore
     g.logging.trace(f"placeholder: {placeholder}") # type: ignore
