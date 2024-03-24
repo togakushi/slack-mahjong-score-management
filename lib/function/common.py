@@ -77,7 +77,7 @@ def argument_analysis(argument, command_option = {}):
     appointed_time = current_time + relativedelta(hours = -12)
     for keyword in argument:
         # 日付取得
-        if re.match(r"^[0-9]{8}$", keyword):
+        if re.match(r"^([0-9]{8}|[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}/[0-9]{2}/[0-9]{2})$", keyword):
             try:
                 trytime = datetime.fromisoformat(f"{keyword[0:4]}-{keyword[4:6]}-{keyword[6:8]}")
                 target_days.append(trytime.strftime("%Y%m%d"))
