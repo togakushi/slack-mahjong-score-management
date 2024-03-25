@@ -275,12 +275,7 @@ def for_report_personal_data(argument, command_option, flag = "M"):
             round(cast(count(rank = 4 or NULL) AS real) / cast(count() as real) * 100, 2) as "4位率",
             round(avg(rank), 2) AS 平均順位,
             count(rpoint < -1 or NULL) as トビ,
-            round(cast(count(rpoint < -1 OR NULL) AS real) / cast(count() as real) * 100, 2) as トビ率,
-            max(rpoint) as 最大素点,
-            min(rpoint) as 最小素点,
-            round(avg(rpoint), 1) as 平均素点,
-            min(playtime) as 最初,
-            max(playtime) as 最後
+            round(cast(count(rpoint < -1 OR NULL) AS real) / cast(count() as real) * 100, 2) as トビ率
         from
             individual_results
         where
