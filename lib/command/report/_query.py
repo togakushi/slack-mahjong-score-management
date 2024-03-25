@@ -396,16 +396,17 @@ def for_report_count_moving(argument, command_option, interval = 40):
             interval,
             row_number() over (partition by interval) as game_no,
             total_count,
+            playtime,
             round(sum(point) over moving, 1) as point_sum,
             round(avg(rank) over moving, 2) as rank_avg
         from (
             select
-                (row_number() over (order by total_count desc) - 1) / ? as interval,
-                total_count, rank, point
+                <<Calculation Formula>> as interval,
+                total_count, playtime, rank, point
             from (
                 select
                     row_number() over (order by playtime) as total_count,
-                    rank, point
+                    playtime, rank, point
                 from
                     individual_results
                 where
@@ -420,6 +421,14 @@ def for_report_count_moving(argument, command_option, interval = 40):
         order by
             total_count
     """
+
+    if interval == 0:
+        sql = sql.replace("<<Calculation Formula>>", "?")
+    else:
+        sql = sql.replace(
+            "<<Calculation Formula>>",
+            "(row_number() over (order by total_count desc) - 1) / ?"
+        )
 
     placeholder = [interval, g.rule_version, target_player[0]]
 
