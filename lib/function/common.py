@@ -79,7 +79,8 @@ def argument_analysis(argument, command_option = {}):
         # 日付取得
         if re.match(r"^([0-9]{8}|[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}/[0-9]{2}/[0-9]{2})$", keyword):
             try:
-                trytime = datetime.fromisoformat(f"{keyword[0:4]}-{keyword[4:6]}-{keyword[6:8]}")
+                trystr = re.sub("[/-]", "", keyword)
+                trytime = datetime.fromisoformat(f"{trystr[0:4]}-{trystr[4:6]}-{trystr[6:8]}")
                 target_days.append(trytime.strftime("%Y%m%d"))
                 continue
             except: # 日付変換できない数値は無視
