@@ -18,6 +18,7 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.function as f
+import lib.command as c
 import lib.command.report._query as query
 from lib.function import global_value as g
 
@@ -46,7 +47,6 @@ def get_game_results(argument, command_option, flag = "M"):
             "4位", "",
             "平均\n順位",
             "トビ", "",
-            "最初", "最後",
         ]
     ]
 
@@ -66,7 +66,6 @@ def get_game_results(argument, command_option, flag = "M"):
                 row["4位"], f"{row['4位率']:.2f}%",
                 f"{row['平均順位']:.2f}",
                 row["トビ"], f"{row['トビ率']:.2f}%",
-                row["最初"], row["最後"],
             ]
         )
     g.logging.info(f"return record: {len(results)}")
@@ -242,7 +241,6 @@ def graphing_rank_distribution(df, title):
     """
 
     imgdata = BytesIO()
-
     df.plot(
         kind = "bar",
         stacked = True,
@@ -253,7 +251,10 @@ def graphing_rank_distribution(df, title):
     plt.title(title, fontsize = 18)
     plt.yticks([0, 25, 50, 75, 100])
     plt.ylabel("（％）", fontsize = 14)
-    plt.xticks(rotation = 45, ha = "right")
+    if len(df) > 10:
+        plt.xticks(rotation = 30, ha = "right")
+    else:
+        plt.xticks(rotation = 30)
     plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
 
     for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
@@ -289,7 +290,17 @@ def gen_pdf(argument, command_option):
 
     _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
 
-    # --- レポート作成
+    # 対象メンバーの記録状況
+    target_info = c.member.member_info(target_player[0])
+    g.logging.info(target_info)
+
+    if not target_info["game_count"] > 0: # 記録なし
+        return(False, False)
+
+    first_game = datetime.fromtimestamp(float(target_info["first_game"])) # 最初のゲーム日時
+    last_game = datetime.fromtimestamp(float(target_info["last_game"])) # 最後のゲーム日時
+
+    # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     pdf_path = os.path.join(os.path.realpath(os.path.curdir), "Results.pdf")
     pdfmetrics.registerFont(TTFont("ReportFont", font_path))
@@ -308,28 +319,23 @@ def gen_pdf(argument, command_option):
     style["Left"] = ParagraphStyle(name = "Left", fontName = "ReportFont", fontSize = 14, alignment = TA_LEFT)
     style["Right"] = ParagraphStyle(name = "Right", fontName = "ReportFont", fontSize = 14, alignment = TA_RIGHT)
 
-    # グラフフォント設定
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname = font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
 
+    # --- レポート作成
     elements = []
-
-    # 全体のデータ
-    tmp_data = get_game_results(argument, command_option, flag = "A") # 0件のときはFalseが返る
-    if not tmp_data:
-        return(False, False)
-
-    total_game_count = int(tmp_data[1][1]) # トータルゲーム数
-    game_first = tmp_data[1][15] # 最初のゲーム日時
-    game_last = tmp_data[1][16] # 最後のゲーム日時
-    g.logging.info(f"total: {total_game_count}, first: {game_first}, last: {game_last}")
 
     # タイトル
     elements.append(Spacer(1, 40*mm))
     elements.append(Paragraph(f"成績レポート：{target_player[0]}", style["Title"]))
     elements.append(Spacer(1, 10*mm))
-    elements.append(Paragraph(f"集計期間：{game_first} - {game_last}", style["Normal"]))
+    elements.append(Paragraph(
+        "集計期間：{} - {}".format(
+            first_game.strftime("%Y-%m-%d %H:%M"),
+            last_game.strftime("%Y-%m-%d %H:%M"),
+        ), style["Normal"]
+    ))
     elements.append(Spacer(1, 100*mm))
     elements.append(Paragraph(f"作成日：{datetime.now().strftime('%Y-%m-%d')}", style["Right"]))
     elements.append(PageBreak())
@@ -337,9 +343,10 @@ def gen_pdf(argument, command_option):
     # --- 全期間
     elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5*mm))
+    tmp_data = get_game_results(argument, command_option, flag = "A")
     data = []
-    for x in range(len(tmp_data)): # ゲーム数と日時を除外
-        data.append(tmp_data[x][1:15])
+    for x in range(len(tmp_data)): # ゲーム数を除外
+        data.append(tmp_data[x][1:])
     tt = LongTable(data, repeatRows = 1)
     tt.setStyle(TableStyle([
         ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
@@ -460,7 +467,7 @@ def gen_pdf(argument, command_option):
         (400, 500, "長期"),
     ]
     for count, threshold, title in pattern:
-        if total_game_count > threshold:
+        if target_info["game_count"] > threshold:
             # テーブル
             elements.append(Paragraph(f"区間集計 （ {title} ）", style["Left"]))
             elements.append(Spacer(1,5*mm))
