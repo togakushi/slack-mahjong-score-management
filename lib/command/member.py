@@ -95,6 +95,34 @@ def Getmemberslist():
     return(title, msg)
 
 
+def member_info(name):
+    """
+    指定メンバーの記録情報を返す
+    """
+
+    sql = """
+        select
+            count() as game_count,
+            min(ts) as first_game,
+            max(ts) as last_game,
+            max(rpoint) as max_rpoint,
+            min(rpoint) as min_rpoint
+        from
+            individual_results
+        where
+            rule_version = ?
+            and name = ?
+    """
+
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+    rows = resultdb.execute(sql, (g.rule_version, name))
+    ret = dict(rows.fetchone())
+    resultdb.close()
+
+    return(ret)
+
+
 def MemberAppend(argument):
     """
     メンバー追加
