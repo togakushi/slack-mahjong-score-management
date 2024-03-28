@@ -96,6 +96,9 @@ def invalid_score(user_id, rpoint_sum, correct_score):
 def no_hits(argument, command_option):
     target_days, _, _, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
+    if not(starttime and endtime):
+        return(invalid_argument)
+
     keyword = g.config["search"].get("keyword", "終局")
     start = starttime.strftime("%Y/%m/%d %H:%M")
     end = endtime.strftime("%Y/%m/%d %H:%M")
