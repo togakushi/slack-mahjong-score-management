@@ -5,6 +5,10 @@ from lib.function import global_value as g
 
 
 def help(command):
+    """
+    スラッシュコマンド用ヘルプ
+    """
+
     msg = f"```使い方："
     msg += f"\n\t{command} help          このメッセージ"
     msg += f"\n\t{command} results       成績出力"
@@ -20,6 +24,10 @@ def help(command):
 
 
 def help_message():
+    """
+    チャンネル内呼び出しキーワード用ヘルプ
+    """
+
     results_option = f.configure.command_option_initialization("results")
     graph_option = f.configure.command_option_initialization("graph")
     ranking_option = f.configure.command_option_initialization("ranking")
@@ -62,6 +70,10 @@ def help_message():
 
 
 def invalid_argument():
+    """
+    引数解析失敗時のメッセージ
+    """
+
     msg = f"使い方が間違っています。"
 
     if g.config.has_section("custom_message"):
@@ -76,6 +88,10 @@ def invalid_argument():
 
 
 def invalid_score(user_id, rpoint_sum, correct_score):
+    """
+    ゲーム終了時の素点合計が配給原点合計と異なる場合の警告メッセージ
+    """
+
     rpoint_diff = abs(correct_score - rpoint_sum)
     msg = f"素点合計： {rpoint_sum}\n点数差分： {rpoint_diff}"
 
@@ -94,6 +110,10 @@ def invalid_score(user_id, rpoint_sum, correct_score):
 
 
 def no_hits(argument, command_option):
+    """
+    指定範囲に記録用キーワードが見つからなかった場合のメッセージ
+    """
+
     target_days, _, _, command_option = f.common.argument_analysis(argument, command_option)
     starttime, endtime = f.common.scope_coverage(target_days)
     if not(starttime and endtime):
@@ -116,6 +136,10 @@ def no_hits(argument, command_option):
 
 
 def remarks(command_option):
+    """
+    引数で指定された集計方法を注記にまとめる
+    """
+
     ret = ""
     remark = []
 
