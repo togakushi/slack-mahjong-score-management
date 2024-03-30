@@ -150,14 +150,31 @@ def get_count_moving(argument, command_option, game_count):
     return(results)
 
 
-def graphing_mean_rank(df, title, legend = False):
+def graphing_mean_rank(df, title, whole = False):
     """
     平均順位の折れ線グラフを生成
+
+    Parameters
+    ----------
+    df : dataflame
+        描写データ
+
+    title : str
+        グラフタイトル
+
+    whole : bool
+        - True 全体集計
+        - False 指定範囲集計
+
+    Returns
+    -------
+    imgdata : BytesIO
+        画像データ
     """
 
     imgdata = BytesIO()
 
-    if legend:
+    if whole:
         df.plot(
             kind = "line",
             figsize = (12, 5),
@@ -177,59 +194,91 @@ def graphing_mean_rank(df, title, legend = False):
             fontsize = 14,
         )
 
-    plt.grid(axis = "y")
     plt.title(title, fontsize = 18)
-    plt.yticks([4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0])
-    plt.ylabel("平均順位", fontsize = 14)
-    plt.xlabel("ゲーム数", fontsize = 14)
+    plt.grid(axis = "y")
 
-    # Y軸修正
+    # Y軸設定
+    plt.ylabel("平均順位", fontsize = 14)
+    plt.yticks([4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0])
     for ax in plt.gcf().get_axes(): # 逆向きにする
         ax.invert_yaxis()
 
-    plt.savefig(imgdata, format = "jpg")
+    # X軸設定
+    plt.xlabel("ゲーム数", fontsize = 14)
+
+    plt.savefig(imgdata, format = "jpg", bbox_inches = "tight")
     plt.close()
 
     return(imgdata)
 
 
-def graphing_total_points(df, title, legend = False):
+def graphing_total_points(df, title, whole = False):
     """
     累積ポイント推移の折れ線グラフを生成
+
+    Parameters
+    ----------
+    df : dataflame
+        描写データ
+
+    title : str
+        グラフタイトル
+
+    whole : bool
+        - True 全体集計 / 移動平均付き
+        - False 指定範囲集計
+
+    Returns
+    -------
+    imgdata : BytesIO
+        画像データ
     """
 
     imgdata = BytesIO()
 
-    if legend:
+    if whole:
         df.plot(
             kind = "line",
             figsize = (12, 8),
             fontsize = 14,
         )
         plt.legend(
-            title = "開始 - 終了",
+            title = "累積 （ 開始 - 終了 ）",
             ncol = int(len(df.columns) / 5) + 1,
         )
     else:
-        df.plot(
+        point_sum = df.plot(
             kind = "line",
             y = "point_sum",
-            legend = False,
+            label = "累積",
             figsize = (12, 8),
             fontsize = 14,
         )
+        if len(df) > 50:
+            point_sum = df["point_sum"].rolling(40).mean().plot(
+                kind = "line", label = "移動平均(40ゲーム)",
+                ax = point_sum,
+            )
+        if len(df) > 100:
+            point_sum = df["point_sum"].rolling(80).mean().plot(
+                kind = "line", label = "移動平均(80ゲーム)",
+                ax = point_sum,
+            )
+        plt.legend()
 
-    plt.grid(axis = "y")
     plt.title(title, fontsize = 18)
-    plt.ylabel("獲得ポイント(累積)", fontsize = 14)
-    plt.xlabel("ゲーム数", fontsize = 14)
+    plt.grid(axis = "y")
 
-    # Y軸修正
+    # Y軸設定
+    plt.ylabel("ポイント", fontsize = 14)
     ylocs, ylabs = plt.yticks()
     new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
     plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
 
-    plt.savefig(imgdata, format = "jpg")
+    # X軸設定
+    plt.xlabel("ゲーム数", fontsize = 14)
+
+    plt.savefig(imgdata, format = "jpg", bbox_inches = "tight")
     plt.close()
 
     return(imgdata)
@@ -241,6 +290,7 @@ def graphing_rank_distribution(df, title):
     """
 
     imgdata = BytesIO()
+
     df.plot(
         kind = "bar",
         stacked = True,
@@ -249,19 +299,23 @@ def graphing_rank_distribution(df, title):
     )
 
     plt.title(title, fontsize = 18)
-    plt.yticks([0, 25, 50, 75, 100])
-    plt.ylabel("（％）", fontsize = 14)
-    if len(df) > 10:
-        plt.xticks(rotation = 30, ha = "right")
-    else:
-        plt.xticks(rotation = 30)
+    plt.grid(axis = "y")
     plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
-
     for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
         ax.set_axisbelow(True)
         plt.grid(axis = "y")
 
-    plt.savefig(imgdata, format = "jpg")
+    # Y軸設定
+    plt.yticks([0, 25, 50, 75, 100])
+    plt.ylabel("（％）", fontsize = 14)
+
+    # X軸設定
+    if len(df) > 10:
+        plt.xticks(rotation = 30, ha = "right")
+    else:
+        plt.xticks(rotation = 30)
+
+    plt.savefig(imgdata, format = "jpg", bbox_inches = "tight")
     plt.close()
 
     return(imgdata)
@@ -380,7 +434,7 @@ def gen_pdf(argument, command_option):
         kind = "pie",
         y = "順位分布",
         labels = None,
-        figsize = (8, 6),
+        figsize = (6, 6),
         fontsize = 14,
         autopct = "%.2f%%",
         wedgeprops = {"linewidth": 1, "edgecolor": "white"},
@@ -388,10 +442,10 @@ def gen_pdf(argument, command_option):
     plt.title("順位分布 （ 全期間 ）", fontsize = 18)
     plt.ylabel(None)
     plt.legend(list(gdata.index), bbox_to_anchor = (0.5, -0.1), loc = "lower center", ncol = 4, fontsize = 12)
-    plt.savefig(imgdata, format = "jpg")
+    plt.savefig(imgdata, format = "jpg", bbox_inches = "tight")
 
     elements.append(Spacer(1, 5*mm))
-    elements.append(Image(imgdata, width = 800 * 0.5, height = 600 * 0.5))
+    elements.append(Image(imgdata, width = 600 * 0.5, height = 600 * 0.5))
     plt.close()
 
     data = get_count_moving(argument, command_option, 0)
