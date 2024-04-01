@@ -286,7 +286,7 @@ def graphing_total_points(df, title, whole = False):
 
 def graphing_rank_distribution(df, title):
     """
-    累積ポイント推移の棒グラフを生成
+    順位分布の棒グラフを生成
     """
 
     imgdata = BytesIO()
@@ -299,15 +299,14 @@ def graphing_rank_distribution(df, title):
     )
 
     plt.title(title, fontsize = 18)
-    plt.grid(axis = "y")
     plt.legend(bbox_to_anchor = (0.5, 0), loc = "lower center", ncol = 4, fontsize = 12)
-    for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
-        ax.set_axisbelow(True)
-        plt.grid(axis = "y")
 
     # Y軸設定
     plt.yticks([0, 25, 50, 75, 100])
     plt.ylabel("（％）", fontsize = 14)
+    for ax in plt.gcf().get_axes(): # グリッド線を背後にまわす
+        ax.set_axisbelow(True)
+        plt.grid(axis = "y")
 
     # X軸設定
     if len(df) > 10:
@@ -373,9 +372,11 @@ def gen_pdf(argument, command_option):
     style["Left"] = ParagraphStyle(name = "Left", fontName = "ReportFont", fontSize = 14, alignment = TA_LEFT)
     style["Right"] = ParagraphStyle(name = "Right", fontName = "ReportFont", fontSize = 14, alignment = TA_RIGHT)
 
-    fm.fontManager.addfont(font_path)
+    plt.rcParams.update(plt.rcParamsDefault) # type: ignore
     font_prop = fm.FontProperties(fname = font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
+    fm.fontManager.addfont(font_path)
+
 
     # --- レポート作成
     elements = []

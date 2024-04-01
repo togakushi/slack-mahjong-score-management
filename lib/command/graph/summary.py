@@ -202,5 +202,6 @@ def plot(argument, command_option):
     plt.tight_layout()
     fig.tight_layout()
     fig.savefig(save_file)
+    plt.close()
 
     return(game_count, save_file)

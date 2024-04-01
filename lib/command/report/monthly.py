@@ -84,5 +84,6 @@ def plot(argument, command_option):
     )
 
     fig.savefig(report_file_path)
+    plt.close()
 
     return(report_file_path)

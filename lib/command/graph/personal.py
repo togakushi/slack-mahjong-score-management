@@ -138,5 +138,6 @@ def plot(argument, command_option):
     plt.setp(rank_ax.get_xticklabels(), rotation = rotation, ha = position)
     fig.tight_layout()
     fig.savefig(save_file)
+    plt.close()
 
     return(game_count, save_file)

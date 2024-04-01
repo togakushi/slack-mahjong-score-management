@@ -110,5 +110,6 @@ def plot(argument, command_option):
         fontsize = 6,
     )
     fig.savefig(report_file_path)
+    plt.close()
 
     return(report_file_path)
