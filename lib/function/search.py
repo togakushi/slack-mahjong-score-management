@@ -53,11 +53,11 @@ def for_slack(keyword, channel):
         検索した結果
     """
 
-    g.logging.info(f"query:'{keyword} in:{channel}'")
+    g.logging.info(f"query:'{keyword} in:{channel} after:2024-01-01'")
 
     ### データ取得 ###
     response = g.webclient.search_messages(
-        query = f"{keyword} in:{channel}",
+        query = f"{keyword} in:{channel} after:2024-01-01",
         sort = "timestamp",
         sort_dir = "asc",
         count = 100
@@ -66,7 +66,7 @@ def for_slack(keyword, channel):
 
     for p in range(2, response["messages"]["paging"]["pages"] + 1):
         response = g.webclient.search_messages(
-            query = f"{keyword} in:{channel}",
+            query = f"{keyword} in:{channel} after:2024-01-01",
             sort = "timestamp",
             sort_dir = "asc",
             count = 100,
