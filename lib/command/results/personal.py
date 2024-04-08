@@ -174,7 +174,7 @@ def aggregation(argument, command_option):
                         msg2["戦績"] += "\t{}： {}{} / {}位 {:>7}点 ({}pt) {}\n".format(
                             n, pname, " " * (padding - f.common.len_count(pname)),
                             results[i][f"{p}_rank"], results[i][f"{p}_rpoint"], results[i][f"{p}_point"], matter,
-                        )
+                        ).replace("-", "▲")
                 else:
                     matter = ""
                     if data["name"] in game_remarks:
