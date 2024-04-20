@@ -45,7 +45,7 @@ def for_slack(keyword, channel):
         検索キーワード
 
     channel : text
-        チャンネルID
+        チャンネル名
 
     Returns
     -------
@@ -53,11 +53,21 @@ def for_slack(keyword, channel):
         検索した結果
     """
 
-    g.logging.info(f"query:'{keyword} in:{channel} after:2024-01-01'")
+    ### 検索クエリ ###
+    query = f"{keyword} in:{channel}"
+    after = g.config["search"].get("after")
+    if after:
+        try:
+            datetime.fromisoformat(after) # フォーマットチェック
+            query = f"{keyword} in:{channel} after:{after}"
+        except:
+            g.logging.error(f"Incorrect date string: {after}")
+
+    g.logging.info(f"query: {query}")
 
     ### データ取得 ###
     response = g.webclient.search_messages(
-        query = f"{keyword} in:{channel} after:2024-01-01",
+        query = query,
         sort = "timestamp",
         sort_dir = "asc",
         count = 100
@@ -66,7 +76,7 @@ def for_slack(keyword, channel):
 
     for p in range(2, response["messages"]["paging"]["pages"] + 1):
         response = g.webclient.search_messages(
-            query = f"{keyword} in:{channel} after:2024-01-01",
+            query = query,
             sort = "timestamp",
             sort_dir = "asc",
             count = 100,

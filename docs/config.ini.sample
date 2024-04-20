@@ -38,6 +38,9 @@ commandword = 麻雀成績チェック
 [search]
 keyword = 終局
 channel = #麻雀部
+# 検索開始日(未指定時/日付フォーマットエラー時はNone -> 検索可能範囲のすべて)
+after = 2024-01-01
+
 
 [alias] # サブコマンドエイリアス(カンマ区切り)
 results = 成績
