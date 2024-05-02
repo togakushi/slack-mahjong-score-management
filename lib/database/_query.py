@@ -1,4 +1,5 @@
-import lib.function as f
+import lib.command as c
+import lib.database as d
 from lib.function import global_value as g
 
 
@@ -49,85 +50,28 @@ sql_remarks_delete_all = "delete from remarks where thread_ts=?"
 sql_remarks_delete_one = "delete from remarks where event_ts=?"
 
 
-def query_count_game(argument, command_option):
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
+def query_get_personal_data(argument, command_option, cur):
+    """
+    個人成績情報を返す
 
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
 
-    sql = """
-        select
-            count() as count
-        from (
-            select
-                playtime
-            from
-                individual_results
-            where
-                rule_version = ?
-                and playtime between ? and ? -- 検索範囲
-                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
-                --[target_player] and name in (<<target_player>>) -- 対象プレイヤー
-            group by
-                playtime
-            order by
-                playtime desc
-            --[recent] limit ?
-        )
+    command_option : dict
+        コマンドオプション
+
+    cur : object
+        カーソル
+
+    Returns
+    -------
+    results : dict
+        成績情報
     """
 
-    placeholder = [g.rule_version, starttime, endtime]
-
-    if command_option["unregistered_replace"]:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-    if target_player:
-        sql = sql.replace("--[target_player] ", "")
-        p = []
-        for i in target_player:
-            p.append("?")
-            placeholder.append(i)
-        sql = sql.replace("<<target_player>>", ",".join([i for i in p]))
-
-    if target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-        placeholder.pop(placeholder.index(starttime))
-        placeholder.pop(placeholder.index(endtime))
-        placeholder += [target_count]
-
-    g.logging.trace(f"sql: {sql}") # type: ignore
-    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
-
-    return {
-        "target_days": target_days,
-        "target_player": target_player,
-        "target_count": target_count,
-        "starttime": starttime,
-        "endtime": endtime,
-        "sql": sql,
-        "placeholder": placeholder,
-    }
-
-
-def query_get_personal_data(argument, command_option):
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
-
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
-
-    origin_point = g.config["mahjong"].getint("point", 250) # 配給原点
-    return_point = g.config["mahjong"].getint("return", 300) # 返し点
-
+    prams = d.common.placeholder_params(argument, command_option)
     sql = """
         select
             name as プレイヤー,
@@ -136,8 +80,8 @@ def query_get_personal_data(argument, command_option):
             round(avg(point), 1) as 平均ポイント,
             round(sum(rpoint), 1) as 累積素点,
             round(avg(rpoint), 1) as 平均素点,
-            round(avg(rpoint) - ?, 1) as 平均収支1,
-            round(avg(rpoint) - ?, 1) as 平均収支2,
+            round(avg(rpoint) - :origin_point, 1) as 平均収支1,
+            round(avg(rpoint) - :return_point, 1) as 平均収支2,
             round(cast(count(rank = 1 or null) as real) / count() * 100, 2) as トップ率,
             round(cast(count(rank <= 2 or null) as real) / count() * 100, 2) as 連対率,
             round(cast(count(rank <= 3 or null) as real) / count() * 100, 2) as ラス回避率,
@@ -155,7 +99,7 @@ def query_get_personal_data(argument, command_option):
         from (
             select
                 playtime,
-                --[unregistered_replace] case when guest = 0 then individual_results.name else ? end as name, -- ゲスト有効
+                --[unregistered_replace] case when guest = 0 then individual_results.name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] individual_results.name, -- ゲスト無効
                 rpoint,
                 rank,
@@ -167,23 +111,21 @@ def query_get_personal_data(argument, command_option):
                 (select thread_ts, name,count() as gs_count from remarks group by thread_ts, name) as remarks
                 on individual_results.ts = remarks.thread_ts and individual_results.name = remarks.name
             where
-                rule_version = ?
-                and playtime between ? and ?
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
             order by
                 playtime desc
-            --[recent] limit ? * 4 -- 直近N(縦持ちなので4倍する)
+            --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
         )
         group by
             name
         having
-            count() >= ? -- 規定打数
+            count() >= :stipulated -- 規定打数
         order by
             count() desc
     """
-
-    placeholder = [origin_point, return_point, g.guest_name, g.rule_version, starttime, endtime, command_option["stipulated"]]
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")
@@ -193,24 +135,21 @@ def query_get_personal_data(argument, command_option):
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
-        placeholder.pop(placeholder.index(g.guest_name))
 
-    if target_count != 0:
+    if prams["target_count"] != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
-        placeholder.pop(placeholder.index(starttime))
-        placeholder.pop(placeholder.index(endtime))
-        placeholder += [target_count]
 
     g.logging.trace(f"sql: {sql}") # type: ignore
-    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
+    g.logging.trace(f"placeholder: {prams}") # type: ignore
 
-    return {
-        "target_days": target_days,
-        "target_player": target_player,
-        "target_count": target_count,
-        "starttime": starttime,
-        "endtime": endtime,
-        "sql": sql,
-        "placeholder": placeholder,
-    }
+    rows = cur.execute(sql, prams)
+    results = {}
+    name_list = []
+    for row in rows.fetchall():
+        results[row["プレイヤー"]] = dict(row)
+        name_list.append(c.member.NameReplace(row["プレイヤー"], command_option, add_mark = True))
+        g.logging.trace(f"{row['プレイヤー']}: {results[row['プレイヤー']]}") # type: ignore
+    g.logging.info(f"return record: {len(results)}")
+
+    return(results)

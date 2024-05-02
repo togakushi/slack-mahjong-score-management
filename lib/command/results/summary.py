@@ -32,24 +32,13 @@ def aggregation(argument, command_option):
         メモ内容
     """
 
+    ### データ収集 ###
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
+    cur = resultdb.cursor()
 
-    ret = d._query.query_count_game(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
-    total_game_count = rows.fetchone()[0]
-
-    ret = query.select_game(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
-
-    # ---
-    results = {}
-    name_list = []
-    for row in rows.fetchall():
-        results[row["name"]] = dict(row)
-        name_list.append(c.member.NameReplace(row["name"], command_option, add_mark = True))
-        g.logging.trace(f"{row['name']}: {results[row['name']]}") # type: ignore
-    g.logging.info(f"return record: {len(results)}")
+    total_game_count = d.common.game_count(argument, command_option, cur)
+    results, name_list, prams = query.select_game(argument, command_option, cur)
 
     ### 表示 ###
     if len(results) == 0: # 結果が0件のとき
@@ -62,14 +51,14 @@ def aggregation(argument, command_option):
     last_game = max([results[name]["last_game"] for name in results.keys()])
 
     # --- 情報ヘッダ
-    if ret["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
+    if prams["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
         msg2 += "\t検索範囲：{} ～ {}\n".format(
-            ret["starttime"].strftime('%Y/%m/%d %H:%M'), ret["endtime"].strftime('%Y/%m/%d %H:%M'),
+            prams["starttime"].strftime('%Y/%m/%d %H:%M'), prams["endtime"].strftime('%Y/%m/%d %H:%M'),
         )
     msg2 += "\t最初のゲーム：{}\n\t最後のゲーム：{}\n".format(
         first_game.replace("-", "/"), last_game.replace("-", "/"),
     )
-    if ret["target_player"]:
+    if prams["player_name"]:
         msg2 += f"\t総ゲーム数：{total_game_count} 回"
     else:
         msg2 += f"\tゲーム数：{total_game_count} 回"

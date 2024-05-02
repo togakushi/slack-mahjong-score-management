@@ -58,28 +58,18 @@ def aggregation(argument, command_option):
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
+    cur = resultdb.cursor()
 
     # --- データ取得
-    ret = d._query.query_count_game(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
-    total_game_count = rows.fetchone()[0]
+    total_game_count = d.common.game_count(argument, command_option, cur)
     if command_option["stipulated"] == 0:
         command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
 
-    ret = d._query.query_get_personal_data(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
-    results = {}
-    name_list = []
-    for row in rows.fetchall():
-        results[row["プレイヤー"]] = dict(row)
-        name_list.append(c.member.NameReplace(row["プレイヤー"], command_option, add_mark = True))
-        g.logging.trace(f"{row['プレイヤー']}: {results[row['プレイヤー']]}") # type: ignore
-    g.logging.info(f"return record: {len(results)}")
-
+    results = d._query.query_get_personal_data(argument, command_option, cur)
     if len(results) == 0: # 結果が0件のとき
         return(f.message.no_hits(argument, command_option), None)
 
-    padding = c.member.CountPadding(list(set(name_list)))
+    padding = c.member.CountPadding(list(set(results.keys())))
     first_game = min([results[name]["first_game"] for name in results.keys()])
     last_game = max([results[name]["last_game"] for name in results.keys()])
 

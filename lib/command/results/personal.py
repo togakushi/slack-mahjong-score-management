@@ -30,20 +30,13 @@ def aggregation(argument, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
+    ### データ収集 ###
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
+    cur = resultdb.cursor()
 
-    ret = query.select_personal_data(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
-    data = rows.fetchone()
-
-    if data:
-        g.logging.trace(dict(data)) # type: ignore
-    else:
-        data = {
-            "name": ret["target_player"][0],
-            "game": 0, "win": 0, "lose": 0, "draw": 0,
-        }
+    data = query.select_personal_data(argument, command_option, cur)
+    g.logging.trace(dict(data)) # type: ignore
 
     ### 表示オプション ###
     badge_degree = ""

@@ -30,22 +30,16 @@ def aggregation(argument, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
+    ### データ収集 ###
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
+    cur = resultdb.cursor()
 
-    # --- データ収集
-    ret = query.select_versus_matrix(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+    results, prams = query.select_versus_matrix(argument, command_option, cur)
 
-    my_name = ret["target_player"][0]
-    starttime = ret["starttime"]
-    endtime = ret["endtime"]
-
-    results = {}
-    for row in rows.fetchall():
-        results[row["vs_name"]] = dict(row)
-        g.logging.trace(f"{row['vs_name']}: {results[row['vs_name']]}") # type: ignore
-    g.logging.info(f"return record: {len(results)}")
+    my_name = prams["player_name"]
+    starttime = prams["starttime"]
+    endtime = prams["endtime"]
 
     # ヘッダ情報
     msg2 = {}
@@ -56,9 +50,7 @@ def aggregation(argument, command_option):
         vs_list = list(results.keys())
         msg1 += f"\t対戦相手：全員\n"
     else:
-        vs_list = ret["target_player"][1:]
-        if my_name in vs_list:
-            vs_list.remove(my_name)
+        vs_list = prams["competition_list"]
         msg1 += f"\t対戦相手：{', '.join(vs_list)}\n"
 
     msg1 += "\t検索範囲：{} ～ {}\n".format(
