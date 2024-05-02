@@ -9,6 +9,111 @@ import lib.database as d
 from lib.function import global_value as g
 
 
+def placeholder_params(argument, command_option):
+    """
+    名前付きプレースホルダへ渡すための辞書を返す
+    """
+
+    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
+    starttime, endtime = f.common.scope_coverage(target_days)
+
+    player_name = None
+    player_list = None
+    competition_list = None
+
+    if target_player:
+        player_name = target_player[0]
+        player_list = ",".join([f'"{i}"' for i in target_player])
+        if len(target_player) >= 1:
+            competition_list = list(set(target_player[1:]))
+            if player_name in competition_list: # 集計対象者の名前はリストに含めない
+                competition_list.remove(player_name)
+
+    params = {
+        "rule_version": g.rule_version,
+        "player_name": player_name,
+        "guest_name": g.guest_name,
+        "player_list": player_list,
+        "competition_list": competition_list,
+        "starttime": starttime,
+        "endtime": endtime,
+        "target_count": target_count,
+        "stipulated": command_option["stipulated"],
+        "origin_point": g.config["mahjong"].getint("point", 250), # 配給原点
+        "return_point": g.config["mahjong"].getint("return", 300), # 返し点
+    }
+
+    g.logging.info(f"params: {params}")
+    return(params)
+
+
+def game_count(argument, command_option, cur):
+    """
+    指定条件を満たすゲーム数をカウントする
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+
+    command_option : dict
+        コマンドオプション
+
+    cur : object
+        カーソル
+
+    Returns
+    -------
+    game_count : int
+        ゲーム数
+    """
+
+    prams = d.common.placeholder_params(argument, command_option)
+    sql = """
+        select
+            count() as count
+        from (
+            select
+                playtime
+            from
+                individual_results
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime -- 検索範囲
+                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
+                --[target_player] and name in (:player_list) -- 対象プレイヤー
+            group by
+                playtime
+            order by
+                playtime desc
+            --[recent] limit :target_count
+        )
+    """
+
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+    if prams["player_name"]:
+        sql = sql.replace("--[target_player] ", "")
+
+    if prams["target_count"] != 0:
+        sql = sql.replace("and playtime between", "-- and playtime between")
+        sql = sql.replace("--[recent] ", "")
+
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"placeholder: {prams}") # type: ignore
+
+    rows = cur.execute(sql, prams)
+    game_count = rows.fetchone()[0]
+
+    return(game_count)
+
+
 def ExsistRecord(ts):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     row = resultdb.execute("select ts from result where ts=?", (ts,))

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 import lib.function as f
 import lib.command as c
-import lib.command.report._query as query
+import lib.database as d
 from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")
@@ -17,10 +17,72 @@ def plot(argument, command_option):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
-    # --- データ取得
-    ret = query.select_winner(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+    sql = """
+        select
+            collection as "集計月",
+            replace(printf("%s (%.1fpt)",
+                max(case when rank = 1 then name end),
+                max(case when rank = 1 then total end)
+            ), "-", "▲") as "1位",
+            replace(printf("%s (%.1fpt)",
+                max(case when rank = 2 then name end),
+                max(case when rank = 2 then total end)
+            ), "-", "▲") as "2位",
+            replace(printf("%s (%.1fpt)",
+                max(case when rank = 3 then name end),
+                max(case when rank = 3 then total end)
+            ), "-", "▲") as "3位",
+            replace(printf("%s (%.1fpt)",
+                max(case when rank = 4 then name end),
+                max(case when rank = 4 then total end)
+            ), "-", "▲") as "4位",
+            replace(printf("%s (%.1fpt)",
+                max(case when rank = 5 then name end),
+                max(case when rank = 5 then total end)
+            ), "-", "▲") as "5位"
+        from (
+            select
+                collection,
+                rank() over (partition by collection order by round(sum(point), 1) desc) as rank,
+                name,
+                round(sum(point), 1) as total
+            from (
+                select
+                    collection,
+                    --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
+                    --[unregistered_not_replace] name, -- ゲスト無効
+                    point
+                from
+                    individual_results
+                where
+                    rule_version = :rule_version
+                    and playtime between :starttime and :endtime
+                    --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
+                    --[guest_skip] and guest = 0 -- ゲストなし
+            )
+            group by
+                name, collection
+            having
+                count() >= :stipulated -- 規定打数
+        )
+        group by
+            collection
+        order by
+            collection desc
+    """
 
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    # --- データ取得
+    params = d.common.placeholder_params(argument, command_option)
+    rows = resultdb.execute(sql, params)
     results = {}
     for row in rows.fetchall():
         results[row["集計月"]] = dict(row)
@@ -86,8 +148,8 @@ def plot(argument, command_option):
     # 追加テキスト
     remark_text =  f.message.remarks(command_option).replace("\t", "")
     add_text = "[検索範囲：{} - {}] {} {}".format(
-        ret["starttime"].strftime('%Y/%m/%d %H:%M'),
-        ret["endtime"].strftime('%Y/%m/%d %H:%M'),
+        params["starttime"].strftime('%Y/%m/%d %H:%M'),
+        params["endtime"].strftime('%Y/%m/%d %H:%M'),
         f"[規定数：{command_option['stipulated']} ゲーム以上]" if command_option["stipulated"] != 0 else "",
         f"[{remark_text}]" if remark_text else "",
     )

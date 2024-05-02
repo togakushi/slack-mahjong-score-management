@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import lib.command as c
 import lib.function as f
 import lib.database as d
-import lib.command.report._query as query
 from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")
@@ -21,16 +20,97 @@ def plot(argument, command_option):
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
+    cur = resultdb.cursor()
+
+    params = d.common.placeholder_params(argument, command_option)
+    sql = """
+        select
+            name as プレイヤー,
+            count() as ゲーム数,
+            replace(round(sum(point), 1), "-", "▲") as 累積ポイント,
+            replace(round(avg(point), 1), "-", "▲") as 平均ポイント,
+            printf("%3d (%7.2f%%)",
+                count(rank = 1 or null),
+                round(cast(count(rank = 1 or null) as real) / count() * 100, 2)
+            ) as '1位',
+            printf("%3d (%7.2f%%)",
+                count(rank = 2 or null),
+                round(cast(count(rank = 2 or null) as real) / count() * 100, 2)
+            ) as '2位',
+            printf("%3d (%7.2f%%)",
+                count(rank = 3 or null),
+                round(cast(count(rank = 3 or null) as real) / count() * 100, 2)
+            ) as '3位',
+            printf("%3d (%7.2f%%)",
+                count(rank = 4 or null),
+                round(cast(count(rank = 4 or null) AS real) / count() * 100, 2)
+            ) as '4位',
+            printf("%.2f", round(avg(rank), 2)) as 平均順位,
+            printf("%3d (%7.2f%%)",
+                count(rpoint < 0 or null),
+                round(cast(count(rpoint < 0 or null) as real) / count() * 100, 2)
+            ) as トビ,
+            printf("%3d (%7.2f%%)",
+                ifnull(sum(gs_count), 0),
+                round(cast(ifnull(sum(gs_count), 0) as real) / count() * 100, 2)
+            ) as 役満和了,
+            min(playtime) as first_game,
+            max(playtime) as last_game,
+            sum(point) as 並び変え用カラム
+        from (
+            select
+                playtime,
+                --[unregistered_replace] case when guest = 0 then individual_results.name else :guest_name end as name, -- ゲスト有効
+                --[unregistered_not_replace] individual_results.name, -- ゲスト無効
+                rpoint,
+                rank,
+                point,
+                gs_count
+            from
+                individual_results
+            left outer join
+                (select thread_ts, name,count() as gs_count from remarks group by thread_ts, name) as remarks
+                on individual_results.ts = remarks.thread_ts and individual_results.name = remarks.name
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
+                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
+                --[guest_skip] and guest = 0 -- ゲストなし
+                --[target_player] and individual_results.name in (:target_player) -- 対象プレイヤー
+            order by
+                playtime desc
+            --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
+        )
+        group by
+            name
+        having
+            count() >= :stipulated -- 規定打数
+        order by
+            並び変え用カラム desc
+    """
+
+    if params["target_player"]:
+        sql = sql.replace("--[target_player] ", "")
+
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    if params["target_count"] != 0:
+        sql = sql.replace("and playtime between", "-- and playtime between")
+        sql = sql.replace("--[recent] ", "")
 
     # --- データ取得
-    ret = d._query.query_count_game(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
-    total_game_count = rows.fetchone()[0]
+    total_game_count = d.common.game_count(argument, command_option, cur)
     if command_option["stipulated"] == 0:
         command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
 
-    ret = query.select_personal_data(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+    rows = resultdb.execute(sql, params)
 
     results = {}
     playtime = []

@@ -4,6 +4,7 @@ import sqlite3
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
+import lib.database as d
 import lib.command.report._query as query
 from lib.function import global_value as g
 
@@ -15,10 +16,29 @@ def plot(argument, command_option):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
-    ret = query.select_game_data(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+    sql = """
+        select
+            collection as 集計月,
+            count() / 4 as ゲーム数,
+            replace(printf("%.1f pt", round(sum(point) , 1)), "-", "▲") as 供託,
+            count(rpoint < -1 or null) as "飛んだ人数(延べ)",
+            printf("%.2f%",	round(cast(count(rpoint < -1 or null) as real) / cast(count() / 4 as real) * 100, 2)) as トビ終了率,
+            replace(printf("%s", max(rpoint)), "-", "▲") as 最大素点,
+            replace(printf("%s", min(rpoint)), "-", "▲") as 最小素点
+        from
+            individual_results
+        where
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+        group by
+            collection
+        order by
+            collection desc
+    """
 
     # --- データ収集
+    params = d.common.placeholder_params(argument, command_option)
+    rows = resultdb.execute(sql, params)
     results = {}
     for row in rows.fetchall():
         results[row["集計月"]] = dict(row)
@@ -73,8 +93,8 @@ def plot(argument, command_option):
 
     # 追加テキスト
     add_text = "[検索範囲：{} - {}] [特記：すべてのゲーム結果を含む]".format(
-        ret["starttime"].strftime('%Y/%m/%d %H:%M'),
-        ret["endtime"].strftime('%Y/%m/%d %H:%M'),
+        params["starttime"].strftime('%Y/%m/%d %H:%M'),
+        params["endtime"].strftime('%Y/%m/%d %H:%M'),
     )
 
     fig.text(0.01, 0.02, # 表示位置(左下0,0 右下0,1)
