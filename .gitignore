@@ -8,3 +8,5 @@
 *.pdf
 *.ttf
 !requirements.txt
+.*
+!.gitignore
