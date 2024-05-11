@@ -1,7 +1,10 @@
 import sqlite3
 
+import pandas as pd
+
 import lib.command as c
 import lib.function as f
+import lib.database as d
 import lib.command.results._query as query
 from lib.function import global_value as g
 
@@ -64,8 +67,9 @@ def aggregation(argument, command_option):
         badge_status = status_badge[index]
 
     ### 表示内容 ###
+    target_player = data["name"]
     msg1 = "*【個人成績】*\n\tプレイヤー名： {} {}\n".format(
-        c.member.NameReplace(data["name"], command_option, add_mark = True),
+        c.member.NameReplace(target_player, command_option, add_mark = True),
         badge_degree,
     )
     msg2 = {}
@@ -100,7 +104,7 @@ def aggregation(argument, command_option):
         msg1 += "\t役満： {:2} 回 ({:.2f}%)\n".format(data["gs"], data["gs%"])
         msg1 += "\n" + f.message.remarks(command_option)
 
-        # 座席
+        # --- 座席
         msg2["座席"] += "\t# 席：順位分布(平順) / トビ / 役満 #\n"
         for n, s in [("東家", "s1"), ("南家", "s2"), ("西家", "s3"), ("北家", "s4")]:
             if data[f"{s}-rank_avg"]:
@@ -120,7 +124,7 @@ def aggregation(argument, command_option):
                     data[f"{s}-gs"] if data[f"{s}-rank_avg"] else "--",
                 )
 
-        # 戦績
+        # --- 戦績
         ret = query.select_game_results(argument, command_option)
         rows = resultdb.execute(ret["sql"], ret["placeholder"])
 
@@ -138,7 +142,7 @@ def aggregation(argument, command_option):
                 name_list.append(c.member.NameReplace(results[i][f"{p}_name"], command_option, add_mark = True))
         padding = c.member.CountPadding(list(set(name_list)))
 
-        # 戦績表示
+        # --- 戦績表示
         if command_option["game_results"]:
             rows = resultdb.execute(
                 "select * from remarks where thread_ts between ? and ?", (min(timestamp), max(timestamp))
@@ -170,10 +174,10 @@ def aggregation(argument, command_option):
                         ).replace("-", "▲")
                 else:
                     matter = ""
-                    if data["name"] in game_remarks:
-                        if results[i]["ts"] in game_remarks[data["name"]]:
-                            matter = ",".join(game_remarks[data["name"]][results[i]["ts"]])
-                    seat = [results[i]["p1_name"], results[i]["p2_name"], results[i]["p3_name"], results[i]["p4_name"]].index(data["name"]) + 1
+                    if target_player in game_remarks:
+                        if results[i]["ts"] in game_remarks[target_player]:
+                            matter = ",".join(game_remarks[target_player][results[i]["ts"]])
+                    seat = [results[i]["p1_name"], results[i]["p2_name"], results[i]["p3_name"], results[i]["p4_name"]].index(target_player) + 1
                     msg2["戦績"] += "{}： {}位 {:>7}点 ({:>+5.1f}pt){} {}\n".format(
                         results[i]["playtime"].replace("-", "/"),
                         results[i][f"p{seat}_rank"],
@@ -185,13 +189,12 @@ def aggregation(argument, command_option):
         else:
             msg2.pop("戦績")
 
-        # 対戦結果
+        # --- 対戦結果
         if command_option["versus_matrix"]:
-            ret = query.select_versus_matrix(argument, command_option)
-            rows = resultdb.execute(ret["sql"], ret["placeholder"])
+            results, _ = query.select_versus_matrix(argument, command_option, cur)
 
             msg2["対戦"] += "\n```\n"
-            for row in rows.fetchall():
+            for row in results:
                 pname = c.member.NameReplace(row["vs_name"], command_option, add_mark = True)
                 msg2["対戦"] += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>6.2f}%)\n".format(
                     pname, " " * (padding - f.common.len_count(pname)),
@@ -200,6 +203,83 @@ def aggregation(argument, command_option):
             msg2["対戦"] += "```"
         else:
             msg2.pop("対戦")
+
+    # --- 記録
+    # データ収集
+    gamedata = pd.read_sql(
+        """
+        select
+            playtime,
+            name as "プレイヤー名",
+            rank as "順位",
+            point as "獲得ポイント",
+            rpoint as "最終素点"
+        from
+            individual_results
+        where
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+        """,
+        resultdb,
+        params = d.common.placeholder_params(argument, command_option)
+    )
+
+    # ゲスト置換
+    if command_option["unregistered_replace"]:
+        player_name = gamedata["プレイヤー名"].map(lambda x:
+            c.member.NameReplace(x, command_option, add_mark = True)
+        )
+        player_name = player_name.rename("プレイヤー名")
+        gamedata.update(player_name)
+
+    # 連続順位カウント
+    rank_mask = {
+        "連続トップ":     {1: 0, 2: 1, 3: 1, 4: 1},
+        "連続連対":       {1: 0, 2: 0, 3: 1, 4: 1},
+        "連続ラス回避":   {1: 0, 2: 0, 3: 0, 4: 1},
+        "連続トップなし": {1: 1, 2: 0, 3: 0, 4: 0},
+        "連続逆連対":     {1: 1, 2: 1, 3: 0, 4: 0},
+        "連続ラス":       {1: 1, 2: 1, 3: 1, 4: 0},
+    }
+
+    for k in rank_mask.keys():
+        gamedata[k] = 0
+        for pname in gamedata["プレイヤー名"].unique():
+            tmp_df = gamedata.query("プレイヤー名 == @pname")["順位"].replace(rank_mask[k])
+            tmp_df = tmp_df.groupby(tmp_df.cumsum()).cumcount()
+            tmp_df = tmp_df.rename(k)
+            gamedata.update(tmp_df)
+
+    # 最大値/最小値の格納
+    x = pd.DataFrame()
+    for pname in gamedata["プレイヤー名"].unique():
+        tmp_data = gamedata.query("プレイヤー名 == @pname").max().to_frame().transpose()
+        tmp_data.rename(
+            columns = {
+                "最終素点": "最大素点",
+                "獲得ポイント": "最大獲得ポイント"
+            },
+            inplace = True,
+        )
+        tmp_data["最小素点"] = gamedata.query("プレイヤー名 == @pname")["最終素点"].min()
+        tmp_data["最小獲得ポイント"] = gamedata.query("プレイヤー名 == @pname")["獲得ポイント"].min()
+        x = pd.concat([x, tmp_data])
+
+    # 表示内容
+    if target_player in x["プレイヤー名"].unique():
+        x = x.query("プレイヤー名 == @target_player")
+        msg2["記録"] = "*【ベストレコード】*\n"
+        msg2["記録"] += "\t連続トップ： {} 回\n".format(x["連続トップ"].to_string(index = False))
+        msg2["記録"] += "\t連続連対： {} 回\n".format(x["連続連対"].to_string(index = False))
+        msg2["記録"] += "\t連続ラス回避： {} 回\n".format(x["連続ラス回避"].to_string(index = False))
+        msg2["記録"] += "\t最大素点： {} 点\n".format((x["最大素点"] * 100).to_string(index = False)).replace("-", "▲")
+        msg2["記録"] += "\t最大獲得ポイント： {} pt\n".format(x["最大獲得ポイント"].to_string(index = False)).replace("-", "▲")
+        msg2["記録"] += "\n*【ワーストレコード】*\n"
+        msg2["記録"] += "\t連続ラス： {} 回\n".format(x["連続ラス"].to_string(index = False))
+        msg2["記録"] += "\t連続逆連対： {} 回\n".format(x["連続逆連対"].to_string(index = False))
+        msg2["記録"] += "\t連続トップなし： {} 回\n".format(x["連続トップなし"].to_string(index = False))
+        msg2["記録"] += "\t最小素点： {} 点\n".format((x["最小素点"] * 100).to_string(index = False)).replace("-", "▲")
+        msg2["記録"] += "\t最小獲得ポイント： {} pt\n".format(x["最小獲得ポイント"].to_string(index = False)).replace("-", "▲")
 
     resultdb.close()
     return(msg1.strip(), msg2)
