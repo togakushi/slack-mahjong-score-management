@@ -18,16 +18,25 @@ def placeholder_params(argument, command_option):
     starttime, endtime = f.common.scope_coverage(target_days)
 
     player_name = None
-    player_list = None
-    competition_list = None
+    player_list = {}
+    competition_list = {}
 
     if target_player:
         player_name = target_player[0]
-        player_list = ",".join([f'"{i}"' for i in target_player])
+        count = 0
+        for name in list(set(target_player)):
+            player_list[f"player_{count}"] = name
+            count += 1
         if len(target_player) >= 1:
-            competition_list = list(set(target_player[1:]))
-            if player_name in competition_list: # 集計対象者の名前はリストに含めない
-                competition_list.remove(player_name)
+            count = 0
+            if command_option["all_player"]: # 全員対象
+                tmp_list = list(set(g.member_list))
+            else:
+                tmp_list = list(set(target_player[1:]))
+            for name in tmp_list:
+                if name != player_name: # 集計対象者の名前はリストに含めない
+                    competition_list[f"competition_{count}"] = name
+                    count += 1
 
     params = {
         "rule_version": g.rule_version,
@@ -42,6 +51,8 @@ def placeholder_params(argument, command_option):
         "origin_point": g.config["mahjong"].getint("point", 250), # 配給原点
         "return_point": g.config["mahjong"].getint("return", 300), # 返し点
     }
+    params.update(params["player_list"])
+    params.update(params["competition_list"])
 
     g.logging.info(f"params: {params}")
     return(params)
