@@ -207,20 +207,7 @@ def aggregation(argument, command_option):
     # --- 記録
     # データ収集
     gamedata = pd.read_sql(
-        """
-        select
-            playtime,
-            name as "プレイヤー名",
-            rank as "順位",
-            point as "獲得ポイント",
-            rpoint as "最終素点"
-        from
-            individual_results
-        where
-            rule_version = :rule_version
-            and playtime between :starttime and :endtime
-        """,
-        resultdb,
+        d.generat.record_count(), resultdb,
         params = d.common.placeholder_params(argument, command_option)
     )
 
