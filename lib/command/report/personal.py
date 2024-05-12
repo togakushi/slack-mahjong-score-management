@@ -76,7 +76,7 @@ def plot(argument, command_option):
                 and playtime between :starttime and :endtime
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
-                --[target_player] and individual_results.name in (:target_player) -- 対象プレイヤー
+                --[player_name] and individual_results.name in (:player_list) -- 対象プレイヤー
             order by
                 playtime desc
             --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
@@ -89,8 +89,8 @@ def plot(argument, command_option):
             並び変え用カラム desc
     """
 
-    if params["target_player"]:
-        sql = sql.replace("--[target_player] ", "")
+    if params["player_name"]:
+        sql = sql.replace("--[player_name] ", "")
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")
