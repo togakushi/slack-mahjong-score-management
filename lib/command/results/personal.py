@@ -207,12 +207,12 @@ def aggregation(argument, command_option):
     # --- 記録
     # データ収集
     gamedata = pd.read_sql(
-        d.generat.record_count(), resultdb,
+        d.generate.record_count(), resultdb,
         params = d.common.placeholder_params(argument, command_option)
     )
 
     # ゲスト置換
-    if command_option["unregistered_replace"]:
+    if not command_option["unregistered_replace"]:
         player_name = gamedata["プレイヤー名"].map(lambda x:
             c.member.NameReplace(x, command_option, add_mark = True)
         )

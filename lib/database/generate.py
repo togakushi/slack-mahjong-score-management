@@ -74,6 +74,69 @@ def record_count():
     return(sql)
 
 
+def game_results(argument, command_option):
+    """
+    ゲーム結果を集計するSQLを生成
+    """
+    params = d.common.placeholder_params(argument, command_option)
+    sql = """
+        select
+            name,
+            count() as count,
+            round(sum(point), 1) as pt_total,
+            round(avg(point), 1) as pt_avg,
+            count(rank = 1 or null) as "1st",
+            count(rank = 2 or null) as "2nd",
+            count(rank = 3 or null) as "3rd",
+            count(rank = 4 or null) as "4th",
+            round(avg(rank), 2) as rank_avg,
+            count(rpoint < 0 or null) as flying
+        from (
+            select
+                --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
+                --[unregistered_not_replace] name, -- ゲスト無効
+                rpoint, rank, point, guest, rule_version
+            from
+                individual_results
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime -- 検索範囲
+                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
+                --[guest_skip] and guest = 0 -- ゲストなし
+                --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
+            order by
+                playtime desc
+            --[recent] limit :target_count
+        )
+        group by
+            name
+        having
+            count() >= :stipulated -- 規定打数
+        order by
+            pt_total desc
+    """
+
+    if params["player_name"]:
+        sql = sql.replace("--[player_name] ", "")
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in params["player_list"].keys()]))
+
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    if params["target_count"] != 0:
+        sql = sql.replace("and playtime between", "-- and playtime between")
+        sql = sql.replace("--[recent] ", "")
+
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    return(sql)
+
+
 def personal_results(argument, command_option):
     """
     個人成績を集計するSQLを生成

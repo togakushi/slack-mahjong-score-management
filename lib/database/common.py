@@ -147,7 +147,7 @@ def game_count2(argument, command_option):
     """
 
     df = pd.read_sql(
-        d.generat.game_count(argument, command_option),
+        d.generate.game_count(argument, command_option),
         sqlite3.connect(g.database_file),
         params = d.common.placeholder_params(argument, command_option)
     )
