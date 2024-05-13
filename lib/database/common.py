@@ -3,6 +3,8 @@ import shutil
 import sqlite3
 from datetime import datetime
 
+import pandas as pd
+
 import lib.command as c
 import lib.function as f
 import lib.database as d
@@ -54,7 +56,7 @@ def placeholder_params(argument, command_option):
     params.update(params["player_list"])
     params.update(params["competition_list"])
 
-    g.logging.info(f"params: {params}")
+    g.logging.trace(f"params: {params}") # type: ignore
     return(params)
 
 
@@ -122,7 +124,39 @@ def game_count(argument, command_option, cur):
     rows = cur.execute(sql, prams)
     game_count = rows.fetchone()[0]
 
-    return(game_count)
+    return(int(game_count))
+
+
+def game_count2(argument, command_option):
+    """
+    指定条件を満たすゲーム数をカウントする
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    count : int
+    first : datetime
+    last : datetime
+    """
+
+    df = pd.read_sql(
+        d.generat.game_count(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = d.common.placeholder_params(argument, command_option)
+    )
+
+    count = int(df["count"].to_string(index = False))
+    first = datetime.fromisoformat(df["first_game"].to_string(index = False))
+    last = datetime.fromisoformat(df["last_game"].to_string(index = False))
+
+    return(count, first, last)
 
 
 def ExsistRecord(ts):
