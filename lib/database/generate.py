@@ -52,15 +52,17 @@ def game_count(argument, command_option):
     return(sql)
 
 
-def record_count():
+def record_count(argument, command_option):
     """
     連測連対などの記録をカウントするSQLを生成
     """
 
+    params = d.common.placeholder_params(argument, command_option)
     sql = """
         select
             playtime,
-            name as "プレイヤー名",
+            --[unregistered_replace] case when guest = 0 then name else :guest_name end as "プレイヤー名", -- ゲスト有効
+            --[unregistered_not_replace] name as "プレイヤー名", -- ゲスト無効
             rank as "順位",
             point as "獲得ポイント",
             rpoint as "最終素点"
@@ -69,7 +71,28 @@ def record_count():
         where
             rule_version = :rule_version
             and playtime between :starttime and :endtime
-        """
+            --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
+            --[guest_skip] and guest = 0 -- ゲストなし
+            --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
+        --[recent] limit :target_count
+    """
+
+    if params["player_name"]:
+        sql = sql.replace("--[player_name] ", "")
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in params["player_list"].keys()]))
+
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    if params["target_count"] != 0:
+        sql = sql.replace("and playtime between", "-- and playtime between")
+        sql = sql.replace("--[recent] ", "")
 
     return(sql)
 
