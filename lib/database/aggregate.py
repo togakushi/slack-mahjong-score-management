@@ -35,13 +35,18 @@ def game_count(argument, command_option):
     )
 
     count = int(df["count"].to_string(index = False))
-    first = datetime.fromisoformat(df["first_game"].to_string(index = False))
-    last = datetime.fromisoformat(df["last_game"].to_string(index = False))
+    first = datetime.now()
+    last = datetime.now()
 
+    if count >= 1:
+        first = datetime.fromisoformat(df["first_game"].to_string(index = False))
+        last = datetime.fromisoformat(df["last_game"].to_string(index = False))
+
+    g.logging.info(f"return: count: {count}, first: {first}, last: {last}")
     return(count, first, last)
 
 
-def game_summry(argument, command_option):
+def game_summary(argument, command_option):
     """
     指定条件を満たすゲーム結果をサマライズする
 
@@ -64,6 +69,9 @@ def game_summry(argument, command_option):
         sqlite3.connect(g.database_file),
         params = d.common.placeholder_params(argument, command_option)
     )
+
+    #点数差分
+    df["pt_diff"] = df["pt_total"].diff().abs()
 
     # ゲスト置換
     if not command_option["unregistered_replace"]:
