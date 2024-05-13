@@ -67,9 +67,9 @@ def aggregation(argument, command_option):
         badge_status = status_badge[index]
 
     ### 表示内容 ###
-    target_player = data["name"]
+    target_player = c.member.NameReplace(data["name"], command_option, add_mark = True)
     msg1 = "*【個人成績】*\n\tプレイヤー名： {} {}\n".format(
-        c.member.NameReplace(target_player, command_option, add_mark = True),
+        target_player,
         badge_degree,
     )
     msg2 = {}
@@ -205,56 +205,9 @@ def aggregation(argument, command_option):
             msg2.pop("対戦")
 
     # --- 記録
-    # データ収集
-    gamedata = pd.read_sql(
-        d.generate.record_count(), resultdb,
-        params = d.common.placeholder_params(argument, command_option)
-    )
-
-    # ゲスト置換
-    if not command_option["unregistered_replace"]:
-        player_name = gamedata["プレイヤー名"].map(lambda x:
-            c.member.NameReplace(x, command_option, add_mark = True)
-        )
-        player_name = player_name.rename("プレイヤー名")
-        gamedata.update(player_name)
-
-    # 連続順位カウント
-    rank_mask = {
-        "連続トップ":     {1: 0, 2: 1, 3: 1, 4: 1},
-        "連続連対":       {1: 0, 2: 0, 3: 1, 4: 1},
-        "連続ラス回避":   {1: 0, 2: 0, 3: 0, 4: 1},
-        "連続トップなし": {1: 1, 2: 0, 3: 0, 4: 0},
-        "連続逆連対":     {1: 1, 2: 1, 3: 0, 4: 0},
-        "連続ラス":       {1: 1, 2: 1, 3: 1, 4: 0},
-    }
-
-    for k in rank_mask.keys():
-        gamedata[k] = 0
-        for pname in gamedata["プレイヤー名"].unique():
-            tmp_df = gamedata.query("プレイヤー名 == @pname")["順位"].replace(rank_mask[k])
-            tmp_df = tmp_df.groupby(tmp_df.cumsum()).cumcount()
-            tmp_df = tmp_df.rename(k)
-            gamedata.update(tmp_df)
-
-    # 最大値/最小値の格納
-    x = pd.DataFrame()
-    for pname in gamedata["プレイヤー名"].unique():
-        tmp_data = gamedata.query("プレイヤー名 == @pname").max().to_frame().transpose()
-        tmp_data.rename(
-            columns = {
-                "最終素点": "最大素点",
-                "獲得ポイント": "最大獲得ポイント"
-            },
-            inplace = True,
-        )
-        tmp_data["最小素点"] = gamedata.query("プレイヤー名 == @pname")["最終素点"].min()
-        tmp_data["最小獲得ポイント"] = gamedata.query("プレイヤー名 == @pname")["獲得ポイント"].min()
-        x = pd.concat([x, tmp_data])
-
-    # 表示内容
-    if target_player in x["プレイヤー名"].unique():
-        x = x.query("プレイヤー名 == @target_player")
+    gamedata = d.aggregate.personal_results(argument, command_option)
+    if target_player in gamedata["プレイヤー名"].unique():
+        x = gamedata.query("プレイヤー名 == @target_player")
         msg2["記録"] = "*【ベストレコード】*\n"
         msg2["記録"] += "\t連続トップ： {} 回\n".format(x["連続トップ"].to_string(index = False))
         msg2["記録"] += "\t連続連対： {} 回\n".format(x["連続連対"].to_string(index = False))

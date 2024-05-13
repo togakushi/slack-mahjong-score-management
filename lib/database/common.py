@@ -3,8 +3,6 @@ import shutil
 import sqlite3
 from datetime import datetime
 
-import pandas as pd
-
 import lib.command as c
 import lib.function as f
 import lib.database as d
@@ -125,38 +123,6 @@ def game_count(argument, command_option, cur):
     game_count = rows.fetchone()[0]
 
     return(int(game_count))
-
-
-def game_count2(argument, command_option):
-    """
-    指定条件を満たすゲーム数をカウントする
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
-
-    Returns
-    -------
-    count : int
-    first : datetime
-    last : datetime
-    """
-
-    df = pd.read_sql(
-        d.generate.game_count(argument, command_option),
-        sqlite3.connect(g.database_file),
-        params = d.common.placeholder_params(argument, command_option)
-    )
-
-    count = int(df["count"].to_string(index = False))
-    first = datetime.fromisoformat(df["first_game"].to_string(index = False))
-    last = datetime.fromisoformat(df["last_game"].to_string(index = False))
-
-    return(count, first, last)
 
 
 def ExsistRecord(ts):
