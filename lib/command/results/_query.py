@@ -344,11 +344,11 @@ def select_game(argument, command_option, cur):
     name_list : list
         集計対象メンバーリスト(ゲストフラグ付き)
 
-    prams : dict
+    params : dict
         検索条件
     """
 
-    prams = d.common.placeholder_params(argument, command_option)
+    params = d.common.placeholder_params(argument, command_option)
     sql = """
         select
             name,
@@ -377,7 +377,7 @@ def select_game(argument, command_option, cur):
                 and playtime between :starttime and :endtime -- 検索範囲
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
                 --[guest_skip] and guest = 0 -- ゲストなし
-                --[target_player] and name in (:player_list) -- 対象プレイヤー
+                --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
             order by
                 playtime desc
             --[recent] limit :target_count
@@ -398,16 +398,17 @@ def select_game(argument, command_option, cur):
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
-    if prams["player_name"]:
-        sql = sql.replace("--[target_player] ", "")
-    if prams["target_count"] != 0:
+    if params["player_name"]:
+        sql = sql.replace("--[player_name] ", "")
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in params["player_list"].keys()]))
+    if params["target_count"] != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {sql}") # type: ignore
-    g.logging.trace(f"placeholder: {prams}") # type: ignore
+    g.logging.trace(f"placeholder: {params}") # type: ignore
 
-    rows = cur.execute(sql, prams)
+    rows = cur.execute(sql, params)
 
     # ---
     results = {}
@@ -416,4 +417,4 @@ def select_game(argument, command_option, cur):
         results[row["name"]] = dict(row)
         name_list.append(c.member.NameReplace(row["name"], command_option, add_mark = True))
 
-    return(results, name_list, prams)
+    return(results, name_list, params)
