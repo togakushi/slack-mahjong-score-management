@@ -205,7 +205,7 @@ def aggregation(argument, command_option):
             msg2.pop("対戦")
 
     # --- 記録
-    gamedata = d.aggregate.personal_results(argument, command_option)
+    gamedata = d.aggregate.personal_record(argument, command_option)
     if target_player in gamedata["プレイヤー名"].unique():
         x = gamedata.query("プレイヤー名 == @target_player")
         msg2["記録"] = "*【ベストレコード】*\n"
