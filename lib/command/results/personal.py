@@ -209,15 +209,15 @@ def aggregation(argument, command_option):
     if target_player in gamedata["プレイヤー名"].unique():
         x = gamedata.query("プレイヤー名 == @target_player")
         msg2["記録"] = "*【ベストレコード】*\n"
-        msg2["記録"] += "\t連続トップ： {} 連続\n".format(x["連続トップ"].to_string(index = False))
-        msg2["記録"] += "\t連続連対： {} 連続\n".format(x["連続連対"].to_string(index = False))
-        msg2["記録"] += "\t連続ラス回避： {} 連続\n".format(x["連続ラス回避"].to_string(index = False))
+        msg2["記録"] += "\t連続トップ： {} 連続\n".format(x["連続トップ"].to_string(index = False)).replace("： 1 連続", "： ----")
+        msg2["記録"] += "\t連続連対： {} 連続\n".format(x["連続連対"].to_string(index = False)).replace("： 1 連続", "： ----")
+        msg2["記録"] += "\t連続ラス回避： {} 連続\n".format(x["連続ラス回避"].to_string(index = False)).replace("： 1 連続", "： ----")
         msg2["記録"] += "\t最大素点： {} 点\n".format((x["最大素点"] * 100).to_string(index = False)).replace("-", "▲")
         msg2["記録"] += "\t最大獲得ポイント： {} pt\n".format(x["最大獲得ポイント"].to_string(index = False)).replace("-", "▲")
         msg2["記録"] += "\n*【ワーストレコード】*\n"
-        msg2["記録"] += "\t連続ラス： {} 連続\n".format(x["連続ラス"].to_string(index = False))
-        msg2["記録"] += "\t連続逆連対： {} 連続\n".format(x["連続逆連対"].to_string(index = False))
-        msg2["記録"] += "\t連続トップなし： {} 連続\n".format(x["連続トップなし"].to_string(index = False))
+        msg2["記録"] += "\t連続ラス： {} 連続\n".format(x["連続ラス"].to_string(index = False)).replace("： 1 連続", "： ----")
+        msg2["記録"] += "\t連続逆連対： {} 連続\n".format(x["連続逆連対"].to_string(index = False)).replace("： 1 連続", "： ----")
+        msg2["記録"] += "\t連続トップなし： {} 連続\n".format(x["連続トップなし"].to_string(index = False)).replace("： 1 連続", "： ----")
         msg2["記録"] += "\t最小素点： {} 点\n".format((x["最小素点"] * 100).to_string(index = False)).replace("-", "▲")
         msg2["記録"] += "\t最小獲得ポイント： {} pt\n".format(x["最小獲得ポイント"].to_string(index = False)).replace("-", "▲")
 
