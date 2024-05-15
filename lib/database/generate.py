@@ -180,7 +180,7 @@ def personal_results(argument, command_option):
             round(avg(rank), 2) as 平均順位,
             count(rpoint < 0 or null) as トビ,
             ifnull(sum(gs_count), 0) as 役満和了,
-            round((avg(rpoint) - :origin_point) * 100, 1) as 平均収支1,
+            round((avg(rpoint) - :origin_point) * 100, 1) as 平均収支,
             round((avg(rpoint) - :return_point) * 100, 1) as 平均収支2,
             round(cast(count(rank = 1 or null) as real) / count() * 100, 2) as トップ率,
             round(cast(count(rank <= 2 or null) as real) / count() * 100, 2) as 連対率,
