@@ -1,5 +1,6 @@
 import math
-import sqlite3
+
+import pandas as pd
 
 import lib.command as c
 import lib.function as f
@@ -56,205 +57,118 @@ def aggregation(argument, command_option):
         各ランキングの情報
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
-    cur = resultdb.cursor()
-
     # --- データ取得
-    total_game_count = d.common.game_count(argument, command_option, cur)
-    if command_option["stipulated"] == 0:
-        command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
+    total_game_count, first_game, last_game = d.aggregate.game_count(argument, command_option)
 
-    results = d._query.query_get_personal_data(argument, command_option, cur)
-    if len(results) == 0: # 結果が0件のとき
+    if total_game_count == 0: # 結果が0件のとき
         return(f.message.no_hits(argument, command_option), None)
 
-    padding = c.member.CountPadding(list(set(results.keys())))
-    first_game = min([results[name]["first_game"] for name in results.keys()])
-    last_game = max([results[name]["last_game"] for name in results.keys()])
+    if command_option["stipulated"] == 0: # 規定打数が指定されない場合はレートから計算
+        command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
 
+    result_df = d.aggregate.personal_results(argument, command_option)
+    record_df = d.aggregate.personal_record(argument, command_option)
+    result_df = pd.merge(result_df, record_df, on = "プレイヤー名")
+
+    # --- 集計
+    result_df["ゲーム参加率"] = result_df["ゲーム数"] / total_game_count
+    result_df["トップ率"] = result_df["1位"] / result_df["ゲーム数"]
+    result_df["連対"] = result_df["1位"] + result_df["2位"]
+    result_df["連対率"] = result_df["連対"] / result_df["ゲーム数"]
+    result_df["ラス回避"] = result_df["ゲーム数"] - result_df["4位"]
+    result_df["ラス回避率"] = result_df["ラス回避"] / result_df["ゲーム数"]
+    result_df["トビ率"] = result_df["トビ"] / result_df["ゲーム数"]
+    result_df["役満和了率"] = result_df["役満和了"] / result_df["ゲーム数"]
+    result_df["総ゲーム数"] = total_game_count
+    result_df["最大素点"] = result_df["最大素点"] * 100
+    result_df = result_df.query("ゲーム数 >= @command_option['stipulated']")
+    result_df = result_df.reset_index(drop = True)
+
+    data = {
+        # order: True -> 小さい値が上位 / False -> 大きい値が上位
+        # threshold : 表示閾値
+        "ゲーム参加率": { "order": False, "threshold": 0,
+            "str": "{:>6.2%} ({:3d} / {:4d}ゲーム)",
+            "params": ["ゲーム参加率", "ゲーム数", "総ゲーム数"],
+        },
+        "累積ポイント":  { "order": False, "threshold": 0,
+            "str": "{:>7.1f}pt ({:3d}ゲーム)",
+            "params": ["累積ポイント", "ゲーム数"],
+        },
+        "平均ポイント":  { "order": False, "threshold": 0,
+            "str": "{:>5.1f}pt ({:>7.1f}pt / {:3d}ゲーム)",
+            "params": ["平均ポイント", "累積ポイント", "ゲーム数"],
+        },
+        "平均収支":  { "order": False, "threshold": 0,
+            "str": "{:>8.0f}点 ({:>5.0f}点 / {:3d}ゲーム)",
+            "params": ["平均収支", "平均最終素点", "ゲーム数"],
+        },
+        "トップ率":  { "order": False, "threshold": 0,
+            "str": "{:>3.2%} ({:3d} / {:3d}ゲーム)",
+            "params": ["トップ率", "1位", "ゲーム数"],
+        },
+        "連対率":  { "order": False, "threshold": 0,
+            "str": "{:>3.2%} ({:3d} / {:3d}ゲーム)",
+            "params": ["連対率", "連対", "ゲーム数"],
+        },
+        "ラス回避率":  { "order": False, "threshold": 0,
+            "str": "{:>3.2%} ({:3d} / {:3d}ゲーム)",
+            "params": ["ラス回避率", "ラス回避", "ゲーム数"],
+        },
+        "トビ率":  { "order": True, "threshold": 0,
+            "str": "{:>3.2%} ({:3d} / {:3d}ゲーム)",
+            "params": ["トビ率", "トビ","ゲーム数" ],
+        },
+        "平均順位":  { "order": True, "threshold": 0,
+            "str": "{:>4.2f} ({:3d}ゲーム)",
+            "params": ["平均順位", "ゲーム数"],
+        },
+        "役満和了率":  { "order": False, "threshold": 1,
+            "str": "{:>3.2%} ({:3d} / {:3d}ゲーム)",
+            "params": ["役満和了率", "役満和了", "ゲーム数"],
+        },
+        "最大素点":  { "order": False, "threshold": 0,
+            "str": "{:>5.0f}点 ({:>5.1f}pt)",
+            "params": ["最大素点", "最大獲得ポイント"],
+        },
+        "連続トップ":  { "order": False, "threshold": 2,
+            "str": "{:>2d}連続 ({:>2d}ゲーム中)",
+            "params": ["連続トップ", "ゲーム数"],
+        },
+        "連続連対":  { "order": False, "threshold": 2,
+            "str": "{:>2d}連続 ({:>2d}ゲーム中)",
+            "params": ["連続連対", "ゲーム数"],
+        },
+        "連続ラス回避":  { "order": False, "threshold": 2,
+            "str": "{:>2d}連続 ({:>2d}ゲーム中)",
+            "params": ["連続ラス回避", "ゲーム数"],
+        },
+    }
+
+    for k in data.keys(): # ランク付け
+        result_df[f"{k}_rank"] = result_df[k].rank(method = "dense", ascending = data[k]["order"])
+
+    # --- 表示
     msg1 = "\n*【ランキング】*\n"
     msg1 += f"\t集計範囲：{first_game} ～ {last_game}\n".replace("-", "/")
     msg1 += f"\t集計ゲーム数：{total_game_count}\t(規定数：{command_option['stipulated']} 以上)\n"
     msg1 += f.message.remarks(command_option)
-    msg2 = {
-        "ゲーム参加率": "\n*ゲーム参加率*\n",
-        "累積ポイント": "\n*累積ポイント*\n",
-        "平均ポイント": "\n*平均ポイント*\n",
-        "平均収支1": "\n*平均収支1* (最終素点-配給原点)/ゲーム数\n",
-        "平均収支2": "\n*平均収支2* (最終素点-返し点)/ゲーム数\n",
-        "トップ率": "\n*トップ率*\n",
-        "連対率": "\n*連対率*\n",
-        "ラス回避率": "\n*ラス回避率*\n",
-        "トビ率": "\n*トビ率*\n",
-        "平均順位": "\n*平均順位*\n",
-        "役満和了率": "\n*役満和了率*\n",
-    }
+    msg2 = {}
+    padding = c.member.CountPadding(list(result_df["プレイヤー名"].unique()))
 
-    # ゲーム参加率
-    ranking_data = ranking_sort(results, "ゲーム数")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["ゲーム参加率"] += "{:3d}： {}{} \t{:>6.2%} ({:3d} / {:3d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val / total_game_count, val, total_game_count,
-        )
+    for k in data.keys():
+        msg2[k] = f"\n*{k}*\n"
+        tmp_df = result_df.sort_values([f"{k}_rank", "ゲーム数"], ascending =[True, False])
+        tmp_df = tmp_df.query(f"{k}_rank <= @command_option['ranked'] and {k} >= @data['{k}']['threshold']")
 
-    # 累積ポイント
-    ranking_data = ranking_sort(results, "累積ポイント")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["累積ポイント"] += "{:3d}： {}{} \t{:>7.1f}pt ({:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val, results[name]["ゲーム数"],
-        ).replace("-", "▲")
+        for _, s in tmp_df.iterrows():
+            msg2[k] += ("\t{:3d}： {}{} \t" + data[k]["str"] + "\n").format(
+                int(s[f"{k}_rank"]), s["プレイヤー名"],
+                " " * (padding - f.common.len_count(s["プレイヤー名"])),
+                *[s[x] for x in data[k]["params"]]
+            ).replace("-", "▲")
 
-    # 平均ポイント
-    ranking_data = ranking_sort(results, "平均ポイント")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["平均ポイント"] += "{:3d}： {}{} \t{:>5.1f}pt ({:>7.1f}pt / {:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val, results[name]["累積ポイント"], results[name]["ゲーム数"],
-        ).replace("-", "▲")
-
-    # 平均収支1
-    ranking_data = ranking_sort(results, "平均収支1")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["平均収支1"] += "{:3d}： {}{} \t{:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
-        ).replace("-", "▲")
-
-    # 平均収支2
-    ranking_data = ranking_sort(results, "平均収支2")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["平均収支2"] += "{:3d}： {}{} \t{:>8.0f}点 ({:>5.0f}点 / {:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val * 100, results[name]["平均素点"] * 100, results[name]["ゲーム数"],
-        ).replace("-", "▲")
-
-    # トップ率
-    ranking_data = ranking_sort(results, "トップ率")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["トップ率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val, results[name]["1位"], results[name]["ゲーム数"],
-        )
-
-    # 連対率
-    ranking_data = ranking_sort(results, "連対率")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["連対率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val, results[name]["1位"] + results[name]["2位"], results[name]["ゲーム数"],
-        )
-
-    # ラス回避率
-    ranking_data = ranking_sort(results, "ラス回避率")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["ラス回避率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val, results[name]["1位"] + results[name]["2位"] + results[name]["3位"], results[name]["ゲーム数"],
-        )
-
-    # トビ率
-    ranking_data = ranking_sort(results, "トビ率", False)
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["トビ率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val, results[name]["トビ回数"], results[name]["ゲーム数"],
-        )
-
-    # 平均順位
-    ranking_data = ranking_sort(results, "平均順位", False)
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        msg2["平均順位"] += "{:3d}： {}{} \t{:>4.2f} ({:2d}ゲーム)\n".format(
-            ranking_data.index((name, val)) + 1,
-            pname, " " * (padding - f.common.len_count(pname)),
-            val, results[name]["ゲーム数"],
-        )
-
-    # 役満和了率
-    ranking_data = ranking_sort(results, "役満和了率")
-    for name, val in ranking_data:
-        if ranking_data.index((name, val)) + 1 > command_option["ranked"]:
-            break
-        pname = c.member.NameReplace(name, command_option, add_mark = True)
-        if results[name]["役満和了"] != 0:
-            msg2["役満和了率"] += "{:3d}： {}{} \t{:>6.2f}% ({:2d} / {:2d}ゲーム)\n".format(
-                ranking_data.index((name, val)) + 1,
-                pname, " " * (padding - f.common.len_count(pname)),
-                val, results[name]["役満和了"], results[name]["ゲーム数"],
-            )
-    if msg2["役満和了率"].strip().count("\n") == 0: # 対象者がいなければ項目を削除
-        msg2.pop("役満和了率")
+        if msg2[k].strip().count("\n") == 0: # 対象者がいなければ項目を削除
+            msg2.pop(k)
 
     return(msg1, msg2)
-
-
-def ranking_sort(data, keyword, reverse = True):
-    """
-    指定項目のデータを順位順で返す
-
-    Parameters
-    ----------
-    data : dict
-        対象データ
-
-    keyword : str
-        対象項目
-
-    reverse : bool
-        昇順/降順
-
-    Returns
-    -------
-    ranking_data : list
-        並べ変えられた結果(名前, 値のタプル)
-    """
-
-    tmp_data = {}
-    for name in data.keys():
-        tmp_data[name] = data[name][keyword]
-
-    ranking_data = sorted(tmp_data.items(), key = lambda x:x[1], reverse = reverse)
-    g.logging.trace(f"{keyword}: {ranking_data}") # type: ignore
-
-    return(ranking_data)
