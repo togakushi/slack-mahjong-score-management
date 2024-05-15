@@ -161,7 +161,7 @@ def aggregation(argument, command_option):
         tmp_df = result_df.sort_values([f"{k}_rank", "ゲーム数"], ascending =[True, False])
         tmp_df = tmp_df.query(f"{k}_rank <= @command_option['ranked'] and {k} >= @data['{k}']['threshold']")
 
-        for _, s in tmp_df.iterrows():
+        for _, s in tmp_df.drop_duplicates(subset = "プレイヤー名").iterrows():
             msg2[k] += ("\t{:3d}： {}{} \t" + data[k]["str"] + "\n").format(
                 int(s[f"{k}_rank"]), s["プレイヤー名"],
                 " " * (padding - f.common.len_count(s["プレイヤー名"])),
