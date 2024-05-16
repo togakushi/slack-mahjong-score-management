@@ -72,15 +72,9 @@ def aggregation(argument, command_option):
 
     # --- 集計
     result_df["ゲーム参加率"] = result_df["ゲーム数"] / total_game_count
-    result_df["トップ率"] = result_df["1位"] / result_df["ゲーム数"]
-    result_df["連対"] = result_df["1位"] + result_df["2位"]
-    result_df["連対率"] = result_df["連対"] / result_df["ゲーム数"]
-    result_df["ラス回避"] = result_df["ゲーム数"] - result_df["4位"]
-    result_df["ラス回避率"] = result_df["ラス回避"] / result_df["ゲーム数"]
-    result_df["トビ率"] = result_df["トビ"] / result_df["ゲーム数"]
-    result_df["役満和了率"] = result_df["役満和了"] / result_df["ゲーム数"]
     result_df["総ゲーム数"] = total_game_count
     result_df["最大素点"] = result_df["最大素点"] * 100
+    result_df.rename(columns = {"1位率": "トップ率"}, inplace = True)
     result_df = result_df.query("ゲーム数 >= @command_option['stipulated']")
     result_df = result_df.reset_index(drop = True)
 
@@ -104,19 +98,19 @@ def aggregation(argument, command_option):
             "params": ["平均収支", "平均最終素点", "ゲーム数"],
         },
         "トップ率": {"order": False, "threshold": 0,
-            "str": "{:>3.2%} ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["トップ率", "1位", "ゲーム数"],
         },
         "連対率": {"order": False, "threshold": 0,
-            "str": "{:>3.2%} ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["連対率", "連対", "ゲーム数"],
         },
         "ラス回避率": {"order": False, "threshold": 0,
-            "str": "{:>3.2%} ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["ラス回避率", "ラス回避", "ゲーム数"],
         },
         "トビ率": {"order": True, "threshold": 0,
-            "str": "{:>3.2%} ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["トビ率", "トビ","ゲーム数" ],
         },
         "平均順位": {"order": True, "threshold": 0,
@@ -124,7 +118,7 @@ def aggregation(argument, command_option):
             "params": ["平均順位", "ゲーム数"],
         },
         "役満和了率": {"order": False, "threshold": 1,
-            "str": "{:>3.2%} ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>3.2}% ( {:3d} / {:3d} ゲーム )",
             "params": ["役満和了率", "役満和了", "ゲーム数"],
         },
         "最大素点": {"order": False, "threshold": -999999999,
