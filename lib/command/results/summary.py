@@ -4,7 +4,6 @@ from datetime import datetime
 import lib.command as c
 import lib.function as f
 import lib.database as d
-import lib.command.results._query as query
 from lib.function import global_value as g
 
 
@@ -44,12 +43,9 @@ def aggregation(argument, command_option):
     # --- 情報ヘッダ
     msg2 = "*【成績サマリ】*\n"
     if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
-        msg2 += "\t検索範囲：{} ～ {}\n".format(
-            params["starttime"].strftime('%Y/%m/%d %H:%M'), params["endtime"].strftime('%Y/%m/%d %H:%M'),
-        )
-    msg2 += "\t最初のゲーム：{}\n\t最後のゲーム：{}\n".format(
-        first_game.strftime("%Y/%m/%d %H:%M:%S"), last_game.strftime("%Y/%m/%d %H:%M:%S"),
-    )
+        msg2 += f"\t検索範囲：{first_game} ～ {last_game}\n".replace("-", "/")
+    msg2 += f"\t最初のゲーム：{first_game}\n\t最後のゲーム：{last_game}\n".replace("-", "/")
+
     if params["player_name"]:
         msg2 += f"\t総ゲーム数：{total_game_count} 回"
     else:
