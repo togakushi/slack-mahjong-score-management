@@ -88,6 +88,40 @@ def game_summary(argument, command_option):
     return(df)
 
 
+def game_details(argument, command_option):
+    """
+    ゲーム結果を集計する
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    df : DataFrame
+    """
+
+    df = pd.read_sql(
+        d.generate.game_details(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = d.common.placeholder_params(argument, command_option),
+    )
+
+    # ゲスト置換
+    for i in ("p1_name", "p2_name", "p3_name", "p4_name"):
+        player_name = df[i].map(lambda x:
+            c.member.NameReplace(x, command_option, add_mark = True)
+        )
+        player_name = player_name.rename(i)
+        df.update(player_name)
+
+    return(df)
+
+
 def personal_record(argument, command_option):
     """
     個人記録を集計する

@@ -170,6 +170,9 @@ def personal_results(argument, command_option):
         select
             name as プレイヤー名,
             count() as ゲーム数,
+            count(point > 0 or null) as win,
+            count(point < 0 or null) as lose,
+            count(point = 0 or null) as draw,
             count(rank = 1 or null) as '1位',
             round(cast(count(rank = 1 or null) as real) / count() * 100, 2) as '1位率',
             count(rank = 2 or null) as '2位',
@@ -269,6 +272,51 @@ def personal_results(argument, command_option):
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    if params["target_count"] != 0:
+        sql = sql.replace("and playtime between", "-- and playtime between")
+        sql = sql.replace("--[recent] ", "")
+
+    g.logging.trace(f"sql: {sql}") # type: ignore
+    return(sql)
+
+
+def game_details(argument, command_option):
+    """
+    ゲーム結果の詳細を返すSQLを生成
+    """
+
+    params = d.common.placeholder_params(argument, command_option)
+    sql = """
+        select * from (
+            select
+                playtime, ts,
+                p1_guest + p2_guest + p3_guest + p4_guest as guest_count,
+                p1_name, p1_rpoint * 100 as p1_rpoint, p1_rank, p1_point,
+                p2_name, p2_rpoint * 100 as p2_rpoint, p2_rank, p2_point,
+                p3_name, p3_rpoint * 100 as p3_rpoint, p3_rank, p3_point,
+                p4_name, p4_rpoint * 100 as p4_rpoint, p4_rank, p4_point
+            from
+                game_results
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
+                --<<select player>>--
+            order by
+                playtime desc
+            --[recent] limit :target_count
+        )
+        order by
+            playtime
+        """
+
+    if params["player_list"]:
+        rep_str = "--<<select player>>--"
+        for pname in params["player_list"].keys():
+            sql = sql.replace(
+                rep_str,
+                f"{rep_str}\nand :{pname} in (p1_name, p2_name, p3_name, p4_name)"
+            )
 
     if params["target_count"] != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
