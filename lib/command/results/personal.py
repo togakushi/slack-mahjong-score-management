@@ -42,29 +42,8 @@ def aggregation(argument, command_option):
     g.logging.trace(dict(data)) # type: ignore
 
     ### 表示オプション ###
-    badge_degree = ""
-    if g.config["degree"].getboolean("display", False):
-        degree_badge = g.config.get("degree", "badge").split(",")
-        degree_counter = [x for x in map(int, g.config.get("degree", "counter").split(","))]
-        for i in range(len(degree_counter)):
-            if data["game"] >= degree_counter[i]:
-                badge_degree = degree_badge[i]
-
-    badge_status = ""
-    if g.config["status"].getboolean("display", False):
-        status_badge = g.config.get("status", "badge").split(",")
-        status_step = g.config.getfloat("status", "step")
-        if data["game"] == 0:
-            index = 0
-        else:
-            winper = data["win"] / data["game"] * 100
-            index = 3
-            for i in (1, 2, 3):
-                if winper <= 50 - status_step * i:
-                    index = 4 - i
-                if winper >= 50 + status_step * i:
-                    index = 2 + i
-        badge_status = status_badge[index]
+    badge_degree = f.common.badge_degree(data["game"])
+    badge_status = f.common.badge_status(data["game"], data["win"])
 
     ### 表示内容 ###
     target_player = c.member.NameReplace(data["name"], command_option, add_mark = True)

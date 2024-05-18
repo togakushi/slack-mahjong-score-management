@@ -298,3 +298,67 @@ def KANA2HIRA(text):
     KANA = "".join(chr(0x30a1 + i) for i in range(86))
     trans_table = str.maketrans(KANA, HIRA)
     return(text.translate(trans_table))
+
+def badge_degree(game_count = 0):
+    """
+    プレイしたゲーム数に対して表示される称号を返す
+
+    Parameters
+    ----------
+    game_count : int
+        ゲーム数
+
+    Returns
+    -------
+    badge_degree : text
+        表示する称号
+    """
+
+    badge_degree = ""
+
+    if g.config["degree"].getboolean("display", False):
+        degree_badge = g.config.get("degree", "badge").split(",")
+        degree_counter = [x for x in map(int, g.config.get("degree", "counter").split(","))]
+        for i in range(len(degree_counter)):
+            if game_count >= degree_counter[i]:
+                badge_degree = degree_badge[i]
+
+    return(badge_degree)
+
+
+def badge_status(game_count = 0, win = 0):
+    """
+    勝率に対して付く調子バッジを返す
+
+    Parameters
+    ----------
+    game_count : int
+        ゲーム数
+
+    win : int
+        勝ち数
+
+    Returns
+    -------
+    badge_degree : text
+        表示する称号
+    """
+
+    badge_status = ""
+
+    if g.config["status"].getboolean("display", False):
+        status_badge = g.config.get("status", "badge").split(",")
+        status_step = g.config.getfloat("status", "step")
+        if game_count == 0:
+            index = 0
+        else:
+            winper = win / game_count * 100
+            index = 3
+            for i in (1, 2, 3):
+                if winper <= 50 - status_step * i:
+                    index = 4 - i
+                if winper >= 50 + status_step * i:
+                    index = 2 + i
+        badge_status = status_badge[index]
+
+    return(badge_status)
