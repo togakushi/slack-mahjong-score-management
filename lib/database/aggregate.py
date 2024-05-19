@@ -3,9 +3,47 @@ from datetime import datetime
 
 import pandas as pd
 
+import lib.function as f
 import lib.command as c
 import lib.database as d
 from lib.function import global_value as g
+
+
+def _disp_name(df, command_option, adjust = 0):
+    """
+    ゲスト置換/パディング付与
+
+    Parameters
+    ----------
+    df : DataFrame
+        変更対象のデータ
+
+    command_option : dict
+        コマンドオプション
+
+    adjust : int
+        パディング数の調整
+
+    Returns
+    -------
+    df : DataFrame
+        置換後のデータ
+    """
+
+    player_list = list(df.unique())
+
+    replace_list = []
+    for name in list(df.unique()):
+        replace_list.append(
+            c.member.NameReplace(name, command_option, add_mark = True)
+        )
+
+    max_padding = c.member.CountPadding(replace_list)
+    for i in range(len(replace_list)):
+        padding = " " * (max_padding - f.common.len_count(replace_list[i]) + adjust)
+        replace_list[i] = f"{replace_list[i]}{padding}"
+
+    return(df.replace(player_list, replace_list))
 
 
 def game_count(argument, command_option):
@@ -70,22 +108,17 @@ def game_summary(argument, command_option):
         params = d.common.placeholder_params(argument, command_option)
     )
 
-    #点数差分
+    # 点数差分
     df["pt_diff"] = df["pt_total"].diff().abs()
 
     # ゲスト置換
-    if not command_option["unregistered_replace"]:
-        player_name = df["name"].map(lambda x:
-            c.member.NameReplace(x, command_option, add_mark = True)
-        )
-        player_name = player_name.rename("name")
-        df.update(player_name)
+    df["表示名"] = _disp_name(df["name"], command_option)
 
     # インデックスの振り直し
     df = df.reset_index(drop = True)
     df.index = df.index + 1
 
-    return(df)
+    return(df.fillna(value = "*****"))
 
 
 def game_details(argument, command_option):
@@ -112,14 +145,9 @@ def game_details(argument, command_option):
     )
 
     # ゲスト置換
-    for i in ("p1_name", "p2_name", "p3_name", "p4_name"):
-        player_name = df[i].map(lambda x:
-            c.member.NameReplace(x, command_option, add_mark = True)
-        )
-        player_name = player_name.rename(i)
-        df.update(player_name)
+    df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
 
-    return(df)
+    return(df.fillna(value = ""))
 
 
 def personal_record(argument, command_option):
@@ -181,12 +209,7 @@ def personal_record(argument, command_option):
         df = pd.concat([df, tmp_df])
 
     # ゲスト置換
-    if not command_option["unregistered_replace"]:
-        player_name = df["プレイヤー名"].map(lambda x:
-            c.member.NameReplace(x, command_option, add_mark = True)
-        )
-        player_name = player_name.rename("プレイヤー名")
-        df.update(player_name)
+    df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
 
     # インデックスの振り直し
     df = df.reset_index(drop = True)
@@ -220,12 +243,7 @@ def personal_results(argument, command_option):
     )
 
     # ゲスト置換
-    if not command_option["unregistered_replace"]:
-        player_name = df["プレイヤー名"].map(lambda x:
-            c.member.NameReplace(x, command_option, add_mark = True)
-        )
-        player_name = player_name.rename("プレイヤー名")
-        df.update(player_name)
+    df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
 
     # インデックスの振り直し
     df = df.reset_index(drop = True)

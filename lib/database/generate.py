@@ -310,13 +310,28 @@ def game_details(argument, command_option):
             playtime
         """
 
-    if params["player_list"]:
-        rep_str = "--<<select player>>--"
-        for pname in params["player_list"].keys():
-            sql = sql.replace(
-                rep_str,
-                f"{rep_str}\nand :{pname} in (p1_name, p2_name, p3_name, p4_name)"
-            )
+    sql = """
+        select
+            playtime,
+            name as プレイヤー名,
+            guest,
+            seat,
+            rpoint,
+            rank,
+            point,
+            grandslam
+        from (
+            select * from individual_results
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
+            order by
+                playtime desc
+            --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
+        )
+        order by
+            playtime
+    """
 
     if params["target_count"] != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")

@@ -1,4 +1,5 @@
 import sqlite3
+import textwrap
 
 import pandas as pd
 
@@ -23,7 +24,7 @@ def aggregation(argument, command_option):
 
     Returns
     -------
-    msg : text
+    msg1 : text
         slackにpostするデータ
 
     msg2 : dict
@@ -34,171 +35,117 @@ def aggregation(argument, command_option):
     command_option["guest_skip"] = command_option["guest_skip2"]
 
     ### データ収集 ###
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
-    cur = resultdb.cursor()
-
-    data = query.select_personal_data(argument, command_option, cur)
-    g.logging.trace(dict(data)) # type: ignore
-
-    ### 表示オプション ###
-    badge_degree = f.common.badge_degree(data["game"])
-    badge_status = f.common.badge_status(data["game"], data["win"])
+    _, first_game, last_game = d.aggregate.game_count(argument, command_option)
+    result_df = d.aggregate.personal_results(argument, command_option)
+    record_df = d.aggregate.personal_record(argument, command_option)
+    result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"])
+    data = result_df.to_dict(orient = "records")[0]
 
     ### 表示内容 ###
-    target_player = c.member.NameReplace(data["name"], command_option, add_mark = True)
-    msg1 = "*【個人成績】*\n\tプレイヤー名： {} {}\n".format(
-        target_player,
-        badge_degree,
-    )
+    badge_degree = f.common.badge_degree(data["ゲーム数"])
+    badge_status = f.common.badge_status(data["ゲーム数"], data["win"])
+
+    msg1 = f"""
+        *【個人成績】*
+        \tプレイヤー名： {data["表示名"]} {badge_degree}
+        \t集計範囲： {first_game} ～ {last_game}
+        \t対戦数：{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分)  {badge_status}
+    """.replace("-", "/")
+
     msg2 = {}
-    msg2["座席"] = "*【座席データ】*\n"
-    if command_option["guest_skip"]:
-        msg2["戦績"] = "*【戦績】*\n"
-    else:
-        if command_option["verbose"]:
-            msg2["戦績"] = f"*【戦績】*\n"
-        else:
-            msg2["戦績"] = f"*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
-    msg2["対戦"] = "*【対戦結果】*\n"
 
-    # 成績
-    if data["game"] == 0:
-        msg1 += f"\t対戦数：{data['game']} 戦 ({data['win']} 勝 {data['lose']} 敗 {data['draw']} 分) {badge_status}\n"
-        msg2.clear()
-    else:
-        msg1 += "\t集計範囲：{} ～ {}\n".format(
-            data["first_game"].replace("-", "/"), data["last_game"].replace("-", "/"),
-        )
-        msg1 += f"\t対戦数：{data['game']} 戦 ({data['win']} 勝 {data['lose']} 敗 {data['draw']} 分) {badge_status}\n"
-        msg1 += "\t累積ポイント： {:+.1f}\n".format(data["pt_total"]).replace("-", "▲")
-        msg1 += "\t平均ポイント： {:+.1f}\n".format(data["pt_avg"]).replace("-", "▲")
-        msg1 += "\t平均順位： {:1.2f}\n".format(data["rank_avg"])
-        msg1 += "\t1位： {:2} 回 ({:.2f}%)\n".format(data["1st"], data["1st%"])
-        msg1 += "\t2位： {:2} 回 ({:.2f}%)\n".format(data["2nd"], data["2nd%"])
-        msg1 += "\t3位： {:2} 回 ({:.2f}%)\n".format(data["3rd"], data["3rd%"])
-        msg1 += "\t4位： {:2} 回 ({:.2f}%)\n".format(data["4th"], data["4th%"])
-        if not g.config["mahjong"].getboolean("ignore_flying", False):
-            msg1 += "\tトビ： {} 回 ({:.2f}%)\n".format(data["flying"], data["flying%"])
-        msg1 += "\t役満： {:2} 回 ({:.2f}%)\n".format(data["gs"], data["gs%"])
-        msg1 += "\n" + f.message.remarks(command_option)
+    if data["ゲーム数"] == 0:
+        return(textwrap.dedent(msg1).strip(), msg2)
 
-        # --- 座席
-        msg2["座席"] += "\t# 席：順位分布(平順) / トビ / 役満 #\n"
-        for n, s in [("東家", "s1"), ("南家", "s2"), ("西家", "s3"), ("北家", "s4")]:
-            if data[f"{s}-rank_avg"]:
-                msg2["座席"] += "\t{}： {}-{}-{}-{} ({:1.2f})".format(
-                    n, data[f"{s}-1st"], data[f"{s}-2nd"], data[f"{s}-3rd"], data[f"{s}-4th"], data[f"{s}-rank_avg"]
-                )
-            else:
-                msg2["座席"] += f"\t{n}： 0-0-0-0 (-.--)"
-            if g.config["mahjong"].getboolean("ignore_flying", False):
-                msg2["座席"] = msg2["座席"].replace("/ トビ /", "/")
-                msg2["座席"] += " / {} 回\n".format(
-                    data[f"{s}-gs"] if data[f"{s}-rank_avg"] else "--",
-                )
-            else:
-                msg2["座席"] += " / {} 回 / {} 回\n".format(
-                    data[f"{s}-flying"] if data[f"{s}-rank_avg"] else "--",
-                    data[f"{s}-gs"] if data[f"{s}-rank_avg"] else "--",
-                )
+    msg1 += f"""
+        \t累積ポイント： {data['累積ポイント']:+.1f}
+        \t平均ポイント： {data['平均ポイント']:+.1f}
+        \t平均順位： {data['平均順位']:1.2f}
+        \t1位： {data['1位']:2} 回 ({data['1位率']:.2f}%)
+        \t2位： {data['2位']:2} 回 ({data['2位率']:.2f}%)
+        \t3位： {data['3位']:2} 回 ({data['3位率']:.2f}%)
+        \t4位： {data['4位']:2} 回 ({data['4位率']:.2f}%)
+        \tトビ： {data['トビ']:2} 回 ({data['トビ率']:.2f}%)
+        \t役満： {data['役満和了']:2} 回 ({data['役満和了率']:.2f}%)
+        \t{f.message.remarks(command_option)}
+    """.replace("-", "▲")
 
-        # --- 戦績
-        ret = query.select_game_results(argument, command_option)
-        rows = resultdb.execute(ret["sql"], ret["placeholder"])
-
-        # 結果保存
-        results = {}
-        for row in rows.fetchall():
-            results[row["playtime"]] = dict(row)
-
-        # パディング計算
-        name_list = []
-        timestamp = []
-        for i in results.keys():
-            timestamp.append(results[i]["ts"])
-            for p in ("p1", "p2", "p3", "p4"):
-                name_list.append(c.member.NameReplace(results[i][f"{p}_name"], command_option, add_mark = True))
-        padding = c.member.CountPadding(list(set(name_list)))
-
-        # --- 戦績表示
-        if command_option["game_results"]:
-            rows = resultdb.execute(
-                "select * from remarks where thread_ts between ? and ?", (min(timestamp), max(timestamp))
-            )
-            game_remarks = {}
-            for row in rows.fetchall():
-                if not row["name"] in game_remarks:
-                    game_remarks[row["name"]] = {}
-                if not row["thread_ts"] in game_remarks[row["name"]]:
-                    game_remarks[row["name"]][row["thread_ts"]] = []
-                game_remarks[row["name"]][row["thread_ts"]].append(row["matter"])
-
-            for i in results.keys():
-                if command_option["verbose"]:
-                    msg2["戦績"] += "{} {}\n".format(
-                        results[i]["playtime"].replace("-", "/"),
-                        "(2ゲスト戦)" if results[i]["guest_count"] >= 2 else "",
-                    )
-                    for n, p in [("東家", "p1"), ("南家", "p2"), ("西家", "p3"), ("北家", "p4")]:
-                        matter = ""
-                        name = results[i][f"{p}_name"]
-                        if name in game_remarks:
-                            if results[i]["ts"] in game_remarks[name]:
-                                matter = ",".join(game_remarks[name][results[i]["ts"]])
-                        pname = c.member.NameReplace(results[i][f"{p}_name"], command_option, add_mark = True)
-                        msg2["戦績"] += "\t{}： {}{} / {}位 {:>7}点 ({}pt) {}\n".format(
-                            n, pname, " " * (padding - f.common.len_count(pname)),
-                            results[i][f"{p}_rank"], results[i][f"{p}_rpoint"], results[i][f"{p}_point"], matter,
-                        ).replace("-", "▲")
-                else:
-                    matter = ""
-                    if target_player in game_remarks:
-                        if results[i]["ts"] in game_remarks[target_player]:
-                            matter = ",".join(game_remarks[target_player][results[i]["ts"]])
-                    seat = [results[i]["p1_name"], results[i]["p2_name"], results[i]["p3_name"], results[i]["p4_name"]].index(target_player) + 1
-                    msg2["戦績"] += "{}： {}位 {:>7}点 ({:>+5.1f}pt){} {}\n".format(
-                        results[i]["playtime"].replace("-", "/"),
-                        results[i][f"p{seat}_rank"],
-                        results[i][f"p{seat}_rpoint"],
-                        results[i][f"p{seat}_point"],
-                        g.guest_mark if results[i]["guest_count"] >= 2 else "",
-                        matter,
-                ).replace("-", "▲")
-        else:
-            msg2.pop("戦績")
-
-        # --- 対戦結果
-        if command_option["versus_matrix"]:
-            results, _ = query.select_versus_matrix(argument, command_option, cur)
-
-            msg2["対戦"] += "\n```\n"
-            for row in results:
-                pname = c.member.NameReplace(row["vs_name"], command_option, add_mark = True)
-                msg2["対戦"] += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>6.2f}%)\n".format(
-                    pname, " " * (padding - f.common.len_count(pname)),
-                    row["game"], row["win"], row["lose"], row["win%"]
-                )
-            msg2["対戦"] += "```"
-        else:
-            msg2.pop("対戦")
+    # --- 座席データ
+    msg2["座席"] = textwrap.dedent(f"""
+        *【座席データ】*
+        \t# 席：順位分布(平順) / トビ / 役満 #
+        \t東家： {data['東家-1位']}-{data['東家-2位']}-{data['東家-3位']}-{data['東家-4位']} ({data['東家-平均順位']:1.2f}) / {data['東家-トビ']} / {data['東家-役満和了']}
+        \t南家： {data['南家-1位']}-{data['南家-2位']}-{data['南家-3位']}-{data['南家-4位']} ({data['南家-平均順位']:1.2f}) / {data['南家-トビ']} / {data['南家-役満和了']}
+        \t西家： {data['西家-1位']}-{data['西家-2位']}-{data['西家-3位']}-{data['西家-4位']} ({data['西家-平均順位']:1.2f}) / {data['西家-トビ']} / {data['西家-役満和了']}
+        \t北家： {data['北家-1位']}-{data['北家-2位']}-{data['北家-3位']}-{data['北家-4位']} ({data['北家-平均順位']:1.2f}) / {data['北家-トビ']} / {data['北家-役満和了']}
+    """)
 
     # --- 記録
-    gamedata = d.aggregate.personal_record(argument, command_option)
-    if target_player in gamedata["プレイヤー名"].unique():
-        x = gamedata.query("プレイヤー名 == @target_player")
-        msg2["記録"] = "*【ベストレコード】*\n"
-        msg2["記録"] += "\t連続トップ： {} 連続\n".format(x["連続トップ"].to_string(index = False)).replace("： 1 連続", "： ----")
-        msg2["記録"] += "\t連続連対： {} 連続\n".format(x["連続連対"].to_string(index = False)).replace("： 1 連続", "： ----")
-        msg2["記録"] += "\t連続ラス回避： {} 連続\n".format(x["連続ラス回避"].to_string(index = False)).replace("： 1 連続", "： ----")
-        msg2["記録"] += "\t最大素点： {} 点\n".format((x["最大素点"] * 100).to_string(index = False)).replace("-", "▲")
-        msg2["記録"] += "\t最大獲得ポイント： {} pt\n".format(x["最大獲得ポイント"].to_string(index = False)).replace("-", "▲")
-        msg2["記録"] += "\n*【ワーストレコード】*\n"
-        msg2["記録"] += "\t連続ラス： {} 連続\n".format(x["連続ラス"].to_string(index = False)).replace("： 1 連続", "： ----")
-        msg2["記録"] += "\t連続逆連対： {} 連続\n".format(x["連続逆連対"].to_string(index = False)).replace("： 1 連続", "： ----")
-        msg2["記録"] += "\t連続トップなし： {} 連続\n".format(x["連続トップなし"].to_string(index = False)).replace("： 1 連続", "： ----")
-        msg2["記録"] += "\t最小素点： {} 点\n".format((x["最小素点"] * 100).to_string(index = False)).replace("-", "▲")
-        msg2["記録"] += "\t最小獲得ポイント： {} pt\n".format(x["最小獲得ポイント"].to_string(index = False)).replace("-", "▲")
+    msg2["記録"] = textwrap.dedent(f"""
+        *【ベストレコード】*
+        \t連続トップ： {data['連続トップ']} 連続
+        \t連続連対： {data['連続連対']} 連続
+        \t連続ラス回避： {data['連続ラス回避']} 連続
+        \t最大素点： {data['最大素点'] * 100} 点
+        \t最大獲得ポイント： {data['最大獲得ポイント']} pt
 
-    resultdb.close()
-    return(msg1.strip(), msg2)
+        *【ワーストレコード】*
+        \t連続ラス： {data['連続ラス']} 連続
+        \t連続逆連対： {data['連続逆連対']} 連続
+        \t連続トップなし： {data['連続トップなし']} 連続
+        \t最小素点： {data['最小素点'] * 100} 点
+        \t最小獲得ポイント： {data['最小獲得ポイント']} pt
+    """).replace("： 1 連続", "： ----")
+
+    # --- 戦績
+    if command_option["game_results"]:
+        df = d.aggregate.game_details(argument, command_option)
+        df = df.fillna(value = "")
+
+        if command_option["verbose"]:
+            msg2["戦績"] = f"*【戦績】*\n"
+            for p in df["playtime"].unique():
+                seat1 = df.query("playtime == @p and seat == 1").to_dict(orient = "records")[0]
+                seat2 = df.query("playtime == @p and seat == 2").to_dict(orient = "records")[0]
+                seat3 = df.query("playtime == @p and seat == 3").to_dict(orient = "records")[0]
+                seat4 = df.query("playtime == @p and seat == 4").to_dict(orient = "records")[0]
+                guest_count = df.query("playtime == @p and guest == 1").sum()["guest"]
+                msg2["戦績"] += textwrap.dedent(f"""
+                    {p.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
+                    \t東家： {seat1["表示名"]} {seat1["rank"]}位 {seat1["rpoint"] * 100:>7}点 ({seat1["point"]:>+5.1f}pt) {seat1["grandslam"]}
+                    \t南家： {seat2["表示名"]} {seat2["rank"]}位 {seat2["rpoint"] * 100:>7}点 ({seat2["point"]:>+5.1f}pt) {seat2["grandslam"]}
+                    \t西家： {seat3["表示名"]} {seat3["rank"]}位 {seat3["rpoint"] * 100:>7}点 ({seat3["point"]:>+5.1f}pt) {seat3["grandslam"]}
+                    \t北家： {seat4["表示名"]} {seat4["rank"]}位 {seat4["rpoint"] * 100:>7}点 ({seat4["point"]:>+5.1f}pt) {seat4["grandslam"]}
+                """).replace("-", "▲").strip() + "\n"
+        else:
+            msg2["戦績"] = f"*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
+            x = df.query("プレイヤー名 == @data['プレイヤー名']")
+            for _, v in x.iterrows():
+                guest_count = df.query("playtime == @v['playtime'] and guest == 1").sum()["guest"]
+                msg2["戦績"] += "{} {}\t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
+                    v["playtime"].replace("-", "/"),
+                    g.guest_mark.strip() if guest_count >= 2 else "",
+                    v["rank"], v["rpoint"] * 100, v["point"], v["grandslam"],
+                ).replace("-", "▲")
+
+
+
+    # --- 対戦結果
+    if command_option["versus_matrix"]:
+        msg2["対戦"] = "*【対戦結果】*\n"
+        resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+        resultdb.row_factory = sqlite3.Row
+        results, _ = query.select_versus_matrix(argument, command_option, cur)
+
+        msg2["対戦"] += "\n```\n"
+        for row in results:
+            pname = c.member.NameReplace(row["vs_name"], command_option, add_mark = True)
+            msg2["対戦"] += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>6.2f}%)\n".format(
+                pname, " " * (padding - f.common.len_count(pname)),
+                row["game"], row["win"], row["lose"], row["win%"]
+            )
+        resultdb.close()
+        msg2["対戦"] += "```"
+
+
+    return(textwrap.dedent(msg1), msg2)
