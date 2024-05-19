@@ -146,7 +146,7 @@ def plot(argument, command_option):
             tb[i, j].set_text_props(ha = "center")
 
     # 追加テキスト
-    remark_text =  f.message.remarks(command_option).replace("\t", "")
+    remark_text = f.message.remarks(command_option).replace("\t", "")
     add_text = "[検索範囲：{} - {}] {} {}".format(
         params["starttime"].strftime('%Y/%m/%d %H:%M'),
         params["endtime"].strftime('%Y/%m/%d %H:%M'),

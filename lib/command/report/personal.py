@@ -175,7 +175,7 @@ def plot(argument, command_option):
         tb[i, 0].set_text_props(ha = "center")
 
     # 追加テキスト
-    remark_text =  f.message.remarks(command_option).replace("\t", "")
+    remark_text = f.message.remarks(command_option).replace("\t", "")
     add_text = "[集計範囲：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
         min(playtime).replace("-", "/"),
         max(playtime).replace("-", "/"),
