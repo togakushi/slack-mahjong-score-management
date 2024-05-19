@@ -68,7 +68,7 @@ def aggregation(argument, command_option):
 
     result_df = d.aggregate.personal_results(argument, command_option)
     record_df = d.aggregate.personal_record(argument, command_option)
-    result_df = pd.merge(result_df, record_df, on = "プレイヤー名")
+    result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"])
 
     # --- 集計
     result_df["ゲーム参加率"] = result_df["ゲーム数"] / total_game_count
@@ -146,9 +146,8 @@ def aggregation(argument, command_option):
     msg1 = "\n*【ランキング】*\n"
     msg1 += f"\t集計範囲：{first_game} ～ {last_game}\n".replace("-", "/")
     msg1 += f"\t集計ゲーム数：{total_game_count}\t(規定数：{command_option['stipulated']} 以上)\n"
-    msg1 += f.message.remarks(command_option)
+    msg1 += "\t" + f.message.remarks(command_option)
     msg2 = {}
-    padding = c.member.CountPadding(list(result_df["プレイヤー名"].unique()))
 
     for k in data.keys():
         msg2[k] = f"\n*{k}*\n"
@@ -156,9 +155,8 @@ def aggregation(argument, command_option):
         tmp_df = tmp_df.query(f"{k}_rank <= @command_option['ranked'] and {k} >= @data['{k}']['threshold']")
 
         for _, s in tmp_df.drop_duplicates(subset = "プレイヤー名").iterrows():
-            msg2[k] += ("\t{:3d}： {}{} \t" + data[k]["str"] + "\n").format(
-                int(s[f"{k}_rank"]), s["プレイヤー名"],
-                " " * (padding - f.common.len_count(s["プレイヤー名"])),
+            msg2[k] += ("\t{:3d}： {}\t" + data[k]["str"] + "\n").format(
+                int(s[f"{k}_rank"]), s["表示名"],
                 *[s[x] for x in data[k]["params"]]
             ).replace("-", "▲")
 

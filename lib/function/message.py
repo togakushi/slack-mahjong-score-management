@@ -148,6 +148,6 @@ def remarks(command_option):
     if not command_option["unregistered_replace"]:
         remark.append("ゲスト置換なし("+ g.guest_mark + "：未登録プレイヤー)")
     if remark:
-        ret = f"\t特記：" + "、".join(remark)
+        ret = f"特記：" + "、".join(remark)
 
     return(ret)

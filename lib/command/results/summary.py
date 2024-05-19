@@ -57,28 +57,26 @@ def aggregation(argument, command_option):
         msg2 += " / トバされた人（延べ）： {} 人\n".format(
             summary_data["flying"].sum(),
         )
-    msg2 += f.message.remarks(command_option)
+    msg2 += "\t" + f.message.remarks(command_option)
 
     # --- 集計結果
     msg3 = ""
-    padding = c.member.CountPadding(list(summary_data["name"].unique()))
+    padding = c.member.CountPadding(list(summary_data["表示名"].unique()))
     if command_option["score_comparisons"]: # 差分表示
         msg1 = "## {} {}： 累積    / 点差 ##\n".format(
             "名前", " " * (padding - f.common.len_count("名前") - 4),
         )
         for _, row in summary_data.iterrows():
-            msg1 += "{} {}： {:>+6.1f} / {:>5.1f}\n".format(
-                row["name"], " " * (padding - f.common.len_count(row["name"])),
-                row["pt_total"], row["pt_diff"],
-            ).replace("-", "▲").replace("nan", "****")
+            msg1 += "{}： {:>+6.1f} / {:>5.1f}\n".format(
+                row["表示名"], row["pt_total"], row["pt_diff"],
+            ).replace("-", "▲")
     else: # 通常表示
         if g.config["mahjong"].getboolean("ignore_flying", False): # トビカウントなし
             msg1 = "# {} {} :  累積   (平均)  / 順位分布 (平均) #\n".format(
                 "名前", " " * (padding - f.common.len_count("名前") - 3))
             for _, row in summary_data.iterrows():
-                msg1 += "{} {}： {:>+6.1f} ({:>+5.1f}) / {}*{}*{}*{} ({:1.2f})\n".format(
-                    row["name"], " " * (padding - f.common.len_count(row["name"])),
-                    row["pt_total"], row["pt_avg"],
+                msg1 += "{}： {:>+6.1f} ({:>+5.1f}) / {}*{}*{}*{} ({:1.2f})\n".format(
+                    row["表示名"], row["pt_total"], row["pt_avg"],
                     row["1st"], row["2nd"], row["3rd"], row["4th"],
                     row["rank_avg"],
                 ).replace("-", "▲").replace("*", "-")
@@ -86,9 +84,8 @@ def aggregation(argument, command_option):
             msg1 = "# {} {} :  累積   (平均)  / 順位分布 (平均) / トビ #\n".format(
                 "名前", " " * (padding - f.common.len_count("名前") - 3))
             for index, row in summary_data.iterrows():
-                msg1 += "{} {}： {:>+6.1f} ({:>+5.1f}) / {}*{}*{}*{} ({:1.2f}) / {}\n".format(
-                    row["name"], " " * (padding - f.common.len_count(row["name"])),
-                    row["pt_total"], row["pt_avg"],
+                msg1 += "{}： {:>+6.1f} ({:>+5.1f}) / {}*{}*{}*{} ({:1.2f}) / {}\n".format(
+                    row["表示名"], row["pt_total"], row["pt_avg"],
                     row["1st"], row["2nd"], row["3rd"], row["4th"],
                     row["rank_avg"], row["flying"],
                 ).replace("-", "▲").replace("*", "-")

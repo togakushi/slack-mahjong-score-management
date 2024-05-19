@@ -57,7 +57,7 @@ def aggregation(argument, command_option):
         starttime.strftime("%Y/%m/%d %H:%M"),
         endtime.strftime("%Y/%m/%d %H:%M"),
     )
-    msg1 += f.message.remarks(command_option)
+    msg1 += "\t" + f.message.remarks(command_option)
 
     if len(vs_list) == 0:
         msg2[""] = "対戦相手が見つかりませんでした。\n"
