@@ -100,8 +100,6 @@ def aggregation(argument, command_option):
     # --- 戦績
     if command_option["game_results"]:
         df = d.aggregate.game_details(argument, command_option)
-        df = df.fillna(value = "")
-
         if command_option["verbose"]:
             msg2["戦績"] = f"*【戦績】*\n"
             for p in df["playtime"].unique():
