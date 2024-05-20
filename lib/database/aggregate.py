@@ -250,3 +250,17 @@ def personal_results(argument, command_option):
     df.index = df.index + 1
 
     return(df)
+
+def versus_matrix(argument, command_option):
+    # データ収集
+    df = pd.read_sql(
+        d.generate.versus_matrix(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = d.common.placeholder_params(argument, command_option)
+    )
+
+    # ゲスト置換
+    df["my_表示名"] = _disp_name(df["my_name"], command_option)
+    df["vs_表示名"] = _disp_name(df["vs_name"], command_option)
+
+    return(df)

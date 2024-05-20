@@ -339,3 +339,81 @@ def game_details(argument, command_option):
 
     g.logging.trace(f"sql: {sql}") # type: ignore
     return(sql)
+
+
+def versus_matrix(argument, command_option):
+    """
+    直接対戦結果を集計するSQLを生成
+    """
+
+    prams = d.common.placeholder_params(argument, command_option)
+    sql = """
+        select
+            my_name, vs_name,
+            count() as game,
+            count(my_rank < vs_rank or null) as win,
+            count(my_rank > vs_rank or null) as lose,
+            round(cast(count(my_rank < vs_rank or null) AS real) / count() * 100, 2) as 'win%',
+            round(sum(my_point),1 ) as my_point_sum,
+            round(avg(my_point),1 ) as my_point_avg,
+            round(sum(vs_point), 1) as vs_point_sum,
+            round(avg(vs_point), 1) as vs_point_avg,
+            round(avg(my_rpoint), 1) as my_rpoint_avg,
+            round(avg(vs_rpoint), 1) as vs_rpoint_avg,
+            count(my_rank = 1 or null) as my_1st,
+            count(my_rank = 2 or null) as my_2nd,
+            count(my_rank = 3 or null) as my_3rd,
+            count(my_rank = 4 or null) as my_4th,
+            round(avg(my_rank), 2) as my_rank_avg,
+            count(vs_rank = 1 or null) as vs_1st,
+            count(vs_rank = 2 or null) as vs_2nd,
+            count(vs_rank = 3 or null) as vs_3rd,
+            count(vs_rank = 4 or null) as vs_4th,
+            round(avg(vs_rank), 2) as vs_rank_avg
+        from (
+            select
+                my.name as my_name,
+                my.rank as my_rank,
+                my.rpoint as my_rpoint,
+                my.point as my_point,
+                --[unregistered_replace] case when vs.guest = 0 then vs.name else :guest_name end as vs_name, -- ゲスト有効
+                --[unregistered_not_replace] vs.name as vs_name, -- ゲスト無効
+                vs.rank as vs_rank,
+                vs.rpoint as vs_rpoint,
+                vs.point as vs_point
+            from
+                individual_results my
+            inner join
+                individual_results vs
+                    on (my.playtime = vs.playtime and my.name != vs.name)
+            where
+                my.rule_version = :rule_version
+                and my.playtime between :starttime and :endtime
+                and my.name = :player_name
+                --[guest_not_skip] and vs.playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
+                --[guest_skip] and vs.guest = 0 -- ゲストなし
+            order by
+                my.playtime desc
+            --[recent] limit :target_count
+        )
+        group by
+            my_name, vs_name
+        order by
+            game desc
+    """
+
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    if prams["target_count"] != 0:
+        sql = sql.replace("and my.playtime between", "-- and my.playtime between")
+        sql = sql.replace("--[recent] ", "")
+
+
+    return(sql)
