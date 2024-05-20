@@ -27,14 +27,20 @@ def placeholder_params(argument, command_option):
         for name in list(set(target_player)):
             player_list[f"player_{count}"] = name
             count += 1
+
+        # 複数指定
         if len(target_player) >= 1:
             count = 0
             if command_option["all_player"]: # 全員対象
                 tmp_list = list(set(g.member_list))
             else:
-                tmp_list = list(set(target_player[1:]))
-            for name in tmp_list:
-                if name != player_name: # 集計対象者の名前はリストに含めない
+                tmp_list = target_player[1:]
+
+            tmp_list2 = []
+            for name in tmp_list: # 名前ブレ修正
+                tmp_list2.append(c.member.NameReplace(name, command_option, add_mark = False))
+            for name in list(set(tmp_list2)): # 集計対象者の名前はリストに含めない
+                if name != player_name:
                     competition_list[f"competition_{count}"] = name
                     count += 1
 
