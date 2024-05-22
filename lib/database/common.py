@@ -57,8 +57,6 @@ def placeholder_params(argument, command_option):
         "origin_point": g.config["mahjong"].getint("point", 250), # 配給原点
         "return_point": g.config["mahjong"].getint("return", 300), # 返し点
     }
-    params.update(params["player_list"])
-    params.update(params["competition_list"])
 
     g.logging.trace(f"params: {params}") # type: ignore
     return(params)

@@ -46,6 +46,19 @@ def _disp_name(df, command_option, adjust = 0):
     return(df.replace(player_list, replace_list))
 
 
+def _extending(params = {}):
+    """
+    入れ子になった辞書の展開
+    """
+
+    for k in list(params.keys()):
+        if type(params[k]) == dict:
+            tmp_dict = params.pop(k)
+            params.update(tmp_dict)
+
+    return(params)
+
+
 def game_count(argument, command_option):
     """
     指定条件を満たすゲーム数をカウントする
@@ -69,7 +82,7 @@ def game_count(argument, command_option):
     df = pd.read_sql(
         d.generate.game_count(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = d.common.placeholder_params(argument, command_option)
+        params = _extending(d.common.placeholder_params(argument, command_option))
     )
 
     count = int(df["count"].to_string(index = False))
@@ -105,7 +118,7 @@ def game_summary(argument, command_option):
     df = pd.read_sql(
         d.generate.game_results(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = d.common.placeholder_params(argument, command_option)
+        params = _extending(d.common.placeholder_params(argument, command_option))
     )
 
     # 点数差分
@@ -141,7 +154,7 @@ def game_details(argument, command_option):
     df = pd.read_sql(
         d.generate.game_details(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = d.common.placeholder_params(argument, command_option),
+        params = _extending(d.common.placeholder_params(argument, command_option))
     )
 
     # ゲスト置換
@@ -171,7 +184,7 @@ def personal_record(argument, command_option):
     gamedata = pd.read_sql(
         d.generate.record_count(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = d.common.placeholder_params(argument, command_option)
+        params = _extending(d.common.placeholder_params(argument, command_option))
     )
 
     # 連続順位カウント
@@ -239,7 +252,7 @@ def personal_results(argument, command_option):
     df = pd.read_sql(
         d.generate.personal_results(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = d.common.placeholder_params(argument, command_option)
+        params = _extending(d.common.placeholder_params(argument, command_option))
     )
 
     # ゲスト置換
@@ -251,12 +264,13 @@ def personal_results(argument, command_option):
 
     return(df)
 
+
 def versus_matrix(argument, command_option):
     # データ収集
     df = pd.read_sql(
         d.generate.versus_matrix(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = d.common.placeholder_params(argument, command_option)
+        params = _extending(d.common.placeholder_params(argument, command_option))
     )
 
     # ゲスト置換

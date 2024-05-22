@@ -33,7 +33,7 @@ def game_count(argument, command_option):
 
     if params["player_name"]:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in params["player_list"].keys()]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")
@@ -79,7 +79,7 @@ def record_count(argument, command_option):
 
     if params["player_name"]:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in params["player_list"].keys()]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")
@@ -141,7 +141,7 @@ def game_results(argument, command_option):
 
     if params["player_name"]:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in params["player_list"].keys()]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")
@@ -262,7 +262,7 @@ def personal_results(argument, command_option):
 
     if params["player_name"]:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in params["player_list"].keys()]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
 
     if command_option["unregistered_replace"]:
         sql = sql.replace("--[unregistered_replace] ", "")
