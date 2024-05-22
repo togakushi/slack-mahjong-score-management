@@ -88,7 +88,7 @@ def aggregation(argument, command_option):
                 my_playtime = my_score["playtime"].to_list()
                 vs_playtime = vs_score["playtime"].to_list()
 
-                for playtime in set(my_playtime + vs_playtime):
+                for playtime in sorted(set(my_playtime + vs_playtime)):
                     if playtime in my_playtime and playtime in vs_playtime:
                         current_game = df_game.query("playtime == @playtime")
                         guest_count = current_game["guest"].sum()
@@ -97,7 +97,7 @@ def aggregation(argument, command_option):
                             s2 = current_game.query("seat == 2").to_dict(orient = "records")[0]
                             s3 = current_game.query("seat == 3").to_dict(orient = "records")[0]
                             s4 = current_game.query("seat == 4").to_dict(orient = "records")[0]
-                            msg2[vs_name][playtime] = textwrap.dedent(f"""
+                            msg2[vs_name][count] = textwrap.dedent(f"""
                                 {"*【戦績】*" if count == 0 else ""}
                                 {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
                                 \t東家：{s1["表示名"]} {s1["rank"]}位 {s1["rpoint"] * 100:>7} 点 ({s1["point"]:>+5.1f}pt) {s1["grandslam"]}
@@ -108,7 +108,7 @@ def aggregation(argument, command_option):
                         else: # 簡易表示
                             a1 = my_score.query("playtime == @playtime").to_dict(orient = "records")[0]
                             a2 = vs_score.query("playtime == @playtime").to_dict(orient = "records")[0]
-                            msg2[vs_name][playtime] = textwrap.dedent(f"""
+                            msg2[vs_name][count] = textwrap.dedent(f"""
                                 {"*【戦績】*" if count == 0 else ""}
                                 {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
                                 \t{a1["表示名"]}： {a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}
