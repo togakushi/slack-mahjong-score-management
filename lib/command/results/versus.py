@@ -114,7 +114,7 @@ def aggregation(argument, command_option):
                                 \t{a1["表示名"]}： {a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}
                                 \t{a2["表示名"]}： {a2["rank"]}位 {a2["rpoint"] * 100:>7} 点 ({a2["point"]:>+5.1f}pt) {a2["grandslam"]}
                             """).replace("-", "▲").strip() + " \n"
-                        count =+ 1
+                        count += 1
         else: # 対戦記録なし
             msg2[vs_name]["info"] = "【{} vs {}】\n\t対戦相手が見つかりません。\n".format(
                 c.member.NameReplace(my_name, command_option, add_mark = True),
