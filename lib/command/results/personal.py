@@ -1,12 +1,9 @@
-import sqlite3
 import textwrap
 
 import pandas as pd
 
-import lib.command as c
 import lib.function as f
 import lib.database as d
-import lib.command.results._query as query
 from lib.function import global_value as g
 
 
@@ -95,7 +92,7 @@ def aggregation(argument, command_option):
         \t連続トップなし： {data['連続トップなし']} 連続
         \t最小素点： {data['最小素点'] * 100} 点
         \t最小獲得ポイント： {data['最小獲得ポイント']} pt
-    """).replace("： 1 連続", "： ----")
+    """).replace("-", "▲").replace("： 1 連続", "： ----")
 
     # --- 戦績
     if command_option["game_results"]:
@@ -126,24 +123,12 @@ def aggregation(argument, command_option):
                     v["rank"], v["rpoint"] * 100, v["point"], v["grandslam"],
                 ).replace("-", "▲")
 
-
-
     # --- 対戦結果
+    print(command_option)
     if command_option["versus_matrix"]:
-        msg2["対戦"] = "*【対戦結果】*\n"
-        resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-        resultdb.row_factory = sqlite3.Row
-        results, _ = query.select_versus_matrix(argument, command_option, cur)
-
-        msg2["対戦"] += "\n```\n"
-        for row in results:
-            pname = c.member.NameReplace(row["vs_name"], command_option, add_mark = True)
-            msg2["対戦"] += "{}{}：{:3}戦{:3}勝{:3}敗 ({:>6.2f}%)\n".format(
-                pname, " " * (padding - f.common.len_count(pname)),
-                row["game"], row["win"], row["lose"], row["win%"]
-            )
-        resultdb.close()
-        msg2["対戦"] += "```"
-
+        df = d.aggregate.versus_matrix(argument, command_option)
+        msg2["対戦"] = "\n*【対戦結果】*\n"
+        for _, r in df.iterrows():
+            msg2["対戦"] += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:.2f}%)\n"
 
     return(textwrap.dedent(msg1), msg2)

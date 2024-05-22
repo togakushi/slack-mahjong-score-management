@@ -39,8 +39,8 @@ def main(client, channel, argument):
     if len(target_player) == 1 and not versus_mode: # 個人成績
         msg1, msg2 = personal.aggregation(argument, command_option)
         res = f.slack_api.post_message(client, channel, msg1)
-        for m in msg2.keys():
-            f.slack_api.post_message(client, channel, msg2[m] + "\n", res["ts"])
+        if msg2:
+            f.slack_api.post_multi_message(client, channel, msg2, res["ts"])
     elif versus_mode: # 直接対戦
         msg1, msg2 = versus.aggregation(argument, command_option)
         res = f.slack_api.post_message(client, channel, msg1)
