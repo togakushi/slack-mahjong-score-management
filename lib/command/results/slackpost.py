@@ -44,8 +44,13 @@ def main(client, channel, argument):
     elif versus_mode: # 直接対戦
         msg1, msg2 = versus.aggregation(argument, command_option)
         res = f.slack_api.post_message(client, channel, msg1)
+        new_dict = {}
         for m in msg2.keys():
-            f.slack_api.post_message(client, channel, msg2[m] + "\n", res["ts"])
+            new_dict[f"{m}_info"] = msg2[m].pop("info")
+            for x in sorted(msg2[m].keys()):
+                new_dict[f"{m}_{x}"] = msg2[m][x]
+            new_dict[f"{m}_separate"] = "\n\n"
+        f.slack_api.post_multi_message(client, channel, new_dict, res["ts"])
     else: # 成績サマリ
         msg1, msg2, msg3 = summary.aggregation(argument, command_option)
         res = f.slack_api.post_message(client, channel, msg2)
