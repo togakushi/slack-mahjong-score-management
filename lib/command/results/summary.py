@@ -32,7 +32,7 @@ def aggregation(argument, command_option):
     """
 
     ### データ収集 ###
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     total_game_count, first_game, last_game = d.aggregate.game_count(argument, command_option)
     summary_data = d.aggregate.game_summary(argument, command_option)
 

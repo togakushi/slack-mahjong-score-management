@@ -82,7 +82,7 @@ def game_count(argument, command_option):
     df = pd.read_sql(
         d.generate.game_count(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = _extending(d.common.placeholder_params(argument, command_option))
+        params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
     count = int(df["count"].to_string(index = False))
@@ -118,7 +118,7 @@ def game_summary(argument, command_option):
     df = pd.read_sql(
         d.generate.game_results(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = _extending(d.common.placeholder_params(argument, command_option))
+        params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
     # 点数差分
@@ -154,7 +154,7 @@ def game_details(argument, command_option):
     df = pd.read_sql(
         d.generate.game_details(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = _extending(d.common.placeholder_params(argument, command_option))
+        params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
     # ゲスト置換
@@ -184,7 +184,7 @@ def personal_record(argument, command_option):
     gamedata = pd.read_sql(
         d.generate.record_count(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = _extending(d.common.placeholder_params(argument, command_option))
+        params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
     # 連続順位カウント
@@ -252,7 +252,7 @@ def personal_results(argument, command_option):
     df = pd.read_sql(
         d.generate.personal_results(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = _extending(d.common.placeholder_params(argument, command_option))
+        params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
     # ゲスト置換
@@ -270,7 +270,7 @@ def versus_matrix(argument, command_option):
     df = pd.read_sql(
         d.generate.versus_matrix(argument, command_option),
         sqlite3.connect(g.database_file),
-        params = _extending(d.common.placeholder_params(argument, command_option))
+        params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
     # ゲスト置換

@@ -1,4 +1,4 @@
-import lib.database as d
+import lib.function as f
 from lib.function import global_value as g
 
 
@@ -7,7 +7,7 @@ def game_count(argument, command_option):
     ゲーム数をカウントするSQLを返す
     """
 
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             count() as count,
@@ -57,7 +57,7 @@ def record_count(argument, command_option):
     連測連対などの記録をカウントするSQLを生成
     """
 
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             playtime,
@@ -101,7 +101,7 @@ def game_results(argument, command_option):
     """
     ゲーム結果を集計するSQLを生成
     """
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             name,
@@ -165,7 +165,7 @@ def personal_results(argument, command_option):
     個人成績を集計するSQLを生成
     """
 
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             name as プレイヤー名,
@@ -181,6 +181,12 @@ def personal_results(argument, command_option):
             round(cast(count(rank = 3 or null) as real) / count() * 100, 2) as '3位率',
             count(rank = 4 or null) as '4位',
             round(cast(count(rank = 4 or null) as real) / count() * 100, 2) as '4位率',
+            printf("%d-%d-%d-%d",
+                count(rank = 1 or null),
+                count(rank = 2 or null),
+                count(rank = 3 or null),
+                count(rank = 4 or null)
+            ) as 順位分布,
             round(avg(rpoint) * 100, 1) as 平均最終素点,
             round(sum(point), 1) as 累積ポイント,
             round(avg(point), 1) as 平均ポイント,
@@ -286,7 +292,7 @@ def game_details(argument, command_option):
     ゲーム結果の詳細を返すSQLを生成
     """
 
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select * from (
             select
@@ -346,7 +352,7 @@ def versus_matrix(argument, command_option):
     直接対戦結果を集計するSQLを生成
     """
 
-    prams = d.common.placeholder_params(argument, command_option)
+    prams = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             my_name, vs_name,
@@ -365,11 +371,23 @@ def versus_matrix(argument, command_option):
             count(my_rank = 3 or null) as my_3rd,
             count(my_rank = 4 or null) as my_4th,
             round(avg(my_rank), 2) as my_rank_avg,
+            printf("%d-%d-%d-%d",
+                count(my_rank = 1 or null),
+                count(my_rank = 2 or null),
+                count(my_rank = 3 or null),
+                count(my_rank = 4 or null)
+            ) as my_rank_distr,
             count(vs_rank = 1 or null) as vs_1st,
             count(vs_rank = 2 or null) as vs_2nd,
             count(vs_rank = 3 or null) as vs_3rd,
             count(vs_rank = 4 or null) as vs_4th,
-            round(avg(vs_rank), 2) as vs_rank_avg
+            round(avg(vs_rank), 2) as vs_rank_avg,
+            printf("%d-%d-%d-%d",
+                count(vs_rank = 1 or null),
+                count(vs_rank = 2 or null),
+                count(vs_rank = 3 or null),
+                count(vs_rank = 4 or null)
+            ) as vs_rank_distr
         from (
             select
                 my.name as my_name,

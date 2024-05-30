@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 
 import lib.function as f
 import lib.command as c
-import lib.database as d
 from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")
@@ -81,7 +80,7 @@ def plot(argument, command_option):
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
     # --- データ取得
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     rows = resultdb.execute(sql, params)
     results = {}
     for row in rows.fetchall():

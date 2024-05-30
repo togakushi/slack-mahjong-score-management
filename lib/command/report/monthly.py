@@ -4,8 +4,7 @@ import sqlite3
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
-import lib.database as d
-import lib.command.report._query as query
+import lib.function as f
 from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")
@@ -37,7 +36,7 @@ def plot(argument, command_option):
     """
 
     # --- データ収集
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     rows = resultdb.execute(sql, params)
     results = {}
     for row in rows.fetchall():

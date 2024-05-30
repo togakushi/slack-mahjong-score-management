@@ -22,7 +22,7 @@ def plot(argument, command_option):
     resultdb.row_factory = sqlite3.Row
     cur = resultdb.cursor()
 
-    params = d.common.placeholder_params(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             name as プレイヤー,

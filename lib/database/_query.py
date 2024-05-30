@@ -1,5 +1,5 @@
 import lib.command as c
-import lib.database as d
+import lib.function as f
 from lib.function import global_value as g
 
 
@@ -71,7 +71,7 @@ def query_get_personal_data(argument, command_option, cur):
         成績情報
     """
 
-    prams = d.common.placeholder_params(argument, command_option)
+    prams = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             name as プレイヤー,
