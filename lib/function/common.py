@@ -32,7 +32,7 @@ def scope_coverage(target_days):
         startday = datetime.fromisoformat(f"{startday[0:4]}-{startday[4:6]}-{startday[6:8]}")
         endday = datetime.fromisoformat(f"{endday[0:4]}-{endday[4:6]}-{endday[6:8]}") + relativedelta(days = 1)
     except:
-        return(False, False)
+        return(datetime.now(), datetime.now())
 
     return(
         startday.replace(hour = 12, minute = 0, second = 0, microsecond = 0), # starttime
@@ -75,104 +75,84 @@ def argument_analysis(argument, command_option = {}):
     current_time = datetime.now()
     appointed_time = current_time + relativedelta(hours = -12)
     for keyword in argument:
-        # 日付取得
-        if re.match(r"^([0-9]{8}|[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}/[0-9]{2}/[0-9]{2})$", keyword):
-            try:
-                trystr = re.sub("[/-]", "", keyword)
-                trytime = datetime.fromisoformat(f"{trystr[0:4]}-{trystr[4:6]}-{trystr[6:8]}")
-                target_days.append(trytime.strftime("%Y%m%d"))
-                continue
-            except: # 日付変換できない数値は無視
-                continue
-        if keyword == "当日":
-            target_days.append(appointed_time.strftime("%Y%m%d"))
-            continue
-        if keyword == "今日":
-            target_days.append(current_time.strftime("%Y%m%d"))
-            continue
-        if keyword == "昨日":
-            target_days.append((current_time + relativedelta(days = -1)).strftime("%Y%m%d"))
-            continue
-        if keyword == "今月":
-            target_days.append((appointed_time + relativedelta(day = 1, months = 0)).strftime("%Y%m%d"))
-            target_days.append((appointed_time + relativedelta(day = 1, months = 1, days = -1,)).strftime("%Y%m%d"))
-            continue
-        if keyword == "先月":
-            target_days.append((appointed_time + relativedelta(day = 1, months = -1)).strftime("%Y%m%d"))
-            target_days.append((appointed_time + relativedelta(day = 1, months = 0, days = -1,)).strftime("%Y%m%d"))
-            continue
-        if keyword == "先々月":
-            target_days.append((appointed_time + relativedelta(day = 1, months = -2)).strftime("%Y%m%d"))
-            target_days.append((appointed_time + relativedelta(day = 1, months = -1, days = -1,)).strftime("%Y%m%d"))
-            continue
-        if keyword == "今年":
-            target_days.append((current_time + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
-            target_days.append((current_time + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
-            continue
-        if keyword in ("去年", "昨年"):
-            target_days.append((current_time + relativedelta(day = 1, month = 1, years = -1)).strftime("%Y%m%d"))
-            target_days.append((current_time + relativedelta(day = 31, month = 12, years = -1)).strftime("%Y%m%d"))
-            continue
-        if keyword == "一昨年":
-            target_days.append((current_time + relativedelta(day = 1, month = 1, years = -2)).strftime("%Y%m%d"))
-            target_days.append((current_time + relativedelta(day = 31, month = 12, years = -2)).strftime("%Y%m%d"))
-            continue
-        if keyword == "最後":
-            target_days.append((current_time + relativedelta(days = 1)).strftime("%Y%m%d"))
-            continue
-        if keyword == "全部":
-            target_days.append("20200101")
-            target_days.append((current_time + relativedelta(days = 1)).strftime("%Y%m%d"))
-            continue
+        match keyword:
+            # 日付取得
+            case keyword if re.match(r"^([0-9]{8}|[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}/[0-9]{2}/[0-9]{2})$", keyword):
+                try:
+                    trystr = re.sub("[/-]", "", keyword)
+                    trytime = datetime.fromisoformat(f"{trystr[0:4]}-{trystr[4:6]}-{trystr[6:8]}")
+                    target_days.append(trytime.strftime("%Y%m%d"))
+                except: # 日付変換できない数値は無視
+                    pass
+            case "当日":
+                target_days.append(appointed_time.strftime("%Y%m%d"))
+            case "今日":
+                target_days.append(current_time.strftime("%Y%m%d"))
+            case "昨日":
+                target_days.append((current_time + relativedelta(days = -1)).strftime("%Y%m%d"))
+            case "今月":
+                target_days.append((appointed_time + relativedelta(day = 1, months = 0)).strftime("%Y%m%d"))
+                target_days.append((appointed_time + relativedelta(day = 1, months = 1, days = -1,)).strftime("%Y%m%d"))
+            case "先月":
+                target_days.append((appointed_time + relativedelta(day = 1, months = -1)).strftime("%Y%m%d"))
+                target_days.append((appointed_time + relativedelta(day = 1, months = 0, days = -1,)).strftime("%Y%m%d"))
+            case "先々月":
+                target_days.append((appointed_time + relativedelta(day = 1, months = -2)).strftime("%Y%m%d"))
+                target_days.append((appointed_time + relativedelta(day = 1, months = -1, days = -1,)).strftime("%Y%m%d"))
+            case "今年":
+                target_days.append((current_time + relativedelta(day = 1, month = 1)).strftime("%Y%m%d"))
+                target_days.append((current_time + relativedelta(day = 31, month = 12)).strftime("%Y%m%d"))
+            case "去年" | "昨年":
+                target_days.append((current_time + relativedelta(day = 1, month = 1, years = -1)).strftime("%Y%m%d"))
+                target_days.append((current_time + relativedelta(day = 31, month = 12, years = -1)).strftime("%Y%m%d"))
+            case "一昨年":
+                target_days.append((current_time + relativedelta(day = 1, month = 1, years = -2)).strftime("%Y%m%d"))
+                target_days.append((current_time + relativedelta(day = 31, month = 12, years = -2)).strftime("%Y%m%d"))
+            case "最後":
+                target_days.append((current_time + relativedelta(days = 1)).strftime("%Y%m%d"))
+            case "全部":
+                target_days.append("20200101")
+                target_days.append((current_time + relativedelta(days = 1)).strftime("%Y%m%d"))
 
-        # コマンドオプションフラグ変更
-        if re.match(r"^ゲスト(なし|ナシ|無し)$", keyword):
-            command_option["guest_skip"] = False
-            command_option["guest_skip2"] = False
-            continue
-        if re.match(r"^ゲスト(あり|アリ)$", keyword):
-            command_option["guest_skip"] = True
-            command_option["guest_skip2"] = True
-            continue
-        if re.match(r"^ゲスト無効$", keyword):
-            command_option["unregistered_replace"] = False
-            continue
-        if re.match(r"^(全員|all)$", keyword):
-            command_option["all_player"] = True
-            continue
-        if re.match(r"^(比較|点差|差分)$", keyword):
-            command_option["score_comparisons"] = True
-            continue
-        if re.match(r"^(戦績)$", keyword):
-            command_option["game_results"] = True
-            continue
-        if re.match(r"^(対戦|対戦結果)$", keyword):
-            command_option["versus_matrix"] = True
-            continue
-        if re.match(r"^(詳細|verbose)$", keyword):
-            command_option["verbose"] = True
-            continue
-        if re.match(r"^(順位)$", keyword):
-            command_option["order"] = True
-            continue
-        if re.match(r"^(統計)$", keyword):
-            command_option["statistics"] = True
-            continue
-        if re.match(r"^(個人|個人成績)$", keyword):
-            command_option["personal"] = True
-            continue
-        if re.match(r"^(直近)([0-9]+)$", keyword):
-            target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
-            continue
-        if re.match(r"^(トップ|上位|top)([0-9]+)$", keyword):
-            command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
-            continue
-        if re.match(r"^(規定数|規定打数)([0-9]+)$", keyword):
-            command_option["stipulated"] = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
-            continue
+            # コマンドオプションフラグ変更
+            case keyword if re.search(r"^ゲスト(なし|ナシ|無し)$", keyword):
+                command_option["guest_skip"] = False
+                command_option["guest_skip2"] = False
+            case keyword if re.search(r"^ゲスト(あり|アリ)$", keyword):
+                command_option["guest_skip"] = True
+                command_option["guest_skip2"] = True
+            case keyword if re.search(r"^ゲスト無効$", keyword):
+                command_option["unregistered_replace"] = False
+            case keyword if re.search(r"^(全員|all)$", keyword.lower()):
+                command_option["all_player"] = True
+            case keyword if re.search(r"^(比較|点差|差分)$", keyword):
+                command_option["score_comparisons"] = True
+            case keyword if re.search(r"^(戦績)$", keyword):
+                command_option["game_results"] = True
+            case keyword if re.search(r"^(対戦|対戦結果)$", keyword):
+                command_option["versus_matrix"] = True
+            case keyword if re.search(r"^(詳細|verbose)$", keyword.lower()):
+                command_option["verbose"] = True
+            case keyword if re.search(r"^(順位)$", keyword):
+                command_option["order"] = True
+            case keyword if re.search(r"^(統計)$", keyword):
+                command_option["statistics"] = True
+            case keyword if re.search(r"^(個人|個人成績)$", keyword):
+                command_option["personal"] = True
+            case keyword if re.search(r"^(直近)([0-9]+)$", keyword):
+                target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
+            case keyword if re.search(r"^(トップ|上位|top)([0-9]+)$", keyword.lower()):
+                command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword.lower()))
+            case keyword if re.search(r"^(規定数|規定打数)([0-9]+)$", keyword):
+                command_option["stipulated"] = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
 
-        # どのオプションにもマッチしないものはプレイヤー名
-        target_player.append(c.member.NameReplace(keyword, command_option))
+            # フォーマット指定
+            case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
+                command_option["format"] = keyword.lower()
+
+            # どのオプションにもマッチしないものはプレイヤー名
+            case _:
+                target_player.append(c.member.NameReplace(keyword, command_option))
 
     # 日付再取得のために再帰呼び出し
     if command_option.get("recursion") and not target_days:
@@ -298,6 +278,7 @@ def KANA2HIRA(text):
     KANA = "".join(chr(0x30a1 + i) for i in range(86))
     trans_table = str.maketrans(KANA, HIRA)
     return(text.translate(trans_table))
+
 
 def badge_degree(game_count = 0):
     """
