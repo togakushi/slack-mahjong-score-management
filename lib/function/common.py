@@ -343,3 +343,38 @@ def badge_status(game_count = 0, win = 0):
         badge_status = status_badge[index]
 
     return(badge_status)
+
+
+def save_output(df, format, filename):
+    """
+    指定されたフォーマットでdfを保存する
+
+    Parameters
+    ----------
+    df : DataFrame
+        保存するデータ
+
+    format : str
+        フォーマット
+
+    filename : str
+        保存ファイル名
+
+    Returns
+    -------
+    True / False
+    """
+
+    match format.lower():
+        case "csv":
+            data = df.to_csv(index = False)
+        case "text" | "txt":
+            data = df.to_string(index = False)
+        case _:
+            return(False)
+
+    # 保存
+    with open(filename, "w") as writefile:
+        writefile.writelines(data)
+
+    return(True)
