@@ -2,7 +2,6 @@ import math
 
 import pandas as pd
 
-import lib.command as c
 import lib.function as f
 import lib.database as d
 from lib.function import global_value as g
