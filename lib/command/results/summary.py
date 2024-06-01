@@ -103,6 +103,6 @@ def aggregation(argument, command_option):
         if len(grandslam_df) != 0:
             msg["メモ"] = "*【メモ】*\n"
             for _, v in grandslam_df.iterrows():
-                msg["メモ"] += f"\t{v['playtime']} {v['表示名']} {v['grandslam']}"
+                msg["メモ"] += f"\t{v['playtime']} {v['表示名']} {v['grandslam']}\n"
 
     return(msg2, msg)
