@@ -112,6 +112,12 @@ def game_results(argument, command_option):
             count(rank = 2 or null) as "2nd",
             count(rank = 3 or null) as "3rd",
             count(rank = 4 or null) as "4th",
+            printf("%d-%d-%d-%d",
+                count(rank = 1 or null),
+                count(rank = 2 or null),
+                count(rank = 3 or null),
+                count(rank = 4 or null)
+            ) as rank_distr,
             round(avg(rank), 2) as rank_avg,
             count(rpoint < 0 or null) as flying
         from (
