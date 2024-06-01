@@ -1,6 +1,3 @@
-import sqlite3
-from datetime import datetime
-
 import lib.command as c
 import lib.function as f
 import lib.database as d
@@ -21,97 +18,91 @@ def aggregation(argument, command_option):
 
     Returns
     -------
-    msg1 : text
-        集計結果
-
     msg2 : text
         検索条件などの情報
 
-    msg3 : text
-        メモ内容
+    msg : dict
+        集計結果
     """
 
     ### データ収集 ###
     params = f.configure.get_parameters(argument, command_option)
     total_game_count, first_game, last_game = d.aggregate.game_count(argument, command_option)
-    summary_data = d.aggregate.game_summary(argument, command_option)
+    summary_df = d.aggregate.game_summary(argument, command_option)
+    game_df = d.aggregate.game_details(argument, command_option)
 
     ### 表示 ###
-    if total_game_count == 0: # 結果が0件のとき
-        return(None, f.message.no_hits(argument, command_option), None)
-
     # --- 情報ヘッダ
     msg2 = "*【成績サマリ】*\n"
     if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
-        msg2 += f"\t検索範囲：{first_game} ～ {last_game}\n".replace("-", "/")
-    msg2 += f"\t最初のゲーム：{first_game}\n\t最後のゲーム：{last_game}\n".replace("-", "/")
+        msg2 += f"\t検索範囲：{params['starttime_hms']} ～ {params['endtime_hms']}\n"
+    if total_game_count != 0:
+        msg2 += f"\t最初のゲーム：{first_game}\n\t最後のゲーム：{last_game}\n".replace("-", "/")
+        if params["player_name"]:
+            msg2 += f"\t総ゲーム数：{total_game_count} 回"
+        else:
+            msg2 += f"\tゲーム数：{total_game_count} 回"
 
-    if params["player_name"]:
-        msg2 += f"\t総ゲーム数：{total_game_count} 回"
-    else:
-        msg2 += f"\tゲーム数：{total_game_count} 回"
-
-    if g.config["mahjong"].getboolean("ignore_flying", False):
-        msg2 += "\n"
-    else:
-        msg2 += " / トバされた人（延べ）： {} 人\n".format(
-            summary_data["flying"].sum(),
-        )
-    msg2 += "\t" + f.message.remarks(command_option)
+        if g.config["mahjong"].getboolean("ignore_flying", False):
+            msg2 += "\n"
+        else:
+            msg2 += " / トバされた人（延べ）： {} 人\n".format(
+                summary_df["flying"].sum(),
+            )
+        msg2 += "\t" + f.message.remarks(command_option)
+    else: # 結果が0件のとき
+        msg2 += "\t" + f.message.remarks(command_option)
+        return(msg2, f.message.no_hits(argument, command_option))
 
     # --- 集計結果
-    msg3 = ""
-    padding = c.member.CountPadding(list(summary_data["表示名"].unique()))
+    padding = c.member.CountPadding(list(summary_df["表示名"].unique())) -7
+    message = ""
+
     if command_option["score_comparisons"]: # 差分表示
-        msg1 = "## {} {}： 累積    / 点差 ##\n".format(
-            "名前", " " * (padding - f.common.len_count("名前") - 4),
-        )
-        for _, row in summary_data.iterrows():
-            msg1 += "{}： {:>+6.1f} / {:>5.1f}\n".format(
-                row["表示名"], row["pt_total"], row["pt_diff"],
+        header = f"\n```\n# 名前{' ' * padding} ： 累積    / 点差 #\n"
+        for _, v in summary_df.iterrows():
+            message += "{}： {:>+6.1f} / {:>5.1f}\n".format(
+                v["表示名"], v["pt_total"], v["pt_diff"],
             ).replace("-", "▲")
     else: # 通常表示
         if g.config["mahjong"].getboolean("ignore_flying", False): # トビカウントなし
-            msg1 = "# {} {} :  累積   (平均)  / 順位分布 (平均) #\n".format(
-                "名前", " " * (padding - f.common.len_count("名前") - 3))
-            for _, row in summary_data.iterrows():
-                msg1 += "{}： {:>+6.1f} ({:>+5.1f}) / {}*{}*{}*{} ({:1.2f})\n".format(
-                    row["表示名"], row["pt_total"], row["pt_avg"],
-                    row["1st"], row["2nd"], row["3rd"], row["4th"],
-                    row["rank_avg"],
-                ).replace("-", "▲").replace("*", "-")
-        else:
-            msg1 = "# {} {} :  累積   (平均)  / 順位分布 (平均) / トビ #\n".format(
-                "名前", " " * (padding - f.common.len_count("名前") - 3))
-            for index, row in summary_data.iterrows():
-                msg1 += "{}： {:>+6.1f} ({:>+5.1f}) / {}*{}*{}*{} ({:1.2f}) / {}\n".format(
-                    row["表示名"], row["pt_total"], row["pt_avg"],
-                    row["1st"], row["2nd"], row["3rd"], row["4th"],
-                    row["rank_avg"], row["flying"],
-                ).replace("-", "▲").replace("*", "-")
-
-        # --- メモ表示
-        resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-        resultdb.row_factory = sqlite3.Row
-        rows = resultdb.execute(
-            "select * from remarks where thread_ts between ? and ? order by thread_ts,event_ts", (
-                first_game.timestamp(),
-                last_game.timestamp(),
-            )
-        )
-        for row in rows.fetchall():
-            g.logging.trace(dict(row)) # type: ignore
-            name = c.member.NameReplace(row["name"], command_option, add_mark = True)
-            if name in list(summary_data["name"].unique()):
-                msg3 += "\t{}： {} （{}）\n".format(
-                    datetime.fromtimestamp(float(row["thread_ts"])).strftime('%Y/%m/%d %H:%M:%S'),
-                    row["matter"],
-                    name,
+            header = f"\n```\n# 名前{' ' * padding} ：  累積   (平均) / 順位分布 (平均) #\n"
+            for i, v in summary_df.iterrows():
+                message += "{}： {} ({}) / {} ({:1.2f})\n".format(
+                    v["表示名"],
+                    str(f"{v['pt_total']:>+6.1f}").replace("-", "▲"),
+                    str(f"{v['pt_avg']:>+5.1f}").replace("-", "▲"),
+                    v["rank_distr"], v["rank_avg"],
+                )
+        else: # トビカウントあり
+            header = f"\n```\n# 名前{' ' * padding} ：  累積   (平均) / 順位分布 (平均) / トビ #\n"
+            for i, v in summary_df.iterrows():
+                message += "{}： {} ({}) / {} ({:1.2f}) / {}\n".format(
+                    v["表示名"],
+                    str(f"{v['pt_total']:>+6.1f}").replace("-", "▲"),
+                    str(f"{v['pt_avg']:>+5.1f}").replace("-", "▲"),
+                    v["rank_distr"], v["rank_avg"], v["flying"],
                 )
 
-        resultdb.close()
+        # メッセージをstep行単位のブロックに分割
+        step = 50
+        msg = {}
+        for count in range(int(len(message.splitlines()) / step) + 1):
+            msg[count] = "\n".join(message.splitlines()[count * step:(count + 1) * step])
 
-    if msg3:
-        msg3 = "*【メモ】*\n" + msg3
+        # 最終ブロックがstepの半分以下なら直前のブロックにまとめる
+        if count >= 1 and step / 2 > len(msg[count].splitlines()):
+            msg[count - 1] += "\n" + msg.pop(count)
 
-    return(msg1, msg2, msg3)
+        # ヘッダ+コードブロック追加
+        for i in msg.keys():
+            msg[i] = header + msg[i] + "\n```\n"
+
+        # --- メモ表示
+        grandslam_df = game_df.query("grandslam != ''")
+        if len(grandslam_df) != 0:
+            msg["メモ"] = "*【メモ】*\n"
+            for _, v in grandslam_df.iterrows():
+                msg["メモ"] += f"\t{v['playtime']} {v['表示名']} {v['grandslam']}"
+
+    return(msg2, msg)
