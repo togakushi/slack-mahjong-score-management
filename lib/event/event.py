@@ -123,17 +123,17 @@ def handle_message_events(client, body):
                 case "message_append":
                     for name, val in zip(argument[0::2], argument[1::2]):
                         g.logging.info(f"insert: {name}, {val}")
-                        resultdb.execute(d._query.sql_remarks_insert, (
+                        resultdb.execute(d.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
                             c.member.NameReplace(name, command_option),
                             val,
                         ))
                 case "message_changed":
-                    resultdb.execute(d._query.sql_remarks_delete_one, (parameter["event_ts"],))
+                    resultdb.execute(d.sql_remarks_delete_one, (parameter["event_ts"],))
                     for name, val in zip(argument[0::2], argument[1::2]):
                         g.logging.info(f"update: {name}, {val}")
-                        resultdb.execute(d._query.sql_remarks_insert, (
+                        resultdb.execute(d.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
                             c.member.NameReplace(name, command_option),
@@ -141,7 +141,7 @@ def handle_message_events(client, body):
                         ))
                 case "message_deleted":
                     g.logging.info(f"delete one")
-                    resultdb.execute(d._query.sql_remarks_delete_one, (parameter["event_ts"],))
+                    resultdb.execute(d.sql_remarks_delete_one, (parameter["event_ts"],))
 
             resultdb.commit()
             resultdb.close()

@@ -102,7 +102,7 @@ def resultdb_insert(msg, ts):
         array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.execute(d._query.sql_result_insert, (
+    resultdb.execute(d.sql_result_insert, (
         ts, datetime.fromtimestamp(float(ts)),
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
@@ -131,7 +131,7 @@ def resultdb_update(msg, ts):
         array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.execute(d._query.sql_result_update, (
+    resultdb.execute(d.sql_result_update, (
         array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
         array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
         array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
@@ -147,8 +147,8 @@ def resultdb_update(msg, ts):
 
 def resultdb_delete(ts):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.execute(d._query.sql_result_delete, (ts,))
-    resultdb.execute(d._query.sql_remarks_delete_all, (ts,))
+    resultdb.execute(d.sql_result_delete, (ts,))
+    resultdb.execute(d.sql_remarks_delete_all, (ts,))
     resultdb.commit()
     g.logging.notice(f"{ts}") # type: ignore
     resultdb.close()
