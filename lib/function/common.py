@@ -370,7 +370,7 @@ def save_output(df, format, filename):
         case "csv":
             data = df.to_csv(index = False)
         case "text" | "txt":
-            data = df.to_string(index = False)
+            data = df.to_markdown(index = False, tablefmt = "outline")
         case _:
             return(False)
 

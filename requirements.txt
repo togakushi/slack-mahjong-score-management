@@ -3,4 +3,4 @@ slack-sdk
 matplotlib
 reportlab
 pandas
-python-dateutil
+tabulate[widechars] # type: ignore
