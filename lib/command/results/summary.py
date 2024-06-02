@@ -33,17 +33,17 @@ def aggregation(argument, command_option):
     df_grandslam = df_game.query("grandslam != ''")
 
     # ヘッダ更新 ToDo: SQLのカラム名を変える
-    df_summary.rename(
+    df_summary = df_summary.rename(
         columns = {
             "count": "ゲーム数", "pt_total": "累積ポイント", "pt_avg": "平均ポイント",
             "1st": "1位", "2nd": "2位", "3rd": "3位", "4th": "4位", "rank_distr": "順位分布",
             "rank_avg": "平均順位", "flying": "トビ", "pt_diff": "差分",
-        }, inplace = True)
+        })
     df_summary["プレイヤー名"] = df_summary["表示名"].apply(lambda x: x.strip())
-    df_grandslam.rename(
+    df_grandslam = df_grandslam.rename(
         columns = {
             "プレイヤー名": "name", "grandslam": "和了役", "playtime": "日時",
-        }, inplace = True)
+        })
     df_grandslam["プレイヤー名"] = df_grandslam["表示名"].apply(lambda x: x.strip())
 
     ### 表示 ###
