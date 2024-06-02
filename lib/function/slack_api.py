@@ -1,21 +1,15 @@
 import re
 
+import lib.function as f
 from lib.function import global_value as g
+
 
 def call_chat_postMessage(client, **kwargs):
     res = None
+    if not kwargs["thread_ts"]:
+        kwargs.pop("thread_ts")
     try:
-        if kwargs["thread_ts"]:
-            res = client.chat_postMessage(
-                channel = kwargs["channel"],
-                text = kwargs["text"],
-                thread_ts = kwargs["thread_ts"],
-            )
-        else:
-            res = client.chat_postMessage(
-                channel = kwargs["channel"],
-                text = kwargs["text"],
-            )
+        res = client.chat_postMessage(**kwargs)
     except g.SlackApiError as e:
         g.logging.error(e)
 
@@ -24,21 +18,10 @@ def call_chat_postMessage(client, **kwargs):
 
 def call_files_upload(client, **kwargs):
     res = None
+    if not kwargs["thread_ts"]:
+        kwargs.pop("thread_ts")
     try:
-        if "file" in kwargs:
-            res = client.files_upload_v2(
-                channel = kwargs["channels"],
-                title = kwargs["title"],
-                file = kwargs["file"],
-                request_file_info = False,
-            )
-        if "content" in kwargs:
-            res = client.files_upload_v2(
-                channel = kwargs["channels"],
-                title = kwargs["title"],
-                content = kwargs["content"],
-                request_file_info = False,
-            )
+        res = client.files_upload_v2(**kwargs)
     except g.SlackApiError as e:
         g.logging.error(e)
 
@@ -56,21 +39,27 @@ def post_message(client, channel, msg, ts = False):
     return(res)
 
 
-def post_multi_message(client, channel, msg, ts = False):
-    # ブロック単位で分割ポスト
-    key_list = list(msg.keys())
-    post_msg = msg[key_list[0]]
-    for i in key_list[1:]:
-        if len((post_msg + msg[i]).splitlines()) < 95: # 95行を超える直前までまとめる
-            post_msg += msg[i]
-        else:
-            post_message(client, channel, post_msg, ts)
-            post_msg = msg[i]
+def post_multi_message(client, channel, msg, ts = False, summarize = True):
+    if type(msg) == dict:
+        if summarize: # まとめてポスト
+            key_list = list(msg.keys())
+            post_msg = msg[key_list[0]]
+            for i in key_list[1:]:
+                if len((post_msg + msg[i]).splitlines()) < 95: # 95行を超える直前までまとめる
+                    post_msg += msg[i]
+                else:
+                    post_message(client, channel, post_msg, ts)
+                    post_msg = msg[i]
+            else:
+                post_message(client, channel, post_msg, ts)
+        else: # そのままポスト
+            for i in msg.keys():
+                post_message(client, channel, msg[i], ts)
     else:
-        post_message(client, channel, post_msg, ts)
-
+        post_message(client, channel, msg, ts)
 
 def post_text(client, channel, event_ts, title, msg):
+    # コードブロック修飾付きポスト
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
         res = call_chat_postMessage(
             client,
@@ -101,23 +90,45 @@ def post_text(client, channel, event_ts, title, msg):
     return(res)
 
 
-def post_upload(client, channel, title, msg):
+def post_fileupload(client, channel, title, file, ts = False):
     res = call_files_upload(
         client,
-        channels = channel,
-        title = title,
-        content = f"{msg.strip()}",
-    )
-
-    return(res)
-
-
-def post_fileupload(client, channel, title, file):
-    res = call_files_upload(
-        client,
-        channels = channel,
+        channel = channel,
         title = title,
         file = file,
+        thread_ts = ts,
+        request_file_info = False,
     )
 
     return(res)
+
+
+def slack_post(**kwargs):
+    g.logging.debug(f"{kwargs}")
+    command_option = kwargs["command_option"] if "command_option" in kwargs else None
+    client = kwargs["client"] if "client" in kwargs else None
+    channel = kwargs["channel"] if "channel" in kwargs else None
+    headline = kwargs["headline"] if "headline" in kwargs else None
+    message = kwargs["message"] if "message" in kwargs else None
+    summarize = kwargs["summarize"] if "summarize" in kwargs else True
+    file_list = kwargs["file_list"] if "file_list" in kwargs else {}
+
+    # 見出しポスト
+    res = post_message(client, channel, headline)
+
+    # 本文ポスト
+    match command_option["format"].lower():
+        case "csv" if file_list:
+            for x in file_list.keys():
+                if len(file_list[x]["df"]) != 0:
+                    f.common.save_output(file_list[x]["df"], "csv", file_list[x]["filename"] + ".csv")
+                    post_fileupload(client, channel, x, file_list[x]["filename"] + ".csv", res["ts"])
+        case "text" | "txt" if file_list:
+            for x in file_list.keys():
+                if len(file_list[x]["df"]) != 0:
+                    f.common.save_output(file_list[x]["df"], "txt", file_list[x]["filename"] + ".txt")
+                    post_fileupload(client, channel, x, file_list[x]["filename"] + ".txt", res["ts"])
+
+        case _:
+            if message:
+                post_multi_message(client, channel, message, res["ts"], summarize)
