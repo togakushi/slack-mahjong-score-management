@@ -122,7 +122,7 @@ def game_summary(argument, command_option):
     )
 
     # 点数差分
-    df["pt_diff"] = df["pt_total"].diff().abs()
+    df["pt_diff"] = df["pt_total"].diff().abs().round(2)
 
     # ゲスト置換
     df["表示名"] = _disp_name(df["name"], command_option)
