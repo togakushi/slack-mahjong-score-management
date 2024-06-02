@@ -64,16 +64,23 @@ def handle_search_action(ack, body, client):
     app_msg.append("集計完了")
     msg2 = f.message.no_hits(argument, command_option)
 
-    msg1, msg2, _, _ = c.results.summary.aggregation(argument, command_option)
-    if msg1:
-        res = f.slack_api.post_message(client, body["user"]["id"], msg2)
-        f.slack_api.post_text(client, body["user"]["id"], res["ts"], "", msg1)
-    if msg2:
-        f.slack_api.post_message(client, body["user"]["id"], msg2, res["ts"])
+    msg1, msg2, df_summary, df_grandslam = c.results.summary.aggregation(argument, command_option)
+    f.slack_api.slack_post(
+        command_option = command_option,
+        client = client,
+        channel = body["user"]["id"],
+        headline = msg1,
+        message = msg2,
+        summarize = False,
+        file_list = {
+            "集計結果": {"df": df_summary, "filename": "summary"},
+            "役満和了": {"df": df_grandslam, "filename": "grandslam"},
+        },
+    )
 
     client.views_update(
         view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg2}"),
+        view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )
 
 
