@@ -74,7 +74,7 @@ def handle_search_action(ack, body, client):
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1, msg2 = c.results.versus.aggregation(argument, command_option)
+    msg1, msg2, _, _ = c.results.versus.aggregation(argument, command_option)
     res = f.slack_api.post_message(client, body["user"]["id"], msg1)
 
     new_dict = {}
