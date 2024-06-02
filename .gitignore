@@ -5,8 +5,6 @@ work/
 *.ini
 *.db
 *.txt
-*.png
-*.pdf
 *.ttf
 !requirements.txt
 .*
