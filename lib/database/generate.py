@@ -366,6 +366,11 @@ def versus_matrix(argument, command_option):
             count(my_rank < vs_rank or null) as win,
             count(my_rank > vs_rank or null) as lose,
             round(cast(count(my_rank < vs_rank or null) AS real) / count() * 100, 2) as 'win%',
+            printf("%d 戦 %d 勝 %d 敗",
+                count(),
+                count(my_rank < vs_rank or null),
+                count(my_rank > vs_rank or null)
+            ) as results,
             round(sum(my_point),1 ) as my_point_sum,
             round(avg(my_point),1 ) as my_point_avg,
             round(sum(vs_point), 1) as vs_point_sum,
