@@ -74,7 +74,7 @@ def plot(argument, command_option):
         return(game_count, f.message.no_hits(argument, command_option))
 
     ### グラフ生成 ###
-    save_file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
+    save_file = os.path.join(g.work_dir, "graph.png")
     # グラフフォント設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     fm.fontManager.addfont(font_path)

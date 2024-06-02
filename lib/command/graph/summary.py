@@ -117,7 +117,7 @@ def plot(argument, command_option):
     ranking_rank = sorted(ranking_rank.items(), key = lambda x:x[1])
 
     ### グラフ生成 ###
-    save_file = os.path.join(os.path.realpath(os.path.curdir), "graph.png")
+    save_file = os.path.join(g.work_dir, "graph.png")
     # グラフフォント設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     fm.fontManager.addfont(font_path)

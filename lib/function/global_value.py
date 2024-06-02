@@ -115,6 +115,7 @@ guest_mark = config["setting"].get("guest_mark", "※")
 reaction_ok = config["setting"].get("reaction_ok", "ok")
 reaction_ng = config["setting"].get("reaction_ng", "ng")
 font_file = config["setting"].get("font_file", "ipaexg.ttf")
+work_dir = config["setting"].get("work_dir", "work")
 ignore_userid = [x.strip() for x in config["setting"].get("ignore_userid", "").split(",")]
 commandword.update(remarks_word = config["setting"].get("remarks_word", "麻雀成績メモ"))
 guest_name = config["member"].get("guest_name", "ゲスト")
@@ -139,6 +140,15 @@ logging.trace(f"commandword: {commandword}") # type: ignore
 logging.info(f"slash command: {slash_command}")
 logging.info(f"ignore_userid: {ignore_userid}")
 logging.info(f"channel_limitations: {channel_limitations}")
+
+# 作業用ディレクトリ作成
+work_dir = os.path.join(os.path.realpath(os.path.curdir), work_dir)
+if not os.path.isdir(work_dir):
+    try:
+        os.mkdir(work_dir)
+    except:
+        logging.error("Working directory creation failed !!!")
+        sys.exit()
 
 ### slack api ###
 try:

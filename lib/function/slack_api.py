@@ -121,13 +121,15 @@ def slack_post(**kwargs):
         case "csv" if file_list:
             for x in file_list.keys():
                 if len(file_list[x]["df"]) != 0:
-                    f.common.save_output(file_list[x]["df"], "csv", file_list[x]["filename"] + ".csv")
-                    post_fileupload(client, channel, x, file_list[x]["filename"] + ".csv", res["ts"])
+                    save_file = f.common.save_output(file_list[x]["df"], "csv", file_list[x]["filename"] + ".csv")
+                    if save_file:
+                        post_fileupload(client, channel, x, save_file, res["ts"])
         case "text" | "txt" if file_list:
             for x in file_list.keys():
                 if len(file_list[x]["df"]) != 0:
-                    f.common.save_output(file_list[x]["df"], "txt", file_list[x]["filename"] + ".txt")
-                    post_fileupload(client, channel, x, file_list[x]["filename"] + ".txt", res["ts"])
+                    save_file = f.common.save_output(file_list[x]["df"], "txt", file_list[x]["filename"] + ".txt")
+                    if save_file:
+                        post_fileupload(client, channel, x, save_file, res["ts"])
 
         case _:
             if message:

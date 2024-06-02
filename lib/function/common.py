@@ -1,3 +1,4 @@
+import os
 import re
 import unicodedata
 
@@ -362,7 +363,7 @@ def save_output(df, format, filename):
 
     Returns
     -------
-    True / False
+    save_file : file path / False
     """
 
     match format.lower():
@@ -374,7 +375,8 @@ def save_output(df, format, filename):
             return(False)
 
     # 保存
-    with open(filename, "w") as writefile:
+    save_file = os.path.join(g.work_dir, filename)
+    with open(save_file, "w") as writefile:
         writefile.writelines(data)
 
-    return(True)
+    return(save_file)
