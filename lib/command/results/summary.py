@@ -108,7 +108,7 @@ def aggregation(argument, command_option):
                 numalign = "right",
                 floatfmt = ("", "", "+.1f", "+.1f",  "", ".2f")
             )
-        msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r" ▲\1", t) + "```\n" # マイナスを記号に置換
+        msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r"▲\1", t) + "```\n" # マイナスを記号に置換
 
     # メモ追加
     if msg_memo:
