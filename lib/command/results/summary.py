@@ -1,4 +1,5 @@
-import lib.command as c
+import re
+
 import lib.function as f
 import lib.database as d
 from lib.function import global_value as g
@@ -32,19 +33,11 @@ def aggregation(argument, command_option):
     df_game = d.aggregate.game_details(argument, command_option)
     df_grandslam = df_game.query("grandslam != ''")
 
-    # ヘッダ更新 ToDo: SQLのカラム名を変える
-    df_summary = df_summary.rename(
-        columns = {
-            "count": "ゲーム数", "pt_total": "累積ポイント", "pt_avg": "平均ポイント",
-            "1st": "1位", "2nd": "2位", "3rd": "3位", "4th": "4位", "rank_distr": "順位分布",
-            "rank_avg": "平均順位", "flying": "トビ", "pt_diff": "差分",
-        })
-    df_summary["プレイヤー名"] = df_summary["表示名"].apply(lambda x: x.strip())
     df_grandslam = df_grandslam.rename(
         columns = {
             "プレイヤー名": "name", "grandslam": "和了役", "playtime": "日時",
         })
-    df_grandslam["プレイヤー名"] = df_grandslam["表示名"].apply(lambda x: x.strip())
+    df_grandslam["和了者"] = df_grandslam["表示名"].apply(lambda x: x.strip())
 
     ### 表示 ###
     # --- 情報ヘッダ
@@ -71,72 +64,51 @@ def aggregation(argument, command_option):
         return(msg2, None, df_summary, df_grandslam)
 
     # --- 集計結果
-    padding = c.member.CountPadding(list(df_summary["表示名"].unique())) -7
     msg = {}
-    message = ""
     msg_memo = ""
 
     if not command_option["score_comparisons"]: # 通常表示
         if g.config["mahjong"].getboolean("ignore_flying", False): # トビカウントなし
-            header = f"\n```\n# 名前{' ' * padding} ：  累積   (平均) / 順位分布 (平均) #\n"
-            filter_list = [
-                "プレイヤー名", "ゲーム数", "累積ポイント", "平均ポイント",
-                "1位", "2位", "3位", "4位", "平均順位",
-            ]
-            for i, v in df_summary.iterrows():
-                message += "{}： {} ({}) / {} ({:1.2f})\n".format(
-                    v["表示名"],
-                    str(f"{v['累積ポイント']:>+6.1f}").replace("-", "▲"),
-                    str(f"{v['平均ポイント']:>+5.1f}").replace("-", "▲"),
-                    v["順位分布"], v["平均順位"],
-                )
+            header_list = ["プレイヤー名", "累積", "平均", "順位分布", "平順"]
+            filter_list = ["プレイヤー名", "ゲーム数", "累積", "平均", "1位", "2位", "3位", "4位", "平順"]
         else: # トビカウントあり
-            header = f"\n```\n# 名前{' ' * padding} ：  累積   (平均) / 順位分布 (平均) / トビ #\n"
-            filter_list = [
-                "プレイヤー名", "ゲーム数", "累積ポイント", "平均ポイント",
-                "1位", "2位", "3位", "4位", "平均順位", "トビ",
-            ]
-            for i, v in df_summary.iterrows():
-                message += "{}： {} ({}) / {} ({:1.2f}) / {}\n".format(
-                    v["表示名"],
-                    str(f"{v['累積ポイント']:>+6.1f}").replace("-", "▲"),
-                    str(f"{v['平均ポイント']:>+5.1f}").replace("-", "▲"),
-                    v["順位分布"], v["平均順位"], v["トビ"],
-                )
-
-        # --- メモ表示
+            header_list = ["プレイヤー名", "累積", "平均", "順位分布", "平順", "トビ"]
+            filter_list = ["プレイヤー名", "ゲーム数", "累積", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
+        # メモ表示
         if len(df_grandslam) != 0:
             msg_memo = "*【メモ】*\n"
             for _, v in df_grandslam.iterrows():
                 msg_memo += "\t{} ： {} （{}）\n".format(
-                    v["日時"].replace("-", "/"),
-                    v["和了役"],
-                    v["プレイヤー名"],
+                    v["日時"].replace("-", "/"), v["和了役"], v["和了者"],
                 )
     else: # 差分表示
-        df_grandslam = df_grandslam[:0]
-        header = f"\n```\n# 名前{' ' * padding} ： 累積    / 点差 #\n"
-        filter_list = ["プレイヤー名", "ゲーム数", "累積ポイント", "点差"]
-        for _, v in df_summary.iterrows():
-            message += "{}： {} / {}\n".format(
-                v["表示名"],
-                str(f"{v['累積ポイント']:>+6.1f}").replace("-", "▲"),
-                f"{v['差分']:>5.1f}" if type(v["差分"]) == float else v["差分"],
-            )
+        df_grandslam = df_grandslam[:0] # 非表示のため破棄
+        header_list = ["プレイヤー名", "累積", "平均", "点差"]
+        filter_list = ["プレイヤー名", "ゲーム数", "累積", "点差"]
 
     # --- メッセージ整形
-    # メッセージをstep行単位のブロックに分割
     step = 50
-    for count in range(int(len(message.splitlines()) / step) + 1):
-        msg[count] = "\n".join(message.splitlines()[count * step:(count + 1) * step])
+    last_line = len(df_summary)
+    step_count = []
 
-    # 最終ブロックがstepの半分以下なら直前のブロックにまとめる
-    if count >= 1 and step / 2 > len(msg[count].splitlines()):
-        msg[count - 1] += "\n" + msg.pop(count)
+    for i in range(int(last_line / step + 1)): # step行毎に分割
+        s_line = i * step
+        e_line = (i + 1) * step
 
-    # ヘッダ+コードブロック追加
-    for i in msg.keys():
-        msg[i] = header + msg[i] + "\n```\n"
+        if last_line - e_line < step / 2: # 最終ブロックがstep/2で収まるならまとめる
+            step_count.append((s_line, last_line))
+            break
+        step_count.append((s_line, e_line))
+
+    for s_line, e_line in step_count:
+        t = df_summary[s_line:e_line].filter(
+                items = header_list
+            ).to_markdown(
+                tablefmt = "simple",
+                numalign = "right",
+                floatfmt = ("", "", ".1f", ".1f",  "", ".2f")
+            )
+        msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r" ▲\1", t) + "```\n" # マイナスを記号に置換
 
     # メモ追加
     if msg_memo:
@@ -144,6 +116,6 @@ def aggregation(argument, command_option):
 
     # --- ファイル出力用データ整形
     df_summary = df_summary.filter(items = filter_list)
-    df_grandslam = df_grandslam.filter(items = ["日時", "和了役", "プレイヤー名"])
+    df_grandslam = df_grandslam.filter(items = ["日時", "和了役", "和了者"])
 
     return(msg2, msg, df_summary, df_grandslam)

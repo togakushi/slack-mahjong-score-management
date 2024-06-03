@@ -121,11 +121,29 @@ def game_summary(argument, command_option):
         params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
+    # ヘッダ修正
+    df = df.rename(
+        columns = {
+            "count": "ゲーム数",
+            "pt_total": "累積",
+            "pt_avg": "平均",
+            "rank_distr": "順位分布",
+            "rank_avg": "平順",
+            "flying": "トビ",
+            "1st": "1位",
+            "2nd": "2位",
+            "3rd": "3位",
+            "4th": "4位",
+        }
+    )
+
     # 点数差分
-    df["pt_diff"] = df["pt_total"].diff().abs().round(2)
+    df["点差"] = df["累積"].diff().abs().round(2)
 
     # ゲスト置換
-    df["表示名"] = _disp_name(df["name"], command_option)
+    df["プレイヤー名"] = df["name"].apply(
+        lambda x: c.member.NameReplace(x, command_option, add_mark = True)
+    )
 
     # インデックスの振り直し
     df = df.reset_index(drop = True)
