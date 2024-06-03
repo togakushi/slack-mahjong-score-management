@@ -300,29 +300,6 @@ def game_details(argument, command_option):
 
     params = f.configure.get_parameters(argument, command_option)
     sql = """
-        select * from (
-            select
-                playtime, ts,
-                p1_guest + p2_guest + p3_guest + p4_guest as guest_count,
-                p1_name, p1_rpoint * 100 as p1_rpoint, p1_rank, p1_point,
-                p2_name, p2_rpoint * 100 as p2_rpoint, p2_rank, p2_point,
-                p3_name, p3_rpoint * 100 as p3_rpoint, p3_rank, p3_point,
-                p4_name, p4_rpoint * 100 as p4_rpoint, p4_rank, p4_point
-            from
-                game_results
-            where
-                rule_version = :rule_version
-                and playtime between :starttime and :endtime
-                --<<select player>>--
-            order by
-                playtime desc
-            --[recent] limit :target_count
-        )
-        order by
-            playtime
-        """
-
-    sql = """
         select
             playtime,
             name as プレイヤー名,
