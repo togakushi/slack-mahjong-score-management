@@ -72,8 +72,8 @@ def aggregation(argument, command_option):
             header_list = ["名前", "累積", "平均", "順位", "平順"]
             filter_list = ["名前", "ゲーム数", "累積", "平均", "1位", "2位", "3位", "4位", "平順"]
         else: # トビカウントあり
-            header_list = ["名前", "累積", "平均", "順位", "平順", "ﾄﾋﾞ"]
-            filter_list = ["名前", "ゲーム数", "累積", "平均", "1位", "2位", "3位", "4位", "平順", "ﾄﾋﾞ"]
+            header_list = ["名前", "累積", "平均", "順位", "平順", "トビ"]
+            filter_list = ["名前", "ゲーム数", "累積", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
         # メモ表示
         if len(df_grandslam) != 0:
             msg_memo = "*【メモ】*\n"
@@ -87,7 +87,7 @@ def aggregation(argument, command_option):
         filter_list = ["名前", "ゲーム数", "累積", "点差"]
 
     # --- メッセージ整形
-    df_summary = df_summary.rename(columns={"プレイヤー名": "名前", "順位分布": "順位", "トビ": "ﾄﾋﾞ"})
+    df_summary = df_summary.rename(columns={"プレイヤー名": "名前", "順位分布": "順位"})
     step = 50
     step_count = []
     last_line = len(df_summary)
@@ -108,6 +108,7 @@ def aggregation(argument, command_option):
                 index = False,
                 tablefmt = "simple",
                 numalign = "right",
+                maxheadercolwidths = 4,
                 floatfmt = ("", "+.1f", "+.1f",  "", ".2f")
             )
         msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r"▲\1", t) + "```\n" # マイナスを記号に置換
