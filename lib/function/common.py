@@ -1,7 +1,6 @@
 import os
 import re
 import unicodedata
-
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
@@ -380,3 +379,14 @@ def save_output(df, format, filename):
         writefile.writelines(data)
 
     return(save_file)
+
+
+def set_graph_font(plt, fm):
+    """
+    グラフフォント設定
+    """
+
+    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
+    fm.fontManager.addfont(font_path)
+    font_prop = fm.FontProperties(fname = font_path)
+    plt.rcParams["font.family"] = font_prop.get_name()
