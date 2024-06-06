@@ -59,8 +59,14 @@ def point_plot(argument, command_option):
 
     save_file = _graph_generation(pivot, **args)
 
+    # X軸修正
     plt.xticks(rotation = 45, ha = "right")
     plt.axhline(y = 0, linewidth = 0.5, ls = "dashed", color = "grey")
+
+    # Y軸修正
+    ylocs, ylabs = plt.yticks()
+    new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
+    plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
 
     plt.savefig(save_file, bbox_inches = "tight")
 
@@ -115,7 +121,14 @@ def rank_plot(argument, command_option):
 
     save_file = _graph_generation(pivot, **args)
 
+    # X軸修正
     plt.xticks(rotation = 45, ha = "right")
+
+    # Y軸修正
+    plt.yticks(
+        [x for x in range(1, len(target_data))][0::2],
+        [x for x in range(1, len(target_data))][0::2],
+    )
     plt.gca().invert_yaxis()
 
     plt.savefig(save_file, bbox_inches = "tight")
@@ -166,11 +179,12 @@ def _graph_generation(df, **kwargs):
         ))
 
     plt.style.use("ggplot")
+
     df.plot(
         figsize = (8 + 0.01 * kwargs["total_game_count"], 8),
-        title = kwargs["title_text"],
         xlabel = kwargs["xlabel_text"],
         ylabel = kwargs["ylabel_text"],
+        marker = ".",
     )
 
     plt.legend(
@@ -181,9 +195,9 @@ def _graph_generation(df, **kwargs):
         ncol = int(len(kwargs["target_data"]) / 30 + 1),
     )
 
-    # Y軸修正
-    ylocs, ylabs = plt.yticks()
-    new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
-    plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
+    plt.title(
+        kwargs["title_text"],
+        fontsize = 16,
+    )
 
     return(save_file)
