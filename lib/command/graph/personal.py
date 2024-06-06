@@ -1,13 +1,11 @@
 import os
-import sqlite3
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
 import lib.function as f
-import lib.command as c
-import lib.command.graph._query as query
+import lib.database as d
 from lib.function import global_value as g
 
 
@@ -40,38 +38,20 @@ def plot(argument, command_option):
     # 検索動作を合わせる
     command_option["guest_skip"] = command_option["guest_skip2"]
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
+    # --- データ収集 ToDo: 仮置き換え
+    params = f.configure.get_parameters(argument, command_option)
+    total_game_count, _, _ = d.aggregate.game_count(argument, command_option)
+    df = d.aggregate.personal_gamedata(argument, command_option)
+    target_player = params["player_name"]
+    playtime = df["playtime"].to_list()
+    point = df["point"].to_list()
+    point_sum = df["point_sum"].to_list()
+    point_avg = df["point_avg"].to_list()
+    rank = df["rank"].to_list()
+    rank_avg = df["rank_avg"].to_list()
 
-    ret = query.select_data(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
-
-    target_count = ret["target_count"]
-    starttime = ret["starttime"]
-    endtime = ret["endtime"]
-
-    # --- データ収集
-    playtime = []
-    point = []
-    point_sum = []
-    point_avg = []
-    rank = []
-    rank_avg = []
-    for row in rows.fetchall():
-        target_player = c.member.NameReplace(row["name"], command_option, add_mark = True)
-        playtime.append(row["playtime"])
-        point.append(row["point"])
-        point_sum.append(row["point_sum"])
-        point_avg.append(row["point_avg"])
-        rank.append(row["rank"])
-        rank_avg.append(row["rank_avg"])
-        g.logging.trace(f"{dict(row)}") # type: ignore
-    g.logging.info(f"return record: {len(playtime)}")
-
-    game_count = len(playtime)
-
-    if game_count == 0:
-        return(game_count, f.message.no_hits(argument, command_option))
+    if total_game_count == 0:
+        return(total_game_count, f.message.no_hits(argument, command_option))
 
     ### グラフ生成 ###
     save_file = os.path.join(g.work_dir, "graph.png")
@@ -88,21 +68,21 @@ def plot(argument, command_option):
     rotation = 45
     position = "right"
 
-    if game_count > 10:
+    if total_game_count > 10:
         rotation = 60
-    if game_count > 20:
-        fig = plt.figure(figsize = (8 + 0.5 * int(game_count / 5), 8))
+    if total_game_count > 20:
+        fig = plt.figure(figsize = (8 + 0.5 * int(total_game_count / 5), 8))
         rotation = 90
         position = "center"
-    if game_count == 1:
+    if total_game_count == 1:
         rotation = 0
         position = "center"
 
-    _xlabel = f"ゲーム終了日時（{game_count} ゲーム）"
-    if target_count == 0:
-        title_text = f"『{target_player}』の成績 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
+    _xlabel = f"ゲーム終了日時（{total_game_count} ゲーム）"
+    if params["target_count"] == 0:
+        title_text = f"『{target_player}』の成績 ({params['starttime_hm']} - {params['endtime_hm']})"
     else:
-        title_text = f"『{target_player}』の成績 (直近 {target_count} ゲーム)"
+        title_text = f"『{target_player}』の成績 (直近 {total_game_count} ゲーム)"
 
     grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [3, 1])
     fig.suptitle(title_text, fontsize = 12)
@@ -110,8 +90,8 @@ def plot(argument, command_option):
     # 累積推移
     point_ax = fig.add_subplot(grid[0])
     point_ax.set_ylabel("ポイント")
-    point_ax.set_xlim(-1, game_count)
-    point_ax.hlines(y = 0, xmin = -1, xmax = game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
+    point_ax.set_xlim(-1, total_game_count)
+    point_ax.hlines(y = 0, xmin = -1, xmax = total_game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
     point_ax.plot(playtime, point_sum, marker = "o", markersize = 3, label = f"累積ポイント({str(point_sum[-1])}pt)".replace("-", "▲"))
     point_ax.plot(playtime, point_avg, marker = "o", markersize = 3, label = f"平均ポイント({str(point_avg[-1])}pt)".replace("-", "▲"))
     point_ax.bar(playtime, point, color = "dodgerblue", label = f"獲得ポイント")
@@ -128,9 +108,9 @@ def plot(argument, command_option):
     rank_ax.invert_yaxis()
     rank_ax.set_ylabel("順位")
     rank_ax.set_xlabel(_xlabel)
-    rank_ax.set_xlim(-1, game_count)
+    rank_ax.set_xlim(-1, total_game_count)
     rank_ax.set_ylim(4.2, 0.8)
-    rank_ax.hlines(y = 2.5, xmin = -1, xmax = game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
+    rank_ax.hlines(y = 2.5, xmin = -1, xmax = total_game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
     rank_ax.plot(playtime, rank, marker = "o", markersize = 3, label = f"獲得順位")
     rank_ax.plot(playtime, rank_avg, marker = "o", markersize = 3, label = f"平均順位({rank_avg[-1]})")
     rank_ax.legend(bbox_to_anchor = (1, 1), loc = "upper left", borderaxespad = 0.5)
@@ -140,4 +120,4 @@ def plot(argument, command_option):
     fig.savefig(save_file)
     plt.close()
 
-    return(game_count, save_file)
+    return(total_game_count, save_file)

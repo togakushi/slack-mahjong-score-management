@@ -30,7 +30,10 @@ def main(client, channel, argument):
     if len(target_player) == 1: # 対象がひとり → 個人成績
         count, ret = personal.plot(argument, command_option)
     else: # 対象が複数 → 比較
-        count, ret = summary.plot(argument, command_option)
+        if command_option["order"]:
+            count, ret = summary.rank_plot(argument, command_option)
+        else:
+            count, ret = summary.point_plot(argument, command_option)
 
     if count == 0:
         f.slack_api.post_message(client, channel, ret)

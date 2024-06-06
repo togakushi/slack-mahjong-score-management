@@ -1,23 +1,20 @@
 import os
-import sqlite3
-from itertools import chain
 
+import pandas as pd
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.function as f
-import lib.command as c
-import lib.command.graph._query as query
+import lib.database as d
 from lib.function import global_value as g
-
 
 mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
 
-def plot(argument, command_option):
+def point_plot(argument, command_option):
     """
-    ポイント推移/順位変動グラフを生成する
+    ポイント推移グラフを生成する
 
     Parameters
     ----------
@@ -29,7 +26,7 @@ def plot(argument, command_option):
 
     Returns
     -------
-    game_count : int
+    total_game_count : int
         グラフにプロットしたゲーム数
 
     text : text
@@ -37,161 +34,151 @@ def plot(argument, command_option):
         グラフ画像保存パス
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
+    # データ収集
+    params = f.configure.get_parameters(argument, command_option)
+    total_game_count, target_data, df = _data_collection(argument, command_option, params)
 
-    command_option["fourfold"] = True # 直近Nは4倍する(縦持ちなので4人分)
-    ret = query.select_data(argument, command_option)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+    if len(target_data) == 0: # 描写対象が0人の場合は終了
+        return(len(target_data), f.message.no_hits(argument, command_option))
 
-    target_count = ret["target_count"]
-    starttime = ret["starttime"]
-    endtime = ret["endtime"]
+    # 集計
+    pivot = pd.pivot_table(df, index = "playtime", columns = "プレイヤー名", values = "point_sum").ffill()
+    pivot = pivot.reindex(target_data["プレイヤー名"].to_list(), axis = "columns") # 並び替え
 
-    # --- データ収集
-    tmp_results = {}
-    for row in rows.fetchall():
-        if not row["name"] in tmp_results:
-            tmp_results[row["name"]] = {
-                "playtime": [],
-                "point_sum": [],
-                "interim_rank": [],
-                "count": 0,
-            }
-        tmp_results[row["name"]]["playtime"].append(row["playtime"])
-        tmp_results[row["name"]]["point_sum"].append(row["point_sum"])
-        tmp_results[row["name"]]["count"] = row["count"]
-        g.logging.trace(f"{row['name']}: {tmp_results[row['name']]}") # type: ignore
-    g.logging.info(f"return record: {len(tmp_results)}")
-
-    # 規定打数足切り
-    for name in list(tmp_results):
-        if not tmp_results[name]["count"] >= command_option["stipulated"]:
-            tmp_results.pop(name)
-
-    if len(tmp_results) == 0: # 描写対象が0人の場合は終了
-        return(len(tmp_results), f.message.no_hits(argument, command_option))
-
-    # 各プレイヤーのplaytimeから総ゲーム数をカウント
-    playtime = sorted(set(chain.from_iterable([tmp_results[i]["playtime"] for i in tmp_results.keys()])))
-    game_count = len(playtime)
-
-    # 累積ポイント推移
-    results = {}
-    for name in tmp_results.keys():
-        results[name] = {
-            "playtime": [],
-            "point_sum": [],
-            "interim_rank": [],
-            "count": tmp_results[name]["count"],
-        }
-        point = None
-        for i in range(game_count):
-            if playtime[i] in tmp_results[name]["playtime"]:
-                position = tmp_results[name]["playtime"].index(playtime[i])
-                point = tmp_results[name]["point_sum"][position]
-            results[name]["playtime"].append(playtime[i])
-            results[name]["point_sum"].append(point)
-
-    # 順位推移
-    for i in range(game_count):
-        ranking = list(set([results[x]["point_sum"][i] for x in results.keys()]))
-        if None in ranking:
-            ranking.remove(None)
-        ranking.sort(reverse = True)
-
-        for name in results.keys(): # Todo: 同点のとき重なる
-            if results[name]["point_sum"][i]:
-                results[name]["interim_rank"].append(list(ranking).index(results[name]["point_sum"][i]) + 1)
-            else:
-                results[name]["interim_rank"].append(None)
-
-    # 最終順位順に並べ替え
-    ranking_point = {}
-    ranking_rank = {}
-    for name in results.keys():
-        ranking_point[name] = results[name]["point_sum"][-1]
-        ranking_rank[name] = results[name]["interim_rank"][-1]
-
-    ranking_point = sorted(ranking_point.items(), key = lambda x:x[1], reverse = True)
-    ranking_rank = sorted(ranking_rank.items(), key = lambda x:x[1])
-
-    ### グラフ生成 ###
-    save_file = os.path.join(g.work_dir, "graph.png")
-    # グラフフォント設定
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
-    fm.fontManager.addfont(font_path)
-    font_prop = fm.FontProperties(fname = font_path)
-    plt.rcParams["font.family"] = font_prop.get_name()
-
-    fig = plt.figure()
-    plt.style.use("ggplot")
-    plt.xticks(rotation = 45, ha = "right")
-
-    # サイズ、表記調整
-    if game_count > 20:
-        fig = plt.figure(figsize = (8 + 0.5 * int(game_count / 5), 8))
-        plt.xlim(-1, game_count)
-    if game_count > 10:
-        plt.xticks(rotation = 90, ha = "center")
-    if game_count == 1:
-        plt.xticks(rotation = 0, ha = "center")
-
-    # タイトルと軸ラベル
-    _xlabel = f"ゲーム終了日時（{game_count} ゲーム）"
-    if command_option["order"]:
-        _ylabel = "順位 (累積ポイント順)"
-        if target_count == 0:
-            title_text = f"順位変動 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
-        else:
-            title_text = f"順位変動 (直近 {target_count} ゲーム)"
+    # グラフ生成
+    args = {
+        "total_game_count": total_game_count,
+        "target_data": target_data,
+        "xlabel_text": f"ゲーム終了日時（{total_game_count} ゲーム）",
+        "ylabel_text": "累積ポイント",
+    }
+    if params["target_count"] == 0:
+        args["title_text"] = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
     else:
-        _ylabel = "累積ポイント"
-        if target_count == 0:
-            title_text = f"ポイント推移 ({starttime.strftime('%Y/%m/%d %H:%M')} - {endtime.strftime('%Y/%m/%d %H:%M')})"
-        else:
-            title_text = f"ポイント推移 (直近 {target_count} ゲーム)"
+        args["title_text"] = f"ポイント推移 (直近 {params['target_count']} ゲーム)"
 
-    plt.hlines(y = 0, xmin = -1, xmax = game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
-    plt.title(title_text, fontsize = 12)
-    plt.ylabel(_ylabel)
-    plt.xlabel(_xlabel)
+    save_file = _graph_generation(pivot, **args)
 
-    # プロット
-    if command_option["order"]: # 順位変動
-        for name, _ in ranking_rank:
-            label = "{}位：{} {}pt / {}G)".format(
-                str(results[name]["interim_rank"][-1]),
-                c.member.NameReplace(name, command_option, add_mark = True),
-                str(results[name]["point_sum"][-1]),
-                str(results[name]["count"]),
-            ).replace("-", "▲")
-            plt.plot(playtime, results[name]["interim_rank"], marker = "o", markersize = 3, label = label)
-        if game_count < 10:
-            plt.yticks([i for i in range(len(results) + 2)])
-        else:
-            # Y軸の目盛り設定(多めにリストを作って描写範囲まで削る)
-            yl = [i for i in range(-(int(len(results) / 20) + 1), int(len(results) * 1.5), int(len(results) / 20) + 2)]
-            while yl[-2] > len(results):
-                yl.pop()
-            plt.yticks(yl)
-        plt.ylim(0.2, len(results) + 0.8)
-        plt.gca().invert_yaxis()
-    else: # ポイント推移
-        for name, _ in ranking_point:
-            label = "{} ({}pt / {}G)".format(
-                c.member.NameReplace(name, command_option, add_mark = True),
-                str(results[name]["point_sum"][-1]),
-                str(results[name]["count"]),
-            ).replace("-", "▲")
-            plt.plot(playtime, results[name]["point_sum"], marker = "o", markersize = 3, label = label)
+    plt.xticks(rotation = 45, ha = "right")
+    plt.axhline(y = 0, linewidth = 0.5, ls = "dashed", color = "grey")
+
+    plt.savefig(save_file, bbox_inches = "tight")
+
+    return(total_game_count, save_file)
+
+
+def rank_plot(argument, command_option):
+    """
+    順位変動グラフを生成する
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    total_game_count : int
+        グラフにプロットしたゲーム数
+
+    text : text
+        検索結果が0件のときのメッセージ or
+        グラフ画像保存パス
+    """
+
+    # データ収集
+    params = f.configure.get_parameters(argument, command_option)
+    total_game_count, target_data, df = _data_collection(argument, command_option, params)
+
+    if len(target_data) == 0: # 描写対象が0人の場合は終了
+        return(len(target_data), f.message.no_hits(argument, command_option))
+
+    # 集計
+    pivot = pd.pivot_table(df, index = "playtime", columns = "プレイヤー名", values = "point_sum").ffill()
+    pivot = pivot.reindex(target_data["プレイヤー名"].to_list(), axis = "columns") # 並び替え
+    pivot = pivot.rank(method = "dense", ascending = False, axis = 1)
+
+    # グラフ生成
+    args = {
+        "total_game_count": total_game_count,
+        "target_data": target_data,
+        "xlabel_text": f"ゲーム終了日時（{total_game_count} ゲーム）",
+        "ylabel_text": "順位 (累積ポイント順)",
+    }
+    if params["target_count"] == 0:
+        args["title_text"] = f"順位変動 ({params['starttime_hm']} - {params['endtime_hm']})"
+    else:
+        args["title_text"] = f"順位変動 (直近 {params['target_count']} ゲーム)"
+
+    save_file = _graph_generation(pivot, **args)
+
+    plt.xticks(rotation = 45, ha = "right")
+    plt.gca().invert_yaxis()
+
+    plt.savefig(save_file, bbox_inches = "tight")
+
+    return(total_game_count, save_file)
+
+
+def _data_collection(argument, command_option, params):
+    """
+    データ収集
+    """
+
+    # データ収集
+    command_option["fourfold"] = True # 直近Nは4倍する(縦持ちなので4人分)
+    total_game_count, _, _ = d.aggregate.game_count(argument, command_option)
+    df = d.aggregate.personal_gamedata(argument, command_option)
+
+    target_data = pd.DataFrame()
+    target_data["プレイヤー名"] = df.groupby("name").last()["プレイヤー名"]
+    target_data["last_point"] = df.groupby("name").last()["point_sum"]
+    target_data["game_count"] = df.groupby("name").max()["count"]
+
+    # 足切り
+    target_list = list(target_data.query("game_count >= @params['stipulated']").index)
+    target_data = target_data.query("name == @target_list").copy()
+    df = df.query("name == @target_list").copy()
+
+    # 順位付け
+    target_data["position"] = target_data["last_point"].rank(ascending = False).astype(int)
+
+    return(total_game_count, target_data.sort_values("position"), df)
+
+
+def _graph_generation(df, **kwargs):
+    """
+    グラフ生成共通処理
+    """
+
+    f.common.set_graph_font(plt, fm)
+    save_file = os.path.join(g.work_dir, "graph.png")
 
     # 凡例
+    legend_text = []
+    for _,v in kwargs["target_data"].iterrows():
+        legend_text.append("{}位：{} ({}pt / {}G)".format(
+            v["position"], v["プレイヤー名"],
+            str(v["last_point"]).replace("-", "▲"), v["game_count"],
+        ))
+
+    plt.style.use("ggplot")
+    df.plot(
+        figsize = (8 + 0.01 * kwargs["total_game_count"], 8),
+        title = kwargs["title_text"],
+        xlabel = kwargs["xlabel_text"],
+        ylabel = kwargs["ylabel_text"],
+    )
+
     plt.legend(
+        legend_text,
         bbox_to_anchor = (1, 1),
         loc = "upper left",
         borderaxespad = 0.5,
-        ncol = int(len(results.keys()) / 30 + 1),
+        ncol = int(len(kwargs["target_data"]) / 30 + 1),
     )
 
     # Y軸修正
@@ -199,9 +186,4 @@ def plot(argument, command_option):
     new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
     plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
 
-    plt.tight_layout()
-    fig.tight_layout()
-    fig.savefig(save_file)
-    plt.close()
-
-    return(game_count, save_file)
+    return(save_file)

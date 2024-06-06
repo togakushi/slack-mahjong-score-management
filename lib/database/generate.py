@@ -423,3 +423,63 @@ def versus_matrix(argument, command_option):
 
 
     return(sql)
+
+
+def personal_gamedata(argument, command_option):
+    """
+    ゲーム結果集計
+    """
+    params = f.configure.get_parameters(argument, command_option)
+    sql = """
+        select
+            count() over moving as count,
+            replace(playtime, "-", "/") as playtime,
+            name,
+            rank,
+            point,
+            round(sum(point) over moving, 1) as point_sum,
+            round(avg(point) over moving, 1) as point_avg,
+            round(avg(rank) over moving, 2) as rank_avg
+        from (
+            select
+                playtime,
+                --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
+                --[unregistered_not_replace] name, -- ゲスト無効
+                rank,
+                point
+            from
+                individual_results
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
+                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
+                --[guest_skip] and guest = 0 -- ゲストなし
+                --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
+            order by
+                playtime desc
+            --[recent] limit :target_count
+        )
+        window
+            moving as (partition by name order by playtime)
+        order by
+            name, playtime
+    """
+
+    if params["player_name"]:
+        sql = sql.replace("--[player_name] ", "")
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    if params["target_count"] != 0:
+        sql = sql.replace("and my.playtime between", "-- and my.playtime between")
+        sql = sql.replace("--[recent] ", "")
+
+    return(sql)

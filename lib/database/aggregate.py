@@ -296,3 +296,19 @@ def versus_matrix(argument, command_option):
     df["vs_表示名"] = _disp_name(df["vs_name"], command_option)
 
     return(df)
+
+
+def personal_gamedata(argument, command_option):
+    # データ収集
+    df = pd.read_sql(
+        d.generate.personal_gamedata(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = _extending(f.configure.get_parameters(argument, command_option))
+    )
+
+    # ゲスト置換
+    df["プレイヤー名"] = df["name"].apply(
+        lambda x: c.member.NameReplace(x, command_option, add_mark = True)
+    )
+
+    return(df)
