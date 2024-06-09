@@ -273,6 +273,12 @@ def personal_results(argument, command_option):
         params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
+    # Nullが返ってきたときにobject型になるのでfloat型に変換
+    df["東家-平均順位"] = df["東家-平均順位"].astype(float)
+    df["南家-平均順位"] = df["南家-平均順位"].astype(float)
+    df["西家-平均順位"] = df["西家-平均順位"].astype(float)
+    df["北家-平均順位"] = df["北家-平均順位"].astype(float)
+
     # ゲスト置換
     df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
 
@@ -280,7 +286,7 @@ def personal_results(argument, command_option):
     df = df.reset_index(drop = True)
     df.index = df.index + 1
 
-    return(df)
+    return(df.fillna(0))
 
 
 def versus_matrix(argument, command_option):
