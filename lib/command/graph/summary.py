@@ -179,7 +179,7 @@ def _graph_generation(df:pd.DataFrame, **kwargs):
     plt.style.use("ggplot")
 
     df.plot(
-        figsize = (8 + 0.1 * int(len(df) / 50), 8),
+        figsize = (8, 6),
         xlabel = kwargs["xlabel_text"],
         ylabel = kwargs["ylabel_text"],
         marker = "." if len(df) < 50 else None,
