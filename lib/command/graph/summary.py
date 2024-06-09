@@ -60,7 +60,6 @@ def point_plot(argument, command_option):
     save_file = _graph_generation(pivot, **args)
 
     # X軸修正
-    plt.xticks(rotation = 45, ha = "right")
     plt.axhline(y = 0, linewidth = 0.5, ls = "dashed", color = "grey")
 
     # Y軸修正
@@ -121,13 +120,10 @@ def rank_plot(argument, command_option):
 
     save_file = _graph_generation(pivot, **args)
 
-    # X軸修正
-    plt.xticks(rotation = 45, ha = "right")
-
     # Y軸修正
     plt.yticks(
-        [x for x in range(1, len(target_data))][0::2],
-        [x for x in range(1, len(target_data))][0::2],
+        list(range(len(target_data) + 1 ))[1::2],
+        list(range(len(target_data) + 1 ))[1::2]
     )
     plt.gca().invert_yaxis()
 
@@ -136,7 +132,7 @@ def rank_plot(argument, command_option):
     return(total_game_count, save_file)
 
 
-def _data_collection(argument, command_option, params):
+def _data_collection(argument:list, command_option:dict, params:dict):
     """
     データ収集
     """
@@ -162,13 +158,15 @@ def _data_collection(argument, command_option, params):
     return(total_game_count, target_data.sort_values("position"), df)
 
 
-def _graph_generation(df, **kwargs):
+def _graph_generation(df:pd.DataFrame, **kwargs):
     """
     グラフ生成共通処理
     """
 
     f.common.set_graph_font(plt, fm)
     save_file = os.path.join(g.work_dir, "graph.png")
+
+    g.logging.info(f"plot data:\n{df}")
 
     # 凡例
     legend_text = []
@@ -181,10 +179,10 @@ def _graph_generation(df, **kwargs):
     plt.style.use("ggplot")
 
     df.plot(
-        figsize = (8 + 0.01 * kwargs["total_game_count"], 8),
+        figsize = (8 + 0.1 * int(len(df) / 50), 8),
         xlabel = kwargs["xlabel_text"],
         ylabel = kwargs["ylabel_text"],
-        marker = ".",
+        marker = "." if len(df) < 50 else None,
     )
 
     plt.legend(
@@ -198,6 +196,13 @@ def _graph_generation(df, **kwargs):
     plt.title(
         kwargs["title_text"],
         fontsize = 16,
+    )
+
+    plt.xticks(
+        list(range(len(df)))[::int(len(df) / 25) + 1],
+        list(df.index)[::int(len(df) / 25) + 1],
+        rotation = 45,
+        ha = "right",
     )
 
     return(save_file)
