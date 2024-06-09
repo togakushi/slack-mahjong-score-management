@@ -32,7 +32,18 @@ def aggregation(argument, command_option):
     command_option["guest_skip"] = command_option["guest_skip2"]
 
     ### データ収集 ###
-    _, first_game, last_game = d.aggregate.game_count(argument, command_option)
+    params = f.configure.get_parameters(argument, command_option)
+    game_count, first_game, last_game = d.aggregate.game_count(argument, command_option)
+
+    if game_count == 0:
+        msg1 = f"""
+            *【個人成績】*
+            \tプレイヤー名： {params['player_name']} {f.common.badge_degree(0)}
+            \t検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}
+            \t対戦数： 0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}
+        """.replace("-", "/")
+        return(textwrap.dedent(msg1), {})
+
     result_df = d.aggregate.personal_results(argument, command_option)
     record_df = d.aggregate.personal_record(argument, command_option)
     result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"])
@@ -45,18 +56,16 @@ def aggregation(argument, command_option):
     msg1 = f"""
         *【個人成績】*
         \tプレイヤー名： {data["表示名"]} {badge_degree}
+        \t検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}
         \t集計範囲： {first_game} ～ {last_game}
-        \t対戦数：{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分)  {badge_status}
+        \t対戦数： {data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}
     """.replace("-", "/")
 
     msg2 = {}
 
-    if data["ゲーム数"] == 0:
-        return(textwrap.dedent(msg1).strip(), msg2)
-
     msg1 += f"""
-        \t累積ポイント： {data['累積ポイント']:+.1f}
-        \t平均ポイント： {data['平均ポイント']:+.1f}
+        \t累積ポイント： {data['累積ポイント']:+.1f}pt
+        \t平均ポイント： {data['平均ポイント']:+.1f}pt
         \t平均順位： {data['平均順位']:1.2f}
         \t1位： {data['1位']:2} 回 ({data['1位率']:.2f}%)
         \t2位： {data['2位']:2} 回 ({data['2位率']:.2f}%)
@@ -75,7 +84,7 @@ def aggregation(argument, command_option):
         \t南家： {data['南家-1位']}-{data['南家-2位']}-{data['南家-3位']}-{data['南家-4位']} ({data['南家-平均順位']:1.2f}) / {data['南家-トビ']} / {data['南家-役満和了']}
         \t西家： {data['西家-1位']}-{data['西家-2位']}-{data['西家-3位']}-{data['西家-4位']} ({data['西家-平均順位']:1.2f}) / {data['西家-トビ']} / {data['西家-役満和了']}
         \t北家： {data['北家-1位']}-{data['北家-2位']}-{data['北家-3位']}-{data['北家-4位']} ({data['北家-平均順位']:1.2f}) / {data['北家-トビ']} / {data['北家-役満和了']}
-    """)
+    """).replace("0.00", "-.--")
 
     # --- 記録
     msg2["記録"] = textwrap.dedent(f"""
@@ -83,52 +92,52 @@ def aggregation(argument, command_option):
         \t連続トップ： {data['連続トップ']} 連続
         \t連続連対： {data['連続連対']} 連続
         \t連続ラス回避： {data['連続ラス回避']} 連続
-        \t最大素点： {data['最大素点'] * 100} 点
-        \t最大獲得ポイント： {data['最大獲得ポイント']} pt
+        \t最大素点： {data['最大素点'] * 100}点
+        \t最大獲得ポイント： {data['最大獲得ポイント']}pt
 
         *【ワーストレコード】*
         \t連続ラス： {data['連続ラス']} 連続
         \t連続逆連対： {data['連続逆連対']} 連続
         \t連続トップなし： {data['連続トップなし']} 連続
-        \t最小素点： {data['最小素点'] * 100} 点
-        \t最小獲得ポイント： {data['最小獲得ポイント']} pt
-    """).replace("-", "▲").replace("： 1 連続", "： ----")
+        \t最小素点： {data['最小素点'] * 100}点
+        \t最小獲得ポイント： {data['最小獲得ポイント']}pt
+    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
     # --- 戦績
     if command_option["game_results"]:
         df = d.aggregate.game_details(argument, command_option)
         if command_option["verbose"]:
-            msg2["戦績"] = f"*【戦績】*\n"
+            msg2["戦績"] = f"\n*【戦績】*\n"
             for p in df["playtime"].unique():
                 seat1 = df.query("playtime == @p and seat == 1").to_dict(orient = "records")[0]
                 seat2 = df.query("playtime == @p and seat == 2").to_dict(orient = "records")[0]
                 seat3 = df.query("playtime == @p and seat == 3").to_dict(orient = "records")[0]
                 seat4 = df.query("playtime == @p and seat == 4").to_dict(orient = "records")[0]
                 guest_count = df.query("playtime == @p and guest == 1").sum()["guest"]
-                msg2["戦績"] += textwrap.dedent(f"""
-                    {p.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
-                    \t東家： {seat1["表示名"]} {seat1["rank"]}位 {seat1["rpoint"] * 100:>7}点 ({seat1["point"]:>+5.1f}pt) {seat1["grandslam"]}
-                    \t南家： {seat2["表示名"]} {seat2["rank"]}位 {seat2["rpoint"] * 100:>7}点 ({seat2["point"]:>+5.1f}pt) {seat2["grandslam"]}
-                    \t西家： {seat3["表示名"]} {seat3["rank"]}位 {seat3["rpoint"] * 100:>7}点 ({seat3["point"]:>+5.1f}pt) {seat3["grandslam"]}
-                    \t北家： {seat4["表示名"]} {seat4["rank"]}位 {seat4["rpoint"] * 100:>7}点 ({seat4["point"]:>+5.1f}pt) {seat4["grandslam"]}
-                """).replace("-", "▲").strip() + "\n"
+                if data["プレイヤー名"] in (seat1["プレイヤー名"], seat2["プレイヤー名"], seat3["プレイヤー名"], seat4["プレイヤー名"]):
+                    msg2["戦績"] += textwrap.dedent(f"""
+                        {p.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
+                        \t東家： {seat1["表示名"]} {seat1["rank"]}位 {seat1["rpoint"] * 100:>7}点 ({seat1["point"]:>+5.1f}pt) {seat1["grandslam"]}
+                        \t南家： {seat2["表示名"]} {seat2["rank"]}位 {seat2["rpoint"] * 100:>7}点 ({seat2["point"]:>+5.1f}pt) {seat2["grandslam"]}
+                        \t西家： {seat3["表示名"]} {seat3["rank"]}位 {seat3["rpoint"] * 100:>7}点 ({seat3["point"]:>+5.1f}pt) {seat3["grandslam"]}
+                        \t北家： {seat4["表示名"]} {seat4["rank"]}位 {seat4["rpoint"] * 100:>7}点 ({seat4["point"]:>+5.1f}pt) {seat4["grandslam"]}
+                    """).replace("-", "▲").strip() + " \n"
         else:
             msg2["戦績"] = f"*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
             x = df.query("プレイヤー名 == @data['プレイヤー名']")
             for _, v in x.iterrows():
                 guest_count = df.query("playtime == @v['playtime'] and guest == 1").sum()["guest"]
-                msg2["戦績"] += "{} {}\t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
-                    v["playtime"].replace("-", "/"),
+                msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
                     g.guest_mark.strip() if guest_count >= 2 else "",
+                    v["playtime"].replace("-", "/"),
                     v["rank"], v["rpoint"] * 100, v["point"], v["grandslam"],
                 ).replace("-", "▲")
 
     # --- 対戦結果
-    print(command_option)
     if command_option["versus_matrix"]:
         df = d.aggregate.versus_matrix(argument, command_option)
         msg2["対戦"] = "\n*【対戦結果】*\n"
         for _, r in df.iterrows():
-            msg2["対戦"] += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:.2f}%)\n"
+            msg2["対戦"] += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"
 
     return(textwrap.dedent(msg1), msg2)
