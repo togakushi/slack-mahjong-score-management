@@ -123,7 +123,7 @@ def aggregation(argument, command_option):
                         \t北家： {seat4["表示名"]} {seat4["rank"]}位 {seat4["rpoint"] * 100:>7}点 ({seat4["point"]:>+5.1f}pt) {seat4["grandslam"]}
                     """).replace("-", "▲").strip() + " \n"
         else:
-            msg2["戦績"] = f"*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
+            msg2["戦績"] = f"\n*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
             x = df.query("プレイヤー名 == @data['プレイヤー名']")
             for _, v in x.iterrows():
                 guest_count = df.query("playtime == @v['playtime'] and guest == 1").sum()["guest"]

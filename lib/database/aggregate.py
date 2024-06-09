@@ -207,21 +207,26 @@ def personal_record(argument, command_option):
 
     # 連続順位カウント
     rank_mask = {
-        "連続トップ":     {1: 0, 2: 1, 3: 1, 4: 1},
-        "連続連対":       {1: 0, 2: 0, 3: 1, 4: 1},
-        "連続ラス回避":   {1: 0, 2: 0, 3: 0, 4: 1},
-        "連続トップなし": {1: 1, 2: 0, 3: 0, 4: 0},
-        "連続逆連対":     {1: 1, 2: 1, 3: 0, 4: 0},
-        "連続ラス":       {1: 1, 2: 1, 3: 1, 4: 0},
+        "連続トップ":     {1: 1, 2: 0, 3: 0, 4: 0},
+        "連続連対":       {1: 1, 2: 1, 3: 0, 4: 0},
+        "連続ラス回避":   {1: 1, 2: 1, 3: 1, 4: 0},
+        "連続トップなし": {1: 0, 2: 1, 3: 1, 4: 1},
+        "連続逆連対":     {1: 0, 2: 0, 3: 1, 4: 1},
+        "連続ラス":       {1: 0, 2: 0, 3: 0, 4: 1},
     }
 
+    tmp_df = pd.DataFrame()
     for k in rank_mask.keys():
-        gamedata[k] = 0
         for pname in gamedata["プレイヤー名"].unique():
-            tmp_df = gamedata.query("プレイヤー名 == @pname")["順位"].replace(rank_mask[k])
-            tmp_df = tmp_df.groupby(tmp_df.cumsum()).cumcount()
-            tmp_df = tmp_df.rename(k)
-            gamedata.update(tmp_df)
+            tmp_df["順位"] = gamedata.query("プレイヤー名 == @pname")["順位"]
+            tmp_df[k] = gamedata.query("プレイヤー名 == @pname")["順位"].replace(rank_mask[k])
+
+        tmp_df2 = pd.DataFrame()
+        tmp_df2["flg"] = tmp_df[k]
+        tmp_df2["id"] = (tmp_df[k] != tmp_df[k].shift()).cumsum()
+        tmp_df2["count"] = tmp_df2.groupby("id").count()
+        gamedata[k] = tmp_df2.query("flg == 1").groupby("id").count().max()["flg"]
+        gamedata[k] = gamedata[k].fillna(0).astype(int)
 
     # 最大値/最小値の格納
     df = pd.DataFrame()
@@ -278,6 +283,7 @@ def personal_results(argument, command_option):
     df["南家-平均順位"] = df["南家-平均順位"].astype(float)
     df["西家-平均順位"] = df["西家-平均順位"].astype(float)
     df["北家-平均順位"] = df["北家-平均順位"].astype(float)
+    df = df.fillna(0)
 
     # ゲスト置換
     df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
@@ -286,7 +292,7 @@ def personal_results(argument, command_option):
     df = df.reset_index(drop = True)
     df.index = df.index + 1
 
-    return(df.fillna(0))
+    return(df)
 
 
 def versus_matrix(argument, command_option):
