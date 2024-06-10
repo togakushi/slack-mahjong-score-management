@@ -67,7 +67,7 @@ def aggregation(argument, command_option):
 
     result_df = d.aggregate.personal_results(argument, command_option)
     record_df = d.aggregate.personal_record(argument, command_option)
-    result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"])
+    result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"], suffixes = ["", "_x"])
 
     # --- 集計
     result_df["ゲーム参加率"] = result_df["ゲーム数"] / total_game_count
@@ -139,7 +139,13 @@ def aggregation(argument, command_option):
     }
 
     for k in data.keys(): # ランク付け
-        result_df[f"{k}_rank"] = result_df[k].rank(method = "dense", ascending = data[k]["order"])
+        result_df[f"{k}_rank"] = result_df[k].rank(
+            method = "dense",
+            ascending = data[k]["order"]
+        )
+
+    for x in ["連続トップ", "連続連対", "連続ラス回避"]: # 型変換
+        result_df[x] = result_df[x].astype(int)
 
     # --- 表示
     msg1 = "\n*【ランキング】*\n"
