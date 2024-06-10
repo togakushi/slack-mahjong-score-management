@@ -46,7 +46,7 @@ def aggregation(argument, command_option):
 
     result_df = d.aggregate.personal_results(argument, command_option)
     record_df = d.aggregate.personal_record(argument, command_option)
-    result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"])
+    result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"], suffixes = ["", "_x"])
     data = result_df.to_dict(orient = "records")[0]
 
     ### 表示内容 ###
