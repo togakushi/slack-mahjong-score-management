@@ -215,18 +215,14 @@ def personal_record(argument, command_option):
         "連続ラス":       {1: 0, 2: 0, 3: 0, 4: 1},
     }
 
-    tmp_df = pd.DataFrame()
     for k in rank_mask.keys():
+        gamedata[k] = None
         for pname in gamedata["プレイヤー名"].unique():
-            tmp_df["順位"] = gamedata.query("プレイヤー名 == @pname")["順位"]
-            tmp_df[k] = gamedata.query("プレイヤー名 == @pname")["順位"].replace(rank_mask[k])
-
-        tmp_df2 = pd.DataFrame()
-        tmp_df2["flg"] = tmp_df[k]
-        tmp_df2["id"] = (tmp_df[k] != tmp_df[k].shift()).cumsum()
-        tmp_df2["count"] = tmp_df2.groupby("id").count()
-        gamedata[k] = tmp_df2.query("flg == 1").groupby("id").count().max()["flg"]
-        gamedata[k] = gamedata[k].fillna(0).astype(int)
+            tmp_df = pd.DataFrame()
+            tmp_df["flg"] = gamedata.query("プレイヤー名 == @pname")["順位"].replace(rank_mask[k])
+            tmp_df[k] = tmp_df["flg"].groupby((tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()).cumcount() + 1
+            tmp_df.loc[tmp_df["flg"] == 0, k] = 0
+            gamedata.update(tmp_df)
 
     # 最大値/最小値の格納
     df = pd.DataFrame()
@@ -236,10 +232,10 @@ def personal_record(argument, command_option):
             columns = {
                 "最終素点": "最大素点",
                 "獲得ポイント": "最大獲得ポイント",
-                "playtime": "最終ゲーム時間",
             },
             inplace = True,
         )
+        tmp_df["ゲーム数"] = len(gamedata.query("プレイヤー名 == @pname"))
         tmp_df["最小素点"] = gamedata.query("プレイヤー名 == @pname")["最終素点"].min()
         tmp_df["最小獲得ポイント"] = gamedata.query("プレイヤー名 == @pname")["獲得ポイント"].min()
         df = pd.concat([df, tmp_df])
@@ -247,6 +243,8 @@ def personal_record(argument, command_option):
     # ゲスト置換
     df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
 
+    df = df.drop(columns = ["playtime", "順位"])
+ 
     # インデックスの振り直し
     df = df.reset_index(drop = True)
     df.index = df.index + 1
