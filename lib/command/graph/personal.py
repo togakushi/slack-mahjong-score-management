@@ -42,82 +42,71 @@ def plot(argument, command_option):
     params = f.configure.get_parameters(argument, command_option)
     total_game_count, _, _ = d.aggregate.game_count(argument, command_option)
     df = d.aggregate.personal_gamedata(argument, command_option)
-    target_player = params["player_name"]
-    playtime = df["playtime"].to_list()
-    point = df["point"].to_list()
-    point_sum = df["point_sum"].to_list()
-    point_avg = df["point_avg"].to_list()
-    rank = df["rank"].to_list()
-    rank_avg = df["rank_avg"].to_list()
 
     if total_game_count == 0:
         return(total_game_count, f.message.no_hits(argument, command_option))
 
     ### グラフ生成 ###
+    f.common.set_graph_font(plt, fm)
     save_file = os.path.join(g.work_dir, "graph.png")
-    # グラフフォント設定
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
-    fm.fontManager.addfont(font_path)
-    font_prop = fm.FontProperties(fname = font_path)
-    plt.rcParams["font.family"] = font_prop.get_name()
 
     plt.style.use("ggplot")
+    fig = plt.figure(figsize = (12, 8))
 
-    # サイズ、表記調整
-    fig = plt.figure(figsize = (10, 8))
-    rotation = 45
-    position = "right"
-
-    if total_game_count > 10:
-        rotation = 60
-    if total_game_count > 20:
-        fig = plt.figure(figsize = (8 + 0.5 * int(total_game_count / 5), 8))
-        rotation = 90
-        position = "center"
-    if total_game_count == 1:
-        rotation = 0
-        position = "center"
-
-    _xlabel = f"ゲーム終了日時（{total_game_count} ゲーム）"
     if params["target_count"] == 0:
-        title_text = f"『{target_player}』の成績 ({params['starttime_hm']} - {params['endtime_hm']})"
+        title_text = f"『{params['player_name']}』の成績 ({params['starttime_hm']} - {params['endtime_hm']})"
     else:
-        title_text = f"『{target_player}』の成績 (直近 {total_game_count} ゲーム)"
+        title_text = f"『{params['player_name']}』の成績 (直近 {total_game_count} ゲーム)"
 
     grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [3, 1])
-    fig.suptitle(title_text, fontsize = 12)
-
-    # 累積推移
     point_ax = fig.add_subplot(grid[0])
-    point_ax.set_ylabel("ポイント")
-    point_ax.set_xlim(-1, total_game_count)
-    point_ax.hlines(y = 0, xmin = -1, xmax = total_game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
-    point_ax.plot(playtime, point_sum, marker = "o", markersize = 3, label = f"累積ポイント({str(point_sum[-1])}pt)".replace("-", "▲"))
-    point_ax.plot(playtime, point_avg, marker = "o", markersize = 3, label = f"平均ポイント({str(point_avg[-1])}pt)".replace("-", "▲"))
-    point_ax.bar(playtime, point, color = "dodgerblue", label = f"獲得ポイント")
-    point_ax.tick_params(axis = "x", labelsize = 0, labelcolor = "white") # 背景色と同じにして見えなくする
-    point_ax.legend(bbox_to_anchor = (1, 1), loc = "upper left", borderaxespad = 0.5)
-
-    ticks = point_ax.get_yticks()
-    point_ax.set_yticks(ticks[1:-1])
-    new_ticks = [str(int(i)).replace("-", "▲") for i in ticks]
-    point_ax.set_yticklabels(new_ticks[1:-1])
-
-    # 順位分布
     rank_ax = fig.add_subplot(grid[1], sharex = point_ax)
-    rank_ax.invert_yaxis()
-    rank_ax.set_ylabel("順位")
-    rank_ax.set_xlabel(_xlabel)
-    rank_ax.set_xlim(-1, total_game_count)
-    rank_ax.set_ylim(4.2, 0.8)
-    rank_ax.hlines(y = 2.5, xmin = -1, xmax = total_game_count, linewidth = 0.5, linestyles="dashed", color = "grey")
-    rank_ax.plot(playtime, rank, marker = "o", markersize = 3, label = f"獲得順位")
-    rank_ax.plot(playtime, rank_avg, marker = "o", markersize = 3, label = f"平均順位({rank_avg[-1]})")
-    rank_ax.legend(bbox_to_anchor = (1, 1), loc = "upper left", borderaxespad = 0.5)
 
-    plt.setp(rank_ax.get_xticklabels(), rotation = rotation, ha = position)
+    # ---
+    df.filter(items = ["point_sum", "point_avg"]).plot.line(
+        ax = point_ax,
+        ylabel = "ポイント(pt)",
+        marker = "." if len(df) < 50 else None,
+    )
+    df.filter(items = ["point"]).plot.bar(
+        ax = point_ax,
+        color = "blue",
+    )
+    point_ax.legend(
+        ["累積ポイント", "平均ポイント", "獲得ポイント"],
+        bbox_to_anchor = (1, 1),
+        loc = "upper left",
+        borderaxespad = 0.5,
+    )
+    point_ax.axhline(y = 0, linewidth = 0.5, ls = "dashed", color = "grey")
+
+    # Y軸修正
+    ylabs = point_ax.get_yticks()[1:-1]
+    point_ax.set_yticks(ylabs)
+    point_ax.set_yticklabels([str(int(ylab)).replace("-", "▲") for ylab in ylabs])
+
+    # ---
+    df.filter(items = ["rank", "rank_avg"]).plot.line(
+        ax = rank_ax,
+        marker = "." if len(df) < 50 else None,
+        yticks = [1, 2, 3, 4],
+        ylabel = "順位",
+        xlabel = f"ゲーム終了日時（{total_game_count} ゲーム）",
+    )
+    rank_ax.legend(
+        ["獲得順位","平均順位"],
+        bbox_to_anchor = (1, 1),
+        loc = "upper left",
+        borderaxespad = 0.5,
+    )
+
+    rank_ax.set_xticks(list(df.index)[::int(len(df) / 25) + 1])
+    rank_ax.set_xticklabels(list(df["playtime"])[::int(len(df) / 25) + 1], rotation = 45, ha = "right")
+    rank_ax.axhline(y = 2.5, linewidth = 0.5, ls = "dashed", color = "grey")
+    rank_ax.invert_yaxis()
+
+    fig.suptitle(title_text, fontsize = 16)
     fig.tight_layout()
-    fig.savefig(save_file)
-    plt.close()
+    plt.savefig(save_file, bbox_inches = "tight")
 
     return(total_game_count, save_file)
