@@ -1,3 +1,4 @@
+import textwrap
 import lib.function as f
 from lib.function import global_value as g
 
@@ -48,7 +49,7 @@ def game_count(argument, command_option):
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
-    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
 
 
@@ -94,6 +95,7 @@ def record_count(argument, command_option):
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
 
 
@@ -162,7 +164,7 @@ def game_results(argument, command_option):
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
-    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
 
 
@@ -289,7 +291,7 @@ def personal_results(argument, command_option):
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
-    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
 
 
@@ -326,7 +328,7 @@ def game_details(argument, command_option):
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
-    g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
 
 
@@ -421,7 +423,7 @@ def versus_matrix(argument, command_option):
         sql = sql.replace("and my.playtime between", "-- and my.playtime between")
         sql = sql.replace("--[recent] ", "")
 
-
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
 
 
@@ -479,7 +481,8 @@ def personal_gamedata(argument, command_option):
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
     if params["target_count"] != 0:
-        sql = sql.replace("and my.playtime between", "-- and my.playtime between")
+        sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
