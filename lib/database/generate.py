@@ -114,11 +114,12 @@ def game_results(argument, command_option):
             count(rank = 2 or null) as "2nd",
             count(rank = 3 or null) as "3rd",
             count(rank = 4 or null) as "4th",
-            printf("%d-%d-%d-%d",
+            printf("%d-%d-%d-%d (%.2f)",
                 count(rank = 1 or null),
                 count(rank = 2 or null),
                 count(rank = 3 or null),
-                count(rank = 4 or null)
+                count(rank = 4 or null),
+                round(avg(rank), 2)
             ) as rank_distr,
             round(avg(rank), 2) as rank_avg,
             count(rpoint < 0 or null) as flying
@@ -189,11 +190,12 @@ def personal_results(argument, command_option):
             round(cast(count(rank = 3 or null) as real) / count() * 100, 2) as '3位率',
             count(rank = 4 or null) as '4位',
             round(cast(count(rank = 4 or null) as real) / count() * 100, 2) as '4位率',
-            printf("%d-%d-%d-%d",
+            printf("%d-%d-%d-%d (%.2f)",
                 count(rank = 1 or null),
                 count(rank = 2 or null),
                 count(rank = 3 or null),
-                count(rank = 4 or null)
+                count(rank = 4 or null),
+                round(avg(rank), 2)
             ) as 順位分布,
             round(avg(rpoint) * 100, 1) as 平均最終素点,
             round(sum(point), 1) as 累積ポイント,
@@ -217,6 +219,13 @@ def personal_results(argument, command_option):
             round(avg(case when seat = 1 then rank end), 2) as '東家-平均順位',
             count(seat = 1 and matter != '' or null) as '東家-役満和了',
             count(seat = 1 and rpoint < 0 or null) as '東家-トビ',
+            printf("東家： %d-%d-%d-%d (%.2f)",
+                count(seat = 1 and rank = 1 or null),
+                count(seat = 1 and rank = 2 or null),
+                count(seat = 1 and rank = 3 or null),
+                count(seat = 1 and rank = 4 or null),
+                round(avg(case when seat = 1 then rank end), 2)
+            ) as '東家-順位分布',
             count(seat = 2 and rank = 1 or null) as '南家-1位',
             count(seat = 2 and rank = 2 or null) as '南家-2位',
             count(seat = 2 and rank = 3 or null) as '南家-3位',
@@ -224,6 +233,13 @@ def personal_results(argument, command_option):
             round(avg(case when seat = 2 then rank end), 2) as '南家-平均順位',
             count(seat = 2 and matter != '' or null) as '南家-役満和了',
             count(seat = 2 and rpoint < 0 or null) as '南家-トビ',
+            printf("南家： %d-%d-%d-%d (%.2f)",
+                count(seat = 2 and rank = 1 or null),
+                count(seat = 2 and rank = 2 or null),
+                count(seat = 2 and rank = 3 or null),
+                count(seat = 2 and rank = 4 or null),
+                round(avg(case when seat = 2 then rank end), 2)
+            ) as '南家-順位分布',
             count(seat = 3 and rank = 1 or null) as '西家-1位',
             count(seat = 3 and rank = 2 or null) as '西家-2位',
             count(seat = 3 and rank = 3 or null) as '西家-3位',
@@ -231,6 +247,13 @@ def personal_results(argument, command_option):
             round(avg(case when seat = 3 then rank end), 2) as '西家-平均順位',
             count(seat = 3 and matter != '' or null) as '西家-役満和了',
             count(seat = 3 and rpoint < 0 or null) as '西家-トビ',
+            printf("西家： %d-%d-%d-%d (%.2f)",
+                count(seat = 3 and rank = 1 or null),
+                count(seat = 3 and rank = 2 or null),
+                count(seat = 3 and rank = 3 or null),
+                count(seat = 3 and rank = 4 or null),
+                round(avg(case when seat = 3 then rank end), 2)
+            ) as '西家-順位分布',
             count(seat = 4 and rank = 1 or null) as '北家-1位',
             count(seat = 4 and rank = 2 or null) as '北家-2位',
             count(seat = 4 and rank = 3 or null) as '北家-3位',
@@ -238,6 +261,13 @@ def personal_results(argument, command_option):
             round(avg(case when seat = 4 then rank end), 2) as '北家-平均順位',
             count(seat = 4 and matter != '' or null) as '北家-役満和了',
             count(seat = 4 and rpoint < 0 or null) as '北家-トビ',
+            printf("北家： %d-%d-%d-%d (%.2f)",
+                count(seat = 4 and rank = 1 or null),
+                count(seat = 4 and rank = 2 or null),
+                count(seat = 4 and rank = 3 or null),
+                count(seat = 4 and rank = 4 or null),
+                round(avg(case when seat = 4 then rank end), 2)
+            ) as '北家-順位分布',
             min(playtime) as first_game,
             max(playtime) as last_game
         from (
