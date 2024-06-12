@@ -322,3 +322,14 @@ def personal_gamedata(argument, command_option):
     )
 
     return(df)
+
+
+def monthly_report(argument, command_option):
+    # データ収集
+    df = pd.read_sql(
+        d.generate.monthly_report(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = _extending(f.configure.get_parameters(argument, command_option))
+    )
+
+    return(df)

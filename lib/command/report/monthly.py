@@ -1,10 +1,10 @@
 import os
-import sqlite3
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.function as f
+import lib.database as d
 from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")
@@ -12,48 +12,16 @@ mlogger.setLevel(g.logging.WARNING)
 
 
 def plot(argument, command_option):
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
-
-    sql = """
-        select
-            collection as 集計月,
-            count() / 4 as ゲーム数,
-            replace(printf("%.1f pt", round(sum(point) , 1)), "-", "▲") as 供託,
-            count(rpoint < -1 or null) as "飛んだ人数(延べ)",
-            printf("%.2f%",	round(cast(count(rpoint < -1 or null) as real) / cast(count() / 4 as real) * 100, 2)) as トビ終了率,
-            replace(printf("%s", max(rpoint)), "-", "▲") as 最大素点,
-            replace(printf("%s", min(rpoint)), "-", "▲") as 最小素点
-        from
-            individual_results
-        where
-            rule_version = :rule_version
-            and playtime between :starttime and :endtime
-        group by
-            collection
-        order by
-            collection desc
-    """
-
     # --- データ収集
     params = f.configure.get_parameters(argument, command_option)
-    rows = resultdb.execute(sql, params)
-    results = {}
-    for row in rows.fetchall():
-        results[row["集計月"]] = dict(row)
-        g.logging.trace(f"{row['集計月']}: {results[row['集計月']]}") # type: ignore
-    g.logging.info(f"return record: {len(results)}")
-
-    resultdb.close()
+    df = d.aggregate.monthly_report(argument, command_option)
+    results = df.transpose().to_dict()
 
     if len(results) == 0:
         return(False)
 
     # --- グラフフォント設定
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
-    fm.fontManager.addfont(font_path)
-    font_prop = fm.FontProperties(fname = font_path)
-    plt.rcParams["font.family"] = font_prop.get_name()
+    f.common.set_graph_font(plt, fm)
     plt.rcParams["font.size"] = 6
 
     column_labels = list(results[list(results.keys())[0]].keys())
