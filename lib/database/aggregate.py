@@ -2,6 +2,7 @@ import sqlite3
 from datetime import datetime
 
 import pandas as pd
+import numpy as np
 
 import lib.function as f
 import lib.command as c
@@ -331,5 +332,22 @@ def monthly_report(argument, command_option):
         sqlite3.connect(g.database_file),
         params = _extending(f.configure.get_parameters(argument, command_option))
     )
+
+    return(df)
+
+
+def winner_report(argument, command_option):
+    # データ収集
+    df = pd.read_sql(
+        d.generate.winner_report(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = _extending(f.configure.get_parameters(argument, command_option))
+    ).fillna(value=np.nan)
+
+    # ゲスト置換
+    for i in range(1,6):
+        df[f"pname{i}"] = df[f"name{i}"].apply(
+            lambda x: "該当者なし" if type(x) == float else c.member.NameReplace(x, command_option, add_mark = True)
+        )
 
     return(df)
