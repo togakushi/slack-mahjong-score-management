@@ -35,10 +35,8 @@ def plot(argument, command_option):
         グラフ画像保存パス
     """
 
-    # 検索動作を合わせる
-    command_option["guest_skip"] = command_option["guest_skip2"]
-
-    # --- データ収集 ToDo: 仮置き換え
+    # データ収集
+    command_option["guest_skip"] = command_option["guest_skip2"] # 検索動作を合わせる
     params = f.configure.get_parameters(argument, command_option)
     total_game_count, _, _ = d.aggregate.game_count(argument, command_option)
     df = d.aggregate.personal_gamedata(argument, command_option)
@@ -46,6 +44,7 @@ def plot(argument, command_option):
     if total_game_count == 0:
         return(total_game_count, f.message.no_hits(argument, command_option))
 
+    # 最終値（凡例追加用）
     point_sum = "{:+.1f}".format(float(df["point_sum"].iloc[-1])).replace("-", "▲")
     point_avg = "{:+.1f}".format(float(df["point_avg"].iloc[-1])).replace("-", "▲")
     rank_avg = "{:.2f}".format(float(df["rank_avg"].iloc[-1]))
