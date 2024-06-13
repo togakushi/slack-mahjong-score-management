@@ -38,7 +38,7 @@ def point_plot(argument, command_option):
     params = f.configure.get_parameters(argument, command_option)
     total_game_count, target_data, df = _data_collection(argument, command_option, params)
 
-    if len(target_data) == 0: # 描写対象が0人の場合は終了
+    if target_data.empty: # 描写対象が0人の場合は終了
         return(len(target_data), f.message.no_hits(argument, command_option))
 
     # 集計
@@ -98,7 +98,7 @@ def rank_plot(argument, command_option):
     params = f.configure.get_parameters(argument, command_option)
     total_game_count, target_data, df = _data_collection(argument, command_option, params)
 
-    if len(target_data) == 0: # 描写対象が0人の場合は終了
+    if target_data.empty: # 描写対象が0人の場合は終了
         return(len(target_data), f.message.no_hits(argument, command_option))
 
     # 集計
@@ -141,8 +141,11 @@ def _data_collection(argument:list, command_option:dict, params:dict):
     command_option["fourfold"] = True # 直近Nは4倍する(縦持ちなので4人分)
     total_game_count, _, _ = d.aggregate.game_count(argument, command_option)
     df = d.aggregate.personal_gamedata(argument, command_option)
-
     target_data = pd.DataFrame()
+
+    if df.empty:
+        return(total_game_count, target_data, df)
+
     target_data["プレイヤー名"] = df.groupby("name").last()["プレイヤー名"]
     target_data["last_point"] = df.groupby("name").last()["point_sum"]
     target_data["game_count"] = df.groupby("name").max()["count"]
