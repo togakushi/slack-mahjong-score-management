@@ -33,6 +33,7 @@ def aggregation(argument, command_option):
     df_game = d.aggregate.game_details(argument, command_option)
     df_grandslam = df_game.query("grandslam != ''")
 
+
     df_grandslam = df_grandslam.rename(
         columns = {
             "プレイヤー名": "name", "grandslam": "和了役", "playtime": "日時",
@@ -42,26 +43,28 @@ def aggregation(argument, command_option):
     ### 表示 ###
     # --- 情報ヘッダ
     msg2 = "*【成績サマリ】*\n"
-    if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
-        msg2 += f"\t検索範囲：{params['starttime_hms']} ～ {params['endtime_hms']}\n"
-    if total_game_count != 0:
-        msg2 += f"\t最初のゲーム：{first_game}\n\t最後のゲーム：{last_game}\n".replace("-", "/")
-        if params["player_name"]:
-            msg2 += f"\t総ゲーム数：{total_game_count} 回"
-        else:
-            msg2 += f"\tゲーム数：{total_game_count} 回"
 
-        if g.config["mahjong"].getboolean("ignore_flying", False):
-            msg2 += "\n"
-        else:
-            msg2 += " / トバされた人（延べ）： {} 人\n".format(
-                df_summary["トビ"].sum(),
-            )
-        msg2 += "\t" + f.message.remarks(command_option)
-    else: # 結果が0件のとき
+    if df_summary.empty:
         msg2 += f"\tゲーム数：{total_game_count} 回"
         msg2 += "\t" + f.message.remarks(command_option)
         return(msg2, None, df_summary, df_grandslam)
+
+    if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
+        msg2 += f"\t検索範囲：{params['starttime_hms']} ～ {params['endtime_hms']}\n"
+
+    msg2 += f"\t最初のゲーム：{first_game}\n\t最後のゲーム：{last_game}\n".replace("-", "/")
+    if params["player_name"]:
+        msg2 += f"\t総ゲーム数：{total_game_count} 回"
+    else:
+        msg2 += f"\tゲーム数：{total_game_count} 回"
+
+    if g.config["mahjong"].getboolean("ignore_flying", False):
+        msg2 += "\n"
+    else:
+        msg2 += " / トバされた人（延べ）： {} 人\n".format(
+            df_summary["トビ"].sum(),
+        )
+    msg2 += "\t" + f.message.remarks(command_option)
 
     # --- 集計結果
     msg = {}
