@@ -38,11 +38,10 @@ def plot(argument, command_option):
     # データ収集
     command_option["guest_skip"] = command_option["guest_skip2"] # 検索動作を合わせる
     params = f.configure.get_parameters(argument, command_option)
-    total_game_count, _, _ = d.aggregate.game_count(argument, command_option)
     df = d.aggregate.personal_gamedata(argument, command_option)
 
-    if total_game_count == 0:
-        return(total_game_count, f.message.no_hits(argument, command_option))
+    if df.empty:
+        return(0, f.message.no_hits(argument, command_option))
 
     # 最終値（凡例追加用）
     point_sum = "{:+.1f}".format(float(df["point_sum"].iloc[-1])).replace("-", "▲")
@@ -59,7 +58,7 @@ def plot(argument, command_option):
     if params["target_count"] == 0:
         title_text = f"『{params['player_name']}』の成績 ({params['starttime_hm']} - {params['endtime_hm']})"
     else:
-        title_text = f"『{params['player_name']}』の成績 (直近 {total_game_count} ゲーム)"
+        title_text = f"『{params['player_name']}』の成績 (直近 {len(df)} ゲーム)"
 
     grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [3, 1])
     point_ax = fig.add_subplot(grid[0])
@@ -94,7 +93,7 @@ def plot(argument, command_option):
         marker = "." if len(df) < 50 else None,
         yticks = [1, 2, 3, 4],
         ylabel = "順位",
-        xlabel = f"ゲーム終了日時（{total_game_count} ゲーム）",
+        xlabel = f"ゲーム終了日時（{len(df)} ゲーム）",
     )
     rank_ax.legend(
         ["獲得順位", f"平均順位 ({rank_avg})"],
@@ -112,4 +111,4 @@ def plot(argument, command_option):
     fig.tight_layout()
     plt.savefig(save_file, bbox_inches = "tight")
 
-    return(total_game_count, save_file)
+    return(len(df), save_file)
