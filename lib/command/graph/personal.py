@@ -46,6 +46,10 @@ def plot(argument, command_option):
     if total_game_count == 0:
         return(total_game_count, f.message.no_hits(argument, command_option))
 
+    point_sum = "{:+.1f}".format(float(df["point_sum"].iloc[-1])).replace("-", "▲")
+    point_avg = "{:+.1f}".format(float(df["point_avg"].iloc[-1])).replace("-", "▲")
+    rank_avg = "{:.2f}".format(float(df["rank_avg"].iloc[-1]))
+
     ### グラフ生成 ###
     f.common.set_graph_font(plt, fm)
     save_file = os.path.join(g.work_dir, "graph.png")
@@ -73,7 +77,7 @@ def plot(argument, command_option):
         color = "blue",
     )
     point_ax.legend(
-        ["累積ポイント", "平均ポイント", "獲得ポイント"],
+        [f"累積ポイント ({point_sum}pt)", f"平均ポイント ({point_avg}pt)", "獲得ポイント"],
         bbox_to_anchor = (1, 1),
         loc = "upper left",
         borderaxespad = 0.5,
@@ -94,7 +98,7 @@ def plot(argument, command_option):
         xlabel = f"ゲーム終了日時（{total_game_count} ゲーム）",
     )
     rank_ax.legend(
-        ["獲得順位","平均順位"],
+        ["獲得順位", f"平均順位 ({rank_avg})"],
         bbox_to_anchor = (1, 1),
         loc = "upper left",
         borderaxespad = 0.5,
