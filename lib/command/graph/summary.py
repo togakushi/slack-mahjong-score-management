@@ -176,7 +176,7 @@ def _graph_generation(df:pd.DataFrame, **kwargs):
     for _,v in kwargs["target_data"].iterrows():
         legend_text.append("{}位：{} ({}pt / {}G)".format(
             v["position"], v["プレイヤー名"],
-            str(v["last_point"]).replace("-", "▲"), v["game_count"],
+            "{:+.1f}".format(v["last_point"]).replace("-", "▲"), v["game_count"],
         ))
 
     plt.style.use("ggplot")
