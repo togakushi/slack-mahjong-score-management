@@ -362,7 +362,7 @@ def save_output(df, format, filename):
 
     Returns
     -------
-    save_file : file path / False
+    save_file : file path / None
     """
 
     match format.lower():
@@ -371,7 +371,7 @@ def save_output(df, format, filename):
         case "text" | "txt":
             data = df.to_markdown(index = False, tablefmt = "outline")
         case _:
-            return(False)
+            return(None)
 
     # 保存
     save_file = os.path.join(g.work_dir, filename)

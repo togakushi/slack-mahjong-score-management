@@ -28,9 +28,8 @@ def aggregation(argument, command_option):
     msg2 : dict
         slackにpostするデータ(スレッドに返す)
 
-    df_data : DataFrame
-        ファイル出力用データフレーム
-    df_vs
+    file_list : dict
+        ファイル出力用path
     """
 
     # 検索動作を合わせる
@@ -137,7 +136,7 @@ def aggregation(argument, command_option):
             msg2[f"{m}_{x}"] = tmp_msg[m][x]
         msg2[f"{m}_separate"] = "\n\n"
 
-    # --- ファイル出力用データ整形
+    # --- ファイル出力
     if len(df_data) != 0:
         df_data["プレイヤー名"] = df_data["表示名"].apply(lambda x: x.strip())
         df_data["座席"] = df_data["seat"].apply(lambda x: ["東家", "南家", "西家", "北家"][x - 1])
@@ -174,5 +173,18 @@ def aggregation(argument, command_option):
                     ]
         ).drop_duplicates()
 
+    match command_option["format"].lower():
+        case "csv":
+            file_list = {
+                "対戦結果": f.common.save_output(df_data, "csv", "result.csv"),
+                "成績": f.common.save_output(df_vs2, "csv", "versus.csv"),
+            }
+        case "text" | "txt":
+            file_list = {
+                "対戦結果": f.common.save_output(df_data, "txt", "result.txt"),
+                "成績": f.common.save_output(df_vs2, "txt", "versus.txt"),
+            }
+        case _:
+            file_list = {}
 
-    return(msg1, msg2, df_data, df_vs2)
+    return(msg1, msg2, file_list)

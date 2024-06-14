@@ -1,6 +1,5 @@
 import re
 
-import lib.function as f
 from lib.function import global_value as g
 
 
@@ -58,6 +57,7 @@ def post_multi_message(client, channel, msg, ts = False, summarize = True):
     else:
         post_message(client, channel, msg, ts)
 
+
 def post_text(client, channel, event_ts, title, msg):
     # コードブロック修飾付きポスト
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
@@ -105,7 +105,6 @@ def post_fileupload(client, channel, title, file, ts = False):
 
 def slack_post(**kwargs):
     g.logging.debug(f"{kwargs}")
-    command_option = kwargs["command_option"] if "command_option" in kwargs else None
     client = kwargs["client"] if "client" in kwargs else None
     channel = kwargs["channel"] if "channel" in kwargs else None
     headline = kwargs["headline"] if "headline" in kwargs else None
@@ -117,20 +116,9 @@ def slack_post(**kwargs):
     res = post_message(client, channel, headline)
 
     # 本文ポスト
-    match command_option["format"].lower():
-        case "csv" if file_list:
-            for x in file_list.keys():
-                if len(file_list[x]["df"]) != 0:
-                    save_file = f.common.save_output(file_list[x]["df"], "csv", file_list[x]["filename"] + ".csv")
-                    if save_file:
-                        post_fileupload(client, channel, x, save_file, res["ts"])
-        case "text" | "txt" if file_list:
-            for x in file_list.keys():
-                if len(file_list[x]["df"]) != 0:
-                    save_file = f.common.save_output(file_list[x]["df"], "txt", file_list[x]["filename"] + ".txt")
-                    if save_file:
-                        post_fileupload(client, channel, x, save_file, res["ts"])
-
-        case _:
-            if message:
-                post_multi_message(client, channel, message, res["ts"], summarize)
+    if file_list:
+        for x in file_list.keys():
+            post_fileupload(client, channel, x, file_list[x], res["ts"])
+    else:
+        if message:
+            post_multi_message(client, channel, message, res["ts"], summarize)

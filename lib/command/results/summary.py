@@ -24,6 +24,9 @@ def aggregation(argument, command_option):
 
     msg : dict
         集計結果
+
+    file_list : dict
+        ファイル出力用path
     """
 
     ### データ収集 ###
@@ -47,7 +50,7 @@ def aggregation(argument, command_option):
     if df_summary.empty:
         msg2 += f"\tゲーム数：{total_game_count} 回"
         msg2 += "\t" + f.message.remarks(command_option)
-        return(msg2, None, df_summary, df_grandslam)
+        return(msg2, {}, {})
 
     if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
         msg2 += f"\t検索範囲：{params['starttime_hms']} ～ {params['endtime_hms']}\n"
@@ -120,8 +123,22 @@ def aggregation(argument, command_option):
     if msg_memo:
         msg["メモ"] = msg_memo
 
-    # --- ファイル出力用データ整形
+    # --- ファイル出力
     df_summary = df_summary.filter(items = filter_list)
     df_grandslam = df_grandslam.filter(items = ["日時", "和了役", "和了者"])
 
-    return(msg2, msg, df_summary, df_grandslam)
+    match command_option["format"].lower():
+        case "csv":
+            file_list = {
+                "集計結果": f.common.save_output(df_summary, "csv", "summary.csv"),
+                "役満和了": f.common.save_output(df_grandslam, "csv", "grandslam.csv"),
+            }
+        case "text" | "txt":
+            file_list = {
+                "集計結果": f.common.save_output(df_summary, "txt", "summary.txt"),
+                "役満和了": f.common.save_output(df_grandslam, "txt", "grandslam.txt"),
+            }
+        case _:
+            file_list = {}
+
+    return(msg2, msg, file_list)

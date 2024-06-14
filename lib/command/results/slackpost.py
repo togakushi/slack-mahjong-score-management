@@ -41,36 +41,27 @@ def main(client, channel, argument):
     if len(target_player) == 1 and not versus_mode: # 個人成績
         msg1, msg2 = personal.aggregation(argument, command_option)
         f.slack_api.slack_post(
-            command_option = command_option,
             client = client,
             channel = channel,
             headline = msg1,
             message = msg2,
         )
     elif versus_mode: # 直接対戦
-        msg1, msg2, df_result, df_vs = versus.aggregation(argument, command_option)
+        msg1, msg2, file_list = versus.aggregation(argument, command_option)
         f.slack_api.slack_post(
-            command_option = command_option,
             client = client,
             channel = channel,
             headline = msg1,
             message = msg2,
-            file_list = {
-                "対戦結果": {"df": df_vs, "filename": "versus"},
-                "成績": {"df": df_result, "filename": "result"},
-            },
+            file_list = file_list,
         )
     else: # 成績サマリ
-        msg1, msg2, df_summary, df_grandslam = summary.aggregation(argument, command_option)
+        msg1, msg2, file_list = summary.aggregation(argument, command_option)
         f.slack_api.slack_post(
-            command_option = command_option,
             client = client,
             channel = channel,
             headline = msg1,
             message = msg2,
             summarize = False,
-            file_list = {
-                "集計結果": {"df": df_summary, "filename": "summary"},
-                "役満和了": {"df": df_grandslam, "filename": "grandslam"},
-            },
+            file_list = file_list,
         )
