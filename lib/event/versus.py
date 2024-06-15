@@ -75,17 +75,13 @@ def handle_search_action(ack, body, client):
     app_msg.pop()
     app_msg.append("集計完了")
 
-    msg1, msg2, df_result, df_vs = c.results.versus.aggregation(argument, command_option)
+    msg1, msg2, file_list = c.results.versus.aggregation(argument, command_option)
     f.slack_api.slack_post(
-        command_option = command_option,
         client = client,
         channel = body["user"]["id"],
         headline = msg1,
         message = msg2,
-        file_list = {
-            "対戦結果": {"df": df_vs, "filename": "versus"},
-            "成績": {"df": df_result, "filename": "result"},
-        },
+        file_list = file_list,
     )
 
     client.views_update(
