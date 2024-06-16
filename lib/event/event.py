@@ -172,7 +172,7 @@ def handle_message_events(client, body):
     # 結果報告フォーマットに一致したポストの処理
     msg = f.search.pattern(parameter["text"])
     if msg:
-        if not parameter["status"] == "message_deleted":
+        if not parameter["status"] == "message_deleted" and updatable:
             f.score.check_score(client, parameter["channel_id"], parameter["event_ts"], parameter["user"], msg)
         if updatable:
             match parameter["status"]:
@@ -185,6 +185,8 @@ def handle_message_events(client, body):
                         d.common.resultdb_insert(msg, parameter["event_ts"])
                 case "message_deleted":
                     d.common.resultdb_delete(parameter["event_ts"])
+        else:
+            f.slack_api.post_message(client, parameter["channel_id"], f.message.restricted_channel(), parameter["event_ts"])
     else:
         if updatable and existence: # データベース投入済みデータが削除された場合
             d.common.resultdb_delete(parameter["event_ts"])

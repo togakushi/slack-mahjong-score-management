@@ -87,6 +87,24 @@ def invalid_argument():
     return(msg)
 
 
+def restricted_channel():
+    """
+    制限チャンネルでキーワードを検出したときのメッセージ
+    """
+
+    msg = f"この投稿はデータベースに反映されません。"
+
+    if g.config.has_section("custom_message"):
+        key_list = []
+        for i in g.config["custom_message"]:
+            if i.startswith("restricted_channel"):
+                key_list.append(i)
+        if key_list:
+            msg = g.config["custom_message"][random.choice(key_list)]
+
+    return(msg)
+
+
 def invalid_score(user_id, rpoint_sum, correct_score):
     """
     ゲーム終了時の素点合計が配給原点合計と異なる場合の警告メッセージ
