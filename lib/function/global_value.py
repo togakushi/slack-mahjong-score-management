@@ -44,7 +44,7 @@ def parser():
 
     p.add_argument(
         "-c", "--config",
-        required = True,
+        default = "config.ini",
         metavar = "config.ini",
         help = "設定ファイル",
     )
