@@ -26,8 +26,12 @@ def pattern(text):
     pattern1 = re.compile(rf"^{keyword}([^0-9+-]+[0-9+-]+){{4}}$")
     pattern2 = re.compile(rf"([^0-9+-]+[0-9+-]+){{4}}{keyword}$")
 
+    # 全角プラス符号(0xff0b)は半角に置換
+    text = text.replace(chr(0xff0b), "+")
     # 全角マイナス符号(0x2212)は半角に置換
-    text = "".join(text.split()).replace(chr(0x2212),'-')
+    text = text.replace(chr(0x2212), "-")
+
+    text = "".join(text.split())
     if pattern1.search(text) or pattern2.search(text):
         ret = re.sub(rf"^{keyword}|{keyword}$", "", text)
         ret = re.sub(rf"([^0-9+-]+)([0-9+-]+)" * 4, r"\1 \2 \3 \4 \5 \6 \7 \8", ret).split()
