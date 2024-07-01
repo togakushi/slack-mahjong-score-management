@@ -109,6 +109,7 @@ def plot(argument, command_option):
     total_game_count = d.common.game_count(argument, command_option, cur)
     if command_option["stipulated"] == 0:
         command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
+        params = f.configure.get_parameters(argument, command_option) # 更新
 
     rows = resultdb.execute(sql, params)
 
