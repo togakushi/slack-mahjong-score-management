@@ -126,7 +126,7 @@ def game_summary(argument, command_option):
     df = df.rename(
         columns = {
             "count": "ゲーム数",
-            "pt_total": "累積",
+            "pt_total": "通算",
             "pt_avg": "平均",
             "rank_distr": "順位分布",
             "rank_avg": "平順",
@@ -139,7 +139,7 @@ def game_summary(argument, command_option):
     )
 
     # 点数差分
-    df["点差"] = df["累積"].diff().abs().round(2)
+    df["点差"] = df["通算"].diff().abs().round(2)
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(

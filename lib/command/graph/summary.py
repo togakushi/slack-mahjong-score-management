@@ -50,7 +50,7 @@ def point_plot(argument, command_option):
         "total_game_count": total_game_count,
         "target_data": target_data,
         "xlabel_text": f"ゲーム終了日時（{total_game_count} ゲーム）",
-        "ylabel_text": "累積ポイント",
+        "ylabel_text": "通算ポイント",
     }
     if params["target_count"] == 0:
         args["title_text"] = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
@@ -111,7 +111,7 @@ def rank_plot(argument, command_option):
         "total_game_count": total_game_count,
         "target_data": target_data,
         "xlabel_text": f"ゲーム終了日時（{total_game_count} ゲーム）",
-        "ylabel_text": "順位 (累積ポイント順)",
+        "ylabel_text": "順位 (通算ポイント順)",
     }
     if params["target_count"] == 0:
         args["title_text"] = f"順位変動 ({params['starttime_hm']} - {params['endtime_hm']})"

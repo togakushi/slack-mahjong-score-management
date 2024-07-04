@@ -75,7 +75,7 @@ def plot(argument, command_option):
         color = "blue",
     )
     point_ax.legend(
-        [f"累積ポイント ({point_sum}pt)", f"平均ポイント ({point_avg}pt)", "獲得ポイント"],
+        [f"通算ポイント ({point_sum}pt)", f"平均ポイント ({point_avg}pt)", "獲得ポイント"],
         bbox_to_anchor = (1, 1),
         loc = "upper left",
         borderaxespad = 0.5,

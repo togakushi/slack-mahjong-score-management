@@ -89,7 +89,7 @@ def DisplayOptions(view, no, flag = []):
 
     if "score_comparisons" in flag:
         view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "累積ポイント比較"}, "value": "score_comparisons"}
+            {"text": {"type": "plain_text", "text": "通算ポイント比較"}, "value": "score_comparisons"}
         )
 
     return(view, no + 1)

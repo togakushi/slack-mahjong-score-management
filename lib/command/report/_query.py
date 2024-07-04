@@ -14,7 +14,7 @@ def for_report_personal_data(argument, command_option, flag = "M"):
         select
             <<collection>>,
             count() as ゲーム数,
-            round(sum(point), 1) as 累積ポイント,
+            round(sum(point), 1) as 通算ポイント,
             round(avg(point), 1) as 平均ポイント,
             count(rank = 1 or NULL) as "1位",
             round(cast(count(rank = 1 or NULL) AS real) / cast(count() as real) * 100, 2) as "1位率",
@@ -80,7 +80,7 @@ def for_report_count_data(argument, command_option, interval = 40):
             min(game_count) as 開始,
             max(game_count) as 終了,
             count() as ゲーム数,
-            round(sum(point), 1) as 累積ポイント,
+            round(sum(point), 1) as 通算ポイント,
             round(avg(point), 1) as 平均ポイント,
             count(rank = 1 or NULL) as "1位",
             round(cast(count(rank = 1 or NULL) AS real) / cast(count() as real) * 100, 2) as "1位率",

@@ -39,7 +39,7 @@ def get_game_results(argument, command_option, flag = "M"):
         [
             "",
             "ゲーム数",
-            "累積\nポイント",
+            "通算\nポイント",
             "平均\nポイント",
             "1位", "",
             "2位", "",
@@ -58,7 +58,7 @@ def get_game_results(argument, command_option, flag = "M"):
             [
                 row["集計"],
                 row["ゲーム数"],
-                str(row["累積ポイント"]).replace("-", "▲") + "pt",
+                str(row["通算ポイント"]).replace("-", "▲") + "pt",
                 str(row["平均ポイント"]).replace("-", "▲") + "pt",
                 row["1位"], f"{row['1位率']:.2f}%",
                 row["2位"], f"{row['2位率']:.2f}%",
@@ -90,7 +90,7 @@ def get_count_results(argument, command_option, game_count):
             "開始",
             "終了",
             "ゲーム数",
-            "累積\nポイント",
+            "通算\nポイント",
             "平均\nポイント",
             "1位", "",
             "2位", "",
@@ -110,7 +110,7 @@ def get_count_results(argument, command_option, game_count):
                 row["開始"],
                 row["終了"],
                 row["ゲーム数"],
-                str(row["累積ポイント"]).replace("-", "▲") + "pt",
+                str(row["通算ポイント"]).replace("-", "▲") + "pt",
                 str(row["平均ポイント"]).replace("-", "▲") + "pt",
                 row["1位"], f"{row['1位率']:.2f}%",
                 row["2位"], f"{row['2位率']:.2f}%",
@@ -214,7 +214,7 @@ def graphing_mean_rank(df, title, whole = False):
 
 def graphing_total_points(df, title, whole = False):
     """
-    累積ポイント推移の折れ線グラフを生成
+    通算ポイント推移の折れ線グラフを生成
 
     Parameters
     ----------
@@ -243,14 +243,14 @@ def graphing_total_points(df, title, whole = False):
             fontsize = 14,
         )
         plt.legend(
-            title = "累積 （ 開始 - 終了 ）",
+            title = "通算 （ 開始 - 終了 ）",
             ncol = int(len(df.columns) / 5) + 1,
         )
     else:
         point_sum = df.plot(
             kind = "line",
             y = "point_sum",
-            label = "累積",
+            label = "通算",
             figsize = (12, 8),
             fontsize = 14,
         )
@@ -453,8 +453,8 @@ def gen_pdf(argument, command_option):
     df = pd.DataFrame.from_dict(data)
     df["playtime"] = pd.to_datetime(df["playtime"])
 
-    # 累積ポイント推移
-    imgdata = graphing_total_points(df, "累積ポイント推移 （ 全期間 ）", False)
+    # 通算ポイント推移
+    imgdata = graphing_total_points(df, "通算ポイント推移 （ 全期間 ）", False)
     elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5))
 
     # 平均順位
@@ -563,7 +563,7 @@ def gen_pdf(argument, command_option):
             elements.append(Spacer(1, 5*mm))
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5))
 
-            # 累積ポイント推移
+            # 通算ポイント推移
             data = get_count_moving(argument, command_option, count)
             tmp_df = pd.DataFrame.from_dict(data)
             df = pd.DataFrame()
@@ -572,7 +572,7 @@ def gen_pdf(argument, command_option):
                 game_count = tmp_df[tmp_df.interval == i]["total_count"].to_list()
                 df[f"{min(game_count)} - {max(game_count)}"] = [None] * (count - len(list_data)) + list_data
 
-            imgdata = graphing_total_points(df, f"累積ポイント推移（区間 {title}）", True)
+            imgdata = graphing_total_points(df, f"通算ポイント推移（区間 {title}）", True)
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5))
 
             # 平均順位

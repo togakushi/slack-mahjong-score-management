@@ -64,7 +64,7 @@ def aggregation(argument, command_option):
     msg2 = {}
 
     msg1 += f"""
-        \t累積ポイント： {data['累積ポイント']:+.1f}pt
+        \t通算ポイント： {data['通算ポイント']:+.1f}pt
         \t平均ポイント： {data['平均ポイント']:+.1f}pt
         \t平均順位： {data['平均順位']:1.2f}
         \t1位： {data['1位']:2} 回 ({data['1位率']:6.2f}%)

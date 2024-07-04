@@ -7,7 +7,7 @@ from lib.function import global_value as g
 
 def aggregation(argument, command_option):
     """
-    各プレイヤーの累積ポイントを表示
+    各プレイヤーの通算ポイントを表示
 
     Parameters
     ----------
@@ -75,11 +75,11 @@ def aggregation(argument, command_option):
 
     if not command_option["score_comparisons"]: # 通常表示
         if g.config["mahjong"].getboolean("ignore_flying", False): # トビカウントなし
-            header_list = ["名前", "累積", "平均", "順位分布"]
-            filter_list = ["名前", "ゲーム数", "累積", "平均", "1位", "2位", "3位", "4位", "平順"]
+            header_list = ["名前", "通算", "平均", "順位分布"]
+            filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順"]
         else: # トビカウントあり
-            header_list = ["名前", "累積", "平均", "順位分布", "トビ"]
-            filter_list = ["名前", "ゲーム数", "累積", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
+            header_list = ["名前", "通算", "平均", "順位分布", "トビ"]
+            filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
         # メモ表示
         if len(df_grandslam) != 0:
             msg_memo = "*【メモ】*\n"
@@ -89,8 +89,8 @@ def aggregation(argument, command_option):
                 )
     else: # 差分表示
         df_grandslam = df_grandslam[:0] # 非表示のため破棄
-        header_list = ["名前", "累積", "平均", "点差"]
-        filter_list = ["名前", "ゲーム数", "累積", "点差"]
+        header_list = ["名前", "通算", "平均", "点差"]
+        filter_list = ["名前", "ゲーム数", "通算", "点差"]
 
     # --- メッセージ整形
     df_summary = df_summary.rename(columns={"プレイヤー名": "名前"})

@@ -20,7 +20,7 @@ WHERE
 SELECT
     name AS プレイヤー名,
     count() AS ゲーム数,
-    round(sum(point), 1) AS 累積ポイント,
+    round(sum(point), 1) AS 通算ポイント,
     round(avg(point), 1) AS 平均ポイント,
     count(rank = 1 OR NULL) AS "1位",
     count(rank = 2 OR NULL) AS "2位",
@@ -45,7 +45,7 @@ GROUP BY
 HAVING
     ゲーム数 > (SELECT count() * 0.01 FROM result WHERE playtime BETWEEN datetime(strftime('%Y-01-01 12:00:00')) AND datetime(strftime('%Y-12-01 12:00:00'), '1 month', '-1 second')) -- 規定打数
 ORDER BY
-    累積ポイント DESC
+    通算ポイント DESC
 ```
 
 ## 月間ランキング
@@ -108,7 +108,7 @@ HAVING
 SELECT
     collection AS 集計月,
     count() AS ゲーム数,
-    round(sum(point), 1) AS 累積ポイント,
+    round(sum(point), 1) AS 通算ポイント,
     round(avg(point), 1) AS 平均ポイント,
     count(rank = 1 OR NULL) AS "1位",
     count(rank = 2 OR NULL) AS "2位",

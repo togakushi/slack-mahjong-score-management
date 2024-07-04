@@ -198,7 +198,7 @@ def personal_results(argument, command_option):
                 round(avg(rank), 2)
             ) as 順位分布,
             round(avg(rpoint) * 100, 1) as 平均最終素点,
-            round(sum(point), 1) as 累積ポイント,
+            round(sum(point), 1) as 通算ポイント,
             round(avg(point), 1) as 平均ポイント,
             round(avg(rank), 2) as 平均順位,
             count(rpoint < 0 or null) as トビ,

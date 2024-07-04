@@ -27,7 +27,7 @@ def plot(argument, command_option):
         select
             name as プレイヤー,
             count() as ゲーム数,
-            replace(round(sum(point), 1), "-", "▲") as 累積ポイント,
+            replace(round(sum(point), 1), "-", "▲") as 通算ポイント,
             replace(round(avg(point), 1), "-", "▲") as 平均ポイント,
             printf("%3d (%7.2f%%)",
                 count(rank = 1 or null),
