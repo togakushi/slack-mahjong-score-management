@@ -362,6 +362,42 @@ def game_details(argument, command_option):
     return(sql)
 
 
+def game_data(argument, command_option):
+    """
+    ゲーム結果を返すSQLを生成
+    """
+
+    params = f.configure.get_parameters(argument, command_option)
+    sql = """
+        select
+            playtime,
+            p1_name, p1_rank, p1_point,
+            p2_name, p2_rank, p2_point,
+            p3_name, p3_rank, p3_point,
+            p4_name, p4_rank, p4_point,
+            deposit,
+            p1_guest + p2_guest + p3_guest + p4_guest as guest_count
+        from
+            game_results
+        where
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+            --<player_name>
+            --<unregistered_replace>
+    """
+
+    # プレイヤー絞り込み
+    if params["player_name"]:
+        sql = sql.replace("--<player_name>", "and :player_name in (p1_name, p2_name, p3_name, p4_name)")
+
+    # 2ゲスト戦除外
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--<unregistered_replace>", "and guest_count <= 1")
+
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    return(sql)
+
+
 def versus_matrix(argument, command_option):
     """
     直接対戦結果を集計するSQLを生成

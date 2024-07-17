@@ -182,6 +182,42 @@ def game_details(argument, command_option):
     return(df.fillna(value = ""))
 
 
+def game_data(argument, command_option):
+    """
+    ゲーム結果を返す
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    df : DataFrame
+    """
+
+    df = pd.read_sql(
+        d.generate.game_data(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = _extending(f.configure.get_parameters(argument, command_option))
+    )
+
+    # ゲスト置換
+    df["p1_name"] = _disp_name(df["p1_name"], command_option)
+    df["p2_name"] = _disp_name(df["p2_name"], command_option)
+    df["p3_name"] = _disp_name(df["p3_name"], command_option)
+    df["p4_name"] = _disp_name(df["p4_name"], command_option)
+
+    # インデックスの振り直し
+    df = df.reset_index(drop = True)
+    df.index = df.index + 1
+
+    return(df.fillna(value = ""))
+
+
 def personal_record(argument, command_option):
     """
     個人記録を集計する
