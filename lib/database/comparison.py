@@ -37,14 +37,7 @@ def main(client, channel, event_ts, argument):
     if fts: # slackからスコア記録のログが見つかった場合のみチェック
         remarks_comparison(fts)
 
-    g.logging.notice( # type: ignore
-        "mismatch:{}, missing:{}, delete:{}, invalid_score: {}".format(
-            count["mismatch"],
-            count["missing"],
-            count["delete"],
-            count["invalid_score"],
-        )
-    )
+    g.logging.notice(f"{count=}") # type: ignore
 
     ret = f"*【データ突合】*\n"
     ret += "＊ 不一致： {}件\n{}".format(count["mismatch"], msg["mismatch"])

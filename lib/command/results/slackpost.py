@@ -25,8 +25,8 @@ def main(client, channel, argument):
     command_option = f.configure.command_option_initialization("results")
     _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
 
-    g.logging.info(f"arg: {argument}")
-    g.logging.info(f"opt: {command_option}")
+    g.logging.info(f"{argument=}")
+    g.logging.info(f"{command_option=}")
 
     # モード切り替え
     versus_mode = False

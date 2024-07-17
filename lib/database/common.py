@@ -67,8 +67,8 @@ def game_count(argument, command_option, cur):
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
-    g.logging.trace(f"sql: {sql}") # type: ignore
-    g.logging.trace(f"placeholder: {prams}") # type: ignore
+    g.logging.trace(f"{sql=}") # type: ignore
+    g.logging.trace(f"{prams=}") # type: ignore
 
     rows = cur.execute(sql, prams)
     game_count = rows.fetchone()[0]

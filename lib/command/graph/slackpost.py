@@ -24,8 +24,8 @@ def main(client, channel, argument):
     command_option = f.configure.command_option_initialization("graph")
     _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
 
-    g.logging.info(f"arg: {argument}")
-    g.logging.info(f"opt: {command_option}")
+    g.logging.info(f"{argument=}")
+    g.logging.info(f"{command_option=}")
 
     if len(target_player) == 1: # 対象がひとり → 個人成績
         count, ret = personal.plot(argument, command_option)

@@ -136,10 +136,10 @@ app_var = { # ホームタブ用
     "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
 }
 
-logging.trace(f"commandword: {commandword}") # type: ignore
-logging.info(f"slash command: {slash_command}")
-logging.info(f"ignore_userid: {ignore_userid}")
-logging.info(f"channel_limitations: {channel_limitations}")
+logging.trace(f"{commandword=}") # type: ignore
+logging.info(f"{slash_command=}")
+logging.info(f"{ignore_userid=}")
+logging.info(f"{channel_limitations=}")
 
 # 作業用ディレクトリ作成
 work_dir = os.path.join(os.path.realpath(os.path.curdir), work_dir)

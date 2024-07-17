@@ -26,8 +26,8 @@ def main(client, channel, argument):
     command_option = f.configure.command_option_initialization("report")
     _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
 
-    g.logging.info(f"arg: {argument}")
-    g.logging.info(f"opt: {command_option}")
+    g.logging.info(f"{argument=}")
+    g.logging.info(f"{command_option=}")
 
     if len(target_player) == 1: # 個人成績レポート
         name, pdf_file = results.gen_pdf(argument, command_option)

@@ -67,7 +67,7 @@ def for_slack(keyword, channel):
         except:
             g.logging.error(f"Incorrect date string: {after}")
 
-    g.logging.info(f"query: {query}")
+    g.logging.info(f"{query=}")
 
     ### データ取得 ###
     response = g.webclient.search_messages(
@@ -177,83 +177,3 @@ def game_result(data, command_option):
         return(None)
     else:
         return(result)
-
-
-def game_select(starttime, endtime, target_player, target_count, command_option):
-    """
-    集計対象のゲームを選択
-
-    Parameters
-    ----------
-    starttime : date
-        集計開始日時
-
-    endtime : date
-        集計終了日時
-
-    target_player : list
-        集計対象プレイヤー（空のときは全プレイヤーを対象にする）
-
-    target_count: int
-        集計するゲーム数
-
-    command_option : dict
-        コマンドオプション
-
-    Returns
-    -------
-    ret : dict
-        条件に合致したゲーム結果
-    """
-
-    g.logging.info(f"date range: {starttime} {endtime}, target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
-
-    if target_count != 0 and len(target_player) == 0: # プレイヤー指定なしの直近N回
-        sql = "select * from (select * from result where rule_version=? order by playtime desc limit ?) order by playtime"
-        placeholder = [g.rule_version, target_count]
-    elif target_count != 0 and len(target_player) != 0: # プレイヤー指定ありの直近N回
-        sql = "select * from (select * from result where rule_version=? and ("
-        sql += " or".join([" ? in (p1_name, p2_name, p3_name, p4_name)" for i in target_player])
-        sql += ") order by playtime desc limit ?) order by playtime"
-        placeholder = [g.rule_version] + target_player + [target_count]
-    elif target_count == 0 and len(target_player) != 0: # プレイヤー指定あり
-        sql = "select * from result where rule_version=? and playtime between ? and ? and ("
-        sql += " or".join([" ? in (p1_name, p2_name, p3_name, p4_name)" for i in target_player]) + ")"
-        placeholder = [g.rule_version, starttime, endtime] + target_player
-    else: # 条件なし
-        sql = "select * from result where rule_version=? and playtime between ? and ?"
-        placeholder = [g.rule_version, starttime, endtime]
-
-    g.logging.trace(f"sql: {sql}") # type: ignore
-    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
-    rows = resultdb.execute(sql, placeholder)
-
-    data = {}
-    count = 0
-    for row in rows.fetchall():
-        p1_name = c.member.NameReplace(row["p1_name"], command_option, add_mark = True)
-        p2_name = c.member.NameReplace(row["p2_name"], command_option, add_mark = True)
-        p3_name = c.member.NameReplace(row["p3_name"], command_option, add_mark = True)
-        p4_name = c.member.NameReplace(row["p4_name"], command_option, add_mark = True)
-        guest_count = [p1_name, p2_name, p3_name, p4_name].count(g.guest_name)
-
-        if command_option["guest_skip"] and guest_count >= 2:
-            g.logging.trace(f"2ゲスト戦除外: {row['ts']}, {p1_name}, {p2_name}, {p3_name}, {p4_name}") # type: ignore
-        else:
-            data[count] = {
-                "日付": datetime.fromtimestamp(float(row["ts"])),
-                "東家": {"name": p1_name, "rpoint": row["p1_rpoint"], "rank": row["p1_rank"], "point": row["p1_point"]},
-                "南家": {"name": p2_name, "rpoint": row["p2_rpoint"], "rank": row["p2_rank"], "point": row["p2_point"]},
-                "西家": {"name": p3_name, "rpoint": row["p3_rpoint"], "rank": row["p3_rank"], "point": row["p3_point"]},
-                "北家": {"name": p4_name, "rpoint": row["p4_rpoint"], "rank": row["p4_rank"], "point": row["p4_point"]},
-            }
-            g.logging.trace(f"{count}: {data[count]}") # type: ignore
-            count += 1
-
-    g.logging.info(f"return record: {len(data)}")
-    resultdb.close()
-    return(data)

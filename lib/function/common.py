@@ -164,9 +164,9 @@ def argument_analysis(argument, command_option = {}):
     # 重複排除
     target_player = list(dict.fromkeys(target_player))
 
-    g.logging.info(f"return: target_days: {target_days} target_count: {target_count}")
-    g.logging.info(f"return: target_player: {target_player}")
-    g.logging.info(f"return: command_option: {command_option}")
+    g.logging.info(f"return: {target_days=} {target_count=}")
+    g.logging.info(f"return: {target_player=}")
+    g.logging.info(f"return: {command_option=}")
 
     return(target_days, target_player, target_count, command_option)
 
