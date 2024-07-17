@@ -55,18 +55,17 @@ def command_option_initialization(command):
         "fourfold": False, # 縦持ちデータの直近Nを4倍で取るか
         "stipulated": 0, # 規定打数
         "verbose": False, # 戦績詳細
-        "format": g.config["setting"].get("format", "default"),
+        "unregistered_replace": g.config[command].getboolean("unregistered_replace", True),
+        "guest_skip": g.config[command].getboolean("guest_skip", True),
+        "guest_skip2": g.config[command].getboolean("guest_skip2", True),
+        "score_comparisons": g.config[command].getboolean("score_comparisons", False),
+        "game_results": g.config[command].getboolean("game_results", False),
+        "versus_matrix": g.config[command].getboolean("versus_matrix", False),
+        "ranked": g.config[command].getint("ranked", 3),
+        "stipulated_rate": g.config[command].getfloat("stipulated_rate", 0.05),
+        "format": g.config["setting"].get("format", "csv"),
     }
-
     option["aggregation_range"].append(g.config[command].get("aggregation_range", "当日"))
-    option["unregistered_replace"] = g.config[command].getboolean("unregistered_replace", True)
-    option["guest_skip"] = g.config[command].getboolean("guest_skip", True)
-    option["guest_skip2"] = g.config[command].getboolean("guest_skip2", True)
-    option["score_comparisons"] = g.config[command].getboolean("score_comparisons", False)
-    option["game_results"] = g.config[command].getboolean("game_results", False)
-    option["versus_matrix"] = g.config[command].getboolean("versus_matrix", False)
-    option["ranked"] = g.config[command].getint("ranked", 3)
-    option["stipulated_rate"] = g.config[command].getfloat("stipulated_rate", 0.05)
 
     return(option)
 
