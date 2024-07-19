@@ -2,10 +2,12 @@ import os
 import re
 import unicodedata
 from datetime import datetime
+from itertools import chain
 
 from dateutil.relativedelta import relativedelta
 
 import lib.command as c
+import lib.function as f
 from lib.function import global_value as g
 
 
@@ -164,9 +166,9 @@ def argument_analysis(argument, command_option = {}):
     # 重複排除
     target_player = list(dict.fromkeys(target_player))
 
-    g.logging.info(f"return: {target_days=} {target_count=}")
-    g.logging.info(f"return: {target_player=}")
-    g.logging.info(f"return: {command_option=}")
+    #g.logging.info(f"return: {target_days=} {target_count=}")
+    #glogging.info(f"return: {target_player=}")
+    #g.logging.info(f"return: {command_option=}")
 
     return(target_days, target_player, target_count, command_option)
 
