@@ -115,7 +115,7 @@ def aggregation(argument, command_option):
                 tablefmt = "simple",
                 numalign = "right",
                 maxheadercolwidths = 8,
-                floatfmt = ("", "+.1f", "+.1f",  "", ".2f")
+                floatfmt = ("", "+.1f", "+.1f", "", ".2f")
             )
         msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r"▲\1", t) + "```\n" # マイナスを記号に置換
 
