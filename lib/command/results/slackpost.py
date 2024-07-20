@@ -4,6 +4,7 @@ from lib.function import global_value as g
 from lib.command.results import summary
 from lib.command.results import personal
 from lib.command.results import versus
+from lib.command.results import team
 
 
 def main(client, channel, argument):
@@ -56,7 +57,11 @@ def main(client, channel, argument):
             file_list = file_list,
         )
     else: # 成績サマリ
-        msg1, msg2, file_list = summary.aggregation(argument, command_option)
+        if command_option["team_total"]:
+            msg1, msg2, file_list = team.aggregation(argument, command_option)
+        else:
+            msg1, msg2, file_list = summary.aggregation(argument, command_option)
+
         f.slack_api.slack_post(
             client = client,
             channel = channel,

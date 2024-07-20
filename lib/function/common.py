@@ -147,6 +147,8 @@ def argument_analysis(argument, command_option = {}):
                 command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword.lower()))
             case keyword if re.search(r"^(規定数|規定打数)([0-9]+)$", keyword):
                 command_option["stipulated"] = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
+            case keyword if re.search(r"^(チーム|team)$", keyword.lower()):
+                command_option["team_total"] = True
 
             # フォーマット指定
             case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):

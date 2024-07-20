@@ -111,6 +111,7 @@ def initialization_resultdb():
                 p1_point as point,
                 group_concat(matter, ",") as grandslam,
                 p1_name not in (select name from member) as guest,
+                team.name as team,
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -124,6 +125,10 @@ def initialization_resultdb():
             left outer join
                 remarks on remarks.thread_ts = result.ts
                 and remarks.name = result.p1_name
+            left outer join
+                member on member.name = result.p1_name
+            left outer join
+                team on member.team_id = team.id
             group by ts, seat, remarks.thread_ts, remarks.name
             union select
                 datetime(playtime),
@@ -135,6 +140,7 @@ def initialization_resultdb():
                 p2_point,
                 group_concat(matter, ",") as grandslam,
                 p2_name not in (select name from member),
+                team.name,
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -148,6 +154,10 @@ def initialization_resultdb():
             left outer join
                 remarks on remarks.thread_ts = result.ts
                 and remarks.name = result.p2_name
+            left outer join
+                member on member.name = result.p2_name
+            left outer join
+                team on member.team_id = team.id
             group by ts, seat, remarks.thread_ts, remarks.name
             union select
                 datetime(playtime),
@@ -159,6 +169,7 @@ def initialization_resultdb():
                 p3_point,
                 group_concat(matter, ",") as grandslam,
                 p3_name not in (select name from member),
+                team.name,
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -172,6 +183,10 @@ def initialization_resultdb():
             left outer join
                 remarks on remarks.thread_ts = result.ts
                 and remarks.name = result.p3_name
+            left outer join
+                member on member.name = result.p3_name
+            left outer join
+                team on member.team_id = team.id
             group by ts, seat, remarks.thread_ts, remarks.name
             union select
                 datetime(playtime),
@@ -183,6 +198,7 @@ def initialization_resultdb():
                 p4_point,
                 group_concat(matter, ",") as grandslam,
                 p4_name not in (select name from member),
+                team.name,
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -196,6 +212,10 @@ def initialization_resultdb():
             left outer join
                 remarks on remarks.thread_ts = result.ts
                 and remarks.name = result.p4_name
+            left outer join
+                member on member.name = result.p4_name
+            left outer join
+                team on member.team_id = team.id
             group by ts, seat, remarks.thread_ts, remarks.name
         """
     )

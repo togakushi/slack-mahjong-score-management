@@ -113,6 +113,18 @@ def handle_message_events(client, body):
         d.comparison.main(client, parameter["channel_id"], parameter["event_ts"], None)
         return
 
+    # その他
+    if re.match(rf"^{g.commandword['member']}", parameter["text"]):
+        title, msg = c.member.Getmemberslist()
+        f.slack_api.post_text(client, parameter["channel_id"], parameter["event_ts"], title, msg)
+        return
+
+    if re.match(rf"^{g.commandword['team']}", parameter["text"]):
+        title = "チーム一覧"
+        msg = c.team.list()
+        f.slack_api.post_text(client, parameter["channel_id"], parameter["event_ts"], title, msg)
+        return
+
     # 追加メモ
     if re.match(rf"^{g.commandword['remarks_word']}", parameter["text"]) and parameter["thread_ts"]:
         if d.common.ExsistRecord(parameter["thread_ts"]) and updatable:

@@ -637,3 +637,31 @@ def winner_report(argument, command_option):
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
+
+
+def team_total(argument, command_option):
+    """
+    チーム集計結果を返すSQLを生成
+    """
+
+    params = f.configure.get_parameters(argument, command_option)
+    sql = """
+        select
+            team,
+            round(sum(point),1) as total,
+            round(avg(rank),2) as rank,
+            count() as count
+        from
+            individual_results
+        where
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+            and team not null
+        group by
+            team
+        order by
+            total desc
+    """
+
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    return(sql)

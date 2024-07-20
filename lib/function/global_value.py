@@ -98,7 +98,7 @@ for x in ("mahjong", "setting"):
         sys.exit()
 
 # オプションセクションチェック
-for x in ("results", "graph", "ranking", "report", "member", "database", "help"):
+for x in ("results", "graph", "ranking", "report", "member", "team", "database", "help"):
     if not x in config.sections():
         config.add_section(x)
 
@@ -107,6 +107,8 @@ commandword = { # チャンネル内呼び出しキーワード
     "graph": config["graph"].get("commandword", "麻雀グラフ"),
     "ranking": config["ranking"].get("commandword", "麻雀ランキング"),
     "report": config["report"].get("commandword", "麻雀成績レポート"),
+    "member": config["member"].get("commandword", "メンバー一覧"),
+    "team": config["team"].get("commandword", "チーム一覧"),
 }
 
 rule_version = config["mahjong"].get("rule_version", "")
@@ -127,6 +129,7 @@ commandword.update(help = config["help"].get("commandword", "ヘルプ"))
 ### 固定値 ###
 wind = ("東家", "南家", "西家", "北家")
 member_list = {}
+team_list = {}
 
 app_var = { # ホームタブ用
     "user_id": None,

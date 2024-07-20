@@ -94,7 +94,7 @@ def game_count(argument, command_option):
         first = datetime.fromisoformat(df["first_game"].to_string(index = False))
         last = datetime.fromisoformat(df["last_game"].to_string(index = False))
 
-    g.logging.info(f"return: count: {count}, first: {first}, last: {last}")
+    g.logging.info(f"return: {count=}, {first=}, {last=}")
     return(count, first, last)
 
 
@@ -385,5 +385,36 @@ def winner_report(argument, command_option):
         df[f"pname{i}"] = df[f"name{i}"].apply(
             lambda x: "該当者なし" if type(x) == float else c.member.NameReplace(x, command_option, add_mark = True)
         )
+
+    return(df)
+
+
+def team_total(argument, command_option):
+    """
+    チーム集計
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    df : DataFrame
+    """
+
+    # データ収集
+    df = pd.read_sql(
+        d.generate.team_total(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = _extending(f.configure.get_parameters(argument, command_option))
+    )
+
+    # インデックスの振り直し
+    df = df.reset_index(drop = True)
+    df.index = df.index + 1
 
     return(df)

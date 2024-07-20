@@ -7,7 +7,7 @@ from lib.function import global_value as g
 
 def read_memberslist():
     """
-    メンバーリスト読み込み
+    メンバー/チームリスト読み込み
     """
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
@@ -16,18 +16,17 @@ def read_memberslist():
     rows = resultdb.execute("select name from member where id=0")
     g.guest_name = rows.fetchone()[0]
 
-    g.member_list = {}
     rows = resultdb.execute("select name, member from alias")
-    for row in rows.fetchall():
-        if not row["member"] in g.member_list:
-            g.member_list[row["member"]] = row["member"]
-        if not row["name"] in g.member_list:
-            g.member_list[row["name"]] = row["member"]
+    g.member_list = dict(rows.fetchall()) 
+
+    rows = resultdb.execute("select * from team")
+    g.team_list = dict(rows.fetchall())
 
     resultdb.close()
 
     g.logging.notice(f"guest_name: {g.guest_name}") # type: ignore
     g.logging.notice(f"member_list: {set(g.member_list.values())}") # type: ignore
+    g.logging.notice(f"team_list: {list(g.team_list.values())}") # type: ignore
 
 
 def command_option_initialization(command):
@@ -55,6 +54,7 @@ def command_option_initialization(command):
         "fourfold": False, # 縦持ちデータの直近Nを4倍で取るか
         "stipulated": 0, # 規定打数
         "verbose": False, # 戦績詳細
+        "team_total": False, # チーム集計
         "unregistered_replace": g.config[command].getboolean("unregistered_replace", True),
         "guest_skip": g.config[command].getboolean("guest_skip", True),
         "guest_skip2": g.config[command].getboolean("guest_skip2", True),
