@@ -63,7 +63,7 @@ def command_option_initialization(command):
         "versus_matrix": g.config[command].getboolean("versus_matrix", False),
         "ranked": g.config[command].getint("ranked", 3),
         "stipulated_rate": g.config[command].getfloat("stipulated_rate", 0.05),
-        "format": g.config["setting"].get("format", "csv"),
+        "format": g.config["setting"].get("format", "default"),
     }
     option["aggregation_range"].append(g.config[command].get("aggregation_range", "当日"))
 
