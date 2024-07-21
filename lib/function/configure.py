@@ -55,6 +55,7 @@ def command_option_initialization(command):
         "stipulated": 0, # 規定打数
         "verbose": False, # 戦績詳細
         "team_total": False, # チーム集計
+        "friendly_fire": g.config["team"].getboolean("friendly_fire", False),
         "unregistered_replace": g.config[command].getboolean("unregistered_replace", True),
         "guest_skip": g.config[command].getboolean("guest_skip", True),
         "guest_skip2": g.config[command].getboolean("guest_skip2", True),

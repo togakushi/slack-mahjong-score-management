@@ -653,15 +653,21 @@ def team_total(argument, command_option):
             count() as count
         from
             individual_results
+        join game_info
+            on individual_results.ts = game_info.ts
         where
             rule_version = :rule_version
             and playtime between :starttime and :endtime
             and team not null
+            --[friendly_fire] and same_team = 0
         group by
             team
         order by
             total desc
     """
+
+    if not command_option["friendly_fire"]:
+        sql = sql.replace("--[friendly_fire] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
