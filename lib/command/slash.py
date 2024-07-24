@@ -73,6 +73,7 @@ def slash_command(ack, body, client):
             # チーム管理系コマンド
             case subcom if subcom in subcommand_list("team_create"):
                 msg = c.team.create(argument)
+                f.slack_api.post_message(client, channel_id, msg)
             case subcom if subcom in subcommand_list("team_del"):
                 msg = c.team.delete(argument)
                 f.slack_api.post_message(client, channel_id, msg)
