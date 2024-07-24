@@ -17,8 +17,16 @@ def help(command):
     msg += f"\n\t{command} report        レポート表示"
     msg += f"\n\t{command} check         データ突合"
     msg += f"\n\t{command} download      データベースダウンロード"
+    msg += f"\n\t---メンバー管理---"
     msg += f"\n\t{command} member        登録されているメンバー"
     msg += f"\n\t{command} add | del     メンバーの追加/削除"
+    msg += f"\n\t---チーム管理---"
+    msg += f"\n\t{command} team_create <チーム名>            チームの新規作成"
+    msg += f"\n\t{command} team_del <チーム名>		         チームの削除"
+    msg += f"\n\t{command} team_add <チーム名> <メンバー名>  チームにメンバーを登録"
+    msg += f"\n\t{command} team_remove <メンバー名>		     指定したメンバーを未所属にする"
+    msg += f"\n\t{command} team_list                         チーム名と所属メンバーを表示"
+    msg += f"\n\t{command} team_clear                        チームデータをすべて削除"
     msg += f"```"
     return(msg)
 
@@ -42,24 +50,26 @@ def help_message():
         "\n*成績サマリ*",
         f"\t呼び出しキーワード： {g.commandword['results']}",
         f"\t検索範囲デフォルト： {results_option['aggregation_range'][0]}",
-        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/summary.md",
 
         "\n*成績グラフ*",
         f"\t呼び出しキーワード： {g.commandword['graph']}",
         f"\t検索範囲デフォルト： {graph_option['aggregation_range'][0]}",
-        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/graph.md",
 
         "\n*ランキング*",
         f"\t呼び出しキーワード： {g.commandword['ranking']}",
         f"\t検索範囲デフォルト： {ranking_option['aggregation_range'][0]}",
         f"\t規定打数デフォルト： 全体ゲーム数 × {ranking_option['stipulated_rate']} ＋ 1",
         f"\t出力制限デフォルト： 上位 {ranking_option['ranked']} 名",
-        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/ranking.md",
 
         "\n*レポート*",
         f"\t呼び出しキーワード： {g.commandword['report']}",
         f"\t検索範囲デフォルト： {report_option['aggregation_range'][0]}",
-        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/report.md",
+
+        "\n*メンバー一覧*",
+        f"\t呼び出しキーワード： {g.commandword['member']}",
+
+        "\n*チーム一覧*",
+        f"\t呼び出しキーワード： {g.commandword['team']}",
 
         "\n" + "-" * 30,
 
