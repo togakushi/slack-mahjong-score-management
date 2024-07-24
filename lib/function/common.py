@@ -149,8 +149,10 @@ def argument_analysis(argument, command_option = {}):
                 command_option["stipulated"] = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
             case keyword if re.search(r"^(チーム|team)$", keyword.lower()):
                 command_option["team_total"] = True
-            case keyword if re.search(r"^(チーム同卓|同士討ち|コンビ)$", keyword.lower()):
+            case keyword if re.search(r"^(チーム同卓あり|コンビあり|同士討ち)$", keyword.lower()):
                 command_option["friendly_fire"] = True
+            case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword.lower()):
+                command_option["friendly_fire"] = False
 
             # フォーマット指定
             case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
