@@ -113,7 +113,7 @@ def score_comparison():
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                     textformat(db_data[key]), textformat(slack_data[key]),
                 )
-                db_update(cur, key, slack_data[key], command_option)
+                db_update(cur, key, slack_data[key])
                 continue
         else: #追加
             count["missing"] += 1
@@ -122,7 +122,7 @@ def score_comparison():
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(slack_data[key])
             )
-            db_insert(cur, key, slack_data[key], command_option)
+            db_insert(cur, key, slack_data[key])
 
     # DBだけにあるパターン
     for key in db_data.keys():
@@ -157,48 +157,34 @@ def score_comparison():
     return(count, ret_msg, fts)
 
 
-def db_update(cur, ts, msg, command_option): # 突合処理専用
-    # ポイント計算
-    rpoint_data =[eval(msg[1]), eval(msg[3]), eval(msg[5]), eval(msg[7])]
-    deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
-    array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
-    for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
-        array[i1]["str"] = msg[i2 * 2 + 1]
-        array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
+def db_update(cur, ts, msg): # 突合処理専用
+    param = {
+        "ts": ts,
+        "playtime": datetime.fromtimestamp(float(ts)),
+        "rule_version": g.rule_version,
+        "comment": "",
+    }
+    param.update(f.score.get_score(msg))
 
-    cur.execute(d.sql_result_update, (
-        array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
-        array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
-        array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
-        array["p4"]["name"], array["p4"]["str"], array["p4"]["rpoint"], array["p4"]["rank"], array["p4"]["point"],
-        deposit,
-        ts,
-        )
-    )
+    cur.execute(d.sql_result_update, param)
+    g.logging.notice(f"{param=}") # type: ignore
 
 
-def db_insert(cur, ts, msg, command_option): # 突合処理専用
-    # ポイント計算
-    rpoint_data =[eval(msg[1]), eval(msg[3]), eval(msg[5]), eval(msg[7])]
-    deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
-    array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
-    for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
-        array[i1]["str"] = msg[i2 * 2 + 1]
-        array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
+def db_insert(cur, ts, msg): # 突合処理専用
+    param = {
+        "ts": ts,
+        "playtime": datetime.fromtimestamp(float(ts)),
+        "rule_version": g.rule_version,
+        "comment": "",
+    }
+    param.update(f.score.get_score(msg))
 
-    cur.execute(d.sql_result_insert, (
-        ts, datetime.fromtimestamp(float(ts)),
-        array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
-        array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
-        array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
-        array["p4"]["name"], array["p4"]["str"], array["p4"]["rpoint"], array["p4"]["rank"], array["p4"]["point"],
-        deposit, g.rule_version, "",
-        )
-    )
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    cur.execute(d.sql_result_insert, param)
+
+    resultdb.commit()
+    resultdb.close()
+    g.logging.notice(f"{param=}") # type: ignore
 
 
 def db_delete(cur, ts): # 突合処理専用

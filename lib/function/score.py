@@ -1,56 +1,42 @@
-import math
+import pandas as pd
 
 import lib.function as f
+import lib.command as c
 from lib.function import global_value as g
 
 
-def calculation_point(rpoint_data, rpoint, seat):
+def calculation_point(score_df):
     """
-    素点データと獲得素点から獲得ポイントと順位を返す
+    素点データから獲得ポイントと順位を取得する
 
     Parameters
     ----------
-    rpoint_data : list
-        全員分の素点リスト
-
-    rpoint : int
-        対象プレイヤーの素点
-
-    seat : int
-        対象プレイヤーの座席
-        (0:東家 1:南家 2:西家 3:北家)
+    score_df : DataFrame
+        全員分の素点データ(東家から順)
 
     Returns
     -------
-    rank : int
-        獲得順位
-
-    point : float
-        獲得ポイント
+    score_df : DataFrame
+        順位と獲得ポイントを追加したデータ
     """
 
-    # 同点のときに席順で順位に差が付くように小さい数字を足す
-    temp_data = []
-    correction = [0.000004, 0.000003, 0.000002, 0.000001]
-    for i in range(len(rpoint_data)):
-        temp_data.append(rpoint_data[i] + correction[i])
-    temp_data.sort(reverse = True)
+    # 順位点算出
+    origin_point  = g.config["mahjong"].getint("point", 250) # 配給原点
+    return_point = g.config["mahjong"].getint("return", 300) # 返し点
+    uma = g.config["mahjong"].get("rank_point", "30,10,-10,-30") # ウマ
+    rank_point = [int(x) for x in uma.split(",")]
+    rank_point[0] += (return_point - origin_point) / 10 * 4 # type: ignore # オカ
 
-    # 獲得順位
-    rank = temp_data.index(rpoint + correction[seat]) + 1
+    # 同点は席順で決定するパターン
+    score_df["rank"] = score_df.rank(numeric_only = True, ascending = False, method = "first").astype("int")
+    score_df["point"] = [
+        (x["rpoint"] - return_point) / 10 + rank_point[x["rank"] - 1]
+        for _, x in score_df.iterrows()
+    ]
 
-    # ポイント計算
-    p = g.config["mahjong"].getint("point", 250) # 配給原点
-    r = g.config["mahjong"].getint("return", 300) # 返し点
-    u = g.config["mahjong"].get("rank_point", "30,10,-10,-30") # 順位点
+    # ToDo: 同点は順位点を山分けするパターン
 
-    oka = (r - p) * 4 / 10
-    uma = [int(x) for x in u.split(",")]
-    uma[0] = uma[0] + int(oka)
-
-    point = math.floor((rpoint - r) + uma[rank - 1] * 10) / 10
-
-    return(rank, point)
+    return(score_df)
 
 
 def check_score(client, channel_id, event_ts, user, msg):
@@ -82,3 +68,45 @@ def check_score(client, channel_id, event_ts, user, msg):
             name = g.reaction_ng,
             timestamp = event_ts,
         )
+
+
+def get_score(msg):
+    """
+    postされた内容から素点を抽出し、順位と獲得ポイントを計算する
+
+    Parameters
+    ----------
+    msg : list
+        postされたデータ(名前, 素点)
+
+    Returns
+    -------
+    ret : dict
+        名前(p?_name), 素点文字列(p?_str), 素点(p?_rpoint),
+        ポイント(p?_point), 順位(p?_rank), 供託(deposit)
+    """
+
+    command_option = {}
+    command_option["unregistered_replace"] = False # ゲスト無効
+
+    # ポイント計算
+    score_df = pd.DataFrame({
+        "name": [
+            c.member.NameReplace(msg[x * 2], command_option, False)
+            for x in range(4)
+        ],
+        "str": [msg[x * 2 + 1] for x in range(4)],
+        "rpoint": [eval(msg[x * 2 + 1]) for x in range(4)],
+    })
+    score_df = calculation_point(score_df)
+    score = score_df.to_dict(orient = "records")
+
+    ret = {
+        "deposit": g.config["mahjong"].getint("point", 250) * 4 - score_df["rpoint"].sum(),
+    }
+    ret.update(dict(zip([f"p1_{x}" for x in list(score[0])], list(score[0].values()))))
+    ret.update(dict(zip([f"p2_{x}" for x in list(score[1])], list(score[1].values()))))
+    ret.update(dict(zip([f"p3_{x}" for x in list(score[2])], list(score[2].values()))))
+    ret.update(dict(zip([f"p4_{x}" for x in list(score[3])], list(score[3].values()))))
+
+    return(ret)

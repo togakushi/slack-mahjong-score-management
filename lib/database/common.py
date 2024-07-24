@@ -3,7 +3,6 @@ import shutil
 import sqlite3
 from datetime import datetime
 
-import lib.command as c
 import lib.function as f
 import lib.database as d
 from lib.function import global_value as g
@@ -88,61 +87,35 @@ def ExsistRecord(ts):
 
 
 def resultdb_insert(msg, ts):
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
-
-    # ポイント計算
-    rpoint_data =[eval(msg[1]), eval(msg[3]), eval(msg[5]), eval(msg[7])]
-    deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
-    array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
-    for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
-        array[i1]["str"] = msg[i2 * 2 + 1]
-        array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
+    param = {
+        "ts": ts,
+        "playtime": datetime.fromtimestamp(float(ts)),
+        "rule_version": g.rule_version,
+        "comment": "",
+    }
+    param.update(f.score.get_score(msg))
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.execute(d.sql_result_insert, (
-        ts, datetime.fromtimestamp(float(ts)),
-        array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
-        array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
-        array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
-        array["p4"]["name"], array["p4"]["str"], array["p4"]["rpoint"], array["p4"]["rank"], array["p4"]["point"],
-        deposit, g.rule_version, "",
-        )
-    )
-    resultdb.commit()
-    g.logging.notice(f"{ts}: {array}") # type: ignore
-    resultdb.close()
+    resultdb.execute(d.sql_result_insert, param)
 
+    resultdb.commit()
+    resultdb.close()
+    g.logging.notice(f"{param=}") # type: ignore
 
 def resultdb_update(msg, ts):
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
-
-    # ポイント計算
-    rpoint_data =[eval(msg[1]), eval(msg[3]), eval(msg[5]), eval(msg[7])]
-    deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
-    array = {"p1": {}, "p2": {}, "p3": {}, "p4": {}}
-    for i1, i2 in ("p1",0),("p2",1),("p3",2),("p4",3):
-        array[i1]["name"] = c.member.NameReplace(msg[i2 * 2], command_option, False)
-        array[i1]["str"] = msg[i2 * 2 + 1]
-        array[i1]["rpoint"] = rpoint_data[i2]
-        array[i1]["rank"], array[i1]["point"] = f.score.calculation_point(rpoint_data, rpoint_data[i2], i2)
+    param = {
+        "ts": ts,
+        "playtime": datetime.fromtimestamp(float(ts)),
+        "rule_version": g.rule_version,
+        "comment": "",
+    }
+    param.update(f.score.get_score(msg))
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
-    resultdb.execute(d.sql_result_update, (
-        array["p1"]["name"], array["p1"]["str"], array["p1"]["rpoint"], array["p1"]["rank"], array["p1"]["point"],
-        array["p2"]["name"], array["p2"]["str"], array["p2"]["rpoint"], array["p2"]["rank"], array["p2"]["point"],
-        array["p3"]["name"], array["p3"]["str"], array["p3"]["rpoint"], array["p3"]["rank"], array["p3"]["point"],
-        array["p4"]["name"], array["p4"]["str"], array["p4"]["rpoint"], array["p4"]["rank"], array["p4"]["point"],
-        deposit,
-        ts
-        )
-    )
+    resultdb.execute(d.sql_result_update, param)
     resultdb.commit()
-    g.logging.notice(f"{ts}: {array}") # type: ignore
     resultdb.close()
+    g.logging.notice(f"{param=}") # type: ignore
 
 
 def resultdb_delete(ts):
@@ -150,8 +123,8 @@ def resultdb_delete(ts):
     resultdb.execute(d.sql_result_delete, (ts,))
     resultdb.execute(d.sql_remarks_delete_all, (ts,))
     resultdb.commit()
-    g.logging.notice(f"{ts}") # type: ignore
     resultdb.close()
+    g.logging.notice(f"{ts}") # type: ignore
 
 
 def database_backup():
