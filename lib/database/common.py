@@ -8,73 +8,6 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def game_count(argument, command_option, cur):
-    """
-    指定条件を満たすゲーム数をカウントする
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
-
-    cur : object
-        カーソル
-
-    Returns
-    -------
-    game_count : int
-        ゲーム数
-    """
-
-    prams = f.configure.get_parameters(argument, command_option)
-    sql = """
-        select
-            count() as count
-        from (
-            select
-                playtime
-            from
-                individual_results
-            where
-                rule_version = :rule_version
-                and playtime between :starttime and :endtime -- 検索範囲
-                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
-                --[target_player] and name in (:player_list) -- 対象プレイヤー
-            group by
-                playtime
-            order by
-                playtime desc
-            --[recent] limit :target_count
-        )
-    """
-
-    if command_option["unregistered_replace"]:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-    if prams["player_name"]:
-        sql = sql.replace("--[target_player] ", "")
-
-    if prams["target_count"] != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
-    g.logging.trace(f"{sql=}") # type: ignore
-    g.logging.trace(f"{prams=}") # type: ignore
-
-    rows = cur.execute(sql, prams)
-    game_count = rows.fetchone()[0]
-
-    return(int(game_count))
-
-
 def ExsistRecord(ts):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     row = resultdb.execute("select ts from result where ts=?", (ts,))
@@ -91,31 +24,28 @@ def resultdb_insert(msg, ts):
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
         "rule_version": g.rule_version,
-        "comment": "",
     }
     param.update(f.score.get_score(msg))
+    g.logging.notice(f"{param=}") # type: ignore
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(d.sql_result_insert, param)
-
     resultdb.commit()
     resultdb.close()
-    g.logging.notice(f"{param=}") # type: ignore
 
 def resultdb_update(msg, ts):
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
         "rule_version": g.rule_version,
-        "comment": "",
     }
     param.update(f.score.get_score(msg))
+    g.logging.notice(f"{param=}") # type: ignore
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.execute(d.sql_result_update, param)
     resultdb.commit()
     resultdb.close()
-    g.logging.notice(f"{param=}") # type: ignore
 
 
 def resultdb_delete(ts):
