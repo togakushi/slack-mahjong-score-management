@@ -22,6 +22,7 @@ sql_result_insert = """
             :p3_name, :p3_str, :p3_rpoint, :p3_rank, :p3_point,
             :p4_name, :p4_str, :p4_rpoint, :p4_rank, :p4_point,
             :deposit, :rule_version, :comment
+        )
 """
 
 
