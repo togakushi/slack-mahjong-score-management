@@ -1,11 +1,18 @@
 import re
-import sqlite3
 from datetime import datetime
+
+import regex_spm
 
 import lib.command as c
 import lib.function as f
 from lib.function import global_value as g
 
+class Regexes:
+    keyword = g.config["search"].get("keyword", "終局")
+    pattern1 = re.compile(rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
+    pattern2 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$")
+    pattern3 = re.compile(rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
+    pattern4 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$")
 
 def pattern(text):
     """
@@ -18,25 +25,34 @@ def pattern(text):
 
     Returns
     -------
-    ret : text / False
+    msg : text / False
         フォーマットに一致すればスペース区切りの名前と素点のペア
     """
 
-    keyword = g.config["search"].get("keyword", "終局")
-    pattern1 = re.compile(rf"^{keyword}([^0-9+-]+[0-9+-]+){{4}}$")
-    pattern2 = re.compile(rf"([^0-9+-]+[0-9+-]+){{4}}{keyword}$")
+    # 全角記号を半角へ置換
+    replace_chr = [
+        (chr(0xff0b), "+"), # 全角プラス符号(0xff0b)
+        (chr(0x2212), "-"), # 全角マイナス符号(0x2212)
+        (chr(0xff08), "("),
+        (chr(0xff09), ")"),
+    ]
+    for z, h in replace_chr:
+        text = text.replace(z, h)
 
-    # 全角プラス符号(0xff0b)は半角に置換
-    text = text.replace(chr(0xff0b), "+")
-    # 全角マイナス符号(0x2212)は半角に置換
-    text = text.replace(chr(0x2212), "-")
+    # パターンマッチング
+    match regex_spm.fullmatch_in("".join(text.split())):
+        case Regexes.pattern1 as m:
+            msg = [m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], None]
+        case Regexes.pattern2 as m:
+            msg = [m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], None]
+        case Regexes.pattern3 as m:
+            msg = [m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[2]]
+        case Regexes.pattern4 as m:
+            msg = [m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[10]]
+        case _:
+            msg = False
 
-    text = "".join(text.split())
-    if pattern1.search(text) or pattern2.search(text):
-        ret = re.sub(rf"^{keyword}|{keyword}$", "", text)
-        ret = re.sub(rf"([^0-9+-]+)([0-9+-]+)" * 4, r"\1 \2 \3 \4 \5 \6 \7 \8", ret).split()
-
-    return(ret if "ret" in locals() else False)
+    return(msg)
 
 
 def for_slack(keyword, channel):
@@ -170,7 +186,7 @@ def game_result(data, command_option):
                     p2_name = c.member.NameReplace(msg[2], command_option)
                     p3_name = c.member.NameReplace(msg[4], command_option)
                     p4_name = c.member.NameReplace(msg[6], command_option)
-                    result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7]]
+                    result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7], msg[8]]
                     g.logging.trace(f"{ts}: {result[ts]}") # type: ignore
 
     if len(result) == 0:
