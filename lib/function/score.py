@@ -83,7 +83,7 @@ def get_score(msg):
     -------
     ret : dict
         名前(p?_name), 素点文字列(p?_str), 素点(p?_rpoint),
-        ポイント(p?_point), 順位(p?_rank), 供託(deposit)
+        ポイント(p?_point), 順位(p?_rank), 供託(deposit), コメント(comment)
     """
 
     command_option = {}
@@ -103,6 +103,7 @@ def get_score(msg):
 
     ret = {
         "deposit": g.config["mahjong"].getint("point", 250) * 4 - score_df["rpoint"].sum(),
+        "comment": msg[8],
     }
     ret.update(dict(zip([f"p1_{x}" for x in list(score[0])], list(score[0].values()))))
     ret.update(dict(zip([f"p2_{x}" for x in list(score[1])], list(score[1].values()))))

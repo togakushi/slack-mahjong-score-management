@@ -119,7 +119,8 @@ def initialization_resultdb():
                             else date(playtime)
                     end, 1, 7
                 ) as collection,
-                rule_version
+                rule_version,
+                comment
             from
                 result
             left outer join
@@ -148,7 +149,8 @@ def initialization_resultdb():
                             else date(playtime)
                     end, 1, 7
                 ),
-                rule_version
+                rule_version,
+                comment
             from
                 result
             left outer join
@@ -177,7 +179,8 @@ def initialization_resultdb():
                             else date(playtime)
                     end, 1, 7
                 ),
-                rule_version
+                rule_version,
+                comment
             from
                 result
             left outer join
@@ -206,7 +209,8 @@ def initialization_resultdb():
                             else date(playtime)
                     end, 1, 7
                 ),
-                rule_version
+                rule_version,
+                comment
             from
                 result
             left outer join

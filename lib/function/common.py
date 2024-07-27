@@ -2,12 +2,10 @@ import os
 import re
 import unicodedata
 from datetime import datetime
-from itertools import chain
 
 from dateutil.relativedelta import relativedelta
 
 import lib.command as c
-import lib.function as f
 from lib.function import global_value as g
 
 
@@ -153,6 +151,8 @@ def argument_analysis(argument, command_option = {}):
                 command_option["friendly_fire"] = True
             case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword.lower()):
                 command_option["friendly_fire"] = False
+            case keyword if re.search(r"^(コメント|comment)(.+)$", keyword):
+                command_option["comment"] = re.sub(r"^(コメント|comment)(.+)$", r"\2", keyword)
 
             # フォーマット指定
             case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
@@ -171,10 +171,6 @@ def argument_analysis(argument, command_option = {}):
 
     # 重複排除
     target_player = list(dict.fromkeys(target_player))
-
-    #g.logging.info(f"return: {target_days=} {target_count=}")
-    #glogging.info(f"return: {target_player=}")
-    #g.logging.info(f"return: {command_option=}")
 
     return(target_days, target_player, target_count, command_option)
 

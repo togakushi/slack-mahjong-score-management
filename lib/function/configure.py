@@ -17,7 +17,7 @@ def read_memberslist():
     g.guest_name = rows.fetchone()[0]
 
     rows = resultdb.execute("select name, member from alias")
-    g.member_list = dict(rows.fetchall()) 
+    g.member_list = dict(rows.fetchall())
 
     rows = resultdb.execute("select * from team")
     g.team_list = dict(rows.fetchall())
@@ -65,6 +65,7 @@ def command_option_initialization(command):
         "ranked": g.config[command].getint("ranked", 3),
         "stipulated_rate": g.config[command].getfloat("stipulated_rate", 0.05),
         "format": g.config["setting"].get("format", "default"),
+        "comment": None,
     }
     option["aggregation_range"].append(g.config[command].get("aggregation_range", "当日"))
 
@@ -136,6 +137,9 @@ def get_parameters(argument, command_option):
         "origin_point": g.config["mahjong"].getint("point", 250), # 配給原点
         "return_point": g.config["mahjong"].getint("return", 300), # 返し点
     }
+
+    if command_option["comment"]:
+        params["comment"] = f"%{command_option['comment']}%"
 
     g.logging.trace(f"params: {params}") # type: ignore
     return(params)
