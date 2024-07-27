@@ -196,6 +196,8 @@ def textformat(text):
 
     ret = ""
     for i in range(0,len(text),2):
+        if text[i] == None:
+            continue
         ret += f"[{text[i]} {str(text[i + 1])}]"
 
     return(ret)
