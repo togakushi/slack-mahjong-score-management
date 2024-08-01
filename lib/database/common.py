@@ -33,6 +33,7 @@ def resultdb_insert(msg, ts):
     resultdb.commit()
     resultdb.close()
 
+
 def resultdb_update(msg, ts):
     param = {
         "ts": ts,
