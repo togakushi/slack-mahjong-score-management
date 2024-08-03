@@ -139,19 +139,14 @@ def invalid_score(user_id, rpoint_sum, correct_score):
     ))
 
 
-def no_hits(argument, command_option):
+def no_hits(params):
     """
     指定範囲に記録用キーワードが見つからなかった場合のメッセージ
     """
 
-    target_days, _, _, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
-    if not(starttime and endtime):
-        return(invalid_argument)
-
     keyword = g.config["search"].get("keyword", "終局")
-    start = starttime.strftime("%Y/%m/%d %H:%M")
-    end = endtime.strftime("%Y/%m/%d %H:%M")
+    start = params["starttime_hm"]
+    end = params["endtime_hm"]
     msg = f"{start} ～ {end} に≪{keyword}≫はありません。"
 
     if g.config.has_section("custom_message"):
@@ -181,3 +176,39 @@ def remarks(command_option):
         ret = f"特記：" + "、".join(remark)
 
     return(ret)
+
+
+def header(game_info, command_option, params, add_text = "", indent = 1):
+    msg = ""
+    tab = "\t" * indent
+
+    # 集計範囲
+    game_range1 = f"{tab}最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
+    game_range1 += f"{tab}最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
+    if command_option["comment"]: # コメント検索の場合はコメントで表示
+        game_range2 = f"{tab}集計範囲： {game_info['first_comment']} ～ {game_info['last_comment']}\n"
+    else:
+        game_range2 = f"{tab}集計範囲： {game_info['first_game']} ～ {game_info['last_game']}\n".replace("-", "/")
+
+    # ゲーム数
+    if game_info["game_count"] == 0:
+        msg += f"{tab}{f.message.no_hits(params)}"
+    else:
+        match command_option["command"]:
+            case "results":
+                if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
+                    msg += f"{tab}検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}\n"
+                    msg += game_range1
+                    msg += f"{tab}ゲーム数：{game_info['game_count']} 回{add_text}\n"
+                else:
+                    msg += game_range1
+                    msg += f"{tab}総ゲーム数：{game_info['game_count']} 回{add_text}\n"
+            case "ranking":
+                msg += game_range2
+                msg += f"{tab}集計ゲーム数：{game_info['game_count']} (規定数：{command_option['stipulated']} 以上)\n"
+            case _:
+                msg += game_range2
+                msg += f"{tab}総ゲーム数：{game_info['game_count']} 回\n"
+        msg += tab + f.message.remarks(command_option)
+
+    return(msg)

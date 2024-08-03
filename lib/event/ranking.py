@@ -53,6 +53,7 @@ def handle_search_action(ack, body, client):
         f.configure.command_option_initialization("ranking"),
         body,
     )
+    params, _ = f.common.game_info(argument, command_option)
 
     client.views_update(
         view_id = g.app_var["view_id"],
@@ -71,7 +72,7 @@ def handle_search_action(ack, body, client):
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.no_hits(argument, command_option)
+    msg1 = f.message.no_hits(params)
 
     msg1, msg2 = c.ranking.slackpost.aggregation(argument, command_option)
     if msg2:

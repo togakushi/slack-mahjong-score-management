@@ -41,7 +41,7 @@ def plot(argument, command_option):
     df = d.aggregate.personal_gamedata(argument, command_option)
 
     if df.empty:
-        return(0, f.message.no_hits(argument, command_option))
+        return(0, f.message.no_hits(params))
 
     # 最終値（凡例追加用）
     point_sum = "{:+.1f}".format(float(df["point_sum"].iloc[-1])).replace("-", "▲")

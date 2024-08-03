@@ -12,11 +12,14 @@ def game_count(argument, command_option):
     sql = """
         select
             count() as count,
-            min(playtime) as first_game,
-            max(playtime) as last_game
+            first_game, last_game,
+            first_comment, last_comment
         from (
             select
-                playtime
+                first_value(playtime) over(order by ts asc) as first_game,
+                last_value(playtime) over(order by ts asc) as last_game,
+                first_value(comment) over(order by ts asc) as first_comment,
+                last_value(comment) over(order by ts asc) as last_comment
             from
                 individual_results
             where
@@ -365,7 +368,7 @@ def game_details(argument, command_option):
                 and playtime between :starttime and :endtime
                 --[comment] and comment like :comment
             order by
-                playtime desc, comment
+                playtime desc, comment asc
             --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
         )
         order by
@@ -394,7 +397,8 @@ def game_data(argument, command_option):
             p3_name, p3_rank, p3_point,
             p4_name, p4_rank, p4_point,
             deposit,
-            p1_guest + p2_guest + p3_guest + p4_guest as guest_count
+            p1_guest + p2_guest + p3_guest + p4_guest as guest_count,
+            comment
         from
             game_results
         where
@@ -521,7 +525,7 @@ def versus_matrix(argument, command_option):
 
 def personal_gamedata(argument, command_option):
     """
-    ゲーム結果集計
+    ゲーム結果集計(個人戦)
     """
     params = f.configure.get_parameters(argument, command_option)
     sql = """
@@ -533,14 +537,16 @@ def personal_gamedata(argument, command_option):
             point,
             round(sum(point) over moving, 1) as point_sum,
             round(avg(point) over moving, 1) as point_avg,
-            round(avg(rank) over moving, 2) as rank_avg
+            round(avg(rank) over moving, 2) as rank_avg,
+            comment
         from (
             select
                 playtime,
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
                 rank,
-                point
+                point,
+                comment
             from
                 individual_results
             where
@@ -573,6 +579,55 @@ def personal_gamedata(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
+    if command_option["comment"]:
+        sql = sql.replace("--[comment] ", "")
+
+    if params["target_count"] != 0:
+        sql = sql.replace("and playtime between", "-- and playtime between")
+        sql = sql.replace("--[recent] ", "")
+
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    return(sql)
+
+
+def team_gamedata(argument, command_option):
+    """
+    ゲーム結果集計(チーム戦)
+    """
+    params = f.configure.get_parameters(argument, command_option)
+    sql = """
+        select
+            count() over moving as count,
+            replace(playtime, "-", "/") as playtime,
+            team,
+            rank,
+            point,
+            round(sum(point) over moving, 1) as point_sum,
+            round(avg(point) over moving, 1) as point_avg,
+            round(avg(rank) over moving, 2) as rank_avg,
+            comment
+        from (
+            select
+                playtime,
+                team,
+                rank,
+                point,
+                comment
+            from
+                individual_results
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
+                --[comment] and comment like :comment
+            order by
+                playtime desc
+            --[recent] limit :target_count
+        )
+        window
+            moving as (partition by team order by playtime)
+        order by
+            team, playtime
+    """
     if command_option["comment"]:
         sql = sql.replace("--[comment] ", "")
 

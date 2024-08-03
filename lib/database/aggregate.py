@@ -98,6 +98,53 @@ def game_count(argument, command_option):
     return(count, first, last)
 
 
+def game_info(argument, command_option):
+    """
+    指定条件を満たすゲーム数をカウントする
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    ret : dict
+        game_count : int
+        first_game : datetime
+        last_game : datetime
+        first_comment : str
+        last_comment : str
+    """
+
+    # データ収集
+    df = pd.read_sql(
+        d.generate.game_count(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = _extending(f.configure.get_parameters(argument, command_option))
+    )
+
+    ret = {
+        "game_count": int(df["count"].to_string(index = False)),
+        "first_game": datetime.now(),
+        "last_game": datetime.now(),
+        "first_comment": None,
+        "last_comment": None,
+    }
+
+    if ret["game_count"] >= 1:
+        ret["first_game"] = datetime.fromisoformat(df["first_game"].to_string(index = False))
+        ret["last_game"] = datetime.fromisoformat(df["last_game"].to_string(index = False))
+        ret["first_comment"] = df["first_comment"].to_string(index = False)
+        ret["last_comment"] = df["last_comment"].to_string(index = False)
+
+    g.logging.info(f"return: {ret=}")
+    return(ret)
+
+
 def game_summary(argument, command_option):
     """
     指定条件を満たすゲーム結果をサマライズする
@@ -356,6 +403,17 @@ def personal_gamedata(argument, command_option):
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
         lambda x: c.member.NameReplace(x, command_option, add_mark = True)
+    )
+
+    return(df)
+
+
+def team_gamedata(argument, command_option):
+    # データ収集
+    df = pd.read_sql(
+        d.generate.team_gamedata(argument, command_option),
+        sqlite3.connect(g.database_file),
+        params = _extending(f.configure.get_parameters(argument, command_option))
     )
 
     return(df)

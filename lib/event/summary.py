@@ -52,6 +52,7 @@ def handle_search_action(ack, body, client):
         f.configure.command_option_initialization("results"),
         body,
     )
+    params, _ = f.common.game_info(argument, command_option)
 
     client.views_update(
         view_id = g.app_var["view_id"],
@@ -62,7 +63,7 @@ def handle_search_action(ack, body, client):
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg2 = f.message.no_hits(argument, command_option)
+    msg2 = f.message.no_hits(params)
 
     msg1, msg2, file_list = c.results.summary.aggregation(argument, command_option)
     f.slack_api.slack_post(

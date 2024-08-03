@@ -32,10 +32,8 @@ def aggregation(argument, command_option):
     command_option["guest_skip"] = command_option["guest_skip2"]
 
     ### データ収集 ###
-    params = f.configure.get_parameters(argument, command_option)
-    game_count, first_game, last_game = d.aggregate.game_count(argument, command_option)
-
-    if game_count == 0:
+    params , game_info = f.common.game_info(argument, command_option)
+    if game_info["game_count"] == 0:
         msg1 = f"""
             *【個人成績】*
             \tプレイヤー名： {params['player_name']} {f.common.badge_degree(0)}
@@ -57,7 +55,7 @@ def aggregation(argument, command_option):
         *【個人成績】*
         \tプレイヤー名： {data["表示名"]} {badge_degree}
         \t検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}
-        \t集計範囲： {first_game} ～ {last_game}
+        \t集計範囲： {game_info['first_game']} ～ {game_info['last_game']}
         \t対戦数： {data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}
     """.replace("-", "/")
 

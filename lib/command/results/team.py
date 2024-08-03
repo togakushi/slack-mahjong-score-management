@@ -30,10 +30,8 @@ def aggregation(argument, command_option):
     """
 
     ### データ収集 ###
-    params = f.configure.get_parameters(argument, command_option)
-    total_game_count, first_game, last_game = d.aggregate.game_count(argument, command_option)
+    params , game_info = f.common.game_info(argument, command_option)
     df_summary = d.aggregate.team_total(argument, command_option)
-
     df_summary = df_summary.rename(
         columns = {
             "team": "チーム名",
@@ -45,17 +43,11 @@ def aggregation(argument, command_option):
 
     ### 表示 ###
     msg = {}
-    msg2 = "*【チーム成績サマリ】*\n"
+    header = "*【チーム成績サマリ】*\n"
+    header += f.message.header(game_info, command_option, params, "", 1)
     file_list = {}
 
-    if df_summary.empty:
-        msg2 += f"\t検索範囲：{params['starttime_hms']} ～ {params['endtime_hms']}\n"
-        msg2 += "\n\tチーム戦の記録はありません"
-    else:
-        msg2 += f"\t検索範囲：{params['starttime_hms']} ～ {params['endtime_hms']}\n"
-        msg2 += f"\t最初のゲーム：{first_game}\n\t最後のゲーム：{last_game}\n".replace("-", "/")
-        msg2 += "\t" + f.message.remarks(command_option)
-
+    if not df_summary.empty:
         data = df_summary.to_markdown(
             index = False,
             tablefmt = "simple",
@@ -66,4 +58,4 @@ def aggregation(argument, command_option):
         data = re.sub(r" -([0-9]+)", r"▲\1", data)
         msg[0] = f"```\n{data}\n```"
 
-    return(msg2, msg, file_list)
+    return(header, msg, file_list)

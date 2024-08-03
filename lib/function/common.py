@@ -6,7 +6,37 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 import lib.command as c
+import lib.function as f
+import lib.database as d
 from lib.function import global_value as g
+
+
+def game_info(argument, command_option):
+    """
+    引数の内容を解析し、集計対象のゲーム情報を取得する
+
+    Parameters
+    ----------
+    argument : list
+        slackから受け取った引数
+        集計対象の期間などが指定される
+
+    command_option : dict
+        コマンドオプション
+
+    Returns
+    -------
+    params : dict
+        オプション解析結果
+
+    game_data : dict
+        集計対象ゲームの件数、他
+    """
+
+    params = f.configure.get_parameters(argument, command_option)
+    game_data = d.aggregate.game_info(argument, command_option)
+
+    return(params, game_data)
 
 
 def scope_coverage(target_days):

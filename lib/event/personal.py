@@ -55,6 +55,7 @@ def handle_search_action(ack, body, client):
         f.configure.command_option_initialization("results"),
         body,
     )
+    params, _ = f.common.game_info(argument, command_option)
 
     search_options = body["view"]["state"]["values"]
     if "bid-user_select" in search_options:
@@ -72,7 +73,7 @@ def handle_search_action(ack, body, client):
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.no_hits(argument, command_option)
+    msg1 = f.message.no_hits(params)
 
     msg1, msg2 = c.results.personal.aggregation(argument, command_option)
     res = f.slack_api.post_message(client, body["user"]["id"], msg1)

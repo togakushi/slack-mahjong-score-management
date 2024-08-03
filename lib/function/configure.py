@@ -45,6 +45,7 @@ def command_option_initialization(command):
     """
 
     option = {
+        "command": command,
         "recursion": True,
         "aggregation_range": [],
         "all_player": False,

@@ -30,12 +30,10 @@ def aggregation(argument, command_option):
     """
 
     ### データ収集 ###
-    params = f.configure.get_parameters(argument, command_option)
-    total_game_count, first_game, last_game = d.aggregate.game_count(argument, command_option)
+    params , game_info = f.common.game_info(argument, command_option)
     df_summary = d.aggregate.game_summary(argument, command_option)
     df_game = d.aggregate.game_details(argument, command_option)
     df_grandslam = df_game.query("grandslam != ''")
-
 
     df_grandslam = df_grandslam.rename(
         columns = {
@@ -45,29 +43,16 @@ def aggregation(argument, command_option):
 
     ### 表示 ###
     # --- 情報ヘッダ
+    add_text = ""
     msg2 = "*【成績サマリ】*\n"
-
-    if df_summary.empty:
-        msg2 += f"\tゲーム数：{total_game_count} 回"
-        msg2 += "\t" + f.message.remarks(command_option)
-        return(msg2, {}, {})
-
-    if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
-        msg2 += f"\t検索範囲：{params['starttime_hms']} ～ {params['endtime_hms']}\n"
-
-    msg2 += f"\t最初のゲーム：{first_game}\n\t最後のゲーム：{last_game}\n".replace("-", "/")
-    if params["player_name"]:
-        msg2 += f"\t総ゲーム数：{total_game_count} 回"
-    else:
-        msg2 += f"\tゲーム数：{total_game_count} 回"
-
-    if g.config["mahjong"].getboolean("ignore_flying", False):
-        msg2 += "\n"
-    else:
-        msg2 += " / トバされた人（延べ）： {} 人\n".format(
+    if not g.config["mahjong"].getboolean("ignore_flying", False):
+        add_text = " / トバされた人（延べ）： {} 人\n".format(
             df_summary["トビ"].sum(),
         )
-    msg2 += "\t" + f.message.remarks(command_option)
+    msg2 += f.message.header(game_info, command_option, params, add_text, 1)
+
+    if df_summary.empty:
+        return(msg2, {}, {})
 
     # --- 集計結果
     msg = {}

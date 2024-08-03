@@ -3,6 +3,7 @@ import math
 import pandas as pd
 
 import lib.function as f
+import lib.command as c
 import lib.database as d
 from lib.function import global_value as g
 
@@ -57,10 +58,12 @@ def aggregation(argument, command_option):
     """
 
     # --- データ取得
+    params , game_info = f.common.game_info(argument, command_option)
+
     total_game_count, first_game, last_game = d.aggregate.game_count(argument, command_option)
 
     if total_game_count == 0: # 結果が0件のとき
-        return(f.message.no_hits(argument, command_option), None)
+        return(f.message.no_hits(params), None)
 
     if command_option["stipulated"] == 0: # 規定打数が指定されない場合はレートから計算
         command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
@@ -149,9 +152,7 @@ def aggregation(argument, command_option):
 
     # --- 表示
     msg1 = "\n*【ランキング】*\n"
-    msg1 += f"\t集計範囲：{first_game} ～ {last_game}\n".replace("-", "/")
-    msg1 += f"\t集計ゲーム数：{total_game_count}\t(規定数：{command_option['stipulated']} 以上)\n"
-    msg1 += "\t" + f.message.remarks(command_option)
+    msg1 += f.message.header(game_info, command_option, params, "", 1)
     msg2 = {}
 
     for k in data.keys():
