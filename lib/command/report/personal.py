@@ -105,9 +105,9 @@ def plot(argument, command_option):
         sql = sql.replace("--[recent] ", "")
 
     # --- データ取得
-    total_game_count, _, _ = d.aggregate.game_count(argument, command_option)
+    params, _ = f.common.game_info(argument, command_option)
     if command_option["stipulated"] == 0:
-        command_option["stipulated"] = math.ceil(total_game_count * command_option["stipulated_rate"]) + 1
+        command_option["stipulated"] = math.ceil(params["game_count"] * command_option["stipulated_rate"]) + 1
         params = f.configure.get_parameters(argument, command_option) # 更新
 
     rows = resultdb.execute(sql, params)

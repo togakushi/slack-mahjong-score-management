@@ -60,47 +60,9 @@ def _extending(params = {}):
     return(params)
 
 
-def game_count(argument, command_option):
-    """
-    指定条件を満たすゲーム数をカウントする
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
-
-    Returns
-    -------
-    count : int
-    first : datetime
-    last : datetime
-    """
-
-    # データ収集
-    df = pd.read_sql(
-        d.generate.game_count(argument, command_option),
-        sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
-    )
-
-    count = int(df["count"].to_string(index = False))
-    first = datetime.now()
-    last = datetime.now()
-
-    if count >= 1:
-        first = datetime.fromisoformat(df["first_game"].to_string(index = False))
-        last = datetime.fromisoformat(df["last_game"].to_string(index = False))
-
-    g.logging.info(f"return: {count=}, {first=}, {last=}")
-    return(count, first, last)
-
-
 def game_info(argument, command_option):
     """
-    指定条件を満たすゲーム数をカウントする
+    指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
 
     Parameters
     ----------
@@ -122,7 +84,7 @@ def game_info(argument, command_option):
 
     # データ収集
     df = pd.read_sql(
-        d.generate.game_count(argument, command_option),
+        d.generate.game_info(argument, command_option),
         sqlite3.connect(g.database_file),
         params = _extending(f.configure.get_parameters(argument, command_option))
     )

@@ -3,9 +3,9 @@ import lib.function as f
 from lib.function import global_value as g
 
 
-def game_count(argument, command_option):
+def game_info(argument, command_option):
     """
-    ゲーム数をカウントするSQLを返す
+    ゲーム数のカウント、最初と最後のゲームの時間とコメントを取得するSQLを返す
     """
 
     params = f.configure.get_parameters(argument, command_option)
