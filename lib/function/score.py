@@ -24,19 +24,84 @@ def calculation_point(score_df):
     origin_point  = g.config["mahjong"].getint("point", 250) # 配給原点
     return_point = g.config["mahjong"].getint("return", 300) # 返し点
     uma = g.config["mahjong"].get("rank_point", "30,10,-10,-30") # ウマ
-    rank_point = [int(x) for x in uma.split(",")]
-    rank_point[0] += (return_point - origin_point) / 10 * 4 # type: ignore # オカ
+    rank_point = list(map(int, uma.split(",")))
+    rank_point[0] += int((return_point - origin_point) / 10 * 4) # type: ignore # オカ
 
-    # 同点は席順で決定するパターン
-    score_df["rank"] = score_df.rank(numeric_only = True, ascending = False, method = "first").astype("int")
-    score_df["point"] = [
-        (x["rpoint"] - return_point) / 10 + rank_point[x["rank"] - 1]
-        for _, x in score_df.iterrows()
-    ]
+    if g.config["mahjong"].getboolean("draw_split", False): # 山分け
+        score_df["rank"] = score_df["rpoint"].rank(ascending = False, method = "min").astype("int")
 
-    # ToDo: 同点は順位点を山分けするパターン
+        # 順位点リストの更新
+        rank_sequence = "".join(score_df["rank"].sort_values().to_string(index=False).split())
+        match rank_sequence:
+            case "1111":
+                rank_point = point_split(rank_point)
+            case "1114":
+                new_point = point_split(rank_point[0:3])
+                rank_point[0] = new_point[0]
+                rank_point[1] = new_point[1]
+                rank_point[2] = new_point[2]
+            case "1134":
+                new_point = point_split(rank_point[0:2])
+                rank_point[0] = new_point[0]
+                rank_point[1] = new_point[1]
+            case "1133":
+                new_point = point_split(rank_point[0:2])
+                rank_point[0] = new_point[0]
+                rank_point[1] = new_point[1]
+                new_point = point_split(rank_point[2:4])
+                rank_point[2] = new_point[0]
+                rank_point[3] = new_point[1]
+            case "1222":
+                new_point = point_split(rank_point[1:4])
+                rank_point[1] = new_point[0]
+                rank_point[2] = new_point[1]
+                rank_point[3] = new_point[2]
+            case "1224":
+                new_point = point_split(rank_point[1:3])
+                rank_point[1] = new_point[0]
+                rank_point[2] = new_point[1]
+            case "1233":
+                new_point = point_split(rank_point[2:4])
+                rank_point[2] = new_point[0]
+                rank_point[3] = new_point[1]
+            case _:
+                pass
 
+    else: # 席順
+        score_df["rank"] = score_df["rpoint"].rank(ascending = False, method = "first").astype("int")
+
+    # 獲得ポイント計算
+    score_df["point"] = "point"
+    score_df["position"] = score_df["rpoint"].rank(ascending = False, method = "first").astype("int")
+    for x in score_df.itertuples():
+        score_df.at[x.Index, x.point] = (x.rpoint - return_point) / 10 + rank_point[x.position -1]
+
+    g.logging.info(f"{rank_point=}")
     return(score_df)
+
+
+def point_split(point: list):
+    """
+    順位点を山分けする
+
+    Parameters
+    ----------
+    point : list
+        山分けするポイントのリスト
+
+    Returns
+    -------
+    new_point : list
+        山分けした結果
+    """
+
+    new_point = [int(sum(point) / len(point))] * len(point)
+    if sum(point) % len(point):
+        new_point[0] += sum(point) % len(point)
+        if sum(point) < 0:
+            new_point = list(map(lambda x: x-1, new_point))
+
+    return(new_point)
 
 
 def check_score(client, channel_id, event_ts, user, msg):
