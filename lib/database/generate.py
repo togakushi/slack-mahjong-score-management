@@ -590,6 +590,70 @@ def personal_gamedata(argument, command_option):
     return(sql)
 
 
+def personal_gamedata_daily(argument, command_option):
+    """
+    ゲーム結果日次集計(個人戦)
+    """
+    params = f.configure.get_parameters(argument, command_option)
+    sql = """
+        select
+            sum(count) over moving as count,
+            replace(collection_daily, "-", "/") as playtime,
+            name,
+            round(sum(point_sum) over moving, 1) as point_sum
+        from (
+            select
+                count() as count,
+                collection_daily,
+                --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
+                --[unregistered_not_replace] name, -- ゲスト無効
+                round(sum(point), 1) as point_sum,
+                guest_count
+            from
+                individual_results
+            join
+                game_info on individual_results.ts = game_info.ts
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
+                --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
+                --[guest_skip] and guest = 0 -- ゲストなし
+                --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
+                --[comment] and comment like :comment
+            group by
+                collection_daily, name
+            --[recent] limit :target_count
+        )
+        window
+            moving as (partition by name order by collection_daily)
+        order by
+            collection_daily
+    """
+
+    if params["player_name"]:
+        sql = sql.replace("--[player_name] ", "")
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+
+    if command_option["unregistered_replace"]:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if command_option["guest_skip"]:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    if command_option["comment"]:
+        sql = sql.replace("--[comment] ", "")
+
+    if params["target_count"] != 0:
+        sql = sql.replace("and playtime between", "-- and playtime between")
+        sql = sql.replace("--[recent] ", "")
+
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    return(sql)
+
+
 def team_gamedata(argument, command_option):
     """
     ゲーム結果集計(チーム戦)

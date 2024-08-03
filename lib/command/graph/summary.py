@@ -63,9 +63,14 @@ def point_plot(argument, command_option):
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
         "legend": legend,
-        "xlabel_text": f"ゲーム終了日時（{game_info['game_count']} ゲーム）",
         "ylabel_text": "通算ポイント",
     }
+
+    if command_option["daily"]:
+        args["xlabel_text"] = f"集計日（総ゲーム数：{game_info['game_count']}）"
+    else:
+        args["xlabel_text"] = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+
     if params["target_count"] == 0:
         args["title_text"] = title_text
     else:
@@ -126,9 +131,13 @@ def rank_plot(argument, command_option):
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
         "legend": legend,
-        "xlabel_text": f"ゲーム終了日時（{game_info['game_count']} ゲーム）",
         "ylabel_text": "順位 (通算ポイント順)",
     }
+    if command_option["daily"]:
+        args["xlabel_text"] = f"集計日（総ゲーム数：{game_info['game_count']}）"
+    else:
+        args["xlabel_text"] = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+
     if params["target_count"] == 0:
         args["title_text"] = f"順位変動 ({params['starttime_hm']} - {params['endtime_hm']})"
     else:
@@ -179,9 +188,6 @@ def _data_collection(argument:list, command_option:dict, params:dict):
         target_list = list(target_data.query("game_count >= @params['stipulated']").index)
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
-
-    if df.empty:
-        return(target_data, df)
 
     # 順位付け
     target_data["position"] = target_data["last_point"].rank(ascending = False).astype(int)

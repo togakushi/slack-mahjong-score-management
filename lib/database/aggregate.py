@@ -356,11 +356,18 @@ def versus_matrix(argument, command_option):
 
 def personal_gamedata(argument, command_option):
     # データ収集
-    df = pd.read_sql(
-        d.generate.personal_gamedata(argument, command_option),
-        sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
-    )
+    if command_option["daily"]:
+        df = pd.read_sql(
+            d.generate.personal_gamedata_daily(argument, command_option),
+            sqlite3.connect(g.database_file),
+            params = _extending(f.configure.get_parameters(argument, command_option))
+        )
+    else:
+        df = pd.read_sql(
+            d.generate.personal_gamedata(argument, command_option),
+            sqlite3.connect(g.database_file),
+            params = _extending(f.configure.get_parameters(argument, command_option))
+        )
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(

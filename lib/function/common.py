@@ -105,7 +105,7 @@ def argument_analysis(argument, command_option = {}):
     current_time = datetime.now()
     appointed_time = current_time + relativedelta(hours = -12)
     for keyword in argument:
-        match keyword:
+        match keyword.lower():
             # 日付取得
             case keyword if re.match(r"^([0-9]{8}|[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}/[0-9]{2}/[0-9]{2})$", keyword):
                 try:
@@ -153,7 +153,7 @@ def argument_analysis(argument, command_option = {}):
                 command_option["guest_skip2"] = True
             case keyword if re.search(r"^ゲスト無効$", keyword):
                 command_option["unregistered_replace"] = False
-            case keyword if re.search(r"^(全員|all)$", keyword.lower()):
+            case keyword if re.search(r"^(全員|all)$", keyword):
                 command_option["all_player"] = True
             case keyword if re.search(r"^(比較|点差|差分)$", keyword):
                 command_option["score_comparisons"] = True
@@ -161,7 +161,7 @@ def argument_analysis(argument, command_option = {}):
                 command_option["game_results"] = True
             case keyword if re.search(r"^(対戦|対戦結果)$", keyword):
                 command_option["versus_matrix"] = True
-            case keyword if re.search(r"^(詳細|verbose)$", keyword.lower()):
+            case keyword if re.search(r"^(詳細|verbose)$", keyword):
                 command_option["verbose"] = True
             case keyword if re.search(r"^(順位)$", keyword):
                 command_option["order"] = True
@@ -171,18 +171,20 @@ def argument_analysis(argument, command_option = {}):
                 command_option["personal"] = True
             case keyword if re.search(r"^(直近)([0-9]+)$", keyword):
                 target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
-            case keyword if re.search(r"^(トップ|上位|top)([0-9]+)$", keyword.lower()):
-                command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword.lower()))
+            case keyword if re.search(r"^(トップ|上位|top)([0-9]+)$", keyword):
+                command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
             case keyword if re.search(r"^(規定数|規定打数)([0-9]+)$", keyword):
                 command_option["stipulated"] = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
             case keyword if re.search(r"^(チーム|team)$", keyword.lower()):
                 command_option["team_total"] = True
-            case keyword if re.search(r"^(チーム同卓あり|コンビあり|同士討ち)$", keyword.lower()):
+            case keyword if re.search(r"^(チーム同卓あり|コンビあり|同士討ち)$", keyword):
                 command_option["friendly_fire"] = True
-            case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword.lower()):
+            case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword):
                 command_option["friendly_fire"] = False
             case keyword if re.search(r"^(コメント|comment)(.+)$", keyword):
                 command_option["comment"] = re.sub(r"^(コメント|comment)(.+)$", r"\2", keyword)
+            case keyword if re.search(r"^(daily|デイリー|日次)$", keyword):
+                command_option["daily"] = True
 
             # フォーマット指定
             case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
