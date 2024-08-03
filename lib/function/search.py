@@ -141,6 +141,7 @@ def for_database(cur, first_ts = False):
         data[ts].append(row["p3_str"])
         data[ts].append(row["p4_name"])
         data[ts].append(row["p4_str"])
+        data[ts].append(row["comment"])
 
     return(data)
 
