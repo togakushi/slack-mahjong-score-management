@@ -58,21 +58,21 @@ def aggregation(argument, command_option):
     """
 
     # --- データ取得
-    params , game_info = f.common.game_info(argument, command_option)
+    params, game_info = f.common.game_info(argument, command_option)
 
-    if params["game_count"] == 0: # 結果が0件のとき
+    if game_info["game_count"] == 0: # 結果が0件のとき
         return(f.message.no_hits(params), None)
 
     if command_option["stipulated"] == 0: # 規定打数が指定されない場合はレートから計算
-        command_option["stipulated"] = math.ceil(params["game_count"] * command_option["stipulated_rate"]) + 1
+        command_option["stipulated"] = math.ceil(game_info["game_count"] * command_option["stipulated_rate"]) + 1
 
     result_df = d.aggregate.personal_results(argument, command_option)
     record_df = d.aggregate.personal_record(argument, command_option)
     result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"], suffixes = ["", "_x"])
 
     # --- 集計
-    result_df["ゲーム参加率"] = result_df["ゲーム数"] / params["game_count"]
-    result_df["総ゲーム数"] = params["game_count"]
+    result_df["ゲーム参加率"] = result_df["ゲーム数"] / game_info["game_count"]
+    result_df["総ゲーム数"] = game_info["game_count"]
     result_df["最大素点"] = result_df["最大素点"] * 100
     result_df.rename(columns = {"1位率": "トップ率"}, inplace = True)
     result_df = result_df.query("ゲーム数 >= @command_option['stipulated']")
