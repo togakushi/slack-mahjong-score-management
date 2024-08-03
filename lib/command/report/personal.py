@@ -20,7 +20,6 @@ def plot(argument, command_option):
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-    cur = resultdb.cursor()
 
     params = f.configure.get_parameters(argument, command_option)
     sql = """
