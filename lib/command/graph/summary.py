@@ -172,7 +172,7 @@ def _data_collection(argument:list, command_option:dict, params:dict):
             return(target_data, df)
 
         target_data["last_point"] = df.groupby("team").last()["point_sum"]
-        target_data["game_count"] = df.groupby("team").max()["count"]
+        target_data["game_count"] = df.groupby("team").max(numeric_only = True)["count"]
         target_data["チーム名"] = target_data.index
         target_data = target_data.sort_values("last_point", ascending = False)
     else: # 個人戦
@@ -180,9 +180,10 @@ def _data_collection(argument:list, command_option:dict, params:dict):
         if df.empty:
             return(target_data, df)
 
+        print(df.info())
         target_data["プレイヤー名"] = df.groupby("name").last()["プレイヤー名"]
         target_data["last_point"] = df.groupby("name").last()["point_sum"]
-        target_data["game_count"] = df.groupby("name").max()["count"]
+        target_data["game_count"] = df.groupby("name").max(numeric_only = True)["count"]
 
         # 足切り
         target_list = list(target_data.query("game_count >= @params['stipulated']").index)
