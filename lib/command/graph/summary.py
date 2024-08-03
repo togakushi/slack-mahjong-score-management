@@ -227,7 +227,7 @@ def _graph_generation(df:pd.DataFrame, **kwargs):
         bbox_to_anchor = (1, 1),
         loc = "upper left",
         borderaxespad = 0.5,
-        ncol = int(len(kwargs["target_data"]) / 30 + 1),
+        ncol = int(len(kwargs["target_data"]) / 25 + 1),
     )
 
     plt.title(
