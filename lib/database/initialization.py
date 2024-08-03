@@ -119,6 +119,13 @@ def initialization_resultdb():
                             else date(playtime)
                     end, 1, 7
                 ) as collection,
+                substr(
+                    case when
+                        time(playtime) between "00:00:00" and "11:59:59"
+                            then date(playtime, "-1 days")
+                            else date(playtime)
+                    end, 1, 10
+                ) as collection_daily,
                 rule_version,
                 comment
             from
@@ -148,6 +155,13 @@ def initialization_resultdb():
                             then date(playtime, "-1 days")
                             else date(playtime)
                     end, 1, 7
+                ),
+                substr(
+                    case when
+                        time(playtime) between "00:00:00" and "11:59:59"
+                            then date(playtime, "-1 days")
+                            else date(playtime)
+                    end, 1, 10
                 ),
                 rule_version,
                 comment
@@ -179,6 +193,13 @@ def initialization_resultdb():
                             else date(playtime)
                     end, 1, 7
                 ),
+                substr(
+                    case when
+                        time(playtime) between "00:00:00" and "11:59:59"
+                            then date(playtime, "-1 days")
+                            else date(playtime)
+                    end, 1, 10
+                ),
                 rule_version,
                 comment
             from
@@ -208,6 +229,13 @@ def initialization_resultdb():
                             then date(playtime, "-1 days")
                             else date(playtime)
                     end, 1, 7
+                ),
+                substr(
+                    case when
+                        time(playtime) between "00:00:00" and "11:59:59"
+                            then date(playtime, "-1 days")
+                            else date(playtime)
+                    end, 1, 10
                 ),
                 rule_version,
                 comment
