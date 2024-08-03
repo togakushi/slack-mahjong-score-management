@@ -35,25 +35,39 @@ def point_plot(argument, command_option):
     """
 
     # データ収集
-    params = f.configure.get_parameters(argument, command_option)
-    total_game_count, target_data, df = _data_collection(argument, command_option, params)
+    params , game_info = f.common.game_info(argument, command_option)
+    target_data, df = _data_collection(argument, command_option, params)
 
     if target_data.empty: # 描写対象が0人の場合は終了
-        return(len(target_data), f.message.no_hits(argument, command_option))
+        return(len(target_data), f.message.no_hits(params))
 
     # 集計
-    pivot = pd.pivot_table(df, index = "playtime", columns = "プレイヤー名", values = "point_sum").ffill()
-    pivot = pivot.reindex(target_data["プレイヤー名"].to_list(), axis = "columns") # 並び替え
+    if command_option["comment"]:
+        pivot_index = "comment"
+        title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
+    else:
+        pivot_index = "playtime"
+        title_text = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
+
+    if command_option["team_total"]:
+        legend = "チーム名"
+        pivot = pd.pivot_table(df, index = pivot_index, columns = "team", values = "point_sum").ffill()
+    else:
+        legend = "プレイヤー名"
+        pivot = pd.pivot_table(df, index = pivot_index, columns = "プレイヤー名", values = "point_sum").ffill()
+
+    pivot = pivot.reindex(target_data[legend].to_list(), axis = "columns") # 並び替え
 
     # グラフ生成
     args = {
-        "total_game_count": total_game_count,
+        "total_game_count": game_info["game_count"],
         "target_data": target_data,
-        "xlabel_text": f"ゲーム終了日時（{total_game_count} ゲーム）",
+        "legend": legend,
+        "xlabel_text": f"ゲーム終了日時（{game_info['game_count']} ゲーム）",
         "ylabel_text": "通算ポイント",
     }
     if params["target_count"] == 0:
-        args["title_text"] = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
+        args["title_text"] = title_text
     else:
         args["title_text"] = f"ポイント推移 (直近 {params['target_count']} ゲーム)"
 
@@ -69,7 +83,7 @@ def point_plot(argument, command_option):
 
     plt.savefig(save_file, bbox_inches = "tight")
 
-    return(total_game_count, save_file)
+    return(game_info["game_count"], save_file)
 
 
 def rank_plot(argument, command_option):
@@ -95,22 +109,24 @@ def rank_plot(argument, command_option):
     """
 
     # データ収集
-    params = f.configure.get_parameters(argument, command_option)
-    total_game_count, target_data, df = _data_collection(argument, command_option, params)
+    params , game_info = f.common.game_info(argument, command_option)
+    target_data, df = _data_collection(argument, command_option, params)
 
     if target_data.empty: # 描写対象が0人の場合は終了
-        return(len(target_data), f.message.no_hits(argument, command_option))
+        return(len(target_data), f.message.no_hits(params))
 
     # 集計
     pivot = pd.pivot_table(df, index = "playtime", columns = "プレイヤー名", values = "point_sum").ffill()
     pivot = pivot.reindex(target_data["プレイヤー名"].to_list(), axis = "columns") # 並び替え
     pivot = pivot.rank(method = "dense", ascending = False, axis = 1)
+    legend = "プレイヤー名"
 
     # グラフ生成
     args = {
-        "total_game_count": total_game_count,
+        "total_game_count": game_info["game_count"],
         "target_data": target_data,
-        "xlabel_text": f"ゲーム終了日時（{total_game_count} ゲーム）",
+        "legend": legend,
+        "xlabel_text": f"ゲーム終了日時（{game_info['game_count']} ゲーム）",
         "ylabel_text": "順位 (通算ポイント順)",
     }
     if params["target_count"] == 0:
@@ -129,7 +145,7 @@ def rank_plot(argument, command_option):
 
     plt.savefig(save_file, bbox_inches = "tight")
 
-    return(total_game_count, save_file)
+    return(game_info["game_count"], save_file)
 
 
 def _data_collection(argument:list, command_option:dict, params:dict):
@@ -139,26 +155,38 @@ def _data_collection(argument:list, command_option:dict, params:dict):
 
     # データ収集
     command_option["fourfold"] = True # 直近Nは4倍する(縦持ちなので4人分)
-    total_game_count, _, _ = d.aggregate.game_count(argument, command_option)
-    df = d.aggregate.personal_gamedata(argument, command_option)
+
     target_data = pd.DataFrame()
+    if command_option["team_total"]: # チーム戦
+        df = d.aggregate.team_gamedata(argument, command_option)
+        if df.empty:
+            return(target_data, df)
+
+        target_data["last_point"] = df.groupby("team").last()["point_sum"]
+        target_data["game_count"] = df.groupby("team").max()["count"]
+        target_data["チーム名"] = target_data.index
+        target_data = target_data.sort_values("last_point", ascending = False)
+    else: # 個人戦
+        df = d.aggregate.personal_gamedata(argument, command_option)
+        if df.empty:
+            return(target_data, df)
+
+        target_data["プレイヤー名"] = df.groupby("name").last()["プレイヤー名"]
+        target_data["last_point"] = df.groupby("name").last()["point_sum"]
+        target_data["game_count"] = df.groupby("name").max()["count"]
+
+        # 足切り
+        target_list = list(target_data.query("game_count >= @params['stipulated']").index)
+        target_data = target_data.query("name == @target_list").copy()
+        df = df.query("name == @target_list").copy()
 
     if df.empty:
-        return(total_game_count, target_data, df)
-
-    target_data["プレイヤー名"] = df.groupby("name").last()["プレイヤー名"]
-    target_data["last_point"] = df.groupby("name").last()["point_sum"]
-    target_data["game_count"] = df.groupby("name").max()["count"]
-
-    # 足切り
-    target_list = list(target_data.query("game_count >= @params['stipulated']").index)
-    target_data = target_data.query("name == @target_list").copy()
-    df = df.query("name == @target_list").copy()
+        return(target_data, df)
 
     # 順位付け
     target_data["position"] = target_data["last_point"].rank(ascending = False).astype(int)
 
-    return(total_game_count, target_data.sort_values("position"), df)
+    return(target_data.sort_values("position"), df)
 
 
 def _graph_generation(df:pd.DataFrame, **kwargs):
@@ -173,9 +201,9 @@ def _graph_generation(df:pd.DataFrame, **kwargs):
 
     # 凡例
     legend_text = []
-    for _,v in kwargs["target_data"].iterrows():
+    for _, v in kwargs["target_data"].iterrows():
         legend_text.append("{}位：{} ({}pt / {}G)".format(
-            v["position"], v["プレイヤー名"],
+            v["position"], v[kwargs["legend"]],
             "{:+.1f}".format(v["last_point"]).replace("-", "▲"), v["game_count"],
         ))
 
