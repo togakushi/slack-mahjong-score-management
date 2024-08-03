@@ -179,7 +179,7 @@ def plot(argument, command_option):
     add_text = "[集計範囲：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
         min(playtime).replace("-", "/"),
         max(playtime).replace("-", "/"),
-        total_game_count,
+        params["game_count"],
         command_option["stipulated"],
         f"[{remark_text}]" if remark_text else "",
     )
