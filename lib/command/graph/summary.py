@@ -180,7 +180,6 @@ def _data_collection(argument:list, command_option:dict, params:dict):
         if df.empty:
             return(target_data, df)
 
-        print(df.info())
         target_data["プレイヤー名"] = df.groupby("name").last()["プレイヤー名"]
         target_data["last_point"] = df.groupby("name").last()["point_sum"]
         target_data["game_count"] = df.groupby("name").max(numeric_only = True)["count"]
