@@ -191,6 +191,8 @@ def argument_analysis(argument, command_option = {}):
             # フォーマット指定
             case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
                 command_option["format"] = keyword.lower()
+            case keyword if re.search(r"^(filename:|ファイル名)(.+)$", keyword):
+                command_option["filename"] = re.sub(r"^(filename:|ファイル名)(.+)$", r"\2", keyword)
 
             # どのオプションにもマッチしないものはプレイヤー名
             case _:

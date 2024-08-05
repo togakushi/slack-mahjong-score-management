@@ -50,7 +50,9 @@ def plot(argument, command_option):
 
     ### グラフ生成 ###
     f.common.set_graph_font(plt, fm)
-    save_file = os.path.join(g.work_dir, "graph.png")
+    save_file = os.path.join(g.work_dir,
+        command_option["filename"] + ".png" if command_option["filename"] else "graph.png"
+    )
 
     plt.style.use("ggplot")
     fig = plt.figure(figsize = (12, 8))

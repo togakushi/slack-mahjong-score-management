@@ -35,7 +35,9 @@ def plot(argument, command_option):
     # --- グラフ設定
     f.common.set_graph_font(plt, fm)
     plt.rcParams["font.size"] = 6
-    report_file_path = os.path.join(g.work_dir, "report3.png")
+    report_file_path = os.path.join(g.work_dir,
+        command_option["filename"] + ".png" if command_option["filename"] else "report.png"
+    )
 
     column_labels = list(results[list(results.keys())[0]].keys())
     column_color = ["#000080" for i in column_labels]

@@ -64,6 +64,7 @@ def point_plot(argument, command_option):
         "target_data": target_data,
         "legend": legend,
         "ylabel_text": "通算ポイント",
+        "filename": command_option["filename"],
     }
 
     if command_option["daily"]:
@@ -132,6 +133,7 @@ def rank_plot(argument, command_option):
         "target_data": target_data,
         "legend": legend,
         "ylabel_text": "順位 (通算ポイント順)",
+        "filename": command_option["filename"],
     }
     if command_option["daily"]:
         args["xlabel_text"] = f"集計日（総ゲーム数：{game_info['game_count']}）"
@@ -201,7 +203,9 @@ def _graph_generation(df:pd.DataFrame, **kwargs):
     """
 
     f.common.set_graph_font(plt, fm)
-    save_file = os.path.join(g.work_dir, "graph.png")
+    save_file = os.path.join(g.work_dir,
+        kwargs["filename"] + ".png" if kwargs["filename"] else "graph.png"
+    )
 
     g.logging.info(f"plot data:\n{df}")
 

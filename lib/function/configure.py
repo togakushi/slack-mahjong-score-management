@@ -66,6 +66,7 @@ def command_option_initialization(command):
         "ranked": g.config[command].getint("ranked", 3),
         "stipulated_rate": g.config[command].getfloat("stipulated_rate", 0.05),
         "format": g.config["setting"].get("format", "default"),
+        "filename": None,
         "daily": False,
         "group_length": g.config["comment"].getint("group_length", 0),
         "search_word": g.config["comment"].get("search_word", None),

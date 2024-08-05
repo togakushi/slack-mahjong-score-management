@@ -38,7 +38,10 @@ def plot(argument, command_option):
         else:
             cell_color.append(["#dddddd" for i in column_labels])
 
-    report_file_path = os.path.join(g.work_dir, "report.png")
+    report_file_path = os.path.join(g.work_dir,
+        command_option["filename"] + ".png" if command_option["filename"] else "report.png"
+    )
+
     fig = plt.figure(figsize = (6, (len(results) * 0.2) + 0.8), dpi = 200, tight_layout = True)
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
