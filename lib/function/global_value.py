@@ -49,6 +49,12 @@ def parser():
         help = "設定ファイル",
     )
 
+    p.add_argument(
+        "-t", "--testcase",
+        metavar = "testcase.ini",
+        help = "動作テスト用",
+    )
+
     return(p.parse_args())
 
 
@@ -98,7 +104,7 @@ for x in ("mahjong", "setting"):
         sys.exit()
 
 # オプションセクションチェック
-for x in ("results", "graph", "ranking", "report", "member", "team", "database", "help"):
+for x in ("results", "graph", "ranking", "report", "member", "team", "database", "comment", "help"):
     if not x in config.sections():
         config.add_section(x)
 
