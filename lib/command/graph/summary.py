@@ -42,7 +42,7 @@ def point_plot(argument, command_option):
         return(len(target_data), f.message.no_hits(params))
 
     # 集計
-    if command_option["comment"]:
+    if command_option["search_word"]:
         pivot_index = "comment"
         title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
     else:

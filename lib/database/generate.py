@@ -27,7 +27,7 @@ def game_info(argument, command_option):
                 and playtime between :starttime and :endtime -- 検索範囲
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :comment
+                --[comment] and comment like :search_word
             group by
                 playtime
             order by
@@ -49,7 +49,7 @@ def game_info(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     if params["target_count"] != 0:
@@ -82,7 +82,7 @@ def record_count(argument, command_option):
             --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
             --[guest_skip] and guest = 0 -- ゲストなし
             --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-            --[comment] and comment like :comment
+            --[comment] and comment like :search_word
         --[recent] limit :target_count
     """
 
@@ -99,7 +99,7 @@ def record_count(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     if params["target_count"] != 0:
@@ -147,7 +147,7 @@ def game_results(argument, command_option):
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :comment
+                --[comment] and comment like :search_word
             order by
                 playtime desc
             --[recent] limit :target_count
@@ -173,7 +173,7 @@ def game_results(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     if params["target_count"] != 0:
@@ -307,7 +307,7 @@ def personal_results(argument, command_option):
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :comment
+                --[comment] and comment like :search_word
             order by
                 playtime desc
             --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
@@ -333,7 +333,7 @@ def personal_results(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     if params["target_count"] != 0:
@@ -366,7 +366,7 @@ def game_details(argument, command_option):
             where
                 rule_version = :rule_version
                 and playtime between :starttime and :endtime
-                --[comment] and comment like :comment
+                --[comment] and comment like :search_word
             order by
                 playtime desc, comment asc
             --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
@@ -404,7 +404,7 @@ def game_data(argument, command_option):
         where
             rule_version = :rule_version
             and playtime between :starttime and :endtime
-            --[comment] and comment like :comment
+            --[comment] and comment like :search_word
             --<player_name>
             --<unregistered_replace>
     """
@@ -417,7 +417,7 @@ def game_data(argument, command_option):
     if command_option["unregistered_replace"]:
         sql = sql.replace("--<unregistered_replace>", "and guest_count <= 1")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
@@ -492,7 +492,7 @@ def versus_matrix(argument, command_option):
                 and my.name = :player_name
                 --[guest_not_skip] and vs.playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and vs.guest = 0 -- ゲストなし
-                --[comment] and my.comment like :comment
+                --[comment] and my.comment like :search_word
             order by
                 my.playtime desc
             --[recent] limit :target_count
@@ -512,7 +512,7 @@ def versus_matrix(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     if prams["target_count"] != 0:
@@ -555,7 +555,7 @@ def personal_gamedata(argument, command_option):
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :comment
+                --[comment] and comment like :search_word
             order by
                 playtime desc
             --[recent] limit :target_count
@@ -579,7 +579,7 @@ def personal_gamedata(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     if params["target_count"] != 0:
@@ -619,7 +619,7 @@ def personal_gamedata_daily(argument, command_option):
                 --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :comment
+                --[comment] and comment like :search_word
             group by
                 collection_daily, name
             --[recent] limit :target_count
@@ -643,7 +643,7 @@ def personal_gamedata_daily(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     if params["target_count"] != 0:
@@ -682,7 +682,7 @@ def team_gamedata(argument, command_option):
             where
                 rule_version = :rule_version
                 and playtime between :starttime and :endtime
-                --[comment] and comment like :comment
+                --[comment] and comment like :search_word
             order by
                 playtime desc
             --[recent] limit :target_count
@@ -692,12 +692,77 @@ def team_gamedata(argument, command_option):
         order by
             team, playtime
     """
-    if command_option["comment"]:
+
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
+    else:
+        sql = sql.replace("--[not_comment] ", "")
 
     if params["target_count"] != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
+
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    return(sql)
+
+
+def team_gamedata_daily(argument, command_option):
+    """
+    ゲーム結果日次集計(チーム戦)
+    """
+
+    params = f.configure.get_parameters(argument, command_option)
+    sql = """
+        select
+            playtime,
+            team,
+            round(sum(point_sum) over moving, 1) as point_sum,
+            sum(count) over moving as count,
+            comment
+        from (
+            select
+                --[not_comment] collection_daily as playtime,
+                --[comment] comment as playtime,
+                --[group_length] substr(comment, 1, :group_length) as playtime,
+                team,
+                round(sum(point), 1) as point_sum,
+                --[not_comment] comment,
+                --[comment] comment,
+                --[group_length] substr(comment, 1, :group_length) as comment,
+                count() as count
+            from
+                individual_results
+            join game_info
+                on individual_results.ts = game_info.ts
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
+                and team not null
+                --[friendly_fire] and same_team = 0
+                --[comment] and comment like :search_word
+            group by
+                --[not_comment] collection_daily, team
+                --[comment] comment, team
+                --[group_length] substr(comment, 1, :group_length), team
+            order by
+                playtime
+        )
+        window
+            moving as (partition by team order by playtime)
+        order by
+            playtime
+    """
+
+    if not command_option["friendly_fire"]:
+        sql = sql.replace("--[friendly_fire] ", "")
+
+    if command_option["search_word"]:
+        if command_option["group_length"]:
+            sql = sql.replace("--[group_length] ", "")
+        else:
+            sql = sql.replace("--[comment] ", "")
+    else:
+        sql = sql.replace("--[not_comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
@@ -719,14 +784,14 @@ def monthly_report(argument, command_option):
     where
         rule_version = :rule_version
         and playtime between :starttime and :endtime
-        --[comment] and comment like :comment
+        --[comment] and comment like :search_word
     group by
         collection
     order by
         collection desc
     """
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
@@ -767,7 +832,7 @@ def winner_report(argument, command_option):
                     and playtime between :starttime and :endtime
                     --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                     --[guest_skip] and guest = 0 -- ゲストなし
-                    --[comment] and comment like :comment
+                    --[comment] and comment like :search_word
             )
             group by
                 name, collection
@@ -789,7 +854,7 @@ def winner_report(argument, command_option):
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
@@ -817,7 +882,7 @@ def team_total(argument, command_option):
             and playtime between :starttime and :endtime
             and team not null
             --[friendly_fire] and same_team = 0
-            --[comment] and comment like :comment
+            --[comment] and comment like :search_word
         group by
             team
         order by
@@ -827,7 +892,7 @@ def team_total(argument, command_option):
     if not command_option["friendly_fire"]:
         sql = sql.replace("--[friendly_fire] ", "")
 
-    if command_option["comment"]:
+    if command_option["search_word"]:
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore

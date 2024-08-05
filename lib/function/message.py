@@ -185,7 +185,7 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
     # 集計範囲
     game_range1 = f"{tab}最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
     game_range1 += f"{tab}最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
-    if command_option["comment"]: # コメント検索の場合はコメントで表示
+    if command_option["search_word"]: # コメント検索の場合はコメントで表示
         game_range2 = f"{tab}集計範囲： {game_info['first_comment']} ～ {game_info['last_comment']}\n"
     else:
         game_range2 = f"{tab}集計範囲： {game_info['first_game']} ～ {game_info['last_game']}\n".replace("-", "/")
@@ -194,7 +194,7 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
     if game_info["game_count"] == 0:
         msg += f"{tab}{f.message.no_hits(params)}"
     else:
-        match command_option["command"]:
+        match command_option["search_word"]:
             case "results":
                 if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
                     msg += f"{tab}検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}\n"

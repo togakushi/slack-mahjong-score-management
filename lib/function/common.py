@@ -182,9 +182,11 @@ def argument_analysis(argument, command_option = {}):
             case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword):
                 command_option["friendly_fire"] = False
             case keyword if re.search(r"^(コメント|comment)(.+)$", keyword):
-                command_option["comment"] = re.sub(r"^(コメント|comment)(.+)$", r"\2", keyword)
+                command_option["search_word"] = re.sub(r"^(コメント|comment)(.+)$", r"\2", keyword)
             case keyword if re.search(r"^(daily|デイリー|日次)$", keyword):
                 command_option["daily"] = True
+            case keyword if re.search(r"^(集約)([0-9]+)$", keyword):
+                command_option["group_length"] = int(re.sub(rf"^(集約)([0-9]+)$", r"\2", keyword))
 
             # フォーマット指定
             case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
