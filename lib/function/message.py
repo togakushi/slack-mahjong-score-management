@@ -173,7 +173,7 @@ def remarks(command_option):
     if not command_option["unregistered_replace"]:
         remark.append("ゲスト置換なし("+ g.guest_mark + "：未登録プレイヤー)")
     if remark:
-        ret = f"特記：" + "、".join(remark)
+        ret = "特記：" + "、".join(remark)
 
     return(ret)
 
@@ -197,12 +197,12 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
         match command_option["command"]:
             case "results":
                 if params["target_count"]: # 直近指定がない場合は検索範囲を付ける
+                    msg += game_range1
+                    msg += f"{tab}総ゲーム数：{game_info['game_count']} 回{add_text}\n"
+                else:
                     msg += f"{tab}検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}\n"
                     msg += game_range1
                     msg += f"{tab}ゲーム数：{game_info['game_count']} 回{add_text}\n"
-                else:
-                    msg += game_range1
-                    msg += f"{tab}総ゲーム数：{game_info['game_count']} 回{add_text}\n"
             case "ranking":
                 msg += game_range2
                 msg += f"{tab}集計ゲーム数：{game_info['game_count']} (規定数：{command_option['stipulated']} 以上)\n"

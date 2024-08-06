@@ -46,7 +46,7 @@ def aggregation(argument, command_option):
     add_text = ""
     msg2 = "*【成績サマリ】*\n"
     if not g.config["mahjong"].getboolean("ignore_flying", False):
-        add_text = " / トバされた人（延べ）： {} 人\n".format(
+        add_text = " / トバされた人（延べ）： {} 人".format(
             df_summary["トビ"].sum(),
         )
     msg2 += f.message.header(game_info, command_option, params, add_text, 1)
