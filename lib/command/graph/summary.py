@@ -35,7 +35,7 @@ def point_plot(argument, command_option):
     """
 
     # データ収集
-    params , game_info = f.common.game_info(argument, command_option)
+    params, game_info = f.common.game_info(argument, command_option)
     target_data, df = _data_collection(argument, command_option, params)
 
     if target_data.empty: # 描写対象が0人の場合は終了

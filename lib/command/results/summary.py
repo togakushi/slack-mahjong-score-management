@@ -30,7 +30,7 @@ def aggregation(argument, command_option):
     """
 
     ### データ収集 ###
-    params , game_info = f.common.game_info(argument, command_option)
+    params, game_info = f.common.game_info(argument, command_option)
     df_summary = d.aggregate.game_summary(argument, command_option)
     df_game = d.aggregate.game_details(argument, command_option)
     df_grandslam = df_game.query("grandslam != ''")

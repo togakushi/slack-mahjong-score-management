@@ -30,7 +30,7 @@ def aggregation(argument, command_option):
     """
 
     ### データ収集 ###
-    params , game_info = f.common.game_info(argument, command_option)
+    params, game_info = f.common.game_info(argument, command_option)
     df_summary = d.aggregate.team_total(argument, command_option)
     df_summary = df_summary.rename(
         columns = {

@@ -781,7 +781,7 @@ def monthly_report(argument, command_option):
     select
         collection as 集計月,
         count() / 4 as ゲーム数,
-        replace(printf("%.1f pt", round(sum(point) , 1)), "-", "▲") as 供託,
+        replace(printf("%.1f pt", round(sum(point), 1)), "-", "▲") as 供託,
         count(rpoint < -1 or null) as "飛んだ人数(延べ)",
         printf("%.2f%",	round(cast(count(rpoint < -1 or null) as real) / cast(count() / 4 as real) * 100, 2)) as トビ終了率,
         replace(printf("%s", max(rpoint)), "-", "▲") as 最大素点,

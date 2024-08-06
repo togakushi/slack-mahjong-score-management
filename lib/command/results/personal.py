@@ -32,7 +32,7 @@ def aggregation(argument, command_option):
     command_option["guest_skip"] = command_option["guest_skip2"]
 
     ### データ収集 ###
-    params , game_info = f.common.game_info(argument, command_option)
+    params, game_info = f.common.game_info(argument, command_option)
     if game_info["game_count"] == 0:
         msg1 = f"""
             *【個人成績】*
