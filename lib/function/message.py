@@ -194,9 +194,9 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
     if game_info["game_count"] == 0:
         msg += f"{tab}{f.message.no_hits(params)}"
     else:
-        match command_option["search_word"]:
+        match command_option["command"]:
             case "results":
-                if params["target_count"] == 0: # 直近指定がない場合は検索範囲を付ける
+                if params["target_count"]: # 直近指定がない場合は検索範囲を付ける
                     msg += f"{tab}検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}\n"
                     msg += game_range1
                     msg += f"{tab}ゲーム数：{game_info['game_count']} 回{add_text}\n"
