@@ -337,12 +337,13 @@ def badge_degree(game_count = 0):
 
     badge_degree = ""
 
-    if g.config["degree"].getboolean("display", False):
-        degree_badge = g.config.get("degree", "badge").split(",")
-        degree_counter = [x for x in map(int, g.config.get("degree", "counter").split(","))]
-        for i in range(len(degree_counter)):
-            if game_count >= degree_counter[i]:
-                badge_degree = degree_badge[i]
+    if "degree" in g.config.sections():
+        if g.config["degree"].getboolean("display", False):
+            degree_badge = g.config.get("degree", "badge").split(",")
+            degree_counter = [x for x in map(int, g.config.get("degree", "counter").split(","))]
+            for i in range(len(degree_counter)):
+                if game_count >= degree_counter[i]:
+                    badge_degree = degree_badge[i]
 
     return(badge_degree)
 
@@ -367,20 +368,21 @@ def badge_status(game_count = 0, win = 0):
 
     badge_status = ""
 
-    if g.config["status"].getboolean("display", False):
-        status_badge = g.config.get("status", "badge").split(",")
-        status_step = g.config.getfloat("status", "step")
-        if game_count == 0:
-            index = 0
-        else:
-            winper = win / game_count * 100
-            index = 3
-            for i in (1, 2, 3):
-                if winper <= 50 - status_step * i:
-                    index = 4 - i
-                if winper >= 50 + status_step * i:
-                    index = 2 + i
-        badge_status = status_badge[index]
+    if "status" in g.config.sections():
+        if g.config["status"].getboolean("display", False):
+            status_badge = g.config.get("status", "badge").split(",")
+            status_step = g.config.getfloat("status", "step")
+            if game_count == 0:
+                index = 0
+            else:
+                winper = win / game_count * 100
+                index = 3
+                for i in (1, 2, 3):
+                    if winper <= 50 - status_step * i:
+                        index = 4 - i
+                    if winper >= 50 + status_step * i:
+                        index = 2 + i
+            badge_status = status_badge[index]
 
     return(badge_status)
 
