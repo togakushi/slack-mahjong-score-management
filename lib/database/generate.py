@@ -12,8 +12,10 @@ def game_info(argument, command_option):
     sql = """
         select
             count() as count,
-            first_game, last_game,
-            first_comment, last_comment
+            --[group_length] substr(first_comment, 1, :group_length) as first_comment,
+            --[group_length] substr(last_comment, 1, :group_length) as last_comment,
+            --[not_group_length] first_comment, last_comment,
+            first_game, last_game
         from (
             select
                 first_value(playtime) over(order by ts asc) as first_game,
@@ -35,6 +37,11 @@ def game_info(argument, command_option):
             --[recent] limit :target_count
         )
     """
+
+    if command_option["group_length"]:
+        sql = sql.replace("--[group_length] ", "")
+    else:
+        sql = sql.replace("--[not_group_length] ", "")
 
     if params["player_name"]:
         sql = sql.replace("--[player_name] ", "")
