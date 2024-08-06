@@ -224,18 +224,3 @@ def ModalPeriodSelection():
     view["blocks"][1]["label"].update({"type": "plain_text", "text": "終了日"})
 
     return(view)
-
-
-#		{
-#			"type": "input",
-#			"element": {
-#				"type": "plain_text_input",
-#				"action_id": "plain_text_input-action"
-#			},
-#			"label": {
-#				"type": "plain_text",
-#				"text": "直近のN回"
-#			}
-#		}
-#	]
-#}

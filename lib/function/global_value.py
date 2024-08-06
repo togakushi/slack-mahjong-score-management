@@ -12,6 +12,7 @@ from slack_bolt import App
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+
 def parser():
     p = argparse.ArgumentParser(
         formatter_class = argparse.RawTextHelpFormatter,
@@ -57,7 +58,6 @@ def parser():
 
     return(p.parse_args())
 
-
 ### ログレベル追加 ###
 # TRACE
 logging.TRACE = 19  # type: ignore
@@ -88,7 +88,6 @@ else:
         logging.basicConfig(level = logging.WARNING, format = fmt)
     else:
         logging.basicConfig(level = logging.NOTICE, format = fmt) # type: ignore
-
 
 ### 設定ファイル読み込み ###
 try:

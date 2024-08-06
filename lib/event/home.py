@@ -55,7 +55,6 @@ def set_command_option(command_option, body):
             if flag == "unregistered_replace":
                 command_option[flag] = False
 
-
     if "bid-display_option" in search_options:
         selected_options = search_options["bid-display_option"]["aid-display"]["selected_options"]
         for i in range(len(selected_options)):

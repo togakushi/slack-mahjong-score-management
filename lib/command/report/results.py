@@ -377,7 +377,6 @@ def gen_pdf(argument, command_option):
     plt.rcParams["font.family"] = font_prop.get_name()
     fm.fontManager.addfont(font_path)
 
-
     # --- レポート作成
     elements = []
 

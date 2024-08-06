@@ -76,7 +76,6 @@ def create(argument):
         slackにpostする内容
     """
 
-
     ret = False
     msg = "使い方が間違っています。"
 
@@ -115,8 +114,6 @@ def delete(argument):
         slackにpostする内容
     """
 
-
-    ret = False
     msg = "使い方が間違っています。"
 
     if len(argument) == 1: # 新規追加
@@ -216,7 +213,6 @@ def remove(argument):
         slackにpostする内容
     """
 
-
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
@@ -304,7 +300,6 @@ def clear():
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-
 
     resultdb.execute("drop table team")
     resultdb.execute("update member set team_id = null")

@@ -256,7 +256,6 @@ def MemberRemove(argument):
     return(msg)
 
 
-
 def check_namepattern(name):
     """
     登録制限チェック

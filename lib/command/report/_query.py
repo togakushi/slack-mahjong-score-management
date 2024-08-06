@@ -49,8 +49,6 @@ def for_report_personal_data(argument, command_option, flag = "M"):
             sql = sql.replace("<<collection>>", "'合計' as 集計")
             sql = sql.replace("<<group by>>", "")
 
-
-
     placeholder = [g.rule_version, starttime, endtime, target_player[0]]
 
     g.logging.trace(f"sql: {sql}") # type: ignore

@@ -109,7 +109,6 @@ def check_score(client, channel_id, event_ts, user, msg):
     postされた素点合計が配給原点と同じかチェック
     """
 
-
     correct_score = g.config["mahjong"].getint("point", 250) * 4
     rpoint_sum = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
 

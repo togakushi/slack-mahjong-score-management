@@ -63,7 +63,6 @@ def handle_search_action(ack, body, client):
         if user_select == None:
             return
 
-
     client.views_update(
         view_id = g.app_var["view_id"],
         view = e.PlainText(f"{chr(10).join(app_msg)}")

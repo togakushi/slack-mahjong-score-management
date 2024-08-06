@@ -28,7 +28,6 @@ def build_versus_menu():
     view, no = e.Button(view, no, text = "集計開始", value = "click_versus", action_id = "search_versus", style = "primary")
     view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back", style = "danger")
 
-
     return(view)
 
 
@@ -45,6 +44,7 @@ def handle_menu_action(ack, body, client):
         user_id = g.app_var["user_id"],
         view = build_versus_menu(),
     )
+
 
 @g.app.action("search_versus")
 def handle_search_action(ack, body, client):
