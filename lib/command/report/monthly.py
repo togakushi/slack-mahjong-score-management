@@ -62,13 +62,8 @@ def plot(argument, command_option):
         tb[i, 0].set_text_props(ha = "center")
 
     # 追加テキスト
-    add_text = "[検索範囲：{} - {}] [特記：すべてのゲーム結果を含む]".format(
-        params["starttime"].strftime('%Y/%m/%d %H:%M'),
-        params["endtime"].strftime('%Y/%m/%d %H:%M'),
-    )
-
     fig.text(0.01, 0.02, # 表示位置(左下0,0 右下0,1)
-        add_text,
+        f"[検索範囲：({params['starttime_hm']} - {params['endtime_hm']}] [特記：すべてのゲーム結果を含む]",
         transform = fig.transFigure,
         fontsize = 6,
     )
