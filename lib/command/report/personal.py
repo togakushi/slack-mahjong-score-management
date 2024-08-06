@@ -21,7 +21,7 @@ def plot(argument, command_option):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
-    params = f.configure.get_parameters(argument, command_option)
+    params, game_info = f.common.game_info(argument, command_option)
     sql = """
         select
             name as プレイヤー,
@@ -107,7 +107,7 @@ def plot(argument, command_option):
     # --- データ取得
     params, _ = f.common.game_info(argument, command_option)
     if command_option["stipulated"] == 0:
-        command_option["stipulated"] = math.ceil(params["game_count"] * command_option["stipulated_rate"]) + 1
+        command_option["stipulated"] = math.ceil(game_info["game_count"] * command_option["stipulated_rate"]) + 1
         params = f.configure.get_parameters(argument, command_option) # 更新
 
     rows = resultdb.execute(sql, params)
@@ -153,7 +153,10 @@ def plot(argument, command_option):
         else:
             cell_color.append(["#dddddd" for i in column_labels])
 
-    report_file_path = os.path.join(g.work_dir, "report2.png")
+    report_file_path = os.path.join(g.work_dir,
+        command_option["filename"] + ".png" if command_option["filename"] else "report.png"
+    )
+
     fig = plt.figure(figsize = (8, (len(results) * 0.2) + 0.8), dpi = 200, tight_layout = True)
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
@@ -179,7 +182,7 @@ def plot(argument, command_option):
     add_text = "[集計範囲：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
         min(playtime).replace("-", "/"),
         max(playtime).replace("-", "/"),
-        params["game_count"],
+        game_info["game_count"],
         command_option["stipulated"],
         f"[{remark_text}]" if remark_text else "",
     )
