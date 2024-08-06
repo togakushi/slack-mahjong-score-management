@@ -41,14 +41,24 @@ def point_plot(argument, command_option):
     if target_data.empty: # 描写対象が0人の場合は終了
         return(len(target_data), f.message.no_hits(params))
 
-    # 集計
-    if command_option["search_word"]:
-        pivot_index = "comment"
-        title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
+    # グラフタイトル
+    pivot_index = "playtime"
+    if params["target_count"]:
+        title_text = f"ポイント推移 (直近 {params['target_count']} ゲーム)"
     else:
-        pivot_index = "playtime"
-        title_text = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
+        if command_option["search_word"]:
+            title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
+            pivot_index = "comment"
+        else:
+            title_text = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
 
+    # X軸ラベル
+    if command_option["daily"]:
+        xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+    else:
+        xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+
+    # 集計
     if command_option["team_total"]:
         legend = "チーム名"
         pivot = pd.pivot_table(df, index = pivot_index, columns = "team", values = "point_sum").ffill()
@@ -60,22 +70,14 @@ def point_plot(argument, command_option):
 
     # グラフ生成
     args = {
+        "title_text": title_text,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
         "legend": legend,
+        "xlabel_text": xlabel_text,
         "ylabel_text": "通算ポイント",
         "filename": command_option["filename"],
     }
-
-    if command_option["daily"]:
-        args["xlabel_text"] = f"集計日（総ゲーム数：{game_info['game_count']}）"
-    else:
-        args["xlabel_text"] = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-
-    if params["target_count"] == 0:
-        args["title_text"] = title_text
-    else:
-        args["title_text"] = f"ポイント推移 (直近 {params['target_count']} ゲーム)"
 
     save_file = _graph_generation(pivot, **args)
 
@@ -115,35 +117,50 @@ def rank_plot(argument, command_option):
     """
 
     # データ収集
-    params , game_info = f.common.game_info(argument, command_option)
+    params, game_info = f.common.game_info(argument, command_option)
     target_data, df = _data_collection(argument, command_option, params)
 
     if target_data.empty: # 描写対象が0人の場合は終了
         return(len(target_data), f.message.no_hits(params))
 
+    # グラフタイトル
+    pivot_index = "playtime"
+    if params["target_count"]:
+        title_text = f"ポイント推移 (直近 {params['target_count']} ゲーム)"
+    else:
+        if command_option["search_word"]:
+            title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
+            pivot_index = "comment"
+        else:
+            title_text = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
+
+    # X軸ラベル
+    if command_option["daily"]:
+        xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+    else:
+        xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+
     # 集計
-    pivot = pd.pivot_table(df, index = "playtime", columns = "プレイヤー名", values = "point_sum").ffill()
-    pivot = pivot.reindex(target_data["プレイヤー名"].to_list(), axis = "columns") # 並び替え
+    if command_option["team_total"]:
+        legend = "チーム名"
+        pivot = pd.pivot_table(df, index = pivot_index, columns = "team", values = "point_sum").ffill()
+    else:
+        legend = "プレイヤー名"
+        pivot = pd.pivot_table(df, index = pivot_index, columns = legend, values = "point_sum").ffill()
+
+    pivot = pivot.reindex(target_data[legend].to_list(), axis = "columns") # 並び替え
     pivot = pivot.rank(method = "dense", ascending = False, axis = 1)
-    legend = "プレイヤー名"
 
     # グラフ生成
     args = {
+        "title_text": title_text,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
         "legend": legend,
+        "xlabel_text": xlabel_text,
         "ylabel_text": "順位 (通算ポイント順)",
         "filename": command_option["filename"],
     }
-    if command_option["daily"]:
-        args["xlabel_text"] = f"集計日（総ゲーム数：{game_info['game_count']}）"
-    else:
-        args["xlabel_text"] = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-
-    if params["target_count"] == 0:
-        args["title_text"] = f"順位変動 ({params['starttime_hm']} - {params['endtime_hm']})"
-    else:
-        args["title_text"] = f"順位変動 (直近 {params['target_count']} ゲーム)"
 
     save_file = _graph_generation(pivot, **args)
 
