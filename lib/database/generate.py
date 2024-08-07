@@ -512,7 +512,9 @@ def personal_gamedata(argument, command_option):
                 --[unregistered_not_replace] name, -- ゲスト無効
                 rank,
                 point,
-                comment
+                --[not_comment] comment
+                --[comment] comment
+                --[group_length] substr(comment, 1, :group_length) as comment
             from
                 individual_results
             where
@@ -546,7 +548,12 @@ def personal_gamedata(argument, command_option):
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
     if command_option["search_word"]:
-        sql = sql.replace("--[comment] ", "")
+        if command_option["group_length"]:
+            sql = sql.replace("--[group_length] ", "")
+        else:
+            sql = sql.replace("--[comment] ", "")
+    else:
+        sql = sql.replace("--[not_comment] ", "")
 
     if params["target_count"] != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
@@ -566,7 +573,8 @@ def personal_gamedata_daily(argument, command_option):
             sum(count) over moving as count,
             replace(collection_daily, "-", "/") as playtime,
             name,
-            round(sum(point_sum) over moving, 1) as point_sum
+            round(sum(point_sum) over moving, 1) as point_sum,
+            comment
         from (
             select
                 count() as count,
@@ -574,7 +582,10 @@ def personal_gamedata_daily(argument, command_option):
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
                 round(sum(point), 1) as point_sum,
-                guest_count
+                guest_count,
+                --[not_comment] comment
+                --[comment] comment
+                --[group_length] substr(comment, 1, :group_length) as comment
             from
                 individual_results
             join
@@ -587,8 +598,9 @@ def personal_gamedata_daily(argument, command_option):
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[comment] and comment like :search_word
             group by
-                collection_daily, name
-            --[recent] limit :target_count
+                --[not_comment] collection_daily, name
+                --[comment] comment, name
+                --[group_length] substr(comment, 1, :group_length), name
         )
         window
             moving as (partition by name order by collection_daily)
@@ -610,7 +622,12 @@ def personal_gamedata_daily(argument, command_option):
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
     if command_option["search_word"]:
-        sql = sql.replace("--[comment] ", "")
+        if command_option["group_length"]:
+            sql = sql.replace("--[group_length] ", "")
+        else:
+            sql = sql.replace("--[comment] ", "")
+    else:
+        sql = sql.replace("--[not_comment] ", "")
 
     if params["target_count"] != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
