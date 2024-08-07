@@ -8,17 +8,9 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def aggregation(argument, command_option):
+def aggregation():
     """
     直接対戦結果を集計して返す
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -33,29 +25,28 @@ def aggregation(argument, command_option):
     """
 
     # 検索動作を合わせる
-    command_option["guest_skip"] = command_option["guest_skip2"]
+    g.opt.guest_skip = g.opt.guest_skip2
 
     # --- データ収集
-    param = f.configure.get_parameters(argument, command_option)
-    df_vs = d.aggregate.versus_matrix(argument, command_option)
-    df_game = d.aggregate.game_details(argument, command_option)
+    df_vs = d.aggregate.versus_matrix()
+    df_game = d.aggregate.game_details()
     df_data = pd.DataFrame(columns = df_game.columns) # ファイル出力用
 
     # --- ヘッダ情報
-    my_name = param["player_name"]
-    if command_option["all_player"]:
+    my_name = g.prm.player_name
+    if g.opt.all_player:
         vs = "全員"
         vs_list = set(g.member_list.values())
     else:
-        vs = ",".join(param["competition_list"].values())
+        vs = ",".join(g.prm.competition_list.values())
         vs_list = list(df_game["プレイヤー名"].unique())
 
     msg1 = textwrap.dedent(f"""
         *【直接対戦結果】*
-        \tプレイヤー名：{c.member.NameReplace(my_name, command_option, add_mark = True)}
+        \tプレイヤー名：{c.member.NameReplace(my_name, add_mark = True)}
         \t対戦相手：{vs}
-        \t検索範囲：{param["starttime_hms"]} ～ {param["endtime_hms"]}
-        \t{f.message.remarks(command_option)}
+        \t検索範囲：{g.prm.starttime_hms} ～ {g.prm.endtime_hms}
+        \t{f.message.remarks(vars(g.opt))}
     """).strip() + "\n"
 
     # --- 表示内容
@@ -63,14 +54,14 @@ def aggregation(argument, command_option):
     if len(df_vs) == 0: # 検索結果なし
         tmp_msg[""] = "対戦記録が見つかりません。\n"
 
-    for vs_name in param["competition_list"].values():
+    for vs_name in g.prm.competition_list.values():
         tmp_msg[vs_name] = {}
         if vs_name in vs_list:
             data = df_vs.query("vs_name == @vs_name")
             if len(data) == 0:
                 tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦記録はありません。\n".format(
-                    c.member.NameReplace(my_name, command_option, add_mark = True),
-                    c.member.NameReplace(vs_name, command_option, add_mark = True),
+                    c.member.NameReplace(my_name, add_mark = True),
+                    c.member.NameReplace(vs_name, add_mark = True),
                 )
                 continue
 
@@ -86,7 +77,7 @@ def aggregation(argument, command_option):
             """).replace("-", "▲").replace("*", "-").strip() + "\n\n"
 
             # ゲーム結果
-            if command_option["game_results"]:
+            if g.opt.game_results:
                 count = 0
                 my_score = df_game.query("プレイヤー名 == @my_name")
                 vs_score = df_game.query("プレイヤー名 == @vs_name")
@@ -98,7 +89,7 @@ def aggregation(argument, command_option):
                         current_game = df_game.query("playtime == @playtime")
                         guest_count = current_game["guest"].sum()
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
-                        if command_option["verbose"]: # 詳細表示
+                        if g.opt.verbose: # 詳細表示
                             s1 = current_game.query("seat == 1").to_dict(orient = "records")[0]
                             s2 = current_game.query("seat == 2").to_dict(orient = "records")[0]
                             s3 = current_game.query("seat == 3").to_dict(orient = "records")[0]
@@ -124,8 +115,8 @@ def aggregation(argument, command_option):
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
         else: # 対戦記録なし
             tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦相手が見つかりません。\n".format(
-                c.member.NameReplace(my_name, command_option, add_mark = True),
-                c.member.NameReplace(vs_name, command_option, add_mark = True),
+                c.member.NameReplace(my_name, add_mark = True),
+                c.member.NameReplace(vs_name, add_mark = True),
             )
 
     # --- データ整列&まとめ
@@ -152,7 +143,7 @@ def aggregation(argument, command_option):
         items = ["日時", "座席", "プレイヤー名", "順位", "素点", "獲得ポイント", "役満和了"]
     ).drop_duplicates()
 
-    namelist = list(param["competition_list"].values())
+    namelist = list(g.prm.competition_list.values())
     df_vs["対戦相手"] = df_vs["vs_表示名"].apply(lambda x: x.strip())
     df_vs.rename(
         columns = {
@@ -173,7 +164,7 @@ def aggregation(argument, command_option):
                     ]
         ).drop_duplicates()
 
-    match command_option["format"].lower():
+    match g.opt.format.lower():
         case "csv":
             file_list = {
                 "対戦結果": f.common.save_output(df_data, "csv", "result.csv"),

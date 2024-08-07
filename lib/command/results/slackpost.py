@@ -23,24 +23,21 @@ def main(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    command_option = f.configure.command_option_initialization("results")
-    _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
-
-    g.logging.info(f"{argument=}")
-    g.logging.info(f"{command_option=}")
+    g.opt.initialization("results", argument)
+    g.prm.update(argument, vars(g.opt))
 
     # モード切り替え
     versus_mode = False
-    if command_option["versus_matrix"]:
+    if g.opt.versus_matrix:
         versus_mode = True
-        if len(target_player) == 0:
+        if len(g.prm.player_list) == 0:
             versus_mode = False
-        if len(target_player) == 1 and not command_option["all_player"]:
+        if len(g.prm.player_list) == 1 and not g.opt.all_player:
             versus_mode = False
 
     # ---
-    if len(target_player) == 1 and not versus_mode: # 個人成績
-        msg1, msg2 = personal.aggregation(argument, command_option)
+    if len(g.prm.player_list) == 1 and not versus_mode: # 個人成績
+        msg1, msg2 = personal.aggregation()
         f.slack_api.slack_post(
             client = client,
             channel = channel,
@@ -48,7 +45,7 @@ def main(client, channel, argument):
             message = msg2,
         )
     elif versus_mode: # 直接対戦
-        msg1, msg2, file_list = versus.aggregation(argument, command_option)
+        msg1, msg2, file_list = versus.aggregation()
         f.slack_api.slack_post(
             client = client,
             channel = channel,
@@ -57,10 +54,10 @@ def main(client, channel, argument):
             file_list = file_list,
         )
     else: # 成績サマリ
-        if command_option["team_total"]:
-            msg1, msg2, file_list = team.aggregation(argument, command_option)
+        if g.opt.team_total:
+            msg1, msg2, file_list = team.aggregation()
         else:
-            msg1, msg2, file_list = summary.aggregation(argument, command_option)
+            msg1, msg2, file_list = summary.aggregation()
 
         f.slack_api.slack_post(
             client = client,

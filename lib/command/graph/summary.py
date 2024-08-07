@@ -12,17 +12,9 @@ mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
 
-def point_plot(argument, command_option):
+def point_plot():
     """
     ポイント推移グラフを生成する
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -34,32 +26,33 @@ def point_plot(argument, command_option):
         グラフ画像保存パス
     """
 
+    plt.close()
     # データ収集
-    params, game_info = f.common.game_info(argument, command_option)
-    target_data, df = _data_collection(argument, command_option, params)
+    game_info = d.aggregate.game_info()
+    target_data, df = _data_collection(g.prm.argument, vars(g.opt), vars(g.prm))
 
     if target_data.empty: # 描写対象が0人の場合は終了
-        return(len(target_data), f.message.no_hits(params))
+        return(len(target_data), f.message.no_hits(vars(g.prm)))
 
     # グラフタイトル
     pivot_index = "playtime"
-    if params["target_count"]:
-        title_text = f"ポイント推移 (直近 {params['target_count']} ゲーム)"
+    if g.prm.target_count:
+        title_text = f"ポイント推移 (直近 {g.prm.target_count} ゲーム)"
     else:
-        if command_option["search_word"]:
+        if g.opt.search_word:
             title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
             pivot_index = "comment"
         else:
-            title_text = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
+            title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
 
     # X軸ラベル
-    if command_option["daily"]:
+    if g.opt.daily:
         xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
     else:
         xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
 
     # 集計
-    if command_option["team_total"]:
+    if g.opt.team_total:
         legend = "チーム名"
         pivot = pd.pivot_table(df, index = pivot_index, columns = "team", values = "point_sum").ffill()
     else:
@@ -76,7 +69,7 @@ def point_plot(argument, command_option):
         "legend": legend,
         "xlabel_text": xlabel_text,
         "ylabel_text": "通算ポイント",
-        "filename": command_option["filename"],
+        "filename": g.opt.filename,
     }
 
     save_file = _graph_generation(pivot, **args)
@@ -94,17 +87,9 @@ def point_plot(argument, command_option):
     return(game_info["game_count"], save_file)
 
 
-def rank_plot(argument, command_option):
+def rank_plot():
     """
     順位変動グラフを生成する
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -117,31 +102,31 @@ def rank_plot(argument, command_option):
     """
 
     # データ収集
-    params, game_info = f.common.game_info(argument, command_option)
-    target_data, df = _data_collection(argument, command_option, params)
+    game_info = d.aggregate.game_info()
+    target_data, df = _data_collection(g.prm.argument, vars(g.opt), vars(g.prm))
 
     if target_data.empty: # 描写対象が0人の場合は終了
-        return(len(target_data), f.message.no_hits(params))
+        return(len(target_data), f.message.no_hits(vars(g.prm)))
 
     # グラフタイトル
     pivot_index = "playtime"
-    if params["target_count"]:
-        title_text = f"ポイント推移 (直近 {params['target_count']} ゲーム)"
+    if g.prm.target_count:
+        title_text = f"ポイント推移 (直近 {g.prm.target_count} ゲーム)"
     else:
-        if command_option["search_word"]:
+        if g.opt.search_word:
             title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
             pivot_index = "comment"
         else:
-            title_text = f"ポイント推移 ({params['starttime_hm']} - {params['endtime_hm']})"
+            title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
 
     # X軸ラベル
-    if command_option["daily"]:
+    if g.opt.daily:
         xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
     else:
         xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
 
     # 集計
-    if command_option["team_total"]:
+    if g.opt.team_total:
         legend = "チーム名"
         pivot = pd.pivot_table(df, index = pivot_index, columns = "team", values = "point_sum").ffill()
     else:
@@ -159,7 +144,7 @@ def rank_plot(argument, command_option):
         "legend": legend,
         "xlabel_text": xlabel_text,
         "ylabel_text": "順位 (通算ポイント順)",
-        "filename": command_option["filename"],
+        "filename": g.opt.filename,
     }
 
     save_file = _graph_generation(pivot, **args)
@@ -182,11 +167,11 @@ def _data_collection(argument:list, command_option:dict, params:dict):
     """
 
     # データ収集
-    command_option["fourfold"] = True # 直近Nは4倍する(縦持ちなので4人分)
+    g.opt.fourfold = True # 直近Nは4倍する(縦持ちなので4人分)
 
     target_data = pd.DataFrame()
-    if command_option["team_total"]: # チーム戦
-        df = d.aggregate.team_gamedata(argument, command_option)
+    if g.opt.team_total: # チーム戦
+        df = d.aggregate.team_gamedata()
         if df.empty:
             return(target_data, df)
 
@@ -195,7 +180,7 @@ def _data_collection(argument:list, command_option:dict, params:dict):
         target_data["チーム名"] = target_data.index
         target_data = target_data.sort_values("last_point", ascending = False)
     else: # 個人戦
-        df = d.aggregate.personal_gamedata(argument, command_option)
+        df = d.aggregate.personal_gamedata()
         if df.empty:
             return(target_data, df)
 

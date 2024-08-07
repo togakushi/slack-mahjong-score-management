@@ -45,7 +45,7 @@ def slash_command(ack, body, client):
 
             # データベース関連コマンド
             case "check":
-                d.comparison.main(client, channel_id, event_ts, argument)
+                d.comparison.main(client, channel_id, event_ts)
             case "download":
                 f.slack_api.post_fileupload(client, channel_id, "resultdb", g.database_file)
 

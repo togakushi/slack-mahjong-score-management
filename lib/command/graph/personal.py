@@ -13,17 +13,9 @@ mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
 
-def plot(argument, command_option):
+def plot():
     """
     個人成績のグラフを生成する
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -35,13 +27,14 @@ def plot(argument, command_option):
         グラフ画像保存パス
     """
 
+    plt.close()
     # データ収集
-    command_option["guest_skip"] = command_option["guest_skip2"] # 検索動作を合わせる
-    params = f.configure.get_parameters(argument, command_option)
-    df = d.aggregate.personal_gamedata(argument, command_option)
+    g.opt.guest_skip = g.opt.guest_skip2
+
+    df = d.aggregate.personal_gamedata()
 
     if df.empty:
-        return(0, f.message.no_hits(params))
+        return(0, f.message.no_hits(g.prm.argument))
 
     # 最終値（凡例追加用）
     point_sum = "{:+.1f}".format(float(df["point_sum"].iloc[-1])).replace("-", "▲")
@@ -51,16 +44,16 @@ def plot(argument, command_option):
     ### グラフ生成 ###
     f.common.set_graph_font(plt, fm)
     save_file = os.path.join(g.work_dir,
-        command_option["filename"] + ".png" if command_option["filename"] else "graph.png"
+        f"{g.opt.filename}.png" if g.opt.filename else "graph.png"
     )
 
     plt.style.use("ggplot")
     fig = plt.figure(figsize = (12, 8))
 
-    if params["target_count"] == 0:
-        title_text = f"『{params['player_name']}』の成績 ({params['starttime_hm']} - {params['endtime_hm']})"
+    if g.prm.target_count == 0:
+        title_text = f"『{g.prm.player_name}』の成績 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
     else:
-        title_text = f"『{params['player_name']}』の成績 (直近 {len(df)} ゲーム)"
+        title_text = f"『{g.prm.player_name}』の成績 (直近 {len(df)} ゲーム)"
 
     grid = gridspec.GridSpec(nrows = 2, ncols = 1, height_ratios = [3, 1])
     point_ax = fig.add_subplot(grid[0])

@@ -3,12 +3,11 @@ import lib.function as f
 from lib.function import global_value as g
 
 
-def game_info(argument, command_option):
+def game_info():
     """
     ゲーム数のカウント、最初と最後のゲームの時間とコメントを取得するSQLを返す
     """
 
-    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             count() as count,
@@ -38,28 +37,28 @@ def game_info(argument, command_option):
         )
     """
 
-    if command_option["group_length"]:
+    if g.opt.group_length:
         sql = sql.replace("--[group_length] ", "")
     else:
         sql = sql.replace("--[not_group_length] ", "")
 
-    if params["player_name"]:
+    if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["search_word"]:
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -67,12 +66,11 @@ def game_info(argument, command_option):
     return(sql)
 
 
-def record_count(argument, command_option):
+def record_count():
     """
     連測連対などの記録をカウントするSQLを生成
     """
 
-    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             playtime,
@@ -93,23 +91,23 @@ def record_count(argument, command_option):
         --[recent] limit :target_count
     """
 
-    if params["player_name"]:
+    if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["search_word"]:
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -117,11 +115,11 @@ def record_count(argument, command_option):
     return(sql)
 
 
-def game_results(argument, command_option):
+def game_results():
     """
     ゲーム結果を集計するSQLを生成
     """
-    params = f.configure.get_parameters(argument, command_option)
+
     sql = """
         select
             name,
@@ -167,23 +165,23 @@ def game_results(argument, command_option):
             pt_total desc
     """
 
-    if params["player_name"]:
+    if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["search_word"]:
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -191,12 +189,11 @@ def game_results(argument, command_option):
     return(sql)
 
 
-def personal_results(argument, command_option):
+def personal_results():
     """
     個人成績を集計するSQLを生成
     """
 
-    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             name as プレイヤー名,
@@ -327,23 +324,23 @@ def personal_results(argument, command_option):
             sum(point) desc
     """
 
-    if params["player_name"]:
+    if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["search_word"]:
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -351,12 +348,11 @@ def personal_results(argument, command_option):
     return(sql)
 
 
-def game_details(argument, command_option):
+def game_details():
     """
     ゲーム結果の詳細を返すSQLを生成
     """
 
-    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             playtime,
@@ -382,7 +378,7 @@ def game_details(argument, command_option):
             playtime
     """
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -390,12 +386,11 @@ def game_details(argument, command_option):
     return(sql)
 
 
-def versus_matrix(argument, command_option):
+def versus_matrix():
     """
     直接対戦結果を集計するSQLを生成
     """
 
-    prams = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             my_name, vs_name,
@@ -469,19 +464,19 @@ def versus_matrix(argument, command_option):
             game desc
     """
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["search_word"]:
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
 
-    if prams["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and my.playtime between", "-- and my.playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -489,11 +484,11 @@ def versus_matrix(argument, command_option):
     return(sql)
 
 
-def personal_gamedata(argument, command_option):
+def personal_gamedata():
     """
     ゲーム結果集計(個人戦)
     """
-    params = f.configure.get_parameters(argument, command_option)
+
     sql = """
         select
             count() over moving as count,
@@ -534,28 +529,28 @@ def personal_gamedata(argument, command_option):
             name, playtime
     """
 
-    if params["player_name"]:
+    if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["search_word"]:
-        if command_option["group_length"]:
+    if g.opt.search_word:
+        if g.opt.group_length:
             sql = sql.replace("--[group_length] ", "")
         else:
             sql = sql.replace("--[comment] ", "")
     else:
         sql = sql.replace("--[not_comment] ", "")
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -563,11 +558,11 @@ def personal_gamedata(argument, command_option):
     return(sql)
 
 
-def personal_gamedata_daily(argument, command_option):
+def personal_gamedata_daily():
     """
     ゲーム結果日次集計(個人戦)
     """
-    params = f.configure.get_parameters(argument, command_option)
+
     sql = """
         select
             sum(count) over moving as count,
@@ -608,28 +603,28 @@ def personal_gamedata_daily(argument, command_option):
             collection_daily
     """
 
-    if params["player_name"]:
+    if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["search_word"]:
-        if command_option["group_length"]:
+    if g.opt.search_word:
+        if g.opt.group_length:
             sql = sql.replace("--[group_length] ", "")
         else:
             sql = sql.replace("--[comment] ", "")
     else:
         sql = sql.replace("--[not_comment] ", "")
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -637,11 +632,11 @@ def personal_gamedata_daily(argument, command_option):
     return(sql)
 
 
-def team_gamedata(argument, command_option):
+def team_gamedata():
     """
     ゲーム結果集計(チーム戦)
     """
-    params = f.configure.get_parameters(argument, command_option)
+
     sql = """
         select
             count() over moving as count,
@@ -676,12 +671,12 @@ def team_gamedata(argument, command_option):
             team, playtime
     """
 
-    if command_option["search_word"]:
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
     else:
         sql = sql.replace("--[not_comment] ", "")
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
@@ -689,12 +684,11 @@ def team_gamedata(argument, command_option):
     return(sql)
 
 
-def team_gamedata_daily(argument, command_option):
+def team_gamedata_daily():
     """
     ゲーム結果日次集計(チーム戦)
     """
 
-    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             playtime,
@@ -736,11 +730,11 @@ def team_gamedata_daily(argument, command_option):
             playtime
     """
 
-    if not command_option["friendly_fire"]:
+    if not g.opt.friendly_fire:
         sql = sql.replace("--[friendly_fire] ", "")
 
-    if command_option["search_word"]:
-        if command_option["group_length"]:
+    if g.opt.search_word:
+        if g.opt.group_length:
             sql = sql.replace("--[group_length] ", "")
         else:
             sql = sql.replace("--[comment] ", "")
@@ -751,38 +745,42 @@ def team_gamedata_daily(argument, command_option):
     return(sql)
 
 
-def monthly_report(argument, command_option):
-    params = f.configure.get_parameters(argument, command_option)
-    sql = """
-    select
-        collection as 集計月,
-        count() / 4 as ゲーム数,
-        replace(printf("%.1f pt", round(sum(point), 1)), "-", "▲") as 供託,
-        count(rpoint < -1 or null) as "飛んだ人数(延べ)",
-        printf("%.2f%",	round(cast(count(rpoint < -1 or null) as real) / cast(count() / 4 as real) * 100, 2)) as トビ終了率,
-        replace(printf("%s", max(rpoint)), "-", "▲") as 最大素点,
-        replace(printf("%s", min(rpoint)), "-", "▲") as 最小素点
-    from
-        individual_results
-    where
-        rule_version = :rule_version
-        and playtime between :starttime and :endtime
-        --[comment] and comment like :search_word
-    group by
-        collection
-    order by
-        collection desc
+def monthly_report():
+    """
     """
 
-    if command_option["search_word"]:
+    sql = """
+        select
+            collection as 集計月,
+            count() / 4 as ゲーム数,
+            replace(printf("%.1f pt", round(sum(point), 1)), "-", "▲") as 供託,
+            count(rpoint < -1 or null) as "飛んだ人数(延べ)",
+            printf("%.2f%",	round(cast(count(rpoint < -1 or null) as real) / cast(count() / 4 as real) * 100, 2)) as トビ終了率,
+            replace(printf("%s", max(rpoint)), "-", "▲") as 最大素点,
+            replace(printf("%s", min(rpoint)), "-", "▲") as 最小素点
+        from
+            individual_results
+        where
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+            --[comment] and comment like :search_word
+        group by
+            collection
+        order by
+            collection desc
+    """
+
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
 
 
-def winner_report(argument, command_option):
-    params = f.configure.get_parameters(argument, command_option)
+def winner_report():
+    """
+    """
+
     sql = """
         select
             collection,
@@ -828,28 +826,27 @@ def winner_report(argument, command_option):
             collection desc
     """
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if command_option["search_word"]:
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     return(sql)
 
 
-def team_total(argument, command_option):
+def team_total():
     """
     チーム集計結果を返すSQLを生成
     """
 
-    params = f.configure.get_parameters(argument, command_option)
     sql = """
         select
             team,
@@ -872,10 +869,10 @@ def team_total(argument, command_option):
             total desc
     """
 
-    if not command_option["friendly_fire"]:
+    if not g.opt.friendly_fire:
         sql = sql.replace("--[friendly_fire] ", "")
 
-    if command_option["search_word"]:
+    if g.opt.search_word:
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore

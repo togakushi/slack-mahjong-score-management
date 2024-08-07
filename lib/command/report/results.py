@@ -17,7 +17,6 @@ import pandas as pd
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
-import lib.function as f
 import lib.command as c
 import lib.command.report._query as query
 from lib.function import global_value as g
@@ -320,17 +319,9 @@ def graphing_rank_distribution(df, title):
     return(imgdata)
 
 
-def gen_pdf(argument, command_option):
+def gen_pdf():
     """
     成績レポートを生成する
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -341,10 +332,13 @@ def gen_pdf(argument, command_option):
         レポート保存パス
     """
 
-    _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
+    plt.close()
+    
+    if not g.prm.player_name: # レポート対象の指定なし
+        return(False, False)
 
     # 対象メンバーの記録状況
-    target_info = c.member.member_info(target_player[0])
+    target_info = c.member.member_info(g.prm.player_name)
     g.logging.info(target_info)
 
     if not target_info["game_count"] > 0: # 記録なし
@@ -382,7 +376,7 @@ def gen_pdf(argument, command_option):
 
     # タイトル
     elements.append(Spacer(1, 40*mm))
-    elements.append(Paragraph(f"成績レポート：{target_player[0]}", style["Title"]))
+    elements.append(Paragraph(f"成績レポート：{g.prm.player_name}", style["Title"]))
     elements.append(Spacer(1, 10*mm))
     elements.append(Paragraph(
         "集計期間：{} - {}".format(
@@ -397,7 +391,7 @@ def gen_pdf(argument, command_option):
     # --- 全期間
     elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5*mm))
-    tmp_data = get_game_results(argument, command_option, flag = "A")
+    tmp_data = get_game_results(g.prm.argument, vars(g.opt), flag = "A")
     data = []
     for x in range(len(tmp_data)): # ゲーム数を除外
         data.append(tmp_data[x][1:])
@@ -448,7 +442,7 @@ def gen_pdf(argument, command_option):
     elements.append(Image(imgdata, width = 600 * 0.5, height = 600 * 0.5))
     plt.close()
 
-    data = get_count_moving(argument, command_option, 0)
+    data = get_count_moving(g.prm.argument, vars(g.opt), 0)
     df = pd.DataFrame.from_dict(data)
     df["playtime"] = pd.to_datetime(df["playtime"])
 
@@ -472,7 +466,7 @@ def gen_pdf(argument, command_option):
         elements.append(Spacer(1, 5*mm))
 
         data = []
-        tmp_data = get_game_results(argument, command_option, flag)
+        tmp_data = get_game_results(g.prm.argument, vars(g.opt), flag)
         for x in range(len(tmp_data)): # 日時を除外
             data.append(tmp_data[x][:15])
 
@@ -525,7 +519,7 @@ def gen_pdf(argument, command_option):
             # テーブル
             elements.append(Paragraph(f"区間集計 （ {title} ）", style["Left"]))
             elements.append(Spacer(1,5*mm))
-            data = get_count_results(argument, command_option, count)
+            data = get_count_results(g.prm.argument, vars(g.opt), count)
             tt = LongTable(data, repeatRows = 1)
             ts = TableStyle([
                 ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
@@ -563,7 +557,7 @@ def gen_pdf(argument, command_option):
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5))
 
             # 通算ポイント推移
-            data = get_count_moving(argument, command_option, count)
+            data = get_count_moving(g.prm.argument, vars(g.opt), count)
             tmp_df = pd.DataFrame.from_dict(data)
             df = pd.DataFrame()
             for i in sorted(tmp_df["interval"].unique().tolist()):
@@ -587,6 +581,6 @@ def gen_pdf(argument, command_option):
             elements.append(PageBreak())
 
     doc.build(elements)
-    g.logging.notice(f"report generation: {target_player[0]}") # type: ignore
+    g.logging.notice(f"report generation: {g.prm.player_name}") # type: ignore
 
-    return(str(target_player[0]), pdf_path)
+    return(g.prm.player_name, pdf_path)

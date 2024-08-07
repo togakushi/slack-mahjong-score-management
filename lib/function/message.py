@@ -38,10 +38,14 @@ def help_message():
     チャンネル内呼び出しキーワード用ヘルプ
     """
 
-    results_option = f.configure.command_option_initialization("results")
-    graph_option = f.configure.command_option_initialization("graph")
-    ranking_option = f.configure.command_option_initialization("ranking")
-    report_option = f.configure.command_option_initialization("report")
+    results_option = g.command_option()
+    results_option.initialization("results")
+    graph_option = g.command_option()
+    graph_option.initialization("graph")
+    ranking_option = g.command_option()
+    ranking_option.initialization("ranking")
+    report_option = g.command_option()
+    report_option.initialization("report")
 
     msg = [
         "*機能呼び出し構文*",
@@ -51,21 +55,21 @@ def help_message():
 
         "\n*成績サマリ*",
         f"\t呼び出しキーワード： {g.commandword['results']}",
-        f"\t検索範囲デフォルト： {results_option['aggregation_range'][0]}",
+        f"\t検索範囲デフォルト： {results_option.aggregation_range[0]}",
 
         "\n*成績グラフ*",
         f"\t呼び出しキーワード： {g.commandword['graph']}",
-        f"\t検索範囲デフォルト： {graph_option['aggregation_range'][0]}",
+        f"\t検索範囲デフォルト： {graph_option.aggregation_range[0]}",
 
         "\n*ランキング*",
         f"\t呼び出しキーワード： {g.commandword['ranking']}",
-        f"\t検索範囲デフォルト： {ranking_option['aggregation_range'][0]}",
-        f"\t規定打数デフォルト： 全体ゲーム数 × {ranking_option['stipulated_rate']} ＋ 1",
-        f"\t出力制限デフォルト： 上位 {ranking_option['ranked']} 名",
+        f"\t検索範囲デフォルト： {ranking_option.aggregation_range[0]}",
+        f"\t規定打数デフォルト： 全体ゲーム数 × {ranking_option.stipulated_rate} ＋ 1",
+        f"\t出力制限デフォルト： 上位 {ranking_option.ranked} 名",
 
         "\n*レポート*",
         f"\t呼び出しキーワード： {g.commandword['report']}",
-        f"\t検索範囲デフォルト： {report_option['aggregation_range'][0]}",
+        f"\t検索範囲デフォルト： {report_option.aggregation_range[0]}",
 
         "\n*メンバー一覧*",
         f"\t呼び出しキーワード： {g.commandword['member']}",
@@ -168,9 +172,9 @@ def remarks(command_option):
     ret = ""
     remark = []
 
-    if not command_option["guest_skip"]:
+    if not g.opt.guest_skip:
         remark.append("2ゲスト戦の結果を含む")
-    if not command_option["unregistered_replace"]:
+    if not g.opt.unregistered_replace:
         remark.append("ゲスト置換なし("+ g.guest_mark + "：未登録プレイヤー)")
     if remark:
         ret = "特記：" + "、".join(remark)
@@ -185,7 +189,7 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
     # 集計範囲
     game_range1 = f"{tab}最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
     game_range1 += f"{tab}最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
-    if command_option["search_word"]: # コメント検索の場合はコメントで表示
+    if g.opt.search_word: # コメント検索の場合はコメントで表示
         game_range2 = f"{tab}集計範囲： {game_info['first_comment']} ～ {game_info['last_comment']}\n"
     else:
         game_range2 = f"{tab}集計範囲： {game_info['first_game']} ～ {game_info['last_game']}\n".replace("-", "/")
@@ -194,7 +198,7 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
     if game_info["game_count"] == 0:
         msg += f"{tab}{f.message.no_hits(params)}"
     else:
-        match command_option["command"]:
+        match g.opt.command:
             case "results":
                 if params["target_count"]: # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1
@@ -205,10 +209,10 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
                     msg += f"{tab}ゲーム数：{game_info['game_count']} 回{add_text}\n"
             case "ranking":
                 msg += game_range2
-                msg += f"{tab}集計ゲーム数：{game_info['game_count']} (規定数：{command_option['stipulated']} 以上)\n"
+                msg += f"{tab}集計ゲーム数：{game_info['game_count']} (規定数：{g.opt.stipulated} 以上)\n"
             case _:
                 msg += game_range2
                 msg += f"{tab}総ゲーム数：{game_info['game_count']} 回\n"
-        msg += tab + f.message.remarks(command_option)
+        msg += tab + f.message.remarks(vars(g.opt))
 
     return(msg)

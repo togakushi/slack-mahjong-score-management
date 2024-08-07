@@ -8,7 +8,7 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def NameReplace(pname, command_option, add_mark = False):
+def NameReplace(pname, add_mark = False):
     """
     表記ブレ修正(正規化)
 
@@ -16,9 +16,6 @@ def NameReplace(pname, command_option, add_mark = False):
     ----------
     pname : str
         対象文字列（プレイヤー名）
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -47,7 +44,7 @@ def NameReplace(pname, command_option, add_mark = False):
         return(g.member_list[f.common.HIRA2KANA(pname)])
 
     # メンバーリストに見つからない場合
-    if command_option.get("unregistered_replace"):
+    if g.opt.unregistered_replace:
         return(g.guest_name)
     else:
         if add_mark:

@@ -146,7 +146,7 @@ def for_database(cur, first_ts = False):
     return(data)
 
 
-def game_result(data, command_option):
+def game_result(data):
     """
     slackの検索ログからゲームの結果を返す
 
@@ -154,9 +154,6 @@ def game_result(data, command_option):
     ----------
     data : dict
         slackの検索ログ
-
-    command_option : dict
-        検索オプション
 
     Returns
     -------
@@ -183,10 +180,10 @@ def game_result(data, command_option):
                 # 結果報告フォーマットに一致したポストの処理
                 msg = f.search.pattern(tmp_msg)
                 if msg:
-                    p1_name = c.member.NameReplace(msg[0], command_option)
-                    p2_name = c.member.NameReplace(msg[2], command_option)
-                    p3_name = c.member.NameReplace(msg[4], command_option)
-                    p4_name = c.member.NameReplace(msg[6], command_option)
+                    p1_name = c.member.NameReplace(msg[0])
+                    p2_name = c.member.NameReplace(msg[2])
+                    p3_name = c.member.NameReplace(msg[4])
+                    p4_name = c.member.NameReplace(msg[6])
                     result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7], msg[8]]
                     g.logging.trace(f"{ts}: {result[ts]}") # type: ignore
 

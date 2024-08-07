@@ -14,14 +14,16 @@ mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
 
-def plot(argument, command_option):
+def plot():
+    plt.close()
     # 検索動作を合わせる
-    command_option["guest_skip"] = command_option["guest_skip2"]
+    g.opt.guest_skip = g.opt.guest_skip2
+
+    game_info = d.aggregate.game_info()
 
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
-    params, game_info = f.common.game_info(argument, command_option)
     sql = """
         select
             name as プレイヤー,
@@ -88,37 +90,36 @@ def plot(argument, command_option):
             並び変え用カラム desc
     """
 
-    if params["player_name"]:
+    if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*params["player_list"]]]))
+        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if command_option["unregistered_replace"]:
+    if g.opt.unregistered_replace:
         sql = sql.replace("--[unregistered_replace] ", "")
-        if command_option["guest_skip"]:
+        if g.opt.guest_skip:
             sql = sql.replace("--[guest_not_skip] ", "")
         else:
             sql = sql.replace("--[guest_skip] ", "")
     else:
         sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    if params["target_count"] != 0:
+    if g.prm.target_count != 0:
         sql = sql.replace("and playtime between", "-- and playtime between")
         sql = sql.replace("--[recent] ", "")
 
     # --- データ取得
-    params, _ = f.common.game_info(argument, command_option)
-    if command_option["stipulated"] == 0:
-        command_option["stipulated"] = math.ceil(game_info["game_count"] * command_option["stipulated_rate"]) + 1
-        params = f.configure.get_parameters(argument, command_option) # 更新
+    if g.opt.stipulated == 0:
+        g.opt.stipulated = math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
+        g.prm.update(g.prm.argument, vars(g.opt)) # 更新
 
-    rows = resultdb.execute(sql, d.aggregate._extending(params))
+    rows = resultdb.execute(sql, g.prm.to_dict())
 
     results = {}
     playtime = []
     for row in rows.fetchall():
         name = row["プレイヤー"]
         results[name] = dict(row)
-        results[name].update({"プレイヤー": c.member.NameReplace(name, command_option, add_mark = True)})
+        results[name].update({"プレイヤー": c.member.NameReplace(name, add_mark = True)})
         playtime.append(row["first_game"])
         playtime.append(row["last_game"])
         # 描写しないカラムを削除
@@ -155,7 +156,7 @@ def plot(argument, command_option):
             cell_color.append(["#dddddd" for i in column_labels])
 
     report_file_path = os.path.join(g.work_dir,
-        command_option["filename"] + ".png" if command_option["filename"] else "report.png"
+        f"{g.opt.filename}.png" if g.opt.filename else "report.png"
     )
 
     fig = plt.figure(figsize = (8, (len(results) * 0.2) + 0.8), dpi = 200, tight_layout = True)
@@ -179,12 +180,12 @@ def plot(argument, command_option):
         tb[i, 0].set_text_props(ha = "center")
 
     # 追加テキスト
-    remark_text = f.message.remarks(command_option).replace("\t", "")
+    remark_text = f.message.remarks(vars(g.opt)).replace("\t", "")
     add_text = "[集計範囲：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
         min(playtime).replace("-", "/"),
         max(playtime).replace("-", "/"),
         game_info["game_count"],
-        command_option["stipulated"],
+        g.opt.stipulated,
         f"[{remark_text}]" if remark_text else "",
     )
 

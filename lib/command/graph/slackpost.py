@@ -21,19 +21,16 @@ def main(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    command_option = f.configure.command_option_initialization("graph")
-    _, target_player, _, command_option = f.common.argument_analysis(argument, command_option)
+    g.opt.initialization("graph", argument)
+    g.prm.update(argument, vars(g.opt))
 
-    g.logging.info(f"{argument=}")
-    g.logging.info(f"{command_option=}")
-
-    if len(target_player) == 1: # 対象がひとり → 個人成績
-        count, ret = personal.plot(argument, command_option)
+    if len(g.prm.player_list) == 1: # 対象がひとり → 個人成績
+        count, ret = personal.plot()
     else: # 対象が複数 → 比較
-        if command_option["order"]:
-            count, ret = summary.rank_plot(argument, command_option)
+        if g.opt.order:
+            count, ret = summary.rank_plot()
         else:
-            count, ret = summary.point_plot(argument, command_option)
+            count, ret = summary.point_plot()
 
     if count == 0:
         f.slack_api.post_message(client, channel, ret)

@@ -11,34 +11,6 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def game_info(argument, command_option):
-    """
-    引数の内容を解析し、集計対象のゲーム情報を取得する
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-        集計対象の期間などが指定される
-
-    command_option : dict
-        コマンドオプション
-
-    Returns
-    -------
-    params : dict
-        オプション解析結果
-
-    game_data : dict
-        集計対象ゲームの件数、他
-    """
-
-    params = f.configure.get_parameters(argument, command_option)
-    game_data = d.aggregate.game_info(argument, command_option)
-
-    return(params, game_data)
-
-
 def scope_coverage(target_days):
     """
     日付リストから期間(最小値と最大値)を返す
@@ -146,68 +118,71 @@ def argument_analysis(argument, command_option = {}):
 
             # コマンドオプションフラグ変更
             case keyword if re.search(r"^ゲスト(なし|ナシ|無し)$", keyword):
-                command_option["guest_skip"] = False
-                command_option["guest_skip2"] = False
+                g.opt.guest_skip = False
+                g.opt.guest_skip2 = False
             case keyword if re.search(r"^ゲスト(あり|アリ)$", keyword):
-                command_option["guest_skip"] = True
-                command_option["guest_skip2"] = True
+                g.opt.guest_skip = True
+                g.opt.guest_skip2 = True
             case keyword if re.search(r"^ゲスト無効$", keyword):
-                command_option["unregistered_replace"] = False
+                g.opt.unregistered_replace = False
             case keyword if re.search(r"^(全員|all)$", keyword):
-                command_option["all_player"] = True
+                g.opt.all_player = True
             case keyword if re.search(r"^(比較|点差|差分)$", keyword):
-                command_option["score_comparisons"] = True
+                g.opt.score_comparisons = True
             case keyword if re.search(r"^(戦績)$", keyword):
-                command_option["game_results"] = True
+                g.opt.game_results = True
             case keyword if re.search(r"^(対戦|対戦結果)$", keyword):
-                command_option["versus_matrix"] = True
+                g.opt.versus_matrix = True
             case keyword if re.search(r"^(詳細|verbose)$", keyword):
-                command_option["verbose"] = True
+                g.opt.verbose = True
             case keyword if re.search(r"^(順位)$", keyword):
-                command_option["order"] = True
+                g.opt.order = True
             case keyword if re.search(r"^(統計)$", keyword):
-                command_option["statistics"] = True
+                g.opt.statistics = True
             case keyword if re.search(r"^(個人|個人成績)$", keyword):
-                command_option["personal"] = True
+                g.opt.personal = True
             case keyword if re.search(r"^(直近)([0-9]+)$", keyword):
-                target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
+                g.opt.target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
             case keyword if re.search(r"^(トップ|上位|top)([0-9]+)$", keyword):
-                command_option["ranked"] = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
+                g.opt.ranked = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
             case keyword if re.search(r"^(規定数|規定打数)([0-9]+)$", keyword):
-                command_option["stipulated"] = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
+                g.opt.stipulated = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
             case keyword if re.search(r"^(チーム|team)$", keyword.lower()):
-                command_option["team_total"] = True
+                g.opt.team_total = True
             case keyword if re.search(r"^(チーム同卓あり|コンビあり|同士討ち)$", keyword):
-                command_option["friendly_fire"] = True
+                g.opt.friendly_fire = True
             case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword):
-                command_option["friendly_fire"] = False
+                g.opt.friendly_fire = False
             case keyword if re.search(r"^(コメント|comment)(.+)$", keyword):
-                command_option["search_word"] = re.sub(r"^(コメント|comment)(.+)$", r"\2", keyword)
+                g.opt.search_word = re.sub(r"^(コメント|comment)(.+)$", r"\2", keyword)
             case keyword if re.search(r"^(daily|デイリー|日次)$", keyword):
-                command_option["daily"] = True
+                g.opt.daily = True
             case keyword if re.search(r"^(集約)([0-9]+)$", keyword):
-                command_option["group_length"] = int(re.sub(rf"^(集約)([0-9]+)$", r"\2", keyword))
+                g.opt.group_length = int(re.sub(rf"^(集約)([0-9]+)$", r"\2", keyword))
 
             # フォーマット指定
             case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
-                command_option["format"] = keyword.lower()
+                g.opt.format = keyword.lower()
             case keyword if re.search(r"^(filename:|ファイル名)(.+)$", keyword):
-                command_option["filename"] = re.sub(r"^(filename:|ファイル名)(.+)$", r"\2", keyword)
+                g.opt.filename = re.sub(r"^(filename:|ファイル名)(.+)$", r"\2", keyword)
 
             # どのオプションにもマッチしないものはプレイヤー名
             case _:
-                target_player.append(c.member.NameReplace(keyword, command_option))
+                target_player.append(c.member.NameReplace(keyword))
 
     # 日付再取得のために再帰呼び出し
-    if command_option.get("recursion") and not target_days:
-        if "aggregation_range" in command_option:
-            command_option["recursion"] = False # ループ防止
-            target_days, _, _, _ = argument_analysis(command_option["aggregation_range"], command_option)
-            command_option["recursion"] = True # 元に戻す
+    if g.opt.recursion and not target_days:
+        if "aggregation_range" in vars(g.opt):
+            g.opt.recursion = False # ループ防止
+            target_days, _, _, _ = argument_analysis(g.opt.aggregation_range, vars(g.opt))
+            g.opt.recursion = True # 元に戻す
 
     # 重複排除
     target_player = list(dict.fromkeys(target_player))
 
+    #
+    g.opt.target_days = target_days
+    
     return(target_days, target_player, target_count, command_option)
 
 

@@ -48,24 +48,23 @@ def handle_search_action(ack, body, client):
     ack()
     g.logging.trace(body) # type: ignore
 
-    argument, command_option, app_msg = e.set_command_option(
-        f.configure.command_option_initialization("results"),
-        body,
-    )
-    params, _ = f.common.game_info(argument, command_option)
+    g.opt.initialization("results")
+    argument, app_msg = e.set_command_option(body)
+    g.opt.update(argument)
+    g.prm.update(argument, vars(g.opt))
 
     client.views_update(
         view_id = g.app_var["view_id"],
         view = e.PlainText(f"{chr(10).join(app_msg)}"),
     )
 
-    g.logging.info(f"[app:search_summary] {argument}, {command_option}")
+    g.logging.info(f"[app:search_summary] {argument}, {vars(g.opt)}")
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg2 = f.message.no_hits(params)
+    msg2 = f.message.no_hits(vars(g.prm))
 
-    msg1, msg2, file_list = c.results.summary.aggregation(argument, command_option)
+    msg1, msg2, file_list = c.results.summary.aggregation()
     f.slack_api.slack_post(
         client = client,
         channel = body["user"]["id"],

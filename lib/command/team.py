@@ -158,11 +158,10 @@ def append(argument):
         msg = create(argument)
 
     if len(argument) == 2: # チーム所属
-        command_option = {}
-        command_option["unregistered_replace"] = False
+        g.opt.unregistered_replace = False
 
         team_name = f.common.HAN2ZEN(argument[0])
-        player_name = NameReplace(argument[1], command_option)
+        player_name = NameReplace(argument[1])
         g.logging.notice(f"Team participation: {team_name} -> {player_name}") # type: ignore
 
         registration_flg = True
@@ -219,11 +218,10 @@ def remove(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 2: # 別名削除
-        command_option = {}
-        command_option["unregistered_replace"] = False
+        g.opt.unregistered_replace = False
 
         team_name = f.common.HAN2ZEN(argument[0])
-        player_name = NameReplace(argument[1], command_option)
+        player_name = NameReplace(argument[1])
         g.logging.notice(f"Team breakaway: {team_name} -> {player_name}") # type: ignore
 
         registration_flg = True

@@ -150,13 +150,12 @@ def get_score(msg):
         ポイント(p?_point), 順位(p?_rank), 供託(deposit), コメント(comment)
     """
 
-    command_option = {}
-    command_option["unregistered_replace"] = False # ゲスト無効
+    g.opt.unregistered_replace = False # ゲスト無効
 
     # ポイント計算
     score_df = pd.DataFrame({
         "name": [
-            c.member.NameReplace(msg[x * 2], command_option, False)
+            c.member.NameReplace(msg[x * 2], False)
             for x in range(4)
         ],
         "str": [msg[x * 2 + 1] for x in range(4)],

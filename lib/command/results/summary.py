@@ -5,17 +5,9 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def aggregation(argument, command_option):
+def aggregation():
     """
     各プレイヤーの通算ポイントを表示
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -30,9 +22,9 @@ def aggregation(argument, command_option):
     """
 
     ### データ収集 ###
-    params, game_info = f.common.game_info(argument, command_option)
-    df_summary = d.aggregate.game_summary(argument, command_option)
-    df_game = d.aggregate.game_details(argument, command_option)
+    game_info = d.aggregate.game_info()
+    df_summary = d.aggregate.game_summary()
+    df_game = d.aggregate.game_details()
     df_grandslam = df_game.query("grandslam != ''")
 
     df_grandslam = df_grandslam.rename(
@@ -49,7 +41,7 @@ def aggregation(argument, command_option):
         add_text = " / トバされた人（延べ）： {} 人".format(
             df_summary["トビ"].sum(),
         )
-    msg2 += f.message.header(game_info, command_option, params, add_text, 1)
+    msg2 += f.message.header(game_info, vars(g.opt), vars(g.prm), add_text, 1)
 
     if df_summary.empty:
         return(msg2, {}, {})
@@ -58,7 +50,7 @@ def aggregation(argument, command_option):
     msg = {}
     msg_memo = ""
 
-    if not command_option["score_comparisons"]: # 通常表示
+    if not g.opt.score_comparisons: # 通常表示
         if g.config["mahjong"].getboolean("ignore_flying", False): # トビカウントなし
             header_list = ["名前", "通算", "平均", "順位分布"]
             filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順"]
@@ -112,7 +104,7 @@ def aggregation(argument, command_option):
     df_summary = df_summary.filter(items = filter_list)
     df_grandslam = df_grandslam.filter(items = ["日時", "和了役", "和了者"])
 
-    match command_option["format"].lower():
+    match g.opt.format.lower():
         case "csv":
             file_list = {
                 "集計結果": f.common.save_output(df_summary, "csv", "summary.csv"),

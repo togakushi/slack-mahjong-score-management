@@ -24,29 +24,18 @@ def main(client, channel, argument):
         解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    command_option = f.configure.command_option_initialization("ranking")
-    _, _, _, command_option = f.common.argument_analysis(argument, command_option)
+    g.opt.initialization("ranking", argument)
+    g.prm.update(argument, vars(g.opt))
 
-    g.logging.info(f"{argument=}")
-    g.logging.info(f"{command_option=}")
-
-    msg1, msg2 = aggregation(argument, command_option)
+    msg1, msg2 = aggregation()
     res = f.slack_api.post_message(client, channel, msg1)
     if msg2:
         f.slack_api.post_multi_message(client, channel, msg2, res["ts"])
 
 
-def aggregation(argument, command_option):
+def aggregation():
     """
     ランキングデータを生成
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -58,16 +47,17 @@ def aggregation(argument, command_option):
     """
 
     # --- データ取得
-    params, game_info = f.common.game_info(argument, command_option)
+    game_info = d.aggregate.game_info()
 
     if game_info["game_count"] == 0: # 結果が0件のとき
-        return(f.message.no_hits(params), None)
+        return(f.message.no_hits(vars(g.prm)), None)
 
-    if command_option["stipulated"] == 0: # 規定打数が指定されない場合はレートから計算
-        command_option["stipulated"] = math.ceil(game_info["game_count"] * command_option["stipulated_rate"]) + 1
+    if g.opt.stipulated == 0: # 規定打数が指定されない場合はレートから計算
+        g.opt.stipulated = math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
+        g.prm.update(g.prm.argument, vars(g.opt))
 
-    result_df = d.aggregate.personal_results(argument, command_option)
-    record_df = d.aggregate.personal_record(argument, command_option)
+    result_df = d.aggregate.personal_results()
+    record_df = d.aggregate.personal_record()
     result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"], suffixes = ["", "_x"])
 
     # --- 集計
@@ -75,7 +65,7 @@ def aggregation(argument, command_option):
     result_df["総ゲーム数"] = game_info["game_count"]
     result_df["最大素点"] = result_df["最大素点"] * 100
     result_df.rename(columns = {"1位率": "トップ率"}, inplace = True)
-    result_df = result_df.query("ゲーム数 >= @command_option['stipulated']")
+    result_df = result_df.query("ゲーム数 >= @g.opt.stipulated")
     result_df = result_df.reset_index(drop = True)
 
     data = {
@@ -150,13 +140,13 @@ def aggregation(argument, command_option):
 
     # --- 表示
     msg1 = "\n*【ランキング】*\n"
-    msg1 += f.message.header(game_info, command_option, params, "", 1)
+    msg1 += f.message.header(game_info, vars(g.opt), vars(g.prm), "", 1)
     msg2 = {}
 
     for k in data.keys():
         msg2[k] = f"\n*{k}*\n"
         tmp_df = result_df.sort_values([f"{k}_rank", "ゲーム数"], ascending =[True, False])
-        tmp_df = tmp_df.query(f"{k}_rank <= @command_option['ranked'] and {k} >= @data['{k}']['threshold']")
+        tmp_df = tmp_df.query(f"{k}_rank <= @g.opt.ranked and {k} >= @data['{k}']['threshold']")
 
         for _, s in tmp_df.drop_duplicates(subset = "プレイヤー名").iterrows():
             msg2[k] += ("\t{:3d}： {}\t" + data[k]["str"] + "\n").format(

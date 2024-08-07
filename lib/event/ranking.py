@@ -49,11 +49,10 @@ def handle_search_action(ack, body, client):
     ack()
     g.logging.trace(body) # type: ignore
 
-    argument, command_option, app_msg = e.set_command_option(
-        f.configure.command_option_initialization("ranking"),
-        body,
-    )
-    params, _ = f.common.game_info(argument, command_option)
+    g.opt.initialization("ranking")
+    argument, app_msg = e.set_command_option(body)
+    g.opt.update(argument)
+    g.prm.update(argument, vars(g.opt))
 
     client.views_update(
         view_id = g.app_var["view_id"],
@@ -65,16 +64,15 @@ def handle_search_action(ack, body, client):
         if "value" in search_options["bid-ranked"]["aid-ranked"]:
             ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
             if ranked > 0:
-                argument.append(f"トップ{ranked}")
+                g.opt.ranked = ranked
 
-    g.logging.info(f"[app:search_ranking] {argument}, {command_option}")
-    _, _, _, command_option = f.common.argument_analysis(argument, command_option)
+    g.logging.info(f"[app:search_ranking] {argument}, {vars(g.opt)}")
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.no_hits(params)
+    msg1 = f.message.no_hits(vars(g.prm))
 
-    msg1, msg2 = c.ranking.slackpost.aggregation(argument, command_option)
+    msg1, msg2 = c.ranking.slackpost.aggregation()
     if msg2:
         res = f.slack_api.post_message(client, body["user"]["id"], msg1)
         f.slack_api.post_multi_message(client, body["user"]["id"], msg2, res["ts"])

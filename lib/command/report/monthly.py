@@ -11,10 +11,10 @@ mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
 
-def plot(argument, command_option):
+def plot():
+    plt.close()
     # --- データ収集
-    params = f.configure.get_parameters(argument, command_option)
-    df = d.aggregate.monthly_report(argument, command_option)
+    df = d.aggregate.monthly_report()
     results = df.transpose().to_dict()
 
     if len(results) == 0:
@@ -39,7 +39,7 @@ def plot(argument, command_option):
             cell_color.append(["#dddddd" for i in column_labels])
 
     report_file_path = os.path.join(g.work_dir,
-        command_option["filename"] + ".png" if command_option["filename"] else "report.png"
+        f"{g.opt.filename}.png" if g.opt.filename else "report.png"
     )
 
     fig = plt.figure(figsize = (6, (len(results) * 0.2) + 0.8), dpi = 200, tight_layout = True)
@@ -63,7 +63,7 @@ def plot(argument, command_option):
 
     # 追加テキスト
     fig.text(0.01, 0.02, # 表示位置(左下0,0 右下0,1)
-        f"[検索範囲：({params['starttime_hm']} - {params['endtime_hm']}] [特記：すべてのゲーム結果を含む]",
+        f"[検索範囲：({g.prm.starttime_hm} - {g.prm.endtime_hm}] [特記：すべてのゲーム結果を含む]",
         transform = fig.transFigure,
         fontsize = 6,
     )

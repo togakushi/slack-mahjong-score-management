@@ -8,7 +8,7 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def main(client, channel, event_ts, argument):
+def main(client, channel, event_ts):
     """
     データ突合の実施、その結果をslackにpostする
 
@@ -21,13 +21,6 @@ def main(client, channel, event_ts, argument):
 
     event_ts: text
         スレッドに返す場合の返し先
-
-    argument : list
-        slackから受け取った引数
-        解析対象のプレイヤー、検索範囲などが指定される
-
-    command_option : dict
-        コマンドオプション
     """
 
     # スコア突合
@@ -76,16 +69,16 @@ def score_comparison():
     fts = None # slackのログの先頭の時刻
 
     # 検索パラメータ
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
-    command_option["aggregation_range"] = "全部" # 検索範囲
+    g.opt.initialization("results")
+    g.opt.unregistered_replace = False # ゲスト無効
+    g.opt.aggregation_range = ["全部"] # 検索範囲
 
     # slackログからデータを取得
     matches = f.search.for_slack(
         g.config["search"].get("keyword", "終局"),
         g.config["search"].get("channel", "#麻雀部"),
     )
-    slack_data = f.search.game_result(matches, command_option)
+    slack_data = f.search.game_result(matches)
     if slack_data == None:
         return(count, ret_msg, fts)
 
@@ -218,9 +211,9 @@ def remarks_comparison(fts):
     """
 
     # 検索パラメータ
-    command_option = f.configure.command_option_initialization("results")
-    command_option["unregistered_replace"] = False # ゲスト無効
-    command_option["aggregation_range"] = "全部" # 検索範囲
+    g.opt.initialization("results")
+    g.opt.unregistered_replace = False # ゲスト無効
+    g.opt.aggregation_range = ["全部"] # 検索範囲
 
     slack_data = {}
     db_data = {}
@@ -247,7 +240,7 @@ def remarks_comparison(fts):
                     slack_data[count] = {
                         "thread_ts": thread_ts,
                         "event_ts": event_ts,
-                        "name": c.member.NameReplace(name, command_option),
+                        "name": c.member.NameReplace(name),
                         "matter": val,
                     }
                     g.logging.trace(f"slack: {slack_data[count]}") # type: ignore
@@ -302,7 +295,7 @@ def remarks_comparison(fts):
                     cur.execute(d.sql_remarks_insert, (
                         update_data["thread_ts"],
                         update_data["event_ts"],
-                        c.member.NameReplace(update_data["name"], command_option),
+                        c.member.NameReplace(update_data["name"]),
                         update_data["matter"],
                     ))
                     g.logging.info(f"update: {update_data}")

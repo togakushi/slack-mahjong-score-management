@@ -5,17 +5,9 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def aggregation(argument, command_option):
+def aggregation():
     """
     各チームの通算ポイントを表示
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -30,8 +22,8 @@ def aggregation(argument, command_option):
     """
 
     ### データ収集 ###
-    params, game_info = f.common.game_info(argument, command_option)
-    df_summary = d.aggregate.team_total(argument, command_option)
+    game_info = d.aggregate.game_info()
+    df_summary = d.aggregate.team_total()
     df_summary = df_summary.rename(
         columns = {
             "team": "チーム名",
@@ -44,7 +36,7 @@ def aggregation(argument, command_option):
     ### 表示 ###
     msg = {}
     header = "*【チーム成績サマリ】*\n"
-    header += f.message.header(game_info, command_option, params, "", 1)
+    header += f.message.header(game_info, vars(g.opt), vars(g.prm), "", 1)
     file_list = {}
 
     if not df_summary.empty:

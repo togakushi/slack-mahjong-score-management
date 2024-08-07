@@ -10,7 +10,7 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def _disp_name(df, command_option, adjust = 0):
+def _disp_name(df, adjust = 0):
     """
     ゲスト置換/パディング付与
 
@@ -18,9 +18,6 @@ def _disp_name(df, command_option, adjust = 0):
     ----------
     df : DataFrame
         変更対象のデータ
-
-    command_option : dict
-        コマンドオプション
 
     adjust : int
         パディング数の調整
@@ -36,7 +33,7 @@ def _disp_name(df, command_option, adjust = 0):
     replace_list = []
     for name in list(df.unique()):
         replace_list.append(
-            c.member.NameReplace(name, command_option, add_mark = True)
+            c.member.NameReplace(name, add_mark = True)
         )
 
     max_padding = c.member.CountPadding(replace_list)
@@ -47,30 +44,9 @@ def _disp_name(df, command_option, adjust = 0):
     return(df.replace(player_list, replace_list))
 
 
-def _extending(params = {}):
-    """
-    入れ子になった辞書の展開
-    """
-
-    for k in list(params.keys()):
-        if type(params[k]) == dict:
-            tmp_dict = params.pop(k)
-            params.update(tmp_dict)
-
-    return(params)
-
-
-def game_info(argument, command_option):
+def game_info():
     """
     指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -84,9 +60,9 @@ def game_info(argument, command_option):
 
     # データ収集
     df = pd.read_sql(
-        d.generate.game_info(argument, command_option),
+        d.generate.game_info(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict()
     )
 
     ret = {
@@ -107,17 +83,9 @@ def game_info(argument, command_option):
     return(ret)
 
 
-def game_summary(argument, command_option):
+def game_summary():
     """
     指定条件を満たすゲーム結果をサマライズする
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -126,9 +94,9 @@ def game_summary(argument, command_option):
 
     # データ収集
     df = pd.read_sql(
-        d.generate.game_results(argument, command_option),
+        d.generate.game_results(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict(),
     )
 
     # ヘッダ修正
@@ -152,7 +120,7 @@ def game_summary(argument, command_option):
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, command_option, add_mark = True)
+        lambda x: c.member.NameReplace(x, add_mark = True)
     )
 
     # インデックスの振り直し
@@ -162,17 +130,9 @@ def game_summary(argument, command_option):
     return(df.fillna(value = "*****"))
 
 
-def game_details(argument, command_option):
+def game_details():
     """
     ゲーム結果を集計する
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -180,28 +140,20 @@ def game_details(argument, command_option):
     """
 
     df = pd.read_sql(
-        d.generate.game_details(argument, command_option),
+        d.generate.game_details(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict(),
     )
 
     # ゲスト置換
-    df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
+    df["表示名"] = _disp_name(df["プレイヤー名"])
 
     return(df.fillna(value = ""))
 
 
-def personal_record(argument, command_option):
+def personal_record():
     """
     個人記録を集計する
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -210,9 +162,9 @@ def personal_record(argument, command_option):
 
     # データ収集
     gamedata = pd.read_sql(
-        d.generate.record_count(argument, command_option),
+        d.generate.record_count(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict(),
     )
 
     # 連続順位カウント
@@ -251,7 +203,7 @@ def personal_record(argument, command_option):
         df = pd.concat([df, tmp_df])
 
     # ゲスト置換
-    df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
+    df["表示名"] = _disp_name(df["プレイヤー名"])
 
     df = df.drop(columns = ["playtime", "順位"])
  
@@ -262,17 +214,9 @@ def personal_record(argument, command_option):
     return(df)
 
 
-def personal_results(argument, command_option):
+def personal_results():
     """
     個人成績を集計する
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -281,9 +225,9 @@ def personal_results(argument, command_option):
 
     # データ収集
     df = pd.read_sql(
-        d.generate.personal_results(argument, command_option),
+        d.generate.personal_results(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict(),
     )
 
     # Nullが返ってきたときにobject型になるのでfloat型に変換
@@ -294,7 +238,7 @@ def personal_results(argument, command_option):
     df = df.fillna(0)
 
     # ゲスト置換
-    df["表示名"] = _disp_name(df["プレイヤー名"], command_option)
+    df["表示名"] = _disp_name(df["プレイヤー名"])
 
     # インデックスの振り直し
     df = df.reset_index(drop = True)
@@ -303,101 +247,93 @@ def personal_results(argument, command_option):
     return(df)
 
 
-def versus_matrix(argument, command_option):
+def versus_matrix():
     # データ収集
     df = pd.read_sql(
-        d.generate.versus_matrix(argument, command_option),
+        d.generate.versus_matrix(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict(),
     )
 
     # ゲスト置換
-    df["my_表示名"] = _disp_name(df["my_name"], command_option)
-    df["vs_表示名"] = _disp_name(df["vs_name"], command_option)
+    df["my_表示名"] = _disp_name(df["my_name"])
+    df["vs_表示名"] = _disp_name(df["vs_name"])
 
     return(df)
 
 
-def personal_gamedata(argument, command_option):
+def personal_gamedata():
     # データ収集
-    if command_option["daily"]:
+    if g.opt.daily:
         df = pd.read_sql(
-            d.generate.personal_gamedata_daily(argument, command_option),
+            d.generate.personal_gamedata_daily(),
             sqlite3.connect(g.database_file),
-            params = _extending(f.configure.get_parameters(argument, command_option))
+            params = g.prm.to_dict(),
         )
     else:
         df = pd.read_sql(
-            d.generate.personal_gamedata(argument, command_option),
+            d.generate.personal_gamedata(),
             sqlite3.connect(g.database_file),
-            params = _extending(f.configure.get_parameters(argument, command_option))
+            params = g.prm.to_dict(),
         )
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, command_option, add_mark = True)
+        lambda x: c.member.NameReplace(x, add_mark = True)
     )
 
     return(df)
 
 
-def team_gamedata(argument, command_option):
+def team_gamedata():
     # データ収集
-    if command_option["daily"]:
+    if g.opt.daily:
         df = pd.read_sql(
-            d.generate.team_gamedata_daily(argument, command_option),
+            d.generate.team_gamedata_daily(),
             sqlite3.connect(g.database_file),
-            params = _extending(f.configure.get_parameters(argument, command_option))
+            params = g.prm.to_dict(),
         )
     else:
         df = pd.read_sql(
-            d.generate.team_gamedata(argument, command_option),
+            d.generate.team_gamedata(),
             sqlite3.connect(g.database_file),
-            params = _extending(f.configure.get_parameters(argument, command_option))
+            params = g.prm.to_dict(),
         )
 
     return(df)
 
 
-def monthly_report(argument, command_option):
+def monthly_report():
     # データ収集
     df = pd.read_sql(
-        d.generate.monthly_report(argument, command_option),
+        d.generate.monthly_report(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict(),
     )
 
     return(df)
 
 
-def winner_report(argument, command_option):
+def winner_report():
     # データ収集
     df = pd.read_sql(
-        d.generate.winner_report(argument, command_option),
+        d.generate.winner_report(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict(),
     ).fillna(value=np.nan)
 
     # ゲスト置換
     for i in range(1,6):
         df[f"pname{i}"] = df[f"name{i}"].apply(
-            lambda x: "該当者なし" if type(x) == float else c.member.NameReplace(x, command_option, add_mark = True)
+            lambda x: "該当者なし" if type(x) == float else c.member.NameReplace(x, add_mark = True)
         )
 
     return(df)
 
 
-def team_total(argument, command_option):
+def team_total():
     """
     チーム集計
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -406,22 +342,10 @@ def team_total(argument, command_option):
 
     # データ収集
     df = pd.read_sql(
-        d.generate.team_total(argument, command_option),
+        d.generate.team_total(),
         sqlite3.connect(g.database_file),
-        params = _extending(f.configure.get_parameters(argument, command_option))
+        params = g.prm.to_dict(),
     )
-    #if command_option["daily"]:
-    #    df = pd.read_sql(
-    #        d.generate.team_total_daily(argument, command_option),
-    #        sqlite3.connect(g.database_file),
-    #        params = _extending(f.configure.get_parameters(argument, command_option))
-    #    )
-    #else:
-    #    df = pd.read_sql(
-    #        d.generate.team_total(argument, command_option),
-    #        sqlite3.connect(g.database_file),
-    #        params = _extending(f.configure.get_parameters(argument, command_option))
-    #    )
 
     # インデックスの振り直し
     df = df.reset_index(drop = True)

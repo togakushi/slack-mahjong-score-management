@@ -106,11 +106,11 @@ def handle_message_events(client, body):
 
     # データベース関連コマンド
     if re.match(rf"^{g.commandword['check']}", parameter["text"]):
-        d.comparison.main(client, parameter["channel_id"], parameter["event_ts"], argument)
+        d.comparison.main(client, parameter["channel_id"], parameter["event_ts"])
         return
     if re.match(rf"^Reminder: {g.commandword['check']}$", parameter["text"]): # Reminderによる突合
         g.logging.info(f'Reminder: {g.commandword["check"]}')
-        d.comparison.main(client, parameter["channel_id"], parameter["event_ts"], None)
+        d.comparison.main(client, parameter["channel_id"], parameter["event_ts"])
         return
 
     # その他
@@ -128,8 +128,8 @@ def handle_message_events(client, body):
     # 追加メモ
     if re.match(rf"^{g.commandword['remarks_word']}", parameter["text"]) and parameter["thread_ts"]:
         if d.common.ExsistRecord(parameter["thread_ts"]) and updatable:
-            command_option = f.configure.command_option_initialization("results")
-            command_option["unregistered_replace"] = False # ゲスト無効
+            g.opt.initialization("results")
+            g.opt.unregistered_replace = False # ゲスト無効
             resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
             match parameter["status"]:
                 case "message_append":
@@ -138,7 +138,7 @@ def handle_message_events(client, body):
                         resultdb.execute(d.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
-                            c.member.NameReplace(name, command_option),
+                            c.member.NameReplace(name),
                             val,
                         ))
                 case "message_changed":
@@ -148,7 +148,7 @@ def handle_message_events(client, body):
                         resultdb.execute(d.sql_remarks_insert, (
                             parameter["thread_ts"],
                             parameter["event_ts"],
-                            c.member.NameReplace(name, command_option),
+                            c.member.NameReplace(name),
                             val,
                         ))
                 case "message_deleted":

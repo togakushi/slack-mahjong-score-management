@@ -51,11 +51,10 @@ def handle_search_action(ack, body, client):
     ack()
     g.logging.trace(body) # type: ignore
 
-    argument, command_option, app_msg = e.set_command_option(
-        f.configure.command_option_initialization("results"),
-        body,
-    )
-    params, _ = f.common.game_info(argument, command_option)
+    g.opt.initialization("results")
+    argument, app_msg = e.set_command_option(body)
+    g.opt.update(argument)
+    g.prm.update(argument, vars(g.opt))
 
     search_options = body["view"]["state"]["values"]
     if "bid-user_select" in search_options:
@@ -68,13 +67,13 @@ def handle_search_action(ack, body, client):
         view = e.PlainText(f"{chr(10).join(app_msg)}")
     )
 
-    g.logging.info(f"[app:search_personal] {argument}, {command_option}")
+    g.logging.info(f"[app:search_personal] {argument}, {vars(g.opt)}")
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.no_hits(params)
+    msg1 = f.message.no_hits(vars(g.prm))
 
-    msg1, msg2 = c.results.personal.aggregation(argument, command_option)
+    msg1, msg2 = c.results.personal.aggregation()
     res = f.slack_api.post_message(client, body["user"]["id"], msg1)
     for m in msg2.keys():
         f.slack_api.post_message(client, body["user"]["id"], msg2[m] + "\n", res["ts"])

@@ -14,7 +14,7 @@ def build_main_menu():
     return(view)
 
 
-def set_command_option(command_option, body):
+def set_command_option(body):
     # 検索設定
     argument = []
     search_options = body["view"]["state"]["values"]
@@ -53,24 +53,24 @@ def set_command_option(command_option, body):
         for i in range(len(selected_options)):
             flag = selected_options[i]["value"]
             if flag == "unregistered_replace":
-                command_option[flag] = False
+                g.opt.unregistered_replace = False
 
     if "bid-display_option" in search_options:
         selected_options = search_options["bid-display_option"]["aid-display"]["selected_options"]
         for i in range(len(selected_options)):
             flag = selected_options[i]["value"]
             if flag == "versus_matrix":
-                command_option[flag] = True
+                g.opt.versus_matrix = True
             if flag == "game_results":
-                command_option[flag] = True
+                g.opt.game_results = True
             if flag == "verbose":
-                command_option["game_results"] = True
-                command_option[flag] = True
+                g.opt.game_results = True
+                g.opt.verbose = True
             if flag == "score_comparisons":
-                command_option["score_comparisons"] = True
+                g.opt.score_comparisons = True
 
     app_msg.append("集計中…")
-    return(argument, command_option, app_msg)
+    return(argument, app_msg)
 
 
 @g.app.action("actionId-back")

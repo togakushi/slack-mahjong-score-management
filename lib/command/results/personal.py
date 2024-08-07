@@ -7,17 +7,9 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def aggregation(argument, command_option):
+def aggregation():
     """
     個人成績を集計して返す
-
-    Parameters
-    ----------
-    argument : list
-        slackから受け取った引数
-
-    command_option : dict
-        コマンドオプション
 
     Returns
     -------
@@ -29,21 +21,22 @@ def aggregation(argument, command_option):
     """
 
     # 検索動作を合わせる
-    command_option["guest_skip"] = command_option["guest_skip2"]
+    g.opt.guest_skip = g.opt.guest_skip2
 
     ### データ収集 ###
-    params, game_info = f.common.game_info(argument, command_option)
+    game_info = d.aggregate.game_info()
+
     if game_info["game_count"] == 0:
         msg1 = f"""
             *【個人成績】*
-            \tプレイヤー名： {params['player_name']} {f.common.badge_degree(0)}
-            \t検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}
+            \tプレイヤー名： {g.prm.player_name} {f.common.badge_degree(0)}
+            \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
             \t対戦数： 0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}
         """.replace("-", "/")
         return(textwrap.dedent(msg1), {})
 
-    result_df = d.aggregate.personal_results(argument, command_option)
-    record_df = d.aggregate.personal_record(argument, command_option)
+    result_df = d.aggregate.personal_results()
+    record_df = d.aggregate.personal_record()
     result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"], suffixes = ["", "_x"])
     data = result_df.to_dict(orient = "records")[0]
 
@@ -54,7 +47,7 @@ def aggregation(argument, command_option):
     msg1 = f"""
         *【個人成績】*
         \tプレイヤー名： {data["表示名"]} {badge_degree}
-        \t検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}
+        \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
         \t集計範囲： {game_info['first_game']} ～ {game_info['last_game']}
         \t対戦数： {data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}
     """.replace("-", "/")
@@ -71,7 +64,7 @@ def aggregation(argument, command_option):
         \t4位： {data['4位']:2} 回 ({data['4位率']:6.2f}%)
         \tトビ： {data['トビ']:2} 回 ({data['トビ率']:6.2f}%)
         \t役満： {data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)
-        \t{f.message.remarks(command_option)}
+        \t{f.message.remarks(vars(g.opt))}
     """.replace("-", "▲")
 
     # --- 座席データ
@@ -102,9 +95,9 @@ def aggregation(argument, command_option):
     """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
     # --- 戦績
-    if command_option["game_results"]:
-        df = d.aggregate.game_details(argument, command_option)
-        if command_option["verbose"]:
+    if g.opt.game_results:
+        df = d.aggregate.game_details()
+        if g.opt.verbose:
             msg2["戦績"] = f"\n*【戦績】*\n"
             for p in df["playtime"].unique():
                 seat1 = df.query("playtime == @p and seat == 1").to_dict(orient = "records")[0]
@@ -132,8 +125,8 @@ def aggregation(argument, command_option):
                 ).replace("-", "▲")
 
     # --- 対戦結果
-    if command_option["versus_matrix"]:
-        df = d.aggregate.versus_matrix(argument, command_option)
+    if g.opt.versus_matrix:
+        df = d.aggregate.versus_matrix()
         msg2["対戦"] = "\n*【対戦結果】*\n"
         for _, r in df.iterrows():
             msg2["対戦"] += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"

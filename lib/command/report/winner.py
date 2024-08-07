@@ -11,10 +11,10 @@ mlogger = g.logging.getLogger("matplotlib")
 mlogger.setLevel(g.logging.WARNING)
 
 
-def plot(argument, command_option):
+def plot():
+    plt.close()
     # --- データ取得
-    params = f.configure.get_parameters(argument, command_option)
-    results_df = d.aggregate.winner_report(argument, command_option)
+    results_df = d.aggregate.winner_report()
 
     if len(results_df) == 0:
         return(False)
@@ -36,7 +36,7 @@ def plot(argument, command_option):
     f.common.set_graph_font(plt, fm)
     plt.rcParams["font.size"] = 6
     report_file_path = os.path.join(g.work_dir,
-        command_option["filename"] + ".png" if command_option["filename"] else "report.png"
+        f"{g.opt.filename}.png" if g.opt.filename else "report.png"
     )
 
     column_labels = list(results[list(results.keys())[0]].keys())
@@ -75,10 +75,10 @@ def plot(argument, command_option):
             tb[i, j].set_text_props(ha = "center")
 
     # 追加テキスト
-    remark_text = f.message.remarks(command_option).replace("\t", "")
+    remark_text = f.message.remarks(vars(g.opt)).replace("\t", "")
     add_text = "[検索範囲：{} - {}] {} {}".format(
-        params["starttime_hm"], params["endtime_hm"],
-        f"[規定数：{command_option['stipulated']} ゲーム以上]" if command_option["stipulated"] != 0 else "",
+        g.prm.starttime_hm, g.prm.endtime_hm,
+        f"[規定数：{g.opt.stipulated} ゲーム以上]" if g.opt.stipulated != 0 else "",
         f"[{remark_text}]" if remark_text else "",
     )
 
