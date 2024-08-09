@@ -3,6 +3,7 @@ import sqlite3
 from itertools import chain
 
 import lib.function as f
+import lib.command as c
 import lib.database as d
 from lib.function import global_value as g
 from lib.command.member import NameReplace
@@ -43,11 +44,10 @@ def check_namepattern(name):
         return(False, "使用できない記号が含まれています。")
 
     # コマンドと同じ名前かチェック
-    chk_target_days, _, _, chk_command_option = f.common.argument_analysis([name])
-    if chk_target_days:
-        return(False, "検索範囲指定に使用される単語は登録できません。")
-    if chk_command_option:
-        return(False, "オプションに使用される単語は登録できません。")
+    chk = g.command_option()
+    chk.check([name])
+    if vars(chk):
+        return(False, "日付、またはオプションに使用される単語は登録できません。")
 
     commandlist = [i for i in g.commandword.values()]
     commandlist.extend([g.config["setting"].get("slash_commandname")])
@@ -93,7 +93,7 @@ def create(argument):
                 resultdb.execute(f"insert into team(name) values (?)", (team_name,))
                 resultdb.commit()
                 resultdb.close()
-                f.configure.read_memberslist()
+                c.member.read_memberslist()
                 msg = f"チーム「{team_name}」を登録しました。"
 
     return(msg)
@@ -130,7 +130,7 @@ def delete(argument):
             resultdb.execute(f"update member set team_id = null where team_id = ?", (team_id,))
             resultdb.commit()
             resultdb.close()
-            f.configure.read_memberslist()
+            c.member.read_memberslist()
             msg += f"\nチーム「{team_name}」を削除しました。"
 
     return(msg)
@@ -190,7 +190,7 @@ def append(argument):
             resultdb.execute("update member set team_id = ? where name = ?", (team_id, player_name))
             resultdb.commit()
             resultdb.close()
-            f.configure.read_memberslist()
+            c.member.read_memberslist()
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
 
     return(msg)
@@ -242,7 +242,7 @@ def remove(argument):
             resultdb.execute("update member set team_id = null where name = ?", (player_name,))
             resultdb.commit()
             resultdb.close()
-            f.configure.read_memberslist()
+            c.member.read_memberslist()
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
 
     return(msg)
@@ -305,6 +305,6 @@ def clear():
     resultdb.close()
 
     d.initialization.initialization_resultdb()
-    f.configure.read_memberslist()
+    c.member.read_memberslist()
 
     return(msg)

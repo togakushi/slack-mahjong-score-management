@@ -8,6 +8,30 @@ import lib.database as d
 from lib.function import global_value as g
 
 
+def read_memberslist():
+    """
+    メンバー/チームリスト読み込み
+    """
+
+    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb.row_factory = sqlite3.Row
+
+    rows = resultdb.execute("select name from member where id=0")
+    g.guest_name = rows.fetchone()[0]
+
+    rows = resultdb.execute("select name, member from alias")
+    g.member_list = dict(rows.fetchall())
+
+    rows = resultdb.execute("select * from team")
+    g.team_list = dict(rows.fetchall())
+
+    resultdb.close()
+
+    g.logging.notice(f"guest_name: {g.guest_name}") # type: ignore
+    g.logging.notice(f"member_list: {set(g.member_list.values())}") # type: ignore
+    g.logging.notice(f"team_list: {list(g.team_list.values())}") # type: ignore
+
+
 def NameReplace(pname, add_mark = False):
     """
     表記ブレ修正(正規化)
@@ -74,6 +98,10 @@ def CountPadding(data):
 
 
 def Getmemberslist():
+    """
+    登録済みのメンバー一覧をslackに出力する
+    """
+
     title = "登録済みメンバー一覧"
     padding = c.member.CountPadding(list(set(g.member_list.values())))
     msg = "# 表示名{}： 登録されている名前 #\n".format(" " * (padding - 8))
@@ -198,7 +226,7 @@ def MemberAppend(argument):
 
     resultdb.commit()
     resultdb.close()
-    f.configure.read_memberslist()
+    read_memberslist()
 
     return(msg)
 
@@ -248,7 +276,7 @@ def MemberRemove(argument):
 
     resultdb.commit()
     resultdb.close()
-    f.configure.read_memberslist()
+    read_memberslist()
 
     return(msg)
 
@@ -287,11 +315,10 @@ def check_namepattern(name):
         return(False, "使用できない記号が含まれています。")
 
     # コマンドと同じ名前かチェック
-    chk_target_days, _, _, chk_command_option = f.common.argument_analysis([name])
-    if chk_target_days:
-        return(False, "検索範囲指定に使用される単語は登録できません。")
-    if chk_command_option:
-        return(False, "オプションに使用される単語は登録できません。")
+    chk = g.command_option()
+    chk.check([name])
+    if vars(chk):
+        return(False, "日付、またはオプションに使用される単語は登録できません。")
 
     commandlist = list(g.commandword.values())
     commandlist.extend([g.config["setting"].get("slash_commandname")])

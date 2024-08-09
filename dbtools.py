@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import lib.function as f
+import lib.command as c
 import lib.database as d
 
 if __name__ == "__main__":
     # --- メンバーリスト
-    f.configure.read_memberslist()
+    c.member.read_memberslist()
 
     # --- 突合
     count, msg, fts = d.comparison.score_comparison()

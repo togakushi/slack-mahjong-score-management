@@ -4,7 +4,7 @@ import os
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 import lib.event as e
-import lib.function as f
+import lib.command as c
 import lib.database as d
 from lib.function import global_value as g
 
@@ -28,7 +28,7 @@ def handle_home_events(client, event):
 
 if __name__ == "__main__":
     d.initialization.initialization_resultdb()
-    f.configure.read_memberslist()
+    c.member.read_memberslist()
 
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
