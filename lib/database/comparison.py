@@ -71,7 +71,6 @@ def score_comparison():
     # 検索パラメータ
     g.opt.initialization("results")
     g.opt.unregistered_replace = False # ゲスト無効
-    g.opt.aggregation_range = ["全部"] # 検索範囲
 
     # slackログからデータを取得
     matches = f.search.for_slack(

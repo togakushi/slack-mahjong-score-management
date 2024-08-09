@@ -54,7 +54,7 @@ def handle_search_action(ack, body, client):
     g.opt.initialization("results")
     argument, app_msg = e.set_command_option(body)
     g.opt.update(argument)
-    g.prm.update(argument, vars(g.opt))
+    g.prm.update(g.opt)
 
     search_options = body["view"]["state"]["values"]
     if "bid-user_select" in search_options:

@@ -24,7 +24,7 @@ def main(client, channel, argument):
     """
 
     g.opt.initialization("results", argument)
-    g.prm.update(argument, vars(g.opt))
+    g.prm.update(g.opt)
 
     # モード切り替え
     versus_mode = False

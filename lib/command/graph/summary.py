@@ -29,10 +29,10 @@ def point_plot():
     plt.close()
     # データ収集
     game_info = d.aggregate.game_info()
-    target_data, df = _data_collection(g.prm.argument, vars(g.opt), vars(g.prm))
+    target_data, df = _data_collection()
 
     if target_data.empty: # 描写対象が0人の場合は終了
-        return(len(target_data), f.message.no_hits(vars(g.prm)))
+        return(len(target_data), f.message.no_hits())
 
     # グラフタイトル
     pivot_index = "playtime"
@@ -103,10 +103,10 @@ def rank_plot():
 
     # データ収集
     game_info = d.aggregate.game_info()
-    target_data, df = _data_collection(g.prm.argument, vars(g.opt), vars(g.prm))
+    target_data, df = _data_collection()
 
     if target_data.empty: # 描写対象が0人の場合は終了
-        return(len(target_data), f.message.no_hits(vars(g.prm)))
+        return(len(target_data), f.message.no_hits())
 
     # グラフタイトル
     pivot_index = "playtime"
@@ -161,7 +161,7 @@ def rank_plot():
     return(game_info["game_count"], save_file)
 
 
-def _data_collection(argument:list, command_option:dict, params:dict):
+def _data_collection():
     """
     データ収集
     """
@@ -189,7 +189,7 @@ def _data_collection(argument:list, command_option:dict, params:dict):
         target_data["game_count"] = df.groupby("name").max(numeric_only = True)["count"]
 
         # 足切り
-        target_list = list(target_data.query("game_count >= @params['stipulated']").index)
+        target_list = list(target_data.query("game_count >= @g.opt.stipulated").index)
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
 

@@ -52,7 +52,7 @@ def handle_search_action(ack, body, client):
     g.opt.initialization("ranking")
     argument, app_msg = e.set_command_option(body)
     g.opt.update(argument)
-    g.prm.update(argument, vars(g.opt))
+    g.prm.update(g.opt)
 
     client.views_update(
         view_id = g.app_var["view_id"],
@@ -70,7 +70,7 @@ def handle_search_action(ack, body, client):
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.no_hits(vars(g.prm))
+    msg1 = f.message.no_hits()
 
     msg1, msg2 = c.ranking.slackpost.aggregation()
     if msg2:

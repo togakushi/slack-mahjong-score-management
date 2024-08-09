@@ -75,7 +75,7 @@ def plot():
             tb[i, j].set_text_props(ha = "center")
 
     # 追加テキスト
-    remark_text = f.message.remarks(vars(g.opt)).replace("\t", "")
+    remark_text = f.message.remarks().replace("\t", "")
     add_text = "[検索範囲：{} - {}] {} {}".format(
         g.prm.starttime_hm, g.prm.endtime_hm,
         f"[規定数：{g.opt.stipulated} ゲーム以上]" if g.opt.stipulated != 0 else "",

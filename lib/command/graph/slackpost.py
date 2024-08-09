@@ -22,7 +22,7 @@ def main(client, channel, argument):
     """
 
     g.opt.initialization("graph", argument)
-    g.prm.update(argument, vars(g.opt))
+    g.prm.update(g.opt)
 
     if len(g.prm.player_list) == 1: # 対象がひとり → 個人成績
         count, ret = personal.plot()

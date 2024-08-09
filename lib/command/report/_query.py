@@ -1,15 +1,7 @@
-import lib.function as f
 from lib.function import global_value as g
 
 
-def for_report_personal_data(argument, command_option, flag = "M"):
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
-
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
-
+def for_report_personal_data(flag = "M"):
     sql = """
         select
             <<collection>>,
@@ -30,9 +22,9 @@ def for_report_personal_data(argument, command_option, flag = "M"):
         from
             individual_results
         where
-            rule_version = ?
-            and playtime between ? and ?
-            and name = ?
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+            and name = :player_name
         <<group by>>
         order by
             collection desc
@@ -49,30 +41,13 @@ def for_report_personal_data(argument, command_option, flag = "M"):
             sql = sql.replace("<<collection>>", "'合計' as 集計")
             sql = sql.replace("<<group by>>", "")
 
-    placeholder = [g.rule_version, starttime, endtime, target_player[0]]
-
     g.logging.trace(f"sql: {sql}") # type: ignore
-    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
 
-    return {
-        "target_days": target_days,
-        "target_player": target_player,
-        "target_count": target_count,
-        "starttime": starttime,
-        "endtime": endtime,
-        "sql": sql,
-        "placeholder": placeholder,
-    }
+    return(sql)
 
 
-def for_report_count_data(argument, command_option, interval = 40):
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
-
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
-
+def for_report_count_data(interval = 40):
     sql = """
         select
             min(game_count) as 開始,
@@ -93,7 +68,7 @@ def for_report_count_data(argument, command_option, interval = 40):
             round(cast(count(rpoint < -1 OR NULL) AS real) / cast(count() as real) * 100, 2) as トビ率
         from (
             select
-                (row_number() over (order by game_count desc) - 1) / ? as interval,
+                (row_number() over (order by game_count desc) - 1) / :interval as interval,
                 game_count, rank, point, rpoint
             from (
                 select
@@ -102,8 +77,8 @@ def for_report_count_data(argument, command_option, interval = 40):
                 from
                     individual_results
                 where
-                    rule_version = ?
-                    and name = ?
+                    rule_version = :rule_version
+                    and name = :player_name
             )
             order by
                 game_count desc
@@ -111,30 +86,13 @@ def for_report_count_data(argument, command_option, interval = 40):
         group by interval
     """
 
-    placeholder = [interval, g.rule_version, target_player[0]]
-
+    g.prm.append({"interval": interval})
     g.logging.trace(f"sql: {sql}") # type: ignore
-    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
-    return {
-        "target_days": target_days,
-        "target_player": target_player,
-        "target_count": target_count,
-        "starttime": starttime,
-        "endtime": endtime,
-        "sql": sql,
-        "placeholder": placeholder,
-    }
+    return(sql)
 
 
-def for_report_count_moving(argument, command_option, interval = 40):
-    target_days, target_player, target_count, command_option = f.common.argument_analysis(argument, command_option)
-    starttime, endtime = f.common.scope_coverage(target_days)
-
-    g.logging.info(f"date range: {starttime} {endtime}  target_count: {target_count}")
-    g.logging.info(f"target_player: {target_player}")
-    g.logging.info(f"command_option: {command_option}")
-
+def for_report_count_moving(interval = 40):
     sql = """
         select
             interval,
@@ -154,8 +112,8 @@ def for_report_count_moving(argument, command_option, interval = 40):
                 from
                     individual_results
                 where
-                    rule_version = ?
-                    and name = ?
+                    rule_version = :rule_version
+                    and name = :player_name
             )
             order by
                 total_count desc
@@ -166,25 +124,16 @@ def for_report_count_moving(argument, command_option, interval = 40):
             total_count
     """
 
+    g.prm.append({"interval": interval})
+
     if interval == 0:
-        sql = sql.replace("<<Calculation Formula>>", "?")
+        sql = sql.replace("<<Calculation Formula>>", ":interval")
     else:
         sql = sql.replace(
             "<<Calculation Formula>>",
-            "(row_number() over (order by total_count desc) - 1) / ?"
+            "(row_number() over (order by total_count desc) - 1) / :interval"
         )
 
-    placeholder = [interval, g.rule_version, target_player[0]]
-
     g.logging.trace(f"sql: {sql}") # type: ignore
-    g.logging.trace(f"placeholder: {placeholder}") # type: ignore
 
-    return {
-        "target_days": target_days,
-        "target_player": target_player,
-        "target_count": target_count,
-        "starttime": starttime,
-        "endtime": endtime,
-        "sql": sql,
-        "placeholder": placeholder,
-    }
+    return(sql)

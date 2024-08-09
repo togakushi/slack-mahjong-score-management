@@ -25,7 +25,7 @@ def main(client, channel, argument):
     """
 
     g.opt.initialization("ranking", argument)
-    g.prm.update(argument, vars(g.opt))
+    g.prm.update(g.opt)
 
     msg1, msg2 = aggregation()
     res = f.slack_api.post_message(client, channel, msg1)
@@ -50,11 +50,11 @@ def aggregation():
     game_info = d.aggregate.game_info()
 
     if game_info["game_count"] == 0: # 結果が0件のとき
-        return(f.message.no_hits(vars(g.prm)), None)
+        return(f.message.no_hits(), None)
 
     if g.opt.stipulated == 0: # 規定打数が指定されない場合はレートから計算
         g.opt.stipulated = math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
-        g.prm.update(g.prm.argument, vars(g.opt))
+        g.prm.update(g.opt)
 
     result_df = d.aggregate.personal_results()
     record_df = d.aggregate.personal_record()

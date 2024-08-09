@@ -143,14 +143,14 @@ def invalid_score(user_id, rpoint_sum, correct_score):
     ))
 
 
-def no_hits(params):
+def no_hits():
     """
     指定範囲に記録用キーワードが見つからなかった場合のメッセージ
     """
 
     keyword = g.config["search"].get("keyword", "終局")
-    start = params["starttime_hm"]
-    end = params["endtime_hm"]
+    start = g.prm.starttime_hm
+    end = g.prm.endtime_hm
     msg = f"{start} ～ {end} に≪{keyword}≫はありません。"
 
     if g.config.has_section("custom_message"):
@@ -164,7 +164,7 @@ def no_hits(params):
     return(msg.format(keyword = keyword, start = start, end = end))
 
 
-def remarks(command_option):
+def remarks():
     """
     引数で指定された集計方法を注記にまとめる
     """
@@ -196,7 +196,7 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
 
     # ゲーム数
     if game_info["game_count"] == 0:
-        msg += f"{tab}{f.message.no_hits(params)}"
+        msg += f"{tab}{f.message.no_hits()}"
     else:
         match g.opt.command:
             case "results":
@@ -213,6 +213,6 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
             case _:
                 msg += game_range2
                 msg += f"{tab}総ゲーム数：{game_info['game_count']} 回\n"
-        msg += tab + f.message.remarks(vars(g.opt))
+        msg += tab + f.message.remarks()
 
     return(msg)

@@ -64,7 +64,7 @@ def aggregation():
         \t4位： {data['4位']:2} 回 ({data['4位率']:6.2f}%)
         \tトビ： {data['トビ']:2} 回 ({data['トビ率']:6.2f}%)
         \t役満： {data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)
-        \t{f.message.remarks(vars(g.opt))}
+        \t{f.message.remarks()}
     """.replace("-", "▲")
 
     # --- 座席データ

@@ -46,7 +46,7 @@ def aggregation():
         \tプレイヤー名：{c.member.NameReplace(my_name, add_mark = True)}
         \t対戦相手：{vs}
         \t検索範囲：{g.prm.starttime_hms} ～ {g.prm.endtime_hms}
-        \t{f.message.remarks(vars(g.opt))}
+        \t{f.message.remarks()}
     """).strip() + "\n"
 
     # --- 表示内容

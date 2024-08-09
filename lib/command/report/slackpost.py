@@ -24,7 +24,7 @@ def main(client, channel, argument):
     """
 
     g.opt.initialization("report", argument)
-    g.prm.update(argument, vars(g.opt))
+    g.prm.update(g.opt)
 
     if len(g.prm.player_list) == 1: # 個人成績レポート
         name, pdf_file = results.gen_pdf()
@@ -37,16 +37,16 @@ def main(client, channel, argument):
         if report_file_path:
             f.slack_api.post_fileupload(client, channel, "月別ゲーム統計", report_file_path)
         else:
-            f.slack_api.post_message(client, channel, f.message.no_hits(g.prm.to_dict()))
+            f.slack_api.post_message(client, channel, f.message.no_hits())
     elif g.opt.personal:
         report_file_path = personal.plot()
         if report_file_path:
             f.slack_api.post_fileupload(client, channel, "個人成績一覧", report_file_path)
         else:
-            f.slack_api.post_message(client, channel, f.message.no_hits(g.prm.to_dict()))
+            f.slack_api.post_message(client, channel, f.message.no_hits())
     else:
         report_file_path = winner.plot()
         if report_file_path:
             f.slack_api.post_fileupload(client, channel, "成績上位者", report_file_path)
         else:
-            f.slack_api.post_message(client, channel, f.message.no_hits(g.prm.to_dict()))
+            f.slack_api.post_message(client, channel, f.message.no_hits())

@@ -26,12 +26,10 @@ mlogger.setLevel(g.logging.WARNING)
 pd.set_option("display.max_rows", None)
 
 
-def get_game_results(argument, command_option, flag = "M"):
+def get_game_results(flag = "M"):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-
-    ret = query.for_report_personal_data(argument, command_option, flag = flag)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+    rows = resultdb.execute(query.for_report_personal_data(flag), g.prm.to_dict())
 
     # --- データ収集
     results = [
@@ -76,12 +74,10 @@ def get_game_results(argument, command_option, flag = "M"):
     return(results)
 
 
-def get_count_results(argument, command_option, game_count):
+def get_count_results(game_count):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-
-    ret = query.for_report_count_data(argument, command_option, game_count)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+    rows = resultdb.execute(query.for_report_count_data(game_count), g.prm.to_dict())
 
     # --- データ収集
     results = [
@@ -128,12 +124,10 @@ def get_count_results(argument, command_option, game_count):
     return(results)
 
 
-def get_count_moving(argument, command_option, game_count):
+def get_count_moving(game_count):
     resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-
-    ret = query.for_report_count_moving(argument, command_option, game_count)
-    rows = resultdb.execute(ret["sql"], ret["placeholder"])
+    rows = resultdb.execute(query.for_report_count_moving(game_count), g.prm.to_dict())
 
     # --- データ収集
     results = []
@@ -333,7 +327,7 @@ def gen_pdf():
     """
 
     plt.close()
-    
+
     if not g.prm.player_name: # レポート対象の指定なし
         return(False, False)
 
@@ -391,8 +385,12 @@ def gen_pdf():
     # --- 全期間
     elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5*mm))
-    tmp_data = get_game_results(g.prm.argument, vars(g.opt), flag = "A")
+    tmp_data = get_game_results(flag = "A")
     data = []
+
+    if not tmp_data:
+        return(False, False)
+
     for x in range(len(tmp_data)): # ゲーム数を除外
         data.append(tmp_data[x][1:])
     tt = LongTable(data, repeatRows = 1)
@@ -442,7 +440,7 @@ def gen_pdf():
     elements.append(Image(imgdata, width = 600 * 0.5, height = 600 * 0.5))
     plt.close()
 
-    data = get_count_moving(g.prm.argument, vars(g.opt), 0)
+    data = get_count_moving(0)
     df = pd.DataFrame.from_dict(data)
     df["playtime"] = pd.to_datetime(df["playtime"])
 
@@ -466,7 +464,7 @@ def gen_pdf():
         elements.append(Spacer(1, 5*mm))
 
         data = []
-        tmp_data = get_game_results(g.prm.argument, vars(g.opt), flag)
+        tmp_data = get_game_results(flag)
         for x in range(len(tmp_data)): # 日時を除外
             data.append(tmp_data[x][:15])
 
@@ -519,7 +517,7 @@ def gen_pdf():
             # テーブル
             elements.append(Paragraph(f"区間集計 （ {title} ）", style["Left"]))
             elements.append(Spacer(1,5*mm))
-            data = get_count_results(g.prm.argument, vars(g.opt), count)
+            data = get_count_results(count)
             tt = LongTable(data, repeatRows = 1)
             ts = TableStyle([
                 ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
@@ -557,7 +555,7 @@ def gen_pdf():
             elements.append(Image(imgdata, width = 1200 * 0.5, height = 800 * 0.5))
 
             # 通算ポイント推移
-            data = get_count_moving(g.prm.argument, vars(g.opt), count)
+            data = get_count_moving(count)
             tmp_df = pd.DataFrame.from_dict(data)
             df = pd.DataFrame()
             for i in sorted(tmp_df["interval"].unique().tolist()):
