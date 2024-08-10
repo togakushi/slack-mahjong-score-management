@@ -69,7 +69,6 @@ def point_plot():
         "legend": legend,
         "xlabel_text": xlabel_text,
         "ylabel_text": "通算ポイント",
-        "filename": g.opt.filename,
     }
 
     save_file = _graph_generation(pivot, **args)
@@ -144,7 +143,6 @@ def rank_plot():
         "legend": legend,
         "xlabel_text": xlabel_text,
         "ylabel_text": "順位 (通算ポイント順)",
-        "filename": g.opt.filename,
     }
 
     save_file = _graph_generation(pivot, **args)
@@ -206,7 +204,7 @@ def _graph_generation(df:pd.DataFrame, **kwargs):
 
     f.common.set_graph_font(plt, fm)
     save_file = os.path.join(g.work_dir,
-        kwargs["filename"] + ".png" if kwargs["filename"] else "graph.png"
+        f"{g.opt.filename}.png" if g.opt.filename else "graph.png"
     )
 
     g.logging.info(f"plot data:\n{df}")

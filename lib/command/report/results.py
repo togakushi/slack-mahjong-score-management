@@ -343,7 +343,9 @@ def gen_pdf():
 
     # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
-    pdf_path = os.path.join(g.work_dir, "Results.pdf")
+    pdf_path = os.path.join(g.work_dir,
+        f"{g.opt.filename}.pdf" if g.opt.filename else "Results.pdf"
+    )
     pdfmetrics.registerFont(TTFont("ReportFont", font_path))
 
     doc = SimpleDocTemplate(
