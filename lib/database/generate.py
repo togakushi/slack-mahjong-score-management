@@ -1,5 +1,59 @@
+import re
 import textwrap
 from lib.function import global_value as g
+
+
+def _query_modification(sql: str):
+    """
+    オプションの内容でクエリを修正する
+    """
+
+    # ゲスト関連フラグ
+    if g.opt.unregistered_replace:
+        sql = sql.replace("--[unregistered_replace] ", "")
+        if g.opt.guest_skip:
+            sql = sql.replace("--[guest_not_skip] ", "")
+        else:
+            sql = sql.replace("--[guest_skip] ", "")
+    else:
+        sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    # チーム戦
+    if not g.opt.friendly_fire:
+        sql = sql.replace("--[friendly_fire] ", "")
+
+    # 日次集計
+    if g.opt.daily:
+        sql = sql.replace("--[daily] ", "")
+    else:
+        sql = sql.replace("--[not_daily] ", "")
+    if g.prm.search_word or g.prm.group_length:
+        sql = sql.replace("--[group_by] ", "")
+    else:
+        sql = sql.replace("--[not_group_by] ", "")
+
+    # コメント検索
+    if g.opt.search_word:
+        sql = sql.replace("--[search_word] ", "")
+
+    if g.opt.group_length:
+        sql = sql.replace("--[group_length] ", "")
+    else:
+        sql = sql.replace("--[not_group_length] ", "")
+        if g.prm.search_word:
+            sql = sql.replace("--[comment] ", "")
+        else:
+            sql = sql.replace("--[not_comment] ", "")
+
+    # 直近N検索用（全範囲取得してから絞る）
+    if g.prm.target_count != 0:
+        sql = sql.replace("and my.playtime between", "-- and my.playtime between")
+
+    # SQLコメント削除
+    sql = re.sub(r"^ *--\[.*$", "", sql, flags = re.MULTILINE)
+    sql = re.sub(r"\n+", "\n", sql, flags = re.MULTILINE)
+
+    return(sql)
 
 
 def game_info():
@@ -27,42 +81,22 @@ def game_info():
                 and playtime between :starttime and :endtime -- 検索範囲
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :search_word
+                --[search_word] and comment like :search_word
             group by
                 playtime
             order by
                 playtime desc
-            --[recent] limit :target_count
         )
     """
-
-    if g.opt.group_length:
-        sql = sql.replace("--[group_length] ", "")
-    else:
-        sql = sql.replace("--[not_group_length] ", "")
 
     if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
         sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if g.opt.unregistered_replace:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if g.opt.guest_skip:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-
-    if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
-
-    if g.prm.target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -87,32 +121,17 @@ def record_count():
             --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
             --[guest_skip] and guest = 0 -- ゲストなし
             --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-            --[comment] and comment like :search_word
-        --[recent] limit :target_count
+            --[search_word] and comment like :search_word
     """
 
     if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
         sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if g.opt.unregistered_replace:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if g.opt.guest_skip:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-
-    if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
-
-    if g.prm.target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -153,10 +172,9 @@ def game_results():
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :search_word
+                --[search_word] and comment like :search_word
             order by
                 playtime desc
-            --[recent] limit :target_count
         )
         group by
             name
@@ -170,24 +188,10 @@ def game_results():
         sql = sql.replace("--[player_name] ", "")
         sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if g.opt.unregistered_replace:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if g.opt.guest_skip:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-
-    if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
-
-    if g.prm.target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -313,10 +317,9 @@ def personal_results():
                 --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :search_word
+                --[search_word] and comment like :search_word
             order by
                 playtime desc
-            --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
         )
         group by
             name
@@ -330,24 +333,10 @@ def personal_results():
         sql = sql.replace("--[player_name] ", "")
         sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if g.opt.unregistered_replace:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if g.opt.guest_skip:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-
-    if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
-
-    if g.prm.target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -366,27 +355,25 @@ def game_details():
             rank,
             point,
             grandslam,
-            comment
+            --[not_group_length] comment
+            --[group_length] substr(comment, 1, :group_length) as comment
         from (
             select * from individual_results
             where
                 rule_version = :rule_version
                 and playtime between :starttime and :endtime
-                --[comment] and comment like :search_word
+                --[search_word] and comment like :search_word
             order by
                 playtime desc, comment asc
-            --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
         )
         order by
             playtime
     """
 
-    if g.prm.target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -460,7 +447,6 @@ def versus_matrix():
                 --[comment] and my.comment like :search_word
             order by
                 my.playtime desc
-            --[recent] limit :target_count
         )
         group by
             my_name, vs_name
@@ -468,24 +454,10 @@ def versus_matrix():
             game desc
     """
 
-    if g.opt.unregistered_replace:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if g.opt.guest_skip:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-
-    if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
-
-    if g.prm.target_count != 0:
-        sql = sql.replace("and my.playtime between", "-- and my.playtime between")
-        sql = sql.replace("--[recent] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -495,9 +467,13 @@ def personal_gamedata():
     """
 
     sql = """
+        -- ゲーム結果集計(個人戦)
         select
-            count() over moving as count,
-            replace(playtime, "-", "/") as playtime,
+            --[not_daily] --[not_group_by] count() over moving as count,
+            --[not_daily] --[group_by] sum(count) over moving as count,
+            --[daily] sum(count) over moving as count,
+            --[not_daily] replace(playtime, "-", "/") as playtime,
+            --[daily] replace(collection_daily, "-", "/") as playtime,
             name,
             rank,
             point,
@@ -507,85 +483,19 @@ def personal_gamedata():
             comment
         from (
             select
+                --[daily] count() as count,
+                --[not_daily] --[group_by] count() as count,
                 playtime,
-                --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
-                --[unregistered_not_replace] name, -- ゲスト無効
-                rank,
-                point,
-                --[not_comment] comment
-                --[comment] comment
-                --[group_length] substr(comment, 1, :group_length) as comment
-            from
-                individual_results
-            where
-                rule_version = :rule_version
-                and playtime between :starttime and :endtime
-                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
-                --[guest_skip] and guest = 0 -- ゲストなし
-                --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :search_word
-            order by
-                playtime desc
-            --[recent] limit :target_count
-        )
-        window
-            moving as (partition by name order by playtime)
-        order by
-            name, playtime
-    """
-
-    if g.prm.player_name:
-        sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
-
-    if g.opt.unregistered_replace:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if g.opt.guest_skip:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-
-    if g.opt.search_word:
-        if g.opt.group_length:
-            sql = sql.replace("--[group_length] ", "")
-        else:
-            sql = sql.replace("--[comment] ", "")
-    else:
-        sql = sql.replace("--[not_comment] ", "")
-
-    if g.prm.target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
-    return(sql)
-
-
-def personal_gamedata_daily():
-    """
-    ゲーム結果日次集計(個人戦)
-    """
-
-    sql = """
-        select
-            sum(count) over moving as count,
-            replace(collection_daily, "-", "/") as playtime,
-            name,
-            round(sum(point_sum) over moving, 1) as point_sum,
-            comment
-        from (
-            select
-                count() as count,
                 collection_daily,
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
-                round(sum(point), 1) as point_sum,
+                --[not_daily] rank,
+                --[daily] round(avg(rank), 2) as rank,
+                --[not_daily] --[not_group_by] point,
+                --[not_daily] --[group_by] round(sum(point), 1) as point,
+                --[daily] round(sum(point), 1) as point,
                 guest_count,
-                --[not_comment] comment
-                --[comment] comment
+                --[not_group_length] comment
                 --[group_length] substr(comment, 1, :group_length) as comment
             from
                 individual_results
@@ -597,45 +507,33 @@ def personal_gamedata_daily():
                 --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[comment] and comment like :search_word
-            group by
-                --[not_comment] collection_daily, name
-                --[comment] comment, name
-                --[group_length] substr(comment, 1, :group_length), name
+                --[search_word] and comment like :search_word
+            --[not_daily] --[group_by] group by -- コメント集約
+            --[not_daily] --[group_by]     --[not_comment] collection_daily, name
+            --[not_daily] --[group_by]     --[comment] comment, name
+            --[not_daily] --[group_by]     --[group_length] substr(comment, 1, :group_length), name
+            --[daily] group by -- 日次集計
+            --[daily]     collection_daily, name
+            order by
+                --[not_daily] playtime desc
+                --[daily] collection_daily desc
         )
         window
-            moving as (partition by name order by collection_daily)
+            --[not_daily] moving as (partition by name order by playtime)
+            --[daily] moving as (partition by name order by collection_daily)
         order by
-            collection_daily
+            --[not_daily] playtime, name
+            --[daily] collection_daily, name
     """
 
     if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
         sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
 
-    if g.opt.unregistered_replace:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if g.opt.guest_skip:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-
-    if g.opt.search_word:
-        if g.opt.group_length:
-            sql = sql.replace("--[group_length] ", "")
-        else:
-            sql = sql.replace("--[comment] ", "")
-    else:
-        sql = sql.replace("--[not_comment] ", "")
-
-    if g.prm.target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -644,7 +542,7 @@ def team_gamedata():
     ゲーム結果集計(チーム戦)
     """
 
-    sql = """
+    sql2 = """
         select
             count() over moving as count,
             replace(playtime, "-", "/") as playtime,
@@ -661,18 +559,16 @@ def team_gamedata():
                 team,
                 rank,
                 point,
-                --[not_comment] comment,
-                --[comment] comment,
-                --[group_length] substr(comment, 1, :group_length) as comment,
+                --[not_group_length] comment
+                --[group_length] substr(comment, 1, :group_length) as comment
             from
                 individual_results
             where
                 rule_version = :rule_version
                 and playtime between :starttime and :endtime
-                --[comment] and comment like :search_word
+                --[search_word] and comment like :search_word
             order by
                 playtime desc
-            --[recent] limit :target_count
         )
         window
             moving as (partition by team order by playtime)
@@ -680,82 +576,67 @@ def team_gamedata():
             team, playtime
     """
 
-    if g.opt.search_word:
-        if g.opt.group_length:
-            sql = sql.replace("--[group_length] ", "")
-        else:
-            sql = sql.replace("--[comment] ", "")
-    else:
-        sql = sql.replace("--[not_comment] ", "")
-
-    if g.prm.target_count != 0:
-        sql = sql.replace("and playtime between", "-- and playtime between")
-        sql = sql.replace("--[recent] ", "")
-
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
-    return(sql)
-
-
-def team_gamedata_daily():
-    """
-    ゲーム結果日次集計(チーム戦)
-    """
-
     sql = """
+        -- ゲーム結果集計(チーム戦)
         select
-            playtime,
+            --[not_daily] --[not_group_by] count() over moving as count,
+            --[not_daily] --[group_by] sum(count) over moving as count,
+            --[daily] sum(count) over moving as count,
+            --[not_daily] replace(playtime, "-", "/") as playtime,
+            --[daily] replace(collection_daily, "-", "/") as playtime,
             team,
-            round(sum(point_sum) over moving, 1) as point_sum,
-            sum(count) over moving as count,
+            rank,
+            point,
+            round(sum(point) over moving, 1) as point_sum,
+            round(avg(point) over moving, 1) as point_avg,
+            round(avg(rank) over moving, 2) as rank_avg,
             comment
         from (
             select
-                --[not_comment] collection_daily as playtime,
-                --[comment] comment as playtime,
-                --[group_length] substr(comment, 1, :group_length) as playtime,
+                --[daily] count() as count,
+                --[not_daily] --[group_by] count() as count,
+                playtime,
+                collection_daily,
                 team,
-                round(sum(point), 1) as point_sum,
-                --[not_comment] comment,
-                --[comment] comment,
-                --[group_length] substr(comment, 1, :group_length) as comment,
-                count() as count
+                --[not_daily] rank,
+                --[daily] round(avg(rank), 2) as rank,
+                --[not_daily] --[not_group_by] point,
+                --[not_daily] --[group_by] round(sum(point), 1) as point,
+                --[daily] round(sum(point), 1) as point,
+                guest_count,
+                --[not_group_length] comment
+                --[group_length] substr(comment, 1, :group_length) as comment
             from
                 individual_results
-            join game_info
-                on individual_results.ts = game_info.ts
+            join
+                game_info on individual_results.ts = game_info.ts
             where
                 rule_version = :rule_version
                 and playtime between :starttime and :endtime
-                and team not null
-                --[friendly_fire] and same_team = 0
-                --[comment] and comment like :search_word
-            group by
-                --[not_comment] collection_daily, team
-                --[comment] comment, team
-                --[group_length] substr(comment, 1, :group_length), team
+                --[search_word] and comment like :search_word
+            --[not_daily] --[group_by] group by -- コメント集約
+            --[not_daily] --[group_by]     --[not_comment] collection_daily, team
+            --[not_daily] --[group_by]     --[comment] comment, team
+            --[not_daily] --[group_by]     --[group_length] substr(comment, 1, :group_length), team
+            --[daily] group by -- 日次集計
+            --[daily]     collection_daily, team
             order by
-                playtime
+                --[not_daily] playtime desc
+                --[daily] collection_daily desc
         )
         window
-            moving as (partition by team order by playtime)
+            --[not_daily] moving as (partition by team order by playtime)
+            --[daily] moving as (partition by team order by collection_daily)
         order by
-            playtime
+            --[not_daily] playtime, team
+            --[daily] collection_daily, team
     """
 
-    if not g.opt.friendly_fire:
-        sql = sql.replace("--[friendly_fire] ", "")
 
-    if g.opt.search_word:
-        if g.opt.group_length:
-            sql = sql.replace("--[group_length] ", "")
-        else:
-            sql = sql.replace("--[comment] ", "")
-    else:
-        sql = sql.replace("--[not_comment] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -777,18 +658,17 @@ def monthly_report():
         where
             rule_version = :rule_version
             and playtime between :starttime and :endtime
-            --[comment] and comment like :search_word
+            --[search_word] and comment like :search_word
         group by
             collection
         order by
             collection desc
     """
 
-    if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -828,7 +708,7 @@ def winner_report():
                     and playtime between :starttime and :endtime
                     --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                     --[guest_skip] and guest = 0 -- ゲストなし
-                    --[comment] and comment like :search_word
+                    --[search_word] and comment like :search_word
             )
             group by
                 name, collection
@@ -841,20 +721,10 @@ def winner_report():
             collection desc
     """
 
-    if g.opt.unregistered_replace:
-        sql = sql.replace("--[unregistered_replace] ", "")
-        if g.opt.guest_skip:
-            sql = sql.replace("--[guest_not_skip] ", "")
-        else:
-            sql = sql.replace("--[guest_skip] ", "")
-    else:
-        sql = sql.replace("--[unregistered_not_replace] ", "")
-
-    if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)
 
 
@@ -878,19 +748,15 @@ def team_total():
             and playtime between :starttime and :endtime
             and team not null
             --[friendly_fire] and same_team = 0
-            --[comment] and comment like :search_word
+            --[search_word] and comment like :search_word
         group by
             team
         order by
             total desc
     """
 
-    if not g.opt.friendly_fire:
-        sql = sql.replace("--[friendly_fire] ", "")
-
-    if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
-
+    sql = _query_modification(sql)
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
     g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+
     return(sql)

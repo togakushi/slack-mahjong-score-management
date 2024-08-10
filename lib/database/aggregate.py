@@ -264,18 +264,11 @@ def versus_matrix():
 
 def personal_gamedata():
     # データ収集
-    if g.opt.daily:
-        df = pd.read_sql(
-            d.generate.personal_gamedata_daily(),
-            sqlite3.connect(g.database_file),
-            params = g.prm.to_dict(),
-        )
-    else:
-        df = pd.read_sql(
-            d.generate.personal_gamedata(),
-            sqlite3.connect(g.database_file),
-            params = g.prm.to_dict(),
-        )
+    df = pd.read_sql(
+        d.generate.personal_gamedata(),
+        sqlite3.connect(g.database_file),
+        params = g.prm.to_dict(),
+    )
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
@@ -287,18 +280,11 @@ def personal_gamedata():
 
 def team_gamedata():
     # データ収集
-    if g.opt.daily:
-        df = pd.read_sql(
-            d.generate.team_gamedata_daily(),
-            sqlite3.connect(g.database_file),
-            params = g.prm.to_dict(),
-        )
-    else:
-        df = pd.read_sql(
-            d.generate.team_gamedata(),
-            sqlite3.connect(g.database_file),
-            params = g.prm.to_dict(),
-        )
+    df = pd.read_sql(
+        d.generate.team_gamedata(),
+        sqlite3.connect(g.database_file),
+        params = g.prm.to_dict(),
+    )
 
     return(df)
 
