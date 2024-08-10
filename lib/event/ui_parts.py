@@ -2,8 +2,6 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
-import lib.command as c
-import lib.function as f
 from lib.function import global_value as g
 
 
@@ -12,23 +10,23 @@ def PlainText(msg):
     view["blocks"].append({"type": "section", "text": {}})
     view["blocks"][0]["text"] = {"type": "mrkdwn", "text": msg}
 
-    return(view)
+    return (view)
 
 
 def Divider(view, no):
-    view["blocks"].append({"type": "divider",})
+    view["blocks"].append({"type": "divider", })
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
-def Header(view, no, text = "dummy"):
+def Header(view, no, text="dummy"):
     view["blocks"].append({"type": "header", "text": {}})
     view["blocks"][no]["text"] = {"type": "plain_text", "text": text}
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
-def Button(view, no, text = "Click Me", value = "dummy", action_id = False, style = False):
+def Button(view, no, text="Click Me", value="dummy", action_id=False, style=False):
     view["blocks"].append({"type": "actions", "elements": [{}]})
     view["blocks"][no]["elements"][0] = {"type": "button", "text": {}, "value": value, "action_id": action_id}
     view["blocks"][no]["elements"][0]["text"] = {"type": "plain_text", "text": text}
@@ -36,16 +34,16 @@ def Button(view, no, text = "Click Me", value = "dummy", action_id = False, styl
     if style:
         view["blocks"][no]["elements"][0].update({"style": style})
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
-def SearchOptions(view, no, flag = []):
+def SearchOptions(view, no, flag=[]):
     view["blocks"].append(
         {"type": "input", "block_id": "bid-search_option", "optional": False, "element": {}}
     )
     view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索オプション"}
     view["blocks"][no]["element"]["type"] = "checkboxes"
-    view["blocks"][no]["element"]["action_id"] =  "aid-search"
+    view["blocks"][no]["element"]["action_id"] = "aid-search"
 
     view["blocks"][no]["element"]["options"] = []
     view["blocks"][no]["element"]["initial_options"] = []
@@ -58,19 +56,19 @@ def SearchOptions(view, no, flag = []):
             {"text": {"type": "plain_text", "text": "ゲスト無効"}, "value": "unregistered_replace"}
         )
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
-def DisplayOptions(view, no, flag = []):
+def DisplayOptions(view, no, flag=[]):
     view["blocks"].append(
         {"type": "input", "block_id": "bid-display_option", "optional": False, "element": {}}
     )
     view["blocks"][no]["label"] = {"type": "plain_text", "text": "表示オプション"}
     view["blocks"][no]["element"]["type"] = "checkboxes"
-    view["blocks"][no]["element"]["action_id"] =  "aid-display"
+    view["blocks"][no]["element"]["action_id"] = "aid-display"
 
     view["blocks"][no]["element"]["options"] = []
-    #view["blocks"][no]["element"]["initial_options"] = []
+    # view["blocks"][no]["element"]["initial_options"] = []
 
     if "versus_matrix" in flag:
         view["blocks"][no]["element"]["options"].append(
@@ -92,10 +90,10 @@ def DisplayOptions(view, no, flag = []):
             {"text": {"type": "plain_text", "text": "通算ポイント比較"}, "value": "score_comparisons"}
         )
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
-def UserSelect(view, no, text = "dummy", add_list = False):
+def UserSelect(view, no, text="dummy", add_list=False):
     view["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     view["blocks"][no]["element"]["type"] = "static_select"
     view["blocks"][no]["element"]["action_id"] = "player"
@@ -115,10 +113,10 @@ def UserSelect(view, no, text = "dummy", add_list = False):
 
     view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
-def MultiSelect(view, no, text = "dummy", add_list = False):
+def MultiSelect(view, no, text="dummy", add_list=False):
     view["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
     view["blocks"][no]["element"]["type"] = "multi_static_select"
     view["blocks"][no]["element"]["action_id"] = "player"
@@ -138,12 +136,14 @@ def MultiSelect(view, no, text = "dummy", add_list = False):
 
     view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
-def PeriodSelection(view, no, text = "dummy", block_id = False, action_id = "dummy", initial_date = False):
+def PeriodSelection(view, no, text="dummy", block_id=False, action_id="dummy", initial_date=False):
     if not initial_date:
-        initial_date = (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d")
+        initial_date = (
+            datetime.now() + relativedelta(hours=-12)
+        ).strftime("%Y-%m-%d")
 
     if block_id:
         view["blocks"].append({"type": "input", "block_id": block_id, "element": {}})
@@ -153,10 +153,10 @@ def PeriodSelection(view, no, text = "dummy", block_id = False, action_id = "dum
     view["blocks"][no]["element"]["type"] = "datepicker"
     view["blocks"][no]["element"]["initial_date"] = initial_date
     view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select a date"}
-    view["blocks"][no]["element"]["action_id"] =  action_id
+    view["blocks"][no]["element"]["action_id"] = action_id
     view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
 def SearchRangeChoice(view, no):
@@ -184,10 +184,10 @@ def SearchRangeChoice(view, no):
         {"text": {"type": "plain_text", "text": "今月"}, "value": "今月"}
     )
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
-def InputRanked(view, no, block_id = False):
+def InputRanked(view, no, block_id=False):
     if block_id:
         view["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
     else:
@@ -200,7 +200,7 @@ def InputRanked(view, no, block_id = False):
     view["blocks"][no]["element"].update({"action_id": "aid-ranked"})
     view["blocks"][no]["label"].update({"type": "plain_text", "text": "出力順位上限"})
 
-    return(view, no + 1)
+    return (view, no + 1)
 
 
 def ModalPeriodSelection():
@@ -223,4 +223,4 @@ def ModalPeriodSelection():
     view["blocks"][1]["element"].update({"action_id": "aid-eday"})
     view["blocks"][1]["label"].update({"type": "plain_text", "text": "終了日"})
 
-    return(view)
+    return (view)

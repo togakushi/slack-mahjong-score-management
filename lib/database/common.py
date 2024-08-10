@@ -9,14 +9,18 @@ from lib.function import global_value as g
 
 
 def ExsistRecord(ts):
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(
+        g.database_file,
+        detect_types=sqlite3.PARSE_DECLTYPES,
+    )
     row = resultdb.execute("select ts from result where ts=?", (ts,))
     line = len(row.fetchall())
     resultdb.close()
 
     if line:
-        return(True)
-    return(False)
+        return (True)
+
+    return (False)
 
 
 def resultdb_insert(msg, ts):
@@ -26,9 +30,12 @@ def resultdb_insert(msg, ts):
         "rule_version": g.rule_version,
     }
     param.update(f.score.get_score(msg))
-    g.logging.notice(f"{param=}") # type: ignore
+    g.logging.notice(f"{param=}")  # type: ignore
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(
+        g.database_file,
+        detect_types=sqlite3.PARSE_DECLTYPES,
+    )
     resultdb.execute(d.sql_result_insert, param)
     resultdb.commit()
     resultdb.close()
@@ -41,21 +48,27 @@ def resultdb_update(msg, ts):
         "rule_version": g.rule_version,
     }
     param.update(f.score.get_score(msg))
-    g.logging.notice(f"{param=}") # type: ignore
+    g.logging.notice(f"{param=}")  # type: ignore
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(
+        g.database_file,
+        detect_types=sqlite3.PARSE_DECLTYPES,
+    )
     resultdb.execute(d.sql_result_update, param)
     resultdb.commit()
     resultdb.close()
 
 
 def resultdb_delete(ts):
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(
+        g.database_file,
+        detect_types=sqlite3.PARSE_DECLTYPES,
+    )
     resultdb.execute(d.sql_result_delete, (ts,))
     resultdb.execute(d.sql_remarks_delete_all, (ts,))
     resultdb.commit()
     resultdb.close()
-    g.logging.notice(f"{ts}") # type: ignore
+    g.logging.notice(f"{ts}")  # type: ignore
 
 
 def database_backup():
@@ -65,21 +78,21 @@ def database_backup():
     bktime = datetime.now().strftime('%Y%m%d-%H%M%S')
     bkfname = os.path.join(backup_dir, f"{fname}_{bktime}{fext}")
 
-    if not backup_dir: # バックアップ設定がされていない場合は何もしない
-        return("")
+    if not backup_dir:  # バックアップ設定がされていない場合は何もしない
+        return ("")
 
-    if not os.path.isdir(backup_dir): # バックアップディレクトリ作成
+    if not os.path.isdir(backup_dir):  # バックアップディレクトリ作成
         try:
             os.mkdir(backup_dir)
-        except:
+        except Exception:
             g.logging.error("Database backup directory creation failed !!!")
-            return("\nバックアップ用ディレクトリ作成の作成に失敗しました。")
+            return ("\nバックアップ用ディレクトリ作成の作成に失敗しました。")
 
     # バックアップディレクトリにコピー
     try:
         shutil.copyfile(g.database_file, bkfname)
-        g.logging.notice(f"database backup: {bkfname}") # type: ignore
-        return("\nデータベースをバックアップしました。")
-    except:
+        g.logging.notice(f"database backup: {bkfname}")  # type: ignore
+        return ("\nデータベースをバックアップしました。")
+    except Exception:
         g.logging.error("Database backup failed !!!")
-        return("\nデータベースのバックアップに失敗しました。")
+        return ("\nデータベースのバックアップに失敗しました。")

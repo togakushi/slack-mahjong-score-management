@@ -6,12 +6,12 @@ def build_main_menu():
     g.app_var["screen"] = "MainMenu"
     no = 0
     view = {"type": "home", "blocks": []}
-    view, no = e.Button(view, no, text = "成績サマリ", value = "click_summary_menu", action_id = "menu_summary")
-    view, no = e.Button(view, no, text = "ランキング", value = "click_ranking_menu", action_id = "menu_ranking")
-    view, no = e.Button(view, no, text = "個人成績", value = "click_personal_menu", action_id = "menu_personal")
-    view, no = e.Button(view, no, text = "直接対戦", value = "click_versus_menu", action_id = "menu_versus")
+    view, no = e.Button(view, no, text="成績サマリ", value="click_summary_menu", action_id="menu_summary")
+    view, no = e.Button(view, no, text="ランキング", value="click_ranking_menu", action_id="menu_ranking")
+    view, no = e.Button(view, no, text="個人成績", value="click_personal_menu", action_id="menu_personal")
+    view, no = e.Button(view, no, text="直接対戦", value="click_versus_menu", action_id="menu_versus")
 
-    return(view)
+    return (view)
 
 
 def set_command_option(body):
@@ -39,8 +39,8 @@ def set_command_option(body):
         select_item = search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]
         if select_item == "指定":
             app_msg.append(f"集計範囲： {g.app_var['sday']} ～ {g.app_var['eday']}")
-            argument.append(g.app_var["sday"].replace("-",""))
-            argument.append(g.app_var["eday"].replace("-",""))
+            argument.append(g.app_var["sday"].replace("-", ""))
+            argument.append(g.app_var["eday"].replace("-", ""))
         elif select_item == "全部":
             app_msg.append("集計範囲： 全部")
             argument.append("全部")
@@ -70,17 +70,17 @@ def set_command_option(body):
                 g.opt.score_comparisons = True
 
     app_msg.append("集計中…")
-    return(argument, app_msg)
+    return (argument, app_msg)
 
 
 @g.app.action("actionId-back")
 def handle_action(ack, body, client):
     ack()
-    g.logging.trace(body) # type: ignore
+    g.logging.trace(body)  # type: ignore
 
     client.views_publish(
-        user_id = g.app_var["user_id"],
-        view = build_main_menu(),
+        user_id=g.app_var["user_id"],
+        view=build_main_menu(),
     )
 
 
@@ -89,8 +89,8 @@ def handle_open_modal_button_clicks(ack, body, client):
     ack()
 
     client.views_open(
-        trigger_id = body["trigger_id"],
-        view =e.ModalPeriodSelection(),
+        trigger_id=body["trigger_id"],
+        view=e.ModalPeriodSelection(),
     )
 
 

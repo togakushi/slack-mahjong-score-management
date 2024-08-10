@@ -21,11 +21,11 @@ def aggregation():
         ファイル出力用path
     """
 
-    ### データ収集 ###
+    # データ収集
     game_info = d.aggregate.game_info()
     df_summary = d.aggregate.team_total()
     df_summary = df_summary.rename(
-        columns = {
+        columns={
             "team": "チーム名",
             "total": "通算ポイント",
             "rank": "平均順位",
@@ -33,21 +33,21 @@ def aggregation():
         }
     )
 
-    ### 表示 ###
+    # 表示
     msg = {}
     header = "*【チーム成績サマリ】*\n"
-    header += f.message.header(game_info, vars(g.opt), vars(g.prm), "", 1)
+    header += f.message.header(game_info, vars(g.prm), "", 1)
     file_list = {}
 
     if not df_summary.empty:
         data = df_summary.to_markdown(
-            index = False,
-            tablefmt = "simple",
-            numalign = "right",
-            maxheadercolwidths = 16,
-            floatfmt = ("", "+.1f", ".2f", "")
+            index=False,
+            tablefmt="simple",
+            numalign="right",
+            maxheadercolwidths=16,
+            floatfmt=("", "+.1f", ".2f", "")
         )
         data = re.sub(r" -([0-9]+)", r"▲\1", data)
         msg[0] = f"```\n{data}\n```"
 
-    return(header, msg, file_list)
+    return (header, msg, file_list)

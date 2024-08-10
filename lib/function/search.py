@@ -7,12 +7,22 @@ import lib.command as c
 import lib.function as f
 from lib.function import global_value as g
 
+
 class Regexes:
     keyword = g.config["search"].get("keyword", "終局")
-    pattern1 = re.compile(rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
-    pattern2 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$")
-    pattern3 = re.compile(rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
-    pattern4 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$")
+    pattern1 = re.compile(
+        rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
+    )
+    pattern2 = re.compile(
+        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$"
+    )
+    pattern3 = re.compile(
+        rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
+    )
+    pattern4 = re.compile(
+        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$"
+    )
+
 
 def pattern(text):
     """
@@ -31,8 +41,8 @@ def pattern(text):
 
     # 全角記号を半角へ置換
     replace_chr = [
-        (chr(0xff0b), "+"), # 全角プラス符号(0xff0b)
-        (chr(0x2212), "-"), # 全角マイナス符号(0x2212)
+        (chr(0xff0b), "+"),  # 全角プラス符号(0xff0b)
+        (chr(0x2212), "-"),  # 全角マイナス符号(0x2212)
         (chr(0xff08), "("),
         (chr(0xff09), ")"),
     ]
@@ -52,7 +62,7 @@ def pattern(text):
         case _:
             msg = False
 
-    return(msg)
+    return (msg)
 
 
 def for_slack(keyword, channel):
@@ -73,41 +83,41 @@ def for_slack(keyword, channel):
         検索した結果
     """
 
-    ### 検索クエリ ###
+    # 検索クエリ
     query = f"{keyword} in:{channel}"
     after = g.config["search"].get("after")
     if after:
         try:
-            datetime.fromisoformat(after) # フォーマットチェック
+            datetime.fromisoformat(after)  # フォーマットチェック
             query = f"{keyword} in:{channel} after:{after}"
-        except:
+        except Exception:
             g.logging.error(f"Incorrect date string: {after}")
 
     g.logging.info(f"{query=}")
 
-    ### データ取得 ###
+    # --- データ取得
     response = g.webclient.search_messages(
-        query = query,
-        sort = "timestamp",
-        sort_dir = "asc",
-        count = 100
+        query=query,
+        sort="timestamp",
+        sort_dir="asc",
+        count=100
     )
-    matches = response["messages"]["matches"] # 1ページ目
+    matches = response["messages"]["matches"]  # 1ページ目
 
     for p in range(2, response["messages"]["paging"]["pages"] + 1):
         response = g.webclient.search_messages(
-            query = query,
-            sort = "timestamp",
-            sort_dir = "asc",
-            count = 100,
-            page = p
+            query=query,
+            sort="timestamp",
+            sort_dir="asc",
+            count=100,
+            page=p
         )
-        matches += response["messages"]["matches"] # 2ページ目以降
+        matches += response["messages"]["matches"]  # 2ページ目以降
 
-    return(matches)
+    return (matches)
 
 
-def for_database(cur, first_ts = False):
+def for_database(cur, first_ts=False):
     """
     データベースからスコアを検索して返す
 
@@ -126,10 +136,10 @@ def for_database(cur, first_ts = False):
     """
 
     if not first_ts:
-        return(None)
+        return (None)
 
-    data ={}
-    rows = cur.execute(f"select * from result where ts >= ?", (first_ts,))
+    data = {}
+    rows = cur.execute("select * from result where ts >= ?", (first_ts,))
     for row in rows.fetchall():
         ts = row["ts"]
         data[ts] = []
@@ -143,7 +153,7 @@ def for_database(cur, first_ts = False):
         data[ts].append(row["p4_str"])
         data[ts].append(row["comment"])
 
-    return(data)
+    return (data)
 
 
 def game_result(data):
@@ -164,7 +174,7 @@ def game_result(data):
     result = {}
     for i in range(len(data)):
         if "blocks" in data[i]:
-            if data[i]["user"] in g.ignore_userid: # 除外ユーザからのポストは集計対象から外す
+            if data[i]["user"] in g.ignore_userid:  # 除外ユーザからのポストは集計対象から外す
                 g.logging.info(f"skip: {data[i]}")
                 continue
 
@@ -185,9 +195,9 @@ def game_result(data):
                     p3_name = c.member.NameReplace(msg[4])
                     p4_name = c.member.NameReplace(msg[6])
                     result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7], msg[8]]
-                    g.logging.trace(f"{ts}: {result[ts]}") # type: ignore
+                    g.logging.trace(f"{ts}: {result[ts]}")  # type: ignore
 
     if len(result) == 0:
-        return(None)
+        return (None)
     else:
-        return(result)
+        return (result)

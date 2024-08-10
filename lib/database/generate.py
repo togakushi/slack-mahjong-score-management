@@ -47,13 +47,16 @@ def _query_modification(sql: str):
 
     # 直近N検索用（全範囲取得してから絞る）
     if g.prm.target_count != 0:
-        sql = sql.replace("and my.playtime between", "-- and my.playtime between")
+        sql = sql.replace(
+            "and my.playtime between",
+            "-- and my.playtime between"
+        )
 
     # SQLコメント削除
-    sql = re.sub(r"^ *--\[.*$", "", sql, flags = re.MULTILINE)
-    sql = re.sub(r"\n+", "\n", sql, flags = re.MULTILINE)
+    sql = re.sub(r"^ *--\[.*$", "", sql, flags=re.MULTILINE)
+    sql = re.sub(r"\n+", "\n", sql, flags=re.MULTILINE)
 
-    return(sql)
+    return (sql)
 
 
 def game_info():
@@ -91,13 +94,16 @@ def game_info():
 
     if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
+        sql = sql.replace(
+            "<<player_list>>",
+            ":" + ", :".join([x for x in [*g.prm.player_list]])
+        )
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def record_count():
@@ -126,13 +132,16 @@ def record_count():
 
     if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
+        sql = sql.replace(
+            "<<player_list>>",
+            ":" + ", :".join([x for x in [*g.prm.player_list]])
+        )
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def game_results():
@@ -186,13 +195,16 @@ def game_results():
 
     if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
+        sql = sql.replace(
+            "<<player_list>>",
+            ":" + ", :".join([x for x in [*g.prm.player_list]])
+        )
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def personal_results():
@@ -331,13 +343,16 @@ def personal_results():
 
     if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
+        sql = sql.replace(
+            "<<player_list>>",
+            ":" + ", :".join([x for x in [*g.prm.player_list]])
+        )
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def game_details():
@@ -371,10 +386,10 @@ def game_details():
     """
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def versus_matrix():
@@ -455,10 +470,10 @@ def versus_matrix():
     """
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def personal_gamedata():
@@ -528,52 +543,21 @@ def personal_gamedata():
 
     if g.prm.player_name:
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace("<<player_list>>", ":" + ", :".join([x for x in [*g.prm.player_list]]))
+        sql = sql.replace(
+            "<<player_list>>",
+            ":" + ", :".join([x for x in [*g.prm.player_list]])
+        )
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def team_gamedata():
     """
     ゲーム結果集計(チーム戦)
-    """
-
-    sql2 = """
-        select
-            count() over moving as count,
-            replace(playtime, "-", "/") as playtime,
-            team,
-            rank,
-            point,
-            round(sum(point) over moving, 1) as point_sum,
-            round(avg(point) over moving, 1) as point_avg,
-            round(avg(rank) over moving, 2) as rank_avg,
-            comment
-        from (
-            select
-                playtime,
-                team,
-                rank,
-                point,
-                --[not_group_length] comment
-                --[group_length] substr(comment, 1, :group_length) as comment
-            from
-                individual_results
-            where
-                rule_version = :rule_version
-                and playtime between :starttime and :endtime
-                --[search_word] and comment like :search_word
-            order by
-                playtime desc
-        )
-        window
-            moving as (partition by team order by playtime)
-        order by
-            team, playtime
     """
 
     sql = """
@@ -632,12 +616,11 @@ def team_gamedata():
             --[daily] collection_daily, team
     """
 
-
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def monthly_report():
@@ -666,10 +649,10 @@ def monthly_report():
     """
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def winner_report():
@@ -722,10 +705,10 @@ def winner_report():
     """
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)
 
 
 def team_total():
@@ -756,7 +739,7 @@ def team_total():
     """
 
     sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
+    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
-    return(sql)
+    return (sql)

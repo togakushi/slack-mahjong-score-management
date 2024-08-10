@@ -23,7 +23,7 @@ def aggregation():
     # 検索動作を合わせる
     g.opt.guest_skip = g.opt.guest_skip2
 
-    ### データ収集 ###
+    # --- データ収集
     game_info = d.aggregate.game_info()
 
     if game_info["game_count"] == 0:
@@ -33,14 +33,18 @@ def aggregation():
             \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
             \t対戦数： 0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}
         """.replace("-", "/")
-        return(textwrap.dedent(msg1), {})
+        return (textwrap.dedent(msg1), {})
 
     result_df = d.aggregate.personal_results()
     record_df = d.aggregate.personal_record()
-    result_df = pd.merge(result_df, record_df, on = ["プレイヤー名", "表示名"], suffixes = ["", "_x"])
-    data = result_df.to_dict(orient = "records")[0]
+    result_df = pd.merge(
+        result_df, record_df,
+        on=["プレイヤー名", "表示名"],
+        suffixes=["", "_x"]
+    )
+    data = result_df.to_dict(orient="records")[0]
 
-    ### 表示内容 ###
+    # --- 表示内容
     badge_degree = f.common.badge_degree(data["ゲーム数"])
     badge_status = f.common.badge_status(data["ゲーム数"], data["win"])
 
@@ -92,18 +96,19 @@ def aggregation():
         \t連続トップなし： {data['連続トップなし']} 連続
         \t最小素点： {data['最小素点'] * 100}点
         \t最小獲得ポイント： {data['最小獲得ポイント']}pt
-    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
+    """).replace("-", "▲")
+    msg2["記録"].replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
     # --- 戦績
     if g.opt.game_results:
         df = d.aggregate.game_details()
         if g.opt.verbose:
-            msg2["戦績"] = f"\n*【戦績】*\n"
+            msg2["戦績"] = "\n*【戦績】*\n"
             for p in df["playtime"].unique():
-                seat1 = df.query("playtime == @p and seat == 1").to_dict(orient = "records")[0]
-                seat2 = df.query("playtime == @p and seat == 2").to_dict(orient = "records")[0]
-                seat3 = df.query("playtime == @p and seat == 3").to_dict(orient = "records")[0]
-                seat4 = df.query("playtime == @p and seat == 4").to_dict(orient = "records")[0]
+                seat1 = df.query("playtime == @p and seat == 1").to_dict(orient="records")[0]
+                seat2 = df.query("playtime == @p and seat == 2").to_dict(orient="records")[0]
+                seat3 = df.query("playtime == @p and seat == 3").to_dict(orient="records")[0]
+                seat4 = df.query("playtime == @p and seat == 4").to_dict(orient="records")[0]
                 guest_count = df.query("playtime == @p and guest == 1").sum()["guest"]
                 if data["プレイヤー名"] in (seat1["プレイヤー名"], seat2["プレイヤー名"], seat3["プレイヤー名"], seat4["プレイヤー名"]):
                     msg2["戦績"] += textwrap.dedent(f"""
@@ -117,7 +122,9 @@ def aggregation():
             msg2["戦績"] = f"\n*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
             x = df.query("プレイヤー名 == @data['プレイヤー名']")
             for _, v in x.iterrows():
-                guest_count = df.query("playtime == @v['playtime'] and guest == 1").sum()["guest"]
+                guest_count = df.query(
+                    "playtime == @v['playtime'] and guest == 1"
+                ).sum()["guest"]
                 msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
                     g.guest_mark.strip() if guest_count >= 2 else "",
                     v["playtime"].replace("-", "/"),
@@ -131,4 +138,4 @@ def aggregation():
         for _, r in df.iterrows():
             msg2["対戦"] += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"
 
-    return(textwrap.dedent(msg1), msg2)
+    return (textwrap.dedent(msg1), msg2)

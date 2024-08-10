@@ -12,7 +12,7 @@ def call_chat_postMessage(client, **kwargs):
     except g.SlackApiError as e:
         g.logging.error(e)
 
-    return(res)
+    return (res)
 
 
 def call_files_upload(client, **kwargs):
@@ -24,34 +24,35 @@ def call_files_upload(client, **kwargs):
     except g.SlackApiError as e:
         g.logging.error(e)
 
-    return(res)
+    return (res)
 
 
-def post_message(client, channel, msg, ts = False):
+def post_message(client, channel, msg, ts=False):
     res = call_chat_postMessage(
         client,
-        channel = channel,
-        text = f"{msg.strip()}",
-        thread_ts = ts,
+        channel=channel,
+        text=f"{msg.strip()}",
+        thread_ts=ts,
     )
 
-    return(res)
+    return (res)
 
 
-def post_multi_message(client, channel, msg, ts = False, summarize = True):
-    if type(msg) == dict:
-        if summarize: # まとめてポスト
+def post_multi_message(client, channel, msg, ts=False, summarize=True):
+    if type(msg) is dict:
+        if summarize:  # まとめてポスト
             key_list = list(msg.keys())
             post_msg = msg[key_list[0]]
             for i in key_list[1:]:
-                if len((post_msg + msg[i]).splitlines()) < 95: # 95行を超える直前までまとめる
+                # 95行を超える直前までまとめる
+                if len((post_msg + msg[i]).splitlines()) < 95:
                     post_msg += msg[i]
                 else:
                     post_message(client, channel, post_msg, ts)
                     post_msg = msg[i]
             else:
                 post_message(client, channel, post_msg, ts)
-        else: # そのままポスト
+        else:  # そのままポスト
             for i in msg.keys():
                 post_message(client, channel, msg[i], ts)
     else:
@@ -63,16 +64,18 @@ def post_text(client, channel, event_ts, title, msg):
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
         res = call_chat_postMessage(
             client,
-            channel = channel,
-            text = f"{title}\n{msg.strip()}",
-            thread_ts = event_ts,
+            channel=channel,
+            text=f"{title}\n{msg.strip()}",
+            thread_ts=event_ts,
         )
     else:
         # ポスト予定のメッセージをstep行単位のブロックに分割
         step = 50
         post_msg = []
         for count in range(int(len(msg.splitlines()) / step) + 1):
-            post_msg.append("\n".join(msg.splitlines()[count * step:(count + 1) * step]))
+            post_msg.append(
+                "\n".join(msg.splitlines()[count * step:(count + 1) * step])
+            )
 
         # 最終ブロックがstepの半分以下なら直前のブロックにまとめる
         if len(post_msg) > 1 and step / 2 > len(post_msg[count].splitlines()):
@@ -82,25 +85,25 @@ def post_text(client, channel, event_ts, title, msg):
         for i in range(len(post_msg)):
             res = call_chat_postMessage(
                 client,
-                channel = channel,
-                text = f"\n{title}\n\n```{post_msg[i].strip()}```",
-                thread_ts = event_ts,
+                channel=channel,
+                text=f"\n{title}\n\n```{post_msg[i].strip()}```",
+                thread_ts=event_ts,
             )
 
-    return(res)
+    return (res)
 
 
-def post_fileupload(client, channel, title, file, ts = False):
+def post_fileupload(client, channel, title, file, ts=False):
     res = call_files_upload(
         client,
-        channel = channel,
-        title = title,
-        file = file,
-        thread_ts = ts,
-        request_file_info = False,
+        channel=channel,
+        title=title,
+        file=file,
+        thread_ts=ts,
+        request_file_info=False,
     )
 
-    return(res)
+    return (res)
 
 
 def slack_post(**kwargs):

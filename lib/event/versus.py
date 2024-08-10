@@ -12,12 +12,17 @@ def build_versus_menu():
     view, no = e.Header(view, no, "【直接対戦】")
 
     # プレイヤー選択リスト
-    view, no = e.UserSelect(view, no, text = "対象プレイヤー")
-    view, no = e.MultiSelect(view, no, text = "対戦相手", add_list = ["全員"])
+    view, no = e.UserSelect(view, no, text="対象プレイヤー")
+    view, no = e.MultiSelect(view, no, text="対戦相手", add_list=["全員"])
 
     view, no = e.Divider(view, no)
     view, no = e.SearchRangeChoice(view, no)
-    view, no = e.Button(view, no, text = "検索範囲設定", value = "click_versus", action_id = "modal-open-period")
+    view, no = e.Button(
+        view, no,
+        text="検索範囲設定",
+        value="click_versus",
+        action_id="modal-open-period"
+    )
 
     # 検索オプション
     view, no = e.Divider(view, no)
@@ -25,31 +30,43 @@ def build_versus_menu():
     view, no = e.DisplayOptions(view, no, flag)
 
     view, no = e.Divider(view, no)
-    view, no = e.Button(view, no, text = "集計開始", value = "click_versus", action_id = "search_versus", style = "primary")
-    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back", style = "danger")
+    view, no = e.Button(
+        view, no,
+        text="集計開始",
+        value="click_versus",
+        action_id="search_versus",
+        style="primary"
+    )
+    view, no = e.Button(
+        view, no,
+        text="戻る",
+        value="click_back",
+        action_id="actionId-back",
+        style="danger"
+    )
 
-    return(view)
+    return (view)
 
 
 @g.app.action("menu_versus")
 def handle_menu_action(ack, body, client):
     ack()
-    g.logging.trace(body) # type: ignore
+    g.logging.trace(body)  # type: ignore
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
     g.logging.info(f"[menu_versus] {g.app_var}")
 
     client.views_publish(
-        user_id = g.app_var["user_id"],
-        view = build_versus_menu(),
+        user_id=g.app_var["user_id"],
+        view=build_versus_menu(),
     )
 
 
 @g.app.action("search_versus")
 def handle_search_action(ack, body, client):
     ack()
-    g.logging.trace(body) # type: ignore
+    g.logging.trace(body)  # type: ignore
 
     g.opt.initialization("results")
     argument, app_msg = e.set_command_option(body)
@@ -66,8 +83,8 @@ def handle_search_action(ack, body, client):
             return
 
     client.views_update(
-        view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg)}")
+        view_id=g.app_var["view_id"],
+        view=e.PlainText(f"{chr(10).join(app_msg)}")
     )
 
     g.logging.info(f"[app:search_personal] {argument}, {vars(g.opt)}")
@@ -77,16 +94,16 @@ def handle_search_action(ack, body, client):
 
     msg1, msg2, file_list = c.results.versus.aggregation()
     f.slack_api.slack_post(
-        client = client,
-        channel = body["user"]["id"],
-        headline = msg1,
-        message = msg2,
-        file_list = file_list,
+        client=client,
+        channel=body["user"]["id"],
+        headline=msg1,
+        message=msg2,
+        file_list=file_list,
     )
 
     client.views_update(
-        view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        view_id=g.app_var["view_id"],
+        view=e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )
 
 
@@ -103,6 +120,6 @@ def handle_view_submission(ack, view, client):
     g.logging.info(f"[global var] {g.app_var}")
 
     client.views_update(
-        view_id = g.app_var["view_id"],
-        view = build_versus_menu(),
+        view_id=g.app_var["view_id"],
+        view=build_versus_menu(),
     )

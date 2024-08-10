@@ -13,7 +13,7 @@ def read_memberslist():
     メンバー/チームリスト読み込み
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
     rows = resultdb.execute("select name from member where id=0")
@@ -27,12 +27,12 @@ def read_memberslist():
 
     resultdb.close()
 
-    g.logging.notice(f"guest_name: {g.guest_name}") # type: ignore
-    g.logging.notice(f"member_list: {set(g.member_list.values())}") # type: ignore
-    g.logging.notice(f"team_list: {list(g.team_list.values())}") # type: ignore
+    g.logging.notice(f"guest_name: {g.guest_name}")  # type: ignore
+    g.logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
+    g.logging.notice(f"team_list: {list(g.team_list.values())}")  # type: ignore
 
 
-def NameReplace(pname, add_mark = False):
+def NameReplace(pname, add_mark=False):
     """
     表記ブレ修正(正規化)
 
@@ -51,7 +51,7 @@ def NameReplace(pname, add_mark = False):
     check_list = list(set(g.member_list.keys()))
 
     if pname in check_list:
-        return(g.member_list[pname])
+        return (g.member_list[pname])
 
     # 敬称削除
     honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
@@ -59,22 +59,22 @@ def NameReplace(pname, add_mark = False):
         if not re.match(fr".*(っ|ッ){honor}", pname):
             pname = re.sub(fr"{honor}", "", pname)
     if pname in check_list:
-        return(g.member_list[pname])
+        return (g.member_list[pname])
 
     # ひらがな、カタカナでチェック
     if f.common.KANA2HIRA(pname) in check_list:
-        return(g.member_list[f.common.KANA2HIRA(pname)])
+        return (g.member_list[f.common.KANA2HIRA(pname)])
     if f.common.HIRA2KANA(pname) in check_list:
-        return(g.member_list[f.common.HIRA2KANA(pname)])
+        return (g.member_list[f.common.HIRA2KANA(pname)])
 
     # メンバーリストに見つからない場合
     if g.opt.unregistered_replace:
-        return(g.guest_name)
+        return (g.guest_name)
     else:
         if add_mark:
-            return(f"{pname}({g.guest_mark})")
+            return (f"{pname}({g.guest_mark})")
         else:
-            return(pname)
+            return (pname)
 
 
 def CountPadding(data):
@@ -92,9 +92,9 @@ def CountPadding(data):
                     name_list.append(name)
 
     if name_list:
-        return(max([f.common.len_count(x) for x in name_list]))
+        return (max([f.common.len_count(x) for x in name_list]))
     else:
-        return(0)
+        return (0)
 
 
 def Getmemberslist():
@@ -117,7 +117,7 @@ def Getmemberslist():
             ", ".join(name_list),
         )
 
-    return(title, msg)
+    return (title, msg)
 
 
 def member_info(name):
@@ -139,13 +139,13 @@ def member_info(name):
             and name = ?
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(sql, (g.rule_version, name))
     ret = dict(rows.fetchone())
     resultdb.close()
 
-    return(ret)
+    return (ret)
 
 
 def MemberAppend(argument):
@@ -164,32 +164,38 @@ def MemberAppend(argument):
         slackにpostする内容
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
     ret = False
     dbupdate_flg = False
     msg = "使い方が間違っています。"
 
-    if len(argument) == 1: # 新規追加
+    if len(argument) == 1:  # 新規追加
         new_name = f.common.HAN2ZEN(argument[0])
-        g.logging.notice(f"new member: {new_name}") # type: ignore
+        g.logging.notice(f"new member: {new_name}")  # type: ignore
 
         rows = resultdb.execute("select count() from member")
         count = rows.fetchone()[0]
         if count > g.config["member"].getint("registration_limit", 255):
-            msg = f"登録上限を超えています。"
-        else: # 登録処理
+            msg = "登録上限を超えています。"
+        else:  # 登録処理
             ret, msg = check_namepattern(new_name)
             if ret:
-                resultdb.execute(f"insert into member(name) values (?)", (new_name,))
-                resultdb.execute(f"insert into alias(name, member) values (?,?)", (new_name, new_name))
+                resultdb.execute(
+                    "insert into member(name) values (?)",
+                    (new_name,)
+                )
+                resultdb.execute(
+                    "insert into alias(name, member) values (?,?)",
+                    (new_name, new_name)
+                )
                 msg = f"「{new_name}」を登録しました。"
 
-    if len(argument) == 2: # 別名登録
+    if len(argument) == 2:  # 別名登録
         new_name = f.common.HAN2ZEN(argument[0])
         nic_name = f.common.HAN2ZEN(argument[1])
-        g.logging.notice(f"alias: {new_name} -> {nic_name}") # type: ignore
+        g.logging.notice(f"alias: {new_name} -> {nic_name}")  # type: ignore
 
         registration_flg = True
         rows = resultdb.execute("select count() from alias where member=?", (new_name,))
@@ -198,10 +204,10 @@ def MemberAppend(argument):
             msg = f"「{new_name}」はまだ登録されていません。"
             registration_flg = False
         if count > g.config["member"].getint("alias_limit", 16):
-            msg = f"登録上限を超えています。"
+            msg = "登録上限を超えています。"
             registration_flg = False
 
-        if registration_flg: # 登録処理
+        if registration_flg:  # 登録処理
             ret, msg = check_namepattern(nic_name)
             if ret:
                 resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
@@ -216,7 +222,7 @@ def MemberAppend(argument):
                     or ? in (p1_name, p2_name, p3_name, p4_name)
                 """, (nic_name, f.common.KANA2HIRA(nic_name), f.common.HIRA2KANA(nic_name)))
             count = rows.fetchone()[0]
-            if count != 0: # 過去成績更新
+            if count != 0:  # 過去成績更新
                 msg += d.common.database_backup()
                 for col in ("p1_name", "p2_name", "p3_name", "p4_name"):
                     resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, nic_name))
@@ -228,7 +234,7 @@ def MemberAppend(argument):
     resultdb.close()
     read_memberslist()
 
-    return(msg)
+    return (msg)
 
 
 def MemberRemove(argument):
@@ -247,29 +253,35 @@ def MemberRemove(argument):
         slackにpostする内容
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(
+        g.database_file,
+        detect_types=sqlite3.PARSE_DECLTYPES
+    )
     resultdb.row_factory = sqlite3.Row
 
     msg = "使い方が間違っています。"
 
-    if len(argument) == 1: # メンバー削除
+    if len(argument) == 1:  # メンバー削除
         new_name = f.common.HAN2ZEN(argument[0])
-        g.logging.notice(f"remove member: {new_name}") # type: ignore
+        g.logging.notice(f"remove member: {new_name}")  # type: ignore
 
         if new_name in g.member_list:
             resultdb.execute("delete from member where name=?", (new_name,))
-            resultdb.execute("delete from alias where member=?",(new_name,))
+            resultdb.execute("delete from alias where member=?", (new_name,))
             msg = f"「{new_name}」を削除しました。"
         else:
             msg = f"「{new_name}」は登録されていません。"
 
-    if len(argument) == 2: # 別名削除
+    if len(argument) == 2:  # 別名削除
         new_name = f.common.HAN2ZEN(argument[0])
         nic_name = f.common.HAN2ZEN(argument[1])
-        g.logging.notice(f"alias remove: {new_name} -> {nic_name}") # type: ignore
+        g.logging.notice(f"alias remove: {new_name} -> {nic_name}")  # type: ignore
 
         if nic_name in g.member_list:
-            resultdb.execute("delete from alias where name=? and member=?",(nic_name, new_name))
+            resultdb.execute(
+                "delete from alias where name=? and member=?",
+                (nic_name, new_name)
+            )
             msg = f"「{new_name}」から「{nic_name}」を削除しました。"
         else:
             msg = f"「{new_name}」に「{nic_name}」は登録されていません。"
@@ -278,7 +290,7 @@ def MemberRemove(argument):
     resultdb.close()
     read_memberslist()
 
-    return(msg)
+    return (msg)
 
 
 def check_namepattern(name):
@@ -301,32 +313,34 @@ def check_namepattern(name):
 
     # 登録済みメンバーかチェック
     check_list = list(g.member_list.keys())
-    check_list += [f.common.KANA2HIRA(i) for i in g.member_list.keys()] # ひらがな
-    check_list += [f.common.HIRA2KANA(i) for i in g.member_list.keys()] # カタカナ
+    check_list += [f.common.KANA2HIRA(i) for i in g.member_list.keys()]  # ひらがな
+    check_list += [f.common.HIRA2KANA(i) for i in g.member_list.keys()]  # カタカナ
     if name in check_list:
-        return(False, f"「{name}」はすでに使用されています。")
+        return (False, f"「{name}」はすでに使用されています。")
 
     # 登録規定チェック
-    if len(name) > g.config["member"].getint("character_limit", 8): # 文字制限
-        return(False, "登録可能文字数を超えています。")
-    if name == g.guest_name: # 登録NGプレイヤー名
-        return(False, "使用できない名前です。")
-    if re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable(): # 禁則記号
-        return(False, "使用できない記号が含まれています。")
+    if len(name) > g.config["member"].getint("character_limit", 8):  # 文字制限
+        return (False, "登録可能文字数を超えています。")
+    if name == g.guest_name:  # 登録NGプレイヤー名
+        return (False, "使用できない名前です。")
+    if re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable():  # 禁則記号
+        return (False, "使用できない記号が含まれています。")
 
     # コマンドと同じ名前かチェック
     chk = g.command_option()
     chk.check([name])
     if vars(chk):
-        return(False, "日付、またはオプションに使用される単語は登録できません。")
+        return (False, "日付、またはオプションに使用される単語は登録できません。")
 
     commandlist = list(g.commandword.values())
     commandlist.extend([g.config["setting"].get("slash_commandname")])
     commandlist.extend([g.config["setting"].get("remarks_word")])
     commandlist.extend([g.config["search"].get("keyword")])
     commandlist.extend([x for x, _ in g.config.items("alias")])
-    commandlist.extend(chain.from_iterable([y.split(",") for _, y in g.config.items("alias")]))
+    commandlist.extend(
+        chain.from_iterable([y.split(",") for _, y in g.config.items("alias")])
+    )
     if name in set(commandlist):
-        return(False, "コマンドに使用される単語は登録できません。")
+        return (False, "コマンドに使用される単語は登録できません。")
 
-    return(True, "OK")
+    return (True, "OK")

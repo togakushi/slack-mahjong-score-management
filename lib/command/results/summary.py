@@ -21,19 +21,19 @@ def aggregation():
         ファイル出力用path
     """
 
-    ### データ収集 ###
+    # --- データ収集
     game_info = d.aggregate.game_info()
     df_summary = d.aggregate.game_summary()
     df_game = d.aggregate.game_details()
     df_grandslam = df_game.query("grandslam != ''")
 
     df_grandslam = df_grandslam.rename(
-        columns = {
+        columns={
             "プレイヤー名": "name", "grandslam": "和了役", "playtime": "日時",
         })
     df_grandslam["和了者"] = df_grandslam["表示名"].apply(lambda x: x.strip())
 
-    ### 表示 ###
+    # 表示
     # --- 情報ヘッダ
     add_text = ""
     msg2 = "*【成績サマリ】*\n"
@@ -41,20 +41,20 @@ def aggregation():
         add_text = " / トバされた人（延べ）： {} 人".format(
             df_summary["トビ"].sum(),
         )
-    msg2 += f.message.header(game_info, vars(g.opt), vars(g.prm), add_text, 1)
+    msg2 += f.message.header(game_info, vars(g.prm), add_text, 1)
 
     if df_summary.empty:
-        return(msg2, {}, {})
+        return (msg2, {}, {})
 
     # --- 集計結果
     msg = {}
     msg_memo = ""
 
-    if not g.opt.score_comparisons: # 通常表示
-        if g.config["mahjong"].getboolean("ignore_flying", False): # トビカウントなし
+    if not g.opt.score_comparisons:  # 通常表示
+        if g.config["mahjong"].getboolean("ignore_flying", False):  # トビカウントなし
             header_list = ["名前", "通算", "平均", "順位分布"]
             filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順"]
-        else: # トビカウントあり
+        else:  # トビカウントあり
             header_list = ["名前", "通算", "平均", "順位分布", "トビ"]
             filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
         # メモ表示
@@ -64,8 +64,8 @@ def aggregation():
                 msg_memo += "\t{} ： {} （{}）\n".format(
                     v["日時"].replace("-", "/"), v["和了役"], v["和了者"],
                 )
-    else: # 差分表示
-        df_grandslam = df_grandslam[:0] # 非表示のため破棄
+    else:  # 差分表示
+        df_grandslam = df_grandslam[:0]  # 非表示のため破棄
         header_list = ["名前", "通算", "平均", "点差"]
         filter_list = ["名前", "ゲーム数", "通算", "点差"]
 
@@ -75,34 +75,34 @@ def aggregation():
     step_count = []
     last_line = len(df_summary)
 
-    for i in range(int(last_line / step + 1)): # step行毎に分割
+    for i in range(int(last_line / step + 1)):  # step行毎に分割
         s_line = i * step
         e_line = (i + 1) * step
 
-        if last_line - e_line < step / 2: # 最終ブロックがstep/2で収まるならまとめる
+        if last_line - e_line < step / 2:  # 最終ブロックがstep/2で収まるならまとめる
             step_count.append((s_line, last_line))
             break
         step_count.append((s_line, e_line))
 
     for s_line, e_line in step_count:
         t = df_summary[s_line:e_line].filter(
-                items = header_list
+                items=header_list
             ).to_markdown(
-                index = False,
-                tablefmt = "simple",
-                numalign = "right",
-                maxheadercolwidths = 8,
-                floatfmt = ("", "+.1f", "+.1f", "", ".2f")
+                index=False,
+                tablefmt="simple",
+                numalign="right",
+                maxheadercolwidths=8,
+                floatfmt=("", "+.1f", "+.1f", "", ".2f")
             )
-        msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r"▲\1", t) + "```\n" # マイナスを記号に置換
+        msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r"▲\1", t) + "```\n"  # マイナスを記号に置換
 
     # メモ追加
     if msg_memo:
         msg["メモ"] = msg_memo
 
     # --- ファイル出力
-    df_summary = df_summary.filter(items = filter_list)
-    df_grandslam = df_grandslam.filter(items = ["日時", "和了役", "和了者"])
+    df_summary = df_summary.filter(items=filter_list)
+    df_grandslam = df_grandslam.filter(items=["日時", "和了役", "和了者"])
 
     match g.opt.format.lower():
         case "csv":
@@ -118,4 +118,4 @@ def aggregation():
         case _:
             file_list = {}
 
-    return(msg2, msg, file_list)
+    return (msg2, msg, file_list)

@@ -2,8 +2,12 @@ import sqlite3
 
 from lib.function import global_value as g
 
+
 def initialization_resultdb():
-    resultdb = sqlite3.connect(g.database_file, detect_types = sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(
+        g.database_file,
+        detect_types=sqlite3.PARSE_DECLTYPES,
+    )
     resultdb.row_factory = sqlite3.Row
 
     # --- メンバー登録テーブル
@@ -322,11 +326,11 @@ def initialization_resultdb():
     data = ret.fetchall()
 
     if len(data) == 0:
-        g.logging.notice(f"ゲスト設定: {g.guest_name}") # type: ignore
+        g.logging.notice(f"ゲスト設定: {g.guest_name}")  # type: ignore
         sql = "insert into member (id, name) values (0, ?)"
         resultdb.execute(sql, (g.guest_name,))
     elif data[0][1] != g.guest_name:
-        g.logging.notice(f"ゲスト修正: {data[0][1]} -> {g.guest_name}") # type: ignore
+        g.logging.notice(f"ゲスト修正: {data[0][1]} -> {g.guest_name}")  # type: ignore
         sql = "update member set name=? where id=0"
         resultdb.execute(sql, (g.guest_name,))
 

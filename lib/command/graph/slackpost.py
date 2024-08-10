@@ -24,9 +24,9 @@ def main(client, channel, argument):
     g.opt.initialization("graph", argument)
     g.prm.update(g.opt)
 
-    if len(g.prm.player_list) == 1: # 対象がひとり → 個人成績
+    if len(g.prm.player_list) == 1:  # 対象がひとり → 個人成績
         count, ret = personal.plot()
-    else: # 対象が複数 → 比較
+    else:  # 対象が複数 → 比較
         if g.opt.order:
             count, ret = summary.rank_plot()
         else:

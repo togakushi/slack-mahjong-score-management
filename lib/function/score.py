@@ -21,17 +21,21 @@ def calculation_point(score_df):
     """
 
     # 順位点算出
-    origin_point  = g.config["mahjong"].getint("point", 250) # 配給原点
-    return_point = g.config["mahjong"].getint("return", 300) # 返し点
-    uma = g.config["mahjong"].get("rank_point", "30,10,-10,-30") # ウマ
+    origin_point = g.config["mahjong"].getint("point", 250)  # 配給原点
+    return_point = g.config["mahjong"].getint("return", 300)  # 返し点
+    uma = g.config["mahjong"].get("rank_point", "30,10,-10,-30")  # ウマ
     rank_point = list(map(int, uma.split(",")))
-    rank_point[0] += int((return_point - origin_point) / 10 * 4) # type: ignore # オカ
+    rank_point[0] += int((return_point - origin_point) / 10 * 4)  # type: ignore # オカ
 
-    if g.config["mahjong"].getboolean("draw_split", False): # 山分け
-        score_df["rank"] = score_df["rpoint"].rank(ascending = False, method = "min").astype("int")
+    if g.config["mahjong"].getboolean("draw_split", False):  # 山分け
+        score_df["rank"] = score_df["rpoint"].rank(
+            ascending=False, method="min"
+        ).astype("int")
 
         # 順位点リストの更新
-        rank_sequence = "".join(score_df["rank"].sort_values().to_string(index=False).split())
+        rank_sequence = "".join(
+            score_df["rank"].sort_values().to_string(index=False).split()
+        )
         match rank_sequence:
             case "1111":
                 rank_point = point_split(rank_point)
@@ -67,17 +71,21 @@ def calculation_point(score_df):
             case _:
                 pass
 
-    else: # 席順
-        score_df["rank"] = score_df["rpoint"].rank(ascending = False, method = "first").astype("int")
+    else:  # 席順
+        score_df["rank"] = score_df["rpoint"].rank(
+            ascending=False, method="first"
+        ).astype("int")
 
     # 獲得ポイント計算
     score_df["point"] = "point"
-    score_df["position"] = score_df["rpoint"].rank(ascending = False, method = "first").astype("int")
+    score_df["position"] = score_df["rpoint"].rank(
+        ascending=False, method="first"
+    ).astype("int")
     for x in score_df.itertuples():
-        score_df.at[x.Index, x.point] = (x.rpoint - return_point) / 10 + rank_point[x.position -1]
+        score_df.at[x.Index, x.point] = (x.rpoint - return_point) / 10 + rank_point[x.position - 1]
 
     g.logging.info(f"{rank_point=}")
-    return(score_df)
+    return (score_df)
 
 
 def point_split(point: list):
@@ -101,7 +109,7 @@ def point_split(point: list):
         if sum(point) < 0:
             new_point = list(map(lambda x: x-1, new_point))
 
-    return(new_point)
+    return (new_point)
 
 
 def check_score(client, channel_id, event_ts, user, msg):
@@ -112,25 +120,25 @@ def check_score(client, channel_id, event_ts, user, msg):
     correct_score = g.config["mahjong"].getint("point", 250) * 4
     rpoint_sum = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
 
-    g.logging.notice("post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format( # type: ignore
+    g.logging.notice("post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(  # type: ignore
         msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7],
         correct_score - rpoint_sum,
         )
     )
 
-    if rpoint_sum == correct_score: # 合計が一致している場合
+    if rpoint_sum == correct_score:  # 合計が一致している場合
         client.reactions_add(
-            channel = channel_id,
-            name = g.reaction_ok,
-            timestamp = event_ts,
+            channel=channel_id,
+            name=g.reaction_ok,
+            timestamp=event_ts,
         )
-    else: # 合計が不一致の場合
+    else:  # 合計が不一致の場合
         msg = f.message.invalid_score(user, rpoint_sum, correct_score)
-        f.slack_api.post_message(client, channel_id, msg, event_ts) #
+        f.slack_api.post_message(client, channel_id, msg, event_ts)
         client.reactions_add(
-            channel = channel_id,
-            name = g.reaction_ng,
-            timestamp = event_ts,
+            channel=channel_id,
+            name=g.reaction_ng,
+            timestamp=event_ts,
         )
 
 
@@ -150,7 +158,7 @@ def get_score(msg):
         ポイント(p?_point), 順位(p?_rank), 供託(deposit), コメント(comment)
     """
 
-    g.opt.unregistered_replace = False # ゲスト無効
+    g.opt.unregistered_replace = False  # ゲスト無効
 
     # ポイント計算
     score_df = pd.DataFrame({
@@ -162,7 +170,7 @@ def get_score(msg):
         "rpoint": [eval(msg[x * 2 + 1]) for x in range(4)],
     })
     score_df = calculation_point(score_df)
-    score = score_df.to_dict(orient = "records")
+    score = score_df.to_dict(orient="records")
 
     ret = {
         "deposit": g.config["mahjong"].getint("point", 250) * 4 - score_df["rpoint"].sum(),
@@ -173,4 +181,4 @@ def get_score(msg):
     ret.update(dict(zip([f"p3_{x}" for x in list(score[2])], list(score[2].values()))))
     ret.update(dict(zip([f"p4_{x}" for x in list(score[3])], list(score[3].values()))))
 
-    return(ret)
+    return (ret)

@@ -10,7 +10,7 @@ import lib.database as d
 from lib.function import global_value as g
 
 
-def _disp_name(df, adjust = 0):
+def _disp_name(df, adjust=0):
     """
     ゲスト置換/パディング付与
 
@@ -33,15 +33,17 @@ def _disp_name(df, adjust = 0):
     replace_list = []
     for name in list(df.unique()):
         replace_list.append(
-            c.member.NameReplace(name, add_mark = True)
+            c.member.NameReplace(name, add_mark=True)
         )
 
     max_padding = c.member.CountPadding(replace_list)
     for i in range(len(replace_list)):
-        padding = " " * (max_padding - f.common.len_count(replace_list[i]) + adjust)
+        padding = " " * (
+            max_padding - f.common.len_count(replace_list[i]) + adjust
+        )
         replace_list[i] = f"{replace_list[i]}{padding}"
 
-    return(df.replace(player_list, replace_list))
+    return (df.replace(player_list, replace_list))
 
 
 def game_info():
@@ -62,11 +64,11 @@ def game_info():
     df = pd.read_sql(
         d.generate.game_info(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict()
+        params=g.prm.to_dict()
     )
 
     ret = {
-        "game_count": int(df["count"].to_string(index = False)),
+        "game_count": int(df["count"].to_string(index=False)),
         "first_game": datetime.now(),
         "last_game": datetime.now(),
         "first_comment": None,
@@ -74,13 +76,17 @@ def game_info():
     }
 
     if ret["game_count"] >= 1:
-        ret["first_game"] = datetime.fromisoformat(df["first_game"].to_string(index = False))
-        ret["last_game"] = datetime.fromisoformat(df["last_game"].to_string(index = False))
-        ret["first_comment"] = df["first_comment"].to_string(index = False)
-        ret["last_comment"] = df["last_comment"].to_string(index = False)
+        ret["first_game"] = datetime.fromisoformat(
+            df["first_game"].to_string(index=False)
+        )
+        ret["last_game"] = datetime.fromisoformat(
+            df["last_game"].to_string(index=False)
+        )
+        ret["first_comment"] = df["first_comment"].to_string(index=False)
+        ret["last_comment"] = df["last_comment"].to_string(index=False)
 
     g.logging.info(f"return: {ret=}")
-    return(ret)
+    return (ret)
 
 
 def game_summary():
@@ -96,12 +102,12 @@ def game_summary():
     df = pd.read_sql(
         d.generate.game_results(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
     # ヘッダ修正
     df = df.rename(
-        columns = {
+        columns={
             "count": "ゲーム数",
             "pt_total": "通算",
             "pt_avg": "平均",
@@ -120,14 +126,14 @@ def game_summary():
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, add_mark = True)
+        lambda x: c.member.NameReplace(x, add_mark=True)
     )
 
     # インデックスの振り直し
-    df = df.reset_index(drop = True)
+    df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    return(df.fillna(value = "*****"))
+    return (df.fillna(value="*****"))
 
 
 def game_details():
@@ -142,13 +148,13 @@ def game_details():
     df = pd.read_sql(
         d.generate.game_details(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
     # ゲスト置換
     df["表示名"] = _disp_name(df["プレイヤー名"])
 
-    return(df.fillna(value = ""))
+    return (df.fillna(value=""))
 
 
 def personal_record():
@@ -164,7 +170,7 @@ def personal_record():
     gamedata = pd.read_sql(
         d.generate.record_count(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
     # 連続順位カウント
@@ -181,21 +187,27 @@ def personal_record():
         gamedata[k] = None
         for pname in gamedata["プレイヤー名"].unique():
             tmp_df = pd.DataFrame()
-            tmp_df["flg"] = gamedata.query("プレイヤー名 == @pname")["順位"].replace(rank_mask[k])
-            tmp_df[k] = tmp_df["flg"].groupby((tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()).cumcount() + 1
+            tmp_df["flg"] = gamedata.query(
+                "プレイヤー名 == @pname"
+            )["順位"].replace(rank_mask[k])
+            tmp_df[k] = tmp_df["flg"].groupby(
+                (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
+            ).cumcount() + 1
             tmp_df.loc[tmp_df["flg"] == 0, k] = 0
             gamedata.update(tmp_df)
 
     # 最大値/最小値の格納
     df = pd.DataFrame()
     for pname in gamedata["プレイヤー名"].unique():
-        tmp_df = gamedata.query("プレイヤー名 == @pname").max().to_frame().transpose()
+        tmp_df = gamedata.query(
+            "プレイヤー名 == @pname"
+        ).max().to_frame().transpose()
         tmp_df.rename(
-            columns = {
+            columns={
                 "最終素点": "最大素点",
                 "獲得ポイント": "最大獲得ポイント",
             },
-            inplace = True,
+            inplace=True,
         )
         tmp_df["ゲーム数"] = len(gamedata.query("プレイヤー名 == @pname"))
         tmp_df["最小素点"] = gamedata.query("プレイヤー名 == @pname")["最終素点"].min()
@@ -205,13 +217,13 @@ def personal_record():
     # ゲスト置換
     df["表示名"] = _disp_name(df["プレイヤー名"])
 
-    df = df.drop(columns = ["playtime", "順位"])
- 
+    df = df.drop(columns=["playtime", "順位"])
+
     # インデックスの振り直し
-    df = df.reset_index(drop = True)
+    df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    return(df)
+    return (df)
 
 
 def personal_results():
@@ -227,7 +239,7 @@ def personal_results():
     df = pd.read_sql(
         d.generate.personal_results(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
     # Nullが返ってきたときにobject型になるのでfloat型に変換
@@ -241,10 +253,10 @@ def personal_results():
     df["表示名"] = _disp_name(df["プレイヤー名"])
 
     # インデックスの振り直し
-    df = df.reset_index(drop = True)
+    df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    return(df)
+    return (df)
 
 
 def versus_matrix():
@@ -252,14 +264,14 @@ def versus_matrix():
     df = pd.read_sql(
         d.generate.versus_matrix(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
     # ゲスト置換
     df["my_表示名"] = _disp_name(df["my_name"])
     df["vs_表示名"] = _disp_name(df["vs_name"])
 
-    return(df)
+    return (df)
 
 
 def personal_gamedata():
@@ -267,15 +279,15 @@ def personal_gamedata():
     df = pd.read_sql(
         d.generate.personal_gamedata(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, add_mark = True)
+        lambda x: c.member.NameReplace(x, add_mark=True)
     )
 
-    return(df)
+    return (df)
 
 
 def team_gamedata():
@@ -283,10 +295,10 @@ def team_gamedata():
     df = pd.read_sql(
         d.generate.team_gamedata(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
-    return(df)
+    return (df)
 
 
 def monthly_report():
@@ -294,10 +306,10 @@ def monthly_report():
     df = pd.read_sql(
         d.generate.monthly_report(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
-    return(df)
+    return (df)
 
 
 def winner_report():
@@ -305,16 +317,16 @@ def winner_report():
     df = pd.read_sql(
         d.generate.winner_report(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     ).fillna(value=np.nan)
 
     # ゲスト置換
-    for i in range(1,6):
+    for i in range(1, 6):
         df[f"pname{i}"] = df[f"name{i}"].apply(
-            lambda x: "該当者なし" if type(x) == float else c.member.NameReplace(x, add_mark = True)
+            lambda x: "該当者なし" if type(x) is float else c.member.NameReplace(x, add_mark=True)
         )
 
-    return(df)
+    return (df)
 
 
 def team_total():
@@ -330,11 +342,11 @@ def team_total():
     df = pd.read_sql(
         d.generate.team_total(),
         sqlite3.connect(g.database_file),
-        params = g.prm.to_dict(),
+        params=g.prm.to_dict(),
     )
 
     # インデックスの振り直し
-    df = df.reset_index(drop = True)
+    df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    return(df)
+    return (df)

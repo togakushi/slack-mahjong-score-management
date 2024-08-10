@@ -26,7 +26,7 @@ def len_count(text):
         else:
             count += 1
 
-    return(count)
+    return (count)
 
 
 def HAN2ZEN(text):
@@ -47,7 +47,7 @@ def HAN2ZEN(text):
     ZEN = "".join(chr(0xff10 + i) for i in range(10))
     HAN = "".join(chr(0x30 + i) for i in range(10))
     trans_table = str.maketrans(HAN, ZEN)
-    return(text.translate(trans_table))
+    return (text.translate(trans_table))
 
 
 def ZEN2HAN(text):
@@ -68,7 +68,7 @@ def ZEN2HAN(text):
     ZEN = "".join(chr(0xff10 + i) for i in range(10))
     HAN = "".join(chr(0x30 + i) for i in range(10))
     trans_table = str.maketrans(ZEN, HAN)
-    return(text.translate(trans_table))
+    return (text.translate(trans_table))
 
 
 def HIRA2KANA(text):
@@ -89,7 +89,7 @@ def HIRA2KANA(text):
     HIRA = "".join(chr(0x3041 + i) for i in range(86))
     KANA = "".join(chr(0x30a1 + i) for i in range(86))
     trans_table = str.maketrans(HIRA, KANA)
-    return(text.translate(trans_table))
+    return (text.translate(trans_table))
 
 
 def KANA2HIRA(text):
@@ -110,10 +110,10 @@ def KANA2HIRA(text):
     HIRA = "".join(chr(0x3041 + i) for i in range(86))
     KANA = "".join(chr(0x30a1 + i) for i in range(86))
     trans_table = str.maketrans(KANA, HIRA)
-    return(text.translate(trans_table))
+    return (text.translate(trans_table))
 
 
-def badge_degree(game_count = 0):
+def badge_degree(game_count=0):
     """
     プレイしたゲーム数に対して表示される称号を返す
 
@@ -133,15 +133,17 @@ def badge_degree(game_count = 0):
     if "degree" in g.config.sections():
         if g.config["degree"].getboolean("display", False):
             degree_badge = g.config.get("degree", "badge").split(",")
-            degree_counter = [x for x in map(int, g.config.get("degree", "counter").split(","))]
+            degree_counter = [
+                x for x in map(int, g.config.get("degree", "counter").split(","))
+            ]
             for i in range(len(degree_counter)):
                 if game_count >= degree_counter[i]:
                     badge_degree = degree_badge[i]
 
-    return(badge_degree)
+    return (badge_degree)
 
 
-def badge_status(game_count = 0, win = 0):
+def badge_status(game_count=0, win=0):
     """
     勝率に対して付く調子バッジを返す
 
@@ -177,7 +179,7 @@ def badge_status(game_count = 0, win = 0):
                         index = 2 + i
             badge_status = status_badge[index]
 
-    return(badge_status)
+    return (badge_status)
 
 
 def save_output(df, format, filename):
@@ -202,18 +204,18 @@ def save_output(df, format, filename):
 
     match format.lower():
         case "csv":
-            data = df.to_csv(index = False)
+            data = df.to_csv(index=False)
         case "text" | "txt":
-            data = df.to_markdown(index = False, tablefmt = "outline")
+            data = df.to_markdown(index=False, tablefmt="outline")
         case _:
-            return(None)
+            return (None)
 
     # 保存
     save_file = os.path.join(g.work_dir, filename)
     with open(save_file, "w") as writefile:
         writefile.writelines(data)
 
-    return(save_file)
+    return (save_file)
 
 
 def set_graph_font(plt, fm):
@@ -223,5 +225,5 @@ def set_graph_font(plt, fm):
 
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     fm.fontManager.addfont(font_path)
-    font_prop = fm.FontProperties(fname = font_path)
+    font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams["font.family"] = font_prop.get_name()

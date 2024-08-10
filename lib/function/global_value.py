@@ -17,13 +17,14 @@ import pandas as pd
 
 import lib.command as c
 
+
 class command_option:
     def __init__(self) -> None:
         self.initialization("DEFAULT")
 
     def initialization(self, _command: str, _argument: list = []) -> None:
         self.__dict__.clear()
-        if not _command in config.sections():
+        if _command not in config.sections():
             _command = "DEFAULT"
 
         self.command: str = _command
@@ -31,14 +32,14 @@ class command_option:
         self.aggregation_range.append(config[_command].get("aggregation_range", "当日"))
         self.target_player: list = []
         self.all_player: bool = False
-        self.order: bool = False # 順位推移グラフ
-        self.statistics: bool = False # 統計レポート
-        self.personal: bool = False # 個人成績レポート
-        self.fourfold: bool = False # 縦持ちデータの直近Nを4倍で取るか
-        self.stipulated: int = 0 # 規定打数
-        self.target_count: int = 0 #直近
-        self.verbose: bool = False # 戦績詳細
-        self.team_total: bool = False # チーム集計
+        self.order: bool = False  # 順位推移グラフ
+        self.statistics: bool = False  # 統計レポート
+        self.personal: bool = False  # 個人成績レポート
+        self.fourfold: bool = False  # 縦持ちデータの直近Nを4倍で取るか
+        self.stipulated: int = 0  # 規定打数
+        self.target_count: int = 0  # 直近
+        self.verbose: bool = False  # 戦績詳細
+        self.team_total: bool = False  # チーム集計
         self.friendly_fire: bool = config["team"].getboolean("friendly_fire", False)
         self.unregistered_replace: bool = config[_command].getboolean("unregistered_replace", True)
         self.guest_skip: bool = config[_command].getboolean("guest_skip", True)
@@ -68,7 +69,7 @@ class command_option:
             self.search_first = min(_target_days)
             self.search_last = max(_target_days)
 
-        return(_new_argument)
+        return (_new_argument)
 
     def update(self, _argument: list) -> None:
         unkown_command = []
@@ -104,11 +105,11 @@ class command_option:
                 case keyword if re.search(r"^(個人|個人成績)$", keyword):
                     self.personal = True
                 case keyword if re.search(r"^(直近)([0-9]+)$", keyword):
-                    self.target_count = int(re.sub(rf"^(直近)([0-9]+)$", r"\2", keyword))
+                    self.target_count = int(re.sub(r"^(直近)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(トップ|上位|top)([0-9]+)$", keyword):
-                    self.ranked = int(re.sub(rf"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
+                    self.ranked = int(re.sub(r"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(規定数|規定打数)([0-9]+)$", keyword):
-                    self.stipulated = int(re.sub(rf"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
+                    self.stipulated = int(re.sub(r"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(チーム|team)$", keyword.lower()):
                     self.team_total = True
                 case keyword if re.search(r"^(チーム同卓あり|コンビあり|同士討ち)$", keyword):
@@ -120,7 +121,7 @@ class command_option:
                 case keyword if re.search(r"^(daily|デイリー|日次)$", keyword):
                     self.daily = True
                 case keyword if re.search(r"^(集約)([0-9]+)$", keyword):
-                    self.group_length = int(re.sub(rf"^(集約)([0-9]+)$", r"\2", keyword))
+                    self.group_length = int(re.sub(r"^(集約)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
                     self.format = keyword.lower()
                 case keyword if re.search(r"^(filename:|ファイル名)(.+)$", keyword):
@@ -145,8 +146,8 @@ class parameters:
     def initialization(self):
         self.__dict__.clear()
         self.rule_version = config["mahjong"].get("rule_version", "")
-        self.origin_point = config["mahjong"].getint("point", 250) # 配給原点
-        self.return_point = config["mahjong"].getint("return", 300) # 返し点
+        self.origin_point = config["mahjong"].getint("point", 250)  # 配給原点
+        self.return_point = config["mahjong"].getint("return", 300)  # 返し点
         self.player_name: str = str()
         self.guest_name: str = guest_name
         self.search_word: str = str()
@@ -163,7 +164,7 @@ class parameters:
 
     def update(self, _opt: command_option):
         self.initialization()
-        self.starttime = _opt.search_first # 検索開始日
+        self.starttime = _opt.search_first  # 検索開始日
         self.endtime = _opt.search_last  # 検索終了日
         self.starttime_hm = _opt.search_first.strftime("%Y/%m/%d %H:%M")
         self.endtime_hm = _opt.search_first.strftime("%Y/%m/%d %H:%M")
@@ -183,15 +184,15 @@ class parameters:
             # 複数指定
             if len(_opt.target_player) >= 1:
                 count = 0
-                if _opt.all_player: # 全員対象
+                if _opt.all_player:  # 全員対象
                     tmp_list = list(set(member_list))
                 else:
                     tmp_list = _opt.target_player[1:]
 
                 tmp_list2 = []
-                for name in tmp_list: # 名前ブレ修正
-                    tmp_list2.append(c.member.NameReplace(name, add_mark = False))
-                for name in list(set(tmp_list2)): # 集計対象者の名前はリストに含めない
+                for name in tmp_list:  # 名前ブレ修正
+                    tmp_list2.append(c.member.NameReplace(name, add_mark=False))
+                for name in list(set(tmp_list2)):  # 集計対象者の名前はリストに含めない
                     if name != self.player_name:
                         self.competition_list[f"competition_{count}"] = name
                         count += 1
@@ -209,7 +210,7 @@ class parameters:
         if self.competition_list:
             tmp_dict.update(self.competition_list)
 
-        return(tmp_dict)
+        return (tmp_dict)
 
 
 def scope_coverage(argument: list):
@@ -225,7 +226,7 @@ def scope_coverage(argument: list):
     -------
     new_argument : list
         日付を得られなっかったキーワードのリスト
- 
+
     target_days : list
         キーワードから得た日付のリスト
     """
@@ -233,12 +234,12 @@ def scope_coverage(argument: list):
     new_argument = argument.copy()
     target_days = []
     current_time = datetime.now()
-    appointed_time = current_time + relativedelta(hours = -12)
+    appointed_time = current_time + relativedelta(hours=-12)
 
     for x in argument:
         match x:
             case x if re.match(r"^([0-9]{8}|[0-9/.-]{8,10})$", x):
-                try_day = pd.to_datetime(x, errors = "coerce").to_pydatetime()
+                try_day = pd.to_datetime(x, errors="coerce").to_pydatetime()
                 target_days.append(try_day)
                 new_argument.remove(x)
             case "当日":
@@ -248,99 +249,100 @@ def scope_coverage(argument: list):
                 target_days.append(current_time)
                 new_argument.remove(x)
             case "昨日":
-                target_days.append((current_time + relativedelta(days = -1)))
+                target_days.append((current_time + relativedelta(days=-1)))
                 new_argument.remove(x)
             case "今月":
-                target_days.append((appointed_time + relativedelta(day = 1, months = 0)))
-                target_days.append((appointed_time + relativedelta(day = 1, months = 1, days = -1,)))
+                target_days.append((appointed_time + relativedelta(day=1, months=0)))
+                target_days.append((appointed_time + relativedelta(day=1, months=1, days=-1,)))
                 new_argument.remove(x)
             case "先月":
-                target_days.append((appointed_time + relativedelta(day = 1, months = -1)))
-                target_days.append((appointed_time + relativedelta(day = 1, months = 0, days = -1,)))
+                target_days.append((appointed_time + relativedelta(day=1, months=-1)))
+                target_days.append((appointed_time + relativedelta(day=1, months=0, days=-1,)))
                 new_argument.remove(x)
             case "先々月":
-                target_days.append((appointed_time + relativedelta(day = 1, months = -2)))
-                target_days.append((appointed_time + relativedelta(day = 1, months = -1, days = -1,)))
+                target_days.append((appointed_time + relativedelta(day=1, months=-2)))
+                target_days.append((appointed_time + relativedelta(day=1, months=-1, days=-1,)))
                 new_argument.remove(x)
             case "今年":
-                target_days.append((current_time + relativedelta(day = 1, month = 1)))
-                target_days.append((current_time + relativedelta(day = 31, month = 12)))
+                target_days.append((current_time + relativedelta(day=1, month=1)))
+                target_days.append((current_time + relativedelta(day=31, month=12)))
                 new_argument.remove(x)
             case "去年" | "昨年":
-                target_days.append((current_time + relativedelta(day = 1, month = 1, years = -1)))
-                target_days.append((current_time + relativedelta(day = 31, month = 12, years = -1)))
+                target_days.append((current_time + relativedelta(day=1, month=1, years=-1)))
+                target_days.append((current_time + relativedelta(day=31, month=12, years=-1)))
                 new_argument.remove(x)
             case "一昨年":
-                target_days.append((current_time + relativedelta(day = 1, month = 1, years = -2)))
-                target_days.append((current_time + relativedelta(day = 31, month = 12, years = -2)))
+                target_days.append((current_time + relativedelta(day=1, month=1, years=-2)))
+                target_days.append((current_time + relativedelta(day=31, month=12, years=-2)))
                 new_argument.remove(x)
             case "最後":
-                target_days.append((current_time + relativedelta(days = 1)))
+                target_days.append((current_time + relativedelta(days=1)))
                 new_argument.remove(x)
             case "全部":
-                target_days.append((current_time + relativedelta(years = -10)))
-                target_days.append((current_time + relativedelta(days = 1)))
+                target_days.append((current_time + relativedelta(years=-10)))
+                target_days.append((current_time + relativedelta(days=1)))
                 new_argument.remove(x)
 
-    return(target_days, new_argument)
+    return (target_days, new_argument)
 
 
 def parser():
     p = argparse.ArgumentParser(
-        formatter_class = argparse.RawTextHelpFormatter,
-        add_help = True,
+        formatter_class=argparse.RawTextHelpFormatter,
+        add_help=True,
     )
 
     p.add_argument(
         "--debug",
-        action = "store_true",
-        help = "デバッグ情報表示",
+        action="store_true",
+        help="デバッグ情報表示",
     )
 
     p.add_argument(
         "--verbose",
-        action = "store_true",
-        help = "詳細デバッグ情報表示",
+        action="store_true",
+        help="詳細デバッグ情報表示",
     )
 
     p.add_argument(
         "--moderate",
-        action = "store_true",
-        help = "ログレベルがエラー以下のもを非表示",
+        action="store_true",
+        help="ログレベルがエラー以下のもを非表示",
     )
 
     p.add_argument(
         "--notime",
-        action = "store_true",
-        help = "ログフォーマットから日時を削除",
+        action="store_true",
+        help="ログフォーマットから日時を削除",
     )
 
     p.add_argument(
         "-c", "--config",
-        default = "config.ini",
-        metavar = "config.ini",
-        help = "設定ファイル",
+        default="config.ini",
+        metavar="config.ini",
+        help="設定ファイル",
     )
 
     p.add_argument(
         "-t", "--testcase",
-        metavar = "testcase.ini",
-        help = "動作テスト用",
+        metavar="testcase.ini",
+        help="動作テスト用",
     )
 
-    return(p.parse_args())
+    return (p.parse_args())
 
-### ログレベル追加 ###
+
+# --- ログレベル追加
 # TRACE
 logging.TRACE = 19  # type: ignore
-logging.trace = partial(logging.log, logging.TRACE) # type: ignore
-logging.addLevelName(logging.TRACE, "TRACE") # type: ignore
+logging.trace = partial(logging.log, logging.TRACE)  # type: ignore
+logging.addLevelName(logging.TRACE, "TRACE")  # type: ignore
 # NOTICE
-logging.NOTICE = 25 # type: ignore
-logging.notice = partial(logging.log, logging.NOTICE) # type: ignore
-logging.addLevelName(logging.NOTICE, "NOTICE") # type: ignore
+logging.NOTICE = 25  # type: ignore
+logging.notice = partial(logging.log, logging.NOTICE)  # type: ignore
+logging.addLevelName(logging.NOTICE, "NOTICE")  # type: ignore
 
-### コマンドラインオプション解析 ###
+# --- コマンドラインオプション解析
 args = parser()
 
 if args.notime:
@@ -351,35 +353,35 @@ else:
 if args.debug:
     if args.verbose:
         print("DEBUG MODE(verbose)")
-        logging.basicConfig(level = logging.TRACE, format = fmt) # type: ignore
+        logging.basicConfig(level=logging.TRACE, format=fmt)  # type: ignore
     else:
         print("DEBUG MODE")
-        logging.basicConfig(level = logging.INFO, format = fmt)
+        logging.basicConfig(level=logging.INFO, format=fmt)
 else:
     if args.moderate:
-        logging.basicConfig(level = logging.WARNING, format = fmt)
+        logging.basicConfig(level=logging.WARNING, format=fmt)
     else:
-        logging.basicConfig(level = logging.NOTICE, format = fmt) # type: ignore
+        logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
-### 設定ファイル読み込み ###
+# --- 設定ファイル読み込み
 try:
     config = configparser.ConfigParser()
     config.read(args.config, encoding="utf-8")
-    logging.notice(f"config read: {args.config} -> {config.sections()}") # type: ignore
-except:
+    logging.notice(f"config read: {args.config} -> {config.sections()}")  # type: ignore
+except Exception:
     sys.exit()
 
 # 必須セクションチェック
 for x in ("mahjong", "setting"):
-    if not x in config.sections():
+    if x not in config.sections():
         sys.exit()
 
 # オプションセクションチェック
 for x in ("results", "graph", "ranking", "report", "member", "team", "database", "comment", "help"):
-    if not x in config.sections():
+    if x not in config.sections():
         config.add_section(x)
 
-commandword = { # チャンネル内呼び出しキーワード
+commandword = {  # チャンネル内呼び出しキーワード
     "results": config["results"].get("commandword", "麻雀成績"),
     "graph": config["graph"].get("commandword", "麻雀グラフ"),
     "ranking": config["ranking"].get("commandword", "麻雀ランキング"),
@@ -396,14 +398,14 @@ reaction_ng = config["setting"].get("reaction_ng", "ng")
 font_file = config["setting"].get("font_file", "ipaexg.ttf")
 work_dir = config["setting"].get("work_dir", "work")
 ignore_userid = [x.strip() for x in config["setting"].get("ignore_userid", "").split(",")]
-commandword.update(remarks_word = config["setting"].get("remarks_word", "麻雀成績メモ"))
+commandword.update(remarks_word=config["setting"].get("remarks_word", "麻雀成績メモ"))
 guest_name = config["member"].get("guest_name", "ゲスト")
 database_file = config["database"].get("database_file", "mahjong.db")
 channel_limitations = config["database"].get("channel_limitations", "")
-commandword.update(check = config["database"].get("commandword", "麻雀成績チェック"))
-commandword.update(help = config["help"].get("commandword", "ヘルプ"))
+commandword.update(check=config["database"].get("commandword", "麻雀成績チェック"))
+commandword.update(help=config["help"].get("commandword", "ヘルプ"))
 
-### 固定値 ###
+# 固定値
 opt = command_option()
 prm = parameters()
 
@@ -411,15 +413,15 @@ wind = ("東家", "南家", "西家", "北家")
 member_list = {}
 team_list = {}
 
-app_var = { # ホームタブ用
+app_var = {  # ホームタブ用
     "user_id": None,
     "view_id": None,
     "screen": None,
-    "sday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
-    "eday": (datetime.now() + relativedelta(hours = -12)).strftime("%Y-%m-%d"),
+    "sday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
+    "eday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
 }
 
-logging.trace(f"{commandword=}") # type: ignore
+logging.trace(f"{commandword=}")  # type: ignore
 logging.info(f"{slash_command=}")
 logging.info(f"{ignore_userid=}")
 logging.info(f"{channel_limitations=}")
@@ -429,14 +431,14 @@ work_dir = os.path.join(os.path.realpath(os.path.curdir), work_dir)
 if not os.path.isdir(work_dir):
     try:
         os.mkdir(work_dir)
-    except:
+    except Exception:
         logging.error("Working directory creation failed !!!")
         sys.exit()
 
-### slack api ###
+# --- slack api
 try:
-    app = App(token = os.environ["SLACK_BOT_TOKEN"])
-    webclient = WebClient(token = os.environ["SLACK_WEB_TOKEN"])
+    app = App(token=os.environ["SLACK_BOT_TOKEN"])
+    webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
 except SlackApiError as e:
     logging.error(e)
     sys.exit()

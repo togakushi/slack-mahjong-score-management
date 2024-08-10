@@ -17,14 +17,15 @@ class CommandCheck(str):
         commandlist = [chk_pattern] + [x for x in commandlist.split(",") if x]
 
         if self.command_name in commandlist:
-            return(True)
-        return(False)
+            return (True)
+
+        return (False)
 
 
 @g.app.command(g.slash_command)
 def slash_command(ack, body, client):
     ack()
-    g.logging.trace(f"{body}") # type: ignore
+    g.logging.trace(f"{body}")  # type: ignore
     channel_id = body["channel_id"]
     event_ts = 0
 
@@ -47,12 +48,18 @@ def slash_command(ack, body, client):
             case "check":
                 d.comparison.main(client, channel_id, event_ts)
             case "download":
-                f.slack_api.post_fileupload(client, channel_id, "resultdb", g.database_file)
+                f.slack_api.post_fileupload(
+                    client, channel_id,
+                    "resultdb", g.database_file
+                )
 
             # メンバー管理系コマンド
             case "member":
                 title, msg = c.member.Getmemberslist()
-                f.slack_api.post_text(client, channel_id, event_ts, title, msg)
+                f.slack_api.post_text(
+                    client, channel_id, event_ts,
+                    title, msg
+                )
             case "add":
                 msg = c.member.MemberAppend(argument)
                 f.slack_api.post_message(client, channel_id, msg)
@@ -82,4 +89,7 @@ def slash_command(ack, body, client):
 
             # その他
             case _:
-                f.slack_api.post_message(client, channel_id, f.message.help(body["command"]))
+                f.slack_api.post_message(
+                    client, channel_id,
+                    f.message.help(body["command"])
+                )

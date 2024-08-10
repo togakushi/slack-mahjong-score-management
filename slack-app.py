@@ -16,14 +16,14 @@ def handle_home_events(client, event):
     if "view" in event:
         g.app_var["view_id"] = event["view"]["id"]
 
-    g.logging.trace(f"{g.app_var}") # type: ignore
+    g.logging.trace(f"{g.app_var}")  # type: ignore
 
     result = client.views_publish(
-        user_id = g.app_var["user_id"],
-        view = e.build_main_menu(),
+        user_id=g.app_var["user_id"],
+        view=e.build_main_menu(),
     )
 
-    g.logging.trace(result) # type: ignore
+    g.logging.trace(result)  # type: ignore
 
 
 if __name__ == "__main__":

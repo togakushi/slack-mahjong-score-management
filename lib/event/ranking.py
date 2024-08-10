@@ -14,17 +14,33 @@ def build_ranking_menu():
     # 検索範囲設定
     view, no = e.Divider(view, no)
     view, no = e.SearchRangeChoice(view, no)
-    view, no = e.Button(view, no, text = "検索範囲設定", action_id = "modal-open-period")
+    view, no = e.Button(
+        view, no,
+        text="検索範囲設定",
+        action_id="modal-open-period"
+    )
 
     # 検索オプション
     view, no = e.Divider(view, no)
     view, no = e.SearchOptions(view, no, flag)
 
-    view, no = e.InputRanked(view, no, block_id = "bid-ranked")
+    view, no = e.InputRanked(view, no, block_id="bid-ranked")
 
     view, no = e.Divider(view, no)
-    view, no = e.Button(view, no, text = "集計開始", value = "click_personal", action_id = "search_ranking", style = "primary")
-    view, no = e.Button(view, no, text = "戻る", value = "click_back", action_id = "actionId-back", style = "danger")
+    view, no = e.Button(
+        view, no,
+        text="集計開始",
+        value="click_personal",
+        action_id="search_ranking",
+        style="primary"
+    )
+    view, no = e.Button(
+        view, no,
+        text="戻る",
+        value="click_back",
+        action_id="actionId-back",
+        style="danger"
+    )
 
     return(view)
 
@@ -32,22 +48,22 @@ def build_ranking_menu():
 @g.app.action("menu_ranking")
 def handle_menu_action(ack, body, client):
     ack()
-    g.logging.trace(body) # type: ignore
+    g.logging.trace(body)  # type: ignore
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
     g.logging.info(f"[menu_ranking] {g.app_var}")
 
     client.views_publish(
-        user_id = g.app_var["user_id"],
-        view = build_ranking_menu(),
+        user_id=g.app_var["user_id"],
+        view=build_ranking_menu(),
     )
 
 
 @g.app.action("search_ranking")
 def handle_search_action(ack, body, client):
     ack()
-    g.logging.trace(body) # type: ignore
+    g.logging.trace(body)  # type: ignore
 
     g.opt.initialization("ranking")
     argument, app_msg = e.set_command_option(body)
@@ -55,8 +71,8 @@ def handle_search_action(ack, body, client):
     g.prm.update(g.opt)
 
     client.views_update(
-        view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg)}"),
+        view_id=g.app_var["view_id"],
+        view=e.PlainText(f"{chr(10).join(app_msg)}"),
     )
 
     search_options = body["view"]["state"]["values"]
@@ -74,12 +90,16 @@ def handle_search_action(ack, body, client):
 
     msg1, msg2 = c.ranking.slackpost.aggregation()
     if msg2:
-        res = f.slack_api.post_message(client, body["user"]["id"], msg1)
-        f.slack_api.post_multi_message(client, body["user"]["id"], msg2, res["ts"])
+        res = f.slack_api.post_message(
+            client, body["user"]["id"], msg1
+        )
+        f.slack_api.post_multi_message(
+            client, body["user"]["id"], msg2, res["ts"]
+        )
 
     client.views_update(
-        view_id = g.app_var["view_id"],
-        view = e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        view_id=g.app_var["view_id"],
+        view=e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )
 
 
@@ -94,6 +114,6 @@ def handle_view_submission(ack, view, client):
             g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
     client.views_update(
-        view_id = g.app_var["view_id"],
-        view = build_ranking_menu(),
+        view_id=g.app_var["view_id"],
+        view=build_ranking_menu(),
     )

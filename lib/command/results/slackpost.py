@@ -36,34 +36,34 @@ def main(client, channel, argument):
             versus_mode = False
 
     # ---
-    if len(g.prm.player_list) == 1 and not versus_mode: # 個人成績
+    if len(g.prm.player_list) == 1 and not versus_mode:  # 個人成績
         msg1, msg2 = personal.aggregation()
         f.slack_api.slack_post(
-            client = client,
-            channel = channel,
-            headline = msg1,
-            message = msg2,
+            client=client,
+            channel=channel,
+            headline=msg1,
+            message=msg2,
         )
-    elif versus_mode: # 直接対戦
+    elif versus_mode:  # 直接対戦
         msg1, msg2, file_list = versus.aggregation()
         f.slack_api.slack_post(
-            client = client,
-            channel = channel,
-            headline = msg1,
-            message = msg2,
-            file_list = file_list,
+            client=client,
+            channel=channel,
+            headline=msg1,
+            message=msg2,
+            file_list=file_list,
         )
-    else: # 成績サマリ
+    else:  # 成績サマリ
         if g.opt.team_total:
             msg1, msg2, file_list = team.aggregation()
         else:
             msg1, msg2, file_list = summary.aggregation()
 
         f.slack_api.slack_post(
-            client = client,
-            channel = channel,
-            headline = msg1,
-            message = msg2,
-            summarize = False,
-            file_list = file_list,
+            client=client,
+            channel=channel,
+            headline=msg1,
+            message=msg2,
+            summarize=False,
+            file_list=file_list,
         )

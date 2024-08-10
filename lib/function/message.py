@@ -9,28 +9,29 @@ def help(command):
     スラッシュコマンド用ヘルプ
     """
 
-    msg = f"```使い方："
+    msg = "```使い方："
     msg += f"\n\t{command} help          このメッセージ"
-    msg += f"\n\t--- 成績管理 ---"
+    msg += "\n\t--- 成績管理 ---"
     msg += f"\n\t{command} results       成績出力"
     msg += f"\n\t{command} ranking       ランキング出力"
     msg += f"\n\t{command} graph         ポイント推移グラフを表示"
     msg += f"\n\t{command} report        レポート表示"
-    msg += f"\n\t--- データベース操作 ---"
+    msg += "\n\t--- データベース操作 ---"
     msg += f"\n\t{command} check         データ突合"
     msg += f"\n\t{command} download      データベースダウンロード"
-    msg += f"\n\t--- メンバー管理 ---"
+    msg += "\n\t--- メンバー管理 ---"
     msg += f"\n\t{command} member        登録されているメンバー"
     msg += f"\n\t{command} add | del     メンバーの追加/削除"
-    msg += f"\n\t--- チーム管理 ---"
+    msg += "\n\t--- チーム管理 ---"
     msg += f"\n\t{command} team_create <チーム名>            チームの新規作成"
     msg += f"\n\t{command} team_del <チーム名>               チームの削除"
     msg += f"\n\t{command} team_add <チーム名> <メンバー名>  チームにメンバーを登録"
     msg += f"\n\t{command} team_remove <メンバー名>          指定したメンバーを未所属にする"
     msg += f"\n\t{command} team_list                         チーム名と所属メンバーを表示"
     msg += f"\n\t{command} team_clear                        チームデータをすべて削除"
-    msg += f"```"
-    return(msg)
+    msg += "```"
+
+    return (msg)
 
 
 def help_message():
@@ -82,7 +83,7 @@ def help_message():
         "*オプション*",
         "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/argument_keyword.md",
     ]
-    return("\n".join(msg))
+    return ("\n".join(msg))
 
 
 def invalid_argument():
@@ -90,7 +91,7 @@ def invalid_argument():
     引数解析失敗時のメッセージ
     """
 
-    msg = f"使い方が間違っています。"
+    msg = "使い方が間違っています。"
 
     if g.config.has_section("custom_message"):
         key_list = []
@@ -100,7 +101,7 @@ def invalid_argument():
         if key_list:
             msg = g.config["custom_message"][random.choice(key_list)]
 
-    return(msg)
+    return (msg)
 
 
 def restricted_channel():
@@ -108,7 +109,7 @@ def restricted_channel():
     制限チャンネルでキーワードを検出したときのメッセージ
     """
 
-    msg = f"この投稿はデータベースに反映されません。"
+    msg = "この投稿はデータベースに反映されません。"
 
     if g.config.has_section("custom_message"):
         key_list = []
@@ -118,7 +119,7 @@ def restricted_channel():
         if key_list:
             msg = g.config["custom_message"][random.choice(key_list)]
 
-    return(msg)
+    return (msg)
 
 
 def invalid_score(user_id, rpoint_sum, correct_score):
@@ -137,9 +138,9 @@ def invalid_score(user_id, rpoint_sum, correct_score):
         if key_list:
             msg = g.config["custom_message"][random.choice(key_list)]
 
-    return(f"<@{user_id}> " + msg.format(
-        rpoint_diff = rpoint_diff * 100,
-        rpoint_sum = rpoint_sum * 100,
+    return (f"<@{user_id}> " + msg.format(
+        rpoint_diff=rpoint_diff * 100,
+        rpoint_sum=rpoint_sum * 100,
     ))
 
 
@@ -161,7 +162,7 @@ def no_hits():
         if key_list:
             msg = g.config["custom_message"][random.choice(key_list)]
 
-    return(msg.format(keyword = keyword, start = start, end = end))
+    return (msg.format(keyword=keyword, start=start, end=end))
 
 
 def remarks():
@@ -175,21 +176,21 @@ def remarks():
     if not g.opt.guest_skip:
         remark.append("2ゲスト戦の結果を含む")
     if not g.opt.unregistered_replace:
-        remark.append("ゲスト置換なし("+ g.guest_mark + "：未登録プレイヤー)")
+        remark.append("ゲスト置換なし(" + g.guest_mark + "：未登録プレイヤー)")
     if remark:
         ret = "特記：" + "、".join(remark)
 
-    return(ret)
+    return (ret)
 
 
-def header(game_info, command_option, params, add_text = "", indent = 1):
+def header(game_info, params, add_text="", indent=1):
     msg = ""
     tab = "\t" * indent
 
     # 集計範囲
     game_range1 = f"{tab}最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
     game_range1 += f"{tab}最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
-    if g.opt.search_word: # コメント検索の場合はコメントで表示
+    if g.opt.search_word:  # コメント検索の場合はコメントで表示
         game_range2 = f"{tab}集計範囲： {game_info['first_comment']} ～ {game_info['last_comment']}\n"
     else:
         game_range2 = f"{tab}集計範囲： {game_info['first_game']} ～ {game_info['last_game']}\n".replace("-", "/")
@@ -200,7 +201,7 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
     else:
         match g.opt.command:
             case "results":
-                if params["target_count"]: # 直近指定がない場合は検索範囲を付ける
+                if params["target_count"]:  # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1
                     msg += f"{tab}総ゲーム数：{game_info['game_count']} 回{add_text}\n"
                 else:
@@ -215,4 +216,4 @@ def header(game_info, command_option, params, add_text = "", indent = 1):
                 msg += f"{tab}総ゲーム数：{game_info['game_count']} 回\n"
         msg += tab + f.message.remarks()
 
-    return(msg)
+    return (msg)
