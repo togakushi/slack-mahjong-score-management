@@ -86,14 +86,14 @@ def aggregation():
 
     for s_line, e_line in step_count:
         t = df_summary[s_line:e_line].filter(
-                items=header_list
-            ).to_markdown(
-                index=False,
-                tablefmt="simple",
-                numalign="right",
-                maxheadercolwidths=8,
-                floatfmt=("", "+.1f", "+.1f", "", ".2f")
-            )
+            items=header_list
+        ).to_markdown(
+            index=False,
+            tablefmt="simple",
+            numalign="right",
+            maxheadercolwidths=8,
+            floatfmt=("", "+.1f", "+.1f", "", ".2f")
+        )
         msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r"▲\1", t) + "```\n"  # マイナスを記号に置換
 
     # メモ追加

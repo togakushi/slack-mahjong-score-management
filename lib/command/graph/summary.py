@@ -215,6 +215,7 @@ def _data_collection():
         target_list = list(
             target_data.query("game_count >= @g.opt.stipulated").index
         )
+        _ = target_list  # ignore F841
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
 
