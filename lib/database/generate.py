@@ -1,5 +1,4 @@
 import textwrap
-import lib.function as f
 from lib.function import global_value as g
 
 
@@ -63,6 +62,7 @@ def game_info():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -112,6 +112,7 @@ def record_count():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -186,6 +187,7 @@ def game_results():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -345,6 +347,7 @@ def personal_results():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -383,6 +386,7 @@ def game_details():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -481,6 +485,7 @@ def versus_matrix():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -555,6 +560,7 @@ def personal_gamedata():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -629,6 +635,7 @@ def personal_gamedata_daily():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -654,7 +661,9 @@ def team_gamedata():
                 team,
                 rank,
                 point,
-                comment
+                --[not_comment] comment,
+                --[comment] comment,
+                --[group_length] substr(comment, 1, :group_length) as comment,
             from
                 individual_results
             where
@@ -672,7 +681,10 @@ def team_gamedata():
     """
 
     if g.opt.search_word:
-        sql = sql.replace("--[comment] ", "")
+        if g.opt.group_length:
+            sql = sql.replace("--[group_length] ", "")
+        else:
+            sql = sql.replace("--[comment] ", "")
     else:
         sql = sql.replace("--[not_comment] ", "")
 
@@ -681,6 +693,7 @@ def team_gamedata():
         sql = sql.replace("--[recent] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -742,6 +755,7 @@ def team_gamedata_daily():
         sql = sql.replace("--[not_comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -774,6 +788,7 @@ def monthly_report():
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -839,6 +854,7 @@ def winner_report():
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
 
 
@@ -876,4 +892,5 @@ def team_total():
         sql = sql.replace("--[comment] ", "")
 
     g.logging.trace(f"sql: {textwrap.dedent(sql)}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)

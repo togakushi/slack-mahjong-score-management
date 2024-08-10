@@ -87,7 +87,9 @@ def for_report_count_data(interval = 40):
     """
 
     g.prm.append({"interval": interval})
+
     g.logging.trace(f"sql: {sql}") # type: ignore
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
 
     return(sql)
 
@@ -135,5 +137,5 @@ def for_report_count_moving(interval = 40):
         )
 
     g.logging.trace(f"sql: {sql}") # type: ignore
-
+    g.logging.trace(f"prm: {g.prm.to_dict()}") # type: ignore
     return(sql)
