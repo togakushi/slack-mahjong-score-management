@@ -167,9 +167,9 @@ class parameters:
         self.starttime = _opt.search_first  # 検索開始日
         self.endtime = _opt.search_last  # 検索終了日
         self.starttime_hm = _opt.search_first.strftime("%Y/%m/%d %H:%M")
-        self.endtime_hm = _opt.search_first.strftime("%Y/%m/%d %H:%M")
+        self.endtime_hm = _opt.search_last.strftime("%Y/%m/%d %H:%M")
         self.starttime_hms = _opt.search_first.strftime("%Y/%m/%d %H:%M:%S")
-        self.endtime_hms = _opt.search_first.strftime("%Y/%m/%d %H:%M:%S")
+        self.endtime_hms = _opt.search_last.strftime("%Y/%m/%d %H:%M:%S")
         self.target_count = _opt.target_count
         self.stipulated = _opt.stipulated
         self.group_length = _opt.group_length
