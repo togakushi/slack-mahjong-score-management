@@ -26,12 +26,7 @@ def aggregation():
     df_summary = d.aggregate.game_summary()
     df_game = d.aggregate.game_details()
     df_grandslam = df_game.query("grandslam != ''")
-
-    df_grandslam = df_grandslam.rename(
-        columns={
-            "プレイヤー名": "name", "grandslam": "和了役", "playtime": "日時",
-        })
-    df_grandslam["和了者"] = df_grandslam["表示名"].apply(lambda x: x.strip())
+    df_regulations = df_game.query("regulation != ''")
 
     # 表示
     # --- 情報ヘッダ
@@ -57,13 +52,31 @@ def aggregation():
         else:  # トビカウントあり
             header_list = ["名前", "通算", "平均", "順位分布", "トビ"]
             filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
+
         # メモ表示
+        memo_grandslam = ""
         if len(df_grandslam) != 0:
-            msg_memo = "*【メモ】*\n"
             for _, v in df_grandslam.iterrows():
-                msg_memo += "\t{} ： {} （{}）\n".format(
-                    v["日時"].replace("-", "/"), v["和了役"], v["和了者"],
+                memo_grandslam += "\t{} ： {} （{}）\n".format(
+                    v["playtime"].replace("-", "/"),
+                    v["grandslam"],
+                    v["表示名"].strip(),
                 )
+
+        memo_regulation = ""
+        if len(df_regulations) != 0:
+            for _, v in df_regulations.iterrows():
+                memo_regulation += "\t{} ： {} {}pt（{}）\n".format(
+                    v["playtime"].replace("-", "/"),
+                    v["regulation"],
+                    v["penalty"],
+                    v["表示名"].strip(),
+                )
+
+        if memo_grandslam or memo_regulation:
+            msg_memo = "*【メモ】*\n"
+            msg_memo += memo_grandslam + memo_regulation
+
     else:  # 差分表示
         df_grandslam = df_grandslam[:0]  # 非表示のため破棄
         header_list = ["名前", "通算", "平均", "点差"]

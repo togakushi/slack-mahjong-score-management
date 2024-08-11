@@ -364,24 +364,30 @@ def game_details():
     sql = """
         select
             playtime,
-            name as プレイヤー名,
+            individual_results.name as プレイヤー名,
             guest,
             seat,
             rpoint,
             rank,
             point,
             grandslam,
+            regulations.word as regulation,
+            regulations.penalty,
             --[not_group_length] comment
             --[group_length] substr(comment, 1, :group_length) as comment
-        from (
-            select * from individual_results
-            where
-                rule_version = :rule_version
-                and playtime between :starttime and :endtime
-                --[search_word] and comment like :search_word
-            order by
-                playtime desc, comment asc
-        )
+        from
+            individual_results
+        join game_info on
+            game_info.ts == individual_results.ts
+        left join regulations on
+            regulations.thread_ts == individual_results.ts
+            and regulations.name == individual_results.name
+        where
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+            --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
+            --[guest_skip] and guest = 0 -- ゲストなし
+            --[search_word] and comment like :search_word
         order by
             playtime
     """

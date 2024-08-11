@@ -101,6 +101,16 @@ def initialization_resultdb():
         """
     )
 
+    resultdb.execute(
+        """
+        create table if not exists "words" (
+            "word"  TEXT NOT NULL UNIQUE,
+            "type"  INTEGER,
+            "bonus" ITINTEGER
+        )
+        """
+    )
+
     resultdb.execute("drop view if exists individual_results")
     resultdb.execute(
         """
@@ -112,8 +122,9 @@ def initialization_resultdb():
                 p1_name as name,
                 p1_rpoint as rpoint,
                 p1_rank as rank,
-                p1_point as point,
-                group_concat(matter, ",") as grandslam,
+                p1_point + ifnull(penalty, 0) as point,
+                grandslam,
+                ifnull(penalty, 0) as penalty,
                 p1_name not in (select name from member) as guest,
                 team.name as team,
                 substr(
@@ -134,14 +145,17 @@ def initialization_resultdb():
                 comment
             from
                 result
-            left outer join
-                remarks on remarks.thread_ts = result.ts
-                and remarks.name = result.p1_name
-            left outer join
+            left join
                 member on member.name = result.p1_name
-            left outer join
+            left join
                 team on member.team_id = team.id
-            group by ts, seat, remarks.thread_ts, remarks.name
+            left join
+                grandslam on grandslam.thread_ts == result.ts
+                and grandslam.name = result.p1_name
+            left join
+                regulations on regulations.thread_ts == result.ts
+                and regulations.name == result.p1_name
+            group by ts, seat
             union select
                 datetime(playtime),
                 ts,
@@ -149,8 +163,9 @@ def initialization_resultdb():
                 p2_name,
                 p2_rpoint,
                 p2_rank,
-                p2_point,
-                group_concat(matter, ",") as grandslam,
+                p2_point + ifnull(penalty, 0),
+                grandslam,
+                ifnull(penalty, 0),
                 p2_name not in (select name from member),
                 team.name,
                 substr(
@@ -171,14 +186,17 @@ def initialization_resultdb():
                 comment
             from
                 result
-            left outer join
-                remarks on remarks.thread_ts = result.ts
-                and remarks.name = result.p2_name
-            left outer join
+            left join
                 member on member.name = result.p2_name
-            left outer join
+            left join
                 team on member.team_id = team.id
-            group by ts, seat, remarks.thread_ts, remarks.name
+            left join
+                grandslam on grandslam.thread_ts == result.ts
+                and grandslam.name = result.p2_name
+            left join
+                regulations on regulations.thread_ts == result.ts
+                and regulations.name == result.p2_name
+            group by ts, seat
             union select
                 datetime(playtime),
                 ts,
@@ -186,8 +204,9 @@ def initialization_resultdb():
                 p3_name,
                 p3_rpoint,
                 p3_rank,
-                p3_point,
-                group_concat(matter, ",") as grandslam,
+                p3_point + ifnull(penalty, 0),
+                grandslam,
+                ifnull(penalty, 0),
                 p3_name not in (select name from member),
                 team.name,
                 substr(
@@ -208,14 +227,17 @@ def initialization_resultdb():
                 comment
             from
                 result
-            left outer join
-                remarks on remarks.thread_ts = result.ts
-                and remarks.name = result.p3_name
-            left outer join
+            left join
                 member on member.name = result.p3_name
-            left outer join
+            left join
                 team on member.team_id = team.id
-            group by ts, seat, remarks.thread_ts, remarks.name
+            left join
+                grandslam on grandslam.thread_ts == result.ts
+                and grandslam.name = result.p3_name
+            left join
+                regulations on regulations.thread_ts == result.ts
+                and regulations.name == result.p3_name
+            group by ts, seat
             union select
                 datetime(playtime),
                 ts,
@@ -223,8 +245,9 @@ def initialization_resultdb():
                 p4_name,
                 p4_rpoint,
                 p4_rank,
-                p4_point,
-                group_concat(matter, ",") as grandslam,
+                p4_point + ifnull(penalty, 0),
+                grandslam,
+                ifnull(penalty, 0),
                 p4_name not in (select name from member),
                 team.name,
                 substr(
@@ -245,14 +268,17 @@ def initialization_resultdb():
                 comment
             from
                 result
-            left outer join
-                remarks on remarks.thread_ts = result.ts
-                and remarks.name = result.p4_name
-            left outer join
+            left join
                 member on member.name = result.p4_name
-            left outer join
+            left join
                 team on member.team_id = team.id
-            group by ts, seat, remarks.thread_ts, remarks.name
+            left join
+                grandslam on grandslam.thread_ts == result.ts
+                and grandslam.name = result.p4_name
+            left join
+                regulations on regulations.thread_ts == result.ts
+                and regulations.name == result.p4_name
+            group by ts, seat
         """
     )
 
@@ -321,6 +347,45 @@ def initialization_resultdb():
         """
     )
 
+    resultdb.execute("drop view if exists grandslam")
+    resultdb.execute(
+        """
+        create view if not exists grandslam as
+            select
+                remarks.thread_ts,
+                remarks.name,
+                group_concat(remarks.matter) as grandslam
+            from
+                remarks
+            left join words
+                on remarks.matter == words.word
+            where
+                words.type is null or words.type == 0
+            group by
+                remarks.thread_ts, remarks.name
+        """
+    )
+
+    resultdb.execute("drop view if exists regulations")
+    resultdb.execute(
+        """
+        create view if not exists regulations as
+            select
+                remarks.thread_ts,
+                remarks.name,
+                group_concat(remarks.matter) as word,
+                sum(words.bonus) as penalty
+            from
+                remarks
+            left join words
+                on remarks.matter == words.word
+            where
+                words.type == 1
+            group by
+                remarks.thread_ts, remarks.name
+        """
+    )
+
     # ゲスト設定チェック
     ret = resultdb.execute("select * from member where id=0")
     data = ret.fetchall()
@@ -333,6 +398,16 @@ def initialization_resultdb():
         g.logging.notice(f"ゲスト修正: {data[0][1]} -> {g.guest_name}")  # type: ignore
         sql = "update member set name=? where id=0"
         resultdb.execute(sql, (g.guest_name,))
+
+    # regulationsテーブル情報読み込み
+    if g.config.has_section("regulations"):
+        resultdb.execute("delete from words where type == 1")
+        for word, bonus in g.config.items("regulations"):
+            resultdb.execute(
+                "insert into words(word, type, bonus) values (?, 1, ?)",
+                (word, int(bonus),)
+            )
+            g.logging.info(f"regulations table update: {word}, {bonus}")
 
     resultdb.commit()
     resultdb.close()
