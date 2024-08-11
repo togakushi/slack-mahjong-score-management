@@ -49,10 +49,13 @@ def aggregation():
         \t{f.message.remarks()}
     """).strip() + "\n"
 
+    msg2 = {}  # 対戦結果格納用
+
     # --- 表示内容
     tmp_msg = {}
     if len(df_vs) == 0:  # 検索結果なし
-        tmp_msg[""] = "対戦記録が見つかりません。\n"
+        msg2[""] = "対戦記録が見つかりません。\n"
+        return (msg1, msg2, "")
 
     for vs_name in g.prm.competition_list.values():
         tmp_msg[vs_name] = {}
@@ -120,7 +123,6 @@ def aggregation():
             )
 
     # --- データ整列&まとめ
-    msg2 = {}
     for m in tmp_msg.keys():
         msg2[f"{m}_info"] = tmp_msg[m].pop("info")
         for x in sorted(tmp_msg[m].keys()):
