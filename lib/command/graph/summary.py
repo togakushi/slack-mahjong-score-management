@@ -57,7 +57,6 @@ def point_plot():
         else:
             xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
 
-
     # 集計
     if g.opt.team_total:
         legend = "チーム名"
