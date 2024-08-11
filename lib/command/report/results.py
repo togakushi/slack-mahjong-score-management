@@ -1,21 +1,20 @@
 import os
 import sqlite3
-from io import BytesIO
 from datetime import datetime
+from io import BytesIO
 
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4, landscape
-from reportlab.platypus import SimpleDocTemplate, TableStyle, LongTable, Image
-from reportlab.platypus import Paragraph, PageBreak, Spacer
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib.enums import TA_RIGHT, TA_LEFT
-from reportlab.lib.units import mm
-
-import pandas as pd
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
+import pandas as pd
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_LEFT, TA_RIGHT
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
+                                SimpleDocTemplate, Spacer, TableStyle)
 
 import lib.command as c
 import lib.command.report._query as query

@@ -3,8 +3,8 @@ import sqlite3
 from datetime import datetime
 
 import lib.command as c
-import lib.function as f
 import lib.database as d
+import lib.function as f
 from lib.function import global_value as g
 
 

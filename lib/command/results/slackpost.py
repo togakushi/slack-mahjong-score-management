@@ -1,10 +1,6 @@
 import lib.function as f
+from lib.command.results import personal, summary, team, versus
 from lib.function import global_value as g
-
-from lib.command.results import summary
-from lib.command.results import personal
-from lib.command.results import versus
-from lib.command.results import team
 
 
 def main(client, channel, argument):

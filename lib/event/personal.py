@@ -1,6 +1,6 @@
 import lib.command as c
-import lib.function as f
 import lib.event as e
+import lib.function as f
 from lib.function import global_value as g
 
 

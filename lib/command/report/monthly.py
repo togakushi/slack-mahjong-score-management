@@ -3,8 +3,8 @@ import os
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
-import lib.function as f
 import lib.database as d
+import lib.function as f
 from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")

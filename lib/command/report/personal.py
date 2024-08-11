@@ -1,13 +1,13 @@
-import os
 import math
+import os
 import sqlite3
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.command as c
-import lib.function as f
 import lib.database as d
+import lib.function as f
 from lib.function import global_value as g
 
 mlogger = g.logging.getLogger("matplotlib")

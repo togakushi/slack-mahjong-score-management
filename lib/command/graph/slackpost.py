@@ -1,8 +1,6 @@
 import lib.function as f
+from lib.command.graph import personal, summary
 from lib.function import global_value as g
-
-from lib.command.graph import summary
-from lib.command.graph import personal
 
 
 def main(client, channel, argument):

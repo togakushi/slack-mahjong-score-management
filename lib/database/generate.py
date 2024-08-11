@@ -1,5 +1,6 @@
 import re
 import textwrap
+
 from lib.function import global_value as g
 
 

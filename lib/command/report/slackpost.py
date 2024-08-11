@@ -1,10 +1,6 @@
 import lib.function as f
+from lib.command.report import monthly, personal, results, winner
 from lib.function import global_value as g
-
-from lib.command.report import monthly
-from lib.command.report import personal
-from lib.command.report import winner
-from lib.command.report import results
 
 
 def main(client, channel, argument):

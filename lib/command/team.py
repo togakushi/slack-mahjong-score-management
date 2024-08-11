@@ -2,11 +2,11 @@ import re
 import sqlite3
 from itertools import chain
 
-import lib.function as f
 import lib.command as c
 import lib.database as d
-from lib.function import global_value as g
+import lib.function as f
 from lib.command.member import NameReplace
+from lib.function import global_value as g
 
 
 def check_namepattern(name):

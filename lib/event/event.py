@@ -2,8 +2,8 @@ import re
 import sqlite3
 
 import lib.command as c
-import lib.function as f
 import lib.database as d
+import lib.function as f
 from lib.function import global_value as g
 
 
