@@ -379,10 +379,10 @@ def gen_pdf():
     doc = SimpleDocTemplate(
         pdf_path,
         pagesize=landscape(A4),
-        topMargin=10.0*mm,
-        bottomMargin=10.0*mm,
-        # leftMargin=1.5*mm,
-        # rightMargin=1.5*mm,
+        topMargin=10.0 * mm,
+        bottomMargin=10.0 * mm,
+        # leftMargin=1.5 * mm,
+        # rightMargin=1.5 * mm,
     )
     style = {}
     style["Title"] = ParagraphStyle(
@@ -407,16 +407,16 @@ def gen_pdf():
     elements = []
 
     # タイトル
-    elements.append(Spacer(1, 40*mm))
+    elements.append(Spacer(1, 40 * mm))
     elements.append(Paragraph(f"成績レポート：{g.prm.player_name}", style["Title"]))
-    elements.append(Spacer(1, 10*mm))
+    elements.append(Spacer(1, 10 * mm))
     elements.append(Paragraph(
         "集計期間：{} - {}".format(
             first_game.strftime("%Y-%m-%d %H:%M"),
             last_game.strftime("%Y-%m-%d %H:%M"),
         ), style["Normal"]
     ))
-    elements.append(Spacer(1, 100*mm))
+    elements.append(Spacer(1, 100 * mm))
     elements.append(
         Paragraph(
             f"作成日：{datetime.now().strftime('%Y-%m-%d')}",
@@ -427,7 +427,7 @@ def gen_pdf():
 
     # --- 全期間
     elements.append(Paragraph("全期間", style["Left"]))
-    elements.append(Spacer(1, 5*mm))
+    elements.append(Spacer(1, 5 * mm))
     tmp_data = get_game_results(flag="A")
     data = []
 
@@ -485,7 +485,7 @@ def gen_pdf():
     )
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
 
-    elements.append(Spacer(1, 5*mm))
+    elements.append(Spacer(1, 5 * mm))
     elements.append(Image(imgdata, width=600 * 0.5, height=600 * 0.5))
     plt.close()
 
@@ -510,7 +510,7 @@ def gen_pdf():
     ]
     for table_title, graph_title, flag in pattern:
         elements.append(Paragraph(table_title, style["Left"]))
-        elements.append(Spacer(1, 5*mm))
+        elements.append(Spacer(1, 5 * mm))
 
         data = []
         tmp_data = get_game_results(flag)
@@ -538,19 +538,20 @@ def gen_pdf():
                     ts.add("BACKGROUND", (0, i + 2), (-1, i + 2), colors.lightgrey)
         tt.setStyle(ts)
         elements.append(tt)
-        elements.append(Spacer(1, 10*mm))
+        elements.append(Spacer(1, 10 * mm))
 
         # 順位分布
-        df = pd.DataFrame({
-            "1位率": [float(data[x + 1][5].replace("%", "")) for x in range(len(data) - 1)],
-            "2位率": [float(data[x + 1][7].replace("%", "")) for x in range(len(data) - 1)],
-            "3位率": [float(data[x + 1][9].replace("%", "")) for x in range(len(data) - 1)],
-            "4位率": [float(data[x + 1][11].replace("%", "")) for x in range(len(data) - 1)],
+        df = pd.DataFrame(
+            {
+                "1位率": [float(data[x + 1][5].replace("%", "")) for x in range(len(data) - 1)],
+                "2位率": [float(data[x + 1][7].replace("%", "")) for x in range(len(data) - 1)],
+                "3位率": [float(data[x + 1][9].replace("%", "")) for x in range(len(data) - 1)],
+                "4位率": [float(data[x + 1][11].replace("%", "")) for x in range(len(data) - 1)],
             }, index=[data[x + 1][0] for x in range(len(data) - 1)]
         )
 
         imgdata = graphing_rank_distribution(df, graph_title)
-        elements.append(Spacer(1, 5*mm))
+        elements.append(Spacer(1, 5 * mm))
         elements.append(Image(imgdata, width=1200 * 0.5, height=700 * 0.5))
 
         elements.append(PageBreak())
@@ -565,7 +566,7 @@ def gen_pdf():
         if target_info["game_count"] > threshold:
             # テーブル
             elements.append(Paragraph(f"区間集計 （ {title} ）", style["Left"]))
-            elements.append(Spacer(1, 5*mm))
+            elements.append(Spacer(1, 5 * mm))
             data = get_count_results(count)
             tt = LongTable(data, repeatRows=1)
             ts = TableStyle([
@@ -600,7 +601,7 @@ def gen_pdf():
             )
 
             imgdata = graphing_rank_distribution(df, f"順位分布 （ 区間 {title} ）")
-            elements.append(Spacer(1, 5*mm))
+            elements.append(Spacer(1, 5 * mm))
             elements.append(Image(imgdata, width=1200 * 0.5, height=800 * 0.5))
 
             # 通算ポイント推移

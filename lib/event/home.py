@@ -24,7 +24,7 @@ def set_command_option(body):
 
     if "bid-user_select" in search_options:
         user_select = search_options["bid-user_select"]["player"]["selected_option"]
-        if user_select != None:
+        if user_select is not None:
             if "value" in user_select:
                 player = user_select["value"]
                 app_msg.append(f"対象プレイヤー： {player}")

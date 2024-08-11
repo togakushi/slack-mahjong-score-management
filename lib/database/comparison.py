@@ -78,7 +78,7 @@ def score_comparison():
         g.config["search"].get("channel", "#麻雀部"),
     )
     slack_data = f.search.game_result(matches)
-    if slack_data == None:
+    if slack_data is None:
         return (count, ret_msg, fts)
 
     # データベースからデータを取得
@@ -90,7 +90,7 @@ def score_comparison():
     resultdb.row_factory = sqlite3.Row
     cur = resultdb.cursor()
     db_data = f.search.for_database(cur, fts)
-    if db_data == None:
+    if db_data is None:
         return (count, ret_msg, fts)
 
     # --- 突合処理
@@ -194,7 +194,7 @@ def textformat(text):
 
     ret = ""
     for i in range(0, len(text), 2):
-        if text[i] == None:
+        if text[i] is None:
             continue
         ret += f"[{text[i]} {str(text[i + 1])}]"
 

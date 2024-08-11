@@ -107,7 +107,7 @@ def point_split(point: list):
     if sum(point) % len(point):
         new_point[0] += sum(point) % len(point)
         if sum(point) < 0:
-            new_point = list(map(lambda x: x-1, new_point))
+            new_point = list(map(lambda x: x - 1, new_point))
 
     return (new_point)
 
@@ -120,9 +120,10 @@ def check_score(client, channel_id, event_ts, user, msg):
     correct_score = g.config["mahjong"].getint("point", 250) * 4
     rpoint_sum = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
 
-    g.logging.notice("post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(  # type: ignore
-        msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7],
-        correct_score - rpoint_sum,
+    g.logging.notice(  # type: ignore
+        "post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
+            msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7],
+            correct_score - rpoint_sum,
         )
     )
 

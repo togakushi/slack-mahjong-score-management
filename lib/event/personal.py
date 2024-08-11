@@ -76,7 +76,7 @@ def handle_search_action(ack, body, client):
     search_options = body["view"]["state"]["values"]
     if "bid-user_select" in search_options:
         user_select = search_options["bid-user_select"]["player"]["selected_option"]
-        if user_select == None:
+        if user_select is None:
             return
 
     client.views_update(

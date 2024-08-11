@@ -42,7 +42,7 @@ def build_ranking_menu():
         style="danger"
     )
 
-    return(view)
+    return (view)
 
 
 @g.app.action("menu_ranking")

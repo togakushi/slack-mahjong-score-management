@@ -144,6 +144,7 @@ def aggregation():
     ).drop_duplicates()
 
     namelist = list(g.prm.competition_list.values())
+    _ = namelist  # ignore PEP8 F841
     df_vs["対戦相手"] = df_vs["vs_表示名"].apply(lambda x: x.strip())
     df_vs.rename(
         columns={
@@ -155,15 +156,15 @@ def aggregation():
             "vs_rank_avg": "平均順位(相手)", "vs_rank_distr": "順位分布(相手)",
         }, inplace=True)
     df_vs2 = df_vs.query("vs_name == @namelist").filter(
-            items=[
-                "対戦相手", "対戦結果", "勝率",
-                "獲得ポイント(自分)", "平均ポイント(自分)",
-                "獲得ポイント(相手)", "平均ポイント(相手)",
-                "平均素点(自分)", "平均素点(相手)",
-                "順位分布(自分)", "平均順位(自分)",
-                "順位分布(相手)", "平均順位(相手)",
-            ]
-        ).drop_duplicates()
+        items=[
+            "対戦相手", "対戦結果", "勝率",
+            "獲得ポイント(自分)", "平均ポイント(自分)",
+            "獲得ポイント(相手)", "平均ポイント(相手)",
+            "平均素点(自分)", "平均素点(相手)",
+            "順位分布(自分)", "平均順位(自分)",
+            "順位分布(相手)", "平均順位(相手)",
+        ]
+    ).drop_duplicates()
 
     match g.opt.format.lower():
         case "csv":
