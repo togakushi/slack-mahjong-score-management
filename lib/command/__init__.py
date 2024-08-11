@@ -4,4 +4,3 @@ from lib.command import report
 from lib.command import ranking
 from lib.command import member
 from lib.command import team
-from lib.command.slash import *
