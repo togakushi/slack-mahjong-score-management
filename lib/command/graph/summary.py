@@ -52,7 +52,11 @@ def point_plot():
     if g.opt.daily:
         xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
     else:
-        xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+        if g.opt.search_word:
+            xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
+        else:
+            xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+
 
     # 集計
     if g.opt.team_total:
@@ -135,7 +139,7 @@ def rank_plot():
         xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
     else:
         if g.opt.search_word:
-            xlabel_text = f"ゲーム（{game_info['game_count']} ゲーム）"
+            xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
         else:
             xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
 
