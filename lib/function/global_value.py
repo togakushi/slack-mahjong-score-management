@@ -66,8 +66,10 @@ class command_option:
     def set_search_range(self, _argument: list) -> list:
         _target_days, _new_argument = scope_coverage(_argument)
         if _target_days:
-            self.search_first = min(_target_days)
-            self.search_last = max(_target_days)
+            _first = min(_target_days)
+            _last = max(_target_days) + relativedelta(days=1)
+            self.search_first = _first.replace(hour=12, minute=0, second=0, microsecond=0)
+            self.search_last = _last.replace(hour=11, minute=59, second=59, microsecond=999999)
 
         return (_new_argument)
 
