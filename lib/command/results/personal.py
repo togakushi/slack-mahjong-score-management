@@ -106,7 +106,7 @@ def aggregation():
             msg2["戦績"] = "\n*【戦績】*\n"
             for p in df["playtime"].unique():
                 x = df.query("playtime == @p")
-                if g.opt.guest_skip and any(x["guest_count"] >= 2):  # 2ゲスト戦を計上しないパターン
+                if g.opt.guest_skip and g.opt.unregistered_replace and any(x["guest_count"] >= 2):
                     continue
                 if any(x["プレイヤー名"] == g.prm.player_name):
                     msg2["戦績"] += "{}{}\n".format(
@@ -127,7 +127,7 @@ def aggregation():
             msg2["戦績"] = f"\n*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
             for p in df["playtime"].unique():
                 x = df.query("playtime == @p")
-                if g.opt.guest_skip and any(x["guest_count"] >= 2):  # 2ゲスト戦を計上しないパターン
+                if g.opt.guest_skip and g.opt.unregistered_replace and any(x["guest_count"] >= 2):
                     continue
                 for seat, idx in list(zip(g.wind, range(len(g.wind)))):
                     seat_data = x.iloc[idx].to_dict()
