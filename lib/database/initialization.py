@@ -392,13 +392,13 @@ def initialization_resultdb():
     data = ret.fetchall()
 
     if len(data) == 0:
-        g.logging.notice(f"ゲスト設定: {g.guest_name}")  # type: ignore
+        g.logging.notice(f"ゲスト設定: {g.prm.guest_name}")  # type: ignore
         sql = "insert into member (id, name) values (0, ?)"
-        resultdb.execute(sql, (g.guest_name,))
-    elif data[0][1] != g.guest_name:
-        g.logging.notice(f"ゲスト修正: {data[0][1]} -> {g.guest_name}")  # type: ignore
+        resultdb.execute(sql, (g.prm.guest_name,))
+    elif data[0][1] != g.prm.guest_name:
+        g.logging.notice(f"ゲスト修正: {data[0][1]} -> {g.prm.guest_name}")  # type: ignore
         sql = "update member set name=? where id=0"
-        resultdb.execute(sql, (g.guest_name,))
+        resultdb.execute(sql, (g.prm.guest_name,))
 
     # regulationsテーブル情報読み込み
     if g.config.has_section("regulations"):

@@ -17,7 +17,7 @@ def read_memberslist():
     resultdb.row_factory = sqlite3.Row
 
     rows = resultdb.execute("select name from member where id=0")
-    g.guest_name = rows.fetchone()[0]
+    g.prm.guest_name = rows.fetchone()[0]
 
     rows = resultdb.execute("select name, member from alias")
     g.member_list = dict(rows.fetchall())
@@ -27,7 +27,7 @@ def read_memberslist():
 
     resultdb.close()
 
-    g.logging.notice(f"guest_name: {g.guest_name}")  # type: ignore
+    g.logging.notice(f"guest_name: {g.prm.guest_name}")  # type: ignore
     g.logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
     g.logging.notice(f"team_list: {list(g.team_list.values())}")  # type: ignore
 
@@ -69,7 +69,7 @@ def NameReplace(pname, add_mark=False):
 
     # メンバーリストに見つからない場合
     if g.opt.unregistered_replace:
-        return (g.guest_name)
+        return (g.prm.guest_name)
     else:
         if add_mark:
             return (f"{pname}({g.guest_mark})")
@@ -141,7 +141,7 @@ def member_info(name):
 
     resultdb = sqlite3.connect(g.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-    rows = resultdb.execute(sql, (g.rule_version, name))
+    rows = resultdb.execute(sql, (g.prm.rule_version, name))
     ret = dict(rows.fetchone())
     resultdb.close()
 
@@ -321,7 +321,7 @@ def check_namepattern(name):
     # 登録規定チェック
     if len(name) > g.config["member"].getint("character_limit", 8):  # 文字制限
         return (False, "登録可能文字数を超えています。")
-    if name == g.guest_name:  # 登録NGプレイヤー名
+    if name == g.prm.guest_name:  # 登録NGプレイヤー名
         return (False, "使用できない名前です。")
     if re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable():  # 禁則記号
         return (False, "使用できない記号が含まれています。")

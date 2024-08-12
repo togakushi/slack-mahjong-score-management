@@ -27,7 +27,7 @@ def resultdb_insert(msg, ts):
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
-        "rule_version": g.rule_version,
+        "rule_version": g.prm.rule_version,
     }
     param.update(f.score.get_score(msg))
     g.logging.notice(f"{param=}")  # type: ignore
@@ -45,7 +45,7 @@ def resultdb_update(msg, ts):
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
-        "rule_version": g.rule_version,
+        "rule_version": g.prm.rule_version,
     }
     param.update(f.score.get_score(msg))
     g.logging.notice(f"{param=}")  # type: ignore

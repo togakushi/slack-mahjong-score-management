@@ -145,11 +145,11 @@ class parameters:
 
     def initialization(self):
         self.__dict__.clear()
-        self.rule_version = config["mahjong"].get("rule_version", "")
-        self.origin_point = config["mahjong"].getint("point", 250)  # 配給原点
-        self.return_point = config["mahjong"].getint("return", 300)  # 返し点
+        self.rule_version: str = config["mahjong"].get("rule_version", "")
+        self.origin_point: int = config["mahjong"].getint("point", 250)  # 配給原点
+        self.return_point: int = config["mahjong"].getint("return", 300)  # 返し点
         self.player_name: str = str()
-        self.guest_name: str = guest_name
+        self.guest_name: str = config["member"].get("guest_name", "ゲスト")
         self.search_word: str = str()
         self.player_list: dict = {}
         self.competition_list: dict = {}
@@ -382,15 +382,17 @@ for x in ("results", "graph", "ranking", "report", "member", "team", "database",
         config.add_section(x)
 
 commandword = {  # チャンネル内呼び出しキーワード
+    "help": config["help"].get("commandword", "ヘルプ"),
     "results": config["results"].get("commandword", "麻雀成績"),
     "graph": config["graph"].get("commandword", "麻雀グラフ"),
     "ranking": config["ranking"].get("commandword", "麻雀ランキング"),
     "report": config["report"].get("commandword", "麻雀成績レポート"),
     "member": config["member"].get("commandword", "メンバー一覧"),
     "team": config["team"].get("commandword", "チーム一覧"),
+    "remarks_word": config["setting"].get("remarks_word", "麻雀成績メモ"),
+    "check": config["database"].get("commandword", "麻雀成績チェック"),
 }
 
-rule_version = config["mahjong"].get("rule_version", "")
 slash_command = config["setting"].get("slash_commandname", "/mahjong")
 guest_mark = config["setting"].get("guest_mark", "※")
 reaction_ok = config["setting"].get("reaction_ok", "ok")
@@ -398,12 +400,8 @@ reaction_ng = config["setting"].get("reaction_ng", "ng")
 font_file = config["setting"].get("font_file", "ipaexg.ttf")
 work_dir = config["setting"].get("work_dir", "work")
 ignore_userid = [x.strip() for x in config["setting"].get("ignore_userid", "").split(",")]
-commandword.update(remarks_word=config["setting"].get("remarks_word", "麻雀成績メモ"))
-guest_name = config["member"].get("guest_name", "ゲスト")
 database_file = config["database"].get("database_file", "mahjong.db")
 channel_limitations = config["database"].get("channel_limitations", "")
-commandword.update(check=config["database"].get("commandword", "麻雀成績チェック"))
-commandword.update(help=config["help"].get("commandword", "ヘルプ"))
 
 # 固定値
 opt = command_option()

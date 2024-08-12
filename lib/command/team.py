@@ -39,7 +39,7 @@ def check_namepattern(name):
     # 登録規定チェック
     if len(name) > g.config["team"].getint("character_limit", 8):  # 文字制限
         return (False, "登録可能文字数を超えています。")
-    if name == g.guest_name:  # 登録NGプレイヤー名
+    if name == g.prm.guest_name:  # 登録NGプレイヤー名
         return (False, "使用できない名称です。")
     if re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable():  # 禁則記号
         return (False, "使用できない記号が含まれています。")

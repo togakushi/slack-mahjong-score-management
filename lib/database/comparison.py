@@ -156,7 +156,7 @@ def db_update(cur, ts, msg):  # 突合処理専用
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
-        "rule_version": g.rule_version,
+        "rule_version": g.prm.rule_version,
     }
     param.update(f.score.get_score(msg))
 
@@ -168,7 +168,7 @@ def db_insert(cur, ts, msg):  # 突合処理専用
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
-        "rule_version": g.rule_version,
+        "rule_version": g.prm.rule_version,
     }
     param.update(f.score.get_score(msg))
 
