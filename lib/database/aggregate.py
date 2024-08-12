@@ -242,12 +242,11 @@ def personal_results():
         params=g.prm.to_dict(),
     )
 
-    # Nullが返ってきたときにobject型になるのでfloat型に変換
-    df["東家-平均順位"] = df["東家-平均順位"].astype(float)
-    df["南家-平均順位"] = df["南家-平均順位"].astype(float)
-    df["西家-平均順位"] = df["西家-平均順位"].astype(float)
-    df["北家-平均順位"] = df["北家-平均順位"].astype(float)
-    df = df.fillna(0)
+    # Nullが返ってきたときにobject型になるので型変換
+    df = df.astype({
+        "東家-平均順位": "float", "南家-平均順位": "float", "西家-平均順位": "float", "北家-平均順位": "float",
+        "東家-役満和了": "Int64", "南家-役満和了": "Int64", "西家-役満和了": "Int64", "北家-役満和了": "Int64",
+    }).fillna(0)
 
     # ゲスト置換
     df["表示名"] = _disp_name(df["プレイヤー名"])
