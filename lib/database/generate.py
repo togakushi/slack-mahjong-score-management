@@ -255,7 +255,7 @@ def personal_results():
             count(seat = 1 and rank = 3 or null) as '東家-3位',
             count(seat = 1 and rank = 4 or null) as '東家-4位',
             round(avg(case when seat = 1 then rank end), 2) as '東家-平均順位',
-            count(seat = 1 and matter != '' or null) as '東家-役満和了',
+            sum(case when seat = 1 then gs_count end) as '東家-役満和了',
             count(seat = 1 and rpoint < 0 or null) as '東家-トビ',
             printf("東家： %d-%d-%d-%d (%.2f)",
                 count(seat = 1 and rank = 1 or null),
@@ -269,7 +269,7 @@ def personal_results():
             count(seat = 2 and rank = 3 or null) as '南家-3位',
             count(seat = 2 and rank = 4 or null) as '南家-4位',
             round(avg(case when seat = 2 then rank end), 2) as '南家-平均順位',
-            count(seat = 2 and matter != '' or null) as '南家-役満和了',
+            sum(case when seat = 2 then gs_count end) as '南家-役満和了',
             count(seat = 2 and rpoint < 0 or null) as '南家-トビ',
             printf("南家： %d-%d-%d-%d (%.2f)",
                 count(seat = 2 and rank = 1 or null),
@@ -283,7 +283,7 @@ def personal_results():
             count(seat = 3 and rank = 3 or null) as '西家-3位',
             count(seat = 3 and rank = 4 or null) as '西家-4位',
             round(avg(case when seat = 3 then rank end), 2) as '西家-平均順位',
-            count(seat = 3 and matter != '' or null) as '西家-役満和了',
+            sum(case when seat = 3 then gs_count end) as '西家-役満和了',
             count(seat = 3 and rpoint < 0 or null) as '西家-トビ',
             printf("西家： %d-%d-%d-%d (%.2f)",
                 count(seat = 3 and rank = 1 or null),
@@ -297,7 +297,7 @@ def personal_results():
             count(seat = 4 and rank = 3 or null) as '北家-3位',
             count(seat = 4 and rank = 4 or null) as '北家-4位',
             round(avg(case when seat = 4 then rank end), 2) as '北家-平均順位',
-            count(seat = 4 and matter != '' or null) as '北家-役満和了',
+            sum(case when seat = 4 then gs_count end) as '北家-役満和了',
             count(seat = 4 and rpoint < 0 or null) as '北家-トビ',
             printf("北家： %d-%d-%d-%d (%.2f)",
                 count(seat = 4 and rank = 1 or null),
@@ -317,17 +317,19 @@ def personal_results():
                 rank,
                 point,
                 seat,
-                matter,
-                gs_count
+                individual_results.grandslam,
+                ifnull(gs_count, 0) as gs_count
             from
                 individual_results
-            left outer join
-                (select thread_ts, name, count() as gs_count, matter from remarks group by thread_ts, name) as remarks
-                on individual_results.ts = remarks.thread_ts and individual_results.name = remarks.name
+            join game_info on
+                game_info.ts == individual_results.ts
+            left join grandslam on
+                grandslam.thread_ts == individual_results.ts
+                and grandslam.name == individual_results.name
             where
                 rule_version = :rule_version
                 and playtime between :starttime and :endtime
-                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
+                --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and comment like :search_word
@@ -358,7 +360,7 @@ def personal_results():
 
 def game_details():
     """
-    ゲーム結果の詳細を返すSQLを生成
+    ゲーム結果の詳細を返すSQLを生成(ゲスト戦も返す)
     """
 
     sql = """
@@ -366,6 +368,7 @@ def game_details():
             playtime,
             individual_results.name as プレイヤー名,
             guest,
+            guest_count,
             seat,
             rpoint,
             rank,
@@ -385,8 +388,6 @@ def game_details():
         where
             rule_version = :rule_version
             and playtime between :starttime and :endtime
-            --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
-            --[guest_skip] and guest = 0 -- ゲストなし
             --[search_word] and comment like :search_word
         order by
             playtime

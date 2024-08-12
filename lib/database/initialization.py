@@ -354,7 +354,8 @@ def initialization_resultdb():
             select
                 remarks.thread_ts,
                 remarks.name,
-                group_concat(remarks.matter) as grandslam
+                group_concat(remarks.matter) as grandslam,
+                count() as gs_count
             from
                 remarks
             left join words
