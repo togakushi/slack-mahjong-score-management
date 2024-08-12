@@ -28,6 +28,15 @@ def aggregation():
     df_grandslam = df_game.query("grandslam != ''")
     df_regulations = df_game.query("regulation != ''")
 
+    # ゲスト戦
+    if g.opt.unregistered_replace:
+        if g.opt.guest_skip:  # ゲストあり(2ゲスト戦除外)
+            df_grandslam = df_grandslam.query("guest_count <= 2")
+            df_regulations = df_regulations.query("guest_count <= 2")
+        else:  # ゲストなし(ゲスト除外)
+            df_grandslam = df_grandslam.query("guest == 0")
+            df_regulations = df_regulations.query("guest == 0")
+
     # 表示
     # --- 情報ヘッダ
     add_text = ""
@@ -55,7 +64,7 @@ def aggregation():
 
         # メモ表示
         memo_grandslam = ""
-        if len(df_grandslam) != 0:
+        if len(df_grandslam):
             for _, v in df_grandslam.iterrows():
                 memo_grandslam += "\t{} ： {} （{}）\n".format(
                     v["playtime"].replace("-", "/"),
@@ -64,7 +73,7 @@ def aggregation():
                 )
 
         memo_regulation = ""
-        if len(df_regulations) != 0:
+        if len(df_regulations):
             for _, v in df_regulations.iterrows():
                 memo_regulation += "\t{} ： {} {}pt（{}）\n".format(
                     v["playtime"].replace("-", "/"),
