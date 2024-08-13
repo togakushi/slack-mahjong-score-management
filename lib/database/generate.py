@@ -329,7 +329,7 @@ def personal_results():
             where
                 rule_version = :rule_version
                 and playtime between :starttime and :endtime
-                --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
+                --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and comment like :search_word
@@ -368,7 +368,7 @@ def game_details():
             playtime,
             individual_results.name as プレイヤー名,
             guest,
-            guest_count,
+            game_info.guest_count,
             seat,
             rpoint,
             rank,
@@ -517,7 +517,7 @@ def personal_gamedata():
                 --[not_daily] --[not_group_by] point,
                 --[not_daily] --[group_by] round(sum(point), 1) as point,
                 --[daily] round(sum(point), 1) as point,
-                guest_count,
+                game_info.guest_count,
                 --[not_group_length] comment
                 --[group_length] substr(comment, 1, :group_length) as comment
             from
@@ -527,7 +527,7 @@ def personal_gamedata():
             where
                 rule_version = :rule_version
                 and playtime between :starttime and :endtime
-                --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
+                --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and comment like :search_word
@@ -595,7 +595,7 @@ def team_gamedata():
                 --[not_daily] --[not_group_by] point,
                 --[not_daily] --[group_by] round(sum(point), 1) as point,
                 --[daily] round(sum(point), 1) as point,
-                guest_count,
+                game_info.guest_count,
                 --[not_group_length] comment
                 --[group_length] substr(comment, 1, :group_length) as comment
             from

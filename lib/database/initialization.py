@@ -355,11 +355,15 @@ def initialization_resultdb():
                 remarks.thread_ts,
                 remarks.name,
                 group_concat(remarks.matter) as grandslam,
-                count() as gs_count
+                count() as gs_count,
+                game_info.guest_count,
+                game_info.same_team
             from
                 remarks
-            left join words
-                on remarks.matter == words.word
+            left join words on
+                words.word == remarks.matter
+            join game_info on
+                game_info.ts == remarks.thread_ts
             where
                 words.type is null or words.type == 0
             group by
@@ -375,11 +379,15 @@ def initialization_resultdb():
                 remarks.thread_ts,
                 remarks.name,
                 group_concat(remarks.matter) as word,
-                sum(words.ex_point) as ex_point
+                sum(words.ex_point) as ex_point,
+                game_info.guest_count,
+                game_info.same_team
             from
                 remarks
-            left join words
-                on remarks.matter == words.word
+            left join words on
+                words.word == remarks.matter
+            join game_info on
+                game_info.ts == remarks.thread_ts
             where
                 words.type == 1
             group by
