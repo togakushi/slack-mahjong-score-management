@@ -104,9 +104,9 @@ def initialization_resultdb():
     resultdb.execute(
         """
         create table if not exists "words" (
-            "word"  TEXT NOT NULL UNIQUE,
-            "type"  INTEGER,
-            "bonus" ITINTEGER
+            "word"     TEXT NOT NULL UNIQUE,
+            "type"     INTEGER,
+            "ex_point" ITINTEGER
         )
         """
     )
@@ -122,9 +122,9 @@ def initialization_resultdb():
                 p1_name as name,
                 p1_rpoint as rpoint,
                 p1_rank as rank,
-                p1_point + ifnull(penalty, 0) as point,
+                p1_point + ifnull(ex_point, 0) as point,
                 grandslam,
-                ifnull(penalty, 0) as penalty,
+                ifnull(ex_point, 0) as ex_point,
                 p1_name not in (select name from member) as guest,
                 team.name as team,
                 substr(
@@ -163,9 +163,9 @@ def initialization_resultdb():
                 p2_name,
                 p2_rpoint,
                 p2_rank,
-                p2_point + ifnull(penalty, 0),
+                p2_point + ifnull(ex_point, 0),
                 grandslam,
-                ifnull(penalty, 0),
+                ifnull(ex_point, 0),
                 p2_name not in (select name from member),
                 team.name,
                 substr(
@@ -204,9 +204,9 @@ def initialization_resultdb():
                 p3_name,
                 p3_rpoint,
                 p3_rank,
-                p3_point + ifnull(penalty, 0),
+                p3_point + ifnull(ex_point, 0),
                 grandslam,
-                ifnull(penalty, 0),
+                ifnull(ex_point, 0),
                 p3_name not in (select name from member),
                 team.name,
                 substr(
@@ -245,9 +245,9 @@ def initialization_resultdb():
                 p4_name,
                 p4_rpoint,
                 p4_rank,
-                p4_point + ifnull(penalty, 0),
+                p4_point + ifnull(ex_point, 0),
                 grandslam,
-                ifnull(penalty, 0),
+                ifnull(ex_point, 0),
                 p4_name not in (select name from member),
                 team.name,
                 substr(
@@ -375,7 +375,7 @@ def initialization_resultdb():
                 remarks.thread_ts,
                 remarks.name,
                 group_concat(remarks.matter) as word,
-                sum(words.bonus) as penalty
+                sum(words.ex_point) as ex_point
             from
                 remarks
             left join words
@@ -403,12 +403,12 @@ def initialization_resultdb():
     # regulationsテーブル情報読み込み
     if g.config.has_section("regulations"):
         resultdb.execute("delete from words where type == 1")
-        for word, bonus in g.config.items("regulations"):
+        for word, ex_point in g.config.items("regulations"):
             resultdb.execute(
-                "insert into words(word, type, bonus) values (?, 1, ?)",
-                (word, int(bonus),)
+                "insert into words(word, type, ex_point) values (?, 1, ?)",
+                (word, int(ex_point),)
             )
-            g.logging.info(f"regulations table update: {word}, {bonus}")
+            g.logging.info(f"regulations table update: {word}, {ex_point}")
 
     resultdb.commit()
     resultdb.close()
