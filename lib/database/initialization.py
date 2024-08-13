@@ -106,7 +106,7 @@ def initialization_resultdb():
         create table if not exists "words" (
             "word"     TEXT NOT NULL UNIQUE,
             "type"     INTEGER,
-            "ex_point" ITINTEGER
+            "ex_point" INTEGER
         )
         """
     )

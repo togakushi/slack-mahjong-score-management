@@ -10,6 +10,8 @@ return = 300
 rank_point = 20,10,-10,-20
 # 飛び(あり=False/なし=True)
 ignore_flying = False
+# 同点のときの順位点の決定方法(席順=False/山分け=True)
+draw_split = False
 
 
 ### 設定 ###
@@ -22,6 +24,11 @@ reaction_ok = ok
 reaction_ng = ng
 # ゲーム結果にメモを残す場合に使うキーワード
 remarks_word = 麻雀成績メモ
+# ゲーム結果詳細の件数閾値(超過時はフォーマット変換される)
+threshold = 20
+# 変換時のフォーマット(csv/txt/text)
+format = csv
+
 
 ### DATABASE関連オプション ###
 [database]
@@ -41,6 +48,11 @@ channel = #麻雀部
 # 検索開始日(未指定時/日付フォーマットエラー時はNone -> 検索可能範囲のすべて)
 after = 2024-01-01
 
+[comment]
+# 固定検索ワード(リーグ戦専用化)
+#search_word = 最強戦
+# デフォルトグループ化文字数(未指定時の初期値)
+#group_length = 8
 
 [alias] # サブコマンドエイリアス(カンマ区切り)
 results = 成績
@@ -104,6 +116,8 @@ guest_skip = True
 
 ### メンバー管理 ###
 [member]
+# memberを呼び出すチャンネル内キーワード
+commandword = メンバー一覧
 # 登録メンバー数上限
 registration_limit = 255
 # メンバー名文字数上限
@@ -112,10 +126,16 @@ character_limit = 8
 alias_limit = 16
 # 未登録メンバーを置き換える名前
 guest_name = ゲスト１
+
+[team]
+# team_listを呼び出すチャンネル内キーワード
+commandword = チーム一覧
 # 登録チーム数上限
-team_registration_limit = 8
+registration_limit = 32
 # チーム名文字数上限
-team_character_limit = 16
+character_limit = 16
+# 構成メンバー上限
+member_limit = 8
 
 
 ### 装飾オプション ###

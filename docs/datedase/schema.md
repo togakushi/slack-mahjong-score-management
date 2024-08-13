@@ -35,9 +35,9 @@
 | p4_rpoint    |             | INTEGER   | 北家素点(計算後)                      |
 | p4_rank      |             | INTEGER   | 北家順位                              |
 | p4_point     |             | INTEGER   | 北家が獲得したポイント                |
-| deposit      |             | INTEGER   | 供託                                  |
+| deposit      |             | INTEGER   | 供託(配給原点と素点合計の差分)        |
 | rule_version |             | TEXT      | ルールバージョンを示す文字列          |
-| comment      |             | TEXT      | コメント入力欄(入力できるI/Fは未実装) |
+| comment      |             | TEXT      | ゲームコメント                        |
 
 ## member
 
@@ -52,7 +52,7 @@
 | id       | PRIMARY KEY | INTEGER |                      |
 | name     | NOT NULL    | TEXT    | プレイヤー名         |
 | slack_id |             | TEXT    | 未使用               |
-| team_id  |             | INTEGER | 所属チームID(未使用) |
+| team_id  |             | INTEGER | 所属チームID         |
 | flying   |             | INTEGER | 拡張用フラグ(未使用) |
 | reward   |             | INTEGER | 拡張用フラグ(未使用) |
 | abuse    |             | INTEGER | 拡張用フラグ(未使用) |
@@ -72,7 +72,9 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 
 ## team
 
-チーム名を管理するテーブル。内容
+チーム名を管理するテーブル。
+
+### 内容
 
 | カラム名 | 制約            | 型      | 内容     |
 | -------- | --------------- | ------- | -------- |
@@ -91,6 +93,22 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | event_ts  | NOT NULL | TEXT | メモがslackにポストされた時間     |
 | name      | NOT NULL | TEXT | メモ内容(誰が)                    |
 | matter    | NOT NULL | TEXT | メモ内容(何をした)                |
+
+## words
+
+ `remarks` に記録された単語の種別。祝儀や卓外ペナルティなど、ポイントに影響がある単語を登録。
+
+ 単語の定義は設定ファイル内の `regulations` セクションで行う。
+
+### 内容
+
+| カラム名  | 制約            | 型      | 内容                                             |
+| --------- | --------------- | ------- | ------------------------------------------------ |
+| word      | NOT NULL UNIQUE | TEXT    | `remarks` で使用される単語                       |
+| type      |                 | INTEGER | `0` or `NULL` : 役満扱い<br />`1` : 卓外ポイント |
+| ex_point  |                 | INTEGER | 卓外ポイントとして追加計算されるポイント         |
+
+未登録の単語のtypeはnullになるため、役満として扱われる。
 
 # ビュー
 
@@ -127,7 +145,6 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | p4_point         |      | 北家が獲得したポイント       |
 | deposit          |      | 供託                         |
 | collection       |      | 集計対象年月(YYYY-MM)        |
-| collection_daily |      | 集計対象年月日(YYYY-MM-DD)   |
 | rule_version     |      | ルールバージョンを示す文字列 |
 
 ## individual_results
@@ -137,18 +154,23 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 
 ### 内容
 
-| カラム名     | 制約 | 内容                         |
-| ------------ | ---- | ---------------------------- |
-| playtime     |      | タイムスタンプ(tsを変換)     |
-| ts           |      | slackにポストされた時間      |
-| seat         |      | 席(1=東、2=南、3=西、4=北)   |
-| name         |      | プレイヤー名                 |
-| rpoint       |      | 素点(計算後)                 |
-| rank         |      | 順位                         |
-| point        |      | 獲得ポイント                 |
-| guest        |      | ゲストフラグ(1=ゲスト)       |
-| collection   |      | 集計対象年月(YYYY-MM)        |
-| rule_version |      | ルールバージョンを示す文字列 |
+| カラム名         | 制約 | 内容                              |
+| ---------------- | ---- | --------------------------------- |
+| playtime         |      | タイムスタンプ(tsを変換)          |
+| ts               |      | slackにポストされた時間           |
+| seat             |      | 席(1=東、2=南、3=西、4=北)        |
+| name             |      | プレイヤー名                      |
+| rpoint           |      | 素点(計算後)                      |
+| rank             |      | 順位                              |
+| point            |      | 獲得ポイント(卓外ポイント込み)    |
+| grandslam        |      | 和了した役満( `remarks` から取得) |
+| ex_point         |      | 卓外ポイント                      |
+| guest            |      | ゲストフラグ(1=ゲスト)            |
+| team             |      | 所属チーム名                      |
+| collection       |      | 集計対象年月(YYYY-MM)             |
+| collection_daily |      | 集計対象年月日(YYYY-MM-DD)        |
+| rule_version     |      | ルールバージョンを示す文字列      |
+| comment          |      | ゲームコメント                    |
 
 ## game_info
 
@@ -159,3 +181,29 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | ts           |      | slackにポストされた時間                        |
 | guest_count  |      | ゲーム内のゲストの人数                         |
 | same_team    |      | ゲーム内に同じチームのメンバーが存在すれば `1` |
+
+## grandslam
+
+`remarks` から役満に関するレコードだけを抽出したもの。
+
+### 内容
+
+| カラム名     | 制約 | 参照元            | 内容                                                 |
+| ------------ | ---- | ----------------- | ---------------------------------------------------- |
+| thread_ts    |      | remarks.thread_ts | 対象のゲームのタイムスタンプ                         |
+| name         |      | remarks.name      | 記録対象プレイヤー名                                 |
+| grandslam    |      | remarks.matter    | 内容(複数レコードある場合はカンマ区切りで連結される) |
+| gs_count     |      |                   | 1ゲーム内での発生回数                                |
+
+## regulations
+
+`remarks` から卓外ポイントに関するレコードだけを抽出したもの。
+
+### 内容
+
+| カラム名     | 制約 | 参照元            | 内容                                                 |
+| ------------ | ---- | ----------------- | ---------------------------------------------------- |
+| thread_ts    |      | remarks.thread_ts | 対象のゲームのタイムスタンプ                         |
+| name         |      | remarks.name      | 記録対象プレイヤー名                                 |
+| word         |      | remarks.matter    | 内容(複数レコードある場合はカンマ区切りで連結される) |
+| ex_point     |      | words.ex_point    | 追加計算されるポイント合計                           |
