@@ -1,4 +1,5 @@
 import re
+import inspect
 import textwrap
 
 from lib.function import global_value as g
@@ -57,6 +58,12 @@ def _query_modification(sql: str):
     sql = re.sub(r"^ *--\[.*$", "", sql, flags=re.MULTILINE)
     sql = re.sub(r"\n+", "\n", sql, flags=re.MULTILINE)
 
+    # デバッグ用
+    func = inspect.stack()[1].function
+    g.logging.trace(f"{func}: opt = {vars(g.opt)}")  # type: ignore
+    g.logging.trace(f"{func}: prm = {vars(g.prm)}")  # type: ignore
+    g.logging.trace(f"{func}: sql = {textwrap.dedent(sql)}")  # type: ignore
+
     return (sql)
 
 
@@ -66,18 +73,21 @@ def game_info():
     """
 
     sql = """
+        -- game_info()
         select
             count() as count,
             --[group_length] substr(first_comment, 1, :group_length) as first_comment,
             --[group_length] substr(last_comment, 1, :group_length) as last_comment,
             --[not_group_length] first_comment, last_comment,
-            first_game, last_game
+            first_game, last_game,
+            rule_version
         from (
             select
                 first_value(playtime) over(order by ts asc) as first_game,
                 last_value(playtime) over(order by ts asc) as last_game,
                 first_value(comment) over(order by ts asc) as first_comment,
-                last_value(comment) over(order by ts asc) as last_comment
+                last_value(comment) over(order by ts asc) as last_comment,
+                rule_version
             from
                 individual_results
             where
@@ -100,11 +110,7 @@ def game_info():
             ":" + ", :".join([x for x in [*g.prm.player_list]])
         )
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def record_count():
@@ -113,6 +119,7 @@ def record_count():
     """
 
     sql = """
+        -- record_count()
         select
             playtime,
             --[unregistered_replace] case when guest = 0 then name else :guest_name end as "プレイヤー名", -- ゲスト有効
@@ -138,11 +145,7 @@ def record_count():
             ":" + ", :".join([x for x in [*g.prm.player_list]])
         )
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def game_results():
@@ -151,6 +154,7 @@ def game_results():
     """
 
     sql = """
+        -- game_results()
         select
             name,
             count() as count,
@@ -168,7 +172,8 @@ def game_results():
                 round(avg(rank), 2)
             ) as rank_distr,
             round(avg(rank), 2) as rank_avg,
-            count(rpoint < 0 or null) as flying
+            count(rpoint < 0 or null) as flying,
+            rule_version
         from (
             select
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
@@ -201,11 +206,7 @@ def game_results():
             ":" + ", :".join([x for x in [*g.prm.player_list]])
         )
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def personal_results():
@@ -214,6 +215,7 @@ def personal_results():
     """
 
     sql = """
+        -- personal_results()
         select
             name as プレイヤー名,
             count() as ゲーム数,
@@ -327,7 +329,7 @@ def personal_results():
                 grandslam.thread_ts == individual_results.ts
                 and grandslam.name == individual_results.name
             where
-                rule_version = :rule_version
+                individual_results.rule_version = :rule_version
                 and playtime between :starttime and :endtime
                 --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
@@ -351,11 +353,7 @@ def personal_results():
             ":" + ", :".join([x for x in [*g.prm.player_list]])
         )
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def game_details():
@@ -364,6 +362,7 @@ def game_details():
     """
 
     sql = """
+        --- game_details()
         select
             playtime,
             individual_results.name as プレイヤー名,
@@ -386,18 +385,14 @@ def game_details():
             regulations.thread_ts == individual_results.ts
             and regulations.name == individual_results.name
         where
-            rule_version = :rule_version
+            individual_results.rule_version = :rule_version
             and playtime between :starttime and :endtime
             --[search_word] and comment like :search_word
         order by
             playtime
     """
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def versus_matrix():
@@ -406,6 +401,7 @@ def versus_matrix():
     """
 
     sql = """
+        -- versus_matrix()
         select
             my_name, vs_name,
             count() as game,
@@ -477,11 +473,7 @@ def versus_matrix():
             game desc
     """
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def personal_gamedata():
@@ -490,7 +482,7 @@ def personal_gamedata():
     """
 
     sql = """
-        -- ゲーム結果集計(個人戦)
+        -- personal_gamedata()
         select
             --[not_daily] --[not_group_by] count() over moving as count,
             --[not_daily] --[group_by] sum(count) over moving as count,
@@ -525,7 +517,7 @@ def personal_gamedata():
             join
                 game_info on individual_results.ts = game_info.ts
             where
-                rule_version = :rule_version
+                individual_results.rule_version = :rule_version
                 and playtime between :starttime and :endtime
                 --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
@@ -556,11 +548,7 @@ def personal_gamedata():
             ":" + ", :".join([x for x in [*g.prm.player_list]])
         )
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def team_gamedata():
@@ -569,7 +557,7 @@ def team_gamedata():
     """
 
     sql = """
-        -- ゲーム結果集計(チーム戦)
+        -- team_gamedata()
         select
             --[not_daily] --[not_group_by] count() over moving as count,
             --[not_daily] --[group_by] sum(count) over moving as count,
@@ -603,7 +591,7 @@ def team_gamedata():
             join
                 game_info on individual_results.ts = game_info.ts
             where
-                rule_version = :rule_version
+                individual_results.rule_version = :rule_version
                 and playtime between :starttime and :endtime
                 --[search_word] and comment like :search_word
             --[not_daily] --[group_by] group by -- コメント集約
@@ -624,11 +612,7 @@ def team_gamedata():
             --[daily] collection_daily, team
     """
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def monthly_report():
@@ -636,6 +620,7 @@ def monthly_report():
     """
 
     sql = """
+        -- monthly_report()
         select
             collection as 集計月,
             count() / 4 as ゲーム数,
@@ -656,11 +641,7 @@ def monthly_report():
             collection desc
     """
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def winner_report():
@@ -668,6 +649,7 @@ def winner_report():
     """
 
     sql = """
+        -- winner_report()
         select
             collection,
             max(case when rank = 1 then name end) as name1,
@@ -712,11 +694,7 @@ def winner_report():
             collection desc
     """
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
 
 
 def team_total():
@@ -725,6 +703,7 @@ def team_total():
     """
 
     sql = """
+        -- team_total()
         select
             team,
             round(sum(point),1) as total,
@@ -746,8 +725,4 @@ def team_total():
             total desc
     """
 
-    sql = _query_modification(sql)
-    g.logging.trace(f"sql: {textwrap.dedent(sql)}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
-
-    return (sql)
+    return (_query_modification(sql))
