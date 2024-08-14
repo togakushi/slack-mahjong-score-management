@@ -323,10 +323,21 @@ def parser():
         help="設定ファイル",
     )
 
+    # 動作テスト用オプション(非表示)
     p.add_argument(
         "-t", "--testcase",
-        metavar="testcase.ini",
-        help="動作テスト用",
+        help=argparse.SUPPRESS,
+    )
+
+    p.add_argument(
+        "--classic",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+
+    p.add_argument(
+        "--profile",
+        help=argparse.SUPPRESS,
     )
 
     return (p.parse_args())
