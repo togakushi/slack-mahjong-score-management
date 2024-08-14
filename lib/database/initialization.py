@@ -325,15 +325,16 @@ def initialization_resultdb():
                 case when p2.id isnull then 1 else 0 END +
                 case when p3.id isnull then 1 else 0 END +
                 case when p4.id isnull then 1 else 0 END as guest_count,
-            case
-                when p1.team_id = p2.team_id then 1
-                when p1.team_id = p3.team_id then 1
-                when p1.team_id = p4.team_id then 1
-                when p2.team_id = p3.team_id then 1
-                when p2.team_id = p4.team_id then 1
-                when p3.team_id = p4.team_id then 1
-                else 0
-            end as same_team
+                case
+                    when p1.team_id = p2.team_id then 1
+                    when p1.team_id = p3.team_id then 1
+                    when p1.team_id = p4.team_id then 1
+                    when p2.team_id = p3.team_id then 1
+                    when p2.team_id = p4.team_id then 1
+                    when p3.team_id = p4.team_id then 1
+                    else 0
+                end as same_team,
+                rule_version
             from
                 result
             left join member as p1
