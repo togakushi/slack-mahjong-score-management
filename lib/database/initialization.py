@@ -320,6 +320,7 @@ def initialization_resultdb():
         """
         create view if not exists game_info as
             select
+                datetime(playtime) as playtime,
                 ts,
                 case when p1.id isnull then 1 else 0 END +
                 case when p2.id isnull then 1 else 0 END +

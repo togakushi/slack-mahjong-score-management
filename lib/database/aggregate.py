@@ -46,6 +46,16 @@ def _disp_name(df, adjust=0):
     return (df.replace(player_list, replace_list))
 
 
+def _guest_filter(df: pd.DataFrame):
+    if g.opt.unregistered_replace:
+        if g.opt.guest_skip:  # ゲストあり(2ゲスト戦除外)
+            df = df.query("guest_count <= 2")
+        else:  # ゲストなし(ゲスト除外)
+            df = df.query("guest == 0")
+
+    return (df)
+
+
 def game_info():
     """
     指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
@@ -347,5 +357,41 @@ def team_total():
     # インデックスの振り直し
     df = df.reset_index(drop=True)
     df.index = df.index + 1
+
+    return (df)
+
+
+def grandslam_count():
+    # データ収集
+    df = pd.read_sql(
+        d.generate.remark_count(),
+        sqlite3.connect(g.database_file),
+        params=g.prm.to_dict(),
+    ).query("type != type or type == 0")
+
+    # ゲスト置換
+    df["プレイヤー名"] = df["name"].apply(
+        lambda x: c.member.NameReplace(x, add_mark=True)
+    )
+
+    df = df.filter(items=["プレイヤー名", "matter", "count"])
+
+    return (df)
+
+
+def regulations_count():
+    # データ収集
+    df = pd.read_sql(
+        d.generate.remark_count(),
+        sqlite3.connect(g.database_file),
+        params=g.prm.to_dict(),
+    ).query("type == 1")
+
+    # ゲスト置換
+    df["プレイヤー名"] = df["name"].apply(
+        lambda x: c.member.NameReplace(x, add_mark=True)
+    )
+
+    df = df.filter(items=["プレイヤー名", "matter", "count", "ex_point"])
 
     return (df)

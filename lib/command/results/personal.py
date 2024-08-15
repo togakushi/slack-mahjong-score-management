@@ -25,6 +25,8 @@ def aggregation():
 
     # --- データ収集
     game_info = d.aggregate.game_info()
+    df_grandslam = d.aggregate.grandslam_count()
+    df_regulations = d.aggregate.regulations_count()
 
     if game_info["game_count"] == 0:
         msg1 = f"""
@@ -99,6 +101,17 @@ def aggregation():
     """).replace("-", "▲")
     msg2["記録"] = msg2["記録"].replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
+    if not df_grandslam.empty:
+        msg2["記録"] += "\n*【役満】*\n"
+        for x in df_grandslam.itertuples():
+            msg2["記録"] += f"\t{x.matter}\t{x.count}回\n"
+
+    if not df_regulations.empty:
+        msg2["記録"] += "\n*【その他】*\n"
+        for x in df_regulations.itertuples():
+            ex_point = str(x.ex_point).replace("-", "▲")
+            msg2["記録"] += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
+
     # --- 戦績
     if g.opt.game_results:
         df = d.aggregate.game_details()
@@ -129,17 +142,15 @@ def aggregation():
                 x = df.query("playtime == @p")
                 if g.opt.guest_skip and g.opt.unregistered_replace and any(x["guest_count"] >= 2):
                     continue
-                for seat, idx in list(zip(g.wind, range(len(g.wind)))):
-                    seat_data = x.iloc[idx].to_dict()
-                    if seat_data["プレイヤー名"] == g.prm.player_name:
-                        msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
-                            f"{g.guest_mark.strip()} " if seat_data["guest_count"] >= 2 else "",
-                            seat_data["playtime"].replace("-", "/"),
-                            seat_data["rank"],
-                            seat_data["rpoint"] * 100,
-                            seat_data["point"],
-                            seat_data["grandslam"],
-                        ).replace("-", "▲")
+                for _, seat_data in x.iterrows():
+                    msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
+                        f"{g.guest_mark.strip()} " if seat_data["guest_count"] >= 2 else "",
+                        seat_data["playtime"].replace("-", "/"),
+                        seat_data["rank"],
+                        seat_data["rpoint"] * 100,
+                        seat_data["point"],
+                        seat_data["grandslam"],
+                    ).replace("-", "▲")
 
     # --- 対戦結果
     if g.opt.versus_matrix:

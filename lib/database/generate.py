@@ -79,27 +79,28 @@ def game_info():
             --[group_length] substr(first_comment, 1, :group_length) as first_comment,
             --[group_length] substr(last_comment, 1, :group_length) as last_comment,
             --[not_group_length] first_comment, last_comment,
-            first_game, last_game,
-            rule_version
+            first_game, last_game
         from (
             select
-                first_value(playtime) over(order by ts asc) as first_game,
-                last_value(playtime) over(order by ts asc) as last_game,
-                first_value(comment) over(order by ts asc) as first_comment,
-                last_value(comment) over(order by ts asc) as last_comment,
-                rule_version
+                first_value(individual_results.playtime) over(order by individual_results.ts asc) as first_game,
+                last_value(individual_results.playtime) over(order by individual_results.ts asc) as last_game,
+                first_value(comment) over(order by individual_results.ts asc) as first_comment,
+                last_value(comment) over(order by individual_results.ts asc) as last_comment
             from
                 individual_results
+            join game_info on
+                game_info.ts == individual_results.ts
             where
-                rule_version = :rule_version
-                and playtime between :starttime and :endtime -- 検索範囲
-                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
+                individual_results.rule_version = :rule_version
+                and individual_results.playtime between :starttime and :endtime -- 検索範囲
+                --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
+                --[friendly_fire] and same_team = 0
                 --[search_word] and comment like :search_word
             group by
-                playtime
+                individual_results.playtime
             order by
-                playtime desc
+                individual_results.playtime desc
         )
     """
 
@@ -121,7 +122,7 @@ def record_count():
     sql = """
         -- record_count()
         select
-            playtime,
+            individual_results.playtime,
             --[unregistered_replace] case when guest = 0 then name else :guest_name end as "プレイヤー名", -- ゲスト有効
             --[unregistered_not_replace] name as "プレイヤー名", -- ゲスト無効
             rank as "順位",
@@ -129,11 +130,14 @@ def record_count():
             rpoint as "最終素点"
         from
             individual_results
+        join game_info on
+            game_info.ts == individual_results.ts
         where
-            rule_version = :rule_version
-            and playtime between :starttime and :endtime
-            --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
+            individual_results.rule_version = :rule_version
+            and individual_results.playtime between :starttime and :endtime
+            --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
             --[guest_skip] and guest = 0 -- ゲストなし
+            --[friendly_fire] and same_team = 0
             --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
             --[search_word] and comment like :search_word
     """
@@ -172,24 +176,26 @@ def game_results():
                 round(avg(rank), 2)
             ) as rank_distr,
             round(avg(rank), 2) as rank_avg,
-            count(rpoint < 0 or null) as flying,
-            rule_version
+            count(rpoint < 0 or null) as flying
         from (
             select
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
-                rpoint, rank, point, guest, rule_version
+                rpoint, rank, point, guest
             from
                 individual_results
+            join game_info on
+                game_info.ts == individual_results.ts
             where
-                rule_version = :rule_version
-                and playtime between :starttime and :endtime -- 検索範囲
-                --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) >= 2) -- ゲストあり
+                individual_results.rule_version = :rule_version
+                and individual_results.playtime between :starttime and :endtime -- 検索範囲
+                --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
+                --[friendly_fire] and same_team = 0
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and comment like :search_word
             order by
-                playtime desc
+                individual_results.playtime desc
         )
         group by
             name
@@ -312,7 +318,7 @@ def personal_results():
             max(playtime) as last_game
         from (
             select
-                playtime,
+                individual_results.playtime,
                 --[unregistered_replace] case when guest = 0 then individual_results.name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] individual_results.name, -- ゲスト無効
                 rpoint,
@@ -330,13 +336,14 @@ def personal_results():
                 and grandslam.name == individual_results.name
             where
                 individual_results.rule_version = :rule_version
-                and playtime between :starttime and :endtime
+                and individual_results.playtime between :starttime and :endtime
                 --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
+                --[friendly_fire] and game_info.same_team = 0
                 --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and comment like :search_word
             order by
-                playtime desc
+                individual_results.playtime desc
         )
         group by
             name
@@ -364,7 +371,7 @@ def game_details():
     sql = """
         --- game_details()
         select
-            playtime,
+            individual_results.playtime,
             individual_results.name as プレイヤー名,
             guest,
             game_info.guest_count,
@@ -386,10 +393,10 @@ def game_details():
             and regulations.name == individual_results.name
         where
             individual_results.rule_version = :rule_version
-            and playtime between :starttime and :endtime
+            and individual_results.playtime between :starttime and :endtime
             --[search_word] and comment like :search_word
         order by
-            playtime
+            individual_results.playtime
     """
 
     return (_query_modification(sql))
@@ -500,7 +507,7 @@ def personal_gamedata():
             select
                 --[daily] count() as count,
                 --[not_daily] --[group_by] count() as count,
-                playtime,
+                individual_results.playtime,
                 collection_daily,
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
@@ -518,9 +525,10 @@ def personal_gamedata():
                 game_info on individual_results.ts = game_info.ts
             where
                 individual_results.rule_version = :rule_version
-                and playtime between :starttime and :endtime
+                and individual_results.playtime between :starttime and :endtime
                 --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
+                --[friendly_fire] and same_team = 0
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and comment like :search_word
             --[not_daily] --[group_by] group by -- コメント集約
@@ -530,7 +538,7 @@ def personal_gamedata():
             --[daily] group by -- 日次集計
             --[daily]     collection_daily, name
             order by
-                --[not_daily] playtime desc
+                --[not_daily] individual_results.playtime desc
                 --[daily] collection_daily desc
         )
         window
@@ -593,6 +601,7 @@ def team_gamedata():
             where
                 individual_results.rule_version = :rule_version
                 and playtime between :starttime and :endtime
+                --[friendly_fire] and same_team = 0
                 --[search_word] and comment like :search_word
             --[not_daily] --[group_by] group by -- コメント集約
             --[not_daily] --[group_by]     --[not_comment] collection_daily, team
@@ -681,6 +690,7 @@ def winner_report():
                     and playtime between :starttime and :endtime
                     --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
                     --[guest_skip] and guest = 0 -- ゲストなし
+                    --[friendly_fire] and same_team = 0
                     --[search_word] and comment like :search_word
             )
             group by
@@ -724,5 +734,46 @@ def team_total():
         order by
             total desc
     """
+
+    return (_query_modification(sql))
+
+
+def remark_count():
+    """
+    メモの内容をカウントするSQLを生成
+    """
+
+    sql = """
+        -- remark_count()
+        select
+            name,
+            matter,
+            count() as count,
+            type,
+            sum(ex_point) as ex_point,
+            guest_count,
+            same_team
+        from
+            remarks
+        join game_info on
+            game_info.ts == remarks.thread_ts
+        left join words on
+            words.word == remarks.matter
+        where
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+            --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
+            --[friendly_fire] and same_team = 0
+            --[search_word] and comment like :search_word
+        group by
+            name, matter
+    """
+
+    if g.prm.player_name:
+        sql = sql.replace("--[player_name] ", "")
+        sql = sql.replace(
+            "<<player_list>>",
+            ":" + ", :".join([x for x in [*g.prm.player_list]])
+        )
 
     return (_query_modification(sql))
