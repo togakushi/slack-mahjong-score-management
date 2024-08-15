@@ -38,7 +38,7 @@ class command_option:
         self.target_count: int = 0  # 直近
         self.verbose: bool = False  # 戦績詳細
         self.team_total: bool = False  # チーム集計
-        self.friendly_fire: bool = config["team"].getboolean("friendly_fire", False)
+        self.friendly_fire: bool = config["team"].getboolean("friendly_fire", True)
         self.unregistered_replace: bool = config[_command].getboolean("unregistered_replace", True)
         self.guest_skip: bool = config[_command].getboolean("guest_skip", True)
         self.guest_skip2: bool = config[_command].getboolean("guest_skip2", True)
