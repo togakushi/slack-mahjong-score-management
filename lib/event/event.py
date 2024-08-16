@@ -106,9 +106,7 @@ def handle_message_events(client, body):
         c.ranking.slackpost.main(client, parameter["channel_id"], argument)
         return
     if re.match(rf"^{g.commandword['report']}", parameter["text"]):
-        c.report.slackpost.main(
-            client, parameter["channel_id"], argument
-        )
+        c.report.slackpost.main(client, parameter["channel_id"], argument)
         return
 
     # データベース関連コマンド
