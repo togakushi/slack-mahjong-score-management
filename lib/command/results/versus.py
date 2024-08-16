@@ -75,9 +75,9 @@ def aggregation():
                 \t平均素点差： {(r["my_rpoint_avg"]-r["vs_rpoint_avg"]) * 100:+.0f} 点
                 \t獲得ポイント合計(自分)： {r["my_point_sum"]:+.1f}pt
                 \t獲得ポイント合計(相手)： {r["vs_point_sum"]:+.1f}pt
-                \t順位分布(自分)： {r["my_1st"]}*{r["my_2nd"]}*{r["my_3rd"]}*{r["my_4th"]} ({r["my_rank_avg"]:1.2f})
-                \t順位分布(相手)： {r["vs_1st"]}*{r["vs_2nd"]}*{r["vs_3rd"]}*{r["vs_4th"]} ({r["vs_rank_avg"]:1.2f})
-            """).replace("-", "▲").replace("*", "-").strip() + "\n\n"
+                \t順位分布(自分)： {r["my_1st"]}%%{r["my_2nd"]}%%{r["my_3rd"]}%%{r["my_4th"]} ({r["my_rank_avg"]:1.2f})
+                \t順位分布(相手)： {r["vs_1st"]}%%{r["vs_2nd"]}%%{r["vs_3rd"]}%%{r["vs_4th"]} ({r["vs_rank_avg"]:1.2f})
+            """).replace("-", "▲").replace("%%", "-").strip() + "\n\n"
 
             # ゲーム結果
             if g.opt.game_results:
