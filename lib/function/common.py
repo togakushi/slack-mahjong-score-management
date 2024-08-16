@@ -227,3 +227,13 @@ def set_graph_font(plt, fm):
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
+
+
+def debug_out(msg1, msg2):
+    """
+    メッセージ標準出力(テスト用)
+    """
+
+    print(msg1)
+    if msg2:
+        [print(msg2[x]) for x in msg2]
