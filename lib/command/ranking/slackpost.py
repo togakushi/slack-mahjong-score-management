@@ -27,9 +27,12 @@ def main(client, channel, argument):
     g.prm.update(g.opt)
 
     msg1, msg2 = aggregation()
-    res = f.slack_api.post_message(client, channel, msg1)
-    if msg2:
-        f.slack_api.post_multi_message(client, channel, msg2, res["ts"])
+    if g.args.testcase:
+        f.common.debug_out(msg1, msg2)
+    else:
+        res = f.slack_api.post_message(client, channel, msg1)
+        if msg2:
+            f.slack_api.post_multi_message(client, channel, msg2, res["ts"])
 
 
 def aggregation():
