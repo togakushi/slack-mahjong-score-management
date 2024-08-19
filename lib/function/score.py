@@ -1,6 +1,8 @@
+import sqlite3
 import pandas as pd
 
 import lib.command as c
+import lib.database as d
 import lib.function as f
 from lib.function import global_value as g
 
@@ -112,10 +114,13 @@ def point_split(point: list):
     return (new_point)
 
 
-def check_score(client, channel_id, event_ts, user, msg):
+def check_score(msg):
     """
     postされた素点合計が配給原点と同じかチェック
     """
+
+    if g.msg.checked:
+        return
 
     correct_score = g.prm.origin_point * 4
     rpoint_sum = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
@@ -127,20 +132,75 @@ def check_score(client, channel_id, event_ts, user, msg):
         )
     )
 
+    f.slack_api.reactions_remove()
     if rpoint_sum == correct_score:  # 合計が一致している場合
-        client.reactions_add(
-            channel=channel_id,
-            name=g.reaction_ok,
-            timestamp=event_ts,
-        )
+        f.slack_api.reactions_add(g.reaction_ok)
     else:  # 合計が不一致の場合
-        msg = f.message.invalid_score(user, rpoint_sum, correct_score)
-        f.slack_api.post_message(client, channel_id, msg, event_ts)
-        client.reactions_add(
-            channel=channel_id,
-            name=g.reaction_ng,
-            timestamp=event_ts,
+        f.slack_api.post_message(
+            f.message.invalid_score(g.msg.user_id, rpoint_sum, correct_score),
+            g.msg.event_ts
         )
+        f.slack_api.reactions_add(g.reaction_ng)
+
+    g.msg.checked = True
+
+
+def check_remarks():
+    """
+    メモの内容を拾ってDBに格納する
+    """
+
+    g.opt.initialization("results")
+    g.opt.unregistered_replace = False  # ゲスト無効
+    resultdb = sqlite3.connect(
+        g.database_file,
+        detect_types=sqlite3.PARSE_DECLTYPES,
+    )
+
+    # スレッド元にあるメンバーを取得
+    rows = resultdb.execute(
+        "select p1_name, p2_name, p3_name, p4_name from result where ts == ?",
+        (g.msg.thread_ts,)
+    )
+    check_list = rows.fetchone()
+
+    match g.msg.status:
+        case "message_append":
+            for name, val in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
+                if name in check_list:
+                    g.logging.info(f"insert: {name}, {val}")
+                    resultdb.execute(d.sql_remarks_insert, (
+                        g.msg.thread_ts,
+                        g.msg.event_ts,
+                        c.member.NameReplace(name),
+                        val,
+                    ))
+                    f.slack_api.reactions_add(g.reaction_ok)
+        case "message_changed":
+            f.slack_api.reactions_remove()
+            resultdb.execute(
+                d.sql_remarks_delete_one,
+                (g.msg.event_ts,)
+            )
+            for name, val in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
+                if name in check_list:
+                    g.logging.info(f"update: {name}, {val}")
+                    resultdb.execute(d.sql_remarks_insert, (
+                        g.msg.thread_ts,
+                        g.msg.event_ts,
+                        c.member.NameReplace(name),
+                        val,
+                    ))
+                    f.slack_api.reactions_add(g.reaction_ok)
+        case "message_deleted":
+            g.logging.info("delete one")
+            resultdb.execute(
+                d.sql_remarks_delete_one,
+                (g.msg.event_ts,)
+            )
+
+    resultdb.commit()
+    resultdb.close()
 
 
 def get_score(msg):

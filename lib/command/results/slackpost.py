@@ -3,23 +3,12 @@ from lib.command.results import personal, summary, team, versus
 from lib.function import global_value as g
 
 
-def main(client, channel, argument):
+def main():
     """
     成績の集計結果をslackにpostする
-
-    Parameters
-    ----------
-    client : obj
-
-    channel : str
-        post先のチャンネルID or ユーザーID
-
-    argument : list
-        slackから受け取った引数
-        解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    g.opt.initialization("results", argument)
+    g.opt.initialization("results", g.msg.argument)
     g.prm.update(g.opt)
 
     # モード切り替え
@@ -38,8 +27,6 @@ def main(client, channel, argument):
             f.common.debug_out(msg1, msg2)
         else:
             f.slack_api.slack_post(
-                client=client,
-                channel=channel,
                 headline=msg1,
                 message=msg2,
             )
@@ -49,8 +36,6 @@ def main(client, channel, argument):
             f.common.debug_out(msg1, msg2)
         else:
             f.slack_api.slack_post(
-                client=client,
-                channel=channel,
                 headline=msg1,
                 message=msg2,
                 file_list=file_list,
@@ -65,8 +50,6 @@ def main(client, channel, argument):
             f.common.debug_out(msg1, msg2)
         else:
             f.slack_api.slack_post(
-                client=client,
-                channel=channel,
                 headline=msg1,
                 message=msg2,
                 summarize=False,

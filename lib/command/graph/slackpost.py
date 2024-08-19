@@ -3,23 +3,12 @@ from lib.command.graph import personal, summary
 from lib.function import global_value as g
 
 
-def main(client, channel, argument):
+def main():
     """
     ポイント推移グラフをslackにpostする
-
-    Parameters
-    ----------
-    client : obj
-
-    channel : str
-        post先のチャンネルID or ユーザーID
-
-    argument : list
-        slackから受け取った引数
-        解析対象のプレイヤー、検索範囲などが指定される
     """
 
-    g.opt.initialization("graph", argument)
+    g.opt.initialization("graph", g.msg.argument)
     g.prm.update(g.opt)
 
     if len(g.prm.player_list) == 1:  # 対象がひとり → 個人成績
@@ -34,6 +23,6 @@ def main(client, channel, argument):
         f.common.debug_out(ret, None)
     else:
         if count == 0:
-            f.slack_api.post_message(client, channel, ret)
+            f.slack_api.post_message(ret)
         else:
-            f.slack_api.post_fileupload(client, channel, "成績グラフ", ret)
+            f.slack_api.post_fileupload("成績グラフ", ret)

@@ -47,6 +47,8 @@ def handle_menu_action(ack, body, client):
 def handle_search_action(ack, body, client):
     ack()
     g.logging.trace(body)  # type: ignore
+    g.msg.parser(body)
+    g.msg.client = client
 
     g.opt.initialization("results")
     argument, app_msg = e.set_command_option(body)
@@ -66,8 +68,6 @@ def handle_search_action(ack, body, client):
 
     msg1, msg2, file_list = c.results.summary.aggregation()
     f.slack_api.slack_post(
-        client=client,
-        channel=body["user"]["id"],
         headline=msg1,
         message=msg2,
         summarize=False,

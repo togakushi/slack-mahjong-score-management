@@ -49,73 +49,53 @@ def handle_home_events(client, event):
 def slash_command(ack, body, client):
     ack()
     g.logging.trace(f"{body}")  # type: ignore
-    channel_id = body["channel_id"]
-    event_ts = 0
+    g.msg.parser(body)
+    g.msg.client = client
 
-    if body["text"]:
-        subcom = body["text"].split()[0].lower()
-        argument = body["text"].split()[1:]
-
-        match CommandCheck(subcom):
+    if g.msg.text:
+        match CommandCheck(g.msg.keyword):
             # 成績管理系コマンド
             case "results":
-                c.results.slackpost.main(client, channel_id, argument)
+                c.results.slackpost.main()
             case "graph":
-                c.graph.slackpost.main(client, channel_id, argument)
+                c.graph.slackpost.main()
             case "ranking":
-                c.ranking.slackpost.main(client, channel_id, argument)
+                c.ranking.slackpost.main()
             case "report":
-                c.report.slackpost.main(client, channel_id, argument)
+                c.report.slackpost.main()
 
             # データベース関連コマンド
             case "check":
-                d.comparison.main(client, channel_id, event_ts)
+                d.comparison.main(client, g.msg.channel_id, g.msg.event_ts)
             case "download":
-                f.slack_api.post_fileupload(
-                    client, channel_id,
-                    "resultdb", g.database_file
-                )
+                f.slack_api.post_fileupload("resultdb", g.database_file)
 
             # メンバー管理系コマンド
             case "member":
                 title, msg = c.member.Getmemberslist()
-                f.slack_api.post_text(
-                    client, channel_id, event_ts,
-                    title, msg
-                )
+                f.slack_api.post_text(g.msg.event_ts, title, msg)
             case "add":
-                msg = c.member.MemberAppend(argument)
-                f.slack_api.post_message(client, channel_id, msg)
+                f.slack_api.post_message(c.member.MemberAppend(g.msg.argument))
             case "del":
-                msg = c.member.MemberRemove(argument)
-                f.slack_api.post_message(client, channel_id, msg)
+                f.slack_api.post_message(c.member.MemberRemove(g.msg.argument))
 
             # チーム管理系コマンド
             case "team_create":
-                msg = c.team.create(argument)
-                f.slack_api.post_message(client, channel_id, msg)
+                f.slack_api.post_message(c.team.create(g.msg.argument))
             case "team_del":
-                msg = c.team.delete(argument)
-                f.slack_api.post_message(client, channel_id, msg)
+                f.slack_api.post_message(c.team.delete(g.msg.argument))
             case "team_add":
-                msg = c.team.append(argument)
-                f.slack_api.post_message(client, channel_id, msg)
+                f.slack_api.post_message(c.team.append(g.msg.argument))
             case "team_remove":
-                msg = c.team.remove(argument)
-                f.slack_api.post_message(client, channel_id, msg)
+                f.slack_api.post_message(c.team.remove(g.msg.argument))
             case "team_list":
-                msg = c.team.list()
-                f.slack_api.post_message(client, channel_id, msg)
+                f.slack_api.post_message(c.team.list())
             case "team_clear":
-                msg = c.team.clear()
-                f.slack_api.post_message(client, channel_id, msg)
+                f.slack_api.post_message(c.team.clear())
 
             # その他
             case _:
-                f.slack_api.post_message(
-                    client, channel_id,
-                    f.message.help(body["command"])
-                )
+                f.slack_api.post_message(f.message.help(body["command"]))
 
 
 if __name__ == "__main__":

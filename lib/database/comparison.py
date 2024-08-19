@@ -40,7 +40,7 @@ def main(client, channel, event_ts):
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]
 
-    f.slack_api.post_message(client, channel, ret, event_ts)
+    f.slack_api.post_message(ret, event_ts)
 
 
 def score_comparison():

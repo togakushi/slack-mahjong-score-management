@@ -67,6 +67,8 @@ def handle_menu_action(ack, body, client):
 def handle_search_action(ack, body, client):
     ack()
     g.logging.trace(body)  # type: ignore
+    g.msg.parser(body)
+    g.msg.client = client
 
     g.opt.initialization("results")
     argument, app_msg = e.set_command_option(body)
@@ -91,11 +93,9 @@ def handle_search_action(ack, body, client):
     msg1 = f.message.no_hits()
 
     msg1, msg2 = c.results.personal.aggregation()
-    res = f.slack_api.post_message(client, body["user"]["id"], msg1)
+    res = f.slack_api.post_message(msg1)
     for m in msg2.keys():
-        f.slack_api.post_message(
-            client, body["user"]["id"], msg2[m] + "\n", res["ts"]
-        )
+        f.slack_api.post_message(msg2[m] + "\n", res["ts"])
 
     client.views_update(
         view_id=g.app_var["view_id"],

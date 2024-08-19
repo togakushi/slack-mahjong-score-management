@@ -213,6 +213,94 @@ class parameters:
         return (tmp_dict)
 
 
+class Message_Parser():
+    client: WebClient = WebClient()
+    channel_id: str = str()
+    user_id: str = str()
+    bot_id: str = str()
+    text: str = str()
+    event_ts: str = str()  # テキストのまま処理する
+    thread_ts: str = str()  # テキストのまま処理する
+    status: str = str()
+    keyword: str = str()
+    argument: list = list()
+    updatable: bool = bool()
+    checked: bool = bool()
+
+    def __init__(self, body: dict = {}):
+        if body is dict():
+            self.parser(body)
+
+    def parser(self, _body: dict):
+        self.__dict__.clear()
+        self.client = WebClient()
+        self.thread_ts = str()
+        self.checked = False
+
+        if "channel_name" in _body:
+            if _body["channel_name"] == "directmessage":
+                self.channel_id = _body["channel_id"]
+                self.text = _body["text"]
+                self.event_ts = "0"
+        elif "container" in _body:
+            self.channel_id = _body["user"]["id"]
+        else:
+            self.channel_id = _body["event"]["channel"]
+
+            if _body["authorizations"][0]["is_bot"]:
+                self.bot_id = _body["authorizations"][0]["user_id"]
+            else:
+                self.bot_id = str()
+
+            if "subtype" in _body["event"]:
+                match _body["event"]["subtype"]:
+                    case "message_changed":
+                        self.status = "message_changed"
+                        _event = _body["event"]["message"]
+                    case "message_deleted":
+                        self.status = "message_deleted"
+                        _event = _body["event"]["previous_message"]
+                    case _:
+                        pass
+            else:
+                self.status = "message_append"
+                _event = _body["event"]
+
+            for x in _event:
+                match x:
+                    case "user":
+                        self.user_id = _event["user"]
+                    case "ts":
+                        self.event_ts = _event["ts"]
+                    case "thread_ts":
+                        self.thread_ts = _event["thread_ts"]
+                    case "blocks":
+                        self.text = _event["blocks"][0]["elements"][0]["elements"][0]["text"]
+
+        if self.text:
+            self.keyword = self.text.split()[0]
+            self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
+
+        # DB更新可能チャンネルのポストかチェック
+        if not len(channel_limitations) or self.channel_id in channel_limitations.split(","):
+            self.updatable = True
+        else:
+            self.updatable = False
+
+    def parser_dm(self, _body: dict):
+        self.__dict__.clear()
+        self.client = WebClient()
+        self.channel_id = _body["channel_id"]
+        self.text = _body["text"]
+        self.event_ts = "0"
+        self.thread_ts = str()
+        self.checked = False
+
+        if self.text:
+            self.keyword = self.text.split()[0]
+            self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
+
+
 def scope_coverage(argument: list):
     """
     キーワードから有効な日付を取得する
@@ -417,6 +505,7 @@ channel_limitations = config["database"].get("channel_limitations", "")
 # 固定値
 opt = command_option()
 prm = parameters()
+msg = Message_Parser()
 
 wind = ("東家", "南家", "西家", "北家")
 member_list = {}

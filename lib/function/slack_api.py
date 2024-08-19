@@ -3,42 +3,41 @@ import re
 from lib.function import global_value as g
 
 
-def call_chat_postMessage(client, **kwargs):
+def call_chat_postMessage(**kwargs):
     res = None
     if not kwargs["thread_ts"]:
         kwargs.pop("thread_ts")
     try:
-        res = client.chat_postMessage(**kwargs)
+        res = g.msg.client.chat_postMessage(**kwargs)
     except g.SlackApiError as e:
         g.logging.error(e)
 
     return (res)
 
 
-def call_files_upload(client, **kwargs):
+def call_files_upload(**kwargs):
     res = None
     if not kwargs["thread_ts"]:
         kwargs.pop("thread_ts")
     try:
-        res = client.files_upload_v2(**kwargs)
+        res = g.msg.client.files_upload_v2(**kwargs)
     except g.SlackApiError as e:
         g.logging.error(e)
 
     return (res)
 
 
-def post_message(client, channel, msg, ts=False):
+def post_message(message, ts=False):
     res = call_chat_postMessage(
-        client,
-        channel=channel,
-        text=f"{msg.strip()}",
+        channel=g.msg.channel_id,
+        text=f"{message.strip()}",
         thread_ts=ts,
     )
 
     return (res)
 
 
-def post_multi_message(client, channel, msg, ts=False, summarize=True):
+def post_multi_message(msg, ts=False, summarize=True):
     if type(msg) is dict:
         if summarize:  # まとめてポスト
             key_list = list(msg.keys())
@@ -48,29 +47,28 @@ def post_multi_message(client, channel, msg, ts=False, summarize=True):
                 if len((post_msg + msg[i]).splitlines()) < 95:
                     post_msg += msg[i]
                 else:
-                    post_message(client, channel, post_msg, ts)
+                    post_message(post_msg, ts)
                     post_msg = msg[i]
             else:
-                post_message(client, channel, post_msg, ts)
+                post_message(post_msg, ts)
         else:  # そのままポスト
             for i in msg.keys():
-                post_message(client, channel, msg[i], ts)
+                post_message(msg[i], ts)
     else:
-        post_message(client, channel, msg, ts)
+        post_message(msg, ts)
 
 
-def post_text(client, channel, event_ts, title, msg):
+def post_text(event_ts, title, msg):
     # コードブロック修飾付きポスト
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
         res = call_chat_postMessage(
-            client,
-            channel=channel,
+            channel=g.msg.channel_id,
             text=f"{title}\n{msg.strip()}",
             thread_ts=event_ts,
         )
     else:
         # ポスト予定のメッセージをstep行単位のブロックに分割
-        step = 50
+        step = 10  # ToDo: debug 50 ->
         post_msg = []
         for count in range(int(len(msg.splitlines()) / step) + 1):
             post_msg.append(
@@ -84,8 +82,7 @@ def post_text(client, channel, event_ts, title, msg):
         # ブロック単位でポスト
         for i in range(len(post_msg)):
             res = call_chat_postMessage(
-                client,
-                channel=channel,
+                channel=g.msg.channel_id,
                 text=f"\n{title}\n\n```{post_msg[i].strip()}```",
                 thread_ts=event_ts,
             )
@@ -93,10 +90,9 @@ def post_text(client, channel, event_ts, title, msg):
     return (res)
 
 
-def post_fileupload(client, channel, title, file, ts=False):
+def post_fileupload(title, file, ts=False):
     res = call_files_upload(
-        client,
-        channel=channel,
+        channel=g.msg.channel_id,
         title=title,
         file=file,
         thread_ts=ts,
@@ -108,20 +104,73 @@ def post_fileupload(client, channel, title, file, ts=False):
 
 def slack_post(**kwargs):
     g.logging.debug(f"{kwargs}")
-    client = kwargs["client"] if "client" in kwargs else None
-    channel = kwargs["channel"] if "channel" in kwargs else None
     headline = kwargs["headline"] if "headline" in kwargs else None
     message = kwargs["message"] if "message" in kwargs else None
     summarize = kwargs["summarize"] if "summarize" in kwargs else True
     file_list = kwargs["file_list"] if "file_list" in kwargs else {}
 
     # 見出しポスト
-    res = post_message(client, channel, headline)
+    res = post_message(headline)
 
     # 本文ポスト
     if file_list:
         for x in file_list.keys():
-            post_fileupload(client, channel, x, file_list[x], res["ts"])
+            post_fileupload(x, file_list[x], res["ts"])
     else:
         if message:
-            post_multi_message(client, channel, message, res["ts"], summarize)
+            post_multi_message(message, res["ts"], summarize)
+
+
+def reactions_add(icon):
+    """
+    リアクションを付ける
+    """
+
+    res = g.msg.client.reactions_get(
+        channel=g.msg.channel_id,
+        timestamp=g.msg.event_ts,
+    )
+
+    # 既にリアクションが付いてるなら何もしない
+    if "reactions" in res["message"]:
+        for reaction in res["message"]["reactions"]:
+            if reaction["name"] == g.reaction_ok:
+                if g.msg.bot_id in reaction["users"]:
+                    return
+            if reaction["name"] == g.reaction_ng:
+                if g.msg.bot_id in reaction["users"]:
+                    return
+
+    g.msg.client.reactions_add(
+        channel=g.msg.channel_id,
+        name=icon,
+        timestamp=g.msg.event_ts,
+    )
+
+
+def reactions_remove():
+    """
+    botが付けたリアクションを外す
+    """
+
+    res = g.msg.client.reactions_get(
+        channel=g.msg.channel_id,
+        timestamp=g.msg.event_ts,
+    )
+
+    if "reactions" in res["message"]:
+        for reaction in res["message"]["reactions"]:
+            if reaction["name"] == g.reaction_ok:
+                if g.msg.bot_id in reaction["users"]:
+                    g.msg.client.reactions_remove(
+                        channel=g.msg.channel_id,
+                        name=g.reaction_ok,
+                        timestamp=g.msg.event_ts,
+                    )
+            if reaction["name"] == g.reaction_ng:
+                if g.msg.bot_id in reaction["users"]:
+                    g.msg.client.reactions_remove(
+                        channel=g.msg.channel_id,
+                        name=g.reaction_ng,
+                        timestamp=g.msg.event_ts,
+                    )
