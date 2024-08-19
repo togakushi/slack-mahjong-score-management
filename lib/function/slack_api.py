@@ -28,6 +28,9 @@ def call_files_upload(**kwargs):
 
 
 def post_message(message, ts=False):
+    if not ts and g.msg.thread_ts:
+        ts = g.msg.thread_ts
+
     res = call_chat_postMessage(
         channel=g.msg.channel_id,
         text=f"{message.strip()}",
@@ -91,6 +94,9 @@ def post_text(event_ts, title, msg):
 
 
 def post_fileupload(title, file, ts=False):
+    if not ts and g.msg.thread_ts:
+        ts = g.msg.thread_ts
+
     res = call_files_upload(
         channel=g.msg.channel_id,
         title=title,
