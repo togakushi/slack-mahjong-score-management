@@ -71,7 +71,7 @@ def post_text(event_ts, title, msg):
         )
     else:
         # ポスト予定のメッセージをstep行単位のブロックに分割
-        step = 10  # ToDo: debug 50 ->
+        step = 50
         post_msg = []
         for count in range(int(len(msg.splitlines()) / step) + 1):
             post_msg.append(
