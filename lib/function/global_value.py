@@ -236,6 +236,7 @@ class Message_Parser():
         self.client = WebClient()
         self.thread_ts = str()
         self.checked = False
+        _event = {}
 
         if "channel_name" in _body:
             if _body["channel_name"] == "directmessage":
