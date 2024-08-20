@@ -725,7 +725,7 @@ def team_total():
             on individual_results.ts = game_info.ts
         where
             individual_results.rule_version = :rule_version
-            and playtime between :starttime and :endtime
+            and individual_results.playtime between :starttime and :endtime
             and team not null
             --[friendly_fire] and same_team = 0
             --[search_word] and comment like :search_word
