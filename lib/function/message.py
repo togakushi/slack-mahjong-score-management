@@ -1,4 +1,5 @@
 import random
+import textwrap
 
 import lib.function as f
 from lib.function import global_value as g
@@ -48,42 +49,43 @@ def help_message():
     report_option = g.command_option()
     report_option.initialization("report")
 
-    msg = [
-        "*機能呼び出し構文*",
-        "\t`呼び出しキーワード [検索範囲] [対象メンバー] [オプション]`",
+    msg = textwrap.dedent(f"""
+        *成績記録キーワード*
+        \t{g.config["search"].get("keyword", "終局")}
 
-        "\n" + "-" * 30,
+        *機能呼び出し*
+        \t`呼び出しキーワード [検索範囲] [対象メンバー] [オプション]`
 
-        "\n*成績サマリ*",
-        f"\t呼び出しキーワード： {g.commandword['results']}",
-        f"\t検索範囲デフォルト： {results_option.aggregation_range[0]}",
+        \t*成績サマリ*
+        \t\t呼び出しキーワード： {g.commandword['results']}
+        \t\t検索範囲デフォルト： {results_option.aggregation_range[0]}
+        \t*成績グラフ*
+        \t\t呼び出しキーワード： {g.commandword['graph']}
+        \t\t検索範囲デフォルト： {graph_option.aggregation_range[0]}
+        \t*ランキング*
+        \t\t呼び出しキーワード： {g.commandword['ranking']}
+        \t\t検索範囲デフォルト： {ranking_option.aggregation_range[0]}
+        \t\t規定打数デフォルト： 全体ゲーム数 × {ranking_option.stipulated_rate} ＋ 1
+        \t\t出力制限デフォルト： 上位 {ranking_option.ranked} 名
+        \t*レポート*
+        \t\t呼び出しキーワード： {g.commandword['report']}
+        \t\t検索範囲デフォルト： {report_option.aggregation_range[0]}
+        \t*メンバー一覧*
+        \t\t呼び出しキーワード： {g.commandword['member']}
+        \t*チーム一覧*
+        \t\t呼び出しキーワード： {g.commandword['team']}
 
-        "\n*成績グラフ*",
-        f"\t呼び出しキーワード： {g.commandword['graph']}",
-        f"\t検索範囲デフォルト： {graph_option.aggregation_range[0]}",
+        *オプション*
+        \t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/argument_keyword.md
+    """).strip()
 
-        "\n*ランキング*",
-        f"\t呼び出しキーワード： {g.commandword['ranking']}",
-        f"\t検索範囲デフォルト： {ranking_option.aggregation_range[0]}",
-        f"\t規定打数デフォルト： 全体ゲーム数 × {ranking_option.stipulated_rate} ＋ 1",
-        f"\t出力制限デフォルト： 上位 {ranking_option.ranked} 名",
+    if g.config.has_section("regulations"):
+        additional_rule = "\n\n*追加ルール*\n"
+        for word, ex_point in g.config.items("regulations"):
+            additional_rule += f"\t{word}： {ex_point}pt\n"
+        msg += additional_rule
 
-        "\n*レポート*",
-        f"\t呼び出しキーワード： {g.commandword['report']}",
-        f"\t検索範囲デフォルト： {report_option.aggregation_range[0]}",
-
-        "\n*メンバー一覧*",
-        f"\t呼び出しキーワード： {g.commandword['member']}",
-
-        "\n*チーム一覧*",
-        f"\t呼び出しキーワード： {g.commandword['team']}",
-
-        "\n" + "-" * 30,
-
-        "*オプション*",
-        "\t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/argument_keyword.md",
-    ]
-    return ("\n".join(msg))
+    return (msg.strip())
 
 
 def invalid_argument():
