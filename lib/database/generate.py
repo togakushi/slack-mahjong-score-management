@@ -583,7 +583,7 @@ def team_gamedata():
             select
                 --[daily] count() as count,
                 --[not_daily] --[group_by] count() as count,
-                playtime,
+                individual_results.playtime,
                 collection_daily,
                 team,
                 --[not_daily] rank,
@@ -600,7 +600,7 @@ def team_gamedata():
                 game_info on individual_results.ts = game_info.ts
             where
                 individual_results.rule_version = :rule_version
-                and playtime between :starttime and :endtime
+                and individual_results.playtime between :starttime and :endtime
                 --[friendly_fire] and same_team = 0
                 --[search_word] and comment like :search_word
             --[not_daily] --[group_by] group by -- コメント集約
@@ -610,7 +610,7 @@ def team_gamedata():
             --[daily] group by -- 日次集計
             --[daily]     collection_daily, team
             order by
-                --[not_daily] playtime desc
+                --[not_daily] individual_results.playtime desc
                 --[daily] collection_daily desc
         )
         window
