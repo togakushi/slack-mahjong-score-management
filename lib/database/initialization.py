@@ -301,6 +301,7 @@ def initialization_resultdb():
                             else date(playtime)
                     end, 1, 7
                 ) as collection,
+                comment,
                 rule_version
             from
                 result
