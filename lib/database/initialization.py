@@ -336,6 +336,7 @@ def initialization_resultdb():
                     when p3.team_id = p4.team_id then 1
                     else 0
                 end as same_team,
+                comment,
                 rule_version
             from
                 result
