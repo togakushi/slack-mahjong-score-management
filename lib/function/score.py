@@ -167,7 +167,7 @@ def check_remarks():
     match g.msg.status:
         case "message_append":
             for name, val in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
-                if name in check_list:
+                if c.member.NameReplace(name) in check_list:
                     g.logging.info(f"insert: {name}, {val}")
                     resultdb.execute(d.sql_remarks_insert, (
                         g.msg.thread_ts,
