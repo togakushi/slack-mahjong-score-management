@@ -39,12 +39,13 @@ def pattern(text):
         フォーマットに一致すればスペース区切りの名前と素点のペア
     """
 
-    # 全角記号を半角へ置換
+    # 記号を置換
     replace_chr = [
-        (chr(0xff0b), "+"),  # 全角プラス符号(0xff0b)
-        (chr(0x2212), "-"),  # 全角マイナス符号(0x2212)
-        (chr(0xff08), "("),
-        (chr(0xff09), ")"),
+        (chr(0xff0b), "+"),  # 全角プラス符号
+        (chr(0x2212), "-"),  # 全角マイナス符号
+        (chr(0xff08), "("),  # 全角丸括弧
+        (chr(0xff09), ")"),  # 全角丸括弧
+        (chr(0x2017), "_"),  # DOUBLE LOW LINE(半角)
     ]
     for z, h in replace_chr:
         text = text.replace(z, h)
