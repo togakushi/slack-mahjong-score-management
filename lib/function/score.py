@@ -132,15 +132,15 @@ def check_score(msg):
         )
     )
 
-    f.slack_api.reactions_remove()
+    f.slack_api.call_reactions_remove()
     if rpoint_sum == correct_score:  # 合計が一致している場合
-        f.slack_api.reactions_add(g.reaction_ok)
+        f.slack_api.call_reactions_add(g.reaction_ok)
     else:  # 合計が不一致の場合
         f.slack_api.post_message(
             f.message.invalid_score(g.msg.user_id, rpoint_sum, correct_score),
             g.msg.event_ts
         )
-        f.slack_api.reactions_add(g.reaction_ng)
+        f.slack_api.call_reactions_add(g.reaction_ng)
 
     g.msg.checked = True
 
@@ -175,9 +175,9 @@ def check_remarks():
                         c.member.NameReplace(name),
                         val,
                     ))
-                    f.slack_api.reactions_add(g.reaction_ok)
+                    f.slack_api.call_reactions_add(g.reaction_ok)
         case "message_changed":
-            f.slack_api.reactions_remove()
+            f.slack_api.call_reactions_remove()
             resultdb.execute(
                 d.sql_remarks_delete_one,
                 (g.msg.event_ts,)
@@ -191,7 +191,7 @@ def check_remarks():
                         c.member.NameReplace(name),
                         val,
                     ))
-                    f.slack_api.reactions_add(g.reaction_ok)
+                    f.slack_api.call_reactions_add(g.reaction_ok)
         case "message_deleted":
             g.logging.info("delete one")
             resultdb.execute(

@@ -127,7 +127,7 @@ def slack_post(**kwargs):
             post_multi_message(message, res["ts"], summarize)
 
 
-def reactions_add(icon):
+def call_reactions_add(icon):
     """
     リアクションを付ける
     """
@@ -154,7 +154,7 @@ def reactions_add(icon):
     )
 
 
-def reactions_remove():
+def call_reactions_remove():
     """
     botが付けたリアクションを外す
     """
