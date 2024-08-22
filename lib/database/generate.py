@@ -595,8 +595,8 @@ def team_gamedata():
                 --[not_daily] --[group_by] round(sum(point), 1) as point,
                 --[daily] round(sum(point), 1) as point,
                 game_info.guest_count,
-                --[not_group_length] comment
-                --[group_length] substr(comment, 1, :group_length) as comment
+                --[not_group_length] game_info.comment
+                --[group_length] substr(game_info.comment, 1, :group_length) as comment
             from
                 individual_results
             join
@@ -605,11 +605,11 @@ def team_gamedata():
                 individual_results.rule_version = :rule_version
                 and individual_results.playtime between :starttime and :endtime
                 --[friendly_fire] and same_team = 0
-                --[search_word] and comment like :search_word
+                --[search_word] and game_info.comment like :search_word
             --[not_daily] --[group_by] group by -- コメント集約
             --[not_daily] --[group_by]     --[not_comment] collection_daily, team
-            --[not_daily] --[group_by]     --[comment] comment, team
-            --[not_daily] --[group_by]     --[group_length] substr(comment, 1, :group_length), team
+            --[not_daily] --[group_by]     --[comment] game_info.comment, team
+            --[not_daily] --[group_by]     --[group_length] substr(game_info.comment, 1, :group_length), team
             --[daily] group by -- 日次集計
             --[daily]     collection_daily, team
             order by
