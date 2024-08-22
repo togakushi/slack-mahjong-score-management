@@ -44,13 +44,13 @@ def plot():
     rank_avg = "{:.2f}".format(float(df["rank_avg"].iloc[-1]))
 
     # --- グラフ生成
-    f.common.set_graph_font(plt, fm)
     save_file = os.path.join(
         g.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "graph.png",
     )
 
-    plt.style.use("ggplot")
+    f.common.graph_setup(plt, fm)
+
     fig = plt.figure(figsize=(12, 8))
 
     if g.prm.target_count == 0:

@@ -235,7 +235,6 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
     グラフ生成共通処理
     """
 
-    f.common.set_graph_font(plt, fm)
     save_file = os.path.join(
         g.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "graph.png"
@@ -252,7 +251,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
             v["game_count"],
         ))
 
-    plt.style.use("ggplot")
+    f.common.graph_setup(plt, fm)
 
     df.plot(
         figsize=(8, 6),

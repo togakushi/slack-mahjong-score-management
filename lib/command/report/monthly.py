@@ -21,7 +21,7 @@ def plot():
         return (False)
 
     # --- グラフフォント設定
-    f.common.set_graph_font(plt, fm)
+    f.common.graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
 
     column_labels = list(results[list(results.keys())[0]].keys())

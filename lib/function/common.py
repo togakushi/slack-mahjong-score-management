@@ -218,15 +218,34 @@ def save_output(df, format, filename):
     return (save_file)
 
 
-def set_graph_font(plt, fm):
+def graph_setup(plt, fm):
     """
-    グラフフォント設定
+    グラフ設定
     """
+
+    # スタイルの適応
+    style = g.config["setting"].get("graph_style", "ggplot")
+
+    if style not in plt.style.available:
+        style = "ggplot"
+
+    plt.style.use(style)
+
+    # フォント再設定
+    for x in ("family", "serif", "sans-serif", "cursive", "fantasy", "monospace"):
+        if f"font.{x}" in plt.rcParams:
+            plt.rcParams[f"font.{x}"] = ""
 
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
+
+    # グリッド線を使用しないスタイルに追加
+    if not plt.rcParams["axes.grid"]:
+        plt.rcParams["axes.grid"] = True
+        plt.rcParams["grid.alpha"] = 0.3
+        plt.rcParams["grid.linestyle"] = "--"
 
 
 def debug_out(msg1, msg2):

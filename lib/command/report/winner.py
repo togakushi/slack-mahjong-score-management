@@ -33,7 +33,7 @@ def plot():
                 results[v["collection"]][f"{x}位"] = v[f"pname{x}"]
 
     # --- グラフ設定
-    f.common.set_graph_font(plt, fm)
+    f.common.graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
     report_file_path = os.path.join(
         g.work_dir,

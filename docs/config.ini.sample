@@ -28,7 +28,8 @@ remarks_word = 麻雀成績メモ
 threshold = 20
 # 変換時のフォーマット(csv/txt/text)
 format = csv
-
+# グラフスタイル(https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html)
+graph_style = dark_background
 
 ### DATABASE関連オプション ###
 [database]
