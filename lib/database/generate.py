@@ -731,7 +731,7 @@ def team_total():
             and individual_results.playtime between :starttime and :endtime
             and team not null
             --[friendly_fire] and same_team = 0
-            --[search_word] and comment like :search_word
+            --[search_word] and game_info.comment like :search_word
         group by
             team
         order by
