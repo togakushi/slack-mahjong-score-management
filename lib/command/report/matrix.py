@@ -21,6 +21,9 @@ def plot():
     msg = "*【対局対戦マトリックス】*\n"
     msg += f.message.header(game_info, vars(g.prm), "", 1)
 
+    if df.empty:
+        return (msg, {})
+
     # 保存
     file_name = os.path.join(
         g.work_dir,
@@ -34,6 +37,4 @@ def plot():
         file_path = file_name + ".txt"
         df.to_markdown(file_path, tablefmt="outline")
 
-    file_list = {"対局対戦マトリックス表": file_path}
-
-    return (msg, file_list)
+    return (msg, {"対局対戦マトリックス表": file_path})

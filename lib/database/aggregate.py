@@ -457,6 +457,10 @@ def matrix_table():
         index=list(l_data.keys())
     )
 
+    # 対象リストが0件になった場合は空のデータフレームを返す
+    if rank_df.empty:
+        return (rank_df)
+
     # 対局対戦マトリックス表の作成
     mtx_df = pd.DataFrame(
         index=list(l_data.keys()),

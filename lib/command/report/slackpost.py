@@ -36,6 +36,7 @@ def main():
         else:
             f.slack_api.slack_post(
                 headline=msg,
+                message=f.message.no_hits(),
                 file_list=file_list,
             )
     else:
