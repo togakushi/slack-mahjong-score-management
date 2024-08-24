@@ -248,7 +248,7 @@ def graph_setup(plt, fm):
         plt.rcParams["grid.linestyle"] = "--"
 
 
-def debug_out(msg1, msg2):
+def debug_out(msg1, msg2=None):
     """
     メッセージ標準出力(テスト用)
     """

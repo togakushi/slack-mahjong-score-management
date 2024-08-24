@@ -419,7 +419,7 @@ def matrix_table():
     for pname in plist:
         l_name = c.member.NameReplace(pname)
 
-        # 対象プレイヤーのみ
+        # プレイヤー指定があるなら対象以外をスキップ
         if g.prm.player_list:
             if l_name not in g.prm.player_list.values():
                 continue
@@ -444,6 +444,12 @@ def matrix_table():
                     l_data[l_name] += [x.p4_rank]
                 case _:
                     l_data[l_name] += [None]
+
+    # 規定打数以下を足切り
+    if g.prm.stipulated:
+        for pname in list(l_data.keys()):
+            if sum([x is not None for x in l_data[pname]]) <= g.prm.stipulated:
+                l_data.pop(pname)
 
     rank_df = pd.DataFrame(
         l_data.values(),

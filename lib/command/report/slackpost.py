@@ -30,11 +30,14 @@ def main():
         else:
             f.slack_api.post_message(f.message.no_hits())
     elif g.opt.versus_matrix:
-        file_path = matrix.plot()
-        if file_path:
-            f.slack_api.post_fileupload("対局対戦マトリックス表", file_path)
+        msg, file_list = matrix.plot()
+        if g.args.testcase:
+            f.common.debug_out(msg)
         else:
-            f.slack_api.post_message(f.message.no_hits())
+            f.slack_api.slack_post(
+                headline=msg,
+                file_list=file_list,
+            )
     else:
         report_file_path = winner.plot()
         if report_file_path:

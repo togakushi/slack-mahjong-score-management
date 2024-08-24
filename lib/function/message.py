@@ -210,7 +210,7 @@ def header(game_info, params, add_text="", indent=1):
                     msg += f"{tab}検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}\n"
                     msg += game_range1
                     msg += f"{tab}ゲーム数：{game_info['game_count']} 回{add_text}\n"
-            case "ranking":
+            case "ranking" | "report":
                 msg += game_range2
                 msg += f"{tab}集計ゲーム数：{game_info['game_count']} (規定数：{g.opt.stipulated} 以上)\n"
             case _:
