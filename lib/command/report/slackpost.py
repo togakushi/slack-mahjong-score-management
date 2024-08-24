@@ -29,7 +29,7 @@ def main():
             f.slack_api.post_fileupload("個人成績一覧", report_file_path)
         else:
             f.slack_api.post_message(f.message.no_hits())
-    elif g.opt.versus_matrix:
+    elif g.opt.versus_matrix or len(g.prm.player_list) >= 2:  # 対局対戦マトリックス
         msg, file_list = matrix.plot()
         if g.args.testcase:
             f.common.debug_out(msg)
