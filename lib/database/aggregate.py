@@ -417,7 +417,13 @@ def matrix_table():
     # 順位テーブルの作成
     l_data = {}
     for pname in plist:
-        l_name = pname
+        l_name = c.member.NameReplace(pname)
+
+        # 対象プレイヤーのみ
+        if g.prm.player_list:
+            if l_name not in g.prm.player_list.values():
+                continue
+
         # ゲスト置換
         if g.opt.guest_skip:  # ゲストあり
             l_name = c.member.NameReplace(pname, add_mark=True)
