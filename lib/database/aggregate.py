@@ -395,3 +395,86 @@ def regulations_count():
     df = df.filter(items=["プレイヤー名", "matter", "count", "ex_point"])
 
     return (df)
+
+
+def matrix_table():
+    """
+    対局対戦マトリックス表の作成
+    """
+
+    # データ収集
+    df = pd.read_sql(
+        d.generate.matrix_table(),
+        sqlite3.connect(g.database_file),
+        params=g.prm.to_dict()
+    ).set_index("playtime")
+
+    # 結果に含まれるプレイヤーのリスト
+    plist = sorted(list(set(
+        df["p1_name"].tolist() + df["p2_name"].tolist() + df["p3_name"].tolist() + df["p4_name"].tolist()
+    )))
+
+    # 順位テーブルの作成
+    l_data = {}
+    for pname in plist:
+        l_name = pname
+        # ゲスト置換
+        if g.opt.guest_skip:  # ゲストあり
+            l_name = c.member.NameReplace(pname, add_mark=True)
+        else:  # ゲストなし
+            if pname == g.prm.guest_name:
+                continue
+
+        l_data[l_name] = []
+        for x in df.itertuples():
+            match pname:
+                case x.p1_name:
+                    l_data[l_name] += [x.p1_rank]
+                case x.p2_name:
+                    l_data[l_name] += [x.p2_rank]
+                case x.p3_name:
+                    l_data[l_name] += [x.p3_rank]
+                case x.p4_name:
+                    l_data[l_name] += [x.p4_rank]
+                case _:
+                    l_data[l_name] += [None]
+
+    rank_df = pd.DataFrame(
+        l_data.values(),
+        columns=list(df.index),
+        index=list(l_data.keys())
+    )
+
+    # 対局対戦マトリックス表の作成
+    mtx_df = pd.DataFrame(
+        index=list(l_data.keys()),
+        columns=list(l_data.keys()) + ["total"]
+    )
+
+    for idx1 in range(len(rank_df)):
+        p1 = rank_df.iloc[idx1]
+        t_game_count = 0
+        t_win = 0
+        for idx2 in range(len(rank_df)):
+            p2 = rank_df.iloc[idx2]
+            if p1.name == p2.name:
+                mtx_df.loc[f"{p1.name}", f"{p2.name}"] = "---"
+            else:
+                game_count = len(pd.concat([p1, p2], axis=1).dropna())
+                win = (p1 < p2).sum()
+                t_game_count += game_count
+                t_win += win
+
+                if game_count:
+                    winning_per = round(float(win / game_count * 100), 1)
+                else:
+                    winning_per = "--.-"
+                mtx_df.loc[f"{p1.name}", f"{p2.name}"] = f"{win}-{game_count - win} ({winning_per}%)"
+
+        if t_game_count:
+            t_winning_per = round(float(t_win / t_game_count * 100), 1)
+        else:
+            t_winning_per = "--.-"
+        mtx_df.loc[f"{p1.name}", "total"] = f"{t_win}-{t_game_count - t_win} ({t_winning_per}%)"
+
+    return (mtx_df)

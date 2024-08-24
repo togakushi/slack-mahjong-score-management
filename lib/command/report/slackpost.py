@@ -1,5 +1,5 @@
 import lib.function as f
-from lib.command.report import monthly, personal, results, winner
+from lib.command.report import monthly, personal, results, winner, matrix
 from lib.function import global_value as g
 
 
@@ -27,6 +27,12 @@ def main():
         report_file_path = personal.plot()
         if report_file_path:
             f.slack_api.post_fileupload("個人成績一覧", report_file_path)
+        else:
+            f.slack_api.post_message(f.message.no_hits())
+    elif g.opt.versus_matrix:
+        file_path = matrix.plot()
+        if file_path:
+            f.slack_api.post_fileupload("対局対戦マトリックス表", file_path)
         else:
             f.slack_api.post_message(f.message.no_hits())
     else:
