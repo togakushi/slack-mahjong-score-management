@@ -466,6 +466,10 @@ def matrix_table():
         index=list(l_data.keys()),
         columns=list(l_data.keys()) + ["total"]
     )
+    sorting_df = pd.DataFrame(
+        index=list(l_data.keys()),
+        columns=["win_per", "count"]
+    )
 
     for idx1 in range(len(rank_df)):
         p1 = rank_df.iloc[idx1]
@@ -492,5 +496,14 @@ def matrix_table():
         else:
             t_winning_per = "--.-"
         mtx_df.loc[f"{p1.name}", "total"] = f"{t_win}-{t_game_count - t_win} ({t_winning_per}%)"
+        sorting_df.loc[f"{p1.name}", "win_per"] = t_winning_per
+        sorting_df.loc[f"{p1.name}", "count"] = t_game_count
+
+    # 勝率で並び替え
+    sorting_df = sorting_df.sort_values(["win_per", "count"], ascending=False)
+    mtx_df = mtx_df.reindex(
+        index=list(sorting_df.index),
+        columns=list(sorting_df.index) + ["total"]
+    )
 
     return (mtx_df)

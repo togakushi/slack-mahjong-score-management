@@ -14,7 +14,7 @@ def plot():
         )
         g.prm.update(g.opt)
 
-    # データ収集
+    # データ集計
     df = d.aggregate.matrix_table()
 
     # 表示
