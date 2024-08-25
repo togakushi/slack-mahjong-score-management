@@ -417,19 +417,20 @@ def matrix_table():
     # 順位テーブルの作成
     l_data = {}
     for pname in plist:
-        l_name = c.member.NameReplace(pname)
-
-        # プレイヤー指定があるなら対象以外をスキップ
-        if g.prm.player_list:
-            if l_name not in g.prm.player_list.values():
-                continue
-
-        # ゲスト置換
-        if g.opt.guest_skip:  # ゲストあり
-            l_name = c.member.NameReplace(pname, add_mark=True)
-        else:  # ゲストなし
-            if pname == g.prm.guest_name:
-                continue
+        if g.opt.team_total:
+            l_name = pname
+        else:
+            l_name = c.member.NameReplace(pname)
+            # プレイヤー指定があるなら対象以外をスキップ
+            if g.prm.player_list:
+                if l_name not in g.prm.player_list.values():
+                    continue
+            # ゲスト置換
+            if g.opt.guest_skip:  # ゲストあり
+                l_name = c.member.NameReplace(pname, add_mark=True)
+            else:  # ゲストなし
+                if pname == g.prm.guest_name:
+                    continue
 
         l_data[l_name] = []
         for x in df.itertuples():
