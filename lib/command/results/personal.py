@@ -143,14 +143,15 @@ def aggregation():
                 if g.opt.guest_skip and g.opt.unregistered_replace and any(x["guest_count"] >= 2):
                     continue
                 for _, seat_data in x.iterrows():
-                    msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
-                        f"{g.guest_mark.strip()} " if seat_data["guest_count"] >= 2 else "",
-                        seat_data["playtime"].replace("-", "/"),
-                        seat_data["rank"],
-                        seat_data["rpoint"] * 100,
-                        seat_data["point"],
-                        seat_data["grandslam"],
-                    ).replace("-", "▲")
+                    if seat_data["プレイヤー名"] == g.prm.player_name:
+                        msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
+                            f"{g.guest_mark.strip()} " if seat_data["guest_count"] >= 2 else "",
+                            seat_data["playtime"].replace("-", "/"),
+                            seat_data["rank"],
+                            seat_data["rpoint"] * 100,
+                            seat_data["point"],
+                            seat_data["grandslam"],
+                        ).replace("-", "▲")
 
     # --- 対戦結果
     if g.opt.versus_matrix:
