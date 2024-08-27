@@ -27,8 +27,8 @@ def aggregation():
     df_summary = df_summary.rename(
         columns={
             "team": "チーム名",
-            "total": "通算ポイント",
-            "rank": "平均順位",
+            "pt_total": "通算",
+            "rank_distr": "順位分布",
             "count": "ゲーム数",
         }
     )
@@ -45,7 +45,7 @@ def aggregation():
             tablefmt="simple",
             numalign="right",
             maxheadercolwidths=16,
-            floatfmt=("", "+.1f", ".2f", "")
+            floatfmt=("", "+.1f", "", "")
         )
         data = re.sub(r" -([0-9]+)", r"▲\1", data)
         msg[0] = f"```\n{data}\n```"

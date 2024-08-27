@@ -178,12 +178,12 @@ def game_results():
                 count(rank = 4 or null),
                 round(avg(rank), 2)
             ) as rank_distr,
-            round(avg(rank), 2) as rank_avg,
             count(rpoint < 0 or null) as flying
         from (
             select
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
+                --[team] team as name,
                 rpoint, rank, point, guest
             from
                 individual_results
@@ -195,6 +195,7 @@ def game_results():
                 --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[guest_skip] and guest = 0 -- ゲストなし
                 --[friendly_fire] and same_team = 0
+                --[team] and team notnull
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and game_info.comment like :search_word
             order by
@@ -720,8 +721,14 @@ def team_total():
         -- team_total()
         select
             team,
-            round(sum(point),1) as total,
-            round(avg(rank),2) as rank,
+            round(sum(point),1) as pt_total,
+            printf("%d-%d-%d-%d (%.2f)",
+                count(rank = 1 or null),
+                count(rank = 2 or null),
+                count(rank = 3 or null),
+                count(rank = 4 or null),
+                round(avg(rank), 2)
+            ) as rank_distr,
             count() as count
         from
             individual_results
