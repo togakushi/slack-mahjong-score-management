@@ -743,7 +743,7 @@ def team_total():
         group by
             team
         order by
-            total desc
+            pt_total desc
     """
 
     return (_query_modification(sql))
