@@ -234,7 +234,7 @@ def get_score(msg):
     score = score_df.to_dict(orient="records")
 
     ret = {
-        "deposit": g.prm.origin_point * 4 - score_df["rpoint"].sum(),
+        "deposit": g.prm.origin_point * 4 - int(score_df["rpoint"].sum()),
         "comment": msg[8],
     }
     ret.update(dict(zip([f"p1_{x}" for x in list(score[0])], list(score[0].values()))))
