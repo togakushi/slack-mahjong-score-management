@@ -262,6 +262,9 @@ class Message_Parser():
                     case "message_deleted":
                         self.status = "message_deleted"
                         _event = _body["event"]["previous_message"]
+                    case "file_share":
+                        self.status = "message_append"
+                        _event = _body["event"]
                     case _:
                         pass
             else:
@@ -281,8 +284,6 @@ class Message_Parser():
                             self.text = _event["blocks"][0]["elements"][0]["elements"][0]["text"]
                         else:  # todo: 解析用出力
                             logging.info(f"<analysis> blocks in: {_event=}")
-                    case _:  # todo: 解析用出力
-                        logging.info(f"<analysis> unmatch: {_event=}")
 
         if self.text:
             self.keyword = self.text.split()[0]
