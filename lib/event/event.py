@@ -22,7 +22,6 @@ def handle_message_events(client, body):
         g.logging.trace(f"event skip[ignore user]: {g.msg.user_id}")  # type: ignore
         return
 
-    existence = d.common.ExsistRecord(g.msg.event_ts)
     g.logging.info(f"{vars(g.msg)}")
 
     match g.msg.keyword:
@@ -80,7 +79,7 @@ def handle_message_events(client, body):
                             d.common.resultdb_insert(results, g.msg.event_ts)
                         case "message_changed":
                             f.score.check_score(results)
-                            if existence:
+                            if d.common.ExsistRecord(g.msg.event_ts):
                                 d.common.resultdb_update(results, g.msg.event_ts)
                             else:
                                 d.common.resultdb_insert(results, g.msg.event_ts)
