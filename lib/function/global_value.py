@@ -266,7 +266,7 @@ class Message_Parser():
                         self.status = "message_append"
                         _event = _body["event"]
                     case _:
-                        pass
+                        logging.info(f"unknown subtype: {_body=}")
             else:
                 self.status = "message_append"
                 _event = _body["event"]
