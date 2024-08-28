@@ -68,22 +68,31 @@ def handle_message_events(client, body):
             if d.common.ExsistRecord(g.msg.thread_ts) and g.msg.updatable:
                 f.score.check_remarks()
 
+        # 結果報告フォーマットに一致したポストの処理
         case _:
-            # 結果報告フォーマットに一致したポストの処理
-            results = f.search.pattern(g.msg.text)
-            if results:
-                if g.msg.updatable:
-                    match g.msg.status:
-                        case "message_append":
-                            f.score.check_score(results)
-                            d.common.resultdb_insert(results, g.msg.event_ts)
-                        case "message_changed":
-                            f.score.check_score(results)
+            detection = f.search.pattern(g.msg.text)
+            match g.msg.status:
+                case "message_append":
+                    if detection:
+                        f.score.check_score(detection)
+                        if g.msg.updatable:
+                            d.common.resultdb_insert(detection, g.msg.event_ts)
+                        else:
+                            f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
+                case "message_changed":
+                    if detection:
+                        f.score.check_score(detection)
+                        if g.msg.updatable:
                             if d.common.ExsistRecord(g.msg.event_ts):
-                                d.common.resultdb_update(results, g.msg.event_ts)
+                                d.common.resultdb_update(detection, g.msg.event_ts)
                             else:
-                                d.common.resultdb_insert(results, g.msg.event_ts)
-                        case "message_deleted":
+                                d.common.resultdb_insert(detection, g.msg.event_ts)
+                        else:
+                            f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
+                    else:
+                        if d.common.ExsistRecord(g.msg.event_ts):
+                            f.slack_api.call_reactions_remove()
                             d.common.resultdb_delete(g.msg.event_ts)
-                else:
-                    f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
+                case "message_deleted":
+                    if d.common.ExsistRecord(g.msg.event_ts):
+                        d.common.resultdb_delete(g.msg.event_ts)
