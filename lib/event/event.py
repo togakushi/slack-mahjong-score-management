@@ -90,8 +90,8 @@ def handle_message_events(client, body):
                         else:
                             f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                     else:
+                        f.slack_api.call_reactions_remove()
                         if d.common.ExsistRecord(g.msg.event_ts):
-                            f.slack_api.call_reactions_remove()
                             d.common.resultdb_delete(g.msg.event_ts)
                 case "message_deleted":
                     if d.common.ExsistRecord(g.msg.event_ts):
