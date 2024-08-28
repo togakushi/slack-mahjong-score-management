@@ -234,6 +234,7 @@ class Message_Parser():
     def parser(self, _body: dict):
         self.__dict__.clear()
         self.client = WebClient()
+        self.text = str()
         self.thread_ts = str()
         self.checked = False
         _event = {}
@@ -276,7 +277,12 @@ class Message_Parser():
                     case "thread_ts":
                         self.thread_ts = _event["thread_ts"]
                     case "blocks":
-                        self.text = _event["blocks"][0]["elements"][0]["elements"][0]["text"]
+                        if "text" in _event["blocks"][0]["elements"][0]["elements"][0]:
+                            self.text = _event["blocks"][0]["elements"][0]["elements"][0]["text"]
+                        else:  # todo: 解析用出力
+                            logging.info(f"<analysis> blocks in: {_event=}")
+                    case _:  # todo: 解析用出力
+                        logging.info(f"<analysis> unmatch: {_event=}")
 
         if self.text:
             self.keyword = self.text.split()[0]
