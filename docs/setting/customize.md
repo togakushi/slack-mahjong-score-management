@@ -97,7 +97,7 @@ INIファイル内の設定を変更することで、動作変更が可能。
 | guest_skip           | 未登録プレイヤーの結果を無視する                   | 真偽値 | True   | 全体成績用   |
 | guest_skip2          | 未登録プレイヤーの結果を無視する                   | 真偽値 | True   | 個人成績用   |
 | score_comparisons    | 比較モードで表示する                               | 真偽値 | False  |              |
-| game_results         | 戦績(半荘単位の素点と順位)を表示                   | 真偽値 | False  | 個人成績専用 |
+| game_results         | 戦績(ゲーム単位の素点と順位)を表示                 | 真偽値 | False  | 個人成績専用 |
 | versus_matrix        | 対戦マトリックス表示                               | 真偽値 | False  | 個人成績専用 |
 
 ## メンバー管理
