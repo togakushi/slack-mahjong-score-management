@@ -3,22 +3,22 @@
 結果はアプリからDMで通知される。
 
 ```
-/mahjong results		                        成績を表示
-/mahjong ranking		                        ランキングを表示
-/mahjong graph			                        ポイント推移グラフを表示
-/mahjong report			                        レポートを表示
-/mahjong check			                        突合コマンド
-/mahjong download		                        データベースをダウンロード
-/mahjong member	                        		登録されているメンバーを表示
-/mahjong userlist		                        登録されているメンバーを表示
-/mahjong add <登録名>		                    メンバーの追加
-/mahjong del <登録名>	                     	メンバーの削除
-/mahjong team_create <チーム名>             チームの新規作成
-/mahjong team_del <チーム名>		            チームの削除
-/mahjong team_add <チーム名> <メンバー名>   チームにメンバーを登録
-/mahjong team_remove <メンバー名>		        指定したメンバーを未所属にする
-/mahjong team_list                          チーム名と所属メンバーを表示
-/mahjong team_clear                         チームデータをすべて削除
+/commandname results		                        成績を表示
+/commandname ranking		                        ランキングを表示
+/commandname graph			                        ポイント推移グラフを表示
+/commandname report			                        レポートを表示
+/commandname check			                        突合コマンド
+/commandname download		                        データベースをダウンロード
+/commandname member	                        		登録されているメンバーを表示
+/commandname userlist		                        登録されているメンバーを表示
+/commandname add <登録名>		                    メンバーの追加
+/commandname del <登録名>	                     	メンバーの削除
+/commandname team_create <チーム名>             チームの新規作成
+/commandname team_del <チーム名>		            チームの削除
+/commandname team_add <チーム名> <メンバー名>   チームにメンバーを登録
+/commandname team_remove <メンバー名>		        指定したメンバーを未所属にする
+/commandname team_list                          チーム名と所属メンバーを表示
+/commandname team_clear                         チームデータをすべて削除
 
 ```
 
@@ -29,12 +29,12 @@
 - 概要：
   - 成績を表示
 - 書式：
-  - `/mahjong results [対象メンバー] [検索範囲] [戦績] [詳細] [対戦] [チーム]`
+  - `/commandname results [対象メンバー] [検索範囲] [戦績] [詳細] [対戦] [チーム]`
 - 引数：
   - 専用オプション
     - 戦績：個人成績出力時、検索範囲未指定時でも戦績の結果を出力
     - 詳細：戦績に追加で4人分の戦績を出力
-    - 対戦：対戦マトリックスの表示
+    - 対戦：対戦結果の表示
       - 対象メンバーを2名以上指定した場合、直接対戦結果を表示
     - チーム：チーム成績を出力
   - 共通オプション
@@ -52,7 +52,7 @@
 - 概要：
   - 各成績をランキング形式で表示
 - 書式：
-  - `/mahjong ranking [検索範囲] [トップNNN]`
+  - `/commandname ranking [検索範囲] [トップNNN]`
 - 引数：
   - 専用オプション
     - トップNNN：上位NNN位まで表示する（省略時は「3」）
@@ -69,7 +69,7 @@
 - 概要：
   - ポイント推移グラフを表示
 - 書式：
-  - `/mahjong graph [対象メンバー] [検索範囲]`
+  - `/commandname graph [対象メンバー] [検索範囲]`
 - 引数：
   - 対象メンバー：省略時は検索範囲に含まれるメンバー全員
   - 検索範囲：省略時は「当日」([詳細](argument_keyword.md#検索範囲))
@@ -85,7 +85,7 @@
 - 概要：
   - レポートを表示
 - 書式：
-  - `/mahjong report [専用オプション]`
+  - `/commandname report [専用オプション]`
 - 引数：
   - 専用オプション
     - 指定なし：成績上位5名（月間）
@@ -107,7 +107,7 @@
 - 概要：
   - データベースの突合
 - 書式：
-  - `/mahjong check`
+  - `/commandname check`
 - 引数：
   - なし
 - エイリアス：
@@ -118,7 +118,7 @@
 - 概要：
   - データベースのダウンロード
 - 書式：
-  - `/mahjong download`
+  - `/commandname download`
 - 引数：
   - なし
 - エイリアス：
@@ -131,8 +131,8 @@
 - 概要：
   - 登録されているメンバーを表示
 - 書式：
-  - `/mahjong member`
-  - `/mahjong userlist`
+  - `/commandname member`
+  - `/commandname userlist`
 - 引数：
   - なし
 - エイリアス：
@@ -143,18 +143,18 @@
 - 概要：
   - 成績管理対象のメンバーを追加、削除
 - 書式：
-  - `/mahjong add <登録名> [別名]`
-  - `/mahjong del <登録名> [別名]`
+  - `/commandname add <登録名> [別名]`
+  - `/commandname del <登録名> [別名]`
 - 引数：
   - 登録名：サマリや成績管理で表示される名前
   - 別名：登録名に紐付いている別名
 - エイリアス：
   - 追加、削除
 - 補足説明：
-  - 「/mahjong add <登録名>」でメンバーの新規追加
-  - 「/mahjong add <登録名> <別名>」で別名のニックネームを追加
-  - 「/mahjong del <登録名>」でメンバーを削除(ゲスト扱い)
-  - 「/mahjong del <登録名> <別名>」でニックネームを削除
+  - 「/commandname add <登録名>」でメンバーの新規追加
+  - 「/commandname add <登録名> <別名>」で別名のニックネームを追加
+  - 「/commandname del <登録名>」でメンバーを削除(ゲスト扱い)
+  - 「/commandname del <登録名> <別名>」でニックネームを削除
 
 ### メンバー登録時の注意事項
 
@@ -171,7 +171,7 @@
 - 概要：
   - チームの新規登録
 - 書式：
-  - `/mahjong team_create <登録チーム名>`
+  - `/commandname team_create <登録チーム名>`
 - 引数：
   - 登録チーム名：登録されるチーム名
 - エイリアス：
@@ -182,7 +182,7 @@
 - 概要：
   - チームの削除
 - 書式：
-  - `/mahjong team_del <チーム名>`
+  - `/commandname team_del <チーム名>`
 - 引数：
   - チーム名：削除されるチーム名
 - エイリアス：
@@ -194,8 +194,8 @@
 - 概要：
   - チームにメンバーを所属させる
 - 書式：
-  - `/mahjong team_add <チーム名>`
-  - `/mahjong team_add <チーム名> <メンバー名>`
+  - `/commandname team_add <チーム名>`
+  - `/commandname team_add <チーム名> <メンバー名>`
 - 引数：
   - チーム名：所属させるチーム名
   - メンバー名：所属するメンバー名
@@ -209,7 +209,7 @@
 - 概要：
   - メンバーを未所属にする
 - 書式：
-  - `/mahjong team_remove <メンバー名>`
+  - `/commandname team_remove <メンバー名>`
 - 引数：
   - メンバー名：未所属にするメンバー名
 - エイリアス：
@@ -220,7 +220,7 @@
 - 概要：
   - チーム名と所属メンバーを表示する
 - 書式：
-  - `/mahjong team_list`
+  - `/commandname team_list`
 - 引数：なし
 - エイリアス：
 - 補足説明：
@@ -230,7 +230,7 @@
 - 概要：
   - チーム情報をすべて削除する
 - 書式：
-  - `/mahjong team_clear`
+  - `/commandname team_clear`
 - 引数：なし
 - エイリアス：
 - 補足説明：
