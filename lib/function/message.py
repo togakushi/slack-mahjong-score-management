@@ -190,11 +190,13 @@ def header(game_info, params, add_text="", indent=1):
     tab = "\t" * indent
 
     # 集計範囲
-    game_range1 = f"{tab}最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
-    game_range1 += f"{tab}最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
     if g.opt.search_word:  # コメント検索の場合はコメントで表示
+        game_range1 = f"{tab}最初のゲーム：{game_info['first_comment']}\n".replace("-", "/")
+        game_range1 += f"{tab}最後のゲーム：{game_info['last_comment']}\n".replace("-", "/")
         game_range2 = f"{tab}集計範囲： {game_info['first_comment']} ～ {game_info['last_comment']}\n"
     else:
+        game_range1 = f"{tab}最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
+        game_range1 += f"{tab}最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
         game_range2 = f"{tab}集計範囲： {game_info['first_game']} ～ {game_info['last_game']}\n".replace("-", "/")
 
     # ゲーム数
