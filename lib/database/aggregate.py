@@ -86,12 +86,8 @@ def game_info():
     }
 
     if ret["game_count"] >= 1:
-        ret["first_game"] = datetime.fromisoformat(
-            df["first_game"].to_string(index=False)
-        )
-        ret["last_game"] = datetime.fromisoformat(
-            df["last_game"].to_string(index=False)
-        )
+        ret["first_game"] = df["first_game"].to_string(index=False).replace("-", "/")
+        ret["last_game"] = df["last_game"].to_string(index=False).replace("-", "/")
         ret["first_comment"] = df["first_comment"].to_string(index=False)
         ret["last_comment"] = df["last_comment"].to_string(index=False)
 
