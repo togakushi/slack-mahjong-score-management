@@ -33,8 +33,10 @@ def aggregation():
             *【個人成績】*
             \tプレイヤー名： {g.prm.player_name} {f.common.badge_degree(0)}
             \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
+            \t{f.message.remarks()}
             \t対戦数： 0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}
-        """.replace("-", "/")
+        """
+        msg1 = f.message.del_blank_line(msg1)
         return (textwrap.dedent(msg1), {})
 
     result_df = d.aggregate.personal_results()
@@ -55,12 +57,15 @@ def aggregation():
         \tプレイヤー名： {data["表示名"].strip()} {badge_degree}
         \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
         \t集計範囲： {game_info['first_game']} ～ {game_info['last_game']}
+        \t{f.message.remarks()}
         \t対戦数： {data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}
-    """.replace("-", "/")
+    """
+    msg1 = f.message.del_blank_line(msg1)
 
     msg2 = {}
 
     msg1 += f"""
+        \t
         \t通算ポイント： {data['通算ポイント']:+.1f}pt
         \t平均ポイント： {data['平均ポイント']:+.1f}pt
         \t平均順位： {data['平均順位']:1.2f}
@@ -70,7 +75,6 @@ def aggregation():
         \t4位： {data['4位']:2} 回 ({data['4位率']:6.2f}%)
         \tトビ： {data['トビ']:2} 回 ({data['トビ率']:6.2f}%)
         \t役満： {data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)
-        \t{f.message.remarks()}
     """.replace("-", "▲")
 
     # --- 座席データ

@@ -175,14 +175,19 @@ def remarks():
     ret = ""
     remark = []
 
+    if g.prm.search_word:
+        search_word = f"検索ワード： {g.prm.search_word.replace('%', '')}"
+    else:
+        search_word = ""
+
     if not g.opt.guest_skip:
         remark.append("2ゲスト戦の結果を含む")
     if not g.opt.unregistered_replace:
         remark.append("ゲスト置換なし(" + g.guest_mark + "：未登録プレイヤー)")
     if remark:
-        ret = "特記：" + "、".join(remark)
+        ret = "特記事項：" + "、".join(remark) + "\n"
 
-    return (ret)
+    return (ret + search_word)
 
 
 def header(game_info, params, add_text="", indent=1):
@@ -221,3 +226,19 @@ def header(game_info, params, add_text="", indent=1):
         msg += tab + f.message.remarks()
 
     return (msg)
+
+
+def del_blank_line(text: str):
+    """
+    空行を取り除く
+    """
+
+    new_text = []
+    for x in text.split("\n"):
+        if x.strip() == "":
+            continue
+        if x.strip() == "\t":
+            continue
+        new_text.append(x)
+
+    return ("\n".join(new_text))
