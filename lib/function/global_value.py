@@ -309,6 +309,91 @@ class Message_Parser():
             self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
 
 
+class SearchRange():
+    words = {}
+    day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
+
+    def __init__(self) -> None:
+        self.update()
+
+    def update(self) -> None:
+        self.current_time = datetime.now()
+        self.appointed_time = self.current_time + relativedelta(hours=-12)
+        self.words["当日"] = [
+            self.appointed_time,
+        ]
+        self.words["今日"] = [
+            self.current_time,
+        ]
+        self.words["昨日"] = [
+            self.current_time + relativedelta(days=-1),
+        ]
+        self.words["今月"] = [
+            self.appointed_time + relativedelta(day=1, months=0),
+            self.appointed_time + relativedelta(day=1, months=1, days=-1),
+        ]
+        self.words["先月"] = [
+            self.appointed_time + relativedelta(day=1, months=-1),
+            self.appointed_time + relativedelta(day=1, months=0, days=-1),
+        ]
+        self.words["先々月"] = [
+            self.appointed_time + relativedelta(day=1, months=-2),
+            self.appointed_time + relativedelta(day=1, months=-1, days=-1),
+        ]
+        self.words["今年"] = [
+            self.current_time + relativedelta(day=1, month=1),
+            self.current_time + relativedelta(day=31, month=12),
+        ]
+        self.words["去年"] = [
+            self.current_time + relativedelta(day=1, month=1, years=-1),
+            self.current_time + relativedelta(day=31, month=12, years=-1),
+        ]
+        self.words["昨年"] = self.words["去年"]
+        self.words["一昨年"] = [
+            self.current_time + relativedelta(day=1, month=1, years=-2),
+            self.current_time + relativedelta(day=31, month=12, years=-2),
+        ]
+        self.words["最後"] = [
+            self.current_time + relativedelta(days=1),
+        ]
+        self.words["全部"] = [
+            self.current_time + relativedelta(years=-10),
+            self.current_time + relativedelta(days=1),
+        ]
+
+    def find(self, word: str) -> bool:
+        if word in self.words.keys():
+            return (True)
+        else:
+            if re.match(self.day_format, word):
+                return (True)
+            else:
+                return (False)
+
+    def range(self, word: str) -> list:
+        if word in self.words.keys():
+            return (self.words[word])
+        else:
+            if re.match(self.day_format, word):
+                try_day = pd.to_datetime(word, errors="coerce").to_pydatetime()
+                if pd.isna(try_day):
+                    return ([])
+                else:
+                    return ([try_day])
+            else:
+                return ([])
+
+    def list(self):
+        ret = []
+        for x in self.words.keys():
+            days = []
+            for v in self.words[x]:
+                days.append(v.strftime("%Y/%m/%d"))
+            ret.append(f"{x}： {' ～ '.join(days)}")
+
+        return ("\n".join(ret))
+
+
 def scope_coverage(argument: list):
     """
     キーワードから有効な日付を取得する
@@ -327,57 +412,14 @@ def scope_coverage(argument: list):
         キーワードから得た日付のリスト
     """
 
+    search_word = SearchRange()
     new_argument = argument.copy()
     target_days = []
-    current_time = datetime.now()
-    appointed_time = current_time + relativedelta(hours=-12)
 
     for x in argument:
-        match x:
-            case x if re.match(r"^([0-9]{8}|[0-9/.-]{8,10})$", x):
-                try_day = pd.to_datetime(x, errors="coerce").to_pydatetime()
-                target_days.append(try_day)
-                new_argument.remove(x)
-            case "当日":
-                target_days.append(appointed_time)
-                new_argument.remove(x)
-            case "今日":
-                target_days.append(current_time)
-                new_argument.remove(x)
-            case "昨日":
-                target_days.append((current_time + relativedelta(days=-1)))
-                new_argument.remove(x)
-            case "今月":
-                target_days.append((appointed_time + relativedelta(day=1, months=0)))
-                target_days.append((appointed_time + relativedelta(day=1, months=1, days=-1,)))
-                new_argument.remove(x)
-            case "先月":
-                target_days.append((appointed_time + relativedelta(day=1, months=-1)))
-                target_days.append((appointed_time + relativedelta(day=1, months=0, days=-1,)))
-                new_argument.remove(x)
-            case "先々月":
-                target_days.append((appointed_time + relativedelta(day=1, months=-2)))
-                target_days.append((appointed_time + relativedelta(day=1, months=-1, days=-1,)))
-                new_argument.remove(x)
-            case "今年":
-                target_days.append((current_time + relativedelta(day=1, month=1)))
-                target_days.append((current_time + relativedelta(day=31, month=12)))
-                new_argument.remove(x)
-            case "去年" | "昨年":
-                target_days.append((current_time + relativedelta(day=1, month=1, years=-1)))
-                target_days.append((current_time + relativedelta(day=31, month=12, years=-1)))
-                new_argument.remove(x)
-            case "一昨年":
-                target_days.append((current_time + relativedelta(day=1, month=1, years=-2)))
-                target_days.append((current_time + relativedelta(day=31, month=12, years=-2)))
-                new_argument.remove(x)
-            case "最後":
-                target_days.append((current_time + relativedelta(days=1)))
-                new_argument.remove(x)
-            case "全部":
-                target_days.append((current_time + relativedelta(years=-10)))
-                target_days.append((current_time + relativedelta(days=1)))
-                new_argument.remove(x)
+        if search_word.find(x):
+            target_days += search_word.range(x)
+            new_argument.remove(x)
 
     return (target_days, new_argument)
 
