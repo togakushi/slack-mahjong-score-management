@@ -101,3 +101,8 @@ def handle_message_events(client, body):
 @g.app.event("reaction_added")
 def handle_reaction_added_events():
     pass  # reaction_added はすべて無視する
+
+
+@g.app.event("reaction_removed")
+def handle_reaction_removed_events():
+    pass  # reaction_removed はすべて無視する
