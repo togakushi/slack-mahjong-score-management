@@ -33,7 +33,7 @@ def aggregation():
             *【個人成績】*
             \tプレイヤー名： {g.prm.player_name} {f.common.badge_degree(0)}
             \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
-            \t{f.message.remarks()}
+            \t{f.message.remarks().strip()}
             \t対戦数： 0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}
         """
         msg1 = f.message.del_blank_line(msg1)
@@ -57,7 +57,7 @@ def aggregation():
         \tプレイヤー名： {data["表示名"].strip()} {badge_degree}
         \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
         \t集計範囲： {game_info['first_game']} ～ {game_info['last_game']}
-        \t{f.message.remarks()}
+        \t{f.message.remarks().strip()}
         \t対戦数： {data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}
     """
     msg1 = f.message.del_blank_line(msg1)

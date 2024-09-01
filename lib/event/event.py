@@ -99,5 +99,5 @@ def handle_message_events(client, body):
 
 
 @g.app.event("reaction_added")
-def handle_reaction_added_events(body):
+def handle_reaction_added_events():
     pass  # reaction_added はすべて無視する

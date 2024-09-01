@@ -223,7 +223,7 @@ def header(game_info, params, add_text="", indent=1):
             case _:
                 msg += game_range2
                 msg += f"{tab}総ゲーム数：{game_info['game_count']} 回\n"
-        msg += tab + f.message.remarks()
+        msg += tab + f.message.remarks().strip()
 
     return (msg)
 
