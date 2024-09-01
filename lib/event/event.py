@@ -96,3 +96,8 @@ def handle_message_events(client, body):
                 case "message_deleted":
                     if d.common.ExsistRecord(g.msg.event_ts):
                         d.common.resultdb_delete(g.msg.event_ts)
+
+
+@g.app.event("reaction_added")
+def handle_reaction_added_events(body):
+    g.logging.notice(body)   # type: ignore
