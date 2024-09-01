@@ -100,4 +100,4 @@ def handle_message_events(client, body):
 
 @g.app.event("reaction_added")
 def handle_reaction_added_events(body):
-    g.logging.notice(body)   # type: ignore
+    pass  # reaction_added はすべて無視する
