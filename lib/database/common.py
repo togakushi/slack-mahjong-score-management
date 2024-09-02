@@ -1,6 +1,7 @@
 import os
 import shutil
 import sqlite3
+from contextlib import closing
 from datetime import datetime
 
 import lib.database as d
@@ -28,20 +29,19 @@ def first_record():
     最初のゲーム記録時間を返す
     """
 
-    resultdb = sqlite3.connect(g.database_file)
-    table_count = resultdb.execute(
-        "select count() from sqlite_master where type='table' and name='game_results'",
-    ).fetchall()[0][0]
-
-    if table_count:
-        record = resultdb.execute(
-            "select min(playtime) from game_results"
+    with closing(sqlite3.connect(g.database_file)) as resultdb:
+        table_count = resultdb.execute(
+            "select count() from sqlite_master where type='view' and name='game_results'",
         ).fetchall()[0][0]
-        ret = datetime.fromisoformat(record)
-    else:
-        ret = datetime.now()
 
-    resultdb.close()
+        if table_count:
+            record = resultdb.execute(
+                "select min(playtime) from game_results"
+            ).fetchall()[0][0]
+            ret = datetime.fromisoformat(record)
+        else:
+            ret = datetime.now()
+
     return (ret)
 
 
