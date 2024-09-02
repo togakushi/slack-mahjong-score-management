@@ -19,8 +19,30 @@ def ExsistRecord(ts):
 
     if line:
         return (True)
+    else:
+        return (False)
 
-    return (False)
+
+def first_record():
+    """
+    最初のゲーム記録時間を返す
+    """
+
+    resultdb = sqlite3.connect(g.database_file)
+    table_count = resultdb.execute(
+        "select count() from sqlite_master where type='table' and name='game_results'",
+    ).fetchall()[0][0]
+
+    if table_count:
+        record = resultdb.execute(
+            "select min(playtime) from game_results"
+        ).fetchall()[0][0]
+        ret = datetime.fromisoformat(record)
+    else:
+        ret = datetime.now()
+
+    resultdb.close()
+    return (ret)
 
 
 def resultdb_insert(msg, ts):

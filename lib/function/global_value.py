@@ -14,6 +14,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 import lib.command as c
+import lib.database as d
 
 
 class command_option:
@@ -314,6 +315,7 @@ class SearchRange():
     day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 
     def __init__(self) -> None:
+        self.first_record = d.common.first_record()
         self.update()
 
     def update(self) -> None:
@@ -353,11 +355,14 @@ class SearchRange():
             self.current_time + relativedelta(day=1, month=1, years=-2),
             self.current_time + relativedelta(day=31, month=12, years=-2),
         ]
+        self.words["最初"] = [
+            self.first_record + relativedelta(days=-1),
+        ]
         self.words["最後"] = [
             self.current_time + relativedelta(days=1),
         ]
         self.words["全部"] = [
-            self.current_time + relativedelta(years=-10),
+            self.first_record + relativedelta(days=-1),
             self.current_time + relativedelta(days=1),
         ]
 
@@ -412,7 +417,6 @@ def scope_coverage(argument: list):
         キーワードから得た日付のリスト
     """
 
-    search_word = SearchRange()
     new_argument = argument.copy()
     target_days = []
 
@@ -553,6 +557,7 @@ database_file = config["database"].get("database_file", "mahjong.db")
 channel_limitations = config["database"].get("channel_limitations", "")
 
 # 固定値
+search_word = SearchRange()
 opt = command_option()
 prm = parameters()
 msg = Message_Parser()
