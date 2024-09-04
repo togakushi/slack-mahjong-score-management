@@ -29,6 +29,7 @@ def first_record():
     最初のゲーム記録時間を返す
     """
 
+    ret = datetime.now()
     with closing(sqlite3.connect(g.database_file)) as resultdb:
         table_count = resultdb.execute(
             "select count() from sqlite_master where type='view' and name='game_results'",
@@ -38,9 +39,8 @@ def first_record():
             record = resultdb.execute(
                 "select min(playtime) from game_results"
             ).fetchall()[0][0]
-            ret = datetime.fromisoformat(record)
-        else:
-            ret = datetime.now()
+            if record:
+                ret = datetime.fromisoformat(record)
 
     return (ret)
 
