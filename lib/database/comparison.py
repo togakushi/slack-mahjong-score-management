@@ -1,24 +1,20 @@
+import logging
 import re
 import sqlite3
 from datetime import datetime
 
-import lib.command as c
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+import global_value as g
+from lib import command as c
+from lib import database as d
+from lib import function as f
 
 
-def main(client, channel, event_ts):
+def main(event_ts):
     """
     データ突合の実施、その結果をslackにpostする
 
     Parameters
     ----------
-    client : obj
-
-    channel : str
-        post先のチャンネルID or ユーザーID
-
     event_ts: text
         スレッドに返す場合の返し先
     """
@@ -30,7 +26,7 @@ def main(client, channel, event_ts):
     if fts:  # slackからスコア記録のログが見つかった場合のみチェック
         remarks_comparison(fts)
 
-    g.logging.notice(f"{count=}")  # type: ignore
+    logging.notice(f"{count=}")  # type: ignore
 
     ret = "*【データ突合】*\n"
     ret += "＊ 不一致： {}件\n{}".format(count["mismatch"], msg["mismatch"])
@@ -74,8 +70,8 @@ def score_comparison():
 
     # slackログからデータを取得
     matches = f.search.for_slack(
-        g.config["search"].get("keyword", "終局"),
-        g.config["search"].get("channel", "#麻雀部"),
+        g.cfg.search.keyword,
+        g.cfg.search.channel,
     )
     slack_data = f.search.game_result(matches)
     if slack_data is None:
@@ -84,7 +80,7 @@ def score_comparison():
     # データベースからデータを取得
     fts = list(slack_data.keys())[0]
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
@@ -101,9 +97,9 @@ def score_comparison():
                 continue
             else:  # 更新
                 count["mismatch"] += 1
-                g.logging.notice(f"mismatch: {key}")  # type: ignore
-                g.logging.info(f"   * [slack]: {slack_data[key]}")
-                g.logging.info(f"   * [   db]: {db_data[key]}")
+                logging.notice(f"mismatch: {key}")  # type: ignore
+                logging.info(f"   * [slack]: {slack_data[key]}")
+                logging.info(f"   * [   db]: {db_data[key]}")
                 ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                     textformat(db_data[key]), textformat(slack_data[key]),
@@ -112,7 +108,7 @@ def score_comparison():
                 continue
         else:  # 追加
             count["missing"] += 1
-            g.logging.notice(f"missing: {key}, {slack_data[key]}")  # type: ignore
+            logging.notice(f"missing: {key}, {slack_data[key]}")  # type: ignore
             ret_msg["missing"] += "\t{} {}\n".format(
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(slack_data[key])
@@ -125,7 +121,7 @@ def score_comparison():
             continue
         else:  # 削除
             count["delete"] += 1
-            g.logging.notice(f"delete: {key}, {db_data[key]} (Only database)")  # type: ignore
+            logging.notice(f"delete: {key}, {db_data[key]} (Only database)")  # type: ignore
             ret_msg["delete"] += "\t{} {}\n".format(
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(db_data[key])
@@ -138,7 +134,7 @@ def score_comparison():
             eval(slack_data[i][1]), eval(slack_data[i][3]),
             eval(slack_data[i][5]), eval(slack_data[i][7]),
         ]
-        deposit = g.config["mahjong"].getint("point", 250) * 4 - sum(rpoint_data)
+        deposit = g.prm.origin_point * 4 - sum(rpoint_data)
         if not deposit == 0:
             count["invalid_score"] += 1
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(
@@ -161,7 +157,7 @@ def db_update(cur, ts, msg):  # 突合処理専用
     param.update(f.score.get_score(msg))
 
     cur.execute(d.sql_result_update, param)
-    g.logging.notice(f"{param=}")  # type: ignore
+    logging.notice(f"{param=}")  # type: ignore
 
 
 def db_insert(cur, ts, msg):  # 突合処理専用
@@ -173,14 +169,14 @@ def db_insert(cur, ts, msg):  # 突合処理専用
     param.update(f.score.get_score(msg))
 
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     cur.execute(d.sql_result_insert, param)
 
     resultdb.commit()
     resultdb.close()
-    g.logging.notice(f"{param=}")  # type: ignore
+    logging.notice(f"{param=}")  # type: ignore
 
 
 def db_delete(cur, ts):  # 突合処理専用
@@ -225,8 +221,8 @@ def remarks_comparison(fts):
 
     # slackログからデータを取得
     matches = f.search.for_slack(
-        g.commandword["remarks_word"],
-        g.config["search"].get("channel", "#麻雀部"),
+        g.cfg.cw.remarks_word,
+        g.cfg.search.channel,
     )
 
     count = 0
@@ -239,7 +235,7 @@ def remarks_comparison(fts):
         else:
             thread_ts = None
 
-        if re.match(rf"^{g.commandword['remarks_word']}", text):
+        if re.match(rf"^{g.cfg.cw.remarks_word}", text):
             if thread_ts:
                 for name, val in zip(text.split()[1:][0::2], text.split()[1:][1::2]):
                     slack_data[count] = {
@@ -248,14 +244,14 @@ def remarks_comparison(fts):
                         "name": c.member.NameReplace(name),
                         "matter": val,
                     }
-                    g.logging.trace(f"slack: {slack_data[count]}")  # type: ignore
+                    logging.trace(f"slack: {slack_data[count]}")  # type: ignore
                     count += 1
 
     slack_ts = set([slack_data[i]["event_ts"] for i in slack_data.keys()])
 
     # データベースからデータ取得
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
@@ -270,7 +266,7 @@ def remarks_comparison(fts):
             "name": row["name"],
             "matter": row["matter"],
         }
-        g.logging.trace(f"database: {db_data[count]}")  # type: ignore
+        logging.trace(f"database: {db_data[count]}")  # type: ignore
         count += 1
 
     db_ts = set([db_data[i]["event_ts"] for i in db_data.keys()])
@@ -309,15 +305,15 @@ def remarks_comparison(fts):
                         c.member.NameReplace(update_data["name"]),
                         update_data["matter"],
                     ))
-                    g.logging.info(f"update: {update_data}")
+                    logging.info(f"update: {update_data}")
         else:  # スレッド元がないデータは不要
             cur.execute(d.sql_remarks_delete_one, (str(x),))
-            g.logging.info(f"delete: {x} (No thread origin)")
+            logging.info(f"delete: {x} (No thread origin)")
 
     for x in db_ts:
         if x not in slack_ts:  # データベースにあってslackにない → 削除
             cur.execute(d.sql_remarks_delete_one, (str(x),))
-            g.logging.info(f"delete: {x} (Only database)")
+            logging.info(f"delete: {x} (Only database)")
 
     resultdb.commit()
     resultdb.close()

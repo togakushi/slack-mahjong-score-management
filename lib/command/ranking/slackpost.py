@@ -2,9 +2,9 @@ import math
 
 import pandas as pd
 
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+from lib import database as d
+from lib import function as f
+import global_value as g
 
 
 def main():
@@ -64,7 +64,7 @@ def aggregation():
     record_df = d.aggregate.personal_record()
     result_df = pd.merge(
         result_df, record_df,
-        on=["プレイヤー名", "表示名"],
+        on=["プレイヤー名", "プレイヤー名"],
         suffixes=["", "_x"]
     )
 

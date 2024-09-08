@@ -1,9 +1,9 @@
 import os
 import math
 
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+from lib import database as d
+from lib import function as f
+import global_value as g
 
 
 def plot():
@@ -26,7 +26,7 @@ def plot():
 
     # 保存
     file_name = os.path.join(
-        g.work_dir,
+        g.cfg.setting.work_dir,
         f"{g.opt.filename}" if g.opt.filename else "matrix"
     )
 

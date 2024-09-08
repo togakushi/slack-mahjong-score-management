@@ -1,13 +1,14 @@
+import logging
 import sqlite3
 from datetime import datetime
 
 import numpy as np
 import pandas as pd
 
-import lib.command as c
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+import global_value as g
+from lib import command as c
+from lib import database as d
+from lib import function as f
 
 
 def _disp_name(df, adjust=0):
@@ -73,7 +74,7 @@ def game_info():
     # データ収集
     df = pd.read_sql(
         d.generate.game_info(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict()
     )
 
@@ -91,7 +92,7 @@ def game_info():
         ret["first_comment"] = df["first_comment"].to_string(index=False)
         ret["last_comment"] = df["last_comment"].to_string(index=False)
 
-    g.logging.info(f"return: {ret=}")
+    logging.info(f"return: {ret=}")
     return (ret)
 
 
@@ -107,7 +108,7 @@ def game_summary():
     # データ収集
     df = pd.read_sql(
         d.generate.game_results(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -153,7 +154,7 @@ def game_details():
 
     df = pd.read_sql(
         d.generate.game_details(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -175,7 +176,7 @@ def personal_record():
     # データ収集
     gamedata = pd.read_sql(
         d.generate.record_count(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -229,6 +230,7 @@ def personal_record():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
+    logging.trace(df)  # type: ignore
     return (df)
 
 
@@ -244,7 +246,7 @@ def personal_results():
     # データ収集
     df = pd.read_sql(
         d.generate.personal_results(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -261,6 +263,7 @@ def personal_results():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
+    logging.trace(df)  # type: ignore
     return (df)
 
 
@@ -268,7 +271,7 @@ def versus_matrix():
     # データ収集
     df = pd.read_sql(
         d.generate.versus_matrix(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -283,7 +286,7 @@ def personal_gamedata():
     # データ収集
     df = pd.read_sql(
         d.generate.personal_gamedata(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -299,7 +302,7 @@ def team_gamedata():
     # データ収集
     df = pd.read_sql(
         d.generate.team_gamedata(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -310,7 +313,7 @@ def monthly_report():
     # データ収集
     df = pd.read_sql(
         d.generate.monthly_report(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -321,7 +324,7 @@ def winner_report():
     # データ収集
     df = pd.read_sql(
         d.generate.winner_report(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     ).fillna(value=np.nan)
 
@@ -346,7 +349,7 @@ def team_total():
     # データ収集
     df = pd.read_sql(
         d.generate.team_total(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
@@ -361,7 +364,7 @@ def grandslam_count():
     # データ収集
     df = pd.read_sql(
         d.generate.remark_count(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     ).query("type != type or type == 0")
 
@@ -372,6 +375,7 @@ def grandslam_count():
 
     df = df.filter(items=["プレイヤー名", "matter", "count"])
 
+    logging.trace(df)  # type: ignore
     return (df)
 
 
@@ -379,7 +383,7 @@ def regulations_count():
     # データ収集
     df = pd.read_sql(
         d.generate.remark_count(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     ).query("type == 1")
 
@@ -390,6 +394,7 @@ def regulations_count():
 
     df = df.filter(items=["プレイヤー名", "matter", "count", "ex_point"])
 
+    logging.trace(df)  # type: ignore
     return (df)
 
 
@@ -401,7 +406,7 @@ def matrix_table():
     # データ収集
     df = pd.read_sql(
         d.generate.matrix_table(),
-        sqlite3.connect(g.database_file),
+        sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict()
     ).set_index("playtime")
 

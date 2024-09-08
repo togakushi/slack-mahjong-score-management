@@ -2,7 +2,7 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
-from lib.function import global_value as g
+import global_value as g
 
 
 def PlainText(msg):
@@ -195,7 +195,7 @@ def InputRanked(view, no, block_id=False):
 
     view["blocks"][no]["element"].update({"type": "number_input"})
     view["blocks"][no]["element"].update({"is_decimal_allowed": True})
-    view["blocks"][no]["element"].update({"initial_value": str(g.config["ranking"].getint("ranked", 3))})
+    view["blocks"][no]["element"].update({"initial_value": str(g.cfg.config["ranking"].getint("ranked", 3))})
     view["blocks"][no]["element"].update({"min_value": "1"})
     view["blocks"][no]["element"].update({"action_id": "aid-ranked"})
     view["blocks"][no]["label"].update({"type": "plain_text", "text": "出力順位上限"})

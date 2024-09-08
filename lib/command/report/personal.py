@@ -1,3 +1,4 @@
+import logging
 import math
 import os
 import sqlite3
@@ -5,13 +6,13 @@ import sqlite3
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
-import lib.command as c
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+import global_value as g
+from lib import command as c
+from lib import database as d
+from lib import function as f
 
-mlogger = g.logging.getLogger("matplotlib")
-mlogger.setLevel(g.logging.WARNING)
+mlogger = logging.getLogger("matplotlib")
+mlogger.setLevel(logging.WARNING)
 
 
 def plot():
@@ -22,7 +23,7 @@ def plot():
     game_info = d.aggregate.game_info()
 
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES
     )
     resultdb.row_factory = sqlite3.Row
@@ -136,8 +137,8 @@ def plot():
         results[name].pop("first_game")
         results[name].pop("last_game")
         results[name].pop("並び変え用カラム")
-        g.logging.trace(f"{row['プレイヤー']}: {results[name]}")  # type: ignore
-    g.logging.info(f"return record: {len(results)}")
+        logging.trace(f"{row['プレイヤー']}: {results[name]}")  # type: ignore
+    logging.info(f"return record: {len(results)}")
 
     resultdb.close()
 
@@ -145,7 +146,7 @@ def plot():
         return (False)
 
     # --- グラフフォント設定
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
+    font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
@@ -166,7 +167,7 @@ def plot():
             cell_color.append(["#dddddd" for i in column_labels])
 
     report_file_path = os.path.join(
-        g.work_dir,
+        g.cfg.setting.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "report.png"
     )
 

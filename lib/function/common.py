@@ -1,7 +1,7 @@
 import os
 import unicodedata
 
-from lib.function import global_value as g
+import global_value as g
 
 
 def len_count(text):
@@ -130,11 +130,11 @@ def badge_degree(game_count=0):
 
     badge_degree = ""
 
-    if "degree" in g.config.sections():
-        if g.config["degree"].getboolean("display", False):
-            degree_badge = g.config.get("degree", "badge").split(",")
+    if "degree" in g.cfg.config.sections():
+        if g.cfg.config["degree"].getboolean("display", False):
+            degree_badge = g.cfg.config.get("degree", "badge").split(",")
             degree_counter = [
-                x for x in map(int, g.config.get("degree", "counter").split(","))
+                x for x in map(int, g.cfg.config.get("degree", "counter").split(","))
             ]
             for i in range(len(degree_counter)):
                 if game_count >= degree_counter[i]:
@@ -163,10 +163,10 @@ def badge_status(game_count=0, win=0):
 
     badge_status = ""
 
-    if "status" in g.config.sections():
-        if g.config["status"].getboolean("display", False):
-            status_badge = g.config.get("status", "badge").split(",")
-            status_step = g.config.getfloat("status", "step")
+    if "status" in g.cfg.config.sections():
+        if g.cfg.config["status"].getboolean("display", False):
+            status_badge = g.cfg.config.get("status", "badge").split(",")
+            status_step = g.cfg.config.getfloat("status", "step")
             if game_count == 0:
                 index = 0
             else:
@@ -211,7 +211,7 @@ def save_output(df, format, filename):
             return (None)
 
     # 保存
-    save_file = os.path.join(g.work_dir, filename)
+    save_file = os.path.join(g.cfg.setting.work_dir, filename)
     with open(save_file, "w") as writefile:
         writefile.writelines(data)
 
@@ -224,7 +224,7 @@ def graph_setup(plt, fm):
     """
 
     # スタイルの適応
-    style = g.config["setting"].get("graph_style", "ggplot")
+    style = g.cfg.config["setting"].get("graph_style", "ggplot")
 
     if style not in plt.style.available:
         style = "ggplot"
@@ -236,7 +236,7 @@ def graph_setup(plt, fm):
         if f"font.{x}" in plt.rcParams:
             plt.rcParams[f"font.{x}"] = ""
 
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
+    font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
     fm.fontManager.addfont(font_path)
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
@@ -246,6 +246,35 @@ def graph_setup(plt, fm):
         plt.rcParams["axes.grid"] = True
         plt.rcParams["grid.alpha"] = 0.3
         plt.rcParams["grid.linestyle"] = "--"
+
+
+def scope_coverage(argument: list):
+    """
+    キーワードから有効な日付を取得する
+
+    Parameters
+    ----------
+    argument : list
+        チェック対象のキーワードリスト
+
+    Returns
+    -------
+    new_argument : list
+        日付を得られなっかったキーワードのリスト
+
+    target_days : list
+        キーワードから得た日付のリスト
+    """
+
+    new_argument = argument.copy()
+    target_days = []
+
+    for x in argument:
+        if g.search_word.find(x):
+            target_days += g.search_word.range(x)
+            new_argument.remove(x)
+
+    return (target_days, new_argument)
 
 
 def debug_out(msg1, msg2=None):

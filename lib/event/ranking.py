@@ -1,7 +1,9 @@
-import lib.command as c
-import lib.event as e
-import lib.function as f
-from lib.function import global_value as g
+import logging
+
+import global_value as g
+from lib import command as c
+from lib import event as e
+from lib import function as f
 
 
 def build_ranking_menu():
@@ -9,32 +11,32 @@ def build_ranking_menu():
     no = 0
     flag = ["unregistered_replace"]
     view = {"type": "home", "blocks": []}
-    view, no = e.Header(view, no, "【ランキング】")
+    view, no = e.ui_parts.Header(view, no, "【ランキング】")
 
     # 検索範囲設定
-    view, no = e.Divider(view, no)
-    view, no = e.SearchRangeChoice(view, no)
-    view, no = e.Button(
+    view, no = e.ui_parts.Divider(view, no)
+    view, no = e.ui_parts.SearchRangeChoice(view, no)
+    view, no = e.ui_parts.Button(
         view, no,
         text="検索範囲設定",
         action_id="modal-open-period"
     )
 
     # 検索オプション
-    view, no = e.Divider(view, no)
-    view, no = e.SearchOptions(view, no, flag)
+    view, no = e.ui_parts.Divider(view, no)
+    view, no = e.ui_parts.SearchOptions(view, no, flag)
 
-    view, no = e.InputRanked(view, no, block_id="bid-ranked")
+    view, no = e.ui_parts.InputRanked(view, no, block_id="bid-ranked")
 
-    view, no = e.Divider(view, no)
-    view, no = e.Button(
+    view, no = e.ui_parts.Divider(view, no)
+    view, no = e.ui_parts.Button(
         view, no,
         text="集計開始",
         value="click_personal",
         action_id="search_ranking",
         style="primary"
     )
-    view, no = e.Button(
+    view, no = e.ui_parts.Button(
         view, no,
         text="戻る",
         value="click_back",
@@ -48,11 +50,11 @@ def build_ranking_menu():
 @g.app.action("menu_ranking")
 def handle_menu_action(ack, body, client):
     ack()
-    g.logging.trace(body)  # type: ignore
+    logging.trace(body)  # type: ignore
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
-    g.logging.info(f"[menu_ranking] {g.app_var}")
+    logging.info(f"[menu_ranking] {g.app_var}")
 
     client.views_publish(
         user_id=g.app_var["user_id"],
@@ -63,18 +65,18 @@ def handle_menu_action(ack, body, client):
 @g.app.action("search_ranking")
 def handle_search_action(ack, body, client):
     ack()
-    g.logging.trace(body)  # type: ignore
+    logging.trace(body)  # type: ignore
     g.msg.parser(body)
     g.msg.client = client
 
     g.opt.initialization("ranking")
-    argument, app_msg = e.set_command_option(body)
+    argument, app_msg = e.home.set_command_option(body)
     g.opt.update(argument)
     g.prm.update(g.opt)
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=e.PlainText(f"{chr(10).join(app_msg)}"),
+        view=e.ui_parts.PlainText(f"{chr(10).join(app_msg)}"),
     )
 
     search_options = body["view"]["state"]["values"]
@@ -84,7 +86,7 @@ def handle_search_action(ack, body, client):
             if ranked > 0:
                 g.opt.ranked = ranked
 
-    g.logging.info(f"[app:search_ranking] {argument}, {vars(g.opt)}")
+    logging.info(f"[app:search_ranking] {argument}, {vars(g.opt)}")
 
     app_msg.pop()
     app_msg.append("集計完了")
@@ -97,7 +99,7 @@ def handle_search_action(ack, body, client):
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=e.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        view=e.ui_parts.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )
 
 

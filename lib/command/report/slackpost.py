@@ -1,6 +1,6 @@
 import lib.function as f
 from lib.command.report import monthly, personal, results, winner, matrix
-from lib.function import global_value as g
+import global_value as g
 
 
 def main():

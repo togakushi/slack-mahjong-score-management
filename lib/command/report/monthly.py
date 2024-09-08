@@ -1,14 +1,15 @@
+import logging
 import os
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+import global_value as g
+from lib import database as d
+from lib import function as f
 
-mlogger = g.logging.getLogger("matplotlib")
-mlogger.setLevel(g.logging.WARNING)
+mlogger = logging.getLogger("matplotlib")
+mlogger.setLevel(logging.WARNING)
 
 
 def plot():
@@ -39,7 +40,7 @@ def plot():
             cell_color.append(["#dddddd" for i in column_labels])
 
     report_file_path = os.path.join(
-        g.work_dir,
+        g.cfg.setting.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "report.png"
     )
 

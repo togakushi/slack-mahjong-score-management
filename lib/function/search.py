@@ -1,27 +1,12 @@
+import logging
 import re
 from datetime import datetime
 
 import regex_spm
 
-import lib.command as c
-import lib.function as f
-from lib.function import global_value as g
-
-
-class Regexes:
-    keyword = g.config["search"].get("keyword", "終局")
-    pattern1 = re.compile(
-        rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
-    )
-    pattern2 = re.compile(
-        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$"
-    )
-    pattern3 = re.compile(
-        rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
-    )
-    pattern4 = re.compile(
-        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$"
-    )
+import global_value as g
+from lib import command as c
+from lib import function as f
 
 
 def pattern(text):
@@ -51,6 +36,21 @@ def pattern(text):
         text = text.replace(z, h)
 
     # パターンマッチング
+    class Regexes:
+        keyword = g.cfg.search.keyword
+        pattern1 = re.compile(
+            rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
+        )
+        pattern2 = re.compile(
+            r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$"
+        )
+        pattern3 = re.compile(
+            rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
+        )
+        pattern4 = re.compile(
+            r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$"
+        )
+
     match regex_spm.fullmatch_in("".join(text.split())):
         case Regexes.pattern1 as m:
             msg = [m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], None]
@@ -86,15 +86,14 @@ def for_slack(keyword, channel):
 
     # 検索クエリ
     query = f"{keyword} in:{channel}"
-    after = g.config["search"].get("after")
-    if after:
+    if g.cfg.search.after:
         try:
-            datetime.fromisoformat(after)  # フォーマットチェック
-            query = f"{keyword} in:{channel} after:{after}"
+            datetime.fromisoformat(g.cfg.search.after)  # フォーマットチェック
+            query = f"{keyword} in:{channel} after:{g.cfg.search.after}"
         except Exception:
-            g.logging.error(f"Incorrect date string: {after}")
+            logging.error(f"Incorrect date string: {g.cfg.search.after}")
 
-    g.logging.info(f"{query=}")
+    logging.info(f"{query=}")
 
     # --- データ取得
     response = g.webclient.search_messages(
@@ -175,8 +174,8 @@ def game_result(data):
     result = {}
     for i in range(len(data)):
         if "blocks" in data[i]:
-            if data[i]["user"] in g.ignore_userid:  # 除外ユーザからのポストは集計対象から外す
-                g.logging.info(f"skip: {data[i]}")
+            if data[i]["user"] in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは集計対象から外す
+                logging.info(f"skip: {data[i]}")
                 continue
 
             ts = data[i]["ts"]
@@ -196,7 +195,7 @@ def game_result(data):
                     p3_name = c.member.NameReplace(msg[4])
                     p4_name = c.member.NameReplace(msg[6])
                     result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7], msg[8]]
-                    g.logging.trace(f"{ts}: {result[ts]}")  # type: ignore
+                    logging.trace(f"{ts}: {result[ts]}")  # type: ignore
 
     if len(result) == 0:
         return (None)

@@ -1,12 +1,12 @@
+import logging
 import re
 import sqlite3
-from itertools import chain
 
-import lib.command as c
-import lib.database as d
-import lib.function as f
+import global_value as g
+from lib import command as c
+from lib import database as d
+from lib import function as f
 from lib.command.member import NameReplace
-from lib.function import global_value as g
 
 
 def check_namepattern(name):
@@ -37,7 +37,7 @@ def check_namepattern(name):
             return (False, f"チーム名「{name}」はすでに使用されています。")
 
     # 登録規定チェック
-    if len(name) > g.config["team"].getint("character_limit", 8):  # 文字制限
+    if len(name) > g.cfg.config["team"].getint("character_limit", 8):  # 文字制限
         return (False, "登録可能文字数を超えています。")
     if name == g.prm.guest_name:  # 登録NGプレイヤー名
         return (False, "使用できない名称です。")
@@ -45,20 +45,15 @@ def check_namepattern(name):
         return (False, "使用できない記号が含まれています。")
 
     # コマンドと同じ名前かチェック
+    if g.search_word.find(name):
+        return (False, "検索範囲指定に使用される単語は登録できません。")
+
     chk = g.command_option()
     chk.check([name])
     if vars(chk):
-        return (False, "日付、またはオプションに使用される単語は登録できません。")
+        return (False, "オプションに使用される単語は登録できません。")
 
-    commandlist = [i for i in g.commandword.values()]
-    commandlist.extend([g.config["setting"].get("slash_commandname")])
-    commandlist.extend([g.config["setting"].get("remarks_word")])
-    commandlist.extend([g.config["search"].get("keyword")])
-    commandlist.extend([x for x, _ in g.config.items("alias")])
-    commandlist.extend(
-        chain.from_iterable([y.split(",") for _, y in g.config.items("alias")])
-    )
-    if name in set(commandlist):
+    if name in g.cfg.word_list():
         return (False, "コマンドに使用される単語は登録できません。")
 
     return (True, "OK")
@@ -84,15 +79,15 @@ def create(argument):
 
     if len(argument) == 1:  # 新規追加
         team_name = f.common.HAN2ZEN(argument[0])
-        g.logging.notice(f"New Team: {team_name}")  # type: ignore
+        logging.notice(f"New Team: {team_name}")  # type: ignore
 
-        if len(g.team_list) > g.config["team"].getint("registration_limit", 255):
+        if len(g.team_list) > g.cfg.config["team"].getint("registration_limit", 255):
             msg = "登録上限を超えています。"
         else:  # 登録処理
             ret, msg = check_namepattern(team_name)
             if ret:
                 resultdb = sqlite3.connect(
-                    g.database_file,
+                    g.cfg.db.database_file,
                     detect_types=sqlite3.PARSE_DECLTYPES,
                 )
                 resultdb.row_factory = sqlite3.Row
@@ -127,7 +122,7 @@ def delete(argument):
 
     if len(argument) == 1:  # 新規追加
         team_name = f.common.HAN2ZEN(argument[0])
-        g.logging.notice(f"Team delete: {team_name}")  # type: ignore
+        logging.notice(f"Team delete: {team_name}")  # type: ignore
 
         if team_name not in g.team_list.values():  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
@@ -135,7 +130,7 @@ def delete(argument):
             msg = d.common.database_backup()
             team_id = [k for k, v in g.team_list.items() if v == team_name][0]
             resultdb = sqlite3.connect(
-                g.database_file,
+                g.cfg.db.database_file,
                 detect_types=sqlite3.PARSE_DECLTYPES,
             )
             resultdb.execute(
@@ -180,7 +175,7 @@ def append(argument):
 
         team_name = f.common.HAN2ZEN(argument[0])
         player_name = NameReplace(argument[1])
-        g.logging.notice(f"Team participation: {team_name} -> {player_name}")  # type: ignore
+        logging.notice(f"Team participation: {team_name} -> {player_name}")  # type: ignore
 
         registration_flg = True
         team_id = None
@@ -199,13 +194,13 @@ def append(argument):
         # select count() from member where team_id=? group by team_id;
         # rows = resultdb.execute("select count() from team where name=?", (team_name,))
         # count = rows.fetchone()[0]
-        # if count > g.config["team"].getint("member_limit", 16):
+        # if count > g.cfg.config["team"].getint("member_limit", 16):
         #    msg = f"登録上限を超えています。"
         #    registration_flg = False
 
         if registration_flg and team_id:  # 登録処理
             resultdb = sqlite3.connect(
-                g.database_file,
+                g.cfg.db.database_file,
                 detect_types=sqlite3.PARSE_DECLTYPES,
             )
             resultdb.execute(
@@ -237,7 +232,7 @@ def remove(argument):
     """
 
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
@@ -249,7 +244,7 @@ def remove(argument):
 
         team_name = f.common.HAN2ZEN(argument[0])
         player_name = NameReplace(argument[1])
-        g.logging.notice(f"Team breakaway: {team_name} -> {player_name}")  # type: ignore
+        logging.notice(f"Team breakaway: {team_name} -> {player_name}")  # type: ignore
 
         registration_flg = True
         team_id = None
@@ -266,7 +261,7 @@ def remove(argument):
 
         if registration_flg and team_id:  # 登録処理
             resultdb = sqlite3.connect(
-                g.database_file,
+                g.cfg.db.database_file,
                 detect_types=sqlite3.PARSE_DECLTYPES,
             )
             resultdb.execute(
@@ -287,7 +282,7 @@ def list():
     """
 
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
@@ -333,7 +328,7 @@ def clear():
     msg = d.common.database_backup()
 
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row

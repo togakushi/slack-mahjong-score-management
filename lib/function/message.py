@@ -1,8 +1,8 @@
 import random
 import textwrap
 
-import lib.function as f
-from lib.function import global_value as g
+import global_value as g
+from lib import function as f
 
 
 def help(command):
@@ -40,48 +40,48 @@ def help_message():
     チャンネル内呼び出しキーワード用ヘルプ
     """
 
-    results_option = g.command_option()
+    results_option = f.configuration.command_option()
     results_option.initialization("results")
-    graph_option = g.command_option()
+    graph_option = f.configuration.command_option()
     graph_option.initialization("graph")
-    ranking_option = g.command_option()
+    ranking_option = f.configuration.command_option()
     ranking_option.initialization("ranking")
-    report_option = g.command_option()
+    report_option = f.configuration.command_option()
     report_option.initialization("report")
 
     msg = textwrap.dedent(f"""
         *成績記録キーワード*
-        \t{g.config["search"].get("keyword", "終局")}
+        \t{g.cfg.search.keyword}
 
         *機能呼び出し*
         \t`呼び出しキーワード [検索範囲] [対象メンバー] [オプション]`
 
         \t*成績サマリ*
-        \t\t呼び出しキーワード： {g.commandword['results']}
+        \t\t呼び出しキーワード： {g.cfg.cw.results}
         \t\t検索範囲デフォルト： {results_option.aggregation_range[0]}
         \t*成績グラフ*
-        \t\t呼び出しキーワード： {g.commandword['graph']}
+        \t\t呼び出しキーワード： {g.cfg.cw.graph}
         \t\t検索範囲デフォルト： {graph_option.aggregation_range[0]}
         \t*ランキング*
-        \t\t呼び出しキーワード： {g.commandword['ranking']}
+        \t\t呼び出しキーワード： {g.cfg.cw.ranking}
         \t\t検索範囲デフォルト： {ranking_option.aggregation_range[0]}
         \t\t規定打数デフォルト： 全体ゲーム数 × {ranking_option.stipulated_rate} ＋ 1
         \t\t出力制限デフォルト： 上位 {ranking_option.ranked} 名
         \t*レポート*
-        \t\t呼び出しキーワード： {g.commandword['report']}
+        \t\t呼び出しキーワード： {g.cfg.cw.report}
         \t\t検索範囲デフォルト： {report_option.aggregation_range[0]}
         \t*メンバー一覧*
-        \t\t呼び出しキーワード： {g.commandword['member']}
+        \t\t呼び出しキーワード： {g.cfg.cw.member}
         \t*チーム一覧*
-        \t\t呼び出しキーワード： {g.commandword['team']}
+        \t\t呼び出しキーワード： {g.cfg.cw.team}
 
         *オプション*
         \t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/argument_keyword.md
     """).strip()
 
-    if g.config.has_section("regulations"):
+    if g.cfg.config.has_section("regulations"):
         additional_rule = "\n\n*追加ルール*\n"
-        for word, ex_point in g.config.items("regulations"):
+        for word, ex_point in g.cfg.config.items("regulations"):
             additional_rule += f"\t{word}： {ex_point}pt\n"
         msg += additional_rule
 
@@ -95,13 +95,13 @@ def invalid_argument():
 
     msg = "使い方が間違っています。"
 
-    if g.config.has_section("custom_message"):
+    if g.cfg.config.has_section("custom_message"):
         key_list = []
-        for i in g.config["custom_message"]:
+        for i in g.cfg.config["custom_message"]:
             if i.startswith("invalid_argument"):
                 key_list.append(i)
         if key_list:
-            msg = g.config["custom_message"][random.choice(key_list)]
+            msg = g.cfg.config["custom_message"][random.choice(key_list)]
 
     return (msg)
 
@@ -113,13 +113,13 @@ def restricted_channel():
 
     msg = "この投稿はデータベースに反映されません。"
 
-    if g.config.has_section("custom_message"):
+    if g.cfg.config.has_section("custom_message"):
         key_list = []
-        for i in g.config["custom_message"]:
+        for i in g.cfg.config["custom_message"]:
             if i.startswith("restricted_channel"):
                 key_list.append(i)
         if key_list:
-            msg = g.config["custom_message"][random.choice(key_list)]
+            msg = g.cfg.config["custom_message"][random.choice(key_list)]
 
     return (msg)
 
@@ -132,13 +132,13 @@ def invalid_score(user_id, rpoint_sum, correct_score):
     rpoint_diff = abs(correct_score - rpoint_sum)
     msg = f"素点合計： {rpoint_sum}\n点数差分： {rpoint_diff}"
 
-    if g.config.has_section("custom_message"):
+    if g.cfg.config.has_section("custom_message"):
         key_list = []
-        for i in g.config["custom_message"]:
+        for i in g.cfg.config["custom_message"]:
             if i.startswith("invalid_score"):
                 key_list.append(i)
         if key_list:
-            msg = g.config["custom_message"][random.choice(key_list)]
+            msg = g.cfg.config["custom_message"][random.choice(key_list)]
 
     return (f"<@{user_id}> " + msg.format(
         rpoint_diff=rpoint_diff * 100,
@@ -151,20 +151,19 @@ def no_hits():
     指定範囲に記録用キーワードが見つからなかった場合のメッセージ
     """
 
-    keyword = g.config["search"].get("keyword", "終局")
     start = g.prm.starttime_hm
     end = g.prm.endtime_hm
-    msg = f"{start} ～ {end} に≪{keyword}≫はありません。"
+    msg = f"{start} ～ {end} に≪{g.cfg.search.keyword}≫はありません。"
 
-    if g.config.has_section("custom_message"):
+    if g.cfg.config.has_section("custom_message"):
         key_list = []
-        for i in g.config["custom_message"]:
+        for i in g.cfg.config["custom_message"]:
             if i.startswith("no_hits"):
                 key_list.append(i)
         if key_list:
-            msg = g.config["custom_message"][random.choice(key_list)]
+            msg = g.cfg.config["custom_message"][random.choice(key_list)]
 
-    return (msg.format(keyword=keyword, start=start, end=end))
+    return (msg.format(keyword=g.cfg.search.keyword, start=start, end=end))
 
 
 def remarks():
@@ -183,7 +182,7 @@ def remarks():
     if not g.opt.guest_skip:
         remark.append("2ゲスト戦の結果を含む")
     if not g.opt.unregistered_replace:
-        remark.append("ゲスト置換なし(" + g.guest_mark + "：未登録プレイヤー)")
+        remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
     if remark:
         ret = "特記事項：" + "、".join(remark) + "\n"
 

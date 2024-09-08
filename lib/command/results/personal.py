@@ -2,9 +2,9 @@ import textwrap
 
 import pandas as pd
 
-import lib.function as f
-import lib.database as d
-from lib.function import global_value as g
+from lib import function as f
+from lib import database as d
+import global_value as g
 
 
 def aggregation():
@@ -141,7 +141,7 @@ def aggregation():
                             seat_data["grandslam"],
                         ).replace("-", "▲")
         else:
-            msg2["戦績"] = f"\n*【戦績】* （{g.guest_mark.strip()}：2ゲスト戦）\n"
+            msg2["戦績"] = f"\n*【戦績】* （{g.cfg.setting.guest_mark.strip()}：2ゲスト戦）\n"
             for p in df["playtime"].unique():
                 x = df.query("playtime == @p")
                 if g.opt.guest_skip and g.opt.unregistered_replace and any(x["guest_count"] >= 2):
@@ -149,7 +149,7 @@ def aggregation():
                 for _, seat_data in x.iterrows():
                     if seat_data["プレイヤー名"] == g.prm.player_name:
                         msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
-                            f"{g.guest_mark.strip()} " if seat_data["guest_count"] >= 2 else "",
+                            f"{g.cfg.setting.guest_mark.strip()} " if seat_data["guest_count"] >= 2 else "",
                             seat_data["playtime"].replace("-", "/"),
                             seat_data["rank"],
                             seat_data["rpoint"] * 100,

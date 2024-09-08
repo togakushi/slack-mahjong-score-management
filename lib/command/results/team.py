@@ -1,8 +1,8 @@
 import re
 
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+from lib import database as d
+from lib import function as f
+import global_value as g
 
 
 def aggregation():

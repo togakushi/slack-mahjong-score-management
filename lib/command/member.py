@@ -1,11 +1,11 @@
+import logging
 import re
 import sqlite3
-from itertools import chain
 
-import lib.command as c
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+import global_value as g
+from lib import command as c
+from lib import database as d
+from lib import function as f
 
 
 def read_memberslist():
@@ -13,7 +13,7 @@ def read_memberslist():
     メンバー/チームリスト読み込み
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
     rows = resultdb.execute("select name from member where id=0")
@@ -27,9 +27,9 @@ def read_memberslist():
 
     resultdb.close()
 
-    g.logging.notice(f"guest_name: {g.prm.guest_name}")  # type: ignore
-    g.logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
-    g.logging.notice(f"team_list: {list(g.team_list.values())}")  # type: ignore
+    logging.notice(f"guest_name: {g.prm.guest_name}")  # type: ignore
+    logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
+    logging.notice(f"team_list: {list(g.team_list.values())}")  # type: ignore
 
 
 def NameReplace(pname, add_mark=False):
@@ -72,7 +72,7 @@ def NameReplace(pname, add_mark=False):
         return (g.prm.guest_name)
     else:
         if add_mark:
-            return (f"{pname}({g.guest_mark})")
+            return (f"{pname}({g.cfg.setting.guest_mark})")
         else:
             return (pname)
 
@@ -139,7 +139,7 @@ def member_info(name):
             and name = ?
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(sql, (g.prm.rule_version, name))
     ret = dict(rows.fetchone())
@@ -164,7 +164,7 @@ def MemberAppend(argument):
         slackにpostする内容
     """
 
-    resultdb = sqlite3.connect(g.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
+    resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
 
     ret = False
@@ -173,11 +173,11 @@ def MemberAppend(argument):
 
     if len(argument) == 1:  # 新規追加
         new_name = f.common.HAN2ZEN(argument[0])
-        g.logging.notice(f"new member: {new_name}")  # type: ignore
+        logging.notice(f"new member: {new_name}")  # type: ignore
 
         rows = resultdb.execute("select count() from member")
         count = rows.fetchone()[0]
-        if count > g.config["member"].getint("registration_limit", 255):
+        if count > g.cfg.config["member"].getint("registration_limit", 255):
             msg = "登録上限を超えています。"
         else:  # 登録処理
             ret, msg = check_namepattern(new_name)
@@ -195,7 +195,7 @@ def MemberAppend(argument):
     if len(argument) == 2:  # 別名登録
         new_name = f.common.HAN2ZEN(argument[0])
         nic_name = f.common.HAN2ZEN(argument[1])
-        g.logging.notice(f"alias: {new_name} -> {nic_name}")  # type: ignore
+        logging.notice(f"alias: {new_name} -> {nic_name}")  # type: ignore
 
         registration_flg = True
         rows = resultdb.execute("select count() from alias where member=?", (new_name,))
@@ -203,7 +203,7 @@ def MemberAppend(argument):
         if count == 0:
             msg = f"「{new_name}」はまだ登録されていません。"
             registration_flg = False
-        if count > g.config["member"].getint("alias_limit", 16):
+        if count > g.cfg.config["member"].getint("alias_limit", 16):
             msg = "登録上限を超えています。"
             registration_flg = False
 
@@ -254,7 +254,7 @@ def MemberRemove(argument):
     """
 
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES
     )
     resultdb.row_factory = sqlite3.Row
@@ -263,7 +263,7 @@ def MemberRemove(argument):
 
     if len(argument) == 1:  # メンバー削除
         new_name = f.common.HAN2ZEN(argument[0])
-        g.logging.notice(f"remove member: {new_name}")  # type: ignore
+        logging.notice(f"remove member: {new_name}")  # type: ignore
 
         if new_name in g.member_list:
             resultdb.execute("delete from member where name=?", (new_name,))
@@ -275,7 +275,7 @@ def MemberRemove(argument):
     if len(argument) == 2:  # 別名削除
         new_name = f.common.HAN2ZEN(argument[0])
         nic_name = f.common.HAN2ZEN(argument[1])
-        g.logging.notice(f"alias remove: {new_name} -> {nic_name}")  # type: ignore
+        logging.notice(f"alias remove: {new_name} -> {nic_name}")  # type: ignore
 
         if nic_name in g.member_list:
             resultdb.execute(
@@ -319,7 +319,7 @@ def check_namepattern(name):
         return (False, f"「{name}」はすでに使用されています。")
 
     # 登録規定チェック
-    if len(name) > g.config["member"].getint("character_limit", 8):  # 文字制限
+    if len(name) > g.cfg.config["member"].getint("character_limit", 8):  # 文字制限
         return (False, "登録可能文字数を超えています。")
     if name == g.prm.guest_name:  # 登録NGプレイヤー名
         return (False, "使用できない名前です。")
@@ -327,20 +327,15 @@ def check_namepattern(name):
         return (False, "使用できない記号が含まれています。")
 
     # コマンドと同じ名前かチェック
+    if g.search_word.find(name):
+        return (False, "検索範囲指定に使用される単語は登録できません。")
+
     chk = g.command_option()
     chk.check([name])
     if vars(chk):
-        return (False, "日付、またはオプションに使用される単語は登録できません。")
+        return (False, "オプションに使用される単語は登録できません。")
 
-    commandlist = list(g.commandword.values())
-    commandlist.extend([g.config["setting"].get("slash_commandname")])
-    commandlist.extend([g.config["setting"].get("remarks_word")])
-    commandlist.extend([g.config["search"].get("keyword")])
-    commandlist.extend([x for x, _ in g.config.items("alias")])
-    commandlist.extend(
-        chain.from_iterable([y.split(",") for _, y in g.config.items("alias")])
-    )
-    if name in set(commandlist):
+    if name in g.cfg.word_list():
         return (False, "コマンドに使用される単語は登録できません。")
 
     return (True, "OK")

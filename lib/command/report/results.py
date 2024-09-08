@@ -1,3 +1,4 @@
+import logging
 import os
 import sqlite3
 from datetime import datetime
@@ -16,18 +17,19 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, TableStyle)
 
-import lib.command as c
-import lib.command.report._query as query
-from lib.function import global_value as g
+import global_value as g
+from lib import command as c
+from lib.command.report import _query as query
 
-mlogger = g.logging.getLogger("matplotlib")
-mlogger.setLevel(g.logging.WARNING)
+mlogger = logging.getLogger("matplotlib")
+mlogger.setLevel(logging.WARNING)
+
 pd.set_option("display.max_rows", None)
 
 
 def get_game_results(flag="M"):
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
@@ -70,7 +72,7 @@ def get_game_results(flag="M"):
                 row["トビ"], f"{row['トビ率']:.2f}%",
             ]
         )
-    g.logging.info(f"return record: {len(results)}")
+    logging.info(f"return record: {len(results)}")
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
@@ -81,7 +83,7 @@ def get_game_results(flag="M"):
 
 def get_count_results(game_count):
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
@@ -126,7 +128,7 @@ def get_count_results(game_count):
                 row["トビ"], f"{row['トビ率']:.2f}%",
             ]
         )
-    g.logging.info(f"return record: {len(results)}")
+    logging.info(f"return record: {len(results)}")
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
@@ -137,7 +139,7 @@ def get_count_results(game_count):
 
 def get_count_moving(game_count):
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
@@ -151,7 +153,7 @@ def get_count_moving(game_count):
     for row in rows.fetchall():
         results.append(dict(row))
 
-    g.logging.info(f"return record: {len(results)}")
+    logging.info(f"return record: {len(results)}")
     resultdb.close()
 
     if len(results) == 0:
@@ -166,7 +168,7 @@ def graphing_mean_rank(df, title, whole=False):
 
     Parameters
     ----------
-    df : dataflame
+    df : pandas.DataFrame
         描写データ
 
     title : str
@@ -228,7 +230,7 @@ def graphing_total_points(df, title, whole=False):
 
     Parameters
     ----------
-    df : dataflame
+    df : pandas.DataFrame
         描写データ
 
     title : str
@@ -355,7 +357,7 @@ def gen_pdf():
 
     # 対象メンバーの記録状況
     target_info = c.member.member_info(g.prm.player_name)
-    g.logging.info(target_info)
+    logging.info(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし
         return (False, False)
@@ -368,9 +370,9 @@ def gen_pdf():
     )
 
     # 書式設定
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.font_file)
+    font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
     pdf_path = os.path.join(
-        g.work_dir,
+        g.cfg.setting.work_dir,
         f"{g.opt.filename}.pdf" if g.opt.filename else "Results.pdf"
     )
     pdfmetrics.registerFont(TTFont("ReportFont", font_path))
@@ -628,6 +630,6 @@ def gen_pdf():
             elements.append(PageBreak())
 
     doc.build(elements)
-    g.logging.notice(f"report generation: {g.prm.player_name}")  # type: ignore
+    logging.notice(f"report generation: {g.prm.player_name}")  # type: ignore
 
     return (g.prm.player_name, pdf_path)

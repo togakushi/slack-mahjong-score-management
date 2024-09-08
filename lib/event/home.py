@@ -1,15 +1,33 @@
-import lib.event as e
-from lib.function import global_value as g
+import logging
+
+import global_value as g
+from lib import event as e
+
+
+@g.app.event("app_home_opened")
+def handle_home_events(client, event):
+    g.app_var["user_id"] = event["user"]
+    if "view" in event:
+        g.app_var["view_id"] = event["view"]["id"]
+
+    logging.trace(f"{g.app_var}")  # type: ignore
+
+    result = client.views_publish(
+        user_id=g.app_var["user_id"],
+        view=build_main_menu(),
+    )
+
+    logging.trace(result)  # type: ignore
 
 
 def build_main_menu():
     g.app_var["screen"] = "MainMenu"
     no = 0
     view = {"type": "home", "blocks": []}
-    view, no = e.Button(view, no, text="成績サマリ", value="click_summary_menu", action_id="menu_summary")
-    view, no = e.Button(view, no, text="ランキング", value="click_ranking_menu", action_id="menu_ranking")
-    view, no = e.Button(view, no, text="個人成績", value="click_personal_menu", action_id="menu_personal")
-    view, no = e.Button(view, no, text="直接対戦", value="click_versus_menu", action_id="menu_versus")
+    view, no = e.ui_parts.Button(view, no, text="成績サマリ", value="click_summary_menu", action_id="menu_summary")
+    view, no = e.ui_parts.Button(view, no, text="ランキング", value="click_ranking_menu", action_id="menu_ranking")
+    view, no = e.ui_parts.Button(view, no, text="個人成績", value="click_personal_menu", action_id="menu_personal")
+    view, no = e.ui_parts.Button(view, no, text="直接対戦", value="click_versus_menu", action_id="menu_versus")
 
     return (view)
 
@@ -18,7 +36,7 @@ def set_command_option(body):
     # 検索設定
     argument = []
     search_options = body["view"]["state"]["values"]
-    g.logging.info(f"search options: {search_options}")
+    logging.info(f"search options: {search_options}")
 
     app_msg = []
 
@@ -76,7 +94,7 @@ def set_command_option(body):
 @g.app.action("actionId-back")
 def handle_action(ack, body, client):
     ack()
-    g.logging.trace(body)  # type: ignore
+    logging.trace(body)  # type: ignore
 
     client.views_publish(
         user_id=g.app_var["user_id"],
@@ -90,7 +108,7 @@ def handle_open_modal_button_clicks(ack, body, client):
 
     client.views_open(
         trigger_id=body["trigger_id"],
-        view=e.ModalPeriodSelection(),
+        view=e.ui_parts.ModalPeriodSelection(),
     )
 
 

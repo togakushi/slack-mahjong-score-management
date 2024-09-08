@@ -1,6 +1,6 @@
-import lib.function as f
+from lib import function as f
 from lib.command.results import personal, summary, team, versus
-from lib.function import global_value as g
+import global_value as g
 
 
 def main():

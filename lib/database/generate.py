@@ -1,8 +1,9 @@
-import re
 import inspect
+import logging
+import re
 import textwrap
 
-from lib.function import global_value as g
+import global_value as g
 
 
 def _query_modification(sql: str):
@@ -63,9 +64,9 @@ def _query_modification(sql: str):
 
     # デバッグ用
     func = inspect.stack()[1].function
-    g.logging.trace(f"{func}: opt = {vars(g.opt)}")  # type: ignore
-    g.logging.trace(f"{func}: prm = {vars(g.prm)}")  # type: ignore
-    g.logging.trace(f"{func}: sql = {textwrap.dedent(sql)}")  # type: ignore
+    logging.trace(f"{func}: opt = {vars(g.opt)}")  # type: ignore
+    logging.trace(f"{func}: prm = {vars(g.prm)}")  # type: ignore
+    logging.trace(f"{func}: sql = {textwrap.dedent(sql)}")  # type: ignore
 
     return (sql)
 

@@ -1,4 +1,6 @@
-from lib.function import global_value as g
+import logging
+
+import global_value as g
 
 
 def for_report_personal_data(flag="M"):
@@ -41,8 +43,8 @@ def for_report_personal_data(flag="M"):
             sql = sql.replace("<<collection>>", "'合計' as 集計")
             sql = sql.replace("<<group by>>", "")
 
-    g.logging.trace(f"sql: {sql}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
+    logging.trace(f"sql: {sql}")  # type: ignore
+    logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
     return (sql)
 
@@ -88,8 +90,8 @@ def for_report_count_data(interval=40):
 
     g.prm.append({"interval": interval})
 
-    g.logging.trace(f"sql: {sql}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
+    logging.trace(f"sql: {sql}")  # type: ignore
+    logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
 
     return (sql)
 
@@ -136,6 +138,6 @@ def for_report_count_moving(interval=40):
             "(row_number() over (order by total_count desc) - 1) / :interval"
         )
 
-    g.logging.trace(f"sql: {sql}")  # type: ignore
-    g.logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
+    logging.trace(f"sql: {sql}")  # type: ignore
+    logging.trace(f"prm: {g.prm.to_dict()}")  # type: ignore
     return (sql)

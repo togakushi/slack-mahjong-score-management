@@ -1,11 +1,12 @@
+import logging
 import sqlite3
 
-from lib.function import global_value as g
+import global_value as g
 
 
 def initialization_resultdb():
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
@@ -410,23 +411,23 @@ def initialization_resultdb():
     data = ret.fetchall()
 
     if len(data) == 0:
-        g.logging.notice(f"ゲスト設定: {g.prm.guest_name}")  # type: ignore
+        logging.notice(f"ゲスト設定: {g.prm.guest_name}")  # type: ignore
         sql = "insert into member (id, name) values (0, ?)"
         resultdb.execute(sql, (g.prm.guest_name,))
     elif data[0][1] != g.prm.guest_name:
-        g.logging.notice(f"ゲスト修正: {data[0][1]} -> {g.prm.guest_name}")  # type: ignore
+        logging.notice(f"ゲスト修正: {data[0][1]} -> {g.prm.guest_name}")  # type: ignore
         sql = "update member set name=? where id=0"
         resultdb.execute(sql, (g.prm.guest_name,))
 
     # regulationsテーブル情報読み込み
-    if g.config.has_section("regulations"):
+    if g.cfg.config.has_section("regulations"):
         resultdb.execute("delete from words where type == 1")
-        for word, ex_point in g.config.items("regulations"):
+        for word, ex_point in g.cfg.config.items("regulations"):
             resultdb.execute(
                 "insert into words(word, type, ex_point) values (?, 1, ?)",
                 (word, int(ex_point),)
             )
-            g.logging.info(f"regulations table update: {word}, {ex_point}")
+            logging.info(f"regulations table update: {word}, {ex_point}")
 
     resultdb.commit()
     resultdb.close()

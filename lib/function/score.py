@@ -1,10 +1,12 @@
+import logging
 import sqlite3
+
 import pandas as pd
 
-import lib.command as c
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+import global_value as g
+from lib import command as c
+from lib import database as d
+from lib import function as f
 
 
 def calculation_point(score_df):
@@ -23,13 +25,11 @@ def calculation_point(score_df):
     """
 
     # 順位点算出
-    origin_point = g.config["mahjong"].getint("point", 250)  # 配給原点
-    return_point = g.config["mahjong"].getint("return", 300)  # 返し点
-    uma = g.config["mahjong"].get("rank_point", "30,10,-10,-30")  # ウマ
+    uma = g.cfg.config["mahjong"].get("rank_point", "30,10,-10,-30")  # ウマ
     rank_point = list(map(int, uma.split(",")))
-    rank_point[0] += int((return_point - origin_point) / 10 * 4)  # type: ignore # オカ
+    rank_point[0] += int((g.prm.return_point - g.prm.origin_point) / 10 * 4)  # オカ
 
-    if g.config["mahjong"].getboolean("draw_split", False):  # 山分け
+    if g.cfg.config["mahjong"].getboolean("draw_split", False):  # 山分け
         score_df["rank"] = score_df["rpoint"].rank(
             ascending=False, method="min"
         ).astype("int")
@@ -84,9 +84,9 @@ def calculation_point(score_df):
         ascending=False, method="first"
     ).astype("int")
     for x in score_df.itertuples():
-        score_df.at[x.Index, x.point] = (x.rpoint - return_point) / 10 + rank_point[x.position - 1]
+        score_df.at[x.Index, x.point] = (x.rpoint - g.prm.return_point) / 10 + rank_point[x.position - 1]
 
-    g.logging.info(f"{rank_point=}")
+    logging.info(f"{rank_point=}")
     return (score_df)
 
 
@@ -125,7 +125,7 @@ def check_score(msg):
     correct_score = g.prm.origin_point * 4
     rpoint_sum = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
 
-    g.logging.notice(  # type: ignore
+    logging.notice(  # type: ignore
         "post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
             msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7],
             correct_score - rpoint_sum,
@@ -134,13 +134,13 @@ def check_score(msg):
 
     f.slack_api.call_reactions_remove()
     if rpoint_sum == correct_score:  # 合計が一致している場合
-        f.slack_api.call_reactions_add(g.reaction_ok)
+        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
     else:  # 合計が不一致の場合
         f.slack_api.post_message(
             f.message.invalid_score(g.msg.user_id, rpoint_sum, correct_score),
             g.msg.event_ts
         )
-        f.slack_api.call_reactions_add(g.reaction_ng)
+        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
 
     g.msg.checked = True
 
@@ -153,7 +153,7 @@ def check_remarks():
     g.opt.initialization("results")
     g.opt.unregistered_replace = False  # ゲスト無効
     resultdb = sqlite3.connect(
-        g.database_file,
+        g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
 
@@ -168,14 +168,14 @@ def check_remarks():
         case "message_append":
             for name, val in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
                 if c.member.NameReplace(name) in check_list:
-                    g.logging.info(f"insert: {name}, {val}")
+                    logging.info(f"insert: {name}, {val}")
                     resultdb.execute(d.sql_remarks_insert, (
                         g.msg.thread_ts,
                         g.msg.event_ts,
                         c.member.NameReplace(name),
                         val,
                     ))
-                    f.slack_api.call_reactions_add(g.reaction_ok)
+                    f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
         case "message_changed":
             f.slack_api.call_reactions_remove()
             resultdb.execute(
@@ -184,16 +184,16 @@ def check_remarks():
             )
             for name, val in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
                 if name in check_list:
-                    g.logging.info(f"update: {name}, {val}")
+                    logging.info(f"update: {name}, {val}")
                     resultdb.execute(d.sql_remarks_insert, (
                         g.msg.thread_ts,
                         g.msg.event_ts,
                         c.member.NameReplace(name),
                         val,
                     ))
-                    f.slack_api.call_reactions_add(g.reaction_ok)
+                    f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
         case "message_deleted":
-            g.logging.info("delete one")
+            logging.info("delete one")
             resultdb.execute(
                 d.sql_remarks_delete_one,
                 (g.msg.event_ts,)

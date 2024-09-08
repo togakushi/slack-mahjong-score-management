@@ -1,8 +1,8 @@
 import re
 
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+from lib import database as d
+from lib import function as f
+import global_value as g
 
 
 def aggregation():
@@ -41,7 +41,7 @@ def aggregation():
     # --- 情報ヘッダ
     add_text = ""
     msg2 = "*【成績サマリ】*\n"
-    if not g.config["mahjong"].getboolean("ignore_flying", False):
+    if not g.cfg.config["mahjong"].getboolean("ignore_flying", False):
         add_text = " / トバされた人（延べ）： {} 人".format(
             df_summary["トビ"].sum(),
         )
@@ -55,7 +55,7 @@ def aggregation():
     msg_memo = ""
 
     if not g.opt.score_comparisons:  # 通常表示
-        if g.config["mahjong"].getboolean("ignore_flying", False):  # トビカウントなし
+        if g.cfg.config["mahjong"].getboolean("ignore_flying", False):  # トビカウントなし
             header_list = ["名前", "通算", "平均", "順位分布"]
             filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順"]
         else:  # トビカウントあり

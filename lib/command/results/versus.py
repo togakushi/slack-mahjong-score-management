@@ -2,10 +2,10 @@ import textwrap
 
 import pandas as pd
 
-import lib.command as c
-import lib.database as d
-import lib.function as f
-from lib.function import global_value as g
+from lib import command as c
+from lib import database as d
+from lib import function as f
+import global_value as g
 
 
 def aggregation():
@@ -72,7 +72,7 @@ def aggregation():
             tmp_msg[vs_name]["info"] = textwrap.dedent(f"""
                 【{r["my_表示名"].strip()} vs {r["vs_表示名"].strip()}】
                 \t対戦数： {r["game"]} 戦 {r["win"]} 勝 {r["lose"]} 敗 ({r["win%"]:.2f}%)
-                \t平均素点差： {(r["my_rpoint_avg"]-r["vs_rpoint_avg"]) * 100:+.0f} 点
+                \t平均素点差： {(r["my_rpoint_avg"] - r["vs_rpoint_avg"]) * 100:+.0f} 点
                 \t獲得ポイント合計(自分)： {r["my_point_sum"]:+.1f}pt
                 \t獲得ポイント合計(相手)： {r["vs_point_sum"]:+.1f}pt
                 \t順位分布(自分)： {r["my_1st"]}%%{r["my_2nd"]}%%{r["my_3rd"]}%%{r["my_4th"]} ({r["my_rank_avg"]:1.2f})
