@@ -130,10 +130,10 @@ def setup():
     logging.info(f"{g.cfg.db.channel_limitations=}")
 
     # 作業用ディレクトリ作成
-    shutil.rmtree(g.cfg.setting.work_dir)
-    if not os.path.isdir(g.cfg.setting.work_dir):
-        try:
-            os.mkdir(g.cfg.setting.work_dir)
-        except Exception:
-            logging.error("Working directory creation failed !!!")
-            sys.exit()
+    try:
+        if os.path.isdir(g.cfg.setting.work_dir):
+            shutil.rmtree(g.cfg.setting.work_dir)
+        os.mkdir(g.cfg.setting.work_dir)
+    except Exception:
+        logging.error("Working directory creation failed !!!")
+        sys.exit()
