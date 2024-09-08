@@ -71,6 +71,7 @@ for sec in test_conf.sections():
 
             case "ranking":
                 g.msg.argument = argument.split()
+                g.prm.update(g.opt)
                 dump()
                 pprint(c.ranking.slackpost.main())
 
