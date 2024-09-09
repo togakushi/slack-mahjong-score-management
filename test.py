@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import configparser
-import os
-import shutil
 from pprint import pprint
 
 import global_value as g
@@ -23,9 +21,6 @@ test_conf = configparser.ConfigParser()
 test_conf.read(g.args.testcase, encoding="utf-8")
 
 c.member.read_memberslist()
-
-shutil.rmtree(g.cfg.setting.work_dir)
-os.mkdir(g.cfg.setting.work_dir)
 
 for sec in test_conf.sections():
     print("=" * 80)
