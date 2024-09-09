@@ -5,7 +5,7 @@ import global_value as g
 
 def main():
     """
-    ポイント推移グラフをslackにpostする
+    グラフをslackにpostする
     """
 
     g.opt.initialization("graph", g.msg.argument)

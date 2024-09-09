@@ -10,17 +10,6 @@ import global_value as g
 def main():
     """
     ランキングをslackにpostする
-
-    Parameters
-    ----------
-    client : obj
-
-    channel : str
-        post先のチャンネルID or ユーザーID
-
-    argument : list
-        slackから受け取った引数
-        解析対象のプレイヤー、検索範囲などが指定される
     """
 
     g.opt.initialization("ranking", g.msg.argument)
