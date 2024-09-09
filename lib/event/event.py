@@ -51,16 +51,12 @@ def handle_message_events(client, body):
 
         # データベース関連コマンド
         case x if re.match(rf"^{g.cfg.cw.check}", x):
-            d.comparison.main(
-                client, g.msg.channel_id, g.msg.event_ts
-            )
-        case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", x):  # Reminderによる突合
+            d.comparison.main(g.msg.event_ts)
+        case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", g.msg.text):  # Reminderによる突合
             logging.info(f'Reminder: {g.cfg.cw.check}')
-            d.comparison.main(
-                client, g.msg.channel_id, g.msg.event_ts
-            )
+            d.comparison.main(g.msg.event_ts)
 
-        # その他
+        # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}", x):
             title, msg = c.member.Getmemberslist()
             f.slack_api.post_text(g.msg.event_ts, title, msg)
