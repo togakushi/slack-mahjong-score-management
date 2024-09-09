@@ -1,12 +1,12 @@
+.*
 .*/
-work/
-test/
 **/__pycache__/
+work/
 **.pyc
 *.ini
 *.db
 *.txt
 *.ttf
 !requirements.txt
-.*
+!test_case/test-*.ini
 !.gitignore
