@@ -37,20 +37,19 @@ def point_plot():
 
     # グラフタイトル
     pivot_index = "playtime"
+    short_title = f"通算ポイント ({g.prm.starttime_hm})"
     if g.prm.target_count:
         title_text = f"ポイント推移 (直近 {g.prm.target_count} ゲーム)"
-        short_title = f"獲得ポイント ({g.prm.starttime_hm})"
     else:
         if g.opt.search_word:
             title_text = "ポイント推移 ({} - {})".format(
                 game_info["first_comment"],
                 game_info["last_comment"]
             )
-            short_title = f"獲得ポイント ({game_info['first_comment']})"
+            short_title = f"通算ポイント ({game_info['first_comment']})"
             pivot_index = "comment"
         else:
             title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
-            short_title = f"獲得ポイント ({g.prm.starttime_hm})"
 
     # X軸ラベル
     if g.opt.daily:
@@ -86,16 +85,9 @@ def point_plot():
         "legend": legend,
         "xlabel_text": xlabel_text,
         "ylabel_text": "通算ポイント",
+        "horizontal": True,
     }
     save_file = _graph_generation(pivot, **args)
-
-    # X軸修正
-    plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
-
-    # Y軸修正
-    ylocs, ylabs = plt.yticks()
-    new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
-    plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
 
     plt.savefig(save_file, bbox_inches="tight")
 
@@ -125,6 +117,7 @@ def rank_plot():
 
     # グラフタイトル
     pivot_index = "playtime"
+    short_title = f"獲得ポイント ({g.prm.starttime_hm})"
     if g.prm.target_count:
         title_text = f"順位推移 (直近 {g.prm.target_count} ゲーム)"
     else:
@@ -133,6 +126,7 @@ def rank_plot():
                 game_info["first_comment"],
                 game_info["last_comment"]
             )
+            short_title = f"獲得ポイント ({game_info['first_comment']})"
             pivot_index = "comment"
         else:
             title_text = f"順位推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
@@ -166,11 +160,13 @@ def rank_plot():
     # グラフ生成
     args = {
         "title_text": title_text,
+        "short_title": short_title,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
         "legend": legend,
         "xlabel_text": xlabel_text,
         "ylabel_text": "順位 (通算ポイント順)",
+        "horizontal": False,
     }
 
     save_file = _graph_generation(pivot, **args)
@@ -244,25 +240,39 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         f"{g.opt.filename}.png" if g.opt.filename else "graph.png"
     )
 
-    logging.info(f"plot data:\n{df}")
-
     f.common.graph_setup(plt, fm)
-    if all(df.count() == 1):
+    if all(df.count() == 1) and kwargs["horizontal"]:
         title = kwargs["short_title"]
-        tmpdf = pd.DataFrame(
-            {
-                "獲得ポイント": kwargs["target_data"]["last_point"].to_list(),
-            },
-            index=list(kwargs["target_data"].index),
-        )
+        lab = []
+        for _, v in kwargs["target_data"].iterrows():
+            lab.append("{}位：{} ({}pt / {}G)".format(
+                v["position"], v[kwargs["legend"]],
+                "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
+                v["game_count"],
+            ))
+        val = kwargs["target_data"]["last_point"].to_list()[::-1]
+        lab = lab[::-1]
 
-        tmpdf.plot.bar(
-            figsize=(8, 6),
-            rot=90,
-        )
+        tmpdf = pd.DataFrame({"point": val}, index=lab)
+        tmpdf.plot.barh(figsize=(8, 2 + len(val) / 5))
+        plt.legend().remove()
+        plt.gca().yaxis.tick_right()
 
+        # X軸修正
+        xlocs, xlabs = plt.xticks()
+        new_xlabs = [xlab.get_text().replace("−", "▲") for xlab in xlabs]
+        plt.xticks(xlocs[1:-1], new_xlabs[1:-1])
+
+        logging.info(f"plot data:\n{tmpdf}")
     else:
         title = kwargs["title_text"]
+        df.plot(
+            figsize=(8, 6),
+            xlabel=kwargs["xlabel_text"],
+            ylabel=kwargs["ylabel_text"],
+            marker="." if len(df) < 50 else None,
+        )
+
         # 凡例
         legend_text = []
         for _, v in kwargs["target_data"].iterrows():
@@ -272,13 +282,6 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
                 v["game_count"],
             ))
 
-        df.plot(
-            figsize=(8, 6),
-            xlabel=kwargs["xlabel_text"],
-            ylabel=kwargs["ylabel_text"],
-            marker="." if len(df) < 50 else None,
-        )
-
         plt.legend(
             legend_text,
             bbox_to_anchor=(1, 1),
@@ -287,12 +290,21 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
             ncol=int(len(kwargs["target_data"]) / 25 + 1),
         )
 
+        # X軸修正
         plt.xticks(
             list(range(len(df)))[::int(len(df) / 25) + 1],
             list(df.index)[::int(len(df) / 25) + 1],
             rotation=45,
             ha="right",
         )
+        plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
+
+        # Y軸修正
+        ylocs, ylabs = plt.yticks()
+        new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
+        plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
+
+        logging.info(f"plot data:\n{df}")
 
     plt.title(
         title,
