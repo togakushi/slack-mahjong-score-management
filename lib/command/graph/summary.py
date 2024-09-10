@@ -39,15 +39,18 @@ def point_plot():
     pivot_index = "playtime"
     if g.prm.target_count:
         title_text = f"ポイント推移 (直近 {g.prm.target_count} ゲーム)"
+        short_title = f"獲得ポイント ({g.prm.starttime_hm})"
     else:
         if g.opt.search_word:
             title_text = "ポイント推移 ({} - {})".format(
                 game_info["first_comment"],
                 game_info["last_comment"]
             )
+            short_title = f"獲得ポイント ({game_info['first_comment']})"
             pivot_index = "comment"
         else:
             title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
+            short_title = f"獲得ポイント ({g.prm.starttime_hm})"
 
     # X軸ラベル
     if g.opt.daily:
@@ -77,13 +80,13 @@ def point_plot():
     # グラフ生成
     args = {
         "title_text": title_text,
+        "short_title": short_title,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
         "legend": legend,
         "xlabel_text": xlabel_text,
         "ylabel_text": "通算ポイント",
     }
-
     save_file = _graph_generation(pivot, **args)
 
     # X軸修正
@@ -243,42 +246,57 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
     logging.info(f"plot data:\n{df}")
 
-    # 凡例
-    legend_text = []
-    for _, v in kwargs["target_data"].iterrows():
-        legend_text.append("{}位：{} ({}pt / {}G)".format(
-            v["position"], v[kwargs["legend"]],
-            "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
-            v["game_count"],
-        ))
-
     f.common.graph_setup(plt, fm)
+    if all(df.count() == 1):
+        title = kwargs["short_title"]
+        tmpdf = pd.DataFrame(
+            {
+                "獲得ポイント": kwargs["target_data"]["last_point"].to_list(),
+            },
+            index=list(kwargs["target_data"].index),
+        )
 
-    df.plot(
-        figsize=(8, 6),
-        xlabel=kwargs["xlabel_text"],
-        ylabel=kwargs["ylabel_text"],
-        marker="." if len(df) < 50 else None,
-    )
+        tmpdf.plot.bar(
+            figsize=(8, 6),
+            rot=90,
+        )
 
-    plt.legend(
-        legend_text,
-        bbox_to_anchor=(1, 1),
-        loc="upper left",
-        borderaxespad=0.5,
-        ncol=int(len(kwargs["target_data"]) / 25 + 1),
-    )
+    else:
+        title = kwargs["title_text"]
+        # 凡例
+        legend_text = []
+        for _, v in kwargs["target_data"].iterrows():
+            legend_text.append("{}位：{} ({}pt / {}G)".format(
+                v["position"], v[kwargs["legend"]],
+                "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
+                v["game_count"],
+            ))
+
+        df.plot(
+            figsize=(8, 6),
+            xlabel=kwargs["xlabel_text"],
+            ylabel=kwargs["ylabel_text"],
+            marker="." if len(df) < 50 else None,
+        )
+
+        plt.legend(
+            legend_text,
+            bbox_to_anchor=(1, 1),
+            loc="upper left",
+            borderaxespad=0.5,
+            ncol=int(len(kwargs["target_data"]) / 25 + 1),
+        )
+
+        plt.xticks(
+            list(range(len(df)))[::int(len(df) / 25) + 1],
+            list(df.index)[::int(len(df) / 25) + 1],
+            rotation=45,
+            ha="right",
+        )
 
     plt.title(
-        kwargs["title_text"],
+        title,
         fontsize=16,
-    )
-
-    plt.xticks(
-        list(range(len(df)))[::int(len(df) / 25) + 1],
-        list(df.index)[::int(len(df) / 25) + 1],
-        rotation=45,
-        ha="right",
     )
 
     return (save_file)
