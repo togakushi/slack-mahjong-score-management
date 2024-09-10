@@ -51,8 +51,29 @@ for sec in test_conf.sections():
                 dump()
                 pprint(c.results.summary.aggregation())
 
+            case "team":
+                g.opt.initialization("results", argument.split())
+
+                g.prm.update(g.opt)
+                dump()
+                pprint(c.results.team.aggregation())
+
             case "graph":
                 g.opt.initialization("graph", argument.split())
+
+                g.opt.filename = f"point_{pattern}"
+                g.prm.update(g.opt)
+                dump()
+                pprint(c.graph.summary.point_plot())
+
+                g.opt.filename = f"rank_{pattern}"
+                g.prm.update(g.opt)
+                dump()
+                pprint(c.graph.summary.rank_plot())
+
+            case "team-graph":
+                g.opt.initialization("graph", argument.split())
+                g.opt.team_total = True
 
                 g.opt.filename = f"point_{pattern}"
                 g.prm.update(g.opt)
