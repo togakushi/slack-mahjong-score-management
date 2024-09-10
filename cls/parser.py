@@ -72,10 +72,13 @@ class Message_Parser():
                     case "thread_ts":
                         self.thread_ts = _event["thread_ts"]
                     case "blocks":
-                        if "text" in _event["blocks"][0]["elements"][0]["elements"][0]:
-                            self.text = _event["blocks"][0]["elements"][0]["elements"][0]["text"]
-                        else:  # todo: 解析用出力
-                            logging.info(f"<analysis> blocks in: {_event=}")
+                        try:
+                            if "text" in _event["blocks"][0]["elements"][0]["elements"][0]:
+                                self.text = _event["blocks"][0]["elements"][0]["elements"][0]["text"]
+                            else:  # todo: 解析用出力
+                                logging.info(f"<Not found: text> blocks in: {_event=}")
+                        except Exception:
+                            logging.error(f"<analysis> blocks in: {_event=}")
 
         if self.text:
             self.keyword = self.text.split()[0]
