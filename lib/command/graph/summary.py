@@ -244,19 +244,33 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
     if all(df.count() == 1) and kwargs["horizontal"]:
         title = kwargs["short_title"]
         lab = []
+        color = []
         for _, v in kwargs["target_data"].iterrows():
             lab.append("{}位：{} ({}pt / {}G)".format(
                 v["position"], v[kwargs["legend"]],
                 "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
                 v["game_count"],
             ))
-        val = kwargs["target_data"]["last_point"].to_list()[::-1]
-        lab = lab[::-1]
+            if v["last_point"] > 0:
+                color.append("deepskyblue")
+            else:
+                color.append("orangered")
 
-        tmpdf = pd.DataFrame({"point": val}, index=lab)
-        tmpdf.plot.barh(figsize=(8, 2 + len(val) / 5))
+        tmpdf = pd.DataFrame(
+            {"point": kwargs["target_data"]["last_point"].to_list()[::-1]},
+            index=lab[::-1],
+        )
+
+        tmpdf.plot.barh(
+            figsize=(8, 2 + int(tmpdf.count()) / 5),
+            y="point",
+            color=color[::-1],
+        )
+
         plt.legend().remove()
         plt.gca().yaxis.tick_right()
+        plt.gca().set_axisbelow(True)
+        plt.gca().invert_xaxis()
 
         # X軸修正
         xlocs, xlabs = plt.xticks()
