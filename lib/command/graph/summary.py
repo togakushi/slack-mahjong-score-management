@@ -47,13 +47,13 @@ def point_plot():
                 if g.prm.starttime_ymd == g.prm.endonday_ymd:
                     title_text = f"通算ポイント ({g.prm.starttime_ymd})"
                 else:
-                    title_text = f"ポイント推移 ({g.prm.starttime_ymd} - {g.prm.endtime_ymd})"
+                    title_text = f"ポイント推移 ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
             case "monthly":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
                 if g.prm.starttime_ym == g.prm.endonday_ym:
                     title_text = f"通算ポイント ({g.prm.starttime_ym})"
                 else:
-                    title_text = f"ポイント推移 ({g.prm.starttime_ym} - {g.prm.endtime_ym})"
+                    title_text = f"ポイント推移 ({g.prm.starttime_ym} - {g.prm.endonday_ym})"
             case _:
                 if g.opt.search_word:
                     pivot_index = "comment"
@@ -137,13 +137,13 @@ def rank_plot():
                 if g.prm.starttime_ymd == g.prm.endonday_ymd:
                     title_text = f"順位 ({g.prm.starttime_ymd})"
                 else:
-                    title_text = f"順位推移 ({g.prm.starttime_ymd} - {g.prm.endtime_ymd})"
+                    title_text = f"順位推移 ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
             case "monthly":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
                 if g.prm.starttime_ym == g.prm.endonday_ym:
                     title_text = f"順位 ({g.prm.starttime_ym})"
                 else:
-                    title_text = f"順位推移 ({g.prm.starttime_ym} - {g.prm.endtime_ym})"
+                    title_text = f"順位推移 ({g.prm.starttime_ym} - {g.prm.endonday_ym})"
             case _:
                 if g.opt.search_word:
                     pivot_index = "comment"
