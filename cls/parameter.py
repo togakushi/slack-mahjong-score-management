@@ -148,9 +148,13 @@ class parameters:
         self.starttime = None
         self.starttime_hm = None
         self.starttime_hms = None
+        self.starttime_ymd = None
+        self.starttime_ym = None
         self.endtime = None
         self.endtime_hm = None
         self.endtime_hms = None
+        self.endtime_ymd = None
+        self.endtime_ym = None
         self.stipulated: int = 0
         self.target_count: int = 0
 
@@ -162,6 +166,10 @@ class parameters:
         self.endtime_hm = _opt.search_last.strftime("%Y/%m/%d %H:%M")
         self.starttime_hms = _opt.search_first.strftime("%Y/%m/%d %H:%M:%S")
         self.endtime_hms = _opt.search_last.strftime("%Y/%m/%d %H:%M:%S")
+        self.starttime_ymd = _opt.search_first.strftime("%Y/%m/%d")
+        self.endtime_ymd = _opt.search_last.strftime("%Y/%m/%d")
+        self.starttime_ym = _opt.search_first.strftime("%Y/%m")
+        self.endtime_ym = _opt.search_last.strftime("%Y/%m")
         self.target_count = _opt.target_count
         self.stipulated = _opt.stipulated
         self.group_length = _opt.group_length
