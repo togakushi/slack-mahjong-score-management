@@ -61,12 +61,12 @@ for sec in test_conf.sections():
             case "graph":
                 g.opt.initialization("graph", argument.split())
 
-                g.opt.filename = f"point_{pattern}"
+                g.opt.filename = f"point_{sec}_{pattern}"
                 g.prm.update(g.opt)
                 dump()
                 pprint(c.graph.summary.point_plot())
 
-                g.opt.filename = f"rank_{pattern}"
+                g.opt.filename = f"rank_{sec}_{pattern}"
                 g.prm.update(g.opt)
                 dump()
                 pprint(c.graph.summary.rank_plot())
@@ -75,12 +75,12 @@ for sec in test_conf.sections():
                 g.opt.initialization("graph", argument.split())
                 g.opt.team_total = True
 
-                g.opt.filename = f"point_{pattern}"
+                g.opt.filename = f"point_{sec}_{pattern}"
                 g.prm.update(g.opt)
                 dump()
                 pprint(c.graph.summary.point_plot())
 
-                g.opt.filename = f"rank_{pattern}"
+                g.opt.filename = f"rank_{sec}_{pattern}"
                 g.prm.update(g.opt)
                 dump()
                 pprint(c.graph.summary.rank_plot())
@@ -94,7 +94,7 @@ for sec in test_conf.sections():
             case "matrix":
                 g.opt.initialization("report", g.msg.argument)
 
-                g.opt.filename = f"matrix_{pattern}"
+                g.opt.filename = f"matrix_{sec}_{pattern}"
                 g.prm.update(g.opt)
                 dump()
                 pprint(c.report.slackpost.matrix.plot())
