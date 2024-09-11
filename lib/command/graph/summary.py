@@ -70,6 +70,8 @@ def point_plot():
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
                     title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
+                    if g.prm.starttime_ymd == g.prm.endonday_ymd and game_info["game_count"] == 1:
+                        title_text = f"通算ポイント ({g.prm.starttime_ymd})"
 
     # 集計
     if g.opt.team_total:
@@ -89,6 +91,7 @@ def point_plot():
 
     # グラフ生成
     args = {
+        "kind": "point",
         "title_text": title_text,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
@@ -98,7 +101,6 @@ def point_plot():
         "horizontal": True,
     }
     save_file = _graph_generation(pivot, **args)
-
     plt.savefig(save_file, bbox_inches="tight")
 
     return (game_info["game_count"], save_file)
@@ -160,6 +162,8 @@ def rank_plot():
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
                     title_text = f"順位推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
+                    if g.prm.starttime_ymd == g.prm.endonday_ymd and game_info["game_count"] == 1:
+                        title_text = f"順位 ({g.prm.starttime_ymd})"
 
     # 集計
     if g.opt.team_total:
@@ -180,6 +184,7 @@ def rank_plot():
 
     # グラフ生成
     args = {
+        "kind": "rank",
         "title_text": title_text,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
@@ -188,16 +193,7 @@ def rank_plot():
         "ylabel_text": "順位 (通算ポイント順)",
         "horizontal": False,
     }
-
     save_file = _graph_generation(pivot, **args)
-
-    # Y軸修正
-    plt.yticks(
-        list(range(len(target_data) + 1))[1::2],
-        list(range(len(target_data) + 1))[1::2]
-    )
-    plt.gca().invert_yaxis()
-
     plt.savefig(save_file, bbox_inches="tight")
 
     return (game_info["game_count"], save_file)
@@ -261,18 +257,16 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
     )
 
     f.common.graph_setup(plt, fm)
-    alignment = "center"
-
     if all(df.count() == 1) and kwargs["horizontal"]:
-        alignment = "right"
+        kwargs["kind"] = "barh"
         lab = []
         color = []
         for _, v in kwargs["target_data"].iterrows():
-            lab.append("{} ({}pt / {}G)：{:2d}位".format(
+            lab.append("{:2d}位 ： {} ({}pt / {}G)".format(
+                v["position"],
                 v[kwargs["legend"]],
                 "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
                 v["game_count"],
-                v["position"],
             ))
             if v["last_point"] > 0:
                 color.append("deepskyblue")
@@ -291,9 +285,8 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         )
 
         plt.legend().remove()
-        # plt.gca().yaxis.tick_right()
+        plt.gca().yaxis.tick_right()
         plt.gca().set_axisbelow(True)
-        # plt.gca().invert_xaxis()
 
         # X軸修正
         xlocs, xlabs = plt.xticks()
@@ -312,7 +305,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         # 凡例
         legend_text = []
         for _, v in kwargs["target_data"].iterrows():
-            legend_text.append("{}位：{} ({}pt / {}G)".format(
+            legend_text.append("{}位 ： {} ({}pt / {}G)".format(
                 v["position"], v[kwargs["legend"]],
                 "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
                 v["game_count"],
@@ -333,7 +326,6 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
             rotation=45,
             ha="right",
         )
-        plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
 
         # Y軸修正
         ylocs, ylabs = plt.yticks()
@@ -342,10 +334,20 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
         logging.info(f"plot data:\n{df}")
 
+    #
+    match kwargs["kind"]:
+        case "point":
+            plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
+        case "rank":
+            plt.yticks(
+                list(range(len(kwargs["target_data"]) + 1))[1::2],
+                list(range(len(kwargs["target_data"]) + 1))[1::2]
+            )
+            plt.gca().invert_yaxis()
+
     plt.title(
         kwargs["title_text"],
         fontsize=16,
-        ha=alignment,
     )
 
     return (save_file)
