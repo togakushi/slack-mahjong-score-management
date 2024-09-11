@@ -261,14 +261,18 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
     )
 
     f.common.graph_setup(plt, fm)
+    alignment = "center"
+
     if all(df.count() == 1) and kwargs["horizontal"]:
+        alignment = "right"
         lab = []
         color = []
         for _, v in kwargs["target_data"].iterrows():
-            lab.append("{}位：{} ({}pt / {}G)".format(
-                v["position"], v[kwargs["legend"]],
+            lab.append("{} ({}pt / {}G)：{:2d}位".format(
+                v[kwargs["legend"]],
                 "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
                 v["game_count"],
+                v["position"],
             ))
             if v["last_point"] > 0:
                 color.append("deepskyblue")
@@ -287,9 +291,9 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         )
 
         plt.legend().remove()
-        plt.gca().yaxis.tick_right()
+        # plt.gca().yaxis.tick_right()
         plt.gca().set_axisbelow(True)
-        plt.gca().invert_xaxis()
+        # plt.gca().invert_xaxis()
 
         # X軸修正
         xlocs, xlabs = plt.xticks()
@@ -341,6 +345,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
     plt.title(
         kwargs["title_text"],
         fontsize=16,
+        ha=alignment,
     )
 
     return (save_file)
