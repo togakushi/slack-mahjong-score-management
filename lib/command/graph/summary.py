@@ -37,7 +37,7 @@ def point_plot():
 
     # グラフタイトル
     pivot_index = "playtime"
-    short_title = f"通算ポイント ({g.prm.starttime_hm})"
+    short_title = f"通算ポイント ({g.prm.starttime_ymd})"
     if g.prm.target_count:
         title_text = f"ポイント推移 (直近 {g.prm.target_count} ゲーム)"
     else:
