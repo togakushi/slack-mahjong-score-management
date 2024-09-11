@@ -41,13 +41,14 @@ class command_option:
         self.stipulated_rate: float = g.cfg.config[_command].getfloat("stipulated_rate", 0.05)
         self.format: str = g.cfg.config["setting"].get("format", "default")
         self.filename: str = str()
-        self.daily: bool = False
+        self.collection: str = str()
         self.group_length: int = g.cfg.config["comment"].getint("group_length", 0)
         self.search_word: str = g.cfg.config["comment"].get("search_word", str())
 
         # 検索範囲の初期設定
         self.search_first: datetime = datetime.now()
         self.search_last: datetime = datetime.now()
+        self.search_onday: datetime = datetime.now()
         self.set_search_range(self.aggregation_range)
 
         if _argument:
@@ -57,9 +58,11 @@ class command_option:
         _target_days, _new_argument = f.common.scope_coverage(_argument)
         if _target_days:
             _first = min(_target_days)
+            _onday = max(_target_days)
             _last = max(_target_days) + relativedelta(days=1)
             self.search_first = _first.replace(hour=12, minute=0, second=0, microsecond=0)
             self.search_last = _last.replace(hour=11, minute=59, second=59, microsecond=999999)
+            self.search_onday = _onday.replace(hour=23, minute=59, second=59, microsecond=999999)
 
         return (_new_argument)
 
@@ -111,7 +114,9 @@ class command_option:
                 case keyword if re.search(r"^(コメント|comment)(.+)$", keyword):
                     self.search_word = re.sub(r"^(コメント|comment)(.+)$", r"\2", keyword)
                 case keyword if re.search(r"^(daily|デイリー|日次)$", keyword):
-                    self.daily = True
+                    self.collection = "daily"
+                case keyword if re.search(r"^(monthly|マンスリー|月次)$", keyword):
+                    self.collection = "monthly"
                 case keyword if re.search(r"^(集約)([0-9]+)$", keyword):
                     self.group_length = int(re.sub(r"^(集約)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
@@ -155,6 +160,8 @@ class parameters:
         self.endtime_hms = None
         self.endtime_ymd = None
         self.endtime_ym = None
+        self.endonday_ymd = None
+        self.endonday_ym = None
         self.stipulated: int = 0
         self.target_count: int = 0
 
@@ -170,6 +177,8 @@ class parameters:
         self.endtime_ymd = _opt.search_last.strftime("%Y/%m/%d")
         self.starttime_ym = _opt.search_first.strftime("%Y/%m")
         self.endtime_ym = _opt.search_last.strftime("%Y/%m")
+        self.endonday_ymd = _opt.search_onday.strftime("%Y/%m/%d")
+        self.endonday_ym = _opt.search_onday.strftime("%Y/%m")
         self.target_count = _opt.target_count
         self.stipulated = _opt.stipulated
         self.group_length = _opt.group_length

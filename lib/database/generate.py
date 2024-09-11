@@ -26,11 +26,17 @@ def _query_modification(sql: str):
         else:
             sql = sql.replace("--[unregistered_not_replace] ", "")
 
-    # 日次集計
-    if g.opt.daily:
-        sql = sql.replace("--[daily] ", "")
-    else:
-        sql = sql.replace("--[not_daily] ", "")
+    # 集約集計
+    match g.opt.collection:
+        case "daily":
+            sql = sql.replace("--[collection_daily] ", "")
+            sql = sql.replace("--[collection] ", "")
+        case "monthly":
+            sql = sql.replace("--[collection_monthly] ", "")
+            sql = sql.replace("--[collection] ", "")
+        case _:
+            sql = sql.replace("--[not_collection] ", "")
+
     if g.prm.search_word or g.prm.group_length:
         sql = sql.replace("--[group_by] ", "")
     else:
@@ -497,11 +503,12 @@ def personal_gamedata():
     sql = """
         -- personal_gamedata()
         select
-            --[not_daily] --[not_group_by] count() over moving as count,
-            --[not_daily] --[group_by] sum(count) over moving as count,
-            --[daily] sum(count) over moving as count,
-            --[not_daily] replace(playtime, "-", "/") as playtime,
-            --[daily] replace(collection_daily, "-", "/") as playtime,
+            --[not_collection] --[not_group_by] count() over moving as count,
+            --[not_collection] --[group_by] sum(count) over moving as count,
+            --[collection] sum(count) over moving as count,
+            --[not_collection] replace(playtime, "-", "/") as playtime,
+            --[collection_daily] replace(collection_daily, "-", "/") as playtime,
+            --[collection_monthly] replace(collection, "-", "/") as playtime,
             name,
             rank,
             point,
@@ -511,17 +518,18 @@ def personal_gamedata():
             comment
         from (
             select
-                --[daily] count() as count,
-                --[not_daily] --[group_by] count() as count,
+                --[collection] count() as count,
+                --[not_collection] --[group_by] count() as count,
                 individual_results.playtime,
+                collection,
                 collection_daily,
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
-                --[not_daily] rank,
-                --[daily] round(avg(rank), 2) as rank,
-                --[not_daily] --[not_group_by] point,
-                --[not_daily] --[group_by] round(sum(point), 1) as point,
-                --[daily] round(sum(point), 1) as point,
+                --[not_collection] rank,
+                --[collection] round(avg(rank), 2) as rank,
+                --[not_collection] --[not_group_by] point,
+                --[not_collection] --[group_by] round(sum(point), 1) as point,
+                --[collection] round(sum(point), 1) as point,
                 game_info.guest_count,
                 --[not_group_length] game_info.comment
                 --[group_length] substr(game_info.comment, 1, :group_length) as comment
@@ -537,22 +545,27 @@ def personal_gamedata():
                 --[friendly_fire] and same_team = 0
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and game_info.comment like :search_word
-            --[not_daily] --[group_by] group by -- コメント集約
-            --[not_daily] --[group_by]     --[not_comment] collection_daily, name
-            --[not_daily] --[group_by]     --[comment] game_info.comment, name
-            --[not_daily] --[group_by]     --[group_length] substr(game_info.comment, 1, :group_length), name
-            --[daily] group by -- 日次集計
-            --[daily]     collection_daily, name
+            --[not_collection] --[group_by] group by -- コメント集約
+            --[not_collection] --[group_by]     --[not_comment] collection_daily, name
+            --[not_collection] --[group_by]     --[comment] game_info.comment, name
+            --[not_collection] --[group_by]     --[group_length] substr(game_info.comment, 1, :group_length), name
+            --[collection_daily] group by -- 日次集計
+            --[collection_daily]     collection_daily, name
+            --[collection_monthly] group by -- 月次集計
+            --[collection_monthly]     collection, name
             order by
-                --[not_daily] individual_results.playtime desc
-                --[daily] collection_daily desc
+                --[not_collection] individual_results.playtime desc
+                --[collection_daily] collection_daily desc
+                --[collection_monthly] collection desc
         )
         window
-            --[not_daily] moving as (partition by name order by playtime)
-            --[daily] moving as (partition by name order by collection_daily)
+            --[not_collection] moving as (partition by name order by playtime)
+            --[collection_daily] moving as (partition by name order by collection_daily)
+            --[collection_monthly] moving as (partition by name order by collection)
         order by
-            --[not_daily] playtime, name
-            --[daily] collection_daily, name
+            --[not_collection] playtime, name
+            --[collection_daily] collection_daily, name
+            --[collection_monthly] collection, name
     """
 
     if g.prm.player_name:
@@ -573,11 +586,12 @@ def team_gamedata():
     sql = """
         -- team_gamedata()
         select
-            --[not_daily] --[not_group_by] count() over moving as count,
-            --[not_daily] --[group_by] sum(count) over moving as count,
-            --[daily] sum(count) over moving as count,
-            --[not_daily] replace(playtime, "-", "/") as playtime,
-            --[daily] replace(collection_daily, "-", "/") as playtime,
+            --[not_collection] --[not_group_by] count() over moving as count,
+            --[not_collection] --[group_by] sum(count) over moving as count,
+            --[collection] sum(count) over moving as count,
+            --[not_collection] replace(playtime, "-", "/") as playtime,
+            --[collection_daily] replace(collection_daily, "-", "/") as playtime,
+            --[collection_monthly] replace(collection, "-", "/") as playtime,
             team,
             rank,
             point,
@@ -587,16 +601,17 @@ def team_gamedata():
             comment
         from (
             select
-                --[daily] count() as count,
-                --[not_daily] --[group_by] count() as count,
+                --[collection] count() as count,
+                --[not_collection] --[group_by] count() as count,
                 individual_results.playtime,
+                collection,
                 collection_daily,
                 team,
-                --[not_daily] rank,
-                --[daily] round(avg(rank), 2) as rank,
-                --[not_daily] --[not_group_by] point,
-                --[not_daily] --[group_by] round(sum(point), 1) as point,
-                --[daily] round(sum(point), 1) as point,
+                --[not_collection] rank,
+                --[collection] round(avg(rank), 2) as rank,
+                --[not_collection] --[not_group_by] point,
+                --[not_collection] --[group_by] round(sum(point), 1) as point,
+                --[collection] round(sum(point), 1) as point,
                 game_info.guest_count,
                 --[not_group_length] game_info.comment
                 --[group_length] substr(game_info.comment, 1, :group_length) as comment
@@ -609,22 +624,27 @@ def team_gamedata():
                 and individual_results.playtime between :starttime and :endtime
                 --[friendly_fire] and same_team = 0
                 --[search_word] and game_info.comment like :search_word
-            --[not_daily] --[group_by] group by -- コメント集約
-            --[not_daily] --[group_by]     --[not_comment] collection_daily, team
-            --[not_daily] --[group_by]     --[comment] game_info.comment, team
-            --[not_daily] --[group_by]     --[group_length] substr(game_info.comment, 1, :group_length), team
-            --[daily] group by -- 日次集計
-            --[daily]     collection_daily, team
+            --[not_collection] --[group_by] group by -- コメント集約
+            --[not_collection] --[group_by]     --[not_comment] collection_daily, team
+            --[not_collection] --[group_by]     --[comment] game_info.comment, team
+            --[not_collection] --[group_by]     --[group_length] substr(game_info.comment, 1, :group_length), team
+            --[collection_daily] group by -- 日次集計
+            --[collection_daily]     collection_daily, team
+            --[collection_monthly] group by -- 月次集計
+            --[collection_monthly]     collection, team
             order by
-                --[not_daily] individual_results.playtime desc
-                --[daily] collection_daily desc
+                --[not_collection] individual_results.playtime desc
+                --[collection_daily] collection_daily desc
+                --[collection_monthly] collection desc
         )
         window
-            --[not_daily] moving as (partition by team order by playtime)
-            --[daily] moving as (partition by team order by collection_daily)
+            --[not_collection] moving as (partition by team order by playtime)
+            --[collection_daily] moving as (partition by team order by collection_daily)
+            --[collection_monthly] moving as (partition by team order by collection)
         order by
-            --[not_daily] playtime, team
-            --[daily] collection_daily, team
+            --[not_collection] playtime, team
+            --[collection_daily] collection_daily, team
+            --[collection_monthly] collection, team
     """
 
     return (_query_modification(sql))

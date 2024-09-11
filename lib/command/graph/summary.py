@@ -35,30 +35,41 @@ def point_plot():
     if target_data.empty:  # 描写対象が0人の場合は終了
         return (len(target_data), f.message.no_hits())
 
-    # グラフタイトル
+    # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
-    short_title = f"通算ポイント ({g.prm.starttime_ymd})"
     if g.prm.target_count:
         title_text = f"ポイント推移 (直近 {g.prm.target_count} ゲーム)"
-    else:
-        if g.opt.search_word:
-            title_text = "ポイント推移 ({} - {})".format(
-                game_info["first_comment"],
-                game_info["last_comment"]
-            )
-            short_title = f"通算ポイント ({game_info['first_comment']})"
-            pivot_index = "comment"
-        else:
-            title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
-
-    # X軸ラベル
-    if g.opt.daily:
         xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
     else:
-        if g.opt.search_word:
-            xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
-        else:
-            xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+        match g.opt.collection:
+            case "daily":
+                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                if g.prm.starttime_ymd == g.prm.endonday_ymd:
+                    title_text = f"通算ポイント ({g.prm.starttime_ymd})"
+                else:
+                    title_text = f"ポイント推移 ({g.prm.starttime_ymd} - {g.prm.endtime_ymd})"
+            case "monthly":
+                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                if g.prm.starttime_ym == g.prm.endonday_ym:
+                    title_text = f"通算ポイント ({g.prm.starttime_ym})"
+                else:
+                    title_text = f"ポイント推移 ({g.prm.starttime_ym} - {g.prm.endtime_ym})"
+            case _:
+                if g.opt.search_word:
+                    pivot_index = "comment"
+                    xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
+                    if game_info["first_comment"] == game_info["last_comment"]:
+                        title_text = "通算ポイント ({})".format(
+                            game_info["first_comment"],
+                        )
+                    else:
+                        title_text = "ポイント推移 ({} - {})".format(
+                            game_info["first_comment"],
+                            game_info["last_comment"]
+                        )
+                else:
+                    xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+                    title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
 
     # 集計
     if g.opt.team_total:
@@ -79,7 +90,6 @@ def point_plot():
     # グラフ生成
     args = {
         "title_text": title_text,
-        "short_title": short_title,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
         "legend": legend,
@@ -115,30 +125,41 @@ def rank_plot():
     if target_data.empty:  # 描写対象が0人の場合は終了
         return (len(target_data), f.message.no_hits())
 
-    # グラフタイトル
+    # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
-    short_title = f"獲得ポイント ({g.prm.starttime_hm})"
     if g.prm.target_count:
         title_text = f"順位推移 (直近 {g.prm.target_count} ゲーム)"
-    else:
-        if g.opt.search_word:
-            title_text = "順位推移 ({} - {})".format(
-                game_info["first_comment"],
-                game_info["last_comment"]
-            )
-            short_title = f"獲得ポイント ({game_info['first_comment']})"
-            pivot_index = "comment"
-        else:
-            title_text = f"順位推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
-
-    # X軸ラベル
-    if g.opt.daily:
         xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
     else:
-        if g.opt.search_word:
-            xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
-        else:
-            xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+        match g.opt.collection:
+            case "daily":
+                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                if g.prm.starttime_ymd == g.prm.endonday_ymd:
+                    title_text = f"順位 ({g.prm.starttime_ymd})"
+                else:
+                    title_text = f"順位推移 ({g.prm.starttime_ymd} - {g.prm.endtime_ymd})"
+            case "monthly":
+                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                if g.prm.starttime_ym == g.prm.endonday_ym:
+                    title_text = f"順位 ({g.prm.starttime_ym})"
+                else:
+                    title_text = f"順位推移 ({g.prm.starttime_ym} - {g.prm.endtime_ym})"
+            case _:
+                if g.opt.search_word:
+                    pivot_index = "comment"
+                    xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
+                    if game_info["first_comment"] == game_info["last_comment"]:
+                        title_text = "順位 ({})".format(
+                            game_info["first_comment"],
+                        )
+                    else:
+                        title_text = "順位推移 ({} - {})".format(
+                            game_info["first_comment"],
+                            game_info["last_comment"]
+                        )
+                else:
+                    xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+                    title_text = f"順位推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
 
     # 集計
     if g.opt.team_total:
@@ -160,7 +181,6 @@ def rank_plot():
     # グラフ生成
     args = {
         "title_text": title_text,
-        "short_title": short_title,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
         "legend": legend,
@@ -242,7 +262,6 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
     f.common.graph_setup(plt, fm)
     if all(df.count() == 1) and kwargs["horizontal"]:
-        title = kwargs["short_title"]
         lab = []
         color = []
         for _, v in kwargs["target_data"].iterrows():
@@ -279,7 +298,6 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
         logging.info(f"plot data:\n{tmpdf}")
     else:
-        title = kwargs["title_text"]
         df.plot(
             figsize=(8, 6),
             xlabel=kwargs["xlabel_text"],
@@ -321,7 +339,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         logging.info(f"plot data:\n{df}")
 
     plt.title(
-        title,
+        kwargs["title_text"],
         fontsize=16,
     )
 
