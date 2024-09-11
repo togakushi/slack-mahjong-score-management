@@ -71,7 +71,7 @@ def point_plot():
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
                     title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
                     if g.prm.starttime_ymd == g.prm.endonday_ymd and game_info["game_count"] == 1:
-                        title_text = f"通算ポイント ({g.prm.starttime_ymd})"
+                        title_text = f"獲得ポイント ({g.prm.starttime_ymd})"
 
     # 集計
     if g.opt.team_total:
@@ -257,12 +257,14 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
     )
 
     f.common.graph_setup(plt, fm)
+    plt.gca().set_axisbelow(True)
+
     if all(df.count() == 1) and kwargs["horizontal"]:
         kwargs["kind"] = "barh"
         lab = []
         color = []
         for _, v in kwargs["target_data"].iterrows():
-            lab.append("{:2d}位 ： {} ({}pt / {}G)".format(
+            lab.append("{:2d}位：{} ({}pt / {}G)".format(
                 v["position"],
                 v[kwargs["legend"]],
                 "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
@@ -286,7 +288,6 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
         plt.legend().remove()
         plt.gca().yaxis.tick_right()
-        plt.gca().set_axisbelow(True)
 
         # X軸修正
         xlocs, xlabs = plt.xticks()
@@ -305,7 +306,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         # 凡例
         legend_text = []
         for _, v in kwargs["target_data"].iterrows():
-            legend_text.append("{}位 ： {} ({}pt / {}G)".format(
+            legend_text.append("{:2d}位：{} ({}pt / {}G)".format(
                 v["position"], v[kwargs["legend"]],
                 "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
                 v["game_count"],
@@ -336,13 +337,16 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
     #
     match kwargs["kind"]:
+        case "barh":
+            plt.axvline(x=0, linewidth=0.5, ls="dashed", color="grey")
         case "point":
             plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
         case "rank":
-            plt.yticks(
-                list(range(len(kwargs["target_data"]) + 1))[1::2],
-                list(range(len(kwargs["target_data"]) + 1))[1::2]
-            )
+            lab = list(range(len(kwargs["target_data"]) + 1))
+            if len(lab) > 10:
+                plt.yticks(lab[1::2], lab[1::2])
+            else:
+                plt.yticks(lab[1:], lab[1:])
             plt.gca().invert_yaxis()
 
     plt.title(
