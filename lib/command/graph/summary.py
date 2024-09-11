@@ -281,11 +281,10 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         )
 
         tmpdf.plot.barh(
-            figsize=(8, 2 + int(tmpdf.count()) / 5),
+            figsize=(8, 2 + tmpdf.iloc[0].count() / 5),
             y="point",
             color=color[::-1],
         )
-
         plt.legend().remove()
         plt.gca().yaxis.tick_right()
         plt.gca().set_axisbelow(True)
