@@ -117,6 +117,8 @@ class command_option:
                     self.collection = "daily"
                 case keyword if re.search(r"^(monthly|マンスリー|月次)$", keyword):
                     self.collection = "monthly"
+                case keyword if re.search(r"^(yearly|イヤーリー|年次)$", keyword):
+                    self.collection = "yearly"
                 case keyword if re.search(r"^(集約)([0-9]+)$", keyword):
                     self.group_length = int(re.sub(r"^(集約)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
@@ -153,32 +155,38 @@ class parameters:
         self.starttime = None
         self.starttime_hm = None
         self.starttime_hms = None
-        self.starttime_ymd = None
+        self.starttime_y = None
         self.starttime_ym = None
+        self.starttime_ymd = None
         self.endtime = None
         self.endtime_hm = None
         self.endtime_hms = None
-        self.endtime_ymd = None
+        self.endtime_y = None
         self.endtime_ym = None
-        self.endonday_ymd = None
+        self.endtime_ymd = None
+        self.endonday_y = None
         self.endonday_ym = None
+        self.endonday_ymd = None
         self.stipulated: int = 0
         self.target_count: int = 0
 
     def update(self, _opt: command_option):
         self.initialization()
         self.starttime = _opt.search_first  # 検索開始日
-        self.endtime = _opt.search_last  # 検索終了日
         self.starttime_hm = _opt.search_first.strftime("%Y/%m/%d %H:%M")
-        self.endtime_hm = _opt.search_last.strftime("%Y/%m/%d %H:%M")
         self.starttime_hms = _opt.search_first.strftime("%Y/%m/%d %H:%M:%S")
-        self.endtime_hms = _opt.search_last.strftime("%Y/%m/%d %H:%M:%S")
-        self.starttime_ymd = _opt.search_first.strftime("%Y/%m/%d")
-        self.endtime_ymd = _opt.search_last.strftime("%Y/%m/%d")
+        self.starttime_y = _opt.search_first.strftime("%Y")
         self.starttime_ym = _opt.search_first.strftime("%Y/%m")
+        self.starttime_ymd = _opt.search_first.strftime("%Y/%m/%d")
+        self.endtime = _opt.search_last  # 検索終了日
+        self.endtime_hm = _opt.search_last.strftime("%Y/%m/%d %H:%M")
+        self.endtime_hms = _opt.search_last.strftime("%Y/%m/%d %H:%M:%S")
+        self.endtime_y = _opt.search_last.strftime("%Y")
         self.endtime_ym = _opt.search_last.strftime("%Y/%m")
-        self.endonday_ymd = _opt.search_onday.strftime("%Y/%m/%d")
+        self.endtime_ymd = _opt.search_last.strftime("%Y/%m/%d")
+        self.endonday_y = _opt.search_onday.strftime("%Y")
         self.endonday_ym = _opt.search_onday.strftime("%Y/%m")
+        self.endonday_ymd = _opt.search_onday.strftime("%Y/%m/%d")
         self.target_count = _opt.target_count
         self.stipulated = _opt.stipulated
         self.group_length = _opt.group_length

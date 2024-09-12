@@ -34,6 +34,9 @@ def _query_modification(sql: str):
         case "monthly":
             sql = sql.replace("--[collection_monthly] ", "")
             sql = sql.replace("--[collection] ", "")
+        case "yearly":
+            sql = sql.replace("--[collection_yearly] ", "")
+            sql = sql.replace("--[collection] ", "")
         case _:
             sql = sql.replace("--[not_collection] ", "")
 
@@ -507,8 +510,7 @@ def personal_gamedata():
             --[not_collection] --[group_by] sum(count) over moving as count,
             --[collection] sum(count) over moving as count,
             --[not_collection] replace(playtime, "-", "/") as playtime,
-            --[collection_daily] replace(collection_daily, "-", "/") as playtime,
-            --[collection_monthly] replace(collection, "-", "/") as playtime,
+            --[collection] replace(collection, "-", "/") as playtime,
             name,
             rank,
             point,
@@ -521,8 +523,9 @@ def personal_gamedata():
                 --[collection] count() as count,
                 --[not_collection] --[group_by] count() as count,
                 individual_results.playtime,
-                collection,
-                collection_daily,
+                --[collection_daily] collection_daily as collection,
+                --[collection_monthly] substr(collection_daily, 1, 7) as collection,
+                --[collection_yearly] substr(collection_daily, 1, 4) as collection,
                 --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[unregistered_not_replace] name, -- ゲスト無効
                 --[not_collection] rank,
@@ -549,23 +552,22 @@ def personal_gamedata():
             --[not_collection] --[group_by]     --[not_comment] collection_daily, name
             --[not_collection] --[group_by]     --[comment] game_info.comment, name
             --[not_collection] --[group_by]     --[group_length] substr(game_info.comment, 1, :group_length), name
-            --[collection_daily] group by -- 日次集計
-            --[collection_daily]     collection_daily, name
-            --[collection_monthly] group by -- 月次集計
-            --[collection_monthly]     collection, name
+            --[collection] group by
+            --[collection_daily]     collection_daily, name -- 日次集計
+            --[collection_monthly]     substr(collection_daily, 1, 7), name -- 月次集計
+            --[collection_yearly]     substr(collection_daily, 1, 4), name -- 年次集計
             order by
                 --[not_collection] individual_results.playtime desc
                 --[collection_daily] collection_daily desc
-                --[collection_monthly] collection desc
+                --[collection_monthly] substr(collection_daily, 1, 7) desc
+                --[collection_yearly] substr(collection_daily, 1, 4) desc
         )
         window
             --[not_collection] moving as (partition by name order by playtime)
-            --[collection_daily] moving as (partition by name order by collection_daily)
-            --[collection_monthly] moving as (partition by name order by collection)
+            --[collection] moving as (partition by name order by collection)
         order by
             --[not_collection] playtime, name
-            --[collection_daily] collection_daily, name
-            --[collection_monthly] collection, name
+            --[collection] collection, name
     """
 
     if g.prm.player_name:
@@ -590,8 +592,7 @@ def team_gamedata():
             --[not_collection] --[group_by] sum(count) over moving as count,
             --[collection] sum(count) over moving as count,
             --[not_collection] replace(playtime, "-", "/") as playtime,
-            --[collection_daily] replace(collection_daily, "-", "/") as playtime,
-            --[collection_monthly] replace(collection, "-", "/") as playtime,
+            --[collection] replace(collection, "-", "/") as playtime,
             team,
             rank,
             point,
@@ -604,8 +605,9 @@ def team_gamedata():
                 --[collection] count() as count,
                 --[not_collection] --[group_by] count() as count,
                 individual_results.playtime,
-                collection,
-                collection_daily,
+                --[collection_daily] collection_daily as collection,
+                --[collection_monthly] substr(collection_daily, 1, 7) as collection,
+                --[collection_yearly] substr(collection_daily, 1, 4) as collection,
                 team,
                 --[not_collection] rank,
                 --[collection] round(avg(rank), 2) as rank,
@@ -628,23 +630,22 @@ def team_gamedata():
             --[not_collection] --[group_by]     --[not_comment] collection_daily, team
             --[not_collection] --[group_by]     --[comment] game_info.comment, team
             --[not_collection] --[group_by]     --[group_length] substr(game_info.comment, 1, :group_length), team
-            --[collection_daily] group by -- 日次集計
-            --[collection_daily]     collection_daily, team
-            --[collection_monthly] group by -- 月次集計
-            --[collection_monthly]     collection, team
+            --[collection] group by
+            --[collection_daily]     collection_daily, team  -- 日次集計
+            --[collection_monthly]     substr(collection_daily, 1, 7), team -- 月次集計
+            --[collection_yearly]     substr(collection_daily, 1, 4), team -- 年次集計
             order by
                 --[not_collection] individual_results.playtime desc
                 --[collection_daily] collection_daily desc
-                --[collection_monthly] collection desc
+                --[collection_monthly] substr(collection_daily, 1, 7) desc
+                --[collection_yearly] substr(collection_daily, 1, 4) desc
         )
         window
             --[not_collection] moving as (partition by team order by playtime)
-            --[collection_daily] moving as (partition by team order by collection_daily)
-            --[collection_monthly] moving as (partition by team order by collection)
+            --[collection] moving as (partition by name order by collection)
         order by
             --[not_collection] playtime, team
-            --[collection_daily] collection_daily, team
-            --[collection_monthly] collection, team
+            --[collection] collection, team
     """
 
     return (_query_modification(sql))
