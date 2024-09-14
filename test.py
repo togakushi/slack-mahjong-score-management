@@ -44,9 +44,6 @@ for sec in test_conf.sections():
             case "skip":
                 pass
 
-            case "config":
-                pprint(vars(g.cfg))
-
             case "help":
                 pprint(f.message.help_message())
 
