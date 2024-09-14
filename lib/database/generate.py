@@ -397,6 +397,7 @@ def game_details():
             grandslam,
             regulations.word as regulation,
             regulations.ex_point,
+            regulations.type,
             --[not_group_length] game_info.comment
             --[group_length] substr(game_info.comment, 1, :group_length) as comment
         from
@@ -658,7 +659,7 @@ def monthly_report():
     sql = """
         -- monthly_report()
         select
-            collection as 集計月,
+            substr(collection_daily, 1, 7) as 集計月,
             count() / 4 as ゲーム数,
             replace(printf("%.1f pt", round(sum(point), 1)), "-", "▲") as 供託,
             count(rpoint < -1 or null) as "飛んだ人数(延べ)",
@@ -672,9 +673,9 @@ def monthly_report():
             and playtime between :starttime and :endtime
             --[search_word] and comment like :search_word
         group by
-            collection
+            substr(collection_daily, 1, 7)
         order by
-            collection desc
+            substr(collection_daily, 1, 7) desc
     """
 
     return (_query_modification(sql))
@@ -706,7 +707,7 @@ def winner_report():
                 round(sum(point), 1) as total
             from (
                 select
-                    collection,
+                    substr(collection_daily, 1, 7) as collection,
                     --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                     --[unregistered_not_replace] name, -- ゲスト無効
                     point

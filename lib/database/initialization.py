@@ -133,13 +133,6 @@ def initialization_resultdb():
                         time(playtime) between "00:00:00" and "11:59:59"
                             then date(playtime, "-1 days")
                             else date(playtime)
-                    end, 1, 7
-                ) as collection,
-                substr(
-                    case when
-                        time(playtime) between "00:00:00" and "11:59:59"
-                            then date(playtime, "-1 days")
-                            else date(playtime)
                     end, 1, 10
                 ) as collection_daily,
                 rule_version,
@@ -169,13 +162,6 @@ def initialization_resultdb():
                 ifnull(ex_point, 0),
                 p2_name not in (select name from member),
                 team.name,
-                substr(
-                    case when
-                        time(playtime) between "00:00:00" and "11:59:59"
-                            then date(playtime, "-1 days")
-                            else date(playtime)
-                    end, 1, 7
-                ),
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -215,13 +201,6 @@ def initialization_resultdb():
                         time(playtime) between "00:00:00" and "11:59:59"
                             then date(playtime, "-1 days")
                             else date(playtime)
-                    end, 1, 7
-                ),
-                substr(
-                    case when
-                        time(playtime) between "00:00:00" and "11:59:59"
-                            then date(playtime, "-1 days")
-                            else date(playtime)
                     end, 1, 10
                 ),
                 rule_version,
@@ -251,13 +230,6 @@ def initialization_resultdb():
                 ifnull(ex_point, 0),
                 p4_name not in (select name from member),
                 team.name,
-                substr(
-                    case when
-                        time(playtime) between "00:00:00" and "11:59:59"
-                            then date(playtime, "-1 days")
-                            else date(playtime)
-                    end, 1, 7
-                ),
                 substr(
                     case when
                         time(playtime) between "00:00:00" and "11:59:59"
@@ -391,6 +363,7 @@ def initialization_resultdb():
                 remarks.name,
                 group_concat(remarks.matter) as word,
                 sum(words.ex_point) as ex_point,
+                words.type,
                 game_info.guest_count,
                 game_info.same_team
             from
@@ -400,7 +373,7 @@ def initialization_resultdb():
             join game_info on
                 game_info.ts == remarks.thread_ts
             where
-                words.type == 1
+                words.type not null or words.type != 0
             group by
                 remarks.thread_ts, remarks.name
         """
@@ -427,7 +400,18 @@ def initialization_resultdb():
                 "insert into words(word, type, ex_point) values (?, 1, ?)",
                 (word, int(ex_point),)
             )
-            logging.info(f"regulations table update: {word}, {ex_point}")
+            logging.info(f"regulations table(type1): {word}, {ex_point}")
+
+    words = g.cfg.config["mahjong"].get("regulations_type2", None)
+    if words:
+        words_list = set([x.strip() for x in words.split(",")])
+        resultdb.execute("delete from words where type == 2")
+        for word in words_list:
+            resultdb.execute(
+                "insert into words(word, type, ex_point) values (?, 2, NULL)",
+                (word,)
+            )
+        logging.info(f"regulations table(type2): {words_list}")
 
     resultdb.commit()
     resultdb.close()

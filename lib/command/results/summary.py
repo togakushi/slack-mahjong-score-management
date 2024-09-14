@@ -26,7 +26,10 @@ def aggregation():
     df_summary = d.aggregate.game_summary()
     df_game = d.aggregate.game_details()
     df_grandslam = df_game.query("grandslam != ''")
-    df_regulations = df_game.query("regulation != ''")
+    df_regulations = df_game.query("type == 1")
+    df_wordcount = df_game.query("type == 2")
+
+    print(df_wordcount)
 
     # ゲスト戦
     if g.opt.unregistered_replace:
@@ -64,7 +67,8 @@ def aggregation():
 
         # メモ表示
         memo_grandslam = ""
-        if len(df_grandslam):
+        if not df_grandslam.empty:
+            memo_grandslam = "\n*【役満和了】*\n"
             for _, v in df_grandslam.iterrows():
                 memo_grandslam += "\t{} ： {} （{}）\n".format(
                     v["playtime"].replace("-", "/"),
@@ -73,7 +77,8 @@ def aggregation():
                 )
 
         memo_regulation = ""
-        if len(df_regulations):
+        if not df_regulations.empty:
+            memo_regulation = "\n*【卓外ポイント】*\n"
             for _, v in df_regulations.iterrows():
                 memo_regulation += "\t{} ： {} {}pt（{}）\n".format(
                     v["playtime"].replace("-", "/"),
@@ -82,9 +87,18 @@ def aggregation():
                     v["表示名"].strip(),
                 )
 
-        if memo_grandslam or memo_regulation:
-            msg_memo = "*【メモ】*\n"
-            msg_memo += memo_grandslam + memo_regulation
+        memo_wordcount = ""
+        if not df_wordcount.empty:
+            memo_wordcount = "\n*【メモ】*\n"
+            for _, v in df_wordcount.iterrows():
+                memo_wordcount += "\t{} ： {} （{}）\n".format(
+                    v["playtime"].replace("-", "/"),
+                    v["regulation"],
+                    v["表示名"].strip(),
+                )
+
+        if memo_grandslam or memo_regulation or memo_wordcount:
+            msg_memo = (memo_grandslam + memo_regulation + memo_wordcount).strip()
 
     else:  # 差分表示
         df_grandslam = df_grandslam[:0]  # 非表示のため破棄
