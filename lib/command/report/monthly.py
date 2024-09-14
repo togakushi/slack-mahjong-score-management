@@ -25,6 +25,18 @@ def plot():
     f.common.graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
 
+    # 色彩設定
+    match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
+        case text_color, bg_color if text_color == "black" and bg_color == "white":
+            line_color1 = "#ffffff"
+            line_color2 = "#dddddd"
+        case text_color, bg_color if text_color == "white" and bg_color == "black":
+            line_color1 = "#000000"
+            line_color2 = "#111111"
+        case _:
+            line_color1 = plt.rcParams["figure.facecolor"]
+            line_color2 = plt.rcParams["figure.facecolor"]
+
     column_labels = list(results[list(results.keys())[0]].keys())
     column_color = ["#000080" for i in column_labels]
 
@@ -35,9 +47,9 @@ def plot():
         line_count += 1
         cell_param.append([results[x][y] for y in column_labels])
         if int(line_count % 2):
-            cell_color.append(["#ffffff" for i in column_labels])
+            cell_color.append([line_color1 for i in column_labels])
         else:
-            cell_color.append(["#dddddd" for i in column_labels])
+            cell_color.append([line_color2 for i in column_labels])
 
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
