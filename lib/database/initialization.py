@@ -363,7 +363,7 @@ def initialization_resultdb():
                 remarks.name,
                 group_concat(remarks.matter) as word,
                 sum(words.ex_point) as ex_point,
-                words.type,
+                ifnull(words.type, 0),
                 game_info.guest_count,
                 game_info.same_team
             from

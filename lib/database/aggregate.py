@@ -385,14 +385,12 @@ def regulations_count():
         d.generate.remark_count(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
-    ).query("type == 1")
+    ).query("type == type or type != 0")
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
         lambda x: c.member.NameReplace(x, add_mark=True)
     )
-
-    df = df.filter(items=["プレイヤー名", "matter", "count", "ex_point"])
 
     logging.trace(df)  # type: ignore
     return (df)

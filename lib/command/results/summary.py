@@ -89,7 +89,7 @@ def aggregation():
 
         memo_wordcount = ""
         if not df_wordcount.empty:
-            memo_wordcount = "\n*【メモ】*\n"
+            memo_wordcount = "\n*【その他】*\n"
             for _, v in df_wordcount.iterrows():
                 memo_wordcount += "\t{} ： {} （{}）\n".format(
                     v["playtime"].replace("-", "/"),
