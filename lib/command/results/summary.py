@@ -78,7 +78,7 @@ def aggregation():
                 memo_regulation += "\t{} ： {} {}pt（{}）\n".format(
                     v["playtime"].replace("-", "/"),
                     v["regulation"],
-                    v["ex_point"],
+                    str(v["ex_point"]).replace("-", "▲"),
                     v["表示名"].strip(),
                 )
 
