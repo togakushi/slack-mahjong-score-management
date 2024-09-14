@@ -7,8 +7,8 @@ import pandas as pd
 
 import global_value as g
 from lib import command as c
-from lib import database as d
 from lib import function as f
+from lib.database import query
 
 
 def _disp_name(df, adjust=0):
@@ -73,7 +73,7 @@ def game_info():
 
     # データ収集
     df = pd.read_sql(
-        d.generate.game_info(),
+        query.game.info(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict()
     )
@@ -107,7 +107,7 @@ def game_summary():
 
     # データ収集
     df = pd.read_sql(
-        d.generate.game_results(),
+        query.game.summary(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -152,8 +152,9 @@ def game_details():
     df : DataFrame
     """
 
+    # データ収集
     df = pd.read_sql(
-        d.generate.game_details(),
+        query.game.details(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -164,6 +165,43 @@ def game_details():
     return (df.fillna(value=""))
 
 
+def grandslam_count():
+    # データ収集
+    df = pd.read_sql(
+        query.game.remark_count(),
+        sqlite3.connect(g.cfg.db.database_file),
+        params=g.prm.to_dict(),
+    ).query("type != type or type == 0")
+
+    # ゲスト置換
+    df["プレイヤー名"] = df["name"].apply(
+        lambda x: c.member.NameReplace(x, add_mark=True)
+    )
+
+    df = df.filter(items=["プレイヤー名", "matter", "count"])
+
+    logging.trace(df)  # type: ignore
+    return (df)
+
+
+def regulations_count():
+    # データ収集
+    df = pd.read_sql(
+        query.game.remark_count(),
+        sqlite3.connect(g.cfg.db.database_file),
+        params=g.prm.to_dict(),
+    ).query("type == type or type != 0")
+
+    # ゲスト置換
+    df["プレイヤー名"] = df["name"].apply(
+        lambda x: c.member.NameReplace(x, add_mark=True)
+    )
+
+    logging.trace(df)  # type: ignore
+    return (df)
+
+
+# 個人
 def personal_record():
     """
     個人記録を集計する
@@ -175,7 +213,7 @@ def personal_record():
 
     # データ収集
     gamedata = pd.read_sql(
-        d.generate.record_count(),
+        query.personal.record_count(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -245,7 +283,7 @@ def personal_results():
 
     # データ収集
     df = pd.read_sql(
-        d.generate.personal_results(),
+        query.personal.results(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -267,25 +305,10 @@ def personal_results():
     return (df)
 
 
-def versus_matrix():
-    # データ収集
-    df = pd.read_sql(
-        d.generate.versus_matrix(),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
-
-    # ゲスト置換
-    df["my_表示名"] = _disp_name(df["my_name"])
-    df["vs_表示名"] = _disp_name(df["vs_name"])
-
-    return (df)
-
-
 def personal_gamedata():
     # データ収集
     df = pd.read_sql(
-        d.generate.personal_gamedata(),
+        query.personal.gamedata(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -298,41 +321,29 @@ def personal_gamedata():
     return (df)
 
 
+def versus_matrix():
+    # データ収集
+    df = pd.read_sql(
+        query.personal.versus_matrix(),
+        sqlite3.connect(g.cfg.db.database_file),
+        params=g.prm.to_dict(),
+    )
+
+    # ゲスト置換
+    df["my_表示名"] = _disp_name(df["my_name"])
+    df["vs_表示名"] = _disp_name(df["vs_name"])
+
+    return (df)
+
+
+# チーム
 def team_gamedata():
     # データ収集
     df = pd.read_sql(
-        d.generate.team_gamedata(),
+        query.team.gamedata(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
-
-    return (df)
-
-
-def monthly_report():
-    # データ収集
-    df = pd.read_sql(
-        d.generate.monthly_report(),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
-
-    return (df)
-
-
-def winner_report():
-    # データ収集
-    df = pd.read_sql(
-        d.generate.winner_report(),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    ).fillna(value=np.nan)
-
-    # ゲスト置換
-    for i in range(1, 6):
-        df[f"pname{i}"] = df[f"name{i}"].apply(
-            lambda x: "該当者なし" if type(x) is float else c.member.NameReplace(x, add_mark=True)
-        )
 
     return (df)
 
@@ -348,7 +359,7 @@ def team_total():
 
     # データ収集
     df = pd.read_sql(
-        d.generate.team_total(),
+        query.team.total(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -360,39 +371,32 @@ def team_total():
     return (df)
 
 
-def grandslam_count():
+# レポート
+def monthly_report():
     # データ収集
     df = pd.read_sql(
-        d.generate.remark_count(),
+        query.report.monthly(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
-    ).query("type != type or type == 0")
-
-    # ゲスト置換
-    df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, add_mark=True)
     )
 
-    df = df.filter(items=["プレイヤー名", "matter", "count"])
-
-    logging.trace(df)  # type: ignore
     return (df)
 
 
-def regulations_count():
+def winner_report():
     # データ収集
     df = pd.read_sql(
-        d.generate.remark_count(),
+        query.report.winner(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
-    ).query("type == type or type != 0")
+    ).fillna(value=np.nan)
 
     # ゲスト置換
-    df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, add_mark=True)
-    )
+    for i in range(1, 6):
+        df[f"pname{i}"] = df[f"name{i}"].apply(
+            lambda x: "該当者なし" if type(x) is float else c.member.NameReplace(x, add_mark=True)
+        )
 
-    logging.trace(df)  # type: ignore
     return (df)
 
 
@@ -403,7 +407,7 @@ def matrix_table():
 
     # データ収集
     df = pd.read_sql(
-        d.generate.matrix_table(),
+        query.report.matrix_table(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict()
     ).set_index("playtime")

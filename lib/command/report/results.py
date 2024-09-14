@@ -19,7 +19,7 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
 
 import global_value as g
 from lib import command as c
-from lib.command.report import _query as query
+from lib.database import query
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -34,7 +34,7 @@ def get_game_results(flag="M"):
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query.for_report_personal_data(flag),
+        query.report.personal_data(flag),
         g.prm.to_dict(),
     )
 
@@ -82,13 +82,15 @@ def get_game_results(flag="M"):
 
 
 def get_count_results(game_count):
+    g.prm.append({"interval": game_count})
+
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query.for_report_count_data(game_count),
+        query.report.count_data(game_count),
         g.prm.to_dict(),
     )
 
@@ -138,13 +140,15 @@ def get_count_results(game_count):
 
 
 def get_count_moving(game_count):
+    g.prm.append({"interval": game_count})
+
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query.for_report_count_moving(game_count),
+        query.report.count_moving(game_count),
         g.prm.to_dict(),
     )
 

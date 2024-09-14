@@ -1,13 +1,98 @@
+import inspect
 import logging
 import os
+import re
 import shutil
 import sqlite3
+import textwrap
 from contextlib import closing
 from datetime import datetime
 
 import global_value as g
 from lib import database as d
 from lib import function as f
+
+
+def query_modification(sql: str):
+    """
+    オプションの内容でクエリを修正する
+    """
+
+    if g.opt.team_total:  # チーム戦
+        sql = sql.replace("--[team] ", "")
+        if not g.opt.friendly_fire:
+            sql = sql.replace("--[friendly_fire] ", "")
+    else:  # 個人戦
+        # ゲスト関連フラグ
+        if g.opt.unregistered_replace:
+            sql = sql.replace("--[unregistered_replace] ", "")
+            if g.opt.guest_skip:
+                sql = sql.replace("--[guest_not_skip] ", "")
+            else:
+                sql = sql.replace("--[guest_skip] ", "")
+        else:
+            sql = sql.replace("--[unregistered_not_replace] ", "")
+
+    # 集約集計
+    match g.opt.collection:
+        case "daily":
+            sql = sql.replace("--[collection_daily] ", "")
+            sql = sql.replace("--[collection] ", "")
+        case "monthly":
+            sql = sql.replace("--[collection_monthly] ", "")
+            sql = sql.replace("--[collection] ", "")
+        case "yearly":
+            sql = sql.replace("--[collection_yearly] ", "")
+            sql = sql.replace("--[collection] ", "")
+        case _:
+            sql = sql.replace("--[not_collection] ", "")
+
+    if g.prm.search_word or g.prm.group_length:
+        sql = sql.replace("--[group_by] ", "")
+    else:
+        sql = sql.replace("--[not_group_by] ", "")
+
+    # コメント検索
+    if g.opt.search_word:
+        sql = sql.replace("--[search_word] ", "")
+    else:
+        sql = sql.replace("--[not_search_word] ", "")
+
+    if g.opt.group_length:
+        sql = sql.replace("--[group_length] ", "")
+    else:
+        sql = sql.replace("--[not_group_length] ", "")
+        if g.prm.search_word:
+            sql = sql.replace("--[comment] ", "")
+        else:
+            sql = sql.replace("--[not_comment] ", "")
+
+    # 直近N検索用（全範囲取得してから絞る）
+    if g.prm.target_count != 0:
+        sql = sql.replace(
+            "and my.playtime between",
+            "-- and my.playtime between"
+        )
+
+    # プレイヤーリスト
+    if g.prm.player_name:
+        sql = sql.replace("--[player_name] ", "")
+        sql = sql.replace(
+            "<<player_list>>",
+            ":" + ", :".join([x for x in [*g.prm.player_list]])
+        )
+
+    # SQLコメント削除
+    sql = re.sub(r"^ *--\[.*$", "", sql, flags=re.MULTILINE)
+    sql = re.sub(r"\n+", "\n", sql, flags=re.MULTILINE)
+
+    # デバッグ用
+    func = inspect.stack()[1].function
+    logging.trace(f"{func}: opt = {vars(g.opt)}")  # type: ignore
+    logging.trace(f"{func}: prm = {vars(g.prm)}")  # type: ignore
+    logging.trace(f"{func}: sql = {textwrap.dedent(sql)}")  # type: ignore
+
+    return (sql)
 
 
 def ExsistRecord(ts):
