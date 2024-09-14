@@ -44,6 +44,10 @@ for sec in test_conf.sections():
             case "skip":
                 pass
 
+            case "member":
+                pprint(g.member_list)
+                pprint(g.team_list)
+
             case "help":
                 pprint(f.message.help_message())
 
