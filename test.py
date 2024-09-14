@@ -98,3 +98,21 @@ for sec in test_conf.sections():
                 g.prm.update(g.opt)
                 dump()
                 pprint(c.report.slackpost.matrix.plot())
+
+            case "report":
+                g.opt.initialization("report", g.msg.argument)
+
+                g.opt.filename = f"report_monthly_{sec}_{pattern}"
+                g.prm.update(g.opt)
+                dump()
+                pprint(c.report.slackpost.monthly.plot())
+
+                g.opt.filename = f"report_winner_{sec}_{pattern}"
+                g.prm.update(g.opt)
+                dump()
+                pprint(c.report.slackpost.winner.plot())
+
+                g.opt.filename = f"report_personal_{sec}_{pattern}"
+                g.prm.update(g.opt)
+                dump()
+                pprint(c.report.slackpost.personal.plot())
