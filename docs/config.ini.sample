@@ -12,6 +12,8 @@ rank_point = 20,10,-10,-20
 ignore_flying = False
 # 同点のときの順位点の決定方法(席順=False/山分け=True)
 draw_split = False
+# メモ機能で登録されたワードのうち、個別にカウントするもの(カンマ区切り)
+regulations_type2 = ヤキトリ,チョンボ
 
 
 ### 設定 ###
