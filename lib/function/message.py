@@ -1,4 +1,5 @@
 import random
+import re
 import textwrap
 
 import global_value as g
@@ -49,6 +50,11 @@ def help_message():
     report_option = f.configuration.command_option()
     report_option.initialization("report")
 
+    words = g.cfg.config["mahjong"].get("regulations_type2", None)
+    if words:
+        words_list = set([x.strip() for x in words.split(",")])
+        meg_wordcount = "個別カウントワード： " + ", ".join(words_list)
+
     msg = textwrap.dedent(f"""
         *成績記録キーワード*
         \t{g.cfg.search.keyword}
@@ -75,15 +81,30 @@ def help_message():
         \t*チーム一覧*
         \t\t呼び出しキーワード： {g.cfg.cw.team}
 
-        *オプション*
-        \t詳細説明： https://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/argument_keyword.md
-    """).strip()
+        \t*メモ*
+        \t\t登録キーワード： {g.cfg.cw.remarks_word}
+        {"\t\t" + meg_wordcount if words else ""}
+    """)
 
+    # 追加ルール（卓外ポイント）
     if g.cfg.config.has_section("regulations"):
         additional_rule = "\n\n*追加ルール*\n"
         for word, ex_point in g.cfg.config.items("regulations"):
             additional_rule += f"\t{word}： {ex_point}pt\n"
         msg += additional_rule
+
+    # 検索範囲
+    msg += "\n*検索範囲に指定できるキーワード*\n"
+    for x in g.search_word.list().splitlines():
+        msg += f"\t{x}\n"
+
+    # 追加説明
+    msg += textwrap.dedent("""
+        *その他オプション詳細説明*
+        \thttps://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/argument_keyword.md
+    """)
+
+    msg = re.sub(r"\n\n\n", "\n\n", msg, flags=re.MULTILINE)
 
     return (msg.strip())
 
