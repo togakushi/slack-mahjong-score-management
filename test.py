@@ -57,6 +57,13 @@ for sec in test_conf.sections():
                 dump(flag)
                 pprint(c.results.summary.aggregation())
 
+            case "personal":
+                g.opt.initialization("results", argument.split())
+
+                g.prm.update(g.opt)
+                dump(flag)
+                pprint(c.results.personal.aggregation())
+
             case "team":
                 g.opt.initialization("results", argument.split())
 
