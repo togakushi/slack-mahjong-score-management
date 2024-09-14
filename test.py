@@ -9,10 +9,11 @@ from lib import function as f
 from lib.function import configuration
 
 
-def dump():
-    pprint(["*** opt ***", vars(g.opt)])
-    pprint(["*** prm ***", vars(g.prm)])
-    pprint(["*** game_info ***", d.aggregate.game_info()])
+def dump(flag=True):
+    if flag:
+        pprint(["*** opt ***", vars(g.opt)])
+        pprint(["*** prm ***", vars(g.prm)])
+        pprint(["*** game_info ***", d.aggregate.game_info()])
 
 
 # ---
@@ -20,11 +21,13 @@ configuration.setup()
 test_conf = configparser.ConfigParser()
 test_conf.read(g.args.testcase, encoding="utf-8")
 
+flag = test_conf["default"].getboolean("dump", False)
 c.member.read_memberslist()
 
 for sec in test_conf.sections():
     print("=" * 80)
     print(f"[TEST CASE] {sec}")
+    test_case = None
 
     for pattern, argument in test_conf[sec].items():
         if pattern == "case":
@@ -33,6 +36,9 @@ for sec in test_conf.sections():
 
         print("-" * 80)
         print(f"{pattern=} {argument=}")
+
+        if test_conf[sec].getboolean("config", False):
+            pprint(["*** config ***", vars(g.cfg)])
 
         match test_case:
             case "skip":
@@ -48,14 +54,14 @@ for sec in test_conf.sections():
                 g.opt.initialization("results", argument.split())
 
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.results.summary.aggregation())
 
             case "team":
                 g.opt.initialization("results", argument.split())
 
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.results.team.aggregation())
 
             case "graph":
@@ -63,12 +69,12 @@ for sec in test_conf.sections():
 
                 g.opt.filename = f"point_{sec}_{pattern}"
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.graph.summary.point_plot())
 
                 g.opt.filename = f"rank_{sec}_{pattern}"
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.graph.summary.rank_plot())
 
             case "team-graph":
@@ -77,18 +83,18 @@ for sec in test_conf.sections():
 
                 g.opt.filename = f"point_{sec}_{pattern}"
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.graph.summary.point_plot())
 
                 g.opt.filename = f"rank_{sec}_{pattern}"
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.graph.summary.rank_plot())
 
             case "ranking":
                 g.msg.argument = argument.split()
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.ranking.slackpost.main())
 
             case "matrix":
@@ -96,7 +102,7 @@ for sec in test_conf.sections():
 
                 g.opt.filename = f"matrix_{sec}_{pattern}"
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.report.slackpost.matrix.plot())
 
             case "report":
@@ -104,15 +110,23 @@ for sec in test_conf.sections():
 
                 g.opt.filename = f"report_monthly_{sec}_{pattern}"
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.report.slackpost.monthly.plot())
 
                 g.opt.filename = f"report_winner_{sec}_{pattern}"
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.report.slackpost.winner.plot())
 
                 g.opt.filename = f"report_personal_{sec}_{pattern}"
                 g.prm.update(g.opt)
-                dump()
+                dump(flag)
                 pprint(c.report.slackpost.personal.plot())
+
+            case "pdf":
+                g.opt.initialization("report", g.msg.argument)
+
+                g.opt.filename = f"report_{sec}_{pattern}"
+                g.prm.update(g.opt)
+                dump(flag)
+                pprint(c.report.slackpost.results.gen_pdf())
