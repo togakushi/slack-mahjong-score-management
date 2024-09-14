@@ -397,7 +397,7 @@ def game_details():
             grandslam,
             regulations.word as regulation,
             regulations.ex_point,
-            regulations.type,
+            regulations.type as type,
             --[not_group_length] game_info.comment
             --[group_length] substr(game_info.comment, 1, :group_length) as comment
         from

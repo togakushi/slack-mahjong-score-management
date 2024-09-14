@@ -29,8 +29,6 @@ def aggregation():
     df_regulations = df_game.query("type == 1")
     df_wordcount = df_game.query("type == 2")
 
-    print(df_wordcount)
-
     # ゲスト戦
     if g.opt.unregistered_replace:
         if g.opt.guest_skip:  # ゲストあり(2ゲスト戦除外)

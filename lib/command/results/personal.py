@@ -106,15 +106,17 @@ def aggregation():
     msg2["記録"] = msg2["記録"].replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
     if not df_grandslam.empty:
-        msg2["記録"] += "\n*【役満】*\n"
+        msg2["記録"] += "\n*【役満和了】*\n"
         for x in df_grandslam.itertuples():
             msg2["記録"] += f"\t{x.matter}\t{x.count}回\n"
 
-    if not df_regulations.empty:
+    if not df_regulations.query("type == 1").empty:
         msg2["記録"] += "\n*【卓外ポイント】*\n"
         for x in df_regulations.query("type == 1").itertuples():
             ex_point = str(x.ex_point).replace("-", "▲")
             msg2["記録"] += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
+
+    if not df_regulations.query("type == 2").empty:
         msg2["記録"] += "\n*【その他】*\n"
         for x in df_regulations.query("type == 2").itertuples():
             msg2["記録"] += f"\t{x.matter}\t{x.count}回\n"
