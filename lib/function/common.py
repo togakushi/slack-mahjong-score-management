@@ -241,11 +241,12 @@ def graph_setup(plt, fm):
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
 
-    # グリッド線を使用しないスタイルに追加
+    # グリッド線
     if not plt.rcParams["axes.grid"]:
         plt.rcParams["axes.grid"] = True
         plt.rcParams["grid.alpha"] = 0.3
         plt.rcParams["grid.linestyle"] = "--"
+    plt.rcParams["axes.axisbelow"] = True
 
 
 def scope_coverage(argument: list):

@@ -269,7 +269,6 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
     )
 
     f.common.graph_setup(plt, fm)
-    plt.gca().set_axisbelow(True)
 
     if all(df.count() == 1) and kwargs["horizontal"]:
         kwargs["kind"] = "barh"
