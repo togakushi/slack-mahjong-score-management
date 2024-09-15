@@ -153,7 +153,7 @@ def personal_data(flag="M"):
             and name = :player_name
         <<group by>>
         order by
-            collection desc
+            collection_daily desc
     """
 
     match flag:

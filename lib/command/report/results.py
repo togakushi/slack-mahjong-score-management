@@ -90,7 +90,7 @@ def get_count_results(game_count):
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query.report.count_data(game_count),
+        query.report.count_data(),
         g.prm.to_dict(),
     )
 
