@@ -36,6 +36,7 @@ for sec in test_conf.sections():
 
         print("-" * 80)
         print(f"{pattern=} {argument=}")
+        g.msg.argument = argument.split()
 
         if test_conf[sec].getboolean("config", False):
             pprint(["*** config ***", vars(g.cfg)])
@@ -52,28 +53,28 @@ for sec in test_conf.sections():
                 pprint(f.message.help_message())
 
             case "summary":
-                g.opt.initialization("results", argument.split())
+                g.opt.initialization("results", g.msg.argument)
 
                 g.prm.update(g.opt)
                 dump(flag)
                 pprint(c.results.summary.aggregation())
 
             case "personal":
-                g.opt.initialization("results", argument.split())
+                g.opt.initialization("results", g.msg.argument)
 
                 g.prm.update(g.opt)
                 dump(flag)
                 pprint(c.results.personal.aggregation())
 
             case "team":
-                g.opt.initialization("results", argument.split())
+                g.opt.initialization("results", g.msg.argument)
 
                 g.prm.update(g.opt)
                 dump(flag)
                 pprint(c.results.team.aggregation())
 
             case "graph":
-                g.opt.initialization("graph", argument.split())
+                g.opt.initialization("graph", g.msg.argument)
 
                 g.opt.filename = f"point_{sec}_{pattern}"
                 g.prm.update(g.opt)
@@ -86,7 +87,7 @@ for sec in test_conf.sections():
                 pprint(c.graph.summary.rank_plot())
 
             case "team-graph":
-                g.opt.initialization("graph", argument.split())
+                g.opt.initialization("graph", g.msg.argument)
                 g.opt.team_total = True
 
                 g.opt.filename = f"point_{sec}_{pattern}"
