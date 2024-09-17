@@ -364,11 +364,14 @@ def team_total():
         params=g.prm.to_dict(),
     )
 
+    # 点数差分
+    df["pt_diff"] = df["pt_total"].diff().abs().round(2)
+
     # インデックスの振り直し
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    return (df)
+    return (df.fillna(value="*****"))
 
 
 # レポート

@@ -24,11 +24,13 @@ def aggregation():
     # データ収集
     game_info = d.aggregate.game_info()
     df_summary = d.aggregate.team_total()
+
     df_summary = df_summary.rename(
         columns={
             "team": "チーム名",
             "pt_total": "通算",
             "rank_distr": "順位分布",
+            "pt_diff": "差分",
             "count": "ゲーム数",
         }
     )
@@ -40,13 +42,27 @@ def aggregation():
     file_list = {}
 
     if not df_summary.empty:
-        data = df_summary.to_markdown(
-            index=False,
-            tablefmt="simple",
-            numalign="right",
-            maxheadercolwidths=16,
-            floatfmt=("", "+.1f", "", "")
-        )
+        if g.opt.score_comparisons:  # ポイント差分表示
+            data = df_summary.filter(
+                items=["チーム名", "通算", "差分"]
+            ).to_markdown(
+                index=False,
+                tablefmt="simple",
+                numalign="right",
+                maxheadercolwidths=16,
+                floatfmt=("", "+.1f", ".1f")
+            )
+        else:  # 通常表示
+            data = df_summary.filter(
+                items=["チーム名", "通算", "順位分布", "ゲーム数"]
+            ).to_markdown(
+                index=False,
+                tablefmt="simple",
+                numalign="right",
+                maxheadercolwidths=16,
+                floatfmt=("", "+.1f", "", "")
+            )
+
         data = re.sub(r" -([0-9]+)", r"▲\1", data)
         msg[0] = f"```\n{data}\n```"
 
