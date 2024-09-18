@@ -202,11 +202,21 @@ def save_output(df, format, filename):
     save_file : file path / None
     """
 
+    fmt = []
+    for x in df.columns:
+        match x:
+            case "通算" | "平均":
+                fmt.append("+.1f")
+            case "平均順位" | "平順":
+                fmt.append("+.2f")
+            case _:
+                fmt.append("")
+
     match format.lower():
         case "csv":
             data = df.to_csv(index=False)
         case "text" | "txt":
-            data = df.to_markdown(index=False, tablefmt="outline")
+            data = df.to_markdown(index=False, tablefmt="outline", floatfmt=fmt)
         case _:
             return (None)
 
