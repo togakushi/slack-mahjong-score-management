@@ -1,6 +1,6 @@
+import global_value as g
 from lib import function as f
 from lib.command.graph import personal, summary
-import global_value as g
 
 
 def main():

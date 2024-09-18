@@ -2,9 +2,9 @@ import textwrap
 
 import pandas as pd
 
-from lib import function as f
-from lib import database as d
 import global_value as g
+from lib import database as d
+from lib import function as f
 
 
 def aggregation():

@@ -6,7 +6,6 @@ import global_value as g
 from lib import command as c
 from lib import database as d
 from lib import function as f
-from lib.command.member import NameReplace
 
 
 def check_namepattern(name):
@@ -174,7 +173,7 @@ def append(argument):
         g.opt.unregistered_replace = False
 
         team_name = f.common.HAN2ZEN(argument[0])
-        player_name = NameReplace(argument[1])
+        player_name = c.member.NameReplace(argument[1])
         logging.notice(f"Team participation: {team_name} -> {player_name}")  # type: ignore
 
         registration_flg = True
@@ -243,7 +242,7 @@ def remove(argument):
         g.opt.unregistered_replace = False
 
         team_name = f.common.HAN2ZEN(argument[0])
-        player_name = NameReplace(argument[1])
+        player_name = c.member.NameReplace(argument[1])
         logging.notice(f"Team breakaway: {team_name} -> {player_name}")  # type: ignore
 
         registration_flg = True

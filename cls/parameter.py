@@ -3,9 +3,9 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
+import global_value as g
 from lib import command as c
 from lib import function as f
-import global_value as g
 
 
 class command_option:
