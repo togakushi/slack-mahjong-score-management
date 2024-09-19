@@ -128,13 +128,7 @@ def initialization_resultdb():
                 ifnull(ex_point, 0) as ex_point,
                 p1_name not in (select name from member) as guest,
                 team.name as team,
-                substr(
-                    case when
-                        time(playtime) between "00:00:00" and "11:59:59"
-                            then date(playtime, "-1 days")
-                            else date(playtime)
-                    end, 1, 10
-                ) as collection_daily,
+                date(result.playtime, "-12 hours") as collection_daily,
                 rule_version,
                 comment
             from
@@ -162,13 +156,7 @@ def initialization_resultdb():
                 ifnull(ex_point, 0),
                 p2_name not in (select name from member),
                 team.name,
-                substr(
-                    case when
-                        time(playtime) between "00:00:00" and "11:59:59"
-                            then date(playtime, "-1 days")
-                            else date(playtime)
-                    end, 1, 10
-                ),
+                date(result.playtime, "-12 hours"),
                 rule_version,
                 comment
             from
@@ -196,13 +184,7 @@ def initialization_resultdb():
                 ifnull(ex_point, 0),
                 p3_name not in (select name from member),
                 team.name,
-                substr(
-                    case when
-                        time(playtime) between "00:00:00" and "11:59:59"
-                            then date(playtime, "-1 days")
-                            else date(playtime)
-                    end, 1, 10
-                ),
+                date(result.playtime, "-12 hours"),
                 rule_version,
                 comment
             from
@@ -230,13 +212,7 @@ def initialization_resultdb():
                 ifnull(ex_point, 0),
                 p4_name not in (select name from member),
                 team.name,
-                substr(
-                    case when
-                        time(playtime) between "00:00:00" and "11:59:59"
-                            then date(playtime, "-1 days")
-                            else date(playtime)
-                    end, 1, 10
-                ),
+                date(result.playtime, "-12 hours"),
                 rule_version,
                 comment
             from
