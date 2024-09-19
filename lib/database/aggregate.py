@@ -213,7 +213,7 @@ def personal_record():
 
     # データ収集
     gamedata = pd.read_sql(
-        query.personal.record_count(),
+        query.individual.record_count(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -283,7 +283,7 @@ def personal_results():
 
     # データ収集
     df = pd.read_sql(
-        query.personal.results(),
+        query.individual.results(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -308,7 +308,7 @@ def personal_results():
 def personal_gamedata():
     # データ収集
     df = pd.read_sql(
-        query.personal.gamedata(),
+        query.individual.gamedata(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -324,7 +324,7 @@ def personal_gamedata():
 def versus_matrix():
     # データ収集
     df = pd.read_sql(
-        query.personal.versus_matrix(),
+        query.individual.versus_matrix(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )

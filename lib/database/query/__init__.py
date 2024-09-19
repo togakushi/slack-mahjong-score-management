@@ -1,3 +1,3 @@
-from lib.database.query import game, personal, report, team
+from lib.database.query import game, individual, report, team
 
-__all__ = ["game", "personal", "report", "team"]
+__all__ = ["game", "individual", "report", "team"]
