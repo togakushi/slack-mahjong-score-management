@@ -202,76 +202,6 @@ def regulations_count():
 
 
 # 個人
-def personal_record():
-    """
-    個人記録を集計する
-
-    Returns
-    -------
-    df : DataFrame
-    """
-
-    # データ収集
-    gamedata = pd.read_sql(
-        query.individual.record_count(),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
-
-    # 連続順位カウント
-    rank_mask = {
-        "連続トップ": {1: 1, 2: 0, 3: 0, 4: 0},
-        "連続連対": {1: 1, 2: 1, 3: 0, 4: 0},
-        "連続ラス回避": {1: 1, 2: 1, 3: 1, 4: 0},
-        "連続トップなし": {1: 0, 2: 1, 3: 1, 4: 1},
-        "連続逆連対": {1: 0, 2: 0, 3: 1, 4: 1},
-        "連続ラス": {1: 0, 2: 0, 3: 0, 4: 1},
-    }
-
-    for k in rank_mask.keys():
-        gamedata[k] = None
-        for pname in gamedata["プレイヤー名"].unique():
-            tmp_df = pd.DataFrame()
-            tmp_df["flg"] = gamedata.query(
-                "プレイヤー名 == @pname"
-            )["順位"].replace(rank_mask[k])
-            tmp_df[k] = tmp_df["flg"].groupby(
-                (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
-            ).cumcount() + 1
-            tmp_df.loc[tmp_df["flg"] == 0, k] = 0
-            gamedata.update(tmp_df)
-
-    # 最大値/最小値の格納
-    df = pd.DataFrame()
-    for pname in gamedata["プレイヤー名"].unique():
-        tmp_df = gamedata.query(
-            "プレイヤー名 == @pname"
-        ).max().to_frame().transpose()
-        tmp_df.rename(
-            columns={
-                "最終素点": "最大素点",
-                "獲得ポイント": "最大獲得ポイント",
-            },
-            inplace=True,
-        )
-        tmp_df["ゲーム数"] = len(gamedata.query("プレイヤー名 == @pname"))
-        tmp_df["最小素点"] = gamedata.query("プレイヤー名 == @pname")["最終素点"].min()
-        tmp_df["最小獲得ポイント"] = gamedata.query("プレイヤー名 == @pname")["獲得ポイント"].min()
-        df = pd.concat([df, tmp_df])
-
-    # ゲスト置換
-    df["表示名"] = _disp_name(df["プレイヤー名"])
-
-    df = df.drop(columns=["playtime", "順位"])
-
-    # インデックスの振り直し
-    df = df.reset_index(drop=True)
-    df.index = df.index + 1
-
-    logging.trace(df)  # type: ignore
-    return (df)
-
-
 def personal_results():
     """
     個人成績を集計する
@@ -372,6 +302,77 @@ def team_total():
     df.index = df.index + 1
 
     return (df.fillna(value="*****"))
+
+
+# ランキング
+def ranking_record():
+    """
+    記録を集計する
+
+    Returns
+    -------
+    df : DataFrame
+    """
+
+    # データ収集
+    gamedata = pd.read_sql(
+        query.ranking.record_count(),
+        sqlite3.connect(g.cfg.db.database_file),
+        params=g.prm.to_dict(),
+    )
+
+    # 連続順位カウント
+    rank_mask = {
+        "連続トップ": {1: 1, 2: 0, 3: 0, 4: 0},
+        "連続連対": {1: 1, 2: 1, 3: 0, 4: 0},
+        "連続ラス回避": {1: 1, 2: 1, 3: 1, 4: 0},
+        "連続トップなし": {1: 0, 2: 1, 3: 1, 4: 1},
+        "連続逆連対": {1: 0, 2: 0, 3: 1, 4: 1},
+        "連続ラス": {1: 0, 2: 0, 3: 0, 4: 1},
+    }
+
+    for k in rank_mask.keys():
+        gamedata[k] = None
+        for pname in gamedata["プレイヤー名"].unique():
+            tmp_df = pd.DataFrame()
+            tmp_df["flg"] = gamedata.query(
+                "プレイヤー名 == @pname"
+            )["順位"].replace(rank_mask[k])
+            tmp_df[k] = tmp_df["flg"].groupby(
+                (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
+            ).cumcount() + 1
+            tmp_df.loc[tmp_df["flg"] == 0, k] = 0
+            gamedata.update(tmp_df)
+
+    # 最大値/最小値の格納
+    df = pd.DataFrame()
+    for pname in gamedata["プレイヤー名"].unique():
+        tmp_df = gamedata.query(
+            "プレイヤー名 == @pname"
+        ).max().to_frame().transpose()
+        tmp_df.rename(
+            columns={
+                "最終素点": "最大素点",
+                "獲得ポイント": "最大獲得ポイント",
+            },
+            inplace=True,
+        )
+        tmp_df["ゲーム数"] = len(gamedata.query("プレイヤー名 == @pname"))
+        tmp_df["最小素点"] = gamedata.query("プレイヤー名 == @pname")["最終素点"].min()
+        tmp_df["最小獲得ポイント"] = gamedata.query("プレイヤー名 == @pname")["獲得ポイント"].min()
+        df = pd.concat([df, tmp_df])
+
+    # ゲスト置換
+    df["表示名"] = _disp_name(df["プレイヤー名"])
+
+    df = df.drop(columns=["playtime", "順位"])
+
+    # インデックスの振り直し
+    df = df.reset_index(drop=True)
+    df.index = df.index + 1
+
+    logging.trace(df)  # type: ignore
+    return (df)
 
 
 # レポート
