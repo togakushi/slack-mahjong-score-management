@@ -22,6 +22,8 @@ test_conf = configparser.ConfigParser()
 test_conf.read(g.args.testcase, encoding="utf-8")
 
 flag = test_conf["default"].getboolean("dump", False)
+
+d.initialization.initialization_resultdb()
 c.member.read_memberslist()
 
 for sec in test_conf.sections():
