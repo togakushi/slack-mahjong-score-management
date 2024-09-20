@@ -49,8 +49,8 @@ def post_multi_message(msg, ts=False, summarize=True):
             key_list = list(msg.keys())
             post_msg = msg[key_list[0]]
             for i in key_list[1:]:
-                # 95行を超える直前までまとめる
-                if len((post_msg + msg[i]).splitlines()) < 95:
+                # 4000文字を超える直前までまとめる
+                if len((post_msg + msg[i])) < 4000:
                     post_msg += msg[i]
                 else:
                     post_message(post_msg, ts)
