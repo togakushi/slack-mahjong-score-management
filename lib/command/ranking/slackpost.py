@@ -53,7 +53,7 @@ def aggregation():
     record_df = d.aggregate.ranking_record()
     result_df = pd.merge(
         result_df, record_df,
-        on=["プレイヤー名", "プレイヤー名"],
+        on=["name", "name"],
         suffixes=["", "_x"]
     )
 
@@ -90,22 +90,22 @@ def aggregation():
         },
         "トップ率": {
             "order": False, "threshold": 0,
-            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["トップ率", "1位", "ゲーム数"],
         },
         "連対率": {
             "order": False, "threshold": 0,
-            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["連対率", "連対", "ゲーム数"],
         },
         "ラス回避率": {
             "order": False, "threshold": 0,
-            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["ラス回避率", "ラス回避", "ゲーム数"],
         },
         "トビ率": {
             "order": True, "threshold": 0,
-            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
+            "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["トビ率", "トビ", "ゲーム数"],
         },
         "平均順位": {
@@ -120,7 +120,7 @@ def aggregation():
         },
         "最大素点": {
             "order": False, "threshold": -999999999,
-            "str": "{:>5.0f} 点 ( {:>5.1f} pt )",
+            "str": "{:>6.0f} 点 ( {:>5.1f} pt )",
             "params": ["最大素点", "最大獲得ポイント"],
         },
         "連続トップ": {
@@ -149,6 +149,9 @@ def aggregation():
     for x in ["連続トップ", "連続連対", "連続ラス回避"]:  # 型変換
         result_df[x] = result_df[x].astype(int)
 
+    if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
+        data.pop("トビ率")
+
     # --- 表示
     msg1 = "\n*【ランキング】*\n"
     msg1 += f.message.header(game_info, vars(g.prm), "", 1)
@@ -164,7 +167,7 @@ def aggregation():
             f"{k}_rank <= @g.opt.ranked and {k} >= @data['{k}']['threshold']"
         )
 
-        for _, s in tmp_df.drop_duplicates(subset="プレイヤー名").iterrows():
+        for _, s in tmp_df.drop_duplicates(subset="name").iterrows():
             msg2[k] += ("\t{:3d}： {}\t" + data[k]["str"] + "\n").format(
                 int(s[f"{k}_rank"]), s["表示名"],
                 *[s[x] for x in data[k]["params"]]
