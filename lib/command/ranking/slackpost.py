@@ -153,7 +153,10 @@ def aggregation():
         data.pop("トビ率")
 
     # --- 表示
-    msg1 = "\n*【ランキング】*\n"
+    if g.opt.team_total:
+        msg1 = "\n*【チームランキング】*\n"
+    else:
+        msg1 = "\n*【ランキング】*\n"
     msg1 += f.message.header(game_info, vars(g.prm), "", 1)
     msg2 = {}
 

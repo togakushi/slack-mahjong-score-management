@@ -203,7 +203,8 @@ def remarks():
     if not g.opt.guest_skip:
         remark.append("2ゲスト戦の結果を含む")
     if not g.opt.unregistered_replace:
-        remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
+        if not g.opt.team_total:
+            remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
     if remark:
         ret = "特記事項：" + "、".join(remark) + "\n"
 
@@ -243,7 +244,10 @@ def header(game_info, params, add_text="", indent=1):
             case _:
                 msg += game_range2
                 msg += f"{tab}総ゲーム数：{game_info['game_count']} 回\n"
-        msg += tab + f.message.remarks().strip()
+
+        msg_remarks = f.message.remarks().strip()
+        for x in msg_remarks.splitlines():
+            msg += tab + x.strip()
 
     return (msg)
 
