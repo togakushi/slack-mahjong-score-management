@@ -33,9 +33,10 @@ def _disp_name(df, adjust=0):
 
     replace_list = []
     for name in list(df.unique()):
-        replace_list.append(
-            c.member.NameReplace(name, add_mark=True)
-        )
+        if g.opt.team_total:
+            replace_list.append(name)
+        else:
+            replace_list.append(c.member.NameReplace(name, add_mark=True))
 
     max_padding = c.member.CountPadding(replace_list)
     for i in range(len(replace_list)):
@@ -45,16 +46,6 @@ def _disp_name(df, adjust=0):
         replace_list[i] = f"{replace_list[i]}{padding}"
 
     return (df.replace(player_list, replace_list))
-
-
-def _guest_filter(df: pd.DataFrame):
-    if g.opt.unregistered_replace:
-        if g.opt.guest_skip:  # ゲストあり(2ゲスト戦除外)
-            df = df.query("guest_count <= 2")
-        else:  # ゲストなし(ゲスト除外)
-            df = df.query("guest == 0")
-
-    return (df)
 
 
 def game_info():
@@ -107,17 +98,26 @@ def game_summary():
 
     # データ収集
     df = pd.read_sql(
-        query.game.summary(),
+        query.summary.total(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
+    # ゲスト置換
+    if not g.opt.team_total:
+        df["name"] = df["name"].apply(
+            lambda x: c.member.NameReplace(x, add_mark=True)
+        )
+
     # ヘッダ修正
     df = df.rename(
         columns={
+            "name": "プレイヤー名",
+            "team": "チーム名",
             "count": "ゲーム数",
             "pt_total": "通算",
             "pt_avg": "平均",
+            "pt_diff": "差分",
             "rank_distr": "順位分布",
             "rank_avg": "平順",
             "flying": "トビ",
@@ -126,14 +126,6 @@ def game_summary():
             "3rd": "3位",
             "4th": "4位",
         }
-    )
-
-    # 点数差分
-    df["点差"] = df["通算"].diff().abs().round(2)
-
-    # ゲスト置換
-    df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, add_mark=True)
     )
 
     # インデックスの振り直し
@@ -154,13 +146,18 @@ def game_details():
 
     # データ収集
     df = pd.read_sql(
-        query.game.details(),
+        query.summary.details(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
     # ゲスト置換
-    df["表示名"] = _disp_name(df["プレイヤー名"])
+    if not g.opt.team_total:
+        df["name"] = df["name"].apply(
+            lambda x: c.member.NameReplace(x, add_mark=True)
+        )
+
+    df["表示名"] = _disp_name(df["name"])
 
     return (df.fillna(value=""))
 
@@ -213,7 +210,7 @@ def personal_results():
 
     # データ収集
     df = pd.read_sql(
-        query.individual.results(),
+        query.summary.results(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -225,7 +222,7 @@ def personal_results():
     }).fillna(0)
 
     # ゲスト置換
-    df["表示名"] = _disp_name(df["プレイヤー名"])
+    df["表示名"] = _disp_name(df["name"])
 
     # インデックスの振り直し
     df = df.reset_index(drop=True)
@@ -238,7 +235,7 @@ def personal_results():
 def personal_gamedata():
     # データ収集
     df = pd.read_sql(
-        query.individual.gamedata(),
+        query.summary.gamedata(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -270,38 +267,12 @@ def versus_matrix():
 def team_gamedata():
     # データ収集
     df = pd.read_sql(
-        query.team.gamedata(),
+        query.summary.gamedata(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
     return (df)
-
-
-def team_total():
-    """
-    チーム集計
-
-    Returns
-    -------
-    df : DataFrame
-    """
-
-    # データ収集
-    df = pd.read_sql(
-        query.team.total(),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
-
-    # 点数差分
-    df["pt_diff"] = df["pt_total"].diff().abs().round(2)
-
-    # インデックスの振り直し
-    df = df.reset_index(drop=True)
-    df.index = df.index + 1
-
-    return (df.fillna(value="*****"))
 
 
 # ランキング
@@ -333,10 +304,10 @@ def ranking_record():
 
     for k in rank_mask.keys():
         gamedata[k] = None
-        for pname in gamedata["プレイヤー名"].unique():
+        for pname in gamedata["name"].unique():
             tmp_df = pd.DataFrame()
             tmp_df["flg"] = gamedata.query(
-                "プレイヤー名 == @pname"
+                "name == @pname"
             )["順位"].replace(rank_mask[k])
             tmp_df[k] = tmp_df["flg"].groupby(
                 (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
@@ -346,9 +317,9 @@ def ranking_record():
 
     # 最大値/最小値の格納
     df = pd.DataFrame()
-    for pname in gamedata["プレイヤー名"].unique():
+    for pname in gamedata["name"].unique():
         tmp_df = gamedata.query(
-            "プレイヤー名 == @pname"
+            "name == @pname"
         ).max().to_frame().transpose()
         tmp_df.rename(
             columns={
@@ -357,13 +328,13 @@ def ranking_record():
             },
             inplace=True,
         )
-        tmp_df["ゲーム数"] = len(gamedata.query("プレイヤー名 == @pname"))
-        tmp_df["最小素点"] = gamedata.query("プレイヤー名 == @pname")["最終素点"].min()
-        tmp_df["最小獲得ポイント"] = gamedata.query("プレイヤー名 == @pname")["獲得ポイント"].min()
+        tmp_df["ゲーム数"] = len(gamedata.query("name == @pname"))
+        tmp_df["最小素点"] = gamedata.query("name == @pname")["最終素点"].min()
+        tmp_df["最小獲得ポイント"] = gamedata.query("name == @pname")["獲得ポイント"].min()
         df = pd.concat([df, tmp_df])
 
     # ゲスト置換
-    df["表示名"] = _disp_name(df["プレイヤー名"])
+    df["表示名"] = _disp_name(df["name"])
 
     df = df.drop(columns=["playtime", "順位"])
 

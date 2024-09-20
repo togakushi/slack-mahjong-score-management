@@ -1,4 +1,5 @@
 
+import global_value as g
 from lib.database.common import query_modification
 
 
@@ -11,8 +12,9 @@ def record_count():
         -- ranking.record_count()
         select
             individual_results.playtime,
-            --[unregistered_replace] case when guest = 0 then name else :guest_name end as "プレイヤー名", -- ゲスト有効
-            --[unregistered_not_replace] name as "プレイヤー名", -- ゲスト無効
+            --[individual] --[unregistered_replace] case when guest = 0 then individual_results.name else :guest_name end as name, -- ゲスト有効
+            --[individual] --[unregistered_not_replace] individual_results.name, -- ゲスト無効
+            --[team] individual_results.name,
             rank as "順位",
             point as "獲得ポイント",
             rpoint as "最終素点"
@@ -23,11 +25,17 @@ def record_count():
         where
             individual_results.rule_version = :rule_version
             and individual_results.playtime between :starttime and :endtime
-            --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
-            --[guest_skip] and guest = 0 -- ゲストなし
+            --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
+            --[individual] --[guest_skip] and guest = 0 -- ゲストなし
             --[friendly_fire] and same_team = 0
-            --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
+            --[team] and individual_results.name notnull
+            --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
             --[search_word] and game_info.comment like :search_word
     """
+
+    if g.opt.team_total:
+        g.opt.unregistered_replace = False
+        g.opt.guest_skip = True
+        sql = sql.replace("individual_results", "team_results")
 
     return (query_modification(sql))

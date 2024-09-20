@@ -29,15 +29,6 @@ def aggregation():
     df_regulations = df_game.query("type == 1")
     df_wordcount = df_game.query("type == 2")
 
-    # ゲスト戦
-    if g.opt.unregistered_replace:
-        if g.opt.guest_skip:  # ゲストあり(2ゲスト戦除外)
-            df_grandslam = df_grandslam.query("guest_count <= 2")
-            df_regulations = df_regulations.query("guest_count <= 2")
-        else:  # ゲストなし(ゲスト除外)
-            df_grandslam = df_grandslam.query("guest == 0")
-            df_regulations = df_regulations.query("guest == 0")
-
     # 表示
     # --- 情報ヘッダ
     add_text = ""

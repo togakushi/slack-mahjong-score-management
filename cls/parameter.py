@@ -128,10 +128,13 @@ class command_option:
                 case _:
                     unknown_command.append(keyword)
 
-        # どのオプションにも該当しないキーワードはプレイヤー名
+        # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
         if "target_player" in self.__dict__:
             for x in unknown_command:
-                self.target_player.append(c.member.NameReplace(x))
+                if self.team_total:
+                    self.target_player.append(x)
+                else:
+                    self.target_player.append(c.member.NameReplace(x))
 
     def check(self, _argument: list = []) -> None:
         self.__dict__.clear()

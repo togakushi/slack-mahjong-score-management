@@ -23,17 +23,7 @@ def aggregation():
 
     # データ収集
     game_info = d.aggregate.game_info()
-    df_summary = d.aggregate.team_total()
-
-    df_summary = df_summary.rename(
-        columns={
-            "team": "チーム名",
-            "pt_total": "通算",
-            "rank_distr": "順位分布",
-            "pt_diff": "差分",
-            "count": "ゲーム数",
-        }
-    )
+    df_summary = d.aggregate.game_summary()
 
     # 表示
     msg = {}

@@ -23,6 +23,7 @@ def query_modification(sql: str):
         if not g.opt.friendly_fire:
             sql = sql.replace("--[friendly_fire] ", "")
     else:  # 個人戦
+        sql = sql.replace("--[individual] ", "")
         # ゲスト関連フラグ
         if g.opt.unregistered_replace:
             sql = sql.replace("--[unregistered_replace] ", "")
