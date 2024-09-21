@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 
 import regex_spm
+from dateutil.relativedelta import relativedelta
 
 import global_value as g
 from lib import command as c
@@ -85,14 +86,8 @@ def for_slack(keyword, channel):
     """
 
     # 検索クエリ
-    query = f"{keyword} in:{channel}"
-    if g.cfg.search.after:
-        try:
-            datetime.fromisoformat(g.cfg.search.after)  # フォーマットチェック
-            query = f"{keyword} in:{channel} after:{g.cfg.search.after}"
-        except Exception:
-            logging.error(f"Incorrect date string: {g.cfg.search.after}")
-
+    after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y-%m-%d")
+    query = f"{keyword} in:{channel} after:{after}"
     logging.info(f"{query=}")
 
     # --- データ取得

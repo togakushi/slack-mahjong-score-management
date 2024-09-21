@@ -46,7 +46,7 @@ class Config():
         class search:
             keyword: str = self.config["search"].get("keyword", "終局")
             channel: str = self.config["search"].get("channel", None)
-            after: str = self.config["search"].get("after", None)
+            after: str = self.config["search"].getint("after", 7)
         self.search = search()
 
         @dataclass
