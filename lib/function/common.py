@@ -294,5 +294,7 @@ def debug_out(msg1, msg2=None):
     """
 
     print(msg1)
-    if msg2:
+    if type(msg2) is dict:
         [print(msg2[x]) for x in msg2]
+    elif msg2:
+        print(msg2)

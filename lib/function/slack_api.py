@@ -4,6 +4,7 @@ import re
 from slack_sdk.errors import SlackApiError
 
 import global_value as g
+from lib import function as f
 
 
 def call_chat_postMessage(**kwargs):
@@ -31,37 +32,45 @@ def call_files_upload(**kwargs):
 
 
 def post_message(message, ts=False):
+    res = {}
     if not ts and g.msg.thread_ts:
         ts = g.msg.thread_ts
 
-    res = call_chat_postMessage(
-        channel=g.msg.channel_id,
-        text=f"{message.strip()}",
-        thread_ts=ts,
-    )
+    if g.args.testcase:
+        f.common.debug_out(message)
+        res["ts"] = 0  # dummy
+    else:
+        res = call_chat_postMessage(
+            channel=g.msg.channel_id,
+            text=f"{message.strip()}",
+            thread_ts=ts,
+        )
 
     return (res)
 
 
 def post_multi_message(msg, ts=False, summarize=True):
-    if type(msg) is dict:
-        if summarize:  # まとめてポスト
-            key_list = list(msg.keys())
-            post_msg = msg[key_list[0]]
-            for i in key_list[1:]:
-                # 4000文字を超える直前までまとめる
-                if len((post_msg + msg[i])) < 4000:
-                    post_msg += msg[i]
+    if g.args.testcase:
+        f.common.debug_out("", msg)
+    else:
+        if type(msg) is dict:
+            if summarize:  # まとめてポスト
+                key_list = list(msg.keys())
+                post_msg = msg[key_list[0]]
+                for i in key_list[1:]:
+                    # 4000文字を超える直前までまとめる
+                    if len((post_msg + msg[i])) < 4000:
+                        post_msg += msg[i]
+                    else:
+                        post_message(post_msg, ts)
+                        post_msg = msg[i]
                 else:
                     post_message(post_msg, ts)
-                    post_msg = msg[i]
-            else:
-                post_message(post_msg, ts)
-        else:  # そのままポスト
-            for i in msg.keys():
-                post_message(msg[i], ts)
-    else:
-        post_message(msg, ts)
+            else:  # そのままポスト
+                for i in msg.keys():
+                    post_message(msg[i], ts)
+        else:
+            post_message(msg, ts)
 
 
 def post_text(event_ts, title, msg):
@@ -100,13 +109,16 @@ def post_fileupload(title, file, ts=False):
     if not ts and g.msg.thread_ts:
         ts = g.msg.thread_ts
 
-    res = call_files_upload(
-        channel=g.msg.channel_id,
-        title=title,
-        file=file,
-        thread_ts=ts,
-        request_file_info=False,
-    )
+    if g.args.testcase:
+        res = f.common.debug_out(title, file)
+    else:
+        res = call_files_upload(
+            channel=g.msg.channel_id,
+            title=title,
+            file=file,
+            thread_ts=ts,
+            request_file_info=False,
+        )
 
     return (res)
 

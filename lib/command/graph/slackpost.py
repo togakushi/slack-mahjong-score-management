@@ -19,10 +19,7 @@ def main():
         else:
             count, ret = summary.point_plot()
 
-    if g.args.testcase:
-        f.common.debug_out(ret, None)
+    if count == 0:
+        f.slack_api.post_message(ret)
     else:
-        if count == 0:
-            f.slack_api.post_message(ret)
-        else:
-            f.slack_api.post_fileupload("成績グラフ", ret)
+        f.slack_api.post_fileupload("成績グラフ", ret)
