@@ -33,7 +33,7 @@ def _disp_name(df, adjust=0):
 
     replace_list = []
     for name in list(df.unique()):
-        if g.opt.team_total:
+        if g.opt.team:
             replace_list.append(name)
         else:
             replace_list.append(c.member.NameReplace(name, add_mark=True))
@@ -104,7 +104,7 @@ def game_summary():
     )
 
     # ゲスト置換
-    if not g.opt.team_total:
+    if not g.opt.team:
         df["name"] = df["name"].apply(
             lambda x: c.member.NameReplace(x, add_mark=True)
         )
@@ -152,7 +152,7 @@ def game_details():
     )
 
     # ゲスト置換
-    if not g.opt.team_total:
+    if not g.opt.team:
         df["name"] = df["name"].apply(
             lambda x: c.member.NameReplace(x, add_mark=True)
         )
@@ -395,7 +395,7 @@ def matrix_table():
     # 順位テーブルの作成
     l_data = {}
     for pname in plist:
-        if g.opt.team_total:
+        if g.opt.team:
             l_name = pname
         else:
             l_name = c.member.NameReplace(pname)

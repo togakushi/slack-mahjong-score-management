@@ -80,7 +80,7 @@ def point_plot():
                         title_text = f"獲得ポイント ({g.prm.starttime_ymd})"
 
     # 集計
-    if g.opt.team_total:
+    if g.opt.team:
         legend = "チーム名"
         pivot = pd.pivot_table(
             df, index=pivot_index, columns="team", values="point_sum"
@@ -178,7 +178,7 @@ def rank_plot():
                         title_text = f"順位 ({g.prm.starttime_ymd})"
 
     # 集計
-    if g.opt.team_total:
+    if g.opt.team:
         legend = "チーム名"
         pivot = pd.pivot_table(
             df, index=pivot_index, columns="team", values="point_sum"
@@ -220,7 +220,7 @@ def _data_collection():
     g.opt.fourfold = True  # 直近Nは4倍する(縦持ちなので4人分)
 
     target_data = pd.DataFrame()
-    if g.opt.team_total:  # チーム戦
+    if g.opt.team:  # チーム戦
         df = d.aggregate.team_gamedata()
         if df.empty:
             return (target_data, df)

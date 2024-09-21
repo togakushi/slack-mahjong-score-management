@@ -76,7 +76,7 @@ def gamedata():
             --[collection] collection, name
     """
 
-    if g.opt.team_total:
+    if g.opt.team:
         g.opt.unregistered_replace = False
         g.opt.guest_skip = True
         sql = sql.replace("individual_results", "team_results")
@@ -142,7 +142,7 @@ def total():
             pt_total desc
     """
 
-    if g.opt.team_total:
+    if g.opt.team:
         g.opt.unregistered_replace = False
         g.opt.guest_skip = True
         sql = sql.replace("individual_results", "team_results")
@@ -291,7 +291,7 @@ def results():
             sum(point) desc
     """
 
-    if g.opt.team_total:
+    if g.opt.team:
         g.opt.unregistered_replace = False
         g.opt.guest_skip = True
         sql = sql.replace("individual_results", "team_results")
@@ -338,7 +338,7 @@ def details():
             individual_results.playtime
     """
 
-    if g.opt.team_total:
+    if g.opt.team:
         g.opt.unregistered_replace = False
         g.opt.guest_skip = True
         sql = sql.replace("individual_results", "team_results")

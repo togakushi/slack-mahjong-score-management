@@ -18,7 +18,7 @@ def query_modification(sql: str):
     オプションの内容でクエリを修正する
     """
 
-    if g.opt.team_total:  # チーム戦
+    if g.opt.team:  # チーム戦
         sql = sql.replace("--[team] ", "")
         if not g.opt.friendly_fire:
             sql = sql.replace("--[friendly_fire] ", "")

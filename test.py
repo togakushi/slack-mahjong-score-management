@@ -90,7 +90,7 @@ for sec in test_conf.sections():
 
             case "team-graph":
                 g.opt.initialization("graph", g.msg.argument)
-                g.opt.team_total = True
+                g.opt.team = True
 
                 g.opt.filename = f"point_{sec}_{pattern}"
                 g.prm.update(g.opt)

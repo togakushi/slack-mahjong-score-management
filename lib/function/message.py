@@ -203,7 +203,7 @@ def remarks():
     if not g.opt.guest_skip:
         remark.append("2ゲスト戦の結果を含む")
     if not g.opt.unregistered_replace:
-        if not g.opt.team_total:
+        if not g.opt.team:
             remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
     if remark:
         ret = "特記事項：" + "、".join(remark) + "\n"

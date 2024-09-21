@@ -41,7 +41,7 @@ def main():
                 file_list=file_list,
             )
     else:  # 成績サマリ
-        if g.opt.team_total:
+        if g.opt.team:
             msg1, msg2, file_list = team.aggregation()
         else:
             msg1, msg2, file_list = summary.aggregation()

@@ -24,12 +24,12 @@ class command_option:
         self.all_player: bool = False
         self.order: bool = False  # 順位推移グラフ
         self.statistics: bool = False  # 統計レポート
-        self.personal: bool = False  # 個人成績レポート
+        self.personal: bool = g.cfg.config[_command].getboolean("personal", True)  # 個人集計
+        self.team: bool = g.cfg.config[_command].getboolean("team", False)  # チーム集計
         self.fourfold: bool = False  # 縦持ちデータの直近Nを4倍で取るか
         self.stipulated: int = 0  # 規定打数
         self.target_count: int = 0  # 直近
         self.verbose: bool = False  # 戦績詳細
-        self.team_total: bool = False  # チーム集計
         self.friendly_fire: bool = g.cfg.config["team"].getboolean("friendly_fire", True)
         self.unregistered_replace: bool = g.cfg.config[_command].getboolean("unregistered_replace", True)
         self.guest_skip: bool = g.cfg.config[_command].getboolean("guest_skip", True)
@@ -99,14 +99,16 @@ class command_option:
                     self.statistics = True
                 case keyword if re.search(r"^(個人|個人成績)$", keyword):
                     self.personal = True
+                    self.team = False
+                case keyword if re.search(r"^(チーム|チーム成績|team)$", keyword.lower()):
+                    self.team = True
+                    self.personal = False
                 case keyword if re.search(r"^(直近)([0-9]+)$", keyword):
                     self.target_count = int(re.sub(r"^(直近)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(トップ|上位|top)([0-9]+)$", keyword):
                     self.ranked = int(re.sub(r"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(規定数|規定打数)([0-9]+)$", keyword):
                     self.stipulated = int(re.sub(r"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
-                case keyword if re.search(r"^(チーム|team)$", keyword.lower()):
-                    self.team_total = True
                 case keyword if re.search(r"^(チーム同卓あり|コンビあり|同士討ち)$", keyword):
                     self.friendly_fire = True
                 case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword):
@@ -131,7 +133,7 @@ class command_option:
         # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
         if "target_player" in self.__dict__:
             for x in unknown_command:
-                if self.team_total:
+                if self.team:
                     self.target_player.append(x)
                 else:
                     self.target_player.append(c.member.NameReplace(x))

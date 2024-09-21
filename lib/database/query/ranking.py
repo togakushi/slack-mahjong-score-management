@@ -33,7 +33,7 @@ def record_count():
             --[search_word] and game_info.comment like :search_word
     """
 
-    if g.opt.team_total:
+    if g.opt.team:
         g.opt.unregistered_replace = False
         g.opt.guest_skip = True
         sql = sql.replace("individual_results", "team_results")
