@@ -309,7 +309,7 @@ def remarks_comparison(fts):
                         update_data["matter"],
                     ))
                     remark_count += 1
-                    f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, update_data["event_ts"])
+                    f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, update_data["thread_ts"])
                     logging.info(f"update: {update_data}")
         else:  # スレッド元がないデータは不要 → 削除
             cur.execute(d.sql_remarks_delete_one, (str(x),))
