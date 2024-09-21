@@ -91,8 +91,8 @@ def aggregation():
 
     else:  # 差分表示
         df_grandslam = df_grandslam[:0]  # 非表示のため破棄
-        header_list = ["名前", "通算", "平均", "点差"]
-        filter_list = ["名前", "ゲーム数", "通算", "点差"]
+        header_list = ["名前", "通算", "差分"]
+        filter_list = ["名前", "ゲーム数", "通算", "差分"]
 
     # --- メッセージ整形
     df_summary = df_summary.rename(columns={"プレイヤー名": "名前"})
