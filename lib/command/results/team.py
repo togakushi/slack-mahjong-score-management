@@ -28,7 +28,7 @@ def aggregation():
     # 表示
     msg = {}
     header = "*【チーム成績サマリ】*\n"
-    header += f.message.header(game_info, vars(g.prm), "", 1)
+    header += f.message.header(game_info, "", 1)
     file_list = {}
 
     if not df_summary.empty:

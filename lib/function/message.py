@@ -211,45 +211,42 @@ def remarks():
     return (ret + search_word)
 
 
-def header(game_info, params, add_text="", indent=1):
+def header(game_info, add_text="", indent=1):
     msg = ""
-    tab = "\t" * indent
 
     # 集計範囲
     if g.opt.search_word:  # コメント検索の場合はコメントで表示
-        game_range1 = f"{tab}最初のゲーム：{game_info['first_comment']}\n".replace("-", "/")
-        game_range1 += f"{tab}最後のゲーム：{game_info['last_comment']}\n".replace("-", "/")
-        game_range2 = f"{tab}集計範囲： {game_info['first_comment']} ～ {game_info['last_comment']}\n"
+        game_range1 = f"最初のゲーム：{game_info['first_comment']}\n".replace("-", "/")
+        game_range1 += f"最後のゲーム：{game_info['last_comment']}\n".replace("-", "/")
+        game_range2 = f"集計範囲： {game_info['first_comment']} ～ {game_info['last_comment']}\n"
     else:
-        game_range1 = f"{tab}最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
-        game_range1 += f"{tab}最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
-        game_range2 = f"{tab}集計範囲： {game_info['first_game']} ～ {game_info['last_game']}\n".replace("-", "/")
+        game_range1 = f"最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
+        game_range1 += f"最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
+        game_range2 = f"集計範囲： {game_info['first_game']} ～ {game_info['last_game']}\n".replace("-", "/")
 
     # ゲーム数
     if game_info["game_count"] == 0:
-        msg += f"{tab}{f.message.no_hits()}"
+        msg += f"{f.message.no_hits()}"
     else:
         match g.opt.command:
             case "results":
-                if params["target_count"]:  # 直近指定がない場合は検索範囲を付ける
+                if g.opt.target_count:  # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1
-                    msg += f"{tab}総ゲーム数：{game_info['game_count']} 回{add_text}\n"
+                    msg += f"総ゲーム数：{game_info['game_count']} 回{add_text}\n"
                 else:
-                    msg += f"{tab}検索範囲： {params['starttime_hms']} ～ {params['endtime_hms']}\n"
+                    msg += f"検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}\n"
                     msg += game_range1
-                    msg += f"{tab}ゲーム数：{game_info['game_count']} 回{add_text}\n"
+                    msg += f"ゲーム数：{game_info['game_count']} 回{add_text}\n"
             case "ranking" | "report":
                 msg += game_range2
-                msg += f"{tab}集計ゲーム数：{game_info['game_count']} (規定数：{g.opt.stipulated} 以上)\n"
+                msg += f"集計ゲーム数：{game_info['game_count']} (規定数：{g.opt.stipulated} 以上)\n"
             case _:
                 msg += game_range2
-                msg += f"{tab}総ゲーム数：{game_info['game_count']} 回\n"
+                msg += f"総ゲーム数：{game_info['game_count']} 回\n"
 
-        msg_remarks = f.message.remarks().strip()
-        for x in msg_remarks.splitlines():
-            msg += tab + x.strip()
+        msg += f.message.remarks().strip()
 
-    return (msg)
+    return (textwrap.indent(msg, "\t" * indent))
 
 
 def del_blank_line(text: str):

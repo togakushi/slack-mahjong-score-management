@@ -157,7 +157,7 @@ def aggregation():
         msg1 = "\n*【チームランキング】*\n"
     else:
         msg1 = "\n*【ランキング】*\n"
-    msg1 += f.message.header(game_info, vars(g.prm), "", 1)
+    msg1 += f.message.header(game_info, "", 1)
     msg2 = {}
 
     for k in data.keys():

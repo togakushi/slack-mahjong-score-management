@@ -37,7 +37,7 @@ def aggregation():
         add_text = " / トバされた人（延べ）： {} 人".format(
             df_summary["トビ"].sum(),
         )
-    msg2 += f.message.header(game_info, vars(g.prm), add_text, 1)
+    msg2 += f.message.header(game_info, add_text, 1)
 
     if df_summary.empty:
         return (msg2, {}, {})

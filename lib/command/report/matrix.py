@@ -19,7 +19,7 @@ def plot():
 
     # 表示
     msg = "*【対局対戦マトリックス】*\n"
-    msg += f.message.header(game_info, vars(g.prm), "", 1)
+    msg += f.message.header(game_info, "", 1)
 
     if df.empty:
         return (msg, {})
