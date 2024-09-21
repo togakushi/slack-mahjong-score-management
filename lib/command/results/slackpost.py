@@ -1,6 +1,6 @@
 import global_value as g
 from lib import function as f
-from lib.command.results import personal, summary, team, versus
+from lib.command.results import personal, summary, versus
 
 
 def main():
@@ -35,13 +35,9 @@ def main():
             file_list=file_list,
         )
     else:  # 成績サマリ
-        if g.opt.team:
-            msg1, msg2, file_list = team.aggregation()
-        else:
-            msg1, msg2, file_list = summary.aggregation()
-
+        headline, msg2, file_list = summary.aggregation()
         f.slack_api.slack_post(
-            headline=msg1,
+            headline=headline,
             message=msg2,
             summarize=False,
             file_list=file_list,

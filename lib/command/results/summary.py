@@ -11,7 +11,7 @@ def aggregation():
 
     Returns
     -------
-    msg2 : text
+    header : text
         検索条件などの情報
 
     msg : dict
@@ -32,15 +32,24 @@ def aggregation():
     # 表示
     # --- 情報ヘッダ
     add_text = ""
-    msg2 = "*【成績サマリ】*\n"
+    if g.opt.team:
+        headline = "*【チーム成績サマリ】*\n"
+        column_name = "チーム"
+        df_summary = df_summary.rename(columns={"チーム名": column_name})
+    else:
+        headline = "*【成績サマリ】*\n"
+        column_name = "名前"
+        df_summary = df_summary.rename(columns={"プレイヤー名": column_name})
+
     if not g.cfg.config["mahjong"].getboolean("ignore_flying", False):
         add_text = " / トバされた人（延べ）： {} 人".format(
             df_summary["トビ"].sum(),
         )
-    msg2 += f.message.header(game_info, add_text, 1)
+
+    headline += f.message.header(game_info, add_text, 1)
 
     if df_summary.empty:
-        return (msg2, {}, {})
+        return (headline, {}, {})
 
     # --- 集計結果
     msg = {}
@@ -48,11 +57,11 @@ def aggregation():
 
     if not g.opt.score_comparisons:  # 通常表示
         if g.cfg.config["mahjong"].getboolean("ignore_flying", False):  # トビカウントなし
-            header_list = ["名前", "通算", "平均", "順位分布"]
-            filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順"]
+            header_list = [column_name, "通算", "平均", "順位分布"]
+            filter_list = [column_name, "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順"]
         else:  # トビカウントあり
-            header_list = ["名前", "通算", "平均", "順位分布", "トビ"]
-            filter_list = ["名前", "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
+            header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
+            filter_list = [column_name, "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
 
         # メモ表示
         memo_grandslam = ""
@@ -91,11 +100,10 @@ def aggregation():
 
     else:  # 差分表示
         df_grandslam = df_grandslam[:0]  # 非表示のため破棄
-        header_list = ["名前", "通算", "差分"]
-        filter_list = ["名前", "ゲーム数", "通算", "差分"]
+        header_list = [column_name, "通算", "差分"]
+        filter_list = [column_name, "ゲーム数", "通算", "差分"]
 
     # --- メッセージ整形
-    df_summary = df_summary.rename(columns={"プレイヤー名": "名前"})
     step = 50
     step_count = []
     last_line = len(df_summary)
@@ -143,4 +151,4 @@ def aggregation():
         case _:
             file_list = {}
 
-    return (msg2, msg, file_list)
+    return (headline, msg, file_list)
