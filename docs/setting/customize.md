@@ -101,6 +101,11 @@ INIファイル内の設定を変更することで、動作変更が可能。
 | score_comparisons    | 比較モードで表示する                             | 真偽値 | False  |              |
 | game_results         | 戦績(ゲーム単位の素点と順位)を表示               | 真偽値 | False  | 個人成績専用 |
 | versus_matrix        | 対戦マトリックス表示                             | 真偽値 | False  | 個人成績専用 |
+| personal             | オプション未指定時は個人戦成績を表示             | 真偽値 | True   |              |
+| team                 | オプション未指定時はチーム戦成績を表示           | 真偽値 | False  |              |
+
+> [!NOTE]
+> `personal` と `team` が両方 `True` の場合は `team` が優先され、 `False` の場合は `personal` が優先される。
 
 ## メンバー管理
 
