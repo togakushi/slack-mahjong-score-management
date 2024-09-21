@@ -51,10 +51,10 @@ def handle_message_events(client, body):
 
         # データベース関連コマンド
         case x if re.match(rf"^{g.cfg.cw.check}", x):
-            d.comparison.main(g.msg.event_ts)
+            d.comparison.main()
         case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", g.msg.text):  # Reminderによる突合
             logging.info(f'Reminder: {g.cfg.cw.check}')
-            d.comparison.main(g.msg.event_ts)
+            d.comparison.main()
 
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}", x):
@@ -125,7 +125,7 @@ def slash_command(ack, body, client):
 
             # データベース関連コマンド
             case "check":
-                d.comparison.main(client, g.msg.channel_id, g.msg.event_ts)
+                d.comparison.main()
             case "download":
                 f.slack_api.post_fileupload("resultdb", g.cfg.db.database_file)
 

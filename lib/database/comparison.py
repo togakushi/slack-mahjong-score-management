@@ -11,14 +11,9 @@ from lib import database as d
 from lib import function as f
 
 
-def main(event_ts):
+def main():
     """
     データ突合の実施、その結果をslackにpostする
-
-    Parameters
-    ----------
-    event_ts: text
-        スレッドに返す場合の返し先
     """
 
     # スコア突合
@@ -42,7 +37,7 @@ def main(event_ts):
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]
 
-    f.slack_api.post_message(ret, event_ts)
+    f.slack_api.post_message(ret, g.msg.event_ts)
 
 
 def score_comparison():
