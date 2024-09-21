@@ -105,7 +105,7 @@ INIファイル内の設定を変更することで、動作変更が可能。
 | team                 | オプション未指定時はチーム戦成績を表示           | 真偽値 | False  |              |
 
 > [!NOTE]
-> `personal` と `team` が両方 `True` の場合は `team` が優先され、 `False` の場合は `personal` が優先される。
+> `personal` と `team` が両方 `True` の場合は `team` が優先され、両方 `False` の場合は `personal` が優先される。
 
 ## メンバー管理
 
