@@ -130,16 +130,14 @@ def slack_post(**kwargs):
             post_multi_message(message, res["ts"], summarize)
 
 
-def call_reactions_add(icon, ts=None):
+def call_reactions_add(icon):
     """
     リアクションを付ける
     """
 
-    if not ts:
-        ts = g.msg.event_ts
     res = g.msg.client.reactions_get(
         channel=g.msg.channel_id,
-        timestamp=ts,
+        timestamp=g.msg.event_ts,
     )
 
     # 既にリアクションが付いてるなら何もしない
@@ -155,7 +153,7 @@ def call_reactions_add(icon, ts=None):
     g.msg.client.reactions_add(
         channel=g.msg.channel_id,
         name=icon,
-        timestamp=ts,
+        timestamp=g.msg.event_ts,
     )
 
 
