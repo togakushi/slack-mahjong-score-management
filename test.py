@@ -103,36 +103,14 @@ for sec in test_conf.sections():
                 pprint(c.graph.summary.rank_plot())
 
             case "ranking":
-                g.msg.argument = argument.split()
                 g.prm.update(g.opt)
                 dump(flag)
                 pprint(c.ranking.slackpost.main())
 
-            case "matrix":
-                g.opt.initialization("report", g.msg.argument)
-
-                g.opt.filename = f"matrix_{sec}_{pattern}"
-                g.prm.update(g.opt)
-                dump(flag)
-                pprint(c.report.slackpost.matrix.plot())
-
             case "report":
-                g.opt.initialization("report", g.msg.argument)
-
-                g.opt.filename = f"report_monthly_{sec}_{pattern}"
-                g.prm.update(g.opt)
+                g.msg.argument.append(f"filename:report_{sec}_{pattern}")
                 dump(flag)
-                pprint(c.report.slackpost.monthly.plot())
-
-                g.opt.filename = f"report_winner_{sec}_{pattern}"
-                g.prm.update(g.opt)
-                dump(flag)
-                pprint(c.report.slackpost.winner.plot())
-
-                g.opt.filename = f"report_personal_{sec}_{pattern}"
-                g.prm.update(g.opt)
-                dump(flag)
-                pprint(c.report.slackpost.personal.plot())
+                pprint(c.report.slackpost.main())
 
             case "pdf":
                 g.opt.initialization("report", g.msg.argument)
