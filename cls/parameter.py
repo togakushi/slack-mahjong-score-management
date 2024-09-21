@@ -22,7 +22,7 @@ class command_option:
         self.aggregation_range.append(g.cfg.config[_command].get("aggregation_range", "当日"))
         self.target_player: list = []
         self.all_player: bool = False
-        self.order: bool = False  # 順位推移グラフ
+        self.order: bool = False  # 順位推移グラフ / 成績上位者
         self.statistics: bool = False  # 統計レポート
         self.personal: bool = g.cfg.config[_command].getboolean("personal", True)  # 個人集計
         self.team: bool = g.cfg.config[_command].getboolean("team", False)  # チーム集計
