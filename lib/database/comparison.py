@@ -3,6 +3,8 @@ import re
 import sqlite3
 from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
+
 import global_value as g
 from lib import command as c
 from lib import database as d
@@ -24,14 +26,18 @@ def main(event_ts):
 
     # メモ突合
     if fts:  # slackからスコア記録のログが見つかった場合のみチェック
-        remarks_comparison(fts)
+        count["remark"] = remarks_comparison(fts)
 
     logging.notice(f"{count=}")  # type: ignore
 
-    ret = "*【データ突合】*\n"
+    # 突合結果
+    after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y/%m/%d")
+    befor = datetime.now().strftime("%Y/%m/%d")
+    ret = f"*【データ突合】* ({after} - {befor})\n"
     ret += "＊ 不一致： {}件\n{}".format(count["mismatch"], msg["mismatch"])
     ret += "＊ 取りこぼし：{}件\n{}".format(count["missing"], msg["missing"])
     ret += "＊ 削除漏れ： {}件\n{}".format(count["delete"], msg["delete"])
+    ret += "＊ メモ： {}件\n{}".format(count["remark"], msg["remark"])
     if count["invalid_score"] > 0:
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]
@@ -60,8 +66,8 @@ def score_comparison():
         見つからない場合は None
     """
 
-    count = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0}
-    ret_msg = {"mismatch": "", "missing": "", "delete": "", "invalid_score": ""}
+    count = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0, "remark": 0}
+    ret_msg = {"mismatch": "", "missing": "", "delete": "", "invalid_score": "", "remark": ""}
     fts = None  # slackのログの先頭の時刻
 
     # 検索パラメータ
@@ -208,7 +214,8 @@ def remarks_comparison(fts):
 
     Returns
     -------
-    なし
+    remark_count : int
+        処理された更新/追加/削除の件数
     """
 
     # 検索パラメータ
@@ -218,6 +225,7 @@ def remarks_comparison(fts):
 
     slack_data = {}
     db_data = {}
+    remark_count = 0
 
     # slackログからデータを取得
     matches = f.search.for_slack(
@@ -305,8 +313,10 @@ def remarks_comparison(fts):
                         c.member.NameReplace(update_data["name"]),
                         update_data["matter"],
                     ))
+                    remark_count += 1
+                    f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, update_data["event_ts"])
                     logging.info(f"update: {update_data}")
-        else:  # スレッド元がないデータは不要
+        else:  # スレッド元がないデータは不要 → 削除
             cur.execute(d.sql_remarks_delete_one, (str(x),))
             logging.info(f"delete: {x} (No thread origin)")
 
@@ -317,3 +327,5 @@ def remarks_comparison(fts):
 
     resultdb.commit()
     resultdb.close()
+
+    return (remark_count)

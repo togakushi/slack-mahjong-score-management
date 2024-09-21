@@ -25,8 +25,8 @@ if __name__ == "__main__":
     c.member.read_memberslist()
 
     # --- 突合
-    count, msg, fts = d.comparison.score_comparison()
+    count, _, fts = d.comparison.score_comparison()
     if fts:
-        d.comparison.remarks_comparison(fts)
+        count["remark"] = d.comparison.remarks_comparison(fts)
 
-    print(f">>> mismatch:{count['mismatch']}, missing:{count['missing']}, delete:{count['delete']}")
+    print(f">>> {count=}")
