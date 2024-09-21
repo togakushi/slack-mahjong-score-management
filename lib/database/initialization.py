@@ -127,7 +127,6 @@ def initialization_resultdb():
                 grandslam,
                 ifnull(ex_point, 0) as ex_point,
                 p1_name not in (select name from member) as guest,
-                team.name as team,
                 date(result.playtime, "-12 hours") as collection_daily,
                 rule_version,
                 comment
@@ -135,8 +134,6 @@ def initialization_resultdb():
                 result
             left join
                 member on member.name = result.p1_name
-            left join
-                team on member.team_id = team.id
             left join
                 grandslam on grandslam.thread_ts == result.ts
                 and grandslam.name = result.p1_name
@@ -155,7 +152,6 @@ def initialization_resultdb():
                 grandslam,
                 ifnull(ex_point, 0),
                 p2_name not in (select name from member),
-                team.name,
                 date(result.playtime, "-12 hours"),
                 rule_version,
                 comment
@@ -163,8 +159,6 @@ def initialization_resultdb():
                 result
             left join
                 member on member.name = result.p2_name
-            left join
-                team on member.team_id = team.id
             left join
                 grandslam on grandslam.thread_ts == result.ts
                 and grandslam.name = result.p2_name
@@ -183,7 +177,6 @@ def initialization_resultdb():
                 grandslam,
                 ifnull(ex_point, 0),
                 p3_name not in (select name from member),
-                team.name,
                 date(result.playtime, "-12 hours"),
                 rule_version,
                 comment
@@ -191,8 +184,6 @@ def initialization_resultdb():
                 result
             left join
                 member on member.name = result.p3_name
-            left join
-                team on member.team_id = team.id
             left join
                 grandslam on grandslam.thread_ts == result.ts
                 and grandslam.name = result.p3_name
@@ -211,7 +202,6 @@ def initialization_resultdb():
                 grandslam,
                 ifnull(ex_point, 0),
                 p4_name not in (select name from member),
-                team.name,
                 date(result.playtime, "-12 hours"),
                 rule_version,
                 comment
@@ -219,8 +209,6 @@ def initialization_resultdb():
                 result
             left join
                 member on member.name = result.p4_name
-            left join
-                team on member.team_id = team.id
             left join
                 grandslam on grandslam.thread_ts == result.ts
                 and grandslam.name = result.p4_name
@@ -337,13 +325,7 @@ def initialization_resultdb():
                 p4_name, p4_team.name as p4_team,
                 p4.name isnull as p4_guest, p4_rpoint, p4_rank, p4_point,
                 deposit,
-                substr(
-                    case when
-                        time(result.playtime) between "00:00:00" and "11:59:59"
-                            then date(result.playtime, "-1 days")
-                            else date(result.playtime)
-                    end, 1, 7
-                ) as collection,
+                date(result.playtime, "-12 hours") as collection_daily,
                 result.comment,
                 game_info.guest_count,
                 game_info.same_team,
