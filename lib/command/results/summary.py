@@ -58,10 +58,10 @@ def aggregation():
     if not g.opt.score_comparisons:  # 通常表示
         if g.cfg.config["mahjong"].getboolean("ignore_flying", False):  # トビカウントなし
             header_list = [column_name, "通算", "平均", "順位分布"]
-            filter_list = [column_name, "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順"]
+            filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順"]
         else:  # トビカウントあり
             header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
-            filter_list = [column_name, "ゲーム数", "通算", "平均", "1位", "2位", "3位", "4位", "平順", "トビ"]
+            filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
 
         # メモ表示
         memo_grandslam = ""
