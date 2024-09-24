@@ -24,8 +24,7 @@ class command_option:
         self.all_player: bool = False
         self.order: bool = False  # 順位推移グラフ / 成績上位者
         self.statistics: bool = False  # 統計レポート
-        self.personal: bool = g.cfg.config[_command].getboolean("personal", True)  # 個人集計
-        self.team: bool = g.cfg.config[_command].getboolean("team", False)  # チーム集計
+        self.individual: bool = g.cfg.config[_command].getboolean("individual", True)  # True:個人集計 / False:チーム集計
         self.fourfold: bool = False  # 縦持ちデータの直近Nを4倍で取るか
         self.stipulated: int = 0  # 規定打数
         self.target_count: int = 0  # 直近
@@ -98,11 +97,9 @@ class command_option:
                 case keyword if re.search(r"^(統計)$", keyword):
                     self.statistics = True
                 case keyword if re.search(r"^(個人|個人成績)$", keyword):
-                    self.personal = True
-                    self.team = False
+                    self.individual = True
                 case keyword if re.search(r"^(チーム|チーム成績|team)$", keyword.lower()):
-                    self.team = True
-                    self.personal = False
+                    self.individual = False
                 case keyword if re.search(r"^(直近)([0-9]+)$", keyword):
                     self.target_count = int(re.sub(r"^(直近)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(トップ|上位|top)([0-9]+)$", keyword):
@@ -133,10 +130,10 @@ class command_option:
         # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
         if "target_player" in self.__dict__:
             for x in unknown_command:
-                if self.team:
-                    self.target_player.append(x)
-                else:
+                if self.individual:
                     self.target_player.append(c.member.NameReplace(x))
+                else:
+                    self.target_player.append(x)
 
     def check(self, _argument: list = []) -> None:
         self.__dict__.clear()

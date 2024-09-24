@@ -39,7 +39,7 @@ def main():
                 message=f.message.no_hits(),
                 file_list=file_list,
             )
-    elif g.opt.personal:  # デフォルトがTrueなので最後に判定
+    elif g.opt.individual:  # デフォルトがTrueなので最後に判定
         report_file_path = personal.plot()
         if report_file_path:
             f.slack_api.post_fileupload("個人成績一覧", report_file_path)

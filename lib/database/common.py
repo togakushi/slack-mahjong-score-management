@@ -18,11 +18,7 @@ def query_modification(sql: str):
     オプションの内容でクエリを修正する
     """
 
-    if g.opt.team:  # チーム戦
-        sql = sql.replace("--[team] ", "")
-        if not g.opt.friendly_fire:
-            sql = sql.replace("--[friendly_fire] ", "")
-    else:  # 個人戦
+    if g.opt.individual:  # 個人集計
         sql = sql.replace("--[individual] ", "")
         # ゲスト関連フラグ
         if g.opt.unregistered_replace:
@@ -33,6 +29,10 @@ def query_modification(sql: str):
                 sql = sql.replace("--[guest_skip] ", "")
         else:
             sql = sql.replace("--[unregistered_not_replace] ", "")
+    else:  # チーム集計
+        sql = sql.replace("--[team] ", "")
+        if not g.opt.friendly_fire:
+            sql = sql.replace("--[friendly_fire] ", "")
 
     # 集約集計
     match g.opt.collection:

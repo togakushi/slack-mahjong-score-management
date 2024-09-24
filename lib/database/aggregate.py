@@ -33,10 +33,10 @@ def _disp_name(df, adjust=0):
 
     replace_list = []
     for name in list(df.unique()):
-        if g.opt.team:
-            replace_list.append(name)
-        else:
+        if g.opt.individual:
             replace_list.append(c.member.NameReplace(name, add_mark=True))
+        else:
+            replace_list.append(name)
 
     max_padding = c.member.CountPadding(replace_list)
     for i in range(len(replace_list)):
@@ -104,7 +104,7 @@ def game_summary():
     )
 
     # ゲスト置換
-    if not g.opt.team:
+    if g.opt.individual:
         df["name"] = df["name"].apply(
             lambda x: c.member.NameReplace(x, add_mark=True)
         )
@@ -152,7 +152,7 @@ def game_details():
     )
 
     # ゲスト置換
-    if not g.opt.team:
+    if g.opt.individual:
         df["name"] = df["name"].apply(
             lambda x: c.member.NameReplace(x, add_mark=True)
         )
@@ -395,9 +395,7 @@ def matrix_table():
     # 順位テーブルの作成
     l_data = {}
     for pname in plist:
-        if g.opt.team:
-            l_name = pname
-        else:
+        if g.opt.individual:  # 個人集計
             l_name = c.member.NameReplace(pname)
             # プレイヤー指定があるなら対象以外をスキップ
             if g.prm.player_list:
@@ -409,6 +407,8 @@ def matrix_table():
             else:  # ゲストなし
                 if pname == g.prm.guest_name:
                     continue
+        else:  # チーム集計
+            l_name = pname
 
         l_data[l_name] = []
         for x in df.itertuples():

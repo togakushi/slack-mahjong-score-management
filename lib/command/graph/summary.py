@@ -80,15 +80,15 @@ def point_plot():
                         title_text = f"獲得ポイント ({g.prm.starttime_ymd})"
 
     # 集計
-    if g.opt.team:
-        legend = "チーム名"
-        pivot = pd.pivot_table(
-            df, index=pivot_index, columns="team", values="point_sum"
-        ).ffill()
-    else:
+    if g.opt.individual:  # 個人集計
         legend = "プレイヤー名"
         pivot = pd.pivot_table(
             df, index=pivot_index, columns="プレイヤー名", values="point_sum"
+        ).ffill()
+    else:  # チーム集計
+        legend = "チーム名"
+        pivot = pd.pivot_table(
+            df, index=pivot_index, columns="team", values="point_sum"
         ).ffill()
 
     pivot = pivot.reindex(  # 並び替え
@@ -178,15 +178,15 @@ def rank_plot():
                         title_text = f"順位 ({g.prm.starttime_ymd})"
 
     # 集計
-    if g.opt.team:
-        legend = "チーム名"
-        pivot = pd.pivot_table(
-            df, index=pivot_index, columns="team", values="point_sum"
-        ).ffill()
-    else:
+    if g.opt.individual:  # 個人集計
         legend = "プレイヤー名"
         pivot = pd.pivot_table(
             df, index=pivot_index, columns=legend, values="point_sum"
+        ).ffill()
+    else:  # チーム集計
+        legend = "チーム名"
+        pivot = pd.pivot_table(
+            df, index=pivot_index, columns="team", values="point_sum"
         ).ffill()
 
     pivot = pivot.reindex(  # 並び替え
@@ -220,18 +220,7 @@ def _data_collection():
     g.opt.fourfold = True  # 直近Nは4倍する(縦持ちなので4人分)
 
     target_data = pd.DataFrame()
-    if g.opt.team:  # チーム戦
-        df = d.aggregate.team_gamedata()
-        if df.empty:
-            return (target_data, df)
-
-        target_data["last_point"] = df.groupby("team").last()["point_sum"]
-        target_data["game_count"] = (
-            df.groupby("team").max(numeric_only=True)["count"]
-        )
-        target_data["チーム名"] = target_data.index
-        target_data = target_data.sort_values("last_point", ascending=False)
-    else:  # 個人戦
+    if g.opt.individual:  # 個人集計
         df = d.aggregate.personal_gamedata()
         if df.empty:
             return (target_data, df)
@@ -249,6 +238,17 @@ def _data_collection():
         _ = target_list  # ignore PEP8 F841
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
+    else:  # チーム集計
+        df = d.aggregate.team_gamedata()
+        if df.empty:
+            return (target_data, df)
+
+        target_data["last_point"] = df.groupby("team").last()["point_sum"]
+        target_data["game_count"] = (
+            df.groupby("team").max(numeric_only=True)["count"]
+        )
+        target_data["チーム名"] = target_data.index
+        target_data = target_data.sort_values("last_point", ascending=False)
 
     # 順位付け
     target_data["position"] = (
