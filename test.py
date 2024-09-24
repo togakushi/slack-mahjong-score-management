@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import configparser
+import random
 from pprint import pprint
 
 import global_value as g
@@ -30,15 +31,21 @@ for sec in test_conf.sections():
     print("=" * 80)
     print(f"[TEST CASE] {sec}")
     test_case = None
+    target_player = []
 
     for pattern, argument in test_conf[sec].items():
         if pattern == "case":
             test_case = argument
             continue
 
+        if pattern == "target_player":
+            for x in range(int(argument)):
+                target_player.append(random.choice(list(set(g.member_list.values()))))
+            continue
+
         print("-" * 80)
-        print(f"{pattern=} {argument=}")
-        g.msg.argument = argument.split()
+        print(f"{pattern=} {argument=} {target_player=}")
+        g.msg.argument = argument.split() + target_player
 
         if test_conf[sec].getboolean("config", False):
             pprint(["*** config ***", vars(g.cfg)], width=200)
@@ -56,17 +63,9 @@ for sec in test_conf.sections():
 
             case "summary":
                 g.opt.initialization("results", g.msg.argument)
-
                 g.prm.update(g.opt)
                 dump(flag)
-                pprint(c.results.summary.aggregation(), width=200)
-
-            case "personal":
-                g.opt.initialization("results", g.msg.argument)
-
-                g.prm.update(g.opt)
-                dump(flag)
-                pprint(c.results.personal.aggregation(), width=200)
+                pprint(c.results.summary.aggregation())
 
             case "graph":
                 g.opt.initialization("graph", g.msg.argument)
@@ -84,7 +83,7 @@ for sec in test_conf.sections():
             case "ranking":
                 g.prm.update(g.opt)
                 dump(flag)
-                pprint(c.ranking.slackpost.main(), width=200)
+                pprint(c.ranking.slackpost.main())
 
             case "report":
                 g.msg.argument.append(f"filename:report_{sec}_{pattern}")
