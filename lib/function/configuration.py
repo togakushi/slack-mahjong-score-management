@@ -3,13 +3,9 @@ import logging
 import os
 import shutil
 import sys
-from datetime import datetime
 from functools import partial
 
-from dateutil.relativedelta import relativedelta
-
 import global_value as g
-from cls.config import Config
 from cls.parameter import command_option, parameters
 from cls.parser import Message_Parser
 from cls.search import SearchRange
@@ -105,24 +101,11 @@ def setup():
         else:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
-    g.cfg = Config(g.args.config)
+    g.cfg.read_file(g.args.config)
     g.search_word = SearchRange()
     g.opt = command_option()
     g.prm = parameters()
     g.msg = Message_Parser()
-
-    # 固定値
-    g.wind = ("東家", "南家", "西家", "北家")
-    g.member_list = {}
-    g.team_list = {}
-
-    g.app_var = {  # ホームタブ用
-        "user_id": None,
-        "view_id": None,
-        "screen": None,
-        "sday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
-        "eday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
-    }
 
     logging.trace(f"{g.cfg.cw=}")  # type: ignore
     logging.info(f"{g.cfg.setting.slash_command=}")
