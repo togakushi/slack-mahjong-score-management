@@ -1,3 +1,4 @@
+import global_value as g
 from lib.database.common import query_modification
 
 
@@ -27,7 +28,7 @@ def info():
             where
                 individual_results.rule_version = :rule_version
                 and individual_results.playtime between :starttime and :endtime -- 検索範囲
-                --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
+                --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[friendly_fire] and same_team = 0
                 --[search_word] and game_info.comment like :search_word
@@ -37,6 +38,11 @@ def info():
                 individual_results.playtime desc
         )
     """
+
+    if not g.opt.individual:  # チーム集計
+        g.opt.unregistered_replace = False
+        g.opt.guest_skip = True
+        sql = sql.replace("individual_results", "team_results")
 
     return (query_modification(sql))
 
