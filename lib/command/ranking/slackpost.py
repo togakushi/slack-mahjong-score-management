@@ -46,7 +46,7 @@ def aggregation():
         )
         g.prm.update(g.opt)
 
-    result_df = d.aggregate.personal_results()
+    result_df = d.aggregate.game_results()
     record_df = d.aggregate.ranking_record()
     result_df = pd.merge(
         result_df, record_df,

@@ -198,10 +198,9 @@ def regulations_count():
     return (df)
 
 
-# 個人
-def personal_results():
+def game_results():
     """
-    個人成績を集計する
+    成績を集計する
 
     Returns
     -------
