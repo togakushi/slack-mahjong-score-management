@@ -270,7 +270,8 @@ def results():
                 game_info.ts == individual_results.ts
             left join grandslam on
                 grandslam.thread_ts == individual_results.ts
-                and grandslam.name == individual_results.name
+                --[individual] and grandslam.name == individual_results.name
+                --[team] and grandslam.team == team_results.name
             where
                 individual_results.rule_version = :rule_version
                 and individual_results.playtime between :starttime and :endtime
