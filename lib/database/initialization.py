@@ -386,12 +386,17 @@ def initialization_resultdb():
             select
                 remarks.thread_ts,
                 remarks.name,
+                team.name as team,
                 group_concat(remarks.matter) as grandslam,
                 count() as gs_count,
                 game_info.guest_count,
                 game_info.same_team
             from
                 remarks
+            left join member on
+                member.name == remarks.name
+            left join team on
+                member.team_id == team.id
             left join words on
                 words.word == remarks.matter
             join game_info on
@@ -409,7 +414,8 @@ def initialization_resultdb():
         create view if not exists regulations as
             select
                 remarks.thread_ts,
-                remarks.name,
+                remarks.name as name,
+                team.name as team,
                 group_concat(remarks.matter) as word,
                 sum(words.ex_point) as ex_point,
                 ifnull(words.type, 0) as type,
@@ -417,6 +423,10 @@ def initialization_resultdb():
                 game_info.same_team
             from
                 remarks
+            left join member on
+                member.name == remarks.name
+            left join team on
+                member.team_id == team.id
             left join words on
                 words.word == remarks.matter
             join game_info on
