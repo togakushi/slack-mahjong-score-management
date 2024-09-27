@@ -318,8 +318,7 @@ def details():
             rpoint,
             rank,
             point,
-            --[individual] grandslam,
-            --[team] null as grandslam,
+            grandslam,
             regulations.word as regulation,
             regulations.ex_point,
             regulations.type as type,
@@ -329,9 +328,14 @@ def details():
             individual_results
         join game_info on
             game_info.ts == individual_results.ts
+        left join grandslam on
+            grandslam.thread_ts == individual_results.ts
+            --[individual] and grandslam.name == individual_results.name
+            --[team] and grandslam.team == team_results.name
         left join regulations on
             regulations.thread_ts == individual_results.ts
-            and regulations.name == individual_results.name
+            --[individual] and regulations.name == individual_results.name
+            --[team] and regulations.team == team_results.name
         where
             individual_results.rule_version = :rule_version
             and individual_results.playtime between :starttime and :endtime

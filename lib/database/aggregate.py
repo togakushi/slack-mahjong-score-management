@@ -132,6 +132,7 @@ def game_summary():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
+    logging.trace(df)  # type: ignore
     return (df.fillna(value="*****"))
 
 
@@ -159,6 +160,7 @@ def game_details():
 
     df["表示名"] = _disp_name(df["name"])
 
+    logging.trace(df)  # type: ignore
     return (df.fillna(value=""))
 
 

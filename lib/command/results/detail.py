@@ -181,13 +181,14 @@ def aggregation():
                 for seat, idx in list(zip(g.wind, range(len(g.wind)))):
                     if len(x) >= 4:
                         seat_data = x.iloc[idx].to_dict()
-                        msg2["戦績"] += "\t{}： {} {}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
+                        msg2["戦績"] += "\t{}： {} {}位 {:>7}点 ({:>+5.1f}pt) {}{}\n".format(
                             seat,
                             seat_data["表示名"],
                             seat_data["rank"],
                             seat_data["rpoint"] * 100,
                             seat_data["point"],
                             seat_data["grandslam"],
+                            seat_data["regulation"],
                         ).replace("-", "▲")
                     else:   # todo: チーム戦の結果にゲストの記録がないパターン
                         msg2["戦績"] += "\tゲスト対戦ゲーム\n"
@@ -207,24 +208,26 @@ def aggregation():
                     # 個人戦集計
                     for _, seat_data in x.iterrows():
                         if seat_data["name"] == g.prm.player_name:
-                            msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
+                            msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}{}\n".format(
                                 f"{g.cfg.setting.guest_mark.strip()} " if seat_data["guest_count"] >= 2 else "",
                                 seat_data["playtime"].replace("-", "/"),
                                 seat_data["rank"],
                                 seat_data["rpoint"] * 100,
                                 seat_data["point"],
                                 seat_data["grandslam"],
+                                seat_data["regulation"],
                             ).replace("-", "▲")
                 else:
                     # チーム戦集計
                     for _, seat_data in x.iterrows():
                         if seat_data["name"] == g.prm.player_name:
-                            msg2["戦績"] += "\t{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}\n".format(
+                            msg2["戦績"] += "\t{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}{}\n".format(
                                 seat_data["playtime"].replace("-", "/"),
                                 seat_data["rank"],
                                 seat_data["rpoint"] * 100,
                                 seat_data["point"],
-                                seat_data["grandslam"],
+                                seat_data["grandslam"],  # todo: チーム同卓時に重複する
+                                seat_data["regulation"],
                             ).replace("-", "▲")
 
     # --- 対戦結果
