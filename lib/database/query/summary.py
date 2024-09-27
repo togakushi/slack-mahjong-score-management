@@ -318,7 +318,7 @@ def details():
             rpoint,
             rank,
             point,
-            grandslam,
+            grandslam.grandslam as grandslam,
             regulations.word as regulation,
             regulations.ex_point,
             regulations.type as type,
