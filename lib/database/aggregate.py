@@ -252,7 +252,7 @@ def personal_gamedata():
 def versus_matrix():
     # データ収集
     df = pd.read_sql(
-        query.individual.versus_matrix(),
+        query.summary.versus_matrix(),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
