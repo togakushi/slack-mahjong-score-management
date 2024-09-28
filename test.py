@@ -62,10 +62,9 @@ for sec in test_conf.sections():
                 pprint(f.message.help_message(), width=200)
 
             case "summary":
-                g.opt.initialization("results", g.msg.argument)
                 g.prm.update(g.opt)
                 dump(flag)
-                pprint(c.results.summary.aggregation())
+                pprint(c.results.slackpost.main())
 
             case "graph":
                 g.opt.initialization("graph", g.msg.argument)
