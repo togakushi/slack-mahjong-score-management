@@ -51,7 +51,7 @@ ORDER BY
 ## 月間ランキング
 ```
 SELECT
-    substr(collection_daily, 1, 7) AS 集計月,
+    collection AS 集計月,
     max(CASE WHEN rank = 1 THEN name END) AS "1位",
     max(CASE WHEN rank = 1 THEN total END) AS "ポイント",
     max(CASE WHEN rank = 1 THEN geme_count END) AS "ゲーム数",
@@ -69,8 +69,8 @@ SELECT
     max(CASE WHEN rank = 5 THEN geme_count END) AS "ゲーム数"
 FROM (
     SELECT
-        collection_daily,
-        rank() OVER (PARTITION BY collection_daily ORDER BY round(sum(point), 1) DESC) AS rank,
+        substr(collection_daily, 1, 7) AS collection,
+        rank() OVER (PARTITION BY substr(collection_daily, 1, 7) ORDER BY round(sum(point), 1) DESC) AS rank,
         name,
         round(sum(point), 1) AS total,
         count() AS geme_count
@@ -80,9 +80,9 @@ FROM (
         name, collection_daily
 )
 GROUP BY
-    collection_daily
+    collection
 HAVING
-    collection_daily LIKE strftime("%Y-%%")
+    collection LIKE strftime("%Y-%%")
 ```
 
 ## ゲーム傾向
@@ -98,7 +98,7 @@ SELECT
 FROM
     individual_results
 GROUP BY
-    collection_daily
+    substr(collection_daily, 1, 7)
 HAVING
     collection_daily LIKE strftime("%Y-%%")
 ```
@@ -129,7 +129,7 @@ FROM
 WHERE
     name = "<Player Name>"
 GROUP BY
-    collection_daily
+    substr(collection_daily, 1, 7)
 HAVING
     collection_daily LIKE strftime("%Y-%%")
 ```
