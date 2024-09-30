@@ -51,7 +51,7 @@ ORDER BY
 ## 月間ランキング
 ```
 SELECT
-    collection AS "集計月",
+    substr(collection_daily, 1, 7) AS 集計月,
     max(CASE WHEN rank = 1 THEN name END) AS "1位",
     max(CASE WHEN rank = 1 THEN total END) AS "ポイント",
     max(CASE WHEN rank = 1 THEN geme_count END) AS "ゲーム数",
@@ -69,26 +69,26 @@ SELECT
     max(CASE WHEN rank = 5 THEN geme_count END) AS "ゲーム数"
 FROM (
     SELECT
-        collection,
-        rank() OVER (PARTITION BY collection ORDER BY round(sum(point), 1) DESC) AS rank,
+        collection_daily,
+        rank() OVER (PARTITION BY collection_daily ORDER BY round(sum(point), 1) DESC) AS rank,
         name,
         round(sum(point), 1) AS total,
         count() AS geme_count
     FROM
         individual_results
     GROUP BY
-        name, collection
+        name, collection_daily
 )
 GROUP BY
-    collection
+    collection_daily
 HAVING
-    collection LIKE strftime("%Y-%%")
+    collection_daily LIKE strftime("%Y-%%")
 ```
 
 ## ゲーム傾向
 ```
 SELECT
-    collection AS 集計月,
+    substr(collection_daily, 1, 7) AS 集計月,
     count() / 4 AS ゲーム数,
     round(sum(point), 1) AS 供託,
     count(rpoint < -1 OR NULL) AS "飛んだ人数(延べ)",
@@ -98,15 +98,15 @@ SELECT
 FROM
     individual_results
 GROUP BY
-    collection
+    collection_daily
 HAVING
-    collection LIKE strftime("%Y-%%")
+    collection_daily LIKE strftime("%Y-%%")
 ```
 
 ## 個人成績
 ```
 SELECT
-    collection AS 集計月,
+    substr(collection_daily, 1, 7) AS 集計月,
     count() AS ゲーム数,
     round(sum(point), 1) AS 通算ポイント,
     round(avg(point), 1) AS 平均ポイント,
@@ -129,9 +129,9 @@ FROM
 WHERE
     name = "<Player Name>"
 GROUP BY
-    collection
+    collection_daily
 HAVING
-    collection LIKE strftime("%Y-%%")
+    collection_daily LIKE strftime("%Y-%%")
 ```
 全体成績サマリのHAVING句で絞るでも。
 
@@ -174,7 +174,7 @@ ORDER BY
     count() DESC
 ```
 
-## ゲーム毎の累計ポイント(移動累計)、平均ポイント（移動平均）
+## ゲーム毎の通算ポイント(移動合計)、平均ポイント（移動平均）
 ```
 SELECT
     count() OVER moving AS count,
