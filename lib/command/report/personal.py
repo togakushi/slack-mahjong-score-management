@@ -120,10 +120,11 @@ def plot():
     )
 
     tb.auto_set_font_size(False)
+    tb.auto_set_column_width(range(len(column_labels)))
     for i in range(len(column_labels)):
         tb[0, i].set_text_props(color="#FFFFFF", weight="bold")
-    for i in range(len(results.keys()) + 1):
-        tb[i, 0].set_text_props(ha="center")
+        for j in range(len(results.keys()) + 1):
+            tb[j, i].set_text_props(ha="center")
 
     # 追加テキスト
     remark_text = f.message.remarks().strip()
