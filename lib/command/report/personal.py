@@ -60,10 +60,10 @@ def plot():
 
     # 見出し設定
     if g.opt.individual:
-        graph_title = "個人成績"
+        graph_title = "個人成績一覧"
         column_name = "プレイヤー名"
     else:  # チーム集計
-        graph_title = "チーム成績"
+        graph_title = "チーム成績一覧"
         column_name = "チーム名"
 
     # 非表示項目
@@ -129,7 +129,7 @@ def plot():
     # 追加テキスト
     remark_text = f.message.remarks().strip()
     if g.opt.search_word:
-        add_text = "[集計範囲：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
+        add_text = "[集計範囲：{} ～ {}] [総ゲーム数：{}] [規定ゲーム数：{} 以上] {}".format(
             game_info["first_comment"],
             game_info["last_comment"],
             game_info["game_count"],
@@ -137,7 +137,7 @@ def plot():
             f"[{remark_text}]" if remark_text else "",
         )
     else:
-        add_text = "[集計範囲：{} - {}] [総ゲーム数：{}] [規定数：{} ゲーム以上] {}".format(
+        add_text = "[集計範囲：{} ～ {}] [総ゲーム数：{}] [規定ゲーム数：{} 以上] {}".format(
             game_info["first_game"],
             game_info["last_game"],
             game_info["game_count"],
