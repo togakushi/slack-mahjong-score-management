@@ -11,7 +11,7 @@ def main():
     g.opt.initialization("report", g.msg.argument)
     g.prm.update(g.opt)
 
-    if len(g.prm.player_list) == 1:  # 個人成績レポート
+    if len(g.prm.player_list) == 1:  # 成績レポート
         name, pdf_file = results.gen_pdf()
         if pdf_file:
             f.slack_api.post_fileupload(f"成績レポート({name})", pdf_file)
@@ -39,11 +39,9 @@ def main():
                 message=f.message.no_hits(),
                 file_list=file_list,
             )
-    elif g.opt.individual:  # デフォルトがTrueなので最後に判定
+    else:
         report_file_path = personal.plot()
         if report_file_path:
-            f.slack_api.post_fileupload("個人成績一覧", report_file_path)
+            f.slack_api.post_fileupload("成績一覧", report_file_path)
         else:
             f.slack_api.post_message(f.message.no_hits())
-    else:
-        f.slack_api.post_message(f.message.invalid_argument())

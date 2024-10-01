@@ -1,3 +1,4 @@
+import global_value as g
 from lib.database.common import query_modification
 
 
@@ -253,5 +254,85 @@ def count_moving(interval=40):
             "<<Calculation Formula>>",
             "(row_number() over (order by total_count desc) - 1) / :interval"
         )
+
+    return (query_modification(sql))
+
+
+def results_list():
+    sql = """
+        -- report.results_list()
+        select
+            name,
+            count() as ゲーム数,
+            replace(round(sum(point), 1), "-", "▲") as 通算ポイント,
+            replace(round(avg(point), 1), "-", "▲") as 平均ポイント,
+            printf("%3d (%7.2f%%)",
+                count(rank = 1 or null),
+                round(cast(count(rank = 1 or null) as real) / count() * 100, 2)
+            ) as '1位',
+            printf("%3d (%7.2f%%)",
+                count(rank = 2 or null),
+                round(cast(count(rank = 2 or null) as real) / count() * 100, 2)
+            ) as '2位',
+            printf("%3d (%7.2f%%)",
+                count(rank = 3 or null),
+                round(cast(count(rank = 3 or null) as real) / count() * 100, 2)
+            ) as '3位',
+            printf("%3d (%7.2f%%)",
+                count(rank = 4 or null),
+                round(cast(count(rank = 4 or null) AS real) / count() * 100, 2)
+            ) as '4位',
+            printf("%.2f", round(avg(rank), 2)) as 平均順位,
+            printf("%3d (%7.2f%%)",
+                count(rpoint < 0 or null),
+                round(cast(count(rpoint < 0 or null) as real) / count() * 100, 2)
+            ) as トビ,
+            printf("%3d (%7.2f%%)",
+                ifnull(sum(gs_count), 0),
+                round(cast(ifnull(sum(gs_count), 0) as real) / count() * 100, 2)
+            ) as 役満和了
+        from (
+            select
+                individual_results.playtime,
+                --[individual] --[unregistered_replace] case when guest = 0 then individual_results.name else :guest_name end as name, -- ゲスト有効
+                --[individual] --[unregistered_not_replace] individual_results.name, -- ゲスト無効
+                --[team] team_results.name,
+                rpoint,
+                rank,
+                point,
+                gs_count
+            from
+                individual_results
+            join game_info on
+                game_info.ts == individual_results.ts
+            left join grandslam on
+                grandslam.thread_ts == individual_results.ts
+                --[individual] and grandslam.name == individual_results.name
+                --[team] and grandslam.team == team_results.name
+            where
+                individual_results.rule_version = :rule_version
+                and individual_results.playtime between :starttime and :endtime
+                --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
+                --[individual] --[guest_skip] and guest = 0 -- ゲストなし
+                --[friendly_fire] and same_team = 0
+                --[team] and individual_results.name notnull
+                --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
+                --[search_word] and game_info.comment like :search_word
+            order by
+                individual_results.playtime desc
+            --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
+        )
+        group by
+            name
+        having
+            count() >= :stipulated -- 規定打数
+        order by
+            sum(point) desc
+    """
+
+    if not g.opt.individual:  # チーム集計
+        g.opt.unregistered_replace = False
+        g.opt.guest_skip = True
+        sql = sql.replace("individual_results", "team_results")
 
     return (query_modification(sql))
