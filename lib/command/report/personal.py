@@ -55,10 +55,7 @@ def plot():
         return (False)
 
     # --- グラフフォント設定
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
-    fm.fontManager.addfont(font_path)
-    font_prop = fm.FontProperties(fname=font_path)
-    plt.rcParams["font.family"] = font_prop.get_name()
+    f.common.graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
 
     # 見出し設定
@@ -73,7 +70,6 @@ def plot():
     for x in results.keys():
         if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
             results[x].pop("トビ")
-        print(">", results[x])
 
     # 色彩設定
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
