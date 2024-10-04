@@ -82,6 +82,7 @@ def handle_message_events(client, body):
                         else:
                             f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                 case "message_changed":
+                    print(f"DEBUG> {body=}")  # todo: エラー解析用
                     if detection:
                         f.score.check_score(detection)
                         if g.msg.updatable:
