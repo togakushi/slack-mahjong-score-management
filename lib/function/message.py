@@ -205,6 +205,8 @@ def remarks():
     if not g.opt.unregistered_replace:
         if g.opt.individual:  # 個人集計時のみ表示
             remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
+    if g.opt.stipulated != 0:
+        remark.append(f"規定ゲーム数：{g.opt.stipulated}")
     if remark:
         ret = "特記事項：" + "、".join(remark) + "\n"
 
@@ -239,7 +241,7 @@ def header(game_info, add_text="", indent=1):
                     msg += f"ゲーム数：{game_info['game_count']} 回{add_text}\n"
             case "ranking" | "report":
                 msg += game_range2
-                msg += f"集計ゲーム数：{game_info['game_count']} (規定数：{g.opt.stipulated} 以上)\n"
+                msg += f"集計ゲーム数：{game_info['game_count']}\n"
             case _:
                 msg += game_range2
                 msg += f"総ゲーム数：{game_info['game_count']} 回\n"

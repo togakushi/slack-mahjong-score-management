@@ -347,6 +347,60 @@ def ranking_record():
     return (df)
 
 
+def calculation_rating():
+    """
+    レーティングを集計する
+
+    Returns
+    -------
+    df_ratings : DataFrame
+    """
+
+    # データ収集
+    df_results = pd.read_sql(
+        query.ranking.ratings(),
+        sqlite3.connect(g.cfg.db.database_file),
+        params=g.prm.to_dict(),
+    ).set_index("playtime")
+
+    df_ratings = pd.DataFrame(index=["initial_rating"] + df_results.index.to_list())  # 記録用
+    last_ratings = {}  # 最終値格納用
+
+    # 獲得スコア
+    score_mapping = {1: 30, 2: 10, 3: -10, 4: -30}
+
+    for x in df_results.itertuples():
+        player_list = (x.p1_name, x.p2_name, x.p3_name, x.p4_name)
+        for player in player_list:
+            if player not in df_ratings.columns:
+                last_ratings[player] = 1500
+                df_ratings[player] = np.nan
+                df_ratings.loc["initial_rating", player] = 1500
+                df_ratings = df_ratings.copy()
+
+        # 天鳳計算式 (https://tenhou.net/man/#RATING)
+        rank_list = (x.p1_rank, x.p2_rank, x.p3_rank, x.p4_rank,)
+        rating_list = [last_ratings[player] for player in player_list]
+        rating_avg = 1500 if np.mean(rating_list) < 1500 else np.mean(rating_list)
+
+        for i, player in enumerate(player_list):
+            rating = rating_list[i]
+            rank = rank_list[i]
+
+            correction_value = (rating_avg - rating) / 40
+            if df_ratings[player].count() >= 400:
+                match_correction = 0.2
+            else:
+                match_correction = 1 - df_ratings[player].count() * 0.002
+
+            new_rating = rating + match_correction * (score_mapping[rank] + correction_value)
+
+            last_ratings[player] = new_rating
+            df_ratings.loc[x.Index, player] = new_rating
+
+    return (df_ratings)
+
+
 # レポート
 def monthly_report():
     # データ収集

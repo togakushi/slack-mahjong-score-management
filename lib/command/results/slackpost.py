@@ -1,6 +1,6 @@
 import global_value as g
 from lib import function as f
-from lib.command.results import detail, summary, versus
+from lib.command.results import detail, rating, summary, versus
 
 
 def main():
@@ -23,6 +23,12 @@ def main():
     # ---
     if len(g.prm.player_list) == 1 and not versus_mode:  # 個人成績
         msg1, msg2 = detail.aggregation()
+        f.slack_api.slack_post(
+            headline=msg1,
+            message=msg2,
+        )
+    elif g.opt.rating:
+        msg1, msg2 = rating.aggregation()
         f.slack_api.slack_post(
             headline=msg1,
             message=msg2,

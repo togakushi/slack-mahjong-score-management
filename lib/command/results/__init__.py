@@ -1,3 +1,3 @@
-from lib.command.results import detail, slackpost, summary, versus
+from lib.command.results import detail, rating, slackpost, summary, versus
 
-__all__ = ["detail", "slackpost", "summary", "versus"]
+__all__ = ["detail", "rating", "slackpost", "summary", "versus"]

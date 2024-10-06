@@ -29,6 +29,7 @@ class command_option:
         self.stipulated: int = 0  # 規定打数
         self.target_count: int = 0  # 直近
         self.verbose: bool = False  # 戦績詳細
+        self.rating: bool = False  # レーティング表示
         self.friendly_fire: bool = g.cfg.config["team"].getboolean("friendly_fire", True)
         self.unregistered_replace: bool = g.cfg.config[_command].getboolean("unregistered_replace", True)
         self.guest_skip: bool = g.cfg.config[_command].getboolean("guest_skip", True)
@@ -96,6 +97,8 @@ class command_option:
                     self.order = True
                 case keyword if re.search(r"^(統計)$", keyword):
                     self.statistics = True
+                case keyword if re.search(r"^(レート|レーティング|rate|ratings?)$", keyword):
+                    self.rating = True
                 case keyword if re.search(r"^(個人|個人成績)$", keyword):
                     self.individual = True
                 case keyword if re.search(r"^(チーム|チーム成績|team)$", keyword.lower()):
