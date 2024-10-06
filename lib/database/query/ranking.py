@@ -62,3 +62,34 @@ def ratings():
     """
 
     return (query_modification(sql))
+
+
+def results():
+    """
+    成績集計
+    """
+
+    sql = """
+        -- ranking.results()
+        select
+            name,
+            count() as count,
+            printf("%d + %d + %d + %d = %d",
+                count(rank = 1 or null),
+                count(rank = 2 or null),
+                count(rank = 3 or null),
+                count(rank = 4 or null),
+                count()
+            ) as rank_dist,
+            round(avg(rpoint) * 100, 1) as rpoint_avg,
+            round(avg(rank), 2) as rank_avg
+        from
+            individual_results
+        where
+            rule_version = :rule_version
+            and playtime between :starttime and :endtime
+        group by
+            name
+    """
+
+    return (query_modification(sql))

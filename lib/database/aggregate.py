@@ -401,6 +401,25 @@ def calculation_rating():
     return (df_ratings)
 
 
+def simple_results():
+    """
+    簡易集計結果
+
+    Returns
+    -------
+    df_ratings : DataFrame
+    """
+
+    # データ収集
+    df = pd.read_sql(
+        query.ranking.results(),
+        sqlite3.connect(g.cfg.db.database_file),
+        params=g.prm.to_dict(),
+    ).set_index("name")
+
+    return (df)
+
+
 # レポート
 def monthly_report():
     # データ収集
