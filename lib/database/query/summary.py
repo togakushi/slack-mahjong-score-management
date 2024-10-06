@@ -310,8 +310,8 @@ def details():
         select
             --[not_search_word] individual_results.playtime,
             --[search_word] game_info.comment as playtime,
-            --[team] individual_results.name as name,
-            --[individual] individual_results.name,
+            --[team] team_results.name as name,
+            --[individual] individual_results.name as name,
             --[individual] guest,
             --[individual] game_info.guest_count,
             seat,

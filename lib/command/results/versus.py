@@ -39,7 +39,7 @@ def aggregation():
         vs_list = set(g.member_list.values())
     else:
         vs = ",".join(g.prm.competition_list.values())
-        vs_list = list(df_game["プレイヤー名"].unique())
+        vs_list = list(df_game["name"].unique())
 
     msg1 = textwrap.dedent(f"""
         *【直接対戦結果】*
@@ -82,8 +82,8 @@ def aggregation():
             # ゲーム結果
             if g.opt.game_results:
                 count = 0
-                my_score = df_game.query("プレイヤー名 == @my_name")
-                vs_score = df_game.query("プレイヤー名 == @vs_name")
+                my_score = df_game.query("name == @my_name")
+                vs_score = df_game.query("name == @vs_name")
                 my_playtime = my_score["playtime"].to_list()
                 vs_playtime = vs_score["playtime"].to_list()
 
