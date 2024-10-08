@@ -37,6 +37,7 @@ def read_memberslist():
                 team.id
         """)
 
+    g.team_list = []
     for row in rows.fetchall():
         g.team_list.append(
             dict(zip(["id", "team", "member"], row))
