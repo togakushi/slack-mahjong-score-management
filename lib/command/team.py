@@ -28,7 +28,7 @@ def check_namepattern(name):
     """
 
     # 登録済みチームかチェック
-    for x in g.team_list.values():
+    for x in [x["team"] for x in g.team_list]:
         if name == x:
             return (False, f"チーム名「{name}」はすでに使用されています。")
         if f.common.KANA2HIRA(name) == f.common.KANA2HIRA(x):  # ひらがな
@@ -124,11 +124,11 @@ def delete(argument):
         team_name = f.common.HAN2ZEN(argument[0])
         logging.notice(f"Team delete: {team_name}")  # type: ignore
 
-        if team_name not in g.team_list.values():  # 未登録チームチェック
+        if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
             msg = d.common.database_backup()
-            team_id = [k for k, v in g.team_list.items() if v == team_name][0]
+            team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
             resultdb = sqlite3.connect(
                 g.cfg.db.database_file,
                 detect_types=sqlite3.PARSE_DECLTYPES,
@@ -180,11 +180,11 @@ def append(argument):
         registration_flg = True
         team_id = None
 
-        if team_name not in g.team_list.values():  # 未登録チームチェック
+        if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」はまだ登録されていません。"
             registration_flg = False
         else:
-            team_id = [k for k, v in g.team_list.items() if v == team_name][0]
+            team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
 
         if player_name not in g.member_list.keys():  # 未登録プレイヤーチェック
             msg = f"「{player_name}」はレギュラーメンバーではありません。"
@@ -249,11 +249,11 @@ def remove(argument):
         registration_flg = True
         team_id = None
 
-        if team_name not in g.team_list.values():  # 未登録チームチェック
+        if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
             registration_flg = False
         else:
-            team_id = [k for k, v in g.team_list.items() if v == team_name][0]
+            team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
 
         if player_name not in g.member_list.keys():  # 未登録プレイヤーチェック
             msg = f"「{player_name}」はレギュラーメンバーではありません。"

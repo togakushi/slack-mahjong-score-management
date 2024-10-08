@@ -23,14 +23,30 @@ def read_memberslist():
     rows = resultdb.execute("select name, member from alias")
     g.member_list = dict(rows.fetchall())
 
-    rows = resultdb.execute("select * from team")
-    g.team_list = dict(rows.fetchall())
+    rows = resultdb.execute(
+        """
+            select
+                team.id as id,
+                team.name as team,
+                group_concat(member.name) as member
+            from
+                team
+            left join member on
+                team.id == member.team_id
+            group by
+                team.id
+        """)
+
+    for row in rows.fetchall():
+        g.team_list.append(
+            dict(zip(["id", "team", "member"], row))
+        )
 
     resultdb.close()
 
     logging.notice(f"guest_name: {g.prm.guest_name}")  # type: ignore
     logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
-    logging.notice(f"team_list: {list(g.team_list.values())}")  # type: ignore
+    logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")  # type: ignore
 
 
 def NameReplace(pname, add_mark=False):
