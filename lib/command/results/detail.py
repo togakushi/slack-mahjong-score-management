@@ -3,6 +3,7 @@ import textwrap
 import pandas as pd
 
 import global_value as g
+from lib import command as c
 from lib import database as d
 from lib import function as f
 
@@ -31,14 +32,21 @@ def aggregation():
     if g.opt.individual:
         item_title = "*【個人成績】*"
         item_name = "プレイヤー名"
+        team = c.team.which_team(g.prm.player_name)
+        if team:
+            item_team = f"所属チーム： {team}"
+        else:
+            item_team = ""
     else:
         item_title = "*【チーム成績】*"
         item_name = "チーム名"
+        item_team = ""
 
     if game_info["game_count"] == 0:
         msg1 = f"""
             {item_title}
             \t{item_name}： {g.prm.player_name} {f.common.badge_degree(0)}
+            \t{item_team}
             \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
             \t{f.message.remarks().strip()}
             \t対戦数： 0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}
@@ -62,6 +70,7 @@ def aggregation():
     msg1 = f"""
         {item_title}
         \t{item_name}： {data["表示名"].strip()} {badge_degree}
+        \t{item_team}
         \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
         \t集計範囲： {game_info['first_game']} ～ {game_info['last_game']}
         \t{f.message.remarks().strip()}

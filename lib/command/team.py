@@ -9,6 +9,20 @@ from lib import database as d
 from lib import function as f
 
 
+def which_team(name):
+    """
+    指定メンバーの所属チームを返す
+    """
+
+    team = None
+
+    for x in g.team_list:
+        if name in x["member"].split(","):
+            team = x["team"]
+
+    return (team)
+
+
 def check_namepattern(name):
     """
     登録制限チェック
@@ -239,7 +253,9 @@ def remove(argument):
 
     msg = "使い方が間違っています。"
 
-    if len(argument) == 2:  # 別名削除
+    # todo: argument == 1のときの処理
+
+    if len(argument) == 2:  # チーム名指
         g.opt.unregistered_replace = False
 
         team_name = f.common.HAN2ZEN(argument[0])
