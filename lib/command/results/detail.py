@@ -259,4 +259,9 @@ def aggregation():
         for _, r in df.iterrows():
             msg2["対戦"] += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"
 
+    # 非表示項目
+    if not g.opt.statistics:
+        msg2.pop("座席")
+        msg2.pop("記録")
+
     return (textwrap.dedent(msg1), msg2)
