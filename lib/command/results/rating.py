@@ -49,13 +49,13 @@ def aggregation():
     )
 
     # 計算
-    df["得点偏差"] = (df["rpoint_avg"] - 25000) / df["rpoint_avg"].std(ddof=0) * 10 + 50
-    df["順位偏差"] = (df["rank_avg"] - 2.5) / df["rank_avg"].std(ddof=0) * -10 + 50
+    df["得点偏差"] = (df["rpoint_avg"] - df["rpoint_avg"].mean()) / df["rpoint_avg"].std(ddof=0) * 10 + 50
+    df["順位偏差"] = (df["rank_avg"] - df["rank_avg"].mean()) / df["rank_avg"].std(ddof=0) * -10 + 50
 
     # 表示
     # --- 情報ヘッダ
     add_text = ""
-    headline = "*【レーティング】*\n"
+    headline = "*【レーティング】* （実験的な機能）\n"
     headline += f.message.header(game_info, add_text, 1)
 
     df = df.rename(columns={
