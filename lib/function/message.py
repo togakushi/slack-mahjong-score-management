@@ -206,7 +206,7 @@ def remarks():
         if g.opt.individual:  # 個人集計時のみ表示
             remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
     if g.opt.stipulated != 0:
-        remark.append(f"規定ゲーム数：{g.opt.stipulated}")
+        remark.append(f"規定ゲーム数 {g.opt.stipulated} G以上")
     if remark:
         ret = "特記事項：" + "、".join(remark) + "\n"
 
