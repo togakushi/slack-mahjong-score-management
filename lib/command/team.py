@@ -17,8 +17,9 @@ def which_team(name):
     team = None
 
     for x in g.team_list:
-        if name in x["member"].split(","):
-            team = x["team"]
+        if x["member"]:
+            if name in x["member"].split(","):
+                team = x["team"]
 
     return (team)
 

@@ -29,24 +29,35 @@ def aggregation():
     df_grandslam = d.aggregate.grandslam_count()
     df_regulations = d.aggregate.regulations_count()
 
+    item_team = ""
+    item_member = ""
+
     if g.opt.individual:
         item_title = "*【個人成績】*"
         item_name = "プレイヤー名"
         team = c.team.which_team(g.prm.player_name)
         if team:
             item_team = f"所属チーム： {team}"
-        else:
-            item_team = ""
     else:
+        team_data = [x for x in g.team_list if x["team"] == g.prm.player_name]
+        if team_data:
+            if team_data[0]["member"]:
+                member = "、".join(team_data[0]['member'].split(","))
+                item_member = f"登録メンバー： {member}"
+            else:
+                item_member = "登録メンバー： なし"
+        else:
+            return ("登録されていないチームです", {})
+
         item_title = "*【チーム成績】*"
         item_name = "チーム名"
-        item_team = ""
 
     if game_info["game_count"] == 0:
         msg1 = f"""
             {item_title}
             \t{item_name}： {g.prm.player_name} {f.common.badge_degree(0)}
             \t{item_team}
+            \t{item_member}
             \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
             \t{f.message.remarks().strip()}
             \t対戦数： 0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}
@@ -71,10 +82,12 @@ def aggregation():
         {item_title}
         \t{item_name}： {data["表示名"].strip()} {badge_degree}
         \t{item_team}
+        \t{item_member}
         \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
         \t集計範囲： {game_info['first_game']} ～ {game_info['last_game']}
         \t{f.message.remarks().strip()}
         \t対戦数： {data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}
+
     """
     msg1 = f.message.del_blank_line(msg1)
     msg2 = {}
