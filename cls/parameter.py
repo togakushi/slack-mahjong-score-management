@@ -19,29 +19,31 @@ class command_option:
 
         self.command: str = _command
         self.aggregation_range: list = []
-        self.aggregation_range.append(g.cfg.config[_command].get("aggregation_range", "当日"))
         self.target_player: list = []
         self.all_player: bool = False
         self.order: bool = False  # 順位推移グラフ / 成績上位者
-        self.statistics: bool = False  # 統計レポート
-        self.individual: bool = g.cfg.config[_command].getboolean("individual", True)  # True:個人集計 / False:チーム集計
         self.fourfold: bool = False  # 縦持ちデータの直近Nを4倍で取るか
         self.stipulated: int = 0  # 規定打数
         self.target_count: int = 0  # 直近
         self.verbose: bool = False  # 戦績詳細
         self.rating: bool = False  # レーティング表示
-        self.friendly_fire: bool = g.cfg.config["team"].getboolean("friendly_fire", True)
-        self.unregistered_replace: bool = g.cfg.config[_command].getboolean("unregistered_replace", True)
+
+        self.aggregation_range.append(g.cfg.config[_command].get("aggregation_range", "当日"))
+        self.individual: bool = g.cfg.config[_command].getboolean("individual", True)  # True:個人集計 / False:チーム集計
+        self.statistics: bool = g.cfg.config[_command].getboolean("statistics", False)  # 統計
+        self.unregistered_replace: bool = g.cfg.config[_command].getboolean("unregistered_replace", True)  # ゲスト無効
         self.guest_skip: bool = g.cfg.config[_command].getboolean("guest_skip", True)
         self.guest_skip2: bool = g.cfg.config[_command].getboolean("guest_skip2", True)
-        self.score_comparisons: bool = g.cfg.config[_command].getboolean("score_comparisons", False)
-        self.game_results: bool = g.cfg.config[_command].getboolean("game_results", False)
+        self.score_comparisons: bool = g.cfg.config[_command].getboolean("score_comparisons", False)  # 比較
+        self.game_results: bool = g.cfg.config[_command].getboolean("game_results", False)  # 戦績
         self.versus_matrix: bool = g.cfg.config[_command].getboolean("versus_matrix", False)
         self.ranked: int = g.cfg.config[_command].getint("ranked", 3)
         self.stipulated_rate: float = g.cfg.config[_command].getfloat("stipulated_rate", 0.05)
-        self.format: str = g.cfg.config["setting"].get("format", "default")
         self.filename: str = str()
         self.collection: str = str()
+
+        self.format: str = g.cfg.config["setting"].get("format", "default")
+        self.friendly_fire: bool = g.cfg.config["team"].getboolean("friendly_fire", True)
         self.group_length: int = g.cfg.config["comment"].getint("group_length", 0)
         self.search_word: str = g.cfg.config["comment"].get("search_word", str())
 
