@@ -32,6 +32,7 @@ def main():
         f.slack_api.slack_post(
             headline=msg1,
             message=msg2,
+            summarize=False,
         )
     elif versus_mode:  # 直接対戦
         msg1, msg2, file_list = versus.aggregation()

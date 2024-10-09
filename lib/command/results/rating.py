@@ -41,10 +41,9 @@ def aggregation():
 
     # ゲスト置換
     if g.opt.unregistered_replace:
-        for player in final.index:
-            if player not in g.member_list:
-                final = final.copy().drop(player)
-                df = df.copy().drop(player)
+        for player in df.itertuples():
+            if player.name not in g.member_list.keys():
+                df = df.copy().drop(player.Index)
     df["名前"] = df["name"].copy().apply(
         lambda x: c.member.NameReplace(x, add_mark=True)
     )
@@ -64,18 +63,31 @@ def aggregation():
         "rank_dist": "順位分布",
         "rank_avg": "平均順位",
         "rpoint_avg": "平均素点",
-    }).copy()
-
-    msg = df.filter(
+    }).filter(
         items=[
             "名前", "レート", "平均順位", "順位偏差", "平均素点", "得点偏差", "順位分布"
         ]
-    ).to_markdown(
-        index=False,
-        tablefmt="simple",
-        numalign="right",
-        floatfmt=("", ".1f", ".2f", ".0f", ".1f", ".0f", "")
-    )
-    msg = f"```\n{msg}\n```\n"
+    ).copy()
+
+    msg = {}
+    table_param = {
+        "index": False,
+        "tablefmt": "simple",
+        "numalign": "right",
+        "floatfmt": ("", ".1f", ".2f", ".0f", ".1f", ".0f", "")
+    }
+
+    step = 30
+    length = len(df)
+    for i in range(int(length / step) + 1):
+        s = step * i
+        e = step * (i + 1)
+        if e + step / 2 > length:
+            table = df[s:].to_markdown(**table_param)
+            msg[s] = f"```\n{table}\n```\n"
+            break
+        else:
+            table = df[s:e].to_markdown(**table_param)
+            msg[s] = f"```\n{table}\n```\n"
 
     return (headline, msg)
