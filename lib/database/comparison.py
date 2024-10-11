@@ -130,24 +130,23 @@ def score_comparison():
             db_delete(cur, key)
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
-    for i in slack_data.keys():
+    for ts in slack_data.keys():
+        channel_id = slack_data[ts][9]
         rpoint_data = [
-            eval(slack_data[i][1]), eval(slack_data[i][3]),
-            eval(slack_data[i][5]), eval(slack_data[i][7]),
+            eval(slack_data[ts][1]), eval(slack_data[ts][3]),
+            eval(slack_data[ts][5]), eval(slack_data[ts][7]),
         ]
         deposit = g.prm.origin_point * 4 - sum(rpoint_data)
-        g.msg.channel_id = slack_data[i][9]
-        g.msg.event_ts = i
 
         if deposit == 0:
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, channel_id, ts)
         else:
             count["invalid_score"] += 1
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(
-                datetime.fromtimestamp(float(i)).strftime('%Y/%m/%d %H:%M:%S'),
-                deposit, textformat(slack_data[i])
+                datetime.fromtimestamp(float(ts)).strftime('%Y/%m/%d %H:%M:%S'),
+                deposit, textformat(slack_data[ts])
             )
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, channel_id, ts)
 
     resultdb.commit()
     resultdb.close()
