@@ -74,7 +74,7 @@ def results():
         select
             individual_results.name,
             count() as count,
-            printf("%d + %d + %d + %d = %d",
+            printf("%d+%d+%d+%d=%d",
                 count(rank = 1 or null),
                 count(rank = 2 or null),
                 count(rank = 3 or null),
