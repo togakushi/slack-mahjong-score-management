@@ -94,27 +94,27 @@ def score_comparison():
     # slackだけにあるパターン
     for key in slack_data.keys():
         if key in db_data.keys():
-            if slack_data[key][0:8] == db_data[key]:
+            if slack_data[key][:-1] == db_data[key]:
                 continue
             else:  # 更新
                 count["mismatch"] += 1
                 logging.notice(f"mismatch: {key}")  # type: ignore
-                logging.info(f"   * [slack]: {slack_data[key][0:8]}")
+                logging.info(f"   * [slack]: {slack_data[key][:-1]}")
                 logging.info(f"   * [   db]: {db_data[key]}")
                 ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                    textformat(db_data[key]), textformat(slack_data[key]),
+                    textformat(db_data[key]), textformat(slack_data[key][:-1]),
                 )
-                db_update(cur, key, slack_data[key][0:8])
+                db_update(cur, key, slack_data[key][:-1])
                 continue
         else:  # 追加
             count["missing"] += 1
-            logging.notice(f"missing: {key}, {slack_data[key][0:8]}")  # type: ignore
+            logging.notice(f"missing: {key}, {slack_data[key][:-1]}")  # type: ignore
             ret_msg["missing"] += "\t{} {}\n".format(
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                textformat(slack_data[key][0:8])
+                textformat(slack_data[key][:-1])
             )
-            db_insert(cur, key, slack_data[key[0:8]])
+            db_insert(cur, key, slack_data[key[:-1]])
 
     # DBだけにあるパターン
     for key in db_data.keys():
