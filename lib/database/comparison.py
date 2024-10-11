@@ -105,7 +105,7 @@ def score_comparison():
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                     textformat(db_data[key]), textformat(slack_data[key][:-1]),
                 )
-                db_update(cur, key, slack_data[key][:-1])
+                db_update(cur, key, slack_data[key])
                 continue
         else:  # 追加
             count["missing"] += 1
@@ -114,7 +114,7 @@ def score_comparison():
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(slack_data[key][:-1])
             )
-            db_insert(cur, key, slack_data[key[:-1]])
+            db_insert(cur, key, slack_data[key])
 
     # DBだけにあるパターン
     for key in db_data.keys():
