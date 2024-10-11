@@ -147,7 +147,7 @@ def score_comparison():
                 datetime.fromtimestamp(float(i)).strftime('%Y/%m/%d %H:%M:%S'),
                 deposit, textformat(slack_data[i])
             )
-        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
 
     resultdb.commit()
     resultdb.close()
