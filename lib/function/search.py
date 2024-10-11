@@ -185,11 +185,12 @@ def game_result(data):
                 # 結果報告フォーマットに一致したポストの処理
                 msg = f.search.pattern(tmp_msg)
                 if msg:
+                    channel = data[i]["channel"]["id"]
                     p1_name = c.member.NameReplace(msg[0])
                     p2_name = c.member.NameReplace(msg[2])
                     p3_name = c.member.NameReplace(msg[4])
                     p4_name = c.member.NameReplace(msg[6])
-                    result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7], msg[8]]
+                    result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7], msg[8], channel]
                     logging.trace(f"{ts}: {result[ts]}")  # type: ignore
 
     if len(result) == 0:

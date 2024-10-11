@@ -136,12 +136,18 @@ def score_comparison():
             eval(slack_data[i][5]), eval(slack_data[i][7]),
         ]
         deposit = g.prm.origin_point * 4 - sum(rpoint_data)
-        if not deposit == 0:
+        g.msg.channel_id = slack_data[i][9]
+        g.msg.event_ts = i
+
+        if deposit == 0:
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
+        else:
             count["invalid_score"] += 1
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(
                 datetime.fromtimestamp(float(i)).strftime('%Y/%m/%d %H:%M:%S'),
                 deposit, textformat(slack_data[i])
             )
+        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
 
     resultdb.commit()
     resultdb.close()
