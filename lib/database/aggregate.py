@@ -388,6 +388,7 @@ def calculation_rating():
             rank = rank_list[i]
 
             correction_value = (rating_avg - rating) / 40
+            # correction_value = (sum([rate for j, rate in enumerate(rating_list) if j != i]) / 3 - rating) / 40
             if df_ratings[player].count() >= 400:
                 match_correction = 0.2
             else:

@@ -13,13 +13,11 @@ def aggregation():
     レーティングを集計して返す
     """
 
-    # ゲスト強制除外
-    g.opt.guest_skip = True
-
     # データ収集
+    # g.opt.guest_skip = False  # 2ゲスト戦強制取り込み
     game_info = d.aggregate.game_info()
-    df_ratings = d.aggregate.calculation_rating()
     df_results = d.aggregate.simple_results()
+    df_ratings = d.aggregate.calculation_rating()
 
     # 最終的なレーティング
     final = df_ratings.ffill().tail(1).transpose()
@@ -27,26 +25,25 @@ def aggregation():
     final.columns = ["rate", "count"]
     final["name"] = final.copy().index
 
+    # 足切り
     if g.opt.stipulated == 0:  # 規定打数が指定されない場合はレートから計算
         g.opt.stipulated = (
             math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
         )
         g.prm.update(g.opt)
-
-    # 足切り
     final = final.query("count >= @g.opt.stipulated")
     df_results = df_results.query("count >= @g.opt.stipulated")
 
-    df = pd.merge(df_results, final, on=["name", "count"]).sort_values(by="rate", ascending=False)
+    df = pd.merge(df_results, final, on=["name"]).sort_values(by="rate", ascending=False)
 
     # ゲスト置換
+    df["名前"] = df["name"].copy().apply(
+        lambda x: c.member.NameReplace(x, add_mark=True)
+    )
     if g.opt.unregistered_replace:
         for player in df.itertuples():
             if player.name not in g.member_list.keys():
                 df = df.copy().drop(player.Index)
-    df["名前"] = df["name"].copy().apply(
-        lambda x: c.member.NameReplace(x, add_mark=True)
-    )
 
     # 計算
     df["得点偏差"] = (df["rpoint_avg"] - df["rpoint_avg"].mean()) / df["rpoint_avg"].std(ddof=0) * 10 + 50
