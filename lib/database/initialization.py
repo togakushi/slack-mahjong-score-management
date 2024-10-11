@@ -27,14 +27,6 @@ def initialization_resultdb():
         """
     )
 
-    # 追加したカラム
-    rows = resultdb.execute("pragma table_info(member);")
-    for row in rows.fetchall():
-        if row["name"] == "team_id":
-            break
-    else:
-        resultdb.execute("alter table member add column team_id INTEGER;")
-
     # --- 別名定義テーブル
     resultdb.execute(
         """
