@@ -13,8 +13,8 @@ def call_chat_postMessage(**kwargs):
         kwargs.pop("thread_ts")
     try:
         res = g.msg.client.chat_postMessage(**kwargs)
-    except SlackApiError as e:
-        logging.error(e)
+    except SlackApiError as err:
+        logging.error(err)
 
     return (res)
 
@@ -25,8 +25,8 @@ def call_files_upload(**kwargs):
         kwargs.pop("thread_ts")
     try:
         res = g.msg.client.files_upload_v2(**kwargs)
-    except SlackApiError as e:
-        logging.error(e)
+    except SlackApiError as err:
+        logging.error(err)
 
     return (res)
 
@@ -162,11 +162,14 @@ def call_reactions_add(icon):
                 if g.msg.bot_id in reaction["users"]:
                     return
 
-    g.msg.client.reactions_add(
-        channel=g.msg.channel_id,
-        name=icon,
-        timestamp=g.msg.event_ts,
-    )
+    try:
+        g.msg.client.reactions_add(
+            channel=g.msg.channel_id,
+            name=icon,
+            timestamp=g.msg.event_ts,
+        )
+    except Exception as err:
+        logging.error(err)
 
 
 def call_reactions_remove():
