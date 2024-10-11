@@ -21,6 +21,8 @@ if __name__ == "__main__":
         logging.error(err)
         sys.exit()
 
+    g.opt.dbtools = True
+
     # --- メンバーリスト
     c.member.read_memberslist()
 

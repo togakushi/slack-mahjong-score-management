@@ -147,6 +147,9 @@ def call_reactions_add(icon, channel=None, ts=None):
     リアクションを付ける
     """
 
+    if not g.opt.dbtools:
+        return
+
     if not channel:
         channel = g.msg.channel_id
     if not ts:
