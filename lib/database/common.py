@@ -141,13 +141,8 @@ def resultdb_insert(msg, ts):
     param.update(f.score.get_score(msg))
     logging.notice(f"{param=}")  # type: ignore
 
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.execute(d.sql_result_insert, param)
-    resultdb.commit()
-    resultdb.close()
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.execute(d.sql_result_insert, param)
 
 
 def resultdb_update(msg, ts):
