@@ -204,7 +204,7 @@ def call_reactions_remove(ch=None, ts=None):
         timestamp=ts,
     )
 
-    logging.info(res)
+    logging.debug(res)
 
     if "reactions" in res["message"]:
         for reaction in res["message"]["reactions"]:
