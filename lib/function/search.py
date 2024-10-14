@@ -191,7 +191,8 @@ def game_result(data):
                     p3_name = c.member.NameReplace(msg[4])
                     p4_name = c.member.NameReplace(msg[6])
                     result[ts] = [p1_name, msg[1], p2_name, msg[3], p3_name, msg[5], p4_name, msg[7], msg[8], channel]
-                    logging.trace(f"{ts}: {result[ts]}")  # type: ignore
+                    logging.debug(f"{ts}: {result[ts]}")
+                    logging.trace(f"{ts}: {tmp_msg}")  # type: ignore
 
     if len(result) == 0:
         return (None)
