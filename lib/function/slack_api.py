@@ -142,7 +142,7 @@ def slack_post(**kwargs):
             post_multi_message(message, res["ts"], summarize)
 
 
-def call_reactions_add(icon, ch=g.msg.channel_id, ts=g.msg.event_ts):
+def call_reactions_add(icon, ch=None, ts=None):
     """
     リアクションを付ける
 
@@ -155,6 +155,11 @@ def call_reactions_add(icon, ch=g.msg.channel_id, ts=g.msg.event_ts):
 
     if not g.opt.dbtools:
         return
+
+    if not ch:
+        ch = g.msg.channel_id
+    if not ts:
+        ts = g.msg.event_ts
 
     res = g.msg.client.reactions_get(channel=ch, timestamp=ts)
     logging.debug(res)
@@ -179,7 +184,7 @@ def call_reactions_add(icon, ch=g.msg.channel_id, ts=g.msg.event_ts):
         logging.error(err)
 
 
-def call_reactions_remove(ch=g.msg.channel_id, ts=g.msg.event_ts):
+def call_reactions_remove(ch=None, ts=None):
     """
     botが付けたリアクションを外す
 
@@ -188,6 +193,11 @@ def call_reactions_remove(ch=g.msg.channel_id, ts=g.msg.event_ts):
     ch : channel_id
     ts : timestamp
     """
+
+    if not ch:
+        ch = g.msg.channel_id
+    if not ts:
+        ts = g.msg.event_ts
 
     res = g.msg.client.reactions_get(
         channel=ch,
