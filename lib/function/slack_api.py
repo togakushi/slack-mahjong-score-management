@@ -142,25 +142,22 @@ def slack_post(**kwargs):
             post_multi_message(message, res["ts"], summarize)
 
 
-def call_reactions_add(icon, channel=None, ts=None):
+def call_reactions_add(icon, ch=g.msg.channel_id, ts=g.msg.event_ts):
     """
     リアクションを付ける
+
+    Parameters
+    ----------
+    icon : icon
+    ch : channel_id
+    ts : timestamp
     """
 
     if not g.opt.dbtools:
         return
 
-    if not channel:
-        channel = g.msg.channel_id
-    if not ts:
-        ts = g.msg.event_ts
-
-    res = g.msg.client.reactions_get(
-        channel=channel,
-        timestamp=ts,
-    )
-
-    logging.info(res)
+    res = g.msg.client.reactions_get(channel=ch, timestamp=ts)
+    logging.debug(res)
 
     # 既にリアクションが付いてるなら何もしない
     if "reactions" in res["message"]:
@@ -174,26 +171,26 @@ def call_reactions_add(icon, channel=None, ts=None):
 
     try:
         g.msg.client.reactions_add(
-            channel=g.msg.channel_id,
+            channel=ch,
             name=icon,
-            timestamp=g.msg.event_ts,
+            timestamp=ts,
         )
     except SlackApiError as err:
         logging.error(err)
 
 
-def call_reactions_remove(channel=None, ts=None):
+def call_reactions_remove(ch=g.msg.channel_id, ts=g.msg.event_ts):
     """
     botが付けたリアクションを外す
+
+    Parameters
+    ----------
+    ch : channel_id
+    ts : timestamp
     """
 
-    if not channel:
-        channel = g.msg.channel_id
-    if not ts:
-        ts = g.msg.event_ts
-
     res = g.msg.client.reactions_get(
-        channel=channel,
+        channel=ch,
         timestamp=ts,
     )
 
@@ -204,14 +201,14 @@ def call_reactions_remove(channel=None, ts=None):
             if reaction["name"] == g.cfg.setting.reaction_ok:
                 if g.msg.bot_id in reaction["users"]:
                     g.msg.client.reactions_remove(
-                        channel=g.msg.channel_id,
+                        channel=ch,
                         name=g.cfg.setting.reaction_ok,
-                        timestamp=g.msg.event_ts,
+                        timestamp=ts,
                     )
             if reaction["name"] == g.cfg.setting.reaction_ng:
                 if g.msg.bot_id in reaction["users"]:
                     g.msg.client.reactions_remove(
-                        channel=g.msg.channel_id,
+                        channel=ch,
                         name=g.cfg.setting.reaction_ng,
-                        timestamp=g.msg.event_ts,
+                        timestamp=ts,
                     )
