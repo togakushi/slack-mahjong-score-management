@@ -131,6 +131,7 @@ def score_comparison():
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
     for ts in slack_data.keys():
+        logging.trace(f"score check: {ts=}, {slack_data=}")
         channel_id = slack_data[ts][9]
         rpoint_data = [
             eval(slack_data[ts][1]), eval(slack_data[ts][3]),
