@@ -153,9 +153,6 @@ def call_reactions_add(icon, ch=None, ts=None):
     ts : timestamp
     """
 
-    if g.opt.dbtools:  # dbtools実行時はリアクション操作をしない
-        return
-
     if not ch:
         ch = g.msg.channel_id
     if not ts:

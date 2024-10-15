@@ -145,7 +145,8 @@ def resultdb_insert(detection, ts):
         cur.execute(d.sql_result_insert, param)
         cur.commit()
 
-    f.score.reactions(param, True)
+    if not g.opt.dbtools:  # dbtools実行時はリアクション操作をしない
+        f.score.reactions(param)
 
 
 def resultdb_update(msg, ts):

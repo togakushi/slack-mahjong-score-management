@@ -114,23 +114,7 @@ def point_split(point: list):
     return (new_point)
 
 
-def reactions2(score: list):
-    """
-    素点合計をチェックしリアクションを付ける(突合専用)
-    """
-    # todo: reactionsに統合する
-
-    correct_score = g.prm.origin_point * 4  # 配給原点
-    rpoint_sum = eval(score[1]) + eval(score[3]) + eval(score[5]) + eval(score[7])
-
-    f.slack_api.call_reactions_remove()
-    if rpoint_sum == correct_score:  # 合計が一致している場合
-        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
-    else:  # 合計が不一致の場合
-        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
-
-
-def reactions(param: dict, response: bool):
+def reactions(param: dict):
     """
     素点合計をチェックしリアクションを付ける
 
@@ -138,9 +122,6 @@ def reactions(param: dict, response: bool):
     ----------
     param : dict
         素点データ
-
-     response : bool
-        合計不一致時にメッセージ応答するか
     """
 
     correct_score = g.prm.origin_point * 4  # 配給原点
@@ -151,11 +132,10 @@ def reactions(param: dict, response: bool):
         f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
     else:
         f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
-        if response:
-            f.slack_api.post_message(
-                f.message.invalid_score(g.msg.user_id, rpoint_sum, correct_score),
-                g.msg.event_ts
-            )
+        f.slack_api.post_message(
+            f.message.invalid_score(g.msg.user_id, rpoint_sum, correct_score),
+            g.msg.event_ts
+        )
 
 
 def check_remarks():
