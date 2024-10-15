@@ -114,35 +114,20 @@ def point_split(point: list):
     return (new_point)
 
 
-def check_score(score: list):
+def reactions2(score: list):
     """
-    素点合計が配給原点と同じかチェック
+    素点合計をチェックしリアクションを付ける(突合専用)
     """
-
-    if g.msg.checked:
-        return
+    # todo: reactionsに統合する
 
     correct_score = g.prm.origin_point * 4  # 配給原点
     rpoint_sum = eval(score[1]) + eval(score[3]) + eval(score[5]) + eval(score[7])
-
-    logging.notice(  # type: ignore
-        "post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
-            score[0], score[1], score[2], score[3], score[4], score[5], score[6], score[7],
-            correct_score - rpoint_sum,
-        )
-    )
 
     f.slack_api.call_reactions_remove()
     if rpoint_sum == correct_score:  # 合計が一致している場合
         f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
     else:  # 合計が不一致の場合
-        f.slack_api.post_message(
-            f.message.invalid_score(g.msg.user_id, rpoint_sum, correct_score),
-            g.msg.event_ts
-        )
         f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
-
-    g.msg.checked = True
 
 
 def reactions(param: dict, response: bool):
@@ -261,9 +246,10 @@ def get_score(detection):
     score_df = calculation_point(score_df)
     score = score_df.to_dict(orient="records")
     rpoint_sum = int(score_df["rpoint"].sum())
+    deposit = g.prm.origin_point * 4 - rpoint_sum
 
     ret = {
-        "deposit": g.prm.origin_point * 4 - rpoint_sum,
+        "deposit": deposit,
         "rpoint_sum": rpoint_sum,
         "comment": detection[8],
     }
@@ -271,5 +257,15 @@ def get_score(detection):
     ret.update(dict(zip([f"p2_{x}" for x in list(score[1])], list(score[1].values()))))
     ret.update(dict(zip([f"p3_{x}" for x in list(score[2])], list(score[2].values()))))
     ret.update(dict(zip([f"p4_{x}" for x in list(score[3])], list(score[3].values()))))
+
+    logging.notice(  # type: ignore
+        "score data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
+            ret["p1_name"], ret["p1_rpoint"],
+            ret["p2_name"], ret["p2_rpoint"],
+            ret["p3_name"], ret["p3_rpoint"],
+            ret["p4_name"], ret["p4_name"],
+            ret["deposit"],
+        )
+    )
 
     return (ret)

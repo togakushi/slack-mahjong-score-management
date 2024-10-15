@@ -17,7 +17,6 @@ class Message_Parser():
     keyword: str = str()
     argument: list = list()
     updatable: bool = bool()
-    checked: bool = bool()
 
     def __init__(self, body: dict = {}):
         if body is dict():
@@ -28,7 +27,6 @@ class Message_Parser():
         self.client = WebClient()
         self.text = str()
         self.thread_ts = str()
-        self.checked = False
         _event = {}
 
         if "channel_name" in _body:
@@ -97,7 +95,6 @@ class Message_Parser():
         self.text = _body["text"]
         self.event_ts = "0"
         self.thread_ts = str()
-        self.checked = False
 
         if self.text:
             self.keyword = self.text.split()[0]
