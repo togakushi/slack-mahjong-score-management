@@ -17,6 +17,7 @@ def main():
     """
 
     # スコア突合
+    command_ts = g.msg.event_ts
     count, msg, fts = score_comparison()
 
     # メモ突合
@@ -37,7 +38,7 @@ def main():
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]
 
-    f.slack_api.post_message(ret, g.msg.event_ts)
+    f.slack_api.post_message(ret, command_ts)
 
 
 def score_comparison():
