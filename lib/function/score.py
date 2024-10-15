@@ -114,20 +114,20 @@ def point_split(point: list):
     return (new_point)
 
 
-def check_score(msg):
+def check_score(score: list):
     """
-    postされた素点合計が配給原点と同じかチェック
+    素点合計が配給原点と同じかチェック
     """
 
     if g.msg.checked:
         return
 
     correct_score = g.prm.origin_point * 4
-    rpoint_sum = eval(msg[1]) + eval(msg[3]) + eval(msg[5]) + eval(msg[7])
+    rpoint_sum = eval(score[1]) + eval(score[3]) + eval(score[5]) + eval(score[7])
 
     logging.notice(  # type: ignore
         "post data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
-            msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7],
+            score[0], score[1], score[2], score[3], score[4], score[5], score[6], score[7],
             correct_score - rpoint_sum,
         )
     )
