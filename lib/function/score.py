@@ -124,6 +124,9 @@ def reactions(param: dict):
         素点データ
     """
 
+    if g.opt.dbtools:  # dbtoolsから実行されている場合は何もしない
+        return
+
     correct_score = g.prm.origin_point * 4  # 配給原点
     rpoint_sum = param["rpoint_sum"]  # 素点合計
 
@@ -203,7 +206,7 @@ def get_score(detection):
     Parameters
     ----------
     detection : list
-        素点データ(名前, 素点) x 4人分
+        素点データ(名前, 素点) x 4人分 + ゲームコメント
 
     Returns
     -------

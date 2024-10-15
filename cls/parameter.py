@@ -48,7 +48,7 @@ class command_option:
         self.search_word: str = g.cfg.config["comment"].get("search_word", str())
 
         # その他フラグ
-        self.dbtools: bool = False  # dbtools実行時にTrue
+        self.dbtools: bool = True  # dbtools実行時にTrue
 
         # 検索範囲の初期設定
         self.search_first: datetime = datetime.now()

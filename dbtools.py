@@ -21,12 +21,11 @@ if __name__ == "__main__":
         logging.error(err)
         sys.exit()
 
-    g.opt.dbtools = True
-
     # --- メンバーリスト
     c.member.read_memberslist()
 
     # --- 突合
+    g.opt.dbtools = True
     count, _, fts = d.comparison.score_comparison()
     if fts:
         count["remark"] = d.comparison.remarks_comparison(fts)

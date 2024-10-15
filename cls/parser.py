@@ -10,10 +10,10 @@ class Message_Parser():
     channel_id: str = str()
     user_id: str = str()
     bot_id: str = str()
-    text: str = str()
+    text: str = str()  # post本文
     event_ts: str = str()  # テキストのまま処理する
     thread_ts: str = str()  # テキストのまま処理する
-    status: str = str()
+    status: str = str()  # event subtype
     keyword: str = str()
     argument: list = list()
     updatable: bool = bool()
@@ -23,8 +23,13 @@ class Message_Parser():
             self.parser(body)
 
     def parser(self, _body: dict):
+        """
+        postされたメッセージをパース
+        """
+
+        __tmp_client = self.client
         self.__dict__.clear()
-        self.client = WebClient()
+        self.client = __tmp_client
         self.text = str()
         self.thread_ts = str()
         _event = {}
@@ -88,14 +93,22 @@ class Message_Parser():
         else:
             self.updatable = False
 
-    def parser_dm(self, _body: dict):
-        self.__dict__.clear()
-        self.client = WebClient()
-        self.channel_id = _body["channel_id"]
-        self.text = _body["text"]
-        self.event_ts = "0"
-        self.thread_ts = str()
+    def parser_matches(self, _body: dict):
+        """
+        検索結果のログをパース
+        """
 
-        if self.text:
-            self.keyword = self.text.split()[0]
-            self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
+        __tmp_client = self.client
+        self.__dict__.clear()
+        self.client = __tmp_client
+
+        self.channel_id = _body["channel"]["id"]
+        self.user_id = _body["user"]
+        self.text = _body["text"]
+        self.event_ts = _body["ts"]
+
+        # DB更新可能チャンネルのポストかチェック
+        if not len(g.cfg.db.channel_limitations) or self.channel_id in g.cfg.db.channel_limitations.split(","):
+            self.updatable = True
+        else:
+            self.updatable = False

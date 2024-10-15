@@ -6,7 +6,6 @@ import regex_spm
 from dateutil.relativedelta import relativedelta
 
 import global_value as g
-from lib import command as c
 from lib import function as f
 
 
@@ -168,31 +167,17 @@ def game_result(data):
 
     result = {}
     for i in range(len(data)):
-        if "blocks" in data[i]:
-            if data[i]["user"] in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは集計対象から外す
-                logging.info(f"skip: {data[i]}")
-                continue
+        g.msg.parser_matches(data[i])
 
-            ts = data[i]["ts"]
-            if "elements" in data[i]["blocks"][0]:
-                msg = ""
-                elements = data[i]["blocks"][0]["elements"][0]["elements"]
+        if g.msg.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは集計対象から外す
+            logging.info(f"skip: {data[i]}")
+            continue
 
-                for x in range(len(elements)):
-                    if elements[x]["type"] == "text":
-                        msg += elements[x]["text"]
-
-                # 結果報告フォーマットに一致したポストの処理
-                detection = f.search.pattern(msg)
-                if detection:
-                    channel = data[i]["channel"]["id"]
-                    p1_name = c.member.NameReplace(detection[0])
-                    p2_name = c.member.NameReplace(detection[2])
-                    p3_name = c.member.NameReplace(detection[4])
-                    p4_name = c.member.NameReplace(detection[6])
-                    result[ts] = [p1_name, detection[1], p2_name, detection[3], p3_name, detection[5], p4_name, detection[7], detection[8], channel]
-                    logging.debug(f"{ts}: {result[ts]}")
-                    logging.trace(f"{ts}: {msg}")  # type: ignore
+        # 結果報告フォーマットに一致しているポストの保存
+        detection = f.search.pattern(g.msg.text)
+        if detection:
+            result[g.msg.event_ts] = data[i]
+            logging.trace(f"{g.msg.event_ts}: {data[i]}")  # type: ignore
 
     if len(result) == 0:
         return (None)

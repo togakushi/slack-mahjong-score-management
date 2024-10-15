@@ -93,28 +93,32 @@ def score_comparison():
     # --- 突合処理
     # slackだけにあるパターン
     for key in slack_data.keys():
+        g.msg.parser_matches(slack_data[key])
+        compar_slack = f.search.pattern(g.msg.text)
+
         if key in db_data.keys():
-            if slack_data[key][:-1] == db_data[key]:
+            compar_db = db_data[key]
+            if compar_slack == compar_db:
                 continue
             else:  # 更新
                 count["mismatch"] += 1
                 logging.notice(f"mismatch: {key}")  # type: ignore
-                logging.info(f"   * [slack]: {slack_data[key][:-1]}")
-                logging.info(f"   * [   db]: {db_data[key]}")
+                logging.info(f"   * [slack]: {compar_slack}")
+                logging.info(f"   * [   db]: {compar_db}")
                 ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                    textformat(db_data[key]), textformat(slack_data[key][:-1]),
+                    textformat(compar_db), textformat(compar_slack),
                 )
-                db_update(cur, key, slack_data[key])
+                d.common.resultdb_update(compar_slack, g.msg.event_ts)
                 continue
         else:  # 追加
             count["missing"] += 1
-            logging.notice(f"missing: {key}, {slack_data[key][:-1]}")  # type: ignore
+            logging.notice(f"missing: {key}, {compar_slack}")  # type: ignore
             ret_msg["missing"] += "\t{} {}\n".format(
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                textformat(slack_data[key][:-1])
+                textformat(compar_slack)
             )
-            db_insert(cur, key, slack_data[key])
+            d.common.resultdb_insert(compar_slack, g.msg.event_ts)
 
     # DBだけにあるパターン
     for key in db_data.keys():
@@ -130,24 +134,21 @@ def score_comparison():
             db_delete(cur, key)
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
-    for ts in slack_data.keys():
-        logging.trace(f"score check: {ts=}, {slack_data=}")
-        channel_id = slack_data[ts][9]
-        rpoint_data = [
-            eval(slack_data[ts][1]), eval(slack_data[ts][3]),
-            eval(slack_data[ts][5]), eval(slack_data[ts][7]),
-        ]
-        deposit = g.prm.origin_point * 4 - sum(rpoint_data)
+    for key in slack_data.keys():
+        g.msg.parser_matches(slack_data[key])
+        detection = f.search.pattern(g.msg.text)
+        score_data = f.score.get_score(detection)
 
-        if deposit == 0:
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, channel_id, ts)
+        if score_data["deposit"] == 0:
+            pass
+            # f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, g.msg.channel_id, g.msg.event_ts)
         else:
             count["invalid_score"] += 1
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(
-                datetime.fromtimestamp(float(ts)).strftime('%Y/%m/%d %H:%M:%S'),
-                deposit, textformat(slack_data[ts])
+                datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+                score_data["deposit"], textformat(detection)
             )
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, channel_id, ts)
+            # f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, g.msg.channel_id, g.msg.event_ts)
 
     resultdb.commit()
     resultdb.close()
