@@ -94,20 +94,27 @@ def score_comparison():
     # slackだけにあるパターン
     for key in slack_data.keys():
         g.msg.parser_matches(slack_data[key])
-        compar_slack = f.search.pattern(g.msg.text)
+        detection = f.search.pattern(g.msg.text)  # 素点データ抽出
+        score_data = f.score.get_score(detection)
+        compar_slack = [  # データ構造を合わせる
+            score_data["p1_name"], score_data["p1_str"],
+            score_data["p2_name"], score_data["p2_str"],
+            score_data["p3_name"], score_data["p3_str"],
+            score_data["p4_name"], score_data["p4_str"],
+            score_data["comment"],
+        ]
 
         if key in db_data.keys():
-            compar_db = db_data[key]
-            if compar_slack == compar_db:
+            if compar_slack == db_data[key]:
                 continue
             else:  # 更新
                 count["mismatch"] += 1
                 logging.notice(f"mismatch: {key}")  # type: ignore
                 logging.info(f"   * [slack]: {compar_slack}")
-                logging.info(f"   * [   db]: {compar_db}")
+                logging.info(f"   * [   db]: {db_data[key]}")
                 ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                    textformat(compar_db), textformat(compar_slack),
+                    textformat(db_data[key]), textformat(compar_slack),
                 )
                 d.common.resultdb_update(compar_slack, g.msg.event_ts)
                 continue
@@ -136,19 +143,15 @@ def score_comparison():
     # 素点合計の再チェック(修正可能なslack側のみチェック)
     for key in slack_data.keys():
         g.msg.parser_matches(slack_data[key])
-        detection = f.search.pattern(g.msg.text)
+        detection = f.search.pattern(g.msg.text)  # 素点データ抽出
         score_data = f.score.get_score(detection)
 
-        if score_data["deposit"] == 0:
-            pass
-            # f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, g.msg.channel_id, g.msg.event_ts)
-        else:
+        if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 score_data["deposit"], textformat(detection)
             )
-            # f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, g.msg.channel_id, g.msg.event_ts)
 
     resultdb.commit()
     resultdb.close()
