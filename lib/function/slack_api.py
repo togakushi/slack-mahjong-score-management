@@ -153,7 +153,7 @@ def call_reactions_add(icon, ch=None, ts=None):
     ts : timestamp
     """
 
-    if not g.opt.dbtools:
+    if g.opt.dbtools:  # dbtools実行時はリアクション操作をしない
         return
 
     if not ch:
