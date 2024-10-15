@@ -246,7 +246,7 @@ def get_score(detection):
             ret["p1_name"], ret["p1_rpoint"],
             ret["p2_name"], ret["p2_rpoint"],
             ret["p3_name"], ret["p3_rpoint"],
-            ret["p4_name"], ret["p4_name"],
+            ret["p4_name"], ret["p4_rpoint"],
             ret["deposit"],
         )
     )
