@@ -143,6 +143,7 @@ def resultdb_insert(msg, ts):
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.execute(d.sql_result_insert, param)
+        cur.commit()
 
 
 def resultdb_update(msg, ts):
