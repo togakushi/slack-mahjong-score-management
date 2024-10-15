@@ -124,8 +124,8 @@ def reactions(param: dict):
         素点データ
     """
 
-    if g.opt.dbtools:  # dbtoolsから実行されている場合は何もしない
-        return
+    # if g.opt.dbtools:  # dbtoolsから実行されている場合は何もしない
+    #    return
 
     correct_score = g.prm.origin_point * 4  # 配給原点
     rpoint_sum = param["rpoint_sum"]  # 素点合計
