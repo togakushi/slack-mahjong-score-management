@@ -122,7 +122,7 @@ def check_score(score: list):
     if g.msg.checked:
         return
 
-    correct_score = g.prm.origin_point * 4
+    correct_score = g.prm.origin_point * 4  # 配給原点
     rpoint_sum = eval(score[1]) + eval(score[3]) + eval(score[5]) + eval(score[7])
 
     logging.notice(  # type: ignore
@@ -143,6 +143,34 @@ def check_score(score: list):
         f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
 
     g.msg.checked = True
+
+
+def reactions(param: dict, response: bool):
+    """
+    素点合計をチェックしリアクションを付ける
+
+    Parameters
+    ----------
+    param : dict
+        素点データ
+
+     response : bool
+        合計不一致時にメッセージ応答するか
+    """
+
+    correct_score = g.prm.origin_point * 4  # 配給原点
+    rpoint_sum = param["rpoint_sum"]  # 素点合計
+
+    f.slack_api.call_reactions_remove()
+    if rpoint_sum == correct_score:
+        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
+    else:
+        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
+        if response:
+            f.slack_api.post_message(
+                f.message.invalid_score(g.msg.user_id, rpoint_sum, correct_score),
+                g.msg.event_ts
+            )
 
 
 def check_remarks():
@@ -203,14 +231,14 @@ def check_remarks():
     resultdb.close()
 
 
-def get_score(msg):
+def get_score(detection):
     """
-    postされた内容から素点を抽出し、順位と獲得ポイントを計算する
+    順位と獲得ポイントを計算する
 
     Parameters
     ----------
-    msg : list
-        postされたデータ(名前, 素点)
+    detection : list
+        素点データ(名前, 素点) x 4人分
 
     Returns
     -------
@@ -224,18 +252,20 @@ def get_score(msg):
     # ポイント計算
     score_df = pd.DataFrame({
         "name": [
-            c.member.NameReplace(msg[x * 2], False)
+            c.member.NameReplace(detection[x * 2], False)
             for x in range(4)
         ],
-        "str": [msg[x * 2 + 1] for x in range(4)],
-        "rpoint": [eval(msg[x * 2 + 1]) for x in range(4)],
+        "str": [detection[x * 2 + 1] for x in range(4)],
+        "rpoint": [eval(detection[x * 2 + 1]) for x in range(4)],
     })
     score_df = calculation_point(score_df)
     score = score_df.to_dict(orient="records")
+    rpoint_sum = int(score_df["rpoint"].sum())
 
     ret = {
-        "deposit": g.prm.origin_point * 4 - int(score_df["rpoint"].sum()),
-        "comment": msg[8],
+        "deposit": g.prm.origin_point * 4 - rpoint_sum,
+        "rpoint_sum": rpoint_sum,
+        "comment": detection[8],
     }
     ret.update(dict(zip([f"p1_{x}" for x in list(score[0])], list(score[0].values()))))
     ret.update(dict(zip([f"p2_{x}" for x in list(score[1])], list(score[1].values()))))

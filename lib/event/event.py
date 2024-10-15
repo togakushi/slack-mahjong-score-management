@@ -76,14 +76,12 @@ def handle_message_events(client, body):
             match g.msg.status:
                 case "message_append":
                     if detection:
-                        f.score.check_score(detection)
                         if g.msg.updatable:
                             d.common.resultdb_insert(detection, g.msg.event_ts)
                         else:
                             f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                 case "message_changed":
                     if detection:
-                        f.score.check_score(detection)
                         if g.msg.updatable:
                             if d.common.ExsistRecord(g.msg.event_ts):
                                 d.common.resultdb_update(detection, g.msg.event_ts)

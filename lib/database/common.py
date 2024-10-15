@@ -132,18 +132,20 @@ def first_record():
     return (ret)
 
 
-def resultdb_insert(msg, ts):
+def resultdb_insert(detection, ts):
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
         "rule_version": g.prm.rule_version,
     }
-    param.update(f.score.get_score(msg))
+    param.update(f.score.get_score(detection))
     logging.notice(f"{param=}")  # type: ignore
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.execute(d.sql_result_insert, param)
         cur.commit()
+
+    f.score.reactions(param, True)
 
 
 def resultdb_update(msg, ts):
@@ -155,25 +157,20 @@ def resultdb_update(msg, ts):
     param.update(f.score.get_score(msg))
     logging.notice(f"{param=}")  # type: ignore
 
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.execute(d.sql_result_update, param)
-    resultdb.commit()
-    resultdb.close()
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.execute(d.sql_result_update, param)
+        cur.commit()
+
+    f.score.reactions(param, True)
 
 
 def resultdb_delete(ts):
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.execute(d.sql_result_delete, (ts,))
-    resultdb.execute(d.sql_remarks_delete_all, (ts,))
-    resultdb.commit()
-    resultdb.close()
     logging.notice(f"{ts}")  # type: ignore
+
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.execute(d.sql_result_delete, (ts,))
+        cur.execute(d.sql_remarks_delete_all, (ts,))
+        cur.commit()
 
 
 def database_backup():
