@@ -16,7 +16,7 @@ def main():
     データ突合の実施、その結果をslackにpostする
     """
 
-    # イベントを拾ったメッセージの情報を保持
+    # チェックコマンドを拾ったイベントの情報を保持(結果の返し先)
     command_ch = g.msg.channel_id
     command_ts = g.msg.event_ts
 
@@ -79,7 +79,7 @@ def score_comparison():
         g.cfg.search.keyword,
         g.cfg.search.channel,
     )
-    slack_data = f.search.game_result(matches)
+    slack_data = f.search.game_result(matches)  # ゲーム結果のみ抽出
     if slack_data is None:
         return (count, ret_msg, fts)
 
