@@ -172,6 +172,10 @@ def db_delete(ts):
         cur.execute(d.sql_remarks_delete_all, (ts,))
         cur.commit()
 
+    # リアクションをすべて外す
+    for icon in f.slack_api.reactions_status():
+        f.slack_api.call_reactions_remove(icon)
+
 
 def db_backup():
     fname = os.path.splitext(g.cfg.db.database_file)[0]
