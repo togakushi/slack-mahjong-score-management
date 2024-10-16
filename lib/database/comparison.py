@@ -1,6 +1,7 @@
 import logging
 import re
 import sqlite3
+from contextlib import closing
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
@@ -85,13 +86,7 @@ def score_comparison():
 
     # データベースからデータを取得
     fts = list(slack_data.keys())[0]
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
-    cur = resultdb.cursor()
-    db_data = f.search.for_database(cur, fts)
+    db_data = f.search.for_database(fts)
     if db_data is None:
         return (count, ret_msg, fts)
 
@@ -157,9 +152,6 @@ def score_comparison():
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 score_data["deposit"], textformat(detection)
             )
-
-    resultdb.commit()
-    resultdb.close()
 
     return (count, ret_msg, fts)
 
@@ -231,73 +223,73 @@ def remarks_comparison(fts):
     slack_ts = set([slack_data[i]["event_ts"] for i in slack_data.keys()])
 
     # データベースからデータ取得
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
-    cur = resultdb.cursor()
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.row_factory = sqlite3.Row
+        curs = cur.cursor()
 
-    count = 0
-    rows = cur.execute("select * from remarks where thread_ts >= ?", (fts,))
-    for row in rows.fetchall():
-        db_data[count] = {
-            "thread_ts": row["thread_ts"],
-            "event_ts": row["event_ts"],
-            "name": row["name"],
-            "matter": row["matter"],
-        }
-        logging.trace(f"database: {db_data[count]}")  # type: ignore
-        count += 1
+        count = 0
+        rows = curs.execute("select * from remarks where thread_ts >= ?", (fts,))
+        for row in rows.fetchall():
+            db_data[count] = {
+                "thread_ts": row["thread_ts"],
+                "event_ts": row["event_ts"],
+                "name": row["name"],
+                "matter": row["matter"],
+            }
+            logging.trace(f"database: {db_data[count]}")  # type: ignore
+            count += 1
 
     db_ts = set([db_data[i]["event_ts"] for i in db_data.keys()])
 
     # --- 突合処理
-    for x in slack_ts:
-        check_data_src = []
-        for i in slack_data.keys():
-            if slack_data[i]["event_ts"] == x:
-                check_data_src.append(slack_data[i])
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.row_factory = sqlite3.Row
+        curs = cur.cursor()
 
-        check_data_dst = []
-        for i in db_data.keys():
-            if db_data[i]["event_ts"] == x:
-                check_data_dst.append(db_data[i])
+        for x in slack_ts:
+            check_data_src = []
+            for i in slack_data.keys():
+                if slack_data[i]["event_ts"] == x:
+                    check_data_src.append(slack_data[i])
 
-        # スレッド元をデータベースから検索
-        find_ts = []
-        for i in check_data_src:
-            rows = cur.execute(
-                "select ts from result where ts=?",
-                (str(i["thread_ts"]),)
-            )
-            for row in rows.fetchall():
-                find_ts.append(row["ts"])
+            check_data_dst = []
+            for i in db_data.keys():
+                if db_data[i]["event_ts"] == x:
+                    check_data_dst.append(db_data[i])
 
-        if find_ts:  # スレッド元がある
-            if check_data_src == check_data_dst:
-                continue
-            else:
-                cur.execute(d.sql_remarks_delete_one, (str(x),))
-                for update_data in check_data_src:
-                    cur.execute(d.sql_remarks_insert, (
-                        update_data["thread_ts"],
-                        update_data["event_ts"],
-                        c.member.NameReplace(update_data["name"]),
-                        update_data["matter"],
-                    ))
-                    remark_count += 1
-                    logging.info(f"update: {update_data}")
-        else:  # スレッド元がないデータは不要 → 削除
-            cur.execute(d.sql_remarks_delete_one, (str(x),))
-            logging.info(f"delete: {x} (No thread origin)")
+            # スレッド元をデータベースから検索
+            find_ts = []
+            for i in check_data_src:
+                rows = curs.execute(
+                    "select ts from result where ts=?",
+                    (str(i["thread_ts"]),)
+                )
+                for row in rows.fetchall():
+                    find_ts.append(row["ts"])
 
-    for x in db_ts:
-        if x not in slack_ts:  # データベースにあってslackにない → 削除
-            cur.execute(d.sql_remarks_delete_one, (str(x),))
-            logging.info(f"delete: {x} (Only database)")
+            if find_ts:  # スレッド元がある
+                if check_data_src == check_data_dst:
+                    continue
+                else:
+                    curs.execute(d.sql_remarks_delete_one, (str(x),))
+                    for update_data in check_data_src:
+                        curs.execute(d.sql_remarks_insert, (
+                            update_data["thread_ts"],
+                            update_data["event_ts"],
+                            c.member.NameReplace(update_data["name"]),
+                            update_data["matter"],
+                        ))
+                        remark_count += 1
+                        logging.info(f"update: {update_data}")
+            else:  # スレッド元がないデータは不要 → 削除
+                curs.execute(d.sql_remarks_delete_one, (str(x),))
+                logging.info(f"delete: {x} (No thread origin)")
 
-    resultdb.commit()
-    resultdb.close()
+        for x in db_ts:
+            if x not in slack_ts:  # データベースにあってslackにない → 削除
+                curs.execute(d.sql_remarks_delete_one, (str(x),))
+                logging.info(f"delete: {x} (Only database)")
+
+        cur.commit()
 
     return (remark_count)

@@ -1,5 +1,7 @@
 import logging
 import re
+import sqlite3
+from contextlib import closing
 from datetime import datetime
 
 import regex_spm
@@ -111,15 +113,12 @@ def for_slack(keyword, channel):
     return (matches)
 
 
-def for_database(cur, first_ts=False):
+def for_database(first_ts=False):
     """
     データベースからスコアを検索して返す
 
     Parameters
     ----------
-    cur: obj
-        データベースのカーソル
-
     first_ts: float
         検索を開始する時刻
 
@@ -133,19 +132,23 @@ def for_database(cur, first_ts=False):
         return (None)
 
     data = {}
-    rows = cur.execute("select * from result where ts >= ?", (first_ts,))
-    for row in rows.fetchall():
-        ts = row["ts"]
-        data[ts] = []
-        data[ts].append(row["p1_name"])
-        data[ts].append(row["p1_str"])
-        data[ts].append(row["p2_name"])
-        data[ts].append(row["p2_str"])
-        data[ts].append(row["p3_name"])
-        data[ts].append(row["p3_str"])
-        data[ts].append(row["p4_name"])
-        data[ts].append(row["p4_str"])
-        data[ts].append(row["comment"])
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.row_factory = sqlite3.Row
+        curs = cur.cursor()
+
+        rows = curs.execute("select * from result where ts >= ?", (first_ts,))
+        for row in rows.fetchall():
+            ts = row["ts"]
+            data[ts] = []
+            data[ts].append(row["p1_name"])
+            data[ts].append(row["p1_str"])
+            data[ts].append(row["p2_name"])
+            data[ts].append(row["p2_str"])
+            data[ts].append(row["p3_name"])
+            data[ts].append(row["p3_str"])
+            data[ts].append(row["p4_name"])
+            data[ts].append(row["p4_str"])
+            data[ts].append(row["comment"])
 
     return (data)
 
