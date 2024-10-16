@@ -9,7 +9,6 @@ class Message_Parser():
     client: WebClient = WebClient()
     channel_id: str = str()
     user_id: str = str()
-    bot_id: str = str()
     text: str = str()  # post本文
     event_ts: str = str()  # テキストのまま処理する
     thread_ts: str = str()  # テキストのまま処理する
@@ -43,11 +42,6 @@ class Message_Parser():
             self.channel_id = _body["user"]["id"]
         else:
             self.channel_id = _body["event"]["channel"]
-
-            if _body["authorizations"][0]["is_bot"]:
-                self.bot_id = _body["authorizations"][0]["user_id"]
-            else:
-                self.bot_id = str()
 
             if "subtype" in _body["event"]:
                 match _body["event"]["subtype"]:
@@ -87,11 +81,7 @@ class Message_Parser():
             self.keyword = self.text.split()[0]
             self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
 
-        # DB更新可能チャンネルのポストかチェック
-        if not len(g.cfg.db.channel_limitations) or self.channel_id in g.cfg.db.channel_limitations.split(","):
-            self.updatable = True
-        else:
-            self.updatable = False
+        self.check_updatable()
 
     def parser_matches(self, _body: dict):
         """
@@ -107,7 +97,13 @@ class Message_Parser():
         self.text = _body["text"]
         self.event_ts = _body["ts"]
 
-        # DB更新可能チャンネルのポストかチェック
+        self.check_updatable()
+
+    def check_updatable(self):
+        """
+        DB更新可能チャンネルのポストかチェック
+        """
+
         if not len(g.cfg.db.channel_limitations) or self.channel_id in g.cfg.db.channel_limitations.split(","):
             self.updatable = True
         else:

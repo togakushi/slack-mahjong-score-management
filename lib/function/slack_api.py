@@ -216,8 +216,8 @@ def reactions_status(ch=None, ts=None):
     icon = []
     if "reactions" in res["message"]:
         for reaction in res["message"]["reactions"]:
-            if g.msg.bot_id in reaction["users"]:
+            if g.bot_id in reaction["users"]:
                 icon.append(reaction["name"])
 
-    logging.info(f"{ch=}, {ts=}, user={g.msg.bot_id}, {icon=}")
+    logging.info(f"{ch=}, {ts=}, user={g.bot_id}, {icon=}")
     return (icon)

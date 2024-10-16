@@ -27,6 +27,7 @@ except SlackApiError as err:
 if __name__ == "__main__":
     d.initialization.initialization_resultdb()
     c.member.read_memberslist()
+    g.bot_id = g.app.client.auth_test()["user_id"]
 
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
