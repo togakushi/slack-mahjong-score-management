@@ -12,7 +12,7 @@ def call_chat_postMessage(**kwargs):
     if not kwargs["thread_ts"]:
         kwargs.pop("thread_ts")
     try:
-        res = g.msg.client.chat_postMessage(**kwargs)
+        res = g.app.client.chat_postMessage(**kwargs)
     except SlackApiError as err:
         logging.error(err)
 
@@ -24,7 +24,7 @@ def call_files_upload(**kwargs):
     if not kwargs["thread_ts"]:
         kwargs.pop("thread_ts")
     try:
-        res = g.msg.client.files_upload_v2(**kwargs)
+        res = g.app.client.files_upload_v2(**kwargs)
     except SlackApiError as err:
         logging.error(err)
 
