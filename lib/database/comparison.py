@@ -205,11 +205,9 @@ def textformat(text):
     """
 
     ret = ""
-    for i in range(0, len(text), 2):
-        if text[i] is None:
-            continue
+    for i in range(0, 8, 2):
         ret += f"[{text[i]} {str(text[i + 1])}]"
-
+    ret += f"[{text[8]}]"
     return (ret)
 
 
