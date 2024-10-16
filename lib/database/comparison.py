@@ -16,8 +16,11 @@ def main():
     データ突合の実施、その結果をslackにpostする
     """
 
-    # スコア突合
+    # イベントを拾ったメッセージの情報を保持
+    command_ch = g.msg.channel_id
     command_ts = g.msg.event_ts
+
+    # スコア突合
     count, msg, fts = score_comparison()
 
     # メモ突合
@@ -38,6 +41,7 @@ def main():
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]
 
+    g.msg.channel_id = command_ch
     f.slack_api.post_message(ret, command_ts)
 
 
