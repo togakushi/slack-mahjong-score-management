@@ -167,7 +167,7 @@ def call_reactions_add(icon, ch=None, ts=None):
     except SlackApiError as err:
         logging.error(err)
 
-    logging.info(res)
+    logging.info(f"{ts=}, {ch=}, {icon=}, {res=}")
 
 
 def call_reactions_remove(icon, ch=None, ts=None):
@@ -192,7 +192,7 @@ def call_reactions_remove(icon, ch=None, ts=None):
         timestamp=ts,
     )
 
-    logging.info(res)
+    logging.info(f"{ts=}, {ch=}, {icon=}, {res=}")
 
 
 def reactions_status(ch=None, ts=None):
