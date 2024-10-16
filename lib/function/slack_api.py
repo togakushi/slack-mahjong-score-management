@@ -159,7 +159,7 @@ def call_reactions_add(icon, ch=None, ts=None):
         ts = g.msg.event_ts
 
     try:
-        res = g.msg.client.reactions_add(
+        res = g.app.client.reactions_add(
             channel=ch,
             name=icon,
             timestamp=ts,
@@ -186,7 +186,7 @@ def call_reactions_remove(icon, ch=None, ts=None):
     if not ts:
         ts = g.msg.event_ts
 
-    res = g.msg.client.reactions_remove(
+    res = g.app.client.reactions_remove(
         channel=ch,
         name=icon,
         timestamp=ts,
@@ -214,8 +214,8 @@ def reactions_status(ch=None, ts=None):
     if not ts:
         ts = g.msg.event_ts
 
-    res = g.msg.client.reactions_get(channel=ch, timestamp=ts)
-    logging.trace(res)  # type: ignore
+    res = g.app.client.reactions_get(channel=ch, timestamp=ts)
+    logging.trace(res.validate())  # type: ignore
 
     icon = []
     if "reactions" in res["message"]:
