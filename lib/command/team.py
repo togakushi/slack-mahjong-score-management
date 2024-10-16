@@ -142,7 +142,7 @@ def delete(argument):
         if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
-            msg = d.common.database_backup()
+            msg = d.common.db_backup()
             team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
             resultdb = sqlite3.connect(
                 g.cfg.db.database_file,
@@ -342,7 +342,7 @@ def clear():
         slackにpostする内容
     """
 
-    msg = d.common.database_backup()
+    msg = d.common.db_backup()
 
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,

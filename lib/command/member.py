@@ -241,7 +241,7 @@ def MemberAppend(argument):
                 """, (nic_name, f.common.KANA2HIRA(nic_name), f.common.HIRA2KANA(nic_name)))
             count = rows.fetchone()[0]
             if count != 0:  # 過去成績更新
-                msg += d.common.database_backup()
+                msg += d.common.db_backup()
                 for col in ("p1_name", "p2_name", "p3_name", "p4_name"):
                     resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, nic_name))
                     resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.KANA2HIRA(nic_name)))

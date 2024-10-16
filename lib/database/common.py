@@ -173,7 +173,7 @@ def db_delete(ts):
         cur.commit()
 
 
-def database_backup():
+def db_backup():
     fname = os.path.splitext(g.cfg.db.database_file)[0]
     fext = os.path.splitext(g.cfg.db.database_file)[1]
     bktime = datetime.now().strftime('%Y%m%d-%H%M%S')
