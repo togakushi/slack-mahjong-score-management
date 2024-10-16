@@ -89,9 +89,9 @@ def setup():
     logging.addLevelName(logging.NOTICE, "NOTICE")  # type: ignore
 
     if g.args.notime:
-        fmt = "[%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
+        fmt = "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
     else:
-        fmt = "[%(asctime)s][%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
+        fmt = "[%(asctime)s][%(levelname)s][%(module)s:%(funcName)s] %(message)s"
 
     if g.args.debug:
         if g.args.verbose:
