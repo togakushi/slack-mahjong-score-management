@@ -121,7 +121,7 @@ def score_comparison():
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                     textformat(db_data[key]), textformat(compar_slack),
                 )
-                d.common.resultdb_update(compar_slack, g.msg.event_ts)
+                d.common.db_update(compar_slack, g.msg.event_ts)
                 continue
         else:  # 追加
             count["missing"] += 1
@@ -130,7 +130,7 @@ def score_comparison():
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(compar_slack)
             )
-            d.common.resultdb_insert(compar_slack, g.msg.event_ts)
+            d.common.db_insert(compar_slack, g.msg.event_ts)
 
     # DBだけにあるパターン
     for key in db_data.keys():
@@ -143,7 +143,7 @@ def score_comparison():
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(db_data[key])
             )
-            db_delete(cur, key)
+            d.common.db_delete(key)
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
     for key in slack_data.keys():
@@ -162,41 +162,6 @@ def score_comparison():
     resultdb.close()
 
     return (count, ret_msg, fts)
-
-
-def db_update(cur, ts, msg):  # 突合処理専用
-    param = {
-        "ts": ts,
-        "playtime": datetime.fromtimestamp(float(ts)),
-        "rule_version": g.prm.rule_version,
-    }
-    param.update(f.score.get_score(msg))
-
-    cur.execute(d.sql_result_update, param)
-    logging.notice(f"{param=}")  # type: ignore
-
-
-def db_insert(cur, ts, msg):  # 突合処理専用
-    param = {
-        "ts": ts,
-        "playtime": datetime.fromtimestamp(float(ts)),
-        "rule_version": g.prm.rule_version,
-    }
-    param.update(f.score.get_score(msg))
-
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    cur.execute(d.sql_result_insert, param)
-
-    resultdb.commit()
-    resultdb.close()
-    logging.notice(f"{param=}")  # type: ignore
-
-
-def db_delete(cur, ts):  # 突合処理専用
-    cur.execute(d.sql_result_delete, (ts,))
 
 
 def textformat(text):

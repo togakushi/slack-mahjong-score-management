@@ -132,7 +132,7 @@ def first_record():
     return (ret)
 
 
-def resultdb_insert(detection, ts):
+def db_insert(detection, ts):
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
@@ -148,13 +148,13 @@ def resultdb_insert(detection, ts):
     f.score.reactions(param)
 
 
-def resultdb_update(msg, ts):
+def db_update(detection, ts):
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
         "rule_version": g.prm.rule_version,
     }
-    param.update(f.score.get_score(msg))
+    param.update(f.score.get_score(detection))
     logging.notice(f"{param=}")  # type: ignore
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
@@ -164,7 +164,7 @@ def resultdb_update(msg, ts):
     f.score.reactions(param)
 
 
-def resultdb_delete(ts):
+def db_delete(ts):
     logging.notice(f"{ts}")  # type: ignore
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:

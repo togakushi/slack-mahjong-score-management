@@ -79,25 +79,25 @@ def handle_message_events(client, body):
                 case "message_append":
                     if detection:
                         if g.msg.updatable:
-                            d.common.resultdb_insert(detection, g.msg.event_ts)
+                            d.common.db_insert(detection, g.msg.event_ts)
                         else:
                             f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                 case "message_changed":
                     if detection:
                         if g.msg.updatable:
                             if d.common.ExsistRecord(g.msg.event_ts):
-                                d.common.resultdb_update(detection, g.msg.event_ts)
+                                d.common.db_update(detection, g.msg.event_ts)
                             else:
-                                d.common.resultdb_insert(detection, g.msg.event_ts)
+                                d.common.db_insert(detection, g.msg.event_ts)
                         else:
                             f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                     else:
                         f.slack_api.call_reactions_remove()
                         if d.common.ExsistRecord(g.msg.event_ts):
-                            d.common.resultdb_delete(g.msg.event_ts)
+                            d.common.db_delete(g.msg.event_ts)
                 case "message_deleted":
                     if d.common.ExsistRecord(g.msg.event_ts):
-                        d.common.resultdb_delete(g.msg.event_ts)
+                        d.common.db_delete(g.msg.event_ts)
 
 
 @g.app.command(g.cfg.setting.slash_command)
