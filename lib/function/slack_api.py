@@ -219,4 +219,5 @@ def reactions_status(ch=None, ts=None):
             if g.msg.bot_id in reaction["users"]:
                 icon.append(reaction["name"])
 
+    logging.info(f"{ch=}, {ts=}, {icon=}")
     return (icon)

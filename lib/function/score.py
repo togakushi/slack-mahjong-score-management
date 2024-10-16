@@ -128,7 +128,6 @@ def reactions(param: dict):
     rpoint_sum = param["rpoint_sum"]  # 素点合計
 
     icon = f.slack_api.reactions_status()
-    logging.info(f"channel_id={g.msg.channel_id}, ts={g.msg.event_ts}, {icon=}")
 
     if rpoint_sum == correct_score:
         if g.cfg.setting.reaction_ng in icon:
