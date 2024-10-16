@@ -159,13 +159,15 @@ def call_reactions_add(icon, ch=None, ts=None):
         ts = g.msg.event_ts
 
     try:
-        g.msg.client.reactions_add(
+        res = g.msg.client.reactions_add(
             channel=ch,
             name=icon,
             timestamp=ts,
         )
     except SlackApiError as err:
         logging.error(err)
+
+    g.logging.info(res)
 
 
 def call_reactions_remove(icon, ch=None, ts=None):
@@ -184,11 +186,13 @@ def call_reactions_remove(icon, ch=None, ts=None):
     if not ts:
         ts = g.msg.event_ts
 
-    g.msg.client.reactions_remove(
+    res = g.msg.client.reactions_remove(
         channel=ch,
         name=icon,
         timestamp=ts,
     )
+
+    g.logging.info(res)
 
 
 def reactions_status(ch=None, ts=None):
