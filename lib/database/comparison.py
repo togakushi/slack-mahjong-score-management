@@ -152,6 +152,7 @@ def score_comparison():
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 score_data["deposit"], textformat(detection)
             )
+            _ = f.slack_api.reactions_status()
 
     return (count, ret_msg, fts)
 
