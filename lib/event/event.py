@@ -51,10 +51,8 @@ def handle_message_events(client, body):
 
         # データベース関連コマンド
         case x if re.match(rf"^{g.cfg.cw.check}", x):
-            g.opt.dbtools = False
             d.comparison.main()
         case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", g.msg.text):  # Reminderによる突合
-            g.opt.dbtools = False
             logging.info(f'Reminder: {g.cfg.cw.check}')
             d.comparison.main()
 
