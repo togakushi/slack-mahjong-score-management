@@ -148,7 +148,7 @@ def call_reactions_add(icon, ch=None, ts=None):
 
     Parameters
     ----------
-    icon : icon
+    icon : str
     ch : channel_id
     ts : timestamp
     """
@@ -157,19 +157,6 @@ def call_reactions_add(icon, ch=None, ts=None):
         ch = g.msg.channel_id
     if not ts:
         ts = g.msg.event_ts
-
-    res = g.msg.client.reactions_get(channel=ch, timestamp=ts)
-    logging.debug(res)
-
-    # 既にリアクションが付いてるなら何もしない
-    if "reactions" in res["message"]:
-        for reaction in res["message"]["reactions"]:
-            if reaction["name"] == g.cfg.setting.reaction_ok:
-                if g.msg.bot_id in reaction["users"]:
-                    return
-            if reaction["name"] == g.cfg.setting.reaction_ng:
-                if g.msg.bot_id in reaction["users"]:
-                    return
 
     try:
         g.msg.client.reactions_add(
@@ -181,12 +168,13 @@ def call_reactions_add(icon, ch=None, ts=None):
         logging.error(err)
 
 
-def call_reactions_remove(ch=None, ts=None):
+def call_reactions_remove(icon, ch=None, ts=None):
     """
-    botが付けたリアクションを外す
+    リアクションを外す
 
     Parameters
     ----------
+    icon : str
     ch : channel_id
     ts : timestamp
     """
@@ -196,26 +184,39 @@ def call_reactions_remove(ch=None, ts=None):
     if not ts:
         ts = g.msg.event_ts
 
-    res = g.msg.client.reactions_get(
+    g.msg.client.reactions_remove(
         channel=ch,
+        name=icon,
         timestamp=ts,
     )
 
+
+def reactions_status(ch=None, ts=None):
+    """
+    botが付けたリアクションの種類を返す
+
+    Parameters
+    ----------
+    ch : channel_id
+    ts : timestamp
+
+    Returns
+    -------
+    icon : list
+    """
+
+    if not ch:
+        ch = g.msg.channel_id
+    if not ts:
+        ts = g.msg.event_ts
+
+    res = g.msg.client.reactions_get(channel=ch, timestamp=ts)
     logging.debug(res)
 
+    icon = []
     if "reactions" in res["message"]:
         for reaction in res["message"]["reactions"]:
-            if reaction["name"] == g.cfg.setting.reaction_ok:
-                if g.msg.bot_id in reaction["users"]:
-                    g.msg.client.reactions_remove(
-                        channel=ch,
-                        name=g.cfg.setting.reaction_ok,
-                        timestamp=ts,
-                    )
-            if reaction["name"] == g.cfg.setting.reaction_ng:
-                if g.msg.bot_id in reaction["users"]:
-                    g.msg.client.reactions_remove(
-                        channel=ch,
-                        name=g.cfg.setting.reaction_ng,
-                        timestamp=ts,
-                    )
+            if g.msg.bot_id in reaction["users"]:
+                icon.append(reaction["name"])
+
+    return (icon)

@@ -124,17 +124,21 @@ def reactions(param: dict):
         素点データ
     """
 
-    # if g.opt.dbtools:  # dbtoolsから実行されている場合は何もしない
-    #    return
-
     correct_score = g.prm.origin_point * 4  # 配給原点
     rpoint_sum = param["rpoint_sum"]  # 素点合計
 
-    f.slack_api.call_reactions_remove()
+    icon = f.slack_api.reactions_status()
     if rpoint_sum == correct_score:
-        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
+        if g.cfg.setting.reaction_ng in icon:
+            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng)
+        if g.cfg.setting.reaction_ok not in icon:
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
     else:
-        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
+        if g.cfg.setting.reaction_ok in icon:
+            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok)
+        if g.cfg.setting.reaction_ng not in icon:
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
+
         f.slack_api.post_message(
             f.message.invalid_score(g.msg.user_id, rpoint_sum, correct_score),
             g.msg.event_ts
