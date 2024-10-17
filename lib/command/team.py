@@ -94,7 +94,7 @@ def create(argument):
 
     if len(argument) == 1:  # 新規追加
         team_name = f.common.HAN2ZEN(argument[0])
-        logging.notice(f"New Team: {team_name}")  # type: ignore
+        logging.notice(f"New Team: {team_name}")
 
         if len(g.team_list) > g.cfg.config["team"].getint("registration_limit", 255):
             msg = "登録上限を超えています。"
@@ -137,7 +137,7 @@ def delete(argument):
 
     if len(argument) == 1:  # 新規追加
         team_name = f.common.HAN2ZEN(argument[0])
-        logging.notice(f"Team delete: {team_name}")  # type: ignore
+        logging.notice(f"Team delete: {team_name}")
 
         if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
@@ -190,7 +190,7 @@ def append(argument):
 
         team_name = f.common.HAN2ZEN(argument[0])
         player_name = c.member.NameReplace(argument[1])
-        logging.notice(f"Team participation: {team_name} -> {player_name}")  # type: ignore
+        logging.notice(f"Team participation: {team_name} -> {player_name}")
 
         registration_flg = True
         team_id = None
@@ -261,7 +261,7 @@ def remove(argument):
 
         team_name = f.common.HAN2ZEN(argument[0])
         player_name = c.member.NameReplace(argument[1])
-        logging.notice(f"Team breakaway: {team_name} -> {player_name}")  # type: ignore
+        logging.notice(f"Team breakaway: {team_name} -> {player_name}")
 
         registration_flg = True
         team_id = None

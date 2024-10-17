@@ -215,7 +215,7 @@ def reactions_status(ch=None, ts=None):
         ts = g.msg.event_ts
 
     res = g.app.client.reactions_get(channel=ch, timestamp=ts)
-    logging.trace(res.validate())  # type: ignore
+    logging.trace(res.validate())
 
     icon = []
     if "reactions" in res["message"]:

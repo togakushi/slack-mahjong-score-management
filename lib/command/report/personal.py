@@ -46,7 +46,7 @@ def plot():
             results[name].update(
                 {"name": c.member.NameReplace(name, add_mark=True)}
             )
-        logging.trace(f"{row['name']}: {results[name]}")  # type: ignore
+        logging.trace(f"{row['name']}: {results[name]}")
     logging.info(f"return record: {len(results)}")
 
     resultdb.close()

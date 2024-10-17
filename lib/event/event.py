@@ -19,16 +19,14 @@ def handle_message_events(client, body):
     ポストされた内容で処理を分岐
     """
 
-    logging.trace(body)  # type: ignore
+    logging.trace(body)
     g.msg.parser(body)
     g.msg.client = client
 
     # 許可されていないユーザのポストは処理しない
     if g.msg.user_id in g.cfg.setting.ignore_userid:
-        logging.trace(f"event skip[ignore user]: {g.msg.user_id}")  # type: ignore
+        logging.trace(f"event skip[ignore user]: {g.msg.user_id}")
         return
-
-    logging.info(f"{vars(g.msg)}")
 
     match g.msg.keyword:
         # ヘルプ
@@ -53,7 +51,7 @@ def handle_message_events(client, body):
         case x if re.match(rf"^{g.cfg.cw.check}", x):
             d.comparison.main()
         case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", g.msg.text):  # Reminderによる突合
-            logging.info(f'Reminder: {g.cfg.cw.check}')
+            logging.notice(f'Reminder: {g.cfg.cw.check}')
             d.comparison.main()
 
         # メンバーリスト/チームリスト
@@ -104,7 +102,7 @@ def slash_command(ack, body, client):
     """
 
     ack()
-    logging.trace(f"{body}")  # type: ignore
+    logging.trace(f"{body}")
     g.msg.parser(body)
     g.msg.client = client
 

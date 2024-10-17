@@ -33,7 +33,7 @@ def build_summary_menu():
 @g.app.action("menu_summary")
 def handle_menu_action(ack, body, client):
     ack()
-    logging.trace(body)  # type: ignore
+    logging.trace(body)
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
@@ -48,7 +48,7 @@ def handle_menu_action(ack, body, client):
 @g.app.action("search_summary")
 def handle_search_action(ack, body, client):
     ack()
-    logging.trace(body)  # type: ignore
+    logging.trace(body)
     g.msg.parser(body)
     g.msg.client = client
 

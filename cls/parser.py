@@ -26,6 +26,8 @@ class Message_Parser():
         postされたメッセージをパース
         """
 
+        logging.trace(_body)
+
         __tmp_client = self.client
         self.__dict__.clear()
         self.client = __tmp_client
@@ -87,6 +89,8 @@ class Message_Parser():
         """
         検索結果のログをパース
         """
+
+        logging.trace(_body)
 
         __tmp_client = self.client
         self.__dict__.clear()

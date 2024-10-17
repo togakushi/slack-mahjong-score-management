@@ -45,9 +45,9 @@ def read_memberslist():
 
     resultdb.close()
 
-    logging.notice(f"guest_name: {g.prm.guest_name}")  # type: ignore
-    logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
-    logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")  # type: ignore
+    logging.notice(f"guest_name: {g.prm.guest_name}")
+    logging.notice(f"member_list: {set(g.member_list.values())}")
+    logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")
 
 
 def NameReplace(pname, add_mark=False):
@@ -191,7 +191,7 @@ def MemberAppend(argument):
 
     if len(argument) == 1:  # 新規追加
         new_name = f.common.HAN2ZEN(argument[0])
-        logging.notice(f"new member: {new_name}")  # type: ignore
+        logging.notice(f"new member: {new_name}")
 
         rows = resultdb.execute("select count() from member")
         count = rows.fetchone()[0]
@@ -213,7 +213,7 @@ def MemberAppend(argument):
     if len(argument) == 2:  # 別名登録
         new_name = f.common.HAN2ZEN(argument[0])
         nic_name = f.common.HAN2ZEN(argument[1])
-        logging.notice(f"alias: {new_name} -> {nic_name}")  # type: ignore
+        logging.notice(f"alias: {new_name} -> {nic_name}")
 
         registration_flg = True
         rows = resultdb.execute("select count() from alias where member=?", (new_name,))
@@ -281,7 +281,7 @@ def MemberRemove(argument):
 
     if len(argument) == 1:  # メンバー削除
         new_name = f.common.HAN2ZEN(argument[0])
-        logging.notice(f"remove member: {new_name}")  # type: ignore
+        logging.notice(f"remove member: {new_name}")
 
         if new_name in g.member_list:
             resultdb.execute("delete from member where name=?", (new_name,))
@@ -293,7 +293,7 @@ def MemberRemove(argument):
     if len(argument) == 2:  # 別名削除
         new_name = f.common.HAN2ZEN(argument[0])
         nic_name = f.common.HAN2ZEN(argument[1])
-        logging.notice(f"alias remove: {new_name} -> {nic_name}")  # type: ignore
+        logging.notice(f"alias remove: {new_name} -> {nic_name}")
 
         if nic_name in g.member_list:
             resultdb.execute(

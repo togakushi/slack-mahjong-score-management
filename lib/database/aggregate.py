@@ -132,7 +132,7 @@ def game_summary():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    logging.trace(df)  # type: ignore
+    logging.trace(df)
     return (df.fillna(value="*****"))
 
 
@@ -160,7 +160,7 @@ def game_details():
 
     df["表示名"] = _disp_name(df["name"])
 
-    logging.trace(df)  # type: ignore
+    logging.trace(df)
     return (df.fillna(value=""))
 
 
@@ -179,7 +179,7 @@ def grandslam_count():
 
     df = df.filter(items=["プレイヤー名", "matter", "count"])
 
-    logging.trace(df)  # type: ignore
+    logging.trace(df)
     return (df)
 
 
@@ -196,7 +196,7 @@ def regulations_count():
         lambda x: c.member.NameReplace(x, add_mark=True)
     )
 
-    logging.trace(df)  # type: ignore
+    logging.trace(df)
     return (df)
 
 
@@ -229,7 +229,7 @@ def game_results():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    logging.trace(df)  # type: ignore
+    logging.trace(df)
     return (df)
 
 
@@ -343,7 +343,7 @@ def ranking_record():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    logging.trace(df)  # type: ignore
+    logging.trace(df)
     return (df)
 
 

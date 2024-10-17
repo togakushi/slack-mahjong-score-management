@@ -435,11 +435,11 @@ def initialization_resultdb():
     data = ret.fetchall()
 
     if len(data) == 0:
-        logging.notice(f"ゲスト設定: {g.prm.guest_name}")  # type: ignore
+        logging.notice(f"ゲスト設定: {g.prm.guest_name}")
         sql = "insert into member (id, name) values (0, ?)"
         resultdb.execute(sql, (g.prm.guest_name,))
     elif data[0][1] != g.prm.guest_name:
-        logging.notice(f"ゲスト修正: {data[0][1]} -> {g.prm.guest_name}")  # type: ignore
+        logging.notice(f"ゲスト修正: {data[0][1]} -> {g.prm.guest_name}")
         sql = "update member set name=? where id=0"
         resultdb.execute(sql, (g.prm.guest_name,))
 

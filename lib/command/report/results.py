@@ -403,7 +403,7 @@ def gen_pdf():
         name="Right", fontName="ReportFont", fontSize=14, alignment=TA_RIGHT
     )
 
-    plt.rcParams.update(plt.rcParamsDefault)  # type: ignore
+    plt.rcParams.update(plt.rcParamsDefault)
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams["font.family"] = font_prop.get_name()
     fm.fontManager.addfont(font_path)
@@ -634,6 +634,6 @@ def gen_pdf():
             elements.append(PageBreak())
 
     doc.build(elements)
-    logging.notice(f"report generation: {g.prm.player_name}")  # type: ignore
+    logging.notice(f"report generation: {g.prm.player_name}")
 
     return (g.prm.player_name, pdf_path)

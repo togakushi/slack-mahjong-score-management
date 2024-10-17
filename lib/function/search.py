@@ -180,7 +180,7 @@ def game_result(data):
         detection = f.search.pattern(g.msg.text)
         if detection:
             result[g.msg.event_ts] = data[i]
-            logging.trace(f"{g.msg.event_ts}: {data[i]}")  # type: ignore
+            logging.trace(f"{g.msg.event_ts}: {data[i]}")
 
     if len(result) == 0:
         return (None)

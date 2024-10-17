@@ -89,9 +89,9 @@ def query_modification(sql: str):
 
     # デバッグ用
     func = inspect.stack()[1].function
-    logging.trace(f"{func}: opt = {vars(g.opt)}")  # type: ignore
-    logging.trace(f"{func}: prm = {vars(g.prm)}")  # type: ignore
-    logging.trace(f"{func}: sql = {textwrap.dedent(sql)}")  # type: ignore
+    logging.trace(f"{func}: opt = {vars(g.opt)}")
+    logging.trace(f"{func}: prm = {vars(g.prm)}")
+    logging.trace(f"{func}: sql = {textwrap.dedent(sql)}")
 
     return (sql)
 
@@ -139,7 +139,7 @@ def db_insert(detection, ts):
         "rule_version": g.prm.rule_version,
     }
     param.update(f.score.get_score(detection))
-    logging.notice(f"{param=}")  # type: ignore
+    logging.notice(f"{param=}")
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.execute(d.sql_result_insert, param)
@@ -155,7 +155,7 @@ def db_update(detection, ts):
         "rule_version": g.prm.rule_version,
     }
     param.update(f.score.get_score(detection))
-    logging.notice(f"{param=}")  # type: ignore
+    logging.notice(f"{param=}")
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.execute(d.sql_result_update, param)
@@ -165,7 +165,7 @@ def db_update(detection, ts):
 
 
 def db_delete(ts):
-    logging.notice(f"{ts}")  # type: ignore
+    logging.notice(f"{ts}")
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.execute(d.sql_result_delete, (ts,))
@@ -196,7 +196,7 @@ def db_backup():
     # バックアップディレクトリにコピー
     try:
         shutil.copyfile(g.cfg.db.database_file, bkfname)
-        logging.notice(f"database backup: {bkfname}")  # type: ignore
+        logging.notice(f"database backup: {bkfname}")
         return ("\nデータベースをバックアップしました。")
     except Exception:
         logging.error("Database backup failed !!!")

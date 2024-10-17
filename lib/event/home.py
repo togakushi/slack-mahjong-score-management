@@ -10,14 +10,14 @@ def handle_home_events(client, event):
     if "view" in event:
         g.app_var["view_id"] = event["view"]["id"]
 
-    logging.trace(f"{g.app_var}")  # type: ignore
+    logging.trace(f"{g.app_var}")
 
     result = client.views_publish(
         user_id=g.app_var["user_id"],
         view=build_main_menu(),
     )
 
-    logging.trace(result)  # type: ignore
+    logging.trace(result)
 
 
 def build_main_menu():
@@ -94,7 +94,7 @@ def set_command_option(body):
 @g.app.action("actionId-back")
 def handle_action(ack, body, client):
     ack()
-    logging.trace(body)  # type: ignore
+    logging.trace(body)
 
     client.views_publish(
         user_id=g.app_var["user_id"],

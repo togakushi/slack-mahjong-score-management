@@ -28,7 +28,7 @@ def main():
     if fts:  # slackからスコア記録のログが見つかった場合のみチェック
         count["remark"] = remarks_comparison(fts)
 
-    logging.notice(f"{count=}")  # type: ignore
+    logging.notice(f"{count=}")
 
     # 突合結果
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y/%m/%d")
@@ -109,7 +109,7 @@ def score_comparison():
                 continue
             else:  # 更新
                 count["mismatch"] += 1
-                logging.notice(f"mismatch: {key}")  # type: ignore
+                logging.notice(f"mismatch: {key}")
                 logging.info(f"   * [slack]: {compar_slack}")
                 logging.info(f"   * [   db]: {db_data[key]}")
                 ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
@@ -120,7 +120,7 @@ def score_comparison():
                 continue
         else:  # 追加
             count["missing"] += 1
-            logging.notice(f"missing: {key}, {compar_slack}")  # type: ignore
+            logging.notice(f"missing: {key}, {compar_slack}")
             ret_msg["missing"] += "\t{} {}\n".format(
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(compar_slack)
@@ -133,7 +133,7 @@ def score_comparison():
             continue
         else:  # 削除
             count["delete"] += 1
-            logging.notice(f"delete: {key}, {db_data[key]} (Only database)")  # type: ignore
+            logging.notice(f"delete: {key}, {db_data[key]} (Only database)")
             ret_msg["delete"] += "\t{} {}\n".format(
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(db_data[key])
@@ -218,7 +218,7 @@ def remarks_comparison(fts):
                         "name": c.member.NameReplace(name),
                         "matter": val,
                     }
-                    logging.trace(f"slack: {slack_data[count]}")  # type: ignore
+                    logging.trace(f"slack: {slack_data[count]}")
                     count += 1
 
     slack_ts = set([slack_data[i]["event_ts"] for i in slack_data.keys()])
@@ -237,7 +237,7 @@ def remarks_comparison(fts):
                 "name": row["name"],
                 "matter": row["matter"],
             }
-            logging.trace(f"database: {db_data[count]}")  # type: ignore
+            logging.trace(f"database: {db_data[count]}")
             count += 1
 
     db_ts = set([db_data[i]["event_ts"] for i in db_data.keys()])
