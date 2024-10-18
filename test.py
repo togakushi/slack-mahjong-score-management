@@ -82,7 +82,7 @@ for sec in test_conf.sections():
             case "ranking":
                 g.prm.update(g.opt)
                 dump(flag)
-                pprint(c.ranking.slackpost.main())
+                pprint(c.results.ranking.main())
 
             case "report":
                 g.msg.argument.append(f"filename:report_{sec}_{pattern}")

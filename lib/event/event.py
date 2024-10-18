@@ -43,7 +43,7 @@ def handle_message_events(client, body):
         case x if re.match(rf"^{g.cfg.cw.graph}", x):
             c.graph.slackpost.main()
         case x if re.match(rf"^{g.cfg.cw.ranking}", x):
-            c.ranking.slackpost.main()
+            c.results.ranking.main()
         case x if re.match(rf"^{g.cfg.cw.report}", x):
             c.report.slackpost.main()
 
@@ -114,7 +114,7 @@ def slash_command(ack, body, client):
             case "graph":
                 c.graph.slackpost.main()
             case "ranking":
-                c.ranking.slackpost.main()
+                c.ranking.ranking.main()
             case "report":
                 c.report.slackpost.main()
 
