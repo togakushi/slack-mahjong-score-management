@@ -139,7 +139,7 @@ class command_option:
         if "target_player" in self.__dict__:
             for x in unknown_command:
                 if self.individual:
-                    self.target_player.append(c.member.NameReplace(x))
+                    self.target_player.append(c.member.name_replace(x))
                 else:
                     self.target_player.append(x)
 
@@ -218,7 +218,7 @@ class parameters:
 
                 tmp_list2 = []
                 for name in tmp_list:  # 名前ブレ修正
-                    tmp_list2.append(c.member.NameReplace(name, add_mark=False))
+                    tmp_list2.append(c.member.name_replace(name, add_mark=False))
                 for name in list(set(tmp_list2)):  # 集計対象者の名前はリストに含めない
                     if name != self.player_name:
                         self.competition_list[f"competition_{count}"] = name

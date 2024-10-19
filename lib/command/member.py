@@ -50,7 +50,7 @@ def read_memberslist():
     logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")
 
 
-def NameReplace(pname, add_mark=False):
+def name_replace(pname, add_mark=False):
     """
     表記ブレ修正(正規化)
 
@@ -65,7 +65,7 @@ def NameReplace(pname, add_mark=False):
         表記ブレ修正後のプレイヤー名
     """
 
-    pname = f.common.HAN2ZEN(pname)
+    pname = f.common.han_to_zen(pname)
     check_list = list(set(g.member_list.keys()))
 
     if pname in check_list:
@@ -80,10 +80,10 @@ def NameReplace(pname, add_mark=False):
         return (g.member_list[pname])
 
     # ひらがな、カタカナでチェック
-    if f.common.KANA2HIRA(pname) in check_list:
-        return (g.member_list[f.common.KANA2HIRA(pname)])
-    if f.common.HIRA2KANA(pname) in check_list:
-        return (g.member_list[f.common.HIRA2KANA(pname)])
+    if f.common.kata_to_hira(pname) in check_list:
+        return (g.member_list[f.common.kata_to_hira(pname)])
+    if f.common.hira_to_kana(pname) in check_list:
+        return (g.member_list[f.common.hira_to_kana(pname)])
 
     # メンバーリストに見つからない場合
     if g.opt.unregistered_replace:
@@ -95,7 +95,7 @@ def NameReplace(pname, add_mark=False):
             return (pname)
 
 
-def CountPadding(data):
+def count_padding(data):
     """
     """
     name_list = []
@@ -115,13 +115,13 @@ def CountPadding(data):
         return (0)
 
 
-def Getmemberslist():
+def get_members_list():
     """
     登録済みのメンバー一覧をslackに出力する
     """
 
     title = "登録済みメンバー一覧"
-    padding = c.member.CountPadding(list(set(g.member_list.values())))
+    padding = c.member.count_padding(list(set(g.member_list.values())))
     msg = "# 表示名{}： 登録されている名前 #\n".format(" " * (padding - 8))
 
     for pname in set(g.member_list.values()):
@@ -166,7 +166,7 @@ def member_info(name):
     return (ret)
 
 
-def MemberAppend(argument):
+def member_append(argument):
     """
     メンバー追加
 
@@ -190,7 +190,7 @@ def MemberAppend(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        new_name = f.common.HAN2ZEN(argument[0])
+        new_name = f.common.han_to_zen(argument[0])
         logging.notice(f"new member: {new_name}")
 
         rows = resultdb.execute("select count() from member")
@@ -211,8 +211,8 @@ def MemberAppend(argument):
                 msg = f"「{new_name}」を登録しました。"
 
     if len(argument) == 2:  # 別名登録
-        new_name = f.common.HAN2ZEN(argument[0])
-        nic_name = f.common.HAN2ZEN(argument[1])
+        new_name = f.common.han_to_zen(argument[0])
+        nic_name = f.common.han_to_zen(argument[1])
         logging.notice(f"alias: {new_name} -> {nic_name}")
 
         registration_flg = True
@@ -238,14 +238,14 @@ def MemberAppend(argument):
                     where ? in (p1_name, p2_name, p3_name, p4_name)
                     or ? in (p1_name, p2_name, p3_name, p4_name)
                     or ? in (p1_name, p2_name, p3_name, p4_name)
-                """, (nic_name, f.common.KANA2HIRA(nic_name), f.common.HIRA2KANA(nic_name)))
+                """, (nic_name, f.common.kata_to_hira(nic_name), f.common.hira_to_kana(nic_name)))
             count = rows.fetchone()[0]
             if count != 0:  # 過去成績更新
                 msg += d.common.db_backup()
                 for col in ("p1_name", "p2_name", "p3_name", "p4_name"):
                     resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, nic_name))
-                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.KANA2HIRA(nic_name)))
-                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.HIRA2KANA(nic_name)))
+                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.kata_to_hira(nic_name)))
+                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.hira_to_kana(nic_name)))
                 msg += "\nデータベースを更新しました。"
 
     resultdb.commit()
@@ -255,7 +255,7 @@ def MemberAppend(argument):
     return (msg)
 
 
-def MemberRemove(argument):
+def member_remove(argument):
     """
     メンバー削除
 
@@ -280,7 +280,7 @@ def MemberRemove(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # メンバー削除
-        new_name = f.common.HAN2ZEN(argument[0])
+        new_name = f.common.han_to_zen(argument[0])
         logging.notice(f"remove member: {new_name}")
 
         if new_name in g.member_list:
@@ -291,8 +291,8 @@ def MemberRemove(argument):
             msg = f"「{new_name}」は登録されていません。"
 
     if len(argument) == 2:  # 別名削除
-        new_name = f.common.HAN2ZEN(argument[0])
-        nic_name = f.common.HAN2ZEN(argument[1])
+        new_name = f.common.han_to_zen(argument[0])
+        nic_name = f.common.han_to_zen(argument[1])
         logging.notice(f"alias remove: {new_name} -> {nic_name}")
 
         if nic_name in g.member_list:
@@ -331,8 +331,8 @@ def check_namepattern(name):
 
     # 登録済みメンバーかチェック
     check_list = list(g.member_list.keys())
-    check_list += [f.common.KANA2HIRA(i) for i in g.member_list.keys()]  # ひらがな
-    check_list += [f.common.HIRA2KANA(i) for i in g.member_list.keys()]  # カタカナ
+    check_list += [f.common.kata_to_hira(i) for i in g.member_list.keys()]  # ひらがな
+    check_list += [f.common.hira_to_kana(i) for i in g.member_list.keys()]  # カタカナ
     if name in check_list:
         return (False, f"「{name}」はすでに使用されています。")
 

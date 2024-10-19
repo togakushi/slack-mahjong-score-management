@@ -168,12 +168,12 @@ def check_remarks():
     match g.msg.status:
         case "message_append":
             for name, val in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
-                if c.member.NameReplace(name) in check_list:
+                if c.member.name_replace(name) in check_list:
                     logging.info(f"insert: {name}, {val}")
                     resultdb.execute(d.sql_remarks_insert, (
                         g.msg.thread_ts,
                         g.msg.event_ts,
-                        c.member.NameReplace(name),
+                        c.member.name_replace(name),
                         val,
                     ))
                     f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
@@ -189,7 +189,7 @@ def check_remarks():
                     resultdb.execute(d.sql_remarks_insert, (
                         g.msg.thread_ts,
                         g.msg.event_ts,
-                        c.member.NameReplace(name),
+                        c.member.name_replace(name),
                         val,
                     ))
                     f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
@@ -225,7 +225,7 @@ def get_score(detection):
     # ポイント計算
     score_df = pd.DataFrame({
         "name": [
-            c.member.NameReplace(detection[x * 2], False)
+            c.member.name_replace(detection[x * 2], False)
             for x in range(4)
         ],
         "str": [detection[x * 2 + 1] for x in range(4)],

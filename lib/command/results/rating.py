@@ -38,7 +38,7 @@ def aggregation():
 
     # ゲスト置換
     df["名前"] = df["name"].copy().apply(
-        lambda x: c.member.NameReplace(x, add_mark=True)
+        lambda x: c.member.name_replace(x, add_mark=True)
     )
     if g.opt.unregistered_replace:
         for player in df.itertuples():

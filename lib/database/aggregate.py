@@ -34,11 +34,11 @@ def _disp_name(df, adjust=0):
     replace_list = []
     for name in list(df.unique()):
         if g.opt.individual:
-            replace_list.append(c.member.NameReplace(name, add_mark=True))
+            replace_list.append(c.member.name_replace(name, add_mark=True))
         else:
             replace_list.append(name)
 
-    max_padding = c.member.CountPadding(replace_list)
+    max_padding = c.member.count_padding(replace_list)
     for i in range(len(replace_list)):
         padding = " " * (
             max_padding - f.common.len_count(replace_list[i]) + adjust
@@ -106,7 +106,7 @@ def game_summary():
     # ゲスト置換
     if g.opt.individual:
         df["name"] = df["name"].apply(
-            lambda x: c.member.NameReplace(x, add_mark=True)
+            lambda x: c.member.name_replace(x, add_mark=True)
         )
 
     # ヘッダ修正
@@ -155,7 +155,7 @@ def game_details():
     # ゲスト置換
     if g.opt.individual:
         df["name"] = df["name"].apply(
-            lambda x: c.member.NameReplace(x, add_mark=True)
+            lambda x: c.member.name_replace(x, add_mark=True)
         )
 
     df["表示名"] = _disp_name(df["name"])
@@ -174,7 +174,7 @@ def grandslam_count():
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, add_mark=True)
+        lambda x: c.member.name_replace(x, add_mark=True)
     )
 
     df = df.filter(items=["プレイヤー名", "matter", "count"])
@@ -193,7 +193,7 @@ def regulations_count():
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, add_mark=True)
+        lambda x: c.member.name_replace(x, add_mark=True)
     )
 
     logging.trace(df)
@@ -243,7 +243,7 @@ def personal_gamedata():
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.NameReplace(x, add_mark=True)
+        lambda x: c.member.name_replace(x, add_mark=True)
     )
 
     return (df)
@@ -444,7 +444,7 @@ def winner_report():
     # ゲスト置換
     for i in range(1, 6):
         df[f"pname{i}"] = df[f"name{i}"].apply(
-            lambda x: "該当者なし" if type(x) is float else c.member.NameReplace(x, add_mark=True)
+            lambda x: "該当者なし" if type(x) is float else c.member.name_replace(x, add_mark=True)
         )
 
     return (df)
@@ -471,14 +471,14 @@ def matrix_table():
     l_data = {}
     for pname in plist:
         if g.opt.individual:  # 個人集計
-            l_name = c.member.NameReplace(pname)
+            l_name = c.member.name_replace(pname)
             # プレイヤー指定があるなら対象以外をスキップ
             if g.prm.player_list:
                 if l_name not in g.prm.player_list.values():
                     continue
             # ゲスト置換
             if g.opt.guest_skip:  # ゲストあり
-                l_name = c.member.NameReplace(pname, add_mark=True)
+                l_name = c.member.name_replace(pname, add_mark=True)
             else:  # ゲストなし
                 if pname == g.prm.guest_name:
                     continue

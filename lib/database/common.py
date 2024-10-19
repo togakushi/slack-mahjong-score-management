@@ -96,7 +96,7 @@ def query_modification(sql: str):
     return (sql)
 
 
-def ExsistRecord(ts):
+def exsist_record(ts):
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,

@@ -43,7 +43,7 @@ def aggregation():
 
     msg1 = textwrap.dedent(f"""
         *【直接対戦結果】*
-        \tプレイヤー名：{c.member.NameReplace(my_name, add_mark=True)}
+        \tプレイヤー名：{c.member.name_replace(my_name, add_mark=True)}
         \t対戦相手：{vs}
         \t検索範囲：{g.prm.starttime_hms} ～ {g.prm.endtime_hms}
         \t{f.message.remarks().strip()}
@@ -63,8 +63,8 @@ def aggregation():
             data = df_vs.query("vs_name == @vs_name")
             if len(data) == 0:
                 tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦記録はありません。\n".format(
-                    c.member.NameReplace(my_name, add_mark=True),
-                    c.member.NameReplace(vs_name, add_mark=True),
+                    c.member.name_replace(my_name, add_mark=True),
+                    c.member.name_replace(vs_name, add_mark=True),
                 )
                 continue
 
@@ -118,8 +118,8 @@ def aggregation():
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
         else:  # 対戦記録なし
             tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦相手が見つかりません。\n".format(
-                c.member.NameReplace(my_name, add_mark=True),
-                c.member.NameReplace(vs_name, add_mark=True),
+                c.member.name_replace(my_name, add_mark=True),
+                c.member.name_replace(vs_name, add_mark=True),
             )
 
     # --- データ整列&まとめ

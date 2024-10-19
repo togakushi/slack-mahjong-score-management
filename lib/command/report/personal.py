@@ -44,7 +44,7 @@ def plot():
         results[name] = dict(row)
         if g.opt.individual:
             results[name].update(
-                {"name": c.member.NameReplace(name, add_mark=True)}
+                {"name": c.member.name_replace(name, add_mark=True)}
             )
         logging.trace(f"{row['name']}: {results[name]}")
     logging.info(f"return record: {len(results)}")

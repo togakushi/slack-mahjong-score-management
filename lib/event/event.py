@@ -34,7 +34,7 @@ def handle_message_events(client, body):
             # ヘルプメッセージ
             f.slack_api.post_message(f.message.help_message(), g.msg.event_ts)
             # メンバーリスト
-            title, msg = c.member.Getmemberslist()
+            title, msg = c.member.get_members_list()
             f.slack_api.post_text(g.msg.event_ts, title, msg)
 
         # 成績管理系コマンド
@@ -56,7 +56,7 @@ def handle_message_events(client, body):
 
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}", x):
-            title, msg = c.member.Getmemberslist()
+            title, msg = c.member.get_members_list()
             f.slack_api.post_text(g.msg.event_ts, title, msg)
         case x if re.match(rf"^{g.cfg.cw.team}", x):
             title = "チーム一覧"
@@ -65,7 +65,7 @@ def handle_message_events(client, body):
 
         # 追加メモ
         case x if re.match(rf"^{g.cfg.cw.remarks_word}", x) and g.msg.thread_ts:
-            if d.common.ExsistRecord(g.msg.thread_ts) and g.msg.updatable:
+            if d.common.exsist_record(g.msg.thread_ts) and g.msg.updatable:
                 f.score.check_remarks()
 
         # 結果報告フォーマットに一致したポストの処理
@@ -81,17 +81,17 @@ def handle_message_events(client, body):
                 case "message_changed":
                     if detection:
                         if g.msg.updatable:
-                            if d.common.ExsistRecord(g.msg.event_ts):
+                            if d.common.exsist_record(g.msg.event_ts):
                                 d.common.db_update(detection, g.msg.event_ts)
                             else:
                                 d.common.db_insert(detection, g.msg.event_ts)
                         else:
                             f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                     else:
-                        if d.common.ExsistRecord(g.msg.event_ts):
+                        if d.common.exsist_record(g.msg.event_ts):
                             d.common.db_delete(g.msg.event_ts)
                 case "message_deleted":
-                    if d.common.ExsistRecord(g.msg.event_ts):
+                    if d.common.exsist_record(g.msg.event_ts):
                         d.common.db_delete(g.msg.event_ts)
 
 
@@ -126,12 +126,12 @@ def slash_command(ack, body, client):
 
             # メンバー管理系コマンド
             case "member":
-                title, msg = c.member.Getmemberslist()
+                title, msg = c.member.get_members_list()
                 f.slack_api.post_text(g.msg.event_ts, title, msg)
             case "add":
-                f.slack_api.post_message(c.member.MemberAppend(g.msg.argument))
+                f.slack_api.post_message(c.member.member_append(g.msg.argument))
             case "del":
-                f.slack_api.post_message(c.member.MemberRemove(g.msg.argument))
+                f.slack_api.post_message(c.member.member_remove(g.msg.argument))
 
             # チーム管理系コマンド
             case "team_create":

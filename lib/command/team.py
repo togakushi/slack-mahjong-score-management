@@ -46,9 +46,9 @@ def check_namepattern(name):
     for x in [x["team"] for x in g.team_list]:
         if name == x:
             return (False, f"チーム名「{name}」はすでに使用されています。")
-        if f.common.KANA2HIRA(name) == f.common.KANA2HIRA(x):  # ひらがな
+        if f.common.kata_to_hira(name) == f.common.kata_to_hira(x):  # ひらがな
             return (False, f"チーム名「{name}」はすでに使用されています。")
-        if f.common.HIRA2KANA(name) == f.common.HIRA2KANA(x):  # カタカナ
+        if f.common.hira_to_kana(name) == f.common.hira_to_kana(x):  # カタカナ
             return (False, f"チーム名「{name}」はすでに使用されています。")
 
     # 登録規定チェック
@@ -93,7 +93,7 @@ def create(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        team_name = f.common.HAN2ZEN(argument[0])
+        team_name = f.common.han_to_zen(argument[0])
         logging.notice(f"New Team: {team_name}")
 
         if len(g.team_list) > g.cfg.config["team"].getint("registration_limit", 255):
@@ -136,7 +136,7 @@ def delete(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        team_name = f.common.HAN2ZEN(argument[0])
+        team_name = f.common.han_to_zen(argument[0])
         logging.notice(f"Team delete: {team_name}")
 
         if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
@@ -188,8 +188,8 @@ def append(argument):
     if len(argument) == 2:  # チーム所属
         g.opt.unregistered_replace = False
 
-        team_name = f.common.HAN2ZEN(argument[0])
-        player_name = c.member.NameReplace(argument[1])
+        team_name = f.common.han_to_zen(argument[0])
+        player_name = c.member.name_replace(argument[1])
         logging.notice(f"Team participation: {team_name} -> {player_name}")
 
         registration_flg = True
@@ -259,8 +259,8 @@ def remove(argument):
     if len(argument) == 2:  # チーム名指
         g.opt.unregistered_replace = False
 
-        team_name = f.common.HAN2ZEN(argument[0])
-        player_name = c.member.NameReplace(argument[1])
+        team_name = f.common.han_to_zen(argument[0])
+        player_name = c.member.name_replace(argument[1])
         logging.notice(f"Team breakaway: {team_name} -> {player_name}")
 
         registration_flg = True

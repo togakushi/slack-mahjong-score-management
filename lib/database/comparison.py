@@ -215,7 +215,7 @@ def remarks_comparison(fts):
                     slack_data[count] = {
                         "thread_ts": thread_ts,
                         "event_ts": event_ts,
-                        "name": c.member.NameReplace(name),
+                        "name": c.member.name_replace(name),
                         "matter": val,
                     }
                     logging.trace(f"slack: {slack_data[count]}")
@@ -277,7 +277,7 @@ def remarks_comparison(fts):
                         curs.execute(d.sql_remarks_insert, (
                             update_data["thread_ts"],
                             update_data["event_ts"],
-                            c.member.NameReplace(update_data["name"]),
+                            c.member.name_replace(update_data["name"]),
                             update_data["matter"],
                         ))
                         remark_count += 1

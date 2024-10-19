@@ -29,7 +29,7 @@ def len_count(text):
     return (count)
 
 
-def HAN2ZEN(text):
+def han_to_zen(text):
     """
     半角文字を全角文字に変換(数字のみ)
 
@@ -50,7 +50,7 @@ def HAN2ZEN(text):
     return (text.translate(trans_table))
 
 
-def ZEN2HAN(text):
+def zen_to_han(text):
     """
     全角文字を半角文字に変換(数字のみ)
 
@@ -71,7 +71,7 @@ def ZEN2HAN(text):
     return (text.translate(trans_table))
 
 
-def HIRA2KANA(text):
+def hira_to_kana(text):
     """
     ひらがなをカタカナに変換
 
@@ -92,7 +92,7 @@ def HIRA2KANA(text):
     return (text.translate(trans_table))
 
 
-def KANA2HIRA(text):
+def kata_to_hira(text):
     """
     カタカナをひらがなに変換
 
