@@ -178,6 +178,7 @@ def db_delete(ts):
     logging.notice(f"{ts}")
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,))
         cur.execute(d.sql_result_delete, (ts,))
         cur.execute(d.sql_remarks_delete_all, (ts,))
         cur.commit()
@@ -185,6 +186,13 @@ def db_delete(ts):
     # リアクションをすべて外す
     for icon in f.slack_api.reactions_status():
         f.slack_api.call_reactions_remove(icon)
+    # メモのアイコンを外す
+    for x in delete_list.fetchall():
+        try:  # メッセージが削除済みだと例外を吐くので潰す
+            for icon in f.slack_api.reactions_status(ts=x):
+                f.slack_api.call_reactions_remove(icon, ts=x)
+        except Exception:
+            pass
 
 
 def db_backup():
