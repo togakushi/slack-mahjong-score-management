@@ -213,7 +213,6 @@ def remarks_comparison(fts):
                         "matter": matter,
                     }
                     slack_event_ts.append(g.msg.event_ts)
-                    logging.trace(f"slack: {hashkey}={slack_data[hashkey]}")
 
     # データベースからデータ取得
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
@@ -232,9 +231,10 @@ def remarks_comparison(fts):
                 "matter": row["matter"],
             }
             recorded_event_ts[row["thread_ts"]] = [v for k, v in dict(row).items() if k.endswith("_name")]
-            logging.trace(f"db: {hashkey}={db_data[hashkey]}")
 
     # --- 突合処理
+    logging.trace(f"{slack_data=}")
+    logging.trace(f"{db_data=}")
     remark_list = []
     delete_list = []
     # slackだけにあるパターン
@@ -251,6 +251,7 @@ def remarks_comparison(fts):
             delete_list.append(db_data[key])
 
     # DB更新(変更差分は新規追加として処理する)
+    logging.trace(f"{remark_list=}, {delete_list=}")
     remark_count = 0
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         # todo: 更新禁止フラグ未チェック
