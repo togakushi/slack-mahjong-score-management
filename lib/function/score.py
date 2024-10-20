@@ -1,5 +1,4 @@
 import logging
-import sqlite3
 
 import pandas as pd
 
@@ -151,57 +150,31 @@ def check_remarks():
     メモの内容を拾ってDBに格納する
     """
 
-    g.opt.initialization("results")
-    g.opt.unregistered_replace = False  # ゲスト無効
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
+    game_result = d.common.exsist_record(g.msg.thread_ts)
+    if game_result:  # ゲーム結果のスレッドになっているか
+        check_list = [v for k, v in game_result.items() if k.endswith("_name")]
 
-    # スレッド元にあるメンバーを取得
-    rows = resultdb.execute(
-        "select p1_name, p2_name, p3_name, p4_name from result where ts == ?",
-        (g.msg.thread_ts,)
-    )
-    check_list = rows.fetchone()
-
-    match g.msg.status:
-        case "message_append":
-            for name, val in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
-                if c.member.name_replace(name) in check_list:
-                    logging.info(f"insert: {name}, {val}")
-                    resultdb.execute(d.sql_remarks_insert, (
-                        g.msg.thread_ts,
-                        g.msg.event_ts,
-                        c.member.name_replace(name),
-                        val,
-                    ))
-                    f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
-        case "message_changed":
-            f.slack_api.call_reactions_remove()
-            resultdb.execute(
-                d.sql_remarks_delete_one,
-                (g.msg.event_ts,)
-            )
-            for name, val in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
-                if name in check_list:
-                    logging.info(f"update: {name}, {val}")
-                    resultdb.execute(d.sql_remarks_insert, (
-                        g.msg.thread_ts,
-                        g.msg.event_ts,
-                        c.member.name_replace(name),
-                        val,
-                    ))
-                    f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
-        case "message_deleted":
-            logging.info("delete one")
-            resultdb.execute(
-                d.sql_remarks_delete_one,
-                (g.msg.event_ts,)
-            )
-
-    resultdb.commit()
-    resultdb.close()
+        g.opt.initialization("results")
+        g.opt.unregistered_replace = False  # ゲスト無効
+        match g.msg.status:
+            case "message_append" | "message_changed":
+                remarks = {}
+                for name, matter in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
+                    target_name = c.member.name_replace(name)
+                    if target_name in check_list:
+                        remarks.update(
+                            thread_ts=g.msg.thread_ts,
+                            event_ts=g.msg.event_ts,
+                            name=target_name,
+                            matter=matter,
+                        )
+                        d.common.remarks_append(remarks)
+                    else:
+                        d.common.remarks_delete(g.msg.event_ts)
+            case "message_deleted":
+                d.common.remarks_delete(g.msg.event_ts)
+    else:
+        d.common.remarks_delete(g.msg.event_ts)
 
 
 def get_score(detection):
@@ -246,7 +219,7 @@ def get_score(detection):
     ret.update(dict(zip([f"p3_{x}" for x in list(score[2])], list(score[2].values()))))
     ret.update(dict(zip([f"p4_{x}" for x in list(score[3])], list(score[3].values()))))
 
-    logging.notice(  # type: ignore
+    logging.info(
         "score data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
             ret["p1_name"], ret["p1_rpoint"],
             ret["p2_name"], ret["p2_rpoint"],

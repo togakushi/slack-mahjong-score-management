@@ -63,36 +63,34 @@ def handle_message_events(client, body):
             msg = c.team.list()
             f.slack_api.post_text(g.msg.event_ts, title, msg)
 
-        # 追加メモ
-        case x if re.match(rf"^{g.cfg.cw.remarks_word}", x) and g.msg.thread_ts:
-            if d.common.exsist_record(g.msg.thread_ts) and g.msg.updatable:
-                f.score.check_remarks()
-
-        # 結果報告フォーマットに一致したポストの処理
         case _:
-            detection = f.search.pattern(g.msg.text)
-            match g.msg.status:
-                case "message_append":
-                    if detection:
-                        if g.msg.updatable:
-                            d.common.db_insert(detection, g.msg.event_ts)
-                        else:
-                            f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
-                case "message_changed":
-                    if detection:
-                        if g.msg.updatable:
-                            if d.common.exsist_record(g.msg.event_ts):
-                                d.common.db_update(detection, g.msg.event_ts)
-                            else:
+            if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword) and g.msg.thread_ts:  # 追加メモ
+                if d.common.exsist_record(g.msg.thread_ts) and g.msg.updatable:
+                    f.score.check_remarks()
+            else:  # 結果報告フォーマットに一致したポストの処理
+                detection = f.search.pattern(g.msg.text)
+                match g.msg.status:
+                    case "message_append":
+                        if detection:
+                            if g.msg.updatable:
                                 d.common.db_insert(detection, g.msg.event_ts)
+                            else:
+                                f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
+                    case "message_changed":
+                        if detection:
+                            if g.msg.updatable:
+                                if d.common.exsist_record(g.msg.event_ts):
+                                    d.common.db_update(detection, g.msg.event_ts)
+                                else:
+                                    d.common.db_insert(detection, g.msg.event_ts)
+                            else:
+                                f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                         else:
-                            f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
-                    else:
+                            if d.common.exsist_record(g.msg.event_ts):
+                                d.common.db_delete(g.msg.event_ts)
+                    case "message_deleted":
                         if d.common.exsist_record(g.msg.event_ts):
                             d.common.db_delete(g.msg.event_ts)
-                case "message_deleted":
-                    if d.common.exsist_record(g.msg.event_ts):
-                        d.common.db_delete(g.msg.event_ts)
 
 
 @g.app.command(g.cfg.setting.slash_command)

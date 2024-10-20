@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import re
 import sqlite3
@@ -189,107 +190,88 @@ def remarks_comparison(fts):
     g.opt.unregistered_replace = False  # ゲスト無効
     g.opt.aggregation_range = ["全部"]  # 検索範囲
 
-    slack_data = {}
-    db_data = {}
-    remark_count = 0
-
     # slackログからデータを取得
     matches = f.search.for_slack(
         g.cfg.cw.remarks_word,
         g.cfg.search.channel,
     )
 
-    count = 0
+    slack_data = {}
+    slack_event_ts = []  # リアクション操作用
     for i in range(len(matches)):
-        event_ts = matches[i]["ts"]
-        text = matches[i]["text"]
-        permalink = matches[i]["permalink"]
-        if permalink.split("?thread_ts=")[1:]:
-            thread_ts = permalink.split("?thread_ts=")[1:][0]
-        else:
-            thread_ts = None
-
-        if re.match(rf"^{g.cfg.cw.remarks_word}", text):
-            if thread_ts:
-                for name, val in zip(text.split()[1:][0::2], text.split()[1:][1::2]):
-                    slack_data[count] = {
-                        "thread_ts": thread_ts,
-                        "event_ts": event_ts,
-                        "name": c.member.name_replace(name),
-                        "matter": val,
+        g.msg.parser_matches(matches[i])
+        if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.text):
+            if g.msg.thread_ts:
+                for name, matter in zip(g.msg.text.split()[1:][0::2], g.msg.text.split()[1:][1::2]):
+                    target_name = c.member.name_replace(name)
+                    tmp = str(g.msg.thread_ts) + str(g.msg.event_ts) + target_name + matter
+                    hashkey = hashlib.sha256(tmp.encode()).hexdigest()
+                    slack_data[hashkey] = {
+                        "thread_ts": g.msg.thread_ts,
+                        "event_ts": g.msg.event_ts,
+                        "name": target_name,
+                        "matter": matter,
                     }
-                    logging.trace(f"slack: {slack_data[count]}")
-                    count += 1
-
-    slack_ts = set([slack_data[i]["event_ts"] for i in slack_data.keys()])
+                    slack_event_ts.append(g.msg.event_ts)
+                    logging.trace(f"slack: {hashkey}={slack_data[hashkey]}")
 
     # データベースからデータ取得
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
-        curs = cur.cursor()
+        rows = cur.execute("select * from remarks join result on result.ts = remarks.thread_ts where thread_ts >=?", (fts,))
 
-        count = 0
-        rows = curs.execute("select * from remarks where thread_ts >= ?", (fts,))
+        db_data = {}
+        recorded_event_ts = {}  # 記録済みゲーム結果のタイムスタンプと参加プレイヤー
         for row in rows.fetchall():
-            db_data[count] = {
+            tmp = row["thread_ts"] + row["event_ts"] + row["name"] + row["matter"]
+            hashkey = hashlib.sha256(tmp.encode()).hexdigest()
+            db_data[hashkey] = {
                 "thread_ts": row["thread_ts"],
                 "event_ts": row["event_ts"],
                 "name": row["name"],
                 "matter": row["matter"],
             }
-            logging.trace(f"database: {db_data[count]}")
-            count += 1
-
-    db_ts = set([db_data[i]["event_ts"] for i in db_data.keys()])
+            recorded_event_ts[row["thread_ts"]] = [v for k, v in dict(row).items() if k.endswith("_name")]
+            logging.trace(f"db: {hashkey}={db_data[hashkey]}")
 
     # --- 突合処理
+    remark_list = []
+    delete_list = []
+    # slackだけにあるパターン
+    for key in slack_data.keys():
+        if key not in db_data.keys():
+            ts = slack_data[key]["thread_ts"]
+            if ts in recorded_event_ts.keys():  # ゲーム結果が記録されているか
+                if slack_data[key]["name"] in recorded_event_ts[ts]:  # 名前があるか
+                    remark_list.append(slack_data[key])
+
+    # DBだけにあるパターン
+    for key in db_data.keys():
+        if key not in slack_data.keys():
+            delete_list.append(db_data[key])
+
+    # DB更新(変更差分は新規追加として処理する)
+    remark_count = 0
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.row_factory = sqlite3.Row
-        curs = cur.cursor()
+        # todo: 更新禁止フラグ未チェック
+        for para in delete_list:
+            cur.execute(d.sql_remarks_delete_compar, para)
+            remark_count += 1
+            logging.notice(f"delete: {para}")
 
-        for x in slack_ts:
-            check_data_src = []
-            for i in slack_data.keys():
-                if slack_data[i]["event_ts"] == x:
-                    check_data_src.append(slack_data[i])
+            # リアクション削除
+            if para["event_ts"] in slack_event_ts:
+                if g.cfg.setting.reaction_ok in f.slack_api.reactions_status(ts=para["event_ts"]):
+                    f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=para["event_ts"])
 
-            check_data_dst = []
-            for i in db_data.keys():
-                if db_data[i]["event_ts"] == x:
-                    check_data_dst.append(db_data[i])
+        for para in remark_list:
+            cur.execute(d.sql_remarks_insert, para)
+            remark_count += 1
+            logging.notice(f"insert: {para}")
 
-            # スレッド元をデータベースから検索
-            find_ts = []
-            for i in check_data_src:
-                rows = curs.execute(
-                    "select ts from result where ts=?",
-                    (str(i["thread_ts"]),)
-                )
-                for row in rows.fetchall():
-                    find_ts.append(row["ts"])
-
-            if find_ts:  # スレッド元がある
-                if check_data_src == check_data_dst:
-                    continue
-                else:
-                    curs.execute(d.sql_remarks_delete_one, (str(x),))
-                    for update_data in check_data_src:
-                        curs.execute(d.sql_remarks_insert, (
-                            update_data["thread_ts"],
-                            update_data["event_ts"],
-                            c.member.name_replace(update_data["name"]),
-                            update_data["matter"],
-                        ))
-                        remark_count += 1
-                        logging.info(f"update: {update_data}")
-            else:  # スレッド元がないデータは不要 → 削除
-                curs.execute(d.sql_remarks_delete_one, (str(x),))
-                logging.info(f"delete: {x} (No thread origin)")
-
-        for x in db_ts:
-            if x not in slack_ts:  # データベースにあってslackにない → 削除
-                curs.execute(d.sql_remarks_delete_one, (str(x),))
-                logging.info(f"delete: {x} (Only database)")
+            # リアクション追加
+            if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status(ts=para["event_ts"]):
+                f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=para["event_ts"])
 
         cur.commit()
 

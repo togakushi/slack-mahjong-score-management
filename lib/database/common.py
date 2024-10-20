@@ -97,18 +97,28 @@ def query_modification(sql: str):
 
 
 def exsist_record(ts):
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    row = resultdb.execute("select ts from result where ts=?", (ts,))
-    line = len(row.fetchall())
-    resultdb.close()
+    """
+    記録されているゲーム結果を返す
 
-    if line:
-        return (True)
+    Parameters
+    ----------
+    ts : flote(datetime)
+        検索するタイムスタンプ
+
+    Returns
+    -------
+    dict : dict
+        検索結果
+    """
+
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.row_factory = sqlite3.Row
+        row = cur.execute("select * from result where ts=?", (ts,)).fetchone()
+
+    if row:
+        return (dict(row))
     else:
-        return (False)
+        return ({})
 
 
 def first_record():
@@ -201,3 +211,33 @@ def db_backup():
     except Exception:
         logging.error("Database backup failed !!!")
         return ("\nデータベースのバックアップに失敗しました。")
+
+
+def remarks_append(remarks):
+    logging.notice(f"{remarks=}")
+
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.row_factory = sqlite3.Row
+        row = cur.execute(d.sql_remarks_check, remarks).fetchone()
+
+        if row:
+            cur.execute(d.sql_remarks_update, remarks)
+        else:
+            cur.execute(d.sql_remarks_insert, remarks)
+
+        if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status():
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remarks["event_ts"])
+
+        cur.commit()
+
+
+def remarks_delete(ts):
+    logging.notice(f"{ts}")
+
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.execute(d.sql_remarks_delete_one, (ts,))
+        cur.commit()
+
+    if g.msg.status != "message_deleted":
+        if g.cfg.setting.reaction_ok in f.slack_api.reactions_status():
+            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=ts)

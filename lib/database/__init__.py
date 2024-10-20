@@ -38,17 +38,35 @@ sql_result_update = """
 sql_result_delete = "delete from result where ts=?"
 
 
+sql_remarks_check = "select * from remarks where thread_ts=:thread_ts and event_ts=:event_ts"
+
 sql_remarks_insert = """
     insert into
         remarks (
             thread_ts, event_ts, name, matter
         ) values (
-            ?, ?, ?, ?
+            :thread_ts, :event_ts, :name, :matter
         )
 """
 
+sql_remarks_update = """
+    update remarks set
+        name=:name, matter=:matter
+    where
+        thread_ts=:thread_ts and event_ts=:event_ts
+"""
 
 sql_remarks_delete_all = "delete from remarks where thread_ts=?"
 
 
 sql_remarks_delete_one = "delete from remarks where event_ts=?"
+
+
+sql_remarks_delete_compar = """
+    delete from remarks
+    where
+        thread_ts=:thread_ts
+        and event_ts=:event_ts
+        and name=:name
+        and matter=:matter
+    """

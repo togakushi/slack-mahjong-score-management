@@ -95,11 +95,16 @@ class Message_Parser():
         __tmp_client = self.client
         self.__dict__.clear()
         self.client = __tmp_client
-
         self.channel_id = _body["channel"]["id"]
         self.user_id = _body["user"]
         self.text = _body["text"]
         self.event_ts = _body["ts"]
+        self.thread_ts = None
+
+        if "permalink" in _body:
+            permalink = _body["permalink"]
+            if permalink.split("?thread_ts=")[1:]:
+                self.thread_ts = permalink.split("?thread_ts=")[1:][0]
 
         self.check_updatable()
 
