@@ -235,6 +235,9 @@ def remarks_comparison(fts):
     # --- 突合処理
     logging.trace(f"{slack_data=}")
     logging.trace(f"{db_data=}")
+    logging.trace(f"{slack_event_ts=}")
+    logging.trace(f"{recorded_event_ts=}")
+
     remark_list = []
     delete_list = []
     # slackだけにあるパターン
