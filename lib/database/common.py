@@ -222,19 +222,20 @@ def db_backup():
 
 
 def remarks_append(remarks):
-    logging.notice(f"{remarks=}")
-
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
-        row = cur.execute(d.sql_remarks_check, remarks).fetchone()
 
-        if row:
-            cur.execute(d.sql_remarks_update, remarks)
-        else:
-            cur.execute(d.sql_remarks_insert, remarks)
+        for remark in remarks:
+            # 親スレッドの情報
+            row = cur.execute("select * from result where ts=:thread_ts", remark).fetchone()
 
-        if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status():
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remarks["event_ts"])
+            if row:
+                if remark["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
+                    cur.execute(d.sql_remarks_insert, remark)
+                    logging.notice(f"insert: {remark}")
+
+                    if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status():
+                        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remark["event_ts"])
 
         cur.commit()
 

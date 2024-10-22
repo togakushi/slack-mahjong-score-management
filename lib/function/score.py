@@ -156,25 +156,26 @@ def check_remarks():
 
         g.opt.initialization("results")
         g.opt.unregistered_replace = False  # ゲスト無効
+
+        remarks = []
+        for name, matter in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
+            target_name = c.member.name_replace(name)
+            if target_name in check_list:
+                remarks.append({
+                    "thread_ts": g.msg.thread_ts,
+                    "event_ts": g.msg.event_ts,
+                    "name": target_name,
+                    "matter": matter,
+                })
+
         match g.msg.status:
-            case "message_append" | "message_changed":
-                remarks = {}
-                for name, matter in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
-                    target_name = c.member.name_replace(name)
-                    if target_name in check_list:
-                        remarks.update(
-                            thread_ts=g.msg.thread_ts,
-                            event_ts=g.msg.event_ts,
-                            name=target_name,
-                            matter=matter,
-                        )
-                        d.common.remarks_append(remarks)
-                    else:
-                        d.common.remarks_delete(g.msg.event_ts)
+            case "message_append":
+                d.common.remarks_append(remarks)
+            case "message_changed":
+                d.common.remarks_delete(g.msg.event_ts)
+                d.common.remarks_append(remarks)
             case "message_deleted":
                 d.common.remarks_delete(g.msg.event_ts)
-    else:
-        d.common.remarks_delete(g.msg.event_ts)
 
 
 def get_score(detection):
