@@ -11,7 +11,7 @@ from lib import function as f
 from lib.database import query
 
 
-def _disp_name(df, adjust=0):
+def _disp_name(df, adjust=0, mark=True):
     """
     ゲスト置換/パディング付与
 
@@ -22,6 +22,9 @@ def _disp_name(df, adjust=0):
 
     adjust : int
         パディング数の調整
+
+    mark : bool
+        ゲストマークの表示
 
     Returns
     -------
@@ -34,7 +37,7 @@ def _disp_name(df, adjust=0):
     replace_list = []
     for name in list(df.unique()):
         if g.opt.individual:
-            replace_list.append(c.member.name_replace(name, add_mark=True))
+            replace_list.append(c.member.name_replace(name, add_mark=mark))
         else:
             replace_list.append(name)
 
@@ -158,7 +161,7 @@ def game_details():
             lambda x: c.member.name_replace(x, add_mark=True)
         )
 
-    df["表示名"] = _disp_name(df["name"])
+    df["表示名"] = _disp_name(df["name"], mark=False)
 
     logging.trace(df)
     return (df.fillna(value=""))
