@@ -104,7 +104,7 @@ def aggregation():
         filter_list = [column_name, "ゲーム数", "通算", "差分"]
 
     # --- メッセージ整形
-    step = 50
+    step = 40
     step_count = []
     last_line = len(df_summary)
 
