@@ -208,7 +208,7 @@ def save_output(df, format, filename):
             case "通算" | "平均":
                 fmt.append("+.1f")
             case "平均順位" | "平順":
-                fmt.append("+.2f")
+                fmt.append(".2f")
             case _:
                 fmt.append("")
 
