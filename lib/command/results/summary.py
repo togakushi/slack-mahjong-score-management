@@ -27,7 +27,7 @@ def aggregation():
     df_game = d.aggregate.game_details()
     df_grandslam = df_game.query("grandslam != ''")
     df_regulations = df_game.query("type == 1")
-    df_wordcount = df_game.query("type == 2")
+    df_wordcount = df_game.query("type == 2" if g.undefined_word != 2 else "type != '' or type == 2")
 
     # 表示
     # --- 情報ヘッダ

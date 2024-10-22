@@ -104,6 +104,39 @@ def initialization_resultdb():
         """
     )
 
+    # wordsテーブル情報読み込み(regulations)
+    if g.cfg.config.has_section("regulations"):
+        resultdb.execute("delete from words")
+        for k, v in g.cfg.config.items("regulations"):
+            match k:
+                case "undefined":
+                    if v in ("0", "2"):
+                        g.undefined_word = int(v)
+                case "type0" | "yakuman":
+                    words_list = set([x.strip() for x in v.split(",")])
+                    for word in words_list:
+                        resultdb.execute(
+                            "insert into words(word, type, ex_point) values (?, 0, NULL)",
+                            (word,)
+                        )
+                    logging.info(f"regulations table(type0): {words_list}")
+                case "type2":
+                    words_list = set([x.strip() for x in v.split(",")])
+                    for word in words_list:
+                        resultdb.execute(
+                            "insert into words(word, type, ex_point) values (?, 2, NULL)",
+                            (word,)
+                        )
+                    logging.info(f"regulations table(type2): {words_list}")
+                case _:
+                    word = k.strip()
+                    ex_point = int(v)
+                    resultdb.execute(
+                        "insert into words(word, type, ex_point) values (?, 1, ?)",
+                        (word, ex_point,)
+                    )
+                    logging.info(f"regulations table(type1): {word}, {ex_point}")
+
     resultdb.execute("drop view if exists individual_results")
     resultdb.execute(
         """
@@ -371,9 +404,20 @@ def initialization_resultdb():
         """
     )
 
+    # メモ
+    if g.undefined_word == 0:
+        grandslam_where = "words.type is null or words.type == 0"
+        regulation_where = "words.type == 2"
+    elif g.undefined_word == 2:
+        grandslam_where = "words.type == 0"
+        regulation_where = "words.type is null or words.type == 2"
+    else:
+        grandslam_where = "words.type == 0"
+        regulation_where = "words.type == 2"
+
     resultdb.execute("drop view if exists grandslam")
     resultdb.execute(
-        """
+        f"""
         create view if not exists grandslam as
             select
                 remarks.thread_ts,
@@ -394,7 +438,7 @@ def initialization_resultdb():
             join game_info on
                 game_info.ts == remarks.thread_ts
             where
-                words.type is null or words.type == 0
+                {grandslam_where}
             group by
                 remarks.thread_ts, remarks.name
         """
@@ -402,7 +446,7 @@ def initialization_resultdb():
 
     resultdb.execute("drop view if exists regulations")
     resultdb.execute(
-        """
+        f"""
         create view if not exists regulations as
             select
                 remarks.thread_ts,
@@ -424,7 +468,7 @@ def initialization_resultdb():
             join game_info on
                 game_info.ts == remarks.thread_ts
             where
-                words.type not null or words.type != 0
+                {regulation_where}
             group by
                 remarks.thread_ts, remarks.name
         """
@@ -442,27 +486,6 @@ def initialization_resultdb():
         logging.notice(f"ゲスト修正: {data[0][1]} -> {g.prm.guest_name}")
         sql = "update member set name=? where id=0"
         resultdb.execute(sql, (g.prm.guest_name,))
-
-    # regulationsテーブル情報読み込み
-    if g.cfg.config.has_section("regulations"):
-        resultdb.execute("delete from words where type == 1")
-        for word, ex_point in g.cfg.config.items("regulations"):
-            resultdb.execute(
-                "insert into words(word, type, ex_point) values (?, 1, ?)",
-                (word, int(ex_point),)
-            )
-            logging.info(f"regulations table(type1): {word}, {ex_point}")
-
-    words = g.cfg.config["mahjong"].get("regulations_type2", None)
-    if words:
-        words_list = set([x.strip() for x in words.split(",")])
-        resultdb.execute("delete from words where type == 2")
-        for word in words_list:
-            resultdb.execute(
-                "insert into words(word, type, ex_point) values (?, 2, NULL)",
-                (word,)
-            )
-        logging.info(f"regulations table(type2): {words_list}")
 
     resultdb.commit()
     resultdb.close()

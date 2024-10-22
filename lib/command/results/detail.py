@@ -26,8 +26,8 @@ def aggregation():
 
     # --- データ収集
     game_info = d.aggregate.game_info()
-    df_grandslam = d.aggregate.grandslam_count()
-    df_regulations = d.aggregate.regulations_count()
+    df_grandslam = d.aggregate.remark_count("grandslam")
+    df_regulations = d.aggregate.remark_count("regulation")
 
     item_team = ""
     item_member = ""
@@ -168,9 +168,9 @@ def aggregation():
             ex_point = str(x.ex_point).replace("-", "▲")
             msg2["記録"] += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
 
-    if not df_regulations.query("type == 2").empty:
+    if not df_regulations.query("type != 1").empty:
         msg2["記録"] += "\n*【その他】*\n"
-        for x in df_regulations.query("type == 2").itertuples():
+        for x in df_regulations.query("type != 1").itertuples():
             msg2["記録"] += f"\t{x.matter}\t{x.count}回\n"
 
     # --- 戦績

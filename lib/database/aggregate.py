@@ -160,6 +160,8 @@ def game_details():
         df["name"] = df["name"].apply(
             lambda x: c.member.name_replace(x, add_mark=True)
         )
+        if not g.opt.guest_skip:
+            df.drop(df[df["guest"] == 1].index, inplace=True)
 
     df["表示名"] = _disp_name(df["name"], mark=False)
 
@@ -167,37 +169,35 @@ def game_details():
     return (df.fillna(value=""))
 
 
-def grandslam_count():
+def remark_count(kind):
+    """
+    メモの内容を種別でカウント
+
+    Parameters
+    ----------
+    kind : str
+        集計種別
+
+    Returns
+    -------
+    df : DataFrame
+    """
+
     # データ収集
+
     df = pd.read_sql(
-        query.game.remark_count(),
+        query.game.remark_count(kind),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
-    ).query("type != type or type == 0")
+    )
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
         lambda x: c.member.name_replace(x, add_mark=True)
     )
 
-    df = df.filter(items=["プレイヤー名", "matter", "count"])
-
-    logging.trace(df)
-    return (df)
-
-
-def regulations_count():
-    # データ収集
-    df = pd.read_sql(
-        query.game.remark_count(),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    ).query("type == type or type != 0")
-
-    # ゲスト置換
-    df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.name_replace(x, add_mark=True)
-    )
+    if kind == "grandslam":
+        df = df.filter(items=["プレイヤー名", "matter", "count"])
 
     logging.trace(df)
     return (df)

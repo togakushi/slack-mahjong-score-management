@@ -47,12 +47,28 @@ def info():
     return (query_modification(sql))
 
 
-def remark_count():
+def remark_count(kind):
     """
     メモの内容をカウントするSQLを生成
+
+    Parameters
+    ----------
+    kind : str
+        集計種別
     """
 
-    sql = """
+    if kind == "grandslam":
+        if g.undefined_word == 0:
+            where_string = "and (words.type is null or words.type = 0)"
+        else:
+            where_string = "and words.type = 0"
+    else:
+        if g.undefined_word == 2:
+            where_string = "and (words.type is null or words.type = 2)"
+        else:
+            where_string = "and words.type = 2"
+
+    sql = f"""
         -- game.remark_count()
         select
             --[individual] remarks.name,
@@ -80,6 +96,7 @@ def remark_count():
             --[team] --[player_name] and team.name in (<<player_list>>) -- 対象チーム
             --[friendly_fire] and same_team = 0
             --[search_word] and comment like :search_word
+            {where_string}
         group by
             --[individual] remarks.name, matter
             --[team] team.name, matter
