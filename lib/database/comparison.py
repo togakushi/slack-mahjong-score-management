@@ -217,10 +217,16 @@ def remarks_comparison(fts):
     # データベースからデータ取得
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
-        rows = cur.execute("select * from remarks join result on result.ts = remarks.thread_ts where thread_ts >=?", (fts,))
 
+        # 記録済みゲーム結果のタイムスタンプと参加プレイヤー
+        recorded_ts = {}
+        rows = cur.execute("select * from result where ts>=?", (fts,))
+        for row in rows.fetchall():
+            recorded_ts[row["ts"]] = [v for k, v in dict(row).items() if k.endswith("_name")]
+
+        # 記録済みメモ内容
         db_data = {}
-        recorded_event_ts = {}  # 記録済みゲーム結果のタイムスタンプと参加プレイヤー
+        rows = cur.execute("select * from remarks where thread_ts>=?", (fts,))
         for row in rows.fetchall():
             tmp = row["thread_ts"] + row["event_ts"] + row["name"] + row["matter"]
             hashkey = hashlib.sha256(tmp.encode()).hexdigest()
@@ -230,13 +236,12 @@ def remarks_comparison(fts):
                 "name": row["name"],
                 "matter": row["matter"],
             }
-            recorded_event_ts[row["thread_ts"]] = [v for k, v in dict(row).items() if k.endswith("_name")]
 
     # --- 突合処理
-    logging.trace(f"{slack_data=}")
-    logging.trace(f"{db_data=}")
-    logging.trace(f"{slack_event_ts=}")
-    logging.trace(f"{recorded_event_ts=}")
+    logging.info(f"{slack_data=}")
+    logging.info(f"{db_data=}")
+    logging.info(f"{slack_event_ts=}")
+    logging.info(f"{recorded_ts=}")
 
     remark_list = []
     delete_list = []
@@ -244,8 +249,8 @@ def remarks_comparison(fts):
     for key in slack_data.keys():
         if key not in db_data.keys():
             ts = slack_data[key]["thread_ts"]
-            if ts in recorded_event_ts.keys():  # ゲーム結果が記録されているか
-                if slack_data[key]["name"] in recorded_event_ts[ts]:  # 名前があるか
+            if ts in recorded_ts.keys():  # ゲーム結果が記録されているか
+                if slack_data[key]["name"] in recorded_ts[ts]:  # 名前があるか
                     remark_list.append(slack_data[key])
 
     # DBだけにあるパターン
