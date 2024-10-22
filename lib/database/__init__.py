@@ -23,7 +23,6 @@ sql_result_insert = """
         )
 """
 
-
 sql_result_update = """
     update result set
         p1_name=:p1_name, p1_str=:p1_str, p1_rpoint=:p1_rpoint, p1_rank=:p1_rank, p1_point=:p1_point,
@@ -34,9 +33,7 @@ sql_result_update = """
     where ts=:ts
 """
 
-
 sql_result_delete = "delete from result where ts=?"
-
 
 sql_remarks_check = "select * from remarks where thread_ts=:thread_ts and event_ts=:event_ts"
 
@@ -58,9 +55,7 @@ sql_remarks_update = """
 
 sql_remarks_delete_all = "delete from remarks where thread_ts=?"
 
-
 sql_remarks_delete_one = "delete from remarks where event_ts=?"
-
 
 sql_remarks_delete_compar = """
     delete from remarks
