@@ -62,7 +62,7 @@ def aggregation():
         "rpoint_avg": "平均素点",
     }).filter(
         items=[
-            "名前", "レート", "平均順位", "順位偏差", "平均素点", "得点偏差", "順位分布"
+            "名前", "レート", "順位分布", "平均順位", "順位偏差", "平均素点", "得点偏差"
         ]
     ).copy()
 
@@ -71,7 +71,7 @@ def aggregation():
         "index": False,
         "tablefmt": "simple",
         "numalign": "right",
-        "floatfmt": ("", ".1f", ".2f", ".0f", ".1f", ".0f", "")
+        "floatfmt": ("", ".1f", "", ".2f", ".0f", ".1f", ".0f")
     }
 
     step = 30
