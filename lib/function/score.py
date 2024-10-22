@@ -159,14 +159,14 @@ def check_remarks():
 
         remarks = []
         for name, matter in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
-            target_name = c.member.name_replace(name)
-            if target_name in check_list:
-                remarks.append({
-                    "thread_ts": g.msg.thread_ts,
-                    "event_ts": g.msg.event_ts,
-                    "name": target_name,
-                    "matter": matter,
-                })
+            remark = {
+                "thread_ts": g.msg.thread_ts,
+                "event_ts": g.msg.event_ts,
+                "name": c.member.name_replace(name),
+                "matter": matter,
+            }
+            if remark["name"] in check_list and remark not in remarks:
+                remarks.append(remark)
 
         match g.msg.status:
             case "message_append":
