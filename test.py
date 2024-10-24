@@ -32,6 +32,7 @@ for sec in test_conf.sections():
     print(f"[TEST CASE] {sec}")
     test_case = None
     target_player = []
+    target_team = []
 
     for pattern, argument in test_conf[sec].items():
         if pattern == "case":
@@ -43,9 +44,15 @@ for sec in test_conf.sections():
                 target_player.append(random.choice(list(set(g.member_list.values()))))
             continue
 
+        if pattern == "target_team":
+            team_list = [x["team"] for x in g.team_list]
+            for x in range(int(argument)):
+                target_team.append(random.choice(team_list))
+            continue
+
         print("-" * 80)
-        print(f"{pattern=} {argument=} {target_player=}")
-        g.msg.argument = argument.split() + target_player
+        print(f"{pattern=} {argument=} {target_player=} {target_team=}")
+        g.msg.argument = argument.split() + target_player + target_team
 
         if test_conf[sec].getboolean("config", False):
             pprint(["*** config ***", vars(g.cfg)], width=200)
