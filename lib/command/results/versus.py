@@ -46,7 +46,7 @@ def aggregation():
         \tプレイヤー名：{c.member.name_replace(my_name, add_mark=True)}
         \t対戦相手：{vs}
         \t検索範囲：{g.prm.starttime_hms} ～ {g.prm.endtime_hms}
-        \t{f.message.remarks().strip()}
+        \t{f.message.remarks(True)}
     """).strip() + "\n"
 
     msg2 = {}  # 対戦結果格納用

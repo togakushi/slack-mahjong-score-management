@@ -64,12 +64,12 @@ def remark_count(kind):
             where_string = "and words.type = 0"
     else:
         if g.undefined_word == 2:
-            where_string = "and (words.type is null or words.type = 2)"
+            where_string = "and (words.type is null or words.type = 1 or words.type = 2)"
         else:
-            where_string = "and words.type = 2"
+            where_string = "and (words.type = 1 or words.type = 2)"
 
     sql = f"""
-        -- game.remark_count()
+        -- game.remark_count({kind})
         select
             --[individual] remarks.name,
             --[team] team.name as name,

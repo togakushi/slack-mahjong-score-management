@@ -29,41 +29,29 @@ def aggregation():
     df_grandslam = d.aggregate.remark_count("grandslam")
     df_regulations = d.aggregate.remark_count("regulation")
 
-    item_team = ""
-    item_member = ""
-
+    msg_data = {}
     if g.opt.individual:
-        item_title = "*【個人成績】*"
-        item_name = "プレイヤー名"
+        msg_data["titel"] = "*【個人成績】*"
+        msg_data["プレイヤー名"] = f"{g.prm.player_name} {f.common.badge_degree(0)}"
         team = c.team.which_team(g.prm.player_name)
         if team:
-            item_team = f"所属チーム： {team}"
+            msg_data["所属チーム"] = team
     else:
-        team_data = [x for x in g.team_list if x["team"] == g.prm.player_name]
-        if team_data:
-            if team_data[0]["member"]:
-                member = "、".join(team_data[0]['member'].split(","))
-                item_member = f"登録メンバー： {member}"
-            else:
-                item_member = "登録メンバー： なし"
+        member = c.team.get_teammates()
+        if member:
+            msg_data["titel"] = "*【チーム成績】*"
+            msg_data["チーム名"] = f"{g.prm.player_name} {f.common.badge_degree(0)}"
+            msg_data["登録メンバー"] = "、".join(member)
         else:
             return ("登録されていないチームです", {})
 
-        item_title = "*【チーム成績】*"
-        item_name = "チーム名"
-
     if game_info["game_count"] == 0:
-        msg1 = f"""
-            {item_title}
-            \t{item_name}： {g.prm.player_name} {f.common.badge_degree(0)}
-            \t{item_team}
-            \t{item_member}
-            \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
-            \t{f.message.remarks().strip()}
-            \t対戦数： 0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}
-        """
-        msg1 = f.message.del_blank_line(msg1)
-        return (textwrap.dedent(msg1), {})
+        msg_data["検索範囲"] = f"{g.prm.starttime_hms} ～ {g.prm.endtime_hms}"
+        msg_data["特記事項"] = "、".join(f.message.remarks())
+        msg_data["検索ワード"] = f.message.search_word()
+        msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}"
+
+        return (message_build(msg_data), {})
 
     result_df = d.aggregate.game_results()
     record_df = d.aggregate.ranking_record()
@@ -75,53 +63,38 @@ def aggregation():
     data = result_df.to_dict(orient="records")[0]
 
     # --- 表示内容
+    msg2 = {}
     badge_degree = f.common.badge_degree(data["ゲーム数"])
     badge_status = f.common.badge_status(data["ゲーム数"], data["win"])
+    if g.opt.individual:  # degree更新
+        msg_data["プレイヤー名"] = f"{g.prm.player_name} {badge_degree}"
+    else:
+        msg_data["チーム名"] = f"{g.prm.player_name} {badge_degree}"
 
-    msg1 = f"""
-        {item_title}
-        \t{item_name}： {data["表示名"].strip()} {badge_degree}
-        \t{item_team}
-        \t{item_member}
-        \t検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}
-        \t集計範囲： {game_info['first_game']} ～ {game_info['last_game']}
-        \t{f.message.remarks().strip()}
-        \t対戦数： {data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}
-
-    """
-    msg1 = f.message.del_blank_line(msg1)
-    msg2 = {}
+    msg_data["検索範囲"] = f"{g.prm.starttime_hms} ～ {g.prm.endtime_hms}"
+    msg_data["集計範囲"] = f"{game_info['first_game']} ～ {game_info['last_game']}"
+    msg_data["特記事項"] = "、".join(f.message.remarks())
+    msg_data["検索ワード"] = f.message.search_word()
+    msg_data["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}"
+    msg_data["_blank1"] = True
 
     # --- 成績データ
     if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
-        msg1 += f"""
-            \t
-            \t通算ポイント： {data['通算ポイント']:+.1f}pt
-            \t平均ポイント： {data['平均ポイント']:+.1f}pt
-            \t平均順位： {data['平均順位']:1.2f}
-            \t1位： {data['1位']:2} 回 ({data['1位率']:6.2f}%)
-            \t2位： {data['2位']:2} 回 ({data['2位率']:6.2f}%)
-            \t3位： {data['3位']:2} 回 ({data['3位率']:6.2f}%)
-            \t4位： {data['4位']:2} 回 ({data['4位率']:6.2f}%)
-            \t役満： {data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)
-        """.replace("-", "▲")
-    else:
-        msg1 += f"""
-            \t
-            \t通算ポイント： {data['通算ポイント']:+.1f}pt
-            \t平均ポイント： {data['平均ポイント']:+.1f}pt
-            \t平均順位： {data['平均順位']:1.2f}
-            \t1位： {data['1位']:2} 回 ({data['1位率']:6.2f}%)
-            \t2位： {data['2位']:2} 回 ({data['2位率']:6.2f}%)
-            \t3位： {data['3位']:2} 回 ({data['3位率']:6.2f}%)
-            \t4位： {data['4位']:2} 回 ({data['4位率']:6.2f}%)
-            \tトビ： {data['トビ']:2} 回 ({data['トビ率']:6.2f}%)
-            \t役満： {data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)
-        """.replace("-", "▲")
+        g.cfg.dropitems.results.append("トビ")
+
+    msg_data["通算ポイント"] = f"{data['通算ポイント']:+.1f}pt".replace("-", "▲")
+    msg_data["平均ポイント"] = f"{data['平均ポイント']:+.1f}pt".replace("-", "▲")
+    msg_data["平均順位"] = f"{data['平均順位']:1.2f}"
+    msg_data["1位"] = f"{data['1位']:2} 回 ({data['1位率']:6.2f}%)"
+    msg_data["2位"] = f"{data['2位']:2} 回 ({data['2位率']:6.2f}%)"
+    msg_data["3位"] = f"{data['3位']:2} 回 ({data['3位率']:6.2f}%)"
+    msg_data["4位"] = f"{data['4位']:2} 回 ({data['4位率']:6.2f}%)"
+    msg_data["トビ"] = f"{data['トビ']:2} 回 ({data['トビ率']:6.2f}%)"
+    msg_data["役満"] = f"{data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)"
 
     # --- 座席データ
     if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
-        msg2["座席"] = textwrap.dedent(f"""
+        msg2["座席データ"] = textwrap.dedent(f"""
             *【座席データ】*
             \t# 席：順位分布(平順) / 役満 #
             \t{data['東家-順位分布']} / {data['東家-役満和了']}
@@ -130,7 +103,7 @@ def aggregation():
             \t{data['北家-順位分布']} / {data['北家-役満和了']}
         """).replace("0.00", "-.--")
     else:
-        msg2["座席"] = textwrap.dedent(f"""
+        msg2["座席データ"] = textwrap.dedent(f"""
             *【座席データ】*
             \t# 席：順位分布(平順) / トビ / 役満 #
             \t{data['東家-順位分布']} / {data['東家-トビ']} / {data['東家-役満和了']}
@@ -140,38 +113,39 @@ def aggregation():
         """).replace("0.00", "-.--")
 
     # --- 記録
-    msg2["記録"] = textwrap.dedent(f"""
+    msg2["ベストレコード"] = textwrap.dedent(f"""
         *【ベストレコード】*
-        \t連続トップ： {data['連続トップ']} 連続
-        \t連続連対： {data['連続連対']} 連続
-        \t連続ラス回避： {data['連続ラス回避']} 連続
-        \t最大素点： {data['最大素点'] * 100}点
-        \t最大獲得ポイント： {data['最大獲得ポイント']}pt
+        \t連続トップ： {data["連続トップ"]} 連続
+        \t連続連対： {data["連続連対"]} 連続
+        \t連続ラス回避： {data["連続ラス回避"]} 連続
+        \t最大素点： {data["最大素点"] * 100}点
+        \t最大獲得ポイント： {data["最大獲得ポイント"]}pt
+   """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
+    msg2["ワーストレコード"] = textwrap.dedent(f"""
         *【ワーストレコード】*
         \t連続ラス： {data['連続ラス']} 連続
         \t連続逆連対： {data['連続逆連対']} 連続
         \t連続トップなし： {data['連続トップなし']} 連続
         \t最小素点： {data['最小素点'] * 100}点
         \t最小獲得ポイント： {data['最小獲得ポイント']}pt
-    """).replace("-", "▲")
-    msg2["記録"] = msg2["記録"].replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
+    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
     if not df_grandslam.empty:
-        msg2["記録"] += "\n*【役満和了】*\n"
+        msg2["役満和了"] = "*【役満和了】*\n"
         for x in df_grandslam.itertuples():
-            msg2["記録"] += f"\t{x.matter}\t{x.count}回\n"
+            msg2["役満和了"] += f"\t{x.matter}\t{x.count}回\n"
 
     if not df_regulations.query("type == 1").empty:
-        msg2["記録"] += "\n*【卓外ポイント】*\n"
+        msg2["卓外ポイント"] = "*【卓外ポイント】*\n"
         for x in df_regulations.query("type == 1").itertuples():
             ex_point = str(x.ex_point).replace("-", "▲")
-            msg2["記録"] += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
+            msg2["卓外ポイント"] += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
 
     if not df_regulations.query("type != 1").empty:
-        msg2["記録"] += "\n*【その他】*\n"
+        msg2["その他"] = "*【その他】*\n"
         for x in df_regulations.query("type != 1").itertuples():
-            msg2["記録"] += f"\t{x.matter}\t{x.count}回\n"
+            msg2["その他"] += f"\t{x.matter}\t{x.count}回\n"
 
     # --- 戦績
     if g.opt.game_results:
@@ -260,8 +234,30 @@ def aggregation():
             msg2["対戦"] += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"
 
     # 非表示項目
-    if not g.opt.statistics:
-        msg2.pop("座席")
-        msg2.pop("記録")
+    for k in list(msg2.keys()):
+        if k in g.cfg.dropitems.results:
+            msg2.pop(k)
 
-    return (textwrap.dedent(msg1), msg2)
+    return (message_build(msg_data), msg2)
+
+
+def message_build(data: dict):
+    """
+    表示する内容をテキストに起こす
+    """
+
+    msg = ""
+    for k, v in data.items():
+        if not v:  # 値がない項目は削除
+            continue
+        match k:
+            case k if k in g.cfg.dropitems.results:  # 非表示
+                pass
+            case k if k.startswith("_blank"):
+                msg += "\t\n"
+            case "titel":
+                msg += f"{v}\n"
+            case _:
+                msg += f"\t{k}： {v}\n"
+
+    return (msg)

@@ -114,6 +114,15 @@ class Config():
         self.ranking = self.command_opt("ranking")
         self.report = self.command_opt("report")
 
+        # 非表示項目リスト
+        @dataclass
+        class dropitems:
+            results: list = field(default_factory=list)
+            ranking: list = field(default_factory=list)
+        self.dropitems = dropitems()
+        self.dropitems.results = [x.strip() for x in self.config["results"].get("dropitems", "").split(",")]
+        self.dropitems.ranking = [x.strip() for x in self.config["ranking"].get("dropitems", "").split(",")]
+
     def command_opt(self, section):
         @dataclass
         class subcommand:

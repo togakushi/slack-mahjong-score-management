@@ -127,7 +127,7 @@ def plot():
             tb[j, i].set_text_props(ha="center")
 
     # 追加テキスト
-    remark_text = f.message.remarks().strip()
+    remark_text = f.message.remarks(True) + f.message.search_word(True)
     if g.opt.search_word:
         add_text = "[集計範囲：{} ～ {}] [総ゲーム数：{}] [規定ゲーム数：{} 以上] {}".format(
             game_info["first_comment"],

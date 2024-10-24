@@ -159,6 +159,10 @@ def aggregation():
     msg2 = {}
 
     for k in data.keys():
+        # 非表示項目
+        if k in g.cfg.dropitems.ranking:
+            continue
+
         msg2[k] = f"\n*{k}*\n"
         tmp_df = result_df.sort_values(
             [f"{k}_rank", "ゲーム数"],

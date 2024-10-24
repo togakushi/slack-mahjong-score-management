@@ -187,18 +187,12 @@ def no_hits():
     return (msg.format(keyword=g.cfg.search.keyword, start=start, end=end))
 
 
-def remarks():
+def remarks(headword=False):
     """
     引数で指定された集計方法を注記にまとめる
     """
 
-    ret = ""
     remark = []
-
-    if g.prm.search_word:
-        search_word = f"検索ワード： {g.prm.search_word.replace('%', '')}"
-    else:
-        search_word = ""
 
     if not g.opt.guest_skip:
         remark.append("2ゲスト戦の結果を含む")
@@ -207,10 +201,28 @@ def remarks():
             remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
     if g.opt.stipulated != 0:
         remark.append(f"規定ゲーム数 {g.opt.stipulated} G以上")
-    if remark:
-        ret = "特記事項：" + "、".join(remark) + "\n"
 
-    return (ret + search_word)
+    if headword:
+        if remark:
+            return ("特記事項： " + "、".join(remark))
+
+    return (remark)
+
+
+def search_word(headword=False):
+    if g.prm.search_word:
+        ret = g.prm.search_word.replace("%", "")
+        # 集約条件
+        if g.prm.group_length:
+            ret += f"（{g.prm.group_length}文字集約）"
+    else:
+        ret = ""
+
+    if headword:
+        if ret:
+            return (f"検索ワード： {ret}")
+
+    return (ret)
 
 
 def header(game_info, add_text="", indent=1):
@@ -246,7 +258,10 @@ def header(game_info, add_text="", indent=1):
                 msg += game_range2
                 msg += f"総ゲーム数：{game_info['game_count']} 回\n"
 
-        msg += f.message.remarks().strip()
+        if f.message.remarks():
+            msg += "特記事項：" + "、".join(f.message.remarks()) + "\n"
+        if f.message.search_word():
+            msg += "検索ワード：" + f.message.search_word() + "\n"
 
     return (textwrap.indent(msg, "\t" * indent))
 

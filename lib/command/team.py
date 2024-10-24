@@ -24,6 +24,22 @@ def which_team(name):
     return (team)
 
 
+def get_teammates():
+    """
+    所属チームのチームメイトを返す
+    """
+
+    member = []
+    team_data = [x for x in g.team_list if x["team"] == g.prm.player_name]
+    if team_data:
+        if team_data[0]["member"]:
+            member = team_data[0]['member'].split(",")
+        else:
+            member = ["未エントリー"]
+
+    return (member)
+
+
 def check_namepattern(name):
     """
     登録制限チェック
