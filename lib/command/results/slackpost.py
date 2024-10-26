@@ -21,13 +21,13 @@ def main():
             versus_mode = False
 
     # ---
-    if len(g.prm.player_list) == 1 and not versus_mode:  # 個人成績
+    if len(g.prm.player_list) == 1 and not versus_mode:  # 個人/チーム成績詳細
         msg1, msg2 = detail.aggregation()
         f.slack_api.slack_post(
             headline=msg1,
             message=msg2,
         )
-    elif g.opt.rating:
+    elif g.opt.rating:  # レーティング
         msg1, msg2 = rating.aggregation()
         f.slack_api.slack_post(
             headline=msg1,
