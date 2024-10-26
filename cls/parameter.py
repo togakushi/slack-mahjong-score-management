@@ -138,7 +138,9 @@ class command_option:
         # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
         if "target_player" in self.__dict__:
             for x in unknown_command:
-                if self.individual:
+                if x in [team["team"] for team in g.team_list]:
+                    self.target_player.append(x)
+                elif self.individual:
                     self.target_player.append(c.member.name_replace(x))
                 else:
                     self.target_player.append(x)

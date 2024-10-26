@@ -11,7 +11,7 @@ from lib import function as f
 
 def aggregation():
     """
-    個人/チーム成績を集計して返す
+    個人/チーム成績詳細を集計して返す
 
     Returns
     -------
@@ -24,6 +24,11 @@ def aggregation():
 
     # 検索動作を合わせる
     g.opt.guest_skip = g.opt.guest_skip2
+
+    if g.prm.player_name in [x["team"] for x in g.team_list]:
+        g.opt.individual = False
+    elif g.prm.player_name in g.member_list:
+        g.opt.individual = True
 
     # --- データ収集
     game_info = d.aggregate.game_info()
@@ -101,7 +106,7 @@ def aggregation():
         \t{data['南家-順位分布']} / {data['南家-トビ']} / {data['南家-役満和了']}
         \t{data['西家-順位分布']} / {data['西家-トビ']} / {data['西家-役満和了']}
         \t{data['北家-順位分布']} / {data['北家-トビ']} / {data['北家-役満和了']}
-    """).replace("0.00", "-.--").strip()
+    """).replace("0.00", "-.--")
 
     # --- 記録
     msg2["ベストレコード"] = textwrap.dedent(f"""
@@ -111,7 +116,7 @@ def aggregation():
         \t連続ラス回避： {data["連続ラス回避"]} 連続
         \t最大素点： {data["最大素点"] * 100}点
         \t最大獲得ポイント： {data["最大獲得ポイント"]}pt
-    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----").strip()
+    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
     msg2["ワーストレコード"] = textwrap.dedent(f"""
         *【ワーストレコード】*
@@ -120,21 +125,21 @@ def aggregation():
         \t連続トップなし： {data['連続トップなし']} 連続
         \t最小素点： {data['最小素点'] * 100}点
         \t最小獲得ポイント： {data['最小獲得ポイント']}pt
-    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----").strip()
+    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
     if not df_grandslam.empty:
-        msg2["役満和了"] = "*【役満和了】*\n"
+        msg2["役満和了"] = "\n*【役満和了】*\n"
         for x in df_grandslam.itertuples():
             msg2["役満和了"] += f"\t{x.matter}\t{x.count}回\n"
 
     if not df_regulations.query("type == 1").empty:
-        msg2["卓外ポイント"] = "*【卓外ポイント】*\n"
+        msg2["卓外ポイント"] = "\n*【卓外ポイント】*\n"
         for x in df_regulations.query("type == 1").itertuples():
             ex_point = str(x.ex_point).replace("-", "▲")
             msg2["卓外ポイント"] += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
 
     if not df_regulations.query("type != 1").empty:
-        msg2["その他"] = "*【その他】*\n"
+        msg2["その他"] = "\n*【その他】*\n"
         for x in df_regulations.query("type != 1").itertuples():
             msg2["その他"] += f"\t{x.matter}\t{x.count}回\n"
 
