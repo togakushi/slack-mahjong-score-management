@@ -1,3 +1,4 @@
+import re
 import textwrap
 
 import pandas as pd
@@ -93,24 +94,14 @@ def aggregation():
     msg_data["役満"] = f"{data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)"
 
     # --- 座席データ
-    if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
-        msg2["座席データ"] = textwrap.dedent(f"""
-            *【座席データ】*
-            \t# 席：順位分布(平順) / 役満 #
-            \t{data['東家-順位分布']} / {data['東家-役満和了']}
-            \t{data['南家-順位分布']} / {data['南家-役満和了']}
-            \t{data['西家-順位分布']} / {data['西家-役満和了']}
-            \t{data['北家-順位分布']} / {data['北家-役満和了']}
-        """).replace("0.00", "-.--")
-    else:
-        msg2["座席データ"] = textwrap.dedent(f"""
-            *【座席データ】*
-            \t# 席：順位分布(平順) / トビ / 役満 #
-            \t{data['東家-順位分布']} / {data['東家-トビ']} / {data['東家-役満和了']}
-            \t{data['南家-順位分布']} / {data['南家-トビ']} / {data['南家-役満和了']}
-            \t{data['西家-順位分布']} / {data['西家-トビ']} / {data['西家-役満和了']}
-            \t{data['北家-順位分布']} / {data['北家-トビ']} / {data['北家-役満和了']}
-        """).replace("0.00", "-.--")
+    msg2["座席データ"] = textwrap.dedent(f"""
+        *【座席データ】*
+        \t# 席： 順位分布(平均順位) / トビ / 役満 #
+        \t{data['東家-順位分布']} / {data['東家-トビ']} / {data['東家-役満和了']}
+        \t{data['南家-順位分布']} / {data['南家-トビ']} / {data['南家-役満和了']}
+        \t{data['西家-順位分布']} / {data['西家-トビ']} / {data['西家-役満和了']}
+        \t{data['北家-順位分布']} / {data['北家-トビ']} / {data['北家-役満和了']}
+    """).replace("0.00", "-.--")
 
     # --- 記録
     msg2["ベストレコード"] = textwrap.dedent(f"""
@@ -120,7 +111,7 @@ def aggregation():
         \t連続ラス回避： {data["連続ラス回避"]} 連続
         \t最大素点： {data["最大素点"] * 100}点
         \t最大獲得ポイント： {data["最大獲得ポイント"]}pt
-   """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
+    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
 
     msg2["ワーストレコード"] = textwrap.dedent(f"""
         *【ワーストレコード】*
@@ -177,8 +168,8 @@ def aggregation():
                 for seat, idx in list(zip(g.wind, range(len(g.wind)))):
                     if len(x) >= 4:
                         seat_data = x.iloc[idx].to_dict()
-                        msg2["戦績"] += "\t{}： {} {}位 {:>7}点 ({:>+5.1f}pt) {}{}\n".format(
-                            seat,
+                        msg2["戦績"] += "\t{}{} {}位 {:>7}点 ({:>+5.1f}pt) {}{}\n".format(
+                            "" if "座席データ" in g.cfg.dropitems.results else f"{seat}： ",
                             seat_data["表示名"],
                             seat_data["rank"],
                             seat_data["rpoint"] * 100,
@@ -234,6 +225,17 @@ def aggregation():
             msg2["対戦"] += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"
 
     # 非表示項目
+    if "トビ" in g.cfg.dropitems.results:
+        msg2["座席データ"] = re.sub(r"/ .* /", "/", msg2["座席データ"], flags=re.MULTILINE)
+    if "役満" in g.cfg.dropitems.results:
+        msg2["座席データ"] = msg2["座席データ"].replace(" / 役満", "")
+        msg2["座席データ"] = re.sub(r" / [0-9]+$", "", msg2["座席データ"], flags=re.MULTILINE)
+        msg2.pop("役満和了") if "役満和了" in msg2 else None
+
+    if not g.opt.statistics:  # 統計
+        for k in ("座席データ", "ベストレコード", "ワーストレコード"):
+            msg2.pop(k) if k in msg2 else None
+
     for k in list(msg2.keys()):
         if k in g.cfg.dropitems.results:
             msg2.pop(k)
@@ -260,4 +262,4 @@ def message_build(data: dict):
             case _:
                 msg += f"\t{k}： {v}\n"
 
-    return (msg)
+    return (msg.strip())

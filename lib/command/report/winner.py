@@ -94,9 +94,8 @@ def plot():
 
     # 追加テキスト
     remark_text = f.message.remarks(True) + f.message.search_word(True)
-    add_text = "[検索範囲：{} ～ {}] {} {}".format(
-        g.prm.starttime_hm, g.prm.endtime_hm,
-        f"[規定ゲーム数：{g.opt.stipulated} 以上]" if g.opt.stipulated != 0 else "",
+    add_text = "{} {}".format(
+        f"[{f.message.item_search_range().strip()}]",
         f"[{remark_text}]" if remark_text else "",
     )
 

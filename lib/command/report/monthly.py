@@ -82,7 +82,7 @@ def plot():
     # 追加テキスト
     fig.text(
         0.01, 0.02,  # 表示位置(左下0,0 右下0,1)
-        f"[検索範囲：({g.prm.starttime_hm} ～ {g.prm.endtime_hm}] [特記：すべてのゲーム結果を含む]",
+        f"[{f.message.item_search_range().strip()}] [特記：すべてのゲーム結果を含む]",
         transform=fig.transFigure,
         fontsize=6,
     )

@@ -128,22 +128,11 @@ def plot():
 
     # 追加テキスト
     remark_text = f.message.remarks(True) + f.message.search_word(True)
-    if g.opt.search_word:
-        add_text = "[集計範囲：{} ～ {}] [総ゲーム数：{}] [規定ゲーム数：{} 以上] {}".format(
-            game_info["first_comment"],
-            game_info["last_comment"],
-            game_info["game_count"],
-            g.opt.stipulated,
-            f"[{remark_text}]" if remark_text else "",
-        )
-    else:
-        add_text = "[集計範囲：{} ～ {}] [総ゲーム数：{}] [規定ゲーム数：{} 以上] {}".format(
-            game_info["first_game"],
-            game_info["last_game"],
-            game_info["game_count"],
-            g.opt.stipulated,
-            f"[{remark_text}]" if remark_text else "",
-        )
+    add_text = "[{}] [総ゲーム数： {}] {}".format(
+        f.message.item_search_range(None, "time").strip(),
+        game_info["game_count"],
+        f"[{remark_text}]" if remark_text else "",
+    )
 
     fig.text(
         0.01, 0.01,  # 表示位置(左下0,0 右下0,1)

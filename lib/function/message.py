@@ -200,7 +200,7 @@ def remarks(headword=False):
         if g.opt.individual:  # 個人集計時のみ表示
             remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
     if g.opt.stipulated != 0:
-        remark.append(f"規定ゲーム数 {g.opt.stipulated} G以上")
+        remark.append(f"規定打数 {g.opt.stipulated} G以上")
 
     if headword:
         if remark:
@@ -230,13 +230,12 @@ def header(game_info, add_text="", indent=1):
 
     # 集計範囲
     if g.opt.search_word:  # コメント検索の場合はコメントで表示
-        game_range1 = f"最初のゲーム：{game_info['first_comment']}\n".replace("-", "/")
-        game_range1 += f"最後のゲーム：{game_info['last_comment']}\n".replace("-", "/")
-        game_range2 = f"集計範囲： {game_info['first_comment']} ～ {game_info['last_comment']}\n"
+        game_range1 = f"最初のゲーム：{game_info['first_comment']}\n"
+        game_range1 += f"最後のゲーム：{game_info['last_comment']}\n"
     else:
         game_range1 = f"最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
         game_range1 += f"最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
-        game_range2 = f"集計範囲： {game_info['first_game']} ～ {game_info['last_game']}\n".replace("-", "/")
+    game_range2 = item_aggregation_range(game_info)
 
     # ゲーム数
     if game_info["game_count"] == 0:
@@ -248,7 +247,7 @@ def header(game_info, add_text="", indent=1):
                     msg += game_range1
                     msg += f"総ゲーム数：{game_info['game_count']} 回{add_text}\n"
                 else:
-                    msg += f"検索範囲： {g.prm.starttime_hms} ～ {g.prm.endtime_hms}\n"
+                    msg += item_search_range()
                     msg += game_range1
                     msg += f"ゲーム数：{game_info['game_count']} 回{add_text}\n"
             case "ranking" | "report":
@@ -280,3 +279,49 @@ def del_blank_line(text: str):
         new_text.append(x)
 
     return ("\n".join(new_text))
+
+
+def item_search_range(kind=None, time_pattern=None):
+    """
+    検索範囲を返す（ヘッダ出力用）
+    """
+
+    match time_pattern:
+        case "day":
+            starttime = g.prm.starttime
+            endtime = g.prm.endtime
+        case "time":
+            starttime = g.prm.starttime_hm
+            endtime = g.prm.endtime_hm
+        case _:
+            starttime = g.prm.starttime_hms
+            endtime = g.prm.endtime_hms
+
+    match kind:
+        case "list":
+            return ([starttime, endtime])
+        case "str":
+            return (f"{starttime} ～ {endtime}\n")
+        case _:
+            return (f"検索範囲： {starttime} ～ {endtime}\n")
+
+
+def item_aggregation_range(game_info, kind=None):
+    """
+    集計範囲を返す（ヘッダ出力用）
+    """
+
+    if g.opt.search_word:  # コメント検索の場合はコメントで表示
+        first = game_info['first_comment']
+        last = game_info['last_comment']
+    else:
+        first = game_info['first_game'].replace("-", "/")
+        last = game_info['last_game'].replace("-", "/")
+
+    match kind:
+        case "list":
+            return ([first, last])
+        case "str":
+            return (f"{first} ～ {last}\n")
+        case _:
+            return (f"集計範囲： {first} ～ {last}\n")

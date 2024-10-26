@@ -43,9 +43,9 @@ def aggregation():
 
     msg1 = textwrap.dedent(f"""
         *【直接対戦結果】*
-        \tプレイヤー名：{c.member.name_replace(my_name, add_mark=True)}
-        \t対戦相手：{vs}
-        \t検索範囲：{g.prm.starttime_hms} ～ {g.prm.endtime_hms}
+        \tプレイヤー名： {c.member.name_replace(my_name, add_mark=True)}
+        \t対戦相手： {vs}
+        \t{f.message.item_search_range()}
         \t{f.message.remarks(True)}
     """).strip() + "\n"
 
