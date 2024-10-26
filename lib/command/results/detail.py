@@ -72,8 +72,8 @@ def aggregation():
     else:
         msg_data["チーム名"] = f"{g.prm.player_name} {badge_degree}"
 
-    msg_data["検索範囲"] = f"{g.prm.starttime_hms} ～ {g.prm.endtime_hms}"
-    msg_data["集計範囲"] = f"{game_info['first_game']} ～ {game_info['last_game']}"
+    msg_data["検索範囲"] = f.message.item_search_range(kind="str").strip()
+    msg_data["集計範囲"] = f.message.item_aggregation_range(game_info, kind="str").strip()
     msg_data["特記事項"] = "、".join(f.message.remarks())
     msg_data["検索ワード"] = f.message.search_word()
     msg_data["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}"
@@ -101,7 +101,7 @@ def aggregation():
         \t{data['南家-順位分布']} / {data['南家-トビ']} / {data['南家-役満和了']}
         \t{data['西家-順位分布']} / {data['西家-トビ']} / {data['西家-役満和了']}
         \t{data['北家-順位分布']} / {data['北家-トビ']} / {data['北家-役満和了']}
-    """).replace("0.00", "-.--")
+    """).replace("0.00", "-.--").strip()
 
     # --- 記録
     msg2["ベストレコード"] = textwrap.dedent(f"""
@@ -111,7 +111,7 @@ def aggregation():
         \t連続ラス回避： {data["連続ラス回避"]} 連続
         \t最大素点： {data["最大素点"] * 100}点
         \t最大獲得ポイント： {data["最大獲得ポイント"]}pt
-    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
+    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----").strip()
 
     msg2["ワーストレコード"] = textwrap.dedent(f"""
         *【ワーストレコード】*
@@ -120,7 +120,7 @@ def aggregation():
         \t連続トップなし： {data['連続トップなし']} 連続
         \t最小素点： {data['最小素点'] * 100}点
         \t最小獲得ポイント： {data['最小獲得ポイント']}pt
-    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----")
+    """).replace("-", "▲").replace("： 0 連続", "： ----").replace("： 1 連続", "： ----").strip()
 
     if not df_grandslam.empty:
         msg2["役満和了"] = "*【役満和了】*\n"
