@@ -407,13 +407,13 @@ def initialization_resultdb():
     # メモ
     if g.undefined_word == 0:
         grandslam_where = "words.type is null or words.type == 0"
-        regulation_where = "words.type == 2"
+        regulation_where = "words.type in (1, 2)"
     elif g.undefined_word == 2:
         grandslam_where = "words.type == 0"
-        regulation_where = "words.type is null or words.type == 2"
+        regulation_where = "words.type is null or words.type in (1, 2)"
     else:
         grandslam_where = "words.type == 0"
-        regulation_where = "words.type == 2"
+        regulation_where = "words.type in (1, 2)"
 
     resultdb.execute("drop view if exists grandslam")
     resultdb.execute(
