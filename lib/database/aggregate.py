@@ -74,8 +74,8 @@ def game_info():
 
     ret = {
         "game_count": int(df["count"].to_string(index=False)),
-        "first_game": datetime.now(),
-        "last_game": datetime.now(),
+        "first_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+        "last_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         "first_comment": None,
         "last_comment": None,
     }
@@ -160,8 +160,6 @@ def game_details():
         df["name"] = df["name"].apply(
             lambda x: c.member.name_replace(x, add_mark=True)
         )
-        if not g.opt.guest_skip:
-            df.drop(df[df["guest"] == 1].index, inplace=True)
 
     df["表示名"] = _disp_name(df["name"], mark=False)
 
