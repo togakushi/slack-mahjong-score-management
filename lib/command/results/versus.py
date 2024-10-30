@@ -47,12 +47,14 @@ def aggregation():
         \t対戦相手： {vs}
         \t{f.message.item_search_range()}
         \t{f.message.remarks(True)}
-    """).strip() + "\n"
+    """).strip()
+    msg1 = f.message.del_blank_line(msg1)
 
     msg2 = {}  # 対戦結果格納用
 
     # --- 表示内容
     tmp_msg = {}
+    drop_name = []
     if len(df_vs) == 0:  # 検索結果なし
         msg2[""] = "対戦記録が見つかりません。\n"
         return (msg1, msg2, "")
@@ -61,8 +63,9 @@ def aggregation():
         tmp_msg[vs_name] = {}
         if vs_name in vs_list:
             data = df_vs.query("vs_name == @vs_name")
-            if len(data) == 0:
-                tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦記録はありません。\n".format(
+            if data.empty:
+                drop_name.append(vs_name)
+                tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦記録はありません。\n\n".format(
                     c.member.name_replace(my_name, add_mark=True),
                     c.member.name_replace(vs_name, add_mark=True),
                 )
@@ -104,7 +107,7 @@ def aggregation():
                                 \t南家：{s2["表示名"]} {s2["rank"]}位 {s2["rpoint"] * 100:>7} 点 ({s2["point"]:>+5.1f}pt) {s2["grandslam"]}
                                 \t西家：{s3["表示名"]} {s3["rank"]}位 {s3["rpoint"] * 100:>7} 点 ({s3["point"]:>+5.1f}pt) {s3["grandslam"]}
                                 \t北家：{s4["表示名"]} {s4["rank"]}位 {s4["rpoint"] * 100:>7} 点 ({s4["point"]:>+5.1f}pt) {s4["grandslam"]}
-                                """).replace("-", "▲").strip() + " \n"
+                                """).replace("-", "▲").strip()
                         else:  # 簡易表示
                             a1 = my_score.query("playtime == @playtime").to_dict(orient="records")[0]
                             a2 = vs_score.query("playtime == @playtime").to_dict(orient="records")[0]
@@ -113,21 +116,24 @@ def aggregation():
                                 {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
                                 \t{a1["表示名"]}： {a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}
                                 \t{a2["表示名"]}： {a2["rank"]}位 {a2["rpoint"] * 100:>7} 点 ({a2["point"]:>+5.1f}pt) {a2["grandslam"]}
-                            """).replace("-", "▲").strip() + " \n"
+                            """).replace("-", "▲").strip()
                         count += 1
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
         else:  # 対戦記録なし
-            tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦相手が見つかりません。\n".format(
+            tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦相手が見つかりません。\n\n".format(
                 c.member.name_replace(my_name, add_mark=True),
                 c.member.name_replace(vs_name, add_mark=True),
             )
 
     # --- データ整列&まとめ
     for m in tmp_msg.keys():
+        if g.opt.all_player and m in drop_name:
+            continue
         msg2[f"{m}_info"] = tmp_msg[m].pop("info")
         for x in sorted(tmp_msg[m].keys()):
+            if g.opt.all_player and x in drop_name:
+                continue
             msg2[f"{m}_{x}"] = tmp_msg[m][x]
-        msg2[f"{m}_separate"] = "\n\n"
 
     # --- ファイル出力
     if len(df_data) != 0:
@@ -145,8 +151,7 @@ def aggregation():
         items=["日時", "座席", "プレイヤー名", "順位", "素点", "獲得ポイント", "役満和了"]
     ).drop_duplicates()
 
-    namelist = list(g.prm.competition_list.values())
-    _ = namelist  # ignore PEP8 F841
+    namelist = list(g.prm.competition_list.values())  # noqa: F841
     df_vs["対戦相手"] = df_vs["vs_表示名"].apply(lambda x: x.strip())
     df_vs.rename(
         columns={

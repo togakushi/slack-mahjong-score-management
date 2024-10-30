@@ -102,10 +102,10 @@ def aggregation():
     msg2["座席データ"] = textwrap.dedent(f"""
         *【座席データ】*
         \t# 席： 順位分布(平均順位) / トビ / 役満 #
-        \t{data['東家-順位分布']} / {data['東家-トビ']} / {data['東家-役満和了']}
-        \t{data['南家-順位分布']} / {data['南家-トビ']} / {data['南家-役満和了']}
-        \t{data['西家-順位分布']} / {data['西家-トビ']} / {data['西家-役満和了']}
-        \t{data['北家-順位分布']} / {data['北家-トビ']} / {data['北家-役満和了']}
+        \t{data["東家-順位分布"]:22s} / {data["東家-トビ"]} / {data["東家-役満和了"]}
+        \t{data["南家-順位分布"]:22s} / {data["南家-トビ"]} / {data["南家-役満和了"]}
+        \t{data["西家-順位分布"]:22s} / {data["西家-トビ"]} / {data["西家-役満和了"]}
+        \t{data["北家-順位分布"]:22s} / {data["北家-トビ"]} / {data["北家-役満和了"]}
     """).replace("0.00", "-.--")
 
     # --- 記録
@@ -145,82 +145,58 @@ def aggregation():
 
     # --- 戦績
     if g.opt.game_results:
+        msg2["戦績"] = "\n*【戦績】*\n"
+        data = {}
+        target_player = g.opt.target_player[0]  # noqa: F841
         df = d.aggregate.game_details()
+
         if g.opt.verbose:
-            msg2["戦績"] = "\n*【戦績】*\n"
-            for p in df["playtime"].unique():
-                x = df.query("playtime == @p")
+            data["p0"] = df.filter(items=["playtime", "guest_count"]).drop_duplicates().set_index("playtime")
+            for idx, prefix in enumerate(["p1", "p2", "p3", "p4"]):
+                data[prefix] = df.query("seat == @idx + 1").filter(
+                    items=["playtime", "表示名", "rpoint", "rank", "point", "grandslam", "name"]
+                ).rename(
+                    columns={
+                        "name": f"{prefix}_x",
+                        "表示名": f"{prefix}_name",
+                        "rpoint": f"{prefix}_rpoint",
+                        "rank": f"{prefix}_rank",
+                        "point": f"{prefix}_point",
+                        "grandslam": f"{prefix}_gs",
+                    }
+                ).set_index("playtime")
 
-                if g.opt.individual:
-                    if g.opt.guest_skip and g.opt.unregistered_replace and any(x["guest_count"] >= 2):
-                        continue
-                    if any(x["name"] == g.prm.player_name):
-                        msg2["戦績"] += "{}{}\n".format(
-                            p.replace("-", "/"),
-                            "\t(2ゲスト戦)" if any(x["guest_count"] >= 2) else "",
-                        )
-                    else:
-                        continue
-                else:
-                    if any(x["name"] == g.prm.player_name):
-                        msg2["戦績"] += "{}\n".format(
-                            p.replace("-", "/"),
-                        )
-                    else:
-                        continue
+            df_data = pd.concat([data["p1"], data["p2"], data["p3"], data["p4"], data["p0"]], axis=1)
+            df_data = df_data.query("p1_x == @target_player or p2_x == @target_player or p3_x == @target_player or p4_x == @target_player")
 
-                # 表示内容
-                for seat, idx in list(zip(g.wind, range(len(g.wind)))):
-                    if len(x) >= 4:
-                        seat_data = x.iloc[idx].to_dict()
-                        msg2["戦績"] += "\t{}{} {}位 {:>7}点 ({:>+5.1f}pt) {}{}\n".format(
-                            "" if "座席データ" in g.cfg.dropitems.results else f"{seat}： ",
-                            seat_data["表示名"],
-                            seat_data["rank"],
-                            seat_data["rpoint"] * 100,
-                            seat_data["point"],
-                            seat_data["grandslam"],
-                            seat_data["regulation"],
-                        ).replace("-", "▲")
-                    else:   # todo: チーム戦の結果にゲストの記録がないパターン
-                        msg2["戦績"] += "\tゲスト対戦ゲーム\n"
-                        break
+            for x in df_data.itertuples():
+                vs_guest = ""
+                if x.guest_count >= 2:
+                    vs_guest = "(2ゲスト戦)"
+                msg2["戦績"] += textwrap.dedent(
+                    """
+                    {} {}
+                    \t東家： {} {}位 {:7d}点 ({:6.1f}pt) {}
+                    \t南家： {} {}位 {:7d}点 ({:6.1f}pt) {}
+                    \t西家： {} {}位 {:7d}点 ({:6.1f}pt) {}
+                    \t北家： {} {}位 {:7d}点 ({:6.1f}pt) {}"""
+                ).format(
+                    x.Index.replace("-", "/"), vs_guest,
+                    x.p1_name, x.p1_rank, int(x.p1_rpoint) * 100, x.p1_point, x.p1_gs,
+                    x.p2_name, x.p2_rank, int(x.p2_rpoint) * 100, x.p2_point, x.p2_gs,
+                    x.p3_name, x.p3_rank, int(x.p3_rpoint) * 100, x.p3_point, x.p3_gs,
+                    x.p4_name, x.p4_rank, int(x.p4_rpoint) * 100, x.p4_point, x.p4_gs,
+                ).replace("-", "▲")
         else:
-            if g.opt.individual:
-                msg2["戦績"] = f"\n*【戦績】* （{g.cfg.setting.guest_mark.strip()}：2ゲスト戦）\n"
-            else:
-                msg2["戦績"] = "\n*【戦績】* \n"
-
-            for p in df["playtime"].unique():
-                x = df.query("playtime == @p")
-
-                if g.opt.individual:
-                    if g.opt.guest_skip and g.opt.unregistered_replace and any(x["guest_count"] >= 2):
-                        continue
-                    # 個人戦集計
-                    for _, seat_data in x.iterrows():
-                        if seat_data["name"] == g.prm.player_name:
-                            msg2["戦績"] += "\t{}{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}{}\n".format(
-                                f"{g.cfg.setting.guest_mark.strip()} " if seat_data["guest_count"] >= 2 else "",
-                                seat_data["playtime"].replace("-", "/"),
-                                seat_data["rank"],
-                                seat_data["rpoint"] * 100,
-                                seat_data["point"],
-                                seat_data["grandslam"],
-                                seat_data["regulation"],
-                            ).replace("-", "▲")
-                else:
-                    # チーム戦集計
-                    for _, seat_data in x.iterrows():
-                        if seat_data["name"] == g.prm.player_name:
-                            msg2["戦績"] += "\t{} \t{}位 {:>7}点 ({:>+5.1f}pt) {}{}\n".format(
-                                seat_data["playtime"].replace("-", "/"),
-                                seat_data["rank"],
-                                seat_data["rpoint"] * 100,
-                                seat_data["point"],
-                                seat_data["grandslam"],  # todo: チーム同卓時に重複する
-                                seat_data["regulation"],
-                            ).replace("-", "▲")
+            df_data = df.query("name == @target_player").set_index("playtime")
+            for x in df_data.itertuples():
+                vs_guest = ""
+                if x.guest_count >= 2:
+                    vs_guest = "*"
+                msg2["戦績"] += "\t{}{}  {}位 {:7d}点 ({:6.1f}pt) {}\n".format(
+                    vs_guest, x.Index.replace("-", "/"),
+                    x.rank, int(x.rpoint) * 100, x.point, x.grandslam,
+                ).replace("-", "▲")
 
     # --- 対戦結果
     if g.opt.versus_matrix:

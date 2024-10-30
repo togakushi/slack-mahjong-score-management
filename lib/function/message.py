@@ -312,11 +312,11 @@ def item_aggregation_range(game_info, kind=None):
     """
 
     if g.opt.search_word:  # コメント検索の場合はコメントで表示
-        first = game_info['first_comment']
-        last = game_info['last_comment']
+        first = game_info["first_comment"]
+        last = game_info["last_comment"]
     else:
-        first = game_info['first_game'].replace("-", "/")
-        last = game_info['last_game'].replace("-", "/")
+        first = game_info["first_game"].replace("-", "/")
+        last = game_info["last_game"].replace("-", "/")
 
     match kind:
         case "list":
