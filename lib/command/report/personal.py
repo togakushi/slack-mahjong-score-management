@@ -70,6 +70,12 @@ def plot():
     for x in results.keys():
         if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
             results[x].pop("トビ")
+        if "トビ" in g.cfg.dropitems.report:
+            results[x].pop("トビ")
+        if "役満" in g.cfg.dropitems.report:
+            results[x].pop("役満和了")
+        if "役満和了" in g.cfg.dropitems.report:
+            results[x].pop("役満和了")
 
     # 色彩設定
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
