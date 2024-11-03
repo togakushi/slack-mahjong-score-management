@@ -264,30 +264,30 @@ def results_list():
         select
             name,
             count() as ゲーム数,
-            replace(round(sum(point), 1), "-", "▲") as 通算ポイント,
-            replace(round(avg(point), 1), "-", "▲") as 平均ポイント,
-            printf("%3d (%7.2f%%)",
+            replace(printf("%+.1f pt", round(sum(point), 1)), "-", "▲") as 通算ポイント,
+            replace(printf("%+.1f pt", round(avg(point), 1)), "-", "▲") as 平均ポイント,
+            printf("%3d (%6.2f%%)",
                 count(rank = 1 or null),
                 round(cast(count(rank = 1 or null) as real) / count() * 100, 2)
             ) as '1位',
-            printf("%3d (%7.2f%%)",
+            printf("%3d (%6.2f%%)",
                 count(rank = 2 or null),
                 round(cast(count(rank = 2 or null) as real) / count() * 100, 2)
             ) as '2位',
-            printf("%3d (%7.2f%%)",
+            printf("%3d (%6.2f%%)",
                 count(rank = 3 or null),
                 round(cast(count(rank = 3 or null) as real) / count() * 100, 2)
             ) as '3位',
-            printf("%3d (%7.2f%%)",
+            printf("%3d (%6.2f%%)",
                 count(rank = 4 or null),
                 round(cast(count(rank = 4 or null) AS real) / count() * 100, 2)
             ) as '4位',
             printf("%.2f", round(avg(rank), 2)) as 平均順位,
-            printf("%3d (%7.2f%%)",
+            printf("%3d (%6.2f%%)",
                 count(rpoint < 0 or null),
                 round(cast(count(rpoint < 0 or null) as real) / count() * 100, 2)
             ) as トビ,
-            printf("%3d (%7.2f%%)",
+            printf("%3d (%6.2f%%)",
                 ifnull(sum(gs_count), 0),
                 round(cast(ifnull(sum(gs_count), 0) as real) / count() * 100, 2)
             ) as 役満和了

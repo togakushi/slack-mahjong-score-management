@@ -562,3 +562,29 @@ def matrix_table():
     )
 
     return (mtx_df)
+
+
+def personal_report():
+    """
+    個人成績一覧表
+    """
+
+    # データ収集
+    df = pd.read_sql(
+        query.report.results_list(),
+        sqlite3.connect(g.cfg.db.database_file),
+        params=g.prm.to_dict(),
+    )
+
+    # ゲスト置換
+    if g.opt.individual:
+        df["name"] = df["name"].apply(
+            lambda x: c.member.name_replace(x, add_mark=True)
+        )
+
+    # インデックスの振り直し
+    df = df.reset_index(drop=True)
+    df.index = df.index + 1
+
+    logging.trace(df)
+    return (df)
