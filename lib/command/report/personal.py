@@ -74,11 +74,11 @@ def graph_generation(game_info, df, title):
     # 色彩設定
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
         case text_color, bg_color if text_color == "black" and bg_color == "white":
-            line_color1 = "#ffffff"
-            line_color2 = "#dddddd"
+            line_color1 = "#dddddd"
+            line_color2 = "#ffffff"
         case text_color, bg_color if text_color == "white" and bg_color == "black":
-            line_color1 = "#000000"
-            line_color2 = "#111111"
+            line_color1 = "#111111"
+            line_color2 = "#000000"
         case _:
             line_color1 = plt.rcParams["figure.facecolor"]
             line_color2 = plt.rcParams["figure.facecolor"]
