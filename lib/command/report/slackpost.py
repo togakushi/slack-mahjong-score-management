@@ -1,6 +1,6 @@
 import global_value as g
 import lib.function as f
-from lib.command.report import matrix, monthly, personal, results, winner
+from lib.command.report import matrix, monthly, results_list, results_report, winner
 
 
 def main():
@@ -12,7 +12,7 @@ def main():
     g.prm.update(g.opt)
 
     if len(g.prm.player_list) == 1:  # 成績レポート
-        name, pdf_file = results.gen_pdf()
+        name, pdf_file = results_report.gen_pdf()
         if pdf_file:
             f.slack_api.post_fileupload(f"成績レポート({name})", pdf_file)
         else:
@@ -40,7 +40,7 @@ def main():
                 file_list=file_list,
             )
     else:
-        report_file_path = personal.plot()
+        report_file_path = results_list.plot()
         if report_file_path:
             f.slack_api.post_fileupload("成績一覧", report_file_path)
         else:

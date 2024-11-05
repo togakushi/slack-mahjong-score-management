@@ -102,4 +102,4 @@ for sec in test_conf.sections():
                 g.opt.filename = f"report_{sec}_{pattern}"
                 g.prm.update(g.opt)
                 dump(flag)
-                pprint(c.report.slackpost.results.gen_pdf(), width=200)
+                pprint(c.report.slackpost.results_report.gen_pdf(), width=200)

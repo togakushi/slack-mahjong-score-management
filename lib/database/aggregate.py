@@ -564,9 +564,9 @@ def matrix_table():
     return (mtx_df)
 
 
-def personal_report():
+def results_list():
     """
-    個人成績一覧表
+    成績一覧表
     """
 
     # データ収集
