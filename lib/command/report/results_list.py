@@ -27,7 +27,7 @@ def plot():
         )
         g.prm.update(g.opt)  # 更新
 
-    df = d.aggregate.personal_report()
+    df = d.aggregate.results_list()
 
     if df.empty:
         return (False)
@@ -62,16 +62,18 @@ def plot():
 
 
 def graph_generation(game_info, df, title):
-    # --- グラフフォント設定
+    """
+    グラフ生成
+    """
+
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "report.png"
     )
 
+    # フォント/色彩設定
     f.common.graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
-
-    # 色彩設定
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
         case text_color, bg_color if text_color == "black" and bg_color == "white":
             line_color1 = "#dddddd"
@@ -135,6 +137,10 @@ def graph_generation(game_info, df, title):
 
 
 def text_generation(df):
+    """
+    テキストテーブル生成
+    """
+
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
         f"{g.opt.filename}.txt" if g.opt.filename else "report.txt"
@@ -154,6 +160,10 @@ def text_generation(df):
 
 
 def csv_generation(df):
+    """
+    CSV生成
+    """
+
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
         f"{g.opt.filename}.csv" if g.opt.filename else "report.csv"
