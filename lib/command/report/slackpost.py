@@ -40,7 +40,7 @@ def main():
                 file_list=file_list,
             )
     else:
-        report_file_path = results_list.plot()
+        report_file_path = results_list.main()
         if report_file_path:
             f.slack_api.post_fileupload("成績一覧", report_file_path)
         else:

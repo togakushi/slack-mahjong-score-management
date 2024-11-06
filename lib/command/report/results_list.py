@@ -13,14 +13,13 @@ mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 
 
-def plot():
-    plt.close()
+def main():
     # 検索動作を合わせる
     g.opt.guest_skip = g.opt.guest_skip2
 
     # --- データ取得
+    # 規定打数計算
     game_info = d.aggregate.game_info()
-
     if g.opt.stipulated == 0:
         g.opt.stipulated = (
             math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
@@ -28,27 +27,26 @@ def plot():
         g.prm.update(g.opt)  # 更新
 
     df = d.aggregate.results_list()
-
     if df.empty:
         return (False)
 
     # 見出し設定
     if g.opt.individual:
         title = "個人成績一覧"
-        df = df.rename(columns={"name": "プレイヤー名"})
+        df = df.rename(columns={"name": "player"})
     else:  # チーム集計
         title = "チーム成績一覧"
-        df = df.rename(columns={"name": "チーム名"})
+        df = df.rename(columns={"name": "team"})
 
     # 非表示項目
     if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
-        df = df.drop(columns=["トビ"])
+        df = df.drop(columns=["flying_mix", "flying_count", "flying_%"])
     if "トビ" in g.cfg.dropitems.report:
-        df = df.drop(columns=["トビ"])
+        df = df.drop(columns=["flying_mix", "flying_count", "flying_%"])
     if "役満" in g.cfg.dropitems.report:
-        df = df.drop(columns=["役満和了"])
+        df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_%"])
     if "役満和了" in g.cfg.dropitems.report:
-        df = df.drop(columns=["役満和了"])
+        df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_%"])
 
     match g.opt.format:
         case "text" | "txt":
@@ -65,6 +63,15 @@ def graph_generation(game_info, df, title):
     """
     グラフ生成
     """
+
+    df = columns_rename(df.filter(
+        items=[
+            "player", "team",
+            "game", "total_mix", "avg_mix",
+            "1st_mix", "2nd_mix", "3rd_mix", "4th_mix", "rank_dist",
+            "flying_mix", "yakuman_mix",
+        ]
+    ))
 
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
@@ -146,14 +153,33 @@ def text_generation(df):
         f"{g.opt.filename}.txt" if g.opt.filename else "report.txt"
     )
 
+    df = df.filter(
+        items=[
+            "player", "team",
+            "game", "point_sum", "point_avg",
+            "1st_count", "1st_%",
+            "2nd_count", "2nd_%",
+            "3rd_count", "3rd_%",
+            "4th_count", "4th_%",
+            "rank_avg",
+            "flying_count", "flying_%",
+            "yakuman_count", "yakuman_%",
+        ]
+    )
+
     fmt = [""]  # index分
     for x in df.columns:
         match x:
-            case "平均順位":
+            case "point_sum" | "point_avg":
+                fmt.append("+.1f")
+            case "1st_%" | "2nd_%" | "3rd_%" | "4th_%" | "flying_%" | "yakuman_%":
+                fmt.append(".2f")
+            case "rank_avg":
                 fmt.append(".2f")
             case _:
                 fmt.append("")
 
+    df = columns_rename(df)
     df.to_markdown(report_file_path, tablefmt="outline", floatfmt=fmt)
 
     return (report_file_path)
@@ -169,6 +195,49 @@ def csv_generation(df):
         f"{g.opt.filename}.csv" if g.opt.filename else "report.csv"
     )
 
+    df = df.filter(
+        items=[
+            "player", "team",
+            "game", "point_sum", "point_avg",
+            "1st_count", "1st_%",
+            "2nd_count", "2nd_%",
+            "3rd_count", "3rd_%",
+            "4th_count", "4th_%",
+            "rank_avg",
+            "flying_count", "flying_%",
+            "yakuman_count", "yakuman_%",
+        ]
+    )
+
+    for x in df.columns:
+        match x:
+            case "point_sum" | "point_avg":
+                df[x] = df[x].round(1)
+            case "1st_%" | "2nd_%" | "3rd_%" | "4th_%" | "flying_%" | "yakuman_%":
+                df[x] = df[x].round(2)
+            case "rank_avg":
+                df[x] = df[x].round(2)
+
     df.to_csv(report_file_path)
 
     return (report_file_path)
+
+
+def columns_rename(df):
+    df = df.rename(
+        columns={
+            "player": "プレイヤー名", "team": "チーム名",
+            "game": "ゲーム数",
+            "total_mix": "通算ポイント", "point_sum": "通算ポイント",
+            "avg_mix": "平均ポイント", "point_avg": "平均ポイント",
+            "rank_avg": "平均順位",
+            "1st_mix": "1位", "1st_count": "1位数", "1st_%": "1位率",
+            "2nd_mix": "2位", "2nd_count": "2位数", "2nd_%": "2位率",
+            "3rd_mix": "3位", "3rd_count": "3位数", "3rd_%": "3位率",
+            "4th_mix": "4位", "4th_count": "4位数", "4th_%": "4位率",
+            "flying_mix": "トビ", "flying_count": "トビ数", "flying_%": "トビ率",
+            "yakuman_mix": "役満和了", "yakuman_count": "役満和了数", "yakuman_%": "役満和了率",
+        }
+    )
+
+    return (df)
