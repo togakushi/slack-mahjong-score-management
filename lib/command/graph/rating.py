@@ -59,6 +59,11 @@ def plot():
     sorted_columns = df_dropped.iloc[-1].sort_values(ascending=False).index
     df_sorted = df_dropped[sorted_columns]
 
+    new_index = {"initial_rating": "初期値"}
+    for x in df_sorted[1:].index:
+        new_index[x] = x.replace("-", "/")
+    df_sorted = df_sorted.rename(index=new_index)
+
     # --- グラフ生成
     f.common.graph_setup(plt, fm)
 
@@ -77,7 +82,10 @@ def plot():
 
     # ---
     df_sorted.plot(
-        figsize=(21, 8)
+        figsize=(21, 7),
+        xlabel=f"集計日（総ゲーム数：{game_info['game_count']}）",
+        ylabel="レート",
+        marker="." if len(df_sorted) < 50 else None,
     )
     plt.title(title_text, fontsize=16)
     plt.legend(
@@ -88,9 +96,12 @@ def plot():
         ncol=int(len(sorted_columns) / 25 + 1),
     )
     plt.xticks(
+        list(range(len(df_sorted)))[::int(len(df_sorted) / 25) + 1],
+        list(df_sorted.index)[::int(len(df_sorted) / 25) + 1],
         rotation=45,
         ha="right",
     )
+    plt.axhline(y=1500, linewidth=0.5, ls="dashed", color="grey")
 
     plt.savefig(save_file, bbox_inches="tight")
 
