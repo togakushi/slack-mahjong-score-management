@@ -59,7 +59,7 @@ def plot():
     sorted_columns = df_dropped.iloc[-1].sort_values(ascending=False).index
     df_sorted = df_dropped[sorted_columns]
 
-    new_index = {"initial_rating": "初期値"}
+    new_index = {}
     for x in df_sorted[1:].index:
         new_index[x] = x.replace("-", "/")
     df_sorted = df_sorted.rename(index=new_index)
@@ -96,8 +96,8 @@ def plot():
         ncol=int(len(sorted_columns) / 25 + 1),
     )
     plt.xticks(
-        list(range(len(df_sorted)))[::int(len(df_sorted) / 25) + 1],
-        list(df_sorted.index)[::int(len(df_sorted) / 25) + 1],
+        list(range(len(df_sorted)))[1::int(len(df_sorted) / 25) + 1],
+        list(df_sorted.index)[1::int(len(df_sorted) / 25) + 1],
         rotation=45,
         ha="right",
     )
