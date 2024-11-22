@@ -112,7 +112,7 @@ def slash_command(ack, body, client):
             case "graph":
                 c.graph.slackpost.main()
             case "ranking":
-                c.ranking.ranking.main()
+                c.results.ranking.main()
             case "report":
                 c.report.slackpost.main()
 
