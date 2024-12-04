@@ -102,7 +102,7 @@ def exsist_record(ts):
 
     Parameters
     ----------
-    ts : flote(datetime)
+    ts : float(datetime)
         検索するタイムスタンプ
 
     Returns

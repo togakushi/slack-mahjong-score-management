@@ -37,7 +37,7 @@ def aggregation():
 
     msg_data = {}
     if g.opt.individual:
-        msg_data["titel"] = "*【個人成績】*"
+        msg_data["title"] = "*【個人成績】*"
         msg_data["プレイヤー名"] = f"{g.prm.player_name} {f.common.badge_degree(0)}"
         team = c.team.which_team(g.prm.player_name)
         if team:
@@ -45,7 +45,7 @@ def aggregation():
     else:
         member = c.team.get_teammates()
         if member:
-            msg_data["titel"] = "*【チーム成績】*"
+            msg_data["title"] = "*【チーム成績】*"
             msg_data["チーム名"] = f"{g.prm.player_name} {f.common.badge_degree(0)}"
             msg_data["登録メンバー"] = "、".join(member)
         else:
@@ -238,7 +238,7 @@ def message_build(data: dict):
                 pass
             case k if k.startswith("_blank"):
                 msg += "\t\n"
-            case "titel":
+            case "title":
                 msg += f"{v}\n"
             case _:
                 msg += f"\t{k}： {v}\n"
