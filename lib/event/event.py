@@ -28,6 +28,11 @@ def handle_message_events(client, body):
         logging.trace(f"event skip[ignore user]: {g.msg.user_id}")
         return
 
+    # 投稿済みメッセージが削除された場合
+    if g.msg.status == "message_deleted":
+        d.common.db_delete(g.msg.event_ts)
+        return
+
     match g.msg.keyword:
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
@@ -88,9 +93,6 @@ def handle_message_events(client, body):
                         else:
                             if d.common.exsist_record(g.msg.event_ts):
                                 d.common.db_delete(g.msg.event_ts)
-                    case "message_deleted":
-                        if d.common.exsist_record(g.msg.event_ts):
-                            d.common.db_delete(g.msg.event_ts)
 
 
 @g.app.command(g.cfg.setting.slash_command)

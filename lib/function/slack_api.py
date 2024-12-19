@@ -214,10 +214,14 @@ def reactions_status(ch=None, ts=None):
     if not ts:
         ts = g.msg.event_ts
 
-    res = g.app.client.reactions_get(channel=ch, timestamp=ts)
-    logging.trace(res.validate())
-
     icon = []
+
+    try:  # 削除済みメッセージはエラーになるので潰す
+        res = g.app.client.reactions_get(channel=ch, timestamp=ts)
+        logging.trace(res.validate())
+    except Exception:
+        return (icon)
+
     if "reactions" in res["message"]:
         for reaction in res["message"]["reactions"]:
             if g.bot_id in reaction["users"]:
