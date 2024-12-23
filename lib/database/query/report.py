@@ -223,15 +223,16 @@ def count_moving(interval=40):
             total_count,
             playtime,
             round(sum(point) over moving, 1) as point_sum,
-            round(avg(rank) over moving, 2) as rank_avg
+            round(avg(rank) over moving, 2) as rank_avg,
+            rpoint * 100 as rpoint
         from (
             select
                 <<Calculation Formula>> as interval,
-                total_count, playtime, rank, point
+                total_count, playtime, rank, point, rpoint
             from (
                 select
                     row_number() over (order by playtime) as total_count,
-                    playtime, rank, point
+                    playtime, rank, point, rpoint
                 from
                     individual_results
                 where
