@@ -209,17 +209,14 @@ def reactions_status(ch=None, ts=None):
     icon : list
     """
 
-    if not ch:
-        ch = g.msg.channel_id
-    if not ts:
-        ts = g.msg.event_ts
-
+    ch = ch if ch else g.msg.channel_id
+    ts = ts if ts else g.msg.event_ts
     icon = []
 
     try:  # 削除済みメッセージはエラーになるので潰す
         res = g.app.client.reactions_get(channel=ch, timestamp=ts)
         logging.trace(res.validate())
-    except Exception:
+    except SlackApiError:
         return (icon)
 
     if "reactions" in res["message"]:
