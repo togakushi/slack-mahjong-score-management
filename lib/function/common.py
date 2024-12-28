@@ -182,6 +182,40 @@ def badge_status(game_count=0, win=0):
     return (badge_status)
 
 
+def floatfmt_adjust(df):
+    """
+    カラム名に応じたfloatfmtのリストを返す
+
+    Parameters
+    ----------
+    df : DataFrame
+        チェックするデータ
+
+    Returns
+    -------
+    fmt : list
+        floatfmtに指定するリスト
+    """
+
+    fmt = []
+    for x in df.columns:
+        match x:
+            case "ゲーム数":
+                fmt.append(".0f")
+            case "通算" | "平均" | "区間ポイント" | "通算ポイント" | "区間平均":
+                fmt.append("+.1f")
+            case "1st" | "2nd" | "3rd" | "4th":
+                fmt.append(".0f")
+            case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)":
+                fmt.append(".2f")
+            case "平均順位" | "平順":
+                fmt.append(".2f")
+            case _:
+                fmt.append("")
+
+    return (fmt)
+
+
 def save_output(df, format, filename):
     """
     指定されたフォーマットでdfを保存する
@@ -202,21 +236,11 @@ def save_output(df, format, filename):
     save_file : file path / None
     """
 
-    fmt = []
-    for x in df.columns:
-        match x:
-            case "通算" | "平均":
-                fmt.append("+.1f")
-            case "平均順位" | "平順":
-                fmt.append(".2f")
-            case _:
-                fmt.append("")
-
     match format.lower():
         case "csv":
             data = df.to_csv(index=False)
         case "text" | "txt":
-            data = df.to_markdown(index=False, tablefmt="outline", floatfmt=fmt)
+            data = df.to_markdown(index=False, tablefmt="outline", floatfmt=floatfmt_adjust(df))
         case _:
             return (None)
 
