@@ -31,6 +31,7 @@ def gamedata():
                 --[collection_daily] collection_daily as collection,
                 --[collection_monthly] substr(collection_daily, 1, 7) as collection,
                 --[collection_yearly] substr(collection_daily, 1, 4) as collection,
+                --[collection_all] "" as collection,
                 --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
                 --[individual] --[unregistered_not_replace] name, -- ゲスト無効
                 --[team] name,
@@ -62,11 +63,13 @@ def gamedata():
             --[collection_daily]     collection_daily, name -- 日次集計
             --[collection_monthly]     substr(collection_daily, 1, 7), name -- 月次集計
             --[collection_yearly]     substr(collection_daily, 1, 4), name -- 年次集計
+            --[collection_all]     name -- 全体集計
             order by
                 --[not_collection] individual_results.playtime desc
                 --[collection_daily] collection_daily desc
                 --[collection_monthly] substr(collection_daily, 1, 7) desc
                 --[collection_yearly] substr(collection_daily, 1, 4) desc
+                --[collection_all] collection_daily desc
         )
         window
             --[not_collection] moving as (partition by name order by playtime)

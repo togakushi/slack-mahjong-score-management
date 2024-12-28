@@ -45,6 +45,9 @@ def query_modification(sql: str):
         case "yearly":
             sql = sql.replace("--[collection_yearly] ", "")
             sql = sql.replace("--[collection] ", "")
+        case "all":
+            sql = sql.replace("--[collection_all] ", "")
+            sql = sql.replace("--[collection] ", "")
         case _:
             sql = sql.replace("--[not_collection] ", "")
 

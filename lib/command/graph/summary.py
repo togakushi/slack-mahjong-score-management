@@ -49,17 +49,20 @@ def point_plot():
                 else:
                     title_text = f"ポイント推移 ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
             case "monthly":
-                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
                 if g.prm.starttime_ym == g.prm.endonday_ym:
                     title_text = f"通算ポイント ({g.prm.starttime_ym})"
                 else:
                     title_text = f"ポイント推移 ({g.prm.starttime_ym} - {g.prm.endonday_ym})"
             case "yearly":
-                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
                 if g.prm.starttime_y == g.prm.endonday_y:
-                    title_text = f"通算ポイント ({g.prm.starttime_y})"
+                    title_text = f"通算ポイント ({g.prm.starttime_y}年)"
                 else:
-                    title_text = f"ポイント推移 ({g.prm.starttime_y} - {g.prm.endonday_y})"
+                    title_text = f"ポイント推移 ({g.prm.starttime_y}年 - {g.prm.endonday_y}年)"
+            case "all":
+                xlabel_text = f"総ゲーム数：{game_info['game_count']}"
+                title_text = f"通算ポイント ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
             case _:
                 if g.opt.search_word:
                     pivot_index = "comment"
@@ -147,17 +150,20 @@ def rank_plot():
                 else:
                     title_text = f"順位変動 ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
             case "monthly":
-                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
                 if g.prm.starttime_ym == g.prm.endonday_ym:
                     title_text = f"順位 ({g.prm.starttime_ym})"
                 else:
                     title_text = f"順位変動 ({g.prm.starttime_ym} - {g.prm.endonday_ym})"
             case "yearly":
-                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
                 if g.prm.starttime_y == g.prm.endonday_y:
-                    title_text = f"順位 ({g.prm.starttime_y})"
+                    title_text = f"順位 ({g.prm.starttime_y}年)"
                 else:
-                    title_text = f"順位変動 ({g.prm.starttime_y} - {g.prm.endonday_y})"
+                    title_text = f"順位変動 ({g.prm.starttime_y}年 - {g.prm.endonday_y}年)"
+            case "all":
+                xlabel_text = f"総ゲーム数：{game_info['game_count']}"
+                title_text = f"順位 ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
             case _:
                 if g.opt.search_word:
                     pivot_index = "comment"
@@ -270,7 +276,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
     f.common.graph_setup(plt, fm)
 
-    if all(df.count() == 1) and kwargs["horizontal"]:
+    if (all(df.count() == 1) or g.opt.collection == "all") and kwargs["horizontal"]:
         kwargs["kind"] = "barh"
         lab = []
         color = []
@@ -294,6 +300,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         tmpdf.plot.barh(
             figsize=(8, 2 + tmpdf.count().iloc[0] / 5),
             y="point",
+            xlabel=f"総ゲーム数：{kwargs['total_game_count']}",
             color=color[::-1],
         )
 

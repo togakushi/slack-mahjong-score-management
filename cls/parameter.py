@@ -126,6 +126,8 @@ class command_option:
                     self.collection = "monthly"
                 case keyword if re.search(r"^(yearly|イヤーリー|年次)$", keyword):
                     self.collection = "yearly"
+                case keyword if re.search(r"^(全体)$", keyword):
+                    self.collection = "all"
                 case keyword if re.search(r"^(集約)([0-9]+)$", keyword):
                     self.group_length = int(re.sub(r"^(集約)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
