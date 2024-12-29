@@ -293,7 +293,7 @@ def results_list():
                 count(rank = 4 or null),
                 round(cast(count(rank = 4 or null) AS real) / count() * 100, 2)
             ) as "4th_mix",
-            avg(rank) as "rank_avg",
+            printf("%.2f", avg(rank)) as "rank_avg",
             count(rpoint < 0 or null) as "flying_count",
             cast(count(rpoint < 0 or null) as real) / count() * 100 as "flying_%",
             printf("%3d (%6.2f%%)",
