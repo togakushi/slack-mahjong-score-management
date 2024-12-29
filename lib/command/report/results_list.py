@@ -67,7 +67,7 @@ def graph_generation(game_info, df, title):
     df = columns_rename(df.filter(
         items=[
             "player", "team",
-            "game", "total_mix", "avg_mix",
+            "game", "total_mix", "avg_mix", "rank_avg",
             "1st_mix", "2nd_mix", "3rd_mix", "4th_mix", "rank_dist",
             "flying_mix", "yakuman_mix",
         ]
