@@ -12,6 +12,16 @@ from lib import function as f
 def which_team(name):
     """
     指定メンバーの所属チームを返す
+
+    Parameters
+    ----------
+    name : str
+        チェック対象のメンバー名
+
+    Returns
+    -------
+    team : str or None
+        所属しているチーム名
     """
 
     team = None
@@ -27,6 +37,11 @@ def which_team(name):
 def get_teammates():
     """
     所属チームのチームメイトを返す
+
+    Returns
+    -------
+    member : list
+        メンバーリスト
     """
 
     member = []
@@ -312,6 +327,11 @@ def remove(argument):
 def list():
     """
     チームの登録状況を表示する
+
+    Returns
+    -------
+    msg : text
+        slackにpostする内容
     """
 
     resultdb = sqlite3.connect(
