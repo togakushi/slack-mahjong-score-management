@@ -111,7 +111,7 @@ def aggregation():
             "params": ["平均順位", "ゲーム数"],
         },
         "役満和了率": {
-            "order": False, "threshold": 1,
+            "order": False, "threshold": 0,
             "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["役満和了率", "役満和了", "ゲーム数"],
         },
