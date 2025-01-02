@@ -103,3 +103,12 @@ for sec in test_conf.sections():
                 g.prm.update(g.opt)
                 dump(flag)
                 pprint(c.report.slackpost.results_report.gen_pdf(), width=200)
+
+            case "rating":
+                g.opt.initialization("report", g.msg.argument)
+
+                g.opt.filename = f"rating_{sec}_{pattern}"
+                g.prm.update(g.opt)
+                dump(flag)
+                pprint(c.graph.rating.plot(), width=200)
+
