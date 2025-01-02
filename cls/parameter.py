@@ -25,6 +25,7 @@ class command_option:
         self.fourfold: bool = False  # 縦持ちデータの直近Nを4倍で取るか
         self.stipulated: int = 0  # 規定打数
         self.target_count: int = 0  # 直近
+        self.interval: int = 80  # 区切りゲーム数
         self.verbose: bool = False  # 戦績詳細
         self.rating: bool = False  # レーティング表示
 
@@ -114,6 +115,8 @@ class command_option:
                     self.ranked = int(re.sub(r"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(規定数|規定打数)([0-9]+)$", keyword):
                     self.stipulated = int(re.sub(r"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
+                case keyword if re.search(r"^(区間|区切り?|interval)([0-9]+)$", keyword):
+                    self.interval = int(re.sub(r"^(区間|区切り?|interval)([0-9]+)$", r"\2", keyword))
                 case keyword if re.search(r"^(チーム同卓あり|コンビあり|同士討ち)$", keyword):
                     self.friendly_fire = True
                 case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword):

@@ -13,7 +13,10 @@ def main():
 
     if len(g.prm.player_list) == 1:  # 対象がひとり
         title = "個人成績"
-        count, ret = personal.plot()
+        if g.opt.statistics:
+            count, ret = personal.statistics_plot()
+        else:
+            count, ret = personal.plot()
     else:  # 対象が複数
         if g.opt.rating:  # レーティング
             title = "レーティング推移"
