@@ -64,74 +64,75 @@ def aggregation():
 
     data = {
         # order: True -> 小さい値が上位 / False -> 大きい値が上位
+        # column : 閾値対象のカラム名
         # threshold : 表示閾値
         "ゲーム参加率": {
-            "order": False, "threshold": 0,
+            "order": False, "column": "ゲーム数", "threshold": 0,
             "str": "{:>6.2%} ( {:3d} / {:4d} ゲーム )",
             "params": ["ゲーム参加率", "ゲーム数", "総ゲーム数"],
         },
         "通算ポイント": {
-            "order": False, "threshold": -999999999,
+            "order": False, "column": "通算ポイント", "threshold": -999999999,
             "str": "{:>7.1f} pt ( {:3d} ゲーム )",
             "params": ["通算ポイント", "ゲーム数"],
         },
         "平均ポイント": {
-            "order": False, "threshold": -999999999,
+            "order": False, "column": "平均ポイント", "threshold": -999999999,
             "str": "{:>5.1f} pt ( {:>7.1f} pt / {:3d} ゲーム )",
             "params": ["平均ポイント", "通算ポイント", "ゲーム数"],
         },
         "平均収支": {
-            "order": False, "threshold": -999999999,
+            "order": False, "column": "平均収支", "threshold": -999999999,
             "str": "{:>8.0f} 点 ( {:>5.0f} 点 / {:3d} ゲーム )",
             "params": ["平均収支", "平均最終素点", "ゲーム数"],
         },
         "トップ率": {
-            "order": False, "threshold": 0,
+            "order": False, "column": "トップ率", "threshold": 0,
             "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["トップ率", "1位", "ゲーム数"],
         },
         "連対率": {
-            "order": False, "threshold": 0,
+            "order": False, "column": "連対率", "threshold": 0,
             "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["連対率", "連対", "ゲーム数"],
         },
         "ラス回避率": {
-            "order": False, "threshold": 0,
+            "order": False, "column": "ラス回避率", "threshold": 0,
             "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["ラス回避率", "ラス回避", "ゲーム数"],
         },
         "トビ率": {
-            "order": True, "threshold": 0,
+            "order": True, "column": "トビ率", "threshold": 0,
             "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["トビ率", "トビ", "ゲーム数"],
         },
         "平均順位": {
-            "order": True, "threshold": 0,
+            "order": True, "column": "平均順位", "threshold": 0,
             "str": "{:>4.2f} ( {:3d} ゲーム )",
             "params": ["平均順位", "ゲーム数"],
         },
         "役満和了率": {
-            "order": False, "threshold": 0,
+            "order": False, "column": "役満和了", "threshold": 1,
             "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
             "params": ["役満和了率", "役満和了", "ゲーム数"],
         },
         "最大素点": {
-            "order": False, "threshold": -999999999,
+            "order": False, "column": "最大素点", "threshold": -999999999,
             "str": "{:>6.0f} 点 ( {:>5.1f} pt )",
             "params": ["最大素点", "最大獲得ポイント"],
         },
         "連続トップ": {
-            "order": False, "threshold": 2,
+            "order": False, "column": "連続トップ", "threshold": 2,
             "str": "{:>2d} 連続 ( {:>2d} ゲーム中 )",
             "params": ["連続トップ", "ゲーム数"],
         },
         "連続連対": {
-            "order": False, "threshold": 2,
+            "order": False, "column": "連続連対", "threshold": 2,
             "str": "{:>2d} 連続 ( {:>2d} ゲーム中 )",
             "params": ["連続連対", "ゲーム数"],
         },
         "連続ラス回避": {
-            "order": False, "threshold": 2,
+            "order": False, "column": "連続ラス回避", "threshold": 2,
             "str": "{:>2d} 連続 ( {:>2d} ゲーム中 )",
             "params": ["連続ラス回避", "ゲーム数"],
         },
@@ -159,17 +160,15 @@ def aggregation():
     msg2 = {}
 
     for k in data.keys():
-        # 非表示項目
-        if k in g.cfg.dropitems.ranking:
+        if k in g.cfg.dropitems.ranking:  # 非表示項目
             continue
 
         msg2[k] = f"\n*{k}*\n"
         tmp_df = result_df.sort_values(
             [f"{k}_rank", "ゲーム数"],
             ascending=[True, False]
-        )
-        tmp_df = tmp_df.query(
-            f"{k}_rank <= @g.opt.ranked and {k} >= @data['{k}']['threshold']"
+        ).query(
+            f"{k}_rank <= @g.opt.ranked and {data[k]['column']} >= {data[k]['threshold']}"
         )
 
         for _, s in tmp_df.drop_duplicates(subset="name").iterrows():
