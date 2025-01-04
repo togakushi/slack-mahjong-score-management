@@ -66,8 +66,10 @@ def aggregation():
         # order: True -> 小さい値が上位 / False -> 大きい値が上位
         # column : 閾値対象のカラム名
         # threshold : 表示閾値
+        # str: 表示文字列
+        # params: 表示内容
         "ゲーム参加率": {
-            "order": False, "column": "ゲーム数", "threshold": 0,
+            "order": False, "column": "ゲーム数", "threshold": 2,
             "str": "{:>6.2%} ( {:3d} / {:4d} ゲーム )",
             "params": ["ゲーム参加率", "ゲーム数", "総ゲーム数"],
         },
