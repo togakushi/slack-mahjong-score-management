@@ -199,8 +199,10 @@ def remarks(headword=False):
     if not g.opt.unregistered_replace:
         if g.opt.individual:  # 個人集計時のみ表示
             remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
-    if g.opt.stipulated != 0:
+    if g.opt.stipulated:
         remark.append(f"規定打数 {g.opt.stipulated} G以上")
+    if g.opt.rule_version:
+        remark.append(f"集計対象ルール {g.opt.rule_version}")
 
     if headword:
         if remark:

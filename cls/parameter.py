@@ -18,6 +18,7 @@ class command_option:
             _command = "DEFAULT"
 
         self.command: str = _command
+        self.rule_version: str = str()
         self.aggregation_range: list = []
         self.target_player: list = []
         self.all_player: bool = False
@@ -133,6 +134,8 @@ class command_option:
                     self.collection = "all"
                 case keyword if re.search(r"^(集約)([0-9]+)$", keyword):
                     self.group_length = int(re.sub(r"^(集約)([0-9]+)$", r"\2", keyword))
+                case keyword if re.search(r"^(ルール|rule)(.+)$", keyword):
+                    self.rule_version = re.sub(r"^(ルール|rule)(.+)$", r"\2", keyword)
                 case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
                     self.format = keyword.lower()
                 case keyword if re.search(r"^(filename:|ファイル名)(.+)$", keyword):
@@ -189,6 +192,7 @@ class parameters:
 
     def update(self, _opt: command_option):
         self.initialization()
+        self.rule_version = _opt.rule_version if _opt.rule_version else self.rule_version
         self.starttime = _opt.search_first  # 検索開始日
         self.starttime_hm = _opt.search_first.strftime("%Y/%m/%d %H:%M")
         self.starttime_hms = _opt.search_first.strftime("%Y/%m/%d %H:%M:%S")
