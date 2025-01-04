@@ -69,7 +69,7 @@ def aggregation():
         # str: 表示文字列
         # params: 表示内容
         "ゲーム参加率": {
-            "order": False, "column": "ゲーム数", "threshold": 2,
+            "order": False, "column": "ゲーム数", "threshold": 0,  # 足切り済み
             "str": "{:>6.2%} ( {:3d} / {:4d} ゲーム )",
             "params": ["ゲーム参加率", "ゲーム数", "総ゲーム数"],
         },
