@@ -33,8 +33,8 @@ def main():
 
     # 突合結果
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y/%m/%d")
-    befor = datetime.now().strftime("%Y/%m/%d")
-    ret = f"*【データ突合】* ({after} - {befor})\n"
+    before = datetime.now().strftime("%Y/%m/%d")
+    ret = f"*【データ突合】* ({after} - {before})\n"
     ret += "＊ 不一致： {}件\n{}".format(count["mismatch"], msg["mismatch"])
     ret += "＊ 取りこぼし：{}件\n{}".format(count["missing"], msg["missing"])
     ret += "＊ 削除漏れ： {}件\n{}".format(count["delete"], msg["delete"])
