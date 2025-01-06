@@ -3,6 +3,7 @@ import re
 import textwrap
 
 import global_value as g
+from lib import database as d
 from lib import function as f
 
 
@@ -97,6 +98,16 @@ def help_message():
     msg += "\n*検索範囲に指定できるキーワード*\n"
     for x in g.search_word.list().splitlines():
         msg += f"\t{x}\n"
+
+    # ルール識別子
+    rule = d.common.rule_version()
+    msg += "\n*ルール識別子*\n"
+    for x in rule.keys():
+        msg += "\t{}： {} ～ {}\n".format(
+            x,
+            rule[x]["first_time"],
+            rule[x]["last_time"],
+        )
 
     # 追加説明
     msg += textwrap.dedent("""

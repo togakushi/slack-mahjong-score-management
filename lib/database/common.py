@@ -255,3 +255,16 @@ def remarks_delete(ts):
     if g.msg.status != "message_deleted":
         if g.cfg.setting.reaction_ok in f.slack_api.reactions_status():
             f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=ts)
+
+
+def rule_version():
+    rule = {}
+    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+        ret = cur.execute(d.sql_rule_list)
+        for version, first_time, last_time in ret.fetchall():
+            rule[version] = {
+                "first_time": first_time,
+                "last_time": last_time,
+            }
+
+    return (rule)
