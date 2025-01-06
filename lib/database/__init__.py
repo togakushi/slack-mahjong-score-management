@@ -69,8 +69,8 @@ sql_remarks_delete_compar = """
 sql_rule_list = """
     select
         rule_version,
-        strftime("%Y-%m-%d %H:%M:%S", min(playtime)) as min,
-        strftime("%Y-%m-%d %H:%M:%S", max(playtime)) as max
+        strftime("%Y/%m/%d %H:%M:%S", min(playtime)) as min,
+        strftime("%Y/%m/%d %H:%M:%S", max(playtime)) as max
     from
         result
     group by
