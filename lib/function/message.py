@@ -97,8 +97,6 @@ def help_message():
         \t登録キーワード： {g.cfg.cw.remarks_word}
     """)
 
-    undefined_type = g.cfg.config["regulations"].getint("undefined", 0)
-
     rule = d.common.word_list(1)
     if rule:
         msg += "\n\t*卓外ポイントワード(個人清算)*\n"
@@ -108,19 +106,17 @@ def help_message():
                 str(f"{ex_point:.1f}").replace("-", "▲"),
             )
 
-    rule = d.common.word_list(2)
-    if rule:
-        words = [word for word, _ in rule]
-        if undefined_type == 2:
-            words += ["未登録ワードすべて"]
+    words = [word for word, _ in d.common.word_list(2)]
+    if g.undefined_word == 2:
+        words += ["未登録ワードのすべてを個別にカウント"]
+    if words:
         msg += f"\n\t*個別カウントワード*\n\t\t{'、'.join(words)}\n"
 
-    rule = d.common.word_list(0)
-    if rule:
-        words = [word for word, _ in rule]
-        if undefined_type == 0:
-            words += ["未登録ワードすべて"]
-        msg += f"\n\t*記録対象和了役ワード*\n\t\t{'、'.join(words)}\n"
+    words = [word for word, _ in d.common.word_list(0)]
+    if g.undefined_word == 0:
+        words += ["未登録ワードのすべてを和了役としてカウント"]
+    if words:
+        msg += f"\n\t*役満カウントワード*\n\t\t{'、'.join(words)}\n"
 
     msg = re.sub(r"\n\n\n", "\n\n", msg, flags=re.MULTILINE)
 
