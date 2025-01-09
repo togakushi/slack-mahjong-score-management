@@ -24,7 +24,7 @@ class Config():
                 sys.exit()
 
         # オプションセクションチェック
-        for x in ("results", "graph", "ranking", "report", "member", "alias", "team", "database", "comment", "help"):
+        for x in ("results", "graph", "ranking", "report", "member", "alias", "team", "database", "comment", "regulations", "help"):
             if x not in self.config.sections():
                 self.config.add_section(x)
 

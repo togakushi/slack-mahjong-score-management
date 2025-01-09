@@ -51,11 +51,6 @@ def help_message():
     report_option = f.configuration.command_option()
     report_option.initialization("report")
 
-    words = g.cfg.config["mahjong"].get("regulations_type2", None)
-    if words:
-        words_list = set([x.strip() for x in words.split(",")])
-        meg_wordcount = "個別カウントワード： " + ", ".join(words_list)
-
     msg = textwrap.dedent(f"""
         *成績記録キーワード*
         \t{g.cfg.search.keyword}
@@ -81,39 +76,51 @@ def help_message():
         \t\t呼び出しキーワード： {g.cfg.cw.member}
         \t*チーム一覧*
         \t\t呼び出しキーワード： {g.cfg.cw.team}
-
-        \t*メモ*
-        \t\t登録キーワード： {g.cfg.cw.remarks_word}
-        {"\t\t" + meg_wordcount if words else ""}
     """)
 
-    # 追加ルール（卓外ポイント）
-    if g.cfg.config.has_section("regulations"):
-        additional_rule = "\n\n*追加ルール*\n"
-        for word, ex_point in g.cfg.config.items("regulations"):
-            additional_rule += f"\t{word}： {ex_point}pt\n"
-        msg += additional_rule
-
     # 検索範囲
-    msg += "\n*検索範囲に指定できるキーワード*\n"
+    msg += "\n\n*検索範囲に指定できるキーワード*\n"
     for x in g.search_word.list().splitlines():
         msg += f"\t{x}\n"
 
     # ルール識別子
     rule = d.common.rule_version()
-    msg += "\n*ルール識別子*\n"
-    for x in rule.keys():
-        msg += "\t{}： {} ～ {}\n".format(
-            x,
-            rule[x]["first_time"],
-            rule[x]["last_time"],
-        )
+    if rule:
+        msg += "\n\n*ルール識別子*\n"
+        for x in rule.keys():
+            msg += f"\t{x}： {rule[x]['first_time']} ～ {rule[x]['last_time']}\n"
 
-    # 追加説明
-    msg += textwrap.dedent("""
-        *その他オプション詳細説明*
-        \thttps://github.com/togakushi/slack-mahjong-score-management/blob/main/docs/functions/argument_keyword.md
+    # メモ機能
+    msg += textwrap.dedent(f"""
+        *メモ機能*
+        \t`登録キーワード <対象メンバー> <登録ワード>`
+        \t登録キーワード： {g.cfg.cw.remarks_word}
     """)
+
+    undefined_type = g.cfg.config["regulations"].getint("undefined", 0)
+
+    rule = d.common.word_list(1)
+    if rule:
+        msg += "\n\t*卓外ポイントワード(個人清算)*\n"
+        for word, ex_point in rule:
+            msg += "\t\t{}： {}pt\n".format(
+                word,
+                str(f"{ex_point:.1f}").replace("-", "▲"),
+            )
+
+    rule = d.common.word_list(2)
+    if rule:
+        words = [word for word, _ in rule]
+        if undefined_type == 2:
+            words += ["未登録ワードすべて"]
+        msg += f"\n\t*個別カウントワード*\n\t\t{'、'.join(words)}\n"
+
+    rule = d.common.word_list(0)
+    if rule:
+        words = [word for word, _ in rule]
+        if undefined_type == 0:
+            words += ["未登録ワードすべて"]
+        msg += f"\n\t*記録対象和了役ワード*\n\t\t{'、'.join(words)}\n"
 
     msg = re.sub(r"\n\n\n", "\n\n", msg, flags=re.MULTILINE)
 

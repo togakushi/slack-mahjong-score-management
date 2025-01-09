@@ -260,7 +260,19 @@ def remarks_delete(ts):
 def rule_version():
     rule = {}
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-        ret = cur.execute(d.sql_rule_list)
+        ret = cur.execute(
+            """
+            select
+                rule_version,
+                strftime("%Y/%m/%d %H:%M:%S", min(playtime)) as min,
+                strftime("%Y/%m/%d %H:%M:%S", max(playtime)) as max
+            from
+                result
+            group by
+                rule_version
+            """
+        )
+
         for version, first_time, last_time in ret.fetchall():
             rule[version] = {
                 "first_time": first_time,
@@ -268,3 +280,22 @@ def rule_version():
             }
 
     return (rule)
+
+
+def word_list(word_type=0):
+    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+        ret = cur.execute(
+            """
+            select
+                word,
+                ex_point
+            from
+                words
+            where
+                type=?
+            """, (word_type,)
+        )
+
+        x = ret.fetchall()
+
+    return (x)
