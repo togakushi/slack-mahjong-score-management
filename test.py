@@ -111,4 +111,3 @@ for sec in test_conf.sections():
                 g.prm.update(g.opt)
                 dump(flag)
                 pprint(c.graph.rating.plot(), width=200)
-
