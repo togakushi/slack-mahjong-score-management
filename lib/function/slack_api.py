@@ -15,6 +15,9 @@ def call_chat_postMessage(**kwargs):
         res = g.app.client.chat_postMessage(**kwargs)
     except SlackApiError as err:
         logging.error(err)
+        logging.error(f"{kwargs=}")
+        logging.error(vars(g.opt))
+        logging.error(vars(g.prm))
 
     return (res)
 
@@ -27,6 +30,9 @@ def call_files_upload(**kwargs):
         res = g.app.client.files_upload_v2(**kwargs)
     except SlackApiError as err:
         logging.error(err)
+        logging.error(f"{kwargs=}")
+        logging.error(vars(g.opt))
+        logging.error(vars(g.prm))
 
     return (res)
 
@@ -166,6 +172,8 @@ def call_reactions_add(icon, ch=None, ts=None):
         )
     except SlackApiError as err:
         logging.error(err)
+        logging.error(vars(g.opt))
+        logging.error(vars(g.prm))
 
     logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
 
