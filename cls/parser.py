@@ -35,9 +35,9 @@ class Message_Parser():
         self.thread_ts = str()
         _event = {}
 
-        if "channel_name" in _body:
-            if _body["channel_name"] == "directmessage":
-                self.channel_id = _body["channel_id"]
+        if "command" in _body:
+            if _body["command"] == g.cfg.setting.slash_command:
+                self.channel_id = _body["user_id"]
                 self.text = _body["text"]
                 self.event_ts = "0"
         elif "container" in _body:
