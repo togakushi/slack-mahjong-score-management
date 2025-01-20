@@ -32,7 +32,7 @@ sequenceDiagram
     activate app
     member-)Slack: Message Modification(Game Results)
     Slack->>app: Event API
-    app->>results db: Data Update 
+    app->>results db: Data Update
     app-)Slack: Reaction remove
     app->>app: Score Total Check
     app-)Slack: Reaction add
@@ -54,7 +54,7 @@ sequenceDiagram
     activate app
     member-)Slack: Message Deletion(Game Results)
     Slack->>app: Event API
-    app->>results db: Data Delet
+    app->>results db: Data Delete
     deactivate app
 ```
 
