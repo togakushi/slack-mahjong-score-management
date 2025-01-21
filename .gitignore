@@ -6,8 +6,12 @@ work/
 *.ini
 *.db
 *.txt
+*.csv
 *.ttf
 *.png
+*.py
+!slack-app.py
+!test.py
 !requirements.txt
 !test_case/test-*.ini
 !.gitignore
