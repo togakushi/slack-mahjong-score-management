@@ -11,7 +11,7 @@ from cls.parser import Message_Parser
 from cls.search import SearchRange
 
 
-def parser():
+def arg_parser():
     p = argparse.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter,
         add_help=True,
@@ -48,29 +48,56 @@ def parser():
         help="設定ファイル",
     )
 
-    # 動作テスト用オプション(非表示)
-    p.add_argument(
-        "-t", "--testcase",
-        help=argparse.SUPPRESS,
-    )
+    match os.path.basename(sys.argv[0]):
+        case "dbtools.py":  # dbtools専用オプション
+            group = p.add_mutually_exclusive_group()
+            group.add_argument(
+                "--compar",
+                action="store_true",
+                help="データ突合",
+            )
 
-    p.add_argument(
-        "--classic",
-        action="store_true",
-        help=argparse.SUPPRESS,
-    )
+            group.add_argument(
+                "--export",
+                dest="export_data",
+                nargs="?",
+                const="export_",
+                metavar="PREFIX",
+                help="メンバー設定情報をエクスポート(default prefix: %(const)s)",
+            )
 
-    p.add_argument(
-        "--profile",
-        help=argparse.SUPPRESS,
-    )
+            group.add_argument(
+                "--import",
+                nargs="?",
+                dest="import_data",
+                const="export_",
+                metavar="PREFIX",
+                help="メンバー設定情報をインポート(default prefix: %(const)s)",
+            )
+
+        case "test.py":  # 動作テスト用オプション
+            p.add_argument(
+                "-t", "--testcase",
+            )
+
+            p.add_argument(
+                "--classic",
+                action="store_true",
+            )
+
+            p.add_argument(
+                "--profile",
+            )
 
     return (p.parse_args())
 
 
-def setup():
-    # 設定ファイル読み込み
-    g.args = parser()
+def setup(log=True):
+    """
+    設定ファイル読み込み
+    """
+
+    g.args = arg_parser()
 
     # --- ログレベル追加
     # DEBUG : 10
