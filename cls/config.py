@@ -14,7 +14,8 @@ class Config():
     def read_file(self, filename: str) -> None:
         try:
             self.config.read(filename, encoding="utf-8")
-            logging.notice(f"config read: {filename} -> {self.config.sections()}")
+            logging.notice(f"{filename=}")
+            logging.info(f"read sections: {self.config.sections()}")
         except Exception:
             sys.exit("config read error.")
 
