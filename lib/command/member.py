@@ -9,7 +9,7 @@ from lib import database as d
 from lib import function as f
 
 
-def read_memberslist():
+def read_memberslist(log=True):
     """
     メンバー/チームリスト読み込み
     """
@@ -45,9 +45,10 @@ def read_memberslist():
 
     resultdb.close()
 
-    logging.notice(f"guest_name: {g.prm.guest_name}")
-    logging.notice(f"member_list: {set(g.member_list.values())}")
-    logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")
+    if log:
+        logging.notice(f"guest_name: {g.prm.guest_name}")
+        logging.notice(f"member_list: {set(g.member_list.values())}")
+        logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")
 
 
 def name_replace(pname, add_mark=False):
