@@ -65,14 +65,11 @@ if __name__ == "__main__":
 
         # aliasテーブルが空の場合は作り直す
         alias_list = conn.execute("select name from alias;").fetchall()
-        member_list = conn.execute("select id, name from member where id != 0;").fetchall()
+        member_list = conn.execute("select name, name from member where id != 0;").fetchall()
         if not alias_list:
             print(">>> create new alias table")
-            for id, name in member_list:
-                conn.execute(
-                    "insert into alias(name, member) values (?,?);",
-                    (name, name)
-                )
+            for name in member_list:
+                conn.execute("insert into alias(name, member) values (?,?);", name)
 
         conn.commit()
         conn.close()
