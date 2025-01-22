@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import logging
 import os
 import sqlite3
 import sys
@@ -7,7 +6,6 @@ import sys
 import pandas as pd
 from slack_bolt import App
 from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 
 import global_value as g
 from lib import database as d
@@ -21,11 +19,9 @@ if __name__ == "__main__":
         try:
             g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
             g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-        except SlackApiError as err:
-            logging.error(err)
+        except Exception:
             sys.exit()
 
-        g.opt.dbtools = True
         count, _, fts = d.comparison.score_comparison()
         if fts:
             count["remark"] = d.comparison.remarks_comparison(fts)
@@ -35,12 +31,12 @@ if __name__ == "__main__":
     # エクスポート
     if g.args.export_data:
         for table in ("member", "alias", "team"):
-            csvfile = f"{g.args.export_data}{table}.csv"
+            csvfile = f"{g.args.export_data}_{table}.csv"
             df = pd.read_sql(
                 f"select * from {table};",
                 sqlite3.connect(g.cfg.db.database_file),
             )
-            # 整数を維持
+            # 整数値を維持
             if "team_id" in df.columns:
                 df["team_id"] = df["team_id"].astype("Int64")
 
@@ -53,15 +49,19 @@ if __name__ == "__main__":
         conn = sqlite3.connect(g.cfg.db.database_file)
         for table in ("member", "alias", "team"):
             conn.execute(f"delete from {table};")
-            csvfile = f"{g.args.import_data}{table}.csv"
-            df = pd.read_csv(csvfile)
-            df.to_sql(
-                table,
-                conn,
-                if_exists="append",
-                index=False,
-            )
-            conn.commit()
-            print(f">>> import data: {csvfile} -> {table}")
+            csvfile = f"{g.args.import_data}_{table}.csv"
+            try:
+                pd.read_csv(csvfile).to_sql(
+                    table,
+                    conn,
+                    if_exists="append",
+                    index=False,
+                )
+                print(f">>> import data: {csvfile} -> {table}")
+            except FileNotFoundError:
+                print(f">>> skip: {csvfile} (not found)")
+            except pd.errors.EmptyDataError:
+                print(f">>> skip: {csvfile} (empty file)")
 
+        conn.commit()
         conn.close()

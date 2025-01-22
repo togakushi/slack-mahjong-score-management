@@ -49,9 +49,6 @@ class command_option:
         self.group_length: int = g.cfg.config["comment"].getint("group_length", 0)
         self.search_word: str = g.cfg.config["comment"].get("search_word", str())
 
-        # その他フラグ
-        self.dbtools: bool = True  # dbtools実行時にTrue
-
         # 検索範囲の初期設定
         self.search_first: datetime = datetime.now()
         self.search_last: datetime = datetime.now()

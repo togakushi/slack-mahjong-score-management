@@ -61,7 +61,7 @@ def arg_parser():
                 "--export",
                 dest="export_data",
                 nargs="?",
-                const="export_",
+                const="export",
                 metavar="PREFIX",
                 help="メンバー設定情報をエクスポート(default prefix: %(const)s)",
             )
@@ -70,7 +70,7 @@ def arg_parser():
                 "--import",
                 nargs="?",
                 dest="import_data",
-                const="export_",
+                const="export",
                 metavar="PREFIX",
                 help="メンバー設定情報をインポート(default prefix: %(const)s)",
             )
