@@ -29,8 +29,5 @@ if __name__ == "__main__":
     c.member.read_memberslist()
     g.bot_id = g.app.client.auth_test()["user_id"]
 
-    if not hasattr(g.args, "testcase"):
-        g.args.testcase = False
-
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])
     handler.start()

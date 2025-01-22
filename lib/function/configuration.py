@@ -98,6 +98,8 @@ def setup(log=True):
     """
 
     g.args = arg_parser()
+    if not hasattr(g.args, "testcase"):
+        g.args.testcase = False
 
     # --- ログレベル追加
     # DEBUG : 10
