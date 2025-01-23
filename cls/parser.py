@@ -36,17 +36,20 @@ class Message_Parser():
         self.thread_ts = "0"
         _event = {}
 
-        if _body.get("command") == g.cfg.setting.slash_command:
+        if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
             if not self.channel_id:
-                # スラッシュコマンド実行時のレスポンス先
                 if _body.get("channel_name") == "directmessage":
                     self.channel_id = _body.get("channel_id")
                 else:
                     self.channel_id = slack_api.get_dm_channel_id(_body.get("user_id"))
 
+        if _body.get("container"):  # Homeタブ
+            self.user_id = _body["user"].get("id")
+            self.channel_id = slack_api.get_dm_channel_id(self.user_id)
+            self.text = "dummy"
+
         if _body.get("event"):
             if not self.channel_id:
-                # 呼び出しキーワードのレスポンス先
                 if _body.get("channel_name") != "directmessage":
                     self.channel_id = _body["event"].get("channel")
                 else:
@@ -70,8 +73,8 @@ class Message_Parser():
                     _event = _body["event"]
                     logging.info(f"unknown subtype: {_body=}")
 
-        self.user_id = _event.get("user")
-        self.event_ts = _event.get("ts")
+        self.user_id = _event.get("user", self.user_id)
+        self.event_ts = _event.get("ts", self.event_ts)
         self.thread_ts = _event.get("thread_ts", self.thread_ts)
         self.text = _event.get("text", self.text)
 
