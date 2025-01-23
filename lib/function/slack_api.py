@@ -16,8 +16,9 @@ def call_chat_postMessage(**kwargs):
     except SlackApiError as err:
         logging.error(err)
         logging.error(f"{kwargs=}")
-        logging.error(vars(g.opt))
-        logging.error(vars(g.prm))
+        logging.error(f"opt: {vars(g.opt)}")
+        logging.error(f"prm: {vars(g.prm)}")
+        logging.error(f"msg: {vars(g.msg)}")
 
     return (res)
 
@@ -31,8 +32,9 @@ def call_files_upload(**kwargs):
     except SlackApiError as err:
         logging.error(err)
         logging.error(f"{kwargs=}")
-        logging.error(vars(g.opt))
-        logging.error(vars(g.prm))
+        logging.error(f"opt: {vars(g.opt)}")
+        logging.error(f"prm: {vars(g.prm)}")
+        logging.error(f"msg: {vars(g.msg)}")
 
     return (res)
 
@@ -131,21 +133,25 @@ def post_fileupload(title, file, ts=False):
 
 def slack_post(**kwargs):
     logging.debug(f"{kwargs}")
-    headline = kwargs["headline"] if "headline" in kwargs else None
-    message = kwargs["message"] if "message" in kwargs else None
-    summarize = kwargs["summarize"] if "summarize" in kwargs else True
-    file_list = kwargs["file_list"] if "file_list" in kwargs else {}
+    headline = kwargs.get("headline")
+    message = kwargs.get("message")
+    summarize = kwargs.get("summarize", True)
+    file_list = kwargs.get("file_list", {})
 
     # 見出しポスト
     res = post_message(headline)
+    if res:
+        ts = res.get("ts")
+    else:
+        ts = None
 
     # 本文ポスト
     if file_list:
         for x in file_list.keys():
-            post_fileupload(x, file_list[x], res["ts"])
+            post_fileupload(x, file_list[x], ts)
     else:
         if message:
-            post_multi_message(message, res["ts"], summarize)
+            post_multi_message(message, ts, summarize)
 
 
 def call_reactions_add(icon, ch=None, ts=None):
@@ -173,8 +179,9 @@ def call_reactions_add(icon, ch=None, ts=None):
         logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
     except SlackApiError as err:
         logging.error(err)
-        logging.error(vars(g.opt))
-        logging.error(vars(g.prm))
+        logging.error(f"opt: {vars(g.opt)}")
+        logging.error(f"prm: {vars(g.prm)}")
+        logging.error(f"msg: {vars(g.msg)}")
 
 
 def call_reactions_remove(icon, ch=None, ts=None):
@@ -193,13 +200,18 @@ def call_reactions_remove(icon, ch=None, ts=None):
     if not ts:
         ts = g.msg.event_ts
 
-    res = g.app.client.reactions_remove(
-        channel=ch,
-        name=icon,
-        timestamp=ts,
-    )
-
-    logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
+    try:
+        res = g.app.client.reactions_remove(
+            channel=ch,
+            name=icon,
+            timestamp=ts,
+        )
+        logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
+    except SlackApiError as err:
+        logging.error(err)
+        logging.error(f"opt: {vars(g.opt)}")
+        logging.error(f"prm: {vars(g.prm)}")
+        logging.error(f"msg: {vars(g.msg)}")
 
 
 def reactions_status(ch=None, ts=None):
