@@ -56,6 +56,7 @@ Features -> OAuth & Permissions
   - channels:history
   - chat:write
   - files:write
+  - im:write
 
 足りないものは追加する。
 
