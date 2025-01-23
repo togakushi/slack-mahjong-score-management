@@ -41,6 +41,7 @@ Features -> Event Subscriptions
   - [Add Bot User Event]
     - app_home_opened ※Home Appを利用する場合のみ
     - message.channels
+    - message.groups ※プライベートチャンネルで利用する場合のみ
     - message.im ※DMから機能呼び出しキーワードを利用する場合のみ
   - [Save Changes]
 

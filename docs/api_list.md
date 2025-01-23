@@ -6,6 +6,7 @@
 | ---------------- | :--------------: | :-------------: | :-----------: | :--------------: | :-----------: | :----------------: | :--------------: | :------------: |
 | commands         |                  |                 |               |                  |               |                    |                  | Slash Commands |
 | channels:history |                  |                 |               |                  |               |                    | message.channels |                |
+| groups:history   |                  |                 |               |                  |               |                    |  message.groups  |                |
 | chat:write       |        o         |                 |               |                  |               |                    |                  |                |
 | files:write      |                  |        o        |               |                  |               |                    |                  |                |
 | im:history       |                  |                 |               |                  |               |                    |    message.im    |                |

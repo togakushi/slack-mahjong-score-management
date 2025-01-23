@@ -77,13 +77,13 @@ def handle_message_events(client, body):
                 match g.msg.status:
                     case "message_append":
                         if detection:
-                            if g.msg.updatable and not body["event"].get("channel_type") == "im":
+                            if g.msg.updatable:
                                 d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                     case "message_changed":
                         if detection:
-                            if g.msg.updatable and not body["event"].get("channel_type") == "im":
+                            if g.msg.updatable:
                                 if d.common.exsist_record(g.msg.event_ts):
                                     d.common.db_update(detection, g.msg.event_ts)
                                 else:

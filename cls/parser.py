@@ -9,6 +9,7 @@ import lib.function.slack_api as slack_api
 class Message_Parser():
     client: WebClient = WebClient()
     channel_id: str = str()
+    channel_type: str = str()
     user_id: str = str()
     text: str = str()  # post本文
     event_ts: str = str()  # テキストのまま処理する
@@ -78,6 +79,17 @@ class Message_Parser():
         self.thread_ts = _event.get("thread_ts", self.thread_ts)
         self.text = _event.get("text", self.text)
 
+        if _body.get("command") == g.cfg.setting.slash_command:
+            if _body.get("channel_name") == "directmessage":
+                self.channel_type = "im"
+            else:
+                self.channel_type = "channel"
+        else:
+            if _body.get("event"):
+                self.channel_type = _body["event"].get("channel_type")
+            else:
+                self.channel_type = None
+
         if self.text:
             self.keyword = self.text.split()[0]
             self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
@@ -114,7 +126,14 @@ class Message_Parser():
         DB更新可能チャンネルのポストかチェック
         """
 
-        if not len(g.cfg.db.channel_limitations) or self.channel_id in g.cfg.db.channel_limitations.split(","):
-            self.updatable = True
+        self.updatable = False
+
+        if len(g.cfg.db.channel_limitations):
+            if self.channel_id in g.cfg.db.channel_limitations.split(","):
+                self.updatable = True
         else:
-            self.updatable = False
+            match self.channel_type:
+                case "channel":  # public channel
+                    self.updatable = True
+                case "group":  # private channel
+                    self.updatable = True
