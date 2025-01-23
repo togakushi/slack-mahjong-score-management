@@ -77,13 +77,13 @@ def handle_message_events(client, body):
                 match g.msg.status:
                     case "message_append":
                         if detection:
-                            if g.msg.updatable:
+                            if g.msg.updatable and not body["event"].get("channel_type") == "im":
                                 d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.restricted_channel(), g.msg.event_ts)
                     case "message_changed":
                         if detection:
-                            if g.msg.updatable:
+                            if g.msg.updatable and not body["event"].get("channel_type") == "im":
                                 if d.common.exsist_record(g.msg.event_ts):
                                     d.common.db_update(detection, g.msg.event_ts)
                                 else:
@@ -150,13 +150,3 @@ def slash_command(ack, body, client):
             # その他
             case _:
                 f.slack_api.post_message(f.message.help(body["command"]))
-
-
-@g.app.event("reaction_added")
-def handle_reaction_added_events():
-    pass  # reaction_added はすべて無視する
-
-
-@g.app.event("reaction_removed")
-def handle_reaction_removed_events():
-    pass  # reaction_removed はすべて無視する

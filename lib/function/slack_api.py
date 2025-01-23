@@ -170,12 +170,11 @@ def call_reactions_add(icon, ch=None, ts=None):
             name=icon,
             timestamp=ts,
         )
+        logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
     except SlackApiError as err:
         logging.error(err)
         logging.error(vars(g.opt))
         logging.error(vars(g.prm))
-
-    logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
 
 
 def call_reactions_remove(icon, ch=None, ts=None):
@@ -234,3 +233,27 @@ def reactions_status(ch=None, ts=None):
 
     logging.info(f"{ch=}, {ts=}, user={g.bot_id}, {icon=}")
     return (icon)
+
+
+def get_dm_channel_id(user_id):
+    """
+    DMのチャンネルIDを取得する
+
+    Parameters
+    ----------
+    user_id : str
+
+    Returns
+    -------
+    channel_id : str
+    """
+
+    channel_id = None
+
+    try:
+        response = g.app.client.conversations_open(users=[user_id])
+        channel_id = response["channel"]["id"]
+    except SlackApiError as err:
+        logging.error(err)
+
+    return (channel_id)

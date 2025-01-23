@@ -3,6 +3,7 @@ import logging
 from slack_sdk import WebClient
 
 import global_value as g
+import lib.function.slack_api as slack_api
 
 
 class Message_Parser():
@@ -31,57 +32,54 @@ class Message_Parser():
         __tmp_client = self.client
         self.__dict__.clear()
         self.client = __tmp_client
-        self.text = str()
-        self.thread_ts = str()
+        self.text = _body.get("text")
+        self.thread_ts = "0"
         _event = {}
 
-        if "command" in _body:
-            if _body["command"] == g.cfg.setting.slash_command:
-                self.channel_id = _body["user_id"]
-                self.text = _body["text"]
-                self.event_ts = "0"
-        elif "container" in _body:
-            self.channel_id = _body["user"]["id"]
-        else:
-            self.channel_id = _body["event"]["channel"]
+        if _body.get("command") == g.cfg.setting.slash_command:
+            if not self.channel_id:
+                # スラッシュコマンド実行時のレスポンス先
+                if _body.get("channel_name") == "directmessage":
+                    self.channel_id = _body.get("channel_id")
+                else:
+                    self.channel_id = slack_api.get_dm_channel_id(_body.get("user_id"))
 
-            if "subtype" in _body["event"]:
-                match _body["event"]["subtype"]:
-                    case "message_changed":
-                        self.status = "message_changed"
-                        _event = _body["event"]["message"]
-                    case "message_deleted":
-                        self.status = "message_deleted"
-                        _event = _body["event"]["previous_message"]
-                    case "file_share":
-                        self.status = "message_append"
-                        _event = _body["event"]
-                    case _:
-                        logging.info(f"unknown subtype: {_body=}")
-            else:
-                self.status = "message_append"
-                _event = _body["event"]
+        if _body.get("event"):
+            if not self.channel_id:
+                # 呼び出しキーワードのレスポンス先
+                if _body.get("channel_name") != "directmessage":
+                    self.channel_id = _body["event"].get("channel")
+                else:
+                    self.channel_id = slack_api.get_dm_channel_id(_body.get("user_id"))
 
-            for x in _event:
-                match x:
-                    case "user":
-                        self.user_id = _event["user"]
-                    case "ts":
-                        self.event_ts = _event["ts"]
-                    case "thread_ts":
-                        self.thread_ts = _event["thread_ts"]
-                    case "blocks":
-                        try:
-                            if "text" in _event["blocks"][0]["elements"][0]["elements"][0]:
-                                self.text = _event["blocks"][0]["elements"][0]["elements"][0]["text"]
-                            else:  # todo: 解析用出力
-                                logging.info(f"<Not found: text> blocks in: {_event=}")
-                        except Exception:
-                            logging.error(f"<analysis> blocks in: {_event=}")
+            match _body["event"].get("subtype"):
+                case "message_changed":
+                    self.status = "message_changed"
+                    _event = _body["event"]["message"]
+                case "message_deleted":
+                    self.status = "message_deleted"
+                    _event = _body["event"]["previous_message"]
+                case "file_share":
+                    self.status = "message_append"
+                    _event = _body["event"]
+                case None:
+                    self.status = "message_append"
+                    _event = _body["event"]
+                case _:
+                    self.status = "message_append"
+                    _event = _body["event"]
+                    logging.info(f"unknown subtype: {_body=}")
+
+        self.user_id = _event.get("user")
+        self.event_ts = _event.get("ts")
+        self.thread_ts = _event.get("thread_ts", self.thread_ts)
+        self.text = _event.get("text", self.text)
 
         if self.text:
             self.keyword = self.text.split()[0]
             self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
+        else:  # text属性が見つからないときはログに出力
+            logging.error(f"text not found: {_body=}")
 
         self.check_updatable()
 
