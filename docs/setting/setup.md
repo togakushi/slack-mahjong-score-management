@@ -39,10 +39,9 @@ Features -> Event Subscriptions
 - Enable Events (On)
 - Subscribe to bot events
   - [Add Bot User Event]
-    - app_home_opened ※Home Appを使うときのみ
+    - app_home_opened ※Home Appを利用する場合のみ
     - message.channels
-    - reactions:read
-    - reactions:write
+    - message.im ※DMから機能呼び出しキーワードを利用する場合のみ
   - [Save Changes]
 
 必要な権限を追加する。
@@ -52,18 +51,19 @@ Features -> Event Subscriptions
 Features -> OAuth & Permissions
 
 - Bot Token Scopes
-  - commands
-  - channels:history
   - chat:write
   - files:write
   - im:write
+  - reactions:read
+  - reactions:write
 
 足りないものは追加する。
 
 - User Token Scopes
   - search:read
 
-追加する。
+追加する。<br>
+詳細は[権限リスト](../api_list.md)を参照。
 
 ### アプリ設定
 
