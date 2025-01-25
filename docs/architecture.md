@@ -52,6 +52,7 @@ sequenceDiagram
     member-)Slack: Message Deletion(Game Results)
     Slack->>app: Event API
     app->>results db: Data Delete
+    app-)Slack: Reaction remove
     deactivate app
 ```
 
@@ -82,9 +83,15 @@ sequenceDiagram
     alt Game results that exist in Slack log but not in Database records
     app->>results db: Data Insert
     app-)Slack: Reaction add
+    alt failing to agree on a score
+    app-)member: Warning Mentions
+    end
     else Different game results for Slack log and Database records
     app->>results db: Data Update
     app-)Slack: Reaction add
+    alt failing to agree on a score
+    app-)member: Warning Mentions
+    end
     else Game results that exist in Database records but not in Slack log
     app->>results db: Data Delete
     end
