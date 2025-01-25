@@ -20,7 +20,7 @@ slackに投稿された麻雀のスコアを記録、集計するツール。
 北家プレイヤー名 北家素点
 ```
 
-### メンバー成績管理（[詳細](docs/functions/member_management.md)）
+### メンバー管理（[詳細](docs/functions/member_management.md)）
 成績管理をするプレイヤーを登録し、スコアを蓄積する。
 
 ### 成績サマリ出力機能（[詳細](docs/functions/summary.md)）

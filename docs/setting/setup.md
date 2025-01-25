@@ -64,7 +64,7 @@ Features -> OAuth & Permissions
   - search:read
 
 追加する。<br>
-詳細は[権限リスト](../api_list.md)を参照。
+詳細は[権限リスト](api_list.md)を参照。
 
 ### アプリ設定
 

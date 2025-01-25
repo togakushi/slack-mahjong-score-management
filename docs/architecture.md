@@ -29,17 +29,14 @@ sequenceDiagram
     actor member
 
     app->>Slack: Socket Mode
-    activate app
     member-)Slack: Message Modification(Game Results)
     Slack->>app: Event API
     app->>results db: Data Update
-    app-)Slack: Reaction remove
     app->>app: Score Total Check
     app-)Slack: Reaction add
     alt failing to agree on a score
     app-)member: Warning Mentions
     end
-    deactivate app
 ```
 
 ## 成績削除
@@ -84,8 +81,10 @@ sequenceDiagram
 
     alt Game results that exist in Slack log but not in Database records
     app->>results db: Data Insert
+    app-)Slack: Reaction add
     else Different game results for Slack log and Database records
     app->>results db: Data Update
+    app-)Slack: Reaction add
     else Game results that exist in Database records but not in Slack log
     app->>results db: Data Delete
     end
