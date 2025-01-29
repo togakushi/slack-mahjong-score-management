@@ -82,7 +82,6 @@ def data_comparison():
 
         if key in db_data.keys():  # slack -> DB チェック
             db_score = db_data[key]
-
             if not g.cfg.setting.thread_report:  # スレッド内報告が禁止されているパターン
                 if slack_data[key].get("in_thread"):
                     count["delete"] += 1
@@ -93,11 +92,12 @@ def data_comparison():
                     )
                     d.common.db_delete(key)
 
+                    # リアクションの削除
                     if key in slack_data[key].get("reaction_ok"):
                         f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
                     if key in slack_data[key].get("reaction_ng"):
                         f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
-                continue
+                    continue
 
             if slack_score == db_score:  # スコア比較
                 continue
