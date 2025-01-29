@@ -159,6 +159,24 @@ def restricted_channel():
     return (msg)
 
 
+def inside_thread():
+    """
+    スレッド内で結果報告を検出したときのメッセージ
+    """
+
+    msg = f"<@{g.msg.user_id}> スレッド内から成績登録はできません。"
+
+    if g.cfg.config.has_section("custom_message"):
+        key_list = []
+        for i in g.cfg.config["custom_message"]:
+            if i.startswith("inside_thread"):
+                key_list.append(i)
+        if key_list:
+            msg = g.cfg.config["custom_message"][random.choice(key_list)]
+
+    return (msg)
+
+
 def invalid_score(user_id, rpoint_sum, correct_score):
     """
     ゲーム終了時の素点合計が配給原点合計と異なる場合の警告メッセージ

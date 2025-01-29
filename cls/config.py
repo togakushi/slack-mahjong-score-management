@@ -32,6 +32,7 @@ class Config():
         @dataclass
         class setting:
             slash_command: str = self.config["setting"].get("slash_commandname", "/mahjong")
+            thread_report: bool = self.config["setting"].getboolean("thread_report", True)
             guest_mark: str = self.config["setting"].get("guest_mark", "※")
             reaction_ok: str = self.config["setting"].get("reaction_ok", "ok")
             reaction_ng: str = self.config["setting"].get("reaction_ng", "ng")
