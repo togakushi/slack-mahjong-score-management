@@ -145,11 +145,12 @@ def first_record():
     return (ret)
 
 
-def db_insert(detection, ts):
+def db_insert(detection, ts, reactions_data=None):
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
         "rule_version": g.prm.rule_version,
+        "reactions_data": reactions_data,
     }
     param.update(f.score.get_score(detection))
     logging.notice(f"{param=}")
@@ -161,11 +162,12 @@ def db_insert(detection, ts):
     f.score.reactions(param)
 
 
-def db_update(detection, ts):
+def db_update(detection, ts, reactions_data=None):
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
         "rule_version": g.prm.rule_version,
+        "reactions_data": reactions_data,
     }
     param.update(f.score.get_score(detection))
     logging.notice(f"{param=}")
@@ -255,6 +257,12 @@ def remarks_delete(ts):
     if g.msg.status != "message_deleted":
         if g.cfg.setting.reaction_ok in f.slack_api.reactions_status():
             f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=ts)
+
+
+def remarks_delete_compar(para):
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.execute(d.sql_remarks_delete_compar, para)
+        cur.commit()
 
 
 def rule_version():

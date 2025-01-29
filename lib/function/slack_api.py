@@ -14,7 +14,7 @@ def call_chat_postMessage(**kwargs):
     try:
         res = g.app.client.chat_postMessage(**kwargs)
     except SlackApiError as err:
-        logging.error(err)
+        logging.critical(err)
         logging.error(f"{kwargs=}")
         logging.error(f"opt: {vars(g.opt)}")
         logging.error(f"prm: {vars(g.prm)}")
@@ -30,7 +30,7 @@ def call_files_upload(**kwargs):
     try:
         res = g.app.client.files_upload_v2(**kwargs)
     except SlackApiError as err:
-        logging.error(err)
+        logging.critical(err)
         logging.error(f"{kwargs=}")
         logging.error(f"opt: {vars(g.opt)}")
         logging.error(f"prm: {vars(g.prm)}")
@@ -178,10 +178,15 @@ def call_reactions_add(icon, ch=None, ts=None):
         )
         logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
     except SlackApiError as err:
-        logging.error(err)
-        logging.error(f"opt: {vars(g.opt)}")
-        logging.error(f"prm: {vars(g.prm)}")
-        logging.error(f"msg: {vars(g.msg)}")
+        match err.response.get("error"):
+            case "already_reacted":
+                pass
+            case _:
+                logging.critical(err)
+                logging.critical(f"{ts=}, {ch=}, {icon=}")
+                logging.error(f"opt: {vars(g.opt)}")
+                logging.error(f"prm: {vars(g.prm)}")
+                logging.error(f"msg: {vars(g.msg)}")
 
 
 def call_reactions_remove(icon, ch=None, ts=None):
@@ -208,10 +213,15 @@ def call_reactions_remove(icon, ch=None, ts=None):
         )
         logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
     except SlackApiError as err:
-        logging.error(err)
-        logging.error(f"opt: {vars(g.opt)}")
-        logging.error(f"prm: {vars(g.prm)}")
-        logging.error(f"msg: {vars(g.msg)}")
+        match err.response.get("error"):
+            case "no_reaction":
+                pass
+            case _:
+                logging.critical(err)
+                logging.critical(f"{ts=}, {ch=}, {icon=}")
+                logging.error(f"opt: {vars(g.opt)}")
+                logging.error(f"prm: {vars(g.prm)}")
+                logging.error(f"msg: {vars(g.msg)}")
 
 
 def reactions_status(ch=None, ts=None):

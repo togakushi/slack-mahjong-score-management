@@ -19,13 +19,11 @@ if __name__ == "__main__":
         try:
             g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
             g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+            g.bot_id = g.app.client.auth_test()["user_id"]
         except Exception:
             sys.exit()
 
-        count, _, fts = d.comparison.score_comparison()
-        if fts:
-            count["remark"] = d.comparison.remarks_comparison(fts)
-
+        count, _ = d.comparison.data_comparison()
         print(f">>> {count=}")
 
     # エクスポート

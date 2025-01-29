@@ -68,30 +68,22 @@ def pattern(text):
     return (msg)
 
 
-def for_slack(keyword, channel):
+def for_slack():
     """
-    過去ログからキーワードを検索して返す
-
-    Parameters
-    ----------
-    keyword : text
-        検索キーワード
-
-    channel : text
-        チャンネル名
+    過去ログからゲーム結果を検索して返す
 
     Returns
     -------
-    matches : dict
+    data : dict
         検索した結果
     """
 
     # 検索クエリ
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y-%m-%d")
-    query = f"{keyword} in:{channel} after:{after}"
+    query = f"{g.cfg.search.keyword} in:{g.cfg.search.channel} after:{after}"
     logging.info(f"{query=}")
 
-    # --- データ取得
+    # データ取得
     response = g.webclient.search_messages(
         query=query,
         sort="timestamp",
@@ -110,7 +102,57 @@ def for_slack(keyword, channel):
         )
         matches += response["messages"]["matches"]  # 2ページ目以降
 
-    return (matches)
+    # ゲーム結果の抽出
+    data = {}
+    for x in matches:
+        detection = f.search.pattern(x.get("text"))
+        if detection:
+            user_id = x.get("user")
+            if user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
+                logging.info(f"skip ignore user: {user_id}")
+            else:
+                data[x["ts"]] = {
+                    "channel_id": x["channel"].get("id"),
+                    "user_id": user_id,
+                    "score": detection,
+                    "event_ts": [],
+                    "remarks": [],
+                    "in_thread": False,
+                    "reaction_ok": [],
+                    "reaction_ng": [],
+                }
+    if not data:
+        return (None)
+
+    for thread_ts in data.keys():
+        conversations = g.app.client.conversations_replies(
+            channel=data[thread_ts].get("channel_id"),
+            ts=thread_ts,
+        )
+
+        msg = conversations.get("messages")
+        _ok, _ng = reactions_list(msg[0])
+        data[thread_ts]["reaction_ok"] += _ok
+        data[thread_ts]["reaction_ng"] += _ng
+
+        if msg[0].get("ts") == msg[0].get("thread_ts") or msg[0].get("thread_ts") is None:
+            if len(msg) >= 1:  # スレッド内探索
+                for x in msg[1:]:
+                    if re.match(rf"^{g.cfg.cw.remarks_word}", x.get("text")):  # 追加メモ
+                        text = x.get("text").replace(g.cfg.cw.remarks_word, "").strip().split()
+                        event_ts = x.get("ts")
+
+                        _ok, _ng = reactions_list(x)
+                        data[thread_ts]["reaction_ok"] += _ok
+                        data[thread_ts]["reaction_ng"] += _ng
+
+                        for name, matter in zip(text[0::2], text[1::2]):
+                            data[thread_ts]["event_ts"].append(event_ts)
+                            data[thread_ts]["remarks"].append((name, matter))
+        else:
+            data[thread_ts].update(in_thread=True)
+
+    return (data)
 
 
 def for_database(first_ts=False):
@@ -153,36 +195,57 @@ def for_database(first_ts=False):
     return (data)
 
 
-def game_result(data):
+def for_db_remarks(first_ts=False):
     """
-    slackの検索ログからゲームの結果を返す
+    データベースからメモを検索して返す
 
     Parameters
     ----------
-    data : dict
-        slackの検索ログ
+    first_ts: float
+        検索を開始する時刻
 
     Returns
     -------
-    matches : dict
+    data : list
         検索した結果
     """
 
-    result = {}
-    for i in range(len(data)):
-        g.msg.parser_matches(data[i])
-
-        if g.msg.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは集計対象から外す
-            logging.info(f"skip: {data[i]}")
-            continue
-
-        # 結果報告フォーマットに一致しているポストの保存
-        detection = f.search.pattern(g.msg.text)
-        if detection:
-            result[g.msg.event_ts] = data[i]
-            logging.trace(f"{g.msg.event_ts}: {data[i]}")
-
-    if len(result) == 0:
+    if not first_ts:
         return (None)
-    else:
-        return (result)
+
+    # データベースからデータ取得
+    data = []
+    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+        cur.row_factory = sqlite3.Row
+
+        # 記録済みメモ内容
+        rows = cur.execute("select * from remarks where thread_ts>=?", (first_ts,))
+        for row in rows.fetchall():
+            data.append({
+                "thread_ts": row["thread_ts"],
+                "event_ts": row["event_ts"],
+                "name": row["name"],
+                "matter": row["matter"],
+            })
+
+    return (data)
+
+
+def reactions_list(msg):
+    """
+    botが付けたリアクションを取得
+    """
+
+    reaction_ok = []
+    reaction_ng = []
+
+    if msg.get("reactions"):
+        for reactions in msg.get("reactions"):
+            if g.bot_id in reactions.get("users"):
+                match reactions.get("name"):
+                    case g.cfg.setting.reaction_ok:
+                        reaction_ok.append(msg.get("ts"))
+                    case g.cfg.setting.reaction_ng:
+                        reaction_ng.append(msg.get("ts"))
+
+    return (reaction_ok, reaction_ng)

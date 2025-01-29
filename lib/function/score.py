@@ -126,7 +126,10 @@ def reactions(param: dict):
     correct_score = g.prm.origin_point * 4  # 配給原点
     rpoint_sum = param["rpoint_sum"]  # 素点合計
 
-    icon = f.slack_api.reactions_status()
+    if param["reactions_data"]:
+        icon = param["reactions_data"]
+    else:
+        icon = f.slack_api.reactions_status()
 
     if rpoint_sum == correct_score:
         if g.cfg.setting.reaction_ng in icon:
