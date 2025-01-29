@@ -235,18 +235,23 @@ def member_append(argument):
 
         if dbupdate_flg:
             rows = resultdb.execute(
-                """select count() from result
-                    where ? in (p1_name, p2_name, p3_name, p4_name)
-                    or ? in (p1_name, p2_name, p3_name, p4_name)
-                    or ? in (p1_name, p2_name, p3_name, p4_name)
+                """select count() from (
+                        select p1_name as name from result
+                        union all select p2_name from result
+                        union all select p3_name from result
+                        union all select p4_name from result
+                        union all select name from remarks
+                    )
+                    where name in (?, ?, ?)
+                    group by name
                 """, (nic_name, f.common.kata_to_hira(nic_name), f.common.hira_to_kana(nic_name)))
             count = rows.fetchone()[0]
             if count != 0:  # 過去成績更新
                 msg += d.common.db_backup()
-                for col in ("p1_name", "p2_name", "p3_name", "p4_name"):
-                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, nic_name))
-                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.kata_to_hira(nic_name)))
-                    resultdb.execute(f"update result set {col}=? where {col}=?", (new_name, f.common.hira_to_kana(nic_name)))
+                for tbl, col in [("result", f"p{x}_name") for x in range(1, 5)] + [("remarks", "name")]:
+                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, nic_name))
+                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, f.common.kata_to_hira(nic_name)))
+                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, f.common.hira_to_kana(nic_name)))
                 msg += "\nデータベースを更新しました。"
 
     resultdb.commit()
