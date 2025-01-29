@@ -72,17 +72,34 @@ def data_comparison():
     # --- スコア突合
     for key in slack_data.keys():
         slack_score = slack_data[key].get("score")
-        db_score = db_data[key]
         g.msg.channel_id = slack_data[key].get("channel_id")
         g.msg.user_id = slack_data[key].get("user_id")
         g.msg.event_ts = key
 
-        if key in db_data.keys():  # slack -> DB チェック
-            reactions_data = []
-            reactions_data.append(slack_data[key].get("reaction_ok"))
-            reactions_data.append(slack_data[key].get("reaction_ng"))
+        reactions_data = []
+        reactions_data.append(slack_data[key].get("reaction_ok"))
+        reactions_data.append(slack_data[key].get("reaction_ng"))
 
-            if slack_score == db_score:
+        if key in db_data.keys():  # slack -> DB チェック
+            db_score = db_data[key]
+
+            if not g.cfg.setting.thread_report:  # スレッド内報告が禁止されているパターン
+                if slack_data[key].get("in_thread"):
+                    count["delete"] += 1
+                    logging.notice(f"delete: {key}, {slack_score} (In-thread report)")
+                    ret_msg["delete"] += "\t{} {}\n".format(
+                        datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+                        textformat(slack_score)
+                    )
+                    d.common.db_delete(key)
+
+                    if key in slack_data[key].get("reaction_ok"):
+                        f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
+                    if key in slack_data[key].get("reaction_ng"):
+                        f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
+                continue
+
+            if slack_score == db_score:  # スコア比較
                 continue
             else:  # 更新
                 count["mismatch"] += 1
@@ -96,13 +113,16 @@ def data_comparison():
                 d.common.db_update(slack_score, key, reactions_data)
                 continue
         else:  # 追加
-            count["missing"] += 1
-            logging.notice(f"missing: {key}, {slack_score}")
-            ret_msg["missing"] += "\t{} {}\n".format(
-                datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                textformat(slack_score)
-            )
-            d.common.db_insert(slack_score, key, reactions_data)
+            if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
+                pass
+            else:
+                count["missing"] += 1
+                logging.notice(f"missing: {key}, {slack_score}")
+                ret_msg["missing"] += "\t{} {}\n".format(
+                    datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+                    textformat(slack_score)
+                )
+                d.common.db_insert(slack_score, key, reactions_data)
 
     for key in db_data.keys():  # DB -> slack チェック
         if key in slack_data.keys():
@@ -121,6 +141,9 @@ def data_comparison():
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
     for key in slack_data.keys():
+        if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
+            continue
+
         score_data = f.score.get_score(slack_data[key].get("score"))
         reaction_ok = slack_data[key].get("reaction_ok")
         reaction_ng = slack_data[key].get("reaction_ng")
