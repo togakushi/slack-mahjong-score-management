@@ -79,8 +79,6 @@ def for_slack():
         検索した結果
     """
 
-    g.opt.unregistered_replace = False  # ゲスト無効
-
     # 検索クエリ
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y-%m-%d")
     query = f"{g.cfg.search.keyword} in:{g.cfg.search.channel} after:{after}"
@@ -114,6 +112,8 @@ def for_slack():
         else:
             detection = f.search.pattern(x.get("text"))
             if detection:
+                # 名前ブレを修正
+                g.opt.unregistered_replace = False  # ゲスト無効
                 for i in range(0, 8, 2):
                     detection[i] = c.member.name_replace(detection[i], False)
 
@@ -127,8 +127,11 @@ def for_slack():
                     "reaction_ok": [],
                     "reaction_ng": [],
                 }
+                logging.trace(f"slack data: {x['ts']} : {data[x['ts']]}")
+
+    # 検索データが無い場合は空の辞書を返して後続の処理をスキップ
     if not data:
-        return (None)
+        return (data)
 
     for thread_ts in data.keys():
         conversations = g.app.client.conversations_replies(
@@ -137,9 +140,9 @@ def for_slack():
         )
 
         msg = conversations.get("messages")
-        _ok, _ng = reactions_list(msg[0])
-        data[thread_ts]["reaction_ok"] += _ok
-        data[thread_ts]["reaction_ng"] += _ng
+        reaction_ok, reaction_ng = reactions_list(msg[0])
+        data[thread_ts]["reaction_ok"].extend(reaction_ok)
+        data[thread_ts]["reaction_ng"].extend(reaction_ng)
 
         if msg[0].get("ts") == msg[0].get("thread_ts") or msg[0].get("thread_ts") is None:
             if len(msg) >= 1:  # スレッド内探索

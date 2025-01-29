@@ -57,15 +57,20 @@ def data_comparison():
     count = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0, "remark": 0}
     ret_msg = {"mismatch": "", "missing": "", "delete": "", "invalid_score": "", "remark": ""}
 
+    logging.info(f"thread_report: {g.cfg.setting.thread_report}")
+
     # slackログからゲーム結果を取得
     slack_data = f.search.for_slack()
     if slack_data:
+        logging.info(f"{slack_data=}")
         # データベースからゲーム結果を取得
         db_data = f.search.for_database(min(slack_data))
-        if db_data is None:
-            return (count, ret_msg)
-        else:
+        if db_data:
             db_remarks = f.search.for_db_remarks(min(slack_data))
+            logging.info(f"{db_data=}")
+            logging.info(f"{db_remarks=}")
+        else:
+            return (count, ret_msg)
     else:
         return (count, ret_msg)
 
@@ -150,6 +155,7 @@ def data_comparison():
 
         if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
+            logging.notice(f"invalid score: {key} deposit={score_data['deposit']}")
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 score_data["deposit"], textformat(slack_data[key].get("score"))
@@ -181,13 +187,17 @@ def data_comparison():
                 slack_remarks.append(chk)
 
                 if chk in db_remarks:
-                    logging.info(f"[pass] {chk}, {in_name=}")
+                    if in_name:
+                        logging.info(f"remark pass: {chk}, {in_name=}")
+                    else:
+                        count["remark"] += 1
+                        d.common.remarks_delete_compar(chk)
+                        logging.notice(f"remark delete(name mismatch): {chk}")
                 else:
-                    logging.info(f"[missing] {chk}, {in_name=}")
                     if in_name:
                         count["remark"] += 1
                         d.common.remarks_append((chk,))
-                        logging.info(f"insert: {chk}")
+                        logging.notice(f"remark insert(data missing): {chk}")
 
     if db_remarks:
         for x in db_remarks:
@@ -196,7 +206,7 @@ def data_comparison():
             else:
                 count["remark"] += 1
                 d.common.remarks_delete_compar(x)
-                logging.info(f"delete: {x}")
+                logging.notice(f"remark delete(missed deletion): {x}")
 
     return (count, ret_msg)
 
