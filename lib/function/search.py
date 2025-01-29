@@ -8,6 +8,7 @@ import regex_spm
 from dateutil.relativedelta import relativedelta
 
 import global_value as g
+from lib import command as c
 from lib import function as f
 
 
@@ -78,6 +79,8 @@ def for_slack():
         検索した結果
     """
 
+    g.opt.unregistered_replace = False  # ゲスト無効
+
     # 検索クエリ
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y-%m-%d")
     query = f"{g.cfg.search.keyword} in:{g.cfg.search.channel} after:{after}"
@@ -105,12 +108,15 @@ def for_slack():
     # ゲーム結果の抽出
     data = {}
     for x in matches:
-        detection = f.search.pattern(x.get("text"))
-        if detection:
-            user_id = x.get("user")
-            if user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
-                logging.info(f"skip ignore user: {user_id}")
-            else:
+        user_id = x.get("user")
+        if user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
+            logging.info(f"skip ignore user: {user_id}")
+        else:
+            detection = f.search.pattern(x.get("text"))
+            if detection:
+                for i in range(0, 8, 2):
+                    detection[i] = c.member.name_replace(detection[i], False)
+
                 data[x["ts"]] = {
                     "channel_id": x["channel"].get("id"),
                     "user_id": user_id,

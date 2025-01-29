@@ -8,6 +8,7 @@ from slack_bolt import App
 from slack_sdk import WebClient
 
 import global_value as g
+from lib import command as c
 from lib import database as d
 from lib.function import configuration
 
@@ -20,6 +21,7 @@ if __name__ == "__main__":
             g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
             g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
             g.bot_id = g.app.client.auth_test()["user_id"]
+            c.member.read_memberslist()
         except Exception:
             sys.exit()
 
