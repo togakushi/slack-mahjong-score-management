@@ -2,6 +2,7 @@
 ## セットアップ
 - [セットアップ方法](setting/setup.md)
 - [要求権限一覧](setting/api_list.md)
+- [設定ファイル内容説明](setting/customize.md)
 
 ## 機能
 - [スコア記録](functions/score_record.md)
