@@ -90,7 +90,7 @@ def handle_search_action(ack, body, client):
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.no_hits()
+    msg1 = f.message.reply(message="no_hits")
 
     msg1, msg2 = c.results.ranking.aggregation()
     if msg2:

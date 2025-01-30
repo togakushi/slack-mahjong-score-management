@@ -38,7 +38,7 @@ def aggregation():
     game_info = d.aggregate.game_info()
 
     if game_info["game_count"] == 0:  # 結果が0件のとき
-        return (f.message.no_hits(), None)
+        return (f.message.reply(message="no_hits"), None)
 
     if g.opt.stipulated == 0:  # 規定打数が指定されない場合はレートから計算
         g.opt.stipulated = (

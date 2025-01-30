@@ -34,7 +34,7 @@ def plot():
     df_ratings = d.aggregate.calculation_rating()
 
     if df_ratings.empty:
-        return (0, f.message.no_hits())
+        return (0, f.message.reply(message="no_hits"))
 
     # 足切り
     if g.opt.stipulated == 0:  # 規定打数が指定されない場合はレートから計算

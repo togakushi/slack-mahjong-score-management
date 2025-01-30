@@ -1,3 +1,4 @@
+import logging
 import random
 import re
 import textwrap
@@ -123,100 +124,65 @@ def help_message():
     return (msg.strip())
 
 
-def invalid_argument():
+def reply(message=None, mention=False, rpoint_sum=0):
     """
-    引数解析失敗時のメッセージ
-    """
+    メッセージをランダムに返す
 
-    msg = "使い方が間違っています。"
+    Parameters
+    ----------
+    message : str
+        選択するメッセージ
 
-    if g.cfg.config.has_section("custom_message"):
-        key_list = []
-        for i in g.cfg.config["custom_message"]:
-            if i.startswith("invalid_argument"):
-                key_list.append(i)
-        if key_list:
-            msg = g.cfg.config["custom_message"][random.choice(key_list)]
+    mention : bool
+        メンションにする
 
-    return (msg)
+    rpoint_sum : int
+        素点合計(1/100)
 
-
-def restricted_channel():
-    """
-    制限チャンネルでキーワードを検出したときのメッセージ
+    Returns
+    -------
+    msg : str
+        メッセージ
     """
 
-    msg = "この投稿はデータベースに反映されません。"
-
-    if g.cfg.config.has_section("custom_message"):
-        key_list = []
-        for i in g.cfg.config["custom_message"]:
-            if i.startswith("restricted_channel"):
-                key_list.append(i)
-        if key_list:
-            msg = g.cfg.config["custom_message"][random.choice(key_list)]
-
-    return (msg)
-
-
-def inside_thread():
-    """
-    スレッド内で結果報告を検出したときのメッセージ
-    """
-
-    msg = f"<@{g.msg.user_id}> スレッド内から成績登録はできません。"
-
-    if g.cfg.config.has_section("custom_message"):
-        key_list = []
-        for i in g.cfg.config["custom_message"]:
-            if i.startswith("inside_thread"):
-                key_list.append(i)
-        if key_list:
-            msg = g.cfg.config["custom_message"][random.choice(key_list)]
-
-    return (msg)
-
-
-def invalid_score(user_id, rpoint_sum, correct_score):
-    """
-    ゲーム終了時の素点合計が配給原点合計と異なる場合の警告メッセージ
-    """
-
+    correct_score = g.prm.origin_point * 4  # 配給原点
     rpoint_diff = abs(correct_score - rpoint_sum)
-    msg = f"素点合計： {rpoint_sum}\n点数差分： {rpoint_diff}"
+
+    default_message = {
+        "invalid_argument": "使い方が間違っています。",
+        "no_hits": "{start} ～ {end} に≪{keyword}≫はありません。",
+        "invalid_score": "素点合計： {rpoint_sum}\n点数差分： {rpoint_diff}",
+        "restricted_channel": "この投稿はデータベースに反映されません。",
+        "inside_thread": "スレッド内から成績登録はできません。",
+    }
+
+    msg = default_message.get(message, "")
 
     if g.cfg.config.has_section("custom_message"):
         key_list = []
         for i in g.cfg.config["custom_message"]:
-            if i.startswith("invalid_score"):
+            if i.startswith(message):
                 key_list.append(i)
         if key_list:
             msg = g.cfg.config["custom_message"][random.choice(key_list)]
 
-    return (f"<@{user_id}> " + msg.format(
-        rpoint_diff=rpoint_diff * 100,
-        rpoint_sum=rpoint_sum * 100,
-    ))
+    if mention:
+        msg = "<@{user_id}> " + msg
 
+    try:
+        msg = msg.format(
+            user_id=g.msg.user_id,
+            keyword=g.cfg.search.keyword,
+            start=g.prm.starttime_hm,
+            end=g.prm.endtime_hm,
+            rpoint_diff=rpoint_diff * 100,
+            rpoint_sum=rpoint_sum * 100,
+        )
+    except Exception as err:
+        logging.error(f"{err}: {msg}")
+        msg = msg.replace("{user_id}", g.msg.user_id)
 
-def no_hits():
-    """
-    指定範囲に記録用キーワードが見つからなかった場合のメッセージ
-    """
-
-    start = g.prm.starttime_hm
-    end = g.prm.endtime_hm
-    msg = f"{start} ～ {end} に≪{g.cfg.search.keyword}≫はありません。"
-
-    if g.cfg.config.has_section("custom_message"):
-        key_list = []
-        for i in g.cfg.config["custom_message"]:
-            if i.startswith("no_hits"):
-                key_list.append(i)
-        if key_list:
-            msg = g.cfg.config["custom_message"][random.choice(key_list)]
-
-    return (msg.format(keyword=g.cfg.search.keyword, start=start, end=end))
+    return (msg)
 
 
 def remarks(headword=False):
@@ -273,7 +239,7 @@ def header(game_info, add_text="", indent=1):
 
     # ゲーム数
     if game_info["game_count"] == 0:
-        msg += f"{f.message.no_hits()}"
+        msg += f"{f.message.reply(message='no_hits')}"
     else:
         match g.opt.command:
             case "results":

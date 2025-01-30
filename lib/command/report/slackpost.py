@@ -16,19 +16,19 @@ def main():
         if pdf_file:
             f.slack_api.post_fileupload(f"成績レポート({name})", pdf_file)
         else:
-            f.slack_api.post_message(f.message.invalid_argument())
+            f.slack_api.post_message(f.message.reply(message="invalid_argument"))
     elif g.opt.order:
         report_file_path = winner.plot()
         if report_file_path:
             f.slack_api.post_fileupload("成績上位者", report_file_path)
         else:
-            f.slack_api.post_message(f.message.no_hits())
+            f.slack_api.post_message(f.message.reply(message="no_hits"))
     elif g.opt.statistics:
         report_file_path = monthly.plot()
         if report_file_path:
             f.slack_api.post_fileupload("月別ゲーム統計", report_file_path)
         else:
-            f.slack_api.post_message(f.message.no_hits())
+            f.slack_api.post_message(f.message.reply(message="no_hits"))
     elif g.opt.versus_matrix or len(g.prm.player_list) >= 2:  # 対局対戦マトリックス
         msg, file_list = matrix.plot()
         if g.args.testcase:
@@ -36,7 +36,7 @@ def main():
         else:
             f.slack_api.slack_post(
                 headline=msg,
-                message=f.message.no_hits(),
+                message=f.message.reply(message="no_hits"),
                 file_list=file_list,
             )
     else:
@@ -44,4 +44,4 @@ def main():
         if report_file_path:
             f.slack_api.post_fileupload("成績一覧", report_file_path)
         else:
-            f.slack_api.post_message(f.message.no_hits())
+            f.slack_api.post_message(f.message.reply(message="no_hits"))

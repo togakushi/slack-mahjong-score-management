@@ -36,7 +36,7 @@ def plot():
     player = c.member.name_replace(g.prm.player_name, add_mark=True)
 
     if df.empty:
-        return (0, f.message.no_hits())
+        return (0, f.message.reply(message="no_hits"))
 
     # 最終値（凡例追加用）
     point_sum = "{:+.1f}".format(
@@ -146,7 +146,7 @@ def statistics_plot():
     df = d.aggregate.game_details()
 
     if df.empty:
-        return (0, f.message.no_hits())
+        return (0, f.message.reply(message="no_hits"))
 
     df = df.filter(items=["playtime", "name", "rpoint", "rank", "point"])
     df["rpoint"] = df["rpoint"] * 100

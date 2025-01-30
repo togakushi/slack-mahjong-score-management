@@ -33,7 +33,7 @@ def point_plot():
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        return (len(target_data), f.message.no_hits())
+        return (len(target_data), f.message.reply(message="no_hits"))
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
@@ -134,7 +134,7 @@ def rank_plot():
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        return (len(target_data), f.message.no_hits())
+        return (len(target_data), f.message.reply(message="no_hits"))
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
