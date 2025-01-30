@@ -78,7 +78,7 @@ def handle_message_events(client, body):
                     case "message_append":
                         if detection:
                             if g.msg.updatable:
-                                if float(g.msg.thread_ts) and not g.cfg.setting.thread_report:
+                                if g.cfg.setting.thread_report == g.msg.in_thread or not g.msg.in_thread:
                                     f.slack_api.post_message(f.message.inside_thread(), g.msg.event_ts)
                                 else:
                                     d.common.db_insert(detection, g.msg.event_ts)
@@ -87,7 +87,7 @@ def handle_message_events(client, body):
                     case "message_changed":
                         if detection:
                             if g.msg.updatable:
-                                if float(g.msg.thread_ts) and not g.cfg.setting.thread_report:
+                                if g.cfg.setting.thread_report == g.msg.in_thread or not g.msg.in_thread:
                                     f.slack_api.post_message(f.message.inside_thread(), g.msg.event_ts)
                                 else:
                                     if d.common.exsist_record(g.msg.event_ts):
