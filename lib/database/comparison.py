@@ -118,7 +118,7 @@ def data_comparison():
                 continue
         else:  # 追加
             if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
-                pass
+                continue
             else:
                 count["missing"] += 1
                 logging.notice(f"missing: {key}, {slack_score}")
@@ -201,7 +201,7 @@ def data_comparison():
     if db_remarks:
         for x in db_remarks:
             if x in slack_remarks:
-                pass
+                continue
             else:
                 count["remark"] += 1
                 d.common.remarks_delete_compar(x)
