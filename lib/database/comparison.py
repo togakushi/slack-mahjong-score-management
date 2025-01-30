@@ -57,22 +57,21 @@ def data_comparison():
     count = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0, "remark": 0}
     ret_msg = {"mismatch": "", "missing": "", "delete": "", "invalid_score": "", "remark": ""}
 
-    logging.info(f"thread_report: {g.cfg.setting.thread_report}")
-
     # slackログからゲーム結果を取得
     slack_data = f.search.for_slack()
     if slack_data:
-        logging.info(f"{slack_data=}")
-        # データベースからゲーム結果を取得
-        db_data = f.search.for_database(min(slack_data))
-        if db_data:
-            db_remarks = f.search.for_db_remarks(min(slack_data))
-            logging.info(f"{db_data=}")
-            logging.info(f"{db_remarks=}")
-        else:
-            return (count, ret_msg)
+        first_ts = min(slack_data)
     else:
-        return (count, ret_msg)
+        first_ts = (datetime.now() - relativedelta(days=g.cfg.search.after)).timestamp()
+
+    # データベースからゲーム結果を取得
+    db_data = f.search.for_database(first_ts)
+    db_remarks = f.search.for_db_remarks(first_ts)
+
+    logging.info(f"thread_report: {g.cfg.setting.thread_report}")
+    logging.info(f"{slack_data=}")
+    logging.info(f"{db_data=}")
+    logging.info(f"{db_remarks=}")
 
     # --- スコア突合
     for key in slack_data.keys():
