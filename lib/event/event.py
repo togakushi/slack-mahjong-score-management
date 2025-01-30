@@ -76,7 +76,6 @@ def handle_message_events(client, body):
                 detection = f.search.pattern(g.msg.text)
                 match g.msg.status:
                     case "message_append":
-                        print(f">>> {g.cfg.setting.thread_report=} {g.msg.in_thread=} {g.msg.thread_ts=}")
                         if detection:
                             if g.msg.updatable:
                                 if g.cfg.setting.thread_report == g.msg.in_thread or g.msg.thread_ts == "0":
