@@ -16,13 +16,15 @@ class Config():
             self.config.read(filename, encoding="utf-8")
             logging.notice(f"{filename=}")
             logging.info(f"read sections: {self.config.sections()}")
-        except Exception:
-            sys.exit("config read error.")
+        except Exception as err:
+            logging.critical(f"config read error: {err}")
+            sys.exit(255)
 
         # 必須セクションチェック
         for x in ("mahjong", "setting"):
             if x not in self.config.sections():
-                sys.exit()
+                logging.critical(f"Required section not found. ({x})")
+                sys.exit(255)
 
         # オプションセクションチェック
         for x in ("results", "graph", "ranking", "report", "member", "alias", "team", "database", "comment", "regulations", "help"):

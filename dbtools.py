@@ -22,8 +22,8 @@ if __name__ == "__main__":
             g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
             g.bot_id = g.app.client.auth_test()["user_id"]
             c.member.read_memberslist()
-        except Exception:
-            sys.exit()
+        except Exception as err:
+            sys.exit(err)
 
         count, _ = d.comparison.data_comparison()
         print(f">>> {count=}")
