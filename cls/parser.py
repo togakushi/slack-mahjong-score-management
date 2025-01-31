@@ -105,29 +105,6 @@ class Message_Parser():
 
         self.check_updatable()
 
-    def parser_matches(self, _body: dict):
-        """
-        検索結果のログをパース
-        """
-
-        logging.trace(_body)
-
-        __tmp_client = self.client
-        self.__dict__.clear()
-        self.client = __tmp_client
-        self.channel_id = _body["channel"]["id"]
-        self.user_id = _body["user"]
-        self.text = _body["text"]
-        self.event_ts = _body["ts"]
-        self.thread_ts = None
-
-        if "permalink" in _body:
-            permalink = _body["permalink"]
-            if permalink.split("?thread_ts=")[1:]:
-                self.thread_ts = permalink.split("?thread_ts=")[1:][0]
-
-        self.check_updatable()
-
     def check_updatable(self):
         """
         DB更新可能チャンネルのポストかチェック
