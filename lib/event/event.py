@@ -69,7 +69,7 @@ def handle_message_events(client, body):
             f.slack_api.post_text(g.msg.event_ts, title, msg)
 
         case _:
-            if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword) and float(g.msg.thread_ts):  # 追加メモ
+            if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword) and g.msg.in_thread:  # 追加メモ
                 if d.common.exsist_record(g.msg.thread_ts) and g.msg.updatable:
                     f.score.check_remarks()
             else:  # 結果報告フォーマットに一致したポストの処理
@@ -78,7 +78,7 @@ def handle_message_events(client, body):
                     case "message_append":
                         if detection:
                             if g.msg.updatable:
-                                if g.cfg.setting.thread_report == g.msg.in_thread or not float(g.msg.thread_ts):
+                                if g.cfg.setting.thread_report == g.msg.in_thread:
                                     d.common.db_insert(detection, g.msg.event_ts)
                                 else:
                                     f.slack_api.post_message(f.message.reply(message="inside_thread", mention=True), g.msg.event_ts)
@@ -87,10 +87,13 @@ def handle_message_events(client, body):
                     case "message_changed":
                         if detection:
                             if g.msg.updatable:
-                                if d.common.exsist_record(g.msg.event_ts):
-                                    d.common.db_update(detection, g.msg.event_ts)
+                                if g.cfg.setting.thread_report == g.msg.in_thread:
+                                    if d.common.exsist_record(g.msg.event_ts):
+                                        d.common.db_update(detection, g.msg.event_ts)
+                                    else:
+                                        d.common.db_insert(detection, g.msg.event_ts)
                                 else:
-                                    d.common.db_insert(detection, g.msg.event_ts)
+                                    f.slack_api.post_message(f.message.reply(message="inside_thread", mention=True), g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.reply(message="restricted_channel", mention=True), g.msg.event_ts)
                         else:
