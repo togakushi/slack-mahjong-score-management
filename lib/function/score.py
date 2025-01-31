@@ -143,7 +143,7 @@ def reactions(param: dict):
             f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
 
         f.slack_api.post_message(
-            f.message.reply(message="invalid_score", mention=True, rpoint_sum=rpoint_sum),
+            f.message.reply(message="invalid_score", rpoint_sum=rpoint_sum),
             g.msg.event_ts,
         )
 

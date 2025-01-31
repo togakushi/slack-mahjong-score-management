@@ -124,7 +124,7 @@ def help_message():
     return (msg.strip())
 
 
-def reply(message=None, mention=False, rpoint_sum=0):
+def reply(message=None, rpoint_sum=0):
     """
     メッセージをランダムに返す
 
@@ -132,9 +132,6 @@ def reply(message=None, mention=False, rpoint_sum=0):
     ----------
     message : str
         選択するメッセージ
-
-    mention : bool
-        メンションにする
 
     rpoint_sum : int
         素点合計(1/100)
@@ -152,8 +149,8 @@ def reply(message=None, mention=False, rpoint_sum=0):
         "invalid_argument": "使い方が間違っています。",
         "no_hits": "{start} ～ {end} に≪{keyword}≫はありません。",
         "invalid_score": "素点合計： {rpoint_sum}\n点数差分： {rpoint_diff}",
-        "restricted_channel": "この投稿はデータベースに反映されません。",
-        "inside_thread": "スレッド内から成績登録はできません。",
+        "restricted_channel": "<@{user_id}> この投稿はデータベースに反映されません。",
+        "inside_thread": "<@{user_id}> スレッド内から成績登録はできません。",
     }
 
     msg = default_message.get(message, "")
@@ -166,9 +163,6 @@ def reply(message=None, mention=False, rpoint_sum=0):
         if key_list:
             msg = g.cfg.config["custom_message"][random.choice(key_list)]
 
-    if mention:
-        msg = "<@{user_id}> " + msg
-
     try:
         msg = msg.format(
             user_id=g.msg.user_id,
@@ -179,7 +173,7 @@ def reply(message=None, mention=False, rpoint_sum=0):
             rpoint_sum=rpoint_sum * 100,
         )
     except Exception as err:
-        logging.error(f"{err}: {msg}")
+        logging.error(f"[unknown keywords] {err}: {msg}")
         msg = msg.replace("{user_id}", g.msg.user_id)
 
     return (msg)

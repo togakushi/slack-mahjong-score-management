@@ -81,9 +81,9 @@ def handle_message_events(client, body):
                                 if g.cfg.setting.thread_report == g.msg.in_thread:
                                     d.common.db_insert(detection, g.msg.event_ts)
                                 else:
-                                    f.slack_api.post_message(f.message.reply(message="inside_thread", mention=True), g.msg.event_ts)
+                                    f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
                             else:
-                                f.slack_api.post_message(f.message.reply(message="restricted_channel", mention=True), g.msg.event_ts)
+                                f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
                     case "message_changed":
                         if detection:
                             if g.msg.updatable:
@@ -93,9 +93,9 @@ def handle_message_events(client, body):
                                     else:
                                         d.common.db_insert(detection, g.msg.event_ts)
                                 else:
-                                    f.slack_api.post_message(f.message.reply(message="inside_thread", mention=True), g.msg.event_ts)
+                                    f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
                             else:
-                                f.slack_api.post_message(f.message.reply(message="restricted_channel", mention=True), g.msg.event_ts)
+                                f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
                         else:
                             if d.common.exsist_record(g.msg.event_ts):
                                 d.common.db_delete(g.msg.event_ts)
