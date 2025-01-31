@@ -78,7 +78,7 @@ def handle_message_events(client, body):
                     case "message_append":
                         if detection:
                             if g.msg.updatable:
-                                if g.cfg.setting.thread_report == g.msg.in_thread or g.msg.thread_ts == "0":
+                                if g.cfg.setting.thread_report == g.msg.in_thread or not float(g.msg.thread_ts):
                                     d.common.db_insert(detection, g.msg.event_ts)
                                 else:
                                     f.slack_api.post_message(f.message.reply(message="inside_thread", mention=True), g.msg.event_ts)
@@ -87,13 +87,10 @@ def handle_message_events(client, body):
                     case "message_changed":
                         if detection:
                             if g.msg.updatable:
-                                if g.cfg.setting.thread_report == g.msg.in_thread or g.msg.thread_ts == "0":
-                                    if d.common.exsist_record(g.msg.event_ts):
-                                        d.common.db_update(detection, g.msg.event_ts)
-                                    else:
-                                        d.common.db_insert(detection, g.msg.event_ts)
+                                if d.common.exsist_record(g.msg.event_ts):
+                                    d.common.db_update(detection, g.msg.event_ts)
                                 else:
-                                    f.slack_api.post_message(f.message.reply(message="inside_thread", mention=True), g.msg.event_ts)
+                                    d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.reply(message="restricted_channel", mention=True), g.msg.event_ts)
                         else:

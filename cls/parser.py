@@ -79,7 +79,7 @@ class Message_Parser():
         self.event_ts = _event.get("ts", self.event_ts)
         self.thread_ts = _event.get("thread_ts", self.thread_ts)
         self.text = _event.get("text", self.text)
-        self.in_thread = True if self.event_ts != self.thread_ts or self.thread_ts == "0" else False
+        self.in_thread = True if self.event_ts != self.thread_ts else False
 
         if _body.get("command") == g.cfg.setting.slash_command:
             if _body.get("channel_name") == "directmessage":
