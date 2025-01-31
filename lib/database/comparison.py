@@ -68,10 +68,10 @@ def data_comparison():
     db_data = f.search.for_database(first_ts)
     db_remarks = f.search.for_db_remarks(first_ts)
 
-    logging.info(f"thread_report: {g.cfg.setting.thread_report}")
-    logging.info(f"{slack_data=}")
-    logging.info(f"{db_data=}")
-    logging.info(f"{db_remarks=}")
+    logging.trace(f"thread_report: {g.cfg.setting.thread_report}")
+    logging.trace(f"{slack_data=}")
+    logging.trace(f"{db_data=}")
+    logging.trace(f"{db_remarks=}")
 
     # --- スコア突合
     for key in slack_data.keys():
@@ -104,12 +104,13 @@ def data_comparison():
                     continue
 
             if slack_score == db_score:  # スコア比較
+                logging.info(f"score check pass: {key} {textformat(db_score)}")
                 continue
             else:  # 更新
                 count["mismatch"] += 1
                 logging.notice(f"mismatch: {key}")
-                logging.info(f"   * [slack]: {slack_score}")
-                logging.info(f"   * [   db]: {db_score}")
+                logging.info(f"  *  slack: {textformat(db_score)}")
+                logging.info(f"  *     db: {textformat(slack_score)}")
                 ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                     textformat(db_score), textformat(slack_score),
@@ -173,50 +174,53 @@ def data_comparison():
     slack_remarks = []
     for key in slack_data.keys():
         remarks = slack_data[key].get("remarks")
-        if remarks:
-            event_ts = slack_data[key].get("event_ts")
-            for idx, (name, matter) in enumerate(remarks):
-                in_name = True if name in slack_data[key].get("score") else False
-                chk = {
-                    "thread_ts": key,
-                    "event_ts": event_ts[idx],
-                    "name": name,
-                    "matter": matter,
-                }
-                slack_remarks.append(chk)
+        event_ts = slack_data[key].get("event_ts")
+        for idx, (name, matter) in enumerate(remarks):
+            in_name = True if name in slack_data[key].get("score") else False
+            chk = {
+                "thread_ts": key,
+                "event_ts": event_ts[idx],
+                "name": name,
+                "matter": matter,
+            }
+            slack_remarks.append(chk)
 
-                if chk in db_remarks:
-                    if in_name:
-                        logging.info(f"remark pass: {chk}, {in_name=}")
-                    else:
-                        count["remark"] += 1
-                        d.common.remarks_delete_compar(chk)
-                        logging.notice(f"remark delete(name mismatch): {chk}")
+            if chk in db_remarks:  # slack -> DB チェック
+                if in_name:
+                    logging.info(f"remark pass: {chk}, {in_name=}")
                 else:
-                    if in_name:
-                        count["remark"] += 1
-                        d.common.remarks_append((chk,))
-                        logging.notice(f"remark insert(data missing): {chk}")
-
-    if db_remarks:
-        for x in db_remarks:
-            if x in slack_remarks:
-                continue
+                    count["remark"] += 1
+                    d.common.remarks_delete_compar(chk)
+                    logging.notice(f"remark delete(name mismatch): {chk}")
             else:
-                count["remark"] += 1
-                d.common.remarks_delete_compar(x)
-                logging.notice(f"remark delete(missed deletion): {x}")
+                if in_name:
+                    count["remark"] += 1
+                    d.common.remarks_append((chk,))
+                    logging.notice(f"remark insert(data missing): {chk}")
+
+    for key in db_remarks:
+        if key in slack_remarks:  # DB -> slack チェック
+            continue
+        else:
+            count["remark"] += 1
+            d.common.remarks_delete_compar(key)
+            logging.notice(f"remark delete(missed deletion): {key}")
 
     return (count, ret_msg)
 
 
 def textformat(text):
     """
-    メッセージを整形する
+    メンバーと素点を整形する
     """
 
     ret = ""
     for i in range(0, 8, 2):
         ret += f"[{text[i]} {str(text[i + 1])}]"
-    ret += f"[{text[8]}]"
+
+    if text[8]:  # ゲームコメントの有無
+        ret += f"[{text[8]}]"
+    else:
+        ret += "[]"
+
     return (ret)

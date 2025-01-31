@@ -85,7 +85,7 @@ def calculation_point(score_df):
     for x in score_df.itertuples():
         score_df.at[x.Index, x.point] = (x.rpoint - g.prm.return_point) / 10 + rank_point[x.position - 1]
 
-    logging.info(f"{rank_point=}")
+    logging.trace(f"{rank_point=}")
     return (score_df)
 
 
