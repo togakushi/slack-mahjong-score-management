@@ -149,12 +149,12 @@ def aggregation():
         case "csv":
             file_list = {
                 "集計結果": f.common.save_output(df_summary, "csv", "summary.csv", headline),
-                "役満和了": f.common.save_output(df_grandslam, "csv", "grandslam.csv", headline),
+                "役満和了": f.common.save_output(df_grandslam, "csv", "yakuman.csv", headline),
             }
         case "text" | "txt":
             file_list = {
                 "集計結果": f.common.save_output(df_summary, "txt", "summary.txt", headline),
-                "役満和了": f.common.save_output(df_grandslam, "txt", "grandslam.txt", headline),
+                "役満和了": f.common.save_output(df_grandslam, "txt", "yakuman.txt", headline),
             }
         case _:
             file_list = {}
