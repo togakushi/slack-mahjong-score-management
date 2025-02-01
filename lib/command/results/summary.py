@@ -135,7 +135,15 @@ def aggregation():
 
     # --- ファイル出力
     df_summary = df_summary.filter(items=filter_list)
-    df_grandslam = df_grandslam.filter(items=["日時", "和了役", "和了者"])
+    df_grandslam = df_grandslam.filter(
+        items=["playtime", "grandslam", "name"]
+    ).rename(
+        columns={
+            "playtime": "日時",
+            "grandslam": "和了役",
+            "name": "和了者",
+        }
+    )
 
     match g.opt.format.lower():
         case "csv":
