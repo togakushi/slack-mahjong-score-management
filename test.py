@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import configparser
 import random
+import re
 from pprint import pprint
 
 import global_value as g
@@ -100,12 +101,13 @@ for sec in test_conf.sections():
 
     for pattern, argument in test_conf[sec].items():
         match pattern:
-            case "case":
+            case s if re.match(r"^case", s):
                 test_case = argument
                 continue
             case "target_player":
                 for x in range(int(argument)):
-                    target_player.extend(random.choice(list(set(g.member_list.values()))))
+                    target_player.append(random.choice(list(set(g.member_list.values()))))
+                pprint(target_player)
                 continue
             case "all_player":
                 all_player = True
