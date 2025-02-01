@@ -216,7 +216,7 @@ def floatfmt_adjust(df):
     return (fmt)
 
 
-def save_output(df, format, filename):
+def save_output(df, format, filename, headline):
     """
     指定されたフォーマットでdfを保存する
 
@@ -230,6 +230,9 @@ def save_output(df, format, filename):
 
     filename : str
         保存ファイル名
+
+    headline : text
+        集計情報（ヘッダコメント）
 
     Returns
     -------
@@ -247,6 +250,11 @@ def save_output(df, format, filename):
     # 保存
     save_file = os.path.join(g.cfg.setting.work_dir, filename)
     with open(save_file, "w") as writefile:
+        # ヘッダ書き込み
+        for line in headline.splitlines():
+            writefile.writelines(f"# {line}\n")
+        writefile.writelines("\n")
+
         writefile.writelines(data)
 
     return (save_file)
