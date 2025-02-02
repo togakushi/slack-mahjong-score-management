@@ -93,7 +93,7 @@ class SearchRange():
             days = []
             for v in self.words[x]:
                 days.append(v.strftime("%Y/%m/%d"))
-            ret.append(f"{x}： {' ～ '.join(days)}")
+            ret.append(f"{x}：{' ～ '.join(days)}")
 
         return ("\n".join(ret))
 

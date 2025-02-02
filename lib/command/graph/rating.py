@@ -77,7 +77,7 @@ def plot():
     legend_text = []
     count = 1
     for name, rate in df_sorted.iloc[-1].items():
-        legend_text.append(f"{count:2d}位： {name} （{rate:.1f}）")
+        legend_text.append(f"{count:2d}位：{name} （{rate:.1f}）")
         count += 1
 
     # ---

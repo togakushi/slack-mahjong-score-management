@@ -125,7 +125,7 @@ def graph_generation(game_info, df, title):
 
     # 追加テキスト
     remark_text = f.message.remarks(True) + f.message.search_word(True)
-    add_text = "[{}] [総ゲーム数： {}] {}".format(
+    add_text = "[{}] [総ゲーム数：{}] {}".format(
         f.message.item_search_range(None, "time").strip(),
         game_info["game_count"],
         f"[{remark_text}]" if remark_text else "",

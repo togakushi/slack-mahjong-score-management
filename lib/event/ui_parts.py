@@ -178,7 +178,7 @@ def SearchRangeChoice(view, no):
         {"text": {"type": "plain_text", "text": "全部"}, "value": "全部"}
     )
     view["blocks"][no]["element"]["options"].append(
-        {"text": {"type": "plain_text", "text": f"範囲指定： {days}"}, "value": "指定"}
+        {"text": {"type": "plain_text", "text": f"範囲指定：{days}"}, "value": "指定"}
     )
     view["blocks"][no]["element"]["initial_option"].update(
         {"text": {"type": "plain_text", "text": "今月"}, "value": "今月"}

@@ -45,7 +45,7 @@ def set_command_option(body):
         if user_select is not None:
             if "value" in user_select:
                 player = user_select["value"]
-                app_msg.append(f"対象プレイヤー： {player}")
+                app_msg.append(f"対象プレイヤー：{player}")
                 argument.append(player)
 
     if "bid-multi_select" in search_options:
@@ -56,14 +56,14 @@ def set_command_option(body):
     if "bid-search_range" in search_options:
         select_item = search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]
         if select_item == "指定":
-            app_msg.append(f"集計範囲： {g.app_var['sday']} ～ {g.app_var['eday']}")
+            app_msg.append(f"集計範囲：{g.app_var['sday']} ～ {g.app_var['eday']}")
             argument.append(g.app_var["sday"].replace("-", ""))
             argument.append(g.app_var["eday"].replace("-", ""))
         elif select_item == "全部":
-            app_msg.append("集計範囲： 全部")
+            app_msg.append("集計範囲：全部")
             argument.append("全部")
         else:
-            app_msg.append(f"集計範囲： {select_item}")
+            app_msg.append(f"集計範囲：{select_item}")
             argument.append(select_item)
 
     if "bid-search_option" in search_options:

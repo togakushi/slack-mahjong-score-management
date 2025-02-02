@@ -43,8 +43,8 @@ def aggregation():
 
     msg1 = textwrap.dedent(f"""
         *【直接対戦結果】*
-        \tプレイヤー名： {c.member.name_replace(my_name, add_mark=True)}
-        \t対戦相手： {vs}
+        \tプレイヤー名：{c.member.name_replace(my_name, add_mark=True)}
+        \t対戦相手：{vs}
         \t{f.message.item_search_range()}
         \t{f.message.remarks(True)}
     """).strip()
@@ -74,12 +74,12 @@ def aggregation():
             r = data.to_dict(orient="records")[0]
             tmp_msg[vs_name]["info"] = textwrap.dedent(f"""
                 【{r["my_表示名"].strip()} vs {r["vs_表示名"].strip()}】
-                \t対戦数： {r["game"]} 戦 {r["win"]} 勝 {r["lose"]} 敗 ({r["win%"]:.2f}%)
-                \t平均素点差： {(r["my_rpoint_avg"] - r["vs_rpoint_avg"]) * 100:+.0f} 点
-                \t獲得ポイント合計(自分)： {r["my_point_sum"]:+.1f}pt
-                \t獲得ポイント合計(相手)： {r["vs_point_sum"]:+.1f}pt
-                \t順位分布(自分)： {r["my_1st"]}%%{r["my_2nd"]}%%{r["my_3rd"]}%%{r["my_4th"]} ({r["my_rank_avg"]:1.2f})
-                \t順位分布(相手)： {r["vs_1st"]}%%{r["vs_2nd"]}%%{r["vs_3rd"]}%%{r["vs_4th"]} ({r["vs_rank_avg"]:1.2f})
+                \t対戦数：{r["game"]} 戦 {r["win"]} 勝 {r["lose"]} 敗 ({r["win%"]:.2f}%)
+                \t平均素点差：{(r["my_rpoint_avg"] - r["vs_rpoint_avg"]) * 100:+.0f} 点
+                \t獲得ポイント合計(自分)：{r["my_point_sum"]:+.1f}pt
+                \t獲得ポイント合計(相手)：{r["vs_point_sum"]:+.1f}pt
+                \t順位分布(自分)：{r["my_1st"]}%%{r["my_2nd"]}%%{r["my_3rd"]}%%{r["my_4th"]} ({r["my_rank_avg"]:1.2f})
+                \t順位分布(相手)：{r["vs_1st"]}%%{r["vs_2nd"]}%%{r["vs_3rd"]}%%{r["vs_4th"]} ({r["vs_rank_avg"]:1.2f})
             """).replace("-", "▲").replace("%%", "-").strip() + "\n\n"
 
             # ゲーム結果
@@ -114,8 +114,8 @@ def aggregation():
                             tmp_msg[vs_name][count] = textwrap.dedent(f"""
                                 {"*【戦績】*" if count == 0 else ""}
                                 {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
-                                \t{a1["表示名"]}： {a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}
-                                \t{a2["表示名"]}： {a2["rank"]}位 {a2["rpoint"] * 100:>7} 点 ({a2["point"]:>+5.1f}pt) {a2["grandslam"]}
+                                \t{a1["表示名"]}：{a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}
+                                \t{a2["表示名"]}：{a2["rank"]}位 {a2["rpoint"] * 100:>7} 点 ({a2["point"]:>+5.1f}pt) {a2["grandslam"]}
                             """).replace("-", "▲").strip()
                         count += 1
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
