@@ -69,31 +69,39 @@ def name_replace(pname, add_mark=False):
     pname = f.common.han_to_zen(pname)
     check_list = list(set(g.member_list.keys()))
 
-    if pname in check_list:
-        return (g.member_list[pname])
-
-    # 敬称削除
-    honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
-    if re.match(fr".*{honor}", pname):
-        if not re.match(fr".*(っ|ッ){honor}", pname):
-            pname = re.sub(fr"{honor}", "", pname)
-    if pname in check_list:
-        return (g.member_list[pname])
-
-    # ひらがな、カタカナでチェック
-    if f.common.kata_to_hira(pname) in check_list:
-        return (g.member_list[f.common.kata_to_hira(pname)])
-    if f.common.hira_to_kana(pname) in check_list:
-        return (g.member_list[f.common.hira_to_kana(pname)])
-
-    # メンバーリストに見つからない場合
-    if g.opt.unregistered_replace:
-        return (g.prm.guest_name)
-    else:
-        if add_mark:
-            return (f"{pname}({g.cfg.setting.guest_mark})")
+    if g.opt.anonymous:
+        id = get_member_id().get(pname, 0)
+        anonymous_name = f"Player_{id:03d}"
+        if pname.startswith("Player_"):
+            return (f.common.zen_to_han(pname))
         else:
-            return (pname)
+            return (f.common.zen_to_han(anonymous_name))
+    else:
+        if pname in check_list:
+            return (g.member_list[pname])
+
+        # 敬称削除
+        honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
+        if re.match(fr".*{honor}", pname):
+            if not re.match(fr".*(っ|ッ){honor}", pname):
+                pname = re.sub(fr"{honor}", "", pname)
+        if pname in check_list:
+            return (g.member_list[pname])
+
+        # ひらがな、カタカナでチェック
+        if f.common.kata_to_hira(pname) in check_list:
+            return (g.member_list[f.common.kata_to_hira(pname)])
+        if f.common.hira_to_kana(pname) in check_list:
+            return (g.member_list[f.common.hira_to_kana(pname)])
+
+        # メンバーリストに見つからない場合
+        if g.opt.unregistered_replace:
+            return (g.prm.guest_name)
+        else:
+            if add_mark:
+                return (f"{pname}({g.cfg.setting.guest_mark})")
+            else:
+                return (pname)
 
 
 def count_padding(data):
@@ -123,20 +131,33 @@ def get_members_list():
 
     title = "登録済みメンバー一覧"
     padding = c.member.count_padding(list(set(g.member_list.values())))
-    msg = "# 表示名{}： 登録されている名前 #\n".format(" " * (padding - 8))
+    msg = "# 表示名{}：登録されている名前 #\n".format(" " * (padding - 8))
 
     for pname in set(g.member_list.values()):
         name_list = []
         for alias in g.member_list.keys():
             if g.member_list[alias] == pname:
                 name_list.append(alias)
-        msg += "{}{}： {}\n".format(
+        msg += "{}{}：{}\n".format(
             pname,
             " " * (padding - f.common.len_count(pname)),
             ", ".join(name_list),
         )
 
     return (title, msg)
+
+
+def get_member_id():
+    """
+    メンバーのIDを返す
+    """
+
+    resultdb = sqlite3.connect(g.cfg.db.database_file)
+    rows = resultdb.execute("select name, id from member where id != 0;")
+    id_list = dict(rows.fetchall())
+    resultdb.close()
+
+    return (id_list)
 
 
 def member_info(name):

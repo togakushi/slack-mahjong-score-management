@@ -29,6 +29,7 @@ class command_option:
         self.interval: int = 80  # 区切りゲーム数
         self.verbose: bool = False  # 戦績詳細
         self.rating: bool = False  # レーティング表示
+        self.anonymous: bool = False  # プレイヤー名を伏せる
 
         self.aggregation_range.append(g.cfg.config[_command].get("aggregation_range", "当日"))
         self.individual: bool = g.cfg.config[_command].getboolean("individual", True)  # True:個人集計 / False:チーム集計
@@ -137,6 +138,8 @@ class command_option:
                     self.format = keyword.lower()
                 case keyword if re.search(r"^(filename:|ファイル名)(.+)$", keyword):
                     self.filename = re.sub(r"^(filename:|ファイル名)(.+)$", r"\2", keyword)
+                case keyword if re.search(r"^(匿名|anonymous)$", keyword):
+                    self.anonymous = True
                 case _:
                     unknown_command.append(keyword)
 
