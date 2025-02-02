@@ -60,23 +60,23 @@ def help_message():
         \t`呼び出しキーワード [検索範囲] [対象メンバー] [オプション]`
 
         \t*成績サマリ*
-        \t\t呼び出しキーワード： {g.cfg.cw.results}
-        \t\t検索範囲デフォルト： {results_option.aggregation_range[0]}
+        \t\t呼び出しキーワード：{g.cfg.cw.results}
+        \t\t検索範囲デフォルト：{results_option.aggregation_range[0]}
         \t*成績グラフ*
-        \t\t呼び出しキーワード： {g.cfg.cw.graph}
-        \t\t検索範囲デフォルト： {graph_option.aggregation_range[0]}
+        \t\t呼び出しキーワード：{g.cfg.cw.graph}
+        \t\t検索範囲デフォルト：{graph_option.aggregation_range[0]}
         \t*ランキング*
-        \t\t呼び出しキーワード： {g.cfg.cw.ranking}
-        \t\t検索範囲デフォルト： {ranking_option.aggregation_range[0]}
-        \t\t規定打数デフォルト： 全体ゲーム数 × {ranking_option.stipulated_rate} ＋ 1
-        \t\t出力制限デフォルト： 上位 {ranking_option.ranked} 名
+        \t\t呼び出しキーワード：{g.cfg.cw.ranking}
+        \t\t検索範囲デフォルト：{ranking_option.aggregation_range[0]}
+        \t\t規定打数デフォルト：全体ゲーム数 × {ranking_option.stipulated_rate} ＋ 1
+        \t\t出力制限デフォルト：上位 {ranking_option.ranked} 名
         \t*レポート*
-        \t\t呼び出しキーワード： {g.cfg.cw.report}
-        \t\t検索範囲デフォルト： {report_option.aggregation_range[0]}
+        \t\t呼び出しキーワード：{g.cfg.cw.report}
+        \t\t検索範囲デフォルト：{report_option.aggregation_range[0]}
         \t*メンバー一覧*
-        \t\t呼び出しキーワード： {g.cfg.cw.member}
+        \t\t呼び出しキーワード：{g.cfg.cw.member}
         \t*チーム一覧*
-        \t\t呼び出しキーワード： {g.cfg.cw.team}
+        \t\t呼び出しキーワード：{g.cfg.cw.team}
     """)
 
     # 検索範囲
@@ -89,20 +89,20 @@ def help_message():
     if rule:
         msg += "\n\n*ルール識別子*\n"
         for x in rule.keys():
-            msg += f"\t{x}： {rule[x]['first_time']} ～ {rule[x]['last_time']}\n"
+            msg += f"\t{x}：{rule[x]['first_time']} ～ {rule[x]['last_time']}\n"
 
     # メモ機能
     msg += textwrap.dedent(f"""
         *メモ機能*
         \t`登録キーワード <対象メンバー> <登録ワード>`
-        \t登録キーワード： {g.cfg.cw.remarks_word}
+        \t登録キーワード：{g.cfg.cw.remarks_word}
     """)
 
     rule = d.common.word_list(1)
     if rule:
         msg += "\n\t*卓外ポイントワード(個人清算)*\n"
         for word, ex_point in rule:
-            msg += "\t\t{}： {}pt\n".format(
+            msg += "\t\t{}：{}pt\n".format(
                 word,
                 str(f"{ex_point:.1f}").replace("-", "▲"),
             )
@@ -148,7 +148,7 @@ def reply(message=None, rpoint_sum=0):
     default_message = {
         "invalid_argument": "使い方が間違っています。",
         "no_hits": "{start} ～ {end} に≪{keyword}≫はありません。",
-        "invalid_score": "素点合計： {rpoint_sum}\n点数差分： {rpoint_diff}",
+        "invalid_score": "素点合計：{rpoint_sum}\n点数差分：{rpoint_diff}",
         "restricted_channel": "<@{user_id}> この投稿はデータベースに反映されません。",
         "inside_thread": "<@{user_id}> スレッド内から成績登録はできません。",
     }
@@ -198,9 +198,11 @@ def remarks(headword=False):
 
     if headword:
         if remark:
-            return ("特記事項： " + "、".join(remark))
-
-    return (remark)
+            return ("特記事項：" + "、".join(remark))
+        else:
+            return ("特記事項：なし")
+    else:
+        return (remark)
 
 
 def search_word(headword=False):
@@ -214,7 +216,7 @@ def search_word(headword=False):
 
     if headword:
         if ret:
-            return (f"検索ワード： {ret}")
+            return (f"検索ワード：{ret}")
 
     return (ret)
 
@@ -297,7 +299,7 @@ def item_search_range(kind=None, time_pattern=None):
         case "str":
             return (f"{starttime} ～ {endtime}\n")
         case _:
-            return (f"検索範囲： {starttime} ～ {endtime}\n")
+            return (f"検索範囲：{starttime} ～ {endtime}\n")
 
 
 def item_aggregation_range(game_info, kind=None):
@@ -318,4 +320,4 @@ def item_aggregation_range(game_info, kind=None):
         case "str":
             return (f"{first} ～ {last}\n")
         case _:
-            return (f"集計範囲： {first} ～ {last}\n")
+            return (f"集計範囲：{first} ～ {last}\n")
