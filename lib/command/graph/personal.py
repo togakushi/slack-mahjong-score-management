@@ -153,6 +153,10 @@ def statistics_plot():
 
     player = c.member.name_replace(g.prm.player_name, add_mark=True)
     player_df = df.query("name == @player").reset_index(drop=True)
+
+    if player_df.empty:
+        return (0, f.message.reply(message="no_hits"))
+
     player_df["sum_point"] = player_df["point"].cumsum()
 
     # --- グラフ生成
@@ -160,7 +164,7 @@ def statistics_plot():
         g.cfg.setting.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "graph.png",
     )
-    title_text = "『{}』の成績 (集計期間： {} - {})".format(
+    title_text = "『{}』の成績 (集計期間：{} - {})".format(
         player, g.prm.starttime_ymd, g.prm.endtime_ymd
     )
 
