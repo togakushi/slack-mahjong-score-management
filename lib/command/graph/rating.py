@@ -54,6 +54,11 @@ def plot():
                         player: c.member.name_replace(player, add_mark=True)
                     }
                 )
+    if g.opt.anonymous:
+        id_list = c.member.get_member_id()
+        for name, id in list(id_list.items()):
+            id_list[name] = f"Player_{id:03d}"
+        df_dropped = df_dropped.rename(columns=id_list)
 
     # 並び変え
     sorted_columns = df_dropped.iloc[-1].sort_values(ascending=False).index
