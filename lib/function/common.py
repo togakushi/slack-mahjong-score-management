@@ -210,6 +210,10 @@ def floatfmt_adjust(df):
                 fmt.append(".2f")
             case "平均順位" | "平順":
                 fmt.append(".2f")
+            case "レート":
+                fmt.append(".1f")
+            case "順位偏差" | "得点偏差":
+                fmt.append(".0f")
             case _:
                 fmt.append("")
 

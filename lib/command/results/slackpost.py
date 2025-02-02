@@ -28,11 +28,12 @@ def main():
             message=msg2,
         )
     elif g.opt.rating:  # レーティング
-        msg1, msg2 = rating.aggregation()
+        msg1, msg2, file_list = rating.aggregation()
         f.slack_api.slack_post(
             headline=msg1,
             message=msg2,
             summarize=False,
+            file_list=file_list,
         )
     elif versus_mode:  # 直接対戦
         msg1, msg2, file_list = versus.aggregation()

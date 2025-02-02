@@ -87,4 +87,16 @@ def aggregation():
             table = df[s:e].to_markdown(**table_param)
             msg[s] = f"```\n{table}\n```\n"
 
-    return (headline, msg)
+    match g.opt.format.lower():
+        case "csv":
+            file_list = {
+                "レーティング": f.common.save_output(df, "csv", "rating.csv", headline),
+            }
+        case "text" | "txt":
+            file_list = {
+                "レーティング": f.common.save_output(df, "txt", "rating.txt", headline),
+            }
+        case _:
+            file_list = {}
+
+    return (headline, msg, file_list)
