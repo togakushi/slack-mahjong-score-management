@@ -39,6 +39,8 @@ def aggregation():
         player_name = c.member.name_replace(g.prm.player_name)
         for idx, name in enumerate(g.opt.target_player):
             g.opt.target_player[idx] = c.member.name_replace(name)
+    else:
+        player_name = g.prm.player_name
 
     msg_data = {}
     if g.opt.individual:
