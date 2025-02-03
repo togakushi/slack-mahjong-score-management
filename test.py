@@ -90,6 +90,7 @@ flag = test_conf["default"].getboolean("dump", False)
 
 d.initialization.initialization_resultdb()
 c.member.read_memberslist()
+always_keyword = ""
 
 for sec in test_conf.sections():
     print("=" * 80)
@@ -99,26 +100,30 @@ for sec in test_conf.sections():
     target_player = []
     target_team = []
 
-    for pattern, argument in test_conf[sec].items():
+    for pattern, value in test_conf[sec].items():
         match pattern:
             case s if re.match(r"^case", s):
-                test_case = argument
+                test_case = value
                 continue
             case "target_player":
-                for x in range(int(argument)):
+                for x in range(int(value)):
                     target_player.append(random.choice(list(set(g.member_list.values()))))
-                pprint(target_player)
                 continue
             case "all_player":
                 all_player = True
                 continue
             case "target_team":
                 team_list = [x["team"] for x in g.team_list]
-                for x in range(int(argument)):
+                for x in range(int(value)):
                     target_team.append(random.choice(team_list))
+                continue
+            case "always_keyword":
+                always_keyword = value
+                print("add:", always_keyword)
                 continue
 
         print("-" * 80)
+        argument = f"{value} {always_keyword}"
         if test_conf[sec].getboolean("config", False):
             pprint(["*** config ***", vars(g.cfg)], width=200)
 
