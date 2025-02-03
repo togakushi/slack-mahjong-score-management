@@ -32,10 +32,14 @@ if __name__ == "__main__":
     if g.args.export_data:
         for table in ("member", "alias", "team"):
             csvfile = f"{g.args.export_data}_{table}.csv"
-            df = pd.read_sql(
-                f"select * from {table};",
-                sqlite3.connect(g.cfg.db.database_file),
-            )
+
+            match table:
+                case "member":
+                    sql = f"select name, slack_id, flying, reward, abuse, team_id from {table} where id != 0;"
+                case _:
+                    sql = f"select * from {table};"
+
+            df = pd.read_sql(sql, sqlite3.connect(g.cfg.db.database_file))
             # 整数値を維持
             if "team_id" in df.columns:
                 df["team_id"] = df["team_id"].astype("Int64")
@@ -48,8 +52,13 @@ if __name__ == "__main__":
         d.common.db_backup()
         conn = sqlite3.connect(g.cfg.db.database_file)
         for table in ("member", "alias", "team"):
-            conn.execute(f"delete from {table};")
             csvfile = f"{g.args.import_data}_{table}.csv"
+            conn.execute(f"delete from {table};")
+
+            if table == "member":
+                conn.execute(f"delete from sqlite_sequence where name='{table}';")
+                conn.execute("insert into member (id, name) values (0, ?)", (g.prm.guest_name,))
+
             try:
                 pd.read_csv(csvfile).to_sql(
                     table,
