@@ -259,6 +259,14 @@ def versus_matrix():
     )
 
     # ゲスト置換
+    if g.opt.individual:
+        df["my_name"] = df["my_name"].apply(
+            lambda x: c.member.name_replace(x, add_mark=True)
+        )
+        df["vs_name"] = df["vs_name"].apply(
+            lambda x: c.member.name_replace(x, add_mark=True)
+        )
+
     df["my_表示名"] = _disp_name(df["my_name"])
     df["vs_表示名"] = _disp_name(df["vs_name"])
 

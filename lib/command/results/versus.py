@@ -36,10 +36,14 @@ def aggregation():
     my_name = g.prm.player_name
     if g.opt.all_player:
         vs = "全員"
-        vs_list = set(g.member_list.values())
+        vs_list = list(set(g.member_list.values()))
     else:
         vs = ",".join(g.prm.competition_list.values())
         vs_list = list(df_game["name"].unique())
+
+    if g.opt.anonymous:
+        for idx, name in enumerate(vs_list):
+            vs_list[idx] = c.member.name_replace(name)
 
     msg1 = textwrap.dedent(f"""
         *【直接対戦結果】*
