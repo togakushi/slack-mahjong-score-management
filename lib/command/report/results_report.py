@@ -360,15 +360,6 @@ def gen_pdf():
         return (False, False)
 
     # 対象メンバーの記録状況
-    if g.opt.anonymous:
-        target_player = g.prm.player_name
-        id_list = c.member.get_member_id()
-        for name, id in list(id_list.items()):
-            id_list[name] = f"Player_{id:03d}"
-        g.prm.player_name = [k for k, v in id_list.items() if v == g.prm.player_name][0] or g.prm.player_name
-    else:
-        target_player = g.prm.player_name
-
     target_info = c.member.member_info(g.prm.player_name)
     logging.info(target_info)
 
@@ -381,6 +372,11 @@ def gen_pdf():
     last_game = datetime.fromtimestamp(  # 最後のゲーム日時
         float(target_info["last_game"])
     )
+
+    if g.opt.anonymous:
+        target_player = c.member.name_replace(g.prm.player_name)
+    else:
+        target_player = g.prm.player_name
 
     # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)

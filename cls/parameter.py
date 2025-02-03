@@ -149,7 +149,7 @@ class command_option:
                 if x in [team["team"] for team in g.team_list]:
                     self.target_player.append(x)
                 elif self.individual:
-                    self.target_player.append(c.member.name_replace(x))
+                    self.target_player.append(c.member.name_replace(x, mask=False))
                 else:
                     self.target_player.append(x)
 

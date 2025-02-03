@@ -51,7 +51,7 @@ def read_memberslist(log=True):
         logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")
 
 
-def name_replace(pname, add_mark=False):
+def name_replace(pname, add_mark=False, mask=True):
     """
     表記ブレ修正(正規化)
 
@@ -69,7 +69,7 @@ def name_replace(pname, add_mark=False):
     pname = f.common.han_to_zen(pname)
     check_list = list(set(g.member_list.keys()))
 
-    if g.opt.anonymous:
+    if g.opt.anonymous and mask:
         id = get_member_id().get(pname, 0)
         anonymous_name = f"Player_{id:03d}"
         if pname.startswith("Player_"):

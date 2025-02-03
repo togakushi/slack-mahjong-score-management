@@ -35,10 +35,15 @@ def aggregation():
     df_grandslam = d.aggregate.remark_count("grandslam")
     df_regulations = d.aggregate.remark_count("regulation")
 
+    if g.opt.anonymous:
+        player_name = c.member.name_replace(g.prm.player_name)
+        for idx, name in enumerate(g.opt.target_player):
+            g.opt.target_player[idx] = c.member.name_replace(name)
+
     msg_data = {}
     if g.opt.individual:
         msg_data["title"] = "*【個人成績】*"
-        msg_data["プレイヤー名"] = f"{g.prm.player_name} {f.common.badge_degree(0)}"
+        msg_data["プレイヤー名"] = f"{player_name} {f.common.badge_degree(0)}"
         team = c.team.which_team(g.prm.player_name)
         if team:
             msg_data["所属チーム"] = team
@@ -73,7 +78,7 @@ def aggregation():
     badge_degree = f.common.badge_degree(data["ゲーム数"])
     badge_status = f.common.badge_status(data["ゲーム数"], data["win"])
     if g.opt.individual:  # degree更新
-        msg_data["プレイヤー名"] = f"{g.prm.player_name} {badge_degree}"
+        msg_data["プレイヤー名"] = f"{player_name} {badge_degree}"
     else:
         msg_data["チーム名"] = f"{g.prm.player_name} {badge_degree}"
 
