@@ -28,6 +28,17 @@ pd.set_option("display.max_rows", None)
 
 
 def get_game_results(flag="M"):
+    """月/年単位のゲーム結果集計
+
+    Args:
+        flag (str, optional): 集計単位. Defaults to "M".
+            - M: 月間集計
+            - Y: 年間集計
+
+    Returns:
+        list: 集計結果のリスト
+    """
+
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
@@ -82,6 +93,15 @@ def get_game_results(flag="M"):
 
 
 def get_count_results(game_count):
+    """指定間隔区切りのゲーム結果集計
+
+    Args:
+        game_count (int): 区切るゲーム数
+
+    Returns:
+        list: 集計結果のリスト
+    """
+
     g.prm.append({"interval": game_count})
 
     resultdb = sqlite3.connect(
@@ -140,6 +160,15 @@ def get_count_results(game_count):
 
 
 def get_count_moving(game_count):
+    """移動平均を取得する
+
+    Args:
+        game_count (int): 平滑化するゲーム数
+
+    Returns:
+        list: 集計結果のリスト
+    """
+
     g.prm.append({"interval": game_count})
 
     resultdb = sqlite3.connect(
@@ -167,25 +196,17 @@ def get_count_moving(game_count):
 
 
 def graphing_mean_rank(df, title, whole=False):
-    """
-    平均順位の折れ線グラフを生成
+    """平均順位の折れ線グラフを生成
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        描写データ
+    Args:
+        df (pd.DataFrame): 描写データ
+        title (str): グラフタイトル
+        whole (bool, optional): 集計種別. Defaults to False.
+            - True: 全体集計
+            - False: 指定範囲集計
 
-    title : str
-        グラフタイトル
-
-    whole : bool
-        - True 全体集計
-        - False 指定範囲集計
-
-    Returns
-    -------
-    imgdata : BytesIO
-        画像データ
+    Returns:
+        BytesIO: 画像データ
     """
 
     imgdata = BytesIO()
@@ -229,25 +250,16 @@ def graphing_mean_rank(df, title, whole=False):
 
 
 def graphing_total_points(df, title, whole=False):
-    """
-    通算ポイント推移の折れ線グラフを生成
+    """通算ポイント推移の折れ線グラフを生成
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        描写データ
-
-    title : str
-        グラフタイトル
-
-    whole : bool
-        - True 全体集計 / 移動平均付き
-        - False 指定範囲集計
-
-    Returns
-    -------
-    imgdata : BytesIO
-        画像データ
+    Args:
+        df (pd.DataFrame): 描写データ
+        title (str): グラフタイトル
+        whole (bool, optional): 集計種別. Defaults to False.
+            - True: 全体集計 / 移動平均付き
+            - False: 指定範囲集計
+    Returns:
+        BytesIO: 画像データ
     """
 
     imgdata = BytesIO()
@@ -301,8 +313,14 @@ def graphing_total_points(df, title, whole=False):
 
 
 def graphing_rank_distribution(df, title):
-    """
-    順位分布の棒グラフを生成
+    """順位分布の棒グラフを生成
+
+    Args:
+        df (pd.DataFrame): 描写データ
+        title (str): グラフタイトル
+
+    Returns:
+        BytesIO: 画像データ
     """
 
     imgdata = BytesIO()
@@ -342,16 +360,12 @@ def graphing_rank_distribution(df, title):
 
 
 def gen_pdf():
-    """
-    成績レポートを生成する
+    """成績レポートを生成する
 
-    Returns
-    -------
-    name : str
-        レポート対象プレイヤー名
-
-    pdf_path : file path
-        レポート保存パス
+    Returns:
+        Tuple[str, str]:
+            - str: レポート対象メンバー名
+            - str: レポート保存パス
     """
 
     plt.close()

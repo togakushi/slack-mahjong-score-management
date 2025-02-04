@@ -14,6 +14,12 @@ mlogger.setLevel(logging.WARNING)
 
 
 def main():
+    """成績一覧表を生成する
+
+    Returns:
+        str: 生成ファイルパス
+    """
+
     # 検索動作を合わせる
     g.opt.guest_skip = g.opt.guest_skip2
 
@@ -60,8 +66,15 @@ def main():
 
 
 def graph_generation(game_info, df, title):
-    """
-    グラフ生成
+    """グラフ生成処理
+
+    Args:
+        game_info (dict): ゲーム情報
+        df (pd.DataFrame): 描写データ
+        title (str): グラフタイトル
+
+    Returns:
+        str: 生成ファイルパス
     """
 
     df = columns_rename(df.filter(
@@ -144,8 +157,13 @@ def graph_generation(game_info, df, title):
 
 
 def text_generation(df):
-    """
-    テキストテーブル生成
+    """テキストテーブル生成
+
+    Args:
+        df (pd.DataFrame): 描写データ
+
+    Returns:
+        str: 生成ファイルパス
     """
 
     report_file_path = os.path.join(
@@ -186,8 +204,13 @@ def text_generation(df):
 
 
 def csv_generation(df):
-    """
-    CSV生成
+    """CSV生成
+
+    Args:
+        df (pd.DataFrame): 描写データ
+
+    Returns:
+        str: 生成ファイルパス
     """
 
     report_file_path = os.path.join(
@@ -224,6 +247,15 @@ def csv_generation(df):
 
 
 def columns_rename(df):
+    """カラム名をリネームする
+
+    Args:
+        df (pd.DataFrame): 対象データフレーム
+
+    Returns:
+        pd.DataFrame: カラム名をリネームしたデータフレーム
+    """
+
     df = df.rename(
         columns={
             "player": "プレイヤー名", "team": "チーム名",

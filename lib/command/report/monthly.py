@@ -13,6 +13,12 @@ mlogger.setLevel(logging.WARNING)
 
 
 def plot():
+    """月別ゲーム統計表の生成
+
+    Returns:
+        str: 生成ファイルパス
+    """
+
     plt.close()
     # --- データ収集
     df = d.aggregate.monthly_report()

@@ -13,6 +13,12 @@ mlogger.setLevel(logging.WARNING)
 
 
 def plot():
+    """成績上位者を一覧化
+
+    Returns:
+        str: 生成ファイルパス
+    """
+
     plt.close()
     # --- データ取得
     results_df = d.aggregate.winner_report()

@@ -7,6 +7,14 @@ from lib import function as f
 
 
 def plot():
+    """対局対戦マトリックスの表示
+
+    Returns:
+        Tuple[str, dict]:
+            - str: ヘッダ情報
+            - dict: 生成ファイル情報
+    """
+
     game_info = d.aggregate.game_info()
     if g.opt.stipulated == 0:  # 規定打数が指定されない場合はレートから計算
         g.opt.stipulated = (
