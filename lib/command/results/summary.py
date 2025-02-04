@@ -6,19 +6,13 @@ from lib import function as f
 
 
 def aggregation():
-    """
-    各プレイヤーの通算ポイントを表示
+    """各プレイヤーの通算ポイントを表示
 
-    Returns
-    -------
-    header : text
-        検索条件などの情報
-
-    msg : dict
-        集計結果
-
-    file_list : dict
-        ファイル出力用path
+    Returns:
+        Tuple[str, dict, dict]
+            - str: ヘッダ情報
+            - dict: 集計データ
+            - dict: 生成ファイル情報
     """
 
     # --- データ収集

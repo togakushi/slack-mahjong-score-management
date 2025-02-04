@@ -9,19 +9,13 @@ from lib import function as f
 
 
 def aggregation():
-    """
-    直接対戦結果を集計して返す
+    """直接対戦結果を集計して返す
 
-    Returns
-    -------
-    msg1 : text
-        slackにpostするデータ
-
-    msg2 : dict
-        slackにpostするデータ(スレッドに返す)
-
-    file_list : dict
-        ファイル出力用path
+    Returns:
+        Tuple[str, dict, dict]
+            - str: ヘッダ情報
+            - dict: 集計データ
+            - dict: 生成ファイル情報
     """
 
     # 検索動作を合わせる

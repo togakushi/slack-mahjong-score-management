@@ -10,8 +10,10 @@ from lib import function as f
 
 
 def read_memberslist(log=True):
-    """
-    メンバー/チームリスト読み込み
+    """メンバー/チームリスト読み込み
+
+    Args:
+        log (bool, optional): 読み込み時に内容をログに出力する. Defaults to True.
     """
 
     resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
@@ -52,18 +54,15 @@ def read_memberslist(log=True):
 
 
 def name_replace(pname, add_mark=False, mask=True):
-    """
-    表記ブレ修正(正規化)
+    """表記ブレ修正(正規化)
 
-    Parameters
-    ----------
-    pname : str
-        対象文字列（プレイヤー名）
+    Args:
+        pname (str): 対象プレイヤー名
+        add_mark (bool, optional): ゲストマークを付与する. Defaults to False.
+        mask (bool, optional): 匿名化オプション有効時にプレイヤー名をマスクする. Defaults to True.
 
-    Returns
-    -------
-    name : str
-        表記ブレ修正後のプレイヤー名
+    Returns:
+        str: 表記ブレ修正後のプレイヤー名
     """
 
     pname = f.common.han_to_zen(pname)
@@ -105,8 +104,15 @@ def name_replace(pname, add_mark=False, mask=True):
 
 
 def count_padding(data):
+    """プレイヤー名一覧の中の最も長い名前の文字数を返す
+
+    Args:
+        data (list, dict): 対象プレイヤー名の一覧
+
+    Returns:
+        int: 文字数
     """
-    """
+
     name_list = []
 
     if type(data) is list:
@@ -125,8 +131,12 @@ def count_padding(data):
 
 
 def get_members_list():
-    """
-    登録済みのメンバー一覧をslackに出力する
+    """登録済みのメンバー一覧を取得する(slack出力用)
+
+    Returns:
+        Tuple[str, str]:
+            - str: post時のタイトル
+            - str: メンバー一覧
     """
 
     title = "登録済みメンバー一覧"
@@ -148,8 +158,10 @@ def get_members_list():
 
 
 def get_member_id():
-    """
-    メンバーのIDを返す
+    """メンバーのIDを返す
+
+    Returns:
+        dict: メンバー名とIDのペア
     """
 
     resultdb = sqlite3.connect(g.cfg.db.database_file)
@@ -161,8 +173,13 @@ def get_member_id():
 
 
 def member_info(name):
-    """
-    指定メンバーの記録情報を返す
+    """指定メンバーの記録情報を返す
+
+    Args:
+        name (str): 対象メンバー
+
+    Returns:
+        dict: 記録情報
     """
 
     sql = """
@@ -189,19 +206,15 @@ def member_info(name):
 
 
 def member_append(argument):
-    """
-    メンバー追加
+    """メンバー追加
 
-    Parameters
-    ----------
-    argument : list
-        argument[0] = 登録するプレイヤー名
-        argument[1] = 登録する別名
+    Args:
+        argument (list): 登録情報
+            - argument[0]: 登録するメンバー名
+            - argument[1]: 登録する別名
 
-    Returns
-    -------
-    msg : text
-        slackにpostする内容
+    Returns:
+        str: slackにpostする内容(処理結果)
     """
 
     resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
@@ -283,19 +296,15 @@ def member_append(argument):
 
 
 def member_remove(argument):
-    """
-    メンバー削除
+    """メンバー削除
 
-    Parameters
-    ----------
-    argument : list
-        argument[0] = 削除するプレイヤー名
-        argument[1] = 削除する別名
+    Args:
+        argument (list): 削除情報
+            - argument[0]: 削除するメンバー名
+            - argument[1]: 削除する別名
 
-    Returns
-    -------
-    msg : text
-        slackにpostする内容
+    Returns:
+        str: slackにpostする内容(処理結果)
     """
 
     resultdb = sqlite3.connect(
@@ -339,21 +348,15 @@ def member_remove(argument):
 
 
 def check_namepattern(name):
-    """
-    登録制限チェック
+    """登録制限チェック
 
-    Parameters
-    ----------
-    name : str
-        チェック対象文字列
+    Args:
+        name (str): チェックする名前
 
-    Returns
-    -------
-    bool : True / False
-        制限チェック結果
-
-    msg : text
-        制限理由
+    Returns:
+        Tuple[bool, str]:
+            - bool: 制限チェック結果真偽
+            - str: 制限理由
     """
 
     # 登録済みメンバーかチェック

@@ -9,8 +9,13 @@ from lib import function as f
 
 
 def aggregation():
-    """
-    レーティングを集計して返す
+    """レーティングを集計して返す
+
+    Returns:
+        Tuple[str, dict, dict]:
+            - str: ヘッダ情報
+            - dict: 集計データ
+            - dict: 生成ファイルの情報
     """
 
     # データ収集

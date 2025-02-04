@@ -10,16 +10,10 @@ from lib import function as f
 
 
 def aggregation():
-    """
-    個人/チーム成績詳細を集計して返す
+    """個人/チーム成績詳細を集計して返す
 
-    Returns
-    -------
-    msg1 : text
-        slackにpostするデータ
-
-    msg2 : dict
-        slackにpostするデータ(スレッドに返す)
+    Returns:
+        dict: slackにpostするデータ
     """
 
     # 検索動作を合わせる
@@ -232,8 +226,13 @@ def aggregation():
 
 
 def message_build(data: dict):
-    """
-    表示する内容をテキストに起こす
+    """表示する内容をテキストに起こす
+
+    Args:
+        data (dict): 内容
+
+    Returns:
+        str: 表示するテキスト
     """
 
     msg = ""

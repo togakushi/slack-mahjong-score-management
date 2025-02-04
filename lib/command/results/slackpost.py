@@ -4,8 +4,7 @@ from lib.command.results import detail, rating, summary, versus
 
 
 def main():
-    """
-    成績の集計結果をslackにpostする
+    """成績の集計結果をslackにpostする
     """
 
     g.opt.initialization("results", g.msg.argument)

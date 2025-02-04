@@ -10,18 +10,15 @@ from lib import function as f
 
 
 def which_team(name):
-    """
-    指定メンバーの所属チームを返す
+    """指定メンバーの所属チームを返す
 
-    Parameters
-    ----------
-    name : str
-        チェック対象のメンバー名
+    Args:
+        name (str): チェック対象のメンバー名
 
-    Returns
-    -------
-    team : str or None
-        所属しているチーム名
+    Returns:
+        Union[str, None]:
+            - str: 所属しているチーム名
+            - None: 未所属
     """
 
     team = None
@@ -35,13 +32,10 @@ def which_team(name):
 
 
 def get_teammates():
-    """
-    所属チームのチームメイトを返す
+    """所属チームのチームメイトを返す
 
-    Returns
-    -------
-    member : list
-        メンバーリスト
+    Returns:
+        list: メンバーリスト
     """
 
     member = []
@@ -56,21 +50,15 @@ def get_teammates():
 
 
 def check_namepattern(name):
-    """
-    登録制限チェック
+    """登録制限チェック
 
-    Parameters
-    ----------
-    name : str
-        チェック対象文字列
+    Args:
+        name (str): チェックするチーム名
 
-    Returns
-    -------
-    bool : True / False
-        制限チェック結果
-
-    msg : text
-        制限理由
+    Returns:
+        Tuple[bool, str]:
+            - bool: 制限チェック結果真偽
+            - str: 制限理由
     """
 
     # 登録済みチームかチェック
@@ -106,18 +94,13 @@ def check_namepattern(name):
 
 
 def create(argument):
-    """
-    チーム作成
+    """チーム作成
 
-    Parameters
-    ----------
-    argument : list
-        argument[0] = 作成するチーム名
+    Args:
+        argument (list): 作成するチーム名
 
-    Returns
-    -------
-    msg : text
-        slackにpostする内容
+    Returns:
+        str: slackにpostする内容(処理結果)
     """
 
     ret = False
@@ -150,18 +133,13 @@ def create(argument):
 
 
 def delete(argument):
-    """
-    チーム削除
+    """チーム削除
 
-    Parameters
-    ----------
-    argument : list
-        argument[0] = 削除するチーム名
+    Args:
+        argument (list): 削除するチーム名
 
-    Returns
-    -------
-    msg : text
-        slackにpostする内容
+    Returns:
+        str: slackにpostする内容(処理結果)
     """
 
     msg = "使い方が間違っています。"
@@ -196,19 +174,15 @@ def delete(argument):
 
 
 def append(argument):
-    """
-    チーム所属
+    """チーム所属
 
-    Parameters
-    ----------
-    argument : list
-        argument[0] = 所属させるチーム名
-        argument[1] = 所属するプレイヤー名
+    Args:
+        argument (list): 登録情報
+            - argument[0]: 所属させるチーム名
+            - argument[1]: 所属するメンバー名
 
-    Returns
-    -------
-    msg : text
-        slackにpostする内容
+    Returns:
+        str: slackにpostする内容(処理結果)
     """
 
     msg = "使い方が間違っています。"
@@ -262,19 +236,15 @@ def append(argument):
 
 
 def remove(argument):
-    """
-    チームから除名
+    """チームから除名
 
-    Parameters
-    ----------
-    argument : list
-        argument[0] = 対象チーム名
-        argument[1] = チームから離脱するプレイヤー名
+    Args:
+        argument (_type_): 登録情報
+            - argument[0]: 対象チーム名
+            - argument[1]: チームから離脱するメンバー名
 
-    Returns
-    -------
-    msg : text
-        slackにpostする内容
+    Returns:
+        str: slackにpostする内容(処理結果)
     """
 
     resultdb = sqlite3.connect(
@@ -325,13 +295,10 @@ def remove(argument):
 
 
 def list():
-    """
-    チームの登録状況を表示する
+    """チームの登録状況を表示する
 
-    Returns
-    -------
-    msg : text
-        slackにpostする内容
+    Returns:
+        str: slackにpostする内容
     """
 
     resultdb = sqlite3.connect(
@@ -369,13 +336,10 @@ def list():
 
 
 def clear():
-    """
-    全チーム削除
+    """全チーム削除
 
-    Returns
-    -------
-    msg : text
-        slackにpostする内容
+    Returns:
+        str: slackにpostする内容
     """
 
     msg = d.common.db_backup()

@@ -8,8 +8,7 @@ from lib import function as f
 
 
 def main():
-    """
-    ランキングをslackにpostする
+    """ランキングをslackにpostする
     """
 
     g.opt.initialization("ranking", g.msg.argument)
@@ -22,16 +21,12 @@ def main():
 
 
 def aggregation():
-    """
-    ランキングデータを生成
+    """ランキングデータを生成
 
-    Returns
-    -------
-    msg1 : text
-        ランキングの集計情報
-
-    msg2 : dict
-        各ランキングの情報
+    Returns:
+        Tuple[str, dict]:
+            - str: ランキングの集計情報
+            - dict: 各ランキングの情報
     """
 
     # --- データ取得
