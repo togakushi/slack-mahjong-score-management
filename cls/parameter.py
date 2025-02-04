@@ -9,10 +9,20 @@ from lib import function as f
 
 
 class command_option:
+    """オプション解析クラス
+    """
+
     def __init__(self) -> None:
         self.initialization("DEFAULT")
 
     def initialization(self, _command: str, _argument: list = []) -> None:
+        """初期化処理
+
+        Args:
+            _command (str): 設定ファイルから読み込むセクション名
+            _argument (list, optional): 引数リスト. Defaults to [].
+        """
+
         self.__dict__.clear()
         if _command not in g.cfg.config.sections():
             _command = "DEFAULT"
@@ -60,6 +70,15 @@ class command_option:
             self.update(_argument)
 
     def set_search_range(self, _argument: list) -> list:
+        """検索範囲の日付をインスタンス変数にセットする
+
+        Args:
+            _argument (list): 引数リスト
+
+        Returns:
+            list: 引数リストから日付を取り除いたリスト
+        """
+
         _target_days, _new_argument = f.common.scope_coverage(_argument)
         if _target_days:
             _first = min(_target_days)
@@ -72,6 +91,12 @@ class command_option:
         return (_new_argument)
 
     def update(self, _argument: list) -> None:
+        """引数を解析しインスタンス変数をセットする
+
+        Args:
+            _argument (list): 引数リスト
+        """
+
         unknown_command = []
 
         # 検索範囲取得
@@ -154,15 +179,27 @@ class command_option:
                     self.target_player.append(x)
 
     def check(self, _argument: list = []) -> None:
+        """無効なオプションを引数リストから除外する
+
+        Args:
+            _argument (list, optional): 引数リスト. Defaults to [].
+        """
+
         self.__dict__.clear()
         self.update(_argument)
 
 
 class parameters:
+    """パラメータ解析クラス
+    """
+
     def __init__(self) -> None:
         self.initialization()
 
     def initialization(self):
+        """初期化処理
+        """
+
         self.__dict__.clear()
         self.rule_version: str = g.cfg.config["mahjong"].get("rule_version", "")
         self.origin_point: int = g.cfg.config["mahjong"].getint("point", 250)  # 配給原点
@@ -191,6 +228,12 @@ class parameters:
         self.target_count: int = 0
 
     def update(self, _opt: command_option):
+        """コマンド解析クラスの内容からパラメータをセットする
+
+        Args:
+            _opt (command_option): コマンド解析インスタンス
+        """
+
         self.initialization()
         self.rule_version = _opt.rule_version if _opt.rule_version else self.rule_version
         self.starttime = _opt.search_first  # 検索開始日
@@ -239,9 +282,21 @@ class parameters:
             self.search_word = f"%{_opt.search_word}%"
 
     def append(self, _add_dict: dict):
+        """インスタンス変数を追加/更新する
+
+        Args:
+            _add_dict (dict): 追加する内容
+        """
+
         self.__dict__.update(_add_dict)
 
     def to_dict(self):
+        """インスタンス変数を辞書で返す
+
+        Returns:
+            dict: インスタンス変数
+        """
+
         tmp_dict = self.__dict__
         if self.player_list:
             tmp_dict.update(self.player_list)

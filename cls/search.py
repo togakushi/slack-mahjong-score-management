@@ -9,6 +9,9 @@ from lib.database.common import first_record
 
 
 class SearchRange():
+    """検索範囲取得クラス
+    """
+
     words = {}
     day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 
@@ -17,6 +20,9 @@ class SearchRange():
         self.update()
 
     def update(self) -> None:
+        """キーワードから日付を取得する
+        """
+
         self.current_time = datetime.now()
         self.appointed_time = self.current_time + relativedelta(hours=-12)
         self.words["当日"] = [
@@ -65,6 +71,15 @@ class SearchRange():
         ]
 
     def find(self, word: str) -> bool:
+        """指定ワード/日付が含まれているか判定する
+
+        Args:
+            word (str): チェックするワード or 日付
+
+        Returns:
+            bool: 真偽
+        """
+
         if word in self.words.keys():
             return (True)
         else:
@@ -74,6 +89,15 @@ class SearchRange():
                 return (False)
 
     def range(self, word: str) -> list:
+        """指定ワードを日付に変換する
+
+        Args:
+            word (str): ワード
+
+        Returns:
+            list: 変換後の日付
+        """
+
         self.update()
         if word in self.words.keys():
             return (self.words[word])
@@ -88,6 +112,12 @@ class SearchRange():
                 return ([])
 
     def list(self):
+        """ワードで指定できる範囲を一覧化する（ヘルプ表示用）
+
+        Returns:
+            str: ワードとその範囲
+        """
+
         ret = []
         for x in self.words.keys():
             days = []
@@ -99,8 +129,13 @@ class SearchRange():
 
 
 class CommandCheck(str):
-    """
-    キーワードがサブコマンドかチェックする(match専用)
+    """キーワードがサブコマンドかチェックする(match専用)
+
+    Args:
+        str (str): チェックするキーワード
+
+    Returns:
+        bool: 真偽
     """
 
     def __init__(self, command_name: str):

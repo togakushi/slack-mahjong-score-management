@@ -5,18 +5,13 @@ import global_value as g
 
 
 def len_count(text):
-    """
-    文字数をカウント(全角文字は2)
+    """文字数をカウント(全角文字は2)
 
-    Parameters
-    ----------
-    text : text
-        判定文字列
+    Args:
+        text (str): 判定文字列
 
-    Returns
-    -------
-    count : int
-        文字数
+    Returns:
+        int: 文字数
     """
 
     count = 0
@@ -30,18 +25,13 @@ def len_count(text):
 
 
 def han_to_zen(text):
-    """
-    半角文字を全角文字に変換(数字のみ)
+    """半角文字を全角文字に変換(数字のみ)
 
-    Parameters
-    ----------
-    text : text
-        変換対象文字列
+    Args:
+        text (str): 変換対象文字列
 
-    Returns
-    -------
-    text : text
-        変換後の文字列
+    Returns:
+        str: 変換後の文字列
     """
 
     ZEN = "".join(chr(0xff10 + i) for i in range(10))
@@ -51,18 +41,13 @@ def han_to_zen(text):
 
 
 def zen_to_han(text):
-    """
-    全角文字を半角文字に変換(数字のみ)
+    """全角文字を半角文字に変換(数字のみ)
 
-    Parameters
-    ----------
-    text : text
-        変換対象文字列
+    Args:
+        text (str): 変換対象文字列
 
-    Returns
-    -------
-    text : text
-        変換後の文字列
+    Returns:
+        str: 変換後の文字列
     """
 
     ZEN = "".join(chr(0xff10 + i) for i in range(10))
@@ -72,18 +57,13 @@ def zen_to_han(text):
 
 
 def hira_to_kana(text):
-    """
-    ひらがなをカタカナに変換
+    """ひらがなをカタカナに変換
 
-    Parameters
-    ----------
-    text : text
-        変換対象文字列
+    Args:
+        text (str): 変換対象文字列
 
-    Returns
-    -------
-    text : text
-        変換後の文字列
+    Returns:
+        str: 変換後の文字列
     """
 
     HIRA = "".join(chr(0x3041 + i) for i in range(86))
@@ -93,18 +73,13 @@ def hira_to_kana(text):
 
 
 def kata_to_hira(text):
-    """
-    カタカナをひらがなに変換
+    """カタカナをひらがなに変換
 
-    Parameters
-    ----------
-    text : text
-        変換対象文字列
+    Args:
+        text (str): 変換対象文字列
 
-    Returns
-    -------
-    text : text
-        変換後の文字列
+    Returns:
+        str: 変換後の文字列
     """
 
     HIRA = "".join(chr(0x3041 + i) for i in range(86))
@@ -114,18 +89,13 @@ def kata_to_hira(text):
 
 
 def badge_degree(game_count=0):
-    """
-    プレイしたゲーム数に対して表示される称号を返す
+    """プレイしたゲーム数に対して表示される称号を返す
 
-    Parameters
-    ----------
-    game_count : int
-        ゲーム数
+    Args:
+        game_count (int, optional): ゲーム数. Defaults to 0.
 
-    Returns
-    -------
-    badge_degree : text
-        表示する称号
+    Returns:
+        str: 表示する称号
     """
 
     badge_degree = ""
@@ -144,21 +114,14 @@ def badge_degree(game_count=0):
 
 
 def badge_status(game_count=0, win=0):
-    """
-    勝率に対して付く調子バッジを返す
+    """勝率に対して付く調子バッジを返す
 
-    Parameters
-    ----------
-    game_count : int
-        ゲーム数
+    Args:
+        game_count (int, optional): ゲーム数. Defaults to 0.
+        win (int, optional): 勝ち数. Defaults to 0.
 
-    win : int
-        勝ち数
-
-    Returns
-    -------
-    badge_degree : text
-        表示する称号
+    Returns:
+        str: 表示する称号
     """
 
     badge_status = ""
@@ -183,18 +146,13 @@ def badge_status(game_count=0, win=0):
 
 
 def floatfmt_adjust(df):
-    """
-    カラム名に応じたfloatfmtのリストを返す
+    """カラム名に応じたfloatfmtのリストを返す
 
-    Parameters
-    ----------
-    df : DataFrame
-        チェックするデータ
+    Args:
+        df (pd.DataFrame): チェックするデータ
 
-    Returns
-    -------
-    fmt : list
-        floatfmtに指定するリスト
+    Returns:
+        list: floatfmtに指定するリスト
     """
 
     fmt = []
@@ -221,26 +179,18 @@ def floatfmt_adjust(df):
 
 
 def save_output(df, format, filename, headline):
-    """
-    指定されたフォーマットでdfを保存する
+    """指定されたフォーマットでdfを保存する
 
-    Parameters
-    ----------
-    df : DataFrame
-        保存するデータ
+    Args:
+        df (pd.DataFrame): _description_
+        format (str): フォーマット
+        filename (str): 保存ファイル名
+        headline (str): 集計情報（ヘッダコメント）
 
-    format : str
-        フォーマット
-
-    filename : str
-        保存ファイル名
-
-    headline : text
-        集計情報（ヘッダコメント）
-
-    Returns
-    -------
-    save_file : file path / None
+    Returns:
+        Union[str, None]
+            - str: 保存したファイルパス
+            - None: 指定したフォーマットで保存できなかった場合
     """
 
     match format.lower():
@@ -265,8 +215,11 @@ def save_output(df, format, filename, headline):
 
 
 def graph_setup(plt, fm):
-    """
-    グラフ設定
+    """グラフ設定
+
+    Args:
+        plt (matplotlib.font_manager): matplotlibオブジェクト
+        fm (matplotlib.pyplot): matplotlibオブジェクト
     """
 
     # スタイルの適応
@@ -296,21 +249,15 @@ def graph_setup(plt, fm):
 
 
 def scope_coverage(argument: list):
-    """
-    キーワードから有効な日付を取得する
+    """キーワードから有効な日付を取得する
 
-    Parameters
-    ----------
-    argument : list
-        チェック対象のキーワードリスト
+    Args:
+        argument (list): 引数リスト
 
-    Returns
-    -------
-    new_argument : list
-        日付を得られなっかったキーワードのリスト
-
-    target_days : list
-        キーワードから得た日付のリスト
+    Returns:
+        Tuple[list, list]:
+            - list: 得られた日付のリスト
+            - list: 日付を取り除いた引数リスト
     """
 
     new_argument = argument.copy()
@@ -325,8 +272,11 @@ def scope_coverage(argument: list):
 
 
 def debug_out(msg1, msg2=None):
-    """
-    メッセージ標準出力(テスト用)
+    """メッセージ標準出力(テスト用)
+
+    Args:
+        msg1 (str): _description_
+        msg2 (str, optional): _description_. Defaults to None.
     """
 
     print(msg1)

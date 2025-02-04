@@ -16,17 +16,13 @@ mlogger.setLevel(logging.WARNING)
 
 
 def plot():
-    """
-    個人成績のグラフを生成する
+    """個人成績のグラフを生成する
 
-    Returns
-    -------
-    game_count : int
-        グラフにプロットしたゲーム数
+    Returns:
+        Tuple[int, str]:
+            - int: グラフにプロットしたゲーム数
+            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
 
-    text : text
-        検索結果が0件のときのメッセージ or
-        グラフ画像保存パス
     """
 
     plt.close()
@@ -127,17 +123,12 @@ def plot():
 
 
 def statistics_plot():
-    """
-    個人成績の統計グラフを生成する
+    """個人成績の統計グラフを生成する
 
-    Returns
-    -------
-    game_count : int
-        集計対象のゲーム数
-
-    text : text
-        検索結果が0件のときのメッセージ or
-        グラフ画像保存パス
+    Returns:
+        Tuple[int, str]:
+            - int: 集計対象のゲーム数
+            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
 
     plt.close()
@@ -326,6 +317,16 @@ def statistics_plot():
 
 
 def get_data(df, interval):
+    """データフレームを指定範囲で分割する
+
+    Args:
+        df (pd.DataFrame): 分割するデータ
+        interval (int): 1ブロックに収めるデータ数
+
+    Returns:
+        pd.DataFrame: 分割されたデータ
+    """
+
     # interval単位で分割
     rpoint_data = {}
 
@@ -343,6 +344,12 @@ def get_data(df, interval):
 
 
 def subplot_box(df, ax):
+    """箱ひげ図を生成する
+
+    Args:
+        df (pd.DataFrame): プロットデータ
+        ax (matplotlib.axes): プロット先オブジェクト
+    """
 
     p = [x + 1 for x in range(len(df.columns))]
     df.plot(
@@ -368,6 +375,13 @@ def subplot_box(df, ax):
 
 
 def subplot_table(df, ax):
+    """テーブルを生成する
+
+    Args:
+        df (pd.DataFrame): プロットデータ
+        ax (matplotlib.axes): プロット先オブジェクト
+    """
+
     df = df.apply(lambda col: col.map(lambda x: str(x).replace("-", "▲")))
     df.replace("+nan", "-----", inplace=True)
     table = ax.table(

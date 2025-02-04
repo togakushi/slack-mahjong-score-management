@@ -4,8 +4,7 @@ from lib.command.graph import personal, rating, summary
 
 
 def main():
-    """
-    グラフをslackにpostする
+    """グラフをslackにpostする
     """
 
     g.opt.initialization("graph", g.msg.argument)

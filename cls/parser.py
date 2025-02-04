@@ -7,6 +7,9 @@ import lib.function.slack_api as slack_api
 
 
 class Message_Parser():
+    """メッセージ解析クラス
+    """
+
     client: WebClient = WebClient()
     channel_id: str = str()
     channel_type: str = str()
@@ -25,8 +28,10 @@ class Message_Parser():
             self.parser(body)
 
     def parser(self, _body: dict):
-        """
-        postされたメッセージをパース
+        """postされたメッセージをパースする
+
+        Args:
+            _body (dict): postされたデータ
         """
 
         logging.trace(_body)
@@ -106,8 +111,7 @@ class Message_Parser():
         self.check_updatable()
 
     def check_updatable(self):
-        """
-        DB更新可能チャンネルのポストかチェック
+        """DB更新可能チャンネルのポストかチェックする
         """
 
         self.updatable = False

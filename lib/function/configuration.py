@@ -12,6 +12,12 @@ from cls.search import SearchRange
 
 
 def arg_parser():
+    """コマンドライン解析
+
+    Returns:
+        argparse.ArgumentParser: オブジェクト
+    """
+
     p = argparse.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter,
         add_help=True,
@@ -92,9 +98,8 @@ def arg_parser():
     return (p.parse_args())
 
 
-def setup(log=True):
-    """
-    設定ファイル読み込み
+def setup():
+    """設定ファイル読み込み
     """
 
     g.args = arg_parser()

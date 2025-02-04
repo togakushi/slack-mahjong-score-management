@@ -14,17 +14,12 @@ mlogger.setLevel(logging.WARNING)
 
 
 def point_plot():
-    """
-    ポイント推移グラフを生成する
+    """ポイント推移グラフを生成する
 
-    Returns
-    -------
-    total_game_count : int
-        グラフにプロットしたゲーム数
-
-    text : text
-        検索結果が0件のときのメッセージ or
-        グラフ画像保存パス
+    Returns:
+        Tuple[int, str]:
+            - int: グラフにプロットしたゲーム数
+            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
 
     plt.close()
@@ -116,17 +111,12 @@ def point_plot():
 
 
 def rank_plot():
-    """
-    順位変動グラフを生成する
+    """順位変動グラフを生成する
 
-    Returns
-    -------
-    total_game_count : int
-        グラフにプロットしたゲーム数
-
-    text : text
-        検索結果が0件のときのメッセージ or
-        グラフ画像保存パス
+    Returns:
+        Tuple[int, str]:
+            - int: グラフにプロットしたゲーム数
+            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
 
     # データ収集
@@ -218,8 +208,12 @@ def rank_plot():
 
 
 def _data_collection():
-    """
-    データ収集
+    """データ収集
+
+    Returns:
+        Tuple[pd.DataFrame, pd.DataFrame]:
+            - pd.DataFrame: 収集したデータのサマリ
+            - pd.DataFrame: 集計範囲のデータ
     """
 
     # データ収集
@@ -265,8 +259,14 @@ def _data_collection():
 
 
 def _graph_generation(df: pd.DataFrame, **kwargs):
-    """
-    グラフ生成共通処理
+    """グラフ生成共通処理
+
+    Args:
+        df (pd.DataFrame): _description_
+        kwargs (dict): グラフ生成パラメータ
+
+    Returns:
+        str: 生成したグラフの保存パス
     """
 
     save_file = os.path.join(

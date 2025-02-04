@@ -15,17 +15,12 @@ mlogger.setLevel(logging.WARNING)
 
 
 def plot():
-    """
-    レーティング推移グラフを生成する
+    """レーティング推移グラフを生成する
 
-    Returns
-    -------
-    game_count : int
-        グラフにプロットしたゲーム数
-
-    text : text
-        検索結果が0件のときのメッセージ or
-        グラフ画像保存パス
+    Returns:
+        Tuple[int, str]:
+            - int: グラフにプロットしたゲーム数
+            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
 
     plt.close()

@@ -9,8 +9,13 @@ from lib import function as f
 
 
 def help(command):
-    """
-    スラッシュコマンド用ヘルプ
+    """スラッシュコマンド用ヘルプ
+
+    Args:
+        command (str): スラッシュコマンド名
+
+    Returns:
+        str: ヘルプメッセージ
     """
 
     msg = "```使い方："
@@ -39,8 +44,10 @@ def help(command):
 
 
 def help_message():
-    """
-    チャンネル内呼び出しキーワード用ヘルプ
+    """チャンネル内呼び出しキーワード用ヘルプ
+
+    Returns:
+        str: ヘルプメッセージ
     """
 
     results_option = f.configuration.command_option()
@@ -125,21 +132,14 @@ def help_message():
 
 
 def reply(message=None, rpoint_sum=0):
-    """
-    メッセージをランダムに返す
+    """メッセージをランダムに返す
 
-    Parameters
-    ----------
-    message : str
-        選択するメッセージ
+    Args:
+        message (str, optional): 選択するメッセージ. Defaults to None.
+        rpoint_sum (int, optional): 素点合計(1/100). Defaults to 0.
 
-    rpoint_sum : int
-        素点合計(1/100)
-
-    Returns
-    -------
-    msg : str
-        メッセージ
+    Returns:
+        str: メッセージ
     """
 
     correct_score = g.prm.origin_point * 4  # 配給原点
@@ -180,8 +180,15 @@ def reply(message=None, rpoint_sum=0):
 
 
 def remarks(headword=False):
-    """
-    引数で指定された集計方法を注記にまとめる
+    """引数で指定された集計方法を注記にまとめる
+
+    Args:
+        headword (bool, optional): 見出しを付ける. Defaults to False.
+
+    Returns:
+        Union[list, str]:
+            - `headword` がない場合はリストで返す
+            - `headword` がある場合は文字列で返す
     """
 
     remark = []
@@ -206,6 +213,15 @@ def remarks(headword=False):
 
 
 def search_word(headword=False):
+    """キーワード検索条件を返す
+
+    Args:
+        headword (bool, optional): 見出しを付ける. Defaults to False.
+
+    Returns:
+        str: 条件をまとめた文字列
+    """
+
     if g.prm.search_word:
         ret = g.prm.search_word.replace("%", "")
         # 集約条件
@@ -222,6 +238,17 @@ def search_word(headword=False):
 
 
 def header(game_info, add_text="", indent=1):
+    """見出し生成
+
+    Args:
+        game_info (dict): 集計範囲のゲーム情報
+        add_text (str, optional): 追加表示するテキスト. Defaults to "".
+        indent (int, optional): 先頭のタブ数. Defaults to 1.
+
+    Returns:
+        str: 生成した見出し
+    """
+
     msg = ""
 
     # 集計範囲
@@ -262,8 +289,13 @@ def header(game_info, add_text="", indent=1):
 
 
 def del_blank_line(text: str):
-    """
-    空行を取り除く
+    """空行を取り除く
+
+    Args:
+        text (str): 処理するテキスト
+
+    Returns:
+        str: 処理されたテキスト
     """
 
     new_text = []
@@ -278,8 +310,17 @@ def del_blank_line(text: str):
 
 
 def item_search_range(kind=None, time_pattern=None):
-    """
-    検索範囲を返す（ヘッダ出力用）
+    """検索範囲を返す（ヘッダ出力用）
+
+    Args:
+        kind (str, optional): 返値のタイプ. Defaults to None.
+        time_pattern (str, optional): 表示させるフォーマットを選択. Defaults to None.
+
+    Returns:
+        Union[list, str]:
+            - `kind` にlistが指定されている場合はリスト
+            - `kind` にstrが指定されている場合は文字列
+            - `kind` がNone場合は見出し付き文字列
     """
 
     match time_pattern:
@@ -303,8 +344,17 @@ def item_search_range(kind=None, time_pattern=None):
 
 
 def item_aggregation_range(game_info, kind=None):
-    """
-    集計範囲を返す（ヘッダ出力用）
+    """集計範囲を返す（ヘッダ出力用）
+
+    Args:
+        game_info (dict): 集計範囲のゲーム情報
+        kind (str, optional): 表示させるフォーマットを選択. Defaults to None.
+
+    Returns:
+        Union[list, str]:
+            - `kind` にlistが指定されている場合はリスト
+            - `kind` にstrが指定されている場合は文字列
+            - `kind` がNone場合は見出し付き文字列
     """
 
     if g.opt.search_word:  # コメント検索の場合はコメントで表示

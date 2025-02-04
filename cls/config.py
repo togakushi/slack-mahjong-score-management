@@ -6,12 +6,21 @@ from dataclasses import dataclass, field
 
 
 class Config():
+    """コンフィグ解析クラス
+    """
+
     def __init__(self, filename: str = None) -> None:
         self.config = configparser.ConfigParser()
         if filename is not None:
             self.read_file(filename)
 
     def read_file(self, filename: str) -> None:
+        """設定ファイル読み込み
+
+        Args:
+            str: 設定ファイルパス
+        """
+
         try:
             self.config.read(filename, encoding="utf-8")
             logging.notice(f"{filename=}")
@@ -130,6 +139,15 @@ class Config():
         self.dropitems.report = [x.strip() for x in self.config["report"].get("dropitems", "").split(",")]
 
     def command_opt(self, section):
+        """設定ファイルのセクションを読み込みインスタンス化して返す
+
+        Args:
+            section (_type_): セクション名
+
+        Returns:
+            subcommand: subcommandインスタンス
+        """
+
         @dataclass
         class subcommand:
             aggregation_range: str = self.config[section].get("aggregation_range", "当日")
@@ -158,7 +176,13 @@ class Config():
 
         return (subcommand())
 
-    def word_list(self):
+    def word_list(self) -> list:
+        """設定されている値、キーワードをリスト化する
+
+        Returns:
+            list: リスト化されたキーワード
+        """
+
         words = []
 
         words.append([self.setting.slash_command])
