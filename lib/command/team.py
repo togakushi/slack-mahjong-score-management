@@ -350,8 +350,9 @@ def clear():
     )
     resultdb.row_factory = sqlite3.Row
 
-    resultdb.execute("drop table team")
-    resultdb.execute("update member set team_id = null")
+    resultdb.execute("update member set team_id = null;")
+    resultdb.execute("drop table team;")
+    resultdb.execute("delete from sqlite_sequence where name = 'team';")
     resultdb.commit()
     resultdb.close()
 
