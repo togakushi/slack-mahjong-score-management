@@ -14,8 +14,13 @@ from lib import function as f
 
 
 def query_modification(sql: str):
-    """
-    オプションの内容でクエリを修正する
+    """オプションの内容でクエリを修正する
+
+    Args:
+        sql (str): SQL
+
+    Returns:
+        str: SQL
     """
 
     if g.opt.individual:  # 個人集計
@@ -100,18 +105,13 @@ def query_modification(sql: str):
 
 
 def exsist_record(ts):
-    """
-    記録されているゲーム結果を返す
+    """記録されているゲーム結果を返す
 
-    Parameters
-    ----------
-    ts : float(datetime)
-        検索するタイムスタンプ
+    Args:
+        ts (float): 検索するタイムスタンプ
 
-    Returns
-    -------
-    dict : dict
-        検索結果
+    Returns:
+        dict: 検索結果
     """
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
@@ -125,8 +125,10 @@ def exsist_record(ts):
 
 
 def first_record():
-    """
-    最初のゲーム記録時間を返す
+    """最初のゲーム記録時間を返す
+
+    Returns:
+        datetime: 最初のゲーム記録時間
     """
 
     ret = datetime.now()
@@ -146,6 +148,14 @@ def first_record():
 
 
 def db_insert(detection, ts, reactions_data=None):
+    """スコアデータをDBに追加する
+
+    Args:
+        detection (list): スコア情報
+        ts (datetime): コマンドが発行された時間
+        reactions_data (_type_, optional): リアクションリスト. Defaults to None.
+    """
+
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
@@ -163,6 +173,14 @@ def db_insert(detection, ts, reactions_data=None):
 
 
 def db_update(detection, ts, reactions_data=None):
+    """スコアデータを変更する
+
+    Args:
+        detection (list): スコア情報
+        ts (datetime): コマンドが発行された時間
+        reactions_data (_type_, optional): リアクションリスト. Defaults to None.
+    """
+
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
@@ -180,6 +198,12 @@ def db_update(detection, ts, reactions_data=None):
 
 
 def db_delete(ts):
+    """スコアデータを削除する
+
+    Args:
+        ts (datetime): 削除対象レコードのタイムスタンプ
+    """
+
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
         cur.execute(d.sql_result_delete, (ts,))
@@ -203,6 +227,12 @@ def db_delete(ts):
 
 
 def db_backup():
+    """データベースのバックアップ
+
+    Returns:
+        str: 動作結果メッセージ
+    """
+
     fname = os.path.splitext(g.cfg.db.database_file)[0]
     fext = os.path.splitext(g.cfg.db.database_file)[1]
     bktime = datetime.now().strftime('%Y%m%d-%H%M%S')
@@ -229,6 +259,12 @@ def db_backup():
 
 
 def remarks_append(remarks):
+    """メモをDBに記録する
+
+    Args:
+        remarks (list): メモに残す内容
+    """
+
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
 
@@ -248,6 +284,12 @@ def remarks_append(remarks):
 
 
 def remarks_delete(ts):
+    """DBからメモを削除する
+
+    Args:
+        ts (datetime): 削除対象レコードのタイムスタンプ
+    """
+
     logging.notice(f"{ts}")
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
@@ -266,6 +308,12 @@ def remarks_delete_compar(para):
 
 
 def rule_version():
+    """DBに記録されているルールバージョン毎の範囲を取得する
+
+    Returns:
+        dict: 取得結果
+    """
+
     rule = {}
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         ret = cur.execute(
@@ -291,6 +339,15 @@ def rule_version():
 
 
 def word_list(word_type=0):
+    """登録済みワードリストを取得する
+
+    Args:
+        word_type (int, optional): 取得するタイプ. Defaults to 0.
+
+    Returns:
+        list: 取得結果
+    """
+
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         ret = cur.execute(
             """

@@ -4,8 +4,10 @@ from lib.database.common import query_modification
 
 
 def record_count():
-    """
-    連続連対などの記録をカウントするSQLを生成
+    """連続連対などの記録をカウントするSQLを生成
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -42,8 +44,10 @@ def record_count():
 
 
 def ratings():
-    """
-    レーティング集計用
+    """レーティング集計用
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -65,8 +69,10 @@ def ratings():
 
 
 def results():
-    """
-    成績集計(シンプル版)
+    """成績集計(シンプル版)
+
+    Returns:
+        str: SQL
     """
 
     sql = """

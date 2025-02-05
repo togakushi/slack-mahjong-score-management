@@ -5,6 +5,9 @@ import global_value as g
 
 
 def initialization_resultdb():
+    """DB初期化処理
+    """
+
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,

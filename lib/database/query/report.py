@@ -3,7 +3,10 @@ from lib.database.common import query_modification
 
 
 def monthly():
-    """
+    """月間集計情報
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -32,7 +35,10 @@ def monthly():
 
 
 def winner():
-    """
+    """月間成績上位者を抽出
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -86,8 +92,10 @@ def winner():
 
 
 def matrix_table():
-    """
-    対局対戦マトリックス表の元データを抽出するSQLを生成
+    """対局対戦マトリックス表の元データを抽出するSQLを生成
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -128,6 +136,17 @@ def matrix_table():
 
 
 def personal_data(flag="M"):
+    """個人成績を集計するSQLを生成
+
+    Args:
+        flag (str, optional): 集計単位. Defaults to "M".
+            - M: 月間集計
+            - Y: 年間集計
+
+    Returns:
+        str: SQL
+    """
+
     sql = """
         -- report.personal_data()
         select
@@ -172,6 +191,12 @@ def personal_data(flag="M"):
 
 
 def count_data():
+    """指定区間区切りの集計結果を得るSQLを生成
+
+    Returns:
+        str: SQL
+    """
+
     sql = """
         -- report.count_data()
         select
@@ -215,6 +240,15 @@ def count_data():
 
 
 def count_moving(interval=40):
+    """移動平均を得るSQLを生成
+
+    Args:
+        interval (int, optional): 平滑化するゲーム数. Defaults to 40.
+
+    Returns:
+        str: SQL
+    """
+
     sql = """
         -- report.count_moving()
         select
@@ -260,6 +294,12 @@ def count_moving(interval=40):
 
 
 def results_list():
+    """個人成績一覧を得るSQLを生成
+
+    Returns:
+        str: SQL
+    """
+
     sql = """
         -- report.results_list()
         select

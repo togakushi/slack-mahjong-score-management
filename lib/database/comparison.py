@@ -9,8 +9,7 @@ from lib import function as f
 
 
 def main():
-    """
-    データ突合の実施、その結果をslackにpostする
+    """データ突合の実施、その結果をslackにpostする
     """
 
     # チェックコマンドを拾ったイベントの情報を保持(結果の返し先)
@@ -38,20 +37,12 @@ def main():
 
 
 def data_comparison():
-    """
-    データ突合
+    """データ突合処理
 
-    Parameters
-    ----------
-    unnecessary
-
-    Returns
-    -------
-    count : dict
-        処理された更新/追加/削除の件数
-
-    ret_msg : dict
-        slackに返すメッセージ
+    Returns:
+        Tuple[dict, dict]:
+            - dict: 処理された更新/追加/削除の件数
+            - dict: slackに返すメッセージ
     """
 
     count = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0, "remark": 0}
@@ -210,8 +201,13 @@ def data_comparison():
 
 
 def textformat(text):
-    """
-    メンバーと素点を整形する
+    """メンバーと素点を整形する
+
+    Args:
+        text (list): 素点データ
+
+    Returns:
+        str: 整形テキスト
     """
 
     ret = ""

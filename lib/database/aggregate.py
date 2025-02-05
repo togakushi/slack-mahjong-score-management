@@ -12,24 +12,15 @@ from lib.database import query
 
 
 def _disp_name(df, adjust=0, mark=True):
-    """
-    ゲスト置換/パディング付与
+    """ゲスト置換/パディング付与
 
-    Parameters
-    ----------
-    df : DataFrame
-        変更対象のデータ
+    Args:
+        df (pd.DataFrame): 変更対象のデータ
+        adjust (int, optional): パディング数の調整. Defaults to 0.
+        mark (bool, optional): ゲストマークの表示. Defaults to True.
 
-    adjust : int
-        パディング数の調整
-
-    mark : bool
-        ゲストマークの表示
-
-    Returns
-    -------
-    df : DataFrame
-        置換後のデータ
+    Returns:
+        pd.DataFrame: 置換後のデータ
     """
 
     player_list = list(df.unique())
@@ -52,17 +43,15 @@ def _disp_name(df, adjust=0, mark=True):
 
 
 def game_info():
-    """
-    指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
+    """指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
 
-    Returns
-    -------
-    ret : dict
-        game_count : int
-        first_game : datetime
-        last_game : datetime
-        first_comment : str
-        last_comment : str
+    Returns:
+        dict: 取得したデータ
+            - game_count: int
+            - first_game: datetime
+            - last_game: datetime
+            - first_comment: str
+            - last_comment: str
     """
 
     # データ収集
@@ -91,12 +80,10 @@ def game_info():
 
 
 def game_summary():
-    """
-    指定条件を満たすゲーム結果をサマライズする
+    """指定条件を満たすゲーム結果をサマライズする
 
-    Returns
-    -------
-    df : DataFrame
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集
@@ -140,12 +127,10 @@ def game_summary():
 
 
 def game_details():
-    """
-    ゲーム結果を集計する
+    """ゲーム結果を集計する
 
-    Returns
-    -------
-    df : DataFrame
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集
@@ -168,21 +153,16 @@ def game_details():
 
 
 def remark_count(kind):
-    """
-    メモの内容を種別でカウント
+    """メモの内容を種別でカウント
 
-    Parameters
-    ----------
-    kind : str
-        集計種別
+    Args:
+        kind (str): 集計種別
 
-    Returns
-    -------
-    df : DataFrame
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集
-
     df = pd.read_sql(
         query.game.remark_count(kind),
         sqlite3.connect(g.cfg.db.database_file),
@@ -202,12 +182,10 @@ def remark_count(kind):
 
 
 def game_results():
-    """
-    成績を集計する
+    """成績を集計する
 
-    Returns
-    -------
-    df : DataFrame
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集
@@ -235,6 +213,12 @@ def game_results():
 
 
 def personal_gamedata():
+    """ゲーム結果集計(個人用)
+
+    Returns:
+        pd.DataFrame: 集計結果
+    """
+
     # データ収集
     df = pd.read_sql(
         query.summary.gamedata(),
@@ -251,6 +235,12 @@ def personal_gamedata():
 
 
 def versus_matrix():
+    """直接対戦結果集計
+
+    Returns:
+        pd.DataFrame: 集計結果
+    """
+
     # データ収集
     df = pd.read_sql(
         query.summary.versus_matrix(),
@@ -275,6 +265,11 @@ def versus_matrix():
 
 # チーム
 def team_gamedata():
+    """ゲーム結果集計(チーム用)
+
+    Returns:
+        pd.DataFrame: 集計結果
+    """
     # データ収集
     df = pd.read_sql(
         query.summary.gamedata(),
@@ -287,12 +282,10 @@ def team_gamedata():
 
 # ランキング
 def ranking_record():
-    """
-    記録を集計する
+    """ランキング集計
 
-    Returns
-    -------
-    df : DataFrame
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集
@@ -357,12 +350,10 @@ def ranking_record():
 
 
 def calculation_rating():
-    """
-    レーティングを集計する
+    """レーティング集計
 
-    Returns
-    -------
-    df_ratings : DataFrame
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集
@@ -412,12 +403,10 @@ def calculation_rating():
 
 
 def simple_results():
-    """
-    簡易集計結果
+    """ゲーム結果集計(簡易版)
 
-    Returns
-    -------
-    df_ratings : DataFrame
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集
@@ -432,6 +421,12 @@ def simple_results():
 
 # レポート
 def monthly_report():
+    """レポート生成用データ集計
+
+    Returns:
+        pd.DataFrame: 集計結果
+    """
+
     # データ収集
     df = pd.read_sql(
         query.report.monthly(),
@@ -443,6 +438,12 @@ def monthly_report():
 
 
 def winner_report():
+    """成績上位者
+
+    Returns:
+        pd.DataFrame: 集計結果
+    """
+
     # データ収集
     df = pd.read_sql(
         query.report.winner(),
@@ -460,8 +461,10 @@ def winner_report():
 
 
 def matrix_table():
-    """
-    対局対戦マトリックス表の作成
+    """対局対戦マトリックス表の作成
+
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集
@@ -573,8 +576,10 @@ def matrix_table():
 
 
 def results_list():
-    """
-    成績一覧表
+    """成績一覧表
+
+    Returns:
+        pd.DataFrame: 集計結果
     """
 
     # データ収集

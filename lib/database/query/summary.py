@@ -3,8 +3,10 @@ from lib.database.common import query_modification
 
 
 def gamedata():
-    """
-    通算ポイント推移/平均順位推移
+    """通算ポイント推移/平均順位推移
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -88,8 +90,10 @@ def gamedata():
 
 
 def total():
-    """
-    最終成績集計
+    """最終成績集計
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -154,8 +158,10 @@ def total():
 
 
 def results():
-    """
-    成績集計
+    """成績集計
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -308,8 +314,10 @@ def results():
 
 
 def details():
-    """
-    ゲーム結果の詳細を返すSQLを生成(ゲスト戦も返す)
+    """ゲーム結果の詳細を返すSQLを生成(ゲスト戦も返す)
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -360,8 +368,10 @@ def details():
 
 
 def versus_matrix():
-    """
-    直接対戦結果を集計するSQLを生成
+    """直接対戦結果を集計するSQLを生成
+
+    Returns:
+        str: SQL
     """
 
     sql = """

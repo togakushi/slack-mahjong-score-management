@@ -3,8 +3,10 @@ from lib.database.common import query_modification
 
 
 def info():
-    """
-    ゲーム数のカウント、最初と最後のゲームの時間とコメントを取得するSQLを返す
+    """ゲーム数のカウント、最初と最後のゲームの時間とコメントを取得するSQLを返す
+
+    Returns:
+        str: SQL
     """
 
     sql = """
@@ -48,13 +50,13 @@ def info():
 
 
 def remark_count(kind):
-    """
-    メモの内容をカウントするSQLを生成
+    """メモの内容をカウントするSQLを生成
 
-    Parameters
-    ----------
-    kind : str
-        集計種別
+    Args:
+        kind (str): 集計種別
+
+    Returns:
+        str: SQL
     """
 
     if kind == "grandslam":
