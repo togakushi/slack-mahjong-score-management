@@ -8,6 +8,12 @@ from lib import function as f
 
 
 def call_chat_postMessage(**kwargs):
+    """slackにメッセージをポストする
+
+    Returns:
+        SlackResponse: API response
+    """
+
     res = None
     if not kwargs["thread_ts"]:
         kwargs.pop("thread_ts")
@@ -24,6 +30,12 @@ def call_chat_postMessage(**kwargs):
 
 
 def call_files_upload(**kwargs):
+    """slackにファイルをアップロードする
+
+    Returns:
+        SlackResponse: API response
+    """
+
     res = None
     if not kwargs["thread_ts"]:
         kwargs.pop("thread_ts")
@@ -40,6 +52,16 @@ def call_files_upload(**kwargs):
 
 
 def post_message(message, ts=False):
+    """chat_postMessageに渡すパラメータを設定
+
+    Args:
+        message (str): ポストするメッセージ
+        ts (bool, optional): スレッドに返す. Defaults to False.
+
+    Returns:
+        SlackResponse: API response
+    """
+
     res = {}
     if not ts and g.msg.thread_ts:
         ts = g.msg.thread_ts
@@ -58,6 +80,14 @@ def post_message(message, ts=False):
 
 
 def post_multi_message(msg, ts=False, summarize=True):
+    """メッセージを分割してポスト
+
+    Args:
+        msg (Union[dict, list]): ポストするメッセージ
+        ts (bool, optional): スレッドに返す. Defaults to False.
+        summarize (bool, optional): 可能な限り1つのブロックにまとめる. Defaults to True.
+    """
+
     if g.args.testcase:
         f.common.debug_out("", msg)
     else:
@@ -82,6 +112,17 @@ def post_multi_message(msg, ts=False, summarize=True):
 
 
 def post_text(event_ts, title, msg):
+    """コードブロック修飾付きポスト
+
+    Args:
+        event_ts (str): スレッドに返す
+        title (str): タイトル行
+        msg (str): 本文
+
+    Returns:
+        SlackResponse: API response
+    """
+
     # コードブロック修飾付きポスト
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
         res = call_chat_postMessage(
@@ -114,6 +155,17 @@ def post_text(event_ts, title, msg):
 
 
 def post_fileupload(title, file, ts=False):
+    """files_upload_v2に渡すパラメータを設定
+
+    Args:
+        title (str): タイトル行
+        file (str): アップロードファイルパス
+        ts (bool, optional): スレッドに返す. Defaults to False.
+
+    Returns:
+        SlackResponse: API response
+    """
+
     if not ts and g.msg.thread_ts:
         ts = g.msg.thread_ts
 
@@ -132,6 +184,9 @@ def post_fileupload(title, file, ts=False):
 
 
 def slack_post(**kwargs):
+    """パラメータの内容によって呼び出すAPIを振り分ける
+    """
+
     logging.debug(f"{kwargs}")
     headline = kwargs.get("headline")
     message = kwargs.get("message")
@@ -155,14 +210,12 @@ def slack_post(**kwargs):
 
 
 def call_reactions_add(icon, ch=None, ts=None):
-    """
-    リアクションを付ける
+    """リアクションを付ける
 
-    Parameters
-    ----------
-    icon : str
-    ch : channel_id
-    ts : timestamp
+    Args:
+        icon (str): 付けるリアクション
+        ch (str, optional): チャンネルID. Defaults to None.
+        ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
     """
 
     if not ch:
@@ -190,14 +243,12 @@ def call_reactions_add(icon, ch=None, ts=None):
 
 
 def call_reactions_remove(icon, ch=None, ts=None):
-    """
-    リアクションを外す
+    """リアクションを外す
 
-    Parameters
-    ----------
-    icon : str
-    ch : channel_id
-    ts : timestamp
+    Args:
+        icon (str): 外すリアクション
+        ch (str, optional): チャンネルID. Defaults to None.
+        ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
     """
 
     if not ch:
@@ -225,17 +276,14 @@ def call_reactions_remove(icon, ch=None, ts=None):
 
 
 def reactions_status(ch=None, ts=None):
-    """
-    botが付けたリアクションの種類を返す
+    """botが付けたリアクションの種類を返す
 
-    Parameters
-    ----------
-    ch : channel_id
-    ts : timestamp
+    Args:
+        ch (str, optional): チャンネルID. Defaults to None.
+        ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
 
-    Returns
-    -------
-    icon : list
+    Returns:
+        list: リアクション
     """
 
     ch = ch if ch else g.msg.channel_id
@@ -258,16 +306,13 @@ def reactions_status(ch=None, ts=None):
 
 
 def get_dm_channel_id(user_id):
-    """
-    DMのチャンネルIDを取得する
+    """DMのチャンネルIDを取得する
 
-    Parameters
-    ----------
-    user_id : str
+    Args:
+        user_id (str): DMの相手
 
-    Returns
-    -------
-    channel_id : str
+    Returns:
+        str: チャンネルID
     """
 
     channel_id = None

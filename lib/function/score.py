@@ -9,18 +9,13 @@ from lib import function as f
 
 
 def calculation_point(score_df):
-    """
-    素点データから獲得ポイントと順位を取得する
+    """素点データから獲得ポイントと順位を取得する
 
-    Parameters
-    ----------
-    score_df : DataFrame
-        全員分の素点データ(東家から順)
+    Args:
+        score_df (pd.DataFrame): 全員分の素点データ(東家から順)
 
-    Returns
-    -------
-    score_df : DataFrame
-        順位と獲得ポイントを追加したデータ
+    Returns:
+        pd.DataFrame: 順位と獲得ポイントを追加したデータ
     """
 
     # 順位点算出
@@ -90,18 +85,13 @@ def calculation_point(score_df):
 
 
 def point_split(point: list):
-    """
-    順位点を山分けする
+    """順位点を山分けする
 
-    Parameters
-    ----------
-    point : list
-        山分けするポイントのリスト
+    Args:
+        point (list): 山分けするポイントのリスト
 
-    Returns
-    -------
-    new_point : list
-        山分けした結果
+    Returns:
+        list: 山分けした結果
     """
 
     new_point = [int(sum(point) / len(point))] * len(point)
@@ -114,13 +104,10 @@ def point_split(point: list):
 
 
 def reactions(param: dict):
-    """
-    素点合計をチェックしリアクションを付ける
+    """素点合計をチェックしリアクションを付ける
 
-    Parameters
-    ----------
-    param : dict
-        素点データ
+    Args:
+        param (dict): 素点データ
     """
 
     correct_score = g.prm.origin_point * 4  # 配給原点
@@ -149,8 +136,7 @@ def reactions(param: dict):
 
 
 def check_remarks():
-    """
-    メモの内容を拾ってDBに格納する
+    """メモの内容を拾ってDBに格納する
     """
 
     game_result = d.common.exsist_record(g.msg.thread_ts)
@@ -182,19 +168,20 @@ def check_remarks():
 
 
 def get_score(detection):
-    """
-    順位と獲得ポイントを計算する
+    """順位と獲得ポイントを計算する
 
-    Parameters
-    ----------
-    detection : list
-        素点データ(名前, 素点) x 4人分 + ゲームコメント
+    Args:
+        detection (list): 素点データ(名前, 素点) x 4人分 + ゲームコメント
 
-    Returns
-    -------
-    ret : dict
-        名前(p?_name), 素点文字列(p?_str), 素点(p?_rpoint),
-        ポイント(p?_point), 順位(p?_rank), 供託(deposit), コメント(comment)
+    Returns:
+        dict: 計算結果
+            - p?_name: 名前
+            - p?_str: 素点文字列
+            - p?_rpoint: 素点
+            - p?_point: ポイント
+            - p?_rank: 順位
+            - deposit: 供託
+            - comment: コメント
     """
 
     g.opt.unregistered_replace = False  # ゲスト無効

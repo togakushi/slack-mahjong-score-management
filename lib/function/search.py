@@ -13,18 +13,15 @@ from lib import function as f
 
 
 def pattern(text):
-    """
-    成績記録用フォーマットチェック
+    """成績記録用フォーマットチェック
 
-    Parameters
-    ----------
-    text : text
-        slackにポストされた内容
+    Args:
+        text (str): slackにポストされた内容
 
-    Returns
-    -------
-    msg : text / False
-        フォーマットに一致すればスペース区切りの名前と素点のペア
+    Returns:
+        Tuple[str, bool]:
+            - str: フォーマットに一致すればスペース区切りの名前と素点のペア
+            - False: メッセージのパースに失敗した場合
     """
 
     # 記号を置換
@@ -70,13 +67,10 @@ def pattern(text):
 
 
 def for_slack():
-    """
-    過去ログからゲーム結果を検索して返す
+    """過去ログからゲーム結果を検索して返す
 
-    Returns
-    -------
-    data : dict
-        検索した結果
+    Returns:
+        dict: 検索した結果
     """
 
     # 検索クエリ
@@ -165,18 +159,13 @@ def for_slack():
 
 
 def for_database(first_ts=False):
-    """
-    データベースからスコアを検索して返す
+    """データベースからスコアを検索して返す
 
-    Parameters
-    ----------
-    first_ts: float
-        検索を開始する時刻
+    Args:
+        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.
 
-    Returns
-    -------
-    data : dict
-        検索した結果
+    Returns:
+        dict: 検索した結果
     """
 
     if not first_ts:
@@ -205,18 +194,13 @@ def for_database(first_ts=False):
 
 
 def for_db_remarks(first_ts=False):
-    """
-    データベースからメモを検索して返す
+    """データベースからメモを検索して返す
 
-    Parameters
-    ----------
-    first_ts: float
-        検索を開始する時刻
+    Args:
+        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.
 
-    Returns
-    -------
-    data : list
-        検索した結果
+    Returns:
+        list: 検索した結果
     """
 
     if not first_ts:
@@ -241,8 +225,15 @@ def for_db_remarks(first_ts=False):
 
 
 def reactions_list(msg):
-    """
-    botが付けたリアクションを取得
+    """botが付けたリアクションを取得
+
+    Args:
+        msg (dict): _description_
+
+    Returns:
+        Tuple[list, list]:
+            - reaction_ok: okが付いているメッセージのタイムスタンプ
+            - reaction_ng: ngが付いているメッセージのタイムスタンプ
     """
 
     reaction_ok = []
