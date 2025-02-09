@@ -15,8 +15,11 @@ def import_only():
 # イベントAPI
 @g.app.event("message")
 def handle_message_events(client, body):
-    """
-    ポストされた内容で処理を分岐
+    """ポストされた内容で処理を分岐
+
+    Args:
+        client (slack_bolt.App.client): slack_boltオブジェクト
+        body (dict): ポストされたデータ
     """
 
     logging.trace(body)
@@ -105,8 +108,12 @@ def handle_message_events(client, body):
 
 @g.app.command(g.cfg.setting.slash_command)
 def slash_command(ack, body, client):
-    """
-    スラッシュコマンド
+    """スラッシュコマンド
+
+    Args:
+        ack (_type_): ack
+        body (dict): ポストされたデータ
+        client (slack_bolt.App.client): slack_boltオブジェクト
     """
 
     ack()

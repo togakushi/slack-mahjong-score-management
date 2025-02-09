@@ -6,6 +6,13 @@ from lib import event as e
 
 @g.app.event("app_home_opened")
 def handle_home_events(client, event):
+    """イベントAPI ホームタブオープン
+
+    Args:
+        client (slack_bolt.App.client): slack_boltオブジェクト
+        event (dict): イベント内容
+    """
+
     g.app_var["user_id"] = event["user"]
     if "view" in event:
         g.app_var["view_id"] = event["view"]["id"]
@@ -21,6 +28,12 @@ def handle_home_events(client, event):
 
 
 def build_main_menu():
+    """メニュー項目を生成する
+
+    Returns:
+        dict: viewに描写する内容
+    """
+
     g.app_var["screen"] = "MainMenu"
     no = 0
     view = {"type": "home", "blocks": []}
@@ -33,6 +46,15 @@ def build_main_menu():
 
 
 def set_command_option(body):
+    """オプションのボタンを配置する
+
+    Args:
+        body (dict): イベント内容
+
+    Returns:
+        dict: viewに描写する内容
+    """
+
     # 検索設定
     argument = []
     search_options = body["view"]["state"]["values"]
@@ -93,6 +115,14 @@ def set_command_option(body):
 
 @g.app.action("actionId-back")
 def handle_action(ack, body, client):
+    """戻るボタン
+
+    Args:
+        ack (_type_): ack
+        body (dict): イベント内容
+        client (slack_bolt.App.client): slack_boltオブジェクト
+    """
+
     ack()
     logging.trace(body)
 
@@ -104,8 +134,15 @@ def handle_action(ack, body, client):
 
 @g.app.action("modal-open-period")
 def handle_open_modal_button_clicks(ack, body, client):
-    ack()
+    """検索範囲設定選択イベント
 
+    Args:
+        ack (_type_): ack
+        body (dict): イベント内容
+        client (slack_bolt.App.client): オブジェクト
+    """
+
+    ack()
     client.views_open(
         trigger_id=body["trigger_id"],
         view=e.ui_parts.ModalPeriodSelection(),
@@ -114,8 +151,14 @@ def handle_open_modal_button_clicks(ack, body, client):
 
 @g.app.action("debug")
 def handle_debug_action(ack, body):
-    ack()
+    """デバッグ用
 
+    Args:
+        ack (_type_): ack
+        body (dict): イベント内容
+    """
+
+    ack()
     x = body['view']['state']['values']
     print("-" * 15)
     print(x.keys())

@@ -7,6 +7,12 @@ from lib import function as f
 
 
 def build_ranking_menu():
+    """ランキングメニュー生成
+
+    Returns:
+        dict: viewに描写する内容
+    """
+
     g.app_var["screen"] = "RankingMenu"
     no = 0
     flag = ["unregistered_replace"]
@@ -49,6 +55,14 @@ def build_ranking_menu():
 
 @g.app.action("menu_ranking")
 def handle_menu_action(ack, body, client):
+    """メニュー項目生成
+
+    Args:
+        ack (_type_): ack
+        body (dict): イベント内容
+        client (slack_bolt.App.client): slack_boltオブジェクト
+    """
+
     ack()
     logging.trace(body)
 
@@ -64,6 +78,14 @@ def handle_menu_action(ack, body, client):
 
 @g.app.action("search_ranking")
 def handle_search_action(ack, body, client):
+    """メニュー項目生成
+
+    Args:
+        ack (_type_): ack
+        body (dict): イベント内容
+        client (slack_bolt.App.client): slack_boltオブジェクト
+    """
+
     ack()
     logging.trace(body)
     g.msg.parser(body)
@@ -105,8 +127,15 @@ def handle_search_action(ack, body, client):
 
 @g.app.view("RankingMenu_ModalPeriodSelection")
 def handle_view_submission(ack, view, client):
-    ack()
+    """view更新
 
+    Args:
+        ack (_type_): ack
+        view (dict): 描写内容
+        client (slack_bolt.App.client): slack_boltオブジェクト
+    """
+
+    ack()
     for i in view["state"]["values"].keys():
         if "aid-sday" in view["state"]["values"][i]:
             g.app_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]

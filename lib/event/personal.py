@@ -7,6 +7,12 @@ from lib import function as f
 
 
 def build_personal_menu():
+    """個人成績メニュー作成
+
+    Returns:
+        dict: viewに描写する内容
+    """
+
     g.app_var["screen"] = "PersonalMenu"
     no = 0
     flag = ["unregistered_replace", "versus_matrix", "game_results", "verbose"]
@@ -52,6 +58,14 @@ def build_personal_menu():
 
 @g.app.action("menu_personal")
 def handle_menu_action(ack, body, client):
+    """メニュー項目生成
+
+    Args:
+        ack (_type_): ack
+        body (dict): イベント内容
+        client (slack_bolt.App.client): slack_boltオブジェクト
+    """
+
     ack()
     logging.trace(body)
 
@@ -67,6 +81,14 @@ def handle_menu_action(ack, body, client):
 
 @g.app.action("search_personal")
 def handle_search_action(ack, body, client):
+    """メニュー項目生成
+
+    Args:
+        ack (_type_): ack
+        body (dict): イベント内容
+        client (slack_bolt.App.client): slack_boltオブジェクト
+    """
+
     ack()
     logging.trace(body)
     g.msg.parser(body)
@@ -107,8 +129,15 @@ def handle_search_action(ack, body, client):
 
 @g.app.view("PersonalMenu_ModalPeriodSelection")
 def handle_view_submission(ack, view, client):
-    ack()
+    """view更新
 
+    Args:
+        ack (_type_): ack
+        view (dict): 描写内容
+        client (slack_bolt.App.client): slack_boltオブジェクト
+    """
+
+    ack()
     for i in view["state"]["values"].keys():
         if "aid-sday" in view["state"]["values"][i]:
             g.app_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
