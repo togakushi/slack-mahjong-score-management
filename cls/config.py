@@ -25,8 +25,8 @@ class Config():
             self.config.read(filename, encoding="utf-8")
             logging.notice(f"{filename=}")
             logging.info(f"read sections: {self.config.sections()}")
-        except Exception as err:
-            logging.critical(f"config read error: {err}")
+        except Exception as e:
+            logging.critical(f"config read error: {e}")
             sys.exit(255)
 
         # 必須セクションチェック

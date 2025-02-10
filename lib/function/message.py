@@ -172,8 +172,8 @@ def reply(message=None, rpoint_sum=0):
             rpoint_diff=rpoint_diff * 100,
             rpoint_sum=rpoint_sum * 100,
         )
-    except Exception as err:
-        logging.error(f"[unknown keywords] {err}: {msg}")
+    except Exception as e:
+        logging.error(f"[unknown keywords] {e}: {msg}")
         msg = msg.replace("{user_id}", g.msg.user_id)
 
     return (msg)

@@ -19,8 +19,8 @@ def call_chat_postMessage(**kwargs):
         kwargs.pop("thread_ts")
     try:
         res = g.app.client.chat_postMessage(**kwargs)
-    except SlackApiError as err:
-        logging.critical(err)
+    except SlackApiError as e:
+        logging.critical(e)
         logging.error(f"{kwargs=}")
         logging.error(f"opt: {vars(g.opt)}")
         logging.error(f"prm: {vars(g.prm)}")
@@ -41,8 +41,8 @@ def call_files_upload(**kwargs):
         kwargs.pop("thread_ts")
     try:
         res = g.app.client.files_upload_v2(**kwargs)
-    except SlackApiError as err:
-        logging.critical(err)
+    except SlackApiError as e:
+        logging.critical(e)
         logging.error(f"{kwargs=}")
         logging.error(f"opt: {vars(g.opt)}")
         logging.error(f"prm: {vars(g.prm)}")
@@ -230,12 +230,12 @@ def call_reactions_add(icon, ch=None, ts=None):
             timestamp=ts,
         )
         logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
-    except SlackApiError as err:
-        match err.response.get("error"):
+    except SlackApiError as e:
+        match e.response.get("error"):
             case "already_reacted":
                 pass
             case _:
-                logging.critical(err)
+                logging.critical(e)
                 logging.critical(f"{ts=}, {ch=}, {icon=}")
                 logging.error(f"opt: {vars(g.opt)}")
                 logging.error(f"prm: {vars(g.prm)}")
@@ -263,12 +263,12 @@ def call_reactions_remove(icon, ch=None, ts=None):
             timestamp=ts,
         )
         logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
-    except SlackApiError as err:
-        match err.response.get("error"):
+    except SlackApiError as e:
+        match e.response.get("error"):
             case "no_reaction":
                 pass
             case _:
-                logging.critical(err)
+                logging.critical(e)
                 logging.critical(f"{ts=}, {ch=}, {icon=}")
                 logging.error(f"opt: {vars(g.opt)}")
                 logging.error(f"prm: {vars(g.prm)}")
@@ -320,7 +320,7 @@ def get_dm_channel_id(user_id):
     try:
         response = g.app.client.conversations_open(users=[user_id])
         channel_id = response["channel"]["id"]
-    except SlackApiError as err:
-        logging.error(err)
+    except SlackApiError as e:
+        logging.error(e)
 
     return (channel_id)

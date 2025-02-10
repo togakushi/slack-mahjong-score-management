@@ -17,8 +17,8 @@ try:
     configuration.setup()
     g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
     g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-    from lib import event as e
-    e.event.import_only()
+    from lib import event
+    __all__ = ["event"]
 except SlackApiError as err:
     logging.error(err)
     sys.exit()
