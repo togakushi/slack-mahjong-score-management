@@ -25,12 +25,7 @@ def build_versus_menu():
 
     view, no = h.ui_parts.Divider(view, no)
     view, no = h.ui_parts.SearchRangeChoice(view, no)
-    view, no = h.ui_parts.Button(
-        view, no,
-        text="検索範囲設定",
-        value="click_versus",
-        action_id="modal-open-period"
-    )
+    view, no = h.ui_parts.Button(view, no, text="検索範囲設定", action_id="modal-open-period")
 
     # 検索オプション
     view, no = h.ui_parts.Divider(view, no)
@@ -38,25 +33,13 @@ def build_versus_menu():
     view, no = h.ui_parts.DisplayOptions(view, no, flag)
 
     view, no = h.ui_parts.Divider(view, no)
-    view, no = h.ui_parts.Button(
-        view, no,
-        text="集計開始",
-        value="click_versus",
-        action_id="search_versus",
-        style="primary"
-    )
-    view, no = h.ui_parts.Button(
-        view, no,
-        text="戻る",
-        value="click_back",
-        action_id="actionId-back",
-        style="danger"
-    )
+    view, no = h.ui_parts.Button(view, no, text="集計", action_id="versus_aggregation", style="primary")
+    view, no = h.ui_parts.Button(view, no, text="戻る", action_id="actionId-back", style="danger")
 
     return (view)
 
 
-@g.app.action("menu_versus")
+@g.app.action("versus_menu")
 def handle_menu_action(ack, body, client):
     """メニュー項目生成
 
@@ -71,7 +54,7 @@ def handle_menu_action(ack, body, client):
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
-    logging.info(f"[menu_versus] {g.app_var}")
+    logging.info(f"[versus_menu] {g.app_var}")
 
     client.views_publish(
         user_id=g.app_var["user_id"],
@@ -79,8 +62,8 @@ def handle_menu_action(ack, body, client):
     )
 
 
-@g.app.action("search_versus")
-def handle_search_action(ack, body, client):
+@g.app.action("versus_aggregation")
+def handle_aggregation_action(ack, body, client):
     """メニュー項目生成
 
     Args:
@@ -113,7 +96,7 @@ def handle_search_action(ack, body, client):
         view=h.ui_parts.PlainText(f"{chr(10).join(app_msg)}")
     )
 
-    logging.info(f"[app:search_personal] {argument}, {vars(g.opt)}")
+    logging.info(f"[app:personal_aggregation] {argument}, {vars(g.opt)}")
 
     app_msg.pop()
     app_msg.append("集計完了")

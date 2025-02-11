@@ -26,9 +26,9 @@ def Header(view, no, text="dummy"):
     return (view, no + 1)
 
 
-def Button(view, no, text="Click Me", value="dummy", action_id=False, style=False):
+def Button(view, no, text="Click Me", action_id=False, style=False):
     view["blocks"].append({"type": "actions", "elements": [{}]})
-    view["blocks"][no]["elements"][0] = {"type": "button", "text": {}, "value": value, "action_id": action_id}
+    view["blocks"][no]["elements"][0] = {"type": "button", "text": {}, "action_id": action_id}
     view["blocks"][no]["elements"][0]["text"] = {"type": "plain_text", "text": text}
 
     if style:
@@ -38,6 +38,19 @@ def Button(view, no, text="Click Me", value="dummy", action_id=False, style=Fals
 
 
 def SearchOptions(view, no, flag=[]):
+    """検索オプション選択メニュー
+
+    Args:
+        view (dict): 描写内容
+        no (int): ブロックNo
+        flag (list, optional): 表示する選択項目. Defaults to [].
+
+    Returns:
+        Tuple[dict, int]:
+            - dict: 描写内容
+            - int: 次のブロックNo
+    """
+
     view["blocks"].append(
         {"type": "input", "block_id": "bid-search_option", "optional": False, "element": {}}
     )
@@ -60,6 +73,19 @@ def SearchOptions(view, no, flag=[]):
 
 
 def DisplayOptions(view, no, flag=[]):
+    """表示オプション選択メニュー
+
+    Args:
+        view (dict): 描写内容
+        no (int): ブロックNo
+        flag (list, optional): 表示する選択項目. Defaults to [].
+
+    Returns:
+        Tuple[dict, int]:
+            - dict: 描写内容
+            - int: 次のブロックNo
+    """
+
     view["blocks"].append(
         {"type": "input", "block_id": "bid-display_option", "optional": False, "element": {}}
     )

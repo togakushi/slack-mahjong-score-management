@@ -5,7 +5,7 @@ from lib import home_tab as h
 
 
 def build_main_menu():
-    """メニュー項目を生成する
+    """メインメニューを生成する
 
     Returns:
         dict: viewに描写する内容
@@ -14,10 +14,10 @@ def build_main_menu():
     g.app_var["screen"] = "MainMenu"
     no = 0
     view = {"type": "home", "blocks": []}
-    view, no = h.ui_parts.Button(view, no, text="成績サマリ", value="click_summary_menu", action_id="menu_summary")
-    view, no = h.ui_parts.Button(view, no, text="ランキング", value="click_ranking_menu", action_id="menu_ranking")
-    view, no = h.ui_parts.Button(view, no, text="個人成績", value="click_personal_menu", action_id="menu_personal")
-    view, no = h.ui_parts.Button(view, no, text="直接対戦", value="click_versus_menu", action_id="menu_versus")
+    view, no = h.ui_parts.Button(view, no, text="成績サマリ", action_id="summary_menu")
+    view, no = h.ui_parts.Button(view, no, text="ランキング", action_id="ranking_menu")
+    view, no = h.ui_parts.Button(view, no, text="個人成績", action_id="personal_menu")
+    view, no = h.ui_parts.Button(view, no, text="直接対戦", action_id="versus_menu")
 
     return (view)
 
@@ -53,17 +53,16 @@ def set_command_option(body):
             argument.append(user_list[i]["value"])
 
     if "bid-search_range" in search_options:
-        select_item = search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]
-        if select_item == "指定":
-            app_msg.append(f"集計範囲：{g.app_var['sday']} ～ {g.app_var['eday']}")
-            argument.append(g.app_var["sday"].replace("-", ""))
-            argument.append(g.app_var["eday"].replace("-", ""))
-        elif select_item == "全部":
-            app_msg.append("集計範囲：全部")
-            argument.append("全部")
-        else:
-            app_msg.append(f"集計範囲：{select_item}")
-            argument.append(select_item)
+        match search_options["bid-search_range"]["aid-range"]["selected_option"]["value"]:
+            case "指定":
+                app_msg.append(f"集計範囲：{g.app_var['sday']} ～ {g.app_var['eday']}")
+                argument.extend([g.app_var["sday"], g.app_var["eday"]])
+            case "全部":
+                app_msg.append("集計範囲：全部")
+                argument.append("全部")
+            case _ as select_item:
+                app_msg.append(f"集計範囲：{select_item}")
+                argument.append(select_item)
 
     if "bid-search_option" in search_options:
         selected_options = search_options["bid-search_option"]["aid-search"]["selected_options"]
@@ -75,16 +74,16 @@ def set_command_option(body):
     if "bid-display_option" in search_options:
         selected_options = search_options["bid-display_option"]["aid-display"]["selected_options"]
         for i in range(len(selected_options)):
-            flag = selected_options[i]["value"]
-            if flag == "versus_matrix":
-                g.opt.versus_matrix = True
-            if flag == "game_results":
-                g.opt.game_results = True
-            if flag == "verbose":
-                g.opt.game_results = True
-                g.opt.verbose = True
-            if flag == "score_comparisons":
-                g.opt.score_comparisons = True
+            match selected_options[i]["value"]:
+                case "versus_matrix":
+                    g.opt.versus_matrix = True
+                case "game_results":
+                    g.opt.game_results = True
+                case "verbose":
+                    g.opt.game_results = True
+                    g.opt.verbose = True
+                case "score_comparisons":
+                    g.opt.score_comparisons = True
 
     app_msg.append("集計中…")
     return (argument, app_msg)

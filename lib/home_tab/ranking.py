@@ -22,11 +22,7 @@ def build_ranking_menu():
     # 検索範囲設定
     view, no = h.ui_parts.Divider(view, no)
     view, no = h.ui_parts.SearchRangeChoice(view, no)
-    view, no = h.ui_parts.Button(
-        view, no,
-        text="検索範囲設定",
-        action_id="modal-open-period"
-    )
+    view, no = h.ui_parts.Button(view, no, text="検索範囲設定", action_id="modal-open-period")
 
     # 検索オプション
     view, no = h.ui_parts.Divider(view, no)
@@ -35,25 +31,13 @@ def build_ranking_menu():
     view, no = h.ui_parts.InputRanked(view, no, block_id="bid-ranked")
 
     view, no = h.ui_parts.Divider(view, no)
-    view, no = h.ui_parts.Button(
-        view, no,
-        text="集計開始",
-        value="click_personal",
-        action_id="search_ranking",
-        style="primary"
-    )
-    view, no = h.ui_parts.Button(
-        view, no,
-        text="戻る",
-        value="click_back",
-        action_id="actionId-back",
-        style="danger"
-    )
+    view, no = h.ui_parts.Button(view, no, text="集計", action_id="ranking_aggregation", style="primary")
+    view, no = h.ui_parts.Button(view, no, text="戻る", action_id="actionId-back", style="danger")
 
     return (view)
 
 
-@g.app.action("menu_ranking")
+@g.app.action("ranking_menu")
 def handle_menu_action(ack, body, client):
     """メニュー項目生成
 
@@ -68,7 +52,7 @@ def handle_menu_action(ack, body, client):
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
-    logging.info(f"[menu_ranking] {g.app_var}")
+    logging.info(f"[ranking_menu] {g.app_var}")
 
     client.views_publish(
         user_id=g.app_var["user_id"],
@@ -76,8 +60,8 @@ def handle_menu_action(ack, body, client):
     )
 
 
-@g.app.action("search_ranking")
-def handle_search_action(ack, body, client):
+@g.app.action("ranking_aggregation")
+def handle_aggregation_action(ack, body, client):
     """メニュー項目生成
 
     Args:
@@ -108,7 +92,7 @@ def handle_search_action(ack, body, client):
             if ranked > 0:
                 g.opt.ranked = ranked
 
-    logging.info(f"[app:search_ranking] {argument}, {vars(g.opt)}")
+    logging.info(f"[app:ranking_aggregation] {argument}, {vars(g.opt)}")
 
     app_msg.pop()
     app_msg.append("集計完了")
