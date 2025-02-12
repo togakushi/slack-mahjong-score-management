@@ -15,19 +15,41 @@ def build_summary_menu():
 
     g.app_var["screen"] = "SummaryMenu"
     no = 0
-    flag = ["unregistered_replace", "score_comparisons"]
     view = {"type": "home", "blocks": []}
     view, no = h.ui_parts.Header(view, no, "【成績サマリ】")
 
     # 検索範囲設定
     view, no = h.ui_parts.Divider(view, no)
-    view, no = h.ui_parts.SearchRangeChoice(view, no)
+    view, no = h.ui_parts.radio_buttons(
+        view, no, "search_range", "検索範囲",
+        {
+            "今月": "今月",
+            "先月": "先月",
+            "全部": "全部",
+            "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
+        },
+    )
     view, no = h.ui_parts.Button(view, no, text="検索範囲設定", action_id="modal-open-period")
 
-    # 検索オプション
+    # オプション
     view, no = h.ui_parts.Divider(view, no)
-    view, no = h.ui_parts.SearchOptions(view, no, flag)
-    view, no = h.ui_parts.DisplayOptions(view, no, flag)
+    view, no = h.ui_parts.checkboxes(
+        view, no, "search_option", "検索オプション",
+        {
+            "unregistered_replace": "ゲスト無効",
+        },
+        ["unregistered_replace"],
+    )
+    view, no = h.ui_parts.radio_buttons(
+        view, no, "output_option", "出力オプション",
+        {
+            "normal": "通算ポイント",
+            "score_comparisons": "通算ポイント比較",
+            "point": "ポイント推移グラフ",
+            "rank": "順位推移グラフ",
+            "rating": "レーティング",
+        },
+    )
 
     view, no = h.ui_parts.Divider(view, no)
     view, no = h.ui_parts.Button(view, no, text="集計", action_id="summary_aggregation", style="primary")
@@ -88,19 +110,42 @@ def handle_aggregation_action(ack, body, client):
 
     app_msg.pop()
     app_msg.append("集計完了")
+    msg1 = ""
     msg2 = f.message.reply(message="no_hits")
 
-    msg1, msg2, file_list = c.results.summary.aggregation()
-    f.slack_api.slack_post(
-        headline=msg1,
-        message=msg2,
-        summarize=False,
-        file_list=file_list,
-    )
+    match g.app_var.get("operation"):
+        case "point":
+            count, ret = c.graph.summary.point_plot()
+            if count:
+                f.slack_api.post_fileupload("ポイント推移", ret)
+            else:
+                f.slack_api.post_message(ret)
+        case "rank":
+            count, ret = c.graph.summary.rank_plot()
+            if count:
+                f.slack_api.post_fileupload("順位変動", ret)
+            else:
+                f.slack_api.post_message(ret)
+        case "rating":
+            msg1, msg2, file_list = c.results.rating.aggregation()
+            f.slack_api.slack_post(
+                headline=msg1,
+                message=msg2,
+                summarize=False,
+                file_list=file_list,
+            )
+        case _:
+            msg1, msg2, file_list = c.results.summary.aggregation()
+            f.slack_api.slack_post(
+                headline=msg1,
+                message=msg2,
+                summarize=False,
+                file_list=file_list,
+            )
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        view=h.ui_parts.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}".strip()),
     )
 
 
