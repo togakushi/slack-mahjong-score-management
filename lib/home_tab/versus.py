@@ -15,7 +15,6 @@ def build_versus_menu():
 
     g.app_var["screen"] = "VersusMenu"
     no = 0
-    flag = ["unregistered_replace", "game_results", "verbose"]
     view = {"type": "home", "blocks": []}
     view, no = h.ui_parts.Header(view, no, "【直接対戦】")
 
@@ -24,13 +23,34 @@ def build_versus_menu():
     view, no = h.ui_parts.MultiSelect(view, no, text="対戦相手", add_list=["全員"])
 
     view, no = h.ui_parts.Divider(view, no)
-    view, no = h.ui_parts.SearchRangeChoice(view, no)
+    view, no = h.ui_parts.radio_buttons(
+        view, no, "search_range", "検索範囲",
+        {
+            "今月": "今月",
+            "先月": "先月",
+            "全部": "全部",
+            "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
+        }
+    )
     view, no = h.ui_parts.Button(view, no, text="検索範囲設定", action_id="modal-open-period")
 
-    # 検索オプション
+    # オプション
     view, no = h.ui_parts.Divider(view, no)
-    view, no = h.ui_parts.SearchOptions(view, no, flag)
-    view, no = h.ui_parts.DisplayOptions(view, no, flag)
+    view, no = h.ui_parts.checkboxes(
+        view, no, "search_option", "検索オプション",
+        {
+            "unregistered_replace": "ゲスト無効",
+        },
+        ["unregistered_replace"],
+    )
+    view, no = h.ui_parts.checkboxes(
+        view, no, "display_option", "表示オプション",
+        {
+            "versus_matrix": "対戦結果",
+            "game_results": "戦績（簡易）",
+            "verbose": "戦績（詳細）",
+        },
+    )
 
     view, no = h.ui_parts.Divider(view, no)
     view, no = h.ui_parts.Button(view, no, text="集計", action_id="versus_aggregation", style="primary")

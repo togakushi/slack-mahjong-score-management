@@ -37,13 +37,15 @@ def Button(view, no, text="Click Me", action_id=False, style=False):
     return (view, no + 1)
 
 
-def SearchOptions(view, no, flag=[]):
-    """検索オプション選択メニュー
+def radio_buttons(view, no, id, title, flag):
+    """オプション選択メニュー
 
     Args:
         view (dict): 描写内容
         no (int): ブロックNo
-        flag (list, optional): 表示する選択項目. Defaults to [].
+        id (str): block_id, action_id
+        title (str): 表示タイトル
+        flag (dict, optional): 表示する選択項目
 
     Returns:
         Tuple[dict, int]:
@@ -51,34 +53,32 @@ def SearchOptions(view, no, flag=[]):
             - int: 次のブロックNo
     """
 
-    view["blocks"].append(
-        {"type": "input", "block_id": "bid-search_option", "optional": False, "element": {}}
-    )
-    view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索オプション"}
-    view["blocks"][no]["element"]["type"] = "checkboxes"
-    view["blocks"][no]["element"]["action_id"] = "aid-search"
-
+    view["blocks"].append({"type": "input", "block_id": f"bid-{id}", "element": {}})
+    view["blocks"][no]["label"] = {"type": "plain_text", "text": title}
+    view["blocks"][no]["element"]["type"] = "radio_buttons"
+    view["blocks"][no]["element"]["action_id"] = f"aid-{id}"
+    view["blocks"][no]["element"]["initial_option"] = {  # 先頭の選択肢はチェック済みにする
+        "text": {"type": "plain_text", "text": flag[next(iter(flag))]}, "value": next(iter(flag))
+    }
     view["blocks"][no]["element"]["options"] = []
-    view["blocks"][no]["element"]["initial_options"] = []
-
-    if "unregistered_replace" in flag:
+    for k, v in flag.items():
         view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "ゲスト無効"}, "value": "unregistered_replace"}
-        )
-        view["blocks"][no]["element"]["initial_options"].append(
-            {"text": {"type": "plain_text", "text": "ゲスト無効"}, "value": "unregistered_replace"}
+            {"text": {"type": "plain_text", "text": v}, "value": k}
         )
 
     return (view, no + 1)
 
 
-def DisplayOptions(view, no, flag=[]):
-    """表示オプション選択メニュー
+def checkboxes(view, no, id, title, flag, initial=[]):
+    """チェックボックス選択メニュー
 
     Args:
         view (dict): 描写内容
         no (int): ブロックNo
-        flag (list, optional): 表示する選択項目. Defaults to [].
+        id (str): block_id, action_id
+        title (str): 表示タイトル
+        flag (dict, optional): 表示する選択項目
+        initial (list, optional): チェック済み項目. Defaults to [].
 
     Returns:
         Tuple[dict, int]:
@@ -86,35 +86,22 @@ def DisplayOptions(view, no, flag=[]):
             - int: 次のブロックNo
     """
 
-    view["blocks"].append(
-        {"type": "input", "block_id": "bid-display_option", "optional": False, "element": {}}
-    )
-    view["blocks"][no]["label"] = {"type": "plain_text", "text": "表示オプション"}
+    view["blocks"].append({"type": "input", "block_id": f"bid-{id}", "element": {}})
+    view["blocks"][no]["label"] = {"type": "plain_text", "text": title}
     view["blocks"][no]["element"]["type"] = "checkboxes"
-    view["blocks"][no]["element"]["action_id"] = "aid-display"
-
+    view["blocks"][no]["element"]["action_id"] = f"aid-{id}"
     view["blocks"][no]["element"]["options"] = []
-    # view["blocks"][no]["element"]["initial_options"] = []
+    if initial:
+        view["blocks"][no]["element"]["initial_options"] = []
 
-    if "versus_matrix" in flag:
+    for k, v in flag.items():
         view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "対戦結果"}, "value": "versus_matrix"}
+            {"text": {"type": "plain_text", "text": v}, "value": k}
         )
-
-    if "game_results" in flag:
-        view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "戦績（簡易）"}, "value": "game_results"}
-        )
-
-    if "verbose" in flag:
-        view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "戦績（詳細）"}, "value": "verbose"}
-        )
-
-    if "score_comparisons" in flag:
-        view["blocks"][no]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": "通算ポイント比較"}, "value": "score_comparisons"}
-        )
+        if k in initial:
+            view["blocks"][no]["element"]["initial_options"].append(
+                {"text": {"type": "plain_text", "text": v}, "value": k}
+            )
 
     return (view, no + 1)
 
@@ -181,34 +168,6 @@ def PeriodSelection(view, no, text="dummy", block_id=False, action_id="dummy", i
     view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select a date"}
     view["blocks"][no]["element"]["action_id"] = action_id
     view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
-
-    return (view, no + 1)
-
-
-def SearchRangeChoice(view, no):
-    days = f"{g.app_var['sday']} ～ {g.app_var['eday']}"
-    view["blocks"].append({"type": "input", "block_id": "bid-search_range", "element": {}})
-    view["blocks"][no]["label"] = {"type": "plain_text", "text": "検索範囲"}
-    view["blocks"][no]["element"]["type"] = "radio_buttons"
-    view["blocks"][no]["element"]["action_id"] = "aid-range"
-    view["blocks"][no]["element"]["options"] = []
-    view["blocks"][no]["element"]["initial_option"] = {}
-
-    view["blocks"][no]["element"]["options"].append(
-        {"text": {"type": "plain_text", "text": "今月"}, "value": "今月"}
-    )
-    view["blocks"][no]["element"]["options"].append(
-        {"text": {"type": "plain_text", "text": "先月"}, "value": "先月"}
-    )
-    view["blocks"][no]["element"]["options"].append(
-        {"text": {"type": "plain_text", "text": "全部"}, "value": "全部"}
-    )
-    view["blocks"][no]["element"]["options"].append(
-        {"text": {"type": "plain_text", "text": f"範囲指定：{days}"}, "value": "指定"}
-    )
-    view["blocks"][no]["element"]["initial_option"].update(
-        {"text": {"type": "plain_text", "text": "今月"}, "value": "今月"}
-    )
 
     return (view, no + 1)
 

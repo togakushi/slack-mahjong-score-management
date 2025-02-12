@@ -18,6 +18,7 @@ app_var = {  # ホームタブ用初期値
     "user_id": None,
     "view_id": None,
     "screen": None,
+    "operation": None,
     "sday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
     "eday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
 }
