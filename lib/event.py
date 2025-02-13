@@ -83,6 +83,9 @@ def handle_message_events(client, body):
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
                     case "message_changed":
                         record_data = d.common.exsist_record(g.msg.event_ts)
+                        record_detection = [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]
+                        if detection == record_detection:
+                            return
                         if detection:
                             if g.cfg.setting.thread_report == g.msg.in_thread:
                                 if record_data:
