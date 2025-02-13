@@ -125,3 +125,7 @@ class Message_Parser():
                     self.updatable = True
                 case "group":  # private channel
                     self.updatable = True
+                case "im":  # direct message
+                    self.updatable = False
+                case "search_messages":
+                    self.updatable = True  # ToDo: channel_limitationsのチェックを入れる

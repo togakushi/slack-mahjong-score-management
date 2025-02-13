@@ -155,6 +155,7 @@ def for_slack():
         else:
             data[thread_ts].update(in_thread=True)
 
+    g.msg.channel_type = "search_messages"
     return (data)
 
 
