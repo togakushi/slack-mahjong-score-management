@@ -85,11 +85,15 @@ def handle_message_events(client, body):
                             else:
                                 f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
                     case "message_changed":
+                        record_data = d.common.exsist_record(g.msg.event_ts)
                         if detection:
                             if g.msg.updatable:
                                 if g.cfg.setting.thread_report == g.msg.in_thread:
-                                    if d.common.exsist_record(g.msg.event_ts):
-                                        d.common.db_update(detection, g.msg.event_ts)
+                                    if record_data:
+                                        if record_data.get("rule_version") == g.prm.rule_version:
+                                            d.common.db_update(detection, g.msg.event_ts)
+                                        else:
+                                            logging.notice(f"skip update(rule_version not match). ts={g.msg.event_ts}")
                                     else:
                                         d.common.db_insert(detection, g.msg.event_ts)
                                 else:
@@ -97,7 +101,7 @@ def handle_message_events(client, body):
                             else:
                                 f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
                         else:
-                            if d.common.exsist_record(g.msg.event_ts):
+                            if record_data:
                                 d.common.db_delete(g.msg.event_ts)
                                 for icon in f.slack_api.reactions_status():
                                     f.slack_api.call_reactions_remove(icon)

@@ -98,15 +98,18 @@ def data_comparison():
                 logging.info(f"score check pass: {key} {textformat(db_score)}")
                 continue
             else:  # 更新
-                count["mismatch"] += 1
-                logging.notice(f"mismatch: {key}")
-                logging.info(f"  *  slack: {textformat(db_score)}")
-                logging.info(f"  *     db: {textformat(slack_score)}")
-                ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
-                    datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                    textformat(db_score), textformat(slack_score),
-                )
-                d.common.db_update(slack_score, key, reactions_data)
+                if d.common.exsist_record(key).get("rule_version") == g.prm.rule_version:
+                    count["mismatch"] += 1
+                    logging.notice(f"mismatch: {key}")
+                    logging.info(f"  *  slack: {textformat(db_score)}")
+                    logging.info(f"  *     db: {textformat(slack_score)}")
+                    ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
+                        datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+                        textformat(db_score), textformat(slack_score),
+                    )
+                    d.common.db_update(slack_score, key, reactions_data)
+                else:
+                    logging.info(f"score check skip: {key} {textformat(db_score)}")
                 continue
         else:  # 追加
             if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
@@ -138,6 +141,8 @@ def data_comparison():
     # 素点合計の再チェック(修正可能なslack側のみチェック)
     for key in slack_data.keys():
         if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
+            continue
+        if d.common.exsist_record(key).get("rule_version") != g.prm.rule_version:
             continue
 
         score_data = f.score.get_score(slack_data[key].get("score"))
