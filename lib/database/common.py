@@ -163,13 +163,15 @@ def db_insert(detection, ts, reactions_data=None):
         "reactions_data": reactions_data,
     }
     param.update(f.score.get_score(detection))
-    logging.notice(f"user={g.msg.user_id} {param=}")
 
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.execute(d.sql_result_insert, param)
-        cur.commit()
-
-    f.score.reactions(param)
+    if g.msg.updatable:
+        with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+            cur.execute(d.sql_result_insert, param)
+            cur.commit()
+        logging.notice(f"user={g.msg.user_id} {param=}")
+        f.score.reactions(param)
+    else:
+        f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
 
 
 def db_update(detection, ts, reactions_data=None):
@@ -188,13 +190,15 @@ def db_update(detection, ts, reactions_data=None):
         "reactions_data": reactions_data,
     }
     param.update(f.score.get_score(detection))
-    logging.notice(f"user={g.msg.user_id} {param=}")
 
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.execute(d.sql_result_update, param)
-        cur.commit()
-
-    f.score.reactions(param)
+    if g.msg.updatable:
+        with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+            cur.execute(d.sql_result_update, param)
+            cur.commit()
+        logging.notice(f"user={g.msg.user_id} {param=}")
+        f.score.reactions(param)
+    else:
+        f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
 
 
 def db_delete(ts):
@@ -204,26 +208,27 @@ def db_delete(ts):
         ts (datetime): 削除対象レコードのタイムスタンプ
     """
 
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
-        cur.execute(d.sql_result_delete, (ts,))
-        delete_result = cur.execute("select changes();").fetchone()[0]
-        cur.execute(d.sql_remarks_delete_all, (ts,))
-        delete_remark = cur.execute("select changes();").fetchone()[0]
-        cur.commit()
+    if g.msg.updatable:
+        with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+            delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
+            cur.execute(d.sql_result_delete, (ts,))
+            delete_result = cur.execute("select changes();").fetchone()[0]
+            cur.execute(d.sql_remarks_delete_all, (ts,))
+            delete_remark = cur.execute("select changes();").fetchone()[0]
+            cur.commit()
 
-    if delete_result:
-        logging.notice(f"result: {ts=} user={g.msg.user_id} count={delete_result}")
-    if delete_remark:
-        logging.notice(f"remark: {ts=} user={g.msg.user_id} count={delete_remark}")
+        if delete_result:
+            logging.notice(f"result: {ts=} user={g.msg.user_id} count={delete_result}")
+        if delete_remark:
+            logging.notice(f"remark: {ts=} user={g.msg.user_id} count={delete_remark}")
 
-    # リアクションをすべて外す
-    for icon in f.slack_api.reactions_status():
-        f.slack_api.call_reactions_remove(icon)
-    # メモのアイコンを外す
-    for x in delete_list:
-        for icon in f.slack_api.reactions_status(ts=x):
-            f.slack_api.call_reactions_remove(icon, ts=x)
+        # リアクションをすべて外す
+        for icon in f.slack_api.reactions_status():
+            f.slack_api.call_reactions_remove(icon)
+        # メモのアイコンを外す
+        for x in delete_list:
+            for icon in f.slack_api.reactions_status(ts=x):
+                f.slack_api.call_reactions_remove(icon, ts=x)
 
 
 def db_backup():
@@ -265,22 +270,23 @@ def remarks_append(remarks):
         remarks (list): メモに残す内容
     """
 
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.row_factory = sqlite3.Row
+    if g.msg.updatable:
+        with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+            cur.row_factory = sqlite3.Row
 
-        for remark in remarks:
-            # 親スレッドの情報
-            row = cur.execute("select * from result where ts=:thread_ts", remark).fetchone()
+            for remark in remarks:
+                # 親スレッドの情報
+                row = cur.execute("select * from result where ts=:thread_ts", remark).fetchone()
 
-            if row:
-                if remark["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
-                    cur.execute(d.sql_remarks_insert, remark)
-                    logging.notice(f"insert: {remark}")
+                if row:
+                    if remark["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
+                        cur.execute(d.sql_remarks_insert, remark)
+                        logging.notice(f"insert: {remark}")
 
-                    if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status():
-                        f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remark["event_ts"])
+                        if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status():
+                            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remark["event_ts"])
 
-        cur.commit()
+            cur.commit()
 
 
 def remarks_delete(ts):
@@ -290,19 +296,19 @@ def remarks_delete(ts):
         ts (datetime): 削除対象レコードのタイムスタンプ
     """
 
-    logging.notice(f"{ts}")
+    if g.msg.updatable:
+        logging.notice(f"{ts}")
+        with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+            cur.execute(d.sql_remarks_delete_one, (ts,))
+            cur.commit()
 
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.execute(d.sql_remarks_delete_one, (ts,))
-        cur.commit()
-
-    if g.msg.status != "message_deleted":
-        if g.cfg.setting.reaction_ok in f.slack_api.reactions_status():
-            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=ts)
+        if g.msg.status != "message_deleted":
+            if g.cfg.setting.reaction_ok in f.slack_api.reactions_status():
+                f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=ts)
 
 
 def remarks_delete_compar(para):
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
+    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         cur.execute(d.sql_remarks_delete_compar, para)
         cur.commit()
 
