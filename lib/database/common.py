@@ -163,7 +163,7 @@ def db_insert(detection, ts, reactions_data=None):
         "reactions_data": reactions_data,
     }
     param.update(f.score.get_score(detection))
-    logging.notice(f"{param=}")
+    logging.notice(f"user={g.msg.user_id} {param=}")
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.execute(d.sql_result_insert, param)
@@ -188,7 +188,7 @@ def db_update(detection, ts, reactions_data=None):
         "reactions_data": reactions_data,
     }
     param.update(f.score.get_score(detection))
-    logging.notice(f"{param=}")
+    logging.notice(f"user={g.msg.user_id} {param=}")
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.execute(d.sql_result_update, param)
@@ -213,9 +213,9 @@ def db_delete(ts):
         cur.commit()
 
     if delete_result:
-        logging.notice(f"delete result: {ts=} count={delete_result}")
+        logging.notice(f"result: {ts=} user={g.msg.user_id} count={delete_result}")
     if delete_remark:
-        logging.notice(f"delete remark: {ts=} count={delete_remark}")
+        logging.notice(f"remark: {ts=} user={g.msg.user_id} count={delete_remark}")
 
     # リアクションをすべて外す
     for icon in f.slack_api.reactions_status():
