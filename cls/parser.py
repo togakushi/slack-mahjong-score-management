@@ -106,7 +106,8 @@ class Message_Parser():
             self.keyword = self.text.split()[0]
             self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
         else:  # text属性が見つからないときはログに出力
-            logging.error(f"text not found: {_body=}")
+            if not _event.get("text", False):
+                logging.error(f"text not found: {_body=}")
 
         self.check_updatable()
 
