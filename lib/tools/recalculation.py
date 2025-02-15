@@ -7,6 +7,10 @@ from lib import database as d
 
 
 def main():
+    """ポイント再計算
+    """
+
+    d.common.db_backup()
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
         rows = cur.execute("select * from result")
