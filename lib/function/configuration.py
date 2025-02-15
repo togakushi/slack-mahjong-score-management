@@ -50,8 +50,7 @@ def arg_parser():
     p.add_argument(
         "-c", "--config",
         default="config.ini",
-        metavar="config.ini",
-        help="設定ファイル",
+        help="設定ファイル(default: %(default)s)",
     )
 
     match os.path.basename(sys.argv[0]):
@@ -61,6 +60,19 @@ def arg_parser():
                 "--compar",
                 action="store_true",
                 help="データ突合",
+            )
+
+            group.add_argument(
+                "--unification",
+                nargs="?",
+                const="rename.ini",
+                help="ファイルの内容に従って記録済みのメンバー名を修正する(default: %(const)s)",
+            )
+
+            group.add_argument(
+                "--recalculation",
+                action="store_true",
+                help="ポイント再計算",
             )
 
             group.add_argument(
