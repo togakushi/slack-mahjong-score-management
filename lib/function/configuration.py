@@ -85,14 +85,15 @@ def arg_parser():
             p.add_argument(
                 "-t", "--testcase",
             )
-
             p.add_argument(
                 "--classic",
                 action="store_true",
+                help=argparse.SUPPRESS,
             )
 
             p.add_argument(
                 "--profile",
+                help=argparse.SUPPRESS,
             )
 
     return (p.parse_args())
@@ -147,9 +148,6 @@ def setup():
     g.msg = Message_Parser()
 
     logging.trace(f"{g.cfg.cw=}")  # type: ignore
-    logging.info(f"{g.cfg.setting.slash_command=}")
-    logging.info(f"{g.cfg.setting.ignore_userid=}")
-    logging.info(f"{g.cfg.db.channel_limitations=}")
 
     # 作業用ディレクトリ作成
     try:
