@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime
 
@@ -226,6 +227,8 @@ class parameters:
         self.endonday_ymd = None
         self.stipulated: int = 0
         self.target_count: int = 0
+
+        logging.notice(f"rule_version={self.rule_version}, origin_point={self.origin_point}, return_point={self.return_point}")
 
     def update(self, _opt: command_option):
         """コマンド解析クラスの内容からパラメータをセットする

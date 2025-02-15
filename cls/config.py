@@ -138,6 +138,13 @@ class Config():
         self.dropitems.ranking = [x.strip() for x in self.config["ranking"].get("dropitems", "").split(",")]
         self.dropitems.report = [x.strip() for x in self.config["report"].get("dropitems", "").split(",")]
 
+        logging.info(f"setting={vars(self.setting)}")
+        logging.info(f"search={vars(self.search)}")
+        logging.info(f"database={vars(self.db)}")
+        logging.info(f"alias={vars(self.alias)}")
+        logging.info(f"commandword={vars(self.cw)}")
+        logging.info(f"dropitems={vars(self.dropitems)}")
+
     def command_opt(self, section):
         """設定ファイルのセクションを読み込みインスタンス化して返す
 
