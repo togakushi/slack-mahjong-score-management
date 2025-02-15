@@ -210,6 +210,11 @@ def get_score(detection):
     ret.update(dict(zip([f"p3_{x}" for x in list(score[2])], list(score[2].values()))))
     ret.update(dict(zip([f"p4_{x}" for x in list(score[3])], list(score[3].values()))))
 
+    # 桁ブレ修正
+    for x in range(1, 5):
+        point = ret[f"p{x}_point"]
+        ret[f"p{x}_point"] = float(f"{point:.1f}")
+
     logging.info(
         "score data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
             ret["p1_name"], ret["p1_rpoint"],
