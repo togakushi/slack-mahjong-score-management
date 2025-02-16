@@ -2,7 +2,7 @@ import configparser
 import logging
 import sqlite3
 
-import global_value as g
+import lib.global_value as g
 from lib import database as d
 
 

@@ -2,7 +2,7 @@ import logging
 
 from slack_sdk import WebClient
 
-import global_value as g
+import lib.global_value as g
 import lib.function.slack_api as slack_api
 
 

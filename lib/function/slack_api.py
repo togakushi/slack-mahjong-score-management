@@ -3,7 +3,7 @@ import re
 
 from slack_sdk.errors import SlackApiError
 
-import global_value as g
+import lib.global_value as g
 from lib import function as f
 
 

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
-import global_value as g
+import lib.global_value as g
 from lib import database as d
 from lib import function as f
 

@@ -1,7 +1,7 @@
 import os
 import unicodedata
 
-import global_value as g
+import lib.global_value as g
 
 
 def len_count(text):

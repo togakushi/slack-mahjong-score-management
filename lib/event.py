@@ -1,7 +1,7 @@
 import logging
 import re
 
-import global_value as g
+import lib.global_value as g
 from cls.search import CommandCheck
 from lib import command as c
 from lib import database as d

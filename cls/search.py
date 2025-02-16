@@ -4,7 +4,7 @@ from datetime import datetime
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
-import global_value as g
+import lib.global_value as g
 from lib.database.common import first_record
 
 

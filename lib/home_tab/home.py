@@ -1,6 +1,6 @@
 import logging
 
-import global_value as g
+import lib.global_value as g
 from lib import home_tab as h
 
 

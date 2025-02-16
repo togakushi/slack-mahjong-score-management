@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib import gridspec
 
-import global_value as g
+import lib.global_value as g
 from lib import command as c
 from lib import database as d
 from lib import function as f

@@ -3,7 +3,7 @@ import sqlite3
 
 import pandas as pd
 
-import global_value as g
+import lib.global_value as g
 from lib import database as d
 
 

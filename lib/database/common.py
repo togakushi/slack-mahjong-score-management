@@ -8,7 +8,7 @@ import textwrap
 from contextlib import closing
 from datetime import datetime
 
-import global_value as g
+import lib.global_value as g
 from lib import database as d
 from lib import function as f
 

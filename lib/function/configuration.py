@@ -5,7 +5,7 @@ import shutil
 import sys
 from functools import partial
 
-import global_value as g
+import lib.global_value as g
 from cls.parameter import command_option, parameters
 from cls.parser import Message_Parser
 from cls.search import SearchRange

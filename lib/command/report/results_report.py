@@ -17,7 +17,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, TableStyle)
 
-import global_value as g
+import lib.global_value as g
 from lib import command as c
 from lib.database import query
 

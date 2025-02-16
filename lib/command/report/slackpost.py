@@ -1,4 +1,4 @@
-import global_value as g
+import lib.global_value as g
 import lib.function as f
 from lib.command.report import matrix, monthly, results_list, results_report, winner
 

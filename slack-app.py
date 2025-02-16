@@ -8,7 +8,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-import global_value as g
+import lib.global_value as g
 from lib import command as c
 from lib import database as d
 from lib.function import configuration

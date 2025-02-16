@@ -5,7 +5,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
-import global_value as g
+import lib.global_value as g
 from lib import command as c
 from lib import function as f
 from lib.database import query

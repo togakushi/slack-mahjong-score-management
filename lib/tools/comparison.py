@@ -5,7 +5,7 @@ import sys
 from slack_bolt import App
 from slack_sdk import WebClient
 
-import global_value as g
+import lib.global_value as g
 from lib import command as c
 from lib import database as d
 

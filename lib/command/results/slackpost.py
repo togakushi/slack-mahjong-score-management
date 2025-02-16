@@ -1,4 +1,4 @@
-import global_value as g
+import lib.global_value as g
 from lib import function as f
 from lib.command.results import detail, rating, summary, versus
 

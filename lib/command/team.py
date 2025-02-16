@@ -2,7 +2,7 @@ import logging
 import re
 import sqlite3
 
-import global_value as g
+import lib.global_value as g
 from cls.parameter import command_option
 from lib import command as c
 from lib import database as d

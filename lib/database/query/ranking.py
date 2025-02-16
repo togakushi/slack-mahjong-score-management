@@ -1,5 +1,5 @@
 
-import global_value as g
+import lib.global_value as g
 from lib.database.common import query_modification
 
 
