@@ -93,6 +93,12 @@ def arg_parser():
                 help="メンバー設定情報をインポート(default prefix: %(const)s)",
             )
 
+            group.add_argument(
+                "--vacuum",
+                action="store_true",
+                help="database vacuum",
+            )
+
         case "test.py":  # 動作テスト用オプション
             p.add_argument(
                 "-t", "--testcase",

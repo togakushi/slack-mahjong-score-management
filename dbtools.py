@@ -16,3 +16,5 @@ if __name__ == "__main__":
         t.member.export_data()
     if g.args.import_data:
         t.member.import_data()
+    if g.args.vacuum:
+        t.vacuum.main()

@@ -1,0 +1,50 @@
+import logging
+import os
+import sqlite3
+from contextlib import closing
+
+import lib.global_value as g
+from lib import database as d
+
+
+def main():
+    """vacuum実行
+    """
+
+    d.common.db_backup()
+    before_size = os.path.getsize(g.cfg.db.database_file)
+
+    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+        before_page = db_info(cur, "page_count")
+        before_freelist = db_info(cur, "freelist_count")
+        cur.execute("vacuum;")
+        after_page = db_info(cur, "page_count")
+        after_freelist = db_info(cur, "freelist_count")
+
+    after_size = os.path.getsize(g.cfg.db.database_file)
+
+    logging.notice(f"file size: {before_size} -> {after_size}")
+    logging.notice(f"page_count: {before_page} -> {after_page}")
+    logging.notice(f"freelist_count: {before_freelist} -> {after_freelist}")
+
+
+def db_info(cur, kind):
+    """page_countを取得
+
+    Args:
+        cur (sqlite3.Cursor): カーソルオブジェクト
+        kind (str): 取得する内容
+
+    Returns:
+        int: page_count / freelist_count
+    """
+
+    match kind:
+        case "page_count":
+            count = cur.execute("pragma page_count;").fetchone()[0]
+        case "freelist_count":
+            count = cur.execute("pragma freelist_count;").fetchone()[0]
+        case _:
+            count = 0
+
+    return (count)
