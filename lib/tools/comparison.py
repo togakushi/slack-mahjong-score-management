@@ -19,7 +19,7 @@ def main():
             g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
             g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
             g.bot_id = g.app.client.auth_test()["user_id"]
-            c.member.read_memberslist()
+            c.member.read_memberslist(False)
         except Exception as err:
             sys.exit(err)
 
