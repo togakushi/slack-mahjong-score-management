@@ -1,9 +1,10 @@
+import logging
 import sqlite3
 from contextlib import closing
 
 import global_value as g
-from lib import function as f
 from lib import database as d
+from lib import function as f
 
 
 def main():
@@ -13,7 +14,8 @@ def main():
     d.common.db_backup()
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
-        rows = cur.execute("select * from result")
+        rows = cur.execute("select * from result where rule_version=?;", (g.prm.rule_version,))
+        count = 0
 
         for row in rows:
             detection = [
@@ -26,5 +28,7 @@ def main():
             ret = f.score.get_score(detection)
             ret["ts"] = row["ts"]
             cur.execute(d.sql_result_update, ret)
+            count += 1
 
         cur.commit()
+    logging.notice(f"recalculated: {count}")
