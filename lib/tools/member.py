@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 
 import pandas as pd
@@ -26,7 +27,7 @@ def export_data():
                 df["team_id"] = df["team_id"].astype("Int64")
 
             df.to_csv(csvfile, index=False)
-            print(f">>> export data: {table} -> {csvfile}")
+            logging.notice(f"export data: {table} -> {csvfile}")
 
 
 def import_data():
@@ -51,17 +52,17 @@ def import_data():
                     if_exists="append",
                     index=False,
                 )
-                print(f">>> import data: {csvfile} -> {table}")
+                logging.notice(f"import data: {csvfile} -> {table}")
             except FileNotFoundError:
-                print(f">>> skip: {csvfile} (not found)")
+                logging.notice(f"skip: {csvfile} (not found)")
             except pd.errors.EmptyDataError:
-                print(f">>> skip: {csvfile} (empty file)")
+                logging.notice(f"skip: {csvfile} (empty file)")
 
         # aliasテーブルが空の場合は作り直す
         alias_list = conn.execute("select name from alias;").fetchall()
         member_list = conn.execute("select name, name from member where id != 0;").fetchall()
         if not alias_list:
-            print(">>> create new alias table")
+            logging.warning("create new alias table")
             for name in member_list:
                 conn.execute("insert into alias(name, member) values (?,?);", name)
 

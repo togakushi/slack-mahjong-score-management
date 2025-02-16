@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 
@@ -23,4 +24,4 @@ def main():
             sys.exit(err)
 
         count, _ = d.comparison.data_comparison()
-        print(f">>> {count=}")
+        logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))
