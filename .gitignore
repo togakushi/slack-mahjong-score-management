@@ -9,9 +9,7 @@ work/
 *.csv
 *.ttf
 *.png
-*.py
-!slack-app.py
-!test.py
+
 !requirements.txt
 !test_case/test-*.ini
 !.gitignore
