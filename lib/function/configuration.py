@@ -159,7 +159,7 @@ def setup():
     g.prm = parameters()
     g.msg = Message_Parser()
 
-    logging.trace(f"{g.cfg.cw=}")  # type: ignore
+    logging.notice(f"rule_version={g.prm.rule_version}, origin_point={g.prm.origin_point}, return_point={g.prm.return_point}")
 
     # 作業用ディレクトリ作成
     try:
