@@ -155,7 +155,7 @@ def initialization_resultdb():
                 grandslam,
                 ifnull(ex_point, 0) as ex_point,
                 p1_name not in (select name from member) as guest,
-                date(result.playtime, "-12 hours") as collection_daily,
+                date(result.playtime, '-12 hours') as collection_daily,
                 rule_version,
                 comment
             from
@@ -180,7 +180,7 @@ def initialization_resultdb():
                 grandslam,
                 ifnull(ex_point, 0),
                 p2_name not in (select name from member),
-                date(result.playtime, "-12 hours"),
+                date(result.playtime, '-12 hours'),
                 rule_version,
                 comment
             from
@@ -205,7 +205,7 @@ def initialization_resultdb():
                 grandslam,
                 ifnull(ex_point, 0),
                 p3_name not in (select name from member),
-                date(result.playtime, "-12 hours"),
+                date(result.playtime, '-12 hours'),
                 rule_version,
                 comment
             from
@@ -230,7 +230,7 @@ def initialization_resultdb():
                 grandslam,
                 ifnull(ex_point, 0),
                 p4_name not in (select name from member),
-                date(result.playtime, "-12 hours"),
+                date(result.playtime, '-12 hours'),
                 rule_version,
                 comment
             from
@@ -260,7 +260,7 @@ def initialization_resultdb():
                 result.p1_rank as rank,
                 round(result.p1_point, 1) + ifnull(regulations.ex_point, 0) as point,
                 regulations.ex_point,
-                date(result.playtime, "-12 hours") as collection_daily,
+                date(result.playtime, '-12 hours') as collection_daily,
                 result.rule_version,
                 result.comment
             from
@@ -281,7 +281,7 @@ def initialization_resultdb():
                 result.p2_rank as rank,
                 round(result.p2_point, 1) + ifnull(regulations.ex_point, 0) as point,
                 regulations.ex_point,
-                date(result.playtime, "-12 hours") as collection_daily,
+                date(result.playtime, '-12 hours') as collection_daily,
                 result.rule_version,
                 result.comment
             from
@@ -302,7 +302,7 @@ def initialization_resultdb():
                 result.p3_rank as rank,
                 round(result.p3_point, 1) + ifnull(regulations.ex_point, 0) as point,
                 regulations.ex_point,
-                date(result.playtime, "-12 hours") as collection_daily,
+                date(result.playtime, '-12 hours') as collection_daily,
                 result.rule_version,
                 result.comment
             from
@@ -323,7 +323,7 @@ def initialization_resultdb():
                 result.p4_rank as rank,
                 round(result.p4_point, 1) + ifnull(regulations.ex_point, 0) as point,
                 regulations.ex_point,
-                date(result.playtime, "-12 hours") as collection_daily,
+                date(result.playtime, '-12 hours') as collection_daily,
                 result.rule_version,
                 result.comment
             from
@@ -353,7 +353,7 @@ def initialization_resultdb():
                 p4_name, p4_team.name as p4_team,
                 p4.name isnull as p4_guest, p4_rpoint, p4_rank, p4_point,
                 deposit,
-                date(result.playtime, "-12 hours") as collection_daily,
+                date(result.playtime, '-12 hours') as collection_daily,
                 result.comment,
                 game_info.guest_count,
                 game_info.same_team,
