@@ -13,18 +13,18 @@ from lib import command as c
 from lib import database as d
 from lib.function import configuration
 
-try:
-    configuration.setup()
-    g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
-    g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-    from lib import event
-    __all__ = ["event"]
-except SlackApiError as err:
-    logging.error(err)
-    sys.exit()
-
 
 if __name__ == "__main__":
+    try:
+        configuration.setup()
+        g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
+        g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+        from lib import event
+        __all__ = ["event"]
+    except SlackApiError as err:
+        logging.error(err)
+        sys.exit()
+
     d.initialization.initialization_resultdb()
     c.member.read_memberslist()
     g.bot_id = g.app.client.auth_test()["user_id"]
