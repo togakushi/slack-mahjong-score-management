@@ -82,6 +82,7 @@ def handle_message_events(client, body):
                                 d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
+                                logging.warning(f"DEBUG(inside_thread): {body=} {vars(g.msg)=} {vars(g.prm)=} {vars(g.cfg)=}")  # ToDo: 解析用
                     case "message_changed":
                         record_data = d.common.exsist_record(g.msg.event_ts)
                         record_detection = [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]
