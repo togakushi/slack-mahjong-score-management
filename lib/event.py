@@ -119,6 +119,7 @@ def slash_command(ack, body, client):
 
     ack()
     logging.trace(f"{body}")
+    g.prm.initialization()
     g.msg.parser(body)
     g.msg.client = client
 
