@@ -20,6 +20,7 @@ def handle_message_events(client, body):
     """
 
     logging.trace(body)
+    g.prm.initialization()
     g.msg.parser(body)
     g.msg.client = client
 
