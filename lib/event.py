@@ -97,6 +97,7 @@ def handle_message_events(client, body):
                                     d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
+                                logging.warning(f"DEBUG: {body=} {vars(g.msg)=} {vars(g.prm)=} {vars(g.cfg)=}")  # ToDo: 解析用
                         else:
                             if record_data:
                                 d.common.db_delete(g.msg.event_ts)
