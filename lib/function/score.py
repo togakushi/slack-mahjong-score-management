@@ -1,4 +1,5 @@
 import logging
+import re
 
 import pandas as pd
 
@@ -165,6 +166,30 @@ def check_remarks():
                 d.common.remarks_append(remarks)
             case "message_deleted":
                 d.common.remarks_delete(g.msg.event_ts)
+
+
+def reprocessing_remarks():
+    """スレッドの内容を再処理
+    """
+
+    res = f.slack_api.get_conversations()
+    msg = res.get("messages")
+
+    if msg:
+        reply_count = msg[0].get("reply_count", 0)
+        g.msg.thread_ts = msg[0].get("ts")
+
+        for x in range(1, reply_count + 1):
+            g.msg.event_ts = msg[x].get("ts")
+            text = msg[x].get("text")
+            logging.info(f"({x}/{reply_count}) thread_ts={g.msg.thread_ts}, event_ts={g.msg.event_ts}, {text=}")
+
+            if text:
+                g.msg.keyword = text.split()[0]
+                g.msg.argument = text.split()[1:]
+
+                if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):
+                    f.score.check_remarks()
 
 
 def get_score(detection):

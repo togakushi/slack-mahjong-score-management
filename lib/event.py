@@ -101,6 +101,7 @@ def handle_message_events(client, body):
                                         logging.notice(f"skip update(rule_version not match). event_ts={g.msg.event_ts}")
                                 else:
                                     d.common.db_insert(detection, g.msg.event_ts)
+                                    f.score.reprocessing_remarks()
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
                                 logging.notice(f"skip update(inside thread). event_ts={g.msg.event_ts}, thread_ts={g.msg.thread_ts}")

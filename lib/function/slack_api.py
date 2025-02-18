@@ -324,3 +324,27 @@ def get_dm_channel_id(user_id):
         logging.error(e)
 
     return (channel_id)
+
+
+def get_conversations(ch=None, ts=None):
+    """スレッド情報の取得
+
+    Args:
+        ch (str, optional): チャンネルID. Defaults to None.
+        ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
+
+    Returns:
+        SlackResponse: API response
+    """
+
+    ch = ch if ch else g.msg.channel_id
+    ts = ts if ts else g.msg.event_ts
+    res = {}
+
+    try:
+        res = g.app.client.conversations_replies(channel=ch, ts=ts)
+        logging.trace(res.validate())
+    except SlackApiError as err:
+        logging.error(err)
+
+    return (res)
