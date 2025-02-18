@@ -16,6 +16,7 @@
 - [共通オプション](functions/argument_keyword.md)
 
 ## その他
+- [メンテナンスツール](dbtools.md)
 - [簡易ヘルプ](help.md)
 - [トラブルシューティング](troubleshooting.md)
 - [用語集](glossary.md)
