@@ -23,6 +23,7 @@ def handle_message_events(client, body):
     g.prm.initialization()
     g.msg.parser(body)
     g.msg.client = client
+    logging.info([f"{x}={vars(g.msg)[x]}" for x in ("status", "event_ts", "thread_ts", "in_thread", "keyword", "user_id")])
 
     # 許可されていないユーザのポストは処理しない
     if g.msg.user_id in g.cfg.setting.ignore_userid:
@@ -31,9 +32,13 @@ def handle_message_events(client, body):
 
     # 投稿済みメッセージが削除された場合
     if g.msg.status == "message_deleted":
-        d.common.db_delete(g.msg.event_ts)
+        if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):  # 追加メモ
+            d.common.remarks_delete(g.msg.event_ts)
+        else:
+            d.common.db_delete(g.msg.event_ts)
         return
 
+    # キーワード処理
     match g.msg.keyword:
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
@@ -69,42 +74,42 @@ def handle_message_events(client, body):
             msg = c.team.list()
             f.slack_api.post_text(g.msg.event_ts, title, msg)
 
-        case _:
-            if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword) and g.msg.in_thread:  # 追加メモ
-                if d.common.exsist_record(g.msg.thread_ts) and g.msg.updatable:
+        case _ as x:
+            record_data = d.common.exsist_record(g.msg.event_ts)
+            if re.match(rf"^{g.cfg.cw.remarks_word}", x) and g.msg.in_thread:  # 追加メモ
+                if d.common.exsist_record(g.msg.thread_ts):
                     f.score.check_remarks()
-            else:  # 結果報告フォーマットに一致したポストの処理
+            else:
                 detection = f.search.pattern(g.msg.text)
-                match g.msg.status:
-                    case "message_append":
-                        if detection:
+                if detection:  # 結果報告フォーマットに一致したポストの処理
+                    match g.msg.status:
+                        case "message_append":
                             if g.cfg.setting.thread_report == g.msg.in_thread:
                                 d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
+                                logging.notice(f"skip update(inside thread). event_ts={g.msg.event_ts}, thread_ts={g.msg.thread_ts}")
                                 logging.warning(f"DEBUG(inside_thread): {body=} {vars(g.msg)=} {vars(g.prm)=} {vars(g.cfg)=}")  # ToDo: 解析用
-                    case "message_changed":
-                        record_data = d.common.exsist_record(g.msg.event_ts)
-                        record_detection = [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]
-                        if detection == record_detection:
-                            return
-                        if detection:
+                        case "message_changed":
+                            if detection == [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]:  # 変更箇所がなければ何もしない
+                                return
                             if g.cfg.setting.thread_report == g.msg.in_thread:
                                 if record_data:
                                     if record_data.get("rule_version") == g.prm.rule_version:
                                         d.common.db_update(detection, g.msg.event_ts)
                                     else:
-                                        logging.notice(f"skip update(rule_version not match). ts={g.msg.event_ts}")
+                                        logging.notice(f"skip update(rule_version not match). event_ts={g.msg.event_ts}")
                                 else:
                                     d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
+                                logging.notice(f"skip update(inside thread). event_ts={g.msg.event_ts}, thread_ts={g.msg.thread_ts}")
                                 logging.warning(f"DEBUG(inside_thread): {body=} {vars(g.msg)=} {vars(g.prm)=} {vars(g.cfg)=}")  # ToDo: 解析用
-                        else:
-                            if record_data:
-                                d.common.db_delete(g.msg.event_ts)
-                                for icon in f.slack_api.reactions_status():
-                                    f.slack_api.call_reactions_remove(icon)
+                else:
+                    if record_data:
+                        d.common.db_delete(g.msg.event_ts)
+                        for icon in f.slack_api.reactions_status():
+                            f.slack_api.call_reactions_remove(icon)
 
 
 @g.app.command(g.cfg.setting.slash_command)
