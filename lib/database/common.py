@@ -281,7 +281,7 @@ def remarks_append(remarks):
                 if row:
                     if remark["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
                         cur.execute(d.sql_remarks_insert, remark)
-                        logging.notice(f"insert: {remark}")
+                        logging.notice(f"insert: {remark}, user={g.msg.user_id}")
 
                         if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status():
                             f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remark["event_ts"])
@@ -297,10 +297,13 @@ def remarks_delete(ts):
     """
 
     if g.msg.updatable:
-        logging.notice(f"{ts}")
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
             cur.execute(d.sql_remarks_delete_one, (ts,))
+            count = cur.execute("select changes();").fetchone()[0]
             cur.commit()
+
+        if count:
+            logging.notice(f"{ts=}, user={g.msg.user_id}, {count=}")
 
         if g.msg.status != "message_deleted":
             if g.cfg.setting.reaction_ok in f.slack_api.reactions_status():
