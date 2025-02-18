@@ -39,8 +39,10 @@ class Message_Parser():
         __tmp_client = self.client
         self.__dict__.clear()
         self.client = __tmp_client
-        self.text = _body.get("text")
+        self.text = ""
         self.thread_ts = "0"
+        self.keyword = ""
+        self.argument = []
         _event = {}
 
         if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
@@ -83,7 +85,6 @@ class Message_Parser():
         self.user_id = _event.get("user", self.user_id)
         self.event_ts = _event.get("ts", self.event_ts)
         self.thread_ts = _event.get("thread_ts", self.thread_ts)
-        self.text = _event.get("text", self.text)
 
         # スレッド内のポストか判定
         if float(self.thread_ts):
@@ -102,9 +103,11 @@ class Message_Parser():
             else:
                 self.channel_type = None
 
-        if self.text:
-            self.keyword = self.text.split()[0]
-            self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
+        if "text" in _event:
+            self.text = _event.get("text")
+            if self.text:
+                self.keyword = self.text.split()[0]
+                self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
         else:  # text属性が見つからないときはログに出力
             if not _event.get("text", False):
                 logging.error(f"text not found: {_body=}")
