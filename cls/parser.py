@@ -46,6 +46,7 @@ class Message_Parser():
         _event = {}
 
         if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
+            _event = _body
             if not self.channel_id:
                 if _body.get("channel_name") == "directmessage":
                     self.channel_id = _body.get("channel_id")
