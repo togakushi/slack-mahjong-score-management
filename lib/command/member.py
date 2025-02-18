@@ -269,18 +269,19 @@ def member_append(argument):
 
         if dbupdate_flg:
             rows = resultdb.execute(
-                """select count() from (
-                        select p1_name as name from result
-                        union all select p2_name from result
-                        union all select p3_name from result
-                        union all select p4_name from result
-                        union all select name from remarks
-                    )
-                    where name in (?, ?, ?)
-                    group by name
-                """, (nic_name, f.common.kata_to_hira(nic_name), f.common.hira_to_kana(nic_name)))
-            count = rows.fetchone()[0]
-            if count != 0:  # 過去成績更新
+                """
+                select name from (
+                    select p1_name as name from result
+                    union all select p2_name from result
+                    union all select p3_name from result
+                    union all select p4_name from result
+                    union all select name from remarks
+                ) group by name;
+                """
+            ).fetchall()
+            name_list = [row["name"] for row in rows]
+
+            if {nic_name, f.common.kata_to_hira(nic_name), f.common.hira_to_kana(nic_name)} & set(name_list):
                 msg += d.common.db_backup()
                 for tbl, col in [("result", f"p{x}_name") for x in range(1, 5)] + [("remarks", "name")]:
                     resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, nic_name))
