@@ -3,7 +3,7 @@ import logging
 from slack_sdk import WebClient
 
 import lib.global_value as g
-import lib.function.slack_api as slack_api
+from lib.function import slack_api
 
 
 class Message_Parser():
