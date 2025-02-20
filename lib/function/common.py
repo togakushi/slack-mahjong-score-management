@@ -280,7 +280,7 @@ def debug_out(msg1, msg2=None):
     """
 
     print(msg1)
-    if type(msg2) is dict:
+    if isinstance(msg2, dict):
         [print(msg2[x]) for x in msg2]
     elif msg2:
         print(msg2)

@@ -91,7 +91,7 @@ def post_multi_message(msg, ts=False, summarize=True):
     if g.args.testcase:
         f.common.debug_out("", msg)
     else:
-        if type(msg) is dict:
+        if isinstance(msg, dict):
             if summarize:  # まとめてポスト
                 key_list = list(msg.keys())
                 post_msg = msg[key_list[0]]

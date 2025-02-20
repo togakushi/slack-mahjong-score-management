@@ -454,7 +454,7 @@ def winner_report():
     # ゲスト置換
     for i in range(1, 6):
         df[f"pname{i}"] = df[f"name{i}"].apply(
-            lambda x: "該当者なし" if type(x) is float else c.member.name_replace(x, add_mark=True)
+            lambda x: "該当者なし" if isinstance(x, float) else c.member.name_replace(x, add_mark=True)
         )
 
     return (df)

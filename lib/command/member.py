@@ -113,10 +113,10 @@ def count_padding(data):
 
     name_list = []
 
-    if type(data) is list:
+    if isinstance(data, list):
         name_list = data
 
-    if type(data) is dict:
+    if isinstance(data, dict):
         for i in data.keys():
             for name in [data[i][x]["name"] for x in g.wind[0:4]]:
                 if name not in name_list:

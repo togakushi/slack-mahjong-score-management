@@ -31,7 +31,7 @@ def plot():
         results[v["collection"]] = {}
         results[v["collection"]]["集計月"] = v["collection"]
         for x in range(1, 6):
-            if type(v[f"name{x}"]) is str:
+            if isinstance(v[f"name{x}"], str):
                 results[v["collection"]][f"{x}位"] = "{} ({}pt)".format(  # pylint: disable=consider-using-f-string
                     v[f"pname{x}"],
                     str("{:+}".format(v[f"point{x}"])).replace("-", "▲")  # pylint: disable=consider-using-f-string
