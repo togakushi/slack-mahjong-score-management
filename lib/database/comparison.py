@@ -97,46 +97,49 @@ def data_comparison():
             if slack_score == db_score:  # スコア比較
                 logging.info("score check pass: %s %s", key, textformat(db_score))
                 continue
-            else:  # 更新
-                if d.common.exsist_record(key).get("rule_version") == g.prm.rule_version:
-                    count["mismatch"] += 1
-                    logging.notice("mismatch: %s", key)
-                    logging.info("  *  slack: %s", textformat(db_score))
-                    logging.info("  *     db: %s", textformat(slack_score))
-                    ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(  # pylint: disable=consider-using-f-string
-                        datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                        textformat(db_score), textformat(slack_score),
-                    )
-                    d.common.db_update(slack_score, key, reactions_data)
-                else:
-                    logging.info("score check skip: %s %s", key, textformat(db_score))
-                continue
-        else:  # 追加
-            if not g.cfg.setting.thread_report and val.get("in_thread"):
-                continue
-            else:
-                count["missing"] += 1
-                logging.notice("missing: %s, %s", key, slack_score)
-                ret_msg["missing"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
+
+            # 更新
+            if d.common.exsist_record(key).get("rule_version") == g.prm.rule_version:
+                count["mismatch"] += 1
+                logging.notice("mismatch: %s", key)
+                logging.info("  *  slack: %s", textformat(db_score))
+                logging.info("  *     db: %s", textformat(slack_score))
+                ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(  # pylint: disable=consider-using-f-string
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                    textformat(slack_score)
+                    textformat(db_score), textformat(slack_score),
                 )
-                d.common.db_insert(slack_score, key, reactions_data)
+                d.common.db_update(slack_score, key, reactions_data)
+            else:
+                logging.info("score check skip: %s %s", key, textformat(db_score))
+            continue
+
+        # 追加
+        if not g.cfg.setting.thread_report and val.get("in_thread"):
+            continue
+
+        count["missing"] += 1
+        logging.notice("missing: %s, %s", key, slack_score)
+        ret_msg["missing"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
+            datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+            textformat(slack_score)
+        )
+        d.common.db_insert(slack_score, key, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         if key in slack_data:
             continue
-        else:  # 削除
-            count["delete"] += 1
-            logging.notice("delete: %s, %s (Only database)", key, db_data[key])
-            ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
-                datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                textformat(db_data[key])
-            )
-            d.common.db_delete(key)
-            # メッセージが残っているならリアクションを外す
-            for icon in f.slack_api.reactions_status(ts=key):
-                f.slack_api.call_reactions_remove(icon)
+
+        # 削除
+        count["delete"] += 1
+        logging.notice("delete: %s, %s (Only database)", key, db_data[key])
+        ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
+            datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+            textformat(db_data[key])
+        )
+        d.common.db_delete(key)
+        # メッセージが残っているならリアクションを外す
+        for icon in f.slack_api.reactions_status(ts=key):
+            f.slack_api.call_reactions_remove(icon)
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
     for key, val in slack_data.items():
@@ -197,10 +200,10 @@ def data_comparison():
     for key in db_remarks:
         if key in slack_remarks:  # DB -> slack チェック
             continue
-        else:
-            count["remark"] += 1
-            d.common.remarks_delete_compar(key)
-            logging.notice("remark delete(missed deletion): %s", key)
+
+        count["remark"] += 1
+        d.common.remarks_delete_compar(key)
+        logging.notice("remark delete(missed deletion): %s", key)
 
     return (count, ret_msg)
 
