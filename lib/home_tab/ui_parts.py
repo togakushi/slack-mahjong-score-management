@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 import lib.global_value as g
 
 
-def PlainText(msg):
+def plain_text(msg):
     view = {"type": "home", "blocks": []}
     view["blocks"].append({"type": "section", "text": {}})
     view["blocks"][0]["text"] = {"type": "mrkdwn", "text": msg}
@@ -13,20 +13,20 @@ def PlainText(msg):
     return (view)
 
 
-def Divider(view, no):
+def divider(view, no):
     view["blocks"].append({"type": "divider", })
 
     return (view, no + 1)
 
 
-def Header(view, no, text="dummy"):
+def header(view, no, text="dummy"):
     view["blocks"].append({"type": "header", "text": {}})
     view["blocks"][no]["text"] = {"type": "plain_text", "text": text}
 
     return (view, no + 1)
 
 
-def Button(view, no, text="Click Me", action_id=False, style=False):
+def button(view, no, text="Click Me", action_id=False, style=False):
     view["blocks"].append({"type": "actions", "elements": [{}]})
     view["blocks"][no]["elements"][0] = {"type": "button", "text": {}, "action_id": action_id}
     view["blocks"][no]["elements"][0]["text"] = {"type": "plain_text", "text": text}
@@ -108,7 +108,7 @@ def checkboxes(view, no, id, title, flag, initial=None):
     return (view, no + 1)
 
 
-def UserSelect(view, no, text="dummy", add_list=False):
+def user_select(view, no, text="dummy", add_list=False):
     view["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     view["blocks"][no]["element"]["type"] = "static_select"
     view["blocks"][no]["element"]["action_id"] = "player"
@@ -131,7 +131,7 @@ def UserSelect(view, no, text="dummy", add_list=False):
     return (view, no + 1)
 
 
-def MultiSelect(view, no, text="dummy", add_list=False):
+def multi_select(view, no, text="dummy", add_list=False):
     view["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
     view["blocks"][no]["element"]["type"] = "multi_static_select"
     view["blocks"][no]["element"]["action_id"] = "player"
@@ -154,7 +154,7 @@ def MultiSelect(view, no, text="dummy", add_list=False):
     return (view, no + 1)
 
 
-def PeriodSelection(view, no, text="dummy", block_id=False, action_id="dummy", initial_date=False):
+def period_selection(view, no, text="dummy", block_id=False, action_id="dummy", initial_date=False):
     if not initial_date:
         initial_date = (
             datetime.now() + relativedelta(hours=-12)
@@ -174,7 +174,7 @@ def PeriodSelection(view, no, text="dummy", block_id=False, action_id="dummy", i
     return (view, no + 1)
 
 
-def InputRanked(view, no, block_id=False):
+def input_ranked(view, no, block_id=False):
     if block_id:
         view["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
     else:
@@ -190,7 +190,7 @@ def InputRanked(view, no, block_id=False):
     return (view, no + 1)
 
 
-def ModalPeriodSelection():
+def modalperiod_selection():
     view = {"type": "modal", "callback_id": f"{g.app_var['screen']}_ModalPeriodSelection"}
     view["title"] = {"type": "plain_text", "text": "検索範囲指定"}
     view["submit"] = {"type": "plain_text", "text": "決定"}

@@ -16,13 +16,13 @@ def build_versus_menu():
     g.app_var["screen"] = "VersusMenu"
     no = 0
     view = {"type": "home", "blocks": []}
-    view, no = h.ui_parts.Header(view, no, "【直接対戦】")
+    view, no = h.ui_parts.header(view, no, "【直接対戦】")
 
     # プレイヤー選択リスト
-    view, no = h.ui_parts.UserSelect(view, no, text="対象プレイヤー")
-    view, no = h.ui_parts.MultiSelect(view, no, text="対戦相手", add_list=["全員"])
+    view, no = h.ui_parts.user_select(view, no, text="対象プレイヤー")
+    view, no = h.ui_parts.multi_select(view, no, text="対戦相手", add_list=["全員"])
 
-    view, no = h.ui_parts.Divider(view, no)
+    view, no = h.ui_parts.divider(view, no)
     view, no = h.ui_parts.radio_buttons(
         view, no, "search_range", "検索範囲",
         {
@@ -32,10 +32,10 @@ def build_versus_menu():
             "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
         }
     )
-    view, no = h.ui_parts.Button(view, no, text="検索範囲設定", action_id="modal-open-period")
+    view, no = h.ui_parts.button(view, no, text="検索範囲設定", action_id="modal-open-period")
 
     # オプション
-    view, no = h.ui_parts.Divider(view, no)
+    view, no = h.ui_parts.divider(view, no)
     view, no = h.ui_parts.checkboxes(
         view, no, "search_option", "検索オプション",
         {
@@ -52,9 +52,9 @@ def build_versus_menu():
         },
     )
 
-    view, no = h.ui_parts.Divider(view, no)
-    view, no = h.ui_parts.Button(view, no, text="集計", action_id="versus_aggregation", style="primary")
-    view, no = h.ui_parts.Button(view, no, text="戻る", action_id="actionId-back", style="danger")
+    view, no = h.ui_parts.divider(view, no)
+    view, no = h.ui_parts.button(view, no, text="集計", action_id="versus_aggregation", style="primary")
+    view, no = h.ui_parts.button(view, no, text="戻る", action_id="actionId-back", style="danger")
 
     return (view)
 
@@ -113,7 +113,7 @@ def handle_aggregation_action(ack, body, client):
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.PlainText(f"{chr(10).join(app_msg)}")
+        view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}")
     )
 
     logging.info(f"[app:personal_aggregation] {argument}, {vars(g.opt)}")
@@ -130,7 +130,7 @@ def handle_aggregation_action(ack, body, client):
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )
 
 

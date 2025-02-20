@@ -16,10 +16,10 @@ def build_ranking_menu():
     g.app_var["screen"] = "RankingMenu"
     no = 0
     view = {"type": "home", "blocks": []}
-    view, no = h.ui_parts.Header(view, no, "【ランキング】")
+    view, no = h.ui_parts.header(view, no, "【ランキング】")
 
     # 検索範囲設定
-    view, no = h.ui_parts.Divider(view, no)
+    view, no = h.ui_parts.divider(view, no)
     view, no = h.ui_parts.radio_buttons(
         view, no, "search_range", "検索範囲",
         {
@@ -29,10 +29,10 @@ def build_ranking_menu():
             "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
         }
     )
-    view, no = h.ui_parts.Button(view, no, text="検索範囲設定", action_id="modal-open-period")
+    view, no = h.ui_parts.button(view, no, text="検索範囲設定", action_id="modal-open-period")
 
     # 検索オプション
-    view, no = h.ui_parts.Divider(view, no)
+    view, no = h.ui_parts.divider(view, no)
     view, no = h.ui_parts.checkboxes(
         view, no, "search_option", "検索オプション",
         {
@@ -41,11 +41,11 @@ def build_ranking_menu():
         ["unregistered_replace"],
     )
 
-    view, no = h.ui_parts.InputRanked(view, no, block_id="bid-ranked")
+    view, no = h.ui_parts.input_ranked(view, no, block_id="bid-ranked")
 
-    view, no = h.ui_parts.Divider(view, no)
-    view, no = h.ui_parts.Button(view, no, text="集計", action_id="ranking_aggregation", style="primary")
-    view, no = h.ui_parts.Button(view, no, text="戻る", action_id="actionId-back", style="danger")
+    view, no = h.ui_parts.divider(view, no)
+    view, no = h.ui_parts.button(view, no, text="集計", action_id="ranking_aggregation", style="primary")
+    view, no = h.ui_parts.button(view, no, text="戻る", action_id="actionId-back", style="danger")
 
     return (view)
 
@@ -95,7 +95,7 @@ def handle_aggregation_action(ack, body, client):
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.PlainText(f"{chr(10).join(app_msg)}"),
+        view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
     )
 
     search_options = body["view"]["state"]["values"]
@@ -118,7 +118,7 @@ def handle_aggregation_action(ack, body, client):
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.PlainText(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )
 
 

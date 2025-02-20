@@ -14,10 +14,10 @@ def build_main_menu():
     g.app_var["screen"] = "MainMenu"
     no = 0
     view = {"type": "home", "blocks": []}
-    view, no = h.ui_parts.Button(view, no, text="成績サマリ", action_id="summary_menu")
-    view, no = h.ui_parts.Button(view, no, text="ランキング", action_id="ranking_menu")
-    view, no = h.ui_parts.Button(view, no, text="個人成績", action_id="personal_menu")
-    view, no = h.ui_parts.Button(view, no, text="直接対戦", action_id="versus_menu")
+    view, no = h.ui_parts.button(view, no, text="成績サマリ", action_id="summary_menu")
+    view, no = h.ui_parts.button(view, no, text="ランキング", action_id="ranking_menu")
+    view, no = h.ui_parts.button(view, no, text="個人成績", action_id="personal_menu")
+    view, no = h.ui_parts.button(view, no, text="直接対戦", action_id="versus_menu")
 
     return (view)
 
@@ -130,7 +130,7 @@ def handle_open_modal_button_clicks(ack, body, client):
     ack()
     client.views_open(
         trigger_id=body["trigger_id"],
-        view=h.ui_parts.ModalPeriodSelection(),
+        view=h.ui_parts.modalperiod_selection(),
     )
 
 
