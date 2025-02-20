@@ -178,14 +178,14 @@ def floatfmt_adjust(df):
     return (fmt)
 
 
-def save_output(df, format, filename, headline):
+def save_output(df, format, filename, headline=None):
     """指定されたフォーマットでdfを保存する
 
     Args:
         df (pd.DataFrame): _description_
         format (str): フォーマット
         filename (str): 保存ファイル名
-        headline (str): 集計情報（ヘッダコメント）
+        headline (str): 集計情報（ヘッダコメント）. Defaults to None.
 
     Returns:
         Union[str, None]
@@ -204,10 +204,10 @@ def save_output(df, format, filename, headline):
     # 保存
     save_file = os.path.join(g.cfg.setting.work_dir, filename)
     with open(save_file, "w") as writefile:
-        # ヘッダ書き込み
-        for line in headline.splitlines():
-            writefile.writelines(f"# {line}\n")
-        writefile.writelines("\n")
+        if not headline:  # ヘッダ書き込み
+            for line in headline.splitlines():
+                writefile.writelines(f"# {line}\n")
+            writefile.writelines("\n")
 
         writefile.writelines(data)
 
