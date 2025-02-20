@@ -87,7 +87,7 @@ class SearchRange():
             return (True)
         return (False)
 
-    def range(self, word: str) -> list:
+    def range(self, word: str):
         """指定ワードを日付に変換する
 
         Args:
