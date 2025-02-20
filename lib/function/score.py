@@ -218,7 +218,7 @@ def get_score(detection):
             for x in range(4)
         ],
         "str": [detection[x * 2 + 1] for x in range(4)],
-        "rpoint": [eval(detection[x * 2 + 1]) for x in range(4)],
+        "rpoint": [eval(detection[x * 2 + 1]) for x in range(4)],  # pylint: disable=eval-used
     })
     score_df = calculation_point(score_df)
     score = score_df.to_dict(orient="records")
