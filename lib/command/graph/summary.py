@@ -23,6 +23,10 @@ def point_plot():
     """
 
     plt.close()
+    # 初期化
+    title_text = None
+    xlabel_text = None
+
     # データ収集
     game_info = d.aggregate.game_info()
     target_data, df = _data_collection()
@@ -113,6 +117,11 @@ def rank_plot():
             - int: グラフにプロットしたゲーム数
             - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
+
+    plt.close()
+    # 初期化
+    title_text = None
+    xlabel_text = None
 
     # データ収集
     game_info = d.aggregate.game_info()
