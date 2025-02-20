@@ -67,13 +67,13 @@ def set_command_option(body):
                 app_msg.append(f"集計範囲：{select_item}")
                 argument.append(select_item)
 
-    for id in ("search_option", "display_option", "output_option"):
-        if f"bid-{id}" in search_options:
-            match search_options[f"bid-{id}"][f"aid-{id}"].get("type"):
+    for id_suffix in ("search_option", "display_option", "output_option"):
+        if f"bid-{id_suffix}" in search_options:
+            match search_options[f"bid-{id_suffix}"][f"aid-{id_suffix}"].get("type"):
                 case "checkboxes":
-                    selected_options = search_options[f"bid-{id}"][f"aid-{id}"].get("selected_options")
+                    selected_options = search_options[f"bid-{id_suffix}"][f"aid-{id_suffix}"].get("selected_options")
                 case "radio_buttons":
-                    selected_options = [search_options[f"bid-{id}"][f"aid-{id}"].get("selected_option")]
+                    selected_options = [search_options[f"bid-{id_suffix}"][f"aid-{id_suffix}"].get("selected_option")]
                 case _:
                     continue
 

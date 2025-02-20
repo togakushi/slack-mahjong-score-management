@@ -294,7 +294,7 @@ def remove(argument):
     return (msg)
 
 
-def list():
+def get_list():
     """チームの登録状況を表示する
 
     Returns:

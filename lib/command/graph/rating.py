@@ -51,8 +51,8 @@ def plot():
                 )
     if g.opt.anonymous:
         id_list = c.member.get_member_id()
-        for name, id in list(id_list.items()):
-            id_list[name] = f"Player_{id:03d}"
+        for name, member_id in list(id_list.items()):
+            id_list[name] = f"Player_{member_id:03d}"
         df_dropped = df_dropped.rename(columns=id_list)
 
     # 並び変え

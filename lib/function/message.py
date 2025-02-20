@@ -8,7 +8,7 @@ from lib import database as d
 from lib import function as f
 
 
-def help(command):
+def slash_help(command):
     """スラッシュコマンド用ヘルプ
 
     Args:

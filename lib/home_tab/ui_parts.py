@@ -37,13 +37,13 @@ def button(view, no, text="Click Me", action_id=False, style=False):
     return (view, no + 1)
 
 
-def radio_buttons(view, no, id, title, flag):
+def radio_buttons(view, no, id_suffix, title, flag):
     """オプション選択メニュー
 
     Args:
         view (dict): 描写内容
         no (int): ブロックNo
-        id (str): block_id, action_id
+        id_suffix (str): block_id, action_id
         title (str): 表示タイトル
         flag (dict, optional): 表示する選択項目
 
@@ -53,10 +53,10 @@ def radio_buttons(view, no, id, title, flag):
             - int: 次のブロックNo
     """
 
-    view["blocks"].append({"type": "input", "block_id": f"bid-{id}", "element": {}})
+    view["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
     view["blocks"][no]["label"] = {"type": "plain_text", "text": title}
     view["blocks"][no]["element"]["type"] = "radio_buttons"
-    view["blocks"][no]["element"]["action_id"] = f"aid-{id}"
+    view["blocks"][no]["element"]["action_id"] = f"aid-{id_suffix}"
     view["blocks"][no]["element"]["initial_option"] = {  # 先頭の選択肢はチェック済みにする
         "text": {"type": "plain_text", "text": flag[next(iter(flag))]}, "value": next(iter(flag))
     }
@@ -69,13 +69,13 @@ def radio_buttons(view, no, id, title, flag):
     return (view, no + 1)
 
 
-def checkboxes(view, no, id, title, flag, initial=None):
+def checkboxes(view, no, id_suffix, title, flag, initial=None):
     """チェックボックス選択メニュー
 
     Args:
         view (dict): 描写内容
         no (int): ブロックNo
-        id (str): block_id, action_id
+        id_suffix (str): block_id, action_id
         title (str): 表示タイトル
         flag (dict, optional): 表示する選択項目
         initial (list, optional): チェック済み項目. Defaults to None.
@@ -86,10 +86,10 @@ def checkboxes(view, no, id, title, flag, initial=None):
             - int: 次のブロックNo
     """
 
-    view["blocks"].append({"type": "input", "block_id": f"bid-{id}", "element": {}})
+    view["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
     view["blocks"][no]["label"] = {"type": "plain_text", "text": title}
     view["blocks"][no]["element"]["type"] = "checkboxes"
-    view["blocks"][no]["element"]["action_id"] = f"aid-{id}"
+    view["blocks"][no]["element"]["action_id"] = f"aid-{id_suffix}"
     view["blocks"][no]["element"]["options"] = []
     if initial:
         view["blocks"][no]["element"]["initial_options"] = []

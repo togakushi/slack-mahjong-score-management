@@ -69,8 +69,8 @@ def name_replace(pname, add_mark=False, mask=True):
     check_list = list(set(g.member_list.keys()))
 
     if g.opt.anonymous and mask:
-        id = get_member_id().get(pname, 0)
-        anonymous_name = f"Player_{id:03d}"
+        member_id = get_member_id().get(pname, 0)
+        anonymous_name = f"Player_{member_id:03d}"
         if pname.startswith("Player_"):
             return (f.common.zen_to_han(pname))
         return (f.common.zen_to_han(anonymous_name))

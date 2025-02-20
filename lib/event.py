@@ -170,13 +170,13 @@ def slash_command(ack, body, client):
             case "team_remove":
                 f.slack_api.post_message(c.team.remove(g.msg.argument))
             case "team_list":
-                f.slack_api.post_message(c.team.list())
+                f.slack_api.post_message(c.team.get_list())
             case "team_clear":
                 f.slack_api.post_message(c.team.clear())
 
             # その他
             case _:
-                f.slack_api.post_message(f.message.help(body["command"]))
+                f.slack_api.post_message(f.message.slash_help(body["command"]))
 
 
 @g.app.event("app_home_opened")
