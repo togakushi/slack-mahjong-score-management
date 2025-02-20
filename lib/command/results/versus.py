@@ -149,7 +149,7 @@ def aggregation():
         items=["日時", "座席", "プレイヤー名", "順位", "素点", "獲得ポイント", "役満和了"]
     ).drop_duplicates()
 
-    namelist = list(g.prm.competition_list.values())  # noqa: F841
+    namelist = list(g.prm.competition_list.values())  # pylint: disable=unused-variable  # noqa: F841
     df_vs["対戦相手"] = df_vs["vs_表示名"].apply(lambda x: x.strip())
     df_vs.rename(
         columns={

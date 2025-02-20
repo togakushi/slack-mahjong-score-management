@@ -307,7 +307,7 @@ def ranking_record():
 
     for k in rank_mask:
         gamedata[k] = None
-        for pname in gamedata["name"].unique():
+        for pname in gamedata["name"].unique():  # pylint: disable=unused-variable  # noqa: F841
             tmp_df = pd.DataFrame()
             tmp_df["flg"] = gamedata.query(
                 "name == @pname"
@@ -320,7 +320,7 @@ def ranking_record():
 
     # 最大値/最小値の格納
     df = pd.DataFrame()
-    for pname in gamedata["name"].unique():
+    for pname in gamedata["name"].unique():  # pylint: disable=unused-variable  # noqa: F841
         tmp_df = gamedata.query(
             "name == @pname"
         ).max().to_frame().transpose()

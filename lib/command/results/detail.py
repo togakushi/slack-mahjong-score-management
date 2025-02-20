@@ -148,7 +148,7 @@ def aggregation():
     if g.opt.game_results:
         msg2["戦績"] = "\n*【戦績】*\n"
         data = {}
-        target_player = g.opt.target_player[0]  # noqa: F841
+        target_player = g.opt.target_player[0]  # pylint: disable=unused-variable  # noqa: F841
         df = d.aggregate.game_details()
 
         if g.opt.verbose:
