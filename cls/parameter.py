@@ -8,7 +8,7 @@ from lib import command as c
 from lib import function as f
 
 
-class command_option:
+class CommandOption:
     """オプション解析クラス
     """
 
@@ -189,7 +189,7 @@ class command_option:
         self.update(_argument)
 
 
-class parameters:
+class Parameters:
     """パラメータ解析クラス
     """
 
@@ -227,11 +227,11 @@ class parameters:
         self.stipulated: int = 0
         self.target_count: int = 0
 
-    def update(self, _opt: command_option):
+    def update(self, _opt: CommandOption):
         """コマンド解析クラスの内容からパラメータをセットする
 
         Args:
-            _opt (command_option): コマンド解析インスタンス
+            _opt (CommandOption): コマンド解析インスタンス
         """
 
         self.initialization()

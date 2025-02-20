@@ -50,13 +50,14 @@ def help_message():
         str: ヘルプメッセージ
     """
 
-    results_option = f.configuration.command_option()
+    f
+    results_option = f.configuration.CommandOption()
     results_option.initialization("results")
-    graph_option = f.configuration.command_option()
+    graph_option = f.configuration.CommandOption()
     graph_option.initialization("graph")
-    ranking_option = f.configuration.command_option()
+    ranking_option = f.configuration.CommandOption()
     ranking_option.initialization("ranking")
-    report_option = f.configuration.command_option()
+    report_option = f.configuration.CommandOption()
     report_option.initialization("report")
 
     msg = textwrap.dedent(f"""

@@ -6,8 +6,8 @@ import sys
 from functools import partial
 
 import lib.global_value as g
-from cls.parameter import command_option, parameters
-from cls.parser import Message_Parser
+from cls.parameter import CommandOption, Parameters
+from cls.parser import MessageParser
 from cls.search import SearchRange
 
 
@@ -161,9 +161,9 @@ def setup():
 
     g.cfg.read_file(g.args.config)
     g.search_word = SearchRange()
-    g.opt = command_option()
-    g.prm = parameters()
-    g.msg = Message_Parser()
+    g.opt = CommandOption()
+    g.prm = Parameters()
+    g.msg = MessageParser()
 
     logging.notice("rule_version=%s, origin_point=%s, return_point=%s", g.prm.rule_version, g.prm.origin_point, g.prm.return_point)
 

@@ -3,7 +3,7 @@ import re
 import sqlite3
 
 import lib.global_value as g
-from cls.parameter import command_option
+from cls.parameter import CommandOption
 from lib import command as c
 from lib import database as d
 from lib import function as f
@@ -82,7 +82,7 @@ def check_namepattern(name):
     if g.search_word.find(name):
         return (False, "検索範囲指定に使用される単語は登録できません。")
 
-    chk = command_option()
+    chk = CommandOption()
     chk.check([name])
     if vars(chk):
         return (False, "オプションに使用される単語は登録できません。")

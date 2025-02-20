@@ -6,7 +6,7 @@ import lib.global_value as g
 from lib.function import slack_api
 
 
-class Message_Parser():
+class MessageParser():
     """メッセージ解析クラス
     """
 
