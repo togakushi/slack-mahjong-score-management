@@ -80,7 +80,7 @@ class SearchRange():
             bool: 真偽
         """
 
-        if word in self.words.keys():
+        if word in self.words:
             return (True)
         else:
             if re.match(self.day_format, word):
@@ -99,7 +99,7 @@ class SearchRange():
         """
 
         self.update()
-        if word in self.words.keys():
+        if word in self.words:
             return (self.words[word])
         else:
             if re.match(self.day_format, word):
@@ -119,7 +119,7 @@ class SearchRange():
         """
 
         ret = []
-        for x in self.words.keys():
+        for x in self.words:
             days = []
             for v in self.words[x]:
                 days.append(v.strftime("%Y/%m/%d"))

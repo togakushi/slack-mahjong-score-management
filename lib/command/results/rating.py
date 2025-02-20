@@ -47,7 +47,7 @@ def aggregation():
     )
     if g.opt.unregistered_replace:
         for player in df.itertuples():
-            if player.name not in g.member_list.keys():
+            if player.name not in g.member_list:
                 df = df.copy().drop(player.Index)
 
     # 計算

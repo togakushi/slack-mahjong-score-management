@@ -145,7 +145,7 @@ def get_members_list():
 
     for pname in set(g.member_list.values()):
         name_list = []
-        for alias in g.member_list.keys():
+        for alias in g.member_list:
             if g.member_list[alias] == pname:
                 name_list.append(alias)
         msg += "{}{}：{}\n".format(  # pylint: disable=consider-using-f-string
@@ -362,8 +362,8 @@ def check_namepattern(name):
 
     # 登録済みメンバーかチェック
     check_list = list(g.member_list.keys())
-    check_list += [f.common.kata_to_hira(i) for i in g.member_list.keys()]  # ひらがな
-    check_list += [f.common.hira_to_kana(i) for i in g.member_list.keys()]  # カタカナ
+    check_list += [f.common.kata_to_hira(i) for i in g.member_list]  # ひらがな
+    check_list += [f.common.hira_to_kana(i) for i in g.member_list]  # カタカナ
     if name in check_list:
         return (False, f"「{name}」はすでに使用されています。")
 

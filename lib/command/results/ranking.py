@@ -135,7 +135,7 @@ def aggregation():
         },
     }
 
-    for k in data.keys():  # ランク付け
+    for k in data:  # ランク付け
         result_df[f"{k}_rank"] = result_df[k].rank(
             method="dense",
             ascending=data[k]["order"]
@@ -156,7 +156,7 @@ def aggregation():
     msg1 += f.message.header(game_info, "", 1)
     msg2 = {}
 
-    for k in data.keys():
+    for k in data:
         if k in g.cfg.dropitems.ranking:  # 非表示項目
             continue
 

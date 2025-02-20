@@ -124,7 +124,7 @@ def aggregation():
             )
 
     # --- データ整列&まとめ
-    for m in tmp_msg.keys():
+    for m in tmp_msg:
         if g.opt.all_player and m in drop_name:
             continue
         msg2[f"{m}_info"] = tmp_msg[m].pop("info")

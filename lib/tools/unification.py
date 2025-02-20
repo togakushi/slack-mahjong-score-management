@@ -23,7 +23,7 @@ def main():
 
         db = sqlite3.connect(g.cfg.db.database_file)
 
-        for name in name_table.keys():
+        for name in name_table:
             count = 0
             chk, msg = c.member.check_namepattern(name)
             if chk:

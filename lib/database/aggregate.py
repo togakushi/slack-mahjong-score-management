@@ -305,7 +305,7 @@ def ranking_record():
         "連続ラス": {1: 0, 2: 0, 3: 0, 4: 1},
     }
 
-    for k in rank_mask.keys():
+    for k in rank_mask:
         gamedata[k] = None
         for pname in gamedata["name"].unique():
             tmp_df = pd.DataFrame()

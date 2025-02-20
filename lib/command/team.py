@@ -206,7 +206,7 @@ def append(argument):
         else:
             team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
 
-        if player_name not in g.member_list.keys():  # 未登録プレイヤーチェック
+        if player_name not in g.member_list:  # 未登録プレイヤーチェック
             msg = f"「{player_name}」はレギュラーメンバーではありません。"
             registration_flg = False
 
@@ -273,7 +273,7 @@ def remove(argument):
         else:
             team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
 
-        if player_name not in g.member_list.keys():  # 未登録プレイヤーチェック
+        if player_name not in g.member_list:  # 未登録プレイヤーチェック
             msg = f"「{player_name}」はレギュラーメンバーではありません。"
             registration_flg = False
 

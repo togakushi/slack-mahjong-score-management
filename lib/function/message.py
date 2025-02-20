@@ -95,7 +95,7 @@ def help_message():
     rule = d.common.rule_version()
     if rule:
         msg += "\n\n*ルール識別子*\n"
-        for x in rule.keys():
+        for x in rule:
             msg += f"\t{x}：{rule[x]['first_time']} ～ {rule[x]['last_time']}\n"
 
     # メモ機能

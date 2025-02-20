@@ -65,7 +65,7 @@ def data_comparison():
     logging.trace("db_remarks=%s", db_remarks)
 
     # --- スコア突合
-    for key in slack_data.keys():
+    for key in slack_data:
         slack_score = slack_data[key].get("score")
         g.msg.channel_id = slack_data[key].get("channel_id")
         g.msg.user_id = slack_data[key].get("user_id")
@@ -75,7 +75,7 @@ def data_comparison():
         reactions_data.append(slack_data[key].get("reaction_ok"))
         reactions_data.append(slack_data[key].get("reaction_ng"))
 
-        if key in db_data.keys():  # slack -> DB チェック
+        if key in db_data:  # slack -> DB チェック
             db_score = db_data[key]
             if not g.cfg.setting.thread_report:  # スレッド内報告が禁止されているパターン
                 if slack_data[key].get("in_thread"):
@@ -123,8 +123,8 @@ def data_comparison():
                 )
                 d.common.db_insert(slack_score, key, reactions_data)
 
-    for key in db_data.keys():  # DB -> slack チェック
-        if key in slack_data.keys():
+    for key in db_data:  # DB -> slack チェック
+        if key in slack_data:
             continue
         else:  # 削除
             count["delete"] += 1
@@ -139,7 +139,7 @@ def data_comparison():
                 f.slack_api.call_reactions_remove(icon)
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
-    for key in slack_data.keys():
+    for key in slack_data:
         if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
             continue
         if d.common.exsist_record(key).get("rule_version") != g.prm.rule_version:
@@ -168,7 +168,7 @@ def data_comparison():
 
     # --- メモ突合
     slack_remarks = []
-    for key in slack_data.keys():
+    for key in slack_data:
         remarks = slack_data[key].get("remarks")
         event_ts = slack_data[key].get("event_ts")
         for idx, (name, matter) in enumerate(remarks):

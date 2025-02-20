@@ -127,7 +127,7 @@ def for_slack():
     if not data:
         return (data)
 
-    for thread_ts in data.keys():
+    for thread_ts in data:
         conversations = g.app.client.conversations_replies(
             channel=data[thread_ts].get("channel_id"),
             ts=thread_ts,
