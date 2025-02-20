@@ -175,7 +175,7 @@ def data_comparison():
         remarks = val.get("remarks")
         event_ts = val.get("event_ts")
         for idx, (name, matter) in enumerate(remarks):
-            in_name = True if name in val.get("score") else False
+            in_name = name in val.get("score")
             chk = {
                 "thread_ts": key,
                 "event_ts": event_ts[idx],

@@ -89,7 +89,7 @@ class Message_Parser():
 
         # スレッド内のポストか判定
         if float(self.thread_ts):
-            self.in_thread = True if self.event_ts != self.thread_ts else False
+            self.in_thread = self.event_ts != self.thread_ts
         else:
             self.in_thread = False
 
