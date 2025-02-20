@@ -120,8 +120,7 @@ def exsist_record(ts):
 
     if row:
         return (dict(row))
-    else:
-        return ({})
+    return ({})
 
 
 def first_record():

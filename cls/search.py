@@ -82,11 +82,10 @@ class SearchRange():
 
         if word in self.words:
             return (True)
-        else:
-            if re.match(self.day_format, word):
-                return (True)
-            else:
-                return (False)
+
+        if re.match(self.day_format, word):
+            return (True)
+        return (False)
 
     def range(self, word: str) -> list:
         """指定ワードを日付に変換する
@@ -101,15 +100,14 @@ class SearchRange():
         self.update()
         if word in self.words:
             return (self.words[word])
-        else:
-            if re.match(self.day_format, word):
-                try_day = pd.to_datetime(word, errors="coerce").to_pydatetime()
-                if pd.isna(try_day):
-                    return ([])
-                else:
-                    return ([try_day])
-            else:
+
+        if re.match(self.day_format, word):
+            try_day = pd.to_datetime(word, errors="coerce").to_pydatetime()
+            if pd.isna(try_day):
                 return ([])
+            return ([try_day])
+
+        return ([])
 
     def list(self):
         """ワードで指定できる範囲を一覧化する（ヘルプ表示用）

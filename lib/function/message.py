@@ -206,10 +206,9 @@ def remarks(headword=False):
     if headword:
         if remark:
             return ("特記事項：" + "、".join(remark))
-        else:
-            return ("特記事項：なし")
-    else:
-        return (remark)
+        return ("特記事項：なし")
+
+    return (remark)
 
 
 def search_word(headword=False):

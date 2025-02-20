@@ -73,34 +73,32 @@ def name_replace(pname, add_mark=False, mask=True):
         anonymous_name = f"Player_{id:03d}"
         if pname.startswith("Player_"):
             return (f.common.zen_to_han(pname))
-        else:
-            return (f.common.zen_to_han(anonymous_name))
-    else:
-        if pname in check_list:
-            return (g.member_list[pname])
+        return (f.common.zen_to_han(anonymous_name))
 
-        # 敬称削除
-        honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
-        if re.match(fr".*{honor}", pname):
-            if not re.match(fr".*(っ|ッ){honor}", pname):
-                pname = re.sub(fr"{honor}", "", pname)
-        if pname in check_list:
-            return (g.member_list[pname])
+    if pname in check_list:
+        return (g.member_list[pname])
 
-        # ひらがな、カタカナでチェック
-        if f.common.kata_to_hira(pname) in check_list:
-            return (g.member_list[f.common.kata_to_hira(pname)])
-        if f.common.hira_to_kana(pname) in check_list:
-            return (g.member_list[f.common.hira_to_kana(pname)])
+    # 敬称削除
+    honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
+    if re.match(fr".*{honor}", pname):
+        if not re.match(fr".*(っ|ッ){honor}", pname):
+            pname = re.sub(fr"{honor}", "", pname)
+    if pname in check_list:
+        return (g.member_list[pname])
 
-        # メンバーリストに見つからない場合
-        if g.opt.unregistered_replace:
-            return (g.prm.guest_name)
-        else:
-            if add_mark:
-                return (f"{pname}({g.cfg.setting.guest_mark})")
-            else:
-                return (pname)
+    # ひらがな、カタカナでチェック
+    if f.common.kata_to_hira(pname) in check_list:
+        return (g.member_list[f.common.kata_to_hira(pname)])
+    if f.common.hira_to_kana(pname) in check_list:
+        return (g.member_list[f.common.hira_to_kana(pname)])
+
+    # メンバーリストに見つからない場合
+    if g.opt.unregistered_replace:
+        return (g.prm.guest_name)
+    if add_mark:
+        return (f"{pname}({g.cfg.setting.guest_mark})")
+
+    return (pname)
 
 
 def count_padding(data):
@@ -126,8 +124,7 @@ def count_padding(data):
 
     if name_list:
         return (max([f.common.len_count(x) for x in name_list]))
-    else:
-        return (0)
+    return (0)
 
 
 def get_members_list():
