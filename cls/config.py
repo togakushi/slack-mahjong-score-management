@@ -41,7 +41,7 @@ class Config():
                 self.config.add_section(x)
 
         @dataclass
-        class setting:
+        class Setting:
             slash_command: str = self.config["setting"].get("slash_commandname", "/mahjong")
             thread_report: bool = self.config["setting"].getboolean("thread_report", True)
             guest_mark: str = self.config["setting"].get("guest_mark", "※")
@@ -51,34 +51,34 @@ class Config():
             _work_dir: str = self.config["setting"].get("work_dir", "work")
             work_dir: str = str()
             ignore_userid: list = field(default_factory=list)
-        self.setting = setting()
+        self.setting = Setting()
         self.setting.ignore_userid = [x.strip() for x in self.config["setting"].get("ignore_userid", "").split(",")]
         self.setting.work_dir = os.path.join(os.path.realpath(os.path.curdir), self.setting._work_dir)
 
         @dataclass
-        class search:
+        class Search:
             keyword: str = self.config["search"].get("keyword", "終局")
             channel: str = self.config["search"].get("channel", None)
             after: str = self.config["search"].getint("after", 7)
-        self.search = search()
+        self.search = Search()
 
         @dataclass
-        class database:
+        class Database:
             database_file: str = self.config["database"].get("database_file", "mahjong.db")
             channel_limitations: str = self.config["database"].get("channel_limitations", "")
             backup_dir: str = self.config["database"].get("backup_dir", None)
-        self.db = database()
+        self.db = Database()
 
         @dataclass
-        class member:
+        class Member:
             registration_limit: int = self.config["member"].getint("registration_limit", 255)
             character_limit: int = self.config["member"].getint("character_limit", 8)
             alias_limit: int = self.config["member"].getint("alias_limit", 16)
             guest_name: str = self.config["member"].get("guest_name", "ゲスト")
-        self.member = member()
+        self.member = Member()
 
         @dataclass
-        class alias:
+        class Alias:
             results: list = field(default_factory=list)
             graph: list = field(default_factory=list)
             ranking: list = field(default_factory=list)
@@ -88,7 +88,7 @@ class Config():
             member: list = field(default_factory=list)
             add: list = field(default_factory=list)
             delete: list = field(default_factory=list)
-        self.alias = alias()
+        self.alias = Alias()
         self.alias.results = [x.strip() for x in self.config["alias"].get("results", "").split(",")]
         self.alias.graph = [x.strip() for x in self.config["alias"].get("graph", "").split(",")]
         self.alias.ranking = [x.strip() for x in self.config["alias"].get("ranking", "").split(",")]
@@ -100,16 +100,16 @@ class Config():
         self.alias.delete = [x.strip() for x in self.config["alias"].get("del", "").split(",")]
 
         @dataclass
-        class team:
+        class Team:
             registration_limit: int = self.config["team"].getint("registration_limit", 255)
             character_limit: int = self.config["team"].getint("character_limit", 16)
             member_limit: int = self.config["team"].getint("member_limit", 16)
             friendly_fire: bool = self.config["team"].getboolean("friendly_fire", True)
-        self.team = team()
+        self.team = Team()
 
         # チャンネル内呼び出しキーワード
         @dataclass
-        class cw:
+        class CommandWord:
             help: str = self.config["help"].get("commandword", "ヘルプ")
             results: str = self.config["results"].get("commandword", "麻雀成績")
             graph: str = self.config["graph"].get("commandword", "麻雀グラフ")
@@ -119,7 +119,7 @@ class Config():
             team: str = self.config["team"].get("commandword", "チーム一覧")
             remarks_word: str = self.config["setting"].get("remarks_word", "麻雀成績メモ")
             check: str = self.config["database"].get("commandword", "麻雀成績チェック")
-        self.cw = cw()
+        self.cw = CommandWord()
 
         # コマンド
         self.results = self.command_opt("results")
@@ -129,11 +129,11 @@ class Config():
 
         # 非表示項目リスト
         @dataclass
-        class dropitems:
+        class DropItems:
             results: list = field(default_factory=list)
             ranking: list = field(default_factory=list)
             report: list = field(default_factory=list)
-        self.dropitems = dropitems()
+        self.dropitems = DropItems()
         self.dropitems.results = [x.strip() for x in self.config["results"].get("dropitems", "").split(",")]
         self.dropitems.ranking = [x.strip() for x in self.config["ranking"].get("dropitems", "").split(",")]
         self.dropitems.report = [x.strip() for x in self.config["report"].get("dropitems", "").split(",")]
@@ -156,7 +156,7 @@ class Config():
         """
 
         @dataclass
-        class subcommand:
+        class SubCommand:
             aggregation_range: str = self.config[section].get("aggregation_range", "当日")
             all_player: bool = self.config[section].getboolean("all_player", False)
             daily: bool = self.config[section].getboolean("daily", True)
@@ -181,7 +181,7 @@ class Config():
             verbose: bool = self.config[section].getboolean("verbose", False)
             versus_matrix: bool = self.config[section].getboolean("versus_matrix", False)
 
-        return (subcommand())
+        return (SubCommand())
 
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
