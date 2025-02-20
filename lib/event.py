@@ -93,7 +93,7 @@ def handle_message_events(client, body):
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
                                 logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)
-                                logging.warning(f"DEBUG(inside_thread): {body=} {vars(g.msg)=} {vars(g.prm)=} {vars(g.cfg)=}")  # ToDo: 解析用
+                                logging.warning("DEBUG(inside_thread): body=%s msg=%s prm=%s cfg=%s", body, vars(g.msg), vars(g.prm), vars(g.cfg))  # ToDo: 解析用
                         case "message_changed":
                             if detection == [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]:  # 変更箇所がなければ何もしない
                                 return
@@ -109,7 +109,7 @@ def handle_message_events(client, body):
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
                                 logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)
-                                logging.warning(f"DEBUG(inside_thread): {body=} {vars(g.msg)=} {vars(g.prm)=} {vars(g.cfg)=}")  # ToDo: 解析用
+                                logging.warning("DEBUG(inside_thread): body=%s msg=%s prm=%s cfg=%s", body, vars(g.msg), vars(g.prm), vars(g.cfg))  # ToDo: 解析用
                 else:
                     if record_data:
                         d.common.db_delete(g.msg.event_ts)
