@@ -35,13 +35,13 @@ def plot():
         return (0, f.message.reply(message="no_hits"))
 
     # 最終値（凡例追加用）
-    point_sum = "{:+.1f}".format(
+    point_sum = "{:+.1f}".format(  # pylint: disable=consider-using-f-string
         float(df["point_sum"].iloc[-1])
     ).replace("-", "▲")
-    point_avg = "{:+.1f}".format(
+    point_avg = "{:+.1f}".format(  # pylint: disable=consider-using-f-string
         float(df["point_avg"].iloc[-1])
     ).replace("-", "▲")
-    rank_avg = "{:.2f}".format(float(df["rank_avg"].iloc[-1]))
+    rank_avg = "{:.2f}".format(float(df["rank_avg"].iloc[-1]))  # pylint: disable=consider-using-f-string
 
     # --- グラフ生成
     save_file = os.path.join(
@@ -54,13 +54,9 @@ def plot():
     fig = plt.figure(figsize=(12, 8))
 
     if g.prm.target_count == 0:
-        title_text = "『{}』の成績 ({} - {})".format(
-            player, g.prm.starttime_hm, g.prm.endtime_hm
-        )
+        title_text = f"『{player}』の成績 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
     else:
-        title_text = "『{}』の成績 (直近 {} ゲーム)".format(
-            player, len(df)
-        )
+        title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
 
     grid = gridspec.GridSpec(nrows=2, ncols=1, height_ratios=[3, 1])
     point_ax = fig.add_subplot(grid[0])
@@ -155,9 +151,7 @@ def statistics_plot():
         g.cfg.setting.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "graph.png",
     )
-    title_text = "『{}』の成績 (集計期間：{} - {})".format(
-        player, g.prm.starttime_ymd, g.prm.endtime_ymd
-    )
+    title_text = f"『{player}』の成績 (集計期間：{g.prm.starttime_ymd} - {g.prm.endtime_ymd})"
 
     rpoint_df = get_data(player_df["rpoint"], g.opt.interval)
     point_sum_df = get_data(player_df["point"], g.opt.interval)
@@ -220,11 +214,11 @@ def statistics_plot():
     #
     rank_table = pd.DataFrame()
     rank_table["ゲーム数"] = count_df["ゲーム数"]
-    rank_table["1位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["1位(%)"], row["1位"]), axis=1)
-    rank_table["2位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["2位(%)"], row["2位"]), axis=1)
-    rank_table["3位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["3位(%)"], row["3位"]), axis=1)
-    rank_table["4位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["4位(%)"], row["4位"]), axis=1)
-    rank_table["平均順位"] = count_df.apply(lambda row: "{:.2f}".format(row["平均順位"]), axis=1)
+    rank_table["1位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["1位(%)"], row["1位"]), axis=1)  # pylint: disable=consider-using-f-string
+    rank_table["2位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["2位(%)"], row["2位"]), axis=1)  # pylint: disable=consider-using-f-string
+    rank_table["3位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["3位(%)"], row["3位"]), axis=1)  # pylint: disable=consider-using-f-string
+    rank_table["4位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["4位(%)"], row["4位"]), axis=1)  # pylint: disable=consider-using-f-string
+    rank_table["平均順位"] = count_df.apply(lambda row: "{:.2f}".format(row["平均順位"]), axis=1)  # pylint: disable=consider-using-f-string
 
     # グラフ設定
     f.common.graph_setup(plt, fm)

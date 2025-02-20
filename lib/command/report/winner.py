@@ -32,9 +32,9 @@ def plot():
         results[v["collection"]]["集計月"] = v["collection"]
         for x in range(1, 6):
             if type(v[f"name{x}"]) is str:
-                results[v["collection"]][f"{x}位"] = "{} ({}pt)".format(
+                results[v["collection"]][f"{x}位"] = "{} ({}pt)".format(  # pylint: disable=consider-using-f-string
                     v[f"pname{x}"],
-                    str("{:+}".format(v[f"point{x}"])).replace("-", "▲")
+                    str("{:+}".format(v[f"point{x}"])).replace("-", "▲")  # pylint: disable=consider-using-f-string
                 )
             else:
                 results[v["collection"]][f"{x}位"] = v[f"pname{x}"]
@@ -100,7 +100,7 @@ def plot():
 
     # 追加テキスト
     remark_text = f.message.remarks(True) + f.message.search_word(True)
-    add_text = "{} {}".format(
+    add_text = "{} {}".format(  # pylint: disable=consider-using-f-string
         f"[{f.message.item_search_range().strip()}]",
         f"[{remark_text}]" if remark_text else "",
     )

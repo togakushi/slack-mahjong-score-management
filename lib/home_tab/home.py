@@ -37,7 +37,7 @@ def set_command_option(body):
     # 検索設定
     argument = []
     search_options = body["view"]["state"]["values"]
-    logging.info(f"search options: {search_options}")
+    logging.info("search options: %s", search_options)
 
     app_msg = []
     g.app_var.update(operation=None)

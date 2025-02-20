@@ -36,7 +36,7 @@ def aggregation():
         df_summary = df_summary.rename(columns={"チーム名": column_name})
 
     if not g.cfg.config["mahjong"].getboolean("ignore_flying", False):
-        add_text = " / トバされた人（延べ）：{} 人".format(
+        add_text = " / トバされた人（延べ）：{} 人".format(  # pylint: disable=consider-using-f-string
             df_summary["トビ"].sum(),
         )
 
@@ -62,7 +62,7 @@ def aggregation():
         if not df_grandslam.empty:
             memo_grandslam = "\n*【役満和了】*\n"
             for _, v in df_grandslam.iterrows():
-                memo_grandslam += "\t{}：{} （{}）\n".format(
+                memo_grandslam += "\t{}：{} （{}）\n".format(  # pylint: disable=consider-using-f-string
                     v["playtime"].replace("-", "/"),
                     v["grandslam"],
                     v["表示名"].strip(),
@@ -72,7 +72,7 @@ def aggregation():
         if not df_regulations.empty:
             memo_regulation = "\n*【卓外ポイント】*\n"
             for _, v in df_regulations.iterrows():
-                memo_regulation += "\t{}：{} {}pt（{}）\n".format(
+                memo_regulation += "\t{}：{} {}pt（{}）\n".format(  # pylint: disable=consider-using-f-string
                     v["playtime"].replace("-", "/"),
                     v["regulation"],
                     str(v["ex_point"]).replace("-", "▲"),
@@ -83,7 +83,7 @@ def aggregation():
         if not df_wordcount.empty:
             memo_wordcount = "\n*【その他】*\n"
             for _, v in df_wordcount.iterrows():
-                memo_wordcount += "\t{}：{} （{}）\n".format(
+                memo_wordcount += "\t{}：{} （{}）\n".format(  # pylint: disable=consider-using-f-string
                     v["playtime"].replace("-", "/"),
                     v["regulation"],
                     v["表示名"].strip(),

@@ -41,12 +41,12 @@ def main():
                         db.execute("update remarks set name=? where name=?;", (name, alias,))
                         count += db.execute("select changes();").fetchone()[0]
                     else:
-                        logging.warning(f"remove: {name} -> {alias} ({msg})")
+                        logging.warning("remove: %s -> %s (%s)", name, alias, msg)
                         name_table[name].remove(alias)
                         continue
-                logging.notice(f"rename: {name_table[name]} -> {name} changed: {count}")
+                logging.notice("rename: %s -> %s changed: %s", name_table[name], name, count)
             else:
-                logging.warning(f"skip: {name} ({msg})")
+                logging.warning("skip: %s (%s)", name, msg)
                 continue
         db.commit()
         db.close()

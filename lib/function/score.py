@@ -81,7 +81,7 @@ def calculation_point(score_df):
     for x in score_df.itertuples():
         score_df.at[x.Index, x.point] = (x.rpoint - g.prm.return_point) / 10 + rank_point[x.position - 1]
 
-    logging.trace(f"{rank_point=}")
+    logging.trace("rank_point=%s", rank_point)
     return (score_df)
 
 
@@ -182,7 +182,7 @@ def reprocessing_remarks():
         for x in range(1, reply_count + 1):
             g.msg.event_ts = msg[x].get("ts")
             text = msg[x].get("text")
-            logging.info(f"({x}/{reply_count}) thread_ts={g.msg.thread_ts}, event_ts={g.msg.event_ts}, {text=}")
+            logging.info("(%s/%s) thread_ts=%s, event_ts=%s, %s", x, reply_count, g.msg.thread_ts, g.msg.event_ts, text)
 
             if text:
                 g.msg.keyword = text.split()[0]
@@ -241,13 +241,12 @@ def get_score(detection):
         ret[f"p{x}_point"] = float(f"{point:.1f}")
 
     logging.info(
-        "score data:[東 {} {}][南 {} {}][西 {} {}][北 {} {}][供託 {}]".format(
-            ret["p1_name"], ret["p1_rpoint"],
-            ret["p2_name"], ret["p2_rpoint"],
-            ret["p3_name"], ret["p3_rpoint"],
-            ret["p4_name"], ret["p4_rpoint"],
-            ret["deposit"],
-        )
+        "score data:[東 %s %s][南 %s %s][西 %s %s][北 %s %s][供託 %s]",
+        ret["p1_name"], ret["p1_rpoint"],
+        ret["p2_name"], ret["p2_rpoint"],
+        ret["p3_name"], ret["p3_rpoint"],
+        ret["p4_name"], ret["p4_rpoint"],
+        ret["deposit"],
     )
 
     return (ret)

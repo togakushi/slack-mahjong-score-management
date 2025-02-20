@@ -23,9 +23,9 @@ def main():
 
     after_size = os.path.getsize(g.cfg.db.database_file)
 
-    logging.notice(f"file size: {before_size} -> {after_size}")
-    logging.notice(f"page_count: {before_page} -> {after_page}")
-    logging.notice(f"freelist_count: {before_freelist} -> {after_freelist}")
+    logging.notice("file size: %s -> %s", before_size, after_size)
+    logging.notice("page_count: %s -> %s", before_page, after_page)
+    logging.notice("freelist_count: %s -> %s", before_freelist, after_freelist)
 
 
 def db_info(cur, kind):

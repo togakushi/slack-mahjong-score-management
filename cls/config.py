@@ -23,16 +23,16 @@ class Config():
 
         try:
             self.config.read(filename, encoding="utf-8")
-            logging.notice(f"{filename=}")
-            logging.info(f"read sections: {self.config.sections()}")
+            logging.notice("filename: %s", filename)
+            logging.info("read sections: %s", self.config.sections())
         except Exception as e:
-            logging.critical(f"config read error: {e}")
+            logging.critical("config read error: %s", e)
             sys.exit(255)
 
         # 必須セクションチェック
         for x in ("mahjong", "setting"):
             if x not in self.config.sections():
-                logging.critical(f"Required section not found. ({x})")
+                logging.critical("Required section not found. (%s)", x)
                 sys.exit(255)
 
         # オプションセクションチェック
@@ -138,12 +138,12 @@ class Config():
         self.dropitems.ranking = [x.strip() for x in self.config["ranking"].get("dropitems", "").split(",")]
         self.dropitems.report = [x.strip() for x in self.config["report"].get("dropitems", "").split(",")]
 
-        logging.info(f"setting={vars(self.setting)}")
-        logging.info(f"search={vars(self.search)}")
-        logging.info(f"database={vars(self.db)}")
-        logging.info(f"alias={vars(self.alias)}")
-        logging.info(f"commandword={vars(self.cw)}")
-        logging.info(f"dropitems={vars(self.dropitems)}")
+        logging.info("setting=%s", vars(self.setting))
+        logging.info("search=%s", vars(self.search))
+        logging.info("database=%s", vars(self.db))
+        logging.info("alias=%s", vars(self.alias))
+        logging.info("commandword=%s", vars(self.cw))
+        logging.info("dropitems=%s", vars(self.dropitems))
 
     def command_opt(self, section):
         """設定ファイルのセクションを読み込みインスタンス化して返す

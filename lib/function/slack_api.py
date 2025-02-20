@@ -21,10 +21,10 @@ def call_chat_postMessage(**kwargs):
         res = g.app.client.chat_postMessage(**kwargs)
     except SlackApiError as e:
         logging.critical(e)
-        logging.error(f"{kwargs=}")
-        logging.error(f"opt: {vars(g.opt)}")
-        logging.error(f"prm: {vars(g.prm)}")
-        logging.error(f"msg: {vars(g.msg)}")
+        logging.error("kwargs=%s", kwargs)
+        logging.error("opt: %s", vars(g.opt))
+        logging.error("prm: %s", vars(g.prm))
+        logging.error("msg: %s", vars(g.msg))
 
     return (res)
 
@@ -43,10 +43,10 @@ def call_files_upload(**kwargs):
         res = g.app.client.files_upload_v2(**kwargs)
     except SlackApiError as e:
         logging.critical(e)
-        logging.error(f"{kwargs=}")
-        logging.error(f"opt: {vars(g.opt)}")
-        logging.error(f"prm: {vars(g.prm)}")
-        logging.error(f"msg: {vars(g.msg)}")
+        logging.error("kwargs=%s", kwargs)
+        logging.error("opt: %s", vars(g.opt))
+        logging.error("prm: %s", vars(g.prm))
+        logging.error("msg: %s", vars(g.msg))
 
     return (res)
 
@@ -187,7 +187,7 @@ def slack_post(**kwargs):
     """パラメータの内容によって呼び出すAPIを振り分ける
     """
 
-    logging.debug(f"{kwargs}")
+    logging.debug(kwargs)
     headline = kwargs.get("headline")
     message = kwargs.get("message")
     summarize = kwargs.get("summarize", True)
@@ -236,10 +236,10 @@ def call_reactions_add(icon, ch=None, ts=None):
                 pass
             case _:
                 logging.critical(e)
-                logging.critical(f"{ts=}, {ch=}, {icon=}")
-                logging.error(f"opt: {vars(g.opt)}")
-                logging.error(f"prm: {vars(g.prm)}")
-                logging.error(f"msg: {vars(g.msg)}")
+                logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
+                logging.error("opt: %s", vars(g.opt))
+                logging.error("prm: %s", vars(g.prm))
+                logging.error("msg: %s", vars(g.msg))
 
 
 def call_reactions_remove(icon, ch=None, ts=None):
@@ -269,10 +269,10 @@ def call_reactions_remove(icon, ch=None, ts=None):
                 pass
             case _:
                 logging.critical(e)
-                logging.critical(f"{ts=}, {ch=}, {icon=}")
-                logging.error(f"opt: {vars(g.opt)}")
-                logging.error(f"prm: {vars(g.prm)}")
-                logging.error(f"msg: {vars(g.msg)}")
+                logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
+                logging.error("opt: %s", vars(g.opt))
+                logging.error("prm: %s", vars(g.prm))
+                logging.error("msg: %s", vars(g.msg))
 
 
 def reactions_status(ch=None, ts=None):
@@ -301,7 +301,7 @@ def reactions_status(ch=None, ts=None):
             if g.bot_id in reaction["users"]:
                 icon.append(reaction["name"])
 
-    logging.info(f"{ch=}, {ts=}, user={g.bot_id}, {icon=}")
+    logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.bot_id, icon)
     return (icon)
 
 
@@ -344,7 +344,7 @@ def get_conversations(ch=None, ts=None):
     try:
         res = g.app.client.conversations_replies(channel=ch, ts=ts)
         logging.trace(res.validate())
-    except SlackApiError as err:
-        logging.error(err)
+    except SlackApiError as e:
+        logging.error(e)
 
     return (res)

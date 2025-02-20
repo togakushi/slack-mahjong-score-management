@@ -75,7 +75,7 @@ def game_info():
         ret["first_comment"] = df["first_comment"].to_string(index=False)
         ret["last_comment"] = df["last_comment"].to_string(index=False)
 
-    logging.info(f"return: {ret=}")
+    logging.info("return: %s", ret)
     return (ret)
 
 

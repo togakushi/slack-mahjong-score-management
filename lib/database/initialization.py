@@ -122,7 +122,7 @@ def initialization_resultdb():
                             "insert into words(word, type, ex_point) values (?, 0, NULL)",
                             (word,)
                         )
-                    logging.info(f"regulations table(type0): {words_list}")
+                    logging.info("regulations table(type0): %s", words_list)
                 case "type2":
                     words_list = set([x.strip() for x in v.split(",")])
                     for word in words_list:
@@ -130,7 +130,7 @@ def initialization_resultdb():
                             "insert into words(word, type, ex_point) values (?, 2, NULL)",
                             (word,)
                         )
-                    logging.info(f"regulations table(type2): {words_list}")
+                    logging.info("regulations table(type2): %s", words_list)
                 case _:
                     word = k.strip()
                     ex_point = int(v)
@@ -138,7 +138,7 @@ def initialization_resultdb():
                         "insert into words(word, type, ex_point) values (?, 1, ?)",
                         (word, ex_point,)
                     )
-                    logging.info(f"regulations table(type1): {word}, {ex_point}")
+                    logging.info("regulations table(type1): %s, %s", word, ex_point)
 
     resultdb.execute("drop view if exists individual_results")
     resultdb.execute(
@@ -482,11 +482,11 @@ def initialization_resultdb():
     data = ret.fetchall()
 
     if len(data) == 0:
-        logging.notice(f"ゲスト設定: {g.prm.guest_name}")
+        logging.notice("ゲスト設定: %s", g.prm.guest_name)
         sql = "insert into member (id, name) values (0, ?)"
         resultdb.execute(sql, (g.prm.guest_name,))
     elif data[0][1] != g.prm.guest_name:
-        logging.notice(f"ゲスト修正: {data[0][1]} -> {g.prm.guest_name}")
+        logging.notice("ゲスト修正: %s -> %s", data[0][1], g.prm.guest_name)
         sql = "update member set name=? where id=0"
         resultdb.execute(sql, (g.prm.guest_name,))
 

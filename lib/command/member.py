@@ -141,14 +141,14 @@ def get_members_list():
 
     title = "登録済みメンバー一覧"
     padding = c.member.count_padding(list(set(g.member_list.values())))
-    msg = "# 表示名{}：登録されている名前 #\n".format(" " * (padding - 8))
+    msg = "# 表示名{}：登録されている名前 #\n".format(" " * (padding - 8))  # pylint: disable=consider-using-f-string
 
     for pname in set(g.member_list.values()):
         name_list = []
         for alias in g.member_list.keys():
             if g.member_list[alias] == pname:
                 name_list.append(alias)
-        msg += "{}{}：{}\n".format(
+        msg += "{}{}：{}\n".format(  # pylint: disable=consider-using-f-string
             pname,
             " " * (padding - f.common.len_count(pname)),
             ", ".join(name_list),

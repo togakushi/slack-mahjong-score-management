@@ -76,7 +76,7 @@ def for_slack():
     # 検索クエリ
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y-%m-%d")
     query = f"{g.cfg.search.keyword} in:{g.cfg.search.channel} after:{after}"
-    logging.info(f"{query=}")
+    logging.info("query=%s", query)
 
     # データ取得
     response = g.webclient.search_messages(
@@ -102,7 +102,7 @@ def for_slack():
     for x in matches:
         user_id = x.get("user")
         if user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
-            logging.info(f"skip ignore user: {user_id}")
+            logging.info("skip ignore user: %s", user_id)
         else:
             detection = f.search.pattern(x.get("text"))
             if detection:
@@ -121,7 +121,7 @@ def for_slack():
                     "reaction_ok": [],
                     "reaction_ng": [],
                 }
-                logging.trace(f"slack data: {x['ts']} : {data[x['ts']]}")
+                logging.trace("slack data: %s : %s", x["ts"], data[x["ts"]])
 
     # 検索データが無い場合は空の辞書を返して後続の処理をスキップ
     if not data:

@@ -63,7 +63,7 @@ def aggregation():
             data = df_vs.query("vs_name == @vs_name")
             if data.empty:
                 drop_name.append(vs_name)
-                tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦記録はありません。\n\n".format(
+                tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦記録はありません。\n\n".format(  # pylint: disable=consider-using-f-string
                     c.member.name_replace(my_name, add_mark=True),
                     c.member.name_replace(vs_name, add_mark=True),
                 )
@@ -118,7 +118,7 @@ def aggregation():
                         count += 1
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
         else:  # 対戦記録なし
-            tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦相手が見つかりません。\n\n".format(
+            tmp_msg[vs_name]["info"] = "【{} vs {}】\n\t対戦相手が見つかりません。\n\n".format(  # pylint: disable=consider-using-f-string
                 c.member.name_replace(my_name, add_mark=True),
                 c.member.name_replace(vs_name, add_mark=True),
             )

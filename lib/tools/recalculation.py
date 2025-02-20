@@ -31,4 +31,4 @@ def main():
             count += 1
 
         cur.commit()
-    logging.notice(f"recalculated: {count}")
+    logging.notice("recalculated: %s", count)

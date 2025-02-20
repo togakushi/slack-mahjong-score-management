@@ -194,7 +194,7 @@ def aggregation():
                 vs_guest = ""
                 if x.guest_count >= 2:
                     vs_guest = "*"
-                msg2["戦績"] += "\t{}{}  {}位 {:7d}点 ({:6.1f}pt) {}\n".format(
+                msg2["戦績"] += "\t{}{}  {}位 {:7d}点 ({:6.1f}pt) {}\n".format(  # pylint: disable=consider-using-f-string
                     vs_guest, x.Index.replace("-", "/"),
                     x.rank, int(x.rpoint) * 100, x.point, x.grandslam,
                 ).replace("-", "▲")

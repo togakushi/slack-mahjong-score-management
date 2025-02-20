@@ -81,7 +81,7 @@ class Message_Parser():
                 case _:
                     self.status = "message_append"
                     _event = _body["event"]
-                    logging.info(f"unknown subtype: {_body=}")
+                    logging.info("unknown subtype: %s", _body)
 
         self.user_id = _event.get("user", self.user_id)
         self.event_ts = _event.get("ts", self.event_ts)
@@ -111,7 +111,7 @@ class Message_Parser():
                 self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
         else:  # text属性が見つからないときはログに出力
             if not _event.get("text", False):
-                logging.error(f"text not found: {_body=}")
+                logging.error("text not found: %s", _body)
 
         self.check_updatable()
 

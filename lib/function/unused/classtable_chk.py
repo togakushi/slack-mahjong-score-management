@@ -31,7 +31,7 @@ def d(dani, point, rank):
             dani -= 1
             new_point = class_data["table"][dani]["point"][0]  # 初期値
 
-    print("着順({}) [獲得:{}] [段位ポイント:{} -> {} ({}/{})] {}".format(
+    print("着順({}) [獲得:{}] [段位ポイント:{} -> {} ({}/{})] {}".format(  # pylint: disable=consider-using-f-string
         rank,
         get_point,
         point, point + get_point,

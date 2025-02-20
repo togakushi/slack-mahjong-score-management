@@ -109,7 +109,7 @@ def help_message():
     if rule:
         msg += "\n\t*卓外ポイントワード(個人清算)*\n"
         for word, ex_point in rule:
-            msg += "\t\t{}：{}pt\n".format(
+            msg += "\t\t{}：{}pt\n".format(  # pylint: disable=consider-using-f-string
                 word,
                 str(f"{ex_point:.1f}").replace("-", "▲"),
             )
@@ -173,7 +173,7 @@ def reply(message=None, rpoint_sum=0):
             rpoint_sum=rpoint_sum * 100,
         )
     except Exception as e:
-        logging.error(f"[unknown keywords] {e}: {msg}")
+        logging.error("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", g.msg.user_id)
 
     return (msg)

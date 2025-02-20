@@ -74,7 +74,7 @@ def handle_menu_action(ack, body, client):
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
-    logging.info(f"[personal_menu] {g.app_var}")
+    logging.info("[personal_menu] %s", g.app_var)
 
     client.views_publish(
         user_id=g.app_var["user_id"],
@@ -113,7 +113,7 @@ def handle_aggregation_action(ack, body, client):
         view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}")
     )
 
-    logging.info(f"[app:personal_aggregation] {argument}, {vars(g.opt)}")
+    logging.info("[app:personal_aggregation] %s, %s", argument, vars(g.opt))
 
     app_msg.pop()
     app_msg.append("集計完了")
@@ -147,7 +147,7 @@ def handle_view_submission(ack, view, client):
         if "aid-eday" in view["state"]["values"][i]:
             g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
-    logging.info(f"[global var] {g.app_var}")
+    logging.info("[global var] %s", g.app_var)
 
     client.views_update(
         view_id=g.app_var["view_id"],

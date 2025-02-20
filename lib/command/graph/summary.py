@@ -63,14 +63,9 @@ def point_plot():
                     pivot_index = "comment"
                     xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
                     if game_info["first_comment"] == game_info["last_comment"]:
-                        title_text = "通算ポイント ({})".format(
-                            game_info["first_comment"],
-                        )
+                        title_text = f"通算ポイント ({game_info['first_comment']})"
                     else:
-                        title_text = "ポイント推移 ({} - {})".format(
-                            game_info["first_comment"],
-                            game_info["last_comment"]
-                        )
+                        title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
                     title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
@@ -159,14 +154,9 @@ def rank_plot():
                     pivot_index = "comment"
                     xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
                     if game_info["first_comment"] == game_info["last_comment"]:
-                        title_text = "順位 ({})".format(
-                            game_info["first_comment"],
-                        )
+                        title_text = f"順位 ({game_info['first_comment']})"
                     else:
-                        title_text = "順位変動 ({} - {})".format(
-                            game_info["first_comment"],
-                            game_info["last_comment"]
-                        )
+                        title_text = f"順位変動 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
                     title_text = f"順位変動 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
@@ -281,10 +271,10 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         lab = []
         color = []
         for _, v in kwargs["target_data"].iterrows():
-            lab.append("{:2d}位：{} ({}pt / {}G)".format(
+            lab.append("{:2d}位：{} ({}pt / {}G)".format(  # pylint: disable=consider-using-f-string
                 v["position"],
                 v[kwargs["legend"]],
-                "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
+                "{:+.1f}".format(v["last_point"]).replace("-", "▲"),  # pylint: disable=consider-using-f-string
                 v["game_count"],
             ))
             if v["last_point"] > 0:
@@ -312,7 +302,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         new_xlabs = [xlab.get_text().replace("−", "▲") for xlab in xlabs]
         plt.xticks(xlocs[1:-1], new_xlabs[1:-1])
 
-        logging.info(f"plot data:\n{tmpdf}")
+        logging.info("plot data:\n%s", tmpdf)
     else:
         df.plot(
             figsize=(8, 6),
@@ -324,9 +314,9 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         # 凡例
         legend_text = []
         for _, v in kwargs["target_data"].iterrows():
-            legend_text.append("{:2d}位：{} ({}pt / {}G)".format(
+            legend_text.append("{:2d}位：{} ({}pt / {}G)".format(  # pylint: disable=consider-using-f-string
                 v["position"], v[kwargs["legend"]],
-                "{:+.1f}".format(v["last_point"]).replace("-", "▲"),
+                "{:+.1f}".format(v["last_point"]).replace("-", "▲"),  # pylint: disable=consider-using-f-string
                 v["game_count"],
             ))
 
@@ -351,7 +341,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
         plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
 
-        logging.info(f"plot data:\n{df}")
+        logging.info("plot data:\n%s", df)
 
     #
     match kwargs["kind"]:

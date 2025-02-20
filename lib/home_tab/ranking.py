@@ -65,7 +65,7 @@ def handle_menu_action(ack, body, client):
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
-    logging.info(f"[ranking_menu] {g.app_var}")
+    logging.info("[ranking_menu] %s", g.app_var)
 
     client.views_publish(
         user_id=g.app_var["user_id"],
@@ -105,7 +105,7 @@ def handle_aggregation_action(ack, body, client):
             if ranked > 0:
                 g.opt.ranked = ranked
 
-    logging.info(f"[app:ranking_aggregation] {argument}, {vars(g.opt)}")
+    logging.info("[app:ranking_aggregation] %s, %s", argument, vars(g.opt))
 
     app_msg.pop()
     app_msg.append("集計完了")

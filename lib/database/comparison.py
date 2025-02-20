@@ -18,7 +18,7 @@ def main():
 
     # データ突合
     count, msg = data_comparison()
-    logging.notice(f"{count=}")
+    logging.notice("count=%s", count)
 
     # 突合結果
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y/%m/%d")
@@ -59,10 +59,10 @@ def data_comparison():
     db_data = f.search.for_database(first_ts)
     db_remarks = f.search.for_db_remarks(first_ts)
 
-    logging.trace(f"thread_report: {g.cfg.setting.thread_report}")
-    logging.trace(f"{slack_data=}")
-    logging.trace(f"{db_data=}")
-    logging.trace(f"{db_remarks=}")
+    logging.trace("thread_report: %s", g.cfg.setting.thread_report)
+    logging.trace("slack_data=%s", slack_data)
+    logging.trace("db_data=%s", db_data)
+    logging.trace("db_remarks=%s", db_remarks)
 
     # --- スコア突合
     for key in slack_data.keys():
@@ -80,7 +80,7 @@ def data_comparison():
             if not g.cfg.setting.thread_report:  # スレッド内報告が禁止されているパターン
                 if slack_data[key].get("in_thread"):
                     count["delete"] += 1
-                    logging.notice(f"delete: {key}, {slack_score} (In-thread report)")
+                    logging.notice("delete: %s, %s (In-thread report)", key, slack_score)
                     ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
                         datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                         textformat(slack_score)
@@ -95,29 +95,29 @@ def data_comparison():
                     continue
 
             if slack_score == db_score:  # スコア比較
-                logging.info(f"score check pass: {key} {textformat(db_score)}")
+                logging.info("score check pass: %s %s", key, textformat(db_score))
                 continue
             else:  # 更新
                 if d.common.exsist_record(key).get("rule_version") == g.prm.rule_version:
                     count["mismatch"] += 1
-                    logging.notice(f"mismatch: {key}")
-                    logging.info(f"  *  slack: {textformat(db_score)}")
-                    logging.info(f"  *     db: {textformat(slack_score)}")
+                    logging.notice("mismatch: %s", key)
+                    logging.info("  *  slack: %s", textformat(db_score))
+                    logging.info("  *     db: %s", textformat(slack_score))
                     ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(  # pylint: disable=consider-using-f-string
                         datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                         textformat(db_score), textformat(slack_score),
                     )
                     d.common.db_update(slack_score, key, reactions_data)
                 else:
-                    logging.info(f"score check skip: {key} {textformat(db_score)}")
+                    logging.info("score check skip: %s %s", key, textformat(db_score))
                 continue
         else:  # 追加
             if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
                 continue
             else:
                 count["missing"] += 1
-                logging.notice(f"missing: {key}, {slack_score}")
-                ret_msg["missing"] += "\t{} {}\n".format(
+                logging.notice("missing: %s, %s", key, slack_score)
+                ret_msg["missing"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                     textformat(slack_score)
                 )
@@ -128,7 +128,7 @@ def data_comparison():
             continue
         else:  # 削除
             count["delete"] += 1
-            logging.notice(f"delete: {key}, {db_data[key]} (Only database)")
+            logging.notice("delete: %s, %s (Only database)", key, db_data[key])
             ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(db_data[key])
@@ -151,7 +151,7 @@ def data_comparison():
 
         if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
-            logging.notice(f"invalid score: {key} deposit={score_data['deposit']}")
+            logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(  # pylint: disable=consider-using-f-string
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 score_data["deposit"], textformat(slack_data[key].get("score"))
@@ -183,16 +183,16 @@ def data_comparison():
 
             if chk in db_remarks:  # slack -> DB チェック
                 if in_name:
-                    logging.info(f"remark pass: {chk}, {in_name=}")
+                    logging.info("remark pass: %s, %s", chk, in_name)
                 else:
                     count["remark"] += 1
                     d.common.remarks_delete_compar(chk)
-                    logging.notice(f"remark delete(name mismatch): {chk}")
+                    logging.notice("remark delete(name mismatch): %s", chk)
             else:
                 if in_name:
                     count["remark"] += 1
                     d.common.remarks_append((chk,))
-                    logging.notice(f"remark insert(data missing): {chk}")
+                    logging.notice("remark insert(data missing): %s", chk)
 
     for key in db_remarks:
         if key in slack_remarks:  # DB -> slack チェック
@@ -200,7 +200,7 @@ def data_comparison():
         else:
             count["remark"] += 1
             d.common.remarks_delete_compar(key)
-            logging.notice(f"remark delete(missed deletion): {key}")
+            logging.notice("remark delete(missed deletion): %s", key)
 
     return (count, ret_msg)
 

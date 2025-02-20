@@ -83,7 +83,7 @@ def get_game_results(flag="M"):
                 row["トビ"], f"{row['トビ率']:.2f}%",
             ]
         )
-    logging.info(f"return record: {len(results)}")
+    logging.info("return record: %s", len(results))
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
@@ -150,7 +150,7 @@ def get_count_results(game_count):
                 row["トビ"], f"{row['トビ率']:.2f}%",
             ]
         )
-    logging.info(f"return record: {len(results)}")
+    logging.info("return record: %s", len(results))
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
@@ -186,7 +186,7 @@ def get_count_moving(game_count):
     for row in rows.fetchall():
         results.append(dict(row))
 
-    logging.info(f"return record: {len(results)}")
+    logging.info("return record: %s", len(results))
     resultdb.close()
 
     if len(results) == 0:
@@ -435,7 +435,7 @@ def gen_pdf():
     elements.append(Paragraph(f"成績レポート：{target_player}", style["Title"]))
     elements.append(Spacer(1, 10 * mm))
     elements.append(Paragraph(
-        "集計期間：{} - {}".format(
+        "集計期間：{} - {}".format(  # pylint: disable=consider-using-f-string
             first_game.strftime("%Y-%m-%d %H:%M"),
             last_game.strftime("%Y-%m-%d %H:%M"),
         ), style["Normal"]
@@ -653,6 +653,6 @@ def gen_pdf():
             elements.append(PageBreak())
 
     doc.build(elements)
-    logging.notice(f"report generation: {g.prm.player_name}")
+    logging.notice("report generation: %s", g.prm.player_name)
 
     return (g.prm.player_name, pdf_path)
