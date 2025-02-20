@@ -229,7 +229,7 @@ def call_reactions_add(icon, ch=None, ts=None):
             name=icon,
             timestamp=ts,
         )
-        logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
+        logging.info("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
     except SlackApiError as e:
         match e.response.get("error"):
             case "already_reacted":
@@ -262,7 +262,7 @@ def call_reactions_remove(icon, ch=None, ts=None):
             name=icon,
             timestamp=ts,
         )
-        logging.info(f"{ts=}, {ch=}, {icon=}, {res.validate()}")
+        logging.info("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
     except SlackApiError as e:
         match e.response.get("error"):
             case "no_reaction":
