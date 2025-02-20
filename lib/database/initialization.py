@@ -116,7 +116,7 @@ def initialization_resultdb():
                     if v in ("0", "2"):
                         g.undefined_word = int(v)
                 case "type0" | "yakuman":
-                    words_list = set([x.strip() for x in v.split(",")])
+                    words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
                         resultdb.execute(
                             "insert into words(word, type, ex_point) values (?, 0, NULL)",
@@ -124,7 +124,7 @@ def initialization_resultdb():
                         )
                     logging.info("regulations table(type0): %s", words_list)
                 case "type2":
-                    words_list = set([x.strip() for x in v.split(",")])
+                    words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
                         resultdb.execute(
                             "insert into words(word, type, ex_point) values (?, 2, NULL)",
