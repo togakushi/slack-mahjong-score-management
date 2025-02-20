@@ -34,9 +34,9 @@ def han_to_zen(text):
         str: 変換後の文字列
     """
 
-    ZEN = "".join(chr(0xff10 + i) for i in range(10))
-    HAN = "".join(chr(0x30 + i) for i in range(10))
-    trans_table = str.maketrans(HAN, ZEN)
+    zen = "".join(chr(0xff10 + i) for i in range(10))
+    han = "".join(chr(0x30 + i) for i in range(10))
+    trans_table = str.maketrans(han, zen)
     return (text.translate(trans_table))
 
 
@@ -50,9 +50,9 @@ def zen_to_han(text):
         str: 変換後の文字列
     """
 
-    ZEN = "".join(chr(0xff10 + i) for i in range(10))
-    HAN = "".join(chr(0x30 + i) for i in range(10))
-    trans_table = str.maketrans(ZEN, HAN)
+    zen = "".join(chr(0xff10 + i) for i in range(10))
+    han = "".join(chr(0x30 + i) for i in range(10))
+    trans_table = str.maketrans(zen, han)
     return (text.translate(trans_table))
 
 
@@ -66,9 +66,9 @@ def hira_to_kana(text):
         str: 変換後の文字列
     """
 
-    HIRA = "".join(chr(0x3041 + i) for i in range(86))
-    KANA = "".join(chr(0x30a1 + i) for i in range(86))
-    trans_table = str.maketrans(HIRA, KANA)
+    hira = "".join(chr(0x3041 + i) for i in range(86))
+    kana = "".join(chr(0x30a1 + i) for i in range(86))
+    trans_table = str.maketrans(hira, kana)
     return (text.translate(trans_table))
 
 
@@ -82,9 +82,9 @@ def kata_to_hira(text):
         str: 変換後の文字列
     """
 
-    HIRA = "".join(chr(0x3041 + i) for i in range(86))
-    KANA = "".join(chr(0x30a1 + i) for i in range(86))
-    trans_table = str.maketrans(KANA, HIRA)
+    hira = "".join(chr(0x3041 + i) for i in range(86))
+    kana = "".join(chr(0x30a1 + i) for i in range(86))
+    trans_table = str.maketrans(kana, hira)
     return (text.translate(trans_table))
 
 
