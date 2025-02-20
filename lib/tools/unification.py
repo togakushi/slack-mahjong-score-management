@@ -23,11 +23,11 @@ def main():
 
         db = sqlite3.connect(g.cfg.db.database_file)
 
-        for name in name_table:
+        for name, alias_list in name_table.items():
             count = 0
             chk, msg = c.member.check_namepattern(name)
             if chk:
-                for alias in name_table[name]:
+                for alias in alias_list:
                     chk, msg = c.member.check_namepattern(alias)
                     if chk:
                         db.execute("update result set p1_name=? where p1_name=?;", (name, alias,))
@@ -42,9 +42,9 @@ def main():
                         count += db.execute("select changes();").fetchone()[0]
                     else:
                         logging.warning("remove: %s -> %s (%s)", name, alias, msg)
-                        name_table[name].remove(alias)
+                        alias_list.remove(alias)
                         continue
-                logging.notice("rename: %s -> %s changed: %s", name_table[name], name, count)
+                logging.notice("rename: %s -> %s changed: %s", alias_list, name, count)
             else:
                 logging.warning("skip: %s (%s)", name, msg)
                 continue
