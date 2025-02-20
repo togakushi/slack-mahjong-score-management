@@ -278,7 +278,6 @@ def statistics_plot():
         legend=False,
         grid=False,
     )
-    ax_rank_avg.yaxis
     ax_rank_avg.invert_yaxis()
     ax_rank_avg.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
 
