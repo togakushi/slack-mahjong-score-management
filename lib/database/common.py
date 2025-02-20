@@ -88,7 +88,7 @@ def query_modification(sql: str):
         sql = sql.replace("--[player_name] ", "")
         sql = sql.replace(
             "<<player_list>>",
-            ":" + ", :".join([x for x in [*g.prm.player_list]])
+            ":" + ", :".join(list([*g.prm.player_list]))
         )
 
     # SQLコメント削除
