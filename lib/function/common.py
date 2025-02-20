@@ -178,12 +178,12 @@ def floatfmt_adjust(df):
     return (fmt)
 
 
-def save_output(df, format, filename, headline=None):
+def save_output(df, kind, filename, headline=None):
     """指定されたフォーマットでdfを保存する
 
     Args:
         df (pd.DataFrame): _description_
-        format (str): フォーマット
+        kind (str): フォーマット
         filename (str): 保存ファイル名
         headline (str): 集計情報（ヘッダコメント）. Defaults to None.
 
@@ -193,7 +193,7 @@ def save_output(df, format, filename, headline=None):
             - None: 指定したフォーマットで保存できなかった場合
     """
 
-    match format.lower():
+    match kind.lower():
         case "csv":
             data = df.to_csv(index=False)
         case "text" | "txt":
