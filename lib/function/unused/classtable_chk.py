@@ -6,7 +6,7 @@ import random
 tablefile = "classtable_mahjongsoul.json"
 tablefile = "classtable_tenho.json"
 
-with open(tablefile) as f:
+with open(tablefile, encoding="utf-8") as f:
     class_data = json.load(f)
 
 for i in range(len(class_data["table"])):

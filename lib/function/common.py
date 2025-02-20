@@ -203,7 +203,7 @@ def save_output(df, kind, filename, headline=None):
 
     # 保存
     save_file = os.path.join(g.cfg.setting.work_dir, filename)
-    with open(save_file, "w") as writefile:
+    with open(save_file, "w", encoding="utf-8") as writefile:
         if not headline:  # ヘッダ書き込み
             for line in headline.splitlines():
                 writefile.writelines(f"# {line}\n")
