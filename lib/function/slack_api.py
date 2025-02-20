@@ -170,7 +170,7 @@ def post_fileupload(title, file, ts=False):
         ts = g.msg.thread_ts
 
     if g.args.testcase:
-        res = f.common.debug_out(title, file)
+        res = f.common.debug_out(title, file)  # pylint: disable=assignment-from-no-return
     else:
         res = call_files_upload(
             channel=g.msg.channel_id,
