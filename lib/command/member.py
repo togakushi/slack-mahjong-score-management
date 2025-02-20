@@ -123,7 +123,7 @@ def count_padding(data):
                     name_list.append(name)
 
     if name_list:
-        return (max([f.common.len_count(x) for x in name_list]))
+        return (max(f.common.len_count(x) for x in name_list))
     return (0)
 
 

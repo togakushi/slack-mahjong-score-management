@@ -514,7 +514,7 @@ def matrix_table():
     # 規定打数以下を足切り
     if g.prm.stipulated:
         for pname in list(l_data.keys()):
-            if sum([x is not None for x in l_data[pname]]) <= g.prm.stipulated:
+            if sum(x is not None for x in l_data[pname]) <= g.prm.stipulated:
                 l_data.pop(pname)
 
     rank_df = pd.DataFrame(
