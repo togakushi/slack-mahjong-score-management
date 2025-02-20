@@ -281,6 +281,7 @@ def debug_out(msg1, msg2=None):
 
     print(msg1)
     if isinstance(msg2, dict):
-        [print(msg2[x]) for x in msg2]
+        for _, val in msg2.items():
+            print(val)
     elif msg2:
         print(msg2)

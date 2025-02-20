@@ -212,11 +212,11 @@ def aggregation():
     if "役満" in g.cfg.dropitems.results:
         msg2["座席データ"] = msg2["座席データ"].replace(" / 役満", "")
         msg2["座席データ"] = re.sub(r" / [0-9]+$", "", msg2["座席データ"], flags=re.MULTILINE)
-        msg2.pop("役満和了") if "役満和了" in msg2 else None
+        msg2.pop("役満和了", None)
 
     if not g.opt.statistics:  # 統計
         for k in ("座席データ", "ベストレコード", "ワーストレコード"):
-            msg2.pop(k) if k in msg2 else None
+            msg2.pop(k, None)
 
     for k in list(msg2.keys()):
         if k in g.cfg.dropitems.results:
