@@ -23,7 +23,7 @@ class Message_Parser():
     updatable: bool = bool()
     in_thread: bool = bool()
 
-    def __init__(self, body: dict = {}):
+    def __init__(self, body: dict = None):
         if body is dict():
             self.parser(body)
 

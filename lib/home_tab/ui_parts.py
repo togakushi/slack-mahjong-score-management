@@ -69,7 +69,7 @@ def radio_buttons(view, no, id, title, flag):
     return (view, no + 1)
 
 
-def checkboxes(view, no, id, title, flag, initial=[]):
+def checkboxes(view, no, id, title, flag, initial=None):
     """チェックボックス選択メニュー
 
     Args:
@@ -78,7 +78,7 @@ def checkboxes(view, no, id, title, flag, initial=[]):
         id (str): block_id, action_id
         title (str): 表示タイトル
         flag (dict, optional): 表示する選択項目
-        initial (list, optional): チェック済み項目. Defaults to [].
+        initial (list, optional): チェック済み項目. Defaults to None.
 
     Returns:
         Tuple[dict, int]:
@@ -93,6 +93,8 @@ def checkboxes(view, no, id, title, flag, initial=[]):
     view["blocks"][no]["element"]["options"] = []
     if initial:
         view["blocks"][no]["element"]["initial_options"] = []
+    else:
+        initial = []  # None -> list
 
     for k, v in flag.items():
         view["blocks"][no]["element"]["options"].append(

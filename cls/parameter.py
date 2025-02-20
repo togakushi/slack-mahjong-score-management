@@ -15,12 +15,12 @@ class command_option:
     def __init__(self) -> None:
         self.initialization("DEFAULT")
 
-    def initialization(self, _command: str, _argument: list = []) -> None:
+    def initialization(self, _command: str, _argument: list = None) -> None:
         """初期化処理
 
         Args:
             _command (str): 設定ファイルから読み込むセクション名
-            _argument (list, optional): 引数リスト. Defaults to [].
+            _argument (list, optional): 引数リスト. Defaults to None.
         """
 
         self.__dict__.clear()
@@ -178,11 +178,11 @@ class command_option:
                 else:
                     self.target_player.append(x)
 
-    def check(self, _argument: list = []) -> None:
+    def check(self, _argument: list) -> None:
         """無効なオプションを引数リストから除外する
 
         Args:
-            _argument (list, optional): 引数リスト. Defaults to [].
+            _argument (list, optional): 引数リスト
         """
 
         self.__dict__.clear()
