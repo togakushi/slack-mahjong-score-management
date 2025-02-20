@@ -24,7 +24,7 @@ class Message_Parser():
     in_thread: bool = bool()
 
     def __init__(self, body: dict = None):
-        if body is dict():
+        if isinstance(body, dict):
             self.parser(body)
 
     def parser(self, _body: dict):
