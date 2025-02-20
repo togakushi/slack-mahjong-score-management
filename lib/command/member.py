@@ -142,8 +142,8 @@ def get_members_list():
 
     for pname in set(g.member_list.values()):
         name_list = []
-        for alias in g.member_list:
-            if g.member_list[alias] == pname:
+        for alias, name in g.member_list.items():
+            if name == pname:
                 name_list.append(alias)
         msg += "{}{}：{}\n".format(  # pylint: disable=consider-using-f-string
             pname,

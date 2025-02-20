@@ -127,16 +127,16 @@ def for_slack():
     if not data:
         return (data)
 
-    for thread_ts in data:
+    for thread_ts, val in data.items():
         conversations = g.app.client.conversations_replies(
-            channel=data[thread_ts].get("channel_id"),
+            channel=val.get("channel_id"),
             ts=thread_ts,
         )
 
         msg = conversations.get("messages")
         reaction_ok, reaction_ng = reactions_list(msg[0])
-        data[thread_ts]["reaction_ok"].extend(reaction_ok)
-        data[thread_ts]["reaction_ng"].extend(reaction_ng)
+        val["reaction_ok"].extend(reaction_ok)
+        val["reaction_ng"].extend(reaction_ng)
 
         if msg[0].get("ts") == msg[0].get("thread_ts") or msg[0].get("thread_ts") is None:
             if len(msg) >= 1:  # スレッド内探索
@@ -146,14 +146,14 @@ def for_slack():
                         event_ts = x.get("ts")
 
                         _ok, _ng = reactions_list(x)
-                        data[thread_ts]["reaction_ok"] += _ok
-                        data[thread_ts]["reaction_ng"] += _ng
+                        val["reaction_ok"] += _ok
+                        val["reaction_ng"] += _ng
 
                         for name, matter in zip(text[0::2], text[1::2]):
-                            data[thread_ts]["event_ts"].append(event_ts)
-                            data[thread_ts]["remarks"].append((name, matter))
+                            val["event_ts"].append(event_ts)
+                            val["remarks"].append((name, matter))
         else:
-            data[thread_ts].update(in_thread=True)
+            val.update(in_thread=True)
 
     g.msg.channel_type = "search_messages"
     return (data)

@@ -65,9 +65,9 @@ def plot():
     cell_param = []
     cell_color = []
     line_count = 0
-    for x in results:
+    for _, val in results.items():
         line_count += 1
-        cell_param.append([results[x][y] for y in column_labels])
+        cell_param.append([val[y] for y in column_labels])
         if int(line_count % 2):
             cell_color.append([line_color1 for i in column_labels])
         else:

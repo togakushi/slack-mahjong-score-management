@@ -124,14 +124,14 @@ def aggregation():
             )
 
     # --- データ整列&まとめ
-    for m in tmp_msg:
-        if g.opt.all_player and m in drop_name:
+    for key, val in tmp_msg.items():
+        if g.opt.all_player and key in drop_name:
             continue
-        msg2[f"{m}_info"] = tmp_msg[m].pop("info")
-        for x in sorted(tmp_msg[m].keys()):
+        msg2[f"{key}_info"] = val.pop("info")
+        for x in sorted(val.keys()):
             if g.opt.all_player and x in drop_name:
                 continue
-            msg2[f"{m}_{x}"] = tmp_msg[m][x]
+            msg2[f"{key}_{x}"] = val[x]
 
     # --- ファイル出力
     if len(df_data) != 0:

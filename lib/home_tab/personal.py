@@ -121,8 +121,8 @@ def handle_aggregation_action(ack, body, client):
 
     msg1, msg2 = c.results.detail.aggregation()
     res = f.slack_api.post_message(msg1)
-    for m in msg2:
-        f.slack_api.post_message(msg2[m] + "\n", res["ts"])
+    for _, val in msg2.items():
+        f.slack_api.post_message(val + "\n", res["ts"])
 
     client.views_update(
         view_id=g.app_var["view_id"],

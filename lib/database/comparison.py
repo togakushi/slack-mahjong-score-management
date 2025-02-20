@@ -65,20 +65,20 @@ def data_comparison():
     logging.trace("db_remarks=%s", db_remarks)
 
     # --- スコア突合
-    for key in slack_data:
-        slack_score = slack_data[key].get("score")
-        g.msg.channel_id = slack_data[key].get("channel_id")
-        g.msg.user_id = slack_data[key].get("user_id")
+    for key, val in slack_data.items():
+        slack_score = val.get("score")
+        g.msg.channel_id = val.get("channel_id")
+        g.msg.user_id = val.get("user_id")
         g.msg.event_ts = key
 
         reactions_data = []
-        reactions_data.append(slack_data[key].get("reaction_ok"))
-        reactions_data.append(slack_data[key].get("reaction_ng"))
+        reactions_data.append(val.get("reaction_ok"))
+        reactions_data.append(val.get("reaction_ng"))
 
         if key in db_data:  # slack -> DB チェック
             db_score = db_data[key]
             if not g.cfg.setting.thread_report:  # スレッド内報告が禁止されているパターン
-                if slack_data[key].get("in_thread"):
+                if val.get("in_thread"):
                     count["delete"] += 1
                     logging.notice("delete: %s, %s (In-thread report)", key, slack_score)
                     ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
@@ -88,9 +88,9 @@ def data_comparison():
                     d.common.db_delete(key)
 
                     # リアクションの削除
-                    if key in slack_data[key].get("reaction_ok"):
+                    if key in val.get("reaction_ok"):
                         f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
-                    if key in slack_data[key].get("reaction_ng"):
+                    if key in val.get("reaction_ng"):
                         f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
                     continue
 
@@ -112,7 +112,7 @@ def data_comparison():
                     logging.info("score check skip: %s %s", key, textformat(db_score))
                 continue
         else:  # 追加
-            if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
+            if not g.cfg.setting.thread_report and val.get("in_thread"):
                 continue
             else:
                 count["missing"] += 1
@@ -139,22 +139,22 @@ def data_comparison():
                 f.slack_api.call_reactions_remove(icon)
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
-    for key in slack_data:
-        if not g.cfg.setting.thread_report and slack_data[key].get("in_thread"):
+    for key, val in slack_data.items():
+        if not g.cfg.setting.thread_report and val.get("in_thread"):
             continue
         if d.common.exsist_record(key).get("rule_version") != g.prm.rule_version:
             continue
 
-        score_data = f.score.get_score(slack_data[key].get("score"))
-        reaction_ok = slack_data[key].get("reaction_ok")
-        reaction_ng = slack_data[key].get("reaction_ng")
+        score_data = f.score.get_score(val.get("score"))
+        reaction_ok = val.get("reaction_ok")
+        reaction_ng = val.get("reaction_ng")
 
         if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
             logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(  # pylint: disable=consider-using-f-string
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                score_data["deposit"], textformat(slack_data[key].get("score"))
+                score_data["deposit"], textformat(val.get("score"))
             )
             if key in reaction_ok:
                 f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
@@ -168,11 +168,11 @@ def data_comparison():
 
     # --- メモ突合
     slack_remarks = []
-    for key in slack_data:
-        remarks = slack_data[key].get("remarks")
-        event_ts = slack_data[key].get("event_ts")
+    for key, val in slack_data.items():
+        remarks = val.get("remarks")
+        event_ts = val.get("event_ts")
         for idx, (name, matter) in enumerate(remarks):
-            in_name = True if name in slack_data[key].get("score") else False
+            in_name = True if name in val.get("score") else False
             chk = {
                 "thread_ts": key,
                 "event_ts": event_ts[idx],

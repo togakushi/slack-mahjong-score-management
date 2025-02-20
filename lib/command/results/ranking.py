@@ -135,10 +135,10 @@ def aggregation():
         },
     }
 
-    for k in data:  # ランク付け
-        result_df[f"{k}_rank"] = result_df[k].rank(
+    for key, val in data.items():  # ランク付け
+        result_df[f"{key}_rank"] = result_df[key].rank(
             method="dense",
-            ascending=data[k]["order"]
+            ascending=val["order"]
         )
 
     for x in ["連続トップ", "連続連対", "連続ラス回避"]:  # 型変換
@@ -156,25 +156,25 @@ def aggregation():
     msg1 += f.message.header(game_info, "", 1)
     msg2 = {}
 
-    for k in data:
-        if k in g.cfg.dropitems.ranking:  # 非表示項目
+    for key, val in data.items():
+        if key in g.cfg.dropitems.ranking:  # 非表示項目
             continue
 
-        msg2[k] = f"\n*{k}*\n"
+        msg2[key] = f"\n*{key}*\n"
         tmp_df = result_df.sort_values(
-            [f"{k}_rank", "ゲーム数"],
+            [f"{key}_rank", "ゲーム数"],
             ascending=[True, False]
         ).query(
-            f"{k}_rank <= @g.opt.ranked and {data[k]['column']} >= {data[k]['threshold']}"
+            f"{key}_rank <= @g.opt.ranked and {val['column']} >= {val['threshold']}"
         )
 
         for _, s in tmp_df.drop_duplicates(subset="name").iterrows():
-            msg2[k] += ("\t{:3d}：{}\t" + data[k]["str"] + "\n").format(
-                int(s[f"{k}_rank"]), s["表示名"],
-                *[s[x] for x in data[k]["params"]]
+            msg2[key] += ("\t{:3d}：{}\t" + val["str"] + "\n").format(
+                int(s[f"{key}_rank"]), s["表示名"],
+                *[s[x] for x in val["params"]]
             ).replace("-", "▲")
 
-        if msg2[k].strip().count("\n") == 0:  # 対象者がいなければ項目を削除
-            msg2.pop(k)
+        if msg2[key].strip().count("\n") == 0:  # 対象者がいなければ項目を削除
+            msg2.pop(key)
 
     return (msg1, msg2)

@@ -305,17 +305,17 @@ def ranking_record():
         "連続ラス": {1: 0, 2: 0, 3: 0, 4: 1},
     }
 
-    for k in rank_mask:
-        gamedata[k] = None
+    for key, val in rank_mask.items():
+        gamedata[key] = None
         for pname in gamedata["name"].unique():  # pylint: disable=unused-variable  # noqa: F841
             tmp_df = pd.DataFrame()
             tmp_df["flg"] = gamedata.query(
                 "name == @pname"
-            )["順位"].replace(rank_mask[k])
-            tmp_df[k] = tmp_df["flg"].groupby(
+            )["順位"].replace(val)
+            tmp_df[key] = tmp_df["flg"].groupby(
                 (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
             ).cumcount() + 1
-            tmp_df.loc[tmp_df["flg"] == 0, k] = 0
+            tmp_df.loc[tmp_df["flg"] == 0, key] = 0
             gamedata.update(tmp_df)
 
     # 最大値/最小値の格納
