@@ -88,9 +88,9 @@ def aggregation():
             table = df[s:].to_markdown(**table_param)
             msg[s] = f"```\n{table}\n```\n"
             break
-        else:
-            table = df[s:e].to_markdown(**table_param)
-            msg[s] = f"```\n{table}\n```\n"
+
+        table = df[s:e].to_markdown(**table_param)
+        msg[s] = f"```\n{table}\n```\n"
 
     match g.opt.format.lower():
         case "csv":
