@@ -50,7 +50,6 @@ def help_message():
         str: ヘルプメッセージ
     """
 
-    f
     results_option = f.configuration.CommandOption()
     results_option.initialization("results")
     graph_option = f.configuration.CommandOption()
