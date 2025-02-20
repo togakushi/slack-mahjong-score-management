@@ -7,7 +7,7 @@ import lib.global_value as g
 from lib import function as f
 
 
-def call_chat_postMessage(**kwargs):
+def call_chat_post_message(**kwargs):
     """slackにメッセージをポストする
 
     Returns:
@@ -70,7 +70,7 @@ def post_message(message, ts=False):
         f.common.debug_out(message)
         res["ts"] = 0  # dummy
     else:
-        res = call_chat_postMessage(
+        res = call_chat_post_message(
             channel=g.msg.channel_id,
             text=f"{message.strip()}",
             thread_ts=ts,
@@ -125,7 +125,7 @@ def post_text(event_ts, title, msg):
 
     # コードブロック修飾付きポスト
     if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
-        res = call_chat_postMessage(
+        res = call_chat_post_message(
             channel=g.msg.channel_id,
             text=f"{title}\n{msg.strip()}",
             thread_ts=event_ts,
@@ -145,7 +145,7 @@ def post_text(event_ts, title, msg):
 
         # ブロック単位でポスト
         for _, val in enumerate(post_msg):
-            res = call_chat_postMessage(
+            res = call_chat_post_message(
                 channel=g.msg.channel_id,
                 text=f"\n{title}\n\n```{val.strip()}```",
                 thread_ts=event_ts,
