@@ -24,10 +24,10 @@ def main():
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y/%m/%d")
     before = datetime.now().strftime("%Y/%m/%d")
     ret = f"*【データ突合】* ({after} - {before})\n"
-    ret += "＊ 不一致：{}件\n{}".format(count["mismatch"], msg["mismatch"])
-    ret += "＊ 取りこぼし：{}件\n{}".format(count["missing"], msg["missing"])
-    ret += "＊ 削除漏れ：{}件\n{}".format(count["delete"], msg["delete"])
-    ret += "＊ メモ：{}件\n{}".format(count["remark"], msg["remark"])
+    ret += f"＊ 不一致：{count['mismatch']}件\n{msg['mismatch']}"
+    ret += f"＊ 取りこぼし：{count['missing']}件\n{msg['missing']}"
+    ret += f"＊ 削除漏れ：{count['delete']}件\n{msg['delete']}"
+    ret += f"＊ メモ：{count['remark']}件\n{msg['remark']}"
     if count["invalid_score"] > 0:
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]
@@ -81,7 +81,7 @@ def data_comparison():
                 if slack_data[key].get("in_thread"):
                     count["delete"] += 1
                     logging.notice(f"delete: {key}, {slack_score} (In-thread report)")
-                    ret_msg["delete"] += "\t{} {}\n".format(
+                    ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
                         datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                         textformat(slack_score)
                     )
@@ -103,7 +103,7 @@ def data_comparison():
                     logging.notice(f"mismatch: {key}")
                     logging.info(f"  *  slack: {textformat(db_score)}")
                     logging.info(f"  *     db: {textformat(slack_score)}")
-                    ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(
+                    ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(  # pylint: disable=consider-using-f-string
                         datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                         textformat(db_score), textformat(slack_score),
                     )
@@ -129,7 +129,7 @@ def data_comparison():
         else:  # 削除
             count["delete"] += 1
             logging.notice(f"delete: {key}, {db_data[key]} (Only database)")
-            ret_msg["delete"] += "\t{} {}\n".format(
+            ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 textformat(db_data[key])
             )
@@ -152,7 +152,7 @@ def data_comparison():
         if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
             logging.notice(f"invalid score: {key} deposit={score_data['deposit']}")
-            ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(
+            ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(  # pylint: disable=consider-using-f-string
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 score_data["deposit"], textformat(slack_data[key].get("score"))
             )
