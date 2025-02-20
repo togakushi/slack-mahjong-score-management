@@ -19,7 +19,7 @@ class Message_Parser():
     thread_ts: str = str()  # テキストのまま処理する
     status: str = str()  # event subtype
     keyword: str = str()
-    argument: list = list()
+    argument: list = []
     updatable: bool = bool()
     in_thread: bool = bool()
 
