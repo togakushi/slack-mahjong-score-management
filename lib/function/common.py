@@ -106,9 +106,9 @@ def badge_degree(game_count=0):
             degree_counter = [
                 x for x in map(int, g.cfg.config.get("degree", "counter").split(","))
             ]
-            for i in range(len(degree_counter)):
-                if game_count >= degree_counter[i]:
-                    badge_degree = degree_badge[i]
+            for idx, val in enumerate(degree_counter):
+                if game_count >= val:
+                    badge_degree = degree_badge[idx]
 
     return (badge_degree)
 

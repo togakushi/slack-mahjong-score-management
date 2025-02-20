@@ -458,8 +458,8 @@ def gen_pdf():
     if not tmp_data:
         return (False, False)
 
-    for x in range(len(tmp_data)):  # ゲーム数を除外
-        data.append(tmp_data[x][1:])
+    for _, val in enumerate(tmp_data):  # ゲーム数を除外
+        data.append(val[1:])
     tt = LongTable(data, repeatRows=1)
     tt.setStyle(TableStyle([
         ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
@@ -538,8 +538,8 @@ def gen_pdf():
 
         data = []
         tmp_data = get_game_results(flag)
-        for x in range(len(tmp_data)):  # 日時を除外
-            data.append(tmp_data[x][:15])
+        for _, val in enumerate(tmp_data):  # 日時を除外
+            data.append(val[:15])
 
         tt = LongTable(data, repeatRows=1)
         ts = TableStyle([

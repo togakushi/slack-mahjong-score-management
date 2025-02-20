@@ -33,11 +33,11 @@ def _disp_name(df, adjust=0, mark=True):
             replace_list.append(name)
 
     max_padding = c.member.count_padding(replace_list)
-    for i in range(len(replace_list)):
+    for idx, val in enumerate(replace_list):
         padding = " " * (
-            max_padding - f.common.len_count(replace_list[i]) + adjust
+            max_padding - f.common.len_count(val) + adjust
         )
-        replace_list[i] = f"{replace_list[i]}{padding}"
+        replace_list[idx] = f"{val}{padding}"
 
     return (df.replace(player_list, replace_list))
 

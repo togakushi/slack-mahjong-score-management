@@ -116,9 +116,9 @@ def user_select(view, no, text="dummy", add_list=False):
     view["blocks"][no]["element"]["options"] = []
 
     if add_list:
-        for i in range(len(add_list)):
+        for _, val in enumerate(add_list):
             view["blocks"][no]["element"]["options"].append(
-                {"text": {"type": "plain_text", "text": add_list[i]}, "value": add_list[i]}
+                {"text": {"type": "plain_text", "text": val}, "value": val}
             )
 
     for name in set(g.member_list.values()):
@@ -139,9 +139,9 @@ def multi_select(view, no, text="dummy", add_list=False):
     view["blocks"][no]["element"]["options"] = []
 
     if add_list:
-        for i in range(len(add_list)):
+        for _, val in enumerate(add_list):
             view["blocks"][no]["element"]["options"].append(
-                {"text": {"type": "plain_text", "text": add_list[i]}, "value": add_list[i]}
+                {"text": {"type": "plain_text", "text": val}, "value": val}
             )
 
     for name in set(g.member_list.values()):

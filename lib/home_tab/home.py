@@ -52,8 +52,8 @@ def set_command_option(body):
 
     if "bid-multi_select" in search_options:
         user_list = search_options["bid-multi_select"]["player"]["selected_options"]
-        for i in range(len(user_list)):
-            argument.append(user_list[i]["value"])
+        for _, val in enumerate(user_list):
+            argument.append(val["value"])
 
     if "bid-search_range" in search_options:
         match search_options["bid-search_range"]["aid-search_range"]["selected_option"]["value"]:
@@ -77,8 +77,8 @@ def set_command_option(body):
                 case _:
                     continue
 
-            for i in range(len(selected_options)):
-                match selected_options[i]["value"]:
+            for _, val in enumerate(selected_options):
+                match val["value"]:
                     case "unregistered_replace":
                         g.opt.unregistered_replace = False
                     case "versus_matrix":

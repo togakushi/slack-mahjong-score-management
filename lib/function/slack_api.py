@@ -144,10 +144,10 @@ def post_text(event_ts, title, msg):
             post_msg[count - 1] += "\n" + post_msg.pop(count)
 
         # ブロック単位でポスト
-        for i in range(len(post_msg)):
+        for _, val in enumerate(post_msg):
             res = call_chat_postMessage(
                 channel=g.msg.channel_id,
-                text=f"\n{title}\n\n```{post_msg[i].strip()}```",
+                text=f"\n{title}\n\n```{val.strip()}```",
                 thread_ts=event_ts,
             )
 
