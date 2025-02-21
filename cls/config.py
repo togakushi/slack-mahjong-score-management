@@ -149,7 +149,7 @@ class Config():
         """設定ファイルのセクションを読み込みインスタンス化して返す
 
         Args:
-            section (_type_): セクション名
+            section (str): セクション名
 
         Returns:
             subcommand: subcommandインスタンス
