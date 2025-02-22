@@ -81,7 +81,7 @@ def name_replace(pname, add_mark=False, mask=True):
     # 敬称削除
     honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
     if re.match(fr".*{honor}", pname):
-        if not re.match(fr".*(っ|ッ){honor}", pname):
+        if not re.match(fr".*(っ|ッ|ー){honor}", pname):
             pname = re.sub(fr"{honor}", "", pname)
     if pname in check_list:
         return (g.member_list[pname])
