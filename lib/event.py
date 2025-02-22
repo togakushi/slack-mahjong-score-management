@@ -75,7 +75,7 @@ def handle_message_events(client, body):
             f.slack_api.post_text(g.msg.event_ts, title, msg)
         case x if re.match(rf"^{g.cfg.cw.team}", x):
             title = "チーム一覧"
-            msg = c.team.list()
+            msg = c.team.get_list()
             f.slack_api.post_text(g.msg.event_ts, title, msg)
 
         case _ as x:
