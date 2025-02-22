@@ -129,7 +129,7 @@ INIファイル内の設定を変更することで、動作変更が可能。
 1. `always_argument` の処理
 1. slackから与えられた引数の処理
 
-[日付指定](../functions/argument_keyword.md#日付指定)のオプションは指定されている範囲だけになる。
+[日付指定](../functions/argument_keyword.md#日付指定)は指定されている範囲だけになる。
 > [!TIP]
 > `always_argument`で`今年`と定義した状態でslackから`今月 先月`と指定した場合の範囲は`今月 先月`となる。<br />
 > slackから日付指定がない場合は`今年`が範囲になる。
