@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime
 
@@ -66,8 +67,18 @@ class CommandOption:
         self.search_onday: datetime = datetime.now()
         self.set_search_range(self.aggregation_range)
 
+        # 引数の処理
+        self.always_argument: list = g.cfg.config[_command].get("always_argument", "").split()
+
+        logging.info("Defaults: %s, argument: %s", self.__dict__, _argument)
+        if self.always_argument:
+            self.update(self.always_argument)
+
+        logging.info("Always: %s, argument: %s", self.__dict__, _argument)
         if _argument:
             self.update(_argument)
+
+        logging.info("Finally: %s, argument: %s", self.__dict__, _argument)
 
     def set_search_range(self, _argument: list) -> list:
         """検索範囲の日付をインスタンス変数にセットする
@@ -97,73 +108,76 @@ class CommandOption:
             _argument (list): 引数リスト
         """
 
-        unknown_command = []
-
         # 検索範囲取得
         _new_argument = self.set_search_range(_argument)
 
         # コマンドオプションフラグ変更
+        unknown_command = []
         for keyword in _new_argument:
-            match keyword.lower():
-                case keyword if re.search(r"^ゲスト(なし|ナシ|無し)$", keyword):
+            check_word = f.common.hira_to_kana(keyword.lower())  # カタカナ、小文字に統一
+            check_word = check_word.replace("無シ", "ナシ").replace("有リ", "アリ")  # 表記統一
+            match check_word:
+                case check_word if re.search(r"^ゲストナシ$", check_word):
                     self.guest_skip = False
                     self.guest_skip2 = False
-                case keyword if re.search(r"^ゲスト(あり|アリ)$", keyword):
+                    self.unregistered_replace = True
+                case check_word if re.search(r"^ゲストアリ$", check_word):
                     self.guest_skip = True
                     self.guest_skip2 = True
-                case keyword if re.search(r"^ゲスト無効$", keyword):
+                    self.unregistered_replace = True
+                case check_word if re.search(r"^ゲスト無効$", check_word):
                     self.unregistered_replace = False
-                case keyword if re.search(r"^(全員|all)$", keyword):
+                case check_word if re.search(r"^(全員|all)$", check_word):
                     self.all_player = True
-                case keyword if re.search(r"^(比較|点差|差分)$", keyword):
+                case check_word if re.search(r"^(比較|点差|差分)$", check_word):
                     self.score_comparisons = True
-                case keyword if re.search(r"^(戦績)$", keyword):
+                case check_word if re.search(r"^(戦績)$", check_word):
                     self.game_results = True
-                case keyword if re.search(r"^(対戦|対戦結果)$", keyword):
+                case check_word if re.search(r"^(対戦|対戦結果)$", check_word):
                     self.versus_matrix = True
-                case keyword if re.search(r"^(詳細|verbose)$", keyword):
+                case check_word if re.search(r"^(詳細|verbose)$", check_word):
                     self.verbose = True
-                case keyword if re.search(r"^(順位)$", keyword):
+                case check_word if re.search(r"^(順位)$", check_word):
                     self.order = True
-                case keyword if re.search(r"^(統計)$", keyword):
+                case check_word if re.search(r"^(統計)$", check_word):
                     self.statistics = True
-                case keyword if re.search(r"^(レート|レーティング|rate|ratings?)$", keyword):
+                case check_word if re.search(r"^(レート|レーティング|rate|ratings?)$", check_word):
                     self.rating = True
-                case keyword if re.search(r"^(個人|個人成績)$", keyword):
+                case check_word if re.search(r"^(個人|個人成績)$", check_word):
                     self.individual = True
-                case keyword if re.search(r"^(チーム|チーム成績|team)$", keyword.lower()):
+                case check_word if re.search(r"^(チーム|チーム成績|team)$", check_word):
                     self.individual = False
-                case keyword if re.search(r"^(直近)([0-9]+)$", keyword):
-                    self.target_count = int(re.sub(r"^(直近)([0-9]+)$", r"\2", keyword))
-                case keyword if re.search(r"^(トップ|上位|top)([0-9]+)$", keyword):
-                    self.ranked = int(re.sub(r"^(トップ|上位|top)([0-9]+)$", r"\2", keyword))
-                case keyword if re.search(r"^(規定数|規定打数)([0-9]+)$", keyword):
-                    self.stipulated = int(re.sub(r"^(規定数|規定打数)([0-9]+)$", r"\2", keyword))
-                case keyword if re.search(r"^(区間|区切り?|interval)([0-9]+)$", keyword):
-                    self.interval = int(re.sub(r"^(区間|区切り?|interval)([0-9]+)$", r"\2", keyword))
-                case keyword if re.search(r"^(チーム同卓あり|コンビあり|同士討ち)$", keyword):
+                case check_word if re.search(r"^(直近)([0-9]+)$", check_word):
+                    self.target_count = int(re.sub(r"^(直近)([0-9]+)$", r"\2", check_word))
+                case check_word if re.search(r"^(トップ|上位|top)([0-9]+)$", check_word):
+                    self.ranked = int(re.sub(r"^(トップ|上位|top)([0-9]+)$", r"\2", check_word))
+                case check_word if re.search(r"^(規定数|規定打数)([0-9]+)$", check_word):
+                    self.stipulated = int(re.sub(r"^(規定数|規定打数)([0-9]+)$", r"\2", check_word))
+                case check_word if re.search(r"^(区間|区切リ?|interval)([0-9]+)$", check_word):
+                    self.interval = int(re.sub(r"^(区間|区切リ?|interval)([0-9]+)$", r"\2", check_word))
+                case check_word if re.search(r"^(チーム同卓アリ|コンビアリ|同士討チ)$", check_word):
                     self.friendly_fire = True
-                case keyword if re.search(r"^(チーム同卓なし|コンビなし)$", keyword):
+                case check_word if re.search(r"^(チーム同卓ナシ|コンビナシ)$", check_word):
                     self.friendly_fire = False
-                case keyword if re.search(r"^(コメント|comment)(.+)$", keyword):
-                    self.search_word = re.sub(r"^(コメント|comment)(.+)$", r"\2", keyword)
-                case keyword if re.search(r"^(daily|デイリー|日次)$", keyword):
+                case check_word if re.search(r"^(コメント|comment)(.+)$", check_word):
+                    self.search_word = re.sub(r"^(コメント|comment)(.+)$", r"\2", check_word)
+                case check_word if re.search(r"^(daily|デイリー|日次)$", check_word):
                     self.collection = "daily"
-                case keyword if re.search(r"^(monthly|マンスリー|月次)$", keyword):
+                case check_word if re.search(r"^(monthly|マンスリー|月次)$", check_word):
                     self.collection = "monthly"
-                case keyword if re.search(r"^(yearly|イヤーリー|年次)$", keyword):
+                case check_word if re.search(r"^(yearly|イヤーリー|年次)$", check_word):
                     self.collection = "yearly"
-                case keyword if re.search(r"^(全体)$", keyword):
+                case check_word if re.search(r"^(全体)$", check_word):
                     self.collection = "all"
-                case keyword if re.search(r"^(集約)([0-9]+)$", keyword):
-                    self.group_length = int(re.sub(r"^(集約)([0-9]+)$", r"\2", keyword))
-                case keyword if re.search(r"^(ルール|rule)(.+)$", keyword):
+                case check_word if re.search(r"^(集約)([0-9]+)$", check_word):
+                    self.group_length = int(re.sub(r"^(集約)([0-9]+)$", r"\2", check_word))
+                case check_word if re.search(r"^(ルール|rule)(.+)$", check_word):
                     self.rule_version = re.sub(r"^(ルール|rule)(.+)$", r"\2", keyword)
-                case keyword if re.search(r"^(csv|text|txt)$", keyword.lower()):
-                    self.format = keyword.lower()
-                case keyword if re.search(r"^(filename:|ファイル名)(.+)$", keyword):
+                case check_word if re.search(r"^(csv|text|txt)$", check_word):
+                    self.format = check_word
+                case check_word if re.search(r"^(filename:|ファイル名)(.+)$", check_word):
                     self.filename = re.sub(r"^(filename:|ファイル名)(.+)$", r"\2", keyword)
-                case keyword if re.search(r"^(匿名|anonymous)$", keyword):
+                case check_word if re.search(r"^(匿名|anonymous)$", check_word):
                     self.anonymous = True
                 case _:
                     unknown_command.append(keyword)
