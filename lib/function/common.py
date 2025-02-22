@@ -1,7 +1,9 @@
 import os
+import re
 import unicodedata
 
 import lib.global_value as g
+from cls.parameter import CommandOption
 
 
 def len_count(text):
@@ -86,6 +88,59 @@ def kata_to_hira(text):
     kana = "".join(chr(0x30a1 + i) for i in range(86))
     trans_table = str.maketrans(kana, hira)
     return (text.translate(trans_table))
+
+
+def check_namepattern(name, kind=None):
+    """登録制限チェック
+
+    Args:
+        name (str): チェックする名前
+        kind (str): チェック種別. Defaults to None.
+
+    Returns:
+        Tuple[bool, str]:
+            - bool: 制限チェック結果真偽
+            - str: 制限理由
+    """
+
+    # 登録済みメンバーかチェック
+    check_list = list(g.member_list.keys())
+    check_list += [kata_to_hira(i) for i in g.member_list]  # ひらがな
+    check_list += [hira_to_kana(i) for i in g.member_list]  # カタカナ
+    if name in check_list:
+        return (False, f"「{name}」は存在するメンバーです。")
+
+    # 登録済みチームかチェック
+    for x in [x["team"] for x in g.team_list]:
+        if name == x:
+            return (False, f"「{name}」は存在するチームです。")
+        if kata_to_hira(name) == kata_to_hira(x):  # ひらがな
+            return (False, f"「{name}」は存在するチームです。")
+        if hira_to_kana(name) == hira_to_kana(x):  # カタカナ
+            return (False, f"「{name}」は存在するチームです。")
+
+    # 登録規定チェック
+    if g.cfg.config.has_section(kind):
+        if len(name) > g.cfg.config[kind].getint("character_limit", 8):  # 文字制限
+            return (False, "登録可能文字数を超えています。")
+    if name == g.prm.guest_name:  # 登録NGプレイヤー名
+        return (False, "使用できない名前です。")
+    if re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable():  # 禁則記号
+        return (False, "使用できない記号が含まれています。")
+
+    # コマンドと同じ名前かチェック
+    if g.search_word.find(name):
+        return (False, "検索範囲指定に使用される単語では登録できません。")
+
+    chk = CommandOption()
+    chk.check([name])
+    if vars(chk):
+        return (False, "オプションに使用される単語では登録できません。")
+
+    if name in g.cfg.word_list():
+        return (False, "コマンドに使用される単語では登録できません。")
+
+    return (True, "OK")
 
 
 def badge_degree(game_count=0):

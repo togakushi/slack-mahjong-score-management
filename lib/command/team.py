@@ -1,9 +1,7 @@
 import logging
-import re
 import sqlite3
 
 import lib.global_value as g
-from cls.parameter import CommandOption
 from lib import command as c
 from lib import database as d
 from lib import function as f
@@ -49,50 +47,6 @@ def get_teammates():
     return (member)
 
 
-def check_namepattern(name):
-    """登録制限チェック
-
-    Args:
-        name (str): チェックするチーム名
-
-    Returns:
-        Tuple[bool, str]:
-            - bool: 制限チェック結果真偽
-            - str: 制限理由
-    """
-
-    # 登録済みチームかチェック
-    for x in [x["team"] for x in g.team_list]:
-        if name == x:
-            return (False, f"チーム名「{name}」はすでに使用されています。")
-        if f.common.kata_to_hira(name) == f.common.kata_to_hira(x):  # ひらがな
-            return (False, f"チーム名「{name}」はすでに使用されています。")
-        if f.common.hira_to_kana(name) == f.common.hira_to_kana(x):  # カタカナ
-            return (False, f"チーム名「{name}」はすでに使用されています。")
-
-    # 登録規定チェック
-    if len(name) > g.cfg.config["team"].getint("character_limit", 8):  # 文字制限
-        return (False, "登録可能文字数を超えています。")
-    if name == g.prm.guest_name:  # 登録NGプレイヤー名
-        return (False, "使用できない名称です。")
-    if re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable():  # 禁則記号
-        return (False, "使用できない記号が含まれています。")
-
-    # コマンドと同じ名前かチェック
-    if g.search_word.find(name):
-        return (False, "検索範囲指定に使用される単語は登録できません。")
-
-    chk = CommandOption()
-    chk.check([name])
-    if vars(chk):
-        return (False, "オプションに使用される単語は登録できません。")
-
-    if name in g.cfg.word_list():
-        return (False, "コマンドに使用される単語は登録できません。")
-
-    return (True, "OK")
-
-
 def create(argument):
     """チーム作成
 
@@ -108,12 +62,10 @@ def create(argument):
 
     if len(argument) == 1:  # 新規追加
         team_name = f.common.han_to_zen(argument[0])
-        logging.notice("New Team: %s", team_name)
-
         if len(g.team_list) > g.cfg.config["team"].getint("registration_limit", 255):
             msg = "登録上限を超えています。"
         else:  # 登録処理
-            ret, msg = check_namepattern(team_name)
+            ret, msg = f.common.check_namepattern(team_name, "team")
             if ret:
                 resultdb = sqlite3.connect(
                     g.cfg.db.database_file,
@@ -128,6 +80,7 @@ def create(argument):
                 resultdb.close()
                 c.member.read_memberslist()
                 msg = f"チーム「{team_name}」を登録しました。"
+                logging.notice("add new team: %s", team_name)
 
     return (msg)
 
@@ -146,8 +99,6 @@ def delete(argument):
 
     if len(argument) == 1:  # 新規追加
         team_name = f.common.han_to_zen(argument[0])
-        logging.notice("Team delete: %s", team_name)
-
         if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
@@ -169,6 +120,7 @@ def delete(argument):
             resultdb.close()
             c.member.read_memberslist()
             msg += f"\nチーム「{team_name}」を削除しました。"
+            logging.notice("team delete: %s", team_name)
 
     return (msg)
 
@@ -195,8 +147,6 @@ def append(argument):
 
         team_name = f.common.han_to_zen(argument[0])
         player_name = c.member.name_replace(argument[1])
-        logging.notice("Team participation: %s -> %s", team_name, player_name)
-
         registration_flg = True
         team_id = None
 
@@ -231,6 +181,7 @@ def append(argument):
             resultdb.close()
             c.member.read_memberslist()
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
+            logging.notice("team participation: %s -> %s", team_name, player_name)
 
     return (msg)
 
@@ -259,10 +210,8 @@ def remove(argument):
 
     if len(argument) == 2:  # チーム名指
         g.opt.unregistered_replace = False
-
         team_name = f.common.han_to_zen(argument[0])
         player_name = c.member.name_replace(argument[1])
-        logging.notice("Team breakaway: %s -> %s", team_name, player_name)
 
         registration_flg = True
         team_id = None
@@ -290,6 +239,7 @@ def remove(argument):
             resultdb.close()
             c.member.read_memberslist()
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
+            logging.notice("team breakaway: %s -> %s", team_name, player_name)
 
     return (msg)
 
