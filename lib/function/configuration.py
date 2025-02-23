@@ -117,7 +117,7 @@ def arg_parser():
     return (p.parse_args())
 
 
-def setup():
+def setup() -> None:
     """設定ファイル読み込み
     """
 

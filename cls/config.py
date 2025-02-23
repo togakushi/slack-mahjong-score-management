@@ -3,13 +3,14 @@ import logging
 import os
 import sys
 from dataclasses import dataclass, field
+from itertools import chain
 
 
 class Config():
     """コンフィグ解析クラス
     """
 
-    def __init__(self, filename: str = None) -> None:
+    def __init__(self, filename: str | None = None) -> None:
         self.config = configparser.ConfigParser()
         if filename is not None:
             self.read_file(filename)
@@ -58,15 +59,15 @@ class Config():
         @dataclass
         class Search:
             keyword: str = self.config["search"].get("keyword", "終局")
-            channel: str = self.config["search"].get("channel", None)
-            after: str = self.config["search"].getint("after", 7)
+            channel: str | None = self.config["search"].get("channel", None)
+            after: int = self.config["search"].getint("after", 7)
         self.search = Search()
 
         @dataclass
         class Database:
             database_file: str = self.config["database"].get("database_file", "mahjong.db")
             channel_limitations: str = self.config["database"].get("channel_limitations", "")
-            backup_dir: str = self.config["database"].get("backup_dir", None)
+            backup_dir: str | None = self.config["database"].get("backup_dir", None)
         self.db = Database()
 
         @dataclass
@@ -202,7 +203,7 @@ class Config():
             words.append([k])
             words.append(v)
 
-        words = list(set(sum(words, [])))
+        words = list(set(chain.from_iterable(words)))
         words = ["del" if x == "delete" else x for x in words]
         words = [x for x in words if x != ""]
 

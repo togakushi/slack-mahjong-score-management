@@ -16,7 +16,7 @@ class CommandOption:
     def __init__(self) -> None:
         self.initialization("DEFAULT")
 
-    def initialization(self, _command: str, _argument: list = None) -> None:
+    def initialization(self, _command: str, _argument: list | None = None) -> None:
         """初期化処理
 
         Args:

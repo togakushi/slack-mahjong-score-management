@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from dateutil.relativedelta import relativedelta
 
@@ -6,11 +7,15 @@ from cls import config
 
 # モジュール共通クラス
 cfg = config.Config()
+opt: Any = None
+prm: Any = None
+msg: Any = None
+search_word: Any = None
 
 # 固定値
 wind = ("東家", "南家", "西家", "北家")
-member_list = {}
-team_list = []
+member_list: dict = {}
+team_list: list = []
 bot_id = ""
 undefined_word = 2
 

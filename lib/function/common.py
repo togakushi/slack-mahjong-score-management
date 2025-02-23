@@ -1,12 +1,13 @@
 import os
 import re
 import unicodedata
+from typing import Tuple
 
 import lib.global_value as g
 from cls.parameter import CommandOption
 
 
-def len_count(text):
+def len_count(text: str) -> int:
     """文字数をカウント(全角文字は2)
 
     Args:
@@ -26,7 +27,7 @@ def len_count(text):
     return (count)
 
 
-def han_to_zen(text):
+def han_to_zen(text: str) -> str:
     """半角文字を全角文字に変換(数字のみ)
 
     Args:
@@ -42,7 +43,7 @@ def han_to_zen(text):
     return (text.translate(trans_table))
 
 
-def zen_to_han(text):
+def zen_to_han(text: str) -> str:
     """全角文字を半角文字に変換(数字のみ)
 
     Args:
@@ -58,7 +59,7 @@ def zen_to_han(text):
     return (text.translate(trans_table))
 
 
-def hira_to_kana(text):
+def hira_to_kana(text: str) -> str:
     """ひらがなをカタカナに変換
 
     Args:
@@ -74,7 +75,7 @@ def hira_to_kana(text):
     return (text.translate(trans_table))
 
 
-def kata_to_hira(text):
+def kata_to_hira(text: str) -> str:
     """カタカナをひらがなに変換
 
     Args:
@@ -90,15 +91,15 @@ def kata_to_hira(text):
     return (text.translate(trans_table))
 
 
-def check_namepattern(name, kind=None):
+def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
     """登録制限チェック
 
     Args:
         name (str): チェックする名前
-        kind (str): チェック種別. Defaults to None.
+        kind (str | None, optional): チェック種別. Defaults to None.
 
     Returns:
-        Tuple[bool, str]:
+        Tuple[bool,str]: 判定結果
             - bool: 制限チェック結果真偽
             - str: 制限理由
     """
@@ -120,7 +121,7 @@ def check_namepattern(name, kind=None):
             return (False, f"「{name}」は存在するチームです。")
 
     # 登録規定チェック
-    if g.cfg.config.has_section(kind):
+    if kind is not None and g.cfg.config.has_section(kind):
         if len(name) > g.cfg.config[kind].getint("character_limit", 8):  # 文字制限
             return (False, "登録可能文字数を超えています。")
     if name == g.prm.guest_name:  # 登録NGプレイヤー名
@@ -143,7 +144,7 @@ def check_namepattern(name, kind=None):
     return (True, "OK")
 
 
-def badge_degree(game_count=0):
+def badge_degree(game_count: int = 0) -> str:
     """プレイしたゲーム数に対して表示される称号を返す
 
     Args:
@@ -166,7 +167,7 @@ def badge_degree(game_count=0):
     return (badge_degree)
 
 
-def badge_status(game_count=0, win=0):
+def badge_status(game_count: int = 0, win: int = 0) -> str:
     """勝率に対して付く調子バッジを返す
 
     Args:
@@ -198,7 +199,7 @@ def badge_status(game_count=0, win=0):
     return (badge_status)
 
 
-def floatfmt_adjust(df):
+def floatfmt_adjust(df) -> list:
     """カラム名に応じたfloatfmtのリストを返す
 
     Args:
@@ -231,14 +232,14 @@ def floatfmt_adjust(df):
     return (fmt)
 
 
-def save_output(df, kind, filename, headline=None):
+def save_output(df, kind: str, filename: str, headline: str | None = None) -> str | None:
     """指定されたフォーマットでdfを保存する
 
     Args:
         df (pd.DataFrame): _description_
         kind (str): フォーマット
         filename (str): 保存ファイル名
-        headline (str): 集計情報（ヘッダコメント）. Defaults to None.
+        headline (str | None, optional): 集計情報（ヘッダコメント）. Defaults to None.
 
     Returns:
         Union[str, None]
@@ -257,7 +258,7 @@ def save_output(df, kind, filename, headline=None):
     # 保存
     save_file = os.path.join(g.cfg.setting.work_dir, filename)
     with open(save_file, "w", encoding="utf-8") as writefile:
-        if not headline:  # ヘッダ書き込み
+        if headline is not None:  # ヘッダ書き込み
             for line in headline.splitlines():
                 writefile.writelines(f"# {line}\n")
             writefile.writelines("\n")
@@ -267,7 +268,7 @@ def save_output(df, kind, filename, headline=None):
     return (save_file)
 
 
-def graph_setup(plt, fm):
+def graph_setup(plt, fm) -> None:
     """グラフ設定
 
     Args:
@@ -301,14 +302,14 @@ def graph_setup(plt, fm):
     plt.rcParams["axes.axisbelow"] = True
 
 
-def scope_coverage(argument: list):
+def scope_coverage(argument: list) -> Tuple[list, list]:
     """キーワードから有効な日付を取得する
 
     Args:
         argument (list): 引数リスト
 
     Returns:
-        Tuple[list, list]:
+        Tuple[list,list]:
             - list: 得られた日付のリスト
             - list: 日付を取り除いた引数リスト
     """
@@ -324,12 +325,12 @@ def scope_coverage(argument: list):
     return (target_days, new_argument)
 
 
-def debug_out(msg1, msg2=None):
+def debug_out(msg1: str, msg2: str | dict | None = None) -> None:
     """メッセージ標準出力(テスト用)
 
     Args:
         msg1 (str): _description_
-        msg2 (str, optional): _description_. Defaults to None.
+        msg2 (str | dict | None, optional): _description_. Defaults to None.
     """
 
     print(msg1)
