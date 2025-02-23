@@ -97,9 +97,9 @@ def query_modification(sql: str):
 
     # デバッグ用
     func = inspect.stack()[1].function
-    logging.trace("s: opt=%s", func, vars(g.opt))
-    logging.trace("s: prm=%s", func, vars(g.prm))
-    logging.trace("s: sql=%s", func, textwrap.dedent(sql))
+    logging.trace("%s: opt=%s", func, vars(g.opt))
+    logging.trace("%s: prm=%s", func, vars(g.prm))
+    logging.trace("%s: sql=%s", func, textwrap.dedent(sql))
 
     return (sql)
 
