@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Tuple
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -15,11 +16,11 @@ mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 
 
-def plot():
+def plot() -> Tuple[int, str]:
     """個人成績のグラフを生成する
 
     Returns:
-        Tuple[int, str]:
+        Tuple[int,str]:
             - int: グラフにプロットしたゲーム数
             - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
 
@@ -118,11 +119,11 @@ def plot():
     return (len(df), save_file)
 
 
-def statistics_plot():
+def statistics_plot() -> Tuple[int, str]:
     """個人成績の統計グラフを生成する
 
     Returns:
-        Tuple[int, str]:
+        Tuple[int,str]:
             - int: 集計対象のゲーム数
             - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
@@ -160,7 +161,7 @@ def statistics_plot():
     total_index = "全区間"
 
     rpoint_stats = {
-        "ゲーム数": rpoint_df.count(),
+        "ゲーム数": rpoint_df.count().astype("int"),
         "平均値(x)": rpoint_df.mean().round(1),
         "最小値": rpoint_df.min().astype("int"),
         "第一四分位数": rpoint_df.quantile(0.25).astype("int"),
@@ -169,15 +170,17 @@ def statistics_plot():
         "最大値": rpoint_df.max().astype("int"),
     }
     stats_df = pd.DataFrame(rpoint_stats)
-    stats_df.loc[total_index] = {
-        "ゲーム数": player_df["rpoint"].count(),
-        "平均値(x)": player_df["rpoint"].mean().round(1),
-        "最小値": player_df["rpoint"].min().astype("int"),
-        "第一四分位数": player_df["rpoint"].quantile(0.25).astype("int"),
-        "中央値(|)": player_df["rpoint"].median().astype("int"),
-        "第三四分位数": player_df["rpoint"].quantile(0.75).astype("int"),
-        "最大値": player_df["rpoint"].max().astype("int"),
-    }
+    stats_df.loc[total_index] = pd.Series(
+        {
+            "ゲーム数": player_df["rpoint"].count().astype("int"),
+            "平均値(x)": player_df["rpoint"].mean().round(1),
+            "最小値": player_df["rpoint"].min().astype("int"),
+            "第一四分位数": player_df["rpoint"].quantile(0.25).astype("int"),
+            "中央値(|)": player_df["rpoint"].median().astype("int"),
+            "第三四分位数": player_df["rpoint"].quantile(0.75).astype("int"),
+            "最大値": player_df["rpoint"].max().astype("int"),
+        }
+    )
     stats_df = stats_df.apply(lambda col: col.map(lambda x: f"{int(x)}" if isinstance(x, int) else f"{x:.1f}"))
 
     count_stats = {
@@ -197,23 +200,25 @@ def statistics_plot():
     }
     count_df = pd.DataFrame(count_stats)
 
-    count_df.loc[total_index] = {
-        "ゲーム数": count_df["ゲーム数"].sum().astype("int"),
-        "1位": count_df["1位"].sum().astype("int"),
-        "2位": count_df["2位"].sum().astype("int"),
-        "3位": count_df["3位"].sum().astype("int"),
-        "4位": count_df["4位"].sum().astype("int"),
-        "1位(%)": (count_df["1位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
-        "2位(%)": (count_df["2位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
-        "3位(%)": (count_df["3位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
-        "4位(%)": (count_df["4位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
-        "平均順位": player_df["rank"].mean().round(2),
-        "区間ポイント": player_df["point"].sum().round(1),
-        "区間平均": player_df["point"].mean().round(1),
-    }
-    #
+    count_df.loc[total_index] = pd.Series(
+        {
+            "ゲーム数": count_df["ゲーム数"].sum().astype("int"),
+            "1位": count_df["1位"].sum().astype("int"),
+            "2位": count_df["2位"].sum().astype("int"),
+            "3位": count_df["3位"].sum().astype("int"),
+            "4位": count_df["4位"].sum().astype("int"),
+            "1位(%)": (count_df["1位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
+            "2位(%)": (count_df["2位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
+            "3位(%)": (count_df["3位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
+            "4位(%)": (count_df["4位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
+            "平均順位": player_df["rank"].mean().round(2),
+            "区間ポイント": player_df["point"].sum().round(1),
+            "区間平均": player_df["point"].mean().round(1),
+        }
+    )
+    # テーブル用データ
     rank_table = pd.DataFrame()
-    rank_table["ゲーム数"] = count_df["ゲーム数"]
+    rank_table["ゲーム数"] = count_df["ゲーム数"].astype("int")
     rank_table["1位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["1位(%)"], row["1位"]), axis=1)  # pylint: disable=consider-using-f-string
     rank_table["2位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["2位(%)"], row["2位"]), axis=1)  # pylint: disable=consider-using-f-string
     rank_table["3位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["3位(%)"], row["3位"]), axis=1)  # pylint: disable=consider-using-f-string
@@ -250,8 +255,6 @@ def statistics_plot():
         kind="line",
         title="ポイント推移",
         ylabel="通算ポイント(pt)",
-        y=point_df.values.tolist(),
-        x=point_df.index.to_list(),
         marker="o",
         color="b",
     )
@@ -262,8 +265,7 @@ def statistics_plot():
         [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
     )
 
-    xxx2 = count_df.apply(lambda col: col.map(lambda x: x if isinstance(x, int) else f"{x:+.1f}"))
-    subplot_table(xxx2.filter(items=["ゲーム数", "区間ポイント", "区間平均", "通算ポイント"]), ax_point2)
+    subplot_table(count_df.filter(items=["ゲーム数", "区間ポイント", "区間平均", "通算ポイント"]), ax_point2)
 
     # 順位データ
     ax_rank_avg = ax_rank1.twinx()
@@ -309,11 +311,11 @@ def statistics_plot():
     return (len(player_df), save_file)
 
 
-def get_data(df, interval):
+def get_data(df: pd.Series, interval: int) -> pd.DataFrame:
     """データフレームを指定範囲で分割する
 
     Args:
-        df (pd.DataFrame): 分割するデータ
+        df (pd.Series): 分割するデータ
         interval (int): 1ブロックに収めるデータ数
 
     Returns:
@@ -321,27 +323,26 @@ def get_data(df, interval):
     """
 
     # interval単位で分割
-    rpoint_data = {}
+    rpoint_data: dict = {}
 
-    s = 0
-    e = len(df) % interval
-    if e:
-        rpoint_data[f"{(s + 1):3d}G - {e:3d}G"] = ([None] * interval + df[s:e].to_list())[-interval::]
+    fraction = 0 if not len(df) % interval else interval - len(df) % interval  # 端数
+    if fraction:
+        df = pd.concat([pd.Series([None] * fraction), df], ignore_index=True)
 
     for x in range(int(len(df) / interval)):
         s = len(df) % interval + interval * x
         e = s + interval
-        rpoint_data[f"{(s + 1):3d}G - {e:3d}G"] = df[s:e].to_list()
+        rpoint_data[f"{max(1, s + 1 - fraction):3d}G - {(e - fraction):3d}G"] = df.iloc[s:e].tolist()
 
     return (pd.DataFrame(rpoint_data))
 
 
-def subplot_box(df, ax):
+def subplot_box(df: pd.DataFrame, ax: plt.Axes) -> None:
     """箱ひげ図を生成する
 
     Args:
         df (pd.DataFrame): プロットデータ
-        ax (matplotlib.axes): プロット先オブジェクト
+        ax (plt.Axes): プロット先オブジェクト
     """
 
     p = [x + 1 for x in range(len(df.columns))]
@@ -367,20 +368,35 @@ def subplot_box(df, ax):
     )
 
 
-def subplot_table(df, ax):
+def subplot_table(df: pd.DataFrame, ax: plt.Axes) -> None:
     """テーブルを生成する
 
     Args:
         df (pd.DataFrame): プロットデータ
-        ax (matplotlib.axes): プロット先オブジェクト
+        ax (plt.Axes): プロット先オブジェクト
     """
+
+    # 有効桁数の調整
+    for col in df.columns:
+        match col:
+            case "ゲーム数":
+                df[col] = df[col].apply(lambda x: int(float(x)))
+            case "区間ポイント" | "区間平均" | "通算ポイント":
+                df[col] = df[col].apply(lambda x: f"{float(x):+.1f}")
+            case "平均順位":
+                df[col] = df[col].apply(lambda x: f"{float(x):.2f}")
+            case "平均値(x)":
+                df[col] = df[col].apply(lambda x: f"{float(x):.1f}")
+            case "最小値" | "第一四分位数" | "中央値(|)" | "第三四分位数" | "最大値":
+                df[col] = df[col].apply(lambda x: int(float(x)))
 
     df = df.apply(lambda col: col.map(lambda x: str(x).replace("-", "▲")))
     df.replace("+nan", "-----", inplace=True)
+
     table = ax.table(
-        cellText=df.values,
-        colLabels=df.columns,
-        rowLabels=df.index,
+        cellText=df.values.tolist(),
+        colLabels=df.columns.tolist(),
+        rowLabels=df.index.tolist(),
         cellLoc='center',
         loc='center',
     )
