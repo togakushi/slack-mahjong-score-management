@@ -5,12 +5,18 @@ from dateutil.relativedelta import relativedelta
 
 from cls import config
 
+# slack object
+app: Any = None
+webclient: Any = None
+
 # モジュール共通クラス
 cfg = config.Config()
 opt: Any = None
 prm: Any = None
 msg: Any = None
 search_word: Any = None
+
+args: Any = None
 
 # 固定値
 wind = ("東家", "南家", "西家", "北家")

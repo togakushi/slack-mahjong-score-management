@@ -12,7 +12,7 @@ class SearchRange():
     """検索範囲取得クラス
     """
 
-    words = {}
+    words: dict = {}
     day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 
     def __init__(self) -> None:

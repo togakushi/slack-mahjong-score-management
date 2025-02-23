@@ -11,10 +11,10 @@ class MessageParser():
     """
 
     client: WebClient = WebClient()
-    channel_id: str = str()
-    channel_type: str = str()
+    channel_id: str | None = str()
+    channel_type: str | None = str()
     user_id: str = str()
-    text: str = str()  # post本文
+    text: str | None = str()  # post本文
     event_ts: str = str()  # テキストのまま処理する
     thread_ts: str = str()  # テキストのまま処理する
     status: str = str()  # event subtype
@@ -23,7 +23,7 @@ class MessageParser():
     updatable: bool = bool()
     in_thread: bool = bool()
 
-    def __init__(self, body: dict = None):
+    def __init__(self, body: dict | None = None):
         if isinstance(body, dict):
             self.parser(body)
 

@@ -277,8 +277,8 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
     if (all(df.count() == 1) or g.opt.collection == "all") and kwargs["horizontal"]:
         kwargs["kind"] = "barh"
-        lab = []
-        color = []
+        lab: list = []
+        color: list = []
         for _, v in kwargs["target_data"].iterrows():
             lab.append("{:2d}位：{} ({}pt / {}G)".format(  # pylint: disable=consider-using-f-string
                 v["position"],
@@ -309,7 +309,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         # X軸修正
         xlocs, xlabs = plt.xticks()
         new_xlabs = [xlab.get_text().replace("−", "▲") for xlab in xlabs]
-        plt.xticks(xlocs[1:-1], new_xlabs[1:-1])
+        plt.xticks(list(xlocs[1:-1]), new_xlabs[1:-1])
 
         logging.info("plot data:\n%s", tmpdf)
     else:
@@ -348,7 +348,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         # Y軸修正
         ylocs, ylabs = plt.yticks()
         new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
-        plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
+        plt.yticks(list(ylocs[1:-1]), new_ylabs[1:-1])
 
         logging.info("plot data:\n%s", df)
 

@@ -191,7 +191,7 @@ class Config():
             list: リスト化されたキーワード
         """
 
-        words = []
+        words: list = []
 
         words.append([self.setting.slash_command])
         words.append([self.search.keyword])
