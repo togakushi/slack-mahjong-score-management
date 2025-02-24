@@ -4,7 +4,6 @@ import sqlite3
 from contextlib import closing
 from datetime import datetime
 
-import regex_spm
 from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
@@ -35,31 +34,35 @@ def pattern(text):
     for z, h in replace_chr:
         text = text.replace(z, h)
 
-    # パターンマッチング
-    class Regexes:
-        keyword = g.cfg.search.keyword
-        pattern1 = re.compile(
-            rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
-        )
-        pattern2 = re.compile(
-            r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$"
-        )
-        pattern3 = re.compile(
-            rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
-        )
-        pattern4 = re.compile(
-            r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$"
-        )
+    text = "".join(text.split())
 
-    match regex_spm.fullmatch_in("".join(text.split())):
-        case Regexes.pattern1 as m:
-            msg = [m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], None]
-        case Regexes.pattern2 as m:
+    # パターンマッチング
+    pattern1 = re.compile(
+        rf"^({g.cfg.search.keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
+    )
+    pattern2 = re.compile(
+        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({g.cfg.search.keyword})$"
+    )
+    pattern3 = re.compile(
+        rf"^({g.cfg.search.keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
+    )
+    pattern4 = re.compile(
+        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({g.cfg.search.keyword})\((.+?)\)$"
+    )
+
+    match text:
+        case text if pattern1.findall(text):
+            m = pattern1.findall(text)[0]
             msg = [m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], None]
-        case Regexes.pattern3 as m:
-            msg = [m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[2]]
-        case Regexes.pattern4 as m:
-            msg = [m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[10]]
+        case text if pattern2.findall(text):
+            m = pattern2.findall(text)[0]
+            msg = [m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], None]
+        case text if pattern3.findall(text):
+            m = pattern3.findall(text)[0]
+            msg = [m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[1]]
+        case text if pattern4.findall(text):
+            m = pattern4.findall(text)[0]
+            msg = [m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[9]]
         case _:
             msg = False
 
@@ -172,7 +175,7 @@ def for_database(first_ts=False):
     if not first_ts:
         return (None)
 
-    data = {}
+    data: dict = {}
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
         curs = cur.cursor()

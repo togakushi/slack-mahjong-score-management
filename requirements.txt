@@ -2,6 +2,5 @@ slack-bolt
 slack-sdk
 matplotlib
 reportlab
-regex_spm
 pandas
 tabulate[widechars] # type: ignore
