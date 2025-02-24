@@ -48,11 +48,11 @@ def aggregation():
     """).strip()
     msg1 = f.message.del_blank_line(msg1)
 
-    msg2 = {}  # 対戦結果格納用
+    msg2: dict = {}  # 対戦結果格納用
 
     # --- 表示内容
-    tmp_msg = {}
-    drop_name = []
+    tmp_msg: dict = {}
+    drop_name: list = []
     if len(df_vs) == 0:  # 検索結果なし
         msg2[""] = "対戦記録が見つかりません。\n"
         return (msg1, msg2, "")

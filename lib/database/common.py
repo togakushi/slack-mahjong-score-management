@@ -230,20 +230,20 @@ def db_delete(ts):
                 f.slack_api.call_reactions_remove(icon, ts=x)
 
 
-def db_backup():
+def db_backup() -> str:
     """データベースのバックアップ
 
     Returns:
         str: 動作結果メッセージ
     """
 
+    if not g.cfg.db.backup_dir:  # バックアップ設定がされていない場合は何もしない
+        return ("")
+
     fname = os.path.splitext(g.cfg.db.database_file)[0]
     fext = os.path.splitext(g.cfg.db.database_file)[1]
     bktime = datetime.now().strftime('%Y%m%d-%H%M%S')
     bkfname = os.path.join(g.cfg.db.backup_dir, f"{fname}_{bktime}{fext}")
-
-    if not g.cfg.db.backup_dir:  # バックアップ設定がされていない場合は何もしない
-        return ("")
 
     if not os.path.isdir(g.cfg.db.backup_dir):  # バックアップディレクトリ作成
         try:

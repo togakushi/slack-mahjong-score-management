@@ -12,11 +12,13 @@ mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 
 
-def plot():
+def plot() -> str | bool:
     """成績上位者を一覧化
 
     Returns:
-        str: 生成ファイルパス
+        Union[str,bool]:
+            - str: 生成ファイルパス
+            - False: 描写データなし
     """
 
     plt.close()
@@ -26,7 +28,7 @@ def plot():
     if len(results_df) == 0:
         return (False)
 
-    results = {}
+    results: dict = {}
     for _, v in results_df.iterrows():
         results[v["collection"]] = {}
         results[v["collection"]]["集計月"] = v["collection"]

@@ -480,7 +480,7 @@ def matrix_table():
     )))
 
     # 順位テーブルの作成
-    l_data = {}
+    l_data: dict = {}
     for pname in plist:
         if g.opt.individual:  # 個人集計
             l_name = c.member.name_replace(pname)
@@ -552,13 +552,13 @@ def matrix_table():
                 t_win += win
 
                 if game_count:
-                    winning_per = round(float(win / game_count * 100), 1)
+                    winning_per = str(round(float(win / game_count * 100), 1))
                 else:
                     winning_per = "--.-"
                 mtx_df.loc[f"{p1.name}", f"{p2.name}"] = f"{win}-{game_count - win} ({winning_per}%)"
 
         if t_game_count:
-            t_winning_per = round(float(t_win / t_game_count * 100), 1)
+            t_winning_per = str(round(float(t_win / t_game_count * 100), 1))
         else:
             t_winning_per = "--.-"
         mtx_df.loc[f"{p1.name}", "total"] = f"{t_win}-{t_game_count - t_win} ({t_winning_per}%)"

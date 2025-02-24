@@ -139,9 +139,9 @@ class CommandCheck(str):
     def __init__(self, command_name: str):
         self.command_name = command_name
 
-    def __eq__(self, chk_pattern):
-        commandlist = g.cfg.config["alias"].get(chk_pattern, "")
-        commandlist = [chk_pattern] + [x for x in commandlist.split(",") if x]
+    def __eq__(self, chk_pattern: str) -> bool:
+        commandlist = g.cfg.config["alias"].get(chk_pattern, "").split(",")
+        commandlist = [chk_pattern] + [x for x in commandlist if x]
 
         if self.command_name in commandlist:
             return (True)

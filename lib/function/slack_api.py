@@ -2,12 +2,13 @@ import logging
 import re
 
 from slack_sdk.errors import SlackApiError
+from slack_sdk.web import SlackResponse
 
 import lib.global_value as g
 from lib import function as f
 
 
-def call_chat_post_message(**kwargs):
+def call_chat_post_message(**kwargs) -> SlackResponse:
     """slackにメッセージをポストする
 
     Returns:
@@ -29,7 +30,7 @@ def call_chat_post_message(**kwargs):
     return (res)
 
 
-def call_files_upload(**kwargs):
+def call_files_upload(**kwargs) -> SlackResponse:
     """slackにファイルをアップロードする
 
     Returns:
@@ -51,7 +52,7 @@ def call_files_upload(**kwargs):
     return (res)
 
 
-def post_message(message, ts=False):
+def post_message(message, ts=False) -> SlackResponse:
     """chat_postMessageに渡すパラメータを設定
 
     Args:
@@ -109,7 +110,7 @@ def post_multi_message(msg, ts=False, summarize=True):
             post_message(msg, ts)
 
 
-def post_text(event_ts, title, msg):
+def post_text(event_ts, title, msg) -> SlackResponse:
     """コードブロック修飾付きポスト
 
     Args:
@@ -152,7 +153,7 @@ def post_text(event_ts, title, msg):
     return (res)
 
 
-def post_fileupload(title, file, ts=False):
+def post_fileupload(title: str, file: str, ts: bool = False) -> SlackResponse | None:
     """files_upload_v2に渡すパラメータを設定
 
     Args:
@@ -161,22 +162,23 @@ def post_fileupload(title, file, ts=False):
         ts (bool, optional): スレッドに返す. Defaults to False.
 
     Returns:
-        SlackResponse: API response
+        SlackResponse | None: 結果
     """
+
+    if g.args.testcase:
+        f.common.debug_out(title, file)
+        return (None)
 
     if not ts and g.msg.thread_ts:
         ts = g.msg.thread_ts
 
-    if g.args.testcase:
-        res = f.common.debug_out(title, file)  # pylint: disable=assignment-from-no-return
-    else:
-        res = call_files_upload(
-            channel=g.msg.channel_id,
-            title=title,
-            file=file,
-            thread_ts=ts,
-            request_file_info=False,
-        )
+    res = call_files_upload(
+        channel=g.msg.channel_id,
+        title=title,
+        file=file,
+        thread_ts=ts,
+        request_file_info=False,
+    )
 
     return (res)
 
@@ -286,7 +288,7 @@ def reactions_status(ch=None, ts=None):
 
     ch = ch if ch else g.msg.channel_id
     ts = ts if ts else g.msg.event_ts
-    icon = []
+    icon: list = []
 
     try:  # 削除済みメッセージはエラーになるので潰す
         res = g.app.client.reactions_get(channel=ch, timestamp=ts)

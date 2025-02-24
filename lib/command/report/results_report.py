@@ -3,6 +3,7 @@ import os
 import sqlite3
 from datetime import datetime
 from io import BytesIO
+from typing import List, Tuple, Union
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -301,7 +302,7 @@ def graphing_total_points(df, title, whole=False):
     plt.ylabel("ポイント", fontsize=14)
     ylocs, ylabs = plt.yticks()
     new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
-    plt.yticks(ylocs[1:-1], new_ylabs[1:-1])
+    plt.yticks(list(ylocs[1:-1]), new_ylabs[1:-1])
 
     # X軸設定
     plt.xlabel("ゲーム数", fontsize=14)
@@ -408,7 +409,7 @@ def gen_pdf():
         # leftMargin=1.5 * mm,
         # rightMargin=1.5 * mm,
     )
-    style = {}
+    style: dict = {}
     style["Title"] = ParagraphStyle(
         name="Title", fontName="ReportFont", fontSize=24
     )
@@ -428,7 +429,11 @@ def gen_pdf():
     fm.fontManager.addfont(font_path)
 
     # --- レポート作成
-    elements = []
+    elements: list = []
+    pattern: Union[
+        List[Tuple[str, str, str]],  # 期間集計 / 表タイトル, グラフタイトル, フラグ
+        List[Tuple[int, int, str]],  # 区間集計 / 区切り回数, 閾値, タイトル
+    ]
 
     # タイトル
     elements.append(Spacer(1, 40 * mm))
@@ -499,7 +504,7 @@ def gen_pdf():
         wedgeprops={"linewidth": 1, "edgecolor": "white"},
     )
     plt.title("順位分布 （ 全期間 ）", fontsize=18)
-    plt.ylabel(None)
+    plt.ylabel("")
     plt.legend(
         list(gdata.index),
         bbox_to_anchor=(0.5, -0.1),

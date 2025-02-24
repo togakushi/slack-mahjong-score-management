@@ -1,32 +1,33 @@
 from datetime import datetime
+from typing import Tuple
 
 from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
 
 
-def plain_text(msg):
-    view = {"type": "home", "blocks": []}
+def plain_text(msg: str) -> dict:
+    view: dict = {"type": "home", "blocks": []}
     view["blocks"].append({"type": "section", "text": {}})
     view["blocks"][0]["text"] = {"type": "mrkdwn", "text": msg}
 
     return (view)
 
 
-def divider(view, no):
+def divider(view: dict, no: int) -> Tuple[dict, int]:
     view["blocks"].append({"type": "divider", })
 
     return (view, no + 1)
 
 
-def header(view, no, text="dummy"):
+def header(view: dict, no: int, text: str = "dummy") -> Tuple[dict, int]:
     view["blocks"].append({"type": "header", "text": {}})
     view["blocks"][no]["text"] = {"type": "plain_text", "text": text}
 
     return (view, no + 1)
 
 
-def button(view, no, text="Click Me", action_id=False, style=False):
+def button(view: dict, no: int, text: str = "Click Me", action_id: str | bool = False, style: str | bool = False) -> Tuple[dict, int]:
     view["blocks"].append({"type": "actions", "elements": [{}]})
     view["blocks"][no]["elements"][0] = {"type": "button", "text": {}, "action_id": action_id}
     view["blocks"][no]["elements"][0]["text"] = {"type": "plain_text", "text": text}
@@ -37,7 +38,7 @@ def button(view, no, text="Click Me", action_id=False, style=False):
     return (view, no + 1)
 
 
-def radio_buttons(view, no, id_suffix, title, flag):
+def radio_buttons(view: dict, no: int, id_suffix: str, title: str, flag: dict) -> Tuple[dict, int]:
     """オプション選択メニュー
 
     Args:
@@ -69,7 +70,7 @@ def radio_buttons(view, no, id_suffix, title, flag):
     return (view, no + 1)
 
 
-def checkboxes(view, no, id_suffix, title, flag, initial=None):
+def checkboxes(view: dict, no: int, id_suffix: str, title: str, flag: dict | None = None, initial: list | None = None) -> Tuple[dict, int]:
     """チェックボックス選択メニュー
 
     Args:
@@ -85,6 +86,9 @@ def checkboxes(view, no, id_suffix, title, flag, initial=None):
             - dict: 描写内容
             - int: 次のブロックNo
     """
+
+    if flag is None:
+        flag = {}
 
     view["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
     view["blocks"][no]["label"] = {"type": "plain_text", "text": title}
@@ -108,7 +112,7 @@ def checkboxes(view, no, id_suffix, title, flag, initial=None):
     return (view, no + 1)
 
 
-def user_select(view, no, text="dummy", add_list=False):
+def user_select(view: dict, no: int, text: str = "dummy", add_list: list | None = None) -> Tuple[dict, int]:
     view["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     view["blocks"][no]["element"]["type"] = "static_select"
     view["blocks"][no]["element"]["action_id"] = "player"
@@ -116,7 +120,7 @@ def user_select(view, no, text="dummy", add_list=False):
     view["blocks"][no]["element"]["options"] = []
 
     if add_list:
-        for _, val in enumerate(add_list):
+        for val in add_list:
             view["blocks"][no]["element"]["options"].append(
                 {"text": {"type": "plain_text", "text": val}, "value": val}
             )
@@ -131,7 +135,7 @@ def user_select(view, no, text="dummy", add_list=False):
     return (view, no + 1)
 
 
-def multi_select(view, no, text="dummy", add_list=False):
+def multi_select(view: dict, no: int, text: str = "dummy", add_list: list | None = None) -> Tuple[dict, int]:
     view["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
     view["blocks"][no]["element"]["type"] = "multi_static_select"
     view["blocks"][no]["element"]["action_id"] = "player"
@@ -139,7 +143,7 @@ def multi_select(view, no, text="dummy", add_list=False):
     view["blocks"][no]["element"]["options"] = []
 
     if add_list:
-        for _, val in enumerate(add_list):
+        for val in add_list:
             view["blocks"][no]["element"]["options"].append(
                 {"text": {"type": "plain_text", "text": val}, "value": val}
             )
@@ -154,7 +158,7 @@ def multi_select(view, no, text="dummy", add_list=False):
     return (view, no + 1)
 
 
-def period_selection(view, no, text="dummy", block_id=False, action_id="dummy", initial_date=False):
+def period_selection(view: dict, no: int, text: str = "dummy", block_id: str | bool = False, action_id: str = "dummy", initial_date: str | bool = False) -> Tuple[dict, int]:
     if not initial_date:
         initial_date = (
             datetime.now() + relativedelta(hours=-12)
@@ -174,7 +178,7 @@ def period_selection(view, no, text="dummy", block_id=False, action_id="dummy", 
     return (view, no + 1)
 
 
-def input_ranked(view, no, block_id=False):
+def input_ranked(view: dict, no: int, block_id: str | bool = False) -> Tuple[dict, int]:
     if block_id:
         view["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
     else:
@@ -190,8 +194,8 @@ def input_ranked(view, no, block_id=False):
     return (view, no + 1)
 
 
-def modalperiod_selection():
-    view = {"type": "modal", "callback_id": f"{g.app_var['screen']}_ModalPeriodSelection"}
+def modalperiod_selection() -> dict:
+    view: dict = {"type": "modal", "callback_id": f"{g.app_var['screen']}_ModalPeriodSelection"}
     view["title"] = {"type": "plain_text", "text": "検索範囲指定"}
     view["submit"] = {"type": "plain_text", "text": "決定"}
     view["close"] = {"type": "plain_text", "text": "取消"}

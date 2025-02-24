@@ -46,7 +46,7 @@ def aggregation():
         return (headline, {}, {})
 
     # --- 集計結果
-    msg = {}
+    msg: dict = {}
     msg_memo = ""
 
     if not g.opt.score_comparisons:  # 通常表示
@@ -99,7 +99,7 @@ def aggregation():
 
     # --- メッセージ整形
     step = 40
-    step_count = []
+    step_count: list = []
     last_line = len(df_summary)
 
     for i in range(int(last_line / step + 1)):  # step行毎に分割

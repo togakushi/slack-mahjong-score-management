@@ -272,8 +272,8 @@ def member_append(argument):
                     union all select name from remarks
                 ) group by name;
                 """
-            ).fetchall()
-            name_list = [row["name"] for row in rows]
+            )
+            name_list = [row["name"] for row in rows.fetchall()]
 
             if {nic_name, f.common.kata_to_hira(nic_name), f.common.hira_to_kana(nic_name)} & set(name_list):
                 msg += d.common.db_backup()

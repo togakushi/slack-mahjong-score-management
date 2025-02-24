@@ -164,7 +164,7 @@ class Config():
             # filename: str = self.config[section].get("filename", True)
             # format: str = self.config[section].get("format", True)
             fourfold: bool = self.config[section].getboolean("fourfold", True)
-            game_results: bool = self.config[section].get("game_results", False)
+            game_results: str | bool = self.config[section].get("game_results", False)
             group_length: int = self.config[section].getint("group_length", 0)
             guest_skip: bool = self.config[section].getboolean("guest_skip", True)
             guest_skip2: bool = self.config[section].getboolean("guest_skip2", True)
