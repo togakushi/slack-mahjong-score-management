@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import Any
 
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
@@ -8,11 +9,11 @@ import lib.global_value as g
 from lib import function as f
 
 
-def call_chat_post_message(**kwargs) -> SlackResponse:
+def call_chat_post_message(**kwargs) -> SlackResponse | Any:
     """slackにメッセージをポストする
 
     Returns:
-        SlackResponse: API response
+        SlackResponse | Any: API response
     """
 
     res = None
@@ -30,11 +31,11 @@ def call_chat_post_message(**kwargs) -> SlackResponse:
     return (res)
 
 
-def call_files_upload(**kwargs) -> SlackResponse:
+def call_files_upload(**kwargs) -> SlackResponse | Any:
     """slackにファイルをアップロードする
 
     Returns:
-        SlackResponse: API response
+        SlackResponse | Any: API response
     """
 
     res = None
@@ -52,7 +53,7 @@ def call_files_upload(**kwargs) -> SlackResponse:
     return (res)
 
 
-def post_message(message, ts=False) -> SlackResponse:
+def post_message(message, ts=False) -> SlackResponse | Any:
     """chat_postMessageに渡すパラメータを設定
 
     Args:
@@ -60,10 +61,10 @@ def post_message(message, ts=False) -> SlackResponse:
         ts (bool, optional): スレッドに返す. Defaults to False.
 
     Returns:
-        SlackResponse: API response
+        SlackResponse | Any: API response
     """
 
-    res = {}
+    res: dict = {}
     if not ts and g.msg.thread_ts:
         ts = g.msg.thread_ts
 
@@ -80,7 +81,7 @@ def post_message(message, ts=False) -> SlackResponse:
     return (res)
 
 
-def post_multi_message(msg, ts=False, summarize=True):
+def post_multi_message(msg: dict | list, ts: bool | None = False, summarize: bool = True) -> None:
     """メッセージを分割してポスト
 
     Args:
@@ -110,7 +111,7 @@ def post_multi_message(msg, ts=False, summarize=True):
             post_message(msg, ts)
 
 
-def post_text(event_ts, title, msg) -> SlackResponse:
+def post_text(event_ts, title, msg) -> SlackResponse | Any:
     """コードブロック修飾付きポスト
 
     Args:
@@ -119,7 +120,7 @@ def post_text(event_ts, title, msg) -> SlackResponse:
         msg (str): 本文
 
     Returns:
-        SlackResponse: API response
+        SlackResponse | Any: API response
     """
 
     # コードブロック修飾付きポスト
@@ -153,7 +154,7 @@ def post_text(event_ts, title, msg) -> SlackResponse:
     return (res)
 
 
-def post_fileupload(title: str, file: str, ts: bool = False) -> SlackResponse | None:
+def post_fileupload(title: str, file: str | bool, ts: bool | None = False) -> SlackResponse | None:
     """files_upload_v2に渡すパラメータを設定
 
     Args:
@@ -292,7 +293,7 @@ def reactions_status(ch=None, ts=None):
 
     try:  # 削除済みメッセージはエラーになるので潰す
         res = g.app.client.reactions_get(channel=ch, timestamp=ts)
-        logging.trace(res.validate())
+        logging.trace(res.validate())  # type: ignore
     except SlackApiError:
         return (icon)
 
@@ -343,7 +344,7 @@ def get_conversations(ch=None, ts=None):
 
     try:
         res = g.app.client.conversations_replies(channel=ch, ts=ts)
-        logging.trace(res.validate())
+        logging.trace(res.validate())  # type: ignore
     except SlackApiError as e:
         logging.error(e)
 

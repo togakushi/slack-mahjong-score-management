@@ -11,15 +11,15 @@ from lib import command as c
 from lib import function as f
 
 
-def pattern(text):
+def pattern(text: str) -> list | bool:
     """成績記録用フォーマットチェック
 
     Args:
         text (str): slackにポストされた内容
 
     Returns:
-        Tuple[str, bool]:
-            - str: フォーマットに一致すればスペース区切りの名前と素点のペア
+        Tuple[list,bool]:
+            - list: フォーマットに一致すればスペース区切りの名前と素点のペア
             - False: メッセージのパースに失敗した場合
     """
 
@@ -101,7 +101,7 @@ def for_slack():
         matches += response["messages"]["matches"]  # 2ページ目以降
 
     # ゲーム結果の抽出
-    data = {}
+    data: dict = {}
     for x in matches:
         user_id = x.get("user")
         if user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
@@ -124,7 +124,7 @@ def for_slack():
                     "reaction_ok": [],
                     "reaction_ng": [],
                 }
-                logging.trace("slack data: %s : %s", x["ts"], data[x["ts"]])
+                logging.trace("slack data: %s : %s", x["ts"], data[x["ts"]])  # type: ignore
 
     # 検索データが無い場合は空の辞書を返して後続の処理をスキップ
     if not data:

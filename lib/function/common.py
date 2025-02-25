@@ -325,12 +325,12 @@ def scope_coverage(argument: list) -> Tuple[list, list]:
     return (target_days, new_argument)
 
 
-def debug_out(msg1: str, msg2: str | dict | None = None) -> None:
+def debug_out(msg1: str, msg2: str | dict | list | bool | None = None) -> None:
     """メッセージ標準出力(テスト用)
 
     Args:
         msg1 (str): _description_
-        msg2 (str | dict | None, optional): _description_. Defaults to None.
+        msg2 (str | dict | list | bool | None, optional): _description_. Defaults to None.
     """
 
     print(msg1)

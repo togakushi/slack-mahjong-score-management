@@ -47,12 +47,12 @@ def read_memberslist(log=True):
     resultdb.close()
 
     if log:
-        logging.notice(f"guest_name: {g.prm.guest_name}")
-        logging.notice(f"member_list: {set(g.member_list.values())}")
-        logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")
+        logging.notice(f"guest_name: {g.prm.guest_name}")  # type: ignore
+        logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
+        logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")  # type: ignore
 
 
-def name_replace(pname, add_mark=False, mask=True):
+def name_replace(pname: str, add_mark: bool = False, mask: bool = True) -> str:
     """表記ブレ修正(正規化)
 
     Args:
@@ -238,7 +238,7 @@ def member_append(argument):
                     (new_name, new_name)
                 )
                 msg = f"「{new_name}」を登録しました。"
-                logging.notice(f"add new member: {new_name}")
+                logging.notice(f"add new member: {new_name}")  # type: ignore
 
     if len(argument) == 2:  # 別名登録
         new_name = f.common.han_to_zen(argument[0])
@@ -258,7 +258,7 @@ def member_append(argument):
             if ret:
                 resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
                 msg = f"「{new_name}」に「{nic_name}」を追加しました。"
-                logging.notice(f"add alias: {new_name} -> {nic_name}")
+                logging.notice(f"add alias: {new_name} -> {nic_name}")  # type: ignore
                 dbupdate_flg = True
 
         if dbupdate_flg:
@@ -316,7 +316,7 @@ def member_remove(argument):
             resultdb.execute("delete from member where name=?", (new_name,))
             resultdb.execute("delete from alias where member=?", (new_name,))
             msg = f"「{new_name}」を削除しました。"
-            logging.notice(f"remove member: {new_name}")
+            logging.notice(f"remove member: {new_name}")  # type: ignore
         else:
             msg = f"「{new_name}」は登録されていません。"
 
@@ -329,7 +329,7 @@ def member_remove(argument):
                 (nic_name, new_name)
             )
             msg = f"「{new_name}」から「{nic_name}」を削除しました。"
-            logging.notice(f"alias remove: {new_name} -> {nic_name}")
+            logging.notice(f"alias remove: {new_name} -> {nic_name}")  # type: ignore
         else:
             msg = f"「{new_name}」に「{nic_name}」は登録されていません。"
 
