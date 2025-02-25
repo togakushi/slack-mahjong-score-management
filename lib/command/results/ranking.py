@@ -57,7 +57,7 @@ def aggregation():
     result_df = result_df.query("ゲーム数 >= @g.opt.stipulated")
     result_df = result_df.reset_index(drop=True)
 
-    data = {
+    data: dict = {
         # order: True -> 小さい値が上位 / False -> 大きい値が上位
         # column : 閾値対象のカラム名
         # threshold : 表示閾値
@@ -154,7 +154,7 @@ def aggregation():
         msg1 = "\n*【チームランキング】*\n"
 
     msg1 += f.message.header(game_info, "", 1)
-    msg2 = {}
+    msg2: dict = {}
 
     for key, val in data.items():
         if key in g.cfg.dropitems.ranking:  # 非表示項目

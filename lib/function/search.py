@@ -50,6 +50,7 @@ def pattern(text: str) -> list | bool:
         r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({g.cfg.search.keyword})\((.+?)\)$"
     )
 
+    msg: list | bool
     match text:
         case text if pattern1.findall(text):
             m = pattern1.findall(text)[0]

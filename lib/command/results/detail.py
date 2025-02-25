@@ -36,7 +36,7 @@ def aggregation():
     else:
         player_name = g.prm.player_name
 
-    msg_data = {}
+    msg_data: dict = {}
     if g.opt.individual:
         msg_data["title"] = "*【個人成績】*"
         msg_data["プレイヤー名"] = f"{player_name} {f.common.badge_degree(0)}"
