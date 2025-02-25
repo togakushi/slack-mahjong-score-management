@@ -1,6 +1,7 @@
 import logging
 import sqlite3
 from datetime import datetime
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -69,7 +70,7 @@ def game_info():
         "last_comment": None,
     }
 
-    if ret["game_count"] >= 1:
+    if cast(int, ret["game_count"]) >= 1:
         ret["first_game"] = df["first_game"].to_string(index=False).replace("-", "/")
         ret["last_game"] = df["last_game"].to_string(index=False).replace("-", "/")
         ret["first_comment"] = df["first_comment"].to_string(index=False)
@@ -122,7 +123,7 @@ def game_summary():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    logging.trace(df)
+    logging.trace(df)  # type: ignore
     return (df.fillna(value="*****"))
 
 
@@ -148,7 +149,7 @@ def game_details():
 
     df["表示名"] = _disp_name(df["name"], mark=False)
 
-    logging.trace(df)
+    logging.trace(df)  # type: ignore
     return (df.fillna(value=""))
 
 
@@ -177,7 +178,7 @@ def remark_count(kind):
     if kind == "grandslam":
         df = df.filter(items=["プレイヤー名", "matter", "count"])
 
-    logging.trace(df)
+    logging.trace(df)  # type: ignore
     return (df)
 
 
@@ -208,7 +209,7 @@ def game_results():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    logging.trace(df)
+    logging.trace(df)  # type: ignore
     return (df)
 
 
@@ -345,7 +346,7 @@ def ranking_record():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    logging.trace(df)
+    logging.trace(df)  # type: ignore
     return (df)
 
 
@@ -599,5 +600,5 @@ def results_list():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-    logging.trace(df)
+    logging.trace(df)  # type: ignore
     return (df)

@@ -169,7 +169,7 @@ def aggregation():
         )
 
         for _, s in tmp_df.drop_duplicates(subset="name").iterrows():
-            msg2[key] += ("\t{:3d}：{}\t" + val["str"] + "\n").format(
+            msg2[key] += ("\t{:3d}：{}\t" + str(val["str"]) + "\n").format(
                 int(s[f"{key}_rank"]), s["表示名"],
                 *[s[x] for x in val["params"]]
             ).replace("-", "▲")
