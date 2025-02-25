@@ -458,7 +458,7 @@ def gen_pdf():
     elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5 * mm))
     tmp_data = get_game_results(flag="A")
-    data = []
+    data: list = []
 
     if not tmp_data:
         return (False, False)
@@ -519,7 +519,7 @@ def gen_pdf():
     plt.close()
 
     data = get_count_moving(0)
-    df = pd.DataFrame.from_dict(data)
+    df = pd.DataFrame.from_dict(data[0])
     df["playtime"] = pd.to_datetime(df["playtime"])
 
     # 通算ポイント推移
@@ -635,7 +635,7 @@ def gen_pdf():
 
             # 通算ポイント推移
             data = get_count_moving(count)
-            tmp_df = pd.DataFrame.from_dict(data)
+            tmp_df = pd.DataFrame.from_dict(data[0])
             df = pd.DataFrame()
             for i in sorted(tmp_df["interval"].unique().tolist()):
                 list_data = tmp_df[tmp_df.interval == i]["point_sum"].to_list()

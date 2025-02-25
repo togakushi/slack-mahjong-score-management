@@ -71,12 +71,12 @@ def aggregation():
         ]
     ).copy()
 
-    msg = {}
-    table_param = {
+    msg: dict = {}
+    table_param: dict = {
         "index": False,
         "tablefmt": "simple",
         "numalign": "right",
-        "floatfmt": ("", ".1f", "", ".2f", ".0f", ".1f", ".0f")
+        "floatfmt": ["", ".1f", "", ".2f", ".0f", ".1f", ".0f"],
     }
 
     step = 30
