@@ -24,7 +24,7 @@ class Config():
 
         try:
             self.config.read(filename, encoding="utf-8")
-            logging.notice("filename: %s", filename)
+            logging.notice("filename: %s", filename)  # type: ignore
             logging.info("read sections: %s", self.config.sections())
         except Exception as e:
             logging.critical("config read error: %s", e)

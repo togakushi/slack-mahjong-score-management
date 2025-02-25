@@ -34,7 +34,7 @@ class MessageParser():
             _body (dict): postされたデータ
         """
 
-        logging.trace(_body)
+        logging.trace(_body)  # type: ignore
 
         __tmp_client = self.client
         self.__dict__.clear()

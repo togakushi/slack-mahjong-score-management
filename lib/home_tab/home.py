@@ -109,7 +109,7 @@ def handle_action(ack, body, client):
     """
 
     ack()
-    logging.trace(body)
+    logging.trace(body)  # type: ignore
 
     client.views_publish(
         user_id=g.app_var["user_id"],

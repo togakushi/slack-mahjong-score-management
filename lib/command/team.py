@@ -80,7 +80,7 @@ def create(argument):
                 resultdb.close()
                 c.member.read_memberslist()
                 msg = f"チーム「{team_name}」を登録しました。"
-                logging.notice("add new team: %s", team_name)
+                logging.notice("add new team: %s", team_name)  # type: ignore
 
     return (msg)
 
@@ -120,7 +120,7 @@ def delete(argument):
             resultdb.close()
             c.member.read_memberslist()
             msg += f"\nチーム「{team_name}」を削除しました。"
-            logging.notice("team delete: %s", team_name)
+            logging.notice("team delete: %s", team_name)  # type: ignore
 
     return (msg)
 
@@ -181,7 +181,7 @@ def append(argument):
             resultdb.close()
             c.member.read_memberslist()
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
-            logging.notice("team participation: %s -> %s", team_name, player_name)
+            logging.notice("team participation: %s -> %s", team_name, player_name)  # type: ignore
 
     return (msg)
 
@@ -239,7 +239,7 @@ def remove(argument):
             resultdb.close()
             c.member.read_memberslist()
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
-            logging.notice("team breakaway: %s -> %s", team_name, player_name)
+            logging.notice("team breakaway: %s -> %s", team_name, player_name)  # type: ignore
 
     return (msg)
 

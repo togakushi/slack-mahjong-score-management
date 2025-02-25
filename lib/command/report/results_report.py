@@ -658,6 +658,6 @@ def gen_pdf():
             elements.append(PageBreak())
 
     doc.build(elements)
-    logging.notice("report generation: %s", g.prm.player_name)
+    logging.notice("report generation: %s", g.prm.player_name)  # type: ignore
 
     return (g.prm.player_name, pdf_path)

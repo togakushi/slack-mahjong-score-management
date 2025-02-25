@@ -31,4 +31,4 @@ def main():
             count += 1
 
         cur.commit()
-    logging.notice("recalculated: %s", count)
+    logging.notice("recalculated: %s", count)  # type: ignore

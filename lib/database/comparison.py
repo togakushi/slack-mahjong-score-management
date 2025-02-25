@@ -18,7 +18,7 @@ def main():
 
     # データ突合
     count, msg = data_comparison()
-    logging.notice("count=%s", count)
+    logging.notice("count=%s", count)  # type: ignore
 
     # 突合結果
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y/%m/%d")
@@ -59,10 +59,10 @@ def data_comparison():
     db_data = f.search.for_database(first_ts)
     db_remarks = f.search.for_db_remarks(first_ts)
 
-    logging.trace("thread_report: %s", g.cfg.setting.thread_report)
-    logging.trace("slack_data=%s", slack_data)
-    logging.trace("db_data=%s", db_data)
-    logging.trace("db_remarks=%s", db_remarks)
+    logging.trace("thread_report: %s", g.cfg.setting.thread_report)  # type: ignore
+    logging.trace("slack_data=%s", slack_data)  # type: ignore
+    logging.trace("db_data=%s", db_data)  # type: ignore
+    logging.trace("db_remarks=%s", db_remarks)  # type: ignore
 
     # --- スコア突合
     for key, val in slack_data.items():
@@ -80,7 +80,7 @@ def data_comparison():
             if not g.cfg.setting.thread_report:  # スレッド内報告が禁止されているパターン
                 if val.get("in_thread"):
                     count["delete"] += 1
-                    logging.notice("delete: %s, %s (In-thread report)", key, slack_score)
+                    logging.notice("delete: %s, %s (In-thread report)", key, slack_score)  # type: ignore
                     ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
                         datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                         textformat(slack_score)
@@ -101,7 +101,7 @@ def data_comparison():
             # 更新
             if d.common.exsist_record(key).get("rule_version") == g.prm.rule_version:
                 count["mismatch"] += 1
-                logging.notice("mismatch: %s", key)
+                logging.notice("mismatch: %s", key)  # type: ignore
                 logging.info("  *  slack: %s", textformat(db_score))
                 logging.info("  *     db: %s", textformat(slack_score))
                 ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(  # pylint: disable=consider-using-f-string
@@ -118,7 +118,7 @@ def data_comparison():
             continue
 
         count["missing"] += 1
-        logging.notice("missing: %s, %s", key, slack_score)
+        logging.notice("missing: %s, %s", key, slack_score)  # type: ignore
         ret_msg["missing"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(slack_score)
@@ -131,7 +131,7 @@ def data_comparison():
 
         # 削除
         count["delete"] += 1
-        logging.notice("delete: %s, %s (Only database)", key, db_data[key])
+        logging.notice("delete: %s, %s (Only database)", key, db_data[key])  # type: ignore
         ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(db_data[key])
@@ -154,7 +154,7 @@ def data_comparison():
 
         if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
-            logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])
+            logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])  # type: ignore
             ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(  # pylint: disable=consider-using-f-string
                 datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                 score_data["deposit"], textformat(val.get("score"))
@@ -190,12 +190,12 @@ def data_comparison():
                 else:
                     count["remark"] += 1
                     d.common.remarks_delete_compar(chk)
-                    logging.notice("remark delete(name mismatch): %s", chk)
+                    logging.notice("remark delete(name mismatch): %s", chk)  # type: ignore
             else:
                 if in_name:
                     count["remark"] += 1
                     d.common.remarks_append((chk,))
-                    logging.notice("remark insert(data missing): %s", chk)
+                    logging.notice("remark insert(data missing): %s", chk)  # type: ignore
 
     for key in db_remarks:
         if key in slack_remarks:  # DB -> slack チェック
@@ -203,7 +203,7 @@ def data_comparison():
 
         count["remark"] += 1
         d.common.remarks_delete_compar(key)
-        logging.notice("remark delete(missed deletion): %s", key)
+        logging.notice("remark delete(missed deletion): %s", key)  # type: ignore
 
     return (count, ret_msg)
 

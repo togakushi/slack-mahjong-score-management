@@ -61,7 +61,7 @@ def handle_menu_action(ack, body, client):
     """
 
     ack()
-    logging.trace(body)
+    logging.trace(body)  # type: ignore
 
     g.app_var["user_id"] = body["user"]["id"]
     g.app_var["view_id"] = body["view"]["id"]
@@ -84,7 +84,7 @@ def handle_aggregation_action(ack, body, client):
     """
 
     ack()
-    logging.trace(body)
+    logging.trace(body)  # type: ignore
     g.msg.parser(body)
     g.msg.client = client
 

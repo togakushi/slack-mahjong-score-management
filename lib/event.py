@@ -19,7 +19,7 @@ def handle_message_events(client, body):
         body (dict): ポストされたデータ
     """
 
-    logging.trace(body)
+    logging.trace(body)  # type: ignore
     g.prm.initialization()
     g.msg.parser(body)
     g.msg.client = client
@@ -31,7 +31,7 @@ def handle_message_events(client, body):
 
     # 許可されていないユーザのポストは処理しない
     if g.msg.user_id in g.cfg.setting.ignore_userid:
-        logging.trace("event skip[ignore user]: %s", g.msg.user_id)
+        logging.trace("event skip[ignore user]: %s", g.msg.user_id)  # type: ignore
         return
 
     # 投稿済みメッセージが削除された場合
@@ -66,7 +66,7 @@ def handle_message_events(client, body):
         case x if re.match(rf"^{g.cfg.cw.check}", x):
             d.comparison.main()
         case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", g.msg.text):  # Reminderによる突合
-            logging.notice("Reminder: %s", g.cfg.cw.check)
+            logging.notice("Reminder: %s", g.cfg.cw.check)  # type: ignore
             d.comparison.main()
 
         # メンバーリスト/チームリスト
@@ -92,7 +92,7 @@ def handle_message_events(client, body):
                                 d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
-                                logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)
+                                logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
                                 logging.warning("DEBUG(inside_thread): body=%s msg=%s prm=%s cfg=%s", body, vars(g.msg), vars(g.prm), vars(g.cfg))  # ToDo: 解析用
                         case "message_changed":
                             if detection == [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]:
@@ -102,13 +102,13 @@ def handle_message_events(client, body):
                                     if record_data.get("rule_version") == g.prm.rule_version:
                                         d.common.db_update(detection, g.msg.event_ts)
                                     else:
-                                        logging.notice("skip update(rule_version not match). event_ts=%s", g.msg.event_ts)
+                                        logging.notice("skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
                                 else:
                                     d.common.db_insert(detection, g.msg.event_ts)
                                     f.score.reprocessing_remarks()
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
-                                logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)
+                                logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
                                 logging.warning("DEBUG(inside_thread): body=%s msg=%s prm=%s cfg=%s", body, vars(g.msg), vars(g.prm), vars(g.cfg))  # ToDo: 解析用
                 else:
                     if record_data:
@@ -128,7 +128,7 @@ def slash_command(ack, body, client):
     """
 
     ack()
-    logging.trace(body)
+    logging.trace(body)  # type: ignore
     g.prm.initialization()
     g.msg.parser(body)
     g.msg.client = client
@@ -192,11 +192,11 @@ def handle_home_events(client, event):
     if "view" in event:
         g.app_var["view_id"] = event["view"]["id"]
 
-    logging.trace(g.app_var)
+    logging.trace(g.app_var)  # type: ignore
 
     result = client.views_publish(
         user_id=g.app_var["user_id"],
         view=h.home.build_main_menu(),
     )
 
-    logging.trace(result)
+    logging.trace(result)  # type: ignore

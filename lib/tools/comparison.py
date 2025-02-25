@@ -24,4 +24,4 @@ def main():
             sys.exit(e)
 
         count, _ = d.comparison.data_comparison()
-        logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))
+        logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))  # type: ignore

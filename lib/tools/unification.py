@@ -44,7 +44,7 @@ def main():
                         logging.warning("remove: %s -> %s (%s)", name, alias, msg)
                         alias_list.remove(alias)
                         continue
-                logging.notice("rename: %s -> %s changed: %s", alias_list, name, count)
+                logging.notice("rename: %s -> %s changed: %s", alias_list, name, count)  # type: ignore
             else:
                 logging.warning("skip: %s (%s)", name, msg)
                 continue

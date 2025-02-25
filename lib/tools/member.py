@@ -27,7 +27,7 @@ def export_data():
                 df["team_id"] = df["team_id"].astype("Int64")
 
             df.to_csv(csvfile, index=False)
-            logging.notice("export data: %s -> %s", table, csvfile)
+            logging.notice("export data: %s -> %s", table, csvfile)  # type: ignore
 
 
 def import_data():
@@ -52,11 +52,11 @@ def import_data():
                     if_exists="append",
                     index=False,
                 )
-                logging.notice("import data: %s -> %s", csvfile, table)
+                logging.notice("import data: %s -> %s", csvfile, table)  # type: ignore
             except FileNotFoundError:
-                logging.notice("skip: %s (not found)", csvfile)
+                logging.notice("skip: %s (not found)", csvfile)  # type: ignore
             except pd.errors.EmptyDataError:
-                logging.notice("skip: %s (empty file)", csvfile)
+                logging.notice("skip: %s (empty file)", csvfile)  # type: ignore
 
         # aliasテーブルが空の場合は作り直す
         alias_list = conn.execute("select name from alias;").fetchall()

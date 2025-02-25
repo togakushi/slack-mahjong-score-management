@@ -97,9 +97,9 @@ def query_modification(sql: str):
 
     # デバッグ用
     func = inspect.stack()[1].function
-    logging.trace("%s: opt=%s", func, vars(g.opt))
-    logging.trace("%s: prm=%s", func, vars(g.prm))
-    logging.trace("%s: sql=%s", func, textwrap.dedent(sql))
+    logging.trace("%s: opt=%s", func, vars(g.opt))  # type: ignore
+    logging.trace("%s: prm=%s", func, vars(g.prm))  # type: ignore
+    logging.trace("%s: sql=%s", func, textwrap.dedent(sql))  # type: ignore
 
     return (sql)
 
@@ -167,7 +167,7 @@ def db_insert(detection, ts, reactions_data=None):
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
             cur.execute(d.sql_result_insert, param)
             cur.commit()
-        logging.notice("user=%s, param=%s", g.msg.user_id, param)
+        logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         f.score.reactions(param)
     else:
         f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
@@ -194,7 +194,7 @@ def db_update(detection, ts, reactions_data=None):
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
             cur.execute(d.sql_result_update, param)
             cur.commit()
-        logging.notice("user=%s, param=%s", g.msg.user_id, param)
+        logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         f.score.reactions(param)
     else:
         f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
@@ -217,9 +217,9 @@ def db_delete(ts):
             cur.commit()
 
         if delete_result:
-            logging.notice("result: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_result)
+            logging.notice("result: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_result)  # type: ignore
         if delete_remark:
-            logging.notice("remark: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_remark)
+            logging.notice("remark: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_remark)  # type: ignore
 
         # リアクションをすべて外す
         for icon in f.slack_api.reactions_status():
@@ -255,7 +255,7 @@ def db_backup() -> str:
     # バックアップディレクトリにコピー
     try:
         shutil.copyfile(g.cfg.db.database_file, bkfname)
-        logging.notice("database backup: %s", bkfname)
+        logging.notice("database backup: %s", bkfname)  # type: ignore
         return ("\nデータベースをバックアップしました。")
     except Exception:
         logging.error("Database backup failed !!!")
@@ -280,7 +280,7 @@ def remarks_append(remarks):
                 if row:
                     if remark["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
                         cur.execute(d.sql_remarks_insert, remark)
-                        logging.notice("insert: %s, user=%s", remark, g.msg.user_id)
+                        logging.notice("insert: %s, user=%s", remark, g.msg.user_id)  # type: ignore
 
                         if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status():
                             f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remark["event_ts"])
@@ -302,7 +302,7 @@ def remarks_delete(ts):
             cur.commit()
 
         if count:
-            logging.notice("ts=%s, user=%s, count=%s", ts, g.msg.user_id, count)
+            logging.notice("ts=%s, user=%s, count=%s", ts, g.msg.user_id, count)  # type: ignore
 
         if g.msg.status != "message_deleted":
             if g.cfg.setting.reaction_ok in f.slack_api.reactions_status():
