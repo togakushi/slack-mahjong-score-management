@@ -368,33 +368,33 @@ def calculation_rating():
     last_ratings: dict = {}  # 最終値格納用
 
     # 獲得スコア
-    score_mapping = {1: 30, 2: 10, 3: -10, 4: -30}
+    score_mapping = {"1": 30.0, "2": 10.0, "3": -10.0, "4": -30.0}
 
     for x in df_results.itertuples():
         player_list = (x.p1_name, x.p2_name, x.p3_name, x.p4_name)
         for player in player_list:
             if player not in df_ratings.columns:
-                last_ratings[player] = 1500
+                last_ratings[player] = 1500.0
                 df_ratings[player] = np.nan
-                df_ratings.loc["initial_rating", player] = 1500
+                df_ratings.loc["initial_rating", player] = 1500.0
                 df_ratings = df_ratings.copy()
 
         # 天鳳計算式 (https://tenhou.net/man/#RATING)
         rank_list = (x.p1_rank, x.p2_rank, x.p3_rank, x.p4_rank,)
         rating_list = [last_ratings[player] for player in player_list]
-        rating_avg = 1500 if np.mean(rating_list) < 1500 else np.mean(rating_list)
+        rating_avg = 1500.0 if np.mean(rating_list) < 1500.0 else np.mean(rating_list)
 
         for i, player in enumerate(player_list):
-            rating = np.float(rating_list[i])
-            rank = rank_list[i]
+            rating = float(rating_list[i])
+            rank = str(rank_list[i])
 
-            correction_value = (rating_avg - rating) / 40
+            correction_value: float = (rating_avg - rating) / 40
             if df_ratings[player].count() >= 400:
                 match_correction = 0.2
             else:
                 match_correction = 1 - df_ratings[player].count() * 0.002
 
-            new_rating = rating + match_correction * (score_mapping[rank] + correction_value)
+            new_rating = rating + match_correction * score_mapping[rank] + correction_value
 
             last_ratings[player] = new_rating
             df_ratings.loc[x.Index, player] = new_rating
