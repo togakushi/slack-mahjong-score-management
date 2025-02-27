@@ -365,7 +365,7 @@ def calculation_rating():
     ).set_index("playtime")
 
     df_ratings = pd.DataFrame(index=["initial_rating"] + df_results.index.to_list())  # 記録用
-    last_ratings = {}  # 最終値格納用
+    last_ratings: dict = {}  # 最終値格納用
 
     # 獲得スコア
     score_mapping = {1: 30, 2: 10, 3: -10, 4: -30}
@@ -385,11 +385,10 @@ def calculation_rating():
         rating_avg = 1500 if np.mean(rating_list) < 1500 else np.mean(rating_list)
 
         for i, player in enumerate(player_list):
-            rating = rating_list[i]
+            rating = np.float(rating_list[i])
             rank = rank_list[i]
 
             correction_value = (rating_avg - rating) / 40
-            # correction_value = (sum([rate for j, rate in enumerate(rating_list) if j != i]) / 3 - rating) / 40
             if df_ratings[player].count() >= 400:
                 match_correction = 0.2
             else:
