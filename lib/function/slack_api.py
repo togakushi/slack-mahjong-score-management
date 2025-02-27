@@ -64,7 +64,7 @@ def post_message(message, ts=False) -> SlackResponse | Any:
         SlackResponse | Any: API response
     """
 
-    res: dict = {}
+    res: dict | Any = {}
     if not ts and g.msg.thread_ts:
         ts = g.msg.thread_ts
 
