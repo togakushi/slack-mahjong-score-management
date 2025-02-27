@@ -394,7 +394,7 @@ def calculation_rating():
             else:
                 match_correction = 1 - df_ratings[player].count() * 0.002
 
-            new_rating = rating + match_correction * score_mapping[rank] + correction_value
+            new_rating = rating + match_correction * (score_mapping[rank] + correction_value)
 
             last_ratings[player] = new_rating
             df_ratings.loc[x.Index, player] = new_rating
