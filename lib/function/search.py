@@ -109,7 +109,7 @@ def for_slack():
             logging.info("skip ignore user: %s", user_id)
         else:
             detection = f.search.pattern(x.get("text"))
-            if detection:
+            if isinstance(detection, list):
                 # 名前ブレを修正
                 g.opt.unregistered_replace = False  # ゲスト無効
                 for i in range(0, 8, 2):
