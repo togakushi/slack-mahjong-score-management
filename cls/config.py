@@ -111,11 +111,11 @@ class Config():
             check: str = self.config["database"].get("commandword", "麻雀成績チェック")
         self.cw = CommandWord()
 
-        # コマンド
-        self.results = self.command_opt("results")
-        self.graph = self.command_opt("graph")
-        self.ranking = self.command_opt("ranking")
-        self.report = self.command_opt("report")
+        # サブコマンドデフォルト値
+        self.results = self.command_default("results")
+        self.graph = self.command_default("graph")
+        self.ranking = self.command_default("ranking")
+        self.report = self.command_default("report")
 
         # 非表示項目リスト
         @dataclass
@@ -132,7 +132,7 @@ class Config():
         logging.info("commandword=%s", vars(self.cw))
         logging.info("dropitems=%s", vars(self.dropitems))
 
-    def command_opt(self, section):
+    def command_default(self, section):
         """設定ファイルのセクションを読み込みインスタンス化して返す
 
         Args:
