@@ -106,11 +106,11 @@ class MessageParser():
 
         if "text" in _event:
             self.text = _event.get("text")
-            if self.text:
+            if self.text:  # 空文字以外はキーワードと引数に分割
                 self.keyword = self.text.split()[0]
-                self.argument = self.text.split()[1:]  # 最初のスペース以降はコマンド引数扱い
+                self.argument = self.text.split()[1:]
         else:  # text属性が見つからないときはログに出力
-            if not _event.get("text", False):
+            if not _event.get("text") and not _body.get("type") == "block_actions":
                 logging.error("text not found: %s", _body)
 
         self.check_updatable()
