@@ -111,7 +111,7 @@ class Config():
             check: str = self.config["database"].get("commandword", "麻雀成績チェック")
         self.cw = CommandWord()
 
-        # サブコマンドデフォルト値
+        # サブコマンドデフォルト
         self.results = self.command_default("results")
         self.graph = self.command_default("graph")
         self.ranking = self.command_default("ranking")
@@ -139,7 +139,7 @@ class Config():
             section (str): セクション名
 
         Returns:
-            subcommand: subcommandインスタンス
+            SubCommand: インスタンス
         """
 
         @dataclass
@@ -147,23 +147,16 @@ class Config():
             aggregation_range: str = self.config[section].get("aggregation_range", "当日")
             all_player: bool = self.config[section].getboolean("all_player", False)
             daily: bool = self.config[section].getboolean("daily", True)
-            # filename: str = self.config[section].get("filename", True)
-            # format: str = self.config[section].get("format", True)
             fourfold: bool = self.config[section].getboolean("fourfold", True)
             game_results: str | bool = self.config[section].get("game_results", False)
             group_length: int = self.config[section].getint("group_length", 0)
             guest_skip: bool = self.config[section].getboolean("guest_skip", True)
             guest_skip2: bool = self.config[section].getboolean("guest_skip2", True)
-            # order: bool = self.config[section].get("order", False)
-            # personal: bool = self.config[section].get("personal", False)
             ranked: int = self.config[section].getint("ranked", 3)
             score_comparisons: bool = self.config[section].getboolean("score_comparisons", False)
-            # search_word: str = self.config[section].get("guest_skip", True)
             statistics: bool = self.config[section].getboolean("statistics", False)
             stipulated: int = self.config[section].getint("stipulated", 0)
             stipulated_rate: float = self.config[section].getfloat("stipulated_rate", 0.05)
-            # target_count: int = self.config[section].get("target_count", 0)
-            # team_total: bool = self.config[section].get("team_total", False)
             unregistered_replace: bool = self.config[section].getboolean("unregistered_replace", True)
             verbose: bool = self.config[section].getboolean("verbose", False)
             versus_matrix: bool = self.config[section].getboolean("versus_matrix", False)
