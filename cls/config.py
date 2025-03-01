@@ -2,7 +2,7 @@ import configparser
 import logging
 import os
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import chain
 
 
@@ -50,8 +50,9 @@ class Config():
             reaction_ng: str = self.config["setting"].get("reaction_ng", "ng")
             font_file: str = self.config["setting"].get("font_file", "ipaexg.ttf")
             work_dir: str = self.config["setting"].get("work_dir", "work")
-            ignore_userid: list = [x.strip() for x in self.config["setting"].get("ignore_userid", "").split(",")]
+            ignore_userid: list = field(default_factory=list)
         self.setting = Setting()
+        self.setting.ignore_userid = [x.strip() for x in self.config["setting"].get("ignore_userid", "").split(",")]
         self.setting.work_dir = os.path.join(os.path.realpath(os.path.curdir), self.setting.work_dir)
 
         @dataclass
@@ -86,16 +87,25 @@ class Config():
 
         @dataclass
         class Alias:
-            results: list = [x.strip() for x in self.config["alias"].get("results", "").split(",")]
-            graph: list = [x.strip() for x in self.config["alias"].get("graph", "").split(",")]
-            ranking: list = [x.strip() for x in self.config["alias"].get("ranking", "").split(",")]
-            report: list = [x.strip() for x in self.config["alias"].get("report", "").split(",")]
-            check: list = [x.strip() for x in self.config["alias"].get("check", "").split(",")]
-            download: list = [x.strip() for x in self.config["alias"].get("download", "").split(",")]
-            member: list = [x.strip() for x in self.config["alias"].get("member", "").split(",")]
-            add: list = [x.strip() for x in self.config["alias"].get("add", "").split(",")]
-            delete: list = [x.strip() for x in self.config["alias"].get("del", "").split(",")]
+            results: list = field(default_factory=list)
+            graph: list = field(default_factory=list)
+            ranking: list = field(default_factory=list)
+            report: list = field(default_factory=list)
+            check: list = field(default_factory=list)
+            download: list = field(default_factory=list)
+            member: list = field(default_factory=list)
+            add: list = field(default_factory=list)
+            delete: list = field(default_factory=list)
         self.alias = Alias()
+        self.alias.results = [x.strip() for x in self.config["alias"].get("results", "").split(",")]
+        self.alias.graph = [x.strip() for x in self.config["alias"].get("graph", "").split(",")]
+        self.alias.ranking = [x.strip() for x in self.config["alias"].get("ranking", "").split(",")]
+        self.alias.report = [x.strip() for x in self.config["alias"].get("report", "").split(",")]
+        self.alias.check = [x.strip() for x in self.config["alias"].get("check", "").split(",")]
+        self.alias.download = [x.strip() for x in self.config["alias"].get("download", "").split(",")]
+        self.alias.member = [x.strip() for x in self.config["alias"].get("member", "").split(",")]
+        self.alias.add = [x.strip() for x in self.config["alias"].get("add", "").split(",")]
+        self.alias.delete = [x.strip() for x in self.config["alias"].get("del", "").split(",")]
 
         # チャンネル内呼び出しキーワード
         @dataclass
@@ -120,10 +130,13 @@ class Config():
         # 非表示項目リスト
         @dataclass
         class DropItems:
-            results: list = [x.strip() for x in self.config["results"].get("dropitems", "").split(",")]
-            ranking: list = [x.strip() for x in self.config["ranking"].get("dropitems", "").split(",")]
-            report: list = [x.strip() for x in self.config["report"].get("dropitems", "").split(",")]
+            results: list = field(default_factory=list)
+            ranking: list = field(default_factory=list)
+            report: list = field(default_factory=list)
         self.dropitems = DropItems()
+        self.dropitems.results = [x.strip() for x in self.config["results"].get("dropitems", "").split(",")]
+        self.dropitems.ranking = [x.strip() for x in self.config["ranking"].get("dropitems", "").split(",")]
+        self.dropitems.report = [x.strip() for x in self.config["report"].get("dropitems", "").split(",")]
 
         logging.info("setting=%s", vars(self.setting))
         logging.info("search=%s", vars(self.search))
