@@ -77,6 +77,14 @@ class Config():
         self.member = Member()
 
         @dataclass
+        class Team:
+            registration_limit: int = self.config["team"].getint("registration_limit", 255)
+            character_limit: int = self.config["team"].getint("character_limit", 16)
+            member_limit: int = self.config["team"].getint("member_limit", 16)
+            friendly_fire: bool = self.config["team"].getboolean("friendly_fire", True)
+        self.team = Team()
+
+        @dataclass
         class Alias:
             results: list = [x.strip() for x in self.config["alias"].get("results", "").split(",")]
             graph: list = [x.strip() for x in self.config["alias"].get("graph", "").split(",")]
@@ -88,14 +96,6 @@ class Config():
             add: list = [x.strip() for x in self.config["alias"].get("add", "").split(",")]
             delete: list = [x.strip() for x in self.config["alias"].get("del", "").split(",")]
         self.alias = Alias()
-
-        @dataclass
-        class Team:
-            registration_limit: int = self.config["team"].getint("registration_limit", 255)
-            character_limit: int = self.config["team"].getint("character_limit", 16)
-            member_limit: int = self.config["team"].getint("member_limit", 16)
-            friendly_fire: bool = self.config["team"].getboolean("friendly_fire", True)
-        self.team = Team()
 
         # チャンネル内呼び出しキーワード
         @dataclass
