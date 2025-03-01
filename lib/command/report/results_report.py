@@ -35,6 +35,7 @@ def get_game_results(flag="M"):
         flag (str, optional): 集計単位. Defaults to "M".
             - M: 月間集計
             - Y: 年間集計
+            - A: 全期間集計
 
     Returns:
         list: 集計結果のリスト
