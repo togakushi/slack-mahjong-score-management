@@ -49,12 +49,11 @@ class Config():
             reaction_ok: str = self.config["setting"].get("reaction_ok", "ok")
             reaction_ng: str = self.config["setting"].get("reaction_ng", "ng")
             font_file: str = self.config["setting"].get("font_file", "ipaexg.ttf")
-            _work_dir: str = self.config["setting"].get("work_dir", "work")
-            work_dir: str = str()
+            work_dir: str = self.config["setting"].get("work_dir", "work")
             ignore_userid: list = field(default_factory=list)
         self.setting = Setting()
         self.setting.ignore_userid = [x.strip() for x in self.config["setting"].get("ignore_userid", "").split(",")]
-        self.setting.work_dir = os.path.join(os.path.realpath(os.path.curdir), self.setting._work_dir)
+        self.setting.work_dir = os.path.join(os.path.realpath(os.path.curdir), self.setting.work_dir)
 
         @dataclass
         class Search:
