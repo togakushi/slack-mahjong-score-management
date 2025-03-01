@@ -1,7 +1,4 @@
-from datetime import datetime
 from typing import Tuple
-
-from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
 
@@ -153,26 +150,6 @@ def multi_select(view: dict, no: int, text: str = "dummy", add_list: list | None
             {"text": {"type": "plain_text", "text": name}, "value": name}
         )
 
-    view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
-
-    return (view, no + 1)
-
-
-def period_selection(view: dict, no: int, text: str = "dummy", block_id: str | bool = False, action_id: str = "dummy", initial_date: str | bool = False) -> Tuple[dict, int]:
-    if not initial_date:
-        initial_date = (
-            datetime.now() + relativedelta(hours=-12)
-        ).strftime("%Y-%m-%d")
-
-    if block_id:
-        view["blocks"].append({"type": "input", "block_id": block_id, "element": {}})
-    else:
-        view["blocks"].append({"type": "input", "element": {}})
-
-    view["blocks"][no]["element"]["type"] = "datepicker"
-    view["blocks"][no]["element"]["initial_date"] = initial_date
-    view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select a date"}
-    view["blocks"][no]["element"]["action_id"] = action_id
     view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
 
     return (view, no + 1)
