@@ -231,80 +231,26 @@ def statistics_plot() -> Tuple[int, str]:
     fig.suptitle(title_text, size=20, weight="bold")
     gs = gridspec.GridSpec(figure=fig, nrows=3, ncols=2)
 
-    ax_rpoint1 = fig.add_subplot(gs[2, 0])
-    ax_rpoint2 = fig.add_subplot(gs[2, 1])
     ax_point1 = fig.add_subplot(gs[0, 0])
     ax_point2 = fig.add_subplot(gs[0, 1])
     ax_rank1 = fig.add_subplot(gs[1, 0])
     ax_rank2 = fig.add_subplot(gs[1, 1])
+    ax_rpoint1 = fig.add_subplot(gs[2, 0])
+    ax_rpoint2 = fig.add_subplot(gs[2, 1])
 
     plt.subplots_adjust(wspace=0.22, hspace=0.18)
+
+    # ポイントデータ
+    subplot_point(point_df, ax_point1)
+    subplot_table(count_df.filter(items=["ゲーム数", "区間ポイント", "区間平均", "通算ポイント"]), ax_point2)
+
+    # 順位データ
+    subplot_rank(count_df, ax_rank1, total_index)
+    subplot_table(rank_table, ax_rank2)
 
     # 素点データ
     subplot_box(rpoint_df, ax_rpoint1)
     subplot_table(stats_df, ax_rpoint2)
-
-    # ポイントデータ
-    point_df.plot(  # レイアウト調整用ダミー
-        ax=ax_point1,
-        kind="bar",
-        alpha=0,
-    )
-    point_df.plot(
-        ax=ax_point1,
-        kind="line",
-        title="ポイント推移",
-        ylabel="通算ポイント(pt)",
-        marker="o",
-        color="b",
-    )
-    # Y軸修正
-    ylabs = ax_point1.get_yticks()[1:-1]
-    ax_point1.set_yticks(ylabs)
-    ax_point1.set_yticklabels(
-        [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
-    )
-
-    subplot_table(count_df.filter(items=["ゲーム数", "区間ポイント", "区間平均", "通算ポイント"]), ax_point2)
-
-    # 順位データ
-    ax_rank_avg = ax_rank1.twinx()
-    count_df.filter(items=["平均順位"]).drop(index=total_index).plot(
-        ax=ax_rank_avg,
-        kind="line",
-        ylabel="平均順位",
-        yticks=[1, 2, 3, 4],
-        ylim=[0.85, 4.15],
-        marker="o",
-        color="b",
-        legend=False,
-        grid=False,
-    )
-    ax_rank_avg.invert_yaxis()
-    ax_rank_avg.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
-
-    filter_items = ["1位(%)", "2位(%)", "3位(%)", "4位(%)"]
-    count_df.filter(items=filter_items).drop(index=total_index).plot(
-        ax=ax_rank1,
-        kind="bar",
-        title="獲得順位",
-        ylabel="獲得順位(%)",
-        colormap="Set2",
-        stacked=True,
-        rot=90,
-        ylim=[-5, 105],
-    )
-    h1, l1 = ax_rank1.get_legend_handles_labels()
-    h2, l2 = ax_rank_avg.get_legend_handles_labels()
-    ax_rank1.legend(
-        h1 + h2,
-        l1 + l2,
-        bbox_to_anchor=(0.5, 0),
-        loc="lower center",
-        ncol=5,
-    )
-
-    subplot_table(rank_table, ax_rank2)
 
     plt.savefig(save_file, bbox_inches="tight")
     plt.close()
@@ -402,3 +348,78 @@ def subplot_table(df: pd.DataFrame, ax: plt.Axes) -> None:
     )
     table.auto_set_font_size(False)
     ax.axis("off")
+
+
+def subplot_point(df: pd.DataFrame, ax: plt.Axes) -> None:
+    """ポイントデータ
+
+    Args:
+        df (pd.DataFrame): プロットデータ
+        ax (plt.Axes): プロット先オブジェクト
+    """
+
+    df.plot(  # レイアウト調整用ダミー
+        ax=ax,
+        kind="bar",
+        alpha=0,
+    )
+    df.plot(
+        ax=ax,
+        kind="line",
+        title="ポイント推移",
+        ylabel="通算ポイント(pt)",
+        marker="o",
+        color="b",
+    )
+    # Y軸修正
+    ylabs = ax.get_yticks()[1:-1]
+    ax.set_yticks(ylabs)
+    ax.set_yticklabels(
+        [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
+    )
+
+
+def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
+    """順位データ
+
+    Args:
+        df (pd.DataFrame): プロットデータ
+        ax (plt.Axes): プロット先オブジェクト
+        total_index (str): 合計値格納index
+    """
+
+    ax_rank_avg = ax.twinx()
+    df.filter(items=["平均順位"]).drop(index=total_index).plot(
+        ax=ax_rank_avg,
+        kind="line",
+        ylabel="平均順位",
+        yticks=[1, 2, 3, 4],
+        ylim=[0.85, 4.15],
+        marker="o",
+        color="b",
+        legend=False,
+        grid=False,
+    )
+    ax_rank_avg.invert_yaxis()
+    ax_rank_avg.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
+
+    filter_items = ["1位(%)", "2位(%)", "3位(%)", "4位(%)"]
+    df.filter(items=filter_items).drop(index=total_index).plot(
+        ax=ax,
+        kind="bar",
+        title="獲得順位",
+        ylabel="獲得順位(%)",
+        colormap="Set2",
+        stacked=True,
+        rot=90,
+        ylim=[-5, 105],
+    )
+    h1, l1 = ax.get_legend_handles_labels()
+    h2, l2 = ax_rank_avg.get_legend_handles_labels()
+    ax.legend(
+        h1 + h2,
+        l1 + l2,
+        bbox_to_anchor=(0.5, 0),
+        loc="lower center",
+        ncol=5,
+    )
