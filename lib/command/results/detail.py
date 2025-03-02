@@ -200,7 +200,7 @@ def get_game_results():
     df = d.aggregate.game_details()
 
     if g.opt.verbose:
-        data["p0"] = df.filter(items=["playtime", "guest_count"]).drop_duplicates().set_index("playtime")
+        data["p0"] = df.filter(items=["playtime", "guest_count", "same_team"]).drop_duplicates().set_index("playtime")
         for idx, prefix in enumerate(["p1", "p2", "p3", "p4"]):  # pylint: disable=unused-variable  # noqa: F841
             data[prefix] = df.query("seat == @idx + 1").filter(
                 items=["playtime", "表示名", "rpoint", "rank", "point", "grandslam", "name"]
@@ -220,8 +220,11 @@ def get_game_results():
 
         for x in df_data.itertuples():
             vs_guest = ""
-            if x.guest_count >= 2:
+            if x.guest_count >= 2 and g.opt.individual:
                 vs_guest = "(2ゲスト戦)"
+            if x.same_team == 1 and not g.opt.individual:
+                vs_guest = "(チーム同卓)"
+
             ret += textwrap.dedent(
                 """
                 {} {}
@@ -240,8 +243,11 @@ def get_game_results():
         df_data = df.query("name == @target_player").set_index("playtime")
         for x in df_data.itertuples():
             vs_guest = ""
-            if x.guest_count >= 2:
-                vs_guest = "*"
+            if x.guest_count >= 2 and g.opt.individual:
+                vs_guest = g.cfg.setting.guest_mark
+            if x.same_team == 1 and not g.opt.individual:
+                vs_guest = g.cfg.setting.guest_mark
+
             ret += "\t{}{}  {}位 {:7d}点 ({:6.1f}pt) {}\n".format(  # pylint: disable=consider-using-f-string
                 vs_guest, x.Index.replace("-", "/"),
                 x.rank, int(x.rpoint) * 100, x.point, x.grandslam,
