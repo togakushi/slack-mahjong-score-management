@@ -118,201 +118,207 @@ def initialization_resultdb():
                     )
                     logging.info("regulations table(type1): %s, %s", word, ex_point)
 
-    resultdb.executescript("""
+    resultdb.executescript("""-- individual_results
         drop view if exists individual_results;
         create view if not exists individual_results as
-            select
-                datetime(playtime) as playtime,
-                ts,
-                1 as seat,
-                p1_name as name,
-                p1_rpoint as rpoint,
-                p1_rank as rank,
-                p1_point + ifnull(ex_point, 0) as point,
-                grandslam,
-                ifnull(ex_point, 0) as ex_point,
-                p1_name not in (select name from member) as guest,
-                date(result.playtime, '-12 hours') as collection_daily,
-                rule_version,
-                comment
-            from
-                result
-            left join
-                member on member.name = result.p1_name
-            left join
-                grandslam on grandslam.thread_ts == result.ts
-                and grandslam.name = result.p1_name
-            left join
-                regulations on regulations.thread_ts == result.ts
-                and regulations.name == result.p1_name
-            group by ts, seat
-            union all select
-                datetime(playtime),
-                ts,
-                2 as seat,
-                p2_name,
-                p2_rpoint,
-                p2_rank,
-                p2_point + ifnull(ex_point, 0),
-                grandslam,
-                ifnull(ex_point, 0),
-                p2_name not in (select name from member),
-                date(result.playtime, '-12 hours'),
-                rule_version,
-                comment
-            from
-                result
-            left join
-                member on member.name = result.p2_name
-            left join
-                grandslam on grandslam.thread_ts == result.ts
-                and grandslam.name = result.p2_name
-            left join
-                regulations on regulations.thread_ts == result.ts
-                and regulations.name == result.p2_name
-            group by ts, seat
-            union all select
-                datetime(playtime),
-                ts,
-                3 as seat,
-                p3_name,
-                p3_rpoint,
-                p3_rank,
-                p3_point + ifnull(ex_point, 0),
-                grandslam,
-                ifnull(ex_point, 0),
-                p3_name not in (select name from member),
-                date(result.playtime, '-12 hours'),
-                rule_version,
-                comment
-            from
-                result
-            left join
-                member on member.name = result.p3_name
-            left join
-                grandslam on grandslam.thread_ts == result.ts
-                and grandslam.name = result.p3_name
-            left join
-                regulations on regulations.thread_ts == result.ts
-                and regulations.name == result.p3_name
-            group by ts, seat
-            union all select
-                datetime(playtime),
-                ts,
-                4 as seat,
-                p4_name,
-                p4_rpoint,
-                p4_rank,
-                p4_point + ifnull(ex_point, 0),
-                grandslam,
-                ifnull(ex_point, 0),
-                p4_name not in (select name from member),
-                date(result.playtime, '-12 hours'),
-                rule_version,
-                comment
-            from
-                result
-            left join
-                member on member.name = result.p4_name
-            left join
-                grandslam on grandslam.thread_ts == result.ts
-                and grandslam.name = result.p4_name
-            left join
-                regulations on regulations.thread_ts == result.ts
-                and regulations.name == result.p4_name
-            group by ts, seat
+            select * from (
+                select
+                    datetime(playtime) as playtime,
+                    ts,
+                    1 as seat,
+                    p1_name as name,
+                    p1_rpoint as rpoint,
+                    p1_rank as rank,
+                    p1_point + ifnull(ex_point, 0) as point,
+                    grandslam,
+                    ifnull(ex_point, 0) as ex_point,
+                    p1_name not in (select name from member) as guest,
+                    date(result.playtime, '-12 hours') as collection_daily,
+                    rule_version,
+                    comment
+                from
+                    result
+                left join
+                    member on member.name = result.p1_name
+                left join
+                    grandslam on grandslam.thread_ts == result.ts
+                    and grandslam.name = result.p1_name
+                left join
+                    regulations on regulations.thread_ts == result.ts
+                    and regulations.name == result.p1_name
+                group by ts, seat
+                union all select
+                    datetime(playtime),
+                    ts,
+                    2 as seat,
+                    p2_name,
+                    p2_rpoint,
+                    p2_rank,
+                    p2_point + ifnull(ex_point, 0),
+                    grandslam,
+                    ifnull(ex_point, 0),
+                    p2_name not in (select name from member),
+                    date(result.playtime, '-12 hours'),
+                    rule_version,
+                    comment
+                from
+                    result
+                left join
+                    member on member.name = result.p2_name
+                left join
+                    grandslam on grandslam.thread_ts == result.ts
+                    and grandslam.name = result.p2_name
+                left join
+                    regulations on regulations.thread_ts == result.ts
+                    and regulations.name == result.p2_name
+                group by ts, seat
+                union all select
+                    datetime(playtime),
+                    ts,
+                    3 as seat,
+                    p3_name,
+                    p3_rpoint,
+                    p3_rank,
+                    p3_point + ifnull(ex_point, 0),
+                    grandslam,
+                    ifnull(ex_point, 0),
+                    p3_name not in (select name from member),
+                    date(result.playtime, '-12 hours'),
+                    rule_version,
+                    comment
+                from
+                    result
+                left join
+                    member on member.name = result.p3_name
+                left join
+                    grandslam on grandslam.thread_ts == result.ts
+                    and grandslam.name = result.p3_name
+                left join
+                    regulations on regulations.thread_ts == result.ts
+                    and regulations.name == result.p3_name
+                group by ts, seat
+                union all select
+                    datetime(playtime),
+                    ts,
+                    4 as seat,
+                    p4_name,
+                    p4_rpoint,
+                    p4_rank,
+                    p4_point + ifnull(ex_point, 0),
+                    grandslam,
+                    ifnull(ex_point, 0),
+                    p4_name not in (select name from member),
+                    date(result.playtime, '-12 hours'),
+                    rule_version,
+                    comment
+                from
+                    result
+                left join
+                    member on member.name = result.p4_name
+                left join
+                    grandslam on grandslam.thread_ts == result.ts
+                    and grandslam.name = result.p4_name
+                left join
+                    regulations on regulations.thread_ts == result.ts
+                    and regulations.name == result.p4_name
+                group by ts, seat
+            )
+            order by ts, seat
         ;""")
 
-    resultdb.executescript("""
+    resultdb.executescript("""-- team_results
         drop view if exists team_results;
         create view if not exists team_results as
-            select
-                datetime(result.playtime) as playtime,
-                result.ts,
-                1 as seat,
-                ifnull(team.name, '未所属') as name,
-                result.p1_rpoint as rpoint,
-                result.p1_rank as rank,
-                round(result.p1_point, 1) + ifnull(regulations.ex_point, 0) as point,
-                regulations.ex_point,
-                date(result.playtime, '-12 hours') as collection_daily,
-                result.rule_version,
-                result.comment
-            from
-                result
-            left join member on
-                result.p1_name = member.name
-            left join team on
-                member.team_id = team.id
-            left join regulations on
-                regulations.thread_ts == result.ts
-                and regulations.name == result.p1_name
-            union all select
-                datetime(result.playtime) as playtime,
-                result.ts,
-                2 as seat,
-                ifnull(team.name, '未所属') as name,
-                result.p2_rpoint as rpoint,
-                result.p2_rank as rank,
-                round(result.p2_point, 1) + ifnull(regulations.ex_point, 0) as point,
-                regulations.ex_point,
-                date(result.playtime, '-12 hours') as collection_daily,
-                result.rule_version,
-                result.comment
-            from
-                result
-            left join member on
-                result.p2_name = member.name
-            left join team on
-                member.team_id = team.id
-            left join regulations on
-                regulations.thread_ts == result.ts
-                and regulations.name == result.p2_name
-            union all select
-                datetime(result.playtime) as playtime,
-                result.ts,
-                3 as seat,
-                ifnull(team.name, '未所属') as name,
-                result.p3_rpoint as rpoint,
-                result.p3_rank as rank,
-                round(result.p3_point, 1) + ifnull(regulations.ex_point, 0) as point,
-                regulations.ex_point,
-                date(result.playtime, '-12 hours') as collection_daily,
-                result.rule_version,
-                result.comment
-            from
-                result
-            left join member on
-                result.p3_name = member.name
-            left join team on
-                member.team_id = team.id
-            left join regulations on
-                regulations.thread_ts == result.ts
-                and regulations.name == result.p3_name
-            union all select
-                datetime(result.playtime) as playtime,
-                result.ts,
-                4 as seat,
-                ifnull(team.name, '未所属') as name,
-                result.p4_rpoint as rpoint,
-                result.p4_rank as rank,
-                round(result.p4_point, 1) + ifnull(regulations.ex_point, 0) as point,
-                regulations.ex_point,
-                date(result.playtime, '-12 hours') as collection_daily,
-                result.rule_version,
-                result.comment
-            from
-                result
-            left join member on
-                result.p4_name = member.name
-            left join team on
-                member.team_id = team.id
-            left join regulations on
-                regulations.thread_ts == result.ts
-                and regulations.name == result.p4_name
+            select * from (
+                select
+                    datetime(result.playtime) as playtime,
+                    result.ts,
+                    1 as seat,
+                    ifnull(team.name, '未所属') as name,
+                    result.p1_rpoint as rpoint,
+                    result.p1_rank as rank,
+                    round(result.p1_point, 1) + ifnull(regulations.ex_point, 0) as point,
+                    regulations.ex_point,
+                    date(result.playtime, '-12 hours') as collection_daily,
+                    result.rule_version,
+                    result.comment
+                from
+                    result
+                left join member on
+                    result.p1_name = member.name
+                left join team on
+                    member.team_id = team.id
+                left join regulations on
+                    regulations.thread_ts == result.ts
+                    and regulations.name == result.p1_name
+                union all select
+                    datetime(result.playtime) as playtime,
+                    result.ts,
+                    2 as seat,
+                    ifnull(team.name, '未所属') as name,
+                    result.p2_rpoint as rpoint,
+                    result.p2_rank as rank,
+                    round(result.p2_point, 1) + ifnull(regulations.ex_point, 0) as point,
+                    regulations.ex_point,
+                    date(result.playtime, '-12 hours') as collection_daily,
+                    result.rule_version,
+                    result.comment
+                from
+                    result
+                left join member on
+                    result.p2_name = member.name
+                left join team on
+                    member.team_id = team.id
+                left join regulations on
+                    regulations.thread_ts == result.ts
+                    and regulations.name == result.p2_name
+                union all select
+                    datetime(result.playtime) as playtime,
+                    result.ts,
+                    3 as seat,
+                    ifnull(team.name, '未所属') as name,
+                    result.p3_rpoint as rpoint,
+                    result.p3_rank as rank,
+                    round(result.p3_point, 1) + ifnull(regulations.ex_point, 0) as point,
+                    regulations.ex_point,
+                    date(result.playtime, '-12 hours') as collection_daily,
+                    result.rule_version,
+                    result.comment
+                from
+                    result
+                left join member on
+                    result.p3_name = member.name
+                left join team on
+                    member.team_id = team.id
+                left join regulations on
+                    regulations.thread_ts == result.ts
+                    and regulations.name == result.p3_name
+                union all select
+                    datetime(result.playtime) as playtime,
+                    result.ts,
+                    4 as seat,
+                    ifnull(team.name, '未所属') as name,
+                    result.p4_rpoint as rpoint,
+                    result.p4_rank as rank,
+                    round(result.p4_point, 1) + ifnull(regulations.ex_point, 0) as point,
+                    regulations.ex_point,
+                    date(result.playtime, '-12 hours') as collection_daily,
+                    result.rule_version,
+                    result.comment
+                from
+                    result
+                left join member on
+                    result.p4_name = member.name
+                left join team on
+                    member.team_id = team.id
+                left join regulations on
+                    regulations.thread_ts == result.ts
+                    and regulations.name == result.p4_name
+            )
+            order by ts, seat
         ;""")
 
-    resultdb.executescript("""
+    resultdb.executescript("""-- game_results
         drop view if exists game_results;
         create view if not exists game_results as
             select
@@ -344,7 +350,7 @@ def initialization_resultdb():
             left join team as p4_team on p4.team_id = p4_team.id
         ;""")
 
-    resultdb.executescript("""
+    resultdb.executescript("""-- game_info
         drop view if exists game_info;
         create view if not exists game_info as
             select
@@ -388,7 +394,7 @@ def initialization_resultdb():
         grandslam_where = "words.type == 0"
         regulation_where = "words.type in (1, 2)"
 
-    resultdb.executescript(f"""
+    resultdb.executescript(f"""-- grandslam
         drop view if exists grandslam;
         create view if not exists grandslam as
             select
@@ -415,7 +421,7 @@ def initialization_resultdb():
                 remarks.thread_ts, remarks.name
         ;""")
 
-    resultdb.executescript(f"""
+    resultdb.executescript(f"""-- regulations
         drop view if exists regulations;
         create view if not exists regulations as
             select
