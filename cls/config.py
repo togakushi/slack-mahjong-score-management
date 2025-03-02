@@ -41,71 +41,13 @@ class Config():
             if x not in self.config.sections():
                 self.config.add_section(x)
 
-        @dataclass
-        class Setting:
-            slash_command: str = self.config["setting"].get("slash_commandname", "/mahjong")
-            thread_report: bool = self.config["setting"].getboolean("thread_report", True)
-            guest_mark: str = self.config["setting"].get("guest_mark", "※")
-            reaction_ok: str = self.config["setting"].get("reaction_ok", "ok")
-            reaction_ng: str = self.config["setting"].get("reaction_ng", "ng")
-            font_file: str = self.config["setting"].get("font_file", "ipaexg.ttf")
-            work_dir: str = self.config["setting"].get("work_dir", "work")
-            ignore_userid: list = field(default_factory=list)
-        self.setting = Setting()
-        self.setting.ignore_userid = [x.strip() for x in self.config["setting"].get("ignore_userid", "").split(",")]
-        self.setting.work_dir = os.path.join(os.path.realpath(os.path.curdir), self.setting.work_dir)
-
-        @dataclass
-        class Search:
-            keyword: str = self.config["search"].get("keyword", "終局")
-            channel: str | None = self.config["search"].get("channel", None)
-            after: int = self.config["search"].getint("after", 7)
-        self.search = Search()
-
-        @dataclass
-        class Database:
-            database_file: str = self.config["database"].get("database_file", "mahjong.db")
-            channel_limitations: str = self.config["database"].get("channel_limitations", "")
-            backup_dir: str | None = self.config["database"].get("backup_dir", None)
-        self.db = Database()
-
-        @dataclass
-        class Member:
-            registration_limit: int = self.config["member"].getint("registration_limit", 255)
-            character_limit: int = self.config["member"].getint("character_limit", 8)
-            alias_limit: int = self.config["member"].getint("alias_limit", 16)
-            guest_name: str = self.config["member"].get("guest_name", "ゲスト")
-        self.member = Member()
-
-        @dataclass
-        class Team:
-            registration_limit: int = self.config["team"].getint("registration_limit", 255)
-            character_limit: int = self.config["team"].getint("character_limit", 16)
-            member_limit: int = self.config["team"].getint("member_limit", 16)
-            friendly_fire: bool = self.config["team"].getboolean("friendly_fire", True)
-        self.team = Team()
-
-        @dataclass
-        class Alias:
-            results: list = field(default_factory=list)
-            graph: list = field(default_factory=list)
-            ranking: list = field(default_factory=list)
-            report: list = field(default_factory=list)
-            check: list = field(default_factory=list)
-            download: list = field(default_factory=list)
-            member: list = field(default_factory=list)
-            add: list = field(default_factory=list)
-            delete: list = field(default_factory=list)
-        self.alias = Alias()
-        self.alias.results = [x.strip() for x in self.config["alias"].get("results", "").split(",")]
-        self.alias.graph = [x.strip() for x in self.config["alias"].get("graph", "").split(",")]
-        self.alias.ranking = [x.strip() for x in self.config["alias"].get("ranking", "").split(",")]
-        self.alias.report = [x.strip() for x in self.config["alias"].get("report", "").split(",")]
-        self.alias.check = [x.strip() for x in self.config["alias"].get("check", "").split(",")]
-        self.alias.download = [x.strip() for x in self.config["alias"].get("download", "").split(",")]
-        self.alias.member = [x.strip() for x in self.config["alias"].get("member", "").split(",")]
-        self.alias.add = [x.strip() for x in self.config["alias"].get("add", "").split(",")]
-        self.alias.delete = [x.strip() for x in self.config["alias"].get("del", "").split(",")]
+        # セクション読み込み
+        self.setting_section()
+        self.search_section()
+        self.database_section()
+        self.member_section()
+        self.team_section()
+        self.alias_section()
 
         # チャンネル内呼び出しキーワード
         @dataclass
@@ -144,6 +86,78 @@ class Config():
         logging.info("alias=%s", vars(self.alias))
         logging.info("commandword=%s", vars(self.cw))
         logging.info("dropitems=%s", vars(self.dropitems))
+
+    def setting_section(self):
+        @dataclass
+        class Setting:
+            slash_command: str = self.config["setting"].get("slash_commandname", "/mahjong")
+            thread_report: bool = self.config["setting"].getboolean("thread_report", True)
+            guest_mark: str = self.config["setting"].get("guest_mark", "※")
+            reaction_ok: str = self.config["setting"].get("reaction_ok", "ok")
+            reaction_ng: str = self.config["setting"].get("reaction_ng", "ng")
+            font_file: str = self.config["setting"].get("font_file", "ipaexg.ttf")
+            work_dir: str = self.config["setting"].get("work_dir", "work")
+            ignore_userid: list = field(default_factory=list)
+        self.setting = Setting()
+        self.setting.ignore_userid = [x.strip() for x in self.config["setting"].get("ignore_userid", "").split(",")]
+        self.setting.work_dir = os.path.join(os.path.realpath(os.path.curdir), self.setting.work_dir)
+
+    def search_section(self):
+        @dataclass
+        class Search:
+            keyword: str = self.config["search"].get("keyword", "終局")
+            channel: str | None = self.config["search"].get("channel", None)
+            after: int = self.config["search"].getint("after", 7)
+        self.search = Search()
+
+    def database_section(self):
+        @dataclass
+        class Database:
+            database_file: str = self.config["database"].get("database_file", "mahjong.db")
+            channel_limitations: str = self.config["database"].get("channel_limitations", "")
+            backup_dir: str | None = self.config["database"].get("backup_dir", None)
+        self.db = Database()
+
+    def member_section(self):
+        @dataclass
+        class Member:
+            registration_limit: int = self.config["member"].getint("registration_limit", 255)
+            character_limit: int = self.config["member"].getint("character_limit", 8)
+            alias_limit: int = self.config["member"].getint("alias_limit", 16)
+            guest_name: str = self.config["member"].get("guest_name", "ゲスト")
+        self.member = Member()
+
+    def team_section(self):
+        @dataclass
+        class Team:
+            registration_limit: int = self.config["team"].getint("registration_limit", 255)
+            character_limit: int = self.config["team"].getint("character_limit", 16)
+            member_limit: int = self.config["team"].getint("member_limit", 16)
+            friendly_fire: bool = self.config["team"].getboolean("friendly_fire", True)
+        self.team = Team()
+
+    def alias_section(self):
+        @dataclass
+        class Alias:
+            results: list = field(default_factory=list)
+            graph: list = field(default_factory=list)
+            ranking: list = field(default_factory=list)
+            report: list = field(default_factory=list)
+            check: list = field(default_factory=list)
+            download: list = field(default_factory=list)
+            member: list = field(default_factory=list)
+            add: list = field(default_factory=list)
+            delete: list = field(default_factory=list)
+        self.alias = Alias()
+        self.alias.results = [x.strip() for x in self.config["alias"].get("results", "").split(",")]
+        self.alias.graph = [x.strip() for x in self.config["alias"].get("graph", "").split(",")]
+        self.alias.ranking = [x.strip() for x in self.config["alias"].get("ranking", "").split(",")]
+        self.alias.report = [x.strip() for x in self.config["alias"].get("report", "").split(",")]
+        self.alias.check = [x.strip() for x in self.config["alias"].get("check", "").split(",")]
+        self.alias.download = [x.strip() for x in self.config["alias"].get("download", "").split(",")]
+        self.alias.member = [x.strip() for x in self.config["alias"].get("member", "").split(",")]
+        self.alias.add = [x.strip() for x in self.config["alias"].get("add", "").split(",")]
+        self.alias.delete = [x.strip() for x in self.config["alias"].get("del", "").split(",")]
 
     def command_default(self, section):
         """設定ファイルのセクションを読み込みインスタンス化して返す
