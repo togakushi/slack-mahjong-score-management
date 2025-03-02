@@ -350,11 +350,11 @@ def subplot_table(df: pd.DataFrame, ax: plt.Axes) -> None:
     ax.axis("off")
 
 
-def subplot_point(df: pd.DataFrame, ax: plt.Axes) -> None:
+def subplot_point(df: pd.Series, ax: plt.Axes) -> None:
     """ポイントデータ
 
     Args:
-        df (pd.DataFrame): プロットデータ
+        df (pd.Series): プロットデータ
         ax (plt.Axes): プロット先オブジェクト
     """
 
