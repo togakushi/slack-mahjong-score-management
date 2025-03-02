@@ -344,13 +344,13 @@ def initialization_resultdb():
         create view if not exists game_results as
             select
                 datetime(result.playtime) as playtime, result.ts,
-                p1_name, p1_team.name as p1_team,
+                p1_name, ifnull(p1_team.name, '未所属') as p1_team,
                 p1.name isnull as p1_guest, p1_rpoint, p1_rank, p1_point,
-                p2_name, p2_team.name as p2_team,
+                p2_name, ifnull(p2_team.name, '未所属') as p2_team,
                 p2.name isnull as p2_guest, p2_rpoint, p2_rank, p2_point,
-                p3_name, p3_team.name as p3_team,
+                p3_name, ifnull(p3_team.name, '未所属') as p3_team,
                 p3.name isnull as p3_guest, p3_rpoint, p3_rank, p3_point,
-                p4_name, p4_team.name as p4_team,
+                p4_name, ifnull(p4_team.name, '未所属') as p4_team,
                 p4.name isnull as p4_guest, p4_rpoint, p4_rank, p4_point,
                 deposit,
                 date(result.playtime, '-12 hours') as collection_daily,
@@ -425,7 +425,7 @@ def initialization_resultdb():
             select
                 remarks.thread_ts,
                 remarks.name,
-                team.name as team,
+                ifnull(team.name, '未所属') as team,
                 group_concat(remarks.matter) as grandslam,
                 count() as gs_count,
                 game_info.guest_count,
@@ -454,7 +454,7 @@ def initialization_resultdb():
             select
                 remarks.thread_ts,
                 remarks.name as name,
-                team.name as team,
+                ifnull(team.name, '未所属') as team,
                 group_concat(remarks.matter) as word,
                 sum(words.ex_point) as ex_point,
                 ifnull(words.type, 0) as type,
