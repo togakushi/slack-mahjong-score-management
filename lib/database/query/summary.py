@@ -54,7 +54,7 @@ def gamedata():
                 and individual_results.playtime between :starttime and :endtime
                 --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[individual] --[guest_skip] and guest = 0 -- ゲストなし
-                --[friendly_fire] and same_team = 0
+                --[friendly_fire] and game_info.same_team = 0
                 --[individual] --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and game_info.comment like :search_word
             --[not_collection] --[group_by] group by -- コメント集約
@@ -134,7 +134,7 @@ def total():
                 and individual_results.playtime between :starttime and :endtime -- 検索範囲
                 --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[individual] --[guest_skip] and guest = 0 -- ゲストなし
-                --[friendly_fire] and same_team = 0
+                --[friendly_fire] and game_info.same_team = 0
                 --[team] and name notnull
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and game_info.comment like :search_word
@@ -290,7 +290,7 @@ def results():
                 and individual_results.playtime between :starttime and :endtime
                 --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[individual] --[guest_skip] and guest = 0 -- ゲストなし
-                --[friendly_fire] and same_team = 0
+                --[friendly_fire] and game_info.same_team = 0
                 --[team] and individual_results.name notnull
                 --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and game_info.comment like :search_word
@@ -356,6 +356,7 @@ def details():
             individual_results.rule_version = :rule_version
             and individual_results.playtime between :starttime and :endtime
             --[search_word] and game_info.comment like :search_word
+            --[friendly_fire] and game_info.same_team = 0
         order by
             individual_results.playtime
     """
