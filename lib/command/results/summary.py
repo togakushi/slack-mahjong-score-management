@@ -1,5 +1,7 @@
 import re
 
+import pandas as pd
+
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
@@ -20,8 +22,6 @@ def aggregation():
     df_summary = d.aggregate.game_summary()
     df_game = d.aggregate.game_details()
     df_grandslam = df_game.query("grandslam != ''")
-    df_regulations = df_game.query("type == 1")
-    df_wordcount = df_game.query("type == 2" if g.undefined_word != 2 else "type != '' or type == 2")
 
     # 表示
     # --- 情報ヘッダ
@@ -47,7 +47,7 @@ def aggregation():
 
     # --- 集計結果
     msg: dict = {}
-    msg_memo = ""
+    msg_memo: str = ""
 
     if not g.opt.score_comparisons:  # 通常表示
         if g.cfg.config["mahjong"].getboolean("ignore_flying", False):  # トビカウントなし
@@ -57,40 +57,7 @@ def aggregation():
             header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
             filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
 
-        # メモ表示
-        memo_grandslam = ""
-        if not df_grandslam.empty:
-            memo_grandslam = "\n*【役満和了】*\n"
-            for _, v in df_grandslam.iterrows():
-                memo_grandslam += "\t{}：{} （{}）\n".format(  # pylint: disable=consider-using-f-string
-                    v["playtime"].replace("-", "/"),
-                    v["grandslam"],
-                    v["表示名"].strip(),
-                )
-
-        memo_regulation = ""
-        if not df_regulations.empty:
-            memo_regulation = "\n*【卓外ポイント】*\n"
-            for _, v in df_regulations.iterrows():
-                memo_regulation += "\t{}：{} {}pt（{}）\n".format(  # pylint: disable=consider-using-f-string
-                    v["playtime"].replace("-", "/"),
-                    v["regulation"],
-                    str(v["ex_point"]).replace("-", "▲"),
-                    v["表示名"].strip(),
-                )
-
-        memo_wordcount = ""
-        if not df_wordcount.empty:
-            memo_wordcount = "\n*【その他】*\n"
-            for _, v in df_wordcount.iterrows():
-                memo_wordcount += "\t{}：{} （{}）\n".format(  # pylint: disable=consider-using-f-string
-                    v["playtime"].replace("-", "/"),
-                    v["regulation"],
-                    v["表示名"].strip(),
-                )
-
-        if memo_grandslam or memo_regulation or memo_wordcount:
-            msg_memo = (memo_grandslam + memo_regulation + memo_wordcount).strip()
+        msg_memo = memo_count(df_game)
 
     else:  # 差分表示
         df_grandslam = df_grandslam[:0]  # 非表示のため破棄
@@ -154,3 +121,53 @@ def aggregation():
             file_list = {}
 
     return (headline, msg, file_list)
+
+
+def memo_count(df_game: pd.DataFrame) -> str:
+    """メモ集計
+
+    Args:
+        df_game (pd.DataFrame): ゲーム情報
+
+    Returns:
+        str: 集計結果
+    """
+
+    # データ収集
+    df_grandslam = df_game.query("grandslam != ''")
+    df_regulations = df_game.query("type == 1")
+    df_wordcount = df_game.query("type == 2" if g.undefined_word != 2 else "type != '' or type == 2")
+
+    # メモ表示
+    memo_grandslam = ""
+    if not df_grandslam.empty:
+        memo_grandslam = "\n*【役満和了】*\n"
+        for _, v in df_grandslam.iterrows():
+            memo_grandslam += "\t{}：{} （{}）\n".format(  # pylint: disable=consider-using-f-string
+                v["playtime"].replace("-", "/"),
+                v["grandslam"],
+                v["表示名"].strip(),
+            )
+
+    memo_regulation = ""
+    if not df_regulations.empty:
+        memo_regulation = "\n*【卓外ポイント】*\n"
+        for _, v in df_regulations.iterrows():
+            memo_regulation += "\t{}：{} {}pt（{}）\n".format(  # pylint: disable=consider-using-f-string
+                v["playtime"].replace("-", "/"),
+                v["regulation"],
+                str(v["ex_point"]).replace("-", "▲"),
+                v["表示名"].strip(),
+            )
+
+    memo_wordcount = ""
+    if not df_wordcount.empty:
+        memo_wordcount = "\n*【その他】*\n"
+        for _, v in df_wordcount.iterrows():
+            memo_wordcount += "\t{}：{} （{}）\n".format(  # pylint: disable=consider-using-f-string
+                v["playtime"].replace("-", "/"),
+                v["regulation"],
+                v["表示名"].strip(),
+            )
+
+    return (memo_grandslam + memo_regulation + memo_wordcount).strip()
