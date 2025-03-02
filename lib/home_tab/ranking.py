@@ -8,46 +8,43 @@ from lib import home_tab as h
 
 def build_ranking_menu():
     """ランキングメニュー生成
-
-    Returns:
-        dict: viewに描写する内容
     """
 
     g.app_var["screen"] = "RankingMenu"
-    no = 0
-    view = {"type": "home", "blocks": []}
-    view, no = h.ui_parts.header(view, no, "【ランキング】")
+    g.app_var["no"] = 0
+    g.app_var["view"] = {"type": "home", "blocks": []}
+    h.ui_parts.header("【ランキング】")
 
     # 検索範囲設定
-    view, no = h.ui_parts.divider(view, no)
-    view, no = h.ui_parts.radio_buttons(
-        view, no, "search_range", "検索範囲",
-        {
+    h.ui_parts.divider()
+    h.ui_parts.radio_buttons(
+        id_suffix="search_range",
+        title="検索範囲",
+        flag={
             "今月": "今月",
             "先月": "先月",
             "全部": "全部",
             "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
         }
     )
-    view, no = h.ui_parts.button(view, no, text="検索範囲設定", action_id="modal-open-period")
+    h.ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
 
     # 検索オプション
-    view, no = h.ui_parts.divider(view, no)
-    view, no = h.ui_parts.checkboxes(
-        view, no, "search_option", "検索オプション",
-        {
+    h.ui_parts.divider()
+    h.ui_parts.checkboxes(
+        id_suffix="search_option",
+        title="検索オプション",
+        flag={
             "unregistered_replace": "ゲスト無効",
         },
-        ["unregistered_replace"],
+        initial=["unregistered_replace"],
     )
 
-    view, no = h.ui_parts.input_ranked(view, no, block_id="bid-ranked")
+    h.ui_parts.input_ranked(block_id="bid-ranked")
 
-    view, no = h.ui_parts.divider(view, no)
-    view, no = h.ui_parts.button(view, no, text="集計", action_id="ranking_aggregation", style="primary")
-    view, no = h.ui_parts.button(view, no, text="戻る", action_id="actionId-back", style="danger")
-
-    return (view)
+    h.ui_parts.divider()
+    h.ui_parts.button(text="集計", action_id="ranking_aggregation", style="primary")
+    h.ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
 @g.app.action("ranking_menu")
@@ -67,9 +64,10 @@ def handle_menu_action(ack, body, client):
     g.app_var["view_id"] = body["view"]["id"]
     logging.info("[ranking_menu] %s", g.app_var)
 
+    build_ranking_menu()
     client.views_publish(
         user_id=g.app_var["user_id"],
-        view=build_ranking_menu(),
+        view=g.app_var["view"],
     )
 
 

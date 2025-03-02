@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import lib.global_value as g
 
 
@@ -11,164 +9,146 @@ def plain_text(msg: str) -> dict:
     return (view)
 
 
-def divider(view: dict, no: int) -> Tuple[dict, int]:
-    view["blocks"].append({"type": "divider", })
-
-    return (view, no + 1)
-
-
-def header(view: dict, no: int, text: str = "dummy") -> Tuple[dict, int]:
-    view["blocks"].append({"type": "header", "text": {}})
-    view["blocks"][no]["text"] = {"type": "plain_text", "text": text}
-
-    return (view, no + 1)
+def divider():
+    g.app_var["view"]["blocks"].append({"type": "divider", })
+    g.app_var["no"] += 1
 
 
-def button(view: dict, no: int, text: str = "Click Me", action_id: str | bool = False, style: str | bool = False) -> Tuple[dict, int]:
-    view["blocks"].append({"type": "actions", "elements": [{}]})
-    view["blocks"][no]["elements"][0] = {"type": "button", "text": {}, "action_id": action_id}
-    view["blocks"][no]["elements"][0]["text"] = {"type": "plain_text", "text": text}
+def header(text: str = "dummy"):
+    g.app_var["view"]["blocks"].append({"type": "header", "text": {}})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["text"] = {"type": "plain_text", "text": text}
+    g.app_var["no"] += 1
 
+
+def button(text: str = "Click Me", action_id: str | bool = False, style: str | bool = False):
+    g.app_var["view"]["blocks"].append({"type": "actions", "elements": [{}]})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["elements"][0] = {"type": "button", "text": {}, "action_id": action_id}
+    g.app_var["view"]["blocks"][g.app_var["no"]]["elements"][0]["text"] = {"type": "plain_text", "text": text}
     if style:
-        view["blocks"][no]["elements"][0].update({"style": style})
+        g.app_var["view"]["blocks"][g.app_var["no"]]["elements"][0].update({"style": style})
 
-    return (view, no + 1)
+    g.app_var["no"] += 1
 
 
-def radio_buttons(view: dict, no: int, id_suffix: str, title: str, flag: dict) -> Tuple[dict, int]:
+def radio_buttons(id_suffix: str, title: str, flag: dict):
     """オプション選択メニュー
 
     Args:
-        view (dict): 描写内容
-        no (int): ブロックNo
         id_suffix (str): block_id, action_id
         title (str): 表示タイトル
         flag (dict, optional): 表示する選択項目
-
-    Returns:
-        Tuple[dict, int]:
-            - dict: 描写内容
-            - int: 次のブロックNo
     """
 
-    view["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
-    view["blocks"][no]["label"] = {"type": "plain_text", "text": title}
-    view["blocks"][no]["element"]["type"] = "radio_buttons"
-    view["blocks"][no]["element"]["action_id"] = f"aid-{id_suffix}"
-    view["blocks"][no]["element"]["initial_option"] = {  # 先頭の選択肢はチェック済みにする
+    g.app_var["view"]["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["label"] = {"type": "plain_text", "text": title}
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["type"] = "radio_buttons"
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["action_id"] = f"aid-{id_suffix}"
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["initial_option"] = {  # 先頭の選択肢はチェック済みにする
         "text": {"type": "plain_text", "text": flag[next(iter(flag))]}, "value": next(iter(flag))
     }
-    view["blocks"][no]["element"]["options"] = []
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"] = []
     for k, v in flag.items():
-        view["blocks"][no]["element"]["options"].append(
+        g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": v}, "value": k}
         )
+    g.app_var["no"] += 1
 
-    return (view, no + 1)
 
-
-def checkboxes(view: dict, no: int, id_suffix: str, title: str, flag: dict | None = None, initial: list | None = None) -> Tuple[dict, int]:
+def checkboxes(id_suffix: str, title: str, flag: dict | None = None, initial: list | None = None):
     """チェックボックス選択メニュー
 
     Args:
-        view (dict): 描写内容
-        no (int): ブロックNo
         id_suffix (str): block_id, action_id
         title (str): 表示タイトル
         flag (dict, optional): 表示する選択項目
         initial (list, optional): チェック済み項目. Defaults to None.
-
-    Returns:
-        Tuple[dict, int]:
-            - dict: 描写内容
-            - int: 次のブロックNo
     """
 
     if flag is None:
         flag = {}
 
-    view["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
-    view["blocks"][no]["label"] = {"type": "plain_text", "text": title}
-    view["blocks"][no]["element"]["type"] = "checkboxes"
-    view["blocks"][no]["element"]["action_id"] = f"aid-{id_suffix}"
-    view["blocks"][no]["element"]["options"] = []
+    g.app_var["view"]["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["label"] = {"type": "plain_text", "text": title}
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["type"] = "checkboxes"
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["action_id"] = f"aid-{id_suffix}"
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"] = []
     if initial:
-        view["blocks"][no]["element"]["initial_options"] = []
+        g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["initial_options"] = []
     else:
         initial = []  # None -> list
 
     for k, v in flag.items():
-        view["blocks"][no]["element"]["options"].append(
+        g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": v}, "value": k}
         )
         if k in initial:
-            view["blocks"][no]["element"]["initial_options"].append(
+            g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["initial_options"].append(
                 {"text": {"type": "plain_text", "text": v}, "value": k}
             )
 
-    return (view, no + 1)
+    g.app_var["no"] += 1
 
 
-def user_select(view: dict, no: int, text: str = "dummy", add_list: list | None = None) -> Tuple[dict, int]:
-    view["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
-    view["blocks"][no]["element"]["type"] = "static_select"
-    view["blocks"][no]["element"]["action_id"] = "player"
-    view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
-    view["blocks"][no]["element"]["options"] = []
+def user_select(text: str = "dummy", add_list: list | None = None):
+    g.app_var["view"]["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["type"] = "static_select"
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["action_id"] = "player"
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"] = []
 
     if add_list:
         for val in add_list:
-            view["blocks"][no]["element"]["options"].append(
+            g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"].append(
                 {"text": {"type": "plain_text", "text": val}, "value": val}
             )
 
     for name in set(g.member_list.values()):
-        view["blocks"][no]["element"]["options"].append(
+        g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": name}, "value": name}
         )
 
-    view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
+    g.app_var["view"]["blocks"][g.app_var["no"]]["label"] = {"type": "plain_text", "text": text}
 
-    return (view, no + 1)
+    g.app_var["no"] += 1
 
 
-def multi_select(view: dict, no: int, text: str = "dummy", add_list: list | None = None) -> Tuple[dict, int]:
-    view["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
-    view["blocks"][no]["element"]["type"] = "multi_static_select"
-    view["blocks"][no]["element"]["action_id"] = "player"
-    view["blocks"][no]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
-    view["blocks"][no]["element"]["options"] = []
+def multi_select(text: str = "dummy", add_list: list | None = None):
+    g.app_var["view"]["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["type"] = "multi_static_select"
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["action_id"] = "player"
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"] = []
 
     if add_list:
         for val in add_list:
-            view["blocks"][no]["element"]["options"].append(
+            g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"].append(
                 {"text": {"type": "plain_text", "text": val}, "value": val}
             )
 
     for name in set(g.member_list.values()):
-        view["blocks"][no]["element"]["options"].append(
+        g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": name}, "value": name}
         )
 
-    view["blocks"][no]["label"] = {"type": "plain_text", "text": text}
+    g.app_var["view"]["blocks"][g.app_var["no"]]["label"] = {"type": "plain_text", "text": text}
 
-    return (view, no + 1)
+    g.app_var["no"] += 1
 
 
-def input_ranked(view: dict, no: int, block_id: str | bool = False) -> Tuple[dict, int]:
+def input_ranked(block_id: str | bool = False):
     if block_id:
-        view["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
+        g.app_var["view"]["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
     else:
-        view["blocks"].append({"type": "input", "element": {}, "label": {}})
+        g.app_var["view"]["blocks"].append({"type": "input", "element": {}, "label": {}})
 
-    view["blocks"][no]["element"].update({"type": "number_input"})
-    view["blocks"][no]["element"].update({"is_decimal_allowed": True})
-    view["blocks"][no]["element"].update({"initial_value": str(g.cfg.config["ranking"].getint("ranked", 3))})
-    view["blocks"][no]["element"].update({"min_value": "1"})
-    view["blocks"][no]["element"].update({"action_id": "aid-ranked"})
-    view["blocks"][no]["label"].update({"type": "plain_text", "text": "出力順位上限"})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"type": "number_input"})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"is_decimal_allowed": True})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"initial_value": str(g.cfg.config["ranking"].getint("ranked", 3))})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"min_value": "1"})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"action_id": "aid-ranked"})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["label"].update({"type": "plain_text", "text": "出力順位上限"})
 
-    return (view, no + 1)
+    g.app_var["no"] += 1
 
 
 def modalperiod_selection() -> dict:

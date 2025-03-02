@@ -8,55 +8,53 @@ from lib import home_tab as h
 
 def build_personal_menu():
     """個人成績メニュー作成
-
-    Returns:
-        dict: viewに描写する内容
     """
 
     g.app_var["screen"] = "PersonalMenu"
-    no = 0
-    view = {"type": "home", "blocks": []}
-    view, no = h.ui_parts.header(view, no, "【個人成績】")
+    g.app_var["no"] = 0
+    g.app_var["view"] = {"type": "home", "blocks": []}
+    h.ui_parts.header(text="【個人成績】")
 
     # プレイヤー選択リスト
-    view, no = h.ui_parts.user_select(view, no, text="対象プレイヤー")
+    h.ui_parts.user_select(text="対象プレイヤー")
 
     # 検索範囲設定
-    view, no = h.ui_parts.divider(view, no)
-    view, no = h.ui_parts.radio_buttons(
-        view, no, "search_range", "検索範囲",
-        {
+    h.ui_parts.divider()
+    h.ui_parts.radio_buttons(
+        id_suffix="search_range",
+        title="検索範囲",
+        flag={
             "今月": "今月",
             "先月": "先月",
             "全部": "全部",
             "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
         }
     )
-    view, no = h.ui_parts.button(view, no, text="検索範囲設定", action_id="modal-open-period")
+    h.ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
 
     # オプション
-    view, no = h.ui_parts.divider(view, no)
-    view, no = h.ui_parts.checkboxes(
-        view, no, "search_option", "検索オプション",
-        {
+    h.ui_parts.divider()
+    h.ui_parts.checkboxes(
+        id_suffix="search_option",
+        title="検索オプション",
+        flag={
             "unregistered_replace": "ゲスト無効",
         },
-        ["unregistered_replace"],
+        initial=["unregistered_replace"],
     )
-    view, no = h.ui_parts.checkboxes(
-        view, no, "display_option", "表示オプション",
-        {
+    h.ui_parts.checkboxes(
+        id_suffix="display_option",
+        title="表示オプション",
+        flag={
             "versus_matrix": "対戦結果",
             "game_results": "戦績（簡易）",
             "verbose": "戦績（詳細）",
         },
     )
 
-    view, no = h.ui_parts.divider(view, no)
-    view, no = h.ui_parts.button(view, no, text="集計", action_id="personal_aggregation", style="primary")
-    view, no = h.ui_parts.button(view, no, text="戻る", action_id="actionId-back", style="danger")
-
-    return (view)
+    h.ui_parts.divider()
+    h.ui_parts.button(text="集計", action_id="personal_aggregation", style="primary")
+    h.ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
 @g.app.action("personal_menu")
@@ -76,9 +74,10 @@ def handle_menu_action(ack, body, client):
     g.app_var["view_id"] = body["view"]["id"]
     logging.info("[personal_menu] %s", g.app_var)
 
+    build_personal_menu()
     client.views_publish(
         user_id=g.app_var["user_id"],
-        view=build_personal_menu(),
+        view=g.app_var["view"],
     )
 
 

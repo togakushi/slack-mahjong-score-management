@@ -6,20 +6,15 @@ from lib import home_tab as h
 
 def build_main_menu():
     """メインメニューを生成する
-
-    Returns:
-        dict: viewに描写する内容
     """
 
     g.app_var["screen"] = "MainMenu"
-    no = 0
-    view = {"type": "home", "blocks": []}
-    view, no = h.ui_parts.button(view, no, text="成績サマリ", action_id="summary_menu")
-    view, no = h.ui_parts.button(view, no, text="ランキング", action_id="ranking_menu")
-    view, no = h.ui_parts.button(view, no, text="個人成績", action_id="personal_menu")
-    view, no = h.ui_parts.button(view, no, text="直接対戦", action_id="versus_menu")
-
-    return (view)
+    g.app_var["no"] = 0
+    g.app_var["view"] = {"type": "home", "blocks": []}
+    h.ui_parts.button(text="成績サマリ", action_id="summary_menu")
+    h.ui_parts.button(text="ランキング", action_id="ranking_menu")
+    h.ui_parts.button(text="個人成績", action_id="personal_menu")
+    h.ui_parts.button(text="直接対戦", action_id="versus_menu")
 
 
 def set_command_option(body):
@@ -111,9 +106,10 @@ def handle_action(ack, body, client):
     ack()
     logging.trace(body)  # type: ignore
 
+    build_main_menu()
     client.views_publish(
         user_id=g.app_var["user_id"],
-        view=build_main_menu(),
+        view=g.app_var["view"],
     )
 
 

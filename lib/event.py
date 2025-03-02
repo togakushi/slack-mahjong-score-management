@@ -194,9 +194,10 @@ def handle_home_events(client, event):
 
     logging.trace(g.app_var)  # type: ignore
 
+    h.home.build_main_menu()
     result = client.views_publish(
         user_id=g.app_var["user_id"],
-        view=h.home.build_main_menu(),
+        view=g.app_var["view"],
     )
 
     logging.trace(result)  # type: ignore

@@ -19,13 +19,15 @@ search_word: Any = None
 args: Any = None
 
 # 固定値
-wind = ("東家", "南家", "西家", "北家")
+wind: tuple = ("東家", "南家", "西家", "北家")
 member_list: dict = {}
 team_list: list = []
-bot_id = ""
-undefined_word = 2
+bot_id: str = ""
+undefined_word: int = 2
 
-app_var = {  # ホームタブ用初期値
+app_var: dict = {  # ホームタブ用初期値
+    "view": {},
+    "no": 0,
     "user_id": None,
     "view_id": None,
     "screen": None,
