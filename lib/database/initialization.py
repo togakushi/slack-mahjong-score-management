@@ -146,7 +146,7 @@ def initialization_resultdb():
                 regulations on regulations.thread_ts == result.ts
                 and regulations.name == result.p1_name
             group by ts, seat
-            union select
+            union all select
                 datetime(playtime),
                 ts,
                 2 as seat,
@@ -171,7 +171,7 @@ def initialization_resultdb():
                 regulations on regulations.thread_ts == result.ts
                 and regulations.name == result.p2_name
             group by ts, seat
-            union select
+            union all select
                 datetime(playtime),
                 ts,
                 3 as seat,
@@ -196,7 +196,7 @@ def initialization_resultdb():
                 regulations on regulations.thread_ts == result.ts
                 and regulations.name == result.p3_name
             group by ts, seat
-            union select
+            union all select
                 datetime(playtime),
                 ts,
                 4 as seat,
@@ -240,14 +240,14 @@ def initialization_resultdb():
                 result.comment
             from
                 result
-            join member on
+            left join member on
                 result.p1_name = member.name
             left join team on
                 member.team_id = team.id
             left join regulations on
                 regulations.thread_ts == result.ts
                 and regulations.name == result.p1_name
-            union select
+            union all select
                 datetime(result.playtime) as playtime,
                 result.ts,
                 2 as seat,
@@ -261,14 +261,14 @@ def initialization_resultdb():
                 result.comment
             from
                 result
-            join member on
+            left join member on
                 result.p2_name = member.name
             left join team on
                 member.team_id = team.id
             left join regulations on
                 regulations.thread_ts == result.ts
                 and regulations.name == result.p2_name
-            union select
+            union all select
                 datetime(result.playtime) as playtime,
                 result.ts,
                 3 as seat,
@@ -282,14 +282,14 @@ def initialization_resultdb():
                 result.comment
             from
                 result
-            join member on
+            left join member on
                 result.p3_name = member.name
             left join team on
                 member.team_id = team.id
             left join regulations on
                 regulations.thread_ts == result.ts
                 and regulations.name == result.p3_name
-            union select
+            union all select
                 datetime(result.playtime) as playtime,
                 result.ts,
                 4 as seat,
@@ -303,7 +303,7 @@ def initialization_resultdb():
                 result.comment
             from
                 result
-            join member on
+            left join member on
                 result.p4_name = member.name
             left join team on
                 member.team_id = team.id
