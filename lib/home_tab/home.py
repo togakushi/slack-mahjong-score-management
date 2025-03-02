@@ -35,11 +35,11 @@ def set_command_option(body):
     """
 
     # 検索設定
-    argument = []
+    argument: list = []
     search_options = body["view"]["state"]["values"]
     logging.info("search options: %s", search_options)
 
-    app_msg = []
+    app_msg: list = []
     g.app_var.update(operation=None)
 
     if "bid-user_select" in search_options:
