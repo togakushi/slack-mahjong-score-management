@@ -14,9 +14,7 @@ def initialization_resultdb():
     )
     resultdb.row_factory = sqlite3.Row
 
-    # --- メンバー登録テーブル
-    resultdb.execute(
-        """
+    resultdb.execute("""-- メンバー登録テーブル
         create table if not exists "member" (
             "id"        INTEGER,
             "name"      TEXT NOT NULL UNIQUE,
@@ -26,35 +24,23 @@ def initialization_resultdb():
             "reward"    INTEGER DEFAULT 0,
             "abuse"     INTEGER DEFAULT 0,
             PRIMARY KEY("id" AUTOINCREMENT)
-        )
-        """
-    )
+        );""")
 
-    # --- 別名定義テーブル
-    resultdb.execute(
-        """
+    resultdb.execute("""-- 別名定義テーブル
         create table if not exists "alias" (
             "name"      TEXT,
             "member"    TEXT NOT NULL,
             PRIMARY KEY("name")
-        )
-        """
-    )
+        );""")
 
-    # --- チーム定義テーブル
-    resultdb.execute(
-        """
+    resultdb.execute("""-- チーム定義テーブル
         create table if not exists "team" (
             "id"        INTEGER,
             "name"      TEXT NOT NULL UNIQUE,
             PRIMARY KEY("id" AUTOINCREMENT)
-        )
-        """
-    )
+        );""")
 
-    # --- データ取り込みテーブル
-    resultdb.execute(
-        """
+    resultdb.execute("""-- データ取り込みテーブル
         create table if not exists "result" (
             "ts"            TEXT,
             "playtime"      TIMESTAMP UNIQUE,
@@ -82,34 +68,26 @@ def initialization_resultdb():
             "rule_version"  TEXT,
             "comment"       TEXT,
             PRIMARY KEY("ts")
-        )
-        """
-    )
+        );""")
 
-    resultdb.execute(
-        """
+    resultdb.execute("""-- メモ格納テーブル
         create table if not exists "remarks" (
             "thread_ts" TEXT NOT NULL,
             "event_ts"  TEXT NOT NULL,
             "name"      TEXT NOT NULL,
             "matter"    TEXT NOT NULL
-        )
-        """
-    )
+        );""")
 
-    resultdb.execute(
-        """
+    resultdb.execute("""-- レギュレーションワード登録テーブル
         create table if not exists "words" (
             "word"     TEXT NOT NULL UNIQUE,
             "type"     INTEGER,
             "ex_point" INTEGER
-        )
-        """
-    )
+        );""")
 
     # wordsテーブル情報読み込み(regulations)
     if g.cfg.config.has_section("regulations"):
-        resultdb.execute("delete from words")
+        resultdb.execute("delete from words;")
         for k, v in g.cfg.config.items("regulations"):
             match k:
                 case "undefined":
@@ -119,7 +97,7 @@ def initialization_resultdb():
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
                         resultdb.execute(
-                            "insert into words(word, type, ex_point) values (?, 0, NULL)",
+                            "insert into words(word, type, ex_point) values (?, 0, NULL);",
                             (word,)
                         )
                     logging.info("regulations table(type0): %s", words_list)
@@ -127,7 +105,7 @@ def initialization_resultdb():
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
                         resultdb.execute(
-                            "insert into words(word, type, ex_point) values (?, 2, NULL)",
+                            "insert into words(word, type, ex_point) values (?, 2, NULL);",
                             (word,)
                         )
                     logging.info("regulations table(type2): %s", words_list)
@@ -135,14 +113,13 @@ def initialization_resultdb():
                     word = k.strip()
                     ex_point = int(v)
                     resultdb.execute(
-                        "insert into words(word, type, ex_point) values (?, 1, ?)",
+                        "insert into words(word, type, ex_point) values (?, 1, ?);",
                         (word, ex_point,)
                     )
                     logging.info("regulations table(type1): %s, %s", word, ex_point)
 
-    resultdb.execute("drop view if exists individual_results")
-    resultdb.execute(
-        """
+    resultdb.executescript("""
+        drop view if exists individual_results;
         create view if not exists individual_results as
             select
                 datetime(playtime) as playtime,
@@ -244,12 +221,10 @@ def initialization_resultdb():
                 regulations on regulations.thread_ts == result.ts
                 and regulations.name == result.p4_name
             group by ts, seat
-        """
-    )
+        ;""")
 
-    resultdb.execute("drop view if exists team_results")
-    resultdb.execute(
-        """
+    resultdb.executescript("""
+        drop view if exists team_results;
         create view if not exists team_results as
             select
                 datetime(result.playtime) as playtime,
@@ -335,12 +310,10 @@ def initialization_resultdb():
             left join regulations on
                 regulations.thread_ts == result.ts
                 and regulations.name == result.p4_name
-        """
-    )
+        ;""")
 
-    resultdb.execute("drop view if exists game_results")
-    resultdb.execute(
-        """
+    resultdb.executescript("""
+        drop view if exists game_results;
         create view if not exists game_results as
             select
                 datetime(result.playtime) as playtime, result.ts,
@@ -369,12 +342,10 @@ def initialization_resultdb():
             left join team as p2_team on p2.team_id = p2_team.id
             left join team as p3_team on p3.team_id = p3_team.id
             left join team as p4_team on p4.team_id = p4_team.id
-        """
-    )
+        ;""")
 
-    resultdb.execute("drop view if exists game_info")
-    resultdb.execute(
-        """
+    resultdb.executescript("""
+        drop view if exists game_info;
         create view if not exists game_info as
             select
                 datetime(playtime) as playtime,
@@ -404,8 +375,7 @@ def initialization_resultdb():
                 on p3_name = p3.name
             left join member as p4
                 on p4_name = p4.name
-        """
-    )
+        ;""")
 
     # メモ
     if g.undefined_word == 0:
@@ -418,9 +388,8 @@ def initialization_resultdb():
         grandslam_where = "words.type == 0"
         regulation_where = "words.type in (1, 2)"
 
-    resultdb.execute("drop view if exists grandslam")
-    resultdb.execute(
-        f"""
+    resultdb.executescript(f"""
+        drop view if exists grandslam;
         create view if not exists grandslam as
             select
                 remarks.thread_ts,
@@ -444,12 +413,10 @@ def initialization_resultdb():
                 {grandslam_where}
             group by
                 remarks.thread_ts, remarks.name
-        """
-    )
+        ;""")
 
-    resultdb.execute("drop view if exists regulations")
-    resultdb.execute(
-        f"""
+    resultdb.executescript(f"""
+        drop view if exists regulations;
         create view if not exists regulations as
             select
                 remarks.thread_ts,
@@ -474,20 +441,19 @@ def initialization_resultdb():
                 {regulation_where}
             group by
                 remarks.thread_ts, remarks.name
-        """
-    )
+        ;""")
 
     # ゲスト設定チェック
-    ret = resultdb.execute("select * from member where id=0")
+    ret = resultdb.execute("select * from member where id=0;")
     data = ret.fetchall()
 
     if len(data) == 0:
         logging.notice("ゲスト設定: %s", g.prm.guest_name)  # type: ignore
-        sql = "insert into member (id, name) values (0, ?)"
+        sql = "insert into member (id, name) values (0, ?);"
         resultdb.execute(sql, (g.prm.guest_name,))
     elif data[0][1] != g.prm.guest_name:
         logging.notice("ゲスト修正: %s -> %s", data[0][1], g.prm.guest_name)  # type: ignore
-        sql = "update member set name=? where id=0"
+        sql = "update member set name=? where id=0;"
         resultdb.execute(sql, (g.prm.guest_name,))
 
     resultdb.commit()
