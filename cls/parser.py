@@ -119,14 +119,14 @@ class MessageParser():
 
         return (_event)
 
-    def get_channel_type(self, _body: dict) -> str:
+    def get_channel_type(self, _body: dict) -> str | None:
         """レスポンスからchannel_typeを探索して返す
 
         Args:
             _body (dict): レスポンス内容
 
         Returns:
-            str: channel_type
+            str | None: channel_type
         """
 
         _channel_type: str | None = None
