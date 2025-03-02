@@ -198,7 +198,18 @@ def remarks(headword=False):
         remark.append("2ゲスト戦の結果を含む")
     if not g.opt.unregistered_replace:
         if g.opt.individual:  # 個人集計時のみ表示
-            remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
+            if g.opt.game_results and g.opt.verbose:
+                remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
+            elif g.opt.game_results:
+                remark.append("2ゲスト戦の結果を含む(" + g.cfg.setting.guest_mark + ")")
+            else:
+                remark.append("2ゲスト戦の結果を含む")
+    if not g.opt.individual:  # チーム集計時
+        if g.opt.friendly_fire:
+            if g.opt.game_results and g.opt.verbose:
+                remark.append("チーム同卓時の結果を含む(" + g.cfg.setting.guest_mark + ")")
+            else:
+                remark.append("チーム同卓時の結果を含む")
     if g.opt.stipulated:
         remark.append(f"規定打数 {g.opt.stipulated} G以上")
     if g.opt.rule_version:
