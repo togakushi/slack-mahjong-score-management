@@ -3,7 +3,7 @@ import os
 import sqlite3
 from datetime import datetime
 from io import BytesIO
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -379,18 +379,6 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
     if not target_info["game_count"] > 0:  # 記録なし
         return (False, False)
 
-    first_game = datetime.fromtimestamp(  # 最初のゲーム日時
-        float(target_info["first_game"])
-    )
-    last_game = datetime.fromtimestamp(  # 最後のゲーム日時
-        float(target_info["last_game"])
-    )
-
-    if g.opt.anonymous:
-        target_player = c.member.name_replace(g.prm.player_name)
-    else:
-        target_player = g.prm.player_name
-
     # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
     pdf_path = os.path.join(
@@ -407,6 +395,7 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
         # leftMargin=1.5 * mm,
         # rightMargin=1.5 * mm,
     )
+
     style: dict = {}
     style["Title"] = ParagraphStyle(
         name="Title", fontName="ReportFont", fontSize=24
@@ -426,14 +415,45 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
     plt.rcParams["font.family"] = font_prop.get_name()
     fm.fontManager.addfont(font_path)
 
-    # --- レポート作成
+    # レポート作成
     elements: list = []
-    pattern: Union[
-        List[Tuple[str, str, str]],  # 期間集計 / 表タイトル, グラフタイトル, フラグ
-        List[Tuple[int, int, str]],  # 区間集計 / 区切り回数, 閾値, タイトル
-    ]
+    elements.extend(cover_page(style, target_info))  # 表紙
+    elements.extend(entire_aggregate(style))  # 全期間
+    elements.extend(periodic_aggregation(style))  # 期間集計
+    elements.extend(sectional_aggregate(style, target_info))  # 区間集計
 
-    # タイトル
+    doc.build(elements)
+    logging.notice("report generation: %s", g.prm.player_name)  # type: ignore
+
+    return (g.prm.player_name, pdf_path)
+
+
+def cover_page(style: dict, target_info: dict) -> list:
+    """表紙生成
+
+    Args:
+        style (dict): レイアウトスタイル
+        target_info (dict): プレイヤー情報
+
+    Returns:
+        list: 生成内容
+    """
+
+    elements: list = []
+
+    first_game = datetime.fromtimestamp(  # 最初のゲーム日時
+        float(target_info["first_game"])
+    )
+    last_game = datetime.fromtimestamp(  # 最後のゲーム日時
+        float(target_info["last_game"])
+    )
+
+    if g.opt.anonymous:
+        target_player = c.member.name_replace(g.prm.player_name)
+    else:
+        target_player = g.prm.player_name
+
+    # 表紙
     elements.append(Spacer(1, 40 * mm))
     elements.append(Paragraph(f"成績レポート：{target_player}", style["Title"]))
     elements.append(Spacer(1, 10 * mm))
@@ -452,14 +472,28 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
     )
     elements.append(PageBreak())
 
-    # --- 全期間
+    return (elements)
+
+
+def entire_aggregate(style: dict) -> list:
+    """全期間
+
+    Args:
+        style (dict): レイアウトスタイル
+
+    Returns:
+        list: 生成内容
+    """
+
+    elements: list = []
+
     elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5 * mm))
     data: list = []
     tmp_data = get_game_results(flag="A")
 
     if not tmp_data:
-        return (False, False)
+        return ([])
 
     for _, val in enumerate(tmp_data):  # ゲーム数を除外
         data.append(val[1:])
@@ -530,20 +564,36 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
 
     elements.append(PageBreak())
 
-    # --- 期間集計
-    pattern = [  # 表タイトル, グラフタイトル, フラグ
+    return (elements)
+
+
+def periodic_aggregation(style: dict) -> list:
+    """期間集計
+
+    Args:
+        style (dict): レイアウトスタイル
+
+    Returns:
+        list: 生成内容
+    """
+
+    elements: list = []
+
+    pattern: List[Tuple[str, str, str]] = [
+        # 表タイトル, グラフタイトル, フラグ
         ("月別集計", "順位分布（月別）", "M"),
         ("年別集計", "順位分布（年別）", "Y"),
     ]
+
     for table_title, graph_title, flag in pattern:
         elements.append(Paragraph(table_title, style["Left"]))
         elements.append(Spacer(1, 5 * mm))
 
-        data = []
+        data: list = []
         tmp_data = get_game_results(flag)
 
         if not tmp_data:
-            return (False, False)
+            return ([])
 
         for _, val in enumerate(tmp_data):  # 日時を除外
             data.append(val[:15])
@@ -588,12 +638,29 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
 
         elements.append(PageBreak())
 
-    # --- 区間集計
-    pattern = [  # 区切り回数, 閾値, タイトル
+    return (elements)
+
+
+def sectional_aggregate(style: dict, target_info: dict) -> list:
+    """区間集計
+
+    Args:
+        style (dict): レイアウトスタイル
+        target_info (dict): プレイヤー情報
+
+    Returns:
+        list: 生成内容
+    """
+
+    elements: list = []
+
+    pattern: List[Tuple[int, int, str]] = [
+        # 区切り回数, 閾値, タイトル
         (80, 100, "短期"),
         (200, 240, "中期"),
         (400, 500, "長期"),
     ]
+
     for count, threshold, title in pattern:
         if target_info["game_count"] > threshold:
             # テーブル
@@ -602,7 +669,7 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
             data = get_count_results(count)
 
             if not data:
-                return (False, False)
+                return ([])
 
             tt = LongTable(data, repeatRows=1)
             ts = TableStyle([
@@ -664,7 +731,4 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
 
             elements.append(PageBreak())
 
-    doc.build(elements)
-    logging.notice("report generation: %s", g.prm.player_name)  # type: ignore
-
-    return (g.prm.player_name, pdf_path)
+    return (elements)
