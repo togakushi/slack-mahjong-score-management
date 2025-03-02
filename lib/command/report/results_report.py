@@ -28,7 +28,7 @@ mlogger.setLevel(logging.WARNING)
 pd.set_option("display.max_rows", None)
 
 
-def get_game_results(flag="M"):
+def get_game_results(flag: str = "M") -> list:
     """月/年単位のゲーム結果集計
 
     Args:
@@ -89,12 +89,12 @@ def get_game_results(flag="M"):
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
-        return (False)
+        return ([])
 
     return (results)
 
 
-def get_count_results(game_count):
+def get_count_results(game_count: int) -> list:
     """指定間隔区切りのゲーム結果集計
 
     Args:
@@ -156,12 +156,12 @@ def get_count_results(game_count):
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
-        return (False)
+        return ([])
 
     return (results)
 
 
-def get_count_moving(game_count):
+def get_count_moving(game_count: int) -> list:
     """移動平均を取得する
 
     Args:
@@ -191,13 +191,10 @@ def get_count_moving(game_count):
     logging.info("return record: %s", len(results))
     resultdb.close()
 
-    if len(results) == 0:
-        return (False)
-
     return (results)
 
 
-def graphing_mean_rank(df, title, whole=False):
+def graphing_mean_rank(df: pd.DataFrame, title: str, whole: bool = False) -> BytesIO:
     """平均順位の折れ線グラフを生成
 
     Args:
@@ -251,7 +248,7 @@ def graphing_mean_rank(df, title, whole=False):
     return (imgdata)
 
 
-def graphing_total_points(df, title, whole=False):
+def graphing_total_points(df: pd.DataFrame, title: str, whole: bool = False) -> BytesIO:
     """通算ポイント推移の折れ線グラフを生成
 
     Args:
@@ -314,7 +311,7 @@ def graphing_total_points(df, title, whole=False):
     return (imgdata)
 
 
-def graphing_rank_distribution(df, title):
+def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
     """順位分布の棒グラフを生成
 
     Args:
@@ -361,11 +358,11 @@ def graphing_rank_distribution(df, title):
     return (imgdata)
 
 
-def gen_pdf():
+def gen_pdf() -> Tuple[str | bool, str | bool]:
     """成績レポートを生成する
 
     Returns:
-        Tuple[str, str]:
+        Tuple[str | bool, str | bool]:
             - str: レポート対象メンバー名
             - str: レポート保存パス
     """
@@ -458,8 +455,8 @@ def gen_pdf():
     # --- 全期間
     elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5 * mm))
-    tmp_data = get_game_results(flag="A")
     data: list = []
+    tmp_data = get_game_results(flag="A")
 
     if not tmp_data:
         return (False, False)
@@ -544,6 +541,10 @@ def gen_pdf():
 
         data = []
         tmp_data = get_game_results(flag)
+
+        if not tmp_data:
+            return (False, False)
+
         for _, val in enumerate(tmp_data):  # 日時を除外
             data.append(val[:15])
 
@@ -562,6 +563,7 @@ def gen_pdf():
             ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ])
+
         if len(data) > 4:
             for i in range(len(data) - 2):
                 if i % 2 == 0:
@@ -598,6 +600,10 @@ def gen_pdf():
             elements.append(Paragraph(f"区間集計 （ {title} ）", style["Left"]))
             elements.append(Spacer(1, 5 * mm))
             data = get_count_results(count)
+
+            if not data:
+                return (False, False)
+
             tt = LongTable(data, repeatRows=1)
             ts = TableStyle([
                 ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
