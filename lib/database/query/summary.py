@@ -89,74 +89,6 @@ def gamedata():
     return (query_modification(sql))
 
 
-def total():
-    """最終成績集計
-
-    Returns:
-        str: SQL
-    """
-
-    sql = """
-        -- summary.total()
-        select
-            --[team] name as team,
-            --[individual] name,
-            count() as count,
-            round(sum(point), 1) as pt_total,
-            round(avg(point), 1) as pt_avg,
-            abs(round(sum(point) - lag(sum(point)) over (order by sum(point) desc), 1)) as pt_diff,
-            count(rank = 1 or null) as "1st",
-            count(rank = 2 or null) as "2nd",
-            count(rank = 3 or null) as "3rd",
-            count(rank = 4 or null) as "4th",
-            round(avg(rank), 2) as rank_avg,
-            printf("%d-%d-%d-%d (%.2f)",
-                count(rank = 1 or null),
-                count(rank = 2 or null),
-                count(rank = 3 or null),
-                count(rank = 4 or null),
-                round(avg(rank), 2)
-            ) as rank_distr,
-            count(rpoint < 0 or null) as flying
-        from (
-            select
-                --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
-                --[individual] --[unregistered_not_replace] name, -- ゲスト無効
-                --[team] name,
-                --[individual] guest,
-                rpoint, rank, point
-            from
-                individual_results
-            join game_info on
-                game_info.ts == individual_results.ts
-            where
-                individual_results.rule_version = :rule_version
-                and individual_results.playtime between :starttime and :endtime -- 検索範囲
-                --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
-                --[individual] --[guest_skip] and guest = 0 -- ゲストなし
-                --[friendly_fire] and game_info.same_team = 0
-                --[team] and name notnull
-                --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
-                --[search_word] and game_info.comment like :search_word
-            order by
-                individual_results.playtime desc
-        )
-        group by
-            name
-        having
-            count() >= :stipulated -- 規定打数
-        order by
-            pt_total desc
-    """
-
-    if not g.opt.individual:  # チーム集計
-        g.opt.unregistered_replace = False
-        g.opt.guest_skip = True
-        sql = sql.replace("individual_results", "team_results")
-
-    return (query_modification(sql))
-
-
 def results():
     """成績集計
 
@@ -458,5 +390,136 @@ def versus_matrix():
         g.opt.unregistered_replace = False
         g.opt.guest_skip = True
         sql = sql.replace("individual_results", "team_results")
+
+    return (query_modification(sql))
+
+
+def total():
+    """最終成績集計
+
+    Returns:
+        str: SQL
+    """
+
+    sql = """
+        -- summary.total()
+        with point_table as (
+            select
+                --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
+                --[individual] --[unregistered_not_replace] name, -- ゲスト無効
+                --[team] name as team,
+                --[individual] guest,
+                rpoint,
+                point,
+                ex_point,
+                rank
+            from
+                --[individual] individual_results as results
+                --[team] team_results as results
+            join game_info on
+                game_info.ts == results.ts
+            where
+                results.rule_version = :rule_version
+                and results.playtime between :starttime and :endtime -- 検索範囲
+                --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
+                --[individual] --[guest_skip] and guest = 0 -- ゲストナシ
+                --[team] --[friendly_fire] and game_info.same_team = 0
+                --[team] and team_id notnull -- 未所属除外
+                --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
+                --[search_word] and game_info.comment like :search_word
+        ),
+        point_summary as (
+            select
+                --[individual] name,
+                --[individual] guest,
+                --[team] team,
+                count() as count,
+                sum(point) as total_point,
+                sum(ex_point) as ex_point,
+                round(avg(point), 1) as avg_point,
+                count(rank = 1 or null) as rank1,
+                count(rank = 2 or null) as rank2,
+                count(rank = 3 or null) as rank3,
+                count(rank = 4 or null) as rank4,
+                round(avg(rank), 2) as rank_avg,
+                count(rpoint < 0 or null) as flying
+            from
+                point_table
+            group by
+                --[individual] name
+                --[team] team
+        ),
+        ranked_points as (
+            select
+                --[individual] name,
+                --[individual] guest,
+                --[team] team,
+                count,
+                total_point,
+                ex_point,
+                avg_point,
+                rank1,
+                rank2,
+                rank3,
+                rank4,
+                rank_avg,
+                flying,
+                rank() over (order by total_point desc) as overall_ranking,
+                lag(total_point) over (order by total_point desc) as prev_point,
+                first_value(total_point) over (order by total_point desc) as top_point
+            from point_summary
+        )
+        select
+            overall_ranking as rank,
+            --[individual] case
+            --[individual]     when guest = 0 then name
+            --[individual]     else name || '(<<guest_mark>>)'
+            --[individual] end as name,
+            --[team] team,
+            count,
+            round(cast(total_point as real), 1) as total_point,
+            ex_point,
+            round(cast(avg_point as real), 1) as avg_point,
+            rank1,
+            rank2,
+            rank3,
+            rank4,
+            rank_avg,
+            flying,
+            round(cast(rank1 as real)/count*100,2) as rank1_rate,
+            round(cast(rank2 as real)/count*100,2) as rank2_rate,
+            round(cast(rank3 as real)/count*100,2) as rank3_rate,
+            round(cast(rank4 as real)/count*100,2) as rank4_rate,
+            round(cast(flying as real)/count*100,2) as flying_rate,
+            printf("%d-%d-%d-%d (%.2f)",
+                rank1,
+                rank2,
+                rank3,
+                rank4,
+                rank_avg
+            ) as rank_distr1,
+            printf("%d+%d+%d+%d=%d (%.2f)",
+                rank1,
+                rank2,
+                rank3,
+                rank4,
+                count,
+                rank_avg
+            ) as rank_distr2,
+            case
+                when prev_point is null then null
+                else abs(round(total_point - prev_point, 1))
+            end as diff_from_above,
+            case
+                when total_point = top_point then null
+                else round(top_point - total_point, 1)
+            end as diff_from_top
+        from ranked_points
+        order by rank, count desc;
+    """
+
+    if not g.opt.individual:  # チーム集計
+        g.opt.unregistered_replace = False
+        g.opt.guest_skip = True
 
     return (query_modification(sql))

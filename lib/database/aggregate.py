@@ -93,38 +93,8 @@ def game_summary():
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
-
-    # ゲスト置換
-    if g.opt.individual:
-        df["name"] = df["name"].apply(
-            lambda x: c.member.name_replace(x, add_mark=True)
-        )
-
-    # ヘッダ修正
-    df = df.rename(
-        columns={
-            "name": "プレイヤー名",
-            "team": "チーム名",
-            "count": "ゲーム数",
-            "pt_total": "通算",
-            "pt_avg": "平均",
-            "pt_diff": "差分",
-            "rank_distr": "順位分布",
-            "rank_avg": "平順",
-            "flying": "トビ",
-            "1st": "1位",
-            "2nd": "2位",
-            "3rd": "3位",
-            "4th": "4位",
-        }
-    )
-
-    # インデックスの振り直し
-    df = df.reset_index(drop=True)
-    df.index = df.index + 1
-
     logging.trace(df)  # type: ignore
-    return (df.fillna(value="*****"))
+    return (df)
 
 
 def game_details():

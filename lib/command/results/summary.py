@@ -19,9 +19,11 @@ def aggregation():
 
     # --- データ収集
     game_info = d.aggregate.game_info()
-    df_summary = d.aggregate.game_summary()
+    df_summary = d.aggregate.game_summary().drop("rank_distr2", axis=1)
     df_game = d.aggregate.game_details()
     df_grandslam = df_game.query("grandslam != ''")
+
+    df_summary = d.common.df_rename(df_summary)
 
     # 表示
     # --- 情報ヘッダ
@@ -47,27 +49,26 @@ def aggregation():
 
     # --- 集計結果
     msg: dict = {}
-    msg_memo: str = ""
+    msg_memo: str = memo_count(df_game)
 
     if not g.opt.score_comparisons:  # 通常表示
+        header_list: list = [column_name, "通算", "平均", "順位分布", "トビ"]
+        filter_list: list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
         if g.cfg.config["mahjong"].getboolean("ignore_flying", False):  # トビカウントなし
-            header_list = [column_name, "通算", "平均", "順位分布"]
-            filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順"]
-        else:  # トビカウントあり
-            header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
-            filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
-
-        msg_memo = memo_count(df_game)
-
+            header_list.remove("トビ")
+            filter_list.remove("トビ")
     else:  # 差分表示
         df_grandslam = df_grandslam[:0]  # 非表示のため破棄
-        header_list = [column_name, "通算", "差分"]
-        filter_list = [column_name, "ゲーム数", "通算", "差分"]
+        msg_memo = ""  # 非表示のため破棄
+        header_list = ["#", column_name, "通算", "順位差", "トップ差"]
+        filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
 
     # --- メッセージ整形
-    step = 40
+    step: int = 40
     step_count: list = []
-    last_line = len(df_summary)
+    print_df = df_summary.filter(items=header_list)
+    floatfmt = f.common.floatfmt_adjust(print_df)
+    last_line = len(print_df)
 
     for i in range(int(last_line / step + 1)):  # step行毎に分割
         s_line = i * step
@@ -79,16 +80,14 @@ def aggregation():
         step_count.append((s_line, e_line))
 
     for s_line, e_line in step_count:
-        t = df_summary[s_line:e_line].filter(
-            items=header_list
-        ).to_markdown(
+        t = print_df[s_line:e_line].to_markdown(
             index=False,
             tablefmt="simple",
             numalign="right",
             maxheadercolwidths=8,
-            floatfmt=("", "+.1f", "+.1f", "", ".2f")
-        )
-        msg[s_line] = "```\n" + re.sub(r" -([0-9]+)", r" ▲\1", t) + "\n```\n"  # マイナスを記号に置換
+            floatfmt=floatfmt,
+        ).replace("nan", "")
+        msg[s_line] = "```\n" + re.sub(r"  -([0-9]+)", r" ▲\1", t) + "\n```\n"  # マイナスを記号に置換
 
     # メモ追加
     if msg_memo:

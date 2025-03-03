@@ -90,6 +90,7 @@ def query_modification(sql: str):
             "<<player_list>>",
             ":" + ", :".join(list([*g.prm.player_list]))
         )
+    sql = sql.replace("<<guest_mark>>", g.cfg.setting.guest_mark)
 
     # SQLコメント削除
     sql = re.sub(r"^ *--\[.*$", "", sql, flags=re.MULTILINE)
@@ -372,3 +373,58 @@ def word_list(word_type=0):
         x = ret.fetchall()
 
     return (x)
+
+
+def df_rename(df, short=True):
+    rename_dict: dict = {}
+
+    for x in df.columns:
+        match x:
+            case "rank":
+                rename_dict[x] = "#" if short else "順位"
+            case "name":
+                rename_dict[x] = "名前" if short else "プレイヤー名"
+            case "team":
+                rename_dict[x] = "チーム" if short else "チーム名"
+            case "count":
+                rename_dict[x] = "ゲーム数"
+            case "pt_total" | "total_point":
+                rename_dict[x] = "通算" if short else "通算ポイント"
+            case "pt_avg" | "avg_point":
+                rename_dict[x] = "平均" if short else "平均ポイント"
+            case "ex_point":
+                rename_dict[x] = "卓外" if short else "卓外ポイント"
+            case "rank_distr" | "rank_distr1" | "rank_distr2":
+                rename_dict[x] = "順位分布"
+            case "rank_avg":
+                rename_dict[x] = "平順" if short else "平均順位"
+            case "1st" | "rank1":
+                rename_dict[x] = "1位"
+            case "2nd" | "rank2":
+                rename_dict[x] = "2位"
+            case "3rd" | "rank3":
+                rename_dict[x] = "3位"
+            case "4th" | "rank4":
+                rename_dict[x] = "4位"
+            case "1st(%)" | "rank1_rate":
+                rename_dict[x] = "1位率"
+            case "2nd(%)" | "rank2_rate":
+                rename_dict[x] = "2位率"
+            case "3rd(%)" | "rank3_rate":
+                rename_dict[x] = "3位率"
+            case "4th(%)" | "rank4_rate":
+                rename_dict[x] = "4位率"
+            case "flying":
+                rename_dict[x] = "トビ"
+            case "flying_rate":
+                rename_dict[x] = "トビ率"
+            case "pt_diff":
+                rename_dict[x] = "差分"
+            case "diff_from_above":
+                rename_dict[x] = "順位差"
+            case "diff_from_top":
+                rename_dict[x] = "トップ差"
+            case _ as v:
+                rename_dict[x] = v
+
+    return (df.rename(columns=rename_dict))
