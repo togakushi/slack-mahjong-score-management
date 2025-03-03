@@ -124,7 +124,7 @@ def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
     if kind is not None and g.cfg.config.has_section(kind):
         if len(name) > g.cfg.config[kind].getint("character_limit", 8):  # 文字制限
             return (False, "登録可能文字数を超えています。")
-    if name == g.prm.guest_name:  # 登録NGプレイヤー名
+    if name in [g.prm.guest_name, "nan"]:  # 登録NGプレイヤー名
         return (False, "使用できない名前です。")
     if re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable():  # 禁則記号
         return (False, "使用できない記号が含まれています。")
@@ -216,12 +216,18 @@ def floatfmt_adjust(df) -> list:
                 fmt.append(".0f")
             case "通算" | "平均" | "区間ポイント" | "通算ポイント" | "区間平均":
                 fmt.append("+.1f")
-            case "1st" | "2nd" | "3rd" | "4th":
+            case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位":
                 fmt.append(".0f")
-            case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)":
+            case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)" | "1位率" | "2位率" | "3位率" | "4位率":
+                fmt.append(".2f")
+            case "トビ":
+                fmt.append(".0f")
+            case "トビ率":
                 fmt.append(".2f")
             case "平均順位" | "平順":
                 fmt.append(".2f")
+            case "順位差" | "トップ差":
+                fmt.append(".1f")
             case "レート":
                 fmt.append(".1f")
             case "順位偏差" | "得点偏差":
