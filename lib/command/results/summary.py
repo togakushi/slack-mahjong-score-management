@@ -86,7 +86,7 @@ def aggregation():
             numalign="right",
             maxheadercolwidths=8,
             floatfmt=floatfmt,
-        ).replace("nan", "")
+        ).replace("   nan", "******")
         msg[s_line] = "```\n" + re.sub(r"  -([0-9]+)", r" ▲\1", t) + "\n```\n"  # マイナスを記号に置換
 
     # メモ追加
