@@ -31,13 +31,9 @@ def aggregation():
     final["name"] = final.copy().index
 
     # 足切り
-    if g.opt.stipulated == 0:  # 規定打数が指定されない場合はレートから計算
-        g.opt.stipulated = (
-            math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
-        )
-        g.prm.update(g.opt)
-    final = final.query("count >= @g.opt.stipulated")
-    df_results = df_results.query("count >= @g.opt.stipulated")
+    g.prm.stipulated_update(g.opt, game_info["game_count"])
+    final = final.query("count >= @g.prm.stipulated")
+    df_results = df_results.query("count >= @g.prm.stipulated")
 
     df = pd.merge(df_results, final, on=["name"]).sort_values(by="rate", ascending=False)
 

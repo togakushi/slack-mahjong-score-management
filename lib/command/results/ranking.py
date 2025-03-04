@@ -1,5 +1,3 @@
-import math
-
 import pandas as pd
 
 import lib.global_value as g
@@ -35,12 +33,7 @@ def aggregation():
     if game_info["game_count"] == 0:  # 結果が0件のとき
         return (f.message.reply(message="no_hits"), None)
 
-    if g.opt.stipulated == 0:  # 規定打数が指定されない場合はレートから計算
-        g.opt.stipulated = (
-            math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
-        )
-        g.prm.update(g.opt)
-
+    g.prm.stipulated_update(g.opt, game_info["game_count"])
     result_df = d.aggregate.game_results()
     record_df = d.aggregate.ranking_record()
     result_df = pd.merge(
@@ -54,7 +47,7 @@ def aggregation():
     result_df["総ゲーム数"] = game_info["game_count"]
     result_df["最大素点"] = result_df["最大素点"] * 100
     result_df.rename(columns={"1位率": "トップ率"}, inplace=True)
-    result_df = result_df.query("ゲーム数 >= @g.opt.stipulated")
+    result_df = result_df.query("ゲーム数 >= @g.prm.stipulated")
     result_df = result_df.reset_index(drop=True)
 
     data: dict = {

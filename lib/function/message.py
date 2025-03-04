@@ -205,8 +205,8 @@ def remarks(headword=False):
                 remark.append("チーム同卓時の結果を含む(" + g.cfg.setting.guest_mark + ")")
             else:
                 remark.append("チーム同卓時の結果を含む")
-    if g.opt.stipulated:
-        remark.append(f"規定打数 {g.opt.stipulated} G以上")
+    if g.prm.stipulated > 1:
+        remark.append(f"規定打数 {g.prm.stipulated} G以上")
     if g.opt.rule_version:
         remark.append(f"集計対象ルール {g.opt.rule_version}")
 

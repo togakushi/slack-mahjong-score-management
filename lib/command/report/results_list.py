@@ -1,5 +1,4 @@
 import logging
-import math
 import os
 
 import matplotlib.font_manager as fm
@@ -26,11 +25,7 @@ def main():
     # --- データ取得
     # 規定打数計算
     game_info = d.aggregate.game_info()
-    if g.opt.stipulated == 0:
-        g.opt.stipulated = (
-            math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
-        )
-        g.prm.update(g.opt)  # 更新
+    g.prm.stipulated_update(g.opt, game_info["game_count"])
 
     df = d.aggregate.results_list()
     if df.empty:

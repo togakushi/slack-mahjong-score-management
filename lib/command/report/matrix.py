@@ -1,4 +1,3 @@
-import math
 import os
 
 import lib.global_value as g
@@ -16,11 +15,7 @@ def plot():
     """
 
     game_info = d.aggregate.game_info()
-    if g.opt.stipulated == 0:  # 規定打数が指定されない場合はレートから計算
-        g.opt.stipulated = (
-            math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
-        )
-        g.prm.update(g.opt)
+    g.prm.stipulated_update(g.opt, game_info["game_count"])
 
     # データ集計
     df = d.aggregate.matrix_table()

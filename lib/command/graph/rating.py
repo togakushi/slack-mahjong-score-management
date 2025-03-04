@@ -1,5 +1,4 @@
 import logging
-import math
 import os
 
 import matplotlib.font_manager as fm
@@ -32,11 +31,8 @@ def plot():
         return (0, f.message.reply(message="no_hits"))
 
     # 足切り
-    if g.opt.stipulated == 0:  # 規定打数が指定されない場合はレートから計算
-        g.opt.stipulated = (
-            math.ceil(game_info["game_count"] * g.opt.stipulated_rate) + 1
-        )
-    df_dropped = df_ratings.dropna(axis=1, thresh=g.opt.stipulated).ffill()
+    g.prm.stipulated_update(g.opt, game_info["game_count"])
+    df_dropped = df_ratings.dropna(axis=1, thresh=g.prm.stipulated).ffill()
 
     # ゲスト置換
     for player in df_dropped.columns:

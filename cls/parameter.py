@@ -1,4 +1,5 @@
 import logging
+import math
 import re
 from datetime import datetime
 
@@ -303,6 +304,21 @@ class Parameters:
         """
 
         self.__dict__.update(_add_dict)
+
+    def stipulated_update(self, _opt: CommandOption, game_count: int):
+        """規定打数計算
+
+        Args:
+            _opt (CommandOption): オプションパラメータ
+            game_count (int): ゲーム数
+        """
+
+        if _opt.stipulated:
+            self.stipulated = _opt.stipulated
+        else:  # レートから計算
+            self.stipulated = (
+                math.ceil(game_count * _opt.stipulated_rate) + 1
+            )
 
     def to_dict(self):
         """インスタンス変数を辞書で返す
