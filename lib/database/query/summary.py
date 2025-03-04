@@ -472,7 +472,7 @@ def total():
         select
             overall_ranking as rank,
             --[individual] case
-            --[individual]     when guest = 0 then name
+            --[individual]     when guest = 0 or name = :guest_name then name
             --[individual]     else name || '(<<guest_mark>>)'
             --[individual] end as name,
             --[team] team,
