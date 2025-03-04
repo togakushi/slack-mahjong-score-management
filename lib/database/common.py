@@ -35,6 +35,8 @@ def query_modification(sql: str):
         else:
             sql = sql.replace("--[unregistered_not_replace] ", "")
     else:  # チーム集計
+        g.opt.unregistered_replace = False
+        g.opt.guest_skip = True
         sql = sql.replace("--[team] ", "")
         if not g.opt.friendly_fire:
             sql = sql.replace("--[friendly_fire] ", "")

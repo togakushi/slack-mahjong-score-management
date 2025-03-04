@@ -19,32 +19,28 @@ def info():
             first_game, last_game
         from (
             select
-                first_value(individual_results.playtime) over(order by individual_results.ts asc) as first_game,
-                last_value(individual_results.playtime) over(order by individual_results.ts asc) as last_game,
-                first_value(game_info.comment) over(order by individual_results.ts asc) as first_comment,
-                last_value(game_info.comment) over(order by individual_results.ts asc) as last_comment
+                first_value(results.playtime) over(order by results.ts asc) as first_game,
+                last_value(results.playtime) over(order by results.ts asc) as last_game,
+                first_value(game_info.comment) over(order by results.ts asc) as first_comment,
+                last_value(game_info.comment) over(order by results.ts asc) as last_comment
             from
-                individual_results
+                --[individual] individual_results as results
+                --[team] team_results as results
             join game_info on
-                game_info.ts == individual_results.ts
+                game_info.ts == results.ts
             where
-                individual_results.rule_version = :rule_version
-                and individual_results.playtime between :starttime and :endtime -- 検索範囲
+                results.rule_version = :rule_version
+                and results.playtime between :starttime and :endtime -- 検索範囲
                 --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[player_name] and name in (<<player_list>>) -- 対象プレイヤー
                 --[friendly_fire] and same_team = 0
                 --[search_word] and game_info.comment like :search_word
             group by
-                individual_results.playtime
+                results.playtime
             order by
-                individual_results.playtime desc
+                results.playtime desc
         )
     """
-
-    if not g.opt.individual:  # チーム集計
-        g.opt.unregistered_replace = False
-        g.opt.guest_skip = True
-        sql = sql.replace("individual_results", "team_results")
 
     return (query_modification(sql))
 

@@ -1,4 +1,3 @@
-import lib.global_value as g
 from lib.database.common import query_modification
 
 
@@ -29,7 +28,7 @@ def gamedata():
             select
                 --[collection] count() as count,
                 --[not_collection] --[group_by] count() as count,
-                individual_results.playtime,
+                results.playtime,
                 --[collection_daily] collection_daily as collection,
                 --[collection_monthly] substr(collection_daily, 1, 7) as collection,
                 --[collection_yearly] substr(collection_daily, 1, 4) as collection,
@@ -46,12 +45,13 @@ def gamedata():
                 --[not_group_length] game_info.comment
                 --[group_length] substr(game_info.comment, 1, :group_length) as comment
             from
-                individual_results
+                --[individual] individual_results as results
+                --[team] team_results as results
             join
-                game_info on individual_results.ts = game_info.ts
+                game_info on results.ts = game_info.ts
             where
-                individual_results.rule_version = :rule_version
-                and individual_results.playtime between :starttime and :endtime
+                results.rule_version = :rule_version
+                and results.playtime between :starttime and :endtime
                 --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[individual] --[guest_skip] and guest = 0 -- ゲストなし
                 --[friendly_fire] and game_info.same_team = 0
@@ -67,7 +67,7 @@ def gamedata():
             --[collection_yearly]     substr(collection_daily, 1, 4), name -- 年次集計
             --[collection_all]     name -- 全体集計
             order by
-                --[not_collection] individual_results.playtime desc
+                --[not_collection] results.playtime desc
                 --[collection_daily] collection_daily desc
                 --[collection_monthly] substr(collection_daily, 1, 7) desc
                 --[collection_yearly] substr(collection_daily, 1, 4) desc
@@ -80,11 +80,6 @@ def gamedata():
             --[not_collection] playtime, name
             --[collection] collection, name
     """
-
-    if not g.opt.individual:  # チーム集計
-        g.opt.unregistered_replace = False
-        g.opt.guest_skip = True
-        sql = sql.replace("individual_results", "team_results")
 
     return (query_modification(sql))
 
@@ -199,35 +194,36 @@ def results():
             max(playtime) as last_game
         from (
             select
-                individual_results.playtime,
-                --[individual] --[unregistered_replace] case when guest = 0 then individual_results.name else :guest_name end as name, -- ゲスト有効
-                --[individual] --[unregistered_not_replace] individual_results.name, -- ゲスト無効
-                --[team] individual_results.name,
+                results.playtime,
+                --[individual] --[unregistered_replace] case when guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
+                --[individual] --[unregistered_not_replace] results.name, -- ゲスト無効
+                --[team] results.name,
                 rpoint,
                 rank,
                 point,
                 seat,
-                --[individual] individual_results.grandslam,
+                --[individual] results.grandslam,
                 ifnull(gs_count, 0) as gs_count
             from
-                individual_results
+                --[individual] individual_results as results
+                --[team] team_results as results
             join game_info on
-                game_info.ts == individual_results.ts
+                game_info.ts == results.ts
             left join grandslam on
-                grandslam.thread_ts == individual_results.ts
-                --[individual] and grandslam.name == individual_results.name
-                --[team] and grandslam.team == team_results.name
+                grandslam.thread_ts == results.ts
+                --[individual] and grandslam.name == results.name
+                --[team] and grandslam.team == results.name
             where
-                individual_results.rule_version = :rule_version
-                and individual_results.playtime between :starttime and :endtime
+                results.rule_version = :rule_version
+                and results.playtime between :starttime and :endtime
                 --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
                 --[individual] --[guest_skip] and guest = 0 -- ゲストなし
                 --[friendly_fire] and game_info.same_team = 0
-                --[team] and individual_results.name notnull
-                --[player_name] and individual_results.name in (<<player_list>>) -- 対象プレイヤー
+                --[team] and results.name notnull
+                --[player_name] and results.name in (<<player_list>>) -- 対象プレイヤー
                 --[search_word] and game_info.comment like :search_word
             order by
-                individual_results.playtime desc
+                results.playtime desc
         )
         group by
             name
@@ -236,11 +232,6 @@ def results():
         order by
             sum(point) desc
     """
-
-    if not g.opt.individual:  # チーム集計
-        g.opt.unregistered_replace = False
-        g.opt.guest_skip = True
-        sql = sql.replace("individual_results", "team_results")
 
     return (query_modification(sql))
 
@@ -255,10 +246,10 @@ def details():
     sql = """
         --- game.details()
         select
-            --[not_search_word] individual_results.playtime,
+            --[not_search_word] results.playtime,
             --[search_word] game_info.comment as playtime,
-            --[team] team_results.name as name,
-            --[individual] individual_results.name as name,
+            --[team] results.name as name,
+            --[individual] results.name as name,
             --[individual] guest,
             game_info.guest_count,
             game_info.same_team,
@@ -273,30 +264,26 @@ def details():
             --[not_group_length] game_info.comment
             --[group_length] substr(game_info.comment, 1, :group_length) as comment
         from
-            individual_results
+            --[individual] individual_results as results
+            --[team] team_results as results
         join game_info on
-            game_info.ts == individual_results.ts
+            game_info.ts == results.ts
         left join grandslam on
-            grandslam.thread_ts == individual_results.ts
-            --[individual] and grandslam.name == individual_results.name
-            --[team] and grandslam.team == team_results.name
+            grandslam.thread_ts == results.ts
+            --[individual] and grandslam.name == results.name
+            --[team] and grandslam.team == results.name
         left join regulations on
-            regulations.thread_ts == individual_results.ts
-            --[individual] and regulations.name == individual_results.name
-            --[team] and regulations.team == team_results.name
+            regulations.thread_ts == results.ts
+            --[individual] and regulations.name == results.name
+            --[team] and regulations.team == results.name
         where
-            individual_results.rule_version = :rule_version
-            and individual_results.playtime between :starttime and :endtime
+            results.rule_version = :rule_version
+            and results.playtime between :starttime and :endtime
             --[search_word] and game_info.comment like :search_word
             --[friendly_fire] and game_info.same_team = 0
         order by
-            individual_results.playtime
+            results.playtime
     """
-
-    if not g.opt.individual:  # チーム集計
-        g.opt.unregistered_replace = False
-        g.opt.guest_skip = True
-        sql = sql.replace("individual_results", "team_results")
 
     return (query_modification(sql))
 
@@ -362,11 +349,13 @@ def versus_matrix():
                 vs.rpoint as vs_rpoint,
                 vs.point as vs_point
             from
-                individual_results my
+                --[individual] individual_results as my
+                --[team] team_results as my
             join game_info on
                 game_info.ts == my.ts
             inner join
-                individual_results vs on
+                --[individual] individual_results as vs on
+                --[team] team_results as vs on
                     my.playtime = vs.playtime and my.name != vs.name
             where
                 my.rule_version = :rule_version
@@ -385,11 +374,6 @@ def versus_matrix():
         order by
             game desc
     """
-
-    if not g.opt.individual:  # チーム集計
-        g.opt.unregistered_replace = False
-        g.opt.guest_skip = True
-        sql = sql.replace("individual_results", "team_results")
 
     return (query_modification(sql))
 
@@ -517,9 +501,5 @@ def total():
         from ranked_points
         order by rank, count desc;
     """
-
-    if not g.opt.individual:  # チーム集計
-        g.opt.unregistered_replace = False
-        g.opt.guest_skip = True
 
     return (query_modification(sql))
