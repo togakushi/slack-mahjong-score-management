@@ -72,7 +72,7 @@ def graph_generation(game_info, df, title):
         str: 生成ファイルパス
     """
 
-    df = columns_rename(df.filter(
+    df = d.common.df_rename(df.filter(
         items=[
             "player", "team",
             "game", "total_mix", "avg_mix", "rank_avg",
@@ -192,7 +192,7 @@ def text_generation(df):
             case _:
                 fmt.append("")
 
-    df = columns_rename(df)
+    df = d.common.df_rename(df)
     df.to_markdown(report_file_path, tablefmt="outline", floatfmt=fmt)
 
     return (report_file_path)
@@ -239,32 +239,3 @@ def csv_generation(df):
     df.to_csv(report_file_path)
 
     return (report_file_path)
-
-
-def columns_rename(df):
-    """カラム名をリネームする
-
-    Args:
-        df (pd.DataFrame): 対象データフレーム
-
-    Returns:
-        pd.DataFrame: カラム名をリネームしたデータフレーム
-    """
-
-    df = df.rename(
-        columns={
-            "player": "プレイヤー名", "team": "チーム名",
-            "game": "ゲーム数",
-            "total_mix": "通算ポイント", "point_sum": "通算ポイント",
-            "avg_mix": "平均ポイント", "point_avg": "平均ポイント",
-            "rank_avg": "平均順位",
-            "1st_mix": "1位", "1st_count": "1位数", "1st_%": "1位率",
-            "2nd_mix": "2位", "2nd_count": "2位数", "2nd_%": "2位率",
-            "3rd_mix": "3位", "3rd_count": "3位数", "3rd_%": "3位率",
-            "4th_mix": "4位", "4th_count": "4位数", "4th_%": "4位率",
-            "flying_mix": "トビ", "flying_count": "トビ数", "flying_%": "トビ率",
-            "yakuman_mix": "役満和了", "yakuman_count": "役満和了数", "yakuman_%": "役満和了率",
-        }
-    )
-
-    return (df)

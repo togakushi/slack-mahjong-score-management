@@ -8,6 +8,8 @@ import textwrap
 from contextlib import closing
 from datetime import datetime
 
+import pandas as pd
+
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
@@ -377,22 +379,36 @@ def word_list(word_type=0):
     return (x)
 
 
-def df_rename(df, short=True):
+def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
+    """カラム名をリネームする
+
+    Args:
+        df (pd.DataFrame): 対象データフレーム
+        short (bool, optional): 略語にリネーム. Defaults to True.
+
+    Returns:
+        pd.DataFrame: リネーム後のデータフレーム
+    """
+
     rename_dict: dict = {}
 
     for x in df.columns:
         match x:
             case "rank":
                 rename_dict[x] = "#" if short else "順位"
-            case "name":
+            case "playtime":
+                rename_dict[x] = "日時"
+            case "name" | "player":
                 rename_dict[x] = "名前" if short else "プレイヤー名"
             case "team":
                 rename_dict[x] = "チーム" if short else "チーム名"
-            case "count":
+            case "count" | "game":
                 rename_dict[x] = "ゲーム数"
-            case "pt_total" | "total_point":
+            case "point":
+                rename_dict[x] = "獲得ポイント"
+            case "pt_total" | "total_point" | "point_sum" | "total_mix":
                 rename_dict[x] = "通算" if short else "通算ポイント"
-            case "pt_avg" | "avg_point":
+            case "pt_avg" | "avg_point" | "point_avg" | "avg_mix":
                 rename_dict[x] = "平均" if short else "平均ポイント"
             case "ex_point":
                 rename_dict[x] = "卓外" if short else "卓外ポイント"
@@ -400,25 +416,35 @@ def df_rename(df, short=True):
                 rename_dict[x] = "順位分布"
             case "rank_avg":
                 rename_dict[x] = "平順" if short else "平均順位"
-            case "1st" | "rank1":
+            case "1st" | "rank1" | "1st_mix":
                 rename_dict[x] = "1位"
-            case "2nd" | "rank2":
+            case "2nd" | "rank2" | "2nd_mix":
                 rename_dict[x] = "2位"
-            case "3rd" | "rank3":
+            case "3rd" | "rank3" | "3rd_mix":
                 rename_dict[x] = "3位"
-            case "4th" | "rank4":
+            case "4th" | "rank4" | "4th_mix":
                 rename_dict[x] = "4位"
-            case "1st(%)" | "rank1_rate":
+            case "1st(%)" | "1st_%" | "rank1_rate":
                 rename_dict[x] = "1位率"
-            case "2nd(%)" | "rank2_rate":
+            case "2nd(%)" | "2nd_%" | "rank2_rate":
                 rename_dict[x] = "2位率"
-            case "3rd(%)" | "rank3_rate":
+            case "3rd(%)" | "3rd_%" | "rank3_rate":
                 rename_dict[x] = "3位率"
-            case "4th(%)" | "rank4_rate":
+            case "4th(%)" | "4th_%" | "rank4_rate":
                 rename_dict[x] = "4位率"
-            case "flying":
+            case "1st_count":
+                rename_dict[x] = "1位数"
+            case "2nd_count":
+                rename_dict[x] = "2位数"
+            case "3rd_count":
+                rename_dict[x] = "3位数"
+            case "4th_count":
+                rename_dict[x] = "4位数"
+            case "flying" | "flying_mix":
                 rename_dict[x] = "トビ"
-            case "flying_rate":
+            case "flying_count":
+                rename_dict[x] = "トビ数"
+            case "flying_rate" | "flying_%":
                 rename_dict[x] = "トビ率"
             case "pt_diff":
                 rename_dict[x] = "差分"
@@ -426,7 +452,11 @@ def df_rename(df, short=True):
                 rename_dict[x] = "順位差"
             case "diff_from_top":
                 rename_dict[x] = "トップ差"
-            case _ as v:
-                rename_dict[x] = v
+            case "yakuman_mix" | "grandslam":
+                rename_dict[x] = "役満和了"
+            case "yakuman_count":
+                rename_dict[x] = "役満和了数"
+            case "yakuman_%":
+                rename_dict[x] = "役満和了率"
 
     return (df.rename(columns=rename_dict))

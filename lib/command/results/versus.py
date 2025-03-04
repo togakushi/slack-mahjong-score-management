@@ -138,14 +138,7 @@ def aggregation():
         df_data["プレイヤー名"] = df_data["表示名"].apply(lambda x: x.strip())
         df_data["座席"] = df_data["seat"].apply(lambda x: ["東家", "南家", "西家", "北家"][x - 1])
         df_data["素点"] = df_data["rpoint"] * 100
-    df_data.rename(
-        columns={
-            "playtime": "日時",
-            "point": "獲得ポイント",
-            "rank": "順位",
-            "grandslam": "役満和了",
-        }, inplace=True)
-    df_data = df_data.filter(
+    df_data = d.common.df_rename(df_data, short=False).filter(
         items=["日時", "座席", "プレイヤー名", "順位", "素点", "獲得ポイント", "役満和了"]
     ).drop_duplicates()
 
