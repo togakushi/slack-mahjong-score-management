@@ -31,11 +31,9 @@ def aggregation():
     if g.opt.individual:  # 個人集計
         headline = "*【成績サマリ】*\n"
         column_name = "名前"
-        df_summary = df_summary.rename(columns={"プレイヤー名": column_name})
     else:  # チーム集計
         headline = "*【チーム成績サマリ】*\n"
         column_name = "チーム"
-        df_summary = df_summary.rename(columns={"チーム名": column_name})
 
     if not g.cfg.config["mahjong"].getboolean("ignore_flying", False):
         add_text = " / トバされた人（延べ）：{} 人".format(  # pylint: disable=consider-using-f-string
