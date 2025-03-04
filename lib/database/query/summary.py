@@ -432,6 +432,8 @@ def total():
             group by
                 --[individual] name
                 --[team] team
+            having
+                count >= :stipulated -- 規定打数
         ),
         ranked_points as (
             select
