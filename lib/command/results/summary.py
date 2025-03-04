@@ -19,10 +19,10 @@ def aggregation():
 
     # --- データ収集
     game_info = d.aggregate.game_info()
-    df_summary = d.aggregate.game_summary().drop("rank_distr2", axis=1)
+    df_summary = d.aggregate.game_summary(drop=["rank_distr2"])
     df_game = d.aggregate.game_details()
-    df_grandslam = df_game.query("grandslam != ''")
 
+    df_grandslam = df_game.query("grandslam != ''")
     df_summary = d.common.df_rename(df_summary)
 
     # 表示

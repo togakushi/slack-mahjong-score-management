@@ -80,8 +80,12 @@ def game_info():
     return (ret)
 
 
-def game_summary():
-    """指定条件を満たすゲーム結果をサマライズする
+def game_summary(filter: list | None = None, drop: list | None = None) -> pd.DataFrame:
+    """ゲーム結果をサマライズする
+
+    Args:
+        filter (list | None, optional): 抽出するカラム. Defaults to None.
+        drop (list | None, optional): 除外するカラム. Defaults to None.
 
     Returns:
         pd.DataFrame: 集計結果
@@ -93,6 +97,13 @@ def game_summary():
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
+
+    if isinstance(filter, list):
+        df = df.filter(items=filter)
+
+    if isinstance(drop, list):
+        df = df.drop(columns=drop)
+
     logging.trace(df)  # type: ignore
     return (df)
 
