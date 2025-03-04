@@ -1,5 +1,3 @@
-import math
-
 import pandas as pd
 
 import lib.global_value as g
