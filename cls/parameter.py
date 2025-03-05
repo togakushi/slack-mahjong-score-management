@@ -305,6 +305,9 @@ class Parameters:
 
         self.__dict__.update(_add_dict)
 
+    def get(self, x: str):
+        return (self.__dict__.get(x, None))
+
     def stipulated_update(self, _opt: CommandOption, game_count: int):
         """規定打数計算
 

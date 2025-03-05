@@ -15,15 +15,22 @@ from lib import database as d
 from lib import function as f
 
 
-def query_modification(sql: str):
-    """オプションの内容でクエリを修正する
+def load_query(filepath: str, flag: str | None = None) -> str:
+    """外部ファイルからクエリを読み込みオプションの内容で修正する
 
     Args:
-        sql (str): SQL
+        filepath (str): 読み込むSQLファイルパス
+        flag (str, optional): 集計単位. Defaults to None.
+            - M: 月間集計
+            - Y: 年間集計
+            - A: 全期間集計
 
     Returns:
         str: SQL
     """
+
+    with open(filepath, "r", encoding="utf-8") as queryfile:
+        sql = queryfile.read().strip()
 
     if g.opt.individual:  # 個人集計
         sql = sql.replace("--[individual] ", "")
@@ -60,7 +67,7 @@ def query_modification(sql: str):
         case _:
             sql = sql.replace("--[not_collection] ", "")
 
-    if g.prm.search_word or g.prm.group_length:
+    if g.prm.search_word or g.prm.get("group_length"):
         sql = sql.replace("--[group_by] ", "")
     else:
         sql = sql.replace("--[not_group_by] ", "")
@@ -95,6 +102,38 @@ def query_modification(sql: str):
             ":" + ", :".join(list([*g.prm.player_list]))
         )
     sql = sql.replace("<<guest_mark>>", g.cfg.setting.guest_mark)
+
+    # フラグの処理
+    match flag:
+        case "M":
+            sql = sql.replace("<<collection>>", "substr(collection_daily, 1, 7) as 集計")
+            sql = sql.replace("<<group by>>", "group by 集計")
+        case "Y":
+            sql = sql.replace("<<collection>>", "substr(collection_daily, 1, 4) as 集計")
+            sql = sql.replace("<<group by>>", "group by 集計")
+        case "A":
+            sql = sql.replace("<<collection>>", "'合計' as 集計")
+            sql = sql.replace("<<group by>>", "")
+
+    if g.prm.get("interval") is not None:
+        if g.prm.get("interval") == 0:
+            sql = sql.replace("<<Calculation Formula>>", ":interval")
+        else:
+            sql = sql.replace(
+                "<<Calculation Formula>>",
+                "(row_number() over (order by total_count desc) - 1) / :interval"
+            )
+    if g.prm.get("kind") is not None:
+        if g.prm.get("kind") == "grandslam":
+            if g.undefined_word == 0:
+                sql = sql.replace("<<where_string>>", "and (words.type is null or words.type = 0)")
+            else:
+                sql = sql.replace("<<where_string>>", "and words.type = 0")
+        else:
+            if g.undefined_word == 2:
+                sql = sql.replace("<<where_string>>", "and (words.type is null or words.type = 1 or words.type = 2)")
+            else:
+                sql = sql.replace("<<where_string>>", "and (words.type = 1 or words.type = 2)")
 
     # SQLコメント削除
     sql = re.sub(r"^ *--\[.*$", "", sql, flags=re.MULTILINE)

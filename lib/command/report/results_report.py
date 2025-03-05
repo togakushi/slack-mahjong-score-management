@@ -20,7 +20,7 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
 
 import lib.global_value as g
 from lib import command as c
-from lib.database import query
+from lib.database.common import load_query
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -47,7 +47,7 @@ def get_game_results(flag: str = "M") -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query.report.personal_data(flag),
+        load_query("lib/database/query/report.personal_data.sql", flag),
         g.prm.to_dict(),
     )
 
@@ -112,7 +112,7 @@ def get_count_results(game_count: int) -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query.report.count_data(),
+        load_query("lib/database/query/report.count_data.sql"),
         g.prm.to_dict(),
     )
 
@@ -171,15 +171,15 @@ def get_count_moving(game_count: int) -> list:
         list: 集計結果のリスト
     """
 
-    g.prm.append({"interval": game_count})
-
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
+
+    g.prm.append({"interval": game_count})
     rows = resultdb.execute(
-        query.report.count_moving(game_count),
+        load_query("lib/database/query/report.count_moving.sql"),
         g.prm.to_dict(),
     )
 

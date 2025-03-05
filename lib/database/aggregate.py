@@ -9,7 +9,7 @@ import pandas as pd
 import lib.global_value as g
 from lib import command as c
 from lib import function as f
-from lib.database import query
+from lib.database.common import load_query
 
 
 def _disp_name(df, adjust=0, mark=True):
@@ -57,7 +57,7 @@ def game_info():
 
     # データ収集
     df = pd.read_sql(
-        query.game.info(),
+        load_query("lib/database/query/game.info.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict()
     )
@@ -80,12 +80,12 @@ def game_info():
     return (ret)
 
 
-def game_summary(filter: list | None = None, drop: list | None = None) -> pd.DataFrame:
+def game_summary(filter_items: list | None = None, drop_items: list | None = None) -> pd.DataFrame:
     """ゲーム結果をサマライズする
 
     Args:
-        filter (list | None, optional): 抽出するカラム. Defaults to None.
-        drop (list | None, optional): 除外するカラム. Defaults to None.
+        filter_items (list | None, optional): 抽出するカラム. Defaults to None.
+        drop_items (list | None, optional): 除外するカラム. Defaults to None.
 
     Returns:
         pd.DataFrame: 集計結果
@@ -93,16 +93,16 @@ def game_summary(filter: list | None = None, drop: list | None = None) -> pd.Dat
 
     # データ収集
     df = pd.read_sql(
-        query.summary.total(),
+        load_query("lib/database/query/summary.total.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
 
-    if isinstance(filter, list):
-        df = df.filter(items=filter)
+    if isinstance(filter_items, list):
+        df = df.filter(items=filter_items)
 
-    if isinstance(drop, list):
-        df = df.drop(columns=drop)
+    if isinstance(drop_items, list):
+        df = df.drop(columns=drop_items)
 
     logging.trace(df)  # type: ignore
     return (df)
@@ -117,7 +117,7 @@ def game_details():
 
     # データ収集
     df = pd.read_sql(
-        query.summary.details(),
+        load_query("lib/database/query/summary.details.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -145,8 +145,9 @@ def remark_count(kind):
     """
 
     # データ収集
+    g.prm.append({"kind": kind})
     df = pd.read_sql(
-        query.game.remark_count(kind),
+        load_query("lib/database/query/game.remark_count.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -172,7 +173,7 @@ def game_results():
 
     # データ収集
     df = pd.read_sql(
-        query.summary.results(),
+        load_query("lib/database/query/summary.results.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -203,7 +204,7 @@ def personal_gamedata():
 
     # データ収集
     df = pd.read_sql(
-        query.summary.gamedata(),
+        load_query("lib/database/query/summary.gamedata.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -225,7 +226,7 @@ def versus_matrix():
 
     # データ収集
     df = pd.read_sql(
-        query.summary.versus_matrix(),
+        load_query("lib/database/query/summary.versus_matrix.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -254,7 +255,7 @@ def team_gamedata():
     """
     # データ収集
     df = pd.read_sql(
-        query.summary.gamedata(),
+        load_query("lib/database/query/summary.gamedata.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -272,7 +273,7 @@ def ranking_record():
 
     # データ収集
     gamedata = pd.read_sql(
-        query.ranking.record_count(),
+        load_query("lib/database/query/ranking.record_count.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -340,7 +341,7 @@ def calculation_rating():
 
     # データ収集
     df_results = pd.read_sql(
-        query.ranking.ratings(),
+        load_query("lib/database/query/ranking.ratings.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     ).set_index("playtime")
@@ -392,7 +393,7 @@ def simple_results():
 
     # データ収集
     df = pd.read_sql(
-        query.ranking.results(),
+        load_query("lib/database/query/ranking.results.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     ).set_index("name")
@@ -410,7 +411,7 @@ def monthly_report():
 
     # データ収集
     df = pd.read_sql(
-        query.report.monthly(),
+        load_query("lib/database/query/report.monthly.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
@@ -427,7 +428,7 @@ def winner_report():
 
     # データ収集
     df = pd.read_sql(
-        query.report.winner(),
+        load_query("lib/database/query/report.winner.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     ).fillna(value=np.nan)
@@ -450,7 +451,7 @@ def matrix_table():
 
     # データ収集
     df = pd.read_sql(
-        query.report.matrix_table(),
+        load_query("lib/database/query/report.matrix_table.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict()
     ).set_index("playtime")
@@ -565,7 +566,7 @@ def results_list():
 
     # データ収集
     df = pd.read_sql(
-        query.report.results_list(),
+        load_query("lib/database/query/report.results_list.sql"),
         sqlite3.connect(g.cfg.db.database_file),
         params=g.prm.to_dict(),
     )
