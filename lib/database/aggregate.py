@@ -209,11 +209,6 @@ def personal_gamedata():
         params=g.prm.to_dict(),
     )
 
-    # ゲスト置換
-    df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.name_replace(x, add_mark=True)
-    )
-
     return (df)
 
 

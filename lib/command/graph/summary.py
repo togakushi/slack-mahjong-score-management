@@ -78,16 +78,13 @@ def point_plot():
 
     # 集計
     if g.opt.individual:  # 個人集計
-        legend = "プレイヤー名"
-        pivot = pd.pivot_table(
-            df, index=pivot_index, columns="プレイヤー名", values="point_sum"
-        ).ffill()
+        legend = "name"
     else:  # チーム集計
-        legend = "チーム名"
-        pivot = pd.pivot_table(
-            df, index=pivot_index, columns="team", values="point_sum"
-        ).ffill()
+        legend = "team"
 
+    pivot = pd.pivot_table(
+        df, index=pivot_index, columns=legend, values="point_sum"
+    ).ffill()
     pivot = pivot.reindex(  # 並び替え
         target_data[legend].to_list(), axis="columns"
     )
@@ -174,16 +171,13 @@ def rank_plot():
 
     # 集計
     if g.opt.individual:  # 個人集計
-        legend = "プレイヤー名"
-        pivot = pd.pivot_table(
-            df, index=pivot_index, columns=legend, values="point_sum"
-        ).ffill()
+        legend = "name"
     else:  # チーム集計
-        legend = "チーム名"
-        pivot = pd.pivot_table(
-            df, index=pivot_index, columns="team", values="point_sum"
-        ).ffill()
+        legend = "team"
 
+    pivot = pd.pivot_table(
+        df, index=pivot_index, columns=legend, values="point_sum"
+    ).ffill()
     pivot = pivot.reindex(  # 並び替え
         target_data[legend].to_list(), axis="columns"
     )
@@ -224,15 +218,13 @@ def _data_collection():
         if df.empty:
             return (target_data, df)
 
-        target_data["プレイヤー名"] = df.groupby("name").last()["プレイヤー名"]
-        target_data["last_point"] = df.groupby("name").last()["point_sum"]
-        target_data["game_count"] = (
-            df.groupby("name").max(numeric_only=True)["count"]
-        )
+        target_data["name"] = df.groupby("name", as_index=False).last()["name"]
+        target_data["last_point"] = df.groupby("name", as_index=False).last()["point_sum"]
+        target_data["game_count"] = df.groupby("name", as_index=False).max(numeric_only=True)["count"]
 
         # 足切り
         target_list = list(
-            target_data.query("game_count >= @g.opt.stipulated").index
+            target_data.query("game_count >= @g.opt.stipulated")["name"]
         )
         _ = target_list  # ignore PEP8 F841
         target_data = target_data.query("name == @target_list").copy()
@@ -246,7 +238,7 @@ def _data_collection():
         target_data["game_count"] = (
             df.groupby("team").max(numeric_only=True)["count"]
         )
-        target_data["チーム名"] = target_data.index
+        target_data["team"] = target_data.index
         target_data = target_data.sort_values("last_point", ascending=False)
 
     # 順位付け

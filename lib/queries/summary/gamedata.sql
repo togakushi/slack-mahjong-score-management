@@ -5,7 +5,7 @@ select
     --[collection] sum(count) over moving as count,
     --[not_collection] replace(playtime, "-", "/") as playtime,
     --[collection] replace(collection, "-", "/") as playtime,
-    --[team] name as team,
+    --[team] team,
     --[individual] name,
     rank,
     point,
@@ -23,8 +23,8 @@ from (
         --[collection_yearly] substr(collection_daily, 1, 4) as collection,
         --[collection_all] "" as collection,
         --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
-        --[individual] --[unregistered_not_replace] name, -- ゲスト無効
-        --[team] name,
+        --[individual] --[unregistered_not_replace] case when guest = 0 or name = :guest_name then name else name || '(<<guest_mark>>)' end as name, -- ゲスト無効
+        --[team] name as team,
         --[not_collection] rank,
         --[collection] round(avg(rank), 2) as rank,
         --[not_collection] --[not_group_by] point,
@@ -54,7 +54,8 @@ from (
     --[collection_daily]     collection_daily, name -- 日次集計
     --[collection_monthly]     substr(collection_daily, 1, 7), name -- 月次集計
     --[collection_yearly]     substr(collection_daily, 1, 4), name -- 年次集計
-    --[collection_all]     name -- 全体集計
+    --[individual] --[collection_all]     name -- 全体集計
+    --[team] --[collection_all]     team -- 全体集計
     order by
         --[not_collection] results.playtime desc
         --[collection_daily] collection_daily desc
@@ -63,9 +64,13 @@ from (
         --[collection_all] collection_daily desc
 )
 window
-    --[not_collection] moving as (partition by name order by playtime)
-    --[collection] moving as (partition by name order by collection)
+    --[individual] --[not_collection] moving as (partition by name order by playtime)
+    --[individual] --[collection] moving as (partition by name order by collection)
+    --[team] --[not_collection] moving as (partition by team order by playtime)
+    --[team] --[collection] moving as (partition by team order by collection)
 order by
-    --[not_collection] playtime, name
-    --[collection] collection, name
+    --[individual] --[not_collection] playtime, name
+    --[individual] --[collection] collection, name
+    --[team] --[not_collection] playtime, team
+    --[team] --[collection] collection, team
 ;
