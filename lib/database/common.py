@@ -4,7 +4,6 @@ import os
 import re
 import shutil
 import sqlite3
-import textwrap
 from contextlib import closing
 from datetime import datetime
 
@@ -143,9 +142,27 @@ def load_query(filepath: str, flag: str | None = None) -> str:
     func = inspect.stack()[1].function
     logging.trace("%s: opt=%s", func, vars(g.opt))  # type: ignore
     logging.trace("%s: prm=%s", func, vars(g.prm))  # type: ignore
-    logging.trace("%s: sql=%s", func, textwrap.dedent(sql))  # type: ignore
+    logging.trace("%s: sql=%s", func, named_query(sql, g.prm.to_dict()))  # type: ignore
 
     return (sql)
+
+
+def named_query(query: str, params: dict) -> str:
+    """クエリにパラメータをバインドして返す
+
+    Args:
+        query (str): SQL
+        params (dict): パラメータ
+
+    Returns:
+        str: バインド済みSQL
+    """
+
+    for k, v in params.items():
+        if isinstance(v, datetime):
+            params[k] = v.strftime("%Y-%m-%d %H:%M:%S")
+
+    return re.sub(r":(\w+)", lambda m: repr(params.get(m.group(1), m.group(0))), query)
 
 
 def exsist_record(ts):
