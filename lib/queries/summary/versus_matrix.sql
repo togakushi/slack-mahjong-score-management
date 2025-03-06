@@ -1,4 +1,4 @@
--- summary.versus_matrix()
+-- summary.versus_matrix
 select
     my_name, vs_name,
     count() as game,

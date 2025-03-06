@@ -1,4 +1,4 @@
--- summary.results()
+-- summary.results
 select
     --[team] name as name,
     --[individual] name,

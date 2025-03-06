@@ -1,4 +1,4 @@
--- summary.gamedata()
+-- summary.gamedata
 select
     --[not_collection] --[not_group_by] count() over moving as count,
     --[not_collection] --[group_by] sum(count) over moving as count,

@@ -1,4 +1,4 @@
--- ranking.record_count()
+-- ranking.record_count
 select
     results.playtime,
     --[individual] --[unregistered_replace] case when guest = 0 then results.name else :guest_name end as name, -- ゲスト有効

@@ -1,4 +1,4 @@
--- report.count_moving()
+-- report.count_moving
 select
     interval,
     row_number() over (partition by interval) as game_no,

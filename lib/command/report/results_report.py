@@ -47,7 +47,7 @@ def get_game_results(flag: str = "M") -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        load_query("lib/database/query/report.personal_data.sql", flag),
+        load_query("lib/queries/report/personal_data.sql", flag),
         g.prm.to_dict(),
     )
 
@@ -112,7 +112,7 @@ def get_count_results(game_count: int) -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        load_query("lib/database/query/report.count_data.sql"),
+        load_query("lib/queries/report/count_data.sql"),
         g.prm.to_dict(),
     )
 
@@ -179,7 +179,7 @@ def get_count_moving(game_count: int) -> list:
 
     g.prm.append({"interval": game_count})
     rows = resultdb.execute(
-        load_query("lib/database/query/report.count_moving.sql"),
+        load_query("lib/queries/report/count_moving.sql"),
         g.prm.to_dict(),
     )
 

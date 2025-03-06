@@ -15,12 +15,12 @@ def initialization_resultdb():
     )
     resultdb.row_factory = sqlite3.Row
 
-    resultdb.execute(load_query("lib/database/query/create_table_member.sql"))  # メンバー登録テーブル
-    resultdb.execute(load_query("lib/database/query/create_table_alias.sql"))  # 別名定義テーブル
-    resultdb.execute(load_query("lib/database/query/create_table_team.sql"))  # チーム定義テーブル
-    resultdb.execute(load_query("lib/database/query/create_table_result.sql"))  # データ取り込みテーブル
-    resultdb.execute(load_query("lib/database/query/create_table_remarks.sql"))  # メモ格納テーブル
-    resultdb.execute(load_query("lib/database/query/create_table_words.sql"))  # レギュレーションワード登録テーブル
+    resultdb.execute(load_query("lib/queries/table/member.sql"))  # メンバー登録テーブル
+    resultdb.execute(load_query("lib/queries/table/alias.sql"))  # 別名定義テーブル
+    resultdb.execute(load_query("lib/queries/table/team.sql"))  # チーム定義テーブル
+    resultdb.execute(load_query("lib/queries/table/result.sql"))  # データ取り込みテーブル
+    resultdb.execute(load_query("lib/queries/table/remarks.sql"))  # メモ格納テーブル
+    resultdb.execute(load_query("lib/queries/table/words.sql"))  # レギュレーションワード登録テーブル
 
     # wordsテーブル情報読み込み(regulations)
     if g.cfg.config.has_section("regulations"):
@@ -55,10 +55,10 @@ def initialization_resultdb():
                     )
                     logging.info("regulations table(type1): %s, %s", word, ex_point)
 
-    resultdb.executescript(load_query("lib/database/query/create_view_individual_results.sql"))
-    resultdb.executescript(load_query("lib/database/query/create_view_team_results.sql"))
-    resultdb.executescript(load_query("lib/database/query/create_view_game_results.sql"))
-    resultdb.executescript(load_query("lib/database/query/create_view_game_info.sql"))
+    resultdb.executescript(load_query("lib/queries/view/individual_results.sql"))
+    resultdb.executescript(load_query("lib/queries/view/team_results.sql"))
+    resultdb.executescript(load_query("lib/queries/view/game_results.sql"))
+    resultdb.executescript(load_query("lib/queries/view/game_info.sql"))
 
     # メモ
     if g.undefined_word == 0:
@@ -71,8 +71,8 @@ def initialization_resultdb():
         grandslam_where = "words.type == 0"
         regulation_where = "words.type in (1, 2)"
 
-    resultdb.executescript(load_query("lib/database/query/create_view_grandslam.sql").format(grandslam_where=grandslam_where))
-    resultdb.executescript(load_query("lib/database/query/create_view_regulations.sql").format(regulation_where=regulation_where))
+    resultdb.executescript(load_query("lib/queries/view/grandslam.sql").format(grandslam_where=grandslam_where))
+    resultdb.executescript(load_query("lib/queries/view/regulations.sql").format(regulation_where=regulation_where))
 
     # ゲスト設定チェック
     ret = resultdb.execute("select * from member where id=0;")

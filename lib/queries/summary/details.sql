@@ -1,4 +1,4 @@
---- summary.details()
+--- summary.details
 select
     --[not_search_word] results.playtime,
     --[search_word] game_info.comment as playtime,

@@ -1,4 +1,4 @@
--- report.results_list()
+-- report.results_list
 select
     name,
     count() as "game",

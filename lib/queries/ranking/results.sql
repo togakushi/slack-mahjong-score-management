@@ -1,4 +1,4 @@
--- ranking.results()
+-- ranking.results
 select
     individual_results.name,
     count() as count,

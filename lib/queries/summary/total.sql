@@ -1,5 +1,5 @@
 
--- summary.total()
+-- summary.total
 with point_table as (
     select
         --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効

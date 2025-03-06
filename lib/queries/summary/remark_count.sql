@@ -1,4 +1,4 @@
--- game.remark_count()
+-- summary.remark_count
 select
     --[individual] remarks.name,
     --[team] team.name as name,

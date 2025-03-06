@@ -1,4 +1,4 @@
--- report.monthly()
+-- report.monthly
 select
     substr(collection_daily, 1, 7) as 集計月,
     count() / 4 as ゲーム数,

@@ -1,4 +1,4 @@
--- report.matrix_table()
+-- report.matrix_table
 select
     --[not_search_word] game_results.playtime,
     --[search_word] game_info.comment as playtime,

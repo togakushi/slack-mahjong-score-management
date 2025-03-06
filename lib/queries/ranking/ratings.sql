@@ -1,4 +1,4 @@
--- ranking.ratings()
+-- ranking.ratings
 select
     playtime,
     p1_name, p1_rank,

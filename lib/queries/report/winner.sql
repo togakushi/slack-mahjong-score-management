@@ -1,4 +1,4 @@
--- report.winner()
+-- report.winner
 select
     collection,
     max(case when rank = 1 then name end) as name1,

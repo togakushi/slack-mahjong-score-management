@@ -1,4 +1,4 @@
--- report.count_data()
+-- report.count_data
 select
     min(game_count) as 開始,
     max(game_count) as 終了,

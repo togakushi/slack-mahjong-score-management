@@ -1,4 +1,4 @@
--- report.personal_data()
+-- report.personal_data
 select
     <<collection>>,
     count() as ゲーム数,
