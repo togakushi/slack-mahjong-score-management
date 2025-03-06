@@ -1,4 +1,4 @@
--- game.info()
+-- game.info
 select
     count() as count,
     --[group_length] substr(first_comment, 1, :group_length) as first_comment,
