@@ -70,10 +70,7 @@ ranked_points as (
 )
 select
     overall_ranking as rank,
-    --[individual] case
-    --[individual]     when guest = 0 or name = :guest_name then name
-    --[individual]     else name || '(<<guest_mark>>)'
-    --[individual] end as name,
+    --[individual] case when guest = 0 or name = :guest_name then name else name || '(<<guest_mark>>)' end as name,
     --[team] team,
     count,
     round(cast(total_point as real), 1) as total_point,
