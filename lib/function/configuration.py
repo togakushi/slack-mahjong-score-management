@@ -53,6 +53,11 @@ def arg_parser():
         help="設定ファイル(default: %(default)s)",
     )
 
+    p.add_argument(
+        "--profile",
+        help=argparse.SUPPRESS,
+    )
+
     match os.path.basename(sys.argv[0]):
         case "dbtools.py":  # dbtools専用オプション
             group = p.add_mutually_exclusive_group()
