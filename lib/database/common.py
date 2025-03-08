@@ -1,4 +1,3 @@
-import inspect
 import logging
 import os
 import re
@@ -14,15 +13,11 @@ from lib import database as d
 from lib import function as f
 
 
-def load_query(filepath: str, flag: str | None = None) -> str:
-    """外部ファイルからクエリを読み込みオプションの内容で修正する
+def load_query(filepath: str) -> str:
+    """外部ファイルからクエリを読み込む
 
     Args:
         filepath (str): 読み込むSQLファイルパス
-        flag (str, optional): 集計単位. Defaults to None.
-            - M: 月間集計
-            - Y: 年間集計
-            - A: 全期間集計
 
     Returns:
         str: SQL
@@ -30,6 +25,52 @@ def load_query(filepath: str, flag: str | None = None) -> str:
 
     with open(filepath, "r", encoding="utf-8") as queryfile:
         sql = queryfile.read().strip()
+
+    return (sql)
+
+
+def read_data(filepath: str, flag: str | None = None) -> pd.DataFrame:
+    """データベースからデータを取得する
+
+    Args:
+        filepath (str): SQLファイルパス
+        flag (str | None, optional): 集計単位. Defaults to None.
+            - M: 月間集計
+            - Y: 年間集計
+            - A: 全期間集計
+
+    Returns:
+        pd.DataFrame: 集計結果
+    """
+
+    sql = query_modification(load_query(filepath), flag)
+    df = pd.read_sql(
+        sql,
+        sqlite3.connect(g.cfg.db.database_file),
+        params=g.prm.to_dict(),
+    )
+
+    # デバッグ用
+    logging.trace("%s: opt=%s", vars(g.opt))  # type: ignore
+    logging.trace("%s: prm=%s", vars(g.prm))  # type: ignore
+    logging.trace("%s: sql=%s", named_query(sql, g.prm.to_dict()))  # type: ignore
+
+    return (df)
+
+
+def query_modification(sql: str, flag: str | None = None) -> str:
+    """クエリをオプションの内容で修正する
+
+    Args:
+        sql (str): 修正するクエリ
+        flag (str, optional): 集計単位. Defaults to None.
+            - M: 月間集計
+            - Y: 年間集計
+            - A: 全期間集計
+
+    Returns:
+        str: 修正後のクエリ
+    """
 
     if g.opt.individual:  # 個人集計
         sql = sql.replace("--[individual] ", "")
@@ -137,12 +178,6 @@ def load_query(filepath: str, flag: str | None = None) -> str:
     # SQLコメント削除
     sql = re.sub(r"^ *--\[.*$", "", sql, flags=re.MULTILINE)
     sql = re.sub(r"\n+", "\n", sql, flags=re.MULTILINE)
-
-    # デバッグ用
-    func = inspect.stack()[1].function
-    logging.trace("%s: opt=%s", func, vars(g.opt))  # type: ignore
-    logging.trace("%s: prm=%s", func, vars(g.prm))  # type: ignore
-    logging.trace("%s: sql=%s", func, named_query(sql, g.prm.to_dict()))  # type: ignore
 
     return (sql)
 

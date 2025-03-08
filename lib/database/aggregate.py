@@ -1,5 +1,4 @@
 import logging
-import sqlite3
 from datetime import datetime
 from typing import cast
 
@@ -9,7 +8,7 @@ import pandas as pd
 import lib.global_value as g
 from lib import command as c
 from lib import function as f
-from lib.database.common import load_query
+from lib.database.common import read_data
 
 
 def _disp_name(df, adjust=0, mark=True):
@@ -56,11 +55,7 @@ def game_info():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/game.info.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict()
-    )
+    df = read_data("lib/queries/game.info.sql")
 
     ret = {
         "game_count": int(df["count"].to_string(index=False)),
@@ -92,11 +87,7 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/summary/total.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/summary/total.sql")
 
     if isinstance(filter_items, list):
         df = df.filter(items=filter_items)
@@ -116,11 +107,7 @@ def game_details():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/summary/details.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/summary/details.sql")
 
     # ゲスト置換
     if g.opt.individual:
@@ -146,11 +133,7 @@ def remark_count(kind):
 
     # データ収集
     g.prm.append({"kind": kind})
-    df = pd.read_sql(
-        load_query("lib/queries/summary/remark_count.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/summary/remark_count.sql")
 
     # ゲスト置換
     df["プレイヤー名"] = df["name"].apply(
@@ -172,11 +155,7 @@ def game_results():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/summary/results.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/summary/results.sql")
 
     # Nullが返ってきたときにobject型になるので型変換
     df = df.astype({
@@ -203,11 +182,7 @@ def personal_gamedata():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/summary/gamedata.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/summary/gamedata.sql")
 
     return (df)
 
@@ -220,11 +195,7 @@ def versus_matrix():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/summary/versus_matrix.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/summary/versus_matrix.sql")
 
     # ゲスト置換
     if g.opt.individual:
@@ -249,11 +220,7 @@ def team_gamedata():
         pd.DataFrame: 集計結果
     """
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/summary/gamedata.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/summary/gamedata.sql")
 
     return (df)
 
@@ -267,11 +234,7 @@ def ranking_record():
     """
 
     # データ収集
-    gamedata = pd.read_sql(
-        load_query("lib/queries/ranking/record_count.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    gamedata = read_data("lib/queries/ranking/record_count.sql")
 
     # 連続順位カウント
     rank_mask = {
@@ -335,11 +298,7 @@ def calculation_rating():
     """
 
     # データ収集
-    df_results = pd.read_sql(
-        load_query("lib/queries/ranking/ratings.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    ).set_index("playtime")
+    df_results = read_data("lib/queries/ranking/ratings.sql").set_index("playtime")
 
     df_ratings = pd.DataFrame(index=["initial_rating"] + df_results.index.to_list())  # 記録用
     last_ratings: dict = {}  # 最終値格納用
@@ -387,11 +346,7 @@ def simple_results():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/ranking/results.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    ).set_index("name")
+    df = read_data("lib/queries/ranking/results.sql").set_index("name")
 
     return (df)
 
@@ -405,11 +360,7 @@ def monthly_report():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/report/monthly.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/report/monthly.sql")
 
     return (df)
 
@@ -422,11 +373,7 @@ def winner_report():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/report/winner.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    ).fillna(value=np.nan)
+    df = read_data("lib/queries/report/winner.sql").fillna(value=np.nan)
 
     # ゲスト置換
     for i in range(1, 6):
@@ -445,11 +392,7 @@ def matrix_table():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/report/matrix_table.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict()
-    ).set_index("playtime")
+    df = read_data("lib/queries/report/matrix_table.sql").set_index("playtime")
 
     # 結果に含まれるプレイヤーのリスト
     plist = sorted(list(set(
@@ -560,11 +503,7 @@ def results_list():
     """
 
     # データ収集
-    df = pd.read_sql(
-        load_query("lib/queries/report/results_list.sql"),
-        sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
-    )
+    df = read_data("lib/queries/report/results_list.sql")
 
     # ゲスト置換
     if g.opt.individual:
