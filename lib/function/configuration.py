@@ -108,16 +108,6 @@ def arg_parser():
             p.add_argument(
                 "-t", "--testcase",
             )
-            p.add_argument(
-                "--classic",
-                action="store_true",
-                help=argparse.SUPPRESS,
-            )
-
-            p.add_argument(
-                "--profile",
-                help=argparse.SUPPRESS,
-            )
 
     return (p.parse_args())
 
