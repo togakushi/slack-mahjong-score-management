@@ -199,38 +199,49 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
     return (badge_status)
 
 
-def floatfmt_adjust(df) -> list:
+def floatfmt_adjust(df, index=False) -> list:
     """カラム名に応じたfloatfmtのリストを返す
 
     Args:
+        index (bool): リストにIndexを含める
         df (pd.DataFrame): チェックするデータ
 
     Returns:
         list: floatfmtに指定するリスト
     """
 
-    fmt = []
-    for x in df.columns:
+    fmt: list = []
+    field: list = df.columns.tolist()
+    if index:
+        field.insert(0, df.index.name)
+
+    for x in field:
         match x:
-            case "ゲーム数":
+            case "ゲーム数" | "game_count":
                 fmt.append(".0f")
-            case "通算" | "平均" | "区間ポイント" | "通算ポイント" | "区間平均":
+            case "win" | "lose" | "draw" | "top2" | "top3" | "gs_count":
+                fmt.append(".0f")
+            case "通算" | "通算ポイント" | "point_sum":
                 fmt.append("+.1f")
-            case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位":
+            case "平均" | "平均ポイント" | "point_avg" | "区間ポイント" | "区間平均":
+                fmt.append("+.1f")
+            case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位" | "rank1" | "rank2" | "rank3" | "rank4":
                 fmt.append(".0f")
             case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)" | "1位率" | "2位率" | "3位率" | "4位率":
                 fmt.append(".2f")
-            case "トビ":
+            case "トビ" | "flying":
                 fmt.append(".0f")
             case "トビ率":
                 fmt.append(".2f")
-            case "平均順位" | "平順":
+            case "平均順位" | "平順" | "rank_avg":
                 fmt.append(".2f")
             case "順位差" | "トップ差":
                 fmt.append(".1f")
             case "レート":
                 fmt.append(".1f")
             case "順位偏差" | "得点偏差":
+                fmt.append(".0f")
+            case "rpoint_max" | "rpoint_min" | "rpoint_mean":
                 fmt.append(".0f")
             case _:
                 fmt.append("")
