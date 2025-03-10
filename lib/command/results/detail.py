@@ -49,7 +49,7 @@ def aggregation():
     record_df = d.aggregate.ranking_record()
     result_df = pd.merge(
         result_df, record_df,
-        on=["name", "表示名"],
+        on=["name", "name"],
         suffixes=["", "_x"]
     )
     data = result_df.to_dict(orient="records")[0]

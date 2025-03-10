@@ -1,4 +1,8 @@
+import re
+from typing import Any, Tuple
+
 import pandas as pd
+from tabulate import tabulate
 
 import lib.global_value as g
 from lib import database as d
@@ -18,156 +22,149 @@ def main():
         f.slack_api.post_multi_message(msg2, res["ts"])
 
 
-def aggregation():
+def aggregation() -> Tuple[str, Any]:
     """ランキングデータを生成
 
     Returns:
-        Tuple[str, dict]:
+        Tuple[str, Any]: 集計結果
             - str: ランキングの集計情報
-            - dict: 各ランキングの情報
+            - dict | Any: 各ランキングの情報
     """
 
     # --- データ取得
     game_info = d.aggregate.game_info()
-
     if game_info["game_count"] == 0:  # 結果が0件のとき
         return (f.message.reply(message="no_hits"), None)
 
     g.prm.stipulated_update(g.opt, game_info["game_count"])
-    result_df = d.aggregate.game_results()
-    record_df = d.aggregate.ranking_record()
-    result_df = pd.merge(
-        result_df, record_df,
+    result_df = d.common.read_data("lib/queries/ranking/aggregate.sql")
+    if result_df.empty:
+        return (f.message.reply(message="no_hits"), None)
+
+    df = pd.merge(
+        result_df, d.aggregate.ranking_record2(),
         on=["name", "name"],
         suffixes=["", "_x"]
     )
 
     # --- 集計
-    result_df["ゲーム参加率"] = result_df["ゲーム数"] / game_info["game_count"]
-    result_df["総ゲーム数"] = game_info["game_count"]
-    result_df["最大素点"] = result_df["最大素点"] * 100
-    result_df.rename(columns={"1位率": "トップ率"}, inplace=True)
-    result_df = result_df.query("ゲーム数 >= @g.prm.stipulated")
-    result_df = result_df.reset_index(drop=True)
+    data: dict = {}
 
-    data: dict = {
-        # order: True -> 小さい値が上位 / False -> 大きい値が上位
-        # column : 閾値対象のカラム名
-        # threshold : 表示閾値
-        # str: 表示文字列
-        # params: 表示内容
-        "ゲーム参加率": {
-            "order": False, "column": "ゲーム数", "threshold": 0,  # 足切り済み
-            "str": "{:>6.2%} ( {:3d} / {:4d} ゲーム )",
-            "params": ["ゲーム参加率", "ゲーム数", "総ゲーム数"],
-        },
-        "通算ポイント": {
-            "order": False, "column": "通算ポイント", "threshold": -999999999,
-            "str": "{:>7.1f} pt ( {:3d} ゲーム )",
-            "params": ["通算ポイント", "ゲーム数"],
-        },
-        "平均ポイント": {
-            "order": False, "column": "平均ポイント", "threshold": -999999999,
-            "str": "{:>5.1f} pt ( {:>7.1f} pt / {:3d} ゲーム )",
-            "params": ["平均ポイント", "通算ポイント", "ゲーム数"],
-        },
-        "平均収支": {
-            "order": False, "column": "平均収支", "threshold": -999999999,
-            "str": "{:>8.0f} 点 ( {:>5.0f} 点 / {:3d} ゲーム )",
-            "params": ["平均収支", "平均最終素点", "ゲーム数"],
-        },
-        "トップ率": {
-            "order": False, "column": "トップ率", "threshold": 0,
-            "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
-            "params": ["トップ率", "1位", "ゲーム数"],
-        },
-        "連対率": {
-            "order": False, "column": "連対率", "threshold": 0,
-            "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
-            "params": ["連対率", "連対", "ゲーム数"],
-        },
-        "ラス回避率": {
-            "order": False, "column": "ラス回避率", "threshold": 0,
-            "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
-            "params": ["ラス回避率", "ラス回避", "ゲーム数"],
-        },
-        "トビ率": {
-            "order": True, "column": "トビ率", "threshold": 0,
-            "str": "{:>5.2f}% ( {:3d} / {:3d} ゲーム )",
-            "params": ["トビ率", "トビ", "ゲーム数"],
-        },
-        "平均順位": {
-            "order": True, "column": "平均順位", "threshold": 0,
-            "str": "{:>4.2f} ( {:3d} ゲーム )",
-            "params": ["平均順位", "ゲーム数"],
-        },
-        "役満和了率": {
-            "order": False, "column": "役満和了", "threshold": 1,
-            "str": "{:>3.2f}% ( {:3d} / {:3d} ゲーム )",
-            "params": ["役満和了率", "役満和了", "ゲーム数"],
-        },
-        "最大素点": {
-            "order": False, "column": "最大素点", "threshold": -999999999,
-            "str": "{:>6.0f} 点 ( {:>5.1f} pt )",
-            "params": ["最大素点", "最大獲得ポイント"],
-        },
-        "連続トップ": {
-            "order": False, "column": "連続トップ", "threshold": 2,
-            "str": "{:>2d} 連続 ( {:>2d} ゲーム中 )",
-            "params": ["連続トップ", "ゲーム数"],
-        },
-        "連続連対": {
-            "order": False, "column": "連続連対", "threshold": 2,
-            "str": "{:>2d} 連続 ( {:>2d} ゲーム中 )",
-            "params": ["連続連対", "ゲーム数"],
-        },
-        "連続ラス回避": {
-            "order": False, "column": "連続ラス回避", "threshold": 2,
-            "str": "{:>2d} 連続 ( {:>2d} ゲーム中 )",
-            "params": ["連続ラス回避", "ゲーム数"],
-        },
-    }
+    # ゲーム参加率
+    df["participation_rate"] = df["game_count"] / game_info["game_count"]
+    df["rank"] = df["participation_rate"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["participation_rate"]:>7.2%} ({row["game_count"]:3d}G / {game_info["game_count"]:4d}G)", axis=1)
+    data["ゲーム参加率"] = table_conversion(df)
 
-    for key, val in data.items():  # ランク付け
-        result_df[f"{key}_rank"] = result_df[key].rank(
-            method="dense",
-            ascending=val["order"]
-        )
+    # 通算ポイント
+    df["rank"] = df["point_sum"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["point_sum"]:>+7.1f}pt ({row["game_count"]:3d}G)", axis=1)
+    data["通算ポイント"] = table_conversion(df)
 
-    for x in ["連続トップ", "連続連対", "連続ラス回避"]:  # 型変換
-        result_df[x] = result_df[x].astype(int)
+    # 平均ポイント
+    df["rank"] = df["point_avg"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["point_avg"]:>+7.1f}pt ({row["point_sum"]:>+7.1f}pt / {row["game_count"]:3d}G)", axis=1)
+    data["平均ポイント"] = table_conversion(df)
 
-    if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
-        data.pop("トビ率")
+    # 平均収支
+    df["rank"] = df["rpoint_avg"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["rpoint_avg"] - 25000:>6.0f}点 ({row["rpoint_avg"]:>6.0f}点 / {row["game_count"]:3d}G)", axis=1)
+    data["平均収支"] = table_conversion(df)
+
+    # トップ率
+    df["rank"] = df["rank1_rate"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["rank1_rate"]:>7.2%} ({row["rank1"]:3d} / {row["game_count"]:3d}G)", axis=1)
+    data["トップ率"] = table_conversion(df)
+
+    # 連対率
+    df["rank"] = df["top2_rate"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["top2_rate"]:>7.2%} ({row["top2"]:3d} / {row["game_count"]:3d}G)", axis=1)
+    data["連対率"] = table_conversion(df)
+
+    # ラス回避率
+    df["rank"] = df["top3_rate"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["top3_rate"]:>7.2%} ({row["top3"]:3d} / {row["game_count"]:3d}G)", axis=1)
+    data["ラス回避率"] = table_conversion(df)
+
+    # トビ率
+    df["rank"] = df["flying_rate"].rank(ascending=True, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["flying_rate"]:>7.2%} ({row["flying"]:3d} / {row["game_count"]:3d}G)", axis=1)
+    data["トビ率"] = table_conversion(df)
+
+    # 平均順位
+    df["rank"] = df["rank_avg"].rank(ascending=True, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["rank_avg"]:>4.2f} {row["rank_dist"]}", axis=1)
+    data["平均順位"] = table_conversion(df)
+
+    # 役満和了率
+    df["rank"] = df["gs_rate"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["gs_rate"]:>7.2%} ({row["gs_count"]:3d} / {row["game_count"]:3d}G)", axis=1)
+    data["役満和了率"] = table_conversion(df, ["gs_count", 1])
+
+    # 最大素点
+    df["rank"] = df["rpoint_max"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["rpoint_max"]:>6.0f}点 ({row["point_max"]:>+7.1f}pt)", axis=1)
+    data["最大素点"] = table_conversion(df)
+
+    # 連続トップ
+    df["rank"] = df["c_top"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["c_top"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
+    data["連続トップ"] = table_conversion(df, ["c_top", 2])
+
+    # 連続連対
+    df["rank"] = df["c_top2"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["c_top2"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
+    data["連続連対"] = table_conversion(df, ["c_top2", 2])
+
+    # 連続ラス回避
+    df["rank"] = df["c_top3"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["c_top3"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
+    data["連続ラス回避"] = table_conversion(df, ["c_top3", 2])
 
     # --- 表示
     if g.opt.individual:  # 個人集計
-        msg1 = "\n*【ランキング】*\n"
+        msg = "\n*【ランキング】*\n"
     else:  # チーム集計
-        msg1 = "\n*【チームランキング】*\n"
+        msg = "\n*【チームランキング】*\n"
 
-    msg1 += f.message.header(game_info, "", 1)
-    msg2: dict = {}
+    msg += f.message.header(game_info, "", 1)
 
-    for key, val in data.items():
+    for key in list(data.keys()):
         if key in g.cfg.dropitems.ranking:  # 非表示項目
+            data.pop(key)
             continue
 
-        msg2[key] = f"\n*{key}*\n"
-        tmp_df = result_df.sort_values(
-            [f"{key}_rank", "ゲーム数"],
-            ascending=[True, False]
-        ).query(
-            f"{key}_rank <= @g.opt.ranked and {val['column']} >= {val['threshold']}"
-        )
+        if key in data:  # 対象者がいなければ項目を削除
+            if not data[key]:
+                data.pop(key)
+                continue
 
-        for _, s in tmp_df.drop_duplicates(subset="name").iterrows():
-            msg2[key] += ("\t{:3d}：{}\t" + str(val["str"]) + "\n").format(
-                int(s[f"{key}_rank"]), s["表示名"],
-                *[s[x] for x in val["params"]]
-            ).replace("-", "▲")
+        data[key] = f"*{key}*\n" + data[key]
 
-        if msg2[key].strip().count("\n") == 0:  # 対象者がいなければ項目を削除
-            msg2.pop(key)
+    return (msg, data)
 
-    return (msg1, msg2)
+
+def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:
+    """テーブル変換
+
+    Args:
+        df (pd.DataFrame): 変換対象データ
+        threshold (list | None, optional): 非表示にする閾値. Defaults to None.
+
+    Returns:
+        str: 作成したテーブル
+    """
+
+    if isinstance(threshold, list):
+        df = df.query(f"{threshold[0]} >= @threshold[1]").copy()
+
+    if df.empty:
+        return ("")
+
+    df.sort_values(by=["rank", "game_count"], ascending=[True, False], inplace=True)
+    tbl = tabulate(df.filter(items=["rank", "name", "disp"]).values)
+    tbl = re.sub(r"( *[0-9]+)\s(.*)<>(.*)", r"\1:\2\3", tbl)
+    tbl = "\n".join(tbl.splitlines()[1:-1]).replace(" -", "▲")
+    tbl = f"```\n{tbl}\n```\n"
+
+    return (tbl)

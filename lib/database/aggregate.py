@@ -277,9 +277,6 @@ def ranking_record():
         tmp_df["最小獲得ポイント"] = gamedata.query("name == @pname")["獲得ポイント"].min()
         df = pd.concat([df, tmp_df])
 
-    # ゲスト置換
-    df["表示名"] = _disp_name(df["name"])
-
     df = df.drop(columns=["playtime", "順位"])
 
     # インデックスの振り直し
@@ -288,6 +285,57 @@ def ranking_record():
 
     logging.trace(df)  # type: ignore
     return (df)
+
+
+def ranking_record2():
+    """ランキング集計
+
+    Returns:
+        pd.DataFrame: 集計結果
+    """
+
+    # データ収集
+    gamedata: pd.DataFrame = read_data("lib/queries/ranking/record_count.sql")
+    player_list = gamedata["name"].unique().tolist()
+
+    # 連続順位カウント
+    rank_mask = {
+        "c_top": {1: 1, 2: 0, 3: 0, 4: 0},  # 連続トップ
+        "c_top2": {1: 1, 2: 1, 3: 0, 4: 0},  # 連続連対
+        "c_top3": {1: 1, 2: 1, 3: 1, 4: 0},  # 連続ラス回避
+        "c_low": {1: 0, 2: 1, 3: 1, 4: 1},  # 連続トップなし
+        "c_low2": {1: 0, 2: 0, 3: 1, 4: 1},  # 連続逆連対
+        "c_low4": {1: 0, 2: 0, 3: 0, 4: 1},  # 連続ラス
+    }
+
+    record_df = pd.DataFrame(
+        {
+            "name": player_list,
+            "c_top": [0 for x in player_list],
+            "c_top2": [0 for x in player_list],
+            "c_top3": [0 for x in player_list],
+            "c_low": [0 for x in player_list],
+            "c_low2": [0 for x in player_list],
+            "c_low4": [0 for x in player_list],
+        },
+        index=player_list
+    )
+
+    for key, val in rank_mask.items():
+        for pname in player_list:
+            tmp_df = pd.DataFrame()
+            tmp_df["flg"] = gamedata.query(
+                "name == @pname"
+            )["順位"].replace(val)
+
+            tmp_df[key] = tmp_df["flg"].groupby(
+                (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
+            ).cumcount() + 1
+            tmp_df.loc[tmp_df["flg"] == 0, key] = 0
+            record_df.at[pname, key] = tmp_df[[key]].max().values[0]
+
+    logging.trace(record_df)  # type: ignore
+    return (record_df)
 
 
 def calculation_rating():
@@ -486,7 +534,9 @@ def matrix_table():
         sorting_df.loc[f"{p1.name}", "count"] = t_game_count
 
     # 勝率で並び替え
-    sorting_df = sorting_df.sort_values(["win_per", "count"], ascending=False)
+    sorting_df["win_per"] = pd.to_numeric(sorting_df["win_per"], errors="coerce")
+    sorting_df["count"] = pd.to_numeric(sorting_df["count"], errors="coerce")
+    sorting_df = sorting_df.sort_values(by=["win_per", "count"], ascending=[False, False])
     mtx_df = mtx_df.reindex(
         index=list(sorting_df.index),
         columns=list(sorting_df.index) + ["total"]
