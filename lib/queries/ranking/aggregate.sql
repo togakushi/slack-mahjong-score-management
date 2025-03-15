@@ -1,3 +1,4 @@
+-- ranking.aggregate
 with target_data as (
     select
         --[individual] --[unregistered_replace] case when guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
