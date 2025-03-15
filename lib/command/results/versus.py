@@ -71,7 +71,7 @@ def aggregation():
 
             r = data.to_dict(orient="records")[0]
             tmp_msg[vs_name]["info"] = textwrap.dedent(f"""
-                【{r["my_表示名"].strip()} vs {r["vs_表示名"].strip()}】
+                【{r["my_name"].strip()} vs {r["vs_name"].strip()}】
                 \t対戦数：{r["game"]} 戦 {r["win"]} 勝 {r["lose"]} 敗 ({r["win%"]:.2f}%)
                 \t平均素点差：{(r["my_rpoint_avg"] - r["vs_rpoint_avg"]) * 100:+.0f} 点
                 \t獲得ポイント合計(自分)：{r["my_point_sum"]:+.1f}pt
@@ -101,10 +101,10 @@ def aggregation():
                             tmp_msg[vs_name][count] = textwrap.dedent(f"""
                                 {"*【戦績】*" if count == 0 else ""}
                                 {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
-                                \t東家：{s1["表示名"]} {s1["rank"]}位 {s1["rpoint"] * 100:>7} 点 ({s1["point"]:>+5.1f}pt) {s1["grandslam"]}
-                                \t南家：{s2["表示名"]} {s2["rank"]}位 {s2["rpoint"] * 100:>7} 点 ({s2["point"]:>+5.1f}pt) {s2["grandslam"]}
-                                \t西家：{s3["表示名"]} {s3["rank"]}位 {s3["rpoint"] * 100:>7} 点 ({s3["point"]:>+5.1f}pt) {s3["grandslam"]}
-                                \t北家：{s4["表示名"]} {s4["rank"]}位 {s4["rpoint"] * 100:>7} 点 ({s4["point"]:>+5.1f}pt) {s4["grandslam"]}
+                                \t東家：{s1["name"]} {s1["rank"]}位 {s1["rpoint"] * 100:>7} 点 ({s1["point"]:>+5.1f}pt) {s1["grandslam"]}
+                                \t南家：{s2["name"]} {s2["rank"]}位 {s2["rpoint"] * 100:>7} 点 ({s2["point"]:>+5.1f}pt) {s2["grandslam"]}
+                                \t西家：{s3["name"]} {s3["rank"]}位 {s3["rpoint"] * 100:>7} 点 ({s3["point"]:>+5.1f}pt) {s3["grandslam"]}
+                                \t北家：{s4["name"]} {s4["rank"]}位 {s4["rpoint"] * 100:>7} 点 ({s4["point"]:>+5.1f}pt) {s4["grandslam"]}
                                 """).replace("-", "▲").strip()
                         else:  # 簡易表示
                             a1 = my_score.query("playtime == @playtime").to_dict(orient="records")[0]
@@ -112,8 +112,8 @@ def aggregation():
                             tmp_msg[vs_name][count] = textwrap.dedent(f"""
                                 {"*【戦績】*" if count == 0 else ""}
                                 {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
-                                \t{a1["表示名"]}：{a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}
-                                \t{a2["表示名"]}：{a2["rank"]}位 {a2["rpoint"] * 100:>7} 点 ({a2["point"]:>+5.1f}pt) {a2["grandslam"]}
+                                \t{a1["name"]}：{a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}
+                                \t{a2["name"]}：{a2["rank"]}位 {a2["rpoint"] * 100:>7} 点 ({a2["point"]:>+5.1f}pt) {a2["grandslam"]}
                             """).replace("-", "▲").strip()
                         count += 1
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
@@ -135,7 +135,7 @@ def aggregation():
 
     # --- ファイル出力
     if len(df_data) != 0:
-        df_data["プレイヤー名"] = df_data["表示名"].apply(lambda x: x.strip())
+        df_data["プレイヤー名"] = df_data["name"].apply(lambda x: x.strip())
         df_data["座席"] = df_data["seat"].apply(lambda x: ["東家", "南家", "西家", "北家"][x - 1])
         df_data["素点"] = df_data["rpoint"] * 100
     df_data = d.common.df_rename(df_data, short=False).filter(
@@ -143,7 +143,7 @@ def aggregation():
     ).drop_duplicates()
 
     namelist = list(g.prm.competition_list.values())  # pylint: disable=unused-variable  # noqa: F841
-    df_vs["対戦相手"] = df_vs["vs_表示名"].apply(lambda x: x.strip())
+    df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: x.strip())
     df_vs.rename(
         columns={
             "results": "対戦結果", "win%": "勝率",

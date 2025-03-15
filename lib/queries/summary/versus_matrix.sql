@@ -1,4 +1,32 @@
 -- summary.versus_matrix
+with target_data as (
+    select
+        results.playtime,
+        --[individual] --[unregistered_replace] case when guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
+        --[individual] --[unregistered_not_replace] case when guest = 0 or results.name = :guest_name then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
+        --[team] results.name as name,
+        point,
+        rpoint,
+        rank,
+        gs_count
+    from
+        --[individual] individual_results as results
+        --[team] team_results as results
+    join game_info on
+        game_info.ts == results.ts
+    left join grandslam on
+        grandslam.thread_ts == results.ts
+        and grandslam.name == results.name
+    where
+        results.rule_version = :rule_version
+        and results.playtime between :starttime and :endtime -- 検索範囲
+        --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
+        --[individual] --[guest_skip] and guest = 0 -- ゲストナシ
+        --[team] --[friendly_fire] and game_info.same_team = 0
+        --[team] and team_id notnull -- 未所属除外
+        --[player_name] and results.name in (<<player_list>>) -- 対象プレイヤー
+        --[search_word] and game_info.comment like :search_word
+)
 select
     my_name, vs_name,
     count() as game,
@@ -44,30 +72,14 @@ from (
         my.rank as my_rank,
         my.rpoint as my_rpoint,
         my.point as my_point,
-        --[individual] --[unregistered_replace] case when vs.guest = 0 then vs.name else :guest_name end as vs_name, -- ゲスト有効
-        --[individual] --[unregistered_not_replace] vs.name as vs_name, -- ゲスト無効
-        --[team] vs.name as vs_name,
+        vs.name as vs_name,
         vs.rank as vs_rank,
         vs.rpoint as vs_rpoint,
         vs.point as vs_point
     from
-        --[individual] individual_results as my
-        --[team] team_results as my
-    join game_info on
-        game_info.ts == my.ts
-    inner join
-        --[individual] individual_results as vs on
-        --[team] team_results as vs on
-            my.playtime = vs.playtime and my.name != vs.name
-    where
-        my.rule_version = :rule_version
-        and my.playtime between :starttime and :endtime
-        and my.name = :player_name
-        --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
-        --[individual] --[guest_skip] and vs.guest = 0 -- ゲストなし
-        --[friendly_fire] and game_info.same_team = 0
-        --[team] and vs.name notnull
-        --[comment] and my.comment like :search_word
+        target_data as my
+    inner join target_data as vs on
+        my.playtime = vs.playtime and my.name != vs.name
     order by
         my.playtime desc
 )
