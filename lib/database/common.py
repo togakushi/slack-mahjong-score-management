@@ -51,9 +51,9 @@ def read_data(filepath: str, flag: str | None = None) -> pd.DataFrame:
     )
 
     # デバッグ用
-    logging.trace("%s: opt=%s", vars(g.opt))  # type: ignore
-    logging.trace("%s: prm=%s", vars(g.prm))  # type: ignore
-    logging.trace("%s: sql=%s", named_query(sql, g.prm.to_dict()))  # type: ignore
+    logging.trace("opt: opt=%s", vars(g.opt))  # type: ignore
+    logging.trace("prm: prm=%s", vars(g.prm))  # type: ignore
+    logging.trace("sql: sql=%s", named_query(sql, g.prm.to_dict()))  # type: ignore
 
     return (df)
 
