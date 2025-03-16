@@ -46,7 +46,7 @@ select
 from (
     select
         results.playtime,
-        --[individual] --[unregistered_replace] case when guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
+        --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
         --[individual] --[unregistered_not_replace] results.name, -- ゲスト無効
         --[team] results.name,
         rpoint,
@@ -66,7 +66,7 @@ from (
         results.rule_version = :rule_version
         and results.playtime between :starttime and :endtime
         --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
-        --[individual] --[guest_skip] and guest = 0 -- ゲストなし
+        --[individual] --[guest_skip] and results.guest = 0 -- ゲストなし
         --[friendly_fire] and same_team = 0
         --[team] and results.name notnull
         --[player_name] and results.name in (<<player_list>>) -- 対象プレイヤー

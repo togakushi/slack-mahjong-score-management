@@ -109,14 +109,6 @@ def game_details():
     # データ収集
     df = read_data("lib/queries/summary/details.sql")
 
-    # ゲスト置換
-    if g.opt.individual:
-        df["name"] = df["name"].apply(
-            lambda x: c.member.name_replace(x, add_mark=True)
-        )
-
-    df["表示名"] = _disp_name(df["name"], mark=False)
-
     logging.trace(df)  # type: ignore
     return (df.fillna(value=""))
 
@@ -135,13 +127,8 @@ def remark_count(kind):
     g.prm.append({"kind": kind})
     df = read_data("lib/queries/summary/remark_count.sql")
 
-    # ゲスト置換
-    df["プレイヤー名"] = df["name"].apply(
-        lambda x: c.member.name_replace(x, add_mark=True)
-    )
-
     if kind == "grandslam":
-        df = df.filter(items=["プレイヤー名", "matter", "count"])
+        df = df.filter(items=["name", "matter", "count"])
 
     logging.trace(df)  # type: ignore
     return (df)
@@ -162,9 +149,6 @@ def game_results():
         "東家-平均順位": "float", "南家-平均順位": "float", "西家-平均順位": "float", "北家-平均順位": "float",
         "東家-役満和了": "Int64", "南家-役満和了": "Int64", "西家-役満和了": "Int64", "北家-役満和了": "Int64",
     }).fillna(0)
-
-    # ゲスト置換
-    df["表示名"] = _disp_name(df["name"])
 
     # インデックスの振り直し
     df = df.reset_index(drop=True)
@@ -196,18 +180,6 @@ def versus_matrix():
 
     # データ収集
     df = read_data("lib/queries/summary/versus_matrix.sql")
-
-    # ゲスト置換
-    if g.opt.individual:
-        df["my_name"] = df["my_name"].apply(
-            lambda x: c.member.name_replace(x, add_mark=True)
-        )
-        df["vs_name"] = df["vs_name"].apply(
-            lambda x: c.member.name_replace(x, add_mark=True)
-        )
-
-    df["my_表示名"] = _disp_name(df["my_name"])
-    df["vs_表示名"] = _disp_name(df["vs_name"])
 
     return (df)
 

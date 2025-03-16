@@ -2,9 +2,9 @@
 select
     --[not_search_word] results.playtime,
     --[search_word] game_info.comment as playtime,
+    --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
+    --[individual] --[unregistered_not_replace] case when results.guest = 0 or results.name = :guest_name then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
     --[team] results.name as name,
-    --[individual] results.name as name,
-    --[individual] guest,
     game_info.guest_count,
     game_info.same_team,
     seat,

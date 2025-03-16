@@ -4,11 +4,10 @@ create view if not exists regulations as
         remarks.thread_ts,
         remarks.name as name,
         ifnull(team.name, '未所属') as team,
+        case when member.id isnull then 1 else 0 end as guest,
         group_concat(remarks.matter) as word,
-        sum(words.ex_point) as ex_point,
-        ifnull(words.type, 0) as type,
-        game_info.guest_count,
-        game_info.same_team
+        words.type,
+        sum(ifnull(words.ex_point, 0)) as ex_point
     from
         remarks
     left join member on
@@ -17,8 +16,6 @@ create view if not exists regulations as
         member.team_id == team.id
     left join words on
         words.word == remarks.matter
-    join game_info on
-        game_info.ts == remarks.thread_ts
     where
         {regulation_where}
     group by

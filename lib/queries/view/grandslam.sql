@@ -2,12 +2,11 @@ drop view if exists grandslam;
 create view if not exists grandslam as
     select
         remarks.thread_ts,
-        remarks.name,
+        remarks.name as name,
         ifnull(team.name, '未所属') as team,
+        case when member.id isnull then 1 else 0 end as guest,
         group_concat(remarks.matter) as grandslam,
-        count() as gs_count,
-        game_info.guest_count,
-        game_info.same_team
+        count() as gs_count
     from
         remarks
     left join member on
@@ -16,8 +15,6 @@ create view if not exists grandslam as
         member.team_id == team.id
     left join words on
         words.word == remarks.matter
-    join game_info on
-        game_info.ts == remarks.thread_ts
     where
         {grandslam_where}
     group by

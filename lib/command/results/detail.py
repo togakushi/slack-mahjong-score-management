@@ -39,11 +39,11 @@ def aggregation():
         return (message_build(msg_data), {})
 
     if g.opt.anonymous:
-        player_name = c.member.name_replace(g.prm.player_name)
+        player_name = c.member.name_replace(g.prm.player_name, add_mark=True)
         for idx, name in enumerate(g.opt.target_player):
             g.opt.target_player[idx] = c.member.name_replace(name)
     else:
-        player_name = g.prm.player_name
+        player_name = c.member.name_replace(g.prm.player_name, add_mark=True)
 
     result_df = d.aggregate.game_results()
     record_df = d.aggregate.ranking_record()
@@ -196,18 +196,25 @@ def get_regulations():
 def get_game_results():
     ret: str = "\n*【戦績】*\n"
     data: dict = {}
-    target_player = g.opt.target_player[0]  # pylint: disable=unused-variable  # noqa: F841
+    target_player = c.member.name_replace(g.opt.target_player[0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
+    p_list: list = []
     df = d.aggregate.game_details()
 
+    print(target_player)
     if g.opt.verbose:
         data["p0"] = df.filter(items=["playtime", "guest_count", "same_team"]).drop_duplicates().set_index("playtime")
         for idx, prefix in enumerate(["p1", "p2", "p3", "p4"]):  # pylint: disable=unused-variable  # noqa: F841
-            data[prefix] = df.query("seat == @idx + 1").filter(
-                items=["playtime", "表示名", "rpoint", "rank", "point", "grandslam", "name"]
-            ).rename(
+            tmp_df = df.query("seat == @idx + 1").filter(
+                items=["playtime", "name", "rpoint", "rank", "point", "grandslam", "name"]
+            )
+
+            for x in tmp_df["name"].unique().tolist():
+                if x not in p_list:
+                    p_list.append(x)
+
+            data[prefix] = tmp_df.rename(
                 columns={
-                    "name": f"{prefix}_x",
-                    "表示名": f"{prefix}_name",
+                    "name": f"{prefix}_name",
                     "rpoint": f"{prefix}_rpoint",
                     "rank": f"{prefix}_rank",
                     "point": f"{prefix}_point",
@@ -215,8 +222,9 @@ def get_game_results():
                 }
             ).set_index("playtime")
 
+        max_len = c.member.count_padding(p_list)
         df_data = pd.concat([data["p1"], data["p2"], data["p3"], data["p4"], data["p0"]], axis=1)
-        df_data = df_data.query("p1_x == @target_player or p2_x == @target_player or p3_x == @target_player or p4_x == @target_player")
+        df_data = df_data.query("p1_name == @target_player or p2_name == @target_player or p3_name == @target_player or p4_name == @target_player")
 
         for x in df_data.itertuples():
             vs_guest = ""
@@ -228,17 +236,17 @@ def get_game_results():
             ret += textwrap.dedent(
                 """
                 {} {}
-                \t東家：{} {}位 {:7d}点 ({:6.1f}pt) {}
-                \t南家：{} {}位 {:7d}点 ({:6.1f}pt) {}
-                \t西家：{} {}位 {:7d}点 ({:6.1f}pt) {}
-                \t北家：{} {}位 {:7d}点 ({:6.1f}pt) {}"""
+                \t東家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}
+                \t南家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}
+                \t西家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}
+                \t北家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}"""
             ).format(
                 x.Index.replace("-", "/"), vs_guest,
-                x.p1_name, x.p1_rank, int(x.p1_rpoint) * 100, x.p1_point, x.p1_gs,
-                x.p2_name, x.p2_rank, int(x.p2_rpoint) * 100, x.p2_point, x.p2_gs,
-                x.p3_name, x.p3_rank, int(x.p3_rpoint) * 100, x.p3_point, x.p3_gs,
-                x.p4_name, x.p4_rank, int(x.p4_rpoint) * 100, x.p4_point, x.p4_gs,
-            ).replace("-", "▲")
+                x.p1_name, " " * (max_len - f.common.len_count(x.p1_name)), x.p1_rank, int(x.p1_rpoint) * 100, x.p1_point, x.p1_gs,
+                x.p2_name, " " * (max_len - f.common.len_count(x.p2_name)), x.p2_rank, int(x.p2_rpoint) * 100, x.p2_point, x.p2_gs,
+                x.p3_name, " " * (max_len - f.common.len_count(x.p3_name)), x.p3_rank, int(x.p3_rpoint) * 100, x.p3_point, x.p3_gs,
+                x.p4_name, " " * (max_len - f.common.len_count(x.p4_name)), x.p4_rank, int(x.p4_rpoint) * 100, x.p4_point, x.p4_gs,
+            ).replace(" -", "▲")
     else:
         df_data = df.query("name == @target_player").set_index("playtime")
         for x in df_data.itertuples():
@@ -248,7 +256,7 @@ def get_game_results():
             if x.same_team == 1 and not g.opt.individual:
                 vs_guest = g.cfg.setting.guest_mark
 
-            ret += "\t{}{}  {}位 {:7d}点 ({:6.1f}pt) {}\n".format(  # pylint: disable=consider-using-f-string
+            ret += "\t{}{}  {}位 {:8d}点 ({:7.1f}pt) {}\n".format(  # pylint: disable=consider-using-f-string
                 vs_guest, x.Index.replace("-", "/"),
                 x.rank, int(x.rpoint) * 100, x.point, x.grandslam,
             ).replace("-", "▲")
@@ -260,7 +268,7 @@ def get_versus_matrix():
     ret: str = "\n*【対戦結果】*\n"
     df = d.aggregate.versus_matrix()
     for _, r in df.iterrows():
-        ret += f"\t{r['vs_表示名']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"
+        ret += f"\t{r['vs_name']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"
 
     return (ret)
 
