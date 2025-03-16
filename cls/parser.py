@@ -92,6 +92,9 @@ class MessageParser():
 
         _event: dict = {}
 
+        if _body.get("command") == g.cfg.setting.slash_command:
+            _event = _body
+
         if _body.get("event"):
             if not self.channel_id:
                 if _body.get("channel_name") != "directmessage":
