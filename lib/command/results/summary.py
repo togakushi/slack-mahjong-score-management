@@ -36,9 +36,7 @@ def aggregation():
         column_name = "チーム"
 
     if not g.cfg.config["mahjong"].getboolean("ignore_flying", False):
-        add_text = " / トバされた人（延べ）：{} 人".format(  # pylint: disable=consider-using-f-string
-            df_summary["トビ"].sum(),
-        )
+        add_text = f" / トバされた人（延べ）：{df_summary["トビ"].sum()} 人"
 
     headline += f.message.header(game_info, add_text, 1)
 
@@ -138,33 +136,32 @@ def memo_count(df_game: pd.DataFrame) -> str:
     # メモ表示
     memo_grandslam = ""
     if not df_grandslam.empty:
-        memo_grandslam = "\n*【役満和了】*\n"
         for _, v in df_grandslam.iterrows():
-            memo_grandslam += "\t{}：{} （{}）\n".format(  # pylint: disable=consider-using-f-string
-                v["playtime"].replace("-", "/"),
-                v["grandslam"],
-                v["表示名"].strip(),
-            )
+            if not g.opt.guest_skip and v["name"] == g.prm.guest_name:  # ゲストなし
+                continue
+            else:
+                memo_grandslam += f"\t{v["playtime"].replace("-", "/")}：{v["grandslam"]} （{v["name"]}）\n"
+    if memo_grandslam:
+        memo_grandslam = f"\n*【役満和了】*\n{memo_grandslam}"
 
     memo_regulation = ""
     if not df_regulations.empty:
-        memo_regulation = "\n*【卓外ポイント】*\n"
         for _, v in df_regulations.iterrows():
-            memo_regulation += "\t{}：{} {}pt（{}）\n".format(  # pylint: disable=consider-using-f-string
-                v["playtime"].replace("-", "/"),
-                v["regulation"],
-                str(v["ex_point"]).replace("-", "▲"),
-                v["表示名"].strip(),
-            )
+            if not g.opt.guest_skip and v["name"] == g.prm.guest_name:  # ゲストなし
+                continue
+            else:
+                memo_regulation += f"\t{v["playtime"].replace("-", "/")}：{v["regulation"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）\n"
+    if memo_regulation:
+        memo_regulation = f"\n*【卓外ポイント】*\n{memo_regulation}"
 
     memo_wordcount = ""
     if not df_wordcount.empty:
-        memo_wordcount = "\n*【その他】*\n"
         for _, v in df_wordcount.iterrows():
-            memo_wordcount += "\t{}：{} （{}）\n".format(  # pylint: disable=consider-using-f-string
-                v["playtime"].replace("-", "/"),
-                v["regulation"],
-                v["表示名"].strip(),
-            )
+            if not g.opt.guest_skip and v["name"] == g.prm.guest_name:  # ゲストなし
+                continue
+            else:
+                memo_wordcount += f"\t{v["playtime"].replace("-", "/")}：{v["regulation"]} （{v["name"]}）\n"
+    if memo_wordcount:
+        memo_wordcount = f"\n*【その他】*\n{memo_wordcount}"
 
     return (memo_grandslam + memo_regulation + memo_wordcount).strip()
