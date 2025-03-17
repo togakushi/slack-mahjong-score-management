@@ -93,7 +93,7 @@ def aggregation() -> Tuple[str, Any]:
 
     # 平均順位
     df["rank"] = df["rank_avg"].rank(ascending=True, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["rank_avg"]:>4.2f} {row["rank_dist"]}", axis=1)
+    df["disp"] = df.apply(lambda row: f"<>{row["rank_avg"]:>4.2f} ({row["rank_dist"]})", axis=1)
     data["平均順位"] = table_conversion(df)
 
     # 役満和了率
