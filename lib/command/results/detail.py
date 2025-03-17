@@ -263,11 +263,21 @@ def get_game_results():
     return (ret)
 
 
-def get_versus_matrix():
+def get_versus_matrix() -> str:
+    """対戦結果を返す
+
+    Returns:
+        str: 集計結果
+    """
+
     ret: str = "\n*【対戦結果】*\n"
     df = d.aggregate.versus_matrix()
+    max_len = c.member.count_padding(df["vs_name"].unique().tolist())
+
     for _, r in df.iterrows():
-        ret += f"\t{r['vs_name']}：{r['game']} 戦 {r['win']} 勝 {r['lose']} 敗 ({r['win%']:6.2f}%)\n"
+        padding = max_len - f.common.len_count(r["vs_name"])
+        ret += f"\t{r["vs_name"]}{" " * padding} ： "
+        ret += f"{r["game"]:3d} 戦 {r["win"]:3d} 勝 {r["lose"]:3d} 敗 ({r["win%"]:6.2f}%)\n"
 
     return (ret)
 
