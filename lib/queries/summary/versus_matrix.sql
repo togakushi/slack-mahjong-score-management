@@ -24,7 +24,6 @@ with target_data as (
         --[individual] --[guest_skip] and results.guest = 0 -- ゲストナシ
         --[team] --[friendly_fire] and game_info.same_team = 0
         --[team] and team_id notnull -- 未所属除外
-        --[player_name] and results.name in (<<player_list>>) -- 対象プレイヤー
         --[search_word] and game_info.comment like :search_word
 )
 select
@@ -83,6 +82,7 @@ from (
     order by
         my.playtime desc
 )
+--[player_name] where my_name in (<<player_list>>) -- 対象プレイヤー
 group by
     my_name, vs_name
 order by
