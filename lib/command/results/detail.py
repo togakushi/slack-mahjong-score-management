@@ -200,7 +200,6 @@ def get_game_results():
     p_list: list = []
     df = d.aggregate.game_details()
 
-    print(target_player)
     if g.opt.verbose:
         data["p0"] = df.filter(items=["playtime", "guest_count", "same_team"]).drop_duplicates().set_index("playtime")
         for idx, prefix in enumerate(["p1", "p2", "p3", "p4"]):  # pylint: disable=unused-variable  # noqa: F841
