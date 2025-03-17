@@ -152,7 +152,7 @@ def statistics_plot() -> Tuple[int, str]:
         g.cfg.setting.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "graph.png",
     )
-    title_text = f"『{player}』の成績 (集計期間：{g.prm.starttime_ymd} - {g.prm.endtime_ymd})"
+    title_text = f"『{player}』の成績 (検索期間：{g.prm.starttime_ymd} - {g.prm.endtime_ymd})"
 
     rpoint_df = get_data(player_df["rpoint"], g.opt.interval)
     point_sum_df = get_data(player_df["point"], g.opt.interval)
