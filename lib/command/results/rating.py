@@ -1,7 +1,6 @@
 import pandas as pd
 
 import lib.global_value as g
-from lib import command as c
 from lib import database as d
 from lib import function as f
 
@@ -35,14 +34,14 @@ def aggregation():
 
     df = pd.merge(df_results, final, on=["name"]).sort_values(by="rate", ascending=False)
 
-    # ゲスト置換
-    df["名前"] = df["name"].copy().apply(
-        lambda x: c.member.name_replace(x, add_mark=True)
-    )
-    if g.opt.unregistered_replace:
+    # 集計対象外データの削除
+    if g.opt.unregistered_replace:  # 個人戦
         for player in df.itertuples():
             if player.name not in g.member_list:
                 df = df.copy().drop(player.Index)
+
+    if not g.opt.individual:  # チーム戦
+        df = df.copy().query("name != '未所属'")
 
     # 計算
     df["得点偏差"] = (df["rpoint_avg"] - df["rpoint_avg"].mean()) / df["rpoint_avg"].std(ddof=0) * 10 + 50
@@ -61,7 +60,7 @@ def aggregation():
         "rpoint_avg": "平均素点",
     }).filter(
         items=[
-            "名前", "レート", "順位分布", "平均順位", "順位偏差", "平均素点", "得点偏差"
+            "name", "レート", "順位分布", "平均順位", "順位偏差", "平均素点", "得点偏差"
         ]
     ).copy()
 
