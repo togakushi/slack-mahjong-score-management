@@ -26,7 +26,6 @@ with target_data as (
         --[search_word] and comment like :search_word
         <<where_string>>
 )
-
 select
     --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
     --[individual] --[unregistered_not_replace] case when guest = 0 or name = :guest_name then name else name || '(<<guest_mark>>)' end as name, -- ゲスト無効
