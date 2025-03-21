@@ -47,6 +47,7 @@ def read_data(filepath: str) -> pd.DataFrame:
     )
 
     # デバッグ用
+    pd.set_option("display.max_rows", None)
     pd.set_option("display.max_columns", None)
     logging.trace("opt: opt=%s", vars(g.opt))  # type: ignore
     logging.trace("prm: prm=%s", vars(g.prm))  # type: ignore

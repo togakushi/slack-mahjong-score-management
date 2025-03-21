@@ -25,8 +25,6 @@ from lib.database.common import load_query, query_modification
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 
-pd.set_option("display.max_rows", None)
-
 
 def get_game_results() -> list:
     """月/年単位のゲーム結果集計
