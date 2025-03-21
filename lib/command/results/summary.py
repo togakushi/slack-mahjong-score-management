@@ -20,9 +20,9 @@ def aggregation():
     # --- データ収集
     game_info = d.aggregate.game_info()
     df_summary = d.aggregate.game_summary(drop_items=["rank_distr2"])
-    df_game = d.common.read_data("lib/queries/summary/details.sql").fillna(value="")
+    df_game = d.common.read_data("lib/queries/summary/details.sql")
 
-    df_grandslam = df_game.query("grandslam != ''")
+    df_grandslam = df_game.query("grandslam == grandslam")
     df_summary = d.common.df_rename(df_summary)
 
     # 表示
@@ -130,7 +130,7 @@ def memo_count(df_game: pd.DataFrame) -> str:
 
     # データ収集
     df_grandslam = df_game.query("grandslam == grandslam")
-    match g.undefined_word:
+    match g.cfg.undefined_word:
         case 1:
             df_regulations = df_game.query("regulation == regulation and (type == 1 or type != type)")
             df_wordcount = df_game.query("regulation == regulation and (type == 2 or type == type)")

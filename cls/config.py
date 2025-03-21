@@ -80,6 +80,8 @@ class Config():
         self.dropitems.ranking = [x.strip() for x in self.config["ranking"].get("dropitems", "").split(",")]
         self.dropitems.report = [x.strip() for x in self.config["report"].get("dropitems", "").split(",")]
 
+        self.undefined_word: int = self.config["regulations"].getint("undefined", 2)
+
         logging.info("setting=%s", vars(self.setting))
         logging.info("search=%s", vars(self.search))
         logging.info("database=%s", vars(self.db))

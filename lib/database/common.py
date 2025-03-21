@@ -47,6 +47,7 @@ def read_data(filepath: str) -> pd.DataFrame:
     )
 
     # デバッグ用
+    pd.set_option("display.max_columns", None)
     logging.trace("opt: opt=%s", vars(g.opt))  # type: ignore
     logging.trace("prm: prm=%s", vars(g.prm))  # type: ignore
     logging.trace("sql: sql=%s", named_query(sql, g.prm.to_dict()))  # type: ignore
@@ -158,15 +159,18 @@ def query_modification(sql: str) -> str:
             )
     if g.prm.get("kind") is not None:
         if g.prm.get("kind") == "grandslam":
-            if g.undefined_word == 0:
+            if g.cfg.undefined_word == 0:
                 sql = sql.replace("<<where_string>>", "and (words.type is null or words.type = 0)")
             else:
                 sql = sql.replace("<<where_string>>", "and words.type = 0")
         else:
-            if g.undefined_word == 2:
-                sql = sql.replace("<<where_string>>", "and (words.type is null or words.type = 1 or words.type = 2)")
-            else:
-                sql = sql.replace("<<where_string>>", "and (words.type = 1 or words.type = 2)")
+            match g.cfg.undefined_word:
+                case 1:
+                    sql = sql.replace("<<where_string>>", "and (words.type is null or words.type = 1)")
+                case 2:
+                    sql = sql.replace("<<where_string>>", "and (words.type is null or words.type = 2)")
+                case _:
+                    sql = sql.replace("<<where_string>>", "and (words.type = 1 or words.type = 2)")
 
     # SQLコメント削除
     sql = re.sub(r"^ *--\[.*$", "", sql, flags=re.MULTILINE)

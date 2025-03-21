@@ -28,8 +28,7 @@ def initialization_resultdb():
         for k, v in g.cfg.config.items("regulations"):
             match k:
                 case "undefined":
-                    if v in ("0", "2"):
-                        g.undefined_word = int(v)
+                    continue
                 case "type0" | "yakuman":
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
@@ -61,15 +60,19 @@ def initialization_resultdb():
     resultdb.executescript(load_query("lib/queries/view/game_info.sql"))
 
     # メモ
-    if g.undefined_word == 0:
-        grandslam_where = "words.type is null or words.type == 0"
-        regulation_where = "words.type in (1, 2)"
-    elif g.undefined_word == 2:
-        grandslam_where = "words.type == 0"
-        regulation_where = "words.type is null or words.type in (1, 2)"
-    else:
-        grandslam_where = "words.type == 0"
-        regulation_where = "words.type in (1, 2)"
+    match g.cfg.undefined_word:
+        case 0:
+            grandslam_where = "words.type is null or words.type == 0"
+            regulation_where = "words.type in (1, 2)"
+        case 1:
+            grandslam_where = "words.type == 0"
+            regulation_where = "words.type is null or words.type == 1"
+        case 2:
+            grandslam_where = "words.type == 0"
+            regulation_where = "words.type is null or words.type == 2"
+        case _:
+            grandslam_where = "words.type == 0"
+            regulation_where = "words.type in (1, 2)"
 
     resultdb.executescript(load_query("lib/queries/view/grandslam.sql").format(grandslam_where=grandslam_where))
     resultdb.executescript(load_query("lib/queries/view/regulations.sql").format(regulation_where=regulation_where))

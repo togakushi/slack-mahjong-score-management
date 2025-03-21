@@ -116,13 +116,13 @@ def help_message():
             )
 
     words = [word for word, _ in d.common.word_list(2)]
-    if g.undefined_word == 2:
+    if g.cfg.undefined_word == 2:
         words += ["未登録ワードのすべてを個別にカウント"]
     if words:
         msg += f"\n\t*個別カウントワード*\n\t\t{'、'.join(words)}\n"
 
     words = [word for word, _ in d.common.word_list(0)]
-    if g.undefined_word == 0:
+    if g.cfg.undefined_word == 0:
         words += ["未登録ワードのすべてを和了役としてカウント"]
     if words:
         msg += f"\n\t*役満カウントワード*\n\t\t{'、'.join(words)}\n"

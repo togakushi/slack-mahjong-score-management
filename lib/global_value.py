@@ -23,7 +23,6 @@ wind: tuple = ("東家", "南家", "西家", "北家")
 member_list: dict = {}
 team_list: list = []
 bot_id: str = ""
-undefined_word: int = 2
 
 app_var: dict = {  # ホームタブ用初期値
     "view": {},
