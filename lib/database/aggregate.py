@@ -11,37 +11,6 @@ from lib import function as f
 from lib.database.common import read_data
 
 
-def _disp_name(df, adjust=0, mark=True):
-    """ゲスト置換/パディング付与
-
-    Args:
-        df (pd.DataFrame): 変更対象のデータ
-        adjust (int, optional): パディング数の調整. Defaults to 0.
-        mark (bool, optional): ゲストマークの表示. Defaults to True.
-
-    Returns:
-        pd.DataFrame: 置換後のデータ
-    """
-
-    player_list = list(df.unique())
-
-    replace_list = []
-    for name in list(df.unique()):
-        if g.opt.individual:
-            replace_list.append(c.member.name_replace(name, add_mark=mark))
-        else:
-            replace_list.append(name)
-
-    max_padding = c.member.count_padding(replace_list)
-    for idx, val in enumerate(replace_list):
-        padding = " " * (
-            max_padding - f.common.len_count(val) + adjust
-        )
-        replace_list[idx] = f"{val}{padding}"
-
-    return (df.replace(player_list, replace_list))
-
-
 def game_info():
     """指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
 
@@ -97,20 +66,6 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
 
     logging.trace(df)  # type: ignore
     return (df)
-
-
-def game_details():
-    """ゲーム結果を集計する
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    df = read_data("lib/queries/summary/details.sql")
-
-    logging.trace(df)  # type: ignore
-    return (df.fillna(value=""))
 
 
 def remark_count(kind):
