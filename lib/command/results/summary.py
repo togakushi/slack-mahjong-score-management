@@ -129,17 +129,17 @@ def memo_count(df_game: pd.DataFrame) -> str:
     """
 
     # データ収集
-    df_grandslam = df_game.query("grandslam != ''")
+    df_grandslam = df_game.query("grandslam == grandslam")
     match g.undefined_word:
         case 1:
-            df_regulations = df_game.query("regulation != '' and (type == 1 or type == '')")
-            df_wordcount = df_game.query("regulation != '' and type == 2")
+            df_regulations = df_game.query("regulation == regulation and (type == 1 or type != type)")
+            df_wordcount = df_game.query("regulation == regulation and (type == 2 or type == type)")
         case 2:
-            df_regulations = df_game.query("regulation != '' and type == 1")
-            df_wordcount = df_game.query("regulation != '' and (type == 2 or type == '')")
+            df_regulations = df_game.query("regulation == regulation and (type == 1 or type == type)")
+            df_wordcount = df_game.query("regulation == regulation and (type == 2 or type != type)")
         case _:
-            df_regulations = df_game.query("regulation != '' and type == 1")
-            df_wordcount = df_game.query("regulation != '' and type == 2")
+            df_regulations = df_game.query("regulation == regulation and type == 1")
+            df_wordcount = df_game.query("regulation == regulation and type == 2")
 
     # メモ表示
     memo_grandslam = ""
