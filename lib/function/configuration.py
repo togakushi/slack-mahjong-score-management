@@ -160,7 +160,10 @@ def setup() -> None:
     g.prm = Parameters()
     g.msg = MessageParser()
 
-    logging.notice("rule_version=%s, origin_point=%s, return_point=%s", g.prm.rule_version, g.prm.origin_point, g.prm.return_point)  # type: ignore
+    logging.notice(  # type: ignore
+        "rule_version=%s, origin_point=%s, return_point=%s, undefined_word=%s",
+        g.prm.rule_version, g.prm.origin_point, g.prm.return_point, g.cfg.undefined_word
+    )
 
     # 作業用ディレクトリ作成
     try:
