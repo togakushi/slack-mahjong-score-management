@@ -23,7 +23,7 @@ def aggregation():
 
     # --- データ収集
     df_vs = d.aggregate.versus_matrix()
-    df_game = d.aggregate.game_details()
+    df_game = d.common.read_data("lib/queries/summary/details.sql").fillna(value="")
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 
     # --- ヘッダ情報

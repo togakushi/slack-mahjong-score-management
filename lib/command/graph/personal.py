@@ -131,7 +131,7 @@ def statistics_plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.opt.guest_skip = g.opt.guest_skip2
-    df = d.aggregate.game_details()
+    df = d.common.read_data("lib/queries/summary/details.sql").fillna(value="")
 
     if df.empty:
         return (0, f.message.reply(message="no_hits"))

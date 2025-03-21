@@ -241,6 +241,7 @@ class Parameters:
         self.endonday_ymd = None
         self.stipulated: int = 0
         self.target_count: int = 0
+        self.aggregate_unit: str | None = None  # M: 月間集計 / Y: 年間集計 / A: 全期間集計
 
     def update(self, _opt: CommandOption):
         """コマンド解析クラスの内容からパラメータをセットする

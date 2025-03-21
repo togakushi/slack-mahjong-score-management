@@ -28,14 +28,8 @@ mlogger.setLevel(logging.WARNING)
 pd.set_option("display.max_rows", None)
 
 
-def get_game_results(flag: str = "M") -> list:
+def get_game_results() -> list:
     """月/年単位のゲーム結果集計
-
-    Args:
-        flag (str, optional): 集計単位. Defaults to "M".
-            - M: 月間集計
-            - Y: 年間集計
-            - A: 全期間集計
 
     Returns:
         list: 集計結果のリスト
@@ -47,7 +41,7 @@ def get_game_results(flag: str = "M") -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query_modification(load_query("lib/queries/report/personal_data.sql"), flag),
+        query_modification(load_query("lib/queries/report/personal_data.sql")),
         g.prm.to_dict(),
     )
 
@@ -490,7 +484,8 @@ def entire_aggregate(style: dict) -> list:
     elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5 * mm))
     data: list = []
-    tmp_data = get_game_results(flag="A")
+    g.prm.aggregate_unit = "A"
+    tmp_data = get_game_results()
 
     if not tmp_data:
         return ([])
@@ -590,7 +585,8 @@ def periodic_aggregation(style: dict) -> list:
         elements.append(Spacer(1, 5 * mm))
 
         data: list = []
-        tmp_data = get_game_results(flag)
+        g.prm.aggregate_unit = flag
+        tmp_data = get_game_results()
 
         if not tmp_data:
             return ([])

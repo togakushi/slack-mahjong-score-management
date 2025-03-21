@@ -29,21 +29,17 @@ def load_query(filepath: str) -> str:
     return (sql)
 
 
-def read_data(filepath: str, flag: str | None = None) -> pd.DataFrame:
+def read_data(filepath: str) -> pd.DataFrame:
     """データベースからデータを取得する
 
     Args:
         filepath (str): SQLファイルパス
-        flag (str | None, optional): 集計単位. Defaults to None.
-            - M: 月間集計
-            - Y: 年間集計
-            - A: 全期間集計
 
     Returns:
         pd.DataFrame: 集計結果
     """
 
-    sql = query_modification(load_query(filepath), flag)
+    sql = query_modification(load_query(filepath))
     df = pd.read_sql(
         sql,
         sqlite3.connect(g.cfg.db.database_file),
@@ -54,19 +50,16 @@ def read_data(filepath: str, flag: str | None = None) -> pd.DataFrame:
     logging.trace("opt: opt=%s", vars(g.opt))  # type: ignore
     logging.trace("prm: prm=%s", vars(g.prm))  # type: ignore
     logging.trace("sql: sql=%s", named_query(sql, g.prm.to_dict()))  # type: ignore
+    logging.trace(df)  # type: ignore
 
     return (df)
 
 
-def query_modification(sql: str, flag: str | None = None) -> str:
+def query_modification(sql: str) -> str:
     """クエリをオプションの内容で修正する
 
     Args:
         sql (str): 修正するクエリ
-        flag (str, optional): 集計単位. Defaults to None.
-            - M: 月間集計
-            - Y: 年間集計
-            - A: 全期間集計
 
     Returns:
         str: 修正後のクエリ
@@ -144,7 +137,7 @@ def query_modification(sql: str, flag: str | None = None) -> str:
     sql = sql.replace("<<guest_mark>>", g.cfg.setting.guest_mark)
 
     # フラグの処理
-    match flag:
+    match g.prm.aggregate_unit:
         case "M":
             sql = sql.replace("<<collection>>", "substr(collection_daily, 1, 7) as 集計")
             sql = sql.replace("<<group by>>", "group by 集計")

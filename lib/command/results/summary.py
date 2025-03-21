@@ -20,7 +20,7 @@ def aggregation():
     # --- データ収集
     game_info = d.aggregate.game_info()
     df_summary = d.aggregate.game_summary(drop_items=["rank_distr2"])
-    df_game = d.aggregate.game_details()
+    df_game = d.common.read_data("lib/queries/summary/details.sql").fillna(value="")
 
     df_grandslam = df_game.query("grandslam != ''")
     df_summary = d.common.df_rename(df_summary)

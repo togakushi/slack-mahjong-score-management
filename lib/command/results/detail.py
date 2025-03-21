@@ -198,7 +198,7 @@ def get_game_results():
     data: dict = {}
     target_player = c.member.name_replace(g.opt.target_player[0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
     p_list: list = []
-    df = d.aggregate.game_details()
+    df = d.common.read_data("lib/queries/summary/details.sql").fillna(value="")
 
     if g.opt.verbose:
         data["p0"] = df.filter(items=["playtime", "guest_count", "same_team"]).drop_duplicates().set_index("playtime")
