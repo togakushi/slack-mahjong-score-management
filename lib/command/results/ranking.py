@@ -165,6 +165,6 @@ def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:
     tbl = tabulate(df.filter(items=["rank", "name", "disp"]).values)
     tbl = re.sub(r"( *[0-9]+)\s(.*)<>(.*)", r"\1:\2\3", tbl)
     tbl = "\n".join(tbl.splitlines()[1:-1]).replace(" -", "▲")
-    tbl = f"```\n{tbl}\n```\n"
+    tbl = f"\n```\n{tbl}\n```\n"
 
     return (tbl)
