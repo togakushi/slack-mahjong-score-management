@@ -23,7 +23,7 @@ def plot() -> str | bool:
 
     plt.close()
     # --- データ取得
-    results_df = d.aggregate.winner_report()
+    results_df = d.common.read_data("lib/queries/report/winner.sql")
 
     if len(results_df) == 0:
         return (False)
@@ -33,13 +33,13 @@ def plot() -> str | bool:
         results[v["collection"]] = {}
         results[v["collection"]]["集計月"] = v["collection"]
         for x in range(1, 6):
-            if isinstance(v[f"name{x}"], str):
+            if v.isna()[f"point{x}"]:
+                results[v["collection"]][f"{x}位"] = "該当者なし"
+            else:
                 results[v["collection"]][f"{x}位"] = "{} ({}pt)".format(  # pylint: disable=consider-using-f-string
-                    v[f"pname{x}"],
+                    v[f"name{x}"],
                     str("{:+}".format(v[f"point{x}"])).replace("-", "▲")  # pylint: disable=consider-using-f-string
                 )
-            else:
-                results[v["collection"]][f"{x}位"] = v[f"pname{x}"]
 
     # --- グラフ設定
     f.common.graph_setup(plt, fm)

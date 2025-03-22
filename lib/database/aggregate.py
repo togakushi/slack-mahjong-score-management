@@ -274,25 +274,6 @@ def calculation_rating():
 
 
 # レポート
-def winner_report():
-    """成績上位者
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    df = read_data("lib/queries/report/winner.sql").fillna(value=np.nan)
-
-    # ゲスト置換
-    for i in range(1, 6):
-        df[f"pname{i}"] = df[f"name{i}"].apply(
-            lambda x: "該当者なし" if isinstance(x, float) else c.member.name_replace(x, add_mark=True)
-        )
-
-    return (df)
-
-
 def matrix_table():
     """対局対戦マトリックス表の作成
 

@@ -1,4 +1,29 @@
 -- report.winner
+with target_data as (
+    select
+        substr(collection_daily, 1, 7) as collection,
+        --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
+        --[individual] --[unregistered_not_replace] case when results.guest = 0 or results.name = :guest_name then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
+        --[team] results.name as name,
+        point
+    from
+        --[individual] individual_results as results
+        --[team] team_results as results
+    join game_info on
+        game_info.ts == results.ts
+    where
+        results.rule_version = :rule_version
+        and results.playtime between :starttime and :endtime -- 検索範囲
+        --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
+        --[individual] --[guest_skip] and results.guest = 0 -- ゲストナシ
+        --[team] --[friendly_fire] and game_info.same_team = 0
+        --[team] and team_id notnull -- 未所属除外
+        --[player_name] and results.name in (<<player_list>>) -- 対象プレイヤー
+        --[search_word] and game_info.comment like :search_word
+    order by
+        results.playtime desc
+    --[recent] limit :target_count * 4 -- 直近N(縦持ちなので4倍する)
+)
 select
     collection,
     max(case when rank = 1 then name end) as name1,
@@ -17,22 +42,8 @@ from (
         rank() over (partition by collection order by round(sum(point), 1) desc) as rank,
         name,
         round(sum(point), 1) as total
-    from (
-        select
-            substr(collection_daily, 1, 7) as collection,
-            --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
-            --[unregistered_not_replace] name, -- ゲスト無効
-            point
-        from
-            individual_results
-        where
-            rule_version = :rule_version
-            and playtime between :starttime and :endtime
-            --[guest_not_skip] and playtime not in (select playtime from individual_results group by playtime having sum(guest) > 1) -- ゲストあり(2ゲスト戦除外)
-            --[guest_skip] and guest = 0 -- ゲストなし
-            --[friendly_fire] and same_team = 0
-            --[search_word] and comment like :search_word
-    )
+    from
+        target_data
     group by
         name, collection
     having
