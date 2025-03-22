@@ -112,32 +112,6 @@ def game_results():
     return (df)
 
 
-def versus_matrix():
-    """直接対戦結果集計
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    df = read_data("lib/queries/summary/versus_matrix.sql")
-
-    return (df)
-
-
-# チーム
-def team_gamedata():
-    """ゲーム結果集計(チーム用)
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-    # データ収集
-    df = read_data("lib/queries/summary/gamedata.sql")
-
-    return (df)
-
-
 # ランキング
 def ranking_record():
     """ランキング集計
@@ -299,33 +273,7 @@ def calculation_rating():
     return (df_ratings)
 
 
-def simple_results():
-    """ゲーム結果集計(簡易版)
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    df = read_data("lib/queries/ranking/results.sql").set_index("name")
-
-    return (df)
-
-
 # レポート
-def monthly_report():
-    """レポート生成用データ集計
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    df = read_data("lib/queries/report/monthly.sql")
-
-    return (df)
-
-
 def winner_report():
     """成績上位者
 

@@ -271,7 +271,7 @@ def get_versus_matrix() -> str:
     """
 
     ret: str = "\n*【対戦結果】*\n"
-    df = d.aggregate.versus_matrix()
+    df = d.common.read_data("lib/queries/summary/versus_matrix.sql")
     max_len = c.member.count_padding(df["vs_name"].unique().tolist())
 
     for _, r in df.iterrows():

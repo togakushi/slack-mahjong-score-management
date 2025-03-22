@@ -22,7 +22,7 @@ def aggregation():
     g.opt.guest_skip = g.opt.guest_skip2
 
     # --- データ収集
-    df_vs = d.aggregate.versus_matrix()
+    df_vs = d.common.read_data("lib/queries/summary/versus_matrix.sql")
     df_game = d.common.read_data("lib/queries/summary/details.sql").fillna(value="")
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 

@@ -21,7 +21,7 @@ def plot():
 
     plt.close()
     # --- データ収集
-    df = d.aggregate.monthly_report()
+    df = d.common.read_data("lib/queries/report/monthly.sql")
     results = df.transpose().to_dict()
 
     if len(results) == 0:

@@ -18,7 +18,7 @@ def aggregation():
     # データ収集
     # g.opt.guest_skip = False  # 2ゲスト戦強制取り込み
     game_info = d.aggregate.game_info()
-    df_results = d.aggregate.simple_results()
+    df_results = d.common.read_data("lib/queries/ranking/results.sql").set_index("name")
     df_ratings = d.aggregate.calculation_rating()
 
     # 最終的なレーティング
