@@ -27,7 +27,8 @@ def main():
     game_info = d.aggregate.game_info()
     g.prm.stipulated_update(g.opt, game_info["game_count"])
 
-    df = d.aggregate.results_list()
+    df = d.common.read_data("lib/queries/report/results_list.sql").reset_index(drop=True)
+    df.index = df.index + 1
     if df.empty:
         return (False)
 

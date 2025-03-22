@@ -404,27 +404,3 @@ def matrix_table():
     )
 
     return (mtx_df)
-
-
-def results_list():
-    """成績一覧表
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    df = read_data("lib/queries/report/results_list.sql")
-
-    # ゲスト置換
-    if g.opt.individual:
-        df["name"] = df["name"].apply(
-            lambda x: c.member.name_replace(x, add_mark=True)
-        )
-
-    # インデックスの振り直し
-    df = df.reset_index(drop=True)
-    df.index = df.index + 1
-
-    logging.trace(df)  # type: ignore
-    return (df)
