@@ -7,7 +7,6 @@ import pandas as pd
 
 import lib.global_value as g
 from lib import command as c
-from lib import function as f
 from lib.database.common import read_data
 
 
@@ -110,19 +109,6 @@ def game_results():
     df.index = df.index + 1
 
     logging.trace(df)  # type: ignore
-    return (df)
-
-
-def personal_gamedata():
-    """ゲーム結果集計(個人用)
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    df = read_data("lib/queries/summary/gamedata.sql")
-
     return (df)
 
 
