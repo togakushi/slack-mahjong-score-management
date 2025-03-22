@@ -214,7 +214,7 @@ def _data_collection():
 
     target_data = pd.DataFrame()
     if g.opt.individual:  # 個人集計
-        df = d.aggregate.personal_gamedata()
+        df = d.common.read_data("lib/queries/summary/gamedata.sql")
         if df.empty:
             return (target_data, df)
 
