@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import Tuple
 
 from dateutil.relativedelta import relativedelta
 
@@ -36,7 +37,7 @@ def main():
     f.slack_api.post_message(ret, command_ts)
 
 
-def data_comparison():
+def data_comparison() -> Tuple[dict, dict]:
     """データ突合処理
 
     Returns:
@@ -45,8 +46,8 @@ def data_comparison():
             - dict: slackに返すメッセージ
     """
 
-    count = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0, "remark": 0}
-    ret_msg = {"mismatch": "", "missing": "", "delete": "", "invalid_score": "", "remark": ""}
+    count: dict = {"mismatch": 0, "missing": 0, "delete": 0, "invalid_score": 0, "remark": 0}
+    msg: dict = {"mismatch": "", "missing": "", "delete": "", "invalid_score": "", "remark": ""}
 
     # slackログからゲーム結果を取得
     slack_data = f.search.for_slack()
@@ -65,11 +66,43 @@ def data_comparison():
     logging.trace("db_remarks=%s", db_remarks)  # type: ignore
 
     # --- スコア突合
+    ret_count, ret_msg = check_omission(slack_data, db_data)
+    count = f.common.merge_dicts(count, ret_count)
+    msg = f.common.merge_dicts(msg, ret_msg)
+
+    # --- 素点合計の再チェック(修正可能なslack側のみチェック)
+    ret_count, ret_msg = check_total_score(slack_data)
+    count = f.common.merge_dicts(count, ret_count)
+    msg = f.common.merge_dicts(msg, ret_msg)
+
+    # --- メモ突合
+    ret_count, ret_msg = check_remarks(slack_data, db_remarks)
+    count = f.common.merge_dicts(count, ret_count)
+    msg = f.common.merge_dicts(msg, ret_msg)
+
+    return (count, msg)
+
+
+def check_omission(slack_data: dict, db_data: dict) -> Tuple[dict, dict]:
+    """スコア取りこぼしチェック
+
+    Args:
+        slack_data (dict): slack検索結果
+        db_data (dict): DB登録状況
+
+    Returns:
+        Tuple[dict, dict]: 修正内容(結果)
+    """
+
+    count = {"mismatch": 0, "missing": 0, "delete": 0}
+    msg = {"mismatch": "", "missing": "", "delete": ""}
+
     for key, val in slack_data.items():
         slack_score = val.get("score")
         g.msg.channel_id = val.get("channel_id")
         g.msg.user_id = val.get("user_id")
         g.msg.event_ts = key
+        g.msg.check_updatable()
 
         reactions_data = []
         reactions_data.append(val.get("reaction_ok"))
@@ -81,7 +114,7 @@ def data_comparison():
                 if val.get("in_thread"):
                     count["delete"] += 1
                     logging.notice("delete: %s, %s (In-thread report)", key, slack_score)  # type: ignore
-                    ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
+                    msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
                         datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                         textformat(slack_score)
                     )
@@ -104,7 +137,7 @@ def data_comparison():
                 logging.notice("mismatch: %s", key)  # type: ignore
                 logging.info("  *  slack: %s", textformat(db_score))
                 logging.info("  *     db: %s", textformat(slack_score))
-                ret_msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(  # pylint: disable=consider-using-f-string
+                msg["mismatch"] += "\t{}\n\t\t修正前：{}\n\t\t修正後：{}\n".format(  # pylint: disable=consider-using-f-string
                     datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
                     textformat(db_score), textformat(slack_score),
                 )
@@ -119,7 +152,7 @@ def data_comparison():
 
         count["missing"] += 1
         logging.notice("missing: %s, %s", key, slack_score)  # type: ignore
-        ret_msg["missing"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
+        msg["missing"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(slack_score)
         )
@@ -132,7 +165,7 @@ def data_comparison():
         # 削除
         count["delete"] += 1
         logging.notice("delete: %s, %s (Only database)", key, db_data[key])  # type: ignore
-        ret_msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
+        msg["delete"] += "\t{} {}\n".format(  # pylint: disable=consider-using-f-string
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(db_data[key])
         )
@@ -141,14 +174,23 @@ def data_comparison():
         for icon in f.slack_api.reactions_status(ts=key):
             f.slack_api.call_reactions_remove(icon)
 
-    # 素点合計の再チェック(修正可能なslack側のみチェック)
-    for key, val in slack_data.items():
-        ret = check_total_score(key, val)
-        if ret:
-            count["invalid_score"] += 1
-            ret_msg["invalid_score"] += ret
+    return (count, msg)
 
-    # --- メモ突合
+
+def check_remarks(slack_data: dict, db_remarks: dict) -> Tuple[dict, dict]:
+    """メモの取りこぼしチェック
+
+    Args:
+        slack_data (dict): slack検索結果
+        db_remarks (dict): DB登録状況
+
+    Returns:
+        Tuple[dict, dict]: 修正内容(結果)
+    """
+
+    count = {"remark": 0}
+    msg = {"remark": ""}
+
     slack_remarks = []
     for key, val in slack_data.items():
         remarks = val.get("remarks")
@@ -184,48 +226,50 @@ def data_comparison():
         d.common.remarks_delete_compar(key)
         logging.notice("remark delete(missed deletion): %s", key)  # type: ignore
 
-    return (count, ret_msg)
+    return (count, msg)
 
 
-def check_total_score(key, val) -> str:
+def check_total_score(slack_data: dict) -> Tuple[dict, dict]:
     """素点合計の再チェック
 
     Args:
-        key (_type_): _description_
-        val (_type_): _description_
+        slack_data (dict): slack検索結果
 
     Returns:
-        str: _description_
+        Tuple[dict, dict]: 修正内容(結果)
     """
 
-    ret_msg = ""
+    count = {"invalid_score": 0}
+    msg = {"invalid_score": ""}
 
-    if not g.cfg.setting.thread_report and val.get("in_thread"):
-        return (ret_msg)
-    if d.common.exsist_record(key).get("rule_version") != g.prm.rule_version:
-        return (ret_msg)
+    for key, val in slack_data.items():
+        if not g.cfg.setting.thread_report and val.get("in_thread"):
+            continue
+        if d.common.exsist_record(key).get("rule_version") != g.prm.rule_version:
+            continue
 
-    score_data = f.score.get_score(val.get("score"))
-    reaction_ok = val.get("reaction_ok")
-    reaction_ng = val.get("reaction_ng")
+        score_data = f.score.get_score(val.get("score"))
+        reaction_ok = val.get("reaction_ok")
+        reaction_ng = val.get("reaction_ng")
 
-    if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
-        logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])  # type: ignore
-        ret_msg = "\t{} [供託：{}]{}\n".format(  # pylint: disable=consider-using-f-string
-            datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-            score_data["deposit"], textformat(val.get("score"))
-        )
-        if key in reaction_ok:
-            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
-        if key not in reaction_ng:
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
-    else:
-        if key in reaction_ng:
-            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
-        if key not in reaction_ok:
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
+        if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
+            count["invalid_score"] += 1
+            logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])  # type: ignore
+            msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(  # pylint: disable=consider-using-f-string
+                datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+                score_data["deposit"], textformat(val.get("score"))
+            )
+            if key in reaction_ok:
+                f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
+            if key not in reaction_ng:
+                f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
+        else:
+            if key in reaction_ng:
+                f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
+            if key not in reaction_ok:
+                f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
 
-    return (ret_msg)
+    return (count, msg)
 
 
 def textformat(text):

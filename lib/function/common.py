@@ -91,6 +91,33 @@ def kata_to_hira(text: str) -> str:
     return (text.translate(trans_table))
 
 
+def merge_dicts(dict1: dict, dict2: dict) -> dict:
+    """辞書の内容を更新する
+
+    Args:
+        dict1 (dict): 1つ目の辞書
+        dict2 (dict): 2つ目の辞書
+
+    Returns:
+        dict: 更新された辞書
+    """
+
+    merged = {}
+
+    for key in set(dict1) | set(dict2):
+        val1 = dict1.get(key)
+        val2 = dict2.get(key)
+
+        if isinstance(val1, (int, float)) and isinstance(val2, (int, float)):
+            merged[key] = val1 + val2
+        elif isinstance(val1, str) and isinstance(val2, str):
+            merged[key] = val1 + val2
+        else:
+            merged[key] = val1 if val2 is None else val2
+
+    return (merged)
+
+
 def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
     """登録制限チェック
 
