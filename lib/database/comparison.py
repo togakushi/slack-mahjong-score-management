@@ -169,7 +169,9 @@ def check_omission(slack_data: dict, db_data: dict) -> Tuple[dict, dict]:
             datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
             textformat(db_data[key])
         )
+        g.msg.updatable = True
         d.common.db_delete(key)
+
         # メッセージが残っているならリアクションを外す
         for icon in f.slack_api.reactions_status(ts=key):
             f.slack_api.call_reactions_remove(icon)
