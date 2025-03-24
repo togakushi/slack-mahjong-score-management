@@ -173,6 +173,7 @@ def check_omission(slack_data: dict, db_data: dict) -> Tuple[dict, dict]:
         d.common.db_delete(key)
 
         # メッセージが残っているならリアクションを外す
+        # ToDo: slackの検索結果が0件のときにchannel_idが空になる→リアクション操作にchannel_idが必須
         for icon in f.slack_api.reactions_status(ts=key):
             f.slack_api.call_reactions_remove(icon)
 
