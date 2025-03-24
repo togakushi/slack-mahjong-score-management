@@ -143,31 +143,10 @@ def data_comparison():
 
     # 素点合計の再チェック(修正可能なslack側のみチェック)
     for key, val in slack_data.items():
-        if not g.cfg.setting.thread_report and val.get("in_thread"):
-            continue
-        if d.common.exsist_record(key).get("rule_version") != g.prm.rule_version:
-            continue
-
-        score_data = f.score.get_score(val.get("score"))
-        reaction_ok = val.get("reaction_ok")
-        reaction_ng = val.get("reaction_ng")
-
-        if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
+        ret = check_total_score(key, val)
+        if ret:
             count["invalid_score"] += 1
-            logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])  # type: ignore
-            ret_msg["invalid_score"] += "\t{} [供託：{}]{}\n".format(  # pylint: disable=consider-using-f-string
-                datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
-                score_data["deposit"], textformat(val.get("score"))
-            )
-            if key in reaction_ok:
-                f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
-            if key not in reaction_ng:
-                f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
-        else:
-            if key in reaction_ng:
-                f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
-            if key not in reaction_ok:
-                f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
+            ret_msg["invalid_score"] += ret
 
     # --- メモ突合
     slack_remarks = []
@@ -206,6 +185,47 @@ def data_comparison():
         logging.notice("remark delete(missed deletion): %s", key)  # type: ignore
 
     return (count, ret_msg)
+
+
+def check_total_score(key, val) -> str:
+    """素点合計の再チェック
+
+    Args:
+        key (_type_): _description_
+        val (_type_): _description_
+
+    Returns:
+        str: _description_
+    """
+
+    ret_msg = ""
+
+    if not g.cfg.setting.thread_report and val.get("in_thread"):
+        return (ret_msg)
+    if d.common.exsist_record(key).get("rule_version") != g.prm.rule_version:
+        return (ret_msg)
+
+    score_data = f.score.get_score(val.get("score"))
+    reaction_ok = val.get("reaction_ok")
+    reaction_ng = val.get("reaction_ng")
+
+    if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
+        logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])  # type: ignore
+        ret_msg = "\t{} [供託：{}]{}\n".format(  # pylint: disable=consider-using-f-string
+            datetime.fromtimestamp(float(key)).strftime('%Y/%m/%d %H:%M:%S'),
+            score_data["deposit"], textformat(val.get("score"))
+        )
+        if key in reaction_ok:
+            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
+        if key not in reaction_ng:
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
+    else:
+        if key in reaction_ng:
+            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
+        if key not in reaction_ok:
+            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
+
+    return (ret_msg)
 
 
 def textformat(text):
