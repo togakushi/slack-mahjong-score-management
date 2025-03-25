@@ -173,13 +173,13 @@ def statistics_plot() -> Tuple[int, str]:
     stats_df = pd.DataFrame(rpoint_stats)
     stats_df.loc[total_index] = pd.Series(
         {
-            "ゲーム数": player_df["rpoint"].count().astype("int"),
-            "平均値(x)": player_df["rpoint"].mean().round(1),
-            "最小値": player_df["rpoint"].min().astype("int"),
-            "第一四分位数": player_df["rpoint"].quantile(0.25).astype("int"),
-            "中央値(|)": player_df["rpoint"].median().astype("int"),
-            "第三四分位数": player_df["rpoint"].quantile(0.75).astype("int"),
-            "最大値": player_df["rpoint"].max().astype("int"),
+            "ゲーム数": int(player_df["rpoint"].count()),
+            "平均値(x)": float(round(player_df["rpoint"].mean(), 1)),
+            "最小値": int(player_df["rpoint"].min()),
+            "第一四分位数": int(player_df["rpoint"].quantile(0.25)),
+            "中央値(|)": int(player_df["rpoint"].median()),
+            "第三四分位数": int(player_df["rpoint"].quantile(0.75)),
+            "最大値": int(player_df["rpoint"].max()),
         }
     )
     stats_df = stats_df.apply(lambda col: col.map(lambda x: f"{int(x)}" if isinstance(x, int) else f"{x:.1f}"))
@@ -203,18 +203,18 @@ def statistics_plot() -> Tuple[int, str]:
 
     count_df.loc[total_index] = pd.Series(
         {
-            "ゲーム数": count_df["ゲーム数"].sum().astype("int"),
-            "1位": count_df["1位"].sum().astype("int"),
-            "2位": count_df["2位"].sum().astype("int"),
-            "3位": count_df["3位"].sum().astype("int"),
-            "4位": count_df["4位"].sum().astype("int"),
-            "1位(%)": (count_df["1位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
-            "2位(%)": (count_df["2位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
-            "3位(%)": (count_df["3位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
-            "4位(%)": (count_df["4位"].sum() / count_df["ゲーム数"].sum() * 100).round(2),
-            "平均順位": player_df["rank"].mean().round(2),
-            "区間ポイント": player_df["point"].sum().round(1),
-            "区間平均": player_df["point"].mean().round(1),
+            "ゲーム数": int(count_df["ゲーム数"].sum()),
+            "1位": int(count_df["1位"].sum()),
+            "2位": int(count_df["2位"].sum()),
+            "3位": int(count_df["3位"].sum()),
+            "4位": int(count_df["4位"].sum()),
+            "1位(%)": float(round((count_df["1位"].sum() / count_df["ゲーム数"].sum() * 100), 2)),
+            "2位(%)": float(round((count_df["2位"].sum() / count_df["ゲーム数"].sum() * 100), 2)),
+            "3位(%)": float(round((count_df["3位"].sum() / count_df["ゲーム数"].sum() * 100), 2)),
+            "4位(%)": float(round((count_df["4位"].sum() / count_df["ゲーム数"].sum() * 100), 2)),
+            "平均順位": float(round(player_df["rank"].mean(), 2)),
+            "区間ポイント": float(round(player_df["point"].sum(), 1)),
+            "区間平均": float(round(player_df["point"].mean(), 1)),
         }
     )
     # テーブル用データ
