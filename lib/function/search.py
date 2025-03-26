@@ -120,6 +120,7 @@ def for_slack():
                     "user_id": user_id,
                     "score": detection,
                     "event_ts": [],
+                    "edited_ts": [],
                     "remarks": [],
                     "in_thread": False,
                     "reaction_ok": [],
@@ -138,9 +139,15 @@ def for_slack():
         )
 
         msg = conversations.get("messages")
+
+        # リアクション取得
         reaction_ok, reaction_ng = reactions_list(msg[0])
         val["reaction_ok"].extend(reaction_ok)
         val["reaction_ng"].extend(reaction_ng)
+
+        # 編集時間取得
+        if msg[0].get("edited"):
+            val["edited_ts"].append(msg[0]["edited"]["ts"])
 
         if msg[0].get("ts") == msg[0].get("thread_ts") or msg[0].get("thread_ts") is None:
             if len(msg) >= 1:  # スレッド内探索
@@ -152,6 +159,9 @@ def for_slack():
                         _ok, _ng = reactions_list(x)
                         val["reaction_ok"] += _ok
                         val["reaction_ng"] += _ng
+
+                        if x.get("edited"):
+                            val["edited_ts"].append(x["edited"]["ts"])
 
                         for name, matter in zip(text[0::2], text[1::2]):
                             val["event_ts"].append(event_ts)

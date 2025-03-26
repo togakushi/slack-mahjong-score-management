@@ -1,6 +1,7 @@
 import os
 import re
 import unicodedata
+from datetime import datetime
 from typing import Any, Tuple
 
 import lib.global_value as g
@@ -118,6 +119,37 @@ def merge_dicts(dict1: Any, dict2: Any) -> dict:
             merged[key] = val1 if val2 is None else val2
 
     return (merged)
+
+
+def ts_conv(ts: datetime | float, fmt: str | None = None) -> str:
+    """時間フォーマット変更
+
+    Args:
+        ts (datetime | float): 変更する時間
+        fmt (str | None, optional): 種類. Defaults to None.
+
+    Returns:
+        str: 変換後の文字列
+    """
+
+    time_str: Any = datetime.now()
+
+    if isinstance(ts, float):
+        time_str = datetime.fromtimestamp(ts)
+    elif isinstance(ts, datetime):
+        time_str = ts
+
+    match fmt:
+        case "ts":
+            ret = str(time_str.timestamp())
+        case "yyyymmdd":
+            ret = time_str.strftime("%Y/%m/%d")
+        case "yyyymmdd_hhmm":
+            ret = time_str.strftime("%Y/%m/%d %H:%M")
+        case _:
+            ret = time_str.strftime("%Y/%m/%d %H:%M:%S")
+
+    return (ret)
 
 
 def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:

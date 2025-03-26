@@ -376,8 +376,8 @@ def remarks_append(remarks):
                         cur.execute(d.sql_remarks_insert, remark)
                         logging.notice("insert: %s, user=%s", remark, g.msg.user_id)  # type: ignore
 
-                        if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status():
-                            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remark["event_ts"])
+                        if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status(ts=remark.get("event_ts")):
+                            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remark.get("event_ts"))
 
             cur.commit()
 
@@ -407,6 +407,17 @@ def remarks_delete_compar(para):
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         cur.execute(d.sql_remarks_delete_compar, para)
         cur.commit()
+
+        left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]
+
+    if g.msg.channel_id:
+        ch = g.msg.channel_id
+    else:
+        ch = f.slack_api.get_channel_id()
+
+    icon = f.slack_api.reactions_status(ts=para.get("event_ts"))
+    if g.cfg.setting.reaction_ok in icon and left == 0:
+        f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ch=ch, ts=para.get("event_ts"))
 
 
 def rule_version():

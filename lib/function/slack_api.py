@@ -306,7 +306,35 @@ def reactions_status(ch=None, ts=None):
     return (icon)
 
 
-def get_dm_channel_id(user_id):
+def get_channel_id() -> str | None:
+    """チャンネルIDを取得する
+
+    Returns:
+        str: チャンネルID
+    """
+
+    channel_id = None
+
+    try:
+        response = g.webclient.search_messages(
+            query=f"in:{g.cfg.search.channel}",
+            count=1,
+        )
+        messages = response.get("messages", {})
+        if messages.get("matches"):
+            channel = messages["matches"][0]["channel"]
+            if isinstance(g.cfg.search.channel, str):
+                if channel["name"] in g.cfg.search.channel:
+                    channel_id = channel["id"]
+            else:
+                channel_id = channel["id"]
+    except SlackApiError as e:
+        logging.error(e)
+
+    return (channel_id)
+
+
+def get_dm_channel_id(user_id: str) -> str | None:
     """DMのチャンネルIDを取得する
 
     Args:

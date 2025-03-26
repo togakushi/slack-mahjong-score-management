@@ -110,6 +110,7 @@ class Config():
             keyword: str = self.config["search"].get("keyword", "終局")
             channel: str | None = self.config["search"].get("channel", None)
             after: int = self.config["search"].getint("after", 7)
+            wait: int = self.config["search"].getint("wait", 180)
         self.search = Search()
 
     def database_section(self):
