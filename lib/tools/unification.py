@@ -5,6 +5,7 @@ import sqlite3
 import lib.global_value as g
 from lib import command as c
 from lib import database as d
+from lib import function as f
 
 
 def main():
@@ -17,7 +18,7 @@ def main():
 
     if "rename" in rename_conf.sections():
         d.common.db_backup()
-        name_table = {}
+        name_table: dict = {}
         for name, alias in rename_conf["rename"].items():
             name_table.setdefault(name, [x.strip() for x in alias.split(",")])
 
@@ -25,10 +26,10 @@ def main():
 
         for name, alias_list in name_table.items():
             count = 0
-            chk, msg = c.member.check_namepattern(name)
+            chk, msg = f.common.check_namepattern(name)
             if chk:
                 for alias in alias_list:
-                    chk, msg = c.member.check_namepattern(alias)
+                    chk, msg = f.common.check_namepattern(alias)
                     if chk:
                         db.execute("update result set p1_name=? where p1_name=?;", (name, alias,))
                         count += db.execute("select changes();").fetchone()[0]
