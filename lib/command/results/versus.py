@@ -39,7 +39,7 @@ def aggregation():
         for idx, name in enumerate(vs_list):
             vs_list[idx] = c.member.name_replace(name)
 
-    msg1 = textwrap.dedent(f"""
+    msg1 = textwrap.dedent(f"""\
         *【直接対戦結果】*
         \tプレイヤー名：{c.member.name_replace(my_name, add_mark=True)}
         \t対戦相手：{vs}
@@ -70,7 +70,7 @@ def aggregation():
                 continue
 
             r = data.to_dict(orient="records")[0]
-            tmp_msg[vs_name]["info"] = textwrap.dedent(f"""
+            tmp_msg[vs_name]["info"] = textwrap.dedent(f"""\
                 【{r["my_name"].strip()} vs {r["vs_name"].strip()}】
                 \t対戦数：{r["game"]} 戦 {r["win"]} 勝 {r["lose"]} 敗 ({r["win%"]:.2f}%)
                 \t平均素点差：{(r["my_rpoint_avg"] - r["vs_rpoint_avg"]) * 100:+.0f} 点
@@ -98,7 +98,7 @@ def aggregation():
                             s2 = current_game.query("seat == 2").to_dict(orient="records")[0]
                             s3 = current_game.query("seat == 3").to_dict(orient="records")[0]
                             s4 = current_game.query("seat == 4").to_dict(orient="records")[0]
-                            tmp_msg[vs_name][count] = textwrap.dedent(f"""
+                            tmp_msg[vs_name][count] = textwrap.dedent(f"""\
                                 {"*【戦績】*" if count == 0 else ""}
                                 {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
                                 \t東家：{s1["name"]} {s1["rank"]}位 {s1["rpoint"] * 100:>7} 点 ({s1["point"]:>+5.1f}pt) {s1["grandslam"]}
@@ -109,7 +109,7 @@ def aggregation():
                         else:  # 簡易表示
                             a1 = my_score.query("playtime == @playtime").to_dict(orient="records")[0]
                             a2 = vs_score.query("playtime == @playtime").to_dict(orient="records")[0]
-                            tmp_msg[vs_name][count] = textwrap.dedent(f"""
+                            tmp_msg[vs_name][count] = textwrap.dedent(f"""\
                                 {"*【戦績】*" if count == 0 else ""}
                                 {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
                                 \t{a1["name"]}：{a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}

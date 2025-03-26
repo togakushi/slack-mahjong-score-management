@@ -60,7 +60,7 @@ def help_message():
     report_option = CommandOption()
     report_option.initialization("report")
 
-    msg = textwrap.dedent(f"""
+    msg = textwrap.dedent(f"""\
         *成績記録キーワード*
         \t{g.cfg.search.keyword}
 
@@ -100,7 +100,7 @@ def help_message():
             msg += f"\t{key}：{val['first_time']} ～ {val['last_time']}\n"
 
     # メモ機能
-    msg += textwrap.dedent(f"""
+    msg += textwrap.dedent(f"""\
         *メモ機能*
         \t`登録キーワード <対象メンバー> <登録ワード>`
         \t登録キーワード：{g.cfg.cw.remarks_word}

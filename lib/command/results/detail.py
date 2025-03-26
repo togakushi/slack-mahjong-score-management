@@ -132,7 +132,7 @@ def get_totalization(data):
 
 
 def get_seat_data(data: dict):
-    ret: str = textwrap.dedent(f"""
+    ret: str = textwrap.dedent(f"""\
         *【座席データ】*
         \t# 席：順位分布(平均順位) / トビ / 役満 #
         \t{data["東家-順位分布"]:22s} / {data["東家-トビ"]} / {data["東家-役満和了"]}
@@ -147,7 +147,7 @@ def get_seat_data(data: dict):
 def get_record(data: dict):
     ret: dict = {}
 
-    ret["ベストレコード"] = textwrap.dedent(f"""
+    ret["ベストレコード"] = textwrap.dedent(f"""\
         *【ベストレコード】*
         \t連続トップ：{data["連続トップ"]} 連続
         \t連続連対：{data["連続連対"]} 連続
@@ -156,7 +156,7 @@ def get_record(data: dict):
         \t最大獲得ポイント：{data["最大獲得ポイント"]}pt
     """).replace("-", "▲").replace("：0 連続", "：----").replace("：1 連続", "：----")
 
-    ret["ワーストレコード"] = textwrap.dedent(f"""
+    ret["ワーストレコード"] = textwrap.dedent(f"""\
         *【ワーストレコード】*
         \t連続ラス：{data['連続ラス']} 連続
         \t連続逆連対：{data['連続逆連対']} 連続
@@ -233,12 +233,13 @@ def get_game_results():
                 vs_guest = "(チーム同卓)"
 
             ret += textwrap.dedent(
-                """
+                """\
                 {} {}
                 \t東家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}
                 \t南家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}
                 \t西家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}
-                \t北家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}"""
+                \t北家：{} {} {}位 {:8d}点 ({:7.1f}pt) {}
+                """
             ).format(
                 x.Index.replace("-", "/"), vs_guest,
                 x.p1_name, " " * (max_len - f.common.len_count(x.p1_name)), x.p1_rank, int(x.p1_rpoint) * 100, x.p1_point, x.p1_gs,
