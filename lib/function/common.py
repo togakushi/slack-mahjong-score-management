@@ -122,32 +122,36 @@ def merge_dicts(dict1: Any, dict2: Any) -> dict:
 
 
 def ts_conv(ts: datetime | float, fmt: str | None = None) -> str:
-    """時間フォーマット変更
+    """時間書式変更
 
     Args:
         ts (datetime | float): 変更する時間
-        fmt (str | None, optional): 種類. Defaults to None.
+        fmt (str | None, optional): フォーマット指定. Defaults to None.
 
     Returns:
-        str: 変換後の文字列
+        str: 変更後の文字列
     """
 
-    time_str: Any = datetime.now()
+    time_obj: Any = datetime.now()
 
     if isinstance(ts, float):
-        time_str = datetime.fromtimestamp(ts)
+        time_obj = datetime.fromtimestamp(ts)
     elif isinstance(ts, datetime):
-        time_str = ts
+        time_obj = ts
 
     match fmt:
         case "ts":
-            ret = str(time_str.timestamp())
-        case "yyyymmdd":
-            ret = time_str.strftime("%Y/%m/%d")
-        case "yyyymmdd_hhmm":
-            ret = time_str.strftime("%Y/%m/%d %H:%M")
+            ret = str(time_obj.timestamp())
+        case "y":
+            ret = time_obj.strftime("%Y")
+        case "m":
+            ret = time_obj.strftime("%Y/%m")
+        case "d":
+            ret = time_obj.strftime("%Y/%m/%d")
+        case "hm":
+            ret = time_obj.strftime("%Y/%m/%d %H:%M")
         case _:
-            ret = time_str.strftime("%Y/%m/%d %H:%M:%S")
+            ret = time_obj.strftime("%Y/%m/%d %H:%M:%S")
 
     return (ret)
 
