@@ -65,7 +65,10 @@ def data_comparison() -> Tuple[dict, dict]:
 
     # slackログからゲーム結果を取得
     slack_data = f.search.for_slack()
-    first_ts = (datetime.now() - relativedelta(days=g.cfg.search.after)).timestamp()
+    if slack_data:
+        first_ts = min(slack_data)
+    else:
+        first_ts = (datetime.now() - relativedelta(days=g.cfg.search.after)).timestamp()
 
     # データベースからゲーム結果を取得
     db_data = f.search.for_database(first_ts)
