@@ -491,6 +491,8 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
     """
 
     rename_dict: dict = {
+        "playtime": "日時",
+        # 直接対決
         "results": "対戦結果", "win%": "勝率",
         "my_point_sum": "獲得ポイント(自分)", "my_point_avg": "平均ポイント(自分)",
         "vs_point_sum": "獲得ポイント(相手)", "vs_point_avg": "平均ポイント(相手)",
@@ -502,8 +504,6 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
         match x:
             case "rank":
                 rename_dict[x] = "#" if short else "順位"
-            case "playtime":
-                rename_dict[x] = "日時"
             case "name" | "player":
                 rename_dict[x] = "名前" if short else "プレイヤー名"
             case "team":
