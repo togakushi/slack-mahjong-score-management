@@ -11,6 +11,8 @@ select
     rpoint,
     rank,
     point,
+    --[individual] results.guest,
+    --[team] 0 as guest,
     grandslam.grandslam as grandslam,
     regulations.word as regulation,
     regulations.ex_point,

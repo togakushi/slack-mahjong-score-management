@@ -490,7 +490,13 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
         pd.DataFrame: リネーム後のデータフレーム
     """
 
-    rename_dict: dict = {}
+    rename_dict: dict = {
+        "results": "対戦結果", "win%": "勝率",
+        "my_point_sum": "獲得ポイント(自分)", "my_point_avg": "平均ポイント(自分)",
+        "vs_point_sum": "獲得ポイント(相手)", "vs_point_avg": "平均ポイント(相手)",
+        "my_rpoint_avg": "平均素点(自分)", "my_rank_avg": "平均順位(自分)", "my_rank_distr": "順位分布(自分)",
+        "vs_rpoint_avg": "平均素点(相手)", "vs_rank_avg": "平均順位(相手)", "vs_rank_distr": "順位分布(相手)",
+    }
 
     for x in df.columns:
         match x:
@@ -504,6 +510,8 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
                 rename_dict[x] = "チーム" if short else "チーム名"
             case "count" | "game":
                 rename_dict[x] = "ゲーム数"
+            case "rpoint":
+                rename_dict[x] = "素点"
             case "point":
                 rename_dict[x] = "獲得ポイント"
             case "pt_total" | "total_point" | "point_sum" | "total_mix":

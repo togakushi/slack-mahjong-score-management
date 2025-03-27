@@ -121,11 +121,11 @@ def merge_dicts(dict1: Any, dict2: Any) -> dict:
     return (merged)
 
 
-def ts_conv(ts: datetime | float, fmt: str | None = None) -> str:
+def ts_conv(ts: datetime | float | str, fmt: str | None = None) -> str:
     """時間書式変更
 
     Args:
-        ts (datetime | float): 変更する時間
+        ts (datetime | float | str): 変更する時間
         fmt (str | None, optional): フォーマット指定. Defaults to None.
 
     Returns:
@@ -134,7 +134,9 @@ def ts_conv(ts: datetime | float, fmt: str | None = None) -> str:
 
     time_obj: Any = datetime.now()
 
-    if isinstance(ts, float):
+    if isinstance(ts, str):
+        time_obj = datetime.fromisoformat(ts)
+    elif isinstance(ts, float):
         time_obj = datetime.fromtimestamp(ts)
     elif isinstance(ts, datetime):
         time_obj = ts
