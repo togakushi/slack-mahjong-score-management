@@ -26,27 +26,19 @@ def aggregation():
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 
     # --- ヘッダ情報
-    my_name = g.prm.player_name
+    my_name = c.member.name_replace(g.prm.player_name, add_mark=True)
     if g.opt.all_player:
         vs = "全員"
         vs_list = list(set(g.member_list.values()))
     else:
-        vs = ",".join(g.prm.competition_list.values())
+        vs = ",".join([c.member.name_replace(x, add_mark=True) for x in g.prm.competition_list.values()])
         vs_list = list(df_game["name"].unique())
 
     if g.opt.anonymous:
         for idx, name in enumerate(vs_list):
             vs_list[idx] = c.member.name_replace(name)
 
-    msg1 = textwrap.dedent(f"""\
-        *【直接対戦結果】*
-        \tプレイヤー名：{c.member.name_replace(my_name, add_mark=True)}
-        \t対戦相手：{vs}
-        \t{f.message.item_search_range()}
-        \t{f.message.remarks(True)}
-    """).strip()
-    msg1 = f.message.del_blank_line(msg1)
-
+    msg1 = tmpl_header(my_name, vs)
     msg2: dict = {}  # 対戦結果格納用
 
     # --- 表示内容
@@ -56,14 +48,14 @@ def aggregation():
         msg2[""] = "対戦記録が見つかりません。\n"
         return (msg1, msg2, "")
 
-    for vs_name in g.prm.competition_list.values():
+    for name in g.prm.competition_list.values():
+        vs_name = c.member.name_replace(name, add_mark=True)
         tmp_msg[vs_name] = {}
         if vs_name in vs_list:
             data = df_vs.query("vs_name == @vs_name")
             if data.empty:
                 drop_name.append(vs_name)
-                tmp_msg[vs_name]["info"] = f"【{c.member.name_replace(my_name, add_mark=True)} vs {c.member.name_replace(vs_name, add_mark=True)}】\n"
-                tmp_msg[vs_name]["info"] += "\t対戦記録はありません。\n\n"
+                tmp_msg[vs_name]["info"] = f"【{my_name} vs {vs_name}】\n\t対戦記録はありません。\n\n"
                 continue
 
             tmp_msg[vs_name]["info"] = tmpl_vs_table(data.to_dict(orient="records")[0])
@@ -90,8 +82,7 @@ def aggregation():
                         count += 1
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
         else:  # 対戦記録なし
-            tmp_msg[vs_name]["info"] = f"【{c.member.name_replace(my_name, add_mark=True)} vs {c.member.name_replace(vs_name, add_mark=True)}】\n"
-            tmp_msg[vs_name]["info"] += "\t対戦相手が見つかりません。\n\n"
+            tmp_msg[vs_name]["info"] = f"【{my_name} vs {vs_name}】\n\t対戦相手が見つかりません。\n\n"
 
     # --- データ整列&まとめ
     for key, val in tmp_msg.items():
@@ -167,7 +158,41 @@ def tmpl_vs_table(data: dict) -> str:
     return (ret.strip())
 
 
+def tmpl_header(my_name: str, vs_name: str) -> str:
+    """ヘッダテンプレート
+
+    Args:
+        my_name (str): 自分の名前
+        vs_name (str): 相手の名前
+
+    Returns:
+        str: 出力データ
+    """
+    ret = textwrap.dedent(
+        f"""\
+        *【直接対戦結果】*
+        \tプレイヤー名：{my_name}
+        \t対戦相手：{vs_name}
+        \t{f.message.item_search_range()}
+        \t{f.message.remarks(True)}
+        """
+    ).strip()
+
+    return (f.message.del_blank_line(ret))
+
+
 def tmpl_result_verbose(current_game: pd.DataFrame, playtime: str, guest_count: int) -> str:
+    """詳細結果テンプレート
+
+    Args:
+        current_game (pd.DataFrame): 成績
+        playtime (str): プレイ時間
+        guest_count (int): ゲスト人数
+
+    Returns:
+        str: 出力データ
+    """
+
     s1 = current_game.query("seat == 1").to_dict(orient="records")[0]
     s2 = current_game.query("seat == 2").to_dict(orient="records")[0]
     s3 = current_game.query("seat == 3").to_dict(orient="records")[0]
@@ -187,6 +212,17 @@ def tmpl_result_verbose(current_game: pd.DataFrame, playtime: str, guest_count: 
 
 
 def tmpl_result_simple(my_score: pd.DataFrame, vs_score: pd.DataFrame, playtime: str, guest_count: int) -> str:
+    """簡易結果テンプレート
+
+    Args:
+        my_score (pd.DataFrame): 自分の成績
+        vs_score (pd.DataFrame): 相手の成績
+        playtime (str): プレイ時間
+        guest_count (int): ゲスト人数
+
+    Returns:
+        str: 出力データ
+    """
     a1 = my_score.query("playtime == @playtime").to_dict(orient="records")[0]
     a2 = vs_score.query("playtime == @playtime").to_dict(orient="records")[0]
     ret = textwrap.dedent(
