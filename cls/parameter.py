@@ -1,3 +1,7 @@
+"""
+cls/parameter.py
+"""
+
 import logging
 import math
 import re
@@ -11,9 +15,7 @@ from lib import function as f
 
 
 class CommandOption:
-    """オプション解析クラス
-    """
-
+    """オプション解析クラス"""
     def __init__(self) -> None:
         self.initialization("DEFAULT")
 
@@ -29,7 +31,6 @@ class CommandOption:
         if _command not in g.cfg.config.sections():
             _command = "DEFAULT"
 
-        self.command: str = _command
         self.rule_version: str = str()
         self.aggregation_range: list = []
         self.target_player: list = []

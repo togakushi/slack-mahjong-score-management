@@ -1,3 +1,7 @@
+"""
+cls/config.py
+"""
+
 import configparser
 import logging
 import os
@@ -7,10 +11,15 @@ from itertools import chain
 
 
 class Config():
-    """コンフィグ解析クラス
-    """
-
+    """コンフィグ解析クラス"""
     def __init__(self, filename: str | None = None) -> None:
+        self.setting: dataclass
+        self.alias: dataclass
+        self.db: dataclass
+        self.search: dataclass
+        self.member: dataclass
+        self.team: dataclass
+
         self.config = configparser.ConfigParser()
         if filename is not None:
             self.read_file(filename)
@@ -27,8 +36,7 @@ class Config():
             logging.notice("filename: %s", filename)  # type: ignore
             logging.info("read sections: %s", self.config.sections())
         except Exception as e:
-            logging.critical("config read error: %s", e)
-            sys.exit(255)
+            raise RuntimeError(e) from e
 
         # 必須セクションチェック
         for x in ("mahjong", "setting"):
@@ -49,9 +57,9 @@ class Config():
         self.team_section()
         self.alias_section()
 
-        # チャンネル内呼び出しキーワード
         @dataclass
         class CommandWord:
+            """チャンネル内呼び出しキーワード"""
             help: str = self.config["help"].get("commandword", "ヘルプ")
             results: str = self.config["results"].get("commandword", "麻雀成績")
             graph: str = self.config["graph"].get("commandword", "麻雀グラフ")
@@ -69,9 +77,9 @@ class Config():
         self.ranking = self.command_default("ranking")
         self.report = self.command_default("report")
 
-        # 非表示項目リスト
         @dataclass
         class DropItems:
+            """非表示項目リスト"""
             results: list = field(default_factory=list)
             ranking: list = field(default_factory=list)
             report: list = field(default_factory=list)
@@ -90,8 +98,10 @@ class Config():
         logging.info("dropitems=%s", vars(self.dropitems))
 
     def setting_section(self):
+        """settingセクション読み込み"""
         @dataclass
         class Setting:
+            """初期化"""
             slash_command: str = self.config["setting"].get("slash_commandname", "/mahjong")
             thread_report: bool = self.config["setting"].getboolean("thread_report", True)
             guest_mark: str = self.config["setting"].get("guest_mark", "※")
@@ -105,8 +115,10 @@ class Config():
         self.setting.work_dir = os.path.join(os.path.realpath(os.path.curdir), self.setting.work_dir)
 
     def search_section(self):
+        """searchセクション読み込み"""
         @dataclass
         class Search:
+            """初期化"""
             keyword: str = self.config["search"].get("keyword", "終局")
             channel: str | None = self.config["search"].get("channel", None)
             after: int = self.config["search"].getint("after", 7)
@@ -114,16 +126,20 @@ class Config():
         self.search = Search()
 
     def database_section(self):
+        """databaseセクション読み込み"""
         @dataclass
         class Database:
+            """初期化"""
             database_file: str = self.config["database"].get("database_file", "mahjong.db")
             channel_limitations: str = self.config["database"].get("channel_limitations", "")
             backup_dir: str | None = self.config["database"].get("backup_dir", None)
         self.db = Database()
 
     def member_section(self):
+        """memberセクション読み込み"""
         @dataclass
         class Member:
+            """初期化"""
             registration_limit: int = self.config["member"].getint("registration_limit", 255)
             character_limit: int = self.config["member"].getint("character_limit", 8)
             alias_limit: int = self.config["member"].getint("alias_limit", 16)
@@ -131,8 +147,10 @@ class Config():
         self.member = Member()
 
     def team_section(self):
+        """teamセクション読み込み"""
         @dataclass
         class Team:
+            """初期化"""
             registration_limit: int = self.config["team"].getint("registration_limit", 255)
             character_limit: int = self.config["team"].getint("character_limit", 16)
             member_limit: int = self.config["team"].getint("member_limit", 16)
@@ -140,8 +158,10 @@ class Config():
         self.team = Team()
 
     def alias_section(self):
+        """aliasセクション読み込み"""
         @dataclass
         class Alias:
+            """初期化"""
             results: list = field(default_factory=list)
             graph: list = field(default_factory=list)
             ranking: list = field(default_factory=list)
@@ -174,6 +194,7 @@ class Config():
 
         @dataclass
         class SubCommand:
+            """デフォルト値のセット"""
             aggregation_range: str = self.config[section].get("aggregation_range", "当日")
             all_player: bool = self.config[section].getboolean("all_player", False)
             daily: bool = self.config[section].getboolean("daily", True)
