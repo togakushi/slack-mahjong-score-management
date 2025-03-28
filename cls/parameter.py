@@ -31,6 +31,7 @@ class CommandOption:
         if _command not in g.cfg.config.sections():
             _command = "DEFAULT"
 
+        self.command: str = _command
         self.rule_version: str = str()
         self.aggregation_range: list = []
         self.target_player: list = []
