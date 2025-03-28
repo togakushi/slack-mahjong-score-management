@@ -8,17 +8,18 @@ import os
 import sys
 from dataclasses import dataclass, field
 from itertools import chain
+from typing import Any
 
 
 class Config():
     """コンフィグ解析クラス"""
     def __init__(self, filename: str | None = None) -> None:
-        self.setting: dataclass
-        self.alias: dataclass
-        self.db: dataclass
-        self.search: dataclass
-        self.member: dataclass
-        self.team: dataclass
+        self.setting: Any
+        self.alias: Any
+        self.db: Any
+        self.search: Any
+        self.member: Any
+        self.team: Any
 
         self.config = configparser.ConfigParser()
         if filename is not None:
