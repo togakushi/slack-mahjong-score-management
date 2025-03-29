@@ -2,25 +2,31 @@
 lib/global_value.py
 """
 
+from argparse import Namespace
 from datetime import datetime
-from typing import Any
 
 from dateutil.relativedelta import relativedelta
+from slack_bolt.app.app import App
+from slack_sdk.web.client import WebClient
 
-from cls import config
+from cls.config import Config
+from cls.parameter import CommandOption, Parameters
+from cls.parser import MessageParser
+from cls.search import SearchRange
 
 # slack object
-app: Any = None
-webclient: Any = None
+app: App
+webclient: WebClient
 
 # モジュール共通クラス
-cfg = config.Config()
-opt: Any = None
-prm: Any = None
-msg: Any = None
-search_word: Any = None
+cfg: Config = Config()
+opt: CommandOption
+prm: Parameters
+msg: MessageParser
+search_word: SearchRange
 
-args: Any = None
+# コマンドライン引数
+args: Namespace
 
 # 固定値
 wind: tuple = ("東家", "南家", "西家", "北家")

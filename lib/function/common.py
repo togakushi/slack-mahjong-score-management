@@ -9,7 +9,6 @@ from datetime import datetime
 from typing import Any, Tuple
 
 import lib.global_value as g
-from cls.parameter import CommandOption
 
 
 def len_count(text: str) -> int:
@@ -204,7 +203,7 @@ def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
     if g.search_word.find(name):
         return (False, "検索範囲指定に使用される単語では登録できません。")
 
-    chk = CommandOption()
+    chk = g.CommandOption()
     chk.check([name])
     if vars(chk):
         return (False, "オプションに使用される単語では登録できません。")

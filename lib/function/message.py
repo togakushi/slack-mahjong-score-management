@@ -8,7 +8,6 @@ import re
 import textwrap
 
 import lib.global_value as g
-from cls.parameter import CommandOption
 from lib import database as d
 from lib import function as f
 
@@ -55,13 +54,13 @@ def help_message():
         str: ヘルプメッセージ
     """
 
-    results_option = CommandOption()
+    results_option = g.CommandOption()
     results_option.initialization("results")
-    graph_option = CommandOption()
+    graph_option = g.CommandOption()
     graph_option.initialization("graph")
-    ranking_option = CommandOption()
+    ranking_option = g.CommandOption()
     ranking_option.initialization("ranking")
-    report_option = CommandOption()
+    report_option = g.CommandOption()
     report_option.initialization("report")
 
     msg = textwrap.dedent(f"""\
