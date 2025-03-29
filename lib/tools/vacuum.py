@@ -1,3 +1,7 @@
+"""
+lib/tools/vacuum.py
+"""
+
 import logging
 import os
 import sqlite3

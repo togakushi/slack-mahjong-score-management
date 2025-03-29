@@ -1,3 +1,7 @@
+"""
+lib/command/member.py
+"""
+
 import logging
 import re
 import sqlite3

@@ -1,3 +1,7 @@
+"""
+lib/command/team.py
+"""
+
 import logging
 import sqlite3
 

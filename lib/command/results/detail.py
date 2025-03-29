@@ -1,3 +1,7 @@
+"""
+lib/command/results/detail.py
+"""
+
 import re
 import textwrap
 

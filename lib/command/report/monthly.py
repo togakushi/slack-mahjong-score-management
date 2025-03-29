@@ -1,3 +1,7 @@
+"""
+lib/command/report/monthly.py
+"""
+
 import logging
 import os
 

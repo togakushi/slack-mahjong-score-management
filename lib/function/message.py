@@ -1,3 +1,7 @@
+"""
+lib/function/message.py
+"""
+
 import logging
 import random
 import re

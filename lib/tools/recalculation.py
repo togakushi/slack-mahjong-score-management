@@ -1,3 +1,7 @@
+"""
+lib/tools/recalculation.py
+"""
+
 import logging
 import sqlite3
 from contextlib import closing

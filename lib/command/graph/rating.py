@@ -1,3 +1,7 @@
+"""
+lib/command/graph/rating.py
+"""
+
 import logging
 import os
 

@@ -1,3 +1,7 @@
+"""
+lib/command/graph/summary.py
+"""
+
 import logging
 import os
 

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+dbtools.py
+"""
+
 import lib.global_value as g
 from lib import tools as t
 from lib.function import configuration

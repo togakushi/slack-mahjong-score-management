@@ -1,11 +1,14 @@
+"""
+lib/command/report/slackpost.py
+"""
+
 import lib.global_value as g
 import lib.function as f
 from lib.command.report import matrix, monthly, results_list, results_report, winner
 
 
 def main():
-    """レポートをslackにpostする
-    """
+    """レポートをslackにpostする"""
 
     g.opt.initialization("report", g.msg.argument)
     g.prm.update(g.opt)

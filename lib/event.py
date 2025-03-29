@@ -1,3 +1,7 @@
+"""
+lib/event.py
+"""
+
 import logging
 import re
 

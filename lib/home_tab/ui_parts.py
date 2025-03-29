@@ -1,3 +1,7 @@
+"""
+lib/home_tab/ui_parts.py
+"""
+
 import lib.global_value as g
 
 

@@ -1,3 +1,7 @@
+"""
+lib/command/graph/slackpost.py
+"""
+
 import lib.global_value as g
 from lib import function as f
 from lib.command.graph import personal, rating, summary

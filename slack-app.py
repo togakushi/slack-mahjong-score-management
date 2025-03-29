@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+slack-app.py
+"""
+
 import logging
 import os
 import sys

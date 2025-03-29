@@ -1,3 +1,7 @@
+"""
+lib/tools/comparison.py
+"""
+
 import logging
 import os
 import sys

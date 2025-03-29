@@ -1,3 +1,7 @@
+"""
+lib/command/results/rating.py
+"""
+
 import pandas as pd
 
 import lib.global_value as g

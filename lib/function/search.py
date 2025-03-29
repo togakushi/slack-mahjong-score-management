@@ -1,3 +1,7 @@
+"""
+lib/function/search.py
+"""
+
 import logging
 import re
 import sqlite3

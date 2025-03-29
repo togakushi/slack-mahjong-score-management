@@ -1,3 +1,7 @@
+"""
+lib/home_tab/summary.py
+"""
+
 import logging
 
 import lib.global_value as g
