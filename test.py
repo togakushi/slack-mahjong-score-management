@@ -16,6 +16,11 @@ from lib.function import configuration
 
 
 def dump(flag: bool = True):
+    """パラメータダンプ
+
+    Args:
+        flag (bool, optional): 出力フラグ
+    """
     if flag:
         pprint(["*** opt ***", vars(g.opt)], width=200)
         pprint(["*** prm ***", vars(g.prm)], width=200)
@@ -23,6 +28,15 @@ def dump(flag: bool = True):
 
 
 def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
+    """テストケース実行
+
+    Args:
+        flag (bool): ダンプ出力フラグ
+        test_case (str): テストケース
+        sec (str): 定義セクション
+        pattern (str): 実行パターン
+    """
+
     match test_case:
         case "skip":
             pass
@@ -86,6 +100,7 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
 
 
 def main():
+    """メイン処理"""
     configuration.setup()
     test_conf = configparser.ConfigParser()
     test_conf.read(g.args.testcase, encoding="utf-8")
