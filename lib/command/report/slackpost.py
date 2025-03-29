@@ -9,7 +9,6 @@ from lib.command.report import matrix, monthly, results_list, results_report, wi
 
 def main():
     """レポートをslackにpostする"""
-
     g.opt.initialization("report", g.msg.argument)
     g.prm.update(g.opt)
 

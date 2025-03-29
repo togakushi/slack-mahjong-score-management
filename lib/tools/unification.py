@@ -13,9 +13,7 @@ from lib import function as f
 
 
 def main():
-    """ゲストメンバーの名前を統一する
-    """
-
+    """ゲストメンバーの名前を統一する"""
     rename_conf = configparser.ConfigParser()
     rename_conf.read(g.args.unification, encoding="utf-8")
     c.member.read_memberslist(False)

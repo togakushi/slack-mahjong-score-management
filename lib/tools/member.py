@@ -12,9 +12,7 @@ from lib import database as d
 
 
 def export_data():
-    """メンバー情報エクスポート
-    """
-
+    """メンバー情報エクスポート"""
     if g.args.export_data:
         for table in ("member", "alias", "team"):
             csvfile = f"{g.args.export_data}_{table}.csv"
@@ -35,9 +33,7 @@ def export_data():
 
 
 def import_data():
-    """メンバー情報インポート
-    """
-
+    """メンバー情報インポート"""
     if g.args.import_data:
         d.common.db_backup()
         conn = sqlite3.connect(g.cfg.db.database_file)

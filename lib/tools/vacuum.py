@@ -12,9 +12,7 @@ from lib import database as d
 
 
 def main():
-    """vacuum実行
-    """
-
+    """vacuum実行"""
     d.common.db_backup()
     before_size = os.path.getsize(g.cfg.db.database_file)
 

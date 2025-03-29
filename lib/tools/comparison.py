@@ -14,9 +14,7 @@ from lib import database as d
 
 
 def main():
-    """データ突合処理
-    """
-
+    """データ突合処理"""
     if g.args.compar:
         try:
             g.app = App(token=os.environ["SLACK_BOT_TOKEN"])

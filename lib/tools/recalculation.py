@@ -12,9 +12,7 @@ from lib import function as f
 
 
 def main():
-    """ポイント再計算
-    """
-
+    """ポイント再計算"""
     d.common.db_backup()
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
