@@ -263,7 +263,7 @@ def db_insert(detection: list, ts: datetime, reactions_data: list | None = None)
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(d.sql_result_insert, param)
+            cur.execute(d.SQL_RESULT_INSERT, param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         f.score.reactions(param)
@@ -290,7 +290,7 @@ def db_update(detection: list, ts: datetime, reactions_data: list | None = None)
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(d.sql_result_update, param)
+            cur.execute(d.SQL_RESULT_UPDATE, param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         f.score.reactions(param)
@@ -308,9 +308,9 @@ def db_delete(ts):
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
             delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
-            cur.execute(d.sql_result_delete, (ts,))
+            cur.execute(d.SQL_RESULT_DELETE, (ts,))
             delete_result = cur.execute("select changes();").fetchone()[0]
-            cur.execute(d.sql_remarks_delete_all, (ts,))
+            cur.execute(d.SQL_REMARKS_DELETE_ALL, (ts,))
             delete_remark = cur.execute("select changes();").fetchone()[0]
             cur.commit()
 
@@ -377,7 +377,7 @@ def remarks_append(remarks: list) -> None:
 
                 if row:
                     if remark["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
-                        cur.execute(d.sql_remarks_insert, remark)
+                        cur.execute(d.SQL_REMARKS_INSERT, remark)
                         logging.notice("insert: %s, user=%s", remark, g.msg.user_id)  # type: ignore
 
                         if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status(ts=remark.get("event_ts")):
@@ -395,7 +395,7 @@ def remarks_delete(ts: datetime) -> None:
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(d.sql_remarks_delete_one, (ts,))
+            cur.execute(d.SQL_REMARKS_DELETE_ONE, (ts,))
             count = cur.execute("select changes();").fetchone()[0]
             cur.commit()
 
@@ -415,7 +415,7 @@ def remarks_delete_compar(para: dict) -> None:
     """
 
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-        cur.execute(d.sql_remarks_delete_compar, para)
+        cur.execute(d.SQL_REMARKS_DELETE_COMPAR, para)
         cur.commit()
 
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]

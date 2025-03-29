@@ -13,7 +13,7 @@ __all__ = ["aggregate", "common", "comparison", "initialization"]
 
 
 # 共通クエリ
-sql_result_insert = """
+SQL_RESULT_INSERT = """
     insert into
         result (
             ts, playtime,
@@ -32,7 +32,7 @@ sql_result_insert = """
         )
 """
 
-sql_result_update = """
+SQL_RESULT_UPDATE = """
     update result set
         p1_name=:p1_name, p1_str=:p1_str, p1_rpoint=:p1_rpoint, p1_rank=:p1_rank, p1_point=:p1_point,
         p2_name=:p2_name, p2_str=:p2_str, p2_rpoint=:p2_rpoint, p2_rank=:p2_rank, p2_point=:p2_point,
@@ -42,9 +42,9 @@ sql_result_update = """
     where ts=:ts
 """
 
-sql_result_delete = "delete from result where ts=?"
+SQL_RESULT_DELETE = "delete from result where ts=?"
 
-sql_remarks_insert = """
+SQL_REMARKS_INSERT = """
     insert into
         remarks (
             thread_ts, event_ts, name, matter
@@ -53,11 +53,11 @@ sql_remarks_insert = """
         )
 """
 
-sql_remarks_delete_all = "delete from remarks where thread_ts=?"
+SQL_REMARKS_DELETE_ALL = "delete from remarks where thread_ts=?"
 
-sql_remarks_delete_one = "delete from remarks where event_ts=?"
+SQL_REMARKS_DELETE_ONE = "delete from remarks where event_ts=?"
 
-sql_remarks_delete_compar = """
+SQL_REMARKS_DELETE_COMPAR = """
     delete from remarks
     where
         thread_ts=:thread_ts

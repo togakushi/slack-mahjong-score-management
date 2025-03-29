@@ -31,7 +31,7 @@ def main():
             ]
             ret = f.score.get_score(detection)
             ret["ts"] = row["ts"]
-            cur.execute(d.sql_result_update, ret)
+            cur.execute(d.SQL_RESULT_UPDATE, ret)
             count += 1
 
         cur.commit()
