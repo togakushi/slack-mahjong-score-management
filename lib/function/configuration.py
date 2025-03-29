@@ -174,6 +174,5 @@ def setup() -> None:
         if os.path.isdir(g.cfg.setting.work_dir):
             shutil.rmtree(g.cfg.setting.work_dir)
         os.mkdir(g.cfg.setting.work_dir)
-    except Exception:
-        logging.error("Working directory creation failed !!!")
-        sys.exit()
+    except Exception as e:
+        raise RuntimeError(e) from e

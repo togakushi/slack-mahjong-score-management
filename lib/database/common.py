@@ -346,7 +346,8 @@ def db_backup() -> str:
     if not os.path.isdir(g.cfg.db.backup_dir):  # バックアップディレクトリ作成
         try:
             os.mkdir(g.cfg.db.backup_dir)
-        except Exception:
+        except OSError as e:
+            logging.error(e, exc_info=True)
             logging.error("Database backup directory creation failed !!!")
             return ("\nバックアップ用ディレクトリ作成の作成に失敗しました。")
 
@@ -355,7 +356,8 @@ def db_backup() -> str:
         shutil.copyfile(g.cfg.db.database_file, bkfname)
         logging.notice("database backup: %s", bkfname)  # type: ignore
         return ("\nデータベースをバックアップしました。")
-    except Exception:
+    except OSError as e:
+        logging.error(e, exc_info=True)
         logging.error("Database backup failed !!!")
         return ("\nデータベースのバックアップに失敗しました。")
 

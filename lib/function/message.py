@@ -177,7 +177,7 @@ def reply(message=None, rpoint_sum=0):
             rpoint_diff=rpoint_diff * 100,
             rpoint_sum=rpoint_sum * 100,
         )
-    except Exception as e:
+    except KeyError as e:
         logging.error("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", g.msg.user_id)
 

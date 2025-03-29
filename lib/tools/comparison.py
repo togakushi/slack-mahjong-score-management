@@ -4,7 +4,6 @@ lib/tools/comparison.py
 
 import logging
 import os
-import sys
 
 from slack_bolt import App
 from slack_sdk import WebClient
@@ -25,7 +24,7 @@ def main():
             g.bot_id = g.app.client.auth_test()["user_id"]
             c.member.read_memberslist(False)
         except Exception as e:
-            sys.exit(f"Error: {e}")
+            raise RuntimeError(e) from e
 
         count, _ = d.comparison.data_comparison()
         logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))  # type: ignore
