@@ -202,7 +202,7 @@ def named_query(query: str, params: dict) -> str:
     return re.sub(r":(\w+)", lambda m: repr(params.get(m.group(1), m.group(0))), query)
 
 
-def exsist_record(ts):
+def exsist_record(ts) -> dict:
     """記録されているゲーム結果を返す
 
     Args:
@@ -221,7 +221,7 @@ def exsist_record(ts):
     return ({})
 
 
-def first_record():
+def first_record() -> datetime:
     """最初のゲーム記録時間を返す
 
     Returns:
@@ -244,13 +244,13 @@ def first_record():
     return (ret)
 
 
-def db_insert(detection, ts, reactions_data=None):
+def db_insert(detection: list, ts: datetime, reactions_data: list | None = None) -> None:
     """スコアデータをDBに追加する
 
     Args:
         detection (list): スコア情報
         ts (datetime): コマンドが発行された時間
-        reactions_data (_type_, optional): リアクションリスト. Defaults to None.
+        reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
     param = {
@@ -271,13 +271,13 @@ def db_insert(detection, ts, reactions_data=None):
         f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
 
 
-def db_update(detection, ts, reactions_data=None):
+def db_update(detection: list, ts: datetime, reactions_data: list | None = None) -> None:
     """スコアデータを変更する
 
     Args:
         detection (list): スコア情報
         ts (datetime): コマンドが発行された時間
-        reactions_data (_type_, optional): リアクションリスト. Defaults to None.
+        reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
     param = {
@@ -360,7 +360,7 @@ def db_backup() -> str:
         return ("\nデータベースのバックアップに失敗しました。")
 
 
-def remarks_append(remarks):
+def remarks_append(remarks: list) -> None:
     """メモをDBに記録する
 
     Args:
@@ -386,7 +386,7 @@ def remarks_append(remarks):
             cur.commit()
 
 
-def remarks_delete(ts):
+def remarks_delete(ts: datetime) -> None:
     """DBからメモを削除する
 
     Args:
@@ -407,7 +407,13 @@ def remarks_delete(ts):
                 f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=ts)
 
 
-def remarks_delete_compar(para):
+def remarks_delete_compar(para: dict) -> None:
+    """DBからメモを削除する(突合)
+
+    Args:
+        para (dict): パラメータ
+    """
+
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         cur.execute(d.sql_remarks_delete_compar, para)
         cur.commit()
@@ -424,7 +430,7 @@ def remarks_delete_compar(para):
         f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ch=ch, ts=para.get("event_ts"))
 
 
-def rule_version():
+def rule_version() -> dict:
     """DBに記録されているルールバージョン毎の範囲を取得する
 
     Returns:
@@ -455,7 +461,7 @@ def rule_version():
     return (rule)
 
 
-def word_list(word_type=0):
+def word_list(word_type: int = 0) -> list:
     """登録済みワードリストを取得する
 
     Args:

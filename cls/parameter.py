@@ -207,16 +207,12 @@ class CommandOption:
 
 
 class Parameters:
-    """パラメータ解析クラス
-    """
-
+    """パラメータ解析クラス"""
     def __init__(self) -> None:
         self.initialization()
 
     def initialization(self):
-        """初期化処理
-        """
-
+        """初期化処理"""
         self.__dict__.clear()
         self.rule_version: str = g.cfg.config["mahjong"].get("rule_version", "")
         self.origin_point: int = g.cfg.config["mahjong"].getint("point", 250)  # 配給原点
@@ -309,6 +305,7 @@ class Parameters:
         self.__dict__.update(_add_dict)
 
     def get(self, x: str):
+        """getter"""
         return (self.__dict__.get(x, None))
 
     def stipulated_update(self, _opt: CommandOption, game_count: int):

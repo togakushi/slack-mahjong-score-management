@@ -94,7 +94,18 @@ def aggregation():
     return (message_build(msg_data), msg2)
 
 
-def get_headline(data, game_info, player_name):
+def get_headline(data: dict, game_info: dict, player_name: str) -> dict:
+    """ヘッダメッセージ生成
+
+    Args:
+        data (dict): 生成内容が格納された辞書
+        game_info (dict): ゲーム集計情報
+        player_name (str): プレイヤー名
+
+    Returns:
+        dict: 集計データ
+    """
+
     ret: dict = {}
 
     if g.opt.individual:
@@ -119,7 +130,16 @@ def get_headline(data, game_info, player_name):
     return (ret)
 
 
-def get_totalization(data):
+def get_totalization(data: dict) -> dict:
+    """集計トータルメッセージ生成
+
+    Args:
+        data (dict): 生成内容が格納された辞書
+
+    Returns:
+        dict: 生成メッセージ
+    """
+
     ret: dict = {}
 
     ret["通算ポイント"] = f"{data['通算ポイント']:+.1f}pt".replace("-", "▲")
@@ -135,7 +155,16 @@ def get_totalization(data):
     return (ret)
 
 
-def get_seat_data(data: dict):
+def get_seat_data(data: dict) -> str:
+    """座席データメッセージ生成
+
+    Args:
+        data (dict): 生成内容が格納された辞書
+
+    Returns:
+        str: 生成メッセージ
+    """
+
     ret: str = textwrap.dedent(f"""\
         *【座席データ】*
         \t# 席：順位分布(平均順位) / トビ / 役満 #
@@ -148,7 +177,16 @@ def get_seat_data(data: dict):
     return (ret)
 
 
-def get_record(data: dict):
+def get_record(data: dict) -> dict:
+    """レコード情報メッセージ生成
+
+    Args:
+        data (dict): 生成内容が格納された辞書
+
+    Returns:
+        dict: 集計データ
+    """
+
     ret: dict = {}
 
     ret["ベストレコード"] = textwrap.dedent(f"""\
@@ -172,7 +210,13 @@ def get_record(data: dict):
     return (ret)
 
 
-def get_regulations():
+def get_regulations() -> dict:
+    """レギュレーション情報メッセージ生成
+
+    Returns:
+        dict: 集計データ
+    """
+
     df_grandslam = d.aggregate.remark_count("grandslam")
     df_regulations = d.aggregate.remark_count("regulation")
 
@@ -197,7 +241,13 @@ def get_regulations():
     return (ret)
 
 
-def get_game_results():
+def get_game_results() -> str:
+    """戦績データ出力用メッセージ生成
+
+    Returns:
+        str: 出力メッセージ
+    """
+
     ret: str = "\n*【戦績】*\n"
     data: dict = {}
     target_player = c.member.name_replace(g.opt.target_player[0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
@@ -269,10 +319,10 @@ def get_game_results():
 
 
 def get_versus_matrix() -> str:
-    """対戦結果を返す
+    """対戦結果データ出力用メッセージ生成
 
     Returns:
-        str: 集計結果
+        str: 出力メッセージ
     """
 
     ret: str = "\n*【対戦結果】*\n"
@@ -287,7 +337,7 @@ def get_versus_matrix() -> str:
     return (ret)
 
 
-def message_build(data: dict):
+def message_build(data: dict) -> str:
     """表示する内容をテキストに起こす
 
     Args:

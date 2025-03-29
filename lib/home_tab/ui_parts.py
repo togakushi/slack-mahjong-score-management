@@ -6,6 +6,15 @@ import lib.global_value as g
 
 
 def plain_text(msg: str) -> dict:
+    """プレーンテキストの埋め込み
+
+    Args:
+        msg (str): テキスト
+
+    Returns:
+        dict: ブロック要素
+    """
+
     view: dict = {"type": "home", "blocks": []}
     view["blocks"].append({"type": "section", "text": {}})
     view["blocks"][0]["text"] = {"type": "mrkdwn", "text": msg}
@@ -13,18 +22,33 @@ def plain_text(msg: str) -> dict:
     return (view)
 
 
-def divider():
+def divider() -> None:
+    """境界線を引く"""
     g.app_var["view"]["blocks"].append({"type": "divider", })
     g.app_var["no"] += 1
 
 
-def header(text: str = "dummy"):
+def header(text: str = "dummy") -> None:
+    """ヘッダ生成
+
+    Args:
+        text (str, optional): ヘッダテキスト. Defaults to "dummy".
+    """
+
     g.app_var["view"]["blocks"].append({"type": "header", "text": {}})
     g.app_var["view"]["blocks"][g.app_var["no"]]["text"] = {"type": "plain_text", "text": text}
     g.app_var["no"] += 1
 
 
-def button(text: str = "Click Me", action_id: str | bool = False, style: str | bool = False):
+def button(text: str, action_id: str, style: str | bool = False) -> None:
+    """ボタン配置
+
+    Args:
+        text (str, optional): 表示テキスト
+        action_id (str): action_id
+        style (str | bool, optional): 表示スタイル. Defaults to False.
+    """
+
     g.app_var["view"]["blocks"].append({"type": "actions", "elements": [{}]})
     g.app_var["view"]["blocks"][g.app_var["no"]]["elements"][0] = {"type": "button", "text": {}, "action_id": action_id}
     g.app_var["view"]["blocks"][g.app_var["no"]]["elements"][0]["text"] = {"type": "plain_text", "text": text}
@@ -34,7 +58,7 @@ def button(text: str = "Click Me", action_id: str | bool = False, style: str | b
     g.app_var["no"] += 1
 
 
-def radio_buttons(id_suffix: str, title: str, flag: dict):
+def radio_buttons(id_suffix: str, title: str, flag: dict) -> None:
     """オプション選択メニュー
 
     Args:
@@ -58,7 +82,7 @@ def radio_buttons(id_suffix: str, title: str, flag: dict):
     g.app_var["no"] += 1
 
 
-def checkboxes(id_suffix: str, title: str, flag: dict | None = None, initial: list | None = None):
+def checkboxes(id_suffix: str, title: str, flag: dict | None = None, initial: list | None = None) -> None:
     """チェックボックス選択メニュー
 
     Args:
@@ -93,7 +117,14 @@ def checkboxes(id_suffix: str, title: str, flag: dict | None = None, initial: li
     g.app_var["no"] += 1
 
 
-def user_select(text: str = "dummy", add_list: list | None = None):
+def user_select(text: str = "dummy", add_list: list | None = None) -> None:
+    """プレイヤー選択プルダウンメニュー
+
+    Args:
+        text (str, optional): 表示テキスト. Defaults to "dummy".
+        add_list (list | None, optional): プレイヤーリスト. Defaults to None.
+    """
+
     g.app_var["view"]["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["type"] = "static_select"
     g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["action_id"] = "player"
@@ -116,7 +147,13 @@ def user_select(text: str = "dummy", add_list: list | None = None):
     g.app_var["no"] += 1
 
 
-def multi_select(text: str = "dummy", add_list: list | None = None):
+def multi_select(text: str = "dummy", add_list: list | None = None) -> None:
+    """複数プレイヤー選択プルダウンメニュー
+
+    Args:
+        text (str, optional): 表示テキスト. Defaults to "dummy".
+        add_list (list | None, optional): プレイヤーリスト. Defaults to None.
+    """
     g.app_var["view"]["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
     g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["type"] = "multi_static_select"
     g.app_var["view"]["blocks"][g.app_var["no"]]["element"]["action_id"] = "player"
@@ -139,7 +176,13 @@ def multi_select(text: str = "dummy", add_list: list | None = None):
     g.app_var["no"] += 1
 
 
-def input_ranked(block_id: str | bool = False):
+def input_ranked(block_id: str | bool = False) -> None:
+    """ランキング上限入力テキストボックス
+
+    Args:
+        block_id (str | bool, optional): block_id. Defaults to False.
+    """
+
     if block_id:
         g.app_var["view"]["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
     else:
@@ -156,6 +199,12 @@ def input_ranked(block_id: str | bool = False):
 
 
 def modalperiod_selection() -> dict:
+    """日付選択
+
+    Returns:
+        dict: ブロック要素
+    """
+
     view: dict = {"type": "modal", "callback_id": f"{g.app_var['screen']}_ModalPeriodSelection"}
     view["title"] = {"type": "plain_text", "text": "検索範囲指定"}
     view["submit"] = {"type": "plain_text", "text": "決定"}

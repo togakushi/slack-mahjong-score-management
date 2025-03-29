@@ -137,7 +137,39 @@ def aggregation():
     return (msg1, msg2, file_list)
 
 
+def tmpl_header(my_name: str, vs_name: str) -> str:
+    """ヘッダテンプレート
+
+    Args:
+        my_name (str): 自分の名前
+        vs_name (str): 相手の名前
+
+    Returns:
+        str: 出力データ
+    """
+    ret = textwrap.dedent(
+        f"""\
+        *【直接対戦結果】*
+        \tプレイヤー名：{my_name}
+        \t対戦相手：{vs_name}
+        \t{f.message.item_search_range()}
+        \t{f.message.remarks(True)}
+        """
+    ).strip()
+
+    return (f.message.del_blank_line(ret))
+
+
 def tmpl_vs_table(data: dict) -> str:
+    """直接対決結果表示テンプレート
+
+    Args:
+        data (dict): 結果データ
+
+    Returns:
+        str: 出力データ
+    """
+
     ret = f"【{data["my_name"].strip()} vs {data["vs_name"].strip()}】\n"
     ret += textwrap.indent(
         "".join([
@@ -160,29 +192,6 @@ def tmpl_vs_table(data: dict) -> str:
     )
 
     return (ret.strip())
-
-
-def tmpl_header(my_name: str, vs_name: str) -> str:
-    """ヘッダテンプレート
-
-    Args:
-        my_name (str): 自分の名前
-        vs_name (str): 相手の名前
-
-    Returns:
-        str: 出力データ
-    """
-    ret = textwrap.dedent(
-        f"""\
-        *【直接対戦結果】*
-        \tプレイヤー名：{my_name}
-        \t対戦相手：{vs_name}
-        \t{f.message.item_search_range()}
-        \t{f.message.remarks(True)}
-        """
-    ).strip()
-
-    return (f.message.del_blank_line(ret))
 
 
 def tmpl_result_verbose(current_game: pd.DataFrame, playtime: str, guest_count: int) -> str:
