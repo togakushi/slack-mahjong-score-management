@@ -15,14 +15,14 @@ from lib import function as f
 from lib.function import configuration
 
 
-def dump(flag=True):
+def dump(flag: bool = True):
     if flag:
         pprint(["*** opt ***", vars(g.opt)], width=200)
         pprint(["*** prm ***", vars(g.prm)], width=200)
         pprint(["*** game_info ***", d.aggregate.game_info()], width=200)
 
 
-def test_pattern(test_case, sec, pattern):
+def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
     match test_case:
         case "skip":
             pass
@@ -85,58 +85,62 @@ def test_pattern(test_case, sec, pattern):
             pprint(c.graph.rating.plot(), width=200)
 
 
-# ---
-configuration.setup()
-test_conf = configparser.ConfigParser()
-test_conf.read(g.args.testcase, encoding="utf-8")
+def main():
+    configuration.setup()
+    test_conf = configparser.ConfigParser()
+    test_conf.read(g.args.testcase, encoding="utf-8")
 
-flag = test_conf["default"].getboolean("dump", False)
+    flag = test_conf["default"].getboolean("dump", False)
 
-d.initialization.initialization_resultdb()
-c.member.read_memberslist()
-always_keyword = ""
+    d.initialization.initialization_resultdb()
+    c.member.read_memberslist()
+    always_keyword = ""
 
-for sec in test_conf.sections():
-    print("=" * 80)
-    print(f"[TEST CASE] {sec}")
-    test_case = None
-    all_player = False
-    target_player = []
-    target_team = []
+    for sec in test_conf.sections():
+        print("=" * 80)
+        print(f"[TEST CASE] {sec}")
+        test_case = None
+        all_player = False
+        target_player = []
+        target_team = []
 
-    for pattern, value in test_conf[sec].items():
-        match pattern:
-            case s if re.match(r"^case", s):
-                test_case = value
-                continue
-            case "target_player":
-                for x in range(int(value)):
-                    target_player.append(random.choice(list(set(g.member_list.values()))))
-                continue
-            case "all_player":
-                all_player = True
-                continue
-            case "target_team":
-                team_list = [x["team"] for x in g.team_list]
-                for x in range(int(value)):
-                    target_team.append(random.choice(team_list))
-                continue
-            case "always_keyword":
-                always_keyword = value
-                print("add:", always_keyword)
-                continue
+        for pattern, value in test_conf[sec].items():
+            match pattern:
+                case s if re.match(r"^case", s):
+                    test_case = value
+                    continue
+                case "target_player":
+                    for x in range(int(value)):
+                        target_player.append(random.choice(list(set(g.member_list.values()))))
+                    continue
+                case "all_player":
+                    all_player = True
+                    continue
+                case "target_team":
+                    team_list = [x["team"] for x in g.team_list]
+                    for x in range(int(value)):
+                        target_team.append(random.choice(team_list))
+                    continue
+                case "always_keyword":
+                    always_keyword = value
+                    print("add:", always_keyword)
+                    continue
 
-        print("-" * 80)
-        argument = f"{value} {always_keyword}"
-        if test_conf[sec].getboolean("config", False):
-            pprint(["*** config ***", vars(g.cfg)], width=200)
+            print("-" * 80)
+            argument = f"{value} {always_keyword}"
+            if test_conf[sec].getboolean("config", False):
+                pprint(["*** config ***", vars(g.cfg)], width=200)
 
-        if all_player:
-            for target_player in set(g.member_list.values()):
+            if all_player:
+                for target_player in set(g.member_list.values()):
+                    print(f"{pattern=} {argument=} {target_player=} {target_team=} {all_player=}")
+                    g.msg.argument = argument.split() + [target_player] + target_team
+                    test_pattern(flag, test_case, sec, pattern)
+            else:
                 print(f"{pattern=} {argument=} {target_player=} {target_team=} {all_player=}")
-                g.msg.argument = argument.split() + [target_player] + target_team
-                test_pattern(test_case, sec, pattern)
-        else:
-            print(f"{pattern=} {argument=} {target_player=} {target_team=} {all_player=}")
-            g.msg.argument = argument.split() + target_player + target_team
-            test_pattern(test_case, sec, pattern)
+                g.msg.argument = argument.split() + target_player + target_team
+                test_pattern(flag, test_case, sec, pattern)
+
+
+if __name__ == "__main__":
+    main()
