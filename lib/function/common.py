@@ -225,7 +225,7 @@ def badge_degree(game_count: int = 0) -> str:
         str: 表示する称号
     """
 
-    badge_degree = ""
+    badge: str = ""
 
     if "degree" in g.cfg.config.sections():
         if g.cfg.config["degree"].getboolean("display", False):
@@ -233,9 +233,9 @@ def badge_degree(game_count: int = 0) -> str:
             degree_counter = list(map(int, g.cfg.config.get("degree", "counter").split(",")))
             for idx, val in enumerate(degree_counter):
                 if game_count >= val:
-                    badge_degree = degree_badge[idx]
+                    badge = degree_badge[idx]
 
-    return (badge_degree)
+    return (badge)
 
 
 def badge_status(game_count: int = 0, win: int = 0) -> str:
@@ -249,7 +249,7 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
         str: 表示する称号
     """
 
-    badge_status = ""
+    badge: str = ""
 
     if "status" in g.cfg.config.sections():
         if g.cfg.config["status"].getboolean("display", False):
@@ -265,9 +265,9 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
                         index = 4 - i
                     if winper >= 50 + status_step * i:
                         index = 2 + i
-            badge_status = status_badge[index]
+            badge = status_badge[index]
 
-    return (badge_status)
+    return (badge)
 
 
 def floatfmt_adjust(df, index=False) -> list:
