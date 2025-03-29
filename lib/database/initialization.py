@@ -1,3 +1,7 @@
+"""
+lib/database/initialization.py
+"""
+
 import logging
 import sqlite3
 

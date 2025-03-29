@@ -1,3 +1,8 @@
+"""
+lib/database/aggregate.py
+"""
+
+
 import logging
 from datetime import datetime
 from typing import cast

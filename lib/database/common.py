@@ -1,3 +1,7 @@
+"""
+lib/database/common.py
+"""
+
 import logging
 import os
 import re
