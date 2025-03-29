@@ -14,6 +14,7 @@ from lib import function as f
 
 
 class MsgDict(TypedDict, total=False):
+    """メモ突合用辞書"""
     mismatch: str
     missing: str
     delete: str
