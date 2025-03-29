@@ -117,9 +117,7 @@ def arg_parser():
 
 
 def setup() -> None:
-    """設定ファイル読み込み
-    """
-
+    """設定ファイル読み込み"""
     g.args = arg_parser()
     if not hasattr(g.args, "testcase"):
         g.args.testcase = False
