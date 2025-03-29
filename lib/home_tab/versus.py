@@ -11,9 +11,7 @@ from lib import home_tab as h
 
 
 def build_versus_menu():
-    """対戦結果メニュー生成
-    """
-
+    """対戦結果メニュー生成"""
     g.app_var["screen"] = "VersusMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}

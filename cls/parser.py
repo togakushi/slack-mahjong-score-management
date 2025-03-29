@@ -11,9 +11,7 @@ from lib.function import slack_api
 
 
 class MessageParser():
-    """メッセージ解析クラス
-    """
-
+    """メッセージ解析クラス"""
     client: WebClient = WebClient()
     channel_id: str | None = str()
     channel_type: str | None = str()
@@ -150,9 +148,7 @@ class MessageParser():
         return (_channel_type)
 
     def check_updatable(self):
-        """DB更新可能チャンネルのポストかチェックする
-        """
-
+        """DB更新可能チャンネルのポストかチェックする"""
         self.updatable = False
 
         if len(g.cfg.db.channel_limitations):

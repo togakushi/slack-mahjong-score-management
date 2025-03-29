@@ -24,9 +24,7 @@ class MsgDict(TypedDict, total=False):
 
 
 def main():
-    """データ突合の実施、その結果をslackにpostする
-    """
-
+    """データ突合の実施、その結果をslackにpostする"""
     # チェックコマンドを拾ったイベントの情報を保持(結果の返し先)
     command_ch = g.msg.channel_id
     command_ts = g.msg.event_ts

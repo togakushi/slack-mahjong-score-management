@@ -141,9 +141,7 @@ def reactions(param: dict):
 
 
 def check_remarks():
-    """メモの内容を拾ってDBに格納する
-    """
-
+    """メモの内容を拾ってDBに格納する"""
     game_result = d.common.exsist_record(g.msg.thread_ts)
     if game_result:  # ゲーム結果のスレッドになっているか
         check_list = [v for k, v in game_result.items() if k.endswith("_name")]
@@ -173,9 +171,7 @@ def check_remarks():
 
 
 def reprocessing_remarks():
-    """スレッドの内容を再処理
-    """
-
+    """スレッドの内容を再処理"""
     res = f.slack_api.get_conversations()
     msg = res.get("messages")
 

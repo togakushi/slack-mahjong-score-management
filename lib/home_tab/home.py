@@ -9,9 +9,7 @@ from lib import home_tab as h
 
 
 def build_main_menu():
-    """メインメニューを生成する
-    """
-
+    """メインメニューを生成する"""
     g.app_var["screen"] = "MainMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}

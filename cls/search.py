@@ -13,9 +13,7 @@ from lib.database.common import first_record
 
 
 class SearchRange():
-    """検索範囲取得クラス
-    """
-
+    """検索範囲取得クラス"""
     words: dict = {}
     day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 

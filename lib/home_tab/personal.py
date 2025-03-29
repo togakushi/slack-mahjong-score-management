@@ -11,9 +11,7 @@ from lib import home_tab as h
 
 
 def build_personal_menu():
-    """個人成績メニュー作成
-    """
-
+    """個人成績メニュー作成"""
     g.app_var["screen"] = "PersonalMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}

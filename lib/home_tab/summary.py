@@ -11,9 +11,7 @@ from lib import home_tab as h
 
 
 def build_summary_menu():
-    """サマリメニュー生成
-    """
-
+    """サマリメニュー生成"""
     g.app_var["screen"] = "SummaryMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}
