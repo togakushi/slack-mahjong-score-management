@@ -72,7 +72,7 @@ def plot():
         f"{g.opt.filename}.png" if g.opt.filename else "rating.png",
     )
 
-    title_text = f"レーティング推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
+    title_text = f"レーティング推移 ({g.prm.starttime.hm} - {g.prm.endtime.hm})"
 
     legend_text = []
     count = 1

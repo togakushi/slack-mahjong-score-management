@@ -5,6 +5,7 @@ cls/parameter.py
 import logging
 import math
 import re
+from dataclasses import dataclass
 from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
@@ -12,6 +13,36 @@ from dateutil.relativedelta import relativedelta
 import lib.global_value as g
 from lib import command as c
 from lib import function as f
+
+
+@dataclass
+class StartTime:
+    """検索範囲(開始)"""
+    dt: datetime = datetime.now()
+    y: str = str()
+    ym: str = str()
+    ymd: str = str()
+    hm: str = str()  # yyyy/mm/dd hh:mm
+    hms: str = str()  # yyyy/mm/dd hh:mm:ss
+
+
+@dataclass
+class EndTime:
+    """検索範囲(終了:指定+12h)"""
+    dt: datetime = datetime.now()
+    y: str = str()
+    ym: str = str()
+    ymd: str = str()
+    hm: str = str()  # yyyy/mm/dd hh:mm
+    hms: str = str()  # yyyy/mm/dd hh:mm:ss
+
+
+@dataclass
+class EndonDay:
+    """集計範囲(終了)"""
+    y: str = str()
+    ym: str = str()
+    ymd: str = str()
 
 
 class CommandOption:
@@ -209,6 +240,9 @@ class CommandOption:
 class Parameters:
     """パラメータ解析クラス"""
     def __init__(self) -> None:
+        self.starttime: StartTime
+        self.endtime: EndTime
+        self.endonday: EndonDay
         self.initialization()
 
     def initialization(self):
@@ -222,24 +256,13 @@ class Parameters:
         self.search_word: str = str()
         self.player_list: dict = {}
         self.competition_list: dict = {}
-        self.starttime = None
-        self.starttime_hm = None
-        self.starttime_hms = None
-        self.starttime_y = None
-        self.starttime_ym = None
-        self.starttime_ymd = None
-        self.endtime = None
-        self.endtime_hm = None
-        self.endtime_hms = None
-        self.endtime_y = None
-        self.endtime_ym = None
-        self.endtime_ymd = None
-        self.endonday_y = None
-        self.endonday_ym = None
-        self.endonday_ymd = None
         self.stipulated: int = 0
         self.target_count: int = 0
         self.aggregate_unit: str | None = None  # M: 月間集計 / Y: 年間集計 / A: 全期間集計
+
+        self.starttime = StartTime()
+        self.endtime = EndTime()
+        self.endonday = EndonDay()
 
     def update(self, _opt: CommandOption):
         """コマンド解析クラスの内容からパラメータをセットする
@@ -250,21 +273,21 @@ class Parameters:
 
         self.initialization()
         self.rule_version = _opt.rule_version if _opt.rule_version else self.rule_version
-        self.starttime = _opt.search_first  # 検索開始日
-        self.starttime_hm = _opt.search_first.strftime("%Y/%m/%d %H:%M")
-        self.starttime_hms = _opt.search_first.strftime("%Y/%m/%d %H:%M:%S")
-        self.starttime_y = _opt.search_first.strftime("%Y")
-        self.starttime_ym = _opt.search_first.strftime("%Y/%m")
-        self.starttime_ymd = _opt.search_first.strftime("%Y/%m/%d")
-        self.endtime = _opt.search_last  # 検索終了日
-        self.endtime_hm = _opt.search_last.strftime("%Y/%m/%d %H:%M")
-        self.endtime_hms = _opt.search_last.strftime("%Y/%m/%d %H:%M:%S")
-        self.endtime_y = _opt.search_last.strftime("%Y")
-        self.endtime_ym = _opt.search_last.strftime("%Y/%m")
-        self.endtime_ymd = _opt.search_last.strftime("%Y/%m/%d")
-        self.endonday_y = _opt.search_onday.strftime("%Y")
-        self.endonday_ym = _opt.search_onday.strftime("%Y/%m")
-        self.endonday_ymd = _opt.search_onday.strftime("%Y/%m/%d")
+        self.starttime.dt = _opt.search_first  # 検索開始日
+        self.starttime.hm = _opt.search_first.strftime("%Y/%m/%d %H:%M")
+        self.starttime.hms = _opt.search_first.strftime("%Y/%m/%d %H:%M:%S")
+        self.starttime.y = _opt.search_first.strftime("%Y")
+        self.starttime.ym = _opt.search_first.strftime("%Y/%m")
+        self.starttime.ymd = _opt.search_first.strftime("%Y/%m/%d")
+        self.endtime.dt = _opt.search_last  # 検索終了日
+        self.endtime.hm = _opt.search_last.strftime("%Y/%m/%d %H:%M")
+        self.endtime.hms = _opt.search_last.strftime("%Y/%m/%d %H:%M:%S")
+        self.endtime.y = _opt.search_last.strftime("%Y")
+        self.endtime.ym = _opt.search_last.strftime("%Y/%m")
+        self.endtime.ymd = _opt.search_last.strftime("%Y/%m/%d")
+        self.endonday.y = _opt.search_onday.strftime("%Y")
+        self.endonday.ym = _opt.search_onday.strftime("%Y/%m")
+        self.endonday.ymd = _opt.search_onday.strftime("%Y/%m/%d")
         self.target_count = _opt.target_count
         self.stipulated = _opt.stipulated
         self.group_length = _opt.group_length
@@ -323,17 +346,20 @@ class Parameters:
                 math.ceil(game_count * _opt.stipulated_rate) + 1
             )
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """インスタンス変数を辞書で返す
 
         Returns:
             dict: インスタンス変数
         """
 
-        tmp_dict = self.__dict__
+        tmp_dict = self.__dict__.copy()
         if self.player_list:
             tmp_dict.update(self.player_list)
         if self.competition_list:
             tmp_dict.update(self.competition_list)
+
+        tmp_dict.update(starttime=self.starttime.dt)
+        tmp_dict.update(endtime=self.endtime.dt)
 
         return (tmp_dict)

@@ -59,7 +59,7 @@ def plot() -> Tuple[int, str]:
     fig = plt.figure(figsize=(12, 8))
 
     if g.prm.target_count == 0:
-        title_text = f"『{player}』の成績 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
+        title_text = f"『{player}』の成績 ({g.prm.starttime.hm} - {g.prm.endtime.hm})"
     else:
         title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
 
@@ -156,7 +156,7 @@ def statistics_plot() -> Tuple[int, str]:
         g.cfg.setting.work_dir,
         f"{g.opt.filename}.png" if g.opt.filename else "graph.png",
     )
-    title_text = f"『{player}』の成績 (検索範囲：{g.prm.starttime_ymd} - {g.prm.endtime_ymd})"
+    title_text = f"『{player}』の成績 (検索範囲：{g.prm.starttime.ymd} - {g.prm.endtime.ymd})"
 
     rpoint_df = get_data(player_df["rpoint"], g.opt.interval)
     point_sum_df = get_data(player_df["point"], g.opt.interval)

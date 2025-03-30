@@ -36,7 +36,7 @@ def aggregation():
     game_info = d.aggregate.game_info()
 
     if game_info["game_count"] == 0:
-        msg_data["検索範囲"] = f"{g.prm.starttime_hms} ～ {g.prm.endtime_hms}"
+        msg_data["検索範囲"] = f"{g.prm.starttime.hms} ～ {g.prm.endtime.hms}"
         msg_data["特記事項"] = "、".join(f.message.remarks())
         msg_data["検索ワード"] = f.message.search_word()
         msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}"

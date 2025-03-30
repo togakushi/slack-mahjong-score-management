@@ -6,6 +6,7 @@ import logging
 import random
 import re
 import textwrap
+from datetime import datetime
 
 import lib.global_value as g
 from lib import database as d
@@ -171,8 +172,8 @@ def reply(message=None, rpoint_sum=0):
         msg = msg.format(
             user_id=g.msg.user_id,
             keyword=g.cfg.search.keyword,
-            start=g.prm.starttime_hm,
-            end=g.prm.endtime_hm,
+            start=g.prm.starttime.hm,
+            end=g.prm.endtime.hm,
             rpoint_diff=rpoint_diff * 100,
             rpoint_sum=rpoint_sum * 100,
         )
@@ -332,16 +333,19 @@ def item_search_range(kind=None, time_pattern=None):
             - `kind` がNone場合は見出し付き文字列
     """
 
+    starttime: datetime | str
+    endtime: datetime | str
+
     match time_pattern:
         case "day":
-            starttime = g.prm.starttime
-            endtime = g.prm.endtime
+            starttime = g.prm.starttime.dt
+            endtime = g.prm.endtime.dt
         case "time":
-            starttime = g.prm.starttime_hm
-            endtime = g.prm.endtime_hm
+            starttime = g.prm.starttime.hm
+            endtime = g.prm.endtime.hm
         case _:
-            starttime = g.prm.starttime_hms
-            endtime = g.prm.endtime_hms
+            starttime = g.prm.starttime.hms
+            endtime = g.prm.endtime.hms
 
     match kind:
         case "list":

@@ -47,25 +47,25 @@ def point_plot():
         match g.opt.collection:
             case "daily":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime_ymd == g.prm.endonday_ymd:
-                    title_text = f"通算ポイント ({g.prm.starttime_ymd})"
+                if g.prm.starttime.ymd == g.prm.endonday.ymd:
+                    title_text = f"通算ポイント ({g.prm.starttime.ymd})"
                 else:
-                    title_text = f"ポイント推移 ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
+                    title_text = f"ポイント推移 ({g.prm.starttime.ymd} - {g.prm.endonday.ymd})"
             case "monthly":
                 xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime_ym == g.prm.endonday_ym:
-                    title_text = f"通算ポイント ({g.prm.starttime_ym})"
+                if g.prm.starttime.ym == g.prm.endonday.ym:
+                    title_text = f"通算ポイント ({g.prm.starttime.ym})"
                 else:
-                    title_text = f"ポイント推移 ({g.prm.starttime_ym} - {g.prm.endonday_ym})"
+                    title_text = f"ポイント推移 ({g.prm.starttime.ym} - {g.prm.endonday.ym})"
             case "yearly":
                 xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime_y == g.prm.endonday_y:
-                    title_text = f"通算ポイント ({g.prm.starttime_y}年)"
+                if g.prm.starttime.y == g.prm.endonday.y:
+                    title_text = f"通算ポイント ({g.prm.starttime.y}年)"
                 else:
-                    title_text = f"ポイント推移 ({g.prm.starttime_y}年 - {g.prm.endonday_y}年)"
+                    title_text = f"ポイント推移 ({g.prm.starttime.y}年 - {g.prm.endonday.y}年)"
             case "all":
                 xlabel_text = f"総ゲーム数：{game_info['game_count']}"
-                title_text = f"通算ポイント ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
+                title_text = f"通算ポイント ({g.prm.starttime.ymd} - {g.prm.endonday.ymd})"
             case _:
                 if g.opt.search_word:
                     pivot_index = "comment"
@@ -76,9 +76,9 @@ def point_plot():
                         title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-                    title_text = f"ポイント推移 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
-                    if g.prm.starttime_ymd == g.prm.endonday_ymd and game_info["game_count"] == 1:
-                        title_text = f"獲得ポイント ({g.prm.starttime_ymd})"
+                    title_text = f"ポイント推移 ({g.prm.starttime.hm} - {g.prm.endtime.hm})"
+                    if g.prm.starttime.ymd == g.prm.endonday.ymd and game_info["game_count"] == 1:
+                        title_text = f"獲得ポイント ({g.prm.starttime.ymd})"
 
     # 集計
     if g.opt.individual:  # 個人集計
@@ -140,25 +140,25 @@ def rank_plot():
         match g.opt.collection:
             case "daily":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime_ymd == g.prm.endonday_ymd:
-                    title_text = f"順位 ({g.prm.starttime_ymd})"
+                if g.prm.starttime.ymd == g.prm.endonday.ymd:
+                    title_text = f"順位 ({g.prm.starttime.ymd})"
                 else:
-                    title_text = f"順位変動 ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
+                    title_text = f"順位変動 ({g.prm.starttime.ymd} - {g.prm.endonday.ymd})"
             case "monthly":
                 xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime_ym == g.prm.endonday_ym:
-                    title_text = f"順位 ({g.prm.starttime_ym})"
+                if g.prm.starttime.ym == g.prm.endonday.ym:
+                    title_text = f"順位 ({g.prm.starttime.ym})"
                 else:
-                    title_text = f"順位変動 ({g.prm.starttime_ym} - {g.prm.endonday_ym})"
+                    title_text = f"順位変動 ({g.prm.starttime.ym} - {g.prm.endonday.ym})"
             case "yearly":
                 xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime_y == g.prm.endonday_y:
-                    title_text = f"順位 ({g.prm.starttime_y}年)"
+                if g.prm.starttime.y == g.prm.endonday.y:
+                    title_text = f"順位 ({g.prm.starttime.y}年)"
                 else:
-                    title_text = f"順位変動 ({g.prm.starttime_y}年 - {g.prm.endonday_y}年)"
+                    title_text = f"順位変動 ({g.prm.starttime.y}年 - {g.prm.endonday.y}年)"
             case "all":
                 xlabel_text = f"総ゲーム数：{game_info['game_count']}"
-                title_text = f"順位 ({g.prm.starttime_ymd} - {g.prm.endonday_ymd})"
+                title_text = f"順位 ({g.prm.starttime.ymd} - {g.prm.endonday.ymd})"
             case _:
                 if g.opt.search_word:
                     pivot_index = "comment"
@@ -169,9 +169,9 @@ def rank_plot():
                         title_text = f"順位変動 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-                    title_text = f"順位変動 ({g.prm.starttime_hm} - {g.prm.endtime_hm})"
-                    if g.prm.starttime_ymd == g.prm.endonday_ymd and game_info["game_count"] == 1:
-                        title_text = f"順位 ({g.prm.starttime_ymd})"
+                    title_text = f"順位変動 ({g.prm.starttime.hm} - {g.prm.endtime.hm})"
+                    if g.prm.starttime.ymd == g.prm.endonday.ymd and game_info["game_count"] == 1:
+                        title_text = f"順位 ({g.prm.starttime.ymd})"
 
     # 集計
     if g.opt.individual:  # 個人集計
