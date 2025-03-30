@@ -114,7 +114,7 @@ def main():
     for sec in test_conf.sections():
         print("=" * 80)
         print(f"[TEST CASE] {sec}")
-        test_case = None
+        test_case = str()
         all_player = False
         target_player = []
         target_team = []

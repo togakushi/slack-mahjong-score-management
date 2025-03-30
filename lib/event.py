@@ -69,7 +69,7 @@ def handle_message_events(client, body):
         # データベース関連コマンド
         case x if re.match(rf"^{g.cfg.cw.check}", x):
             d.comparison.main()
-        case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", g.msg.text):  # Reminderによる突合
+        case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", str(g.msg.text)):  # Reminderによる突合
             logging.notice("Reminder: %s", g.cfg.cw.check)  # type: ignore
             d.comparison.main()
 
@@ -88,11 +88,12 @@ def handle_message_events(client, body):
                 if d.common.exsist_record(g.msg.thread_ts):
                     f.score.check_remarks()
             else:
-                detection = f.search.pattern(g.msg.text)
+                detection = f.search.pattern(str(g.msg.text))
                 if detection:  # 結果報告フォーマットに一致したポストの処理
                     match g.msg.status:
                         case "message_append":
                             if g.cfg.setting.thread_report == g.msg.in_thread:
+                                assert isinstance(detection, list), "detection should be a list"
                                 d.common.db_insert(detection, g.msg.event_ts)
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
@@ -104,10 +105,12 @@ def handle_message_events(client, body):
                             if g.cfg.setting.thread_report == g.msg.in_thread:
                                 if record_data:
                                     if record_data.get("rule_version") == g.prm.rule_version:
+                                        assert isinstance(detection, list), "detection should be a list"
                                         d.common.db_update(detection, g.msg.event_ts)
                                     else:
                                         logging.notice("skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
                                 else:
+                                    assert isinstance(detection, list), "detection should be a list"
                                     d.common.db_insert(detection, g.msg.event_ts)
                                     f.score.reprocessing_remarks()
                             else:

@@ -140,7 +140,7 @@ def reactions(param: dict):
         )
 
 
-def check_remarks():
+def check_remarks() -> None:
     """メモの内容を拾ってDBに格納する"""
     game_result = d.common.exsist_record(g.msg.thread_ts)
     if game_result:  # ゲーム結果のスレッドになっているか
@@ -149,7 +149,7 @@ def check_remarks():
         g.opt.initialization("results")
         g.opt.unregistered_replace = False  # ゲスト無効
 
-        remarks = []
+        remarks: list = []
         for name, matter in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
             remark = {
                 "thread_ts": g.msg.thread_ts,

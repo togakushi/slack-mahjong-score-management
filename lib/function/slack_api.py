@@ -158,13 +158,13 @@ def post_text(event_ts, title, msg) -> SlackResponse | Any:
     return (res)
 
 
-def post_fileupload(title: str, file: str | bool, ts: bool | None = False) -> SlackResponse | None:
+def post_fileupload(title: str, file: str | bool, ts: str | bool = False) -> SlackResponse | None:
     """files_upload_v2に渡すパラメータを設定
 
     Args:
         title (str): タイトル行
         file (str): アップロードファイルパス
-        ts (bool, optional): スレッドに返す. Defaults to False.
+        ts (str | bool, optional): スレッドに返す. Defaults to False.
 
     Returns:
         SlackResponse | None: 結果
@@ -189,9 +189,7 @@ def post_fileupload(title: str, file: str | bool, ts: bool | None = False) -> Sl
 
 
 def slack_post(**kwargs):
-    """パラメータの内容によって呼び出すAPIを振り分ける
-    """
-
+    """パラメータの内容によって呼び出すAPIを振り分ける"""
     logging.debug(kwargs)
     headline = kwargs.get("headline")
     message = kwargs.get("message")
@@ -201,26 +199,26 @@ def slack_post(**kwargs):
     # 見出しポスト
     res = post_message(headline)
     if res:
-        ts = res.get("ts")
+        ts = res.get("ts", False)
     else:
-        ts = None
+        ts = False
 
     # 本文ポスト
     if file_list:
         for x in file_list.keys():
-            post_fileupload(x, file_list[x], ts)
+            post_fileupload(str(x), str(file_list[x]), ts)
     else:
         if message:
             post_multi_message(message, ts, summarize)
 
 
-def call_reactions_add(icon, ch=None, ts=None):
+def call_reactions_add(icon: str, ch: str | None = None, ts: str | None = None):
     """リアクションを付ける
 
     Args:
         icon (str): 付けるリアクション
-        ch (str, optional): チャンネルID. Defaults to None.
-        ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
+        ch (str | None, optional): チャンネルID. Defaults to None.
+        ts (str | None, optional): メッセージのタイムスタンプ. Defaults to None.
     """
 
     if not ch:
@@ -229,10 +227,10 @@ def call_reactions_add(icon, ch=None, ts=None):
         ts = g.msg.event_ts
 
     try:
-        res = g.app.client.reactions_add(
-            channel=ch,
+        res: SlackResponse = g.app.client.reactions_add(
+            channel=str(ch),
             name=icon,
-            timestamp=ts,
+            timestamp=str(ts),
         )
         logging.info("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
     except SlackApiError as e:
@@ -324,7 +322,7 @@ def get_channel_id() -> str | None:
             query=f"in:{g.cfg.search.channel}",
             count=1,
         )
-        messages = response.get("messages", {})
+        messages: dict = response.get("messages", {})
         if messages.get("matches"):
             channel = messages["matches"][0]["channel"]
             if isinstance(g.cfg.search.channel, str):
@@ -372,7 +370,7 @@ def get_conversations(ch=None, ts=None):
 
     ch = ch if ch else g.msg.channel_id
     ts = ts if ts else g.msg.event_ts
-    res = {}
+    res: SlackResponse
 
     try:
         res = g.app.client.conversations_replies(channel=ch, ts=ts)

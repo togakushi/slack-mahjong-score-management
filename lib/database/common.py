@@ -244,12 +244,12 @@ def first_record() -> datetime:
     return (ret)
 
 
-def db_insert(detection: list, ts: datetime, reactions_data: list | None = None) -> None:
+def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> None:
     """スコアデータをDBに追加する
 
     Args:
         detection (list): スコア情報
-        ts (datetime): コマンドが発行された時間
+        ts (str): コマンドが発行された時間
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
@@ -271,12 +271,12 @@ def db_insert(detection: list, ts: datetime, reactions_data: list | None = None)
         f.slack_api.post_message(f.message.reply(message="restricted_channel"), g.msg.event_ts)
 
 
-def db_update(detection: list, ts: datetime, reactions_data: list | None = None) -> None:
+def db_update(detection: list, ts: str, reactions_data: list | None = None) -> None:
     """スコアデータを変更する
 
     Args:
         detection (list): スコア情報
-        ts (datetime): コマンドが発行された時間
+        ts (str): コマンドが発行された時間
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
@@ -362,37 +362,39 @@ def db_backup() -> str:
         return ("\nデータベースのバックアップに失敗しました。")
 
 
-def remarks_append(remarks: list) -> None:
+def remarks_append(remarks: dict | list) -> None:
     """メモをDBに記録する
 
     Args:
-        remarks (list): メモに残す内容
+        remarks (dict | list): メモに残す内容
     """
+
+    if isinstance(remarks, dict):
+        remarks = [remarks]
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
             cur.row_factory = sqlite3.Row
 
-            for remark in remarks:
+            for para in remarks:
                 # 親スレッドの情報
-                row = cur.execute("select * from result where ts=:thread_ts", remark).fetchone()
-
+                row = cur.execute("select * from result where ts=:thread_ts", para).fetchone()
                 if row:
-                    if remark["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
-                        cur.execute(d.SQL_REMARKS_INSERT, remark)
-                        logging.notice("insert: %s, user=%s", remark, g.msg.user_id)  # type: ignore
+                    if para["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
+                        cur.execute(d.SQL_REMARKS_INSERT, para)
+                        logging.notice("insert: %s, user=%s", para, g.msg.user_id)  # type: ignore
 
-                        if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status(ts=remark.get("event_ts")):
-                            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=remark.get("event_ts"))
+                        if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status(ts=para.get("event_ts")):
+                            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=para.get("event_ts"))
 
             cur.commit()
 
 
-def remarks_delete(ts: datetime) -> None:
+def remarks_delete(ts: str) -> None:
     """DBからメモを削除する
 
     Args:
-        ts (datetime): 削除対象レコードのタイムスタンプ
+        ts (str): 削除対象レコードのタイムスタンプ
     """
 
     if g.msg.updatable:
@@ -415,6 +417,8 @@ def remarks_delete_compar(para: dict) -> None:
     Args:
         para (dict): パラメータ
     """
+
+    ch: str | None
 
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         cur.execute(d.SQL_REMARKS_DELETE_COMPAR, para)
@@ -439,7 +443,7 @@ def rule_version() -> dict:
         dict: 取得結果
     """
 
-    rule = {}
+    rule: dict = {}
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         ret = cur.execute(
             """
@@ -486,9 +490,7 @@ def word_list(word_type: int = 0) -> list:
             """, (word_type,)
         )
 
-        x = ret.fetchall()
-
-    return (x)
+    return (ret.fetchall())
 
 
 def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:

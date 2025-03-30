@@ -109,8 +109,8 @@ def help_message():
         \t登録キーワード：{g.cfg.cw.remarks_word}
     """)
 
-    rule = d.common.word_list(1)
-    if rule:
+    words = d.common.word_list(1)
+    if words:
         msg += "\n\t*卓外ポイントワード(個人清算)*\n"
         for word, ex_point in rule:
             msg += "\t\t{}：{}pt\n".format(  # pylint: disable=consider-using-f-string
@@ -126,7 +126,7 @@ def help_message():
 
     words = [word for word, _ in d.common.word_list(0)]
     if g.cfg.undefined_word == 0:
-        words += ["未登録ワードのすべてを和了役としてカウント"]
+        words += ["未登録ワードのすべてを役満としてカウント"]
     if words:
         msg += f"\n\t*役満カウントワード*\n\t\t{'、'.join(words)}\n"
 

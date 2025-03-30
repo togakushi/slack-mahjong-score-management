@@ -255,7 +255,7 @@ def check_remarks(slack_data: dict, db_remarks: dict) -> Tuple[dict, MsgDict]:
             else:
                 if in_name:
                     count["remark"] += 1
-                    d.common.remarks_append((chk,))
+                    d.common.remarks_append(chk)
                     logging.notice("insert(data missing): %s", chk)  # type: ignore
 
     for key in db_remarks:  # DB -> slack チェック

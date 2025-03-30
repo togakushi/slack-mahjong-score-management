@@ -7,6 +7,7 @@ import re
 import sqlite3
 from contextlib import closing
 from datetime import datetime
+from typing import Any, Tuple
 
 from dateutil.relativedelta import relativedelta
 
@@ -142,7 +143,7 @@ def for_slack():
             ts=thread_ts,
         )
 
-        msg = conversations.get("messages")
+        msg: list = conversations.get("messages", [])
 
         # リアクション取得
         reaction_ok, reaction_ng = reactions_list(msg[0])
@@ -156,7 +157,7 @@ def for_slack():
         if msg[0].get("ts") == msg[0].get("thread_ts") or msg[0].get("thread_ts") is None:
             if len(msg) >= 1:  # スレッド内探索
                 for x in msg[1:]:
-                    if re.match(rf"^{g.cfg.cw.remarks_word}", x.get("text")):  # 追加メモ
+                    if re.match(rf"^{g.cfg.cw.remarks_word}", x.get("text", "")):  # 追加メモ
                         text = x.get("text").replace(g.cfg.cw.remarks_word, "").strip().split()
                         event_ts = x.get("ts")
 
@@ -243,11 +244,11 @@ def for_db_remarks(first_ts=False):
     return (data)
 
 
-def reactions_list(msg):
+def reactions_list(msg: Any) -> Tuple[list, list]:
     """botが付けたリアクションを取得
 
     Args:
-        msg (dict): _description_
+        msg (Any): メッセージ内容
 
     Returns:
         Tuple[list, list]:
@@ -255,8 +256,8 @@ def reactions_list(msg):
             - reaction_ng: ngが付いているメッセージのタイムスタンプ
     """
 
-    reaction_ok = []
-    reaction_ng = []
+    reaction_ok: list = []
+    reaction_ng: list = []
 
     if msg.get("reactions"):
         for reactions in msg.get("reactions"):
