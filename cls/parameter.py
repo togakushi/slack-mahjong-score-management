@@ -7,6 +7,7 @@ import math
 import re
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any
 
 from dateutil.relativedelta import relativedelta
 
@@ -48,6 +49,35 @@ class EndonDay:
 class CommandOption:
     """オプション解析クラス"""
     def __init__(self) -> None:
+        self.rule_version: str
+        self.collection: str
+        self.format: str
+        self.filename: str
+        self.search_word: str
+        self.stipulated: int  # 規定打数
+        self.ranked: int  # ランキング上位
+        self.target_count: int  # 直近
+        self.interval: int  # 区切りゲーム数
+        self.group_length: int  # コメント集約文字数
+        self.all_player: bool
+        self.order: bool  # 順位推移グラフ / 成績上位者
+        self.fourfold: bool  # 縦持ちデータの直近Nを4倍で取るか(内部フラグ)
+        self.game_results: bool  # 戦績表示
+        self.score_comparisons: bool  # 比較モード
+        self.versus_matrix: bool  # 対戦マトリックス
+        self.statistics: bool  # 統計表示
+        self.rating: bool  # レーティング表示
+        self.verbose: bool  # 詳細情報表示
+        self.guest_skip: bool
+        self.guest_skip2: bool
+        self.unregistered_replace: bool  # ゲスト無効
+        self.anonymous: bool  # プレイヤー名匿名化
+        self.individual: bool  # True:個人集計 / False:チーム集計
+        self.friendly_fire: bool  # チーム同卓
+        self.search_first: datetime
+        self.search_last: datetime
+        self.search_onday: datetime
+
         self.initialization("DEFAULT")
 
     def initialization(self, _command: str, _argument: list | None = None) -> None:
@@ -63,42 +93,42 @@ class CommandOption:
             _command = "DEFAULT"
 
         self.command: str = _command
-        self.rule_version: str = str()
+        self.rule_version = str()
         self.aggregation_range: list = []
         self.target_player: list = []
-        self.all_player: bool = False
-        self.order: bool = False  # 順位推移グラフ / 成績上位者
-        self.fourfold: bool = False  # 縦持ちデータの直近Nを4倍で取るか
-        self.stipulated: int = 0  # 規定打数
-        self.target_count: int = 0  # 直近
-        self.interval: int = 80  # 区切りゲーム数
-        self.verbose: bool = False  # 戦績詳細
-        self.rating: bool = False  # レーティング表示
-        self.anonymous: bool = False  # プレイヤー名を伏せる
+        self.stipulated = 0
+        self.target_count = 0
+        self.interval = 80
+        self.all_player = False
+        self.order = False
+        self.fourfold = False
+        self.verbose = False
+        self.rating = False
+        self.anonymous = False
 
         self.aggregation_range.append(g.cfg.config[_command].get("aggregation_range", "当日"))
-        self.individual: bool = g.cfg.config[_command].getboolean("individual", True)  # True:個人集計 / False:チーム集計
-        self.statistics: bool = g.cfg.config[_command].getboolean("statistics", False)  # 統計
-        self.unregistered_replace: bool = g.cfg.config[_command].getboolean("unregistered_replace", True)  # ゲスト無効
-        self.guest_skip: bool = g.cfg.config[_command].getboolean("guest_skip", True)
-        self.guest_skip2: bool = g.cfg.config[_command].getboolean("guest_skip2", True)
-        self.score_comparisons: bool = g.cfg.config[_command].getboolean("score_comparisons", False)  # 比較
-        self.game_results: bool = g.cfg.config[_command].getboolean("game_results", False)  # 戦績
-        self.versus_matrix: bool = g.cfg.config[_command].getboolean("versus_matrix", False)
-        self.ranked: int = g.cfg.config[_command].getint("ranked", 3)
+        self.individual = g.cfg.config[_command].getboolean("individual", True)
+        self.statistics = g.cfg.config[_command].getboolean("statistics", False)  # 統計
+        self.unregistered_replace = g.cfg.config[_command].getboolean("unregistered_replace", True)
+        self.guest_skip = g.cfg.config[_command].getboolean("guest_skip", True)
+        self.guest_skip2 = g.cfg.config[_command].getboolean("guest_skip2", True)
+        self.score_comparisons = g.cfg.config[_command].getboolean("score_comparisons", False)
+        self.game_results = g.cfg.config[_command].getboolean("game_results", False)  # 戦績
+        self.versus_matrix = g.cfg.config[_command].getboolean("versus_matrix", False)
+        self.ranked = g.cfg.config[_command].getint("ranked", 3)
         self.stipulated_rate: float = g.cfg.config[_command].getfloat("stipulated_rate", 0.05)
-        self.filename: str = str()
-        self.collection: str = str()
+        self.filename = str()
+        self.collection = str()
 
-        self.format: str = g.cfg.config["setting"].get("format", "default")
-        self.friendly_fire: bool = g.cfg.config["team"].getboolean("friendly_fire", True)
-        self.group_length: int = g.cfg.config["comment"].getint("group_length", 0)
-        self.search_word: str = g.cfg.config["comment"].get("search_word", str())
+        self.format = g.cfg.config["setting"].get("format", "default")
+        self.friendly_fire = g.cfg.config["team"].getboolean("friendly_fire", True)
+        self.group_length = g.cfg.config["comment"].getint("group_length", 0)
+        self.search_word = g.cfg.config["comment"].get("search_word", str())
 
         # 検索範囲の初期設定
-        self.search_first: datetime = datetime.now()
-        self.search_last: datetime = datetime.now()
-        self.search_onday: datetime = datetime.now()
+        self.search_first = datetime.now()
+        self.search_last = datetime.now()
+        self.search_onday = datetime.now()
         self.set_search_range(self.aggregation_range)
 
         # 引数の処理
@@ -240,31 +270,40 @@ class CommandOption:
 class Parameters:
     """パラメータ解析クラス"""
     def __init__(self) -> None:
+        self.rule_version: str
+        self.origin_point: int  # 配給原点
+        self.return_point: int  # 返し点
+        self.player_name: str
+        self.guest_name: str
+        self.stipulated: int
+        self.target_count: int
+        self.group_length: int
+        self.search_word: str
+        self.aggregate_unit: str | None = None  # 集計単位(M: 月間集計 / Y: 年間集計 / A: 全期間集計)
         self.starttime: StartTime
         self.endtime: EndTime
         self.endonday: EndonDay
         self.initialization()
 
-    def initialization(self):
+    def initialization(self) -> None:
         """初期化処理"""
         self.__dict__.clear()
-        self.rule_version: str = g.cfg.config["mahjong"].get("rule_version", "")
-        self.origin_point: int = g.cfg.config["mahjong"].getint("point", 250)  # 配給原点
-        self.return_point: int = g.cfg.config["mahjong"].getint("return", 300)  # 返し点
-        self.player_name: str = str()
-        self.guest_name: str = g.cfg.config["member"].get("guest_name", "ゲスト")
-        self.search_word: str = str()
+        self.rule_version = g.cfg.config["mahjong"].get("rule_version", "")
+        self.origin_point = g.cfg.config["mahjong"].getint("point", 250)
+        self.return_point = g.cfg.config["mahjong"].getint("return", 300)
+        self.player_name = str()
+        self.guest_name = g.cfg.config["member"].get("guest_name", "ゲスト")
         self.player_list: dict = {}
         self.competition_list: dict = {}
-        self.stipulated: int = 0
-        self.target_count: int = 0
-        self.aggregate_unit: str | None = None  # M: 月間集計 / Y: 年間集計 / A: 全期間集計
-
+        self.stipulated = 0
+        self.target_count = 0
+        self.search_word = str()
+        self.aggregate_unit = None
         self.starttime = StartTime()
         self.endtime = EndTime()
         self.endonday = EndonDay()
 
-    def update(self, _opt: CommandOption):
+    def update(self, _opt: CommandOption) -> None:
         """コマンド解析クラスの内容からパラメータをセットする
 
         Args:
@@ -307,7 +346,7 @@ class Parameters:
                 else:
                     tmp_list = _opt.target_player[1:]
 
-                tmp_list2 = []
+                tmp_list2: list = []
                 for name in tmp_list:  # 名前ブレ修正
                     tmp_list2.append(c.member.name_replace(name, add_mark=False))
                 for name in list(set(tmp_list2)):  # 集計対象者の名前はリストに含めない
@@ -318,7 +357,7 @@ class Parameters:
         if _opt.search_word:
             self.search_word = f"%{_opt.search_word}%"
 
-    def append(self, _add_dict: dict):
+    def append(self, _add_dict: dict) -> None:
         """インスタンス変数を追加/更新する
 
         Args:
@@ -327,11 +366,11 @@ class Parameters:
 
         self.__dict__.update(_add_dict)
 
-    def get(self, x: str):
-        """getter"""
+    def get(self, x: str) -> Any:
+        """attribute getter"""
         return (self.__dict__.get(x, None))
 
-    def stipulated_update(self, _opt: CommandOption, game_count: int):
+    def stipulated_update(self, _opt: CommandOption, game_count: int) -> None:
         """規定打数計算
 
         Args:
