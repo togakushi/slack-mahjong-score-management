@@ -87,6 +87,27 @@ class CommandWord:
 
 
 @dataclass
+class SubCommand:
+    """サブコマンドデフォルト値"""
+    aggregation_range: str = "当日"
+    all_player: bool = False
+    daily: bool = True
+    fourfold: bool = True
+    game_results: str | bool = False
+    group_length: int = 0
+    guest_skip: bool = True
+    guest_skip2: bool = True
+    ranked: int = 3
+    score_comparisons: bool = False
+    statistics: bool = False
+    stipulated: int = 0
+    stipulated_rate: float = 0.05
+    unregistered_replace: bool = True
+    verbose: bool = False
+    versus_matrix: bool = False
+
+
+@dataclass
 class DropItems:
     """非表示項目リスト"""
     results: list = field(default_factory=list)
@@ -105,6 +126,10 @@ class Config():
         self.alias: AliasSection
         self.dropitems: DropItems
         self.cw: CommandWord
+        self.results: SubCommand
+        self.graph: SubCommand
+        self.ranking: SubCommand
+        self.report: SubCommand
 
         self.config = configparser.ConfigParser()
         if filename is not None:
@@ -198,10 +223,10 @@ class Config():
         )
 
         # サブコマンドデフォルト
-        self.results = self.command_default("results")
-        self.graph = self.command_default("graph")
-        self.ranking = self.command_default("ranking")
-        self.report = self.command_default("report")
+        self.results = self.subcom_default_set("results")
+        self.graph = self.subcom_default_set("graph")
+        self.ranking = self.subcom_default_set("ranking")
+        self.report = self.subcom_default_set("report")
 
         # その他/更新
         self.undefined_word: int = self.config["regulations"].getint("undefined", 2)
@@ -214,7 +239,7 @@ class Config():
         logging.info("commandword=%s", vars(self.cw))
         logging.info("dropitems=%s", vars(self.dropitems))
 
-    def command_default(self, section):
+    def subcom_default_set(self, section: str) -> SubCommand:
         """設定ファイルのセクションを読み込みインスタンス化して返す
 
         Args:
@@ -224,27 +249,25 @@ class Config():
             SubCommand: インスタンス
         """
 
-        @dataclass
-        class SubCommand:
-            """デフォルト値のセット"""
-            aggregation_range: str = self.config[section].get("aggregation_range", "当日")
-            all_player: bool = self.config[section].getboolean("all_player", False)
-            daily: bool = self.config[section].getboolean("daily", True)
-            fourfold: bool = self.config[section].getboolean("fourfold", True)
-            game_results: str | bool = self.config[section].get("game_results", False)
-            group_length: int = self.config[section].getint("group_length", 0)
-            guest_skip: bool = self.config[section].getboolean("guest_skip", True)
-            guest_skip2: bool = self.config[section].getboolean("guest_skip2", True)
-            ranked: int = self.config[section].getint("ranked", 3)
-            score_comparisons: bool = self.config[section].getboolean("score_comparisons", False)
-            statistics: bool = self.config[section].getboolean("statistics", False)
-            stipulated: int = self.config[section].getint("stipulated", 0)
-            stipulated_rate: float = self.config[section].getfloat("stipulated_rate", 0.05)
-            unregistered_replace: bool = self.config[section].getboolean("unregistered_replace", True)
-            verbose: bool = self.config[section].getboolean("verbose", False)
-            versus_matrix: bool = self.config[section].getboolean("versus_matrix", False)
+        default: SubCommand = SubCommand()
+        default.aggregation_range = self.config[section].get("aggregation_range", SubCommand.aggregation_range)
+        default.all_player = self.config[section].getboolean("all_player", SubCommand.all_player)
+        default.daily = self.config[section].getboolean("daily", SubCommand.daily)
+        default.fourfold = self.config[section].getboolean("fourfold", SubCommand.fourfold)
+        default.game_results = self.config[section].get("game_results", SubCommand.game_results)
+        default.group_length = self.config[section].getint("group_length", SubCommand.group_length)
+        default.guest_skip = self.config[section].getboolean("guest_skip", SubCommand.guest_skip)
+        default.guest_skip2 = self.config[section].getboolean("guest_skip2", SubCommand.guest_skip2)
+        default.ranked = self.config[section].getint("ranked", SubCommand.ranked)
+        default.score_comparisons = self.config[section].getboolean("score_comparisons", SubCommand.score_comparisons)
+        default.statistics = self.config[section].getboolean("statistics", SubCommand.statistics)
+        default.stipulated = self.config[section].getint("stipulated", SubCommand.stipulated)
+        default.stipulated_rate = self.config[section].getfloat("stipulated_rate", SubCommand.stipulated_rate)
+        default.unregistered_replace = self.config[section].getboolean("unregistered_replace", SubCommand.unregistered_replace)
+        default.verbose = self.config[section].getboolean("verbose", SubCommand.verbose)
+        default.versus_matrix = self.config[section].getboolean("versus_matrix", SubCommand.versus_matrix)
 
-        return (SubCommand())
+        return (default)
 
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
