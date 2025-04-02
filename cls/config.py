@@ -143,6 +143,8 @@ class Config():
             str: 設定ファイル
         """
 
+        config_dir = os.path.dirname(filename)
+
         try:
             self.config.read(os.path.realpath(filename), encoding="utf-8")
             logging.notice("configfile: %s", os.path.realpath(filename))  # type: ignore
@@ -230,10 +232,12 @@ class Config():
         self.report = self.subcom_default_set("report")
 
         # その他/更新
-        self.db.database_file = os.path.realpath(os.path.join(os.path.dirname(filename), self.db.database_file))
-        self.setting.work_dir = os.path.realpath(os.path.join(os.path.dirname(filename), self.setting.work_dir))
-        self.setting.font_file = os.path.realpath(os.path.join(os.path.dirname(filename), self.setting.font_file))
+        self.db.database_file = os.path.realpath(os.path.join(config_dir, self.db.database_file))
+        self.setting.work_dir = os.path.realpath(os.path.join(config_dir, self.setting.work_dir))
+        self.setting.font_file = os.path.realpath(os.path.join(config_dir, self.setting.font_file))
         self.undefined_word = self.config["regulations"].getint("undefined", 2)
+        if self.db.backup_dir:
+            self.db.backup_dir = os.path.realpath(os.path.join(config_dir, self.db.backup_dir))
 
         logging.info("setting=%s", vars(self.setting))
         logging.info("search=%s", vars(self.search))
