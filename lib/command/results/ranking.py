@@ -2,6 +2,7 @@
 lib/command/results/ranking.py
 """
 
+import os
 import re
 from typing import Any, Tuple
 
@@ -41,7 +42,7 @@ def aggregation() -> Tuple[str, Any]:
         return (f.message.reply(message="no_hits"), None)
 
     g.prm.stipulated_update(g.opt, game_info["game_count"])
-    result_df = d.common.read_data("lib/queries/ranking/aggregate.sql")
+    result_df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/ranking/aggregate.sql"))
     if result_df.empty:
         return (f.message.reply(message="no_hits"), None)
 

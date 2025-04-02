@@ -19,6 +19,7 @@ from lib.function import configuration
 
 
 if __name__ == "__main__":
+    g.script_dir = os.path.dirname(os.path.abspath(__file__))
     try:
         configuration.setup()
         g.app = App(token=os.environ["SLACK_BOT_TOKEN"])

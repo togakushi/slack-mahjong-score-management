@@ -156,14 +156,16 @@ def setup() -> None:
         else:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
-    g.cfg.read_file(g.args.config)
+    g.cfg.read_file(os.path.join(g.script_dir, g.args.config))
     g.search_word = SearchRange()
     g.opt = CommandOption()
     g.prm = Parameters()
     g.msg = MessageParser()
 
+    logging.notice("database: %s", g.cfg.db.database_file)  # type: ignore
+    logging.notice("font: %s", g.cfg.setting.font_file)  # type: ignore
     logging.notice(  # type: ignore
-        "rule_version=%s, origin_point=%s, return_point=%s, undefined_word=%s",
+        "rule_version: %s, origin_point: %s, return_point: %s, undefined_word: %s",
         g.prm.rule_version, g.prm.origin_point, g.prm.return_point, g.cfg.undefined_word
     )
 

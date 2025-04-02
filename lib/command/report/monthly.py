@@ -25,7 +25,7 @@ def plot():
 
     plt.close()
     # --- データ収集
-    df = d.common.read_data("lib/queries/report/monthly.sql")
+    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/monthly.sql"))
     results = df.transpose().to_dict()
 
     if len(results) == 0:

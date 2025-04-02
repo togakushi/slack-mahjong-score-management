@@ -2,6 +2,8 @@
 lib/command/results/rating.py
 """
 
+import os
+
 import pandas as pd
 
 import lib.global_value as g
@@ -22,7 +24,7 @@ def aggregation():
     # データ収集
     # g.opt.guest_skip = False  # 2ゲスト戦強制取り込み
     game_info = d.aggregate.game_info()
-    df_results = d.common.read_data("lib/queries/ranking/results.sql").set_index("name")
+    df_results = d.common.read_data(os.path.join(g.script_dir, "lib/queries/ranking/results.sql")).set_index("name")
     df_ratings = d.aggregate.calculation_rating()
 
     # 最終的なレーティング

@@ -2,6 +2,7 @@
 lib/command/results/detail.py
 """
 
+import os
 import re
 import textwrap
 
@@ -252,7 +253,7 @@ def get_game_results() -> str:
     data: dict = {}
     target_player = c.member.name_replace(g.opt.target_player[0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
     p_list: list = []
-    df = d.common.read_data("lib/queries/summary/details.sql").fillna(value="")
+    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
 
     if g.opt.verbose:
         data["p0"] = df.filter(items=["playtime", "guest_count", "same_team"]).drop_duplicates().set_index("playtime")
@@ -326,7 +327,7 @@ def get_versus_matrix() -> str:
     """
 
     ret: str = "\n*【対戦結果】*\n"
-    df = d.common.read_data("lib/queries/summary/versus_matrix.sql")
+    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
     max_len = c.member.count_padding(df["vs_name"].unique().tolist())
 
     for _, r in df.iterrows():

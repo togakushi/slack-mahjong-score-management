@@ -2,7 +2,9 @@
 lib/command/results/versus.py
 """
 
+import os
 import textwrap
+
 import pandas as pd
 
 import lib.global_value as g
@@ -25,8 +27,8 @@ def aggregation():
     g.opt.guest_skip = g.opt.guest_skip2
 
     # --- データ収集
-    df_vs = d.common.read_data("lib/queries/summary/versus_matrix.sql")
-    df_game = d.common.read_data("lib/queries/summary/details.sql").fillna(value="")
+    df_vs = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
+    df_game = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 
     # --- ヘッダ情報

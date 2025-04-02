@@ -27,7 +27,7 @@ def plot() -> str | bool:
 
     plt.close()
     # --- データ取得
-    results_df = d.common.read_data("lib/queries/report/winner.sql")
+    results_df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/winner.sql"))
 
     if len(results_df) == 0:
         return (False)

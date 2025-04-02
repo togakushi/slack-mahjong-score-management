@@ -29,6 +29,7 @@ search_word: SearchRange
 args: Namespace
 
 # 固定値
+script_dir: str = ""
 wind: tuple = ("東家", "南家", "西家", "北家")
 member_list: dict = {}
 team_list: list = []

@@ -218,7 +218,7 @@ def _data_collection():
 
     target_data = pd.DataFrame()
     if g.opt.individual:  # 個人集計
-        df = d.common.read_data("lib/queries/summary/gamedata.sql")
+        df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
 
@@ -234,7 +234,7 @@ def _data_collection():
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
     else:  # チーム集計
-        df = d.common.read_data("lib/queries/summary/gamedata.sql")
+        df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
 

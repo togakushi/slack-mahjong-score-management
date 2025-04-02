@@ -33,7 +33,7 @@ def plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.opt.guest_skip = g.opt.guest_skip2
-    df = d.common.read_data("lib/queries/summary/gamedata.sql")
+    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
     player = c.member.name_replace(g.prm.player_name, add_mark=True)
 
     if df.empty:
@@ -135,7 +135,7 @@ def statistics_plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.opt.guest_skip = g.opt.guest_skip2
-    df = d.common.read_data("lib/queries/summary/details.sql")
+    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql"))
 
     if df.empty:
         return (0, f.message.reply(message="no_hits"))

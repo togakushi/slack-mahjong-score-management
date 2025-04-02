@@ -130,6 +130,7 @@ class Config():
         self.graph: SubCommand
         self.ranking: SubCommand
         self.report: SubCommand
+        self.undefined_word: int
 
         self.config = configparser.ConfigParser()
         if filename is not None:
@@ -139,12 +140,12 @@ class Config():
         """設定ファイル読み込み
 
         Args:
-            str: 設定ファイルパス
+            str: 設定ファイル
         """
 
         try:
-            self.config.read(filename, encoding="utf-8")
-            logging.notice("filename: %s", filename)  # type: ignore
+            self.config.read(os.path.realpath(filename), encoding="utf-8")
+            logging.notice("configfile: %s", os.path.realpath(filename))  # type: ignore
             logging.info("read sections: %s", self.config.sections())
         except Exception as e:
             raise RuntimeError(e) from e
@@ -229,8 +230,10 @@ class Config():
         self.report = self.subcom_default_set("report")
 
         # その他/更新
-        self.undefined_word: int = self.config["regulations"].getint("undefined", 2)
-        self.setting.work_dir = os.path.join(os.path.realpath(os.path.curdir), self.setting.work_dir)
+        self.db.database_file = os.path.realpath(os.path.join(os.path.dirname(filename), self.db.database_file))
+        self.setting.work_dir = os.path.realpath(os.path.join(os.path.dirname(filename), self.setting.work_dir))
+        self.setting.font_file = os.path.realpath(os.path.join(os.path.dirname(filename), self.setting.font_file))
+        self.undefined_word = self.config["regulations"].getint("undefined", 2)
 
         logging.info("setting=%s", vars(self.setting))
         logging.info("search=%s", vars(self.search))

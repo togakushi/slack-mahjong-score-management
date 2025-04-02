@@ -2,8 +2,8 @@
 lib/database/aggregate.py
 """
 
-
 import logging
+import os
 from datetime import datetime
 from typing import cast
 
@@ -28,7 +28,7 @@ def game_info():
     """
 
     # データ収集
-    df = read_data("lib/queries/game.info.sql")
+    df = read_data(os.path.join(g.script_dir, "lib/queries/game.info.sql"))
 
     ret = {
         "game_count": int(df["count"].to_string(index=False)),
@@ -60,7 +60,7 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
     """
 
     # データ収集
-    df = read_data("lib/queries/summary/total.sql")
+    df = read_data(os.path.join(g.script_dir, "lib/queries/summary/total.sql"))
 
     if isinstance(filter_items, list):
         df = df.filter(items=filter_items)
@@ -84,7 +84,7 @@ def remark_count(kind):
 
     # データ収集
     g.prm.append({"kind": kind})
-    df = read_data("lib/queries/summary/remark_count.sql")
+    df = read_data(os.path.join(g.script_dir, "lib/queries/summary/remark_count.sql"))
 
     if kind == "grandslam":
         df = df.filter(items=["name", "matter", "count"])
@@ -101,7 +101,7 @@ def game_results():
     """
 
     # データ収集
-    df = read_data("lib/queries/summary/results.sql")
+    df = read_data(os.path.join(g.script_dir, "lib/queries/summary/results.sql"))
 
     # Nullが返ってきたときにobject型になるので型変換
     df = df.astype({
@@ -126,7 +126,7 @@ def ranking_record():
     """
 
     # データ収集
-    gamedata = read_data("lib/queries/ranking/record_count.sql")
+    gamedata = read_data(os.path.join(g.script_dir, "lib/queries/ranking/record_count.sql"))
 
     # 連続順位カウント
     rank_mask = {
@@ -187,7 +187,7 @@ def ranking_record2():
     """
 
     # データ収集
-    gamedata: pd.DataFrame = read_data("lib/queries/ranking/record_count.sql")
+    gamedata: pd.DataFrame = read_data(os.path.join(g.script_dir, "lib/queries/ranking/record_count.sql"))
     player_list = gamedata["name"].unique().tolist()
 
     # 連続順位カウント
@@ -238,7 +238,7 @@ def calculation_rating():
     """
 
     # データ収集
-    df_results = read_data("lib/queries/ranking/ratings.sql").set_index("playtime")
+    df_results = read_data(os.path.join(g.script_dir, "lib/queries/ranking/ratings.sql")).set_index("playtime")
 
     df_ratings = pd.DataFrame(index=["initial_rating"] + df_results.index.to_list())  # 記録用
     last_ratings: dict = {}  # 最終値格納用
@@ -287,7 +287,7 @@ def matrix_table():
     """
 
     # データ収集
-    df = read_data("lib/queries/report/matrix_table.sql").set_index("playtime")
+    df = read_data(os.path.join(g.script_dir, "lib/queries/report/matrix_table.sql")).set_index("playtime")
 
     # 結果に含まれるプレイヤーのリスト
     plist = sorted(list(set(
