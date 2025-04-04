@@ -6,61 +6,130 @@ import configparser
 import logging
 import os
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from itertools import chain
+from typing import Union
 
 
 @dataclass
-class SettingSection:
+class CommonMethodMixin:
+    """データクラス共通メソッド"""
+    def initialization(self, section: str | None) -> None:
+        """設定ファイルから値を取りこみ"""
+        config = getattr(self, "config")
+        assert config is not None, "config must not be None"
+        assert section is not None, "section must not be None"
+
+        for x in fields(self):
+            if x.type == Union[configparser.ConfigParser | None]:
+                continue
+            if x.type == Union[str | None]:
+                setattr(self, x.name, None)
+            elif x.type == bool:
+                setattr(self, x.name, config.getboolean(section, x.name, fallback=x.default))
+            elif x.type == str:
+                setattr(self, x.name, config.get(section, x.name, fallback=x.default))
+            elif x.type == int:
+                setattr(self, x.name, config.getint(section, x.name, fallback=x.default))
+            elif x.type == float:
+                setattr(self, x.name, config.getfloat(section, x.name, fallback=x.default))
+            elif x.type == list:
+                tmp_list: list = []
+                for data in config.get(section, x.name, fallback="").split(","):
+                    tmp_list.extend(data.split())
+                setattr(self, x.name, tmp_list)
+            else:
+                setattr(self, x.name, config.get(section, x.name, fallback=x.default))
+
+
+@dataclass
+class MahjongSection(CommonMethodMixin):
+    """mahjongセクション初期値"""
+    config: configparser.ConfigParser | None = None
+    rule_version: str = field(default=str())
+    origin_point: int = field(default=250)
+    return_point: int = field(default=300)
+    rank_point: list = field(default_factory=list)
+    ignore_flying: bool = field(default=False)
+    draw_split: bool = field(default=False)
+    regulations_type2: list = field(default_factory=list)
+
+    def __post_init__(self):
+        self.initialization("mahjong")
+
+
+@dataclass
+class SettingSection(CommonMethodMixin):
     """settingセクション初期値"""
-    slash_command: str = "/mahjong"
-    thread_report: bool = True
-    guest_mark: str = "※"
-    reaction_ok: str = "ok"
-    reaction_ng: str = "ng"
-    font_file: str = "ipaexg.ttf"
-    work_dir: str = "work"
+    config: configparser.ConfigParser | None = None
+    slash_command: str = field(default="/mahjong")
+    thread_report: bool = field(default=True)
+    guest_mark: str = field(default="※")
+    reaction_ok: str = field(default="ok")
+    reaction_ng: str = field(default="ng")
+    font_file: str = field(default="ipaexg.ttf")
+    work_dir: str = field(default="work")
     ignore_userid: list = field(default_factory=list)
 
+    def __post_init__(self):
+        self.initialization("setting")
+
 
 @dataclass
-class SearchSection:
+class SearchSection(CommonMethodMixin):
     """searchセクション初期値"""
-    keyword: str = "終局"
-    channel: str | None = None
-    after: int = 7
-    wait: int = 180
+    config: configparser.ConfigParser | None = None
+    keyword: str = field(default="終局")
+    channel: str | None = field(default=None)
+    after: int = field(default=7)
+    wait: int = field(default=180)
+
+    def __post_init__(self):
+        self.initialization("search")
 
 
 @dataclass
-class DatabaseSection:
+class DatabaseSection(CommonMethodMixin):
     """databaseセクション初期値"""
-    database_file: str = "mahjong.db"
-    channel_limitations: str = str()
-    backup_dir: str | None = None
+    config: configparser.ConfigParser | None = None
+    database_file: str = field(default="mahjong.db")
+    channel_limitations: str = field(default=str())
+    backup_dir: str | None = field(default=None)
+
+    def __post_init__(self):
+        self.initialization("database")
 
 
 @dataclass
-class MemberSection:
+class MemberSection(CommonMethodMixin):
     """memberセクション初期値"""
-    registration_limit: int = 255
-    character_limit: int = 8
-    alias_limit: int = 16
-    guest_name: str = "ゲスト"
+    config: configparser.ConfigParser | None = None
+    registration_limit: int = field(default=255)
+    character_limit: int = field(default=8)
+    alias_limit: int = field(default=16)
+    guest_name: str = field(default="ゲスト")
+
+    def __post_init__(self):
+        self.initialization("member")
 
 
 @dataclass
-class TeamSection:
+class TeamSection(CommonMethodMixin):
     """teamセクション初期値"""
-    registration_limit: int = 255
-    character_limit: int = 16
-    member_limit: int = 16
-    friendly_fire: bool = True
+    config: configparser.ConfigParser | None = None
+    registration_limit: int = field(default=255)
+    character_limit: int = field(default=16)
+    member_limit: int = field(default=16)
+    friendly_fire: bool = field(default=True)
+
+    def __post_init__(self):
+        self.initialization("team")
 
 
 @dataclass
-class AliasSection:
+class AliasSection(CommonMethodMixin):
     """aliasセクション初期値"""
+    config: configparser.ConfigParser | None = None
     results: list = field(default_factory=list)
     graph: list = field(default_factory=list)
     ranking: list = field(default_factory=list)
@@ -70,6 +139,9 @@ class AliasSection:
     member: list = field(default_factory=list)
     add: list = field(default_factory=list)
     delete: list = field(default_factory=list)
+
+    def __post_init__(self):
+        self.initialization("alias")
 
 
 @dataclass
@@ -87,24 +159,41 @@ class CommandWord:
 
 
 @dataclass
-class SubCommand:
+class SubCommand(CommonMethodMixin):
     """サブコマンドデフォルト値"""
-    aggregation_range: str = "当日"
-    all_player: bool = False
-    daily: bool = True
-    fourfold: bool = True
-    game_results: str | bool = False
-    group_length: int = 0
-    guest_skip: bool = True
-    guest_skip2: bool = True
-    ranked: int = 3
-    score_comparisons: bool = False
-    statistics: bool = False
-    stipulated: int = 0
-    stipulated_rate: float = 0.05
-    unregistered_replace: bool = True
-    verbose: bool = False
-    versus_matrix: bool = False
+    config: configparser.ConfigParser | None = None
+    section: str | None = None
+    aggregation_range: str = field(default="当日")
+    individual: bool = field(default=True)
+    all_player: bool = field(default=False)
+    daily: bool = field(default=True)
+    fourfold: bool = field(default=True)
+    game_results: str | bool = field(default=False)
+    guest_skip: bool = field(default=True)
+    guest_skip2: bool = field(default=True)
+    ranked: int = field(default=3)
+    score_comparisons: bool = field(default=False)
+    statistics: bool = field(default=False)
+    stipulated: int = field(default=0)
+    stipulated_rate: float = field(default=0.05)
+    unregistered_replace: bool = field(default=True)
+    verbose: bool = field(default=False)
+    versus_matrix: bool = field(default=False)
+    always_argument: list = field(default_factory=list)
+
+    def __post_init__(self):
+        self.initialization(self.section)
+
+    def empty(self):
+        for x in fields(self):
+            if x.name == "config":
+                continue
+            if x.name == "section":
+                continue
+            if x.type == list:
+                setattr(self, x.name, [])
+            else:
+                setattr(self, x.name, None)
 
 
 @dataclass
@@ -118,6 +207,7 @@ class DropItems:
 class Config():
     """コンフィグ解析クラス"""
     def __init__(self, filename: str | None = None) -> None:
+        self.mahjong: MahjongSection
         self.setting: SettingSection
         self.search: SearchSection
         self.db: DatabaseSection
@@ -164,50 +254,13 @@ class Config():
                 self.config.add_section(x)
 
         # セクション読み込み
-        self.setting = SettingSection(
-            slash_command=self.config["setting"].get("slash_commandname", SettingSection.slash_command),
-            thread_report=self.config["setting"].getboolean("thread_report", SettingSection.thread_report),
-            guest_mark=self.config["setting"].get("guest_mark", SettingSection.guest_mark),
-            reaction_ok=self.config["setting"].get("reaction_ok", SettingSection.reaction_ok),
-            reaction_ng=self.config["setting"].get("reaction_ng", SettingSection.reaction_ng),
-            font_file=self.config["setting"].get("font_file", SettingSection.font_file),
-            work_dir=self.config["setting"].get("work_dir", SettingSection.work_dir),
-            ignore_userid=[x.strip() for x in self.config["setting"].get("ignore_userid", "").split(",")],
-        )
-        self.search = SearchSection(
-            keyword=self.config["search"].get("keyword", SearchSection.keyword),
-            channel=self.config["search"].get("channel", SearchSection.channel),
-            after=self.config["search"].getint("after", SearchSection.after),
-            wait=self.config["search"].getint("wait", SearchSection.wait),
-        )
-        self.db = DatabaseSection(
-            database_file=self.config["database"].get("database_file", DatabaseSection.database_file),
-            channel_limitations=self.config["database"].get("channel_limitations", DatabaseSection.channel_limitations),
-            backup_dir=self.config["database"].get("backup_dir", DatabaseSection.backup_dir),
-        )
-        self.member = MemberSection(
-            registration_limit=self.config["member"].getint("registration_limit", MemberSection.registration_limit),
-            character_limit=self.config["member"].getint("character_limit", MemberSection.character_limit),
-            alias_limit=self.config["member"].getint("alias_limit", MemberSection.alias_limit),
-            guest_name=self.config["member"].get("guest_name", MemberSection.guest_name),
-        )
-        self.team = TeamSection(
-            registration_limit=self.config["team"].getint("registration_limit", TeamSection.registration_limit),
-            character_limit=self.config["team"].getint("character_limit", TeamSection.character_limit),
-            member_limit=self.config["team"].getint("member_limit", TeamSection.member_limit),
-            friendly_fire=self.config["team"].getboolean("friendly_fire", TeamSection.friendly_fire),
-        )
-        self.alias = AliasSection(
-            results=[x.strip() for x in self.config["alias"].get("results", "").split(",")],
-            graph=[x.strip() for x in self.config["alias"].get("graph", "").split(",")],
-            ranking=[x.strip() for x in self.config["alias"].get("ranking", "").split(",")],
-            report=[x.strip() for x in self.config["alias"].get("report", "").split(",")],
-            check=[x.strip() for x in self.config["alias"].get("check", "").split(",")],
-            download=[x.strip() for x in self.config["alias"].get("download", "").split(",")],
-            member=[x.strip() for x in self.config["alias"].get("member", "").split(",")],
-            add=[x.strip() for x in self.config["alias"].get("add", "").split(",")],
-            delete=[x.strip() for x in self.config["alias"].get("del", "").split(",")],
-        )
+        self.mahjong = MahjongSection(self.config)
+        self.setting = SettingSection(self.config)
+        self.search = SearchSection(self.config)
+        self.db = DatabaseSection(self.config)
+        self.member = MemberSection(self.config)
+        self.team = TeamSection(self.config)
+        self.alias = AliasSection(self.config)
         self.cw = CommandWord(  # チャンネル内呼び出しキーワード
             help=self.config["help"].get("commandword", CommandWord.help),
             results=self.config["results"].get("commandword", CommandWord.results),
@@ -226,10 +279,10 @@ class Config():
         )
 
         # サブコマンドデフォルト
-        self.results = self.subcom_default_set("results")
-        self.graph = self.subcom_default_set("graph")
-        self.ranking = self.subcom_default_set("ranking")
-        self.report = self.subcom_default_set("report")
+        self.results = SubCommand(self.config, "results")
+        self.graph = SubCommand(self.config, "graph")
+        self.ranking = SubCommand(self.config, "ranking")
+        self.report = SubCommand(self.config, "report")
 
         # その他/更新
         self.db.database_file = os.path.realpath(os.path.join(config_dir, self.db.database_file))
@@ -245,36 +298,6 @@ class Config():
         logging.info("alias=%s", vars(self.alias))
         logging.info("commandword=%s", vars(self.cw))
         logging.info("dropitems=%s", vars(self.dropitems))
-
-    def subcom_default_set(self, section: str) -> SubCommand:
-        """設定ファイルのセクションを読み込みインスタンス化して返す
-
-        Args:
-            section (str): セクション名
-
-        Returns:
-            SubCommand: インスタンス
-        """
-
-        default: SubCommand = SubCommand()
-        default.aggregation_range = self.config[section].get("aggregation_range", SubCommand.aggregation_range)
-        default.all_player = self.config[section].getboolean("all_player", SubCommand.all_player)
-        default.daily = self.config[section].getboolean("daily", SubCommand.daily)
-        default.fourfold = self.config[section].getboolean("fourfold", SubCommand.fourfold)
-        default.game_results = self.config[section].get("game_results", SubCommand.game_results)
-        default.group_length = self.config[section].getint("group_length", SubCommand.group_length)
-        default.guest_skip = self.config[section].getboolean("guest_skip", SubCommand.guest_skip)
-        default.guest_skip2 = self.config[section].getboolean("guest_skip2", SubCommand.guest_skip2)
-        default.ranked = self.config[section].getint("ranked", SubCommand.ranked)
-        default.score_comparisons = self.config[section].getboolean("score_comparisons", SubCommand.score_comparisons)
-        default.statistics = self.config[section].getboolean("statistics", SubCommand.statistics)
-        default.stipulated = self.config[section].getint("stipulated", SubCommand.stipulated)
-        default.stipulated_rate = self.config[section].getfloat("stipulated_rate", SubCommand.stipulated_rate)
-        default.unregistered_replace = self.config[section].getboolean("unregistered_replace", SubCommand.unregistered_replace)
-        default.verbose = self.config[section].getboolean("verbose", SubCommand.verbose)
-        default.versus_matrix = self.config[section].getboolean("versus_matrix", SubCommand.versus_matrix)
-
-        return (default)
 
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
