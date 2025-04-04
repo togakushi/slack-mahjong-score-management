@@ -17,19 +17,8 @@ from lib import function as f
 
 
 @dataclass
-class StartTime:
-    """検索範囲(開始)"""
-    dt: datetime = datetime.now()
-    y: str = str()
-    ym: str = str()
-    ymd: str = str()
-    hm: str = str()  # yyyy/mm/dd hh:mm
-    hms: str = str()  # yyyy/mm/dd hh:mm:ss
-
-
-@dataclass
-class EndTime:
-    """検索範囲(終了:指定+12h)"""
+class SearchTime:
+    """検索範囲"""
     dt: datetime = datetime.now()
     y: str = str()
     ym: str = str()
@@ -280,8 +269,8 @@ class Parameters:
         self.group_length: int
         self.search_word: str
         self.aggregate_unit: str | None = None  # 集計単位(M: 月間集計 / Y: 年間集計 / A: 全期間集計)
-        self.starttime: StartTime
-        self.endtime: EndTime
+        self.starttime: SearchTime
+        self.endtime: SearchTime
         self.endonday: EndonDay
         self.initialization()
 
@@ -299,8 +288,8 @@ class Parameters:
         self.target_count = 0
         self.search_word = str()
         self.aggregate_unit = None
-        self.starttime = StartTime()
-        self.endtime = EndTime()
+        self.starttime = SearchTime()
+        self.endtime = SearchTime()
         self.endonday = EndonDay()
 
     def update(self, _opt: CommandOption) -> None:
