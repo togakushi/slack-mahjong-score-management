@@ -105,8 +105,6 @@ def handle_aggregation_action(ack, body, client):
             if ranked > 0:
                 g.params.update(ranked=ranked)
 
-    logging.info("[app:ranking_aggregation] %s, %s", argument, vars(g.opt))
-
     app_msg.pop()
     app_msg.append("集計完了")
     msg1 = f.message.reply(message="no_hits")

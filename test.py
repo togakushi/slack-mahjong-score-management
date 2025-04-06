@@ -23,7 +23,6 @@ def dump(flag: bool = True):
         flag (bool, optional): 出力フラグ
     """
     if flag:
-        pprint(["*** opt ***", vars(g.opt)], width=200)
         pprint(["*** prm ***", g.params], width=200)
         # pprint(["*** game_info ***", d.aggregate.game_info()], width=200)
 

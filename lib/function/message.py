@@ -55,15 +55,6 @@ def help_message():
         str: ヘルプメッセージ
     """
 
-    results_option = g.CommandOption()
-    results_option.initialization("results")
-    graph_option = g.CommandOption()
-    graph_option.initialization("graph")
-    ranking_option = g.CommandOption()
-    ranking_option.initialization("ranking")
-    report_option = g.CommandOption()
-    report_option.initialization("report")
-
     msg = textwrap.dedent(f"""\
         *成績記録キーワード*
         \t{g.cfg.search.keyword}
@@ -73,18 +64,18 @@ def help_message():
 
         \t*成績サマリ*
         \t\t呼び出しキーワード：{g.cfg.cw.results}
-        \t\t検索範囲デフォルト：{results_option.aggregation_range[0]}
+        \t\t検索範囲デフォルト：{g.cfg.results.get_default("aggregation_range")}
         \t*成績グラフ*
         \t\t呼び出しキーワード：{g.cfg.cw.graph}
-        \t\t検索範囲デフォルト：{graph_option.aggregation_range[0]}
+        \t\t検索範囲デフォルト：{g.cfg.graph.get_default("aggregation_range")}
         \t*ランキング*
         \t\t呼び出しキーワード：{g.cfg.cw.ranking}
-        \t\t検索範囲デフォルト：{ranking_option.aggregation_range[0]}
-        \t\t規定打数デフォルト：全体ゲーム数 × {ranking_option.stipulated_rate} ＋ 1
-        \t\t出力制限デフォルト：上位 {ranking_option.ranked} 名
+        \t\t検索範囲デフォルト：{g.cfg.ranking.get_default("aggregation_range")}
+        \t\t規定打数デフォルト：全体ゲーム数 × {g.cfg.ranking.get_default("stipulated_rate")} ＋ 1
+        \t\t出力制限デフォルト：上位 {g.cfg.ranking.get_default("ranked")} 名
         \t*レポート*
         \t\t呼び出しキーワード：{g.cfg.cw.report}
-        \t\t検索範囲デフォルト：{report_option.aggregation_range[0]}
+        \t\t検索範囲デフォルト：{g.cfg.report.get_default("aggregation_range")}
         \t*メンバー一覧*
         \t\t呼び出しキーワード：{g.cfg.cw.member}
         \t*チーム一覧*

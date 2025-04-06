@@ -117,8 +117,6 @@ def handle_aggregation_action(ack, body, client):
         view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}")
     )
 
-    logging.info("[app:personal_aggregation] %s, %s", argument, vars(g.opt))
-
     app_msg.pop()
     app_msg.append("集計完了")
 

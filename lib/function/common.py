@@ -207,13 +207,14 @@ def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
     if re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable():  # 禁則記号
         return (False, "使用できない記号が含まれています。")
 
-    # コマンドと同じ名前かチェック
+    # 引数に利用できる名前かチェック
     if g.search_word.find(name):
         return (False, "検索範囲指定に使用される単語では登録できません。")
 
-    chk = g.CommandOption()
-    chk.check([name])
-    if vars(chk):
+    check = analysis_argument([name, f"{name}999"])
+    check.pop("search_range")
+    check.pop("unknown_command")
+    if check:
         return (False, "オプションに使用される単語では登録できません。")
 
     if name in g.cfg.word_list():
@@ -436,8 +437,9 @@ def analysis_argument(argument: list) -> dict:
     unknown_command: list = []
     search_range: list = []
 
-    ret.update(search_word=g.cfg.comment.search_word)
-    ret.update(group_length=g.cfg.comment.group_length)
+    if g.cfg.comment.search_word:
+        ret.update(search_word=g.cfg.comment.search_word)
+        ret.update(group_length=g.cfg.comment.group_length)
 
     for keyword in argument:
         check_word = hira_to_kana(keyword.lower())  # カタカナ、小文字に統一
