@@ -33,7 +33,7 @@ def aggregation():
     # 表示
     # --- 情報ヘッダ
     add_text = ""
-    if g.opt.individual:  # 個人集計
+    if g.params.get("individual"):  # 個人集計
         headline = "*【成績サマリ】*\n"
         column_name = "名前"
     else:  # チーム集計
@@ -52,7 +52,7 @@ def aggregation():
     msg: dict = {}
     msg_memo: str = memo_count(df_game)
 
-    if not g.opt.score_comparisons:  # 通常表示
+    if not g.params.get("score_comparisons"):  # 通常表示
         header_list: list = [column_name, "通算", "平均", "順位分布", "トビ"]
         filter_list: list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
         if g.cfg.config["mahjong"].getboolean("ignore_flying", False):  # トビカウントなし
@@ -106,7 +106,7 @@ def aggregation():
         }
     )
 
-    match g.opt.format.lower():
+    match g.params.get("format", "default").lower().lower():
         case "csv":
             file_list = {
                 "集計結果": f.common.save_output(df_summary, "csv", "summary.csv", headline),
@@ -150,7 +150,7 @@ def memo_count(df_game: pd.DataFrame) -> str:
     memo_grandslam = ""
     if not df_grandslam.empty:
         for _, v in df_grandslam.iterrows():
-            if not g.opt.guest_skip and v["name"] == g.prm.guest_name:  # ゲストなし
+            if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
                 continue
             memo_grandslam += f"\t{v["playtime"].replace("-", "/")}：{v["grandslam"]} （{v["name"]}）\n"
     if memo_grandslam:
@@ -159,7 +159,7 @@ def memo_count(df_game: pd.DataFrame) -> str:
     memo_regulation = ""
     if not df_regulations.empty:
         for _, v in df_regulations.iterrows():
-            if not g.opt.guest_skip and v["name"] == g.prm.guest_name:  # ゲストなし
+            if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
                 continue
             memo_regulation += f"\t{v["playtime"].replace("-", "/")}：{v["regulation"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）\n"
     if memo_regulation:
@@ -168,7 +168,7 @@ def memo_count(df_game: pd.DataFrame) -> str:
     memo_wordcount = ""
     if not df_wordcount.empty:
         for _, v in df_wordcount.iterrows():
-            if not g.opt.guest_skip and v["name"] == g.prm.guest_name:  # ゲストなし
+            if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
                 continue
             memo_wordcount += f"\t{v["playtime"].replace("-", "/")}：{v["regulation"]} （{v["name"]}）\n"
     if memo_wordcount:

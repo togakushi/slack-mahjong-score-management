@@ -28,8 +28,6 @@ def call_chat_post_message(**kwargs) -> SlackResponse | Any:
     except SlackApiError as e:
         logging.critical(e)
         logging.error("kwargs=%s", kwargs)
-        logging.error("opt: %s", vars(g.opt))
-        logging.error("prm: %s", vars(g.prm))
         logging.error("msg: %s", vars(g.msg))
 
     return (res)
@@ -50,8 +48,6 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
     except SlackApiError as e:
         logging.critical(e)
         logging.error("kwargs=%s", kwargs)
-        logging.error("opt: %s", vars(g.opt))
-        logging.error("prm: %s", vars(g.prm))
         logging.error("msg: %s", vars(g.msg))
 
     return (res)
@@ -240,8 +236,6 @@ def call_reactions_add(icon: str, ch: str | None = None, ts: str | None = None):
             case _:
                 logging.critical(e)
                 logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
-                logging.error("opt: %s", vars(g.opt))
-                logging.error("prm: %s", vars(g.prm))
                 logging.error("msg: %s", vars(g.msg))
 
 
@@ -273,8 +267,6 @@ def call_reactions_remove(icon, ch=None, ts=None):
             case _:
                 logging.critical(e)
                 logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
-                logging.error("opt: %s", vars(g.opt))
-                logging.error("prm: %s", vars(g.prm))
                 logging.error("msg: %s", vars(g.msg))
 
 

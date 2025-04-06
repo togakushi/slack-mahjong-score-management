@@ -24,7 +24,7 @@ def aggregation():
     """
 
     # 検索動作を合わせる
-    g.opt.guest_skip = g.opt.guest_skip2
+    g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ収集
     df_vs = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
@@ -32,42 +32,36 @@ def aggregation():
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 
     # --- ヘッダ情報
-    my_name = c.member.name_replace(g.prm.player_name, add_mark=True)
-    if g.opt.all_player:
+    my_name = c.member.name_replace(g.params["player_name"], add_mark=True)
+    vs_list = [c.member.name_replace(x, add_mark=True) for x in g.params["competition_list"].values()]
+    if g.params.get("all_player"):
         vs = "全員"
-        vs_list = list(set(g.member_list.values()))
     else:
-        vs = ",".join([c.member.name_replace(x, add_mark=True) for x in g.prm.competition_list.values()])
-        vs_list = list(df_game["name"].unique())
-
-    if g.opt.anonymous:
-        for idx, name in enumerate(vs_list):
-            vs_list[idx] = c.member.name_replace(name)
+        vs = ",".join(vs_list)
 
     msg1 = tmpl_header(my_name, vs)
     msg2: dict = {}  # 対戦結果格納用
 
     # --- 表示内容
     tmp_msg: dict = {}
-    drop_name: list = []
+    drop_name: list = []  # 対戦記録なしプレイヤー
     if len(df_vs) == 0:  # 検索結果なし
         msg2[""] = "対戦記録が見つかりません。\n"
         return (msg1, msg2, "")
 
-    for name in g.prm.competition_list.values():
-        vs_name = c.member.name_replace(name, add_mark=True)
+    for vs_name in vs_list:
         tmp_msg[vs_name] = {}
         if vs_name in vs_list:
-            data = df_vs.query("vs_name == @vs_name")
+            data = df_vs.query("my_name == @my_name and vs_name == @vs_name")
             if data.empty:
                 drop_name.append(vs_name)
-                tmp_msg[vs_name]["info"] = f"【{my_name} vs {vs_name}】\n\t対戦記録はありません。\n\n"
+                tmp_msg[vs_name]["info"] = f"*【{my_name} vs {vs_name}】*\n\t対戦記録はありません。"
                 continue
 
             tmp_msg[vs_name]["info"] = tmpl_vs_table(data.to_dict(orient="records")[0])
 
             # ゲーム結果
-            if g.opt.game_results:
+            if g.params.get("game_results"):
                 count = 0
                 my_score = df_game.query("name == @my_name")
                 vs_score = df_game.query("name == @vs_name")
@@ -80,25 +74,25 @@ def aggregation():
                         guest_count = current_game["guest"].sum()
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
 
-                        tmp_msg[vs_name][count] = f"{"" if count else "*【戦績】*\n"}"
-                        if g.opt.verbose:  # 詳細表示
+                        tmp_msg[vs_name][count] = f"{"" if count else "【戦績】\n"}"
+                        if g.params.get("verbose"):  # 詳細表示
                             tmp_msg[vs_name][count] += tmpl_result_verbose(current_game, playtime, guest_count)
                         else:  # 簡易表示
                             tmp_msg[vs_name][count] += tmpl_result_simple(my_score, vs_score, playtime, guest_count)
                         count += 1
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
         else:  # 対戦記録なし
-            tmp_msg[vs_name]["info"] = f"【{my_name} vs {vs_name}】\n\t対戦相手が見つかりません。\n\n"
+            tmp_msg[vs_name]["info"] = f"*【{my_name} vs {vs_name}】*\n\t対戦相手が見つかりません。\n\n"
 
     # --- データ整列&まとめ
     for key, val in tmp_msg.items():
-        if g.opt.all_player and key in drop_name:
+        if key in drop_name and len(vs_list) > 5 and not g.params.get("all_player"):
             continue
-        msg2[f"{key}_info"] = val.pop("info")
-        for x in sorted(val.keys()):
-            if g.opt.all_player and x in drop_name:
-                continue
-            msg2[f"{key}_{x}"] = val[x]
+        msg2[f"{key}_info"] = val.pop("info") + "\n"
+        if val:
+            for x in val:
+                msg2[f"{key}_{x}"] = textwrap.indent(val[x], "\t")
+            msg2[f"{key}_{x}"] += "\n"
 
     # --- ファイル出力
     if len(df_data) != 0:
@@ -109,7 +103,7 @@ def aggregation():
         short=False
     )
 
-    namelist = list(g.prm.competition_list.values())  # pylint: disable=unused-variable  # noqa: F841
+    namelist = list(g.params["competition_list"].values())  # pylint: disable=unused-variable  # noqa: F841
     df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: x.strip())
     df_vs["my_rpoint_avg"] = (df_vs["my_rpoint_avg"] * 100).astype("int")
     df_vs["vs_rpoint_avg"] = (df_vs["vs_rpoint_avg"] * 100).astype("int")
@@ -122,7 +116,7 @@ def aggregation():
         ]
     ).drop_duplicates()
 
-    match g.opt.format.lower():
+    match g.params.get("format", "default").lower().lower():
         case "csv":
             file_list = {
                 "対戦結果": f.common.save_output(df_data, "csv", "result.csv"),
@@ -172,7 +166,7 @@ def tmpl_vs_table(data: dict) -> str:
         str: 出力データ
     """
 
-    ret = f"【{data["my_name"].strip()} vs {data["vs_name"].strip()}】\n"
+    ret = f"*【{data["my_name"].strip()} vs {data["vs_name"].strip()}】*\n"
     ret += textwrap.indent(
         "".join([
             textwrap.dedent(

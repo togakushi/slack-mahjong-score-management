@@ -4,6 +4,7 @@ test.py
 """
 
 import configparser
+import os
 import random
 import re
 from pprint import pprint
@@ -23,8 +24,8 @@ def dump(flag: bool = True):
     """
     if flag:
         pprint(["*** opt ***", vars(g.opt)], width=200)
-        pprint(["*** prm ***", vars(g.prm)], width=200)
-        pprint(["*** game_info ***", d.aggregate.game_info()], width=200)
+        pprint(["*** prm ***", g.params], width=200)
+        # pprint(["*** game_info ***", d.aggregate.game_info()], width=200)
 
 
 def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
@@ -49,58 +50,52 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
             pprint(f.message.help_message(), width=200)
 
         case "summary":
-            g.prm.update(g.opt)
+            g.params = d.common.placeholder(g.cfg.results)
             dump(flag)
             pprint(c.results.slackpost.main())
 
         case "graph":
-            g.opt.initialization("graph", g.msg.argument)
-
-            if g.opt.statistics:
-                g.opt.filename = f"statistics_{sec}_{pattern}_{g.opt.target_player[0]}"
-                g.prm.update(g.opt)
+            g.params = d.common.placeholder(g.cfg.graph)
+            if g.params.get("statistics"):
+                g.params.update(filename=f"statistics_{sec}_{pattern}_{g.params["target_player"][0]}")
                 dump(flag)
                 pprint(c.graph.personal.statistics_plot(), width=200)
             else:
-                g.opt.filename = f"point_{sec}_{pattern}"
-                g.prm.update(g.opt)
+                g.params.update(filename=f"point_{sec}_{pattern}")
                 dump(flag)
                 pprint(c.graph.summary.point_plot(), width=200)
 
-                g.opt.filename = f"rank_{sec}_{pattern}"
-                g.prm.update(g.opt)
+                g.params.update(filename=f"rank_{sec}_{pattern}")
                 dump(flag)
                 pprint(c.graph.summary.rank_plot(), width=200)
 
         case "ranking":
-            g.prm.update(g.opt)
+            g.params = d.common.placeholder(g.cfg.ranking)
             dump(flag)
             pprint(c.results.ranking.main())
 
         case "report":
-            g.msg.argument.append(f"filename:report_{sec}_{pattern}")
+            g.params = d.common.placeholder(g.cfg.report)
+            g.params.update(filename=f"report_{sec}_{pattern}")
             dump(flag)
             pprint(c.report.slackpost.main(), width=200)
 
         case "pdf":
-            g.opt.initialization("report", g.msg.argument)
-
-            g.opt.filename = f"report_{sec}_{pattern}_{g.opt.target_player[0]}"
-            g.prm.update(g.opt)
+            g.params = d.common.placeholder(g.cfg.report)
+            g.params.update(filename=f"report_{sec}_{pattern}_{g.params["player_name"]}")
             dump(flag)
             pprint(c.report.slackpost.results_report.gen_pdf(), width=200)
 
         case "rating":
-            g.opt.initialization("report", g.msg.argument)
-
-            g.opt.filename = f"rating_{sec}_{pattern}"
-            g.prm.update(g.opt)
+            g.params = d.common.placeholder(g.cfg.results)
+            g.params.update(filename=f"rating_{sec}_{pattern}")
             dump(flag)
             pprint(c.graph.rating.plot(), width=200)
 
 
 def main():
     """メイン処理"""
+    g.script_dir = os.path.dirname(os.path.abspath(__file__))
     configuration.setup()
     test_conf = configparser.ConfigParser()
     test_conf.read(g.args.testcase, encoding="utf-8")
@@ -110,6 +105,10 @@ def main():
     d.initialization.initialization_resultdb()
     c.member.read_memberslist()
     always_keyword = ""
+
+    print("=" * 80)
+    print(f"config  : {os.path.realpath(os.path.join(g.script_dir, g.args.config))}")
+    print(f"database: {g.cfg.db.database_file}")
 
     for sec in test_conf.sections():
         print("=" * 80)
@@ -125,16 +124,25 @@ def main():
                     test_case = value
                     continue
                 case "target_player":
+                    choice_list = list(set(g.member_list.values()))
                     for x in range(int(value)):
-                        target_player.append(random.choice(list(set(g.member_list.values()))))
+                        if not len(choice_list):
+                            break
+                        choice_name = random.choice(choice_list)
+                        target_player.append(choice_name)
+                        choice_list.remove(choice_name)
                     continue
                 case "all_player":
                     all_player = True
                     continue
                 case "target_team":
-                    team_list = [x["team"] for x in g.team_list]
+                    choice_list = [x["team"] for x in g.team_list]
                     for x in range(int(value)):
-                        target_team.append(random.choice(team_list))
+                        if not len(choice_list):
+                            break
+                        choice_name = random.choice(choice_list)
+                        target_team.append(choice_name)
+                        choice_list.remove(choice_name)
                     continue
                 case "always_keyword":
                     always_keyword = value

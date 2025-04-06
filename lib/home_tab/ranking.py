@@ -8,6 +8,7 @@ import lib.global_value as g
 from lib import command as c
 from lib import function as f
 from lib import home_tab as h
+from lib.database.common import placeholder
 
 
 def build_ranking_menu():
@@ -88,10 +89,9 @@ def handle_aggregation_action(ack, body, client):
     g.msg.parser(body)
     g.msg.client = client
 
-    g.opt.initialization("ranking")
-    argument, app_msg = h.home.set_command_option(body)
-    g.opt.update(argument)
-    g.prm.update(g.opt)
+    argument, app_msg, update_flag = h.home.set_command_option(body)
+    g.cfg.ranking.update_from_dict(update_flag)
+    g.params = placeholder(g.cfg.ranking)
 
     client.views_update(
         view_id=g.app_var["view_id"],
@@ -103,7 +103,7 @@ def handle_aggregation_action(ack, body, client):
         if "value" in search_options["bid-ranked"]["aid-ranked"]:
             ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
             if ranked > 0:
-                g.opt.ranked = ranked
+                g.params.update(ranked=ranked)
 
     logging.info("[app:ranking_aggregation] %s, %s", argument, vars(g.opt))
 

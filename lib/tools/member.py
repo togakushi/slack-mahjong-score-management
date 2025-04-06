@@ -43,7 +43,7 @@ def import_data():
 
             if table == "member":
                 conn.execute(f"delete from sqlite_sequence where name='{table}';")
-                conn.execute("insert into member (id, name) values (0, ?)", (g.prm.guest_name,))
+                conn.execute("insert into member (id, name) values (0, ?)", (g.cfg.member.guest_name,))
 
             try:
                 pd.read_csv(csvfile).to_sql(

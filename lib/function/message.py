@@ -147,7 +147,7 @@ def reply(message=None, rpoint_sum=0):
         str: メッセージ
     """
 
-    correct_score = g.prm.origin_point * 4  # 配給原点
+    correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
     rpoint_diff = abs(correct_score - rpoint_sum)
 
     default_message = {
@@ -172,8 +172,8 @@ def reply(message=None, rpoint_sum=0):
         msg = msg.format(
             user_id=g.msg.user_id,
             keyword=g.cfg.search.keyword,
-            start=g.prm.starttime.hm,
-            end=g.prm.endtime.hm,
+            start=f.common.ts_conv(g.params["starttime"], "d"),
+            end=f.common.ts_conv(g.params["onday"], "d"),
             rpoint_diff=rpoint_diff * 100,
             rpoint_sum=rpoint_sum * 100,
         )
@@ -198,21 +198,21 @@ def remarks(headword=False):
 
     remark = []
 
-    if g.opt.individual:  # 個人集計時のみ表示
-        if not g.opt.unregistered_replace:
+    if g.params.get("individual"):  # 個人集計時のみ表示
+        if not g.params.get("unregistered_replace"):
             remark.append("ゲスト置換なし(" + g.cfg.setting.guest_mark + "：未登録プレイヤー)")
-        if not g.opt.guest_skip:
+        if not g.params.get("guest_skip"):
             remark.append("2ゲスト戦の結果を含む")
     else:  # チーム集計時
-        if g.opt.friendly_fire:
-            if g.opt.game_results and g.opt.verbose:
+        if g.params.get("friendly_fire"):
+            if g.params.get("game_results") and g.params.get("verbose"):
                 remark.append("チーム同卓時の結果を含む(" + g.cfg.setting.guest_mark + ")")
             else:
                 remark.append("チーム同卓時の結果を含む")
-    if g.prm.stipulated > 1:
-        remark.append(f"規定打数 {g.prm.stipulated} G以上")
-    if g.opt.rule_version:
-        remark.append(f"集計対象ルール {g.opt.rule_version}")
+    if g.params.get("stipulated"):
+        remark.append(f"規定打数 {g.params["stipulated"]} G以上")
+    if g.params.get("rule_version") != g.cfg.mahjong.rule_version:
+        remark.append(f"集計対象ルール {g.params["rule_version"]}")
 
     if headword:
         if remark:
@@ -232,11 +232,11 @@ def search_word(headword=False):
         str: 条件をまとめた文字列
     """
 
-    if g.prm.search_word:
-        ret = g.prm.search_word.replace("%", "")
+    if g.params.get("search_word"):
+        ret = g.params["search_word"].replace("%", "")
         # 集約条件
-        if g.prm.group_length:
-            ret += f"（{g.prm.group_length}文字集約）"
+        if g.params.get("group_length"):
+            ret += f"（{g.params["group_length"]}文字集約）"
     else:
         ret = ""
 
@@ -262,7 +262,7 @@ def header(game_info, add_text="", indent=1):
     msg = ""
 
     # 集計範囲
-    if g.opt.search_word:  # コメント検索の場合はコメントで表示
+    if g.params.get("search_word"):  # コメント検索の場合はコメントで表示
         game_range1 = f"最初のゲーム：{game_info['first_comment']}\n"
         game_range1 += f"最後のゲーム：{game_info['last_comment']}\n"
     else:
@@ -274,9 +274,9 @@ def header(game_info, add_text="", indent=1):
     if game_info["game_count"] == 0:
         msg += f"{f.message.reply(message='no_hits')}"
     else:
-        match g.opt.command:
+        match g.params.get("command"):
             case "results":
-                if g.opt.target_count:  # 直近指定がない場合は検索範囲を付ける
+                if g.params.get("target_count"):  # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1
                     msg += f"総ゲーム数：{game_info['game_count']} 回{add_text}\n"
                 else:
@@ -338,14 +338,14 @@ def item_search_range(kind=None, time_pattern=None):
 
     match time_pattern:
         case "day":
-            starttime = g.prm.starttime.dt
-            endtime = g.prm.endtime.dt
+            starttime = f.common.ts_conv(g.params["starttime"], "ts")
+            endtime = f.common.ts_conv(g.params["endtime"], "ts")
         case "time":
-            starttime = g.prm.starttime.hm
-            endtime = g.prm.endtime.hm
+            starttime = f.common.ts_conv(g.params["starttime"], "hm")
+            endtime = f.common.ts_conv(g.params["endtime"], "hm")
         case _:
-            starttime = g.prm.starttime.hms
-            endtime = g.prm.endtime.hms
+            starttime = f.common.ts_conv(g.params["starttime"], "hms")
+            endtime = f.common.ts_conv(g.params["endtime"], "hms")
 
     match kind:
         case "list":
@@ -370,7 +370,7 @@ def item_aggregation_range(game_info, kind=None):
             - `kind` がNone場合は見出し付き文字列
     """
 
-    if g.opt.search_word:  # コメント検索の場合はコメントで表示
+    if g.params.get("search_word"):  # コメント検索の場合はコメントで表示
         first = game_info["first_comment"]
         last = game_info["last_comment"]
     else:
@@ -384,3 +384,42 @@ def item_aggregation_range(game_info, kind=None):
             return (f"{first} ～ {last}\n")
         case _:
             return (f"集計範囲：{first} ～ {last}\n")
+
+
+def item_date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None = None) -> str:
+    """日付範囲文字列
+
+    Args:
+        kind (str): ts_conv()引数
+            - *_o:  表示にondayを使用
+        prefix_a (str | None, optional): 単独で返った時の接頭辞. Defaults to None.
+        prefix_b (str | None, optional): 範囲で返った時の接頭辞. Defaults to None.
+
+    Returns:
+        str: 生成文字列
+    """
+
+    ret: str
+    st: str
+    et: str
+
+    if kind.endswith("_o"):
+        kind = kind.replace("_o", "")
+        st = f.common.ts_conv(g.params["starttime"], kind)
+        et = f.common.ts_conv(g.params["onday"], kind)
+    else:
+        st = f.common.ts_conv(g.params["starttime"], kind)
+        et = f.common.ts_conv(g.params["endtime"], kind)
+
+    if st == f.common.ts_conv(g.params["onday"], kind):
+        if prefix_a and prefix_b:
+            ret = f"{prefix_a} ({st})"
+        else:
+            ret = f"{st}"
+    else:
+        if prefix_a and prefix_b:
+            ret = f"{prefix_b} ({st} - {et})"
+        else:
+            ret = f"{st} - {et}"
+
+    return (ret)

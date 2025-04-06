@@ -6,40 +6,11 @@ import configparser
 import logging
 import os
 import sys
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field
 from itertools import chain
-from typing import Union
 
-
-@dataclass
-class CommonMethodMixin:
-    """データクラス共通メソッド"""
-    def initialization(self, section: str | None) -> None:
-        """設定ファイルから値を取りこみ"""
-        config = getattr(self, "config")
-        assert config is not None, "config must not be None"
-        assert section is not None, "section must not be None"
-
-        for x in fields(self):
-            if x.type == Union[configparser.ConfigParser | None]:
-                continue
-            if x.type == Union[str | None]:
-                setattr(self, x.name, None)
-            elif x.type == bool:
-                setattr(self, x.name, config.getboolean(section, x.name, fallback=x.default))
-            elif x.type == str:
-                setattr(self, x.name, config.get(section, x.name, fallback=x.default))
-            elif x.type == int:
-                setattr(self, x.name, config.getint(section, x.name, fallback=x.default))
-            elif x.type == float:
-                setattr(self, x.name, config.getfloat(section, x.name, fallback=x.default))
-            elif x.type == list:
-                tmp_list: list = []
-                for data in config.get(section, x.name, fallback="").split(","):
-                    tmp_list.extend(data.split())
-                setattr(self, x.name, tmp_list)
-            else:
-                setattr(self, x.name, config.get(section, x.name, fallback=x.default))
+from cls.subcom import SubCommand
+from cls.types import CommonMethodMixin
 
 
 @dataclass
@@ -145,6 +116,17 @@ class AliasSection(CommonMethodMixin):
 
 
 @dataclass
+class CommentSection(CommonMethodMixin):
+    """commentセクション初期値"""
+    config: configparser.ConfigParser | None = None
+    group_length: int = field(default=0)
+    search_word: str = field(default=str())
+
+    def __post_init__(self):
+        self.initialization("comment")
+
+
+@dataclass
 class CommandWord:
     """チャンネル内呼び出しキーワード初期値"""
     help: str = "ヘルプ"
@@ -159,44 +141,6 @@ class CommandWord:
 
 
 @dataclass
-class SubCommand(CommonMethodMixin):
-    """サブコマンドデフォルト値"""
-    config: configparser.ConfigParser | None = None
-    section: str | None = None
-    aggregation_range: str = field(default="当日")
-    individual: bool = field(default=True)
-    all_player: bool = field(default=False)
-    daily: bool = field(default=True)
-    fourfold: bool = field(default=True)
-    game_results: str | bool = field(default=False)
-    guest_skip: bool = field(default=True)
-    guest_skip2: bool = field(default=True)
-    ranked: int = field(default=3)
-    score_comparisons: bool = field(default=False)
-    statistics: bool = field(default=False)
-    stipulated: int = field(default=0)
-    stipulated_rate: float = field(default=0.05)
-    unregistered_replace: bool = field(default=True)
-    verbose: bool = field(default=False)
-    versus_matrix: bool = field(default=False)
-    always_argument: list = field(default_factory=list)
-
-    def __post_init__(self):
-        self.initialization(self.section)
-
-    def empty(self):
-        for x in fields(self):
-            if x.name == "config":
-                continue
-            if x.name == "section":
-                continue
-            if x.type == list:
-                setattr(self, x.name, [])
-            else:
-                setattr(self, x.name, None)
-
-
-@dataclass
 class DropItems:
     """非表示項目リスト"""
     results: list = field(default_factory=list)
@@ -207,6 +151,7 @@ class DropItems:
 class Config():
     """コンフィグ解析クラス"""
     def __init__(self, filename: str | None = None) -> None:
+        # コンフィグセクション
         self.mahjong: MahjongSection
         self.setting: SettingSection
         self.search: SearchSection
@@ -214,12 +159,19 @@ class Config():
         self.member: MemberSection
         self.team: TeamSection
         self.alias: AliasSection
+        self.comment: CommentSection
         self.dropitems: DropItems
         self.cw: CommandWord
+        # サブコマンド
         self.results: SubCommand
         self.graph: SubCommand
         self.ranking: SubCommand
         self.report: SubCommand
+        # 共通パラメータ
+        self.format: str
+        self.filename: str
+        self.interval: int
+        self.aggregate_unit: str
         self.undefined_word: int
 
         self.config = configparser.ConfigParser()
@@ -261,6 +213,7 @@ class Config():
         self.member = MemberSection(self.config)
         self.team = TeamSection(self.config)
         self.alias = AliasSection(self.config)
+        self.comment = CommentSection(self.config)
         self.cw = CommandWord(  # チャンネル内呼び出しキーワード
             help=self.config["help"].get("commandword", CommandWord.help),
             results=self.config["results"].get("commandword", CommandWord.results),
@@ -289,6 +242,10 @@ class Config():
         self.setting.work_dir = os.path.realpath(os.path.join(config_dir, self.setting.work_dir))
         self.setting.font_file = os.path.realpath(os.path.join(config_dir, self.setting.font_file))
         self.undefined_word = self.config["regulations"].getint("undefined", 2)
+        self.format = str()
+        self.filename = str()
+        self.aggregate_unit = str()
+        self.interval = 80
         if self.db.backup_dir:
             self.db.backup_dir = os.path.realpath(os.path.join(config_dir, self.db.backup_dir))
 

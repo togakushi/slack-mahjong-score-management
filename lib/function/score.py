@@ -26,7 +26,7 @@ def calculation_point(score_df):
     # 順位点算出
     uma = g.cfg.config["mahjong"].get("rank_point", "30,10,-10,-30")  # ウマ
     rank_point = list(map(int, uma.split(",")))
-    rank_point[0] += int((g.prm.return_point - g.prm.origin_point) / 10 * 4)  # オカ
+    rank_point[0] += int((g.cfg.mahjong.return_point - g.cfg.mahjong.origin_point) / 10 * 4)  # オカ
 
     if g.cfg.config["mahjong"].getboolean("draw_split", False):  # 山分け
         score_df["rank"] = score_df["rpoint"].rank(
@@ -83,7 +83,7 @@ def calculation_point(score_df):
         ascending=False, method="first"
     ).astype("int")
     for x in score_df.itertuples():
-        score_df.at[x.Index, x.point] = (x.rpoint - g.prm.return_point) / 10 + rank_point[x.position - 1]
+        score_df.at[x.Index, x.point] = (x.rpoint - g.cfg.mahjong.return_point) / 10 + rank_point[x.position - 1]
 
     logging.trace("rank_point=%s", rank_point)  # type: ignore
     return (score_df)
@@ -115,7 +115,7 @@ def reactions(param: dict):
         param (dict): 素点データ
     """
 
-    correct_score = g.prm.origin_point * 4  # 配給原点
+    correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
     rpoint_sum = param["rpoint_sum"]  # 素点合計
 
     if param["reactions_data"]:
@@ -146,8 +146,8 @@ def check_remarks() -> None:
     if game_result:  # ゲーム結果のスレッドになっているか
         check_list = [v for k, v in game_result.items() if k.endswith("_name")]
 
-        g.opt.initialization("results")
-        g.opt.unregistered_replace = False  # ゲスト無効
+        g.cfg.results.initialization()
+        g.cfg.results.unregistered_replace = False  # ゲスト無効
 
         remarks: list = []
         for name, matter in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
@@ -209,7 +209,7 @@ def get_score(detection):
             - comment: コメント
     """
 
-    g.opt.unregistered_replace = False  # ゲスト無効
+    g.params.update(unregistered_replace=False)  # ゲスト無効
 
     # ポイント計算
     score_df = pd.DataFrame({
@@ -223,7 +223,7 @@ def get_score(detection):
     score_df = calculation_point(score_df)
     score = score_df.to_dict(orient="records")
     rpoint_sum = int(score_df["rpoint"].sum())
-    deposit = g.prm.origin_point * 4 - rpoint_sum
+    deposit = g.cfg.mahjong.origin_point * 4 - rpoint_sum
 
     ret = {
         "deposit": deposit,

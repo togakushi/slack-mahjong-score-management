@@ -24,7 +24,6 @@ def handle_message_events(client, body):
     """
 
     logging.trace(body)  # type: ignore
-    g.prm.initialization()
     g.msg.parser(body)
     g.msg.client = client
     logging.info(
@@ -98,13 +97,13 @@ def handle_message_events(client, body):
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
                                 logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
-                                logging.warning("DEBUG(inside_thread): body=%s msg=%s prm=%s cfg=%s", body, vars(g.msg), vars(g.prm), vars(g.cfg))  # ToDo: 解析用
+                                logging.warning("DEBUG(inside_thread): body=%s msg=%s cfg=%s", body, vars(g.msg), vars(g.cfg))  # ToDo: 解析用
                         case "message_changed":
                             if detection == [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]:
                                 return  # 変更箇所がなければ何もしない
                             if g.cfg.setting.thread_report == g.msg.in_thread:
                                 if record_data:
-                                    if record_data.get("rule_version") == g.prm.rule_version:
+                                    if record_data.get("rule_version") == g.cfg.mahjong.rule_version:
                                         assert isinstance(detection, list), "detection should be a list"
                                         d.common.db_update(detection, g.msg.event_ts)
                                     else:
@@ -116,7 +115,7 @@ def handle_message_events(client, body):
                             else:
                                 f.slack_api.post_message(f.message.reply(message="inside_thread"), g.msg.event_ts)
                                 logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
-                                logging.warning("DEBUG(inside_thread): body=%s msg=%s prm=%s cfg=%s", body, vars(g.msg), vars(g.prm), vars(g.cfg))  # ToDo: 解析用
+                                logging.warning("DEBUG(inside_thread): body=%s msg=%s cfg=%s", body, vars(g.msg), vars(g.cfg))  # ToDo: 解析用
                 else:
                     if record_data:
                         d.common.db_delete(g.msg.event_ts)
@@ -136,7 +135,6 @@ def slash_command(ack, body, client):
 
     ack()
     logging.trace(body)  # type: ignore
-    g.prm.initialization()
     g.msg.parser(body)
     g.msg.client = client
 

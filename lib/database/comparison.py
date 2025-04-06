@@ -159,7 +159,7 @@ def check_omission(slack_data: dict, db_data: dict) -> Tuple[dict, MsgDict]:
                 continue
 
             # 更新
-            if d.common.exsist_record(key).get("rule_version") == g.prm.rule_version:
+            if d.common.exsist_record(key).get("rule_version") == g.cfg.mahjong.rule_version:
                 count["mismatch"] += 1
                 logging.notice("mismatch: %s", key)  # type: ignore
                 logging.info("  *  slack: %s", textformat(db_score))
@@ -307,7 +307,7 @@ def check_total_score(slack_data: dict) -> Tuple[dict, MsgDict]:
 
         if not g.cfg.setting.thread_report and val.get("in_thread"):
             continue
-        if d.common.exsist_record(key).get("rule_version") != g.prm.rule_version:
+        if d.common.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
             continue
 
         score_data = f.score.get_score(val.get("score"))

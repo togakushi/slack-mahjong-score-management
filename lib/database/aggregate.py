@@ -72,7 +72,7 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
     return (df)
 
 
-def remark_count(kind):
+def remark_count(kind: str):
     """メモの内容を種別でカウント
 
     Args:
@@ -83,7 +83,7 @@ def remark_count(kind):
     """
 
     # データ収集
-    g.prm.append({"kind": kind})
+    g.params.update(kind=kind)
     df = read_data(os.path.join(g.script_dir, "lib/queries/summary/remark_count.sql"))
 
     if kind == "grandslam":
@@ -239,7 +239,6 @@ def calculation_rating():
 
     # データ収集
     df_results = read_data(os.path.join(g.script_dir, "lib/queries/ranking/ratings.sql")).set_index("playtime")
-
     df_ratings = pd.DataFrame(index=["initial_rating"] + df_results.index.to_list())  # 記録用
     last_ratings: dict = {}  # 最終値格納用
 
@@ -297,17 +296,17 @@ def matrix_table():
     # 順位テーブルの作成
     l_data: dict = {}
     for pname in plist:
-        if g.opt.individual:  # 個人集計
+        if g.params.get("individual"):  # 個人集計
             l_name = c.member.name_replace(pname)
             # プレイヤー指定があるなら対象以外をスキップ
-            if g.prm.player_list:
-                if l_name not in g.prm.player_list.values():
+            if g.params["player_list"]:
+                if l_name not in g.params["player_list"].values():
                     continue
             # ゲスト置換
-            if g.opt.guest_skip:  # ゲストあり
+            if g.params.get("guest_skip"):  # ゲストあり
                 l_name = c.member.name_replace(pname, add_mark=True)
             else:  # ゲストなし
-                if pname == g.prm.guest_name:
+                if pname == g.cfg.member.guest_name:
                     continue
         else:  # チーム集計
             l_name = pname
@@ -327,9 +326,9 @@ def matrix_table():
                     l_data[l_name] += [None]
 
     # 規定打数以下を足切り
-    if g.prm.stipulated:
+    if g.params["stipulated"]:
         for pname in list(l_data.keys()):
-            if sum(x is not None for x in l_data[pname]) <= g.prm.stipulated:
+            if sum(x is not None for x in l_data[pname]) <= g.params["stipulated"]:
                 l_data.pop(pname)
 
     rank_df = pd.DataFrame(

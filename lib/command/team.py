@@ -41,7 +41,7 @@ def get_teammates():
     """
 
     member = []
-    team_data = [x for x in g.team_list if x["team"] == g.prm.player_name]
+    team_data = [x for x in g.team_list if x["team"] == g.params["player_name"]]
     if team_data:
         if team_data[0]["member"]:
             member = team_data[0]['member'].split(",")
@@ -147,7 +147,7 @@ def append(argument):
         msg = create(argument)
 
     if len(argument) == 2:  # チーム所属
-        g.opt.unregistered_replace = False
+        g.params.update(unregistered_replace=False)
 
         team_name = f.common.han_to_zen(argument[0])
         player_name = c.member.name_replace(argument[1])
@@ -213,7 +213,7 @@ def remove(argument):
     # todo: argument == 1のときの処理
 
     if len(argument) == 2:  # チーム名指
-        g.opt.unregistered_replace = False
+        g.params.update(unregistered_replace=False)
         team_name = f.common.han_to_zen(argument[0])
         player_name = c.member.name_replace(argument[1])
 

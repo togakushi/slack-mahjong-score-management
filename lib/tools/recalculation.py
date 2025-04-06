@@ -16,7 +16,7 @@ def main():
     d.common.db_backup()
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
-        rows = cur.execute("select * from result where rule_version=?;", (g.prm.rule_version,))
+        rows = cur.execute("select * from result where rule_version=?;", (g.cfg.mahjong.rule_version,))
         count = 0
 
         for row in rows:
@@ -29,7 +29,7 @@ def main():
             ]
             ret = f.score.get_score(detection)
             ret["ts"] = row["ts"]
-            cur.execute(d.SQL_RESULT_UPDATE, ret)
+            cur.execute(g.SQL_RESULT_UPDATE, ret)
             count += 1
 
         cur.commit()

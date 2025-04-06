@@ -23,7 +23,7 @@ def read_memberslist(log=True):
     resultdb.row_factory = sqlite3.Row
 
     rows = resultdb.execute("select name from member where id=0")
-    g.prm.guest_name = rows.fetchone()[0]
+    g.cfg.member.guest_name = rows.fetchone()[0]
 
     rows = resultdb.execute("select name, member from alias")
     g.member_list = dict(rows.fetchall())
@@ -51,7 +51,7 @@ def read_memberslist(log=True):
     resultdb.close()
 
     if log:
-        logging.notice(f"guest_name: {g.prm.guest_name}")  # type: ignore
+        logging.notice(f"guest_name: {g.cfg.member.guest_name}")  # type: ignore
         logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
         logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")  # type: ignore
 
@@ -71,12 +71,12 @@ def name_replace(pname: str, add_mark: bool = False, mask: bool = True) -> str:
     pname = f.common.han_to_zen(pname)
     check_list = list(set(g.member_list.keys()))
 
-    if g.opt.anonymous and mask:
-        member_id = get_member_id().get(pname, 0)
-        anonymous_name = f"Player_{member_id:03d}"
-        if pname.startswith("Player_"):
-            return (f.common.zen_to_han(pname))
-        return (f.common.zen_to_han(anonymous_name))
+    # if g.params.get("anonymous") and mask:
+    #     member_id = get_member_id().get(pname, 0)
+    #     anonymous_name = f"Player_{member_id:03d}"
+    #     if pname.startswith("Player_"):
+    #         return (f.common.zen_to_han(pname))
+    #     return (f.common.zen_to_han(anonymous_name))
 
     if pname in check_list:
         return (g.member_list[pname])
@@ -96,8 +96,8 @@ def name_replace(pname: str, add_mark: bool = False, mask: bool = True) -> str:
         return (g.member_list[f.common.hira_to_kana(pname)])
 
     # メンバーリストに見つからない場合
-    if g.opt.unregistered_replace:
-        return (g.prm.guest_name)
+    if g.params.get("unregistered_replace"):
+        return (g.cfg.member.guest_name)
     if add_mark:
         return (f"{pname}({g.cfg.setting.guest_mark})")
 
@@ -198,10 +198,9 @@ def member_info(name):
 
     resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
-    rows = resultdb.execute(sql, (g.prm.rule_version, name))
+    rows = resultdb.execute(sql, (g.cfg.mahjong.rule_version, name))
     ret = dict(rows.fetchone())
     resultdb.close()
-
     return (ret)
 
 
@@ -342,3 +341,23 @@ def member_remove(argument):
     read_memberslist()
 
     return (msg)
+
+
+def get_member() -> list:
+    """メンバーリストを返す
+
+    Returns:
+        list: メンバーリスト
+    """
+
+    return (list(set(g.member_list.values())))
+
+
+def get_team() -> list:
+    """チームリストを返す
+
+    Returns:
+        list: チームリスト
+    """
+
+    return ([x.get("team") for x in g.team_list])

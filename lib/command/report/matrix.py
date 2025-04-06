@@ -19,7 +19,7 @@ def plot():
     """
 
     game_info = d.aggregate.game_info()
-    g.prm.stipulated_update(g.opt, game_info["game_count"])
+    g.params.update(stipulated=g.cfg.report.stipulated_calculation(game_info["game_count"]))
 
     # データ集計
     df = d.aggregate.matrix_table()
@@ -34,10 +34,10 @@ def plot():
     # 保存
     file_name = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}" if g.opt.filename else "matrix"
+        f"{g.params["filename"]}" if g.params.get("filename") else "matrix",
     )
 
-    if g.opt.format == "csv":
+    if g.params.get("format", "default").lower() == "csv":
         file_path = file_name + ".csv"
         df.to_csv(file_path)
     else:

@@ -5,30 +5,29 @@ lib/command/results/slackpost.py
 import lib.global_value as g
 from lib import function as f
 from lib.command.results import detail, rating, summary, versus
+from lib.database.common import placeholder
 
 
 def main():
     """成績の集計結果をslackにpostする"""
-    g.opt.initialization("results", g.msg.argument)
-    g.prm.update(g.opt)
-
+    g.params = placeholder(g.cfg.results)
     # モード切り替え
     versus_mode = False
-    if g.opt.versus_matrix:
+    if g.cfg.results.versus_matrix:
         versus_mode = True
-        if len(g.prm.player_list) == 0:
+        if len(g.params["player_list"]) == 0:
             versus_mode = False
-        if len(g.prm.player_list) == 1 and not g.opt.all_player:
+        if len(g.params["player_list"]) == 1 and not g.cfg.results.all_player:
             versus_mode = False
 
     # ---
-    if len(g.prm.player_list) == 1 and not versus_mode:  # 個人/チーム成績詳細
+    if len(g.params["player_list"]) == 1 and not versus_mode:  # 個人/チーム成績詳細
         msg1, msg2 = detail.aggregation()
         f.slack_api.slack_post(
             headline=msg1,
             message=msg2,
         )
-    elif g.opt.rating:  # レーティング
+    elif g.params.get("rating"):  # レーティング
         msg1, msg2, file_list = rating.aggregation()
         f.slack_api.slack_post(
             headline=msg1,

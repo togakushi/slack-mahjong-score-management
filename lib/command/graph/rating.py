@@ -35,13 +35,13 @@ def plot():
         return (0, f.message.reply(message="no_hits"))
 
     # 足切り
-    g.prm.stipulated_update(g.opt, game_info["game_count"])
-    df_dropped = df_ratings.dropna(axis=1, thresh=g.prm.stipulated).ffill()
+    g.params.update(stipulated=g.cfg.graph.stipulated_calculation(game_info["game_count"]))
+    df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
 
     # ゲスト置換
     for player in df_dropped.columns:
         if player not in g.member_list:
-            if g.opt.unregistered_replace:
+            if g.params.get("unregistered_replace"):
                 df_dropped = df_dropped.drop(columns=[player])
             else:
                 df_dropped = df_dropped.rename(
@@ -49,11 +49,11 @@ def plot():
                         player: c.member.name_replace(player, add_mark=True)
                     }
                 )
-    if g.opt.anonymous:
-        id_list = c.member.get_member_id()
-        for name, member_id in list(id_list.items()):
-            id_list[name] = f"Player_{member_id:03d}"
-        df_dropped = df_dropped.rename(columns=id_list)
+    # if g.params.get("anonymous"):
+    #     id_list = c.member.get_member_id()
+    #     for name, member_id in list(id_list.items()):
+    #         id_list[name] = f"Player_{member_id:03d}"
+    #     df_dropped = df_dropped.rename(columns=id_list)
 
     # 並び変え
     sorted_columns = df_dropped.iloc[-1].sort_values(ascending=False).index
@@ -69,10 +69,10 @@ def plot():
 
     save_file = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.png" if g.opt.filename else "rating.png",
+        f"{g.params["filename"]}.png" if g.params.get("filename") else "rating.png",
     )
 
-    title_text = f"レーティング推移 ({g.prm.starttime.hm} - {g.prm.endtime.hm})"
+    title_text = f"レーティング推移 ({f.message.item_date_range("hm")})"
 
     legend_text = []
     count = 1

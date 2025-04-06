@@ -43,8 +43,8 @@ def get_game_results() -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query_modification(load_query("lib/queries/report/personal_data.sql")),
-        g.prm.to_dict(),
+        query_modification(load_query(os.path.join(g.script_dir, "lib/queries/report/personal_data.sql"))),
+        g.params,
     )
 
     # --- データ収集
@@ -100,16 +100,15 @@ def get_count_results(game_count: int) -> list:
         list: 集計結果のリスト
     """
 
-    g.prm.append({"interval": game_count})
-
+    g.params.update(interval=game_count)
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query_modification(load_query("lib/queries/report/count_data.sql")),
-        g.prm.to_dict(),
+        load_query(os.path.join(g.script_dir, "lib/queries/report/count_data.sql")),
+        g.params,
     )
 
     # --- データ収集
@@ -173,10 +172,10 @@ def get_count_moving(game_count: int) -> list:
     )
     resultdb.row_factory = sqlite3.Row
 
-    g.prm.append({"interval": game_count})
+    g.params.update(interval=game_count)
     rows = resultdb.execute(
-        query_modification(load_query("lib/queries/report/count_moving.sql")),
-        g.prm.to_dict(),
+        query_modification(load_query(os.path.join(g.script_dir, "lib/queries/report/count_moving.sql"))),
+        g.params,
     )
 
     # --- データ収集
@@ -365,11 +364,11 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
 
     plt.close()
 
-    if not g.prm.player_name:  # レポート対象の指定なし
+    if not g.params.get("player_name"):  # レポート対象の指定なし
         return (False, False)
 
     # 対象メンバーの記録状況
-    target_info = c.member.member_info(g.prm.player_name)
+    target_info = c.member.member_info(g.params["player_name"])
     logging.info(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし
@@ -379,7 +378,7 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
     pdf_path = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.pdf" if g.opt.filename else "Results.pdf"
+        f"{g.params["filename"]}.pdf" if g.params.get("filename") else "results.pdf",
     )
     pdfmetrics.registerFont(TTFont("ReportFont", font_path))
 
@@ -419,9 +418,9 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
     elements.extend(sectional_aggregate(style, target_info))  # 区間集計
 
     doc.build(elements)
-    logging.notice("report generation: %s", g.prm.player_name)  # type: ignore
+    logging.notice("report generation: %s", g.params["player_name"])  # type: ignore
 
-    return (g.prm.player_name, pdf_path)
+    return (g.params["player_name"], pdf_path)
 
 
 def cover_page(style: dict, target_info: dict) -> list:
@@ -444,10 +443,10 @@ def cover_page(style: dict, target_info: dict) -> list:
         float(target_info["last_game"])
     )
 
-    if g.opt.anonymous:
-        target_player = c.member.name_replace(g.prm.player_name)
+    if g.params.get("anonymous"):
+        target_player = c.member.name_replace(g.params["player_name"])
     else:
-        target_player = g.prm.player_name
+        target_player = g.params["player_name"]
 
     # 表紙
     elements.append(Spacer(1, 40 * mm))
@@ -486,7 +485,7 @@ def entire_aggregate(style: dict) -> list:
     elements.append(Paragraph("全期間", style["Left"]))
     elements.append(Spacer(1, 5 * mm))
     data: list = []
-    g.prm.aggregate_unit = "A"
+    g.cfg.aggregate_unit = "A"
     tmp_data = get_game_results()
 
     if not tmp_data:
@@ -587,7 +586,7 @@ def periodic_aggregation(style: dict) -> list:
         elements.append(Spacer(1, 5 * mm))
 
         data: list = []
-        g.prm.aggregate_unit = flag
+        g.cfg.aggregate_unit = flag
         tmp_data = get_game_results()
 
         if not tmp_data:

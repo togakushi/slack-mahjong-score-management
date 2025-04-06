@@ -10,7 +10,6 @@ import sys
 from functools import partial
 
 import lib.global_value as g
-from cls.parameter import CommandOption, Parameters
 from cls.parser import MessageParser
 from cls.search import SearchRange
 
@@ -158,15 +157,13 @@ def setup() -> None:
 
     g.cfg.read_file(os.path.join(g.script_dir, g.args.config))
     g.search_word = SearchRange()
-    g.opt = CommandOption()
-    g.prm = Parameters()
     g.msg = MessageParser()
 
     logging.notice("database: %s", g.cfg.db.database_file)  # type: ignore
     logging.notice("font: %s", g.cfg.setting.font_file)  # type: ignore
     logging.notice(  # type: ignore
         "rule_version: %s, origin_point: %s, return_point: %s, undefined_word: %s",
-        g.prm.rule_version, g.prm.origin_point, g.prm.return_point, g.cfg.undefined_word
+        g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.undefined_word
     )
 
     # 作業用ディレクトリ作成

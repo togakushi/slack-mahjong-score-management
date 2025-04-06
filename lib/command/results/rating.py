@@ -22,7 +22,7 @@ def aggregation():
     """
 
     # データ収集
-    # g.opt.guest_skip = False  # 2ゲスト戦強制取り込み
+    # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info = d.aggregate.game_info()
     df_results = d.common.read_data(os.path.join(g.script_dir, "lib/queries/ranking/results.sql")).set_index("name")
     df_ratings = d.aggregate.calculation_rating()
@@ -34,19 +34,19 @@ def aggregation():
     final["name"] = final.copy().index
 
     # 足切り
-    g.prm.stipulated_update(g.opt, game_info["game_count"])
-    final = final.query("count >= @g.prm.stipulated")
-    df_results = df_results.query("count >= @g.prm.stipulated")
+    g.params.update(stipulated=g.cfg.results.stipulated_calculation(game_info["game_count"]))
+    final = final.query("count >= @g.params['stipulated']")
+    df_results = df_results.query("count >= @g.params['stipulated']")
 
     df = pd.merge(df_results, final, on=["name"]).sort_values(by="rate", ascending=False)
 
     # 集計対象外データの削除
-    if g.opt.unregistered_replace:  # 個人戦
+    if g.params.get("unregistered_replace"):  # 個人戦
         for player in df.itertuples():
             if player.name not in g.member_list:
                 df = df.copy().drop(player.Index)
 
-    if not g.opt.individual:  # チーム戦
+    if not g.params.get("individual"):  # チーム戦
         df = df.copy().query("name != '未所属'")
 
     # 計算
@@ -91,7 +91,7 @@ def aggregation():
         table = df[s:e].to_markdown(**table_param)
         msg[s] = f"```\n{table}\n```\n"
 
-    match g.opt.format.lower():
+    match g.params.get("format", "default").lower().lower():
         case "csv":
             file_list = {
                 "レーティング": f.common.save_output(df, "csv", "rating.csv", headline),

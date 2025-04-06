@@ -4,6 +4,7 @@ lib/command/graph/summary.py
 
 import logging
 import os
+from typing import Tuple
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -40,34 +41,25 @@ def point_plot():
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
-    if g.prm.target_count:
-        title_text = f"ポイント推移 (直近 {g.prm.target_count} ゲーム)"
+    if g.params.get("target_count"):
+        title_text = f"ポイント推移 (直近 {g.params["target_count"]} ゲーム)"
         xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
     else:
-        match g.opt.collection:
+        match g.params["collection"]:
             case "daily":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime.ymd == g.prm.endonday.ymd:
-                    title_text = f"通算ポイント ({g.prm.starttime.ymd})"
-                else:
-                    title_text = f"ポイント推移 ({g.prm.starttime.ymd} - {g.prm.endonday.ymd})"
+                title_text = f.message.item_date_range("d_o", "通算ポイント", "ポイント推移")
             case "monthly":
                 xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime.ym == g.prm.endonday.ym:
-                    title_text = f"通算ポイント ({g.prm.starttime.ym})"
-                else:
-                    title_text = f"ポイント推移 ({g.prm.starttime.ym} - {g.prm.endonday.ym})"
+                title_text = f.message.item_date_range("jm_o", "通算ポイント", "ポイント推移")
             case "yearly":
                 xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime.y == g.prm.endonday.y:
-                    title_text = f"通算ポイント ({g.prm.starttime.y}年)"
-                else:
-                    title_text = f"ポイント推移 ({g.prm.starttime.y}年 - {g.prm.endonday.y}年)"
+                title_text = f.message.item_date_range("jy_o", "通算ポイント", "ポイント推移")
             case "all":
                 xlabel_text = f"総ゲーム数：{game_info['game_count']}"
-                title_text = f"通算ポイント ({g.prm.starttime.ymd} - {g.prm.endonday.ymd})"
+                title_text = f.message.item_date_range("hm", "通算ポイント", "ポイント推移")
             case _:
-                if g.opt.search_word:
+                if g.params.get("search_word"):
                     pivot_index = "comment"
                     xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
                     if game_info["first_comment"] == game_info["last_comment"]:
@@ -76,12 +68,12 @@ def point_plot():
                         title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-                    title_text = f"ポイント推移 ({g.prm.starttime.hm} - {g.prm.endtime.hm})"
-                    if g.prm.starttime.ymd == g.prm.endonday.ymd and game_info["game_count"] == 1:
-                        title_text = f"獲得ポイント ({g.prm.starttime.ymd})"
+                    title_text = f.message.item_date_range("hm", "通算ポイント", "ポイント推移")
+                    if f.common.ts_conv(g.params["starttime"], "d") == f.common.ts_conv(g.params["onday"], "d") and game_info["game_count"] == 1:
+                        title_text = f"獲得ポイント ({f.common.ts_conv(g.params["starttime"], "d")})"
 
     # 集計
-    if g.opt.individual:  # 個人集計
+    if g.params.get("individual"):  # 個人集計
         legend = "name"
     else:  # チーム集計
         legend = "team"
@@ -110,7 +102,7 @@ def point_plot():
     return (game_info["game_count"], save_file)
 
 
-def rank_plot():
+def rank_plot() -> Tuple[int, str]:
     """順位変動グラフを生成する
 
     Returns:
@@ -133,34 +125,25 @@ def rank_plot():
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
-    if g.prm.target_count:
-        title_text = f"順位変動 (直近 {g.prm.target_count} ゲーム)"
+    if g.params.get("target_count"):
+        title_text = f"順位変動 (直近 {g.params["target_count"]} ゲーム)"
         xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
     else:
-        match g.opt.collection:
+        match g.params["collection"]:
             case "daily":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime.ymd == g.prm.endonday.ymd:
-                    title_text = f"順位 ({g.prm.starttime.ymd})"
-                else:
-                    title_text = f"順位変動 ({g.prm.starttime.ymd} - {g.prm.endonday.ymd})"
+                title_text = f.message.item_date_range("d_o", "順位", "順位変動")
             case "monthly":
                 xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime.ym == g.prm.endonday.ym:
-                    title_text = f"順位 ({g.prm.starttime.ym})"
-                else:
-                    title_text = f"順位変動 ({g.prm.starttime.ym} - {g.prm.endonday.ym})"
+                title_text = f.message.item_date_range("jm", "順位", "順位変動")
             case "yearly":
                 xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
-                if g.prm.starttime.y == g.prm.endonday.y:
-                    title_text = f"順位 ({g.prm.starttime.y}年)"
-                else:
-                    title_text = f"順位変動 ({g.prm.starttime.y}年 - {g.prm.endonday.y}年)"
+                title_text = f.message.item_date_range("jy", "順位", "順位変動")
             case "all":
                 xlabel_text = f"総ゲーム数：{game_info['game_count']}"
-                title_text = f"順位 ({g.prm.starttime.ymd} - {g.prm.endonday.ymd})"
+                title_text = f.message.item_date_range("hm", "順位", "順位変動")
             case _:
-                if g.opt.search_word:
+                if g.params.get("search_word"):
                     pivot_index = "comment"
                     xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
                     if game_info["first_comment"] == game_info["last_comment"]:
@@ -169,12 +152,12 @@ def rank_plot():
                         title_text = f"順位変動 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-                    title_text = f"順位変動 ({g.prm.starttime.hm} - {g.prm.endtime.hm})"
-                    if g.prm.starttime.ymd == g.prm.endonday.ymd and game_info["game_count"] == 1:
-                        title_text = f"順位 ({g.prm.starttime.ymd})"
+                    title_text = f.message.item_date_range("hm", "順位", "順位変動")
+                    if f.common.ts_conv(g.params["starttime"], "d") == f.common.ts_conv(g.params["onday"], "d") and game_info["game_count"] == 1:
+                        title_text = f"順位 ({f.common.ts_conv(g.params["starttime"], "d")})"
 
     # 集計
-    if g.opt.individual:  # 個人集計
+    if g.params.get("individual"):  # 個人集計
         legend = "name"
     else:  # チーム集計
         legend = "team"
@@ -204,7 +187,7 @@ def rank_plot():
     return (game_info["game_count"], save_file)
 
 
-def _data_collection():
+def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
     """データ収集
 
     Returns:
@@ -214,10 +197,10 @@ def _data_collection():
     """
 
     # データ収集
-    g.opt.fourfold = True  # 直近Nは4倍する(縦持ちなので4人分)
+    g.params.update(fourfold=True)  # 直近Nは4倍する(縦持ちなので4人分)
 
     target_data = pd.DataFrame()
-    if g.opt.individual:  # 個人集計
+    if g.params.get("individual"):  # 個人集計
         df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
@@ -227,8 +210,9 @@ def _data_collection():
         target_data["game_count"] = df.groupby("name", as_index=False).max(numeric_only=True)["count"]
 
         # 足切り
+
         target_list = list(
-            target_data.query("game_count >= @g.opt.stipulated")["name"]
+            target_data.query("game_count >= @g.params['stipulated']")["name"]
         )
         _ = target_list  # ignore PEP8 F841
         target_data = target_data.query("name == @target_list").copy()
@@ -253,7 +237,7 @@ def _data_collection():
     return (target_data.sort_values("position"), df)
 
 
-def _graph_generation(df: pd.DataFrame, **kwargs):
+def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
     """グラフ生成共通処理
 
     Args:
@@ -266,12 +250,12 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
     save_file = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.png" if g.opt.filename else "graph.png"
+        f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
     f.common.graph_setup(plt, fm)
 
-    if (all(df.count() == 1) or g.opt.collection == "all") and kwargs["horizontal"]:
+    if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
         kwargs["kind"] = "barh"
         lab: list = []
         color: list = []

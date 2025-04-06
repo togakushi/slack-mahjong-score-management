@@ -2,35 +2,35 @@
 lib/command/report/slackpost.py
 """
 
-import lib.global_value as g
 import lib.function as f
-from lib.command.report import matrix, monthly, results_list, results_report, winner
+import lib.global_value as g
+from lib.command.report import (matrix, monthly, results_list, results_report, winner)
+from lib.database.common import placeholder
 
 
 def main():
     """レポートをslackにpostする"""
-    g.opt.initialization("report", g.msg.argument)
-    g.prm.update(g.opt)
+    g.params = placeholder(g.cfg.report)
 
-    if len(g.prm.player_list) == 1:  # 成績レポート
+    if len(g.params["player_list"]) == 1:  # 成績レポート
         name, pdf_file = results_report.gen_pdf()
         if pdf_file:
             f.slack_api.post_fileupload(f"成績レポート({name})", pdf_file)
         else:
             f.slack_api.post_message(f.message.reply(message="invalid_argument"))
-    elif g.opt.order:
+    elif g.params.get("order"):
         report_file_path = winner.plot()
         if report_file_path:
             f.slack_api.post_fileupload("成績上位者", report_file_path)
         else:
             f.slack_api.post_message(f.message.reply(message="no_hits"))
-    elif g.opt.statistics:
+    elif g.params.get("statistics"):
         report_file_path = monthly.plot()
         if report_file_path:
             f.slack_api.post_fileupload("月別ゲーム統計", report_file_path)
         else:
             f.slack_api.post_message(f.message.reply(message="no_hits"))
-    elif g.opt.versus_matrix or len(g.prm.player_list) >= 2:  # 対局対戦マトリックス
+    elif g.params.get("versus_matrix") or len(g.params["player_list"]) >= 2:  # 対局対戦マトリックス
         msg, file_list = matrix.plot()
         if g.args.testcase:
             f.common.debug_out(msg)

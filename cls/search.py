@@ -22,9 +22,7 @@ class SearchRange():
         self.update()
 
     def update(self) -> None:
-        """キーワードから日付を取得する
-        """
-
+        """キーワードから日付を取得する"""
         self.current_time = datetime.now()
         self.appointed_time = self.current_time + relativedelta(hours=-12)
         self.words["当日"] = [

@@ -15,12 +15,8 @@ from lib import function as f
 
 
 def main():
-    """ランキングをslackにpostする
-    """
-
-    g.opt.initialization("ranking", g.msg.argument)
-    g.prm.update(g.opt)
-
+    """ランキングをslackにpostする"""
+    g.params = d.common.placeholder(g.cfg.ranking)
     msg1, msg2 = aggregation()
     res = f.slack_api.post_message(msg1)
     if msg2:
@@ -41,7 +37,7 @@ def aggregation() -> Tuple[str, Any]:
     if game_info["game_count"] == 0:  # 結果が0件のとき
         return (f.message.reply(message="no_hits"), None)
 
-    g.prm.stipulated_update(g.opt, game_info["game_count"])
+    g.params.update(stipulated=g.cfg.results.stipulated_calculation(game_info["game_count"]))
     result_df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/ranking/aggregate.sql"))
     if result_df.empty:
         return (f.message.reply(message="no_hits"), None)
@@ -127,7 +123,7 @@ def aggregation() -> Tuple[str, Any]:
     data["連続ラス回避"] = table_conversion(df, ["c_top3", 2])
 
     # --- 表示
-    if g.opt.individual:  # 個人集計
+    if g.params.get("individual"):  # 個人集計
         msg = "\n*【ランキング】*\n"
     else:  # チーム集計
         msg = "\n*【チームランキング】*\n"

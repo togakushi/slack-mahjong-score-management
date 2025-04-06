@@ -24,12 +24,12 @@ def main():
     """
 
     # 検索動作を合わせる
-    g.opt.guest_skip = g.opt.guest_skip2
+    g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ取得
     # 規定打数計算
     game_info = d.aggregate.game_info()
-    g.prm.stipulated_update(g.opt, game_info["game_count"])
+    g.params.update(stipulated=g.cfg.report.stipulated_calculation(game_info["game_count"]))
 
     df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/results_list.sql")).reset_index(drop=True)
     df.index = df.index + 1
@@ -37,7 +37,7 @@ def main():
         return (False)
 
     # 見出し設定
-    if g.opt.individual:
+    if g.params.get("individual"):
         title = "個人成績一覧"
         df = df.rename(columns={"name": "player"})
     else:  # チーム集計
@@ -45,7 +45,7 @@ def main():
         df = df.rename(columns={"name": "team"})
 
     # 非表示項目
-    if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
+    if g.cfg.mahjong.ignore_flying:
         df = df.drop(columns=["flying_mix", "flying_count", "flying_%"])
     if "トビ" in g.cfg.dropitems.report:
         df = df.drop(columns=["flying_mix", "flying_count", "flying_%"])
@@ -54,7 +54,7 @@ def main():
     if "役満和了" in g.cfg.dropitems.report:
         df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_%"])
 
-    match g.opt.format:
+    match g.params.get("format", "default").lower():
         case "text" | "txt":
             file_path = text_generation(df)
         case "csv":
@@ -88,7 +88,7 @@ def graph_generation(game_info, df, title):
 
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.png" if g.opt.filename else "report.png"
+        f"{g.params["filename"]}.png" if g.params.get("filename") else "report.png",
     )
 
     # フォント/色彩設定
@@ -168,7 +168,7 @@ def text_generation(df):
 
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.txt" if g.opt.filename else "report.txt"
+        f"{g.params["filename"]}.txt" if g.params.get("filename") else "report.txt",
     )
 
     df = df.filter(
@@ -215,7 +215,7 @@ def csv_generation(df):
 
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.csv" if g.opt.filename else "report.csv"
+        f"{g.params["filename"]}.csv" if g.params.get("filename") else "report.csv",
     )
 
     df = df.filter(

@@ -32,9 +32,9 @@ def plot() -> Tuple[int, str]:
 
     plt.close()
     # データ収集
-    g.opt.guest_skip = g.opt.guest_skip2
+    g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
-    player = c.member.name_replace(g.prm.player_name, add_mark=True)
+    player = c.member.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
         return (0, f.message.reply(message="no_hits"))
@@ -51,15 +51,15 @@ def plot() -> Tuple[int, str]:
     # --- グラフ生成
     save_file = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.png" if g.opt.filename else "graph.png",
+        f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
     f.common.graph_setup(plt, fm)
 
     fig = plt.figure(figsize=(12, 8))
 
-    if g.prm.target_count == 0:
-        title_text = f"『{player}』の成績 ({g.prm.starttime.hm} - {g.prm.endtime.hm})"
+    if g.params.get("target_count") == 0:
+        title_text = f"『{player}』の成績 ({f.common.ts_conv(g.params["starttime"], "hm")} - {f.common.ts_conv(g.params["endtime"], "hm")})"
     else:
         title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
 
@@ -134,7 +134,7 @@ def statistics_plot() -> Tuple[int, str]:
 
     plt.close()
     # データ収集
-    g.opt.guest_skip = g.opt.guest_skip2
+    g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql"))
 
     if df.empty:
@@ -143,7 +143,7 @@ def statistics_plot() -> Tuple[int, str]:
     df = df.filter(items=["playtime", "name", "rpoint", "rank", "point"])
     df["rpoint"] = df["rpoint"] * 100
 
-    player = c.member.name_replace(g.prm.player_name, add_mark=True)
+    player = c.member.name_replace(g.params["player_name"], add_mark=True)
     player_df = df.query("name == @player").reset_index(drop=True)
 
     if player_df.empty:
@@ -154,14 +154,14 @@ def statistics_plot() -> Tuple[int, str]:
     # --- グラフ生成
     save_file = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.png" if g.opt.filename else "graph.png",
+        f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
-    title_text = f"『{player}』の成績 (検索範囲：{g.prm.starttime.ymd} - {g.prm.endtime.ymd})"
+    title_text = f"『{player}』の成績 (検索範囲：{f.message.item_date_range("d")})"
 
-    rpoint_df = get_data(player_df["rpoint"], g.opt.interval)
-    point_sum_df = get_data(player_df["point"], g.opt.interval)
-    point_df = get_data(player_df["sum_point"], g.opt.interval).iloc[-1]
-    rank_df = get_data(player_df["rank"], g.opt.interval)
+    rpoint_df = get_data(player_df["rpoint"], g.params["interval"])
+    point_sum_df = get_data(player_df["point"], g.params["interval"])
+    point_df = get_data(player_df["sum_point"], g.params["interval"]).iloc[-1]
+    rank_df = get_data(player_df["rank"], g.params["interval"])
     total_index = "全区間"
 
     rpoint_stats = {

@@ -9,12 +9,16 @@ import shutil
 import sqlite3
 from contextlib import closing
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
 import lib.global_value as g
-from lib import database as d
 from lib import function as f
+
+
+if TYPE_CHECKING:
+    from cls.subcom import SubCommand
 
 
 def load_query(filepath: str) -> str:
@@ -47,18 +51,67 @@ def read_data(filepath: str) -> pd.DataFrame:
     df = pd.read_sql(
         sql,
         sqlite3.connect(g.cfg.db.database_file),
-        params=g.prm.to_dict(),
+        params=g.params,
     )
 
     # デバッグ用
     pd.set_option("display.max_rows", None)
     pd.set_option("display.max_columns", None)
-    logging.trace("opt: opt=%s", vars(g.opt))  # type: ignore
-    logging.trace("prm: prm=%s", vars(g.prm))  # type: ignore
-    logging.trace("sql: sql=%s", named_query(sql, g.prm.to_dict()))  # type: ignore
+    logging.trace("prm: %s", g.params)  # type: ignore
+    logging.trace("sql: %s", named_query(sql))  # type: ignore
     logging.trace(df)  # type: ignore
 
     return (df)
+
+
+def placeholder(subcom: "SubCommand") -> dict:
+    """オプション/パラメータを更新
+
+    Args:
+        subcom (SubCommand): パラメータ
+
+    Returns:
+        dict: プレースホルダ用辞書
+    """
+
+    ret_dict: dict = {}
+    ret_dict.update(command=subcom.section)
+    ret_dict.update(g.cfg.mahjong.to_dict())
+    ret_dict.update(guest_name=g.cfg.member.guest_name)
+    ret_dict.update(f.common.analysis_argument(g.msg.argument))
+    ret_dict.update(subcom.update(g.msg.argument))
+    ret_dict.update(subcom.to_dict())
+    ret_dict.update(interval=g.cfg.interval)
+    ret_dict.update(format=g.cfg.format)
+    ret_dict.update(filename=g.cfg.filename)
+    ret_dict.update(aggregate_unit=g.cfg.aggregate_unit)
+    ret_dict.update(starttime=ret_dict["search_range"]["starttime"])
+    ret_dict.update(endtime=ret_dict["search_range"]["endtime"])
+    ret_dict.update(onday=ret_dict["search_range"]["onday"])
+
+    if ret_dict["player_list"]:
+        for k, v in ret_dict["player_list"].items():
+            ret_dict[k] = v
+
+    if ret_dict["competition_list"]:
+        for k, v in ret_dict["competition_list"].items():
+            ret_dict[k] = v
+
+    if ret_dict.get("search_word"):
+        ret_dict.update(search_word=f"%{ret_dict["search_word"]}%")
+
+    drop_keys: list = [
+        "config",
+        "rank_point",
+        "aggregation_range",
+        "regulations_type2",
+        "search_range",
+    ]
+    for key in drop_keys:
+        if key in ret_dict:
+            ret_dict.pop(key)
+
+    return (ret_dict)
 
 
 def query_modification(sql: str) -> str:
@@ -71,26 +124,26 @@ def query_modification(sql: str) -> str:
         str: 修正後のクエリ
     """
 
-    if g.opt.individual:  # 個人集計
+    if g.params.get("individual"):  # 個人集計
         sql = sql.replace("--[individual] ", "")
         # ゲスト関連フラグ
-        if g.opt.unregistered_replace:
+        if g.params.get("unregistered_replace"):
             sql = sql.replace("--[unregistered_replace] ", "")
-            if g.opt.guest_skip:
+            if g.params.get("guest_skip"):
                 sql = sql.replace("--[guest_not_skip] ", "")
             else:
                 sql = sql.replace("--[guest_skip] ", "")
         else:
             sql = sql.replace("--[unregistered_not_replace] ", "")
     else:  # チーム集計
-        g.opt.unregistered_replace = False
-        g.opt.guest_skip = True
+        g.params.update(unregistered_replace=False)
+        g.params.update(guest_skip=True)
         sql = sql.replace("--[team] ", "")
-        if not g.opt.friendly_fire:
+        if not g.params.get("friendly_fire"):
             sql = sql.replace("--[friendly_fire] ", "")
 
     # 集約集計
-    match g.opt.collection:
+    match g.params.get("collection"):
         case "daily":
             sql = sql.replace("--[collection_daily] ", "")
             sql = sql.replace("--[collection] ", "")
@@ -106,44 +159,44 @@ def query_modification(sql: str) -> str:
         case _:
             sql = sql.replace("--[not_collection] ", "")
 
-    if g.prm.search_word or g.prm.get("group_length"):
+    # コメント検索
+    if g.params.get("search_word") or g.params.get("group_length"):
         sql = sql.replace("--[group_by] ", "")
     else:
         sql = sql.replace("--[not_group_by] ", "")
 
-    # コメント検索
-    if g.opt.search_word:
+    if g.params.get("search_word"):
         sql = sql.replace("--[search_word] ", "")
     else:
         sql = sql.replace("--[not_search_word] ", "")
 
-    if g.opt.group_length:
+    if g.params.get("group_length"):
         sql = sql.replace("--[group_length] ", "")
     else:
         sql = sql.replace("--[not_group_length] ", "")
-        if g.prm.search_word:
+        if g.params.get("search_word"):
             sql = sql.replace("--[comment] ", "")
         else:
             sql = sql.replace("--[not_comment] ", "")
 
     # 直近N検索用（全範囲取得してから絞る）
-    if g.prm.target_count != 0:
+    if g.params.get("target_count") != 0:
         sql = sql.replace(
             "and my.playtime between",
             "-- and my.playtime between"
         )
 
     # プレイヤーリスト
-    if g.prm.player_name:
+    if g.params.get("player_name"):
         sql = sql.replace("--[player_name] ", "")
         sql = sql.replace(
             "<<player_list>>",
-            ":" + ", :".join(list([*g.prm.player_list]))
+            ":" + ", :".join(g.params["player_list"])
         )
     sql = sql.replace("<<guest_mark>>", g.cfg.setting.guest_mark)
 
     # フラグの処理
-    match g.prm.aggregate_unit:
+    match g.cfg.aggregate_unit:
         case "M":
             sql = sql.replace("<<collection>>", "substr(collection_daily, 1, 7) as 集計")
             sql = sql.replace("<<group by>>", "group by 集計")
@@ -154,16 +207,16 @@ def query_modification(sql: str) -> str:
             sql = sql.replace("<<collection>>", "'合計' as 集計")
             sql = sql.replace("<<group by>>", "")
 
-    if g.prm.get("interval") is not None:
-        if g.prm.get("interval") == 0:
+    if g.params.get("interval") is not None:
+        if g.params.get("interval") == 0:
             sql = sql.replace("<<Calculation Formula>>", ":interval")
         else:
             sql = sql.replace(
                 "<<Calculation Formula>>",
                 "(row_number() over (order by total_count desc) - 1) / :interval"
             )
-    if g.prm.get("kind") is not None:
-        if g.prm.get("kind") == "grandslam":
+    if g.params.get("kind") is not None:
+        if g.params.get("kind") == "grandslam":
             if g.cfg.undefined_word == 0:
                 sql = sql.replace("<<where_string>>", "and (words.type is null or words.type = 0)")
             else:
@@ -184,22 +237,21 @@ def query_modification(sql: str) -> str:
     return (sql)
 
 
-def named_query(query: str, params: dict) -> str:
+def named_query(query: str) -> str:
     """クエリにパラメータをバインドして返す
 
     Args:
         query (str): SQL
-        params (dict): パラメータ
 
     Returns:
         str: バインド済みSQL
     """
 
-    for k, v in params.items():
+    for k, v in g.params.items():
         if isinstance(v, datetime):
-            params[k] = v.strftime("%Y-%m-%d %H:%M:%S")
+            g.params[k] = v.strftime("%Y-%m-%d %H:%M:%S")
 
-    return re.sub(r":(\w+)", lambda m: repr(params.get(m.group(1), m.group(0))), query)
+    return re.sub(r":(\w+)", lambda m: repr(g.params.get(m.group(1), m.group(0))), query)
 
 
 def exsist_record(ts) -> dict:
@@ -256,14 +308,14 @@ def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> N
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
-        "rule_version": g.prm.rule_version,
+        "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
     param.update(f.score.get_score(detection))
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(d.SQL_RESULT_INSERT, param)
+            cur.execute(g.SQL_RESULT_INSERT, param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         f.score.reactions(param)
@@ -283,14 +335,14 @@ def db_update(detection: list, ts: str, reactions_data: list | None = None) -> N
     param = {
         "ts": ts,
         "playtime": datetime.fromtimestamp(float(ts)),
-        "rule_version": g.prm.rule_version,
+        "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
     param.update(f.score.get_score(detection))
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(d.SQL_RESULT_UPDATE, param)
+            cur.execute(g.SQL_RESULT_UPDATE, param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         f.score.reactions(param)
@@ -308,9 +360,9 @@ def db_delete(ts):
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
             delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
-            cur.execute(d.SQL_RESULT_DELETE, (ts,))
+            cur.execute(g.SQL_RESULT_DELETE, (ts,))
             delete_result = cur.execute("select changes();").fetchone()[0]
-            cur.execute(d.SQL_REMARKS_DELETE_ALL, (ts,))
+            cur.execute(g.SQL_REMARKS_DELETE_ALL, (ts,))
             delete_remark = cur.execute("select changes();").fetchone()[0]
             cur.commit()
 
@@ -381,7 +433,7 @@ def remarks_append(remarks: dict | list) -> None:
                 row = cur.execute("select * from result where ts=:thread_ts", para).fetchone()
                 if row:
                     if para["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
-                        cur.execute(d.SQL_REMARKS_INSERT, para)
+                        cur.execute(g.SQL_REMARKS_INSERT, para)
                         logging.notice("insert: %s, user=%s", para, g.msg.user_id)  # type: ignore
 
                         if g.cfg.setting.reaction_ok not in f.slack_api.reactions_status(ts=para.get("event_ts")):
@@ -399,7 +451,7 @@ def remarks_delete(ts: str) -> None:
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(d.SQL_REMARKS_DELETE_ONE, (ts,))
+            cur.execute(g.SQL_REMARKS_DELETE_ONE, (ts,))
             count = cur.execute("select changes();").fetchone()[0]
             cur.commit()
 
@@ -421,7 +473,7 @@ def remarks_delete_compar(para: dict) -> None:
     ch: str | None
 
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-        cur.execute(d.SQL_REMARKS_DELETE_COMPAR, para)
+        cur.execute(g.SQL_REMARKS_DELETE_COMPAR, para)
         cur.commit()
 
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]

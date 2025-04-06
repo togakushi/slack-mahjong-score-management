@@ -16,39 +16,37 @@ from lib import function as f
 
 def aggregation():
     """個人/チーム成績詳細を集計して返す
-
     Returns:
         dict: slackにpostするデータ
     """
 
     # 検索動作を合わせる
-    g.opt.guest_skip = g.opt.guest_skip2
+    g.params.update(guest_skip=g.params.get("guest_skip2"))
 
-    if g.prm.player_name in [x["team"] for x in g.team_list]:
-        g.opt.individual = False
-    elif g.prm.player_name in g.member_list:
-        g.opt.individual = True
+    if g.params["player_name"] in [x["team"] for x in g.team_list]:
+        g.params.update(individual=False)
+    elif g.params["player_name"] in g.member_list:
+        g.params.update(individual=True)
 
-    if not g.opt.individual and not c.team.get_teammates():
+    if not g.params.get("individual") and not c.team.get_teammates():
         return ("登録されていないチームです", {})
 
     # --- データ収集
-    msg_data: dict = {}
     game_info = d.aggregate.game_info()
+    msg_data: dict = {}
 
     if game_info["game_count"] == 0:
-        msg_data["検索範囲"] = f"{g.prm.starttime.hms} ～ {g.prm.endtime.hms}"
+        msg_data["検索範囲"] = f"{f.common.ts_conv(g.params["starttime"], "hms")}"
+        msg_data["検索範囲"] += f" ～ {f.common.ts_conv(g.params["endtime"], "hms")}"
         msg_data["特記事項"] = "、".join(f.message.remarks())
         msg_data["検索ワード"] = f.message.search_word()
         msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}"
         return (message_build(msg_data), {})
 
-    if g.opt.anonymous:
-        player_name = c.member.name_replace(g.prm.player_name, add_mark=True)
-        for idx, name in enumerate(g.opt.target_player):
-            g.opt.target_player[idx] = c.member.name_replace(name)
-    else:
-        player_name = c.member.name_replace(g.prm.player_name, add_mark=True)
+    player_name = c.member.name_replace(g.params["player_name"], add_mark=True)
+    # if g.params.get("anonymous"):
+    #     for idx, name in enumerate(g.opt.target_player):
+    #         g.opt.target_player[idx] = c.member.name_replace(name)
 
     result_df = d.aggregate.game_results()
     record_df = d.aggregate.ranking_record()
@@ -68,10 +66,10 @@ def aggregation():
     msg2.update(get_record(data))  # ベスト/ワーストレコード
     msg2.update(get_regulations())  # レギュレーション
 
-    if g.opt.game_results:  # 戦績
+    if g.params.get("game_results"):  # 戦績
         msg2["戦績"] = get_game_results()
 
-    if g.opt.versus_matrix:  # 対戦結果
+    if g.params.get("versus_matrix"):  # 対戦結果
         msg2["対戦"] = get_versus_matrix()
 
     # 非表示項目
@@ -84,7 +82,7 @@ def aggregation():
         msg2["座席データ"] = re.sub(r" / [0-9]+$", "", msg2["座席データ"], flags=re.MULTILINE)
         msg2.pop("役満和了", None)
 
-    if not g.opt.statistics:  # 統計
+    if not g.params.get("statistics"):  # 統計
         for k in ("座席データ", "ベストレコード", "ワーストレコード"):
             msg2.pop(k, None)
 
@@ -109,15 +107,15 @@ def get_headline(data: dict, game_info: dict, player_name: str) -> dict:
 
     ret: dict = {}
 
-    if g.opt.individual:
+    if g.params.get("individual"):
         ret["title"] = "*【個人成績】*"
         ret["プレイヤー名"] = f"{player_name} {f.common.badge_degree(data["ゲーム数"])}"
-        team = c.team.which_team(g.prm.player_name)
+        team = c.team.which_team(g.params["player_name"])
         if team:
             ret["所属チーム"] = team
     else:
         ret["title"] = "*【チーム成績】*"
-        ret["チーム名"] = f"{g.prm.player_name} {f.common.badge_degree(data["ゲーム数"])}"
+        ret["チーム名"] = f"{g.params["player_name"]} {f.common.badge_degree(data["ゲーム数"])}"
         ret["登録メンバー"] = "、".join(c.team.get_teammates())
 
     badge_status = f.common.badge_status(data["ゲーム数"], data["win"])
@@ -251,11 +249,12 @@ def get_game_results() -> str:
 
     ret: str = "\n*【戦績】*\n"
     data: dict = {}
-    target_player = c.member.name_replace(g.opt.target_player[0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
+
+    target_player = c.member.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
     p_list: list = []
     df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
 
-    if g.opt.verbose:
+    if g.params.get("verbose"):
         data["p0"] = df.filter(items=["playtime", "guest_count", "same_team"]).drop_duplicates().set_index("playtime")
         for idx, prefix in enumerate(["p1", "p2", "p3", "p4"]):  # pylint: disable=unused-variable  # noqa: F841
             tmp_df = df.query("seat == @idx + 1").filter(
@@ -282,9 +281,9 @@ def get_game_results() -> str:
 
         for x in df_data.itertuples():
             vs_guest = ""
-            if x.guest_count >= 2 and g.opt.individual:
+            if x.guest_count >= 2 and g.params["individual"]:
                 vs_guest = "(2ゲスト戦)"
-            if x.same_team == 1 and not g.opt.individual:
+            if x.same_team == 1 and not g.params["individual"]:
                 vs_guest = "(チーム同卓)"
 
             ret += textwrap.dedent(
@@ -306,9 +305,9 @@ def get_game_results() -> str:
         df_data = df.query("name == @target_player").set_index("playtime")
         for x in df_data.itertuples():
             vs_guest = ""
-            if x.guest_count >= 2 and g.opt.individual:
+            if x.guest_count >= 2 and g.params["individual"]:
                 vs_guest = g.cfg.setting.guest_mark
-            if x.same_team == 1 and not g.opt.individual:
+            if x.same_team == 1 and not g.params["individual"]:
                 vs_guest = g.cfg.setting.guest_mark
 
             ret += "\t{}{}  {}位 {:8d}点 ({:7.1f}pt) {}\n".format(  # pylint: disable=consider-using-f-string

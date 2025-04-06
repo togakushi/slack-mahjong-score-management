@@ -26,10 +26,13 @@ def set_command_option(body):
         body (dict): イベント内容
 
     Returns:
-        Tuple[list, list]:
+        Tuple[list, list, dict]:
             - list: コマンドに追加する文字列
             - list: viewに表示するメッセージ
+            - dict: 変更されるフラグ
     """
+
+    update_flag: dict = {}
 
     # 検索設定
     argument: list = []
@@ -77,22 +80,22 @@ def set_command_option(body):
             for _, val in enumerate(selected_options):
                 match val["value"]:
                     case "unregistered_replace":
-                        g.opt.unregistered_replace = False
+                        update_flag.update(unregistered_replace=False)
                     case "versus_matrix":
-                        g.opt.versus_matrix = True
+                        update_flag.update(versus_matrix=True)
                     case "game_results":
-                        g.opt.game_results = True
+                        update_flag.update(game_results=True)
                     case "verbose":
-                        g.opt.game_results = True
-                        g.opt.verbose = True
+                        update_flag.update(game_results=True)
+                        update_flag.update(verbose=True)
                     case "score_comparisons":
-                        g.opt.score_comparisons = True
+                        update_flag.update(score_comparisons=True)
                         g.app_var.update(operation=None)
                     case _ as option:
                         g.app_var.update(operation=option)
 
     app_msg.append("集計中…")
-    return (argument, app_msg)
+    return (argument, app_msg, update_flag)
 
 
 @g.app.action("actionId-back")

@@ -63,7 +63,7 @@ def plot():
 
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
-        f"{g.opt.filename}.png" if g.opt.filename else "report.png"
+        f"{g.params["filename"]}.png" if g.params.get("filename") else "report.png",
     )
 
     fig = plt.figure(

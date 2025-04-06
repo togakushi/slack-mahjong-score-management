@@ -8,6 +8,7 @@ import lib.global_value as g
 from lib import command as c
 from lib import function as f
 from lib import home_tab as h
+from lib.database.common import placeholder
 
 
 def build_versus_menu():
@@ -98,10 +99,9 @@ def handle_aggregation_action(ack, body, client):
     g.msg.parser(body)
     g.msg.client = client
 
-    g.opt.initialization("results")
-    argument, app_msg = h.home.set_command_option(body)
-    g.opt.update(argument)
-    g.prm.update(g.opt)
+    argument, app_msg, update_flag = h.home.set_command_option(body)
+    g.cfg.results.update_from_dict(update_flag)
+    g.params = placeholder(g.cfg.results)
 
     search_options = body["view"]["state"]["values"]
     if "bid-user_select" in search_options:
