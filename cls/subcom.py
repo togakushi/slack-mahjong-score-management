@@ -41,20 +41,6 @@ class SubCommand(CommonMethodMixin):
     def __post_init__(self):
         self.initialization(self.section)
 
-    def check(self, argument: list) -> None:
-        """引数が有効か調べる"""
-        for x in fields(self):
-            if x.name == "config":
-                continue
-            if x.name == "section":
-                continue
-            if x.type == list:
-                setattr(self, x.name, [])
-            else:
-                setattr(self, x.name, None)
-
-        self.update_from_dict(analysis_argument(argument))
-
     def update(self, argument: list) -> dict:
         """引数を解析し、パラメータの更新、集計範囲のパラメータを返す
 
