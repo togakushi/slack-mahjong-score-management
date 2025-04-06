@@ -99,5 +99,5 @@ class CommonMethodMixin:
                 else:
                     ret = config.get(section, x.name, fallback=x.default)
                 return (ret)
-        else:
-            raise AttributeError(f"{attr} has no default or does not exist.")
+
+        raise AttributeError(f"{attr} has no default or does not exist.")
