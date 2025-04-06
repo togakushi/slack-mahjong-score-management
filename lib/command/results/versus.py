@@ -92,7 +92,7 @@ def aggregation():
         if val:
             for x in val:
                 msg2[f"{key}_{x}"] = textwrap.indent(val[x], "\t")
-            msg2[f"{key}_{x}"] += "\n"
+            msg2[f"{key}_blank"] += "\n"
 
     # --- ファイル出力
     if len(df_data) != 0:
