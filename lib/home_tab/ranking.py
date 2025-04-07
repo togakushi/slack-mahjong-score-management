@@ -90,6 +90,7 @@ def handle_aggregation_action(ack, body, client):
     g.msg.client = client
 
     argument, app_msg, update_flag = h.home.set_command_option(body)
+    g.cfg.ranking.update(argument)
     g.cfg.ranking.update_from_dict(update_flag)
     g.params = placeholder(g.cfg.ranking)
 

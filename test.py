@@ -125,7 +125,7 @@ def main():
                 case "target_player":
                     choice_list = list(set(g.member_list.values()))
                     for x in range(int(value)):
-                        if not len(choice_list):
+                        if not choice_list:
                             break
                         choice_name = random.choice(choice_list)
                         target_player.append(choice_name)
@@ -137,7 +137,7 @@ def main():
                 case "target_team":
                     choice_list = [x["team"] for x in g.team_list]
                     for x in range(int(value)):
-                        if not len(choice_list):
+                        if not choice_list:
                             break
                         choice_name = random.choice(choice_list)
                         target_team.append(choice_name)
