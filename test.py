@@ -37,6 +37,36 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
         pattern (str): 実行パターン
     """
 
+    def graph_point():
+        save_filename = ""
+        if g.params.get("filename"):
+            save_filename = g.params["filename"]
+            g.params.update(filename=f"{g.params["filename"]}_point")
+        else:
+            g.params.update(filename=f"point_{sec}_{pattern}")
+        dump(flag)
+        pprint(c.graph.summary.point_plot(), width=200)
+        if save_filename:
+            g.params.update(filename=save_filename)
+
+    def graph_rank():
+        save_filename = ""
+        if g.params.get("filename"):
+            save_filename = g.params["filename"]
+            g.params.update(filename=f"{g.params["filename"]}_rank")
+        else:
+            g.params.update(filename=f"rank_{sec}_{pattern}")
+        dump(flag)
+        pprint(c.graph.summary.rank_plot(), width=200)
+        if save_filename:
+            g.params.update(filename=save_filename)
+
+    def graph_statistics():
+        if not g.params.get("filename"):
+            g.params.update(filename=f"statistics_{sec}_{pattern}_{g.params["target_player"][0]}")
+        dump(flag)
+        pprint(c.graph.personal.statistics_plot(), width=200)
+
     match test_case:
         case "skip":
             pass
@@ -56,17 +86,22 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
         case "graph":
             g.params = d.common.placeholder(g.cfg.graph)
             if g.params.get("statistics"):
-                g.params.update(filename=f"statistics_{sec}_{pattern}_{g.params["target_player"][0]}")
-                dump(flag)
-                pprint(c.graph.personal.statistics_plot(), width=200)
+                graph_statistics()
             else:
-                g.params.update(filename=f"point_{sec}_{pattern}")
-                dump(flag)
-                pprint(c.graph.summary.point_plot(), width=200)
+                graph_point()
+                graph_rank()
 
-                g.params.update(filename=f"rank_{sec}_{pattern}")
-                dump(flag)
-                pprint(c.graph.summary.rank_plot(), width=200)
+        case "graph_point":
+            g.params = d.common.placeholder(g.cfg.graph)
+            graph_point()
+
+        case "graph_rank":
+            g.params = d.common.placeholder(g.cfg.graph)
+            graph_rank()
+
+        case "graph_statistics":
+            g.params = d.common.placeholder(g.cfg.graph)
+            graph_statistics()
 
         case "ranking":
             g.params = d.common.placeholder(g.cfg.ranking)
@@ -103,7 +138,6 @@ def main():
 
     d.initialization.initialization_resultdb()
     c.member.read_memberslist()
-    always_keyword = ""
 
     print("=" * 80)
     print(f"config  : {os.path.realpath(os.path.join(g.script_dir, g.args.config))}")
@@ -113,6 +147,7 @@ def main():
         print("=" * 80)
         print(f"[TEST CASE] {sec}")
         test_case = str()
+        always_keyword = str()
         all_player = False
         target_player = []
         target_team = []
@@ -143,9 +178,9 @@ def main():
                         target_team.append(choice_name)
                         choice_list.remove(choice_name)
                     continue
-                case "always_keyword":
+                case s if re.match(r"^always_keyword", s):
                     always_keyword = value
-                    print("add:", always_keyword)
+                    print("always_keyword:", always_keyword)
                     continue
 
             print("-" * 80)
