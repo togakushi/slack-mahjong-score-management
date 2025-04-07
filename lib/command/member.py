@@ -5,6 +5,7 @@ lib/command/member.py
 import logging
 import re
 import sqlite3
+import random
 
 import lib.global_value as g
 from lib import command as c
@@ -56,13 +57,12 @@ def read_memberslist(log=True):
         logging.notice(f"team_list: {[x['team'] for x in g.team_list]}")  # type: ignore
 
 
-def name_replace(pname: str, add_mark: bool = False, mask: bool = True) -> str:
+def name_replace(pname: str, add_mark: bool = False) -> str:
     """表記ブレ修正(正規化)
 
     Args:
         pname (str): 対象プレイヤー名
         add_mark (bool, optional): ゲストマークを付与する. Defaults to False.
-        mask (bool, optional): 匿名化オプション有効時にプレイヤー名をマスクする. Defaults to True.
 
     Returns:
         str: 表記ブレ修正後のプレイヤー名
@@ -70,13 +70,6 @@ def name_replace(pname: str, add_mark: bool = False, mask: bool = True) -> str:
 
     pname = f.common.han_to_zen(pname)
     check_list = list(set(g.member_list.keys()))
-
-    # if g.params.get("anonymous") and mask:
-    #     member_id = get_member_id().get(pname, 0)
-    #     anonymous_name = f"Player_{member_id:03d}"
-    #     if pname.startswith("Player_"):
-    #         return (f.common.zen_to_han(pname))
-    #     return (f.common.zen_to_han(anonymous_name))
 
     if pname in check_list:
         return (g.member_list[pname])
@@ -102,6 +95,30 @@ def name_replace(pname: str, add_mark: bool = False, mask: bool = True) -> str:
         return (f"{pname}({g.cfg.setting.guest_mark})")
 
     return (pname)
+
+
+def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
+    """名前リストから変換用辞書を生成
+
+    Args:
+        name_list (list): 名前リスト
+        initial (int, optional): インデックス初期値. Defaults to 0.
+
+    Returns:
+        dict: マッピング用辞書
+    """
+
+    ret: dict = {}
+    random.shuffle(name_list)
+
+    prefix = "Player"
+    if not g.params.get("individual", True):
+        prefix = "Team"
+
+    for idx, name in enumerate(name_list):
+        ret[name] = f"{prefix}_{idx + initial:03d}"
+
+    return (ret)
 
 
 def count_padding(data):
@@ -157,18 +174,23 @@ def get_members_list():
     return (title, msg)
 
 
-def get_member_id():
+def get_member_id(name: str | None = None) -> dict:
     """メンバーのIDを返す
+
+    Args:
+        name (str | None, optional): 指定メンバーのみ. Defaults to None.
 
     Returns:
         dict: メンバー名とIDのペア
     """
 
     resultdb = sqlite3.connect(g.cfg.db.database_file)
-    rows = resultdb.execute("select name, id from member where id != 0;")
+    rows = resultdb.execute("select name, id from member;")
     id_list = dict(rows.fetchall())
     resultdb.close()
 
+    if name in id_list:
+        return ({name: id_list[name]})
     return (id_list)
 
 

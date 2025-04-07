@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -28,10 +29,19 @@ def plot() -> str | bool:
     plt.close()
     # --- データ取得
     results_df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/winner.sql"))
-
     if len(results_df) == 0:
         return (False)
 
+    # --- 匿名化
+    if g.params.get("anonymous"):
+        name_list: list = []
+        for col in [f"name{x}" for x in range(1, 6)]:
+            name_list.extend(results_df[col].unique().tolist())
+        mapping_dict = anonymous_mapping(list(set(name_list)))
+        for col in [f"name{x}" for x in range(1, 6)]:
+            results_df[col] = results_df[col].replace(mapping_dict)
+
+    # --- 集計
     results: dict = {}
     for _, v in results_df.iterrows():
         results[v["collection"]] = {}

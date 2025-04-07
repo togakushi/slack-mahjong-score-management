@@ -9,9 +9,9 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.global_value as g
-from lib import command as c
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -38,23 +38,6 @@ def plot():
     g.params.update(stipulated=g.cfg.graph.stipulated_calculation(game_info["game_count"]))
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
 
-    # ゲスト置換
-    for player in df_dropped.columns:
-        if player not in g.member_list:
-            if g.params.get("unregistered_replace"):
-                df_dropped = df_dropped.drop(columns=[player])
-            else:
-                df_dropped = df_dropped.rename(
-                    columns={
-                        player: c.member.name_replace(player, add_mark=True)
-                    }
-                )
-    # if g.params.get("anonymous"):
-    #     id_list = c.member.get_member_id()
-    #     for name, member_id in list(id_list.items()):
-    #         id_list[name] = f"Player_{member_id:03d}"
-    #     df_dropped = df_dropped.rename(columns=id_list)
-
     # 並び変え
     sorted_columns = df_dropped.iloc[-1].sort_values(ascending=False).index
     df_sorted = df_dropped[sorted_columns]
@@ -63,6 +46,10 @@ def plot():
     for x in df_sorted[1:].index:
         new_index[x] = x.replace("-", "/")
     df_sorted = df_sorted.rename(index=new_index)
+
+    if g.params.get("anonymous"):
+        mapping_dict = anonymous_mapping(df_sorted.columns.to_list())
+        df_sorted = df_sorted.rename(columns=mapping_dict)
 
     # --- グラフ生成
     f.common.graph_setup(plt, fm)

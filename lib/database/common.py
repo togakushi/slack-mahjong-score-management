@@ -65,7 +65,7 @@ def read_data(filepath: str) -> pd.DataFrame:
 
 
 def placeholder(subcom: "SubCommand") -> dict:
-    """オプション/パラメータを更新
+    """プレースホルダに使用する辞書を生成
 
     Args:
         subcom (SubCommand): パラメータ
@@ -81,25 +81,25 @@ def placeholder(subcom: "SubCommand") -> dict:
     ret_dict.update(f.common.analysis_argument(g.msg.argument))
     ret_dict.update(subcom.update(g.msg.argument))
     ret_dict.update(subcom.to_dict())
-    ret_dict.update(interval=g.cfg.interval)
-    ret_dict.update(format=g.cfg.format)
-    ret_dict.update(filename=g.cfg.filename)
-    ret_dict.update(aggregate_unit=g.cfg.aggregate_unit)
     ret_dict.update(starttime=ret_dict["search_range"]["starttime"])
     ret_dict.update(endtime=ret_dict["search_range"]["endtime"])
     ret_dict.update(onday=ret_dict["search_range"]["onday"])
 
+    if ret_dict.get("search_word"):
+        ret_dict.update(search_word=f"%{ret_dict["search_word"]}%")
+
+    if not ret_dict.get("interval"):
+        ret_dict.update(interval=g.cfg.interval)
+
+    # プレイヤーリスト/対戦相手リスト
     if ret_dict["player_list"]:
         for k, v in ret_dict["player_list"].items():
             ret_dict[k] = v
-
     if ret_dict["competition_list"]:
         for k, v in ret_dict["competition_list"].items():
             ret_dict[k] = v
 
-    if ret_dict.get("search_word"):
-        ret_dict.update(search_word=f"%{ret_dict["search_word"]}%")
-
+    # 利用しない要素は削除
     drop_keys: list = [
         "config",
         "rank_point",

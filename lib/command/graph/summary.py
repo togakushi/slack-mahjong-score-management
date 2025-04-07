@@ -13,6 +13,7 @@ import pandas as pd
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -210,7 +211,6 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
         target_data["game_count"] = df.groupby("name", as_index=False).max(numeric_only=True)["count"]
 
         # 足切り
-
         target_list = list(
             target_data.query("game_count >= @g.params['stipulated']")["name"]
         )
@@ -233,6 +233,11 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
     target_data["position"] = (
         target_data["last_point"].rank(ascending=False).astype(int)
     )
+
+    if g.params.get("anonymous"):
+        mapping_dict = anonymous_mapping(df["name"].unique().tolist())
+        df["name"] = df["name"].replace(mapping_dict)
+        target_data["name"] = target_data["name"].replace(mapping_dict)
 
     return (target_data.sort_values("position"), df)
 

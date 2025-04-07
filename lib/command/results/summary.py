@@ -10,6 +10,7 @@ import pandas as pd
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 
 def aggregation():
@@ -26,8 +27,14 @@ def aggregation():
     game_info = d.aggregate.game_info()
     df_summary = d.aggregate.game_summary(drop_items=["rank_distr2"])
     df_game = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql"))
-
     df_grandslam = df_game.query("grandslam == grandslam")
+
+    if g.params.get("anonymous"):
+        mapping_dict = anonymous_mapping(df_game["name"].unique().tolist())
+        df_game["name"] = df_game["name"].replace(mapping_dict)
+        df_summary["name"] = df_summary["name"].replace(mapping_dict)
+        df_grandslam["name"] = df_grandslam["name"].replace(mapping_dict)
+
     df_summary = d.common.df_rename(df_summary)
 
     # 表示
@@ -106,16 +113,22 @@ def aggregation():
         }
     )
 
+    prefix_summary = "summary"
+    prefix_yakuman = "yakuman"
+    if g.params.get("filename"):
+        prefix_summary = f"{g.params["filename"]}"
+        prefix_yakuman = f"{g.params["filename"]}_yakuman"
+
     match g.params.get("format", "default").lower().lower():
         case "csv":
             file_list = {
-                "集計結果": f.common.save_output(df_summary, "csv", "summary.csv", headline),
-                "役満和了": f.common.save_output(df_grandslam, "csv", "yakuman.csv", headline),
+                "集計結果": f.common.save_output(df_summary, "csv", f"{prefix_summary}.csv", headline),
+                "役満和了": f.common.save_output(df_grandslam, "csv", f"{prefix_yakuman}.csv", headline),
             }
         case "text" | "txt":
             file_list = {
-                "集計結果": f.common.save_output(df_summary, "txt", "summary.txt", headline),
-                "役満和了": f.common.save_output(df_grandslam, "txt", "yakuman.txt", headline),
+                "集計結果": f.common.save_output(df_summary, "txt", f"{prefix_summary}.txt", headline),
+                "役満和了": f.common.save_output(df_grandslam, "txt", f"{prefix_yakuman}.txt", headline),
             }
         case _:
             file_list = {}

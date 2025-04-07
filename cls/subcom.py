@@ -80,6 +80,13 @@ class SubCommand(CommonMethodMixin):
 
         ret_dict.update(search_range=search_range(tmp_range))
 
+        if new_flag.get("interval"):
+            ret_dict.update(interval=new_flag.get("interval"))
+        if new_flag.get("format"):
+            ret_dict.update(format=new_flag.get("format"))
+        if new_flag.get("filename"):
+            ret_dict.update(filename=new_flag.get("filename"))
+
         # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
         player_name: str = str()
         target_player: list = []
@@ -91,7 +98,7 @@ class SubCommand(CommonMethodMixin):
             if x in team_list:
                 target_player.append(x)
             elif self.individual and self.unregistered_replace:
-                target_player.append(name_replace(x, mask=False))
+                target_player.append(name_replace(x))
             else:
                 target_player.append(x)
 

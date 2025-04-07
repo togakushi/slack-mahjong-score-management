@@ -7,6 +7,7 @@ import os
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 
 def plot():
@@ -23,6 +24,9 @@ def plot():
 
     # データ集計
     df = d.aggregate.matrix_table()
+    if g.params.get("anonymous"):
+        mapping_dict = anonymous_mapping(df.index.tolist())
+        df = df.rename(columns=mapping_dict, index=mapping_dict)
 
     # 表示
     msg = "*【対局対戦マトリックス】*\n"

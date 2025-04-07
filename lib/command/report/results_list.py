@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -35,6 +36,10 @@ def main():
     df.index = df.index + 1
     if df.empty:
         return (False)
+
+    if g.params.get("anonymous"):
+        mapping_dict = anonymous_mapping(df["name"].unique().tolist())
+        df["name"] = df["name"].replace(mapping_dict)
 
     # 見出し設定
     if g.params.get("individual"):

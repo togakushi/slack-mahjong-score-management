@@ -9,6 +9,7 @@ import pandas as pd
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 
 def aggregation():
@@ -48,6 +49,10 @@ def aggregation():
 
     if not g.params.get("individual"):  # チーム戦
         df = df.copy().query("name != '未所属'")
+
+    if g.params.get("anonymous"):
+        mapping_dict = anonymous_mapping(df["name"].unique().tolist())
+        df["name"] = df["name"].replace(mapping_dict)
 
     # 計算
     df["得点偏差"] = (df["rpoint_avg"] - df["rpoint_avg"].mean()) / df["rpoint_avg"].std(ddof=0) * 10 + 50
@@ -91,14 +96,18 @@ def aggregation():
         table = df[s:e].to_markdown(**table_param)
         msg[s] = f"```\n{table}\n```\n"
 
+    prefix_rating = "rating"
+    if g.params.get("filename"):
+        prefix_rating = f"{g.params["filename"]}"
+
     match g.params.get("format", "default").lower().lower():
         case "csv":
             file_list = {
-                "レーティング": f.common.save_output(df, "csv", "rating.csv", headline),
+                "レーティング": f.common.save_output(df, "csv", f"{prefix_rating}.csv", headline),
             }
         case "text" | "txt":
             file_list = {
-                "レーティング": f.common.save_output(df, "txt", "rating.txt", headline),
+                "レーティング": f.common.save_output(df, "txt", f"{prefix_rating}.txt", headline),
             }
         case _:
             file_list = {}

@@ -12,6 +12,7 @@ from tabulate import tabulate
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 
 def main():
@@ -47,6 +48,10 @@ def aggregation() -> Tuple[str, Any]:
         on=["name", "name"],
         suffixes=["", "_x"]
     )
+
+    if g.params.get("anonymous"):
+        mapping_dict = anonymous_mapping(df["name"].unique().tolist())
+        df["name"] = df["name"].replace(mapping_dict)
 
     # --- 集計
     data: dict = {}

@@ -31,9 +31,18 @@ def aggregation():
     df_game = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 
-    # --- ヘッダ情報
     my_name = c.member.name_replace(g.params["player_name"], add_mark=True)
     vs_list = [c.member.name_replace(x, add_mark=True) for x in g.params["competition_list"].values()]
+
+    # --- 匿名化
+    if g.params.get("anonymous"):
+        mapping_dict = c.member.anonymous_mapping([my_name] + vs_list)
+        my_name = mapping_dict[my_name]
+        vs_list = [mapping_dict[name] for name in vs_list]
+        df_vs["my_name"] = df_vs["my_name"].replace(mapping_dict)
+        df_vs["vs_name"] = df_vs["vs_name"].replace(mapping_dict)
+
+    # --- 表示内容
     if g.params.get("all_player"):
         vs = "全員"
     else:
@@ -42,7 +51,6 @@ def aggregation():
     msg1 = tmpl_header(my_name, vs)
     msg2: dict = {}  # 対戦結果格納用
 
-    # --- 表示内容
     tmp_msg: dict = {}
     drop_name: list = []  # 対戦記録なしプレイヤー
     if len(df_vs) == 0:  # 検索結果なし

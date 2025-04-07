@@ -7,6 +7,7 @@ import os
 import sqlite3
 from datetime import datetime
 from io import BytesIO
+from random import random
 from typing import List, Tuple
 
 import matplotlib.font_manager as fm
@@ -444,7 +445,12 @@ def cover_page(style: dict, target_info: dict) -> list:
     )
 
     if g.params.get("anonymous"):
-        target_player = c.member.name_replace(g.params["player_name"])
+        id_list = c.member.get_member_id()
+        if g.params["player_name"] in id_list:
+            idx = id_list[g.params["player_name"]]
+        else:
+            idx = int(random() * 100 + 100)
+        target_player = f"Player_{idx:03d}"
     else:
         target_player = g.params["player_name"]
 

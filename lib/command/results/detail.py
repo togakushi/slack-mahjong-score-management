@@ -12,6 +12,7 @@ import lib.global_value as g
 from lib import command as c
 from lib import database as d
 from lib import function as f
+from lib.command.member import anonymous_mapping
 
 
 def aggregation():
@@ -34,6 +35,7 @@ def aggregation():
     # --- データ収集
     game_info = d.aggregate.game_info()
     msg_data: dict = {}
+    mapping_dict: dict = {}
 
     if game_info["game_count"] == 0:
         msg_data["検索範囲"] = f"{f.common.ts_conv(g.params["starttime"], "hms")}"
@@ -43,11 +45,6 @@ def aggregation():
         msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}"
         return (message_build(msg_data), {})
 
-    player_name = c.member.name_replace(g.params["player_name"], add_mark=True)
-    # if g.params.get("anonymous"):
-    #     for idx, name in enumerate(g.opt.target_player):
-    #         g.opt.target_player[idx] = c.member.name_replace(name)
-
     result_df = d.aggregate.game_results()
     record_df = d.aggregate.ranking_record()
     result_df = pd.merge(
@@ -55,6 +52,13 @@ def aggregation():
         on=["name", "name"],
         suffixes=["", "_x"]
     )
+
+    player_name = c.member.name_replace(g.params["player_name"], add_mark=True)
+    if g.params.get("anonymous"):
+        mapping_dict = anonymous_mapping(result_df["name"].unique().tolist())
+        result_df["name"] = result_df["name"].replace(mapping_dict)
+        player_name = mapping_dict[player_name]
+
     data = result_df.to_dict(orient="records")[0]
 
     # --- 表示内容
@@ -64,13 +68,13 @@ def aggregation():
     msg2: dict = {}
     msg2["座席データ"] = get_seat_data(data)
     msg2.update(get_record(data))  # ベスト/ワーストレコード
-    msg2.update(get_regulations())  # レギュレーション
+    msg2.update(get_regulations(mapping_dict))  # レギュレーション
 
     if g.params.get("game_results"):  # 戦績
-        msg2["戦績"] = get_game_results()
+        msg2["戦績"] = get_game_results(mapping_dict)
 
     if g.params.get("versus_matrix"):  # 対戦結果
-        msg2["対戦"] = get_versus_matrix()
+        msg2["対戦"] = get_versus_matrix(mapping_dict)
 
     # 非表示項目
     if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
@@ -209,17 +213,27 @@ def get_record(data: dict) -> dict:
     return (ret)
 
 
-def get_regulations() -> dict:
+def get_regulations(mapping_dict: dict) -> dict:
     """レギュレーション情報メッセージ生成
 
     Returns:
         dict: 集計データ
     """
 
+    ret: dict = {}
+
     df_grandslam = d.aggregate.remark_count("grandslam")
     df_regulations = d.aggregate.remark_count("regulation")
 
-    ret: dict = {}
+    if g.params.get("anonymous"):
+        new_list = list(set(df_grandslam["name"].unique().tolist() + df_regulations["name"].unique().tolist()))
+        for name in new_list:
+            if name in mapping_dict:
+                new_list.remove(name)
+
+        mapping_dict.update(anonymous_mapping(new_list, len(mapping_dict)))
+        df_grandslam["name"] = df_grandslam["name"].replace(mapping_dict)
+        df_regulations["name"] = df_regulations["name"].replace(mapping_dict)
 
     if not df_grandslam.empty:
         ret["役満和了"] = "\n*【役満和了】*\n"
@@ -240,7 +254,7 @@ def get_regulations() -> dict:
     return (ret)
 
 
-def get_game_results() -> str:
+def get_game_results(mapping_dict: dict) -> str:
     """戦績データ出力用メッセージ生成
 
     Returns:
@@ -253,6 +267,10 @@ def get_game_results() -> str:
     target_player = c.member.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
     p_list: list = []
     df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
+
+    if g.params.get("anonymous"):
+        mapping_dict.update(anonymous_mapping(df["name"].unique().tolist(), len(mapping_dict)))
+        df["name"] = df["name"].replace(mapping_dict)
 
     if g.params.get("verbose"):
         data["p0"] = df.filter(items=["playtime", "guest_count", "same_team"]).drop_duplicates().set_index("playtime")
@@ -318,7 +336,7 @@ def get_game_results() -> str:
     return (ret)
 
 
-def get_versus_matrix() -> str:
+def get_versus_matrix(mapping_dict: dict) -> str:
     """対戦結果データ出力用メッセージ生成
 
     Returns:
@@ -327,6 +345,12 @@ def get_versus_matrix() -> str:
 
     ret: str = "\n*【対戦結果】*\n"
     df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
+
+    if g.params.get("anonymous"):
+        mapping_dict.update(anonymous_mapping(df["vs_name"].unique().tolist(), len(mapping_dict)))
+        df["my_name"] = df["my_name"].replace(mapping_dict)
+        df["vs_name"] = df["vs_name"].replace(mapping_dict)
+
     max_len = c.member.count_padding(df["vs_name"].unique().tolist())
 
     for _, r in df.iterrows():
