@@ -38,32 +38,20 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
     """
 
     def graph_point():
-        save_filename = ""
-        if g.params.get("filename"):
-            save_filename = g.params["filename"]
-            g.params.update(filename=f"{g.params["filename"]}_point")
-        else:
-            g.params.update(filename=f"point_{sec}_{pattern}")
+        """ポイント推移グラフ"""
         dump(flag)
-        pprint(c.graph.summary.point_plot(), width=200)
-        if save_filename:
-            g.params.update(filename=save_filename)
+        if len(g.params["player_list"]) == 1:
+            pprint(c.graph.personal.plot(), width=200)
+        else:
+            pprint(c.graph.summary.point_plot(), width=200)
 
     def graph_rank():
-        save_filename = ""
-        if g.params.get("filename"):
-            save_filename = g.params["filename"]
-            g.params.update(filename=f"{g.params["filename"]}_rank")
-        else:
-            g.params.update(filename=f"rank_{sec}_{pattern}")
+        """順位推移グラフ"""
         dump(flag)
         pprint(c.graph.summary.rank_plot(), width=200)
-        if save_filename:
-            g.params.update(filename=save_filename)
 
     def graph_statistics():
-        if not g.params.get("filename"):
-            g.params.update(filename=f"statistics_{sec}_{pattern}_{g.params["target_player"][0]}")
+        """統計グラフ"""
         dump(flag)
         pprint(c.graph.personal.statistics_plot(), width=200)
 
@@ -85,11 +73,23 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
 
         case "graph":
             g.params = d.common.placeholder(g.cfg.graph)
-            if g.params.get("statistics"):
-                graph_statistics()
-            else:
+            if g.params.get("filename"):
+                save_filename = g.params["filename"]
+                g.params.update(filename=f"{save_filename}_point")
                 graph_point()
+                g.params.update(filename=f"{save_filename}_rank")
                 graph_rank()
+                if g.params.get("statistics"):
+                    g.params.update(filename=f"{save_filename}")
+                    graph_statistics()
+            else:
+                g.params.update(filename=f"point_{sec}_{pattern}")
+                graph_point()
+                g.params.update(filename=f"rank_{sec}_{pattern}")
+                graph_rank()
+                if g.params.get("statistics"):
+                    g.params.update(filename=f"statistics_{sec}_{pattern}")
+                    graph_statistics()
 
         case "graph_point":
             g.params = d.common.placeholder(g.cfg.graph)
