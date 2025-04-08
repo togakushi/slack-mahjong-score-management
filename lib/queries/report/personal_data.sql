@@ -16,7 +16,8 @@ select
     count(rpoint < -1 or NULL) as トビ,
     round(cast(count(rpoint < -1 OR NULL) AS real) / cast(count() as real) * 100, 2) as トビ率
 from
-    individual_results
+    --[individual] individual_results as results
+    --[team] team_results as results
 where
     rule_version = :rule_version
     and playtime between :starttime and :endtime

@@ -8,7 +8,8 @@ select
     replace(printf("%s", max(rpoint)), "-", "▲") as 最大素点,
     replace(printf("%s", min(rpoint)), "-", "▲") as 最小素点
 from
-    individual_results
+    --[individual] individual_results as results
+    --[team] team_results as results
 where
     rule_version = :rule_version
     and playtime between :starttime and :endtime

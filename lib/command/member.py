@@ -223,12 +223,14 @@ def member_info(name):
             max(rpoint) as max_rpoint,
             min(rpoint) as min_rpoint
         from
-            individual_results
+            --[individual] individual_results as results
+            --[team] team_results as results
         where
             rule_version = ?
             and name = ?
     """
 
+    sql = d.common.query_modification(sql)
     resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(sql, (g.cfg.mahjong.rule_version, name))

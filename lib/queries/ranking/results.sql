@@ -10,7 +10,7 @@ select
         count(rank = 3 or null),
         count(rank = 4 or null),
         count()
-    ) as rank_dist,
+    ) as rank_distr,
     round(avg(rpoint) * 100, 1) as rpoint_avg,
     round(avg(rank), 2) as rank_avg
 from
