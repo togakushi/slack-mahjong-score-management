@@ -55,8 +55,8 @@ def aggregation():
         df["name"] = df["name"].replace(mapping_dict)
 
     # 計算
-    df["得点偏差"] = (df["rpoint_avg"] - df["rpoint_avg"].mean()) / df["rpoint_avg"].std(ddof=0) * 10 + 50
-    df["順位偏差"] = (df["rank_avg"] - df["rank_avg"].mean()) / df["rank_avg"].std(ddof=0) * -10 + 50
+    df["point_dev"] = (df["rpoint_avg"] - df["rpoint_avg"].mean()) / df["rpoint_avg"].std(ddof=0) * 10 + 50
+    df["rank_dev"] = (df["rank_avg"] - df["rank_avg"].mean()) / df["rank_avg"].std(ddof=0) * -10 + 50
 
     # 表示
     # --- 情報ヘッダ
@@ -64,16 +64,11 @@ def aggregation():
     headline = "*【レーティング】* （実験的な機能）\n"
     headline += f.message.header(game_info, add_text, 1)
 
-    df = df.rename(columns={
-        "rate": "レート",
-        "rank_dist": "順位分布",
-        "rank_avg": "平均順位",
-        "rpoint_avg": "平均素点",
-    }).filter(
+    df = d.common.df_rename(df.filter(
         items=[
-            "name", "レート", "順位分布", "平均順位", "順位偏差", "平均素点", "得点偏差"
+            "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev"
         ]
-    ).copy()
+    ), short=False).copy()
 
     msg: dict = {}
     table_param: dict = {
