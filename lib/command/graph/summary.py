@@ -235,9 +235,12 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
     )
 
     if g.params.get("anonymous"):
-        mapping_dict = anonymous_mapping(df["name"].unique().tolist())
-        df["name"] = df["name"].replace(mapping_dict)
-        target_data["name"] = target_data["name"].replace(mapping_dict)
+        col = "team"
+        if g.params.get("individual"):
+            col = "name"
+        mapping_dict = anonymous_mapping(df[col].unique().tolist())
+        df[col] = df[col].replace(mapping_dict)
+        target_data[col] = target_data[col].replace(mapping_dict)
 
     return (target_data.sort_values("position"), df)
 

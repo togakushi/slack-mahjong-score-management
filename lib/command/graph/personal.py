@@ -27,7 +27,6 @@ def plot() -> Tuple[int, str]:
         Tuple[int,str]:
             - int: グラフにプロットしたゲーム数
             - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
-
     """
 
     plt.close()
@@ -38,6 +37,10 @@ def plot() -> Tuple[int, str]:
 
     if df.empty:
         return (0, f.message.reply(message="no_hits"))
+
+    if g.params.get("anonymous"):
+        mapping_dict = c.member.anonymous_mapping([g.params["player_name"]])
+        player = next(iter(mapping_dict.values()))
 
     # 最終値（凡例追加用）
     point_sum = "{:+.1f}".format(  # pylint: disable=consider-using-f-string
@@ -58,7 +61,7 @@ def plot() -> Tuple[int, str]:
 
     fig = plt.figure(figsize=(12, 8))
 
-    if g.params.get("target_count") == 0:
+    if g.params.get("target_count", 0) == 0:
         title_text = f"『{player}』の成績 ({f.common.ts_conv(g.params["starttime"], "hm")} - {f.common.ts_conv(g.params["endtime"], "hm")})"
     else:
         title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
@@ -156,6 +159,11 @@ def statistics_plot() -> Tuple[int, str]:
         g.cfg.setting.work_dir,
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
+
+    if g.params.get("anonymous"):
+        mapping_dict = c.member.anonymous_mapping([g.params["player_name"]])
+        player = next(iter(mapping_dict.values()))
+
     title_text = f"『{player}』の成績 (検索範囲：{f.message.item_date_range("d")})"
 
     rpoint_df = get_data(player_df["rpoint"], g.params["interval"])

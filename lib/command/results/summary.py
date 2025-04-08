@@ -30,9 +30,12 @@ def aggregation():
     df_grandslam = df_game.query("grandslam == grandslam")
 
     if g.params.get("anonymous"):
+        col = "team"
+        if g.params.get("individual"):
+            col = "name"
         mapping_dict = anonymous_mapping(df_game["name"].unique().tolist())
         df_game["name"] = df_game["name"].replace(mapping_dict)
-        df_summary["name"] = df_summary["name"].replace(mapping_dict)
+        df_summary[col] = df_summary[col].replace(mapping_dict)
         df_grandslam["name"] = df_grandslam["name"].replace(mapping_dict)
 
     df_summary = d.common.df_rename(df_summary)

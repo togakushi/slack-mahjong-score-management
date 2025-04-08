@@ -109,14 +109,25 @@ def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
     """
 
     ret: dict = {}
-    random.shuffle(name_list)
 
-    prefix = "Player"
-    if not g.params.get("individual", True):
+    if g.params.get("individual", True):
+        prefix = "Player"
+        id_list = c.member.get_member_id()
+    else:
         prefix = "Team"
+        id_list = {x["team"]: x["id"] for x in g.team_list}
 
-    for idx, name in enumerate(name_list):
+    if len(name_list) == 1:
+        name = name_list[0]
+        if name in id_list:
+            idx = id_list[name]
+        else:
+            idx = int(random.random() * 100 + 100)
         ret[name] = f"{prefix}_{idx + initial:03d}"
+    else:
+        random.shuffle(name_list)
+        for idx, name in enumerate(name_list):
+            ret[name] = f"{prefix}_{idx + initial:03d}"
 
     return (ret)
 
