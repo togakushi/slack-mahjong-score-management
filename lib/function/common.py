@@ -398,29 +398,6 @@ def graph_setup(plt, fm) -> None:
     plt.rcParams["axes.axisbelow"] = True
 
 
-def scope_coverage(argument: list) -> Tuple[list, list]:
-    """キーワードから有効な日付を取得する
-
-    Args:
-        argument (list): 引数リスト
-
-    Returns:
-        Tuple[list,list]:
-            - list: 得られた日付のリスト
-            - list: 日付を取り除いた引数リスト
-    """
-
-    new_argument = argument.copy()
-    target_days = []
-
-    for x in argument:
-        if g.search_word.find(x):
-            target_days += g.search_word.range(x)
-            new_argument.remove(x)
-
-    return (target_days, new_argument)
-
-
 def analysis_argument(argument: list) -> dict:
     """引数解析
 
