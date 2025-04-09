@@ -107,7 +107,7 @@ def get_count_results(game_count: int) -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        load_query(os.path.join(g.script_dir, "lib/queries/report/count_data.sql")),
+        query_modification(load_query(os.path.join(g.script_dir, "lib/queries/report/count_data.sql"))),
         g.params,
     )
 
