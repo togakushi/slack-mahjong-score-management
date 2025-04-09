@@ -105,7 +105,7 @@ def aggregation():
         msg["メモ"] = msg_memo
 
     # --- ファイル出力
-    df_summary = df_summary.filter(items=filter_list)
+    df_summary = df_summary.filter(items=filter_list).fillna("*****")
     df_grandslam = df_grandslam.filter(
         items=["playtime", "grandslam", "name"]
     ).rename(

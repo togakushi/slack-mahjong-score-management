@@ -8,6 +8,8 @@ import unicodedata
 from datetime import datetime
 from typing import Any, Tuple
 
+import pandas as pd
+
 import lib.global_value as g
 
 
@@ -278,18 +280,21 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
     return (badge)
 
 
-def floatfmt_adjust(df, index=False) -> list:
+def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
     """カラム名に応じたfloatfmtのリストを返す
 
     Args:
-        index (bool): リストにIndexを含める
         df (pd.DataFrame): チェックするデータ
+        index (bool, optional): リストにIndexを含める. Defaults to False.
 
     Returns:
         list: floatfmtに指定するリスト
     """
 
     fmt: list = []
+    if df.empty:
+        return (fmt)
+
     field: list = df.columns.tolist()
     if index:
         field.insert(0, df.index.name)
@@ -328,7 +333,46 @@ def floatfmt_adjust(df, index=False) -> list:
     return (fmt)
 
 
-def save_output(df, kind: str, filename: str, headline: str | None = None) -> str | None:
+def column_alignment(df: pd.DataFrame, header: bool = False, index: bool = False) -> list:
+    """カラム位置
+
+    Args:
+        df (pd.DataFrame): チェックするデータ
+        header (bool, optional): ヘッダを対象にする
+        index (bool, optional): リストにIndexを含める. Defaults to False.
+
+    Returns:
+        list: colalignに指定するリスト
+    """
+
+    fmt: list = []  # global, right, center, left, decimal, None
+    if df.empty:
+        return (fmt)
+
+    field: list = df.columns.tolist()
+    if index:
+        field.insert(0, df.index.name)
+
+    if header:  # ヘッダ
+        fmt = ["left" for x in field]
+    else:
+        for x in field:
+            match x:
+                case "ゲーム数":
+                    fmt.append("right")
+                case "通算" | "平均" | "1位" | "2位" | "3位" | "4位" | " 平順" | "トビ":
+                    fmt.append("right")
+                case "通算" | "順位差" | "トップ差":
+                    fmt.append("right")
+                case "レート" | "平均順位" | "順位偏差" | "平均素点" | "得点偏差":
+                    fmt.append("right")
+                case _:
+                    fmt.append("left")
+
+    return (fmt)
+
+
+def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None = None) -> str | None:
     """指定されたフォーマットでdfを保存する
 
     Args:
@@ -347,7 +391,13 @@ def save_output(df, kind: str, filename: str, headline: str | None = None) -> st
         case "csv":
             data = df.to_csv(index=False)
         case "text" | "txt":
-            data = df.to_markdown(index=False, tablefmt="outline", floatfmt=floatfmt_adjust(df))
+            data = df.to_markdown(
+                index=False,
+                tablefmt="outline",
+                floatfmt=floatfmt_adjust(df),
+                colalign=column_alignment(df, False),
+                # headersalign=column_alignment(df, True),  # ToDo: python-tabulate >= 0.10.0
+            )
         case _:
             return (None)
 
