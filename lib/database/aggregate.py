@@ -126,67 +126,6 @@ def ranking_record():
     """
 
     # データ収集
-    gamedata = read_data(os.path.join(g.script_dir, "lib/queries/ranking/record_count.sql"))
-
-    # 連続順位カウント
-    rank_mask = {
-        "連続トップ": {1: 1, 2: 0, 3: 0, 4: 0},
-        "連続連対": {1: 1, 2: 1, 3: 0, 4: 0},
-        "連続ラス回避": {1: 1, 2: 1, 3: 1, 4: 0},
-        "連続トップなし": {1: 0, 2: 1, 3: 1, 4: 1},
-        "連続逆連対": {1: 0, 2: 0, 3: 1, 4: 1},
-        "連続ラス": {1: 0, 2: 0, 3: 0, 4: 1},
-    }
-
-    for key, val in rank_mask.items():
-        gamedata[key] = None
-        for pname in gamedata["name"].unique():  # pylint: disable=unused-variable  # noqa: F841
-            tmp_df = pd.DataFrame()
-            tmp_df["flg"] = gamedata.query(
-                "name == @pname"
-            )["順位"].replace(val)
-            tmp_df[key] = tmp_df["flg"].groupby(
-                (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
-            ).cumcount() + 1
-            tmp_df.loc[tmp_df["flg"] == 0, key] = 0
-            gamedata.update(tmp_df)
-
-    # 最大値/最小値の格納
-    df = pd.DataFrame()
-    for pname in gamedata["name"].unique():  # pylint: disable=unused-variable  # noqa: F841
-        tmp_df = gamedata.query(
-            "name == @pname"
-        ).max().to_frame().transpose()
-        tmp_df.rename(
-            columns={
-                "最終素点": "最大素点",
-                "獲得ポイント": "最大獲得ポイント",
-            },
-            inplace=True,
-        )
-        tmp_df["ゲーム数"] = len(gamedata.query("name == @pname"))
-        tmp_df["最小素点"] = gamedata.query("name == @pname")["最終素点"].min()
-        tmp_df["最小獲得ポイント"] = gamedata.query("name == @pname")["獲得ポイント"].min()
-        df = pd.concat([df, tmp_df])
-
-    df = df.drop(columns=["playtime", "順位"])
-
-    # インデックスの振り直し
-    df = df.reset_index(drop=True)
-    df.index = df.index + 1
-
-    logging.trace(df)  # type: ignore
-    return (df)
-
-
-def ranking_record2():
-    """ランキング集計
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
     gamedata: pd.DataFrame = read_data(os.path.join(g.script_dir, "lib/queries/ranking/record_count.sql"))
     player_list = gamedata["name"].unique().tolist()
 
@@ -225,6 +164,12 @@ def ranking_record2():
             ).cumcount() + 1
             tmp_df.loc[tmp_df["flg"] == 0, key] = 0
             record_df.at[pname, key] = tmp_df[[key]].max().values[0]
+
+    # 最大値/最小値追加
+    record_df["max_point"] = gamedata["max_point"].iloc[0]
+    record_df["min_point"] = gamedata["min_point"].iloc[0]
+    record_df["max_rpoint"] = gamedata["max_rpoint"].iloc[0]
+    record_df["min_rpoint"] = gamedata["min_rpoint"].iloc[0]
 
     logging.trace(record_df)  # type: ignore
     return (record_df)

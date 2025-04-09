@@ -4,7 +4,7 @@ with target_data as (
         results.playtime,
         --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
         --[individual] --[unregistered_not_replace] case when results.guest = 0 or results.name = :guest_name then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
-        --[team] results.name as team,
+        --[team] results.name as name,
         point,
         rpoint,
         rank
@@ -28,11 +28,15 @@ with target_data as (
 )
 select
     playtime,
-    --[individual] name,
-    --[team] team as name,
+    name,
     rank as "順位",
     point as "獲得ポイント",
-    rpoint as "最終素点"
+    rpoint as "最終素点",
+    count(*) over (partition by name) as count,
+    max(point) over (partition by name) as max_point,
+    min(point) over (partition by name) as min_point,
+    max(rpoint) over (partition by name) as max_rpoint,
+    min(rpoint) over (partition by name) as min_rpoint
 from
     target_data
 ;

@@ -59,6 +59,7 @@ def aggregation():
         result_df["name"] = result_df["name"].replace(mapping_dict)
         player_name = mapping_dict[player_name]
 
+    result_df = d.common.df_rename(result_df)
     data = result_df.to_dict(orient="records")[0]
 
     # --- 表示内容

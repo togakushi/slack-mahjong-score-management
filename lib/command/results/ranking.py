@@ -44,7 +44,7 @@ def aggregation() -> Tuple[str, Any]:
         return (f.message.reply(message="no_hits"), None)
 
     df = pd.merge(
-        result_df, d.aggregate.ranking_record2(),
+        result_df, d.aggregate.ranking_record(),
         on=["name", "name"],
         suffixes=["", "_x"]
     )
