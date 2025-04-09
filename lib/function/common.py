@@ -353,8 +353,8 @@ def column_alignment(df: pd.DataFrame, header: bool = False, index: bool = False
     if index:
         field.insert(0, df.index.name)
 
-    if header:  # ヘッダ
-        fmt = ["left" for x in field]
+    if header:  # ヘッダ(すべて左寄せ)
+        fmt = ["left"] * len(field)
     else:
         for x in field:
             match x:
