@@ -541,9 +541,9 @@ def word_list(word_type: int = 0) -> list:
             where
                 type=?
             """, (word_type,)
-        )
+        ).fetchall()
 
-    return (ret.fetchall())
+    return (ret)
 
 
 def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
