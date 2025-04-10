@@ -307,7 +307,8 @@ def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     param = {
         "ts": ts,
-        "playtime": datetime.fromtimestamp(float(ts)),
+        # "playtime": datetime.fromtimestamp(float(ts)),
+        "playtime": datetime.fromtimestamp(float(ts)).strftime("%Y-%m-%d %H:%M:%S.%f"),
         "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
