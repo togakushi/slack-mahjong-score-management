@@ -12,4 +12,6 @@ work/
 
 !requirements.txt
 !test_case/test-*.ini
+!test_data/*.csv
+!test_data/*.ini
 !.gitignore
