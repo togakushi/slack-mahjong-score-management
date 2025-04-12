@@ -106,6 +106,7 @@ def placeholder(subcom: "SubCommand") -> dict:
         "aggregation_range",
         "regulations_type2",
         "search_range",
+        "unknown_command",
     ]
     for key in drop_keys:
         if key in ret_dict:
