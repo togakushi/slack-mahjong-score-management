@@ -176,8 +176,8 @@ def main():
         test_case = str()
         always_keyword = str()
         all_player = False
-        target_player = []
-        target_team = []
+        target_player: list = []
+        target_team: list = []
         flag.update(save=test_conf["default"].getboolean("save", False))
 
         for pattern, value in test_conf[sec].items():
@@ -187,6 +187,7 @@ def main():
                     test_case = value
                     continue
                 case "target_player":
+                    target_team.clear()
                     choice_list = list(set(g.member_list.values()))
                     for x in range(int(value)):
                         if not choice_list:
@@ -199,6 +200,7 @@ def main():
                     all_player = True
                     continue
                 case "target_team":
+                    target_player.clear()
                     choice_list = [x["team"] for x in g.team_list]
                     for x in range(int(value)):
                         if not choice_list:
