@@ -16,22 +16,11 @@ from lib import function as f
 from lib.function import configuration
 
 
-def dump(flag: bool = True):
-    """パラメータダンプ
-
-    Args:
-        flag (bool, optional): 出力フラグ
-    """
-    if flag:
-        pprint(["*** prm ***", g.params], width=200)
-        # pprint(["*** game_info ***", d.aggregate.game_info()], width=200)
-
-
-def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
+def test_pattern(flag: dict, test_case: str, sec: str, pattern: str):
     """テストケース実行
 
     Args:
-        flag (bool): ダンプ出力フラグ
+        flag (dict): フラグ格納辞書
         test_case (str): テストケース
         sec (str): 定義セクション
         pattern (str): 実行パターン
@@ -39,21 +28,39 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
 
     def graph_point():
         """ポイント推移グラフ"""
-        dump(flag)
         if len(g.params["player_list"]) == 1:
-            pprint(c.graph.personal.plot(), width=200)
+            pprint([
+                "exec: lib.graph.personal.plot()",
+                c.graph.personal.plot(),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ], width=120)
         else:
-            pprint(c.graph.summary.point_plot(), width=200)
+            pprint([
+                "exec: lib.graph.summary.point_plot()",
+                c.graph.summary.point_plot(),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ], width=120)
 
     def graph_rank():
         """順位推移グラフ"""
-        dump(flag)
-        pprint(c.graph.summary.rank_plot(), width=200)
+        pprint([
+            "exec: lib.graph.summary.rank_plot()",
+            c.graph.summary.rank_plot(),
+            f"{g.params=}" if flag.get("dump") else "g.params={...}",
+        ], width=120)
 
     def graph_statistics():
         """統計グラフ"""
-        dump(flag)
-        pprint(c.graph.personal.statistics_plot(), width=200)
+        pprint([
+            "exec: lib.graph.personal.statistics_plot()",
+            c.graph.personal.statistics_plot(),
+            f"{g.params=}" if flag.get("dump") else "g.params={...}",
+        ], width=120)
+
+    # 追加オプション
+    pre_params = f.common.analysis_argument(g.msg.argument)
+    if flag.get("save") and not pre_params.get("filename"):
+        g.msg.argument.append(f"filename:{flag.get("filename", "dummy")}")
 
     match test_case:
         case "skip":
@@ -68,8 +75,13 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
 
         case "summary":
             g.params = d.common.placeholder(g.cfg.results)
-            dump(flag)
-            pprint(c.results.slackpost.main())
+            if flag.get("save"):
+                g.params.update(filename=flag.get("filename", "dummy"))
+            pprint([
+                "exec: lib.results.slackpost.main()",
+                c.results.slackpost.main(),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ], width=120)
 
         case "graph":
             g.params = d.common.placeholder(g.cfg.graph)
@@ -105,26 +117,37 @@ def test_pattern(flag: bool, test_case: str, sec: str, pattern: str):
 
         case "ranking":
             g.params = d.common.placeholder(g.cfg.ranking)
-            dump(flag)
-            pprint(c.results.ranking.main())
+            pprint([
+                "exec: lib.results.ranking.main()",
+                c.results.ranking.main(),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ], width=120)
 
         case "report":
             g.params = d.common.placeholder(g.cfg.report)
-            g.params.update(filename=f"report_{sec}_{pattern}")
-            dump(flag)
-            pprint(c.report.slackpost.main(), width=200)
+            pprint([
+                "exec: lib.report.slackpost.main()",
+                c.report.slackpost.main(),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ], width=120)
 
         case "pdf":
             g.params = d.common.placeholder(g.cfg.report)
             g.params.update(filename=f"report_{sec}_{pattern}_{g.params["player_name"]}")
-            dump(flag)
-            pprint(c.report.slackpost.results_report.gen_pdf(), width=200)
+            pprint([
+                "exec: lib.report.slackpost.results_report.gen_pdf()",
+                c.report.slackpost.results_report.gen_pdf(),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ], width=120)
 
         case "rating":
             g.params = d.common.placeholder(g.cfg.results)
             g.params.update(filename=f"rating_{sec}_{pattern}")
-            dump(flag)
-            pprint(c.graph.rating.plot(), width=200)
+            pprint([
+                "exec: lib.graph.rating.plot()",
+                c.graph.rating.plot(),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ], width=120)
 
 
 def main():
@@ -134,25 +157,31 @@ def main():
     test_conf = configparser.ConfigParser()
     test_conf.read(g.args.testcase, encoding="utf-8")
 
-    flag = test_conf["default"].getboolean("dump", False)
+    flag: dict = {
+        "dump": test_conf["default"].getboolean("dump", False),
+        "save": test_conf["default"].getboolean("save", False),
+        "filename": "",
+    }
 
     d.initialization.initialization_resultdb()
     c.member.read_memberslist(False)
 
-    print("=" * 80)
+    print("=" * 120)
     print(f"config  : {os.path.realpath(os.path.join(g.script_dir, g.args.config))}")
     print(f"database: {g.cfg.db.database_file}")
 
     for sec in test_conf.sections():
-        print("=" * 80)
+        print("=" * 120)
         print(f"[TEST CASE] {sec}")
         test_case = str()
         always_keyword = str()
         all_player = False
         target_player = []
         target_team = []
+        flag.update(save=test_conf["default"].getboolean("save", False))
 
         for pattern, value in test_conf[sec].items():
+            flag.update(filename=f"{sec}_{pattern}")
             match pattern:
                 case s if re.match(r"^case", s):
                     test_case = value
@@ -182,11 +211,14 @@ def main():
                     always_keyword = value
                     print("always_keyword:", always_keyword)
                     continue
+                case "save":
+                    flag.update(save=test_conf[sec].getboolean("save"))
+                    continue
 
-            print("-" * 80)
+            print("-" * 120)
             argument = f"{value} {always_keyword}"
             if test_conf[sec].getboolean("config", False):
-                pprint(["*** config ***", vars(g.cfg)], width=200)
+                pprint(["*** config ***", vars(g.cfg)], width=120)
 
             if all_player:
                 for target_player in set(g.member_list.values()):
