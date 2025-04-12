@@ -137,7 +137,7 @@ def main():
     flag = test_conf["default"].getboolean("dump", False)
 
     d.initialization.initialization_resultdb()
-    c.member.read_memberslist()
+    c.member.read_memberslist(False)
 
     print("=" * 80)
     print(f"config  : {os.path.realpath(os.path.join(g.script_dir, g.args.config))}")
