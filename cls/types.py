@@ -40,6 +40,12 @@ class CommonMethodMixin:
             else:
                 setattr(self, x.name, config.get(section, x.name, fallback=x.default))
 
+        # 共通パラメータ初期化
+        self.format = str()
+        self.filename = str()
+        self.aggregate_unit = str()
+        self.interval = 80
+
     def to_dict(self) -> dict:
         """必要なパラメータを辞書型で返す
 
