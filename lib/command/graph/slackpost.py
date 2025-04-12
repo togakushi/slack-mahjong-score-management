@@ -11,6 +11,7 @@ from lib.database.common import placeholder
 def main():
     """グラフをslackにpostする"""
     g.params = placeholder(g.cfg.graph)
+
     if len(g.params["player_list"]) == 1:  # 対象がひとり
         title = "個人成績"
         if g.params.get("statistics"):

@@ -18,6 +18,7 @@ from lib.command.member import anonymous_mapping
 def main():
     """ランキングをslackにpostする"""
     g.params = d.common.placeholder(g.cfg.ranking)
+
     msg1, msg2 = aggregation()
     res = f.slack_api.post_message(msg1)
     if msg2:
@@ -38,7 +39,6 @@ def aggregation() -> Tuple[str, Any]:
     if game_info["game_count"] == 0:  # 結果が0件のとき
         return (f.message.reply(message="no_hits"), None)
 
-    g.params.update(stipulated=g.cfg.results.stipulated_calculation(game_info["game_count"]))
     result_df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/ranking/aggregate.sql"))
     if result_df.empty:
         return (f.message.reply(message="no_hits"), None)

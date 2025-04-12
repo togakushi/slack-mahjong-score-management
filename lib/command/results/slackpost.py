@@ -11,6 +11,7 @@ from lib.database.common import placeholder
 def main():
     """成績の集計結果をslackにpostする"""
     g.params = placeholder(g.cfg.results)
+
     # モード切り替え
     versus_mode = False
     if g.cfg.results.versus_matrix:
