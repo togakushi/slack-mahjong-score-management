@@ -29,7 +29,6 @@ def game_info():
 
     # データ収集
     df = read_data(os.path.join(g.script_dir, "lib/queries/game.info.sql"))
-
     ret = {
         "game_count": int(df["count"].to_string(index=False)),
         "first_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),

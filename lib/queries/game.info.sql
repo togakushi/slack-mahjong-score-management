@@ -7,10 +7,10 @@ select
     first_game, last_game
 from (
     select
-        first_value(results.playtime) over(order by results.ts asc) as first_game,
-        last_value(results.playtime) over(order by results.ts asc) as last_game,
-        first_value(game_info.comment) over(order by results.ts asc) as first_comment,
-        last_value(game_info.comment) over(order by results.ts asc) as last_comment
+        first_value(results.playtime) over(order by results.playtime asc) as first_game,
+        last_value(results.playtime) over(order by results.playtime asc) as last_game,
+        first_value(game_info.comment) over(order by results.playtime asc) as first_comment,
+        last_value(game_info.comment) over(order by results.playtime asc) as last_comment
     from
         --[individual] individual_results as results
         --[team] team_results as results
