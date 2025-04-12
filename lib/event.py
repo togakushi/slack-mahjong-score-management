@@ -28,8 +28,7 @@ def handle_message_events(client, body):
     g.msg.client = client
     logging.info(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, keyword=%s, user_id=%s,",
-        vars(g.msg)["status"], vars(g.msg)["event_ts"], vars(g.msg)["thread_ts"],
-        vars(g.msg)["in_thread"], vars(g.msg)["keyword"], vars(g.msg)["user_id"],
+        g.msg.status, g.msg.event_ts, g.msg.thread_ts, g.msg.in_thread, g.msg.keyword, g.msg.user_id,
     )
 
     # 許可されていないユーザのポストは処理しない
