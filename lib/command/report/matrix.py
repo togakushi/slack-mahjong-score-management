@@ -14,15 +14,13 @@ def plot():
     """対局対戦マトリックスの表示
 
     Returns:
-        Tuple[str, dict]:
+        Tuple[str,dict]:
             - str: ヘッダ情報
             - dict: 生成ファイル情報
     """
 
-    game_info = d.aggregate.game_info()
-    g.params.update(stipulated=g.cfg.report.stipulated_calculation(game_info["game_count"]))
-
     # データ集計
+    game_info = d.aggregate.game_info()
     df = d.aggregate.matrix_table()
     if g.params.get("anonymous"):
         mapping_dict = anonymous_mapping(df.index.tolist())

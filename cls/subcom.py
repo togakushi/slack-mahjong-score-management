@@ -126,19 +126,15 @@ class SubCommand(CommonMethodMixin):
         return (ret_dict)
 
     def stipulated_calculation(self, game_count: int) -> int:
-        """規定打数計算
+        """規定打数をゲーム数から計算
 
         Args:
-            game_count (int): ゲーム数
+            game_count (int): 指定ゲーム数
 
         Returns:
             int: 規定ゲーム数
         """
 
-        if self.stipulated:
-            return (self.stipulated)
-
-        # レートから計算
         return int(ceil(game_count * self.stipulated_rate) + 1)
 
     def update_from_dict(self, update_dict: dict) -> None:

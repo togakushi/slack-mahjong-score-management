@@ -28,10 +28,7 @@ def main():
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ取得
-    # 規定打数計算
     game_info = d.aggregate.game_info()
-    g.params.update(stipulated=g.cfg.report.stipulated_calculation(game_info["game_count"]))
-
     df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/results_list.sql")).reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:

@@ -35,7 +35,6 @@ def plot():
         return (0, f.message.reply(message="no_hits"))
 
     # 足切り
-    g.params.update(stipulated=g.cfg.graph.stipulated_calculation(game_info["game_count"]))
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
 
     # 並び変え

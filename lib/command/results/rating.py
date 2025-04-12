@@ -35,7 +35,6 @@ def aggregation():
     final["name"] = final.copy().index
 
     # 足切り
-    g.params.update(stipulated=g.cfg.results.stipulated_calculation(game_info["game_count"]))
     final = final.query("count >= @g.params['stipulated']")
     df_results = df_results.query("count >= @g.params['stipulated']")
 

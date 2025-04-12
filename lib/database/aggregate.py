@@ -44,6 +44,24 @@ def game_info():
         ret["first_comment"] = df["first_comment"].to_string(index=False)
         ret["last_comment"] = df["last_comment"].to_string(index=False)
 
+    # 規定打数更新
+    match g.params.get("command", ""):
+        case "results":
+            old_stipulated = g.cfg.results.stipulated
+            new_stipulated = g.cfg.results.stipulated_calculation(ret["game_count"])
+        case "graph":
+            old_stipulated = g.cfg.graph.stipulated
+            new_stipulated = g.cfg.graph.stipulated_calculation(ret["game_count"])
+        case "ranking":
+            old_stipulated = g.cfg.ranking.stipulated
+            new_stipulated = g.cfg.ranking.stipulated_calculation(ret["game_count"])
+        case "report":
+            old_stipulated = g.cfg.report.stipulated
+            new_stipulated = g.cfg.report.stipulated_calculation(ret["game_count"])
+
+    if not old_stipulated:  # 規定打数が0なら更新
+        g.params.update(stipulated=new_stipulated)
+
     logging.info("return: %s", ret)
     return (ret)
 
