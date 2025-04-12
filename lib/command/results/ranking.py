@@ -168,6 +168,7 @@ def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:
         return ("")
 
     df.sort_values(by=["rank", "game_count"], ascending=[True, False], inplace=True)
+    df = df.query("rank <= @g.cfg.ranking.ranked")
     tbl = tabulate(df.filter(items=["rank", "name", "disp"]).values)
     tbl = re.sub(r"( *[0-9]+)\s(.*)<>(.*)", r"\1:\2\3", tbl)
     tbl = "\n".join(tbl.splitlines()[1:-1]).replace(" -", "▲")
