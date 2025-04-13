@@ -68,6 +68,7 @@ def data_comparison() -> Tuple[dict, dict]:
 
     # slackログからゲーム結果を取得
     slack_data = f.search.for_slack()
+    slack_remarks = f.search.for_slack(g.cfg.cw.remarks_word)
     if slack_data:
         first_ts = min(slack_data)
     else:
@@ -93,7 +94,7 @@ def data_comparison() -> Tuple[dict, dict]:
     msg = f.common.merge_dicts(msg, ret_msg)
 
     # --- メモ突合
-    ret_count, ret_msg = check_remarks(slack_data, db_remarks)
+    ret_count, ret_msg = check_remarks(slack_remarks, db_remarks)
     count = f.common.merge_dicts(count, ret_count)
     msg = f.common.merge_dicts(msg, ret_msg)
 

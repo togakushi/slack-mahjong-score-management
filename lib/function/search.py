@@ -75,8 +75,11 @@ def pattern(text: str) -> list | bool:
     return (msg)
 
 
-def for_slack():
+def for_slack(word: str | None = None) -> dict:
     """過去ログからゲーム結果を検索して返す
+
+    Args:
+        word (str | None, optional): 検索するワード. Defaults to None.
 
     Returns:
         dict: 検索した結果
@@ -84,7 +87,10 @@ def for_slack():
 
     # 検索クエリ
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y-%m-%d")
-    query = f"{g.cfg.search.keyword} in:{g.cfg.search.channel} after:{after}"
+    if word:
+        query = f"{word} in:{g.cfg.search.channel} after:{after}"
+    else:
+        query = f"{g.cfg.search.keyword} in:{g.cfg.search.channel} after:{after}"
     logging.info("query=%s", query)
 
     # データ取得
