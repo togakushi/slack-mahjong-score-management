@@ -80,6 +80,7 @@ def data_comparison() -> Tuple[dict, dict]:
 
     logging.trace("thread_report: %s", g.cfg.setting.thread_report)  # type: ignore
     logging.trace("slack_data=%s", slack_data)  # type: ignore
+    logging.trace("slack_remarks=%s", slack_remarks)  # type: ignore
     logging.trace("db_data=%s", db_data)  # type: ignore
     logging.trace("db_remarks=%s", db_remarks)  # type: ignore
 
