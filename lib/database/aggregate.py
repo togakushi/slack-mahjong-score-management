@@ -11,25 +11,26 @@ import numpy as np
 import pandas as pd
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import command as c
 from lib.database.common import read_data
 
 
-def game_info():
+def game_info() -> GameInfoDict:
     """指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
 
     Returns:
-        dict: 取得したデータ
+        GameInfoDict: 取得したデータ
             - game_count: int
-            - first_game: datetime
-            - last_game: datetime
-            - first_comment: str
-            - last_comment: str
+            - first_game: str ("%Y/%m/%d %H:%M:%S")
+            - last_game: str ("%Y/%m/%d %H:%M:%S")
+            - first_comment: str | None
+            - last_comment: str | None
     """
 
     # データ収集
     df = read_data(os.path.join(g.script_dir, "lib/queries/game.info.sql"))
-    ret = {
+    ret: GameInfoDict = {
         "game_count": int(df["count"].to_string(index=False)),
         "first_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         "last_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),

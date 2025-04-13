@@ -4,7 +4,16 @@ cls/types.py
 
 from configparser import ConfigParser
 from dataclasses import asdict, dataclass, fields
-from typing import Union, Any
+from typing import Any, TypedDict, Union
+
+
+class GameInfoDict(TypedDict, total=False):
+    """ゲーム集計情報格納辞書"""
+    game_count: int
+    first_game: str
+    last_game: str
+    first_comment: str | None
+    last_comment: str | None
 
 
 @dataclass

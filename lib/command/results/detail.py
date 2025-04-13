@@ -9,6 +9,7 @@ import textwrap
 import pandas as pd
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import command as c
 from lib import database as d
 from lib import function as f
@@ -98,12 +99,12 @@ def aggregation():
     return (message_build(msg_data), msg2)
 
 
-def get_headline(data: dict, game_info: dict, player_name: str) -> dict:
+def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
     """ヘッダメッセージ生成
 
     Args:
         data (dict): 生成内容が格納された辞書
-        game_info (dict): ゲーム集計情報
+        game_info (GameInfoDict): ゲーム集計情報
         player_name (str): プレイヤー名
 
     Returns:
