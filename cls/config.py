@@ -183,7 +183,9 @@ class Config():
 
         Args:
             str: 設定ファイル
-        """
+        Raises:
+            RuntimeError: コンフィグファイル読み込み失敗
+            """
 
         config_dir = os.path.dirname(filename)
 
