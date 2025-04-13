@@ -11,6 +11,7 @@ from dateutil.relativedelta import relativedelta
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
+from cls.types import SlackSearchDict
 
 
 class MsgDict(TypedDict, total=False):
@@ -18,7 +19,8 @@ class MsgDict(TypedDict, total=False):
     mismatch: str
     missing: str
     delete: str
-    remark: str
+    remark_mod: str
+    remark_del: str
     invalid_score: str
     pending: list[str]
 
@@ -45,7 +47,8 @@ def main():
     ret += f"＊ 不一致：{count['mismatch']}件\n{msg['mismatch']}"
     ret += f"＊ 取りこぼし：{count['missing']}件\n{msg['missing']}"
     ret += f"＊ 削除漏れ：{count['delete']}件\n{msg['delete']}"
-    ret += f"＊ メモ：{count['remark']}件\n{msg['remark']}"
+    ret += f"＊ メモ更新：{count['remark_mod']}件\n{msg['remark_mod']}"
+    ret += f"＊ メモ削除：{count['remark_del']}件\n{msg['remark_del']}"
     if count["invalid_score"] > 0:
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]
@@ -58,7 +61,7 @@ def data_comparison() -> Tuple[dict, dict]:
     """データ突合処理
 
     Returns:
-        Tuple[dict, dict]:
+        Tuple[dict,dict]:
             - dict: 処理された更新/追加/削除の件数
             - dict: slackに返すメッセージ
     """
@@ -67,30 +70,35 @@ def data_comparison() -> Tuple[dict, dict]:
     msg: dict = {}
 
     # slackログからゲーム結果を取得
-    slack_data = f.search.for_slack()
-    slack_remarks = f.search.for_slack(g.cfg.cw.remarks_word)
-    if slack_data:
-        first_ts = min(slack_data)
+    slack_score = f.search.for_slack_score()
+    slack_remarks = f.search.for_slack_remarks()
+    for key in slack_remarks:  # スレッド元のスコアデータを追加
+        thread_ts = slack_remarks[key].get("thread_ts")
+        if thread_ts in slack_score:
+            slack_remarks[key]["score"] = slack_score[thread_ts].get("score", [])
+
+    if slack_score:
+        first_ts = float(min(slack_score))
     else:
         first_ts = (datetime.now() - relativedelta(days=g.cfg.search.after)).timestamp()
 
     # データベースからゲーム結果を取得
-    db_data = f.search.for_database(first_ts)
+    db_score = f.search.for_db_score(first_ts)
     db_remarks = f.search.for_db_remarks(first_ts)
 
     logging.trace("thread_report: %s", g.cfg.setting.thread_report)  # type: ignore
-    logging.trace("slack_data=%s", slack_data)  # type: ignore
-    logging.trace("slack_remarks=%s", slack_remarks)  # type: ignore
-    logging.trace("db_data=%s", db_data)  # type: ignore
+    logging.trace("slack_score=%s", slack_score)  # type: ignore
+    logging.trace("slack_remarks=%s", slack_score)  # type: ignore
+    logging.trace("db_score=%s", db_score)  # type: ignore
     logging.trace("db_remarks=%s", db_remarks)  # type: ignore
 
     # --- スコア突合
-    ret_count, ret_msg = check_omission(slack_data, db_data)
+    ret_count, ret_msg = check_omission(slack_score, db_score)
     count = f.common.merge_dicts(count, ret_count)
     msg = f.common.merge_dicts(msg, ret_msg)
 
     # --- 素点合計の再チェック(修正可能なslack側のみチェック)
-    ret_count, ret_msg = check_total_score(slack_data)
+    ret_count, ret_msg = check_total_score(slack_score)
     count = f.common.merge_dicts(count, ret_count)
     msg = f.common.merge_dicts(msg, ret_msg)
 
@@ -104,11 +112,11 @@ def data_comparison() -> Tuple[dict, dict]:
     return (count, msg)
 
 
-def check_omission(slack_data: dict, db_data: dict) -> Tuple[dict, MsgDict]:
+def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tuple[dict, MsgDict]:
     """スコア取りこぼしチェック
 
     Args:
-        slack_data (dict): slack検索結果
+        slack_data (dict[str, SlackSearchDict]): slack検索結果
         db_data (dict): DB登録状況
 
     Returns:
@@ -120,6 +128,7 @@ def check_omission(slack_data: dict, db_data: dict) -> Tuple[dict, MsgDict]:
     msg: MsgDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
 
     for key, val in slack_data.items():
+        # 保留チェック
         if val["edited_ts"]:
             check_ts = float(max(val["edited_ts"])) + g.cfg.search.wait
         else:
@@ -208,76 +217,58 @@ def check_omission(slack_data: dict, db_data: dict) -> Tuple[dict, MsgDict]:
     return (count, msg)
 
 
-def check_remarks(slack_data: dict, db_remarks: dict) -> Tuple[dict, MsgDict]:
+def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tuple[dict, MsgDict]:
     """メモの取りこぼしチェック
 
     Args:
-        slack_data (dict): slack検索結果
-        db_remarks (dict): DB登録状況
+        slack_data (dict[str, SlackSearchDict]): slack検索結果
+        db_data (dict): DB登録状況
 
     Returns:
         Tuple[dict, MsgDict]: 修正内容(結果)
     """
 
     now_ts = datetime.now().timestamp()
-    count: dict[str, int] = {"remark": 0}
-    msg: MsgDict = {"remark": "", "pending": []}
+    count: dict[str, int] = {"remark_mod": 0, "remark_del": 0}
+    msg: MsgDict = {"remark_mod": "", "remark_del": "", "pending": []}
 
+    # 比較用リスト生成
     slack_remarks: list = []
-    for key, val in slack_data.items():
-        if val.get("edited_ts"):
-            check_ts = float(max(val["edited_ts"])) + g.cfg.search.wait
+    for val in slack_data.values():
+        if val.get("remarks", []):
+            for name, matter in val["remarks"]:
+                if name in val.get("score", []) and val.get("in_thread"):
+                    slack_remarks.append({
+                        "thread_ts": val.get("thread_ts", ""),
+                        "event_ts": val.get("event_ts", ""),
+                        "name": name,
+                        "matter": matter,
+                    })
+
+    # slack -> DB チェック
+    for remark in slack_remarks:
+        # 保留チェック
+        if float(remark["event_ts"]) + g.cfg.search.wait > now_ts:
+            msg["pending"].append(remark["event_ts"])
+            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(remark["event_ts"])))
+            continue
+
+        if remark in db_data:
+            logging.info("remark pass(slack -> DB): %s", remark)
         else:
-            check_ts = float(key) + g.cfg.search.wait
+            count["remark_mod"] += 1
+            d.common.remarks_delete(remark["event_ts"])
+            d.common.remarks_append(remark)
+            logging.notice("modification(data mismatch): %s", remark)  # type: ignore
 
-        if check_ts > now_ts:
-            msg["pending"].append(str(key))
-            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(key)))
-            continue
-
-        remarks = val.get("remarks")
-        event_ts = val.get("event_ts")
-        for idx, (name, matter) in enumerate(remarks):
-            in_name = name in val.get("score")
-            chk = {
-                "thread_ts": key,
-                "event_ts": event_ts[idx],
-                "name": name,
-                "matter": matter,
-            }
-            slack_remarks.append(chk)
-
-            if chk in db_remarks:  # slack -> DB チェック
-                if in_name:
-                    logging.info("remark pass: %s, %s", chk, in_name)
-                else:
-                    count["remark"] += 1
-                    d.common.remarks_delete_compar(chk)
-                    logging.notice("delete(name mismatch): %s", chk)  # type: ignore
-            else:
-                if in_name:
-                    count["remark"] += 1
-                    d.common.remarks_append(chk)
-                    logging.notice("insert(data missing): %s", chk)  # type: ignore
-
-    for key in db_remarks:  # DB -> slack チェック
-        event_ts = float(key.get("event_ts"))
-        if event_ts + g.cfg.search.wait > now_ts:
-            msg["pending"].append(str(event_ts))
-            logging.info("pending(DB -> slack): %s", f.common.ts_conv(float(event_ts)))
-            continue
-
-        if key.get("thread_ts") in msg.get("pending", {}):  # スレッド元が保留中ならチェックしない
-            msg["pending"].append(str(event_ts))
-            logging.info("pending(thread): %s", f.common.ts_conv(float(event_ts)))
-            continue
-
-        if key in slack_remarks:
-            continue
-
-        count["remark"] += 1
-        d.common.remarks_delete_compar(key)
-        logging.notice("delete(missed deletion): %s", f.common.ts_conv(float(event_ts)))  # type: ignore
+    # DB -> slack チェック
+    for remark in db_data:
+        if remark in slack_remarks:
+            logging.info("remark pass(DB -> slack): %s", remark)
+        else:
+            count["remark_del"] += 1
+            d.common.remarks_delete_compar(remark)
+            logging.notice("delete(missed deletion): %s", remark)  # type: ignore
 
     return (count, msg)
 

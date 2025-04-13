@@ -12,6 +12,7 @@ from typing import Any, Tuple
 from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
+from cls.types import SlackSearchDict
 from lib import command as c
 from lib import function as f
 
@@ -75,22 +76,19 @@ def pattern(text: str) -> list | bool:
     return (msg)
 
 
-def for_slack(word: str | None = None) -> dict:
-    """過去ログからゲーム結果を検索して返す
+def slack_messages(word: str) -> dict[str, SlackSearchDict]:
+    """slackログからメッセージを検索して返す
 
     Args:
-        word (str | None, optional): 検索するワード. Defaults to None.
+        word (str): 検索するワード
 
     Returns:
-        dict: 検索した結果
+        dict[str, SlackSearchDict]: 検索した結果
     """
 
     # 検索クエリ
     after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y-%m-%d")
-    if word:
-        query = f"{word} in:{g.cfg.search.channel} after:{after}"
-    else:
-        query = f"{g.cfg.search.keyword} in:{g.cfg.search.channel} after:{after}"
+    query = f"{word} in:{g.cfg.search.channel} after:{after}"
     logging.info("query=%s", query)
 
     # データ取得
@@ -101,7 +99,6 @@ def for_slack(word: str | None = None) -> dict:
         count=100
     )
     matches = response["messages"]["matches"]  # 1ページ目
-
     for p in range(2, response["messages"]["paging"]["pages"] + 1):
         response = g.webclient.search_messages(
             query=query,
@@ -112,79 +109,130 @@ def for_slack(word: str | None = None) -> dict:
         )
         matches += response["messages"]["matches"]  # 2ページ目以降
 
-    # ゲーム結果の抽出
-    data: dict = {}
+    # 必要なデータだけ辞書に格納
+    data: dict[str, SlackSearchDict] = {}
     for x in matches:
-        user_id = x.get("user")
-        if user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
-            logging.info("skip ignore user: %s", user_id)
-        else:
-            detection = f.search.pattern(x.get("text"))
-            if isinstance(detection, list):
-                # 名前ブレを修正
-                g.params.update(unregistered_replace=False)  # ゲスト無効
-                for i in range(0, 8, 2):
-                    detection[i] = c.member.name_replace(detection[i], False)
+        data[x["ts"]] = {
+            "channel_id": x["channel"].get("id"),
+            "user_id": x.get("user"),
+            "text": x.get("text"),
+        }
 
-                data[x["ts"]] = {
-                    "channel_id": x["channel"].get("id"),
-                    "user_id": user_id,
-                    "score": detection,
-                    "event_ts": [],
-                    "edited_ts": [],
-                    "remarks": [],
-                    "in_thread": False,
-                    "reaction_ok": [],
-                    "reaction_ng": [],
-                }
-                logging.trace("slack data: %s : %s", x["ts"], data[x["ts"]])  # type: ignore
-
-    # 検索データが無い場合は空の辞書を返して後続の処理をスキップ
-    if not data:
-        return (data)
-
-    for thread_ts, val in data.items():
-        conversations = g.app.client.conversations_replies(
-            channel=val.get("channel_id"),
-            ts=thread_ts,
-        )
-
-        msg: list = conversations.get("messages", [])
-
-        # リアクション取得
-        reaction_ok, reaction_ng = reactions_list(msg[0])
-        val["reaction_ok"].extend(reaction_ok)
-        val["reaction_ng"].extend(reaction_ng)
-
-        # 編集時間取得
-        if msg[0].get("edited"):
-            val["edited_ts"].append(msg[0]["edited"]["ts"])
-
-        if msg[0].get("ts") == msg[0].get("thread_ts") or msg[0].get("thread_ts") is None:
-            if len(msg) >= 1:  # スレッド内探索
-                for x in msg[1:]:
-                    if re.match(rf"^{g.cfg.cw.remarks_word}", x.get("text", "")):  # 追加メモ
-                        text = x.get("text").replace(g.cfg.cw.remarks_word, "").strip().split()
-                        event_ts = x.get("ts")
-
-                        _ok, _ng = reactions_list(x)
-                        val["reaction_ok"] += _ok
-                        val["reaction_ng"] += _ng
-
-                        if x.get("edited"):
-                            val["edited_ts"].append(x["edited"]["ts"])
-
-                        for name, matter in zip(text[0::2], text[1::2]):
-                            val["event_ts"].append(event_ts)
-                            val["remarks"].append((name, matter))
-        else:
-            val.update(in_thread=True)
-
-    g.msg.channel_type = "search_messages"
     return (data)
 
 
-def for_database(first_ts=False):
+def conversations_replies(matches: dict) -> dict[str, SlackSearchDict]:
+    """メッセージ詳細情報取得
+
+    Args:
+        matches (dict): 対象データ
+
+    Returns:
+        dict[str, SlackSearchDict]: 詳細情報追加データ
+    """
+
+    # 詳細情報取得
+    for key, val in matches.items():
+        conversations = g.app.client.conversations_replies(
+            channel=val.get("channel_id"),
+            ts=key,
+        )
+        msg: list = conversations.get("messages", [])
+
+        # 各種時間取得
+        if msg[0].get("ts"):  # イベント発生時間
+            val["event_ts"] = msg[0]["ts"]
+        if msg[0].get("thread_ts"):  # スレッドの先頭
+            val["thread_ts"] = msg[0]["thread_ts"]
+        else:
+            val["thread_ts"] = None
+        if msg[0].get("edited"):  # 編集時間
+            val["edited_ts"] = msg[0]["edited"]["ts"]
+        else:
+            val["edited_ts"] = None
+
+        # リアクション取得
+        reaction_ok, reaction_ng = reactions_list(msg[0])
+        val["reaction_ok"] = reaction_ok
+        val["reaction_ng"] = reaction_ng
+
+        # スレッド内フラグ
+        if val.get("event_ts") == val.get("thread_ts") or val.get("thread_ts") is None:
+            val["in_thread"] = False
+        else:
+            val["in_thread"] = True
+
+        matches[key].update(val)
+
+    return (matches)
+
+
+def for_slack_score() -> dict[str, SlackSearchDict]:
+    """過去ログからスコア記録を検索して返す
+
+    Returns:
+        dict[str, SlackSearchDict]: 検索した結果
+    """
+
+    matches = slack_messages(g.cfg.search.keyword)
+
+    # ゲーム結果の抽出
+    for key in list(matches.keys()):
+        if matches[key].get("user", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
+            logging.info("skip ignore user: %s", matches[key]["user"])
+            continue
+        detection = f.search.pattern(matches[key].get("text", ""))
+        if isinstance(detection, list):
+            for i in range(0, 8, 2):
+                g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
+                detection[i] = c.member.name_replace(detection[i], False)
+            matches[key]["score"] = detection
+            matches[key].pop("text")
+        else:  # 不一致は破棄
+            matches.pop(key)
+
+    # 結果が無い場合は空の辞書を返して後続の処理をスキップ
+    if not matches:
+        return ({})
+
+    matches = conversations_replies(matches)
+    g.msg.channel_type = "search_messages"
+    return (matches)
+
+
+def for_slack_remarks() -> dict[str, SlackSearchDict]:
+    """slackログからメモを検索して返す
+
+    Returns:
+        dict[str, SlackSearchDict]: 検索した結果
+    """
+
+    matches = slack_messages(g.cfg.cw.remarks_word)
+
+    # メモの抽出
+    for key in list(matches.keys()):
+        if matches[key].get("user", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
+            logging.info("skip ignore user: %s", matches[key]["user"])
+            continue
+        if re.match(rf"^{g.cfg.cw.remarks_word}", matches[key].get("text", "")):  # キーワードが先頭に存在するかチェック
+            text = matches[key].get("text").replace(g.cfg.cw.remarks_word, "").strip().split()
+            matches[key]["remarks"] = []
+            for name, matter in zip(text[0::2], text[1::2]):
+                matches[key]["remarks"].append((name, matter))
+            matches[key].pop("text")
+        else:  # 不一致は破棄
+            matches.pop(key)
+
+    # 結果が無い場合は空の辞書を返して後続の処理をスキップ
+    if not matches:
+        return ({})
+
+    matches = conversations_replies(matches)
+    g.msg.channel_type = "search_messages"
+    return (matches)
+
+
+def for_db_score(first_ts: float | bool = False) -> dict:
     """データベースからスコアを検索して返す
 
     Args:
@@ -195,14 +243,14 @@ def for_database(first_ts=False):
     """
 
     if not first_ts:
-        return (None)
+        return ({})
 
     data: dict = {}
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
         curs = cur.cursor()
 
-        rows = curs.execute("select * from result where ts >= ?", (first_ts,))
+        rows = curs.execute("select * from result where ts >= ?", (str(first_ts),))
         for row in rows.fetchall():
             ts = row["ts"]
             data[ts] = []
@@ -219,7 +267,7 @@ def for_database(first_ts=False):
     return (data)
 
 
-def for_db_remarks(first_ts=False):
+def for_db_remarks(first_ts: float | bool = False) -> list:
     """データベースからメモを検索して返す
 
     Args:
@@ -230,15 +278,15 @@ def for_db_remarks(first_ts=False):
     """
 
     if not first_ts:
-        return (None)
+        return ([])
 
     # データベースからデータ取得
-    data = []
+    data: list = []
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
 
         # 記録済みメモ内容
-        rows = cur.execute("select * from remarks where thread_ts>=?", (first_ts,))
+        rows = cur.execute("select * from remarks where thread_ts>=?", (str(first_ts),))
         for row in rows.fetchall():
             data.append({
                 "thread_ts": row["thread_ts"],

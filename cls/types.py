@@ -16,6 +16,29 @@ class GameInfoDict(TypedDict, total=False):
     last_comment: str | None
 
 
+class ComparisonDict(TypedDict, total=False):
+    """メモ突合用辞書"""
+    mismatch: str
+    missing: str
+    delete: str
+    remark_mod: str
+    remark_del: str
+    invalid_score: str
+    pending: list[str]
+
+
+class SlackSearchDict(TypedDict, total=False):
+    """slack検索結果格納辞書"""
+    event_ts: str | None
+    thread_ts: str | None
+    edited_ts: str | None
+    reaction_ok: list
+    reaction_ng: list
+    in_thread: bool
+    score: list
+    remarks: list
+
+
 @dataclass
 class CommonMethodMixin:
     """データクラス共通メソッド"""
