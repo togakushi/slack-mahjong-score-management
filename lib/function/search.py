@@ -218,6 +218,8 @@ def for_slack_remarks() -> dict[str, SlackSearchDict]:
             text = matches[key].get("text").replace(g.cfg.cw.remarks_word, "").strip().split()
             matches[key]["remarks"] = []
             for name, matter in zip(text[0::2], text[1::2]):
+                g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
+                name = c.member.name_replace(name, False)
                 matches[key]["remarks"].append((name, matter))
             matches[key].pop("text")
         else:  # 不一致は破棄
