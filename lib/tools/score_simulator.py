@@ -127,6 +127,7 @@ def simulate_game():
             for winner in winners:
                 is_parent = winner == parent
                 point = determine_point(is_parent, False)
+                assert isinstance(point, int), "point should be a int"
                 scores[winner] += (point + 300 * renchan_count)
                 scores[discarder] -= (point + 300 * renchan_count)
 
@@ -139,6 +140,7 @@ def simulate_game():
 
             if random.random() > 0.75:  # ツモによる点数移動
                 point_data = determine_point(is_parent, True)
+                assert isinstance(point_data, tuple), "point_data should be a tuple"
                 for i in losers:
                     pay = point_data[1] if i == parent else point_data[0]
                     scores[i] -= (pay + 100 * renchan_count)
