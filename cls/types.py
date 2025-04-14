@@ -7,8 +7,17 @@ from dataclasses import asdict, dataclass, fields
 from typing import Any, TypedDict, Union
 
 
-class GameInfoDict(TypedDict, total=False):
-    """ゲーム集計情報格納辞書"""
+class GameInfoDict(TypedDict):
+    """ゲーム集計情報格納辞書
+
+    Attributes:
+        game_count (int): ゲーム数
+        first_game  (str): 記録されている最初のゲーム時間("%Y/%m/%d %H:%M:%S")
+        last_game (str): 記録されている最後のゲーム時間("%Y/%m/%d %H:%M:%S")
+        first_comment (str | None): 記録されている最初のゲームコメント
+        last_comment (str | None): 記録されている最後のゲームコメント
+    """
+
     game_count: int
     first_game: str
     last_game: str

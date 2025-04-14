@@ -10,6 +10,7 @@ import pandas as pd
 from tabulate import tabulate
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import database as d
 from lib import function as f
 from lib.command.member import anonymous_mapping
@@ -35,7 +36,7 @@ def aggregation() -> Tuple[str, Any]:
     """
 
     # --- データ取得
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     if game_info["game_count"] == 0:  # 結果が0件のとき
         return (f.message.reply(message="no_hits"), None)
 

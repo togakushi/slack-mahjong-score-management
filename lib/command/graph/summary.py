@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import database as d
 from lib import function as f
 from lib.command.member import anonymous_mapping
@@ -34,7 +35,7 @@ def point_plot():
     xlabel_text = None
 
     # データ収集
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
@@ -118,7 +119,7 @@ def rank_plot() -> Tuple[int, str]:
     xlabel_text = None
 
     # データ収集
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了

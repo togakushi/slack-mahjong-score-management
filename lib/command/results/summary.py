@@ -8,6 +8,7 @@ import re
 import pandas as pd
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import database as d
 from lib import function as f
 from lib.command.member import anonymous_mapping
@@ -24,7 +25,7 @@ def aggregation():
     """
 
     # --- データ収集
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     df_summary = d.aggregate.game_summary(drop_items=["rank_distr2"])
     df_game = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql"))
     df_grandslam = df_game.query("grandslam == grandslam")

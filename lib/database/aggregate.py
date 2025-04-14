@@ -21,11 +21,6 @@ def game_info() -> GameInfoDict:
 
     Returns:
         GameInfoDict: 取得したデータ
-            - game_count: int
-            - first_game: str ("%Y/%m/%d %H:%M:%S")
-            - last_game: str ("%Y/%m/%d %H:%M:%S")
-            - first_comment: str | None
-            - last_comment: str | None
     """
 
     # データ収集

@@ -9,6 +9,7 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import database as d
 from lib import function as f
 from lib.command.member import anonymous_mapping
@@ -28,7 +29,7 @@ def plot():
 
     plt.close()
     # データ収集
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     df_ratings = d.aggregate.calculation_rating()
 
     if df_ratings.empty:

@@ -5,6 +5,7 @@ lib/command/report/matrix.py
 import os
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import database as d
 from lib import function as f
 from lib.command.member import anonymous_mapping
@@ -20,7 +21,7 @@ def plot():
     """
 
     # データ集計
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     df = d.aggregate.matrix_table()
     if g.params.get("anonymous"):
         mapping_dict = anonymous_mapping(df.index.tolist())

@@ -7,6 +7,7 @@ import os
 import pandas as pd
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import database as d
 from lib import function as f
 from lib.command.member import anonymous_mapping
@@ -24,7 +25,7 @@ def aggregation():
 
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     df_results = d.common.read_data(os.path.join(g.script_dir, "lib/queries/ranking/results.sql")).set_index("name")
     df_ratings = d.aggregate.calculation_rating()
 

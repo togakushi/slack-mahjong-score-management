@@ -34,7 +34,7 @@ def aggregation():
         return ("登録されていないチームです", {})
 
     # --- データ収集
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     msg_data: dict = {}
     mapping_dict: dict = {}
 

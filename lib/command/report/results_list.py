@@ -9,6 +9,7 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.global_value as g
+from cls.types import GameInfoDict
 from lib import database as d
 from lib import function as f
 from lib.command.member import anonymous_mapping
@@ -28,7 +29,7 @@ def main():
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ取得
-    game_info = d.aggregate.game_info()
+    game_info: GameInfoDict = d.aggregate.game_info()
     df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/results_list.sql")).reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
