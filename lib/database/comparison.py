@@ -4,25 +4,14 @@ lib/database/comparison.py
 
 import logging
 from datetime import datetime
-from typing import Tuple, TypedDict
+from typing import Tuple
 
 from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
-from cls.types import SlackSearchDict
-
-
-class MsgDict(TypedDict, total=False):
-    """メモ突合用辞書"""
-    mismatch: str
-    missing: str
-    delete: str
-    remark_mod: str
-    remark_del: str
-    invalid_score: str
-    pending: list[str]
+from cls.types import SlackSearchDict, ComparisonDict
 
 
 def main():
@@ -112,7 +101,7 @@ def data_comparison() -> Tuple[dict, dict]:
     return (count, msg)
 
 
-def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tuple[dict, MsgDict]:
+def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tuple[dict, ComparisonDict]:
     """スコア取りこぼしチェック
 
     Args:
@@ -120,12 +109,12 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
         db_data (dict): DB登録状況
 
     Returns:
-        Tuple[dict, MsgDict]: 修正内容(結果)
+        Tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
     now_ts = datetime.now().timestamp()
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
-    msg: MsgDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
+    msg: ComparisonDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
 
     for key, val in slack_data.items():
         # 保留チェック
@@ -217,7 +206,7 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
     return (count, msg)
 
 
-def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: list) -> Tuple[dict, MsgDict]:
+def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: list) -> Tuple[dict, ComparisonDict]:
     """メモの取りこぼしチェック
 
     Args:
@@ -225,12 +214,12 @@ def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: list) -> Tupl
         db_data (list): DB登録状況
 
     Returns:
-        Tuple[dict, MsgDict]: 修正内容(結果)
+        Tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
     now_ts = datetime.now().timestamp()
     count: dict[str, int] = {"remark_mod": 0, "remark_del": 0}
-    msg: MsgDict = {"remark_mod": "", "remark_del": "", "pending": []}
+    msg: ComparisonDict = {"remark_mod": "", "remark_del": "", "pending": []}
 
     # 比較用リスト生成
     slack_remarks: list = []
@@ -273,19 +262,19 @@ def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: list) -> Tupl
     return (count, msg)
 
 
-def check_total_score(slack_data: dict) -> Tuple[dict, MsgDict]:
+def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
     """素点合計の再チェック
 
     Args:
         slack_data (dict): slack検索結果
 
     Returns:
-        Tuple[dict, MsgDict]: 修正内容(結果)
+        Tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
     now_ts = datetime.now().timestamp()
     count: dict[str, int] = {"invalid_score": 0}
-    msg: MsgDict = {"invalid_score": "", "pending": []}
+    msg: ComparisonDict = {"invalid_score": "", "pending": []}
 
     for key, val in slack_data.items():
         if val["edited_ts"]:
