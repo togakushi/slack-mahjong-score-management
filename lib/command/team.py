@@ -65,7 +65,7 @@ def create(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        team_name = f.common.han_to_zen(argument[0])
+        team_name = f.common.str_conv(argument[0], "h2z")
         if len(g.team_list) > g.cfg.config["team"].getint("registration_limit", 255):
             msg = "登録上限を超えています。"
         else:  # 登録処理
@@ -102,7 +102,7 @@ def delete(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        team_name = f.common.han_to_zen(argument[0])
+        team_name = f.common.str_conv(argument[0], "h2z")
         if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
@@ -149,7 +149,7 @@ def append(argument):
     if len(argument) == 2:  # チーム所属
         g.params.update(unregistered_replace=False)
 
-        team_name = f.common.han_to_zen(argument[0])
+        team_name = f.common.str_conv(argument[0], "h2z")
         player_name = c.member.name_replace(argument[1])
         registration_flg = True
         team_id = None
@@ -214,7 +214,7 @@ def remove(argument):
 
     if len(argument) == 2:  # チーム名指
         g.params.update(unregistered_replace=False)
-        team_name = f.common.han_to_zen(argument[0])
+        team_name = f.common.str_conv(argument[0], "h2z")
         player_name = c.member.name_replace(argument[1])
 
         registration_flg = True

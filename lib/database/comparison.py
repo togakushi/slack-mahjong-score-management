@@ -32,7 +32,7 @@ def main():
     if count["pending"]:
         ret += f"＊ 保留：{count['pending']}件\n"
         for x in msg["pending"]:
-            ret += f"\t\t{f.common.ts_conv(float(x))}\n"
+            ret += f"\t\t{f.common.ts_conv(float(x), "hms")}\n"
     ret += f"＊ 不一致：{count['mismatch']}件\n{msg['mismatch']}"
     ret += f"＊ 取りこぼし：{count['missing']}件\n{msg['missing']}"
     ret += f"＊ 削除漏れ：{count['delete']}件\n{msg['delete']}"
@@ -125,7 +125,7 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
 
         if check_ts > now_ts:
             msg["pending"].append(str(key))
-            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(key)))
+            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(key), "hms"))
             continue
 
         slack_score = val.get("score", [])
@@ -144,7 +144,7 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
                 if val.get("in_thread"):
                     count["delete"] += 1
                     logging.notice("delete: %s, %s (In-thread report)", key, slack_score)  # type: ignore
-                    msg["delete"] += f"\t{f.common.ts_conv(float(key))} {textformat(slack_score)}\n"
+                    msg["delete"] += f"\t{f.common.ts_conv(float(key), "hms")} {textformat(slack_score)}\n"
                     d.common.db_delete(key)
 
                     # リアクションの削除
@@ -155,7 +155,7 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
                     continue
 
             if slack_score == db_score:  # スコア比較
-                logging.info("score check pass: %s %s", f.common.ts_conv(float(key)), textformat(db_score))
+                logging.info("score check pass: %s %s", f.common.ts_conv(float(key), "hms"), textformat(db_score))
                 continue
 
             # 更新
@@ -164,12 +164,12 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
                 logging.notice("mismatch: %s", key)  # type: ignore
                 logging.info("  *  slack: %s", textformat(db_score))
                 logging.info("  *     db: %s", textformat(slack_score))
-                msg["mismatch"] += f"\t{f.common.ts_conv(float(key))}\n"
+                msg["mismatch"] += f"\t{f.common.ts_conv(float(key), "hms")}\n"
                 msg["mismatch"] += f"\t\t修正前：{textformat(db_score)}\n"
                 msg["mismatch"] += f"\t\t修正後：{textformat(slack_score)}\n"
                 d.common.db_update(slack_score, key, reactions_data)
             else:
-                logging.info("score check skip: %s %s", f.common.ts_conv(float(key)), textformat(db_score))
+                logging.info("score check skip: %s %s", f.common.ts_conv(float(key), "hms"), textformat(db_score))
             continue
 
         # 追加
@@ -178,13 +178,13 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
 
         count["missing"] += 1
         logging.notice("missing: %s, %s", key, slack_score)  # type: ignore
-        msg["missing"] += f"\t{f.common.ts_conv(float(key))} {textformat(slack_score)}\n"
+        msg["missing"] += f"\t{f.common.ts_conv(float(key), "hms")} {textformat(slack_score)}\n"
         d.common.db_insert(slack_score, key, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         if float(key) + g.cfg.search.wait > now_ts:
             msg["pending"].append(str(key))
-            logging.info("pending(DB -> slack): %s", f.common.ts_conv(float(key)))
+            logging.info("pending(DB -> slack): %s", f.common.ts_conv(float(key), "hms"))
             continue
 
         if key in slack_data:
@@ -193,7 +193,7 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
         # 削除
         count["delete"] += 1
         logging.notice("delete: %s, %s (Only database)", key, db_data[key])  # type: ignore
-        msg["delete"] += f"\t{f.common.ts_conv(float(key))} {textformat(db_data[key])}\n"
+        msg["delete"] += f"\t{f.common.ts_conv(float(key), "hms")} {textformat(db_data[key])}\n"
         g.msg.updatable = True
         d.common.db_delete(key)
 
@@ -239,7 +239,7 @@ def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: list) -> Tupl
         # 保留チェック
         if float(remark["event_ts"]) + g.cfg.search.wait > now_ts:
             msg["pending"].append(remark["event_ts"])
-            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(remark["event_ts"])))
+            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(remark["event_ts"]), "hms"))
             continue
 
         if remark in db_data:
@@ -284,7 +284,7 @@ def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
 
         if check_ts > now_ts:
             msg["pending"].append(str(key))
-            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(key)))
+            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(key), "hms"))
             continue
 
         if not g.cfg.setting.thread_report and val.get("in_thread"):
@@ -299,7 +299,7 @@ def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
         if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
             logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])  # type: ignore
-            msg["invalid_score"] += f"\t{f.common.ts_conv(float(key))} [供託：{score_data["deposit"]}]{textformat(val.get("score"))}\n"
+            msg["invalid_score"] += f"\t{f.common.ts_conv(float(key), "hms")} [供託：{score_data["deposit"]}]{textformat(val.get("score"))}\n"
             if key in reaction_ok:
                 f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
             if key not in reaction_ng:

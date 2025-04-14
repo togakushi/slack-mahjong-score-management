@@ -6,7 +6,7 @@ import os
 import re
 import unicodedata
 from datetime import datetime
-from typing import Any, Tuple
+from typing import Any, Tuple, Literal
 
 import pandas as pd
 
@@ -31,70 +31,6 @@ def len_count(text: str) -> int:
             count += 1
 
     return (count)
-
-
-def han_to_zen(text: str) -> str:
-    """半角文字を全角文字に変換(数字のみ)
-
-    Args:
-        text (str): 変換対象文字列
-
-    Returns:
-        str: 変換後の文字列
-    """
-
-    zen = "".join(chr(0xff10 + i) for i in range(10))
-    han = "".join(chr(0x30 + i) for i in range(10))
-    trans_table = str.maketrans(han, zen)
-    return (text.translate(trans_table))
-
-
-def zen_to_han(text: str) -> str:
-    """全角文字を半角文字に変換(数字のみ)
-
-    Args:
-        text (str): 変換対象文字列
-
-    Returns:
-        str: 変換後の文字列
-    """
-
-    zen = "".join(chr(0xff10 + i) for i in range(10))
-    han = "".join(chr(0x30 + i) for i in range(10))
-    trans_table = str.maketrans(zen, han)
-    return (text.translate(trans_table))
-
-
-def hira_to_kana(text: str) -> str:
-    """ひらがなをカタカナに変換
-
-    Args:
-        text (str): 変換対象文字列
-
-    Returns:
-        str: 変換後の文字列
-    """
-
-    hira = "".join(chr(0x3041 + i) for i in range(86))
-    kana = "".join(chr(0x30a1 + i) for i in range(86))
-    trans_table = str.maketrans(hira, kana)
-    return (text.translate(trans_table))
-
-
-def kata_to_hira(text: str) -> str:
-    """カタカナをひらがなに変換
-
-    Args:
-        text (str): 変換対象文字列
-
-    Returns:
-        str: 変換後の文字列
-    """
-
-    hira = "".join(chr(0x3041 + i) for i in range(86))
-    kana = "".join(chr(0x30a1 + i) for i in range(86))
-    trans_table = str.maketrans(kana, hira)
-    return (text.translate(trans_table))
 
 
 def merge_dicts(dict1: Any, dict2: Any) -> dict:
@@ -126,7 +62,42 @@ def merge_dicts(dict1: Any, dict2: Any) -> dict:
     return (merged)
 
 
-def ts_conv(ts: datetime | float | str, fmt: str | None = None) -> str:
+def str_conv(text: str, kind: Literal["h2z", "z2h", "h2k", "k2h"]) -> str:
+    """文字列変換
+
+    Args:
+        text (str): 変換対象文字列
+        kind (str): 変換種類
+            - h2z: 半角文字を全角文字に変換(数字のみ)
+            - z2h: 全角文字を半角文字に変換(数字のみ)
+            - h2k: ひらがなをカタカナに変換
+            - k2h: カタカナをひらがなに変換
+
+    Returns:
+        str: 変換後の文字列
+    """
+
+    zen = "".join(chr(0xff10 + i) for i in range(10))
+    han = "".join(chr(0x30 + i) for i in range(10))
+    hira = "".join(chr(0x3041 + i) for i in range(86))
+    kana = "".join(chr(0x30a1 + i) for i in range(86))
+
+    match kind:
+        case "h2z":  # 半角文字を全角文字に変換(数字のみ)
+            trans_table = str.maketrans(han, zen)
+        case "z2h":  # 全角文字を半角文字に変換(数字のみ)
+            trans_table = str.maketrans(zen, han)
+        case "h2k":  # ひらがなをカタカナに変換
+            trans_table = str.maketrans(hira, kana)
+        case "k2h":  # カタカナをひらがなに変換
+            trans_table = str.maketrans(kana, hira)
+        case _:
+            return (text)
+
+    return (text.translate(trans_table))
+
+
+def ts_conv(ts: datetime | float | str, fmt: Literal["ts", "y", "jy", "m", "jm", "d", "hm", "hms"] | str) -> str:
     """時間書式変更
 
     Args:
@@ -137,7 +108,7 @@ def ts_conv(ts: datetime | float | str, fmt: str | None = None) -> str:
             - m / jm: "%Y/%m" / "%Y年%m月"
             - d: "%Y/%m/%d"
             - hm: "%Y/%m/%d %H:%M"
-            - _: "%Y/%m/%d %H:%M:%S"
+            - hms: "%Y/%m/%d %H:%M:%S"
 
     Returns:
         str: 変更後の文字列
@@ -165,7 +136,7 @@ def ts_conv(ts: datetime | float | str, fmt: str | None = None) -> str:
             ret = time_obj.strftime("%Y/%m/%d")
         case "hm":
             ret = time_obj.strftime("%Y/%m/%d %H:%M")
-        case _:
+        case "hms":
             ret = time_obj.strftime("%Y/%m/%d %H:%M:%S")
 
     return (ret)
@@ -186,8 +157,8 @@ def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
 
     # 登録済みメンバーかチェック
     check_list = list(g.member_list.keys())
-    check_list += [kata_to_hira(i) for i in g.member_list]  # ひらがな
-    check_list += [hira_to_kana(i) for i in g.member_list]  # カタカナ
+    check_list += [str_conv(i, "k2h") for i in g.member_list]  # ひらがな
+    check_list += [str_conv(i, "h2k") for i in g.member_list]  # カタカナ
     if name in check_list:
         return (False, f"「{name}」は存在するメンバーです。")
 
@@ -195,9 +166,9 @@ def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
     for x in [x["team"] for x in g.team_list]:
         if name == x:
             return (False, f"「{name}」は存在するチームです。")
-        if kata_to_hira(name) == kata_to_hira(x):  # ひらがな
+        if str_conv(name, "k2h") == str_conv(x, "k2h"):  # ひらがな
             return (False, f"「{name}」は存在するチームです。")
-        if hira_to_kana(name) == hira_to_kana(x):  # カタカナ
+        if str_conv(name, "h2k") == str_conv(x, "h2k"):  # カタカナ
             return (False, f"「{name}」は存在するチームです。")
 
     # 登録規定チェック
@@ -469,7 +440,7 @@ def analysis_argument(argument: list) -> dict:
         ret.update(group_length=g.cfg.comment.group_length)
 
     for keyword in argument:
-        check_word = hira_to_kana(keyword.lower())  # カタカナ、小文字に統一
+        check_word = str_conv(keyword.lower(), "h2k")  # カタカナ、小文字に統一
         check_word = check_word.replace("無シ", "ナシ").replace("有リ", "アリ")  # 表記統一
 
         if g.search_word.find(keyword):

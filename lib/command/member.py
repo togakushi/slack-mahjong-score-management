@@ -68,7 +68,7 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
         str: 表記ブレ修正後のプレイヤー名
     """
 
-    pname = f.common.han_to_zen(pname)
+    pname = f.common.str_conv(pname, "h2z")
     check_list = list(set(g.member_list.keys()))
 
     if pname in check_list:
@@ -83,10 +83,10 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
         return (g.member_list[pname])
 
     # ひらがな、カタカナでチェック
-    if f.common.kata_to_hira(pname) in check_list:
-        return (g.member_list[f.common.kata_to_hira(pname)])
-    if f.common.hira_to_kana(pname) in check_list:
-        return (g.member_list[f.common.hira_to_kana(pname)])
+    if f.common.str_conv(pname, "k2h") in check_list:
+        return (g.member_list[f.common.str_conv(pname, "k2h")])
+    if f.common.str_conv(pname, "h2k") in check_list:
+        return (g.member_list[f.common.str_conv(pname, "h2k")])
 
     # メンバーリストに見つからない場合
     if g.params.get("unregistered_replace"):
@@ -259,7 +259,7 @@ def member_append(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        new_name = f.common.han_to_zen(argument[0])
+        new_name = f.common.str_conv(argument[0], "h2z")
         rows = resultdb.execute("select count() from member")
         count = rows.fetchone()[0]
         if count > g.cfg.config["member"].getint("registration_limit", 255):
@@ -279,8 +279,8 @@ def member_append(argument):
                 logging.notice(f"add new member: {new_name}")  # type: ignore
 
     if len(argument) == 2:  # 別名登録
-        new_name = f.common.han_to_zen(argument[0])
-        nic_name = f.common.han_to_zen(argument[1])
+        new_name = f.common.str_conv(argument[0], "h2z")
+        nic_name = f.common.str_conv(argument[1], "h2z")
         registration_flg = True
         rows = resultdb.execute("select count() from alias where member=?", (new_name,))
         count = rows.fetchone()[0]
@@ -313,12 +313,12 @@ def member_append(argument):
             )
             name_list = [row["name"] for row in rows.fetchall()]
 
-            if {nic_name, f.common.kata_to_hira(nic_name), f.common.hira_to_kana(nic_name)} & set(name_list):
+            if {nic_name, f.common.str_conv(nic_name, "k2h"), f.common.str_conv(nic_name, "h2k")} & set(name_list):
                 msg += d.common.db_backup()
                 for tbl, col in [("result", f"p{x}_name") for x in range(1, 5)] + [("remarks", "name")]:
                     resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, nic_name))
-                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, f.common.kata_to_hira(nic_name)))
-                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, f.common.hira_to_kana(nic_name)))
+                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, f.common.str_conv(nic_name, "k2h")))
+                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, f.common.str_conv(nic_name, "h2k")))
                 msg += "\nデータベースを更新しました。"
 
     resultdb.commit()
@@ -349,7 +349,7 @@ def member_remove(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # メンバー削除
-        new_name = f.common.han_to_zen(argument[0])
+        new_name = f.common.str_conv(argument[0], "h2z")
         if new_name in g.member_list:
             resultdb.execute("delete from member where name=?", (new_name,))
             resultdb.execute("delete from alias where member=?", (new_name,))
@@ -359,8 +359,8 @@ def member_remove(argument):
             msg = f"「{new_name}」は登録されていません。"
 
     if len(argument) == 2:  # 別名削除
-        new_name = f.common.han_to_zen(argument[0])
-        nic_name = f.common.han_to_zen(argument[1])
+        new_name = f.common.str_conv(argument[0], "h2z")
+        nic_name = f.common.str_conv(argument[1], "h2z")
         if nic_name in g.member_list:
             resultdb.execute(
                 "delete from alias where name=? and member=?",
