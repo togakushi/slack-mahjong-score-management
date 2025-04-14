@@ -61,10 +61,10 @@ def data_comparison() -> Tuple[dict, dict]:
     # slackログからゲーム結果を取得
     slack_score = f.search.for_slack_score()
     slack_remarks = f.search.for_slack_remarks()
-    for key in slack_remarks:  # スレッド元のスコアデータを追加
-        thread_ts = slack_remarks[key].get("thread_ts")
+    for _, val in slack_remarks.items():  # スレッド元のスコアデータを追加
+        thread_ts = val.get("thread_ts")
         if thread_ts in slack_score:
-            slack_remarks[key]["score"] = slack_score[thread_ts].get("score", [])
+            val["score"] = slack_score[thread_ts].get("score", [])
 
     if slack_score:
         first_ts = float(min(slack_score))
