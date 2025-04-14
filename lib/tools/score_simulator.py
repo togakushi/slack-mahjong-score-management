@@ -1,3 +1,11 @@
+"""lib/tools/score_simulator.py
+
+得点シミュレーター
+
+Returns:
+    list: ゲーム終了時点の素点リスト
+"""
+
 import random
 from typing import Tuple, Union
 
