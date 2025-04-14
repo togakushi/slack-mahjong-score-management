@@ -9,9 +9,9 @@ from typing import Tuple
 from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
+from cls.types import ComparisonDict, SlackSearchData
 from lib import database as d
 from lib import function as f
-from cls.types import SlackSearchData, ComparisonDict
 
 SlackSearchDict = dict[str, SlackSearchData]
 
