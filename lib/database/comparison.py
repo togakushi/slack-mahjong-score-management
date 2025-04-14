@@ -139,9 +139,9 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
             logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(key)))
             continue
 
-        slack_score = val.get("score")
-        g.msg.channel_id = val.get("channel_id")
-        g.msg.user_id = val.get("user_id")
+        slack_score = val.get("score", [])
+        g.msg.channel_id = val.get("channel_id", "")
+        g.msg.user_id = val.get("user_id", "")
         g.msg.event_ts = key
         g.msg.check_updatable()
 
@@ -159,9 +159,9 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
                     d.common.db_delete(key)
 
                     # リアクションの削除
-                    if key in val.get("reaction_ok"):
+                    if key in val.get("reaction_ok", []):
                         f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
-                    if key in val.get("reaction_ng"):
+                    if key in val.get("reaction_ng", []):
                         f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
                     continue
 
@@ -217,12 +217,12 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
     return (count, msg)
 
 
-def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tuple[dict, MsgDict]:
+def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: list) -> Tuple[dict, MsgDict]:
     """メモの取りこぼしチェック
 
     Args:
         slack_data (dict[str, SlackSearchDict]): slack検索結果
-        db_data (dict): DB登録状況
+        db_data (list): DB登録状況
 
     Returns:
         Tuple[dict, MsgDict]: 修正内容(結果)

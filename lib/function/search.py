@@ -113,22 +113,22 @@ def slack_messages(word: str) -> dict[str, SlackSearchDict]:
     data: dict[str, SlackSearchDict] = {}
     for x in matches:
         data[x["ts"]] = {
-            "channel_id": x["channel"].get("id"),
-            "user_id": x.get("user"),
-            "text": x.get("text"),
+            "channel_id": x["channel"].get("id", ""),
+            "user_id": x.get("user", ""),
+            "text": x.get("text", ""),
         }
 
     return (data)
 
 
-def conversations_replies(matches: dict) -> dict[str, SlackSearchDict]:
+def get_message_details(matches: dict) -> dict[str, SlackSearchDict]:
     """メッセージ詳細情報取得
 
     Args:
         matches (dict): 対象データ
 
     Returns:
-        dict[str, SlackSearchDict]: 詳細情報追加データ
+        dict[str,SlackSearchDict]: 詳細情報追加データ
     """
 
     # 詳細情報取得
@@ -178,11 +178,12 @@ def for_slack_score() -> dict[str, SlackSearchDict]:
 
     # ゲーム結果の抽出
     for key in list(matches.keys()):
-        if matches[key].get("user", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
-            logging.info("skip ignore user: %s", matches[key]["user"])
-            continue
         detection = f.search.pattern(matches[key].get("text", ""))
         if isinstance(detection, list):
+            if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
+                logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)
+                matches.pop(key)
+                continue
             for i in range(0, 8, 2):
                 g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
                 detection[i] = c.member.name_replace(detection[i], False)
@@ -195,7 +196,7 @@ def for_slack_score() -> dict[str, SlackSearchDict]:
     if not matches:
         return ({})
 
-    matches = conversations_replies(matches)
+    matches = get_message_details(matches)
     g.msg.channel_type = "search_messages"
     return (matches)
 
@@ -211,16 +212,16 @@ def for_slack_remarks() -> dict[str, SlackSearchDict]:
 
     # メモの抽出
     for key in list(matches.keys()):
-        if matches[key].get("user", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは対象から外す
-            logging.info("skip ignore user: %s", matches[key]["user"])
-            continue
         if re.match(rf"^{g.cfg.cw.remarks_word}", matches[key].get("text", "")):  # キーワードが先頭に存在するかチェック
-            text = matches[key].get("text").replace(g.cfg.cw.remarks_word, "").strip().split()
+            text = matches[key]["text"].replace(g.cfg.cw.remarks_word, "").strip().split()
+            if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
+                logging.info("skip ignore user: %s, (%s)", matches[key]["user_id"], text)
+                matches.pop(key)
+                continue
             matches[key]["remarks"] = []
+            g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
             for name, matter in zip(text[0::2], text[1::2]):
-                g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
-                name = c.member.name_replace(name, False)
-                matches[key]["remarks"].append((name, matter))
+                matches[key]["remarks"].append((c.member.name_replace(name, False), matter))
             matches[key].pop("text")
         else:  # 不一致は破棄
             matches.pop(key)
@@ -229,7 +230,7 @@ def for_slack_remarks() -> dict[str, SlackSearchDict]:
     if not matches:
         return ({})
 
-    matches = conversations_replies(matches)
+    matches = get_message_details(matches)
     g.msg.channel_type = "search_messages"
     return (matches)
 

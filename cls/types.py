@@ -29,6 +29,9 @@ class ComparisonDict(TypedDict, total=False):
 
 class SlackSearchDict(TypedDict, total=False):
     """slack検索結果格納辞書"""
+    text: str
+    channel_id: str
+    user_id: str
     event_ts: str | None
     thread_ts: str | None
     edited_ts: str | None
