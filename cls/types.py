@@ -26,7 +26,18 @@ class GameInfoDict(TypedDict):
 
 
 class ComparisonDict(TypedDict, total=False):
-    """メモ突合用辞書"""
+    """メモ突合用辞書
+
+    Attributes:
+        mismatch (str): 差分
+        missing (str): 追加
+        delete (str): 削除
+        remark_mod (str): 追加/削除
+        remark_del (str): 削除
+        invalid_score (str): 素点合計不一致
+        pending (list[str]): 保留
+    """
+
     mismatch: str
     missing: str
     delete: str
@@ -37,7 +48,22 @@ class ComparisonDict(TypedDict, total=False):
 
 
 class SlackSearchDict(TypedDict, total=False):
-    """slack検索結果格納辞書"""
+    """slack検索結果格納辞書
+
+    Attributes:
+        text (str): 本文
+        channel_id (str): チャンネルID
+        user_id (str): ホストしたユーザID
+        event_ts (str | None): ポスト時間
+        thread_ts (str | None): スレッド元時間
+        edited_ts (str | None): 最終変数時間
+        reaction_ok (list): botが付けたOKリアクション
+        reaction_ng (list): botが付けたNGリアクション
+        in_thread (bool): スレッド内のポストか判定
+        score (list): 本文がスコア報告ならパースした結果
+        remarks (list): 本文がメモなら名前と内容のタプルのリスト
+    """
+
     text: str
     channel_id: str
     user_id: str
