@@ -11,7 +11,9 @@ from dateutil.relativedelta import relativedelta
 import lib.global_value as g
 from lib import database as d
 from lib import function as f
-from cls.types import SlackSearchDict, ComparisonDict
+from cls.types import SlackSearchData, ComparisonDict
+
+SlackSearchDict = dict[str, SlackSearchData]
 
 
 def main():
@@ -101,11 +103,11 @@ def data_comparison() -> Tuple[dict, dict]:
     return (count, msg)
 
 
-def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tuple[dict, ComparisonDict]:
+def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, ComparisonDict]:
     """スコア取りこぼしチェック
 
     Args:
-        slack_data (dict[str, SlackSearchDict]): slack検索結果
+        slack_data (SlackSearchDict): slack検索結果
         db_data (dict): DB登録状況
 
     Returns:
@@ -206,11 +208,11 @@ def check_omission(slack_data: dict[str, SlackSearchDict], db_data: dict) -> Tup
     return (count, msg)
 
 
-def check_remarks(slack_data: dict[str, SlackSearchDict], db_data: list) -> Tuple[dict, ComparisonDict]:
+def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, ComparisonDict]:
     """メモの取りこぼしチェック
 
     Args:
-        slack_data (dict[str, SlackSearchDict]): slack検索結果
+        slack_data (SlackSearchDict): slack検索結果
         db_data (list): DB登録状況
 
     Returns:

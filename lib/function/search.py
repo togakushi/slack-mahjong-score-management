@@ -12,9 +12,11 @@ from typing import Any, Tuple
 from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
-from cls.types import SlackSearchDict
+from cls.types import SlackSearchData
 from lib import command as c
 from lib import function as f
+
+SlackSearchDict = dict[str, SlackSearchData]
 
 
 def pattern(text: str) -> list | bool:
@@ -76,14 +78,14 @@ def pattern(text: str) -> list | bool:
     return (msg)
 
 
-def slack_messages(word: str) -> dict[str, SlackSearchDict]:
+def slack_messages(word: str) -> SlackSearchDict:
     """slackログからメッセージを検索して返す
 
     Args:
         word (str): 検索するワード
 
     Returns:
-        dict[str, SlackSearchDict]: 検索した結果
+        SlackSearchDict: 検索した結果
     """
 
     # 検索クエリ
@@ -110,7 +112,7 @@ def slack_messages(word: str) -> dict[str, SlackSearchDict]:
         matches += response["messages"]["matches"]  # 2ページ目以降
 
     # 必要なデータだけ辞書に格納
-    data: dict[str, SlackSearchDict] = {}
+    data: SlackSearchDict = {}
     for x in matches:
         data[x["ts"]] = {
             "channel_id": x["channel"].get("id", ""),
@@ -121,14 +123,14 @@ def slack_messages(word: str) -> dict[str, SlackSearchDict]:
     return (data)
 
 
-def get_message_details(matches: dict) -> dict[str, SlackSearchDict]:
+def get_message_details(matches: dict) -> SlackSearchDict:
     """メッセージ詳細情報取得
 
     Args:
         matches (dict): 対象データ
 
     Returns:
-        dict[str,SlackSearchDict]: 詳細情報追加データ
+        SlackSearchDict: 詳細情報追加データ
     """
 
     # 詳細情報取得
@@ -167,11 +169,11 @@ def get_message_details(matches: dict) -> dict[str, SlackSearchDict]:
     return (matches)
 
 
-def for_slack_score() -> dict[str, SlackSearchDict]:
+def for_slack_score() -> SlackSearchDict:
     """過去ログからスコア記録を検索して返す
 
     Returns:
-        dict[str, SlackSearchDict]: 検索した結果
+        SlackSearchDict: 検索した結果
     """
 
     matches = slack_messages(g.cfg.search.keyword)
@@ -201,11 +203,11 @@ def for_slack_score() -> dict[str, SlackSearchDict]:
     return (matches)
 
 
-def for_slack_remarks() -> dict[str, SlackSearchDict]:
+def for_slack_remarks() -> SlackSearchDict:
     """slackログからメモを検索して返す
 
     Returns:
-        dict[str, SlackSearchDict]: 検索した結果
+        SlackSearchDict: 検索した結果
     """
 
     matches = slack_messages(g.cfg.cw.remarks_word)

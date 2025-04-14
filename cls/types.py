@@ -47,7 +47,7 @@ class ComparisonDict(TypedDict, total=False):
     pending: list[str]
 
 
-class SlackSearchDict(TypedDict, total=False):
+class SlackSearchData(TypedDict, total=False):
     """slack検索結果格納辞書
 
     Attributes:
