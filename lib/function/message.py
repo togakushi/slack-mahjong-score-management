@@ -200,7 +200,7 @@ def remarks(headword=False):
                 remark.append("チーム同卓時の結果を含む(" + g.cfg.setting.guest_mark + ")")
             else:
                 remark.append("チーム同卓時の結果を含む")
-    if g.params.get("stipulated"):
+    if g.params["stipulated"] >= 2:
         remark.append(f"規定打数 {g.params["stipulated"]} G以上")
     if g.params.get("rule_version") != g.cfg.mahjong.rule_version:
         remark.append(f"集計対象ルール {g.params["rule_version"]}")

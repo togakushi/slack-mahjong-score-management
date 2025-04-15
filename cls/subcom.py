@@ -28,7 +28,7 @@ class SubCommand(CommonMethodMixin):
     ranked: int = field(default=3)
     score_comparisons: bool = field(default=False)
     statistics: bool = field(default=False)
-    stipulated: int = field(default=0)
+    stipulated: int = field(default=1)
     stipulated_rate: float = field(default=0.05)
     unregistered_replace: bool = field(default=True)
     verbose: bool = field(default=False)
