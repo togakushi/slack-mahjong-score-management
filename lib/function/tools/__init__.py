@@ -8,10 +8,6 @@ Exports:
     - vacuum
 """
 
-import comparison
-import member
-import recalculation
-import unification
-import vacuum
+from . import comparison, member, recalculation, unification, vacuum
 
 __all__ = ["comparison", "member", "recalculation", "unification", "vacuum"]

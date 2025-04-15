@@ -7,9 +7,6 @@ Exports:
     - textdata: プレーンテキスト形式で取得(slackポスト用)
 """
 
-import api
-import db
-import internal
-import textdata
+from . import api, db, internal, textdata
 
 __all__ = ["api", "db", "internal", "textdata"]
