@@ -92,7 +92,7 @@ class SubCommand(CommonMethodMixin):
         target_player: list = []
         player_list: dict = {}
         competition_list: dict = {}
-        team_list: list = lookup.get_team()
+        team_list: list = lookup.internal.get_team()
 
         for x in new_flag["unknown_command"]:
             if x in team_list:
@@ -106,7 +106,7 @@ class SubCommand(CommonMethodMixin):
             player_name = target_player[0]
 
         if self.all_player:  # 全員追加
-            target_player = list(set(lookup.get_member() + target_player))
+            target_player = list(set(lookup.internal.get_member() + target_player))
         else:
             target_player = list(set(target_player))
 

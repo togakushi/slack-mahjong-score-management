@@ -1,5 +1,5 @@
 """
-lib/database/comparison.py
+lib/data/comparison.py
 """
 
 import logging
@@ -11,7 +11,7 @@ from dateutil.relativedelta import relativedelta
 import lib.global_value as g
 from cls.types import ComparisonDict, SlackSearchData
 from lib.data import lookup
-from lib.data import manipulate
+from lib.data import modify
 from lib.function import score, search, slack_api
 from lib.utils import dateutil, formatter
 
@@ -149,7 +149,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
                     count["delete"] += 1
                     logging.notice("delete: %s, %s (In-thread report)", key, slack_score)  # type: ignore
                     msg["delete"] += f"\t{dateutil.ts_conv(float(key), "hms")} {textformat(slack_score)}\n"
-                    manipulate.db_delete(key)
+                    modify.db_delete(key)
 
                     # リアクションの削除
                     if key in val.get("reaction_ok", []):
@@ -163,7 +163,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
                 continue
 
             # 更新
-            if lookup.exsist_record(key).get("rule_version") == g.cfg.mahjong.rule_version:
+            if lookup.db.exsist_record(key).get("rule_version") == g.cfg.mahjong.rule_version:
                 count["mismatch"] += 1
                 logging.notice("mismatch: %s", key)  # type: ignore
                 logging.info("  *  slack: %s", textformat(db_score))
@@ -171,7 +171,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
                 msg["mismatch"] += f"\t{dateutil.ts_conv(float(key), "hms")}\n"
                 msg["mismatch"] += f"\t\t修正前：{textformat(db_score)}\n"
                 msg["mismatch"] += f"\t\t修正後：{textformat(slack_score)}\n"
-                manipulate.db_update(slack_score, key, reactions_data)
+                modify.db_update(slack_score, key, reactions_data)
             else:
                 logging.info("score check skip: %s %s", dateutil.ts_conv(float(key), "hms"), textformat(db_score))
             continue
@@ -183,7 +183,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
         count["missing"] += 1
         logging.notice("missing: %s, %s", key, slack_score)  # type: ignore
         msg["missing"] += f"\t{dateutil.ts_conv(float(key), "hms")} {textformat(slack_score)}\n"
-        manipulate.db_insert(slack_score, key, reactions_data)
+        modify.db_insert(slack_score, key, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         if float(key) + g.cfg.search.wait > now_ts:
@@ -199,12 +199,12 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
         logging.notice("delete: %s, %s (Only database)", key, db_data[key])  # type: ignore
         msg["delete"] += f"\t{dateutil.ts_conv(float(key), "hms")} {textformat(db_data[key])}\n"
         g.msg.updatable = True
-        manipulate.db_delete(key)
+        modify.db_delete(key)
 
         # メッセージが残っているならリアクションを外す
         if not g.msg.channel_id:
-            g.msg.channel_id = slack_api.get_channel_id()
-        for icon in slack_api.reactions_status(ts=key):
+            g.msg.channel_id = lookup.api.get_channel_id()
+        for icon in lookup.api.reactions_status(ts=key):
             slack_api.call_reactions_remove(icon, ts=key)
 
     return (count, msg)
@@ -250,8 +250,8 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, Com
             logging.info("remark pass(slack -> DB): %s", remark)
         else:
             count["remark_mod"] += 1
-            manipulate.remarks_delete(remark["event_ts"])
-            manipulate.remarks_append(remark)
+            modify.remarks_delete(remark["event_ts"])
+            modify.remarks_append(remark)
             logging.notice("modification(data mismatch): %s", remark)  # type: ignore
 
     # DB -> slack チェック
@@ -260,7 +260,7 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, Com
             logging.info("remark pass(DB -> slack): %s", remark)
         else:
             count["remark_del"] += 1
-            manipulate.remarks_delete_compar(remark)
+            modify.remarks_delete_compar(remark)
             logging.notice("delete(missed deletion): %s", remark)  # type: ignore
 
     return (count, msg)
@@ -293,7 +293,7 @@ def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
 
         if not g.cfg.setting.thread_report and val.get("in_thread"):
             continue
-        if lookup.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
+        if lookup.db.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
             continue
 
         score_data = score.get_score(val.get("score"))

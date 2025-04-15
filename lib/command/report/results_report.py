@@ -22,8 +22,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, TableStyle)
 
+from lib.data import loader
 import lib.global_value as g
-from lib.data import loader, lookup
+from lib.data import lookup
 from lib.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
@@ -368,7 +369,7 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
         return (False, False)
 
     # 対象メンバーの記録状況
-    target_info = lookup.member_info(g.params["player_name"])
+    target_info = lookup.db.member_info(g.params["player_name"])
     logging.info(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし

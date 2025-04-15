@@ -10,8 +10,7 @@ import pandas as pd
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib.data import loader, lookup
-from lib.data import aggregate
+from lib.data import aggregate, loader, lookup
 from lib.function import message
 from lib.utils import dateutil, formatter, textutil
 
@@ -30,7 +29,7 @@ def aggregation():
     elif g.params["player_name"] in g.member_list:
         g.params.update(individual=True)
 
-    if not g.params.get("individual") and not lookup.get_teammates():
+    if not g.params.get("individual") and not lookup.internal.get_teammates():
         return ("登録されていないチームです", {})
 
     # --- データ収集
@@ -116,13 +115,13 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
     if g.params.get("individual"):
         ret["title"] = "*【個人成績】*"
         ret["プレイヤー名"] = f"{player_name} {message.badge_degree(data["ゲーム数"])}"
-        team_list = lookup.which_team(g.params["player_name"])
+        team_list = lookup.internal.which_team(g.params["player_name"])
         if team_list:
             ret["所属チーム"] = team_list
     else:
         ret["title"] = "*【チーム成績】*"
         ret["チーム名"] = f"{g.params["player_name"]} {message.badge_degree(data["ゲーム数"])}"
-        ret["登録メンバー"] = "、".join(lookup.get_teammates())
+        ret["登録メンバー"] = "、".join(lookup.internal.get_teammates())
 
     badge_status = message.badge_status(data["ゲーム数"], data["win"])
     ret["検索範囲"] = message.item_search_range(kind="str").strip()

@@ -1,5 +1,5 @@
 """
-lib/tools/unification.py
+lib/function/tools/unification.py
 """
 
 import configparser
@@ -7,7 +7,7 @@ import logging
 import sqlite3
 
 import lib.global_value as g
-from lib.data import manipulate
+from lib.data import modify
 from lib.function import configuration
 from lib.utils import formatter
 
@@ -19,7 +19,7 @@ def main():
     configuration.read_memberslist(False)
 
     if "rename" in rename_conf.sections():
-        manipulate.db_backup()
+        modify.db_backup()
         name_table: dict = {}
         for name, alias in rename_conf["rename"].items():
             name_table.setdefault(name, [x.strip() for x in alias.split(",")])

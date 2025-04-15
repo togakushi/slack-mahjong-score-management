@@ -3,13 +3,11 @@ lib/function/score.py
 """
 
 import logging
-import re
 
 import pandas as pd
 
 import lib.global_value as g
 from lib.data import lookup
-from lib.data import manipulate
 from lib.function import message, slack_api
 from lib.utils import formatter
 
@@ -122,7 +120,7 @@ def reactions(param: dict):
     if param["reactions_data"]:
         icon = param["reactions_data"]
     else:
-        icon = slack_api.reactions_status()
+        icon = lookup.api.reactions_status()
 
     if rpoint_sum == correct_score:
         if g.cfg.setting.reaction_ng in icon:
@@ -139,58 +137,6 @@ def reactions(param: dict):
             message.reply(message="invalid_score", rpoint_sum=rpoint_sum),
             g.msg.event_ts,
         )
-
-
-def check_remarks() -> None:
-    """メモの内容を拾ってDBに格納する"""
-    game_result = lookup.exsist_record(g.msg.thread_ts)
-    if game_result:  # ゲーム結果のスレッドになっているか
-        check_list = [v for k, v in game_result.items() if k.endswith("_name")]
-
-        g.cfg.results.initialization()
-        g.cfg.results.unregistered_replace = False  # ゲスト無効
-
-        remarks: list = []
-        for name, matter in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
-            remark = {
-                "thread_ts": g.msg.thread_ts,
-                "event_ts": g.msg.event_ts,
-                "name": formatter.name_replace(name),
-                "matter": matter,
-            }
-            if remark["name"] in check_list and remark not in remarks:
-                remarks.append(remark)
-
-        match g.msg.status:
-            case "message_append":
-                manipulate.remarks_append(remarks)
-            case "message_changed":
-                manipulate.remarks_delete(g.msg.event_ts)
-                manipulate.remarks_append(remarks)
-            case "message_deleted":
-                manipulate.remarks_delete(g.msg.event_ts)
-
-
-def reprocessing_remarks():
-    """スレッドの内容を再処理"""
-    res = slack_api.get_conversations()
-    msg = res.get("messages")
-
-    if msg:
-        reply_count = msg[0].get("reply_count", 0)
-        g.msg.thread_ts = msg[0].get("ts")
-
-        for x in range(1, reply_count + 1):
-            g.msg.event_ts = msg[x].get("ts")
-            text = msg[x].get("text")
-            logging.info("(%s/%s) thread_ts=%s, event_ts=%s, %s", x, reply_count, g.msg.thread_ts, g.msg.event_ts, text)
-
-            if text:
-                g.msg.keyword = text.split()[0]
-                g.msg.argument = text.split()[1:]
-
-                if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):
-                    check_remarks()
 
 
 def get_score(detection):

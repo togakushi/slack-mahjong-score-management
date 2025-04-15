@@ -6,7 +6,7 @@ import re
 from typing import TYPE_CHECKING
 
 import lib.global_value as g
-from lib.utils import textutil, dictutil
+from lib.utils import textutil
 
 if TYPE_CHECKING:
     from cls.subcom import SubCommand
@@ -129,7 +129,7 @@ def placeholder(subcom: "SubCommand") -> dict:
     ret_dict.update(command=subcom.section)
     ret_dict.update(g.cfg.mahjong.to_dict())
     ret_dict.update(guest_name=g.cfg.member.guest_name)
-    ret_dict.update(dictutil.analysis_argument(g.msg.argument))
+    ret_dict.update(analysis_argument(g.msg.argument))
     ret_dict.update(subcom.update(g.msg.argument))
     ret_dict.update(subcom.to_dict())
     ret_dict.update(starttime=ret_dict["search_range"]["starttime"])

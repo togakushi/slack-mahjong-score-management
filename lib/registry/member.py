@@ -6,7 +6,7 @@ import logging
 import sqlite3
 
 import lib.global_value as g
-from lib.data import manipulate
+from lib.data import modify
 from lib.function import configuration
 from lib.utils import formatter, textutil
 
@@ -86,7 +86,7 @@ def append(argument):
             name_list = [row["name"] for row in rows.fetchall()]
 
             if {nic_name, textutil.str_conv(nic_name, "k2h"), textutil.str_conv(nic_name, "h2k")} & set(name_list):
-                msg += manipulate.db_backup()
+                msg += modify.db_backup()
                 for tbl, col in [("result", f"p{x}_name") for x in range(1, 5)] + [("remarks", "name")]:
                     resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, nic_name))
                     resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, textutil.str_conv(nic_name, "k2h")))

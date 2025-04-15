@@ -1,5 +1,5 @@
 """
-lib/database/initialization.py
+lib/data/initialization.py
 """
 
 import logging

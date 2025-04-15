@@ -1,5 +1,5 @@
 """
-lib/tools/vacuum.py
+lib/function/tools/vacuum.py
 """
 
 import logging
@@ -8,12 +8,12 @@ import sqlite3
 from contextlib import closing
 
 import lib.global_value as g
-from lib.data import manipulate
+from lib.data import modify
 
 
 def main():
     """vacuum実行"""
-    manipulate.db_backup()
+    modify.db_backup()
     before_size = os.path.getsize(g.cfg.db.database_file)
 
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:

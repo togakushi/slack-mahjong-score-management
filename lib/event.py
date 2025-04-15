@@ -8,8 +8,8 @@ import re
 import lib.global_value as g
 from cls.search import CommandCheck
 from lib.command import graph, report, results
-from lib.data import comparison, lookup, manipulate
-from lib.function import message, score, search, slack_api
+from lib.data import comparison, lookup, modify
+from lib.function import message, search, slack_api
 from lib.home_tab import home
 from lib.registry import member, team
 
@@ -40,9 +40,9 @@ def handle_message_events(client, body):
     # 投稿済みメッセージが削除された場合
     if g.msg.status == "message_deleted":
         if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):  # 追加メモ
-            manipulate.remarks_delete(g.msg.event_ts)
+            modify.remarks_delete(g.msg.event_ts)
         else:
-            manipulate.db_delete(g.msg.event_ts)
+            modify.db_delete(g.msg.event_ts)
         return
 
     # キーワード処理
@@ -52,7 +52,7 @@ def handle_message_events(client, body):
             # ヘルプメッセージ
             slack_api.post_message(message.help_message(), g.msg.event_ts)
             # メンバーリスト
-            title, msg = lookup.get_members_list()
+            title, msg = lookup.textdata.get_members_list()
             slack_api.post_text(g.msg.event_ts, title, msg)
 
         # 成績管理系コマンド
@@ -74,18 +74,18 @@ def handle_message_events(client, body):
 
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}", x):
-            title, msg = lookup.get_members_list()
+            title, msg = lookup.textdata.get_members_list()
             slack_api.post_text(g.msg.event_ts, title, msg)
         case x if re.match(rf"^{g.cfg.cw.team}", x):
             title = "チーム一覧"
-            msg = lookup.get_team_list()
+            msg = lookup.textdata.get_team_list()
             slack_api.post_text(g.msg.event_ts, title, msg)
 
         case _ as x:
-            record_data = lookup.exsist_record(g.msg.event_ts)
+            record_data = lookup.db.exsist_record(g.msg.event_ts)
             if re.match(rf"^{g.cfg.cw.remarks_word}", x) and g.msg.in_thread:  # 追加メモ
-                if lookup.exsist_record(g.msg.thread_ts):
-                    score.check_remarks()
+                if lookup.db.exsist_record(g.msg.thread_ts):
+                    modify.check_remarks()
             else:
                 detection = search.pattern(str(g.msg.text))
                 if detection:  # 結果報告フォーマットに一致したポストの処理
@@ -93,7 +93,7 @@ def handle_message_events(client, body):
                         case "message_append":
                             if g.cfg.setting.thread_report == g.msg.in_thread:
                                 assert isinstance(detection, list), "detection should be a list"
-                                manipulate.db_insert(detection, g.msg.event_ts)
+                                modify.db_insert(detection, g.msg.event_ts)
                             else:
                                 slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
                                 logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
@@ -105,21 +105,21 @@ def handle_message_events(client, body):
                                 if record_data:
                                     if record_data.get("rule_version") == g.cfg.mahjong.rule_version:
                                         assert isinstance(detection, list), "detection should be a list"
-                                        manipulate.db_update(detection, g.msg.event_ts)
+                                        modify.db_update(detection, g.msg.event_ts)
                                     else:
                                         logging.notice("skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
                                 else:
                                     assert isinstance(detection, list), "detection should be a list"
-                                    manipulate.db_insert(detection, g.msg.event_ts)
-                                    score.reprocessing_remarks()
+                                    modify.db_insert(detection, g.msg.event_ts)
+                                    modify.reprocessing_remarks()
                             else:
                                 slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
                                 logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
                                 logging.warning("DEBUG(inside_thread): body=%s msg=%s cfg=%s", body, vars(g.msg), vars(g.cfg))  # ToDo: 解析用
                 else:
                     if record_data:
-                        manipulate.db_delete(g.msg.event_ts)
-                        for icon in slack_api.reactions_status():
+                        modify.db_delete(g.msg.event_ts)
+                        for icon in lookup.api.reactions_status():
                             slack_api.call_reactions_remove(icon)
 
 
@@ -158,7 +158,7 @@ def slash_command(ack, body, client):
 
             # メンバー管理系コマンド
             case "member":
-                title, msg = lookup.get_members_list()
+                title, msg = lookup.textdata.get_members_list()
                 slack_api.post_text(g.msg.event_ts, title, msg)
             case "add":
                 slack_api.post_message(member.append(g.msg.argument))
@@ -175,7 +175,7 @@ def slash_command(ack, body, client):
             case "team_remove":
                 slack_api.post_message(team.remove(g.msg.argument))
             case "team_list":
-                slack_api.post_message(lookup.get_team_list())
+                slack_api.post_message(lookup.textdata.get_team_list())
             case "team_clear":
                 slack_api.post_message(team.clear())
 

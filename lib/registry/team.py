@@ -5,7 +5,7 @@ lib/command/team.py
 import logging
 import sqlite3
 
-from lib.data import manipulate
+from lib.data import modify
 import lib.global_value as g
 from lib.data import initialization
 from lib.function import configuration
@@ -67,7 +67,7 @@ def delete(argument):
         if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
-            msg = manipulate.db_backup()
+            msg = modify.db_backup()
             team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
             resultdb = sqlite3.connect(
                 g.cfg.db.database_file,
@@ -216,7 +216,7 @@ def clear():
         str: slackにpostする内容
     """
 
-    msg = manipulate.db_backup()
+    msg = modify.db_backup()
 
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,

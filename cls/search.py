@@ -18,7 +18,7 @@ class SearchRange():
     day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 
     def __init__(self) -> None:
-        self.first_record = lookup.first_record()
+        self.first_record = lookup.db.first_record()
         self.update()
 
     def update(self) -> None:
