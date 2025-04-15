@@ -12,9 +12,10 @@ import pandas as pd
 from matplotlib import gridspec
 
 import lib.global_value as g
-from lib import command as c
-from lib import database as d
-from lib import function as f
+from lib.data import loader
+from lib.function import message
+from lib.function.configuration import graph_setup
+from lib.utils import dateutil, formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -32,14 +33,14 @@ def plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
-    player = c.member.name_replace(g.params["player_name"], add_mark=True)
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
+    player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
-        return (0, f.message.reply(message="no_hits"))
+        return (0, message.reply(message="no_hits"))
 
     if g.params.get("anonymous"):
-        mapping_dict = c.member.anonymous_mapping([g.params["player_name"]])
+        mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         player = next(iter(mapping_dict.values()))
 
     # 最終値（凡例追加用）
@@ -57,12 +58,12 @@ def plot() -> Tuple[int, str]:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
-    f.common.graph_setup(plt, fm)
+    graph_setup(plt, fm)
 
     fig = plt.figure(figsize=(12, 8))
 
     if g.params.get("target_count", 0) == 0:
-        title_text = f"『{player}』の成績 ({f.common.ts_conv(g.params["starttime"], "hm")} - {f.common.ts_conv(g.params["endtime"], "hm")})"
+        title_text = f"『{player}』の成績 ({dateutil.ts_conv(g.params["starttime"], "hm")} - {dateutil.ts_conv(g.params["endtime"], "hm")})"
     else:
         title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
 
@@ -138,19 +139,19 @@ def statistics_plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql"))
 
     if df.empty:
-        return (0, f.message.reply(message="no_hits"))
+        return (0, message.reply(message="no_hits"))
 
     df = df.filter(items=["playtime", "name", "rpoint", "rank", "point"])
     df["rpoint"] = df["rpoint"] * 100
 
-    player = c.member.name_replace(g.params["player_name"], add_mark=True)
+    player = formatter.name_replace(g.params["player_name"], add_mark=True)
     player_df = df.query("name == @player").reset_index(drop=True)
 
     if player_df.empty:
-        return (0, f.message.reply(message="no_hits"))
+        return (0, message.reply(message="no_hits"))
 
     player_df["sum_point"] = player_df["point"].cumsum()
 
@@ -161,10 +162,10 @@ def statistics_plot() -> Tuple[int, str]:
     )
 
     if g.params.get("anonymous"):
-        mapping_dict = c.member.anonymous_mapping([g.params["player_name"]])
+        mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         player = next(iter(mapping_dict.values()))
 
-    title_text = f"『{player}』の成績 (検索範囲：{f.message.item_date_range("d")})"
+    title_text = f"『{player}』の成績 (検索範囲：{message.item_date_range("d")})"
 
     rpoint_df = get_data(player_df["rpoint"], g.params["interval"])
     point_sum_df = get_data(player_df["point"], g.params["interval"])
@@ -239,7 +240,7 @@ def statistics_plot() -> Tuple[int, str]:
     rank_table["平均順位"] = count_df.apply(lambda row: "{:.2f}".format(row["平均順位"]), axis=1)  # pylint: disable=consider-using-f-string
 
     # グラフ設定
-    f.common.graph_setup(plt, fm)
+    graph_setup(plt, fm)
     fig = plt.figure(figsize=(20, 10))
     fig.suptitle(title_text, size=20, weight="bold")
     gs = gridspec.GridSpec(figure=fig, nrows=3, ncols=2)

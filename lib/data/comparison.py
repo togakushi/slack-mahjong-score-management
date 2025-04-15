@@ -10,8 +10,10 @@ from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
 from cls.types import ComparisonDict, SlackSearchData
-from lib import database as d
-from lib import function as f
+from lib.data import lookup
+from lib.data import manipulate
+from lib.function import score, search, slack_api
+from lib.utils import dateutil, formatter
 
 SlackSearchDict = dict[str, SlackSearchData]
 
@@ -34,7 +36,7 @@ def main():
     if count["pending"]:
         ret += f"＊ 保留：{count['pending']}件\n"
         for x in msg["pending"]:
-            ret += f"\t\t{f.common.ts_conv(float(x), "hms")}\n"
+            ret += f"\t\t{dateutil.ts_conv(float(x), "hms")}\n"
     ret += f"＊ 不一致：{count['mismatch']}件\n{msg['mismatch']}"
     ret += f"＊ 取りこぼし：{count['missing']}件\n{msg['missing']}"
     ret += f"＊ 削除漏れ：{count['delete']}件\n{msg['delete']}"
@@ -45,7 +47,7 @@ def main():
         ret += msg["invalid_score"]
 
     g.msg.channel_id = command_ch
-    f.slack_api.post_message(ret, command_ts)
+    slack_api.post_message(ret, command_ts)
 
 
 def data_comparison() -> Tuple[dict, dict]:
@@ -61,8 +63,8 @@ def data_comparison() -> Tuple[dict, dict]:
     msg: dict = {}
 
     # slackログからゲーム結果を取得
-    slack_score = f.search.for_slack_score()
-    slack_remarks = f.search.for_slack_remarks()
+    slack_score = search.for_slack_score()
+    slack_remarks = search.for_slack_remarks()
     for _, val in slack_remarks.items():  # スレッド元のスコアデータを追加
         thread_ts = val.get("thread_ts")
         if thread_ts in slack_score:
@@ -74,8 +76,8 @@ def data_comparison() -> Tuple[dict, dict]:
         first_ts = (datetime.now() - relativedelta(days=g.cfg.search.after)).timestamp()
 
     # データベースからゲーム結果を取得
-    db_score = f.search.for_db_score(first_ts)
-    db_remarks = f.search.for_db_remarks(first_ts)
+    db_score = search.for_db_score(first_ts)
+    db_remarks = search.for_db_remarks(first_ts)
 
     logging.trace("thread_report: %s", g.cfg.setting.thread_report)  # type: ignore
     logging.trace("slack_score=%s", slack_score)  # type: ignore
@@ -85,18 +87,18 @@ def data_comparison() -> Tuple[dict, dict]:
 
     # --- スコア突合
     ret_count, ret_msg = check_omission(slack_score, db_score)
-    count = f.common.merge_dicts(count, ret_count)
-    msg = f.common.merge_dicts(msg, ret_msg)
+    count = formatter.merge_dicts(count, ret_count)
+    msg = formatter.merge_dicts(msg, ret_msg)
 
     # --- 素点合計の再チェック(修正可能なslack側のみチェック)
     ret_count, ret_msg = check_total_score(slack_score)
-    count = f.common.merge_dicts(count, ret_count)
-    msg = f.common.merge_dicts(msg, ret_msg)
+    count = formatter.merge_dicts(count, ret_count)
+    msg = formatter.merge_dicts(msg, ret_msg)
 
     # --- メモ突合
     ret_count, ret_msg = check_remarks(slack_remarks, db_remarks)
-    count = f.common.merge_dicts(count, ret_count)
-    msg = f.common.merge_dicts(msg, ret_msg)
+    count = formatter.merge_dicts(count, ret_count)
+    msg = formatter.merge_dicts(msg, ret_msg)
 
     count.update(pending=len(msg["pending"]))
 
@@ -127,7 +129,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
 
         if check_ts > now_ts:
             msg["pending"].append(str(key))
-            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(key), "hms"))
+            logging.info("pending(slack -> DB): %s", dateutil.ts_conv(float(key), "hms"))
             continue
 
         slack_score = val.get("score", [])
@@ -146,32 +148,32 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
                 if val.get("in_thread"):
                     count["delete"] += 1
                     logging.notice("delete: %s, %s (In-thread report)", key, slack_score)  # type: ignore
-                    msg["delete"] += f"\t{f.common.ts_conv(float(key), "hms")} {textformat(slack_score)}\n"
-                    d.common.db_delete(key)
+                    msg["delete"] += f"\t{dateutil.ts_conv(float(key), "hms")} {textformat(slack_score)}\n"
+                    manipulate.db_delete(key)
 
                     # リアクションの削除
                     if key in val.get("reaction_ok", []):
-                        f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
+                        slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
                     if key in val.get("reaction_ng", []):
-                        f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
+                        slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
                     continue
 
             if slack_score == db_score:  # スコア比較
-                logging.info("score check pass: %s %s", f.common.ts_conv(float(key), "hms"), textformat(db_score))
+                logging.info("score check pass: %s %s", dateutil.ts_conv(float(key), "hms"), textformat(db_score))
                 continue
 
             # 更新
-            if d.common.exsist_record(key).get("rule_version") == g.cfg.mahjong.rule_version:
+            if lookup.exsist_record(key).get("rule_version") == g.cfg.mahjong.rule_version:
                 count["mismatch"] += 1
                 logging.notice("mismatch: %s", key)  # type: ignore
                 logging.info("  *  slack: %s", textformat(db_score))
                 logging.info("  *     db: %s", textformat(slack_score))
-                msg["mismatch"] += f"\t{f.common.ts_conv(float(key), "hms")}\n"
+                msg["mismatch"] += f"\t{dateutil.ts_conv(float(key), "hms")}\n"
                 msg["mismatch"] += f"\t\t修正前：{textformat(db_score)}\n"
                 msg["mismatch"] += f"\t\t修正後：{textformat(slack_score)}\n"
-                d.common.db_update(slack_score, key, reactions_data)
+                manipulate.db_update(slack_score, key, reactions_data)
             else:
-                logging.info("score check skip: %s %s", f.common.ts_conv(float(key), "hms"), textformat(db_score))
+                logging.info("score check skip: %s %s", dateutil.ts_conv(float(key), "hms"), textformat(db_score))
             continue
 
         # 追加
@@ -180,13 +182,13 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
 
         count["missing"] += 1
         logging.notice("missing: %s, %s", key, slack_score)  # type: ignore
-        msg["missing"] += f"\t{f.common.ts_conv(float(key), "hms")} {textformat(slack_score)}\n"
-        d.common.db_insert(slack_score, key, reactions_data)
+        msg["missing"] += f"\t{dateutil.ts_conv(float(key), "hms")} {textformat(slack_score)}\n"
+        manipulate.db_insert(slack_score, key, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         if float(key) + g.cfg.search.wait > now_ts:
             msg["pending"].append(str(key))
-            logging.info("pending(DB -> slack): %s", f.common.ts_conv(float(key), "hms"))
+            logging.info("pending(DB -> slack): %s", dateutil.ts_conv(float(key), "hms"))
             continue
 
         if key in slack_data:
@@ -195,15 +197,15 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
         # 削除
         count["delete"] += 1
         logging.notice("delete: %s, %s (Only database)", key, db_data[key])  # type: ignore
-        msg["delete"] += f"\t{f.common.ts_conv(float(key), "hms")} {textformat(db_data[key])}\n"
+        msg["delete"] += f"\t{dateutil.ts_conv(float(key), "hms")} {textformat(db_data[key])}\n"
         g.msg.updatable = True
-        d.common.db_delete(key)
+        manipulate.db_delete(key)
 
         # メッセージが残っているならリアクションを外す
         if not g.msg.channel_id:
-            g.msg.channel_id = f.slack_api.get_channel_id()
-        for icon in f.slack_api.reactions_status(ts=key):
-            f.slack_api.call_reactions_remove(icon, ts=key)
+            g.msg.channel_id = slack_api.get_channel_id()
+        for icon in slack_api.reactions_status(ts=key):
+            slack_api.call_reactions_remove(icon, ts=key)
 
     return (count, msg)
 
@@ -241,15 +243,15 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, Com
         # 保留チェック
         if float(remark["event_ts"]) + g.cfg.search.wait > now_ts:
             msg["pending"].append(remark["event_ts"])
-            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(remark["event_ts"]), "hms"))
+            logging.info("pending(slack -> DB): %s", dateutil.ts_conv(float(remark["event_ts"]), "hms"))
             continue
 
         if remark in db_data:
             logging.info("remark pass(slack -> DB): %s", remark)
         else:
             count["remark_mod"] += 1
-            d.common.remarks_delete(remark["event_ts"])
-            d.common.remarks_append(remark)
+            manipulate.remarks_delete(remark["event_ts"])
+            manipulate.remarks_append(remark)
             logging.notice("modification(data mismatch): %s", remark)  # type: ignore
 
     # DB -> slack チェック
@@ -258,7 +260,7 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, Com
             logging.info("remark pass(DB -> slack): %s", remark)
         else:
             count["remark_del"] += 1
-            d.common.remarks_delete_compar(remark)
+            manipulate.remarks_delete_compar(remark)
             logging.notice("delete(missed deletion): %s", remark)  # type: ignore
 
     return (count, msg)
@@ -286,31 +288,31 @@ def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
 
         if check_ts > now_ts:
             msg["pending"].append(str(key))
-            logging.info("pending(slack -> DB): %s", f.common.ts_conv(float(key), "hms"))
+            logging.info("pending(slack -> DB): %s", dateutil.ts_conv(float(key), "hms"))
             continue
 
         if not g.cfg.setting.thread_report and val.get("in_thread"):
             continue
-        if d.common.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
+        if lookup.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
             continue
 
-        score_data = f.score.get_score(val.get("score"))
+        score_data = score.get_score(val.get("score"))
         reaction_ok = val.get("reaction_ok")
         reaction_ng = val.get("reaction_ng")
 
         if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
             logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])  # type: ignore
-            msg["invalid_score"] += f"\t{f.common.ts_conv(float(key), "hms")} [供託：{score_data["deposit"]}]{textformat(val.get("score"))}\n"
+            msg["invalid_score"] += f"\t{dateutil.ts_conv(float(key), "hms")} [供託：{score_data["deposit"]}]{textformat(val.get("score"))}\n"
             if key in reaction_ok:
-                f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
+                slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
             if key not in reaction_ng:
-                f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
+                slack_api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
         else:
             if key in reaction_ng:
-                f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
+                slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
             if key not in reaction_ok:
-                f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
+                slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
 
     return (count, msg)
 

@@ -11,19 +11,20 @@ from tabulate import tabulate
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib import database as d
-from lib import function as f
-from lib.command.member import anonymous_mapping
+from lib.data import loader
+from lib.data import aggregate
+from lib.function import message, slack_api
+from lib.utils import dictutil, formatter
 
 
 def main():
     """ランキングをslackにpostする"""
-    g.params = d.common.placeholder(g.cfg.ranking)
+    g.params = dictutil.placeholder(g.cfg.ranking)
 
     msg1, msg2 = aggregation()
-    res = f.slack_api.post_message(msg1)
+    res = slack_api.post_message(msg1)
     if msg2:
-        f.slack_api.post_multi_message(msg2, res["ts"])
+        slack_api.post_multi_message(msg2, res["ts"])
 
 
 def aggregation() -> Tuple[str, Any]:
@@ -36,22 +37,22 @@ def aggregation() -> Tuple[str, Any]:
     """
 
     # --- データ取得
-    game_info: GameInfoDict = d.aggregate.game_info()
+    game_info: GameInfoDict = aggregate.game_info()
     if game_info["game_count"] == 0:  # 結果が0件のとき
-        return (f.message.reply(message="no_hits"), None)
+        return (message.reply(message="no_hits"), None)
 
-    result_df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/ranking/aggregate.sql"))
+    result_df = loader.read_data(os.path.join(g.script_dir, "lib/queries/ranking/aggregate.sql"))
     if result_df.empty:
-        return (f.message.reply(message="no_hits"), None)
+        return (message.reply(message="no_hits"), None)
 
     df = pd.merge(
-        result_df, d.aggregate.ranking_record(),
+        result_df, aggregate.ranking_record(),
         on=["name", "name"],
         suffixes=["", "_x"]
     )
 
     if g.params.get("anonymous"):
-        mapping_dict = anonymous_mapping(df["name"].unique().tolist())
+        mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
         df["name"] = df["name"].replace(mapping_dict)
 
     # --- 集計
@@ -134,7 +135,7 @@ def aggregation() -> Tuple[str, Any]:
     else:  # チーム集計
         msg = "\n*【チームランキング】*\n"
 
-    msg += f.message.header(game_info, "", 1)
+    msg += message.header(game_info, "", 1)
 
     for key in list(data.keys()):
         if key in g.cfg.dropitems.ranking:  # 非表示項目

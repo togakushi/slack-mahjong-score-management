@@ -10,10 +10,11 @@ import re
 from pprint import pprint
 
 import lib.global_value as g
-from lib import command as c
-from lib import database as d
-from lib import function as f
-from lib.function import configuration
+from lib.command import graph, report, results
+from lib.command.results import ranking
+from lib.data import initialization
+from lib.function import configuration, message
+from lib.utils import dictutil
 
 
 def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: str):
@@ -31,13 +32,13 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         if len(g.params["player_list"]) == 1:
             pprint([
                 "exec: lib.graph.personal.plot()",
-                c.graph.personal.plot(),
+                graph.personal.plot(),
                 f"{g.params=}" if flag.get("dump") else "g.params={...}",
             ], width=120)
         else:
             pprint([
                 "exec: lib.graph.summary.point_plot()",
-                c.graph.summary.point_plot(),
+                graph.summary.point_plot(),
                 f"{g.params=}" if flag.get("dump") else "g.params={...}",
             ], width=120)
 
@@ -45,7 +46,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         """順位推移グラフ"""
         pprint([
             "exec: lib.graph.summary.rank_plot()",
-            c.graph.summary.rank_plot(),
+            graph.summary.rank_plot(),
             f"{g.params=}" if flag.get("dump") else "g.params={...}",
         ], width=120)
 
@@ -53,7 +54,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         """統計グラフ"""
         pprint([
             "exec: lib.graph.personal.statistics_plot()",
-            c.graph.personal.statistics_plot(),
+            graph.personal.statistics_plot(),
             f"{g.params=}" if flag.get("dump") else "g.params={...}",
         ], width=120)
 
@@ -71,7 +72,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         g.msg.argument = argument.split()
 
         # 追加オプション
-        pre_params = f.common.analysis_argument(g.msg.argument)
+        pre_params = dictutil.analysis_argument(g.msg.argument)
         if flag.get("target_loop"):
             g.msg.argument.append(f"{loop}")
 
@@ -96,18 +97,18 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pprint(g.team_list)
 
             case "help":
-                pprint(f.message.help_message(), width=200)
+                pprint(message.help_message(), width=200)
 
             case "summary":
-                g.params = d.common.placeholder(g.cfg.results)
+                g.params = dictutil.placeholder(g.cfg.results)
                 pprint([
                     "exec: lib.results.slackpost.main()",
-                    c.results.slackpost.main(),
+                    results.slackpost.main(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
             case "graph":
-                g.params = d.common.placeholder(g.cfg.graph)
+                g.params = dictutil.placeholder(g.cfg.graph)
                 if g.params.get("filename"):
                     save_filename = g.params["filename"]
                     g.params.update(filename=f"{save_filename}_point")
@@ -127,46 +128,46 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                         graph_statistics()
 
             case "graph_point":
-                g.params = d.common.placeholder(g.cfg.graph)
+                g.params = dictutil.placeholder(g.cfg.graph)
                 graph_point()
 
             case "graph_rank":
-                g.params = d.common.placeholder(g.cfg.graph)
+                g.params = dictutil.placeholder(g.cfg.graph)
                 graph_rank()
 
             case "graph_statistics":
-                g.params = d.common.placeholder(g.cfg.graph)
+                g.params = dictutil.placeholder(g.cfg.graph)
                 graph_statistics()
 
             case "ranking":
-                g.params = d.common.placeholder(g.cfg.ranking)
+                g.params = dictutil.placeholder(g.cfg.ranking)
                 pprint([
                     "exec: lib.results.ranking.main()",
-                    c.results.ranking.main(),
+                    ranking.main(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
             case "report":
-                g.params = d.common.placeholder(g.cfg.report)
+                g.params = dictutil.placeholder(g.cfg.report)
                 pprint([
                     "exec: lib.report.slackpost.main()",
-                    c.report.slackpost.main(),
+                    report.slackpost.main(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
             case "pdf":
-                g.params = d.common.placeholder(g.cfg.report)
+                g.params = dictutil.placeholder(g.cfg.report)
                 pprint([
                     "exec: lib.report.slackpost.results_report.gen_pdf()",
-                    c.report.slackpost.results_report.gen_pdf(),
+                    report.slackpost.results_report.gen_pdf(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
             case "rating":
-                g.params = d.common.placeholder(g.cfg.results)
+                g.params = dictutil.placeholder(g.cfg.results)
                 pprint([
                     "exec: lib.graph.rating.plot()",
-                    c.graph.rating.plot(),
+                    graph.rating.plot(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
@@ -180,8 +181,8 @@ def main():
 
     flag: dict = {}
 
-    d.initialization.initialization_resultdb()
-    c.member.read_memberslist(False)
+    initialization.initialization_resultdb()
+    configuration.read_memberslist(False)
 
     print("=" * 120)
     print(f"config  : {os.path.realpath(os.path.join(g.script_dir, g.args.config))}")

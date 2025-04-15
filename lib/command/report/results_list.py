@@ -10,9 +10,11 @@ import matplotlib.pyplot as plt
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib import database as d
-from lib import function as f
-from lib.command.member import anonymous_mapping
+from lib.data import loader
+from lib.data import aggregate
+from lib.function import message
+from lib.function.configuration import graph_setup
+from lib.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -29,14 +31,14 @@ def main():
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ取得
-    game_info: GameInfoDict = d.aggregate.game_info()
-    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/results_list.sql")).reset_index(drop=True)
+    game_info: GameInfoDict = aggregate.game_info()
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/report/results_list.sql")).reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
         return (False)
 
     if g.params.get("anonymous"):
-        mapping_dict = anonymous_mapping(df["name"].unique().tolist())
+        mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
         df["name"] = df["name"].replace(mapping_dict)
 
     # 見出し設定
@@ -80,7 +82,7 @@ def graph_generation(game_info, df, title):
         str: 生成ファイルパス
     """
 
-    df = d.common.df_rename(df.filter(
+    df = formatter.df_rename(df.filter(
         items=[
             "player", "team",
             "game", "total_mix", "avg_mix", "rank_avg",
@@ -95,7 +97,7 @@ def graph_generation(game_info, df, title):
     )
 
     # フォント/色彩設定
-    f.common.graph_setup(plt, fm)
+    graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
         case text_color, bg_color if text_color == "black" and bg_color == "white":
@@ -140,9 +142,9 @@ def graph_generation(game_info, df, title):
             tb[j, i].set_text_props(ha="center")
 
     # 追加テキスト
-    remark_text = f.message.remarks(True) + f.message.search_word(True)
+    remark_text = message.remarks(True) + message.search_word(True)
     add_text = "[{}] [総ゲーム数：{}] {}".format(  # pylint: disable=consider-using-f-string
-        f.message.item_search_range(None, "time").strip(),
+        message.item_search_range(None, "time").strip(),
         game_info["game_count"],
         f"[{remark_text}]" if remark_text else "",
     )
@@ -200,7 +202,7 @@ def text_generation(df):
             case _:
                 fmt.append("")
 
-    df = d.common.df_rename(df)
+    df = formatter.df_rename(df)
     df.to_markdown(report_file_path, tablefmt="outline", floatfmt=fmt)
 
     return (report_file_path)

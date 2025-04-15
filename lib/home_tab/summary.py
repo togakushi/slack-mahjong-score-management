@@ -5,10 +5,10 @@ lib/home_tab/summary.py
 import logging
 
 import lib.global_value as g
-from lib import command as c
-from lib import function as f
-from lib import home_tab as h
-from lib.database.common import placeholder
+from lib.command import graph, results
+from lib.function import message, slack_api
+from lib.home_tab import ui_parts
+from lib.utils import dictutil
 
 
 def build_summary_menu():
@@ -16,11 +16,11 @@ def build_summary_menu():
     g.app_var["screen"] = "SummaryMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}
-    h.ui_parts.header("【成績サマリ】")
+    ui_parts.header("【成績サマリ】")
 
     # 検索範囲設定
-    h.ui_parts.divider()
-    h.ui_parts.radio_buttons(
+    ui_parts.divider()
+    ui_parts.radio_buttons(
         id_suffix="search_range",
         title="検索範囲",
         flag={
@@ -30,11 +30,11 @@ def build_summary_menu():
             "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
         },
     )
-    h.ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
+    ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
 
     # オプション
-    h.ui_parts.divider()
-    h.ui_parts.checkboxes(
+    ui_parts.divider()
+    ui_parts.checkboxes(
         id_suffix="search_option",
         title="検索オプション",
         flag={
@@ -42,7 +42,7 @@ def build_summary_menu():
         },
         initial=["unregistered_replace"],
     )
-    h.ui_parts.radio_buttons(
+    ui_parts.radio_buttons(
         id_suffix="output_option",
         title="出力オプション",
         flag={
@@ -54,9 +54,9 @@ def build_summary_menu():
         },
     )
 
-    h.ui_parts.divider()
-    h.ui_parts.button(text="集計", action_id="summary_aggregation", style="primary")
-    h.ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
+    ui_parts.divider()
+    ui_parts.button(text="集計", action_id="summary_aggregation", style="primary")
+    ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
 @g.app.action("summary_menu")
@@ -98,45 +98,45 @@ def handle_aggregation_action(ack, body, client):
     g.msg.parser(body)
     g.msg.client = client
 
-    argument, app_msg, update_flag = h.home.set_command_option(body)
+    argument, app_msg, update_flag = ui_parts.set_command_option(body)
     g.cfg.results.update(argument)
     g.cfg.results.update_from_dict(update_flag)
-    g.params = placeholder(g.cfg.results)
+    g.params = dictutil.placeholder(g.cfg.results)
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
+        view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
     )
 
     app_msg.pop()
     app_msg.append("集計完了")
     msg1 = ""
-    msg2 = f.message.reply(message="no_hits")
+    msg2 = message.reply(message="no_hits")
 
     match g.app_var.get("operation"):
         case "point":
-            count, ret = c.graph.summary.point_plot()
+            count, ret = graph.summary.point_plot()
             if count:
-                f.slack_api.post_fileupload("ポイント推移", ret)
+                slack_api.post_fileupload("ポイント推移", ret)
             else:
-                f.slack_api.post_message(ret)
+                slack_api.post_message(ret)
         case "rank":
-            count, ret = c.graph.summary.rank_plot()
+            count, ret = graph.summary.rank_plot()
             if count:
-                f.slack_api.post_fileupload("順位変動", ret)
+                slack_api.post_fileupload("順位変動", ret)
             else:
-                f.slack_api.post_message(ret)
+                slack_api.post_message(ret)
         case "rating":
-            msg1, msg2, file_list = c.results.rating.aggregation()
-            f.slack_api.slack_post(
+            msg1, msg2, file_list = results.rating.aggregation()
+            slack_api.slack_post(
                 headline=msg1,
                 message=msg2,
                 summarize=False,
                 file_list=file_list,
             )
         case _:
-            msg1, msg2, file_list = c.results.summary.aggregation()
-            f.slack_api.slack_post(
+            msg1, msg2, file_list = results.summary.aggregation()
+            slack_api.slack_post(
                 headline=msg1,
                 message=msg2,
                 summarize=False,
@@ -145,7 +145,7 @@ def handle_aggregation_action(ack, body, client):
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}".strip()),
+        view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}".strip()),
     )
 
 

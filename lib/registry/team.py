@@ -5,50 +5,11 @@ lib/command/team.py
 import logging
 import sqlite3
 
+from lib.data import manipulate
 import lib.global_value as g
-from lib import command as c
-from lib import database as d
-from lib import function as f
-
-
-def which_team(name):
-    """指定メンバーの所属チームを返す
-
-    Args:
-        name (str): チェック対象のメンバー名
-
-    Returns:
-        Union[str, None]:
-            - str: 所属しているチーム名
-            - None: 未所属
-    """
-
-    team = None
-
-    for x in g.team_list:
-        if x["member"]:
-            if name in x["member"].split(","):
-                team = x["team"]
-
-    return (team)
-
-
-def get_teammates():
-    """所属チームのチームメイトを返す
-
-    Returns:
-        list: メンバーリスト
-    """
-
-    member = []
-    team_data = [x for x in g.team_list if x["team"] == g.params["player_name"]]
-    if team_data:
-        if team_data[0]["member"]:
-            member = team_data[0]['member'].split(",")
-        else:
-            member = ["未エントリー"]
-
-    return (member)
+from lib.data import initialization
+from lib.function import configuration
+from lib.utils import formatter, textutil
 
 
 def create(argument):
@@ -65,11 +26,11 @@ def create(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        team_name = f.common.str_conv(argument[0], "h2z")
+        team_name = textutil.str_conv(argument[0], "h2z")
         if len(g.team_list) > g.cfg.config["team"].getint("registration_limit", 255):
             msg = "登録上限を超えています。"
         else:  # 登録処理
-            ret, msg = f.common.check_namepattern(team_name, "team")
+            ret, msg = formatter.check_namepattern(team_name, "team")
             if ret:
                 resultdb = sqlite3.connect(
                     g.cfg.db.database_file,
@@ -82,7 +43,7 @@ def create(argument):
                 )
                 resultdb.commit()
                 resultdb.close()
-                c.member.read_memberslist()
+                configuration.read_memberslist()
                 msg = f"チーム「{team_name}」を登録しました。"
                 logging.notice("add new team: %s", team_name)  # type: ignore
 
@@ -102,11 +63,11 @@ def delete(argument):
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
-        team_name = f.common.str_conv(argument[0], "h2z")
+        team_name = textutil.str_conv(argument[0], "h2z")
         if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
-            msg = d.common.db_backup()
+            msg = manipulate.db_backup()
             team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
             resultdb = sqlite3.connect(
                 g.cfg.db.database_file,
@@ -122,7 +83,7 @@ def delete(argument):
             )
             resultdb.commit()
             resultdb.close()
-            c.member.read_memberslist()
+            configuration.read_memberslist()
             msg += f"\nチーム「{team_name}」を削除しました。"
             logging.notice("team delete: %s", team_name)  # type: ignore
 
@@ -149,8 +110,8 @@ def append(argument):
     if len(argument) == 2:  # チーム所属
         g.params.update(unregistered_replace=False)
 
-        team_name = f.common.str_conv(argument[0], "h2z")
-        player_name = c.member.name_replace(argument[1])
+        team_name = textutil.str_conv(argument[0], "h2z")
+        player_name = formatter.name_replace(argument[1])
         registration_flg = True
         team_id = None
 
@@ -183,7 +144,7 @@ def append(argument):
             )
             resultdb.commit()
             resultdb.close()
-            c.member.read_memberslist()
+            configuration.read_memberslist()
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
             logging.notice("team participation: %s -> %s", team_name, player_name)  # type: ignore
 
@@ -214,8 +175,8 @@ def remove(argument):
 
     if len(argument) == 2:  # チーム名指
         g.params.update(unregistered_replace=False)
-        team_name = f.common.str_conv(argument[0], "h2z")
-        player_name = c.member.name_replace(argument[1])
+        team_name = textutil.str_conv(argument[0], "h2z")
+        player_name = formatter.name_replace(argument[1])
 
         registration_flg = True
         team_id = None
@@ -241,50 +202,9 @@ def remove(argument):
             )
             resultdb.commit()
             resultdb.close()
-            c.member.read_memberslist()
+            configuration.read_memberslist()
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
             logging.notice("team breakaway: %s -> %s", team_name, player_name)  # type: ignore
-
-    return (msg)
-
-
-def get_list():
-    """チームの登録状況を表示する
-
-    Returns:
-        str: slackにpostする内容
-    """
-
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
-    cur = resultdb.execute("""
-        select
-            team.name,
-            ifnull(
-                group_concat(member.name),
-                "未エントリー"
-            )
-        from
-            team
-        left join member on
-            team.id = member.team_id
-        group by
-            team.name
-    """)
-    team_data = dict(cur.fetchall())
-
-    if len(team_data) == 0:
-        msg = "チームは登録されていません。"
-    else:
-        msg = ""
-        for k, v in team_data.items():
-            msg += f"{k}\n"
-            for p in v.split(","):
-                msg += f"\t{p}\n"
-            msg += "\n"
 
     return (msg)
 
@@ -296,7 +216,7 @@ def clear():
         str: slackにpostする内容
     """
 
-    msg = d.common.db_backup()
+    msg = manipulate.db_backup()
 
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
@@ -310,7 +230,7 @@ def clear():
     resultdb.commit()
     resultdb.close()
 
-    d.initialization.initialization_resultdb()
-    c.member.read_memberslist()
+    initialization.initialization_resultdb()
+    configuration.read_memberslist()
 
     return (msg)

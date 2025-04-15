@@ -8,7 +8,7 @@ import sqlite3
 import pandas as pd
 
 import lib.global_value as g
-from lib import database as d
+from lib.data import manipulate
 
 
 def export_data():
@@ -35,7 +35,7 @@ def export_data():
 def import_data():
     """メンバー情報インポート"""
     if g.args.import_data:
-        d.common.db_backup()
+        manipulate.db_backup()
         conn = sqlite3.connect(g.cfg.db.database_file)
         for table in ("member", "alias", "team"):
             csvfile = f"{g.args.import_data}_{table}.csv"

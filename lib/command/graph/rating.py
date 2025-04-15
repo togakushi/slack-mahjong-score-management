@@ -10,9 +10,10 @@ import matplotlib.pyplot as plt
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib import database as d
-from lib import function as f
-from lib.command.member import anonymous_mapping
+from lib.data import aggregate
+from lib.function import message
+from lib.function.configuration import graph_setup
+from lib.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -29,11 +30,11 @@ def plot():
 
     plt.close()
     # データ収集
-    game_info: GameInfoDict = d.aggregate.game_info()
-    df_ratings = d.aggregate.calculation_rating()
+    game_info: GameInfoDict = aggregate.game_info()
+    df_ratings = aggregate.calculation_rating()
 
     if df_ratings.empty:
-        return (0, f.message.reply(message="no_hits"))
+        return (0, message.reply(message="no_hits"))
 
     # 足切り
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
@@ -48,18 +49,18 @@ def plot():
     df_sorted = df_sorted.rename(index=new_index)
 
     if g.params.get("anonymous"):
-        mapping_dict = anonymous_mapping(df_sorted.columns.to_list())
+        mapping_dict = formatter.anonymous_mapping(df_sorted.columns.to_list())
         df_sorted = df_sorted.rename(columns=mapping_dict)
 
     # --- グラフ生成
-    f.common.graph_setup(plt, fm)
+    graph_setup(plt, fm)
 
     save_file = os.path.join(
         g.cfg.setting.work_dir,
         f"{g.params["filename"]}.png" if g.params.get("filename") else "rating.png",
     )
 
-    title_text = f"レーティング推移 ({f.message.item_date_range("hm")})"
+    title_text = f"レーティング推移 ({message.item_date_range("hm")})"
 
     legend_text = []
     count = 1

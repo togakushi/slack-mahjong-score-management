@@ -10,7 +10,7 @@ from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 import lib.global_value as g
-from lib import function as f
+from lib.utils import debug
 
 
 def call_chat_post_message(**kwargs) -> SlackResponse | Any:
@@ -69,7 +69,7 @@ def post_message(message, ts=False) -> SlackResponse | Any:
         ts = g.msg.thread_ts
 
     if g.args.testcase:
-        f.common.debug_out(message)
+        debug.debug_out(message)
         res["ts"] = 0  # dummy
     else:
         res = call_chat_post_message(
@@ -91,7 +91,7 @@ def post_multi_message(msg: dict | list, ts: bool | None = False, summarize: boo
     """
 
     if g.args.testcase:
-        f.common.debug_out("", msg)
+        debug.debug_out("", msg)
     else:
         if isinstance(msg, dict):
             if summarize:  # まとめてポスト
@@ -167,7 +167,7 @@ def post_fileupload(title: str, file: str | bool, ts: str | bool = False) -> Sla
     """
 
     if g.args.testcase:
-        f.common.debug_out(title, file)
+        debug.debug_out(title, file)
         return (None)
 
     if not ts and g.msg.thread_ts:

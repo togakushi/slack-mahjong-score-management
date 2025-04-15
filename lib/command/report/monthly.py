@@ -9,8 +9,9 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.global_value as g
-from lib import database as d
-from lib import function as f
+from lib.data import loader
+from lib.function import message
+from lib.function.configuration import graph_setup
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -25,14 +26,14 @@ def plot():
 
     plt.close()
     # --- データ収集
-    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/monthly.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/report/monthly.sql"))
     results = df.transpose().to_dict()
 
     if len(results) == 0:
         return (False)
 
     # --- グラフフォント設定
-    f.common.graph_setup(plt, fm)
+    graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
 
     # 色彩設定
@@ -92,7 +93,7 @@ def plot():
     # 追加テキスト
     fig.text(
         0.01, 0.02,  # 表示位置(左下0,0 右下0,1)
-        f"[{f.message.item_search_range().strip()}] [特記：すべてのゲーム結果を含む]",
+        f"[{message.item_search_range().strip()}] [特記：すべてのゲーム結果を含む]",
         transform=fig.transFigure,
         fontsize=6,
     )

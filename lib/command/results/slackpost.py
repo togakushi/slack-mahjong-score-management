@@ -3,14 +3,14 @@ lib/command/results/slackpost.py
 """
 
 import lib.global_value as g
-from lib import function as f
 from lib.command.results import detail, rating, summary, versus
-from lib.database.common import placeholder
+from lib.function import slack_api
+from lib.utils import dictutil
 
 
 def main():
     """成績の集計結果をslackにpostする"""
-    g.params = placeholder(g.cfg.results)
+    g.params = dictutil.placeholder(g.cfg.results)
 
     # モード切り替え
     versus_mode = False
@@ -24,13 +24,13 @@ def main():
     # ---
     if len(g.params["player_list"]) == 1 and not versus_mode:  # 個人/チーム成績詳細
         msg1, msg2 = detail.aggregation()
-        f.slack_api.slack_post(
+        slack_api.slack_post(
             headline=msg1,
             message=msg2,
         )
     elif g.params.get("rating"):  # レーティング
         msg1, msg2, file_list = rating.aggregation()
-        f.slack_api.slack_post(
+        slack_api.slack_post(
             headline=msg1,
             message=msg2,
             summarize=False,
@@ -38,14 +38,14 @@ def main():
         )
     elif versus_mode:  # 直接対戦
         msg1, msg2, file_list = versus.aggregation()
-        f.slack_api.slack_post(
+        slack_api.slack_post(
             headline=msg1,
             message=msg2,
             file_list=file_list,
         )
     else:  # 成績サマリ
         headline, msg2, file_list = summary.aggregation()
-        f.slack_api.slack_post(
+        slack_api.slack_post(
             headline=headline,
             message=msg2,
             summarize=False,

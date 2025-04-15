@@ -12,8 +12,8 @@ import pandas as pd
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib import command as c
-from lib.database.common import read_data
+from lib.data import loader
+from lib.utils import formatter
 
 
 def game_info() -> GameInfoDict:
@@ -24,7 +24,7 @@ def game_info() -> GameInfoDict:
     """
 
     # データ収集
-    df = read_data(os.path.join(g.script_dir, "lib/queries/game.info.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/game.info.sql"))
     ret: GameInfoDict = {
         "game_count": int(df["count"].to_string(index=False)),
         "first_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
@@ -73,7 +73,7 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
     """
 
     # データ収集
-    df = read_data(os.path.join(g.script_dir, "lib/queries/summary/total.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/total.sql"))
 
     if isinstance(filter_items, list):
         df = df.filter(items=filter_items)
@@ -97,7 +97,7 @@ def remark_count(kind: str):
 
     # データ収集
     g.params.update(kind=kind)
-    df = read_data(os.path.join(g.script_dir, "lib/queries/summary/remark_count.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/remark_count.sql"))
 
     if kind == "grandslam":
         df = df.filter(items=["name", "matter", "count"])
@@ -114,7 +114,7 @@ def game_results():
     """
 
     # データ収集
-    df = read_data(os.path.join(g.script_dir, "lib/queries/summary/results.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/results.sql"))
 
     # Nullが返ってきたときにobject型になるので型変換
     df = df.astype({
@@ -139,7 +139,7 @@ def ranking_record():
     """
 
     # データ収集
-    gamedata: pd.DataFrame = read_data(os.path.join(g.script_dir, "lib/queries/ranking/record_count.sql"))
+    gamedata: pd.DataFrame = loader.read_data(os.path.join(g.script_dir, "lib/queries/ranking/record_count.sql"))
     player_list = gamedata["name"].unique().tolist()
 
     # 連続順位カウント
@@ -196,7 +196,7 @@ def calculation_rating():
     """
 
     # データ収集
-    df_results = read_data(os.path.join(g.script_dir, "lib/queries/ranking/ratings.sql")).set_index("playtime")
+    df_results = loader.read_data(os.path.join(g.script_dir, "lib/queries/ranking/ratings.sql")).set_index("playtime")
     df_ratings = pd.DataFrame(index=["initial_rating"] + df_results.index.to_list())  # 記録用
     last_ratings: dict = {}  # 最終値格納用
 
@@ -244,7 +244,7 @@ def matrix_table():
     """
 
     # データ収集
-    df = read_data(os.path.join(g.script_dir, "lib/queries/report/matrix_table.sql")).set_index("playtime")
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/report/matrix_table.sql")).set_index("playtime")
 
     # 結果に含まれるプレイヤーのリスト
     plist = sorted(list(set(
@@ -255,14 +255,14 @@ def matrix_table():
     l_data: dict = {}
     for pname in plist:
         if g.params.get("individual"):  # 個人集計
-            l_name = c.member.name_replace(pname)
+            l_name = formatter.name_replace(pname)
             # プレイヤー指定があるなら対象以外をスキップ
             if g.params["player_list"]:
                 if l_name not in g.params["player_list"].values():
                     continue
             # ゲスト置換
             if g.params.get("guest_skip"):  # ゲストあり
-                l_name = c.member.name_replace(pname, add_mark=True)
+                l_name = formatter.name_replace(pname, add_mark=True)
             else:  # ゲストなし
                 if pname == g.cfg.member.guest_name:
                     continue

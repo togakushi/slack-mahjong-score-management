@@ -12,9 +12,11 @@ import pandas as pd
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib import database as d
-from lib import function as f
-from lib.command.member import anonymous_mapping
+from lib.data import loader
+from lib.data import aggregate
+from lib.function import message
+from lib.function.configuration import graph_setup
+from lib.utils import dateutil, formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -35,11 +37,11 @@ def point_plot():
     xlabel_text = None
 
     # データ収集
-    game_info: GameInfoDict = d.aggregate.game_info()
+    game_info: GameInfoDict = aggregate.game_info()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        return (len(target_data), f.message.reply(message="no_hits"))
+        return (len(target_data), message.reply(message="no_hits"))
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
@@ -50,16 +52,16 @@ def point_plot():
         match g.params["collection"]:
             case "daily":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
-                title_text = f.message.item_date_range("d_o", "通算ポイント", "ポイント推移")
+                title_text = message.item_date_range("d_o", "通算ポイント", "ポイント推移")
             case "monthly":
                 xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
-                title_text = f.message.item_date_range("jm_o", "通算ポイント", "ポイント推移")
+                title_text = message.item_date_range("jm_o", "通算ポイント", "ポイント推移")
             case "yearly":
                 xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
-                title_text = f.message.item_date_range("jy_o", "通算ポイント", "ポイント推移")
+                title_text = message.item_date_range("jy_o", "通算ポイント", "ポイント推移")
             case "all":
                 xlabel_text = f"総ゲーム数：{game_info['game_count']}"
-                title_text = f.message.item_date_range("hm", "通算ポイント", "ポイント推移")
+                title_text = message.item_date_range("hm", "通算ポイント", "ポイント推移")
             case _:
                 if g.params.get("search_word"):
                     pivot_index = "comment"
@@ -70,9 +72,9 @@ def point_plot():
                         title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-                    title_text = f.message.item_date_range("hm", "通算ポイント", "ポイント推移")
-                    if f.common.ts_conv(g.params["starttime"], "d") == f.common.ts_conv(g.params["onday"], "d") and game_info["game_count"] == 1:
-                        title_text = f"獲得ポイント ({f.common.ts_conv(g.params["starttime"], "d")})"
+                    title_text = message.item_date_range("hm", "通算ポイント", "ポイント推移")
+                    if dateutil.ts_conv(g.params["starttime"], "d") == dateutil.ts_conv(g.params["onday"], "d") and game_info["game_count"] == 1:
+                        title_text = f"獲得ポイント ({dateutil.ts_conv(g.params["starttime"], "d")})"
 
     # 集計
     if g.params.get("individual"):  # 個人集計
@@ -119,11 +121,11 @@ def rank_plot() -> Tuple[int, str]:
     xlabel_text = None
 
     # データ収集
-    game_info: GameInfoDict = d.aggregate.game_info()
+    game_info: GameInfoDict = aggregate.game_info()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        return (len(target_data), f.message.reply(message="no_hits"))
+        return (len(target_data), message.reply(message="no_hits"))
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
@@ -134,16 +136,16 @@ def rank_plot() -> Tuple[int, str]:
         match g.params["collection"]:
             case "daily":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
-                title_text = f.message.item_date_range("d_o", "順位", "順位変動")
+                title_text = message.item_date_range("d_o", "順位", "順位変動")
             case "monthly":
                 xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
-                title_text = f.message.item_date_range("jm", "順位", "順位変動")
+                title_text = message.item_date_range("jm", "順位", "順位変動")
             case "yearly":
                 xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
-                title_text = f.message.item_date_range("jy", "順位", "順位変動")
+                title_text = message.item_date_range("jy", "順位", "順位変動")
             case "all":
                 xlabel_text = f"総ゲーム数：{game_info['game_count']}"
-                title_text = f.message.item_date_range("hm", "順位", "順位変動")
+                title_text = message.item_date_range("hm", "順位", "順位変動")
             case _:
                 if g.params.get("search_word"):
                     pivot_index = "comment"
@@ -154,9 +156,9 @@ def rank_plot() -> Tuple[int, str]:
                         title_text = f"順位変動 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-                    title_text = f.message.item_date_range("hm", "順位", "順位変動")
-                    if f.common.ts_conv(g.params["starttime"], "d") == f.common.ts_conv(g.params["onday"], "d") and game_info["game_count"] == 1:
-                        title_text = f"順位 ({f.common.ts_conv(g.params["starttime"], "d")})"
+                    title_text = message.item_date_range("hm", "順位", "順位変動")
+                    if dateutil.ts_conv(g.params["starttime"], "d") == dateutil.ts_conv(g.params["onday"], "d") and game_info["game_count"] == 1:
+                        title_text = f"順位 ({dateutil.ts_conv(g.params["starttime"], "d")})"
 
     # 集計
     if g.params.get("individual"):  # 個人集計
@@ -203,7 +205,7 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     target_data = pd.DataFrame()
     if g.params.get("individual"):  # 個人集計
-        df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
+        df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
 
@@ -219,7 +221,7 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
     else:  # チーム集計
-        df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
+        df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
 
@@ -239,7 +241,7 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
         col = "team"
         if g.params.get("individual"):
             col = "name"
-        mapping_dict = anonymous_mapping(df[col].unique().tolist())
+        mapping_dict = formatter.anonymous_mapping(df[col].unique().tolist())
         df[col] = df[col].replace(mapping_dict)
         target_data[col] = target_data[col].replace(mapping_dict)
 
@@ -262,7 +264,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
-    f.common.graph_setup(plt, fm)
+    graph_setup(plt, fm)
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
         kwargs["kind"] = "barh"

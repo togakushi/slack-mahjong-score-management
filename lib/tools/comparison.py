@@ -9,8 +9,8 @@ from slack_bolt import App
 from slack_sdk import WebClient
 
 import lib.global_value as g
-from lib import command as c
-from lib import database as d
+from lib.data import comparison
+from lib.function import configuration
 
 
 def main():
@@ -20,9 +20,9 @@ def main():
             g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
             g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
             g.bot_id = g.app.client.auth_test()["user_id"]
-            c.member.read_memberslist(False)
+            configuration.read_memberslist(False)
         except Exception as e:
             raise RuntimeError(e) from e
 
-        count, _ = d.comparison.data_comparison()
+        count, _ = comparison.data_comparison()
         logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))  # type: ignore

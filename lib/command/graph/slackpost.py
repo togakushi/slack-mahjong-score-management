@@ -3,14 +3,14 @@ lib/command/graph/slackpost.py
 """
 
 import lib.global_value as g
-from lib import function as f
 from lib.command.graph import personal, rating, summary
-from lib.database.common import placeholder
+from lib.function import slack_api
+from lib.utils import dictutil
 
 
 def main():
     """グラフをslackにpostする"""
-    g.params = placeholder(g.cfg.graph)
+    g.params = dictutil.placeholder(g.cfg.graph)
 
     if len(g.params["player_list"]) == 1:  # 対象がひとり
         title = "個人成績"
@@ -31,6 +31,6 @@ def main():
                 count, ret = summary.point_plot()
 
     if count == 0:
-        f.slack_api.post_message(ret)
+        slack_api.post_message(ret)
     else:
-        f.slack_api.post_fileupload(title, ret)
+        slack_api.post_fileupload(title, ret)

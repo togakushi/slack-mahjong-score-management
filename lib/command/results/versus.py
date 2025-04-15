@@ -8,9 +8,9 @@ import textwrap
 import pandas as pd
 
 import lib.global_value as g
-from lib import command as c
-from lib import database as d
-from lib import function as f
+from lib.data import loader
+from lib.function import message
+from lib.utils import dateutil, formatter
 
 
 def aggregation():
@@ -27,16 +27,16 @@ def aggregation():
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ収集
-    df_vs = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
-    df_game = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
+    df_vs = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
+    df_game = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 
-    my_name = c.member.name_replace(g.params["player_name"], add_mark=True)
-    vs_list = [c.member.name_replace(x, add_mark=True) for x in g.params["competition_list"].values()]
+    my_name = formatter.name_replace(g.params["player_name"], add_mark=True)
+    vs_list = [formatter.name_replace(x, add_mark=True) for x in g.params["competition_list"].values()]
 
     # --- 匿名化
     if g.params.get("anonymous"):
-        mapping_dict = c.member.anonymous_mapping([my_name] + vs_list)
+        mapping_dict = formatter.anonymous_mapping([my_name] + vs_list)
         my_name = mapping_dict[my_name]
         vs_list = [mapping_dict[name] for name in vs_list]
         df_vs["my_name"] = df_vs["my_name"].replace(mapping_dict)
@@ -106,7 +106,7 @@ def aggregation():
     if len(df_data) != 0:
         df_data["座席"] = df_data["seat"].apply(lambda x: ["東家", "南家", "西家", "北家"][x - 1])
         df_data["rpoint"] = df_data["rpoint"] * 100
-    df_data = d.common.df_rename(
+    df_data = formatter.df_rename(
         df_data.filter(items=["playtime", "座席", "name", "rank", "rpoint", "point", "grandslam"]).drop_duplicates(),
         short=False
     )
@@ -115,7 +115,7 @@ def aggregation():
     df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: x.strip())
     df_vs["my_rpoint_avg"] = (df_vs["my_rpoint_avg"] * 100).astype("int")
     df_vs["vs_rpoint_avg"] = (df_vs["vs_rpoint_avg"] * 100).astype("int")
-    df_vs = d.common.df_rename(df_vs)
+    df_vs = formatter.df_rename(df_vs)
     df_vs2 = df_vs.query("vs_name == @namelist").filter(
         items=[
             "対戦相手", "対戦結果", "勝率",
@@ -127,13 +127,13 @@ def aggregation():
     match g.params.get("format", "default").lower().lower():
         case "csv":
             file_list = {
-                "対戦結果": f.common.save_output(df_data, "csv", "result.csv"),
-                "成績": f.common.save_output(df_vs2, "csv", "versus.csv"),
+                "対戦結果": formatter.save_output(df_data, "csv", "result.csv"),
+                "成績": formatter.save_output(df_vs2, "csv", "versus.csv"),
             }
         case "text" | "txt":
             file_list = {
-                "対戦結果": f.common.save_output(df_data, "txt", "result.txt"),
-                "成績": f.common.save_output(df_vs2, "txt", "versus.txt"),
+                "対戦結果": formatter.save_output(df_data, "txt", "result.txt"),
+                "成績": formatter.save_output(df_vs2, "txt", "versus.txt"),
             }
         case _:
             file_list = {}
@@ -156,12 +156,12 @@ def tmpl_header(my_name: str, vs_name: str) -> str:
         *【直接対戦結果】*
         \tプレイヤー名：{my_name}
         \t対戦相手：{vs_name}
-        \t{f.message.item_search_range()}
-        \t{f.message.remarks(True)}
+        \t{message.item_search_range()}
+        \t{message.remarks(True)}
         """
     ).strip()
 
-    return (f.message.del_blank_line(ret))
+    return (message.del_blank_line(ret))
 
 
 def tmpl_vs_table(data: dict) -> str:
@@ -217,7 +217,7 @@ def tmpl_result_verbose(current_game: pd.DataFrame, playtime: str, guest_count: 
 
     ret = textwrap.dedent(
         f"""\
-        {f.common.ts_conv(playtime, "hms")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
+        {dateutil.ts_conv(playtime, "hms")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
         \t東家：{s1["name"]} {s1["rank"]}位 {s1["rpoint"] * 100:>7} 点 ({s1["point"]:>+5.1f}pt) {s1["grandslam"]}
         \t南家：{s2["name"]} {s2["rank"]}位 {s2["rpoint"] * 100:>7} 点 ({s2["point"]:>+5.1f}pt) {s2["grandslam"]}
         \t西家：{s3["name"]} {s3["rank"]}位 {s3["rpoint"] * 100:>7} 点 ({s3["point"]:>+5.1f}pt) {s3["grandslam"]}

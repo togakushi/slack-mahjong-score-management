@@ -23,8 +23,8 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, TableStyle)
 
 import lib.global_value as g
-from lib import command as c
-from lib.database.common import load_query, query_modification
+from lib.data import loader, lookup
+from lib.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -43,7 +43,7 @@ def get_game_results() -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query_modification(load_query(os.path.join(g.script_dir, "lib/queries/report/personal_data.sql"))),
+        loader.query_modification(loader.load_query(os.path.join(g.script_dir, "lib/queries/report/personal_data.sql"))),
         g.params,
     )
 
@@ -107,7 +107,7 @@ def get_count_results(game_count: int) -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query_modification(load_query(os.path.join(g.script_dir, "lib/queries/report/count_data.sql"))),
+        loader.query_modification(loader.load_query(os.path.join(g.script_dir, "lib/queries/report/count_data.sql"))),
         g.params,
     )
 
@@ -174,7 +174,7 @@ def get_count_moving(game_count: int) -> list:
 
     g.params.update(interval=game_count)
     rows = resultdb.execute(
-        query_modification(load_query(os.path.join(g.script_dir, "lib/queries/report/count_moving.sql"))),
+        loader.query_modification(loader.load_query(os.path.join(g.script_dir, "lib/queries/report/count_moving.sql"))),
         g.params,
     )
 
@@ -368,7 +368,7 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
         return (False, False)
 
     # 対象メンバーの記録状況
-    target_info = c.member.member_info(g.params["player_name"])
+    target_info = lookup.member_info(g.params["player_name"])
     logging.info(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし
@@ -444,7 +444,7 @@ def cover_page(style: dict, target_info: dict) -> list:
     )
 
     if g.params.get("anonymous"):
-        mapping_dict = c.member.anonymous_mapping([g.params["player_name"]])
+        mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         target_player = next(iter(mapping_dict.values()))
     else:
         target_player = g.params["player_name"]

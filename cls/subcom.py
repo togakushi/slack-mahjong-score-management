@@ -7,9 +7,9 @@ from dataclasses import dataclass, field, fields
 from math import ceil
 
 from cls.types import CommonMethodMixin
-from lib.command.member import get_member, get_team, name_replace
-from lib.function.common import analysis_argument
+from lib.data import lookup
 from lib.function.search import search_range
+from lib.utils import dictutil, formatter
 
 
 @dataclass
@@ -66,14 +66,14 @@ class SubCommand(CommonMethodMixin):
         tmp_range: list = []
 
         # 引数解析
-        new_flag = analysis_argument(self.always_argument)
+        new_flag = dictutil.analysis_argument(self.always_argument)
         if new_flag["search_range"]:
             tmp_range = new_flag["search_range"]
         else:
             tmp_range.append(self.aggregation_range)
         self.update_from_dict(new_flag)
 
-        new_flag = analysis_argument(argument)
+        new_flag = dictutil.analysis_argument(argument)
         if new_flag["search_range"]:
             tmp_range = new_flag["search_range"]
         self.update_from_dict(new_flag)
@@ -92,13 +92,13 @@ class SubCommand(CommonMethodMixin):
         target_player: list = []
         player_list: dict = {}
         competition_list: dict = {}
-        team_list: list = get_team()
+        team_list: list = lookup.get_team()
 
         for x in new_flag["unknown_command"]:
             if x in team_list:
                 target_player.append(x)
             elif self.individual and self.unregistered_replace:
-                target_player.append(name_replace(x))
+                target_player.append(formatter.name_replace(x))
             else:
                 target_player.append(x)
 
@@ -106,7 +106,7 @@ class SubCommand(CommonMethodMixin):
             player_name = target_player[0]
 
         if self.all_player:  # 全員追加
-            target_player = list(set(get_member() + target_player))
+            target_player = list(set(lookup.get_member() + target_player))
         else:
             target_player = list(set(target_player))
 

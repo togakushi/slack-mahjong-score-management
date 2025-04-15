@@ -9,7 +9,7 @@ import pandas as pd
 from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
-from lib.database.common import first_record
+from lib.data import lookup
 
 
 class SearchRange():
@@ -18,7 +18,7 @@ class SearchRange():
     day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 
     def __init__(self) -> None:
-        self.first_record = first_record()
+        self.first_record = lookup.first_record()
         self.update()
 
     def update(self) -> None:

@@ -8,9 +8,10 @@ import re
 import pandas as pd
 
 import lib.global_value as g
-from lib import command as c
-from lib import database as d
-from lib import function as f
+from lib.data import lookup
+from lib.data import manipulate
+from lib.function import message, slack_api
+from lib.utils import formatter
 
 
 def calculation_point(score_df):
@@ -121,28 +122,28 @@ def reactions(param: dict):
     if param["reactions_data"]:
         icon = param["reactions_data"]
     else:
-        icon = f.slack_api.reactions_status()
+        icon = slack_api.reactions_status()
 
     if rpoint_sum == correct_score:
         if g.cfg.setting.reaction_ng in icon:
-            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ng)
+            slack_api.call_reactions_remove(g.cfg.setting.reaction_ng)
         if g.cfg.setting.reaction_ok not in icon:
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
+            slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
     else:
         if g.cfg.setting.reaction_ok in icon:
-            f.slack_api.call_reactions_remove(g.cfg.setting.reaction_ok)
+            slack_api.call_reactions_remove(g.cfg.setting.reaction_ok)
         if g.cfg.setting.reaction_ng not in icon:
-            f.slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
+            slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
 
-        f.slack_api.post_message(
-            f.message.reply(message="invalid_score", rpoint_sum=rpoint_sum),
+        slack_api.post_message(
+            message.reply(message="invalid_score", rpoint_sum=rpoint_sum),
             g.msg.event_ts,
         )
 
 
 def check_remarks() -> None:
     """メモの内容を拾ってDBに格納する"""
-    game_result = d.common.exsist_record(g.msg.thread_ts)
+    game_result = lookup.exsist_record(g.msg.thread_ts)
     if game_result:  # ゲーム結果のスレッドになっているか
         check_list = [v for k, v in game_result.items() if k.endswith("_name")]
 
@@ -154,7 +155,7 @@ def check_remarks() -> None:
             remark = {
                 "thread_ts": g.msg.thread_ts,
                 "event_ts": g.msg.event_ts,
-                "name": c.member.name_replace(name),
+                "name": formatter.name_replace(name),
                 "matter": matter,
             }
             if remark["name"] in check_list and remark not in remarks:
@@ -162,17 +163,17 @@ def check_remarks() -> None:
 
         match g.msg.status:
             case "message_append":
-                d.common.remarks_append(remarks)
+                manipulate.remarks_append(remarks)
             case "message_changed":
-                d.common.remarks_delete(g.msg.event_ts)
-                d.common.remarks_append(remarks)
+                manipulate.remarks_delete(g.msg.event_ts)
+                manipulate.remarks_append(remarks)
             case "message_deleted":
-                d.common.remarks_delete(g.msg.event_ts)
+                manipulate.remarks_delete(g.msg.event_ts)
 
 
 def reprocessing_remarks():
     """スレッドの内容を再処理"""
-    res = f.slack_api.get_conversations()
+    res = slack_api.get_conversations()
     msg = res.get("messages")
 
     if msg:
@@ -189,7 +190,7 @@ def reprocessing_remarks():
                 g.msg.argument = text.split()[1:]
 
                 if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):
-                    f.score.check_remarks()
+                    check_remarks()
 
 
 def get_score(detection):
@@ -214,7 +215,7 @@ def get_score(detection):
     # ポイント計算
     score_df = pd.DataFrame({
         "name": [
-            c.member.name_replace(detection[x * 2], False)
+            formatter.name_replace(detection[x * 2], False)
             for x in range(4)
         ],
         "str": [detection[x * 2 + 1] for x in range(4)],

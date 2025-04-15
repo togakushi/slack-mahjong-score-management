@@ -9,8 +9,8 @@ import textwrap
 from datetime import datetime
 
 import lib.global_value as g
-from lib import database as d
-from lib import function as f
+from lib.utils import dateutil
+from lib.data import lookup
 
 
 def slash_help(command):
@@ -88,7 +88,7 @@ def help_message():
         msg += f"\t{x}\n"
 
     # ルール識別子
-    rule = d.common.rule_version()
+    rule = lookup.rule_version()
     if rule:
         msg += "\n\n*ルール識別子*\n"
         for key, val in rule.items():
@@ -101,7 +101,7 @@ def help_message():
         \t登録キーワード：{g.cfg.cw.remarks_word}
     """)
 
-    words = d.common.word_list(1)
+    words = lookup.word_list(1)
     if words:
         msg += "\n\t*卓外ポイントワード(個人清算)*\n"
         for word, ex_point in rule:
@@ -110,13 +110,13 @@ def help_message():
                 str(f"{ex_point:.1f}").replace("-", "▲"),
             )
 
-    words = [word for word, _ in d.common.word_list(2)]
+    words = [word for word, _ in lookup.word_list(2)]
     if g.cfg.undefined_word == 2:
         words += ["未登録ワードのすべてを個別にカウント"]
     if words:
         msg += f"\n\t*個別カウントワード*\n\t\t{'、'.join(words)}\n"
 
-    words = [word for word, _ in d.common.word_list(0)]
+    words = [word for word, _ in lookup.word_list(0)]
     if g.cfg.undefined_word == 0:
         words += ["未登録ワードのすべてを役満としてカウント"]
     if words:
@@ -163,8 +163,8 @@ def reply(message=None, rpoint_sum=0):
         msg = msg.format(
             user_id=g.msg.user_id,
             keyword=g.cfg.search.keyword,
-            start=f.common.ts_conv(g.params["starttime"], "d"),
-            end=f.common.ts_conv(g.params["onday"], "d"),
+            start=dateutil.ts_conv(g.params["starttime"], "d"),
+            end=dateutil.ts_conv(g.params["onday"], "d"),
             rpoint_diff=rpoint_diff * 100,
             rpoint_sum=rpoint_sum * 100,
         )
@@ -263,7 +263,7 @@ def header(game_info, add_text="", indent=1):
 
     # ゲーム数
     if game_info["game_count"] == 0:
-        msg += f"{f.message.reply(message='no_hits')}"
+        msg += f"{reply(message='no_hits')}"
     else:
         match g.params.get("command"):
             case "results":
@@ -281,10 +281,10 @@ def header(game_info, add_text="", indent=1):
                 msg += game_range2
                 msg += f"総ゲーム数：{game_info['game_count']} 回\n"
 
-        if f.message.remarks():
-            msg += "特記事項：" + "、".join(f.message.remarks()) + "\n"
-        if f.message.search_word():
-            msg += "検索ワード：" + f.message.search_word() + "\n"
+        if remarks():
+            msg += "特記事項：" + "、".join(remarks()) + "\n"
+        if search_word():
+            msg += "検索ワード：" + search_word() + "\n"
 
     return (textwrap.indent(msg, "\t" * indent))
 
@@ -329,14 +329,14 @@ def item_search_range(kind=None, time_pattern=None):
 
     match time_pattern:
         case "day":
-            starttime = f.common.ts_conv(g.params["starttime"], "ts")
-            endtime = f.common.ts_conv(g.params["endtime"], "ts")
+            starttime = dateutil.ts_conv(g.params["starttime"], "ts")
+            endtime = dateutil.ts_conv(g.params["endtime"], "ts")
         case "time":
-            starttime = f.common.ts_conv(g.params["starttime"], "hm")
-            endtime = f.common.ts_conv(g.params["endtime"], "hm")
+            starttime = dateutil.ts_conv(g.params["starttime"], "hm")
+            endtime = dateutil.ts_conv(g.params["endtime"], "hm")
         case _:
-            starttime = f.common.ts_conv(g.params["starttime"], "hms")
-            endtime = f.common.ts_conv(g.params["endtime"], "hms")
+            starttime = dateutil.ts_conv(g.params["starttime"], "hms")
+            endtime = dateutil.ts_conv(g.params["endtime"], "hms")
 
     match kind:
         case "list":
@@ -396,13 +396,13 @@ def item_date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None
 
     if kind.endswith("_o"):
         kind = kind.replace("_o", "")
-        st = f.common.ts_conv(g.params["starttime"], kind)
-        et = f.common.ts_conv(g.params["onday"], kind)
+        st = dateutil.ts_conv(g.params["starttime"], kind)
+        et = dateutil.ts_conv(g.params["onday"], kind)
     else:
-        st = f.common.ts_conv(g.params["starttime"], kind)
-        et = f.common.ts_conv(g.params["endtime"], kind)
+        st = dateutil.ts_conv(g.params["starttime"], kind)
+        et = dateutil.ts_conv(g.params["endtime"], kind)
 
-    if st == f.common.ts_conv(g.params["onday"], kind):
+    if st == dateutil.ts_conv(g.params["onday"], kind):
         if prefix_a and prefix_b:
             ret = f"{prefix_a} ({st})"
         else:
@@ -414,3 +414,58 @@ def item_date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None
             ret = f"{st} - {et}"
 
     return (ret)
+
+
+def badge_degree(game_count: int = 0) -> str:
+    """プレイしたゲーム数に対して表示される称号を返す
+
+    Args:
+        game_count (int, optional): ゲーム数. Defaults to 0.
+
+    Returns:
+        str: 表示する称号
+    """
+
+    badge: str = ""
+
+    if "degree" in g.cfg.config.sections():
+        if g.cfg.config["degree"].getboolean("display", False):
+            degree_badge = g.cfg.config.get("degree", "badge").split(",")
+            degree_counter = list(map(int, g.cfg.config.get("degree", "counter").split(",")))
+            for idx, val in enumerate(degree_counter):
+                if game_count >= val:
+                    badge = degree_badge[idx]
+
+    return (badge)
+
+
+def badge_status(game_count: int = 0, win: int = 0) -> str:
+    """勝率に対して付く調子バッジを返す
+
+    Args:
+        game_count (int, optional): ゲーム数. Defaults to 0.
+        win (int, optional): 勝ち数. Defaults to 0.
+
+    Returns:
+        str: 表示する称号
+    """
+
+    badge: str = ""
+
+    if "status" in g.cfg.config.sections():
+        if g.cfg.config["status"].getboolean("display", False):
+            status_badge = g.cfg.config.get("status", "badge").split(",")
+            status_step = g.cfg.config.getfloat("status", "step")
+            if game_count == 0:
+                index = 0
+            else:
+                winper = win / game_count * 100
+                index = 3
+                for i in (1, 2, 3):
+                    if winper <= 50 - status_step * i:
+                        index = 4 - i
+                    if winper >= 50 + status_step * i:
+                        index = 2 + i
+            badge = status_badge[index]
+
+    return (badge)

@@ -10,10 +10,10 @@ import pandas as pd
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib import command as c
-from lib import database as d
-from lib import function as f
-from lib.command.member import anonymous_mapping
+from lib.data import loader, lookup
+from lib.data import aggregate
+from lib.function import message
+from lib.utils import dateutil, formatter, textutil
 
 
 def aggregation():
@@ -30,37 +30,37 @@ def aggregation():
     elif g.params["player_name"] in g.member_list:
         g.params.update(individual=True)
 
-    if not g.params.get("individual") and not c.team.get_teammates():
+    if not g.params.get("individual") and not lookup.get_teammates():
         return ("登録されていないチームです", {})
 
     # --- データ収集
-    game_info: GameInfoDict = d.aggregate.game_info()
+    game_info: GameInfoDict = aggregate.game_info()
     msg_data: dict = {}
     mapping_dict: dict = {}
 
     if game_info["game_count"] == 0:
-        msg_data["検索範囲"] = f"{f.common.ts_conv(g.params["starttime"], "hms")}"
-        msg_data["検索範囲"] += f" ～ {f.common.ts_conv(g.params["endtime"], "hms")}"
-        msg_data["特記事項"] = "、".join(f.message.remarks())
-        msg_data["検索ワード"] = f.message.search_word()
-        msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {f.common.badge_status(0, 0)}"
+        msg_data["検索範囲"] = f"{dateutil.ts_conv(g.params["starttime"], "hms")}"
+        msg_data["検索範囲"] += f" ～ {dateutil.ts_conv(g.params["endtime"], "hms")}"
+        msg_data["特記事項"] = "、".join(message.remarks())
+        msg_data["検索ワード"] = message.search_word()
+        msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {message.badge_status(0, 0)}"
         return (message_build(msg_data), {})
 
-    result_df = d.aggregate.game_results()
-    record_df = d.aggregate.ranking_record()
+    result_df = aggregate.game_results()
+    record_df = aggregate.ranking_record()
     result_df = pd.merge(
         result_df, record_df,
         on=["name", "name"],
         suffixes=["", "_x"]
     )
 
-    player_name = c.member.name_replace(g.params["player_name"], add_mark=True)
+    player_name = formatter.name_replace(g.params["player_name"], add_mark=True)
     if g.params.get("anonymous"):
-        mapping_dict = anonymous_mapping(result_df["name"].unique().tolist())
+        mapping_dict = formatter.anonymous_mapping(result_df["name"].unique().tolist())
         result_df["name"] = result_df["name"].replace(mapping_dict)
         player_name = mapping_dict[player_name]
 
-    result_df = d.common.df_rename(result_df)
+    result_df = formatter.df_rename(result_df)
     data = result_df.to_dict(orient="records")[0]
 
     # --- 表示内容
@@ -115,20 +115,20 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
 
     if g.params.get("individual"):
         ret["title"] = "*【個人成績】*"
-        ret["プレイヤー名"] = f"{player_name} {f.common.badge_degree(data["ゲーム数"])}"
-        team = c.team.which_team(g.params["player_name"])
-        if team:
-            ret["所属チーム"] = team
+        ret["プレイヤー名"] = f"{player_name} {message.badge_degree(data["ゲーム数"])}"
+        team_list = lookup.which_team(g.params["player_name"])
+        if team_list:
+            ret["所属チーム"] = team_list
     else:
         ret["title"] = "*【チーム成績】*"
-        ret["チーム名"] = f"{g.params["player_name"]} {f.common.badge_degree(data["ゲーム数"])}"
-        ret["登録メンバー"] = "、".join(c.team.get_teammates())
+        ret["チーム名"] = f"{g.params["player_name"]} {message.badge_degree(data["ゲーム数"])}"
+        ret["登録メンバー"] = "、".join(lookup.get_teammates())
 
-    badge_status = f.common.badge_status(data["ゲーム数"], data["win"])
-    ret["検索範囲"] = f.message.item_search_range(kind="str").strip()
-    ret["集計範囲"] = f.message.item_aggregation_range(game_info, kind="str").strip()
-    ret["特記事項"] = "、".join(f.message.remarks())
-    ret["検索ワード"] = f.message.search_word()
+    badge_status = message.badge_status(data["ゲーム数"], data["win"])
+    ret["検索範囲"] = message.item_search_range(kind="str").strip()
+    ret["集計範囲"] = message.item_aggregation_range(game_info, kind="str").strip()
+    ret["特記事項"] = "、".join(message.remarks())
+    ret["検索ワード"] = message.search_word()
     ret["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}"
     ret["_blank1"] = True
 
@@ -224,8 +224,8 @@ def get_regulations(mapping_dict: dict) -> dict:
 
     ret: dict = {}
 
-    df_grandslam = d.aggregate.remark_count("grandslam")
-    df_regulations = d.aggregate.remark_count("regulation")
+    df_grandslam = aggregate.remark_count("grandslam")
+    df_regulations = aggregate.remark_count("regulation")
 
     if g.params.get("anonymous"):
         new_list = list(set(df_grandslam["name"].unique().tolist() + df_regulations["name"].unique().tolist()))
@@ -233,7 +233,7 @@ def get_regulations(mapping_dict: dict) -> dict:
             if name in mapping_dict:
                 new_list.remove(name)
 
-        mapping_dict.update(anonymous_mapping(new_list, len(mapping_dict)))
+        mapping_dict.update(formatter.anonymous_mapping(new_list, len(mapping_dict)))
         df_grandslam["name"] = df_grandslam["name"].replace(mapping_dict)
         df_regulations["name"] = df_regulations["name"].replace(mapping_dict)
 
@@ -266,12 +266,12 @@ def get_game_results(mapping_dict: dict) -> str:
     ret: str = "\n*【戦績】*\n"
     data: dict = {}
 
-    target_player = c.member.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
+    target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
     p_list: list = []
-    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
 
     if g.params.get("anonymous"):
-        mapping_dict.update(anonymous_mapping(df["name"].unique().tolist(), len(mapping_dict)))
+        mapping_dict.update(formatter.anonymous_mapping(df["name"].unique().tolist(), len(mapping_dict)))
         df["name"] = df["name"].replace(mapping_dict)
 
     if g.params.get("verbose"):
@@ -295,7 +295,7 @@ def get_game_results(mapping_dict: dict) -> str:
                 }
             ).set_index("playtime")
 
-        max_len = c.member.count_padding(p_list)
+        max_len = textutil.count_padding(p_list)
         df_data = pd.concat([data["p1"], data["p2"], data["p3"], data["p4"], data["p0"]], axis=1)
         df_data = df_data.query("p1_name == @target_player or p2_name == @target_player or p3_name == @target_player or p4_name == @target_player")
 
@@ -316,10 +316,10 @@ def get_game_results(mapping_dict: dict) -> str:
                 """
             ).format(
                 x.Index.replace("-", "/"), vs_guest,
-                x.p1_name, " " * (max_len - f.common.len_count(x.p1_name)), x.p1_rank, int(x.p1_rpoint) * 100, x.p1_point, x.p1_gs,
-                x.p2_name, " " * (max_len - f.common.len_count(x.p2_name)), x.p2_rank, int(x.p2_rpoint) * 100, x.p2_point, x.p2_gs,
-                x.p3_name, " " * (max_len - f.common.len_count(x.p3_name)), x.p3_rank, int(x.p3_rpoint) * 100, x.p3_point, x.p3_gs,
-                x.p4_name, " " * (max_len - f.common.len_count(x.p4_name)), x.p4_rank, int(x.p4_rpoint) * 100, x.p4_point, x.p4_gs,
+                x.p1_name, " " * (max_len - textutil.len_count(x.p1_name)), x.p1_rank, int(x.p1_rpoint) * 100, x.p1_point, x.p1_gs,
+                x.p2_name, " " * (max_len - textutil.len_count(x.p2_name)), x.p2_rank, int(x.p2_rpoint) * 100, x.p2_point, x.p2_gs,
+                x.p3_name, " " * (max_len - textutil.len_count(x.p3_name)), x.p3_rank, int(x.p3_rpoint) * 100, x.p3_point, x.p3_gs,
+                x.p4_name, " " * (max_len - textutil.len_count(x.p4_name)), x.p4_rank, int(x.p4_rpoint) * 100, x.p4_point, x.p4_gs,
             ).replace(" -", "▲")
     else:
         df_data = df.query("name == @target_player").set_index("playtime")
@@ -346,17 +346,17 @@ def get_versus_matrix(mapping_dict: dict) -> str:
     """
 
     ret: str = "\n*【対戦結果】*\n"
-    df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
 
     if g.params.get("anonymous"):
-        mapping_dict.update(anonymous_mapping(df["vs_name"].unique().tolist(), len(mapping_dict)))
+        mapping_dict.update(formatter.anonymous_mapping(df["vs_name"].unique().tolist(), len(mapping_dict)))
         df["my_name"] = df["my_name"].replace(mapping_dict)
         df["vs_name"] = df["vs_name"].replace(mapping_dict)
 
-    max_len = c.member.count_padding(df["vs_name"].unique().tolist())
+    max_len = textutil.count_padding(df["vs_name"].unique().tolist())
 
     for _, r in df.iterrows():
-        padding = max_len - f.common.len_count(r["vs_name"])
+        padding = max_len - textutil.len_count(r["vs_name"])
         ret += f"\t{r["vs_name"]}{" " * padding} ： "
         ret += f"{r["game"]:3d} 戦 {r["win"]:3d} 勝 {r["lose"]:3d} 敗 ({r["win%"]:6.2f}%)\n"
 

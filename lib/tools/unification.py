@@ -7,19 +7,19 @@ import logging
 import sqlite3
 
 import lib.global_value as g
-from lib import command as c
-from lib import database as d
-from lib import function as f
+from lib.data import manipulate
+from lib.function import configuration
+from lib.utils import formatter
 
 
 def main():
     """ゲストメンバーの名前を統一する"""
     rename_conf = configparser.ConfigParser()
     rename_conf.read(g.args.unification, encoding="utf-8")
-    c.member.read_memberslist(False)
+    configuration.read_memberslist(False)
 
     if "rename" in rename_conf.sections():
-        d.common.db_backup()
+        manipulate.db_backup()
         name_table: dict = {}
         for name, alias in rename_conf["rename"].items():
             name_table.setdefault(name, [x.strip() for x in alias.split(",")])
@@ -28,10 +28,10 @@ def main():
 
         for name, alias_list in name_table.items():
             count = 0
-            chk, msg = f.common.check_namepattern(name)
+            chk, msg = formatter.check_namepattern(name)
             if chk:
                 for alias in alias_list:
-                    chk, msg = f.common.check_namepattern(alias)
+                    chk, msg = formatter.check_namepattern(alias)
                     if chk:
                         db.execute("update result set p1_name=? where p1_name=?;", (name, alias,))
                         count += db.execute("select changes();").fetchone()[0]

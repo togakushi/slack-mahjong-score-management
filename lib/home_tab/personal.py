@@ -5,10 +5,10 @@ lib/home_tab/personal.py
 import logging
 
 import lib.global_value as g
-from lib import command as c
-from lib import function as f
-from lib import home_tab as h
-from lib.database.common import placeholder
+from lib.function import message, slack_api
+from lib.home_tab import ui_parts
+from lib.utils import dictutil
+from lib.command import results
 
 
 def build_personal_menu():
@@ -16,14 +16,14 @@ def build_personal_menu():
     g.app_var["screen"] = "PersonalMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}
-    h.ui_parts.header(text="【個人成績】")
+    ui_parts.header(text="【個人成績】")
 
     # プレイヤー選択リスト
-    h.ui_parts.user_select(text="対象プレイヤー")
+    ui_parts.user_select_pulldown(text="対象プレイヤー")
 
     # 検索範囲設定
-    h.ui_parts.divider()
-    h.ui_parts.radio_buttons(
+    ui_parts.divider()
+    ui_parts.radio_buttons(
         id_suffix="search_range",
         title="検索範囲",
         flag={
@@ -33,11 +33,11 @@ def build_personal_menu():
             "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
         }
     )
-    h.ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
+    ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
 
     # オプション
-    h.ui_parts.divider()
-    h.ui_parts.checkboxes(
+    ui_parts.divider()
+    ui_parts.checkboxes(
         id_suffix="search_option",
         title="検索オプション",
         flag={
@@ -45,7 +45,7 @@ def build_personal_menu():
         },
         initial=["unregistered_replace"],
     )
-    h.ui_parts.checkboxes(
+    ui_parts.checkboxes(
         id_suffix="display_option",
         title="表示オプション",
         flag={
@@ -55,9 +55,9 @@ def build_personal_menu():
         },
     )
 
-    h.ui_parts.divider()
-    h.ui_parts.button(text="集計", action_id="personal_aggregation", style="primary")
-    h.ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
+    ui_parts.divider()
+    ui_parts.button(text="集計", action_id="personal_aggregation", style="primary")
+    ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
 @g.app.action("personal_menu")
@@ -99,10 +99,10 @@ def handle_aggregation_action(ack, body, client):
     g.msg.parser(body)
     g.msg.client = client
 
-    argument, app_msg, update_flag = h.home.set_command_option(body)
+    argument, app_msg, update_flag = ui_parts.set_command_option(body)
     g.cfg.results.update(argument)
     g.cfg.results.update_from_dict(update_flag)
-    g.params = placeholder(g.cfg.results)
+    g.params = dictutil.placeholder(g.cfg.results)
 
     search_options = body["view"]["state"]["values"]
     if "bid-user_select" in search_options:
@@ -112,21 +112,21 @@ def handle_aggregation_action(ack, body, client):
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}")
+        view=ui_parts.plain_text(f"{chr(10).join(app_msg)}")
     )
 
     app_msg.pop()
     app_msg.append("集計完了")
-    msg1 = f.message.reply(message="no_hits")
+    msg1 = message.reply(message="no_hits")
 
-    msg1, msg2 = c.results.detail.aggregation()
-    res = f.slack_api.post_message(msg1)
+    msg1, msg2 = results.detail.aggregation()
+    res = slack_api.post_message(msg1)
     for _, val in msg2.items():
-        f.slack_api.post_message(val + "\n", res["ts"])
+        slack_api.post_message(val + "\n", res["ts"])
 
     client.views_update(
         view_id=g.app_var["view_id"],
-        view=h.ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
     )
 
 

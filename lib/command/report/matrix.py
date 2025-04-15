@@ -6,9 +6,9 @@ import os
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib import database as d
-from lib import function as f
-from lib.command.member import anonymous_mapping
+from lib.data import aggregate
+from lib.function import message
+from lib.utils import formatter
 
 
 def plot():
@@ -21,15 +21,15 @@ def plot():
     """
 
     # データ集計
-    game_info: GameInfoDict = d.aggregate.game_info()
-    df = d.aggregate.matrix_table()
+    game_info: GameInfoDict = aggregate.game_info()
+    df = aggregate.matrix_table()
     if g.params.get("anonymous"):
-        mapping_dict = anonymous_mapping(df.index.tolist())
+        mapping_dict = formatter.anonymous_mapping(df.index.tolist())
         df = df.rename(columns=mapping_dict, index=mapping_dict)
 
     # 表示
     msg = "*【対局対戦マトリックス】*\n"
-    msg += f.message.header(game_info, "", 1)
+    msg += message.header(game_info, "", 1)
 
     if df.empty:
         return (msg, {})

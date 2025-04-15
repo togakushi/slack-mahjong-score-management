@@ -13,8 +13,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 import lib.global_value as g
-from lib import command as c
-from lib import database as d
+from lib.data import initialization
 from lib.function import configuration
 
 
@@ -30,8 +29,8 @@ if __name__ == "__main__":
         logging.error(err)
         sys.exit()
 
-    d.initialization.initialization_resultdb()
-    c.member.read_memberslist()
+    initialization.initialization_resultdb()
+    configuration.read_memberslist()
     g.bot_id = g.app.client.auth_test()["user_id"]
 
     handler = SocketModeHandler(g.app, os.environ["SLACK_APP_TOKEN"])

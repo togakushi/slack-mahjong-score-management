@@ -13,8 +13,7 @@ from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
 from cls.types import SlackSearchData
-from lib import command as c
-from lib import function as f
+from lib.utils import formatter
 
 SlackSearchDict = dict[str, SlackSearchData]
 
@@ -180,7 +179,7 @@ def for_slack_score() -> SlackSearchDict:
 
     # ゲーム結果の抽出
     for key in list(matches.keys()):
-        detection = f.search.pattern(matches[key].get("text", ""))
+        detection = pattern(matches[key].get("text", ""))
         if isinstance(detection, list):
             if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)
@@ -188,7 +187,7 @@ def for_slack_score() -> SlackSearchDict:
                 continue
             for i in range(0, 8, 2):
                 g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
-                detection[i] = c.member.name_replace(detection[i], False)
+                detection[i] = formatter.name_replace(detection[i], False)
             matches[key]["score"] = detection
             matches[key].pop("text")
         else:  # 不一致は破棄
@@ -223,7 +222,7 @@ def for_slack_remarks() -> SlackSearchDict:
             matches[key]["remarks"] = []
             g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
             for name, matter in zip(text[0::2], text[1::2]):
-                matches[key]["remarks"].append((c.member.name_replace(name, False), matter))
+                matches[key]["remarks"].append((formatter.name_replace(name, False), matter))
             matches[key].pop("text")
         else:  # 不一致は破棄
             matches.pop(key)

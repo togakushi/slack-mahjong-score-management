@@ -7,13 +7,13 @@ import sqlite3
 from contextlib import closing
 
 import lib.global_value as g
-from lib import database as d
-from lib import function as f
+from lib.data import manipulate
+from lib.function import score
 
 
 def main():
     """ポイント再計算"""
-    d.common.db_backup()
+    manipulate.db_backup()
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
         rows = cur.execute("select * from result where rule_version=?;", (g.cfg.mahjong.rule_version,))
@@ -27,7 +27,7 @@ def main():
                 row["p4_name"], row["p4_str"],
                 row["comment"],
             ]
-            ret = f.score.get_score(detection)
+            ret = score.get_score(detection)
             ret["ts"] = row["ts"]
             cur.execute(g.SQL_RESULT_UPDATE, ret)
             count += 1

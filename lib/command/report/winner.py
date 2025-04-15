@@ -9,9 +9,10 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import lib.global_value as g
-from lib import database as d
-from lib import function as f
-from lib.command.member import anonymous_mapping
+from lib.data import loader
+from lib.function import message
+from lib.function.configuration import graph_setup
+from lib.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -28,7 +29,7 @@ def plot() -> str | bool:
 
     plt.close()
     # --- データ取得
-    results_df = d.common.read_data(os.path.join(g.script_dir, "lib/queries/report/winner.sql"))
+    results_df = loader.read_data(os.path.join(g.script_dir, "lib/queries/report/winner.sql"))
     if len(results_df) == 0:
         return (False)
 
@@ -37,7 +38,7 @@ def plot() -> str | bool:
         name_list: list = []
         for col in [f"name{x}" for x in range(1, 6)]:
             name_list.extend(results_df[col].unique().tolist())
-        mapping_dict = anonymous_mapping(list(set(name_list)))
+        mapping_dict = formatter.anonymous_mapping(list(set(name_list)))
         for col in [f"name{x}" for x in range(1, 6)]:
             results_df[col] = results_df[col].replace(mapping_dict)
 
@@ -56,7 +57,7 @@ def plot() -> str | bool:
                 )
 
     # --- グラフ設定
-    f.common.graph_setup(plt, fm)
+    graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
@@ -115,9 +116,9 @@ def plot() -> str | bool:
             tb[i, j].set_text_props(ha="center")
 
     # 追加テキスト
-    remark_text = f.message.remarks(True) + f.message.search_word(True)
+    remark_text = message.remarks(True) + message.search_word(True)
     add_text = "{} {}".format(  # pylint: disable=consider-using-f-string
-        f"[{f.message.item_search_range().strip()}]",
+        f"[{message.item_search_range().strip()}]",
         f"[{remark_text}]" if remark_text else "",
     )
 

@@ -4,13 +4,14 @@ lib/command/report/slackpost.py
 
 import lib.function as f
 import lib.global_value as g
-from lib.command.report import (matrix, monthly, results_list, results_report, winner)
-from lib.database.common import placeholder
+from lib.command.report import (matrix, monthly, results_list, results_report,
+                                winner)
+from lib.utils import debug, dictutil
 
 
 def main():
     """レポートをslackにpostする"""
-    g.params = placeholder(g.cfg.report)
+    g.params = dictutil.placeholder(g.cfg.report)
 
     if len(g.params["player_list"]) == 1:  # 成績レポート
         name, pdf_file = results_report.gen_pdf()
@@ -33,7 +34,7 @@ def main():
     elif g.params.get("versus_matrix") or len(g.params["player_list"]) >= 2:  # 対局対戦マトリックス
         msg, file_list = matrix.plot()
         if g.args.testcase:
-            f.common.debug_out(msg)
+            debug.debug_out(msg)
         else:
             f.slack_api.slack_post(
                 headline=msg,

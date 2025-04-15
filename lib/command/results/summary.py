@@ -9,9 +9,10 @@ import pandas as pd
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib import database as d
-from lib import function as f
-from lib.command.member import anonymous_mapping
+from lib.data import loader
+from lib.data import aggregate
+from lib.function import message
+from lib.utils import formatter
 
 
 def aggregation():
@@ -25,21 +26,21 @@ def aggregation():
     """
 
     # --- データ収集
-    game_info: GameInfoDict = d.aggregate.game_info()
-    df_summary = d.aggregate.game_summary(drop_items=["rank_distr2"])
-    df_game = d.common.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql"))
+    game_info: GameInfoDict = aggregate.game_info()
+    df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
+    df_game = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql"))
     df_grandslam = df_game.query("grandslam == grandslam")
 
     if g.params.get("anonymous"):
         col = "team"
         if g.params.get("individual"):
             col = "name"
-        mapping_dict = anonymous_mapping(df_game["name"].unique().tolist())
+        mapping_dict = formatter.anonymous_mapping(df_game["name"].unique().tolist())
         df_game["name"] = df_game["name"].replace(mapping_dict)
         df_summary[col] = df_summary[col].replace(mapping_dict)
         df_grandslam["name"] = df_grandslam["name"].replace(mapping_dict)
 
-    df_summary = d.common.df_rename(df_summary)
+    df_summary = formatter.df_rename(df_summary)
 
     # 表示
     # --- 情報ヘッダ
@@ -54,7 +55,7 @@ def aggregation():
     if not g.cfg.config["mahjong"].getboolean("ignore_flying", False):
         add_text = f" / トバされた人（延べ）：{df_summary["トビ"].sum()} 人"
 
-    headline += f.message.header(game_info, add_text, 1)
+    headline += message.header(game_info, add_text, 1)
 
     if df_summary.empty:
         return (headline, {}, {})
@@ -79,7 +80,7 @@ def aggregation():
     step: int = 40
     step_count: list = []
     print_df = df_summary.filter(items=header_list)
-    floatfmt = f.common.floatfmt_adjust(print_df)
+    floatfmt = formatter.floatfmt_adjust(print_df)
     last_line = len(print_df)
 
     for i in range(int(last_line / step + 1)):  # step行毎に分割
@@ -126,13 +127,13 @@ def aggregation():
     match g.params.get("format", "default").lower().lower():
         case "csv":
             file_list = {
-                "集計結果": f.common.save_output(df_summary, "csv", f"{prefix_summary}.csv", headline),
-                "役満和了": f.common.save_output(df_grandslam, "csv", f"{prefix_yakuman}.csv", headline),
+                "集計結果": formatter.save_output(df_summary, "csv", f"{prefix_summary}.csv", headline),
+                "役満和了": formatter.save_output(df_grandslam, "csv", f"{prefix_yakuman}.csv", headline),
             }
         case "text" | "txt":
             file_list = {
-                "集計結果": f.common.save_output(df_summary, "txt", f"{prefix_summary}.txt", headline),
-                "役満和了": f.common.save_output(df_grandslam, "txt", f"{prefix_yakuman}.txt", headline),
+                "集計結果": formatter.save_output(df_summary, "txt", f"{prefix_summary}.txt", headline),
+                "役満和了": formatter.save_output(df_grandslam, "txt", f"{prefix_yakuman}.txt", headline),
             }
         case _:
             file_list = {}

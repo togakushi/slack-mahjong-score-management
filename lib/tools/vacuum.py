@@ -8,12 +8,12 @@ import sqlite3
 from contextlib import closing
 
 import lib.global_value as g
-from lib import database as d
+from lib.data import manipulate
 
 
 def main():
     """vacuum実行"""
-    d.common.db_backup()
+    manipulate.db_backup()
     before_size = os.path.getsize(g.cfg.db.database_file)
 
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
