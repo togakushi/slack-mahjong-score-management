@@ -9,6 +9,7 @@ work/
 *.csv
 *.ttf
 *.png
+html/
 
 !requirements.txt
 !test_case/test-*.ini
