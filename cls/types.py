@@ -56,7 +56,7 @@ class SlackSearchData(TypedDict, total=False):
         user_id (str): ホストしたユーザID
         event_ts (str | None): ポスト時間
         thread_ts (str | None): スレッド元時間
-        edited_ts (str | None): 最終変数時間
+        edited_ts (str | None): 最終編集時間
         reaction_ok (list): botが付けたOKリアクション
         reaction_ng (list): botが付けたNGリアクション
         in_thread (bool): スレッド内のポストか判定
@@ -65,16 +65,27 @@ class SlackSearchData(TypedDict, total=False):
     """
 
     text: str
+    """検索にヒットした本文の内容"""
     channel_id: str
+    """見つけたチャンネルID"""
     user_id: str
+    """投稿者のユーザID"""
     event_ts: str | None
+    """ポストされた時間"""
     thread_ts: str | None
+    """スレッドになっている場合、スレッド元の時間"""
     edited_ts: str | None
+    """最後に編集された時間"""
     reaction_ok: list
+    """botが付けたOKリアクション"""
     reaction_ng: list
+    """botが付けたNGリアクション"""
     in_thread: bool
+    """スレッドになっていればTrue(スレッド元は除く)"""
     score: list
+    """スコア報告なら結果"""
     remarks: list
+    """メモならその内容"""
 
 
 @dataclass
