@@ -27,6 +27,9 @@ jobs:
           rm -rf temp_docs
           pdoc -d google --output-dir temp_docs *.py lib cls
           touch temp_docs/.nojekyll
+          
+        env: 
+          PDOC_ALLOW_EXEC: "1"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
