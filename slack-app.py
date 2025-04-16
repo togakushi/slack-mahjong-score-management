@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""
-slack-app.py
+"""slack-app.py
+
+Slackに投稿された麻雀のスコアを記録し、集計して表示するツール
 """
 
 import logging

@@ -31,7 +31,20 @@ class MahjongSection(CommonMethodMixin):
 
 @dataclass
 class SettingSection(CommonMethodMixin):
-    """settingセクション初期値"""
+    """settingセクション初期値
+
+    Attributes:
+        config (configparser.ConfigParser | None): コンフィグオブジェクト
+        slash_command (str): スラッシュコマンド名 (default: "/mahjong")
+        thread_report (bool): スレッド内にある得点報告を扱う (default: True)
+        guest_mark (str): ゲスト無効時に未登録メンバーに付与する印 (default: "※")
+        reaction_ok (str): DBに取り込んだ時に付けるリアクション (default: "ok")
+        reaction_ng (str): DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション (default: "ng")
+        font_file (str): グラフ描写に使用するフォントファイル (default: "ipaexg.ttf")
+        work_dir (str): 生成したファイルを保存するディレクトリ (default: "work")
+        ignore_userid (list): 投稿を無視するユーザのリスト(カンマ区切りで設定) (default: 空欄)
+    """
+
     config: configparser.ConfigParser | None = None
     slash_command: str = field(default="/mahjong")
     thread_report: bool = field(default=True)

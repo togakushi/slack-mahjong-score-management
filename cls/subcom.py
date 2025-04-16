@@ -14,11 +14,16 @@ from lib.utils import dictutil, formatter
 
 @dataclass
 class SubCommand(CommonMethodMixin):
-    """サブコマンド定義"""
+    """サブコマンド共通デフォルト値"""
     config: ConfigParser | None = None
     section: str | None = None
     aggregation_range: str = field(default="当日")
+    """検索範囲未指定時に使用される範囲"""
     individual: bool = field(default=True)
+    """個人/チーム集計切替フラグ
+    - True: 個人集計
+    - False: チーム集計
+    """
     all_player: bool = field(default=False)
     daily: bool = field(default=True)
     fourfold: bool = field(default=True)
@@ -29,8 +34,14 @@ class SubCommand(CommonMethodMixin):
     score_comparisons: bool = field(default=False)
     statistics: bool = field(default=False)
     stipulated: int = field(default=1)
+    """規定打数指定"""
     stipulated_rate: float = field(default=0.05)
+    """規定打数計算レート"""
     unregistered_replace: bool = field(default=True)
+    """メンバー未登録プレイヤー名をゲストに置き換えるかフラグ
+    - True: 置き換える
+    - False: 置き換えない
+    """
     verbose: bool = field(default=False)
     versus_matrix: bool = field(default=False)
     collection: str = field(default=str())
