@@ -12,7 +12,7 @@ import lib.global_value as g
 from cls.types import ComparisonDict, SlackSearchData
 from lib.data import lookup, modify
 from lib.function import score, search, slack_api
-from lib.utils import dateutil, formatter
+from lib.utils import dateutil, dictutil
 
 SlackSearchDict = dict[str, SlackSearchData]
 
@@ -86,18 +86,18 @@ def data_comparison() -> Tuple[dict, dict]:
 
     # --- スコア突合
     ret_count, ret_msg = check_omission(slack_score, db_score)
-    count = formatter.merge_dicts(count, ret_count)
-    msg = formatter.merge_dicts(msg, ret_msg)
+    count = dictutil.merge_dicts(count, ret_count)
+    msg = dictutil.merge_dicts(msg, ret_msg)
 
     # --- 素点合計の再チェック(修正可能なslack側のみチェック)
     ret_count, ret_msg = check_total_score(slack_score)
-    count = formatter.merge_dicts(count, ret_count)
-    msg = formatter.merge_dicts(msg, ret_msg)
+    count = dictutil.merge_dicts(count, ret_count)
+    msg = dictutil.merge_dicts(msg, ret_msg)
 
     # --- メモ突合
     ret_count, ret_msg = check_remarks(slack_remarks, db_remarks)
-    count = formatter.merge_dicts(count, ret_count)
-    msg = formatter.merge_dicts(msg, ret_msg)
+    count = dictutil.merge_dicts(count, ret_count)
+    msg = dictutil.merge_dicts(msg, ret_msg)
 
     count.update(pending=len(msg["pending"]))
 

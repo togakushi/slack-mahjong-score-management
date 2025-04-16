@@ -3,7 +3,7 @@ lib/utils/dictutil.py
 """
 
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import lib.global_value as g
 from lib.utils import textutil
@@ -164,3 +164,32 @@ def placeholder(subcom: "SubCommand") -> dict:
             ret_dict.pop(key)
 
     return (ret_dict)
+
+
+def merge_dicts(dict1: Any, dict2: Any) -> dict:
+    """辞書の内容をマージする
+
+    Args:
+        dict1 (Any): 1つ目の辞書
+        dict2 (Any): 2つ目の辞書
+
+    Returns:
+        dict: マージされた辞書
+    """
+
+    merged: dict = {}
+
+    for key in set(dict1) | set(dict2):
+        val1: Any = dict1.get(key)
+        val2: Any = dict2.get(key)
+
+        if isinstance(val1, (int, float)) and isinstance(val2, (int, float)):
+            merged[key] = val1 + val2
+        elif isinstance(val1, str) and isinstance(val2, str):
+            merged[key] = val1 + val2
+        elif isinstance(val1, list) and isinstance(val2, list):
+            merged[key] = sorted(list(set(val1 + val2)))
+        else:
+            merged[key] = val1 if val2 is None else val2
+
+    return (merged)
