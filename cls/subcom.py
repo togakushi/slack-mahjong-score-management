@@ -42,6 +42,7 @@ class SubCommand(CommonMethodMixin):
     - True: 置き換える
     - False: 置き換えない
     """
+    anonymous: bool = field(default=False)
     verbose: bool = field(default=False)
     versus_matrix: bool = field(default=False)
     collection: str = field(default=str())
