@@ -22,7 +22,8 @@ jobs:
 
       - name: Generate documentation
         run: |
-          pdoc --html lib cls --output-dir temp_docs --force
+          rm -rf temp_docs
+          pdoc -d google --html *.py lib cls --output-dir temp_docs
           touch temp_docs/.nojekyll
 
       - name: Deploy to GitHub Pages
