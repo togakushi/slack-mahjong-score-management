@@ -1,5 +1,5 @@
 """
-lib/home_tab/ui_parts.py
+lib/command/home_tab/ui_parts.py
 """
 
 import logging
@@ -237,9 +237,9 @@ def set_command_option(body):
 
     Returns:
         Tuple[list, list, dict]:
-            - list: コマンドに追加する文字列
-            - list: viewに表示するメッセージ
-            - dict: 変更されるフラグ
+        - list: コマンドに追加する文字列
+        - list: viewに表示するメッセージ
+        - dict: 変更されるフラグ
     """
 
     update_flag: dict = {}

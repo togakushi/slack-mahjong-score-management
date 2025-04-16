@@ -9,8 +9,10 @@ import random
 import re
 from pprint import pprint
 
+import lib.command.report.slackpost
+import lib.command.results.slackpost
 import lib.global_value as g
-from lib.command import graph, report, results
+from lib.command import graph, report
 from lib.command.results import ranking
 from lib.data import initialization
 from lib.function import configuration, message
@@ -102,8 +104,8 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
             case "summary":
                 g.params = dictutil.placeholder(g.cfg.results)
                 pprint([
-                    "exec: lib.results.slackpost.main()",
-                    results.slackpost.main(),
+                    "exec: lib.command.results.slackpost.main()",
+                    lib.command.results.slackpost.main(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
@@ -150,8 +152,8 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
             case "report":
                 g.params = dictutil.placeholder(g.cfg.report)
                 pprint([
-                    "exec: lib.report.slackpost.main()",
-                    report.slackpost.main(),
+                    "exec: lib.command.report.slackpost.main()",
+                    lib.command.report.slackpost.main(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
@@ -159,7 +161,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.params = dictutil.placeholder(g.cfg.report)
                 pprint([
                     "exec: lib.report.slackpost.results_report.gen_pdf()",
-                    report.slackpost.results_report.gen_pdf(),
+                    report.results_report.gen_pdf(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 

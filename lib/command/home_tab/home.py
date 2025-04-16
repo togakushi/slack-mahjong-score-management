@@ -1,12 +1,12 @@
 """
-lib/home_tab/home.py
+lib/command/home_tab/home.py
 """
 
 import logging
 
 import lib.global_value as g
+from lib.command.home_tab import ui_parts
 from lib.handler_registry import register
-from lib.home_tab import ui_parts
 
 
 def build_main_menu():

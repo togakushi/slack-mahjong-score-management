@@ -1,28 +1,28 @@
 """
-lib/home_tab/personal.py
+lib/command/home_tab/versus.py
 """
 
 import logging
 
 import lib.global_value as g
 from lib.command import results
-from lib.function import message, slack_api
+from lib.command.home_tab import ui_parts
+from lib.function import slack_api
 from lib.handler_registry import register
-from lib.home_tab import ui_parts
 from lib.utils import dictutil
 
 
-def build_personal_menu():
-    """個人成績メニュー作成"""
-    g.app_var["screen"] = "PersonalMenu"
+def build_versus_menu():
+    """対戦結果メニュー生成"""
+    g.app_var["screen"] = "VersusMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}
-    ui_parts.header(text="【個人成績】")
+    ui_parts.header("【直接対戦】")
 
     # プレイヤー選択リスト
     ui_parts.user_select_pulldown(text="対象プレイヤー")
+    ui_parts.multi_select_pulldown(text="対戦相手", add_list=["全員"])
 
-    # 検索範囲設定
     ui_parts.divider()
     ui_parts.radio_buttons(
         id_suffix="search_range",
@@ -57,14 +57,14 @@ def build_personal_menu():
     )
 
     ui_parts.divider()
-    ui_parts.button(text="集計", action_id="personal_aggregation", style="primary")
+    ui_parts.button(text="集計", action_id="versus_aggregation", style="primary")
     ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
 @register
-def register_personal_handlers(app):
-    """個人成績メニュー"""
-    @app.action("personal_menu")
+def register_versus_handlers(app):
+    """直接対戦メニュー"""
+    @app.action("versus_menu")
     def handle_menu_action(ack, body, client):
         """メニュー項目生成
 
@@ -79,15 +79,15 @@ def register_personal_handlers(app):
 
         g.app_var["user_id"] = body["user"]["id"]
         g.app_var["view_id"] = body["view"]["id"]
-        logging.info("[personal_menu] %s", g.app_var)
+        logging.info("[versus_menu] %s", g.app_var)
 
-        build_personal_menu()
+        build_versus_menu()
         client.views_publish(
             user_id=g.app_var["user_id"],
             view=g.app_var["view"],
         )
 
-    @app.action("personal_aggregation")
+    @app.action("versus_aggregation")
     def handle_aggregation_action(ack, body, client):
         """メニュー項目生成
 
@@ -112,6 +112,9 @@ def register_personal_handlers(app):
             user_select = search_options["bid-user_select"]["player"]["selected_option"]
             if user_select is None:
                 return
+        if "bid-multi_select" in search_options:
+            if len(search_options["bid-multi_select"]["player"]["selected_options"]) == 0:
+                return
 
         client.views_update(
             view_id=g.app_var["view_id"],
@@ -120,19 +123,20 @@ def register_personal_handlers(app):
 
         app_msg.pop()
         app_msg.append("集計完了")
-        msg1 = message.reply(message="no_hits")
 
-        msg1, msg2 = results.detail.aggregation()
-        res = slack_api.post_message(msg1)
-        for _, val in msg2.items():
-            slack_api.post_message(val + "\n", res["ts"])
+        msg1, msg2, file_list = results.versus.aggregation()
+        slack_api.slack_post(
+            headline=msg1,
+            message=msg2,
+            file_list=file_list,
+        )
 
         client.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
         )
 
-    @app.view("PersonalMenu_ModalPeriodSelection")
+    @app.view("VersusMenu_ModalPeriodSelection")
     def handle_view_submission(ack, view, client):
         """view更新
 
@@ -153,5 +157,5 @@ def register_personal_handlers(app):
 
         client.views_update(
             view_id=g.app_var["view_id"],
-            view=build_personal_menu(),
+            view=build_versus_menu(),
         )

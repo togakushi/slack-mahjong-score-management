@@ -1,23 +1,26 @@
 """
-lib/home_tab/ranking.py
+lib/command/home_tab/personal.py
 """
 
 import logging
 
 import lib.global_value as g
 from lib.command import results
+from lib.command.home_tab import ui_parts
 from lib.function import message, slack_api
 from lib.handler_registry import register
-from lib.home_tab import ui_parts
 from lib.utils import dictutil
 
 
-def build_ranking_menu():
-    """ランキングメニュー生成"""
-    g.app_var["screen"] = "RankingMenu"
+def build_personal_menu():
+    """個人成績メニュー作成"""
+    g.app_var["screen"] = "PersonalMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}
-    ui_parts.header("【ランキング】")
+    ui_parts.header(text="【個人成績】")
+
+    # プレイヤー選択リスト
+    ui_parts.user_select_pulldown(text="対象プレイヤー")
 
     # 検索範囲設定
     ui_parts.divider()
@@ -33,7 +36,7 @@ def build_ranking_menu():
     )
     ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
 
-    # 検索オプション
+    # オプション
     ui_parts.divider()
     ui_parts.checkboxes(
         id_suffix="search_option",
@@ -43,18 +46,25 @@ def build_ranking_menu():
         },
         initial=["unregistered_replace"],
     )
-
-    ui_parts.input_ranked(block_id="bid-ranked")
+    ui_parts.checkboxes(
+        id_suffix="display_option",
+        title="表示オプション",
+        flag={
+            "versus_matrix": "対戦結果",
+            "game_results": "戦績（簡易）",
+            "verbose": "戦績（詳細）",
+        },
+    )
 
     ui_parts.divider()
-    ui_parts.button(text="集計", action_id="ranking_aggregation", style="primary")
+    ui_parts.button(text="集計", action_id="personal_aggregation", style="primary")
     ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
 @register
-def register_ranking_handlers(app):
-    """ランキングメニュー"""
-    @app.action("ranking_menu")
+def register_personal_handlers(app):
+    """個人成績メニュー"""
+    @app.action("personal_menu")
     def handle_menu_action(ack, body, client):
         """メニュー項目生成
 
@@ -69,15 +79,15 @@ def register_ranking_handlers(app):
 
         g.app_var["user_id"] = body["user"]["id"]
         g.app_var["view_id"] = body["view"]["id"]
-        logging.info("[ranking_menu] %s", g.app_var)
+        logging.info("[personal_menu] %s", g.app_var)
 
-        build_ranking_menu()
+        build_personal_menu()
         client.views_publish(
             user_id=g.app_var["user_id"],
             view=g.app_var["view"],
         )
 
-    @app.action("ranking_aggregation")
+    @app.action("personal_aggregation")
     def handle_aggregation_action(ack, body, client):
         """メニュー項目生成
 
@@ -93,37 +103,36 @@ def register_ranking_handlers(app):
         g.msg.client = client
 
         argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        g.cfg.ranking.update(argument)
-        g.cfg.ranking.update_from_dict(update_flag)
-        g.params = dictutil.placeholder(g.cfg.ranking)
+        g.cfg.results.update(argument)
+        g.cfg.results.update_from_dict(update_flag)
+        g.params = dictutil.placeholder(g.cfg.results)
+
+        search_options = body["view"]["state"]["values"]
+        if "bid-user_select" in search_options:
+            user_select = search_options["bid-user_select"]["player"]["selected_option"]
+            if user_select is None:
+                return
 
         client.views_update(
             view_id=g.app_var["view_id"],
-            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
+            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}")
         )
-
-        search_options = body["view"]["state"]["values"]
-        if "bid-ranked" in search_options:
-            if "value" in search_options["bid-ranked"]["aid-ranked"]:
-                ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
-                if ranked > 0:
-                    g.params.update(ranked=ranked)
 
         app_msg.pop()
         app_msg.append("集計完了")
         msg1 = message.reply(message="no_hits")
 
-        msg1, msg2 = results.ranking.aggregation()
-        if msg2:
-            res = slack_api.post_message(msg1)
-            slack_api.post_multi_message(msg2, res["ts"])
+        msg1, msg2 = results.detail.aggregation()
+        res = slack_api.post_message(msg1)
+        for _, val in msg2.items():
+            slack_api.post_message(val + "\n", res["ts"])
 
         client.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
         )
 
-    @app.view("RankingMenu_ModalPeriodSelection")
+    @app.view("PersonalMenu_ModalPeriodSelection")
     def handle_view_submission(ack, view, client):
         """view更新
 
@@ -140,7 +149,9 @@ def register_ranking_handlers(app):
             if "aid-eday" in view["state"]["values"][i]:
                 g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
+        logging.info("[global var] %s", g.app_var)
+
         client.views_update(
             view_id=g.app_var["view_id"],
-            view=build_ranking_menu(),
+            view=build_personal_menu(),
         )

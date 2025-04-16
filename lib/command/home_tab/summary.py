@@ -1,14 +1,14 @@
 """
-lib/home_tab/summary.py
+lib/command/home_tab/summary.py
 """
 
 import logging
 
 import lib.global_value as g
 from lib.command import graph, results
+from lib.command.home_tab import ui_parts
 from lib.function import message, slack_api
 from lib.handler_registry import register
-from lib.home_tab import ui_parts
 from lib.utils import dictutil
 
 
