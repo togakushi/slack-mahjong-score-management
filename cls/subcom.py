@@ -49,10 +49,10 @@ class SubCommand(CommonMethodMixin):
 
         Returns:
             dict: 集計範囲パラメータ
-                - player_name: str
-                - search_range: []
-                - player_list: []
-                - competition_list: []
+            - player_name: str
+            - search_range: []
+            - player_list: []
+            - competition_list: []
         """
 
         self.initialization(self.section)

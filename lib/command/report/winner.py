@@ -23,8 +23,8 @@ def plot() -> str | bool:
 
     Returns:
         Union[str,bool]:
-            - str: 生成ファイルパス
-            - False: 描写データなし
+        - str: 生成ファイルパス
+        - False: 描写データなし
     """
 
     plt.close()

@@ -31,8 +31,8 @@ def aggregation() -> Tuple[str, Any]:
 
     Returns:
         Tuple[str, Any]: 集計結果
-            - str: ランキングの集計情報
-            - dict | Any: 各ランキングの情報
+        - str: ランキングの集計情報
+        - dict | Any: 各ランキングの情報
     """
 
     # --- データ取得

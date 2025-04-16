@@ -26,8 +26,8 @@ def pattern(text: str) -> list | bool:
 
     Returns:
         Tuple[list,bool]:
-            - list: フォーマットに一致すればスペース区切りの名前と素点のペア
-            - False: メッセージのパースに失敗した場合
+        - list: フォーマットに一致すればスペース区切りの名前と素点のペア
+        - False: メッセージのパースに失敗した場合
     """
 
     # 記号を置換
@@ -310,8 +310,8 @@ def reactions_list(msg: Any) -> Tuple[list, list]:
 
     Returns:
         Tuple[list, list]:
-            - reaction_ok: okが付いているメッセージのタイムスタンプ
-            - reaction_ng: ngが付いているメッセージのタイムスタンプ
+        - reaction_ok: okが付いているメッセージのタイムスタンプ
+        - reaction_ng: ngが付いているメッセージのタイムスタンプ
     """
 
     reaction_ok: list = []
@@ -337,9 +337,9 @@ def search_range(target_list: list) -> dict:
 
     Returns:
         dict: 取得情報
-            - starttime: 検索開始日時
-            - endtime: 検索終了日次
-            - onday: 終了日時（日を跨がない）
+        - starttime: 検索開始日時
+        - endtime: 検索終了日次
+        - onday: 終了日時（日を跨がない）
     """
 
     day: list = []

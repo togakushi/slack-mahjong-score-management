@@ -25,9 +25,9 @@ def point_plot():
     """ポイント推移グラフを生成する
 
     Returns:
-        Tuple[int, str]:
-            - int: グラフにプロットしたゲーム数
-            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
+        Tuple[int,str]:
+        - int: グラフにプロットしたゲーム数
+        - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
 
     plt.close()
@@ -109,9 +109,9 @@ def rank_plot() -> Tuple[int, str]:
     """順位変動グラフを生成する
 
     Returns:
-        Tuple[int, str]:
-            - int: グラフにプロットしたゲーム数
-            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
+        Tuple[int,str]:
+        - int: グラフにプロットしたゲーム数
+        - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
 
     plt.close()
@@ -195,8 +195,8 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     Returns:
         Tuple[pd.DataFrame, pd.DataFrame]:
-            - pd.DataFrame: 収集したデータのサマリ
-            - pd.DataFrame: 集計範囲のデータ
+        - pd.DataFrame: 収集したデータのサマリ
+        - pd.DataFrame: 集計範囲のデータ
     """
 
     # データ収集

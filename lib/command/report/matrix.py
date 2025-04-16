@@ -16,8 +16,8 @@ def plot():
 
     Returns:
         Tuple[str,dict]:
-            - str: ヘッダ情報
-            - dict: 生成ファイル情報
+        - str: ヘッダ情報
+        - dict: 生成ファイル情報
     """
 
     # データ集計

@@ -51,8 +51,8 @@ def which_team(name: str) -> str | None:
 
     Returns:
         Union[str, None]:
-            - str: 所属しているチーム名
-            - None: 未所属
+        - str: 所属しているチーム名
+        - None: 未所属
     """
 
     team = None

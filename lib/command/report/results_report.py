@@ -358,8 +358,8 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
 
     Returns:
         Tuple[str | bool, str | bool]:
-            - str: レポート対象メンバー名
-            - str: レポート保存パス
+        - str: レポート対象メンバー名
+        - str: レポート保存パス
     """
 
     plt.close()

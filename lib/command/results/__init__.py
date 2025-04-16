@@ -1,9 +1,13 @@
 """成績集計モジュール
 
 Exports:
-- slackpost
+- detail
+- ranking
+- rating
+- summary
+- versus
 """
 
-from lib.command.results import slackpost
+from . import detail, ranking, rating, summary, versus
 
-__all__ = ["slackpost"]
+__all__ = ["detail", "ranking", "rating", "summary", "versus"]

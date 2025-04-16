@@ -183,8 +183,8 @@ def remarks(headword=False):
 
     Returns:
         Union[list, str]:
-            - `headword` がない場合はリストで返す
-            - `headword` がある場合は文字列で返す
+        - `headword` がない場合はリストで返す
+        - `headword` がある場合は文字列で返す
     """
 
     remark = []
@@ -319,9 +319,9 @@ def item_search_range(kind=None, time_pattern=None):
 
     Returns:
         Union[list, str]:
-            - `kind` にlistが指定されている場合はリスト
-            - `kind` にstrが指定されている場合は文字列
-            - `kind` がNone場合は見出し付き文字列
+        - `kind` にlistが指定されている場合はリスト
+        - `kind` にstrが指定されている場合は文字列
+        - `kind` がNone場合は見出し付き文字列
     """
 
     starttime: datetime | str
@@ -356,9 +356,9 @@ def item_aggregation_range(game_info, kind=None):
 
     Returns:
         Union[list, str]:
-            - `kind` にlistが指定されている場合はリスト
-            - `kind` にstrが指定されている場合は文字列
-            - `kind` がNone場合は見出し付き文字列
+        - `kind` にlistが指定されている場合はリスト
+        - `kind` にstrが指定されている場合は文字列
+        - `kind` がNone場合は見出し付き文字列
     """
 
     if g.params.get("search_word"):  # コメント検索の場合はコメントで表示

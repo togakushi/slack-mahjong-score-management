@@ -8,10 +8,10 @@ import re
 import lib.global_value as g
 from cls.search import CommandCheck
 from lib.command import graph, report, results
+from lib.command.home_tab import home
 from lib.data import comparison, lookup, modify
 from lib.function import message, search, slack_api
 from lib.handler_registry import register
-from lib.home_tab import home
 from lib.registry import member, team
 
 

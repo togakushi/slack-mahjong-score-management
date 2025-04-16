@@ -14,8 +14,8 @@ def get_members_list():
 
     Returns:
         Tuple[str, str]:
-            - str: post時のタイトル
-            - str: メンバー一覧
+        - str: post時のタイトル
+        - str: メンバー一覧
     """
 
     title = "登録済みメンバー一覧"

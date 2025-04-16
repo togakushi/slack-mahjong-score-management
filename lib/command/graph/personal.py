@@ -26,8 +26,8 @@ def plot() -> Tuple[int, str]:
 
     Returns:
         Tuple[int,str]:
-            - int: グラフにプロットしたゲーム数
-            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
+        - int: グラフにプロットしたゲーム数
+        - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
 
     plt.close()
@@ -132,8 +132,8 @@ def statistics_plot() -> Tuple[int, str]:
 
     Returns:
         Tuple[int,str]:
-            - int: 集計対象のゲーム数
-            - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
+        - int: 集計対象のゲーム数
+        - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
 
     plt.close()

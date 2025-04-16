@@ -12,12 +12,12 @@ def ts_conv(ts: datetime | float | str, fmt: Literal["ts", "y", "jy", "m", "jm",
     Args:
         ts (datetime | float | str): 変更する時間
         fmt (str | None, optional): フォーマット指定. Defaults to None.
-            - ts: timestamp()
-            - y / jy: "%Y" / "%Y年"
-            - m / jm: "%Y/%m" / "%Y年%m月"
-            - d: "%Y/%m/%d"
-            - hm: "%Y/%m/%d %H:%M"
-            - hms: "%Y/%m/%d %H:%M:%S"
+        - ts: timestamp()
+        - y / jy: "%Y" / "%Y年"
+        - m / jm: "%Y/%m" / "%Y年%m月"
+        - d: "%Y/%m/%d"
+        - hm: "%Y/%m/%d %H:%M"
+        - hms: "%Y/%m/%d %H:%M:%S"
 
     Returns:
         str: 変更後の文字列

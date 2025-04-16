@@ -94,8 +94,8 @@ def append(argument):
 
     Args:
         argument (list): 登録情報
-            - argument[0]: 所属させるチーム名
-            - argument[1]: 所属するメンバー名
+        - argument[0]: 所属させるチーム名
+        - argument[1]: 所属するメンバー名
 
     Returns:
         str: slackにpostする内容(処理結果)
@@ -155,8 +155,8 @@ def remove(argument):
 
     Args:
         argument (_type_): 登録情報
-            - argument[0]: 対象チーム名
-            - argument[1]: チームから離脱するメンバー名
+        - argument[0]: 対象チーム名
+        - argument[1]: チームから離脱するメンバー名
 
     Returns:
         str: slackにpostする内容(処理結果)

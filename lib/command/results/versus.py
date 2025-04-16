@@ -18,9 +18,9 @@ def aggregation():
 
     Returns:
         Tuple[str, dict, dict]
-            - str: ヘッダ情報
-            - dict: 集計データ
-            - dict: 生成ファイル情報
+        - str: ヘッダ情報
+        - dict: 集計データ
+        - dict: 生成ファイル情報
     """
 
     # 検索動作を合わせる

@@ -54,8 +54,8 @@ def data_comparison() -> Tuple[dict, dict]:
 
     Returns:
         Tuple[dict,dict]:
-            - dict: 処理された更新/追加/削除の件数
-            - dict: slackに返すメッセージ
+        - dict: 処理された更新/追加/削除の件数
+        - dict: slackに返すメッセージ
     """
 
     count: dict = {}

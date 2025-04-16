@@ -52,8 +52,8 @@ def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
 
     Returns:
         Tuple[bool,str]: 判定結果
-            - bool: 制限チェック結果真偽
-            - str: 制限理由
+        - bool: 制限チェック結果真偽
+        - str: 制限理由
     """
 
     # 登録済みメンバーかチェック
@@ -200,8 +200,8 @@ def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None
 
     Returns:
         Union[str, None]
-            - str: 保存したファイルパス
-            - None: 指定したフォーマットで保存できなかった場合
+        - str: 保存したファイルパス
+        - None: 指定したフォーマットで保存できなかった場合
     """
 
     match kind.lower():

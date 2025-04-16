@@ -147,13 +147,13 @@ def get_score(detection):
 
     Returns:
         dict: 計算結果
-            - p?_name: 名前
-            - p?_str: 素点文字列
-            - p?_rpoint: 素点
-            - p?_point: ポイント
-            - p?_rank: 順位
-            - deposit: 供託
-            - comment: コメント
+        - p?_name: 名前
+        - p?_str: 素点文字列
+        - p?_rpoint: 素点
+        - p?_point: ポイント
+        - p?_rank: 順位
+        - deposit: 供託
+        - comment: コメント
     """
 
     g.params.update(unregistered_replace=False)  # ゲスト無効
