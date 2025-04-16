@@ -12,7 +12,7 @@ work/
 html/
 
 !requirements.txt
-!test_case/test-*.ini
-!test_data/*.csv
-!test_data/*.ini
+!tests/test_case/test-*.ini
+!tests/test_data/*.csv
+!tests/test_data/*.ini
 !.gitignore
