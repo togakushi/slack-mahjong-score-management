@@ -29,7 +29,7 @@ def main():
             ]
             ret = score.get_score(detection)
             ret["ts"] = row["ts"]
-            cur.execute(g.sql["SQL_RESULT_UPDATE"], ret)
+            cur.execute(g.sql["RESULT_UPDATE"], ret)
             count += 1
 
         cur.commit()

@@ -37,7 +37,7 @@ def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(g.sql["SQL_RESULT_INSERT"], param)
+            cur.execute(g.sql["RESULT_INSERT"], param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         score.reactions(param)
@@ -64,7 +64,7 @@ def db_update(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(g.sql["SQL_RESULT_UPDATE"], param)
+            cur.execute(g.sql["RESULT_UPDATE"], param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         score.reactions(param)
@@ -82,9 +82,9 @@ def db_delete(ts):
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
             delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
-            cur.execute(g.sql["SQL_RESULT_DELETE"], (ts,))
+            cur.execute(g.sql["RESULT_DELETE"], (ts,))
             delete_result = cur.execute("select changes();").fetchone()[0]
-            cur.execute(g.sql["SQL_REMARKS_DELETE_ALL"], (ts,))
+            cur.execute(g.sql["REMARKS_DELETE_ALL"], (ts,))
             delete_remark = cur.execute("select changes();").fetchone()[0]
             cur.commit()
 
@@ -155,7 +155,7 @@ def remarks_append(remarks: dict | list) -> None:
                 row = cur.execute("select * from result where ts=:thread_ts", para).fetchone()
                 if row:
                     if para["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
-                        cur.execute(g.sql["SQL_REMARKS_INSERT"], para)
+                        cur.execute(g.sql["REMARKS_INSERT"], para)
                         logging.notice("insert: %s, user=%s", para, g.msg.user_id)  # type: ignore
 
                         if g.cfg.setting.reaction_ok not in lookup.api.reactions_status(ts=para.get("event_ts")):
@@ -173,7 +173,7 @@ def remarks_delete(ts: str) -> None:
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(g.sql["SQL_REMARKS_DELETE_ONE"], (ts,))
+            cur.execute(g.sql["REMARKS_DELETE_ONE"], (ts,))
             count = cur.execute("select changes();").fetchone()[0]
             cur.commit()
 
@@ -195,7 +195,7 @@ def remarks_delete_compar(para: dict) -> None:
     ch: str | None
 
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-        cur.execute(g.sql["SQL_REMARKS_DELETE_COMPAR"], para)
+        cur.execute(g.sql["REMARKS_DELETE_COMPAR"], para)
         cur.commit()
 
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]

@@ -49,7 +49,7 @@ app_var: dict = {  # ホームタブ用初期値
 
 # 共通クエリ
 sql: dict = {}
-sql["SQL_RESULT_INSERT"] = """
+sql["RESULT_INSERT"] = """
     insert into
         result (
             ts, playtime,
@@ -69,7 +69,7 @@ sql["SQL_RESULT_INSERT"] = """
     ;
 """
 
-sql["SQL_RESULT_UPDATE"] = """
+sql["RESULT_UPDATE"] = """
     update result set
         p1_name=:p1_name, p1_str=:p1_str, p1_rpoint=:p1_rpoint, p1_rank=:p1_rank, p1_point=:p1_point,
         p2_name=:p2_name, p2_str=:p2_str, p2_rpoint=:p2_rpoint, p2_rank=:p2_rank, p2_point=:p2_point,
@@ -80,9 +80,9 @@ sql["SQL_RESULT_UPDATE"] = """
     ;
 """
 
-sql["SQL_RESULT_DELETE"] = "delete from result where ts=?;"
+sql["RESULT_DELETE"] = "delete from result where ts=?;"
 
-sql["SQL_REMARKS_INSERT"] = """
+sql["REMARKS_INSERT"] = """
     insert into
         remarks (
             thread_ts, event_ts, name, matter
@@ -92,11 +92,11 @@ sql["SQL_REMARKS_INSERT"] = """
     ;
 """
 
-sql["SQL_REMARKS_DELETE_ALL"] = "delete from remarks where thread_ts=?;"
+sql["REMARKS_DELETE_ALL"] = "delete from remarks where thread_ts=?;"
 
-sql["SQL_REMARKS_DELETE_ONE"] = "delete from remarks where event_ts=?;"
+sql["REMARKS_DELETE_ONE"] = "delete from remarks where event_ts=?;"
 
-sql["SQL_REMARKS_DELETE_COMPAR"] = """
+sql["REMARKS_DELETE_COMPAR"] = """
     delete from remarks
     where
         thread_ts=:thread_ts
