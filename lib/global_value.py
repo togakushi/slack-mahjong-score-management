@@ -17,12 +17,12 @@ if TYPE_CHECKING:
     from cls.parser import MessageParser
     from cls.search import SearchRange
 
-# コマンドライン引数
 args: "Namespace" = None  # type: ignore
-
-# slack object
+"""コマンドライン引数"""
 app: "App"
+"""slack object"""
 webclient: "WebClient"
+"""slack object"""
 
 # モジュール共通インスタンス
 cfg: "Config"
@@ -32,11 +32,20 @@ search_word: "SearchRange"
 # 固定値
 script_dir: str = ""
 member_list: dict = {}
-team_list: list = []
+"""メンバーリスト
+- 別名: 表示名
+"""
+team_list: list[dict] = []
+"""チームリスト
+- id: チームID
+- team: チーム名
+- member: 所属メンバー(カンマ区切りの文字列)
+"""
 bot_id: str = ""
 params: dict = {}
+"""プレースホルダ用パラメータ"""
 
-app_var: dict = {  # ホームタブ用初期値
+app_var: dict = {
     "view": {},
     "no": 0,
     "user_id": None,
@@ -46,6 +55,7 @@ app_var: dict = {  # ホームタブ用初期値
     "sday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
     "eday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
 }
+"""ホームタブ用初期値"""
 
 # 共通クエリ
 sql: dict = {}
