@@ -25,10 +25,10 @@ jobs:
       - name: Generate documentation
         run: |
           rm -rf temp_docs
-          pdoc -d google --output-dir temp_docs *.py lib cls
+          pdoc -d google --output-dir temp_docs *.py libs cls
           touch temp_docs/.nojekyll
-          
-        env: 
+
+        env:
           PDOC_ALLOW_EXEC: "1"
 
       - name: Deploy to GitHub Pages
