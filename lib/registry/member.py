@@ -16,8 +16,8 @@ def append(argument):
 
     Args:
         argument (list): 登録情報
-        - argument[0]: 登録するメンバー名
-        - argument[1]: 登録する別名
+            - argument[0]: 登録するメンバー名
+            - argument[1]: 登録する別名
 
     Returns:
         str: slackにpostする内容(処理結果)
@@ -105,8 +105,8 @@ def remove(argument):
 
     Args:
         argument (list): 削除情報
-        - argument[0]: 削除するメンバー名
-        - argument[1]: 削除する別名
+            - argument[0]: 削除するメンバー名
+            - argument[1]: 削除する別名
 
     Returns:
         str: slackにpostする内容(処理結果)
