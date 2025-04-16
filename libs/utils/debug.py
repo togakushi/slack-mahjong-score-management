@@ -1,5 +1,5 @@
 """
-lib/utils/debug.py
+libs/utils/debug.py
 """
 
 

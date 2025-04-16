@@ -1,5 +1,5 @@
 """
-lib/function/slack_api.py
+libs/functions/slack_api.py
 """
 
 import logging

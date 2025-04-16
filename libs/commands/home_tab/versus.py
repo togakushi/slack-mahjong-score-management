@@ -1,5 +1,5 @@
 """
-lib/command/home_tab/versus.py
+libs/commands/home_tab/versus.py
 """
 
 import logging

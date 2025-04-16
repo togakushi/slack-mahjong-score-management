@@ -1,5 +1,5 @@
 """
-lib/utils/dictutil.py
+libs/utils/dictutil.py
 """
 
 import re

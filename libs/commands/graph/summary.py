@@ -1,5 +1,5 @@
 """
-lib/command/graph/summary.py
+libs/commands/graph/summary.py
 """
 
 import logging

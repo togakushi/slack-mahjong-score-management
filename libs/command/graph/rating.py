@@ -1,5 +1,5 @@
 """
-lib/command/graph/rating.py
+libs/commands/graph/rating.py
 """
 
 import logging

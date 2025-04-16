@@ -1,5 +1,5 @@
 """
-lib/command/team.py
+libs/commands/team.py
 """
 
 import logging
@@ -8,7 +8,7 @@ import sqlite3
 import libs.global_value as g
 from libs.data import initialization, modify
 from libs.functions import configuration
-from libs.utils import formatter, textutil
+from libs.utils import formatter, textutil, validator
 
 
 def create(argument):
@@ -29,7 +29,7 @@ def create(argument):
         if len(g.team_list) > g.cfg.config["team"].getint("registration_limit", 255):
             msg = "登録上限を超えています。"
         else:  # 登録処理
-            ret, msg = formatter.check_namepattern(team_name, "team")
+            ret, msg = validator.check_namepattern(team_name, "team")
             if ret:
                 resultdb = sqlite3.connect(
                     g.cfg.db.database_file,

@@ -1,5 +1,5 @@
 """
-lib/command/graph/personal.py
+libs/commands/graph/personal.py
 """
 
 import logging

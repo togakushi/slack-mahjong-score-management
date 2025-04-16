@@ -1,5 +1,5 @@
 """
-lib/command/graph/slackpost.py
+libs/commands/graph/slackpost.py
 """
 
 import libs.global_value as g

@@ -1,5 +1,5 @@
 """
-lib/function/message.py
+libs/functions/message.py
 """
 
 import logging

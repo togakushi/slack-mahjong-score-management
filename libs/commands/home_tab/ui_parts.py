@@ -1,5 +1,5 @@
 """
-lib/command/home_tab/ui_parts.py
+libs/commands/home_tab/ui_parts.py
 """
 
 import logging

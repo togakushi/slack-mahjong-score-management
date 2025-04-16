@@ -8,7 +8,7 @@ import sqlite3
 import libs.global_value as g
 from libs.data import modify
 from libs.functions import configuration
-from libs.utils import formatter, textutil
+from libs.utils import textutil, validator
 
 
 def append(argument):
@@ -37,7 +37,7 @@ def append(argument):
         if count > g.cfg.config["member"].getint("registration_limit", 255):
             msg = "登録上限を超えています。"
         else:  # 登録処理
-            ret, msg = formatter.check_namepattern(new_name, "member")
+            ret, msg = validator.check_namepattern(new_name, "member")
             if ret:
                 resultdb.execute(
                     "insert into member(name) values (?)",
@@ -64,7 +64,7 @@ def append(argument):
             registration_flg = False
 
         if registration_flg:  # 登録処理
-            ret, msg = formatter.check_namepattern(nic_name, "member")
+            ret, msg = validator.check_namepattern(nic_name, "member")
             if ret:
                 resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
                 msg = f"「{new_name}」に「{nic_name}」を追加しました。"

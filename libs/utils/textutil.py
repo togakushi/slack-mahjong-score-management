@@ -1,5 +1,5 @@
 """
-lib/utils/formatter.py
+libs/utils/formatter.py
 """
 
 import unicodedata

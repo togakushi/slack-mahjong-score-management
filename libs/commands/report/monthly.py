@@ -1,5 +1,5 @@
 """
-lib/command/report/monthly.py
+libs/commands/report/monthly.py
 """
 
 import logging

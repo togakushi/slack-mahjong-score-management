@@ -1,5 +1,5 @@
 """
-lib/command/results/versus.py
+libs/commands/results/versus.py
 """
 
 import os

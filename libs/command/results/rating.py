@@ -1,5 +1,5 @@
 """
-lib/command/results/rating.py
+libs/commands/results/rating.py
 """
 
 import os

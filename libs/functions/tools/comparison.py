@@ -1,5 +1,5 @@
 """
-lib/function/tools/comparison.py
+libs/functions/tools/comparison.py
 """
 
 import logging

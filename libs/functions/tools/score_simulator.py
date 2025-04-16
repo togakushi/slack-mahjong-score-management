@@ -1,4 +1,4 @@
-"""lib/function/tools/score_simulator.py
+"""libs/functions/tools/score_simulator.py
 
 得点シミュレーター
 

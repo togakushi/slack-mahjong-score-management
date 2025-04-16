@@ -1,5 +1,5 @@
 """
-lib/function/search.py
+libs/functions/search.py
 """
 
 import logging

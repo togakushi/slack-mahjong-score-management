@@ -1,5 +1,5 @@
 """
-lib/command/results/detail.py
+libs/commands/results/detail.py
 """
 
 import os

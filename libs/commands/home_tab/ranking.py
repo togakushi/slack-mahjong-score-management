@@ -1,5 +1,5 @@
 """
-lib/command/home_tab/ranking.py
+libs/commands/home_tab/ranking.py
 """
 
 import logging

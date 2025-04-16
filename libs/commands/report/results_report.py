@@ -1,5 +1,5 @@
 """
-lib/command/report/results_report.py
+libs/commands/report/results_report.py
 """
 
 import logging

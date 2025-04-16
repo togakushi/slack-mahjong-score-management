@@ -1,5 +1,5 @@
 """
-lib/command/home_tab/summary.py
+libs/commands/home_tab/summary.py
 """
 
 import logging

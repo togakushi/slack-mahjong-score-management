@@ -1,5 +1,5 @@
 """
-lib/function/configuration.py
+libs/functions/configuration.py
 """
 
 import argparse

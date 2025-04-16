@@ -1,5 +1,5 @@
 """
-lib/function/score.py
+libs/functions/score.py
 """
 
 import logging
