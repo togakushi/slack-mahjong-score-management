@@ -6,8 +6,8 @@ import logging
 
 from slack_sdk import WebClient
 
-import lib.global_value as g
-from lib.data import lookup
+import libs.global_value as g
+from libs.data import lookup
 
 
 class MessageParser():

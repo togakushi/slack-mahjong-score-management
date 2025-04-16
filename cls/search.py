@@ -8,8 +8,8 @@ from datetime import datetime
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
-import lib.global_value as g
-from lib.data import lookup
+import libs.global_value as g
+from libs.data import lookup
 
 
 class SearchRange():

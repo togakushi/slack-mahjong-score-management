@@ -9,14 +9,14 @@ import random
 import re
 from pprint import pprint
 
-import lib.command.report.slackpost
-import lib.command.results.slackpost
-import lib.global_value as g
-from lib.command import graph, report
-from lib.command.results import ranking
-from lib.data import initialization
-from lib.function import configuration, message
-from lib.utils import dictutil
+import libs.commands.report.slackpost
+import libs.commands.results.slackpost
+import libs.global_value as g
+from libs.commands import graph, report
+from libs.commands.results import ranking
+from libs.data import initialization
+from libs.functions import configuration, message
+from libs.utils import dictutil
 
 
 def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: str):
@@ -105,7 +105,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.params = dictutil.placeholder(g.cfg.results)
                 pprint([
                     "exec: lib.command.results.slackpost.main()",
-                    lib.command.results.slackpost.main(),
+                    libs.commands.results.slackpost.main(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
@@ -153,7 +153,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.params = dictutil.placeholder(g.cfg.report)
                 pprint([
                     "exec: lib.command.report.slackpost.main()",
-                    lib.command.report.slackpost.main(),
+                    libs.commands.report.slackpost.main(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 

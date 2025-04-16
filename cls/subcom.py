@@ -7,9 +7,9 @@ from dataclasses import dataclass, field, fields
 from math import ceil
 
 from cls.types import CommonMethodMixin
-from lib.data import lookup
-from lib.function.search import search_range
-from lib.utils import dictutil, formatter
+from libs.data import lookup
+from libs.functions.search import search_range
+from libs.utils import dictutil, formatter
 
 
 @dataclass

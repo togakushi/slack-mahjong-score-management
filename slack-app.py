@@ -13,10 +13,10 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-import lib.global_value as g
-from lib.data import initialization
-from lib.function import configuration
-from lib.handler_registry import register_all
+import libs.global_value as g
+from libs.data import initialization
+from libs.functions import configuration
+from libs.handler_registry import register_all
 
 if __name__ == "__main__":
     g.script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,7 +24,7 @@ if __name__ == "__main__":
         configuration.setup()
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
         g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-        from lib import event
+        from libs import event
         __all__ = ["event"]
         register_all(app)  # イベント遅延登録
     except SlackApiError as err:
