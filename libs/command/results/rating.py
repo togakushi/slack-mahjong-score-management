@@ -26,7 +26,7 @@ def aggregation():
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info: GameInfoDict = aggregate.game_info()
-    df_results = loader.read_data(os.path.join(g.script_dir, "lib/queries/ranking/results.sql")).set_index("name")
+    df_results = loader.read_data(os.path.join(g.script_dir, "libs/queries/ranking/results.sql")).set_index("name")
     df_ratings = aggregate.calculation_rating()
 
     # 最終的なレーティング

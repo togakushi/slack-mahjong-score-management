@@ -18,12 +18,12 @@ def initialization_resultdb():
     )
     resultdb.row_factory = sqlite3.Row
 
-    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "lib/queries/table/member.sql")))  # メンバー登録テーブル
-    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "lib/queries/table/alias.sql")))  # 別名定義テーブル
-    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "lib/queries/table/team.sql")))  # チーム定義テーブル
-    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "lib/queries/table/result.sql")))  # データ取り込みテーブル
-    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "lib/queries/table/remarks.sql")))  # メモ格納テーブル
-    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "lib/queries/table/words.sql")))  # レギュレーションワード登録テーブル
+    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "libs/queries/table/member.sql")))  # メンバー登録テーブル
+    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "libs/queries/table/alias.sql")))  # 別名定義テーブル
+    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "libs/queries/table/team.sql")))  # チーム定義テーブル
+    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "libs/queries/table/result.sql")))  # データ取り込みテーブル
+    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "libs/queries/table/remarks.sql")))  # メモ格納テーブル
+    resultdb.execute(loader.load_query(os.path.join(g.script_dir, "libs/queries/table/words.sql")))  # レギュレーションワード登録テーブル
 
     # wordsテーブル情報読み込み(regulations)
     if g.cfg.config.has_section("regulations"):
@@ -57,10 +57,10 @@ def initialization_resultdb():
                     )
                     logging.info("regulations table(type1): %s, %s", word, ex_point)
 
-    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "lib/queries/view/individual_results.sql")))
-    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "lib/queries/view/team_results.sql")))
-    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "lib/queries/view/game_results.sql")))
-    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "lib/queries/view/game_info.sql")))
+    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "libs/queries/view/individual_results.sql")))
+    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "libs/queries/view/team_results.sql")))
+    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "libs/queries/view/game_results.sql")))
+    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "libs/queries/view/game_info.sql")))
 
     # メモ
     match g.cfg.undefined_word:
@@ -77,8 +77,8 @@ def initialization_resultdb():
             grandslam_where = "words.type == 0"
             regulation_where = "words.type in (1, 2)"
 
-    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "lib/queries/view/grandslam.sql")).format(grandslam_where=grandslam_where))
-    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "lib/queries/view/regulations.sql")).format(regulation_where=regulation_where))
+    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "libs/queries/view/grandslam.sql")).format(grandslam_where=grandslam_where))
+    resultdb.executescript(loader.load_query(os.path.join(g.script_dir, "libs/queries/view/regulations.sql")).format(regulation_where=regulation_where))
 
     # ゲスト設定チェック
     ret = resultdb.execute("select * from member where id=0;")

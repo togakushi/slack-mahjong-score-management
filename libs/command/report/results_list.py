@@ -31,7 +31,7 @@ def main():
 
     # --- データ取得
     game_info: GameInfoDict = aggregate.game_info()
-    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/report/results_list.sql")).reset_index(drop=True)
+    df = loader.read_data(os.path.join(g.script_dir, "libs/queries/report/results_list.sql")).reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
         return (False)

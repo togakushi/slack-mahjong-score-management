@@ -267,7 +267,7 @@ def get_game_results(mapping_dict: dict) -> str:
 
     target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
     p_list: list = []
-    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/details.sql")).fillna(value="")
+    df = loader.read_data(os.path.join(g.script_dir, "libs/queries/summary/details.sql")).fillna(value="")
 
     if g.params.get("anonymous"):
         mapping_dict.update(formatter.anonymous_mapping(df["name"].unique().tolist(), len(mapping_dict)))
@@ -345,7 +345,7 @@ def get_versus_matrix(mapping_dict: dict) -> str:
     """
 
     ret: str = "\n*【対戦結果】*\n"
-    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/versus_matrix.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "libs/queries/summary/versus_matrix.sql"))
 
     if g.params.get("anonymous"):
         mapping_dict.update(formatter.anonymous_mapping(df["vs_name"].unique().tolist(), len(mapping_dict)))

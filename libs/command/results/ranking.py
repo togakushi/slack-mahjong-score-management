@@ -40,7 +40,7 @@ def aggregation() -> Tuple[str, Any]:
     if game_info["game_count"] == 0:  # 結果が0件のとき
         return (message.reply(message="no_hits"), None)
 
-    result_df = loader.read_data(os.path.join(g.script_dir, "lib/queries/ranking/aggregate.sql"))
+    result_df = loader.read_data(os.path.join(g.script_dir, "libs/queries/ranking/aggregate.sql"))
     if result_df.empty:
         return (message.reply(message="no_hits"), None)
 

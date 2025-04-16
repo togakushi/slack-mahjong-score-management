@@ -24,7 +24,7 @@ def game_info() -> GameInfoDict:
     """
 
     # データ収集
-    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/game.info.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "libs/queries/game.info.sql"))
     ret: GameInfoDict = {
         "game_count": int(df["count"].to_string(index=False)),
         "first_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
@@ -73,7 +73,7 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
     """
 
     # データ収集
-    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/total.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "libs/queries/summary/total.sql"))
 
     if isinstance(filter_items, list):
         df = df.filter(items=filter_items)
@@ -97,7 +97,7 @@ def remark_count(kind: str):
 
     # データ収集
     g.params.update(kind=kind)
-    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/remark_count.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "libs/queries/summary/remark_count.sql"))
 
     if kind == "grandslam":
         df = df.filter(items=["name", "matter", "count"])
@@ -114,7 +114,7 @@ def game_results():
     """
 
     # データ収集
-    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/summary/results.sql"))
+    df = loader.read_data(os.path.join(g.script_dir, "libs/queries/summary/results.sql"))
 
     # Nullが返ってきたときにobject型になるので型変換
     df = df.astype({
@@ -139,7 +139,7 @@ def ranking_record():
     """
 
     # データ収集
-    gamedata: pd.DataFrame = loader.read_data(os.path.join(g.script_dir, "lib/queries/ranking/record_count.sql"))
+    gamedata: pd.DataFrame = loader.read_data(os.path.join(g.script_dir, "libs/queries/ranking/record_count.sql"))
     player_list = gamedata["name"].unique().tolist()
 
     # 連続順位カウント
@@ -196,7 +196,7 @@ def calculation_rating():
     """
 
     # データ収集
-    df_results = loader.read_data(os.path.join(g.script_dir, "lib/queries/ranking/ratings.sql")).set_index("playtime")
+    df_results = loader.read_data(os.path.join(g.script_dir, "libs/queries/ranking/ratings.sql")).set_index("playtime")
     df_ratings = pd.DataFrame(index=["initial_rating"] + df_results.index.to_list())  # 記録用
     last_ratings: dict = {}  # 最終値格納用
 
@@ -244,7 +244,7 @@ def matrix_table():
     """
 
     # データ収集
-    df = loader.read_data(os.path.join(g.script_dir, "lib/queries/report/matrix_table.sql")).set_index("playtime")
+    df = loader.read_data(os.path.join(g.script_dir, "libs/queries/report/matrix_table.sql")).set_index("playtime")
 
     # 結果に含まれるプレイヤーのリスト
     plist = sorted(list(set(
