@@ -176,7 +176,6 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
 
 def main():
     """メイン処理"""
-    g.script_dir = os.path.dirname(os.path.abspath(__file__))
     configuration.setup()
     test_conf = configparser.ConfigParser()
     test_conf.read(g.args.testcase, encoding="utf-8")

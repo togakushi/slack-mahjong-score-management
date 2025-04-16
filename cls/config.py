@@ -18,12 +18,25 @@ class MahjongSection(CommonMethodMixin):
     """mahjongセクション初期値"""
     config: configparser.ConfigParser | None = None
     rule_version: str = field(default=str())
+    """ルール判別識別子"""
     origin_point: int = field(default=250)
+    """配給原点"""
     return_point: int = field(default=300)
+    """返し点"""
     rank_point: list = field(default_factory=list)
+    """順位点"""
     ignore_flying: bool = field(default=False)
+    """トビカウント
+    - True: なし
+    - False: あり
+    """
     draw_split: bool = field(default=False)
+    """同点時の順位点
+    - True: 山分けにする
+    - False: 席順で決める
+    """
     regulations_type2: list = field(default_factory=list)
+    """メモで役満として扱う単語リスト(カンマ区切り)"""
 
     def __post_init__(self):
         self.initialization("mahjong")

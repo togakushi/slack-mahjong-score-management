@@ -19,7 +19,6 @@ from libs.functions import configuration
 from libs.handler_registry import register_all
 
 if __name__ == "__main__":
-    g.script_dir = os.path.dirname(os.path.abspath(__file__))
     try:
         configuration.setup()
         app = App(token=os.environ["SLACK_BOT_TOKEN"])

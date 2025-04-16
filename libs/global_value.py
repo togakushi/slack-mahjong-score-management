@@ -3,6 +3,7 @@ lib/global_value.py
 """
 
 from datetime import datetime
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from dateutil.relativedelta import relativedelta
@@ -30,7 +31,7 @@ msg: "MessageParser"
 search_word: "SearchRange"
 
 # 固定値
-script_dir: str = ""
+script_dir: str = str(Path(__file__).resolve().parents[1])
 member_list: dict = {}
 """メンバーリスト
 - 別名: 表示名
