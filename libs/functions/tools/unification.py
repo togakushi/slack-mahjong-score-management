@@ -9,7 +9,7 @@ import sqlite3
 import libs.global_value as g
 from libs.data import modify
 from libs.functions import configuration
-from libs.utils import formatter
+from libs.utils import validator
 
 
 def main():
@@ -28,10 +28,10 @@ def main():
 
         for name, alias_list in name_table.items():
             count = 0
-            chk, msg = formatter.check_namepattern(name)
+            chk, msg = validator.check_namepattern(name)
             if chk:
                 for alias in alias_list:
-                    chk, msg = formatter.check_namepattern(alias)
+                    chk, msg = validator.check_namepattern(alias)
                     if chk:
                         db.execute("update result set p1_name=? where p1_name=?;", (name, alias,))
                         count += db.execute("select changes();").fetchone()[0]
