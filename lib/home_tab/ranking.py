@@ -7,6 +7,7 @@ import logging
 import lib.global_value as g
 from lib.command import results
 from lib.function import message, slack_api
+from lib.handler_registry import register
 from lib.home_tab import ui_parts
 from lib.utils import dictutil
 
@@ -50,95 +51,96 @@ def build_ranking_menu():
     ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
-@g.app.action("ranking_menu")
-def handle_menu_action(ack, body, client):
-    """メニュー項目生成
+@register
+def register_ranking_handlers(app):
+    """ランキングメニュー"""
+    @app.action("ranking_menu")
+    def handle_menu_action(ack, body, client):
+        """メニュー項目生成
 
-    Args:
-        ack (_type_): ack
-        body (dict): イベント内容
-        client (slack_bolt.App.client): slack_boltオブジェクト
-    """
+        Args:
+            ack (_type_): ack
+            body (dict): イベント内容
+            client (slack_bolt.App.client): slack_boltオブジェクト
+        """
 
-    ack()
-    logging.trace(body)  # type: ignore
+        ack()
+        logging.trace(body)  # type: ignore
 
-    g.app_var["user_id"] = body["user"]["id"]
-    g.app_var["view_id"] = body["view"]["id"]
-    logging.info("[ranking_menu] %s", g.app_var)
+        g.app_var["user_id"] = body["user"]["id"]
+        g.app_var["view_id"] = body["view"]["id"]
+        logging.info("[ranking_menu] %s", g.app_var)
 
-    build_ranking_menu()
-    client.views_publish(
-        user_id=g.app_var["user_id"],
-        view=g.app_var["view"],
-    )
+        build_ranking_menu()
+        client.views_publish(
+            user_id=g.app_var["user_id"],
+            view=g.app_var["view"],
+        )
 
+    @app.action("ranking_aggregation")
+    def handle_aggregation_action(ack, body, client):
+        """メニュー項目生成
 
-@g.app.action("ranking_aggregation")
-def handle_aggregation_action(ack, body, client):
-    """メニュー項目生成
+        Args:
+            ack (_type_): ack
+            body (dict): イベント内容
+            client (slack_bolt.App.client): slack_boltオブジェクト
+        """
 
-    Args:
-        ack (_type_): ack
-        body (dict): イベント内容
-        client (slack_bolt.App.client): slack_boltオブジェクト
-    """
+        ack()
+        logging.trace(body)  # type: ignore
+        g.msg.parser(body)
+        g.msg.client = client
 
-    ack()
-    logging.trace(body)  # type: ignore
-    g.msg.parser(body)
-    g.msg.client = client
+        argument, app_msg, update_flag = ui_parts.set_command_option(body)
+        g.cfg.ranking.update(argument)
+        g.cfg.ranking.update_from_dict(update_flag)
+        g.params = dictutil.placeholder(g.cfg.ranking)
 
-    argument, app_msg, update_flag = ui_parts.set_command_option(body)
-    g.cfg.ranking.update(argument)
-    g.cfg.ranking.update_from_dict(update_flag)
-    g.params = dictutil.placeholder(g.cfg.ranking)
+        client.views_update(
+            view_id=g.app_var["view_id"],
+            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
+        )
 
-    client.views_update(
-        view_id=g.app_var["view_id"],
-        view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
-    )
+        search_options = body["view"]["state"]["values"]
+        if "bid-ranked" in search_options:
+            if "value" in search_options["bid-ranked"]["aid-ranked"]:
+                ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
+                if ranked > 0:
+                    g.params.update(ranked=ranked)
 
-    search_options = body["view"]["state"]["values"]
-    if "bid-ranked" in search_options:
-        if "value" in search_options["bid-ranked"]["aid-ranked"]:
-            ranked = int(search_options["bid-ranked"]["aid-ranked"]["value"])
-            if ranked > 0:
-                g.params.update(ranked=ranked)
+        app_msg.pop()
+        app_msg.append("集計完了")
+        msg1 = message.reply(message="no_hits")
 
-    app_msg.pop()
-    app_msg.append("集計完了")
-    msg1 = message.reply(message="no_hits")
+        msg1, msg2 = results.ranking.aggregation()
+        if msg2:
+            res = slack_api.post_message(msg1)
+            slack_api.post_multi_message(msg2, res["ts"])
 
-    msg1, msg2 = results.ranking.aggregation()
-    if msg2:
-        res = slack_api.post_message(msg1)
-        slack_api.post_multi_message(msg2, res["ts"])
+        client.views_update(
+            view_id=g.app_var["view_id"],
+            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+        )
 
-    client.views_update(
-        view_id=g.app_var["view_id"],
-        view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
-    )
+    @app.view("RankingMenu_ModalPeriodSelection")
+    def handle_view_submission(ack, view, client):
+        """view更新
 
+        Args:
+            ack (_type_): ack
+            view (dict): 描写内容
+            client (slack_bolt.App.client): slack_boltオブジェクト
+        """
 
-@g.app.view("RankingMenu_ModalPeriodSelection")
-def handle_view_submission(ack, view, client):
-    """view更新
+        ack()
+        for i in view["state"]["values"].keys():
+            if "aid-sday" in view["state"]["values"][i]:
+                g.app_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
+            if "aid-eday" in view["state"]["values"][i]:
+                g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
-    Args:
-        ack (_type_): ack
-        view (dict): 描写内容
-        client (slack_bolt.App.client): slack_boltオブジェクト
-    """
-
-    ack()
-    for i in view["state"]["values"].keys():
-        if "aid-sday" in view["state"]["values"][i]:
-            g.app_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
-        if "aid-eday" in view["state"]["values"][i]:
-            g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
-
-    client.views_update(
-        view_id=g.app_var["view_id"],
-        view=build_ranking_menu(),
-    )
+        client.views_update(
+            view_id=g.app_var["view_id"],
+            view=build_ranking_menu(),
+        )

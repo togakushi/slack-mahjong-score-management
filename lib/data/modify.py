@@ -16,6 +16,60 @@ from lib.function import score, slack_api
 from lib.function.message import reply
 from lib.utils import formatter
 
+# クエリ
+SQL_RESULT_INSERT = """
+    insert into
+        result (
+            ts, playtime,
+            p1_name, p1_str, p1_rpoint, p1_rank, p1_point,
+            p2_name, p2_str, p2_rpoint, p2_rank, p2_point,
+            p3_name, p3_str, p3_rpoint, p3_rank, p3_point,
+            p4_name, p4_str, p4_rpoint, p4_rank, p4_point,
+            deposit, rule_version, comment
+        ) values (
+            :ts, :playtime,
+            :p1_name, :p1_str, :p1_rpoint, :p1_rank, :p1_point,
+            :p2_name, :p2_str, :p2_rpoint, :p2_rank, :p2_point,
+            :p3_name, :p3_str, :p3_rpoint, :p3_rank, :p3_point,
+            :p4_name, :p4_str, :p4_rpoint, :p4_rank, :p4_point,
+            :deposit, :rule_version, :comment
+        )
+"""
+
+SQL_RESULT_UPDATE = """
+    update result set
+        p1_name=:p1_name, p1_str=:p1_str, p1_rpoint=:p1_rpoint, p1_rank=:p1_rank, p1_point=:p1_point,
+        p2_name=:p2_name, p2_str=:p2_str, p2_rpoint=:p2_rpoint, p2_rank=:p2_rank, p2_point=:p2_point,
+        p3_name=:p3_name, p3_str=:p3_str, p3_rpoint=:p3_rpoint, p3_rank=:p3_rank, p3_point=:p3_point,
+        p4_name=:p4_name, p4_str=:p4_str, p4_rpoint=:p4_rpoint, p4_rank=:p4_rank, p4_point=:p4_point,
+        deposit=:deposit, comment=:comment
+    where ts=:ts
+"""
+
+SQL_RESULT_DELETE = "delete from result where ts=?"
+
+SQL_REMARKS_INSERT = """
+    insert into
+        remarks (
+            thread_ts, event_ts, name, matter
+        ) values (
+            :thread_ts, :event_ts, :name, :matter
+        )
+"""
+
+SQL_REMARKS_DELETE_ALL = "delete from remarks where thread_ts=?"
+
+SQL_REMARKS_DELETE_ONE = "delete from remarks where event_ts=?"
+
+SQL_REMARKS_DELETE_COMPAR = """
+    delete from remarks
+    where
+        thread_ts=:thread_ts
+        and event_ts=:event_ts
+        and name=:name
+        and matter=:matter
+    """
+
 
 def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> None:
     """スコアデータをDBに追加する
@@ -37,7 +91,7 @@ def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(g.SQL_RESULT_INSERT, param)
+            cur.execute(SQL_RESULT_INSERT, param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         score.reactions(param)
@@ -64,7 +118,7 @@ def db_update(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(g.SQL_RESULT_UPDATE, param)
+            cur.execute(SQL_RESULT_UPDATE, param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
         score.reactions(param)
@@ -82,9 +136,9 @@ def db_delete(ts):
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
             delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
-            cur.execute(g.SQL_RESULT_DELETE, (ts,))
+            cur.execute(SQL_RESULT_DELETE, (ts,))
             delete_result = cur.execute("select changes();").fetchone()[0]
-            cur.execute(g.SQL_REMARKS_DELETE_ALL, (ts,))
+            cur.execute(SQL_REMARKS_DELETE_ALL, (ts,))
             delete_remark = cur.execute("select changes();").fetchone()[0]
             cur.commit()
 
@@ -155,7 +209,7 @@ def remarks_append(remarks: dict | list) -> None:
                 row = cur.execute("select * from result where ts=:thread_ts", para).fetchone()
                 if row:
                     if para["name"] in [v for k, v in dict(row).items() if k.endswith("_name")]:
-                        cur.execute(g.SQL_REMARKS_INSERT, para)
+                        cur.execute(SQL_REMARKS_INSERT, para)
                         logging.notice("insert: %s, user=%s", para, g.msg.user_id)  # type: ignore
 
                         if g.cfg.setting.reaction_ok not in lookup.api.reactions_status(ts=para.get("event_ts")):
@@ -173,7 +227,7 @@ def remarks_delete(ts: str) -> None:
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-            cur.execute(g.SQL_REMARKS_DELETE_ONE, (ts,))
+            cur.execute(SQL_REMARKS_DELETE_ONE, (ts,))
             count = cur.execute("select changes();").fetchone()[0]
             cur.commit()
 
@@ -195,7 +249,7 @@ def remarks_delete_compar(para: dict) -> None:
     ch: str | None
 
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-        cur.execute(g.SQL_REMARKS_DELETE_COMPAR, para)
+        cur.execute(SQL_REMARKS_DELETE_COMPAR, para)
         cur.commit()
 
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]

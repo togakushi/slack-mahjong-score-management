@@ -9,8 +9,8 @@ import textwrap
 from datetime import datetime
 
 import lib.global_value as g
-from lib.utils import dateutil
 from lib.data import lookup
+from lib.utils import dateutil
 
 
 def slash_help(command):

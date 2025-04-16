@@ -22,9 +22,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, TableStyle)
 
-from lib.data import loader
 import lib.global_value as g
-from lib.data import lookup
+from lib.data import loader, lookup
 from lib.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")

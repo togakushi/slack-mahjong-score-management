@@ -11,8 +11,8 @@ from typing import Any, Tuple
 
 from dateutil.relativedelta import relativedelta
 
-import lib.global_value as g
 from cls.types import SlackSearchData
+import lib.global_value as g
 from lib.utils import formatter
 
 SlackSearchDict = dict[str, SlackSearchData]

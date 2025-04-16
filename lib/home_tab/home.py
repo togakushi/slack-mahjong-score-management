@@ -5,6 +5,7 @@ lib/home_tab/home.py
 import logging
 
 import lib.global_value as g
+from lib.handler_registry import register
 from lib.home_tab import ui_parts
 
 
@@ -19,54 +20,55 @@ def build_main_menu():
     ui_parts.button(text="直接対戦", action_id="versus_menu")
 
 
-@g.app.action("actionId-back")
-def handle_action(ack, body, client):
-    """戻るボタン
+@register
+def register_home_handlers(app):
+    """ホームタブ操作イベント"""
+    @app.action("actionId-back")
+    def handle_action(ack, body, client):
+        """戻るボタン
 
-    Args:
-        ack (_type_): ack
-        body (dict): イベント内容
-        client (slack_bolt.App.client): slack_boltオブジェクト
-    """
+        Args:
+            ack (_type_): ack
+            body (dict): イベント内容
+            client (slack_bolt.App.client): slack_boltオブジェクト
+        """
 
-    ack()
-    logging.trace(body)  # type: ignore
+        ack()
+        logging.trace(body)  # type: ignore
 
-    build_main_menu()
-    client.views_publish(
-        user_id=g.app_var["user_id"],
-        view=g.app_var["view"],
-    )
+        build_main_menu()
+        client.views_publish(
+            user_id=g.app_var["user_id"],
+            view=g.app_var["view"],
+        )
 
+    @app.action("modal-open-period")
+    def handle_open_modal_button_clicks(ack, body, client):
+        """検索範囲設定選択イベント
 
-@g.app.action("modal-open-period")
-def handle_open_modal_button_clicks(ack, body, client):
-    """検索範囲設定選択イベント
+        Args:
+            ack (_type_): ack
+            body (dict): イベント内容
+            client (slack_bolt.App.client): オブジェクト
+        """
 
-    Args:
-        ack (_type_): ack
-        body (dict): イベント内容
-        client (slack_bolt.App.client): オブジェクト
-    """
+        ack()
+        client.views_open(
+            trigger_id=body["trigger_id"],
+            view=ui_parts.modalperiod_selection(),
+        )
 
-    ack()
-    client.views_open(
-        trigger_id=body["trigger_id"],
-        view=ui_parts.modalperiod_selection(),
-    )
+    @app.action("debug")
+    def handle_debug_action(ack, body):
+        """デバッグ用
 
+        Args:
+            ack (_type_): ack
+            body (dict): イベント内容
+        """
 
-@g.app.action("debug")
-def handle_debug_action(ack, body):
-    """デバッグ用
-
-    Args:
-        ack (_type_): ack
-        body (dict): イベント内容
-    """
-
-    ack()
-    x = body['view']['state']['values']
-    print("-" * 15)
-    print(x.keys())
-    print(x)
+        ack()
+        x = body['view']['state']['values']
+        print("-" * 15)
+        print(x.keys())
+        print(x)

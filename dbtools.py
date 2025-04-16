@@ -4,8 +4,8 @@ dbtools.py
 """
 
 import lib.global_value as g
-from lib.function import tools as t
 from lib.function import configuration
+from lib.function import tools as t
 
 if __name__ == "__main__":
     configuration.setup()

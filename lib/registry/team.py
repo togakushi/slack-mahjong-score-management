@@ -5,9 +5,8 @@ lib/command/team.py
 import logging
 import sqlite3
 
-from lib.data import modify
 import lib.global_value as g
-from lib.data import initialization
+from lib.data import initialization, modify
 from lib.function import configuration
 from lib.utils import formatter, textutil
 

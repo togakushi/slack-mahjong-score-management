@@ -9,8 +9,7 @@ import pandas as pd
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib.data import loader
-from lib.data import aggregate
+from lib.data import aggregate, loader
 from lib.function import message
 from lib.utils import formatter
 

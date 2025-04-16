@@ -10,8 +10,7 @@ from dateutil.relativedelta import relativedelta
 
 import lib.global_value as g
 from cls.types import ComparisonDict, SlackSearchData
-from lib.data import lookup
-from lib.data import modify
+from lib.data import lookup, modify
 from lib.function import score, search, slack_api
 from lib.utils import dateutil, formatter
 

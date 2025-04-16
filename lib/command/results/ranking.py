@@ -11,8 +11,7 @@ from tabulate import tabulate
 
 import lib.global_value as g
 from cls.types import GameInfoDict
-from lib.data import loader
-from lib.data import aggregate
+from lib.data import aggregate, loader
 from lib.function import message, slack_api
 from lib.utils import dictutil, formatter
 
