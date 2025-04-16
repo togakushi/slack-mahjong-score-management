@@ -10,9 +10,10 @@ from cls.search import CommandCheck
 from libs.commands import graph, report, results
 from libs.commands.home_tab import home
 from libs.data import comparison, lookup, modify
-from libs.functions import message, search, slack_api
+from libs.functions import message, slack_api
 from libs.handler_registry import register
 from libs.registry import member, team
+from libs.utils import validator
 
 
 @register
@@ -90,7 +91,7 @@ def register_event_handlers(app):
                     if lookup.db.exsist_record(g.msg.thread_ts):
                         modify.check_remarks()
                 else:
-                    detection = search.pattern(str(g.msg.text))
+                    detection = validator.pattern(str(g.msg.text))
                     if detection:  # 結果報告フォーマットに一致したポストの処理
                         match g.msg.status:
                             case "message_append":

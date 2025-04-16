@@ -13,68 +13,9 @@ from dateutil.relativedelta import relativedelta
 
 from cls.types import SlackSearchData
 import libs.global_value as g
-from libs.utils import formatter
+from libs.utils import formatter, validator
 
 SlackSearchDict = dict[str, SlackSearchData]
-
-
-def pattern(text: str) -> list | bool:
-    """成績記録用フォーマットチェック
-
-    Args:
-        text (str): slackにポストされた内容
-
-    Returns:
-        Tuple[list,bool]:
-        - list: フォーマットに一致すればスペース区切りの名前と素点のペア
-        - False: メッセージのパースに失敗した場合
-    """
-
-    # 記号を置換
-    replace_chr = [
-        (chr(0xff0b), "+"),  # 全角プラス符号
-        (chr(0x2212), "-"),  # 全角マイナス符号
-        (chr(0xff08), "("),  # 全角丸括弧
-        (chr(0xff09), ")"),  # 全角丸括弧
-        (chr(0x2017), "_"),  # DOUBLE LOW LINE(半角)
-    ]
-    for z, h in replace_chr:
-        text = text.replace(z, h)
-
-    text = "".join(text.split())
-
-    # パターンマッチング
-    pattern1 = re.compile(
-        rf"^({g.cfg.search.keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
-    )
-    pattern2 = re.compile(
-        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({g.cfg.search.keyword})$"
-    )
-    pattern3 = re.compile(
-        rf"^({g.cfg.search.keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
-    )
-    pattern4 = re.compile(
-        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({g.cfg.search.keyword})\((.+?)\)$"
-    )
-
-    msg: list | bool
-    match text:
-        case text if pattern1.findall(text):
-            m = pattern1.findall(text)[0]
-            msg = [m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], None]
-        case text if pattern2.findall(text):
-            m = pattern2.findall(text)[0]
-            msg = [m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], None]
-        case text if pattern3.findall(text):
-            m = pattern3.findall(text)[0]
-            msg = [m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[1]]
-        case text if pattern4.findall(text):
-            m = pattern4.findall(text)[0]
-            msg = [m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[9]]
-        case _:
-            msg = False
-
-    return (msg)
 
 
 def slack_messages(word: str) -> SlackSearchDict:
@@ -179,7 +120,7 @@ def for_slack_score() -> SlackSearchDict:
 
     # ゲーム結果の抽出
     for key in list(matches.keys()):
-        detection = pattern(matches[key].get("text", ""))
+        detection = validator.pattern(matches[key].get("text", ""))
         if isinstance(detection, list):
             if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)
