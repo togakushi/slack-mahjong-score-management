@@ -36,6 +36,9 @@
             <li>
                     <a class="function" href="#placeholder">placeholder</a>
             </li>
+            <li>
+                    <a class="function" href="#merge_dicts">merge_dicts</a>
+            </li>
     </ul>
 
 
@@ -64,7 +67,7 @@
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">lib.global_value</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">g</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">lib.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">textutil</span>
@@ -225,6 +228,35 @@
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>            <span class="n">ret_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret_dict</span><span class="p">)</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="k">def</span><span class="w"> </span><span class="nf">merge_dicts</span><span class="p">(</span><span class="n">dict1</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">dict2</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;辞書の内容をマージする</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">    Args:</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">        dict1 (Any): 1つ目の辞書</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        dict2 (Any): 2つ目の辞書</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">    Returns:</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        dict: マージされた辞書</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="n">merged</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict2</span><span class="p">):</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>        <span class="n">val1</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">dict1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>        <span class="n">val2</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">dict2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val2</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val2</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">)))</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span> <span class="k">if</span> <span class="n">val2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">val2</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">merged</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -436,6 +468,65 @@
 
 <blockquote>
   <p>dict: プレースホルダ用辞書</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="merge_dicts">
+                            <input id="merge_dicts-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">merge_dicts</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dict1</span><span class="p">:</span> <span class="n">Any</span>, </span><span class="param"><span class="n">dict2</span><span class="p">:</span> <span class="n">Any</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+                <label class="view-source-button" for="merge_dicts-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#merge_dicts"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="merge_dicts-170"><a href="#merge_dicts-170"><span class="linenos">170</span></a><span class="k">def</span><span class="w"> </span><span class="nf">merge_dicts</span><span class="p">(</span><span class="n">dict1</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">dict2</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="merge_dicts-171"><a href="#merge_dicts-171"><span class="linenos">171</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;辞書の内容をマージする</span>
+</span><span id="merge_dicts-172"><a href="#merge_dicts-172"><span class="linenos">172</span></a>
+</span><span id="merge_dicts-173"><a href="#merge_dicts-173"><span class="linenos">173</span></a><span class="sd">    Args:</span>
+</span><span id="merge_dicts-174"><a href="#merge_dicts-174"><span class="linenos">174</span></a><span class="sd">        dict1 (Any): 1つ目の辞書</span>
+</span><span id="merge_dicts-175"><a href="#merge_dicts-175"><span class="linenos">175</span></a><span class="sd">        dict2 (Any): 2つ目の辞書</span>
+</span><span id="merge_dicts-176"><a href="#merge_dicts-176"><span class="linenos">176</span></a>
+</span><span id="merge_dicts-177"><a href="#merge_dicts-177"><span class="linenos">177</span></a><span class="sd">    Returns:</span>
+</span><span id="merge_dicts-178"><a href="#merge_dicts-178"><span class="linenos">178</span></a><span class="sd">        dict: マージされた辞書</span>
+</span><span id="merge_dicts-179"><a href="#merge_dicts-179"><span class="linenos">179</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="merge_dicts-180"><a href="#merge_dicts-180"><span class="linenos">180</span></a>
+</span><span id="merge_dicts-181"><a href="#merge_dicts-181"><span class="linenos">181</span></a>    <span class="n">merged</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="merge_dicts-182"><a href="#merge_dicts-182"><span class="linenos">182</span></a>
+</span><span id="merge_dicts-183"><a href="#merge_dicts-183"><span class="linenos">183</span></a>    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict2</span><span class="p">):</span>
+</span><span id="merge_dicts-184"><a href="#merge_dicts-184"><span class="linenos">184</span></a>        <span class="n">val1</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">dict1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span id="merge_dicts-185"><a href="#merge_dicts-185"><span class="linenos">185</span></a>        <span class="n">val2</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">dict2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span id="merge_dicts-186"><a href="#merge_dicts-186"><span class="linenos">186</span></a>
+</span><span id="merge_dicts-187"><a href="#merge_dicts-187"><span class="linenos">187</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+</span><span id="merge_dicts-188"><a href="#merge_dicts-188"><span class="linenos">188</span></a>            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span>
+</span><span id="merge_dicts-189"><a href="#merge_dicts-189"><span class="linenos">189</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val2</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="merge_dicts-190"><a href="#merge_dicts-190"><span class="linenos">190</span></a>            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span>
+</span><span id="merge_dicts-191"><a href="#merge_dicts-191"><span class="linenos">191</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val2</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="merge_dicts-192"><a href="#merge_dicts-192"><span class="linenos">192</span></a>            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">val1</span> <span class="o">+</span> <span class="n">val2</span><span class="p">)))</span>
+</span><span id="merge_dicts-193"><a href="#merge_dicts-193"><span class="linenos">193</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="merge_dicts-194"><a href="#merge_dicts-194"><span class="linenos">194</span></a>            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val1</span> <span class="k">if</span> <span class="n">val2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">val2</span>
+</span><span id="merge_dicts-195"><a href="#merge_dicts-195"><span class="linenos">195</span></a>
+</span><span id="merge_dicts-196"><a href="#merge_dicts-196"><span class="linenos">196</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>辞書の内容をマージする</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>dict1 (Any):</strong>  1つ目の辞書</li>
+<li><strong>dict2 (Any):</strong>  2つ目の辞書</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict: マージされた辞書</p>
 </blockquote>
 </div>
 
