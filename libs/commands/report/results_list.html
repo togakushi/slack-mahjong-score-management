@@ -61,7 +61,7 @@
                     <h1 class="modulename">
 <a href="./../../../libs.html">libs</a><wbr>.<a href="./../../commands.html">commands</a><wbr>.<a href="./../report.html">report</a><wbr>.results_list    </h1>
 
-                        <div class="docstring"><p>lib/command/report/results_list.py</p>
+                        <div class="docstring"><p>libs/commands/report/results_list.py</p>
 </div>
 
                         <input id="mod-results_list-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -69,7 +69,7 @@
                         <label class="view-source-button" for="mod-results_list-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">lib/command/report/results_list.py</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">libs/commands/report/results_list.py</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
@@ -101,7 +101,7 @@
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="c1"># --- データ取得</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="n">game_info</span><span class="p">:</span> <span class="n">GameInfoDict</span> <span class="o">=</span> <span class="n">aggregate</span><span class="o">.</span><span class="n">game_info</span><span class="p">()</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;lib/queries/report/results_list.sql&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;libs/queries/report/results_list.sql&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>        <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">)</span>
@@ -357,7 +357,7 @@
 </span><span id="main-32"><a href="#main-32"><span class="linenos">32</span></a>
 </span><span id="main-33"><a href="#main-33"><span class="linenos">33</span></a>    <span class="c1"># --- データ取得</span>
 </span><span id="main-34"><a href="#main-34"><span class="linenos">34</span></a>    <span class="n">game_info</span><span class="p">:</span> <span class="n">GameInfoDict</span> <span class="o">=</span> <span class="n">aggregate</span><span class="o">.</span><span class="n">game_info</span><span class="p">()</span>
-</span><span id="main-35"><a href="#main-35"><span class="linenos">35</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;lib/queries/report/results_list.sql&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="main-35"><a href="#main-35"><span class="linenos">35</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;libs/queries/report/results_list.sql&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="main-36"><a href="#main-36"><span class="linenos">36</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
 </span><span id="main-37"><a href="#main-37"><span class="linenos">37</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="main-38"><a href="#main-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">)</span>

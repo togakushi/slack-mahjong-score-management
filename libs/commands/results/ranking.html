@@ -55,7 +55,7 @@
                     <h1 class="modulename">
 <a href="./../../../libs.html">libs</a><wbr>.<a href="./../../commands.html">commands</a><wbr>.<a href="./../results.html">results</a><wbr>.ranking    </h1>
 
-                        <div class="docstring"><p>lib/command/results/ranking.py</p>
+                        <div class="docstring"><p>libs/commands/results/ranking.py</p>
 </div>
 
                         <input id="mod-ranking-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -63,7 +63,7 @@
                         <label class="view-source-button" for="mod-ranking-view-source"><span>View Source</span></label>
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">lib/command/results/ranking.py</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">libs/commands/results/ranking.py</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -104,7 +104,7 @@
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="k">if</span> <span class="n">game_info</span><span class="p">[</span><span class="s2">&quot;game_count&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># 結果が0件のとき</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;no_hits&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">result_df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;lib/queries/ranking/aggregate.sql&quot;</span><span class="p">))</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">result_df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;libs/queries/ranking/aggregate.sql&quot;</span><span class="p">))</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="k">if</span> <span class="n">result_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;no_hits&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
@@ -296,7 +296,7 @@
 </span><span id="aggregation-41"><a href="#aggregation-41"><span class="linenos"> 41</span></a>    <span class="k">if</span> <span class="n">game_info</span><span class="p">[</span><span class="s2">&quot;game_count&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># 結果が0件のとき</span>
 </span><span id="aggregation-42"><a href="#aggregation-42"><span class="linenos"> 42</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;no_hits&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 </span><span id="aggregation-43"><a href="#aggregation-43"><span class="linenos"> 43</span></a>
-</span><span id="aggregation-44"><a href="#aggregation-44"><span class="linenos"> 44</span></a>    <span class="n">result_df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;lib/queries/ranking/aggregate.sql&quot;</span><span class="p">))</span>
+</span><span id="aggregation-44"><a href="#aggregation-44"><span class="linenos"> 44</span></a>    <span class="n">result_df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;libs/queries/ranking/aggregate.sql&quot;</span><span class="p">))</span>
 </span><span id="aggregation-45"><a href="#aggregation-45"><span class="linenos"> 45</span></a>    <span class="k">if</span> <span class="n">result_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="aggregation-46"><a href="#aggregation-46"><span class="linenos"> 46</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;no_hits&quot;</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 </span><span id="aggregation-47"><a href="#aggregation-47"><span class="linenos"> 47</span></a>
