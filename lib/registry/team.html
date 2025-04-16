@@ -164,8 +164,8 @@
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    Args:</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        argument (list): 登録情報</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">        - argument[0]: 所属させるチーム名</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        - argument[1]: 所属するメンバー名</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">            - argument[0]: 所属させるチーム名</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">            - argument[1]: 所属するメンバー名</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    Returns:</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        str: slackにpostする内容(処理結果)</span>
@@ -225,8 +225,8 @@
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">    Args:</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">        argument (_type_): 登録情報</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">        - argument[0]: 対象チーム名</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">        - argument[1]: チームから離脱するメンバー名</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">            - argument[0]: 対象チーム名</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">            - argument[1]: チームから離脱するメンバー名</span>
 </span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">    Returns:</span>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">        str: slackにpostする内容(処理結果)</span>
@@ -459,8 +459,8 @@
 </span><span id="append-95"><a href="#append-95"><span class="linenos"> 95</span></a>
 </span><span id="append-96"><a href="#append-96"><span class="linenos"> 96</span></a><span class="sd">    Args:</span>
 </span><span id="append-97"><a href="#append-97"><span class="linenos"> 97</span></a><span class="sd">        argument (list): 登録情報</span>
-</span><span id="append-98"><a href="#append-98"><span class="linenos"> 98</span></a><span class="sd">        - argument[0]: 所属させるチーム名</span>
-</span><span id="append-99"><a href="#append-99"><span class="linenos"> 99</span></a><span class="sd">        - argument[1]: 所属するメンバー名</span>
+</span><span id="append-98"><a href="#append-98"><span class="linenos"> 98</span></a><span class="sd">            - argument[0]: 所属させるチーム名</span>
+</span><span id="append-99"><a href="#append-99"><span class="linenos"> 99</span></a><span class="sd">            - argument[1]: 所属するメンバー名</span>
 </span><span id="append-100"><a href="#append-100"><span class="linenos">100</span></a>
 </span><span id="append-101"><a href="#append-101"><span class="linenos">101</span></a><span class="sd">    Returns:</span>
 </span><span id="append-102"><a href="#append-102"><span class="linenos">102</span></a><span class="sd">        str: slackにpostする内容(処理結果)</span>
@@ -521,9 +521,11 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>argument (list):</strong>  登録情報</li>
-<li><strong>- argument[0]:</strong>  所属させるチーム名</li>
-<li><strong>- argument[1]:</strong>  所属するメンバー名</li>
+<li><strong>argument (list):</strong>  登録情報
+<ul>
+<li>argument[0]: 所属させるチーム名</li>
+<li>argument[1]: 所属するメンバー名</li>
+</ul></li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -551,8 +553,8 @@
 </span><span id="remove-156"><a href="#remove-156"><span class="linenos">156</span></a>
 </span><span id="remove-157"><a href="#remove-157"><span class="linenos">157</span></a><span class="sd">    Args:</span>
 </span><span id="remove-158"><a href="#remove-158"><span class="linenos">158</span></a><span class="sd">        argument (_type_): 登録情報</span>
-</span><span id="remove-159"><a href="#remove-159"><span class="linenos">159</span></a><span class="sd">        - argument[0]: 対象チーム名</span>
-</span><span id="remove-160"><a href="#remove-160"><span class="linenos">160</span></a><span class="sd">        - argument[1]: チームから離脱するメンバー名</span>
+</span><span id="remove-159"><a href="#remove-159"><span class="linenos">159</span></a><span class="sd">            - argument[0]: 対象チーム名</span>
+</span><span id="remove-160"><a href="#remove-160"><span class="linenos">160</span></a><span class="sd">            - argument[1]: チームから離脱するメンバー名</span>
 </span><span id="remove-161"><a href="#remove-161"><span class="linenos">161</span></a>
 </span><span id="remove-162"><a href="#remove-162"><span class="linenos">162</span></a><span class="sd">    Returns:</span>
 </span><span id="remove-163"><a href="#remove-163"><span class="linenos">163</span></a><span class="sd">        str: slackにpostする内容(処理結果)</span>
@@ -610,9 +612,11 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>argument (_type_):</strong>  登録情報</li>
-<li><strong>- argument[0]:</strong>  対象チーム名</li>
-<li><strong>- argument[1]:</strong>  チームから離脱するメンバー名</li>
+<li><strong>argument (_type_):</strong>  登録情報
+<ul>
+<li>argument[0]: 対象チーム名</li>
+<li>argument[1]: チームから離脱するメンバー名</li>
+</ul></li>
 </ul>
 
 <h6 id="returns">Returns:</h6>

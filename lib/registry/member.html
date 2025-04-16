@@ -77,8 +77,8 @@
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">    Args:</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">        argument (list): 登録情報</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">        - argument[0]: 登録するメンバー名</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">        - argument[1]: 登録する別名</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">            - argument[0]: 登録するメンバー名</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">            - argument[1]: 登録する別名</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    Returns:</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">        str: slackにpostする内容(処理結果)</span>
@@ -166,8 +166,8 @@
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    Args:</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">        argument (list): 削除情報</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        - argument[0]: 削除するメンバー名</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        - argument[1]: 削除する別名</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">            - argument[0]: 削除するメンバー名</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">            - argument[1]: 削除する別名</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    Returns:</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        str: slackにpostする内容(処理結果)</span>
@@ -229,8 +229,8 @@
 </span><span id="append-17"><a href="#append-17"><span class="linenos"> 17</span></a>
 </span><span id="append-18"><a href="#append-18"><span class="linenos"> 18</span></a><span class="sd">    Args:</span>
 </span><span id="append-19"><a href="#append-19"><span class="linenos"> 19</span></a><span class="sd">        argument (list): 登録情報</span>
-</span><span id="append-20"><a href="#append-20"><span class="linenos"> 20</span></a><span class="sd">        - argument[0]: 登録するメンバー名</span>
-</span><span id="append-21"><a href="#append-21"><span class="linenos"> 21</span></a><span class="sd">        - argument[1]: 登録する別名</span>
+</span><span id="append-20"><a href="#append-20"><span class="linenos"> 20</span></a><span class="sd">            - argument[0]: 登録するメンバー名</span>
+</span><span id="append-21"><a href="#append-21"><span class="linenos"> 21</span></a><span class="sd">            - argument[1]: 登録する別名</span>
 </span><span id="append-22"><a href="#append-22"><span class="linenos"> 22</span></a>
 </span><span id="append-23"><a href="#append-23"><span class="linenos"> 23</span></a><span class="sd">    Returns:</span>
 </span><span id="append-24"><a href="#append-24"><span class="linenos"> 24</span></a><span class="sd">        str: slackにpostする内容(処理結果)</span>
@@ -319,9 +319,11 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>argument (list):</strong>  登録情報</li>
-<li><strong>- argument[0]:</strong>  登録するメンバー名</li>
-<li><strong>- argument[1]:</strong>  登録する別名</li>
+<li><strong>argument (list):</strong>  登録情報
+<ul>
+<li>argument[0]: 登録するメンバー名</li>
+<li>argument[1]: 登録する別名</li>
+</ul></li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -349,8 +351,8 @@
 </span><span id="remove-106"><a href="#remove-106"><span class="linenos">106</span></a>
 </span><span id="remove-107"><a href="#remove-107"><span class="linenos">107</span></a><span class="sd">    Args:</span>
 </span><span id="remove-108"><a href="#remove-108"><span class="linenos">108</span></a><span class="sd">        argument (list): 削除情報</span>
-</span><span id="remove-109"><a href="#remove-109"><span class="linenos">109</span></a><span class="sd">        - argument[0]: 削除するメンバー名</span>
-</span><span id="remove-110"><a href="#remove-110"><span class="linenos">110</span></a><span class="sd">        - argument[1]: 削除する別名</span>
+</span><span id="remove-109"><a href="#remove-109"><span class="linenos">109</span></a><span class="sd">            - argument[0]: 削除するメンバー名</span>
+</span><span id="remove-110"><a href="#remove-110"><span class="linenos">110</span></a><span class="sd">            - argument[1]: 削除する別名</span>
 </span><span id="remove-111"><a href="#remove-111"><span class="linenos">111</span></a>
 </span><span id="remove-112"><a href="#remove-112"><span class="linenos">112</span></a><span class="sd">    Returns:</span>
 </span><span id="remove-113"><a href="#remove-113"><span class="linenos">113</span></a><span class="sd">        str: slackにpostする内容(処理結果)</span>
@@ -400,9 +402,11 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>argument (list):</strong>  削除情報</li>
-<li><strong>- argument[0]:</strong>  削除するメンバー名</li>
-<li><strong>- argument[1]:</strong>  削除する別名</li>
+<li><strong>argument (list):</strong>  削除情報
+<ul>
+<li>argument[0]: 削除するメンバー名</li>
+<li>argument[1]: 削除する別名</li>
+</ul></li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
