@@ -18,7 +18,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install pdoc
+        run: |
+          pip install -U -r requirements.txt
+          pip install -U pdoc
 
       - name: Generate documentation
         run: |
