@@ -194,11 +194,11 @@ class Config():
     ranking: SubCommand
     report: SubCommand
 
-    def __init__(self, filename: str | None = None) -> None:
-        """クラス初期化処理
+    def __init__(self, filename: str) -> None:
+        """サブクラスのセットアップ、設定ファイルの読み込み
 
         Args:
-            filename (str | None, optional): _設定ファイル Defaults to None.
+            filename (str): 設定ファイル
         """
 
         # 共通パラメータ
@@ -211,8 +211,7 @@ class Config():
         self.aggregate_unit: str
         self.undefined_word: int
 
-        if filename is not None:
-            self.read_file(filename)
+        self.read_file(filename)
 
     def read_file(self, filename: str) -> None:
         """設定ファイル読み込み

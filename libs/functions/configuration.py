@@ -157,8 +157,7 @@ def setup() -> None:
         else:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
-    g.cfg = Config()
-    g.cfg.read_file(g.args.config)
+    g.cfg = Config(g.args.config)
     g.search_word = SearchRange()
     g.msg = MessageParser()
 
