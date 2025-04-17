@@ -144,10 +144,15 @@ def statistics_plot() -> Tuple[int, str]:
     if df.empty:
         return (0, message.reply(message="no_hits"))
 
+    if g.params.get("individual"):  # 個人成績
+        player = formatter.name_replace(g.params["player_name"], add_mark=True)
+    else:  # チーム成績
+        df = df.rename(columns={"team": "name"})
+        player = g.params["player_name"]
+
     df = df.filter(items=["playtime", "name", "rpoint", "rank", "point"])
     df["rpoint"] = df["rpoint"] * 100
 
-    player = formatter.name_replace(g.params["player_name"], add_mark=True)
     player_df = df.query("name == @player").reset_index(drop=True)
 
     if player_df.empty:
