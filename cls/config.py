@@ -219,7 +219,7 @@ class Config():
         Args:
             str: 設定ファイル
         Raises:
-            RuntimeError: コンフィグファイル読み込み失敗
+            RuntimeError: 設定ファイル読み込み失敗
             """
 
         # set base directory
