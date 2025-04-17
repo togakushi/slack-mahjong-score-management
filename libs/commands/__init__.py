@@ -2,8 +2,8 @@
 
 各種機能を提供する
 
-- results: 成績集計
-- graph: グラフ描写
-- report: レポート作成
-- home_tab: ホームApp
+- `libs.commands.results`: 成績集計
+- `libs.commands.graph`: グラフ描写
+- `libs.commands.report`: レポート作成
+- `libs.commands.home_tab`: ホームApp
 """
