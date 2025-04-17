@@ -81,8 +81,8 @@ def analysis_argument(argument: list) -> dict:
                 ret.update(ranked=int(re.sub(r"^(トップ|上位|top)([0-9]+)$", r"\2", check_word)))
             case check_word if re.search(r"^(規定数|規定打数)([0-9]+)$", check_word):
                 ret.update(stipulated=int(re.sub(r"^(規定数|規定打数)([0-9]+)$", r"\2", check_word)))
-            case check_word if re.search(r"^(区間|区切リ?|interval)([0-9]+)$", check_word):
-                ret.update(interval=int(re.sub(r"^(区間|区切リ?|interval)([0-9]+)$", r"\2", check_word)))
+            case check_word if re.search(r"^(期間|区間|区切リ?|interval)([0-9]+)$", check_word):
+                ret.update(interval=int(re.sub(r"^(期間|区間|区切リ?|interval)([0-9]+)$", r"\2", check_word)))
             case check_word if re.search(r"^(チーム同卓アリ|コンビアリ|同士討チ)$", check_word):
                 ret.update(friendly_fire=True)
             case check_word if re.search(r"^(チーム同卓ナシ|コンビナシ)$", check_word):
