@@ -4,7 +4,6 @@ test.py
 """
 
 import configparser
-import os
 import random
 import re
 from pprint import pprint
@@ -184,10 +183,6 @@ def main():
 
     initialization.initialization_resultdb()
     configuration.read_memberslist(False)
-
-    print("=" * 120)
-    print(f"config  : {os.path.realpath(os.path.join(g.script_dir, g.args.config))}")
-    print(f"database: {g.cfg.db.database_file}")
 
     for sec in test_conf.sections():
         print("=" * 120)

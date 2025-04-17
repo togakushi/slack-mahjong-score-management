@@ -158,7 +158,7 @@ def setup() -> None:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
     g.cfg = Config()
-    g.cfg.read_file(os.path.join(g.script_dir, g.args.config))
+    g.cfg.read_file(g.args.config)
     g.search_word = SearchRange()
     g.msg = MessageParser()
 
@@ -243,9 +243,8 @@ def graph_setup(plt, fm) -> None:
         if f"font.{x}" in plt.rcParams:
             plt.rcParams[f"font.{x}"] = ""
 
-    font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
-    fm.fontManager.addfont(font_path)
-    font_prop = fm.FontProperties(fname=font_path)
+    fm.fontManager.addfont(g.cfg.setting.font_file)
+    font_prop = fm.FontProperties(fname=g.cfg.setting.font_file)
     plt.rcParams["font.family"] = font_prop.get_name()
 
     # グリッド線

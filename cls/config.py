@@ -8,6 +8,7 @@ import os
 import sys
 from dataclasses import dataclass, field
 from itertools import chain
+from pathlib import Path
 
 from cls.subcom import SubCommand
 from cls.types import CommonMethodMixin
@@ -176,31 +177,40 @@ class DropItems:
 
 class Config():
     """コンフィグ解析クラス"""
+    # コンフィグセクション
+    mahjong: MahjongSection
+    setting: SettingSection
+    search: SearchSection
+    db: DatabaseSection
+    member: MemberSection
+    team: TeamSection
+    alias: AliasSection
+    comment: CommentSection
+    dropitems: DropItems
+    cw: CommandWord
+    # サブコマンド
+    results: SubCommand
+    graph: SubCommand
+    ranking: SubCommand
+    report: SubCommand
+
     def __init__(self, filename: str | None = None) -> None:
-        # コンフィグセクション
-        self.mahjong: MahjongSection
-        self.setting: SettingSection
-        self.search: SearchSection
-        self.db: DatabaseSection
-        self.member: MemberSection
-        self.team: TeamSection
-        self.alias: AliasSection
-        self.comment: CommentSection
-        self.dropitems: DropItems
-        self.cw: CommandWord
-        # サブコマンド
-        self.results: SubCommand
-        self.graph: SubCommand
-        self.ranking: SubCommand
-        self.report: SubCommand
+        """クラス初期化処理
+
+        Args:
+            filename (str | None, optional): _設定ファイル Defaults to None.
+        """
+
         # 共通パラメータ
+        self.config: configparser.ConfigParser
+        self.script_dir: str
+        self.config_dir: str
         self.format: str
         self.filename: str
         self.interval: int
         self.aggregate_unit: str
         self.undefined_word: int
 
-        self.config = configparser.ConfigParser()
         if filename is not None:
             self.read_file(filename)
 
@@ -213,9 +223,13 @@ class Config():
             RuntimeError: コンフィグファイル読み込み失敗
             """
 
-        config_dir = os.path.dirname(filename)
+        # set base directory
+        self.script_dir = os.path.realpath(str(Path(__file__).resolve().parents[1]))
+        self.config_dir = os.path.dirname(os.path.realpath(str(filename)))
+        logging.info("script_dir=%s, config_dir=%s", self.script_dir, self.config_dir)
 
         try:
+            self.config = configparser.ConfigParser()
             self.config.read(os.path.realpath(filename), encoding="utf-8")
             logging.notice("configfile: %s", os.path.realpath(filename))  # type: ignore
             logging.info("read sections: %s", self.config.sections())
@@ -266,16 +280,16 @@ class Config():
         self.report = SubCommand(self.config, "report")
 
         # その他/更新
-        self.db.database_file = os.path.realpath(os.path.join(config_dir, self.db.database_file))
-        self.setting.work_dir = os.path.realpath(os.path.join(config_dir, self.setting.work_dir))
-        self.setting.font_file = os.path.realpath(os.path.join(config_dir, self.setting.font_file))
+        self.db.database_file = os.path.realpath(os.path.join(self.config_dir, self.db.database_file))
+        self.setting.work_dir = os.path.realpath(os.path.join(self.script_dir, self.setting.work_dir))
+        self.setting.font_file = os.path.realpath(os.path.join(self.config_dir, self.setting.font_file))
         self.undefined_word = self.config["regulations"].getint("undefined", 2)
         self.format = str()
         self.filename = str()
         self.aggregate_unit = str()
         self.interval = 80
         if self.db.backup_dir:
-            self.db.backup_dir = os.path.realpath(os.path.join(config_dir, self.db.backup_dir))
+            self.db.backup_dir = os.path.realpath(os.path.join(self.script_dir, self.db.backup_dir))
 
         logging.info("setting=%s", vars(self.setting))
         logging.info("search=%s", vars(self.search))
