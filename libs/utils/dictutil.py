@@ -156,7 +156,6 @@ def placeholder(subcom: "SubCommand") -> dict:
         "rank_point",
         "aggregation_range",
         "regulations_type2",
-        "search_range",
         "unknown_command",
     ]
     for key in drop_keys:

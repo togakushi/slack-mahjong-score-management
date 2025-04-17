@@ -140,7 +140,6 @@ class CommonMethodMixin:
             "config",
             "section",
             "always_argument",
-            "search_range",
         ]
 
         for key in drop_keys:

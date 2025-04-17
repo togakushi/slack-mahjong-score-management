@@ -5,6 +5,9 @@ lib/event.py
 import logging
 import re
 
+import libs.commands.graph.slackpost
+import libs.commands.report.slackpost
+import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.search import CommandCheck
 from libs.commands import graph, report, results
@@ -61,13 +64,13 @@ def register_event_handlers(app):
 
             # 成績管理系コマンド
             case x if re.match(rf"^{g.cfg.cw.results}", x):
-                results.slackpost.main()
+                libs.commands.results.slackpost.main()
             case x if re.match(rf"^{g.cfg.cw.graph}", x):
-                graph.slackpost.main()
+                libs.commands.graph.slackpost.main()
             case x if re.match(rf"^{g.cfg.cw.ranking}", x):
                 results.ranking.main()
             case x if re.match(rf"^{g.cfg.cw.report}", x):
-                report.slackpost.main()
+                libs.commands.report.slackpost.main()
 
             # データベース関連コマンド
             case x if re.match(rf"^{g.cfg.cw.check}", x):
@@ -145,13 +148,13 @@ def register_event_handlers(app):
             match CommandCheck(g.msg.keyword):
                 # 成績管理系コマンド
                 case "results":
-                    results.slackpost.main()
+                    libs.commands.results.slackpost.main()
                 case "graph":
-                    graph.slackpost.main()
+                    libs.commands.graph.slackpost.main()
                 case "ranking":
                     results.ranking.main()
                 case "report":
-                    report.slackpost.main()
+                    libs.commands.report.slackpost.main()
 
                 # データベース関連コマンド
                 case "check":
