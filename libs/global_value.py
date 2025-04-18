@@ -1,6 +1,4 @@
-"""
-lib/global_value.py
-"""
+"""モジュール間データ共有用"""
 
 from datetime import datetime
 from pathlib import Path
@@ -27,8 +25,11 @@ webclient: "WebClient"
 
 # モジュール共通インスタンス
 cfg: "Config"
+"""Configインスタンス共有"""
 msg: "MessageParser"
+"""MessageParserインスタンス共有"""
 search_word: "SearchRange"
+"""SearchRangeインスタンス共有"""
 
 # 固定値
 script_dir: str = str(Path(__file__).resolve().parents[1])
@@ -43,6 +44,7 @@ team_list: list[dict] = []
 - member: 所属メンバー(カンマ区切りの文字列)
 """
 bot_id: str = ""
+"""ボットID"""
 params: dict = {}
 """プレースホルダ用パラメータ"""
 
@@ -58,8 +60,8 @@ app_var: dict = {
 }
 """ホームタブ用初期値"""
 
-# 共通クエリ
 sql: dict = {}
+"""共通クエリ"""
 sql["RESULT_INSERT"] = """
     insert into
         result (
