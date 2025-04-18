@@ -204,7 +204,9 @@ class Config():
         # 共通パラメータ
         self.config: configparser.ConfigParser
         self.script_dir: str
+        """メインスクリプト格納ディレクトリ"""
         self.config_dir: str
+        """設定ファイル格納ディレクトリ"""
         self.format: str
         self.filename: str
         self.interval: int

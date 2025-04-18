@@ -27,7 +27,7 @@ def aggregation():
     # --- データ収集
     game_info: GameInfoDict = aggregate.game_info()
     df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
-    df_game = loader.read_data(os.path.join(g.script_dir, "libs/queries/summary/details.sql"))
+    df_game = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql"))
     df_grandslam = df_game.query("grandslam == grandslam")
 
     if g.params.get("anonymous"):

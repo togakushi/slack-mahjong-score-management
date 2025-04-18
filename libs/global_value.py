@@ -31,8 +31,7 @@ msg: "MessageParser"
 search_word: "SearchRange"
 """SearchRangeインスタンス共有"""
 
-# 固定値
-script_dir: str = str(Path(__file__).resolve().parents[1])
+# 環境パラメータ
 member_list: dict = {}
 """メンバーリスト
 - 別名: 表示名
