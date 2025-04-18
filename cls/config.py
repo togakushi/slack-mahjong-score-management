@@ -313,8 +313,9 @@ class Config():
             words.append([x])
 
         for k, v in self.alias.__dict__.items():
-            words.append([k])
-            words.append(v)
+            if isinstance(v, list):
+                words.append([k])
+                words.append(v)
 
         words = list(set(chain.from_iterable(words)))
         words = ["del" if x == "delete" else x for x in words]
