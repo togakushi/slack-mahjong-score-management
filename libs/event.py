@@ -10,7 +10,7 @@ import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.search import CommandCheck
-from libs.commands import graph, report, results
+from libs.commands import results
 from libs.commands.home_tab import home
 from libs.data import comparison, lookup, modify
 from libs.functions import message, slack_api

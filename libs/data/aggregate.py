@@ -34,8 +34,8 @@ def game_info() -> GameInfoDict:
     }
 
     if cast(int, ret["game_count"]) >= 1:
-        ret["first_game"] = ExtDt(df["first_game"].to_string(index=False)).format("ymdhms")
-        ret["last_game"] = ExtDt(df["last_game"].to_string(index=False)).format("ymdhms")
+        ret["first_game"] = ExtDt(df["first_game"].to_string(index=False))
+        ret["last_game"] = ExtDt(df["last_game"].to_string(index=False))
         ret["first_comment"] = df["first_comment"].to_string(index=False)
         ret["last_comment"] = df["last_comment"].to_string(index=False)
 

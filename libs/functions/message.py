@@ -6,6 +6,7 @@ import logging
 import random
 import re
 import textwrap
+from typing import cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -381,7 +382,7 @@ def item_date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None
     """日付範囲文字列
 
     Args:
-        kind (str): ts_conv()引数
+        kind (str): ExtendedDatetimeのformatメソッドに渡す引数
             - *_o:  表示にondayを使用
         prefix_a (str | None, optional): 単独で返った時の接頭辞. Defaults to None.
         prefix_b (str | None, optional): 範囲で返った時の接頭辞. Defaults to None.
@@ -405,13 +406,13 @@ def item_date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None
 
     if kind.endswith("_o"):
         kind = kind.replace("_o", "")
-        str_st = st.format(kind, delimiter=delimiter)
-        str_et = ot.format(kind, delimiter=delimiter)
+        str_st = st.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
+        str_et = ot.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
     else:
-        str_st = st.format(kind, delimiter=delimiter)
-        str_et = et.format(kind, delimiter=delimiter)
+        str_st = st.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
+        str_et = et.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
 
-    if st.format(kind, delimiter="num") == ot.format(kind, delimiter="num"):
+    if st.format(cast(ExtDt.FormatType, kind), delimiter="num") == ot.format(cast(ExtDt.FormatType, kind), delimiter="num"):
         if prefix_a and prefix_b:
             ret = f"{prefix_a} ({str_st})"
         else:
