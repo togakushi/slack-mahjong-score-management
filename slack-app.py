@@ -1,7 +1,20 @@
 #!/usr/bin/env python3
-"""slack-app.py
+"""
+slack-app.py - Slackに投稿された麻雀のスコアを記録し、集計して表示するツール
 
-Slackに投稿された麻雀のスコアを記録し、集計して表示するツール
+help:
+
+    $ ./slack-app.py --help
+    usage: slack-app.py [-h] [--debug] [--verbose] [--moderate] [--notime] [-c CONFIG]
+
+    options:
+    -h, --help            show this help message and exit
+    --debug               デバッグ情報表示
+    --verbose             詳細デバッグ情報表示
+    --moderate            ログレベルがエラー以下のもを非表示
+    --notime              ログフォーマットから日時を削除
+    -c CONFIG, --config CONFIG
+                            設定ファイル(default: config.ini)
 """
 
 import logging
