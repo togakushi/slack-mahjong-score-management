@@ -92,8 +92,7 @@ def register_ranking_handlers(app):
         g.msg.parser(body)
         g.msg.client = client
 
-        argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        g.cfg.ranking.update(argument)
+        g.msg.argument, app_msg, update_flag = ui_parts.set_command_option(body)
         g.cfg.ranking.update_from_dict(update_flag)
         g.params = dictutil.placeholder(g.cfg.ranking)
 
