@@ -25,7 +25,7 @@ jobs:
       - name: Generate documentation
         run: |
           rm -rf temp_docs
-          pdoc -d google --output-dir temp_docs *.py libs cls
+          pdoc -d google --logo https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEig6avYSN3Ds4H-e_Hib-mB6bYwDH71xSD7vn22M6QVjtzMei0d6T29PZYPOQadAs6AqUe4dzFo4lLhN6gpKCJHugZd5rQdF8m5oXt2BL1gZAv11YQey7bds63cuhP0gFqQwk4hF9yV28sE/s128/ma-jan_pai.png --logo-link '' --output-dir temp_docs *.py libs cls
           touch temp_docs/.nojekyll
 
         env:
