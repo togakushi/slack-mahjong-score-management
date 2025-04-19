@@ -9,10 +9,11 @@ import textwrap
 import pandas as pd
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
 from libs.data import aggregate, loader, lookup
 from libs.functions import message
-from libs.utils import dateutil, formatter, textutil
+from libs.utils import formatter, textutil
 
 
 def aggregation():
@@ -38,8 +39,8 @@ def aggregation():
     mapping_dict: dict = {}
 
     if game_info["game_count"] == 0:
-        msg_data["検索範囲"] = f"{dateutil.ts_conv(g.params["starttime"], "hms")}"
-        msg_data["検索範囲"] += f" ～ {dateutil.ts_conv(g.params["endtime"], "hms")}"
+        msg_data["検索範囲"] = f"{ExtDt(g.params["starttime"]).format("ymdhms")}"
+        msg_data["検索範囲"] += f" ～ {ExtDt(g.params["endtime"]).format("ymdhms")}"
         msg_data["特記事項"] = "、".join(message.remarks())
         msg_data["検索ワード"] = message.search_word()
         msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {message.badge_status(0, 0)}"

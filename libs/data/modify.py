@@ -8,9 +8,9 @@ import re
 import shutil
 import sqlite3
 from contextlib import closing
-from datetime import datetime
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import lookup
 from libs.functions import score, slack_api
 from libs.functions.message import reply
@@ -28,8 +28,7 @@ def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     param = {
         "ts": ts,
-        # "playtime": datetime.fromtimestamp(float(ts)),
-        "playtime": datetime.fromtimestamp(float(ts)).strftime("%Y-%m-%d %H:%M:%S.%f"),
+        "playtime": ExtDt(float(ts)),
         "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
@@ -56,7 +55,7 @@ def db_update(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     param = {
         "ts": ts,
-        "playtime": datetime.fromtimestamp(float(ts)),
+        "playtime": ExtDt(float(ts)),
         "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
@@ -114,7 +113,7 @@ def db_backup() -> str:
 
     fname = os.path.splitext(g.cfg.db.database_file)[0]
     fext = os.path.splitext(g.cfg.db.database_file)[1]
-    bktime = datetime.now().strftime('%Y%m%d-%H%M%S')
+    bktime = ExtDt().format("ext")
     bkfname = os.path.join(g.cfg.db.backup_dir, f"{fname}_{bktime}{fext}")
 
     if not os.path.isdir(g.cfg.db.backup_dir):  # バックアップディレクトリ作成

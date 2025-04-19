@@ -8,9 +8,10 @@ import textwrap
 import pandas as pd
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.functions import message
-from libs.utils import dateutil, formatter
+from libs.utils import formatter
 
 
 def aggregation():
@@ -217,7 +218,7 @@ def tmpl_result_verbose(current_game: pd.DataFrame, playtime: str, guest_count: 
 
     ret = textwrap.dedent(
         f"""\
-        {dateutil.ts_conv(playtime, "hms")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
+        {ExtDt(playtime).format("ymdhms")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
         \t東家：{s1["name"]} {s1["rank"]}位 {s1["rpoint"] * 100:>7} 点 ({s1["point"]:>+5.1f}pt) {s1["grandslam"]}
         \t南家：{s2["name"]} {s2["rank"]}位 {s2["rpoint"] * 100:>7} 点 ({s2["point"]:>+5.1f}pt) {s2["grandslam"]}
         \t西家：{s3["name"]} {s3["rank"]}位 {s3["rpoint"] * 100:>7} 点 ({s3["point"]:>+5.1f}pt) {s3["grandslam"]}

@@ -4,13 +4,13 @@ lib/database/aggregate.py
 
 import logging
 import os
-from datetime import datetime
 from typing import cast
 
 import numpy as np
 import pandas as pd
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
 from libs.data import loader
 from libs.utils import formatter
@@ -27,15 +27,15 @@ def game_info() -> GameInfoDict:
     df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/game.info.sql"))
     ret: GameInfoDict = {
         "game_count": int(df["count"].to_string(index=False)),
-        "first_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
-        "last_game": datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+        "first_game": ExtDt(),
+        "last_game": ExtDt(),
         "first_comment": None,
         "last_comment": None,
     }
 
     if cast(int, ret["game_count"]) >= 1:
-        ret["first_game"] = df["first_game"].to_string(index=False).replace("-", "/")
-        ret["last_game"] = df["last_game"].to_string(index=False).replace("-", "/")
+        ret["first_game"] = ExtDt(df["first_game"].to_string(index=False)).format("ymdhms")
+        ret["last_game"] = ExtDt(df["last_game"].to_string(index=False)).format("ymdhms")
         ret["first_comment"] = df["first_comment"].to_string(index=False)
         ret["last_comment"] = df["last_comment"].to_string(index=False)
 

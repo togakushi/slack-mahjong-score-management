@@ -12,10 +12,11 @@ import pandas as pd
 from matplotlib import gridspec
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.functions import message
 from libs.functions.configuration import graph_setup
-from libs.utils import dateutil, formatter
+from libs.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -63,7 +64,7 @@ def plot() -> Tuple[int, str]:
     fig = plt.figure(figsize=(12, 8))
 
     if g.params.get("target_count", 0) == 0:
-        title_text = f"『{player}』の成績 ({dateutil.ts_conv(g.params["starttime"], "hm")} - {dateutil.ts_conv(g.params["endtime"], "hm")})"
+        title_text = f"『{player}』の成績 ({ExtDt(g.params["starttime"]).format("ymdhm")} - {ExtDt(g.params["endtime"]).format("ymdhm")})"
     else:
         title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
 
@@ -170,7 +171,7 @@ def statistics_plot() -> Tuple[int, str]:
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         player = next(iter(mapping_dict.values()))
 
-    title_text = f"『{player}』の成績 (検索範囲：{message.item_date_range("d")})"
+    title_text = f"『{player}』の成績 (検索範囲：{message.item_date_range("ymd")})"
 
     rpoint_df = get_data(player_df["rpoint"], g.params["interval"])
     point_sum_df = get_data(player_df["point"], g.params["interval"])

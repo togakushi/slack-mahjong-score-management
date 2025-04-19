@@ -69,11 +69,11 @@ def main():
     return (file_path)
 
 
-def graph_generation(game_info, df, title):
+def graph_generation(game_info: GameInfoDict, df, title):
     """グラフ生成処理
 
     Args:
-        game_info (dict): ゲーム情報
+        game_info (GameInfoDict): ゲーム情報
         df (pd.DataFrame): 描写データ
         title (str): グラフタイトル
 

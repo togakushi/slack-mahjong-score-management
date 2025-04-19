@@ -6,11 +6,11 @@ import logging
 import random
 import re
 import textwrap
-from datetime import datetime
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
+from cls.types import GameInfoDict
 from libs.data import lookup
-from libs.utils import dateutil
 
 
 def slash_help(command):
@@ -163,8 +163,8 @@ def reply(message=None, rpoint_sum=0):
         msg = msg.format(
             user_id=g.msg.user_id,
             keyword=g.cfg.search.keyword,
-            start=dateutil.ts_conv(g.params["starttime"], "d"),
-            end=dateutil.ts_conv(g.params["onday"], "d"),
+            start=ExtDt(g.params["starttime"]).format("ymd"),
+            end=ExtDt(g.params["onday"]).format("ymd"),
             rpoint_diff=rpoint_diff * 100,
             rpoint_sum=rpoint_sum * 100,
         )
@@ -238,11 +238,11 @@ def search_word(headword=False):
     return (ret)
 
 
-def header(game_info, add_text="", indent=1):
+def header(game_info: GameInfoDict, add_text="", indent=1):
     """見出し生成
 
     Args:
-        game_info (dict): 集計範囲のゲーム情報
+        game_info (GameInfoDict): 集計範囲のゲーム情報
         add_text (str, optional): 追加表示するテキスト. Defaults to "".
         indent (int, optional): 先頭のタブ数. Defaults to 1.
 
@@ -257,8 +257,8 @@ def header(game_info, add_text="", indent=1):
         game_range1 = f"最初のゲーム：{game_info['first_comment']}\n"
         game_range1 += f"最後のゲーム：{game_info['last_comment']}\n"
     else:
-        game_range1 = f"最初のゲーム：{game_info['first_game']}\n".replace("-", "/")
-        game_range1 += f"最後のゲーム：{game_info['last_game']}\n".replace("-", "/")
+        game_range1 = f"最初のゲーム：{game_info['first_game'].format("ymdhms")}\n"
+        game_range1 += f"最後のゲーム：{game_info['last_game'].format("ymdhms")}\n"
     game_range2 = item_aggregation_range(game_info)
 
     # ゲーム数
@@ -324,19 +324,19 @@ def item_search_range(kind=None, time_pattern=None):
         - `kind` がNone場合は見出し付き文字列
     """
 
-    starttime: datetime | str
-    endtime: datetime | str
+    starttime: str
+    endtime: str
 
     match time_pattern:
         case "day":
-            starttime = dateutil.ts_conv(g.params["starttime"], "ts")
-            endtime = dateutil.ts_conv(g.params["endtime"], "ts")
+            starttime = ExtDt(g.params["starttime"]).format("ts")
+            endtime = ExtDt(g.params["endtime"]).format("ts")
         case "time":
-            starttime = dateutil.ts_conv(g.params["starttime"], "hm")
-            endtime = dateutil.ts_conv(g.params["endtime"], "hm")
+            starttime = ExtDt(g.params["starttime"]).format("ymdhm")
+            endtime = ExtDt(g.params["endtime"]).format("ymdhm")
         case _:
-            starttime = dateutil.ts_conv(g.params["starttime"], "hms")
-            endtime = dateutil.ts_conv(g.params["endtime"], "hms")
+            starttime = ExtDt(g.params["starttime"]).format("ymdhms")
+            endtime = ExtDt(g.params["endtime"]).format("ymdhms")
 
     match kind:
         case "list":
@@ -347,11 +347,11 @@ def item_search_range(kind=None, time_pattern=None):
             return (f"検索範囲：{starttime} ～ {endtime}\n")
 
 
-def item_aggregation_range(game_info, kind=None):
+def item_aggregation_range(game_info: GameInfoDict, kind=None):
     """集計範囲を返す（ヘッダ出力用）
 
     Args:
-        game_info (dict): 集計範囲のゲーム情報
+        game_info (GameInfoDict): 集計範囲のゲーム情報
         kind (str, optional): 表示させるフォーマットを選択. Defaults to None.
 
     Returns:
@@ -365,8 +365,8 @@ def item_aggregation_range(game_info, kind=None):
         first = game_info["first_comment"]
         last = game_info["last_comment"]
     else:
-        first = game_info["first_game"].replace("-", "/")
-        last = game_info["last_game"].replace("-", "/")
+        first = game_info["first_game"].format("ymdhms")
+        last = game_info["last_game"].format("ymdhms")
 
     match kind:
         case "list":
@@ -391,27 +391,36 @@ def item_date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None
     """
 
     ret: str
-    st: str
-    et: str
+    str_st: str
+    str_et: str
+    st = ExtDt(g.params["starttime"])
+    et = ExtDt(g.params["endtime"])
+    ot = ExtDt(g.params["onday"])
+
+    if kind.startswith("j"):
+        kind = kind.replace("j", "")
+        delimiter = "ja"
+    else:
+        delimiter = "slash"
 
     if kind.endswith("_o"):
         kind = kind.replace("_o", "")
-        st = dateutil.ts_conv(g.params["starttime"], kind)
-        et = dateutil.ts_conv(g.params["onday"], kind)
+        str_st = st.format(kind, delimiter=delimiter)
+        str_et = ot.format(kind, delimiter=delimiter)
     else:
-        st = dateutil.ts_conv(g.params["starttime"], kind)
-        et = dateutil.ts_conv(g.params["endtime"], kind)
+        str_st = st.format(kind, delimiter=delimiter)
+        str_et = et.format(kind, delimiter=delimiter)
 
-    if st == dateutil.ts_conv(g.params["onday"], kind):
+    if st.format(kind, delimiter="num") == ot.format(kind, delimiter="num"):
         if prefix_a and prefix_b:
-            ret = f"{prefix_a} ({st})"
+            ret = f"{prefix_a} ({str_st})"
         else:
-            ret = f"{st}"
+            ret = f"{str_st}"
     else:
         if prefix_a and prefix_b:
-            ret = f"{prefix_b} ({st} - {et})"
+            ret = f"{prefix_b} ({str_st} - {str_et})"
         else:
-            ret = f"{st} - {et}"
+            ret = f"{str_st} - {str_et}"
 
     return (ret)
 

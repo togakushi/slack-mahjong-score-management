@@ -60,7 +60,7 @@ def plot():
         f"{g.params["filename"]}.png" if g.params.get("filename") else "rating.png",
     )
 
-    title_text = f"レーティング推移 ({message.item_date_range("hm")})"
+    title_text = f"レーティング推移 ({message.item_date_range("ymdhm")})"
 
     legend_text = []
     count = 1

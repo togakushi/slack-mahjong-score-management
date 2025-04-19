@@ -1,10 +1,8 @@
 """モジュール間データ共有用"""
 
-from datetime import datetime
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-from dateutil.relativedelta import relativedelta
+from cls.timekit import ExtendedDatetime as ExtDt
 
 if TYPE_CHECKING:
     from argparse import Namespace
@@ -54,8 +52,8 @@ app_var: dict = {
     "view_id": None,
     "screen": None,
     "operation": None,
-    "sday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
-    "eday": (datetime.now() + relativedelta(hours=-12)).strftime("%Y-%m-%d"),
+    "sday": (ExtDt() + {"hours": -12}).format("ymd", "-"),
+    "eday": (ExtDt() + {"hours": -12}).format("ymd", "-"),
 }
 """ホームタブ用初期値"""
 

@@ -11,11 +11,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
 from libs.data import aggregate, loader
 from libs.functions import message
 from libs.functions.configuration import graph_setup
-from libs.utils import dateutil, formatter
+from libs.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -51,16 +52,16 @@ def point_plot():
         match g.params["collection"]:
             case "daily":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
-                title_text = message.item_date_range("d_o", "通算ポイント", "ポイント推移")
+                title_text = message.item_date_range("ymd_o", "通算ポイント", "ポイント推移")
             case "monthly":
                 xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
-                title_text = message.item_date_range("jm_o", "通算ポイント", "ポイント推移")
+                title_text = message.item_date_range("jym_o", "通算ポイント", "ポイント推移")
             case "yearly":
                 xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
                 title_text = message.item_date_range("jy_o", "通算ポイント", "ポイント推移")
             case "all":
                 xlabel_text = f"総ゲーム数：{game_info['game_count']}"
-                title_text = message.item_date_range("hm", "通算ポイント", "ポイント推移")
+                title_text = message.item_date_range("ymdhm", "通算ポイント", "ポイント推移")
             case _:
                 if g.params.get("search_word"):
                     pivot_index = "comment"
@@ -71,9 +72,9 @@ def point_plot():
                         title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-                    title_text = message.item_date_range("hm", "通算ポイント", "ポイント推移")
-                    if dateutil.ts_conv(g.params["starttime"], "d") == dateutil.ts_conv(g.params["onday"], "d") and game_info["game_count"] == 1:
-                        title_text = f"獲得ポイント ({dateutil.ts_conv(g.params["starttime"], "d")})"
+                    title_text = message.item_date_range("ymdhm", "通算ポイント", "ポイント推移")
+                    if ExtDt(g.params["starttime"]).format("ymd") == ExtDt(g.params["onday"]).format("ymd") and game_info["game_count"] == 1:
+                        title_text = f"獲得ポイント ({ExtDt(g.params["starttime"]).format("ymd")})"
 
     # 集計
     if g.params.get("individual"):  # 個人集計
@@ -135,16 +136,16 @@ def rank_plot() -> Tuple[int, str]:
         match g.params["collection"]:
             case "daily":
                 xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
-                title_text = message.item_date_range("d_o", "順位", "順位変動")
+                title_text = message.item_date_range("ymd_o", "順位", "順位変動")
             case "monthly":
                 xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
-                title_text = message.item_date_range("jm", "順位", "順位変動")
+                title_text = message.item_date_range("jym", "順位", "順位変動")
             case "yearly":
                 xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
                 title_text = message.item_date_range("jy", "順位", "順位変動")
             case "all":
                 xlabel_text = f"総ゲーム数：{game_info['game_count']}"
-                title_text = message.item_date_range("hm", "順位", "順位変動")
+                title_text = message.item_date_range("ymdhm", "順位", "順位変動")
             case _:
                 if g.params.get("search_word"):
                     pivot_index = "comment"
@@ -155,9 +156,9 @@ def rank_plot() -> Tuple[int, str]:
                         title_text = f"順位変動 ({game_info['first_comment']} - {game_info['last_comment']})"
                 else:
                     xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
-                    title_text = message.item_date_range("hm", "順位", "順位変動")
-                    if dateutil.ts_conv(g.params["starttime"], "d") == dateutil.ts_conv(g.params["onday"], "d") and game_info["game_count"] == 1:
-                        title_text = f"順位 ({dateutil.ts_conv(g.params["starttime"], "d")})"
+                    title_text = message.item_date_range("ymdhm", "順位", "順位変動")
+                    if ExtDt(g.params["starttime"]).format("ymd") == ExtDt(g.params["onday"]).format("ymd") and game_info["game_count"] == 1:
+                        title_text = f"順位 ({ExtDt(g.params["starttime"]).format("ymd")})"
 
     # 集計
     if g.params.get("individual"):  # 個人集計
