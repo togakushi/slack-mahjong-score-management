@@ -189,3 +189,10 @@ class CommonMethodMixin:
                 return (ret)
 
         raise AttributeError(f"{attr} has no default or does not exist.")
+
+
+@dataclass
+class ParsedCommand:
+    flags: dict[str, Any]
+    arguments: list[str]
+    unknown: list[str]

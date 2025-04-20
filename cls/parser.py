@@ -3,11 +3,198 @@ cls/parser.py
 """
 
 import logging
+import re
 
 from slack_sdk import WebClient
 
 import libs.global_value as g
+from cls.types import ParsedCommand
 from libs.data import lookup
+from libs.utils import textutil
+
+COMMANDS = {
+    # -----------------------------------------------------------------------------------
+    "test_case1": {
+        "match": [r"^command_test1$", r"^command_test2$"],
+        "action": lambda w: {"test_flag": True},
+    },
+    "test_case2": {
+        "match": [r"^command_test(3|4|5)$"],
+        "action": lambda w: {"test_flag": False},
+    },
+    "test_case3": {  # 引数アリ
+        "match": [r"^(command_val)(\d*)$"],
+        "action": lambda w: {"test_val": w},
+    },
+    "test_case4": {  # 分岐
+        "match": [r"^command_case1$", r"^command_case2$"],
+        "action": lambda w: {
+            "command_case1": {"test_case": 1},
+            "command_case2": {"test_case": 2},
+        }[w],
+    },
+    # -----------------------------------------------------------------------------------
+    "guest": {
+        "match": [r"^ゲストナシ$", r"^ゲストアリ$", r"^ゲスト無効$"],
+        "action": lambda w: {
+            "ゲストナシ": {"guest_skip": False, "guest_skip2": False, "unregistered_replace": True},
+            "ゲストアリ": {"guest_skip": True, "guest_skip2": True, "unregistered_replace": True},
+            "ゲスト無効": {"unregistered_replace": False},
+        }[w],
+    },
+    "anonymous": {
+        "match": [r"^匿名$", r"^anonymous$"],
+        "action": lambda w: {"anonymous": True},
+    },
+
+    "individual": {
+        "match": [r"^個人$", "^個人成績$"],
+        "action": lambda w: {"individual": True},
+    },
+    "team": {
+        "match": [r"^チーム$", "^チーム成績$", "^team$"],
+        "action": lambda w: {"individual": False},
+    },
+
+    "all_player": {
+        "match": [r"^全員$", r"^all$"],
+        "action": lambda w: {"all_player": True},
+    },
+
+    "a": {
+        "match": [r"^(チーム同卓アリ|コンビアリ|同士討チ)$"],
+        "action": lambda w: {"friendly_fire": True},
+    },
+    "b": {
+        "match": [r"^(チーム同卓ナシ|コンビナシ)$"],
+        "action": lambda w: {"friendly_fire": False},
+    },
+    # --- 動作変更フラグ
+    "score_comparisons": {  # 比較
+        "match": [r"^比較$", r"^点差$", r"^差分$"],
+        "action": lambda w: {"score_comparisons": True},
+    },
+    "order": {  # 順位出力
+        "match": [r"^順位$"],
+        "action": lambda w: {"order": True},
+    },
+    "results": {  # 戦績
+        "match": [r"^順位$"],
+        "action": lambda w: {"game_results": True},
+    },
+    "versus": {  # 対戦結果
+        "match": [r"^対戦結果$", r"^対戦$"],
+        "action": lambda w: {"versus_matrix": True},
+    },
+    "statistics": {  # 統計
+        "match": [r"^統計$"],
+        "action": lambda w: {"statistics": True},
+    },
+    "rating": {  # レーティング
+        "match": [r"^レート$", r"^レーティング$", r"^rate$", r"^ratings?$"],
+        "action": lambda w: {"rating": True},
+    },
+    "verbose": {  # 詳細
+        "match": [r"^詳細$", r"^verbose$"],
+        "action": lambda w: {"verbose": True},
+    },
+    # --- 集計条件
+    "ranked": {
+        "match": [r"^(トップ|上位|top)(\d*)$"],
+        "action": lambda w: {"ranked": w},
+    },
+    "stipulated": {
+        "match": [r"^(規定数|規定打数)(\d*)$"],
+        "action": lambda w: {"stipulated": w}
+    },
+    "interval": {
+        "match": [r"^(期間|区間|区切リ?|interval)(^d*)$"],
+        "action": lambda w: {"interval": w}
+    },
+    # --- 集約 / 検索条件
+    "daily": {
+        "match": [r"^daily$", r"^日次$", r"^デイリー$"],
+        "action": lambda w: {"collection": "daily"},
+    },
+    "monthly": {
+        "match": [r"^monthly$", r"^月次$", r"^マンスリー$"],
+        "action": lambda w: {"collection": "monthly"},
+    },
+    "yearly": {
+        "match": [r"^yearly$", r"^年次$", r"^イヤーリー$"],
+        "action": lambda w: {"collection": "yearly"},
+    },
+    "collection": {
+        "match": [r"^全体$"],
+        "action": lambda w: {"collection": "all"}
+    },
+    "comment": {
+        "match": [r"^(コメント|comment)(.*)$"],
+        "action": lambda w: {"search_word": w}
+    },
+    "grouping": {
+        "match": [r"^(集約)(\d*)$"],
+        "action": lambda w: {"group_length": w}
+    },
+    "rule_version": {
+        "match": [r"^(ルール|rule)(.*)$"],
+        "action": lambda w: {"rule_version": w}
+    },
+    "most_recent": {
+        "match": [r"^(直近)(\d*)$"],
+        "action": lambda w: {"target_count": w}
+    },
+    # --- 出力オプション
+    "format": {
+        "match": [r"^(csv|text|txt)$"],
+        "action": lambda w: {"format": w}
+    },
+    "filename": {
+        "match": [r"^(filename:|ファイル名)(.*)$"],
+        "action": lambda w: {"filename": w}
+    },
+
+}
+
+
+class CommandParser():
+    def __init__(self):
+        pass
+
+    def parse_user_input(self, argument: list[str]) -> ParsedCommand:
+        ret: dict = {}
+        unknown: list = []
+        args: list = []
+
+        for keyword in argument:
+            check_word = textutil.str_conv(keyword.lower(), "h2k")
+            check_word = check_word.replace("無シ", "ナシ").replace("有リ", "アリ")
+
+            for cmd in COMMANDS.values():
+                assert isinstance(cmd, dict), "cmd should be a dict"
+                for pattern in cmd["match"]:
+                    m = re.match(pattern, check_word)
+                    if m:
+                        match len(m.groups()):
+                            case 0:  # 完全一致: ^command$
+                                ret.update(cmd["action"](m.group()))
+                            case 1:  # 選択: ^(command1|command2|...)$
+                                ret.update(cmd["action"](m.groups()[0]))
+                            case 2:  # 引数あり: ^(command)(\d*)$
+                                tmp = cmd["action"](m.groups())
+                                if isinstance(tmp, dict):
+                                    key = next(iter(tmp.keys()))
+                                    val = str(tmp[key][1])
+                                    if "" != val:
+                                        ret.update({key: int(val) if val.isdigit() else val})
+                        break
+                else:
+                    continue
+                break
+            else:
+                unknown.append(keyword)
+
+        return ParsedCommand(flags=ret, arguments=args, unknown=unknown)
 
 
 class MessageParser():
