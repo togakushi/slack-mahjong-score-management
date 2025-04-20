@@ -4,6 +4,7 @@
 work/
 **.pyc
 *.ini
+*.json
 *.db
 *.txt
 *.csv
