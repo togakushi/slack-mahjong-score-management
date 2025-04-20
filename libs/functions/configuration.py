@@ -16,6 +16,26 @@ from cls.parser import MessageParser
 from cls.search import SearchRange
 
 
+def set_loglevel():
+    """ログレベル追加"""
+
+    # DEBUG : 10
+    # INFO : 20
+    # WARNING : 30
+    # ERROR : 40
+    # CRITICAL : 50
+
+    # TRACE
+    logging.TRACE = 19  # type: ignore
+    logging.trace = partial(logging.log, logging.TRACE)  # type: ignore
+    logging.addLevelName(logging.TRACE, "TRACE")  # type: ignore
+
+    # NOTICE
+    logging.NOTICE = 25  # type: ignore
+    logging.notice = partial(logging.log, logging.NOTICE)  # type: ignore
+    logging.addLevelName(logging.NOTICE, "NOTICE")  # type: ignore
+
+
 def arg_parser():
     """コマンドライン解析
 
@@ -119,25 +139,11 @@ def arg_parser():
 
 def setup() -> None:
     """設定ファイル読み込み"""
+    set_loglevel()
+
     g.args = arg_parser()
     if not hasattr(g.args, "testcase"):
         g.args.testcase = False
-
-    # --- ログレベル追加
-    # DEBUG : 10
-    # INFO : 20
-    # WARNING : 30
-    # ERROR : 40
-    # CRITICAL : 50
-    # TRACE
-    logging.TRACE = 19  # type: ignore
-    logging.trace = partial(logging.log, logging.TRACE)  # type: ignore
-    logging.addLevelName(logging.TRACE, "TRACE")  # type: ignore
-
-    # NOTICE
-    logging.NOTICE = 25  # type: ignore
-    logging.notice = partial(logging.log, logging.NOTICE)  # type: ignore
-    logging.addLevelName(logging.NOTICE, "NOTICE")  # type: ignore
 
     if g.args.notime:
         fmt = "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
