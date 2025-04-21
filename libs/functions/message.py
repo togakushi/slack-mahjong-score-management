@@ -164,8 +164,8 @@ def reply(message=None, rpoint_sum=0):
         msg = msg.format(
             user_id=g.msg.user_id,
             keyword=g.cfg.search.keyword,
-            start=ExtDt(g.params["starttime"]).format("ymd"),
-            end=ExtDt(g.params["onday"]).format("ymd"),
+            start=ExtDt(g.params.get("starttime", ExtDt())).format("ymd"),
+            end=ExtDt(g.params.get("onday", ExtDt())).format("ymd"),
             rpoint_diff=rpoint_diff * 100,
             rpoint_sum=rpoint_sum * 100,
         )
