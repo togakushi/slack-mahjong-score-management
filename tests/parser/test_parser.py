@@ -5,10 +5,10 @@ tests/test_parser.py
 import pytest
 
 from cls.parser import CommandParser
-from tests.parser import parameter
+from tests.parser import param_data
 
 
-@pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_01)
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_01)
 def test_flag_commands(input_args, expected_flags):
     """1. フラグ系テスト"""
     parser = CommandParser()
@@ -18,7 +18,7 @@ def test_flag_commands(input_args, expected_flags):
     assert not result.search_range
 
 
-@pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_02)
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_02)
 def test_command_with_argument_int(input_args, expected_flags):
     """2. 引数付きコマンド(数値)"""
     parser = CommandParser()
@@ -30,7 +30,7 @@ def test_command_with_argument_int(input_args, expected_flags):
     assert not result.search_range
 
 
-@pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_03)
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_03)
 def test_command_with_argument_str(input_args, expected_flags):
     """3. 引数付きコマンド(文字)"""
     parser = CommandParser()

@@ -8,12 +8,12 @@ import pytest
 
 from libs.functions import configuration
 from libs.utils import dictutil
-from tests.parser import parameter
+from tests.parser import param_data
 
 TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini"]
 
 
-@pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_01, ids=parameter.flag_test_ids_01)
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_01, ids=param_data.flag_test_ids_01)
 def test_flag_commands(input_args, expected_flags, monkeypatch):
     """1. フラグ系テスト"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
@@ -27,7 +27,7 @@ def test_flag_commands(input_args, expected_flags, monkeypatch):
     assert result == expected_flags
 
 
-@pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_02)
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_02)
 def test_command_with_argument_int(input_args, expected_flags, monkeypatch):
     """2. 引数付きコマンド(数値)"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
@@ -41,7 +41,7 @@ def test_command_with_argument_int(input_args, expected_flags, monkeypatch):
     assert result == expected_flags
 
 
-@pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_03)
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_03)
 def test_command_with_argument_str(input_args, expected_flags, monkeypatch):
     """3. 引数付きコマンド(文字)"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
