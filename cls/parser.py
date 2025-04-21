@@ -10,11 +10,12 @@ from slack_sdk import WebClient
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import ParsedCommand
+from cls.types import CommandSpec, ParsedCommand
 from libs.data.lookup.api import get_dm_channel_id
 from libs.utils import textutil
 
-COMMANDS = {
+CommandsDict = dict[str, CommandSpec]
+COMMANDS: CommandsDict = {
     # -----------------------------------------------------------------------------------
     "test_case1": {
         "match": [r"^command_test1$", r"^command_test2$"],
@@ -155,7 +156,6 @@ COMMANDS = {
         "match": [r"^(filename:|ファイル名)(.*)$"],
         "action": lambda w: {"filename": w}
     },
-
 }
 
 
@@ -216,11 +216,11 @@ class CommandParser():
 
         return ParsedCommand(flags=ret, arguments=args, unknown=unknown, search_range=search_range)
 
-    def _parse_match(self, cmd: dict, m: re.Match) -> dict:
+    def _parse_match(self, cmd: CommandSpec, m: re.Match) -> dict:
         """コマンド名に一致したときの処理
 
         Args:
-            cmd (dict): コマンドマップ
+            cmd (CommandSpec): コマンドマップ
             m (re.Match): Matchオブジェクト
 
         Returns:

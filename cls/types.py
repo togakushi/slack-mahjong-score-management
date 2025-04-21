@@ -2,9 +2,10 @@
 cls/types.py
 """
 
+from collections.abc import Mapping
 from configparser import ConfigParser
 from dataclasses import asdict, dataclass, fields
-from typing import Any, TypedDict, Union
+from typing import Any, Callable, Tuple, TypedDict, Union
 
 from cls.timekit import ExtendedDatetime as ExtDt
 
@@ -202,4 +203,15 @@ class ParsedCommand:
     flags: dict[str, Any]
     arguments: list[str]
     unknown: list[str]
-    search_range: list[str]
+    search_range: list[ExtDt]
+
+
+# CommandParser用
+CommandResult = Mapping[str, Union[str, int, bool, Tuple[str, ...]]]
+CommandAction = Callable[[Union[str, Tuple[str, ...]]], CommandResult]
+
+
+class CommandSpec(TypedDict):
+    """コマンドマッピング"""
+    match: list[str]
+    action: CommandAction

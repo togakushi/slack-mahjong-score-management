@@ -4,7 +4,7 @@ libs/utils/dictutil.py
 
 import logging
 import re
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import libs.global_value as g
 from cls.parser import CommandParser
@@ -46,8 +46,8 @@ def placeholder2(subcom: "SubCommand") -> dict:
     else:
         search_range = ExtDt.get_range(subcom.aggregation_range)
 
-    ret_dict.update(starttime=min(search_range) + {"hours": 12})
-    ret_dict.update(endtime=max(search_range) + {"hours": 12})
+    ret_dict.update(starttime=cast(ExtDt, min(search_range)) + {"hours": 12})
+    ret_dict.update(endtime=cast(ExtDt, max(search_range)) + {"hours": 12})
     ret_dict.update(onday=max(search_range))
 
     return (ret_dict)
