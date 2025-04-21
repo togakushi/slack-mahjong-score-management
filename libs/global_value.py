@@ -2,8 +2,6 @@
 
 from typing import TYPE_CHECKING
 
-from cls.timekit import ExtendedDatetime as ExtDt
-
 if TYPE_CHECKING:
     from argparse import Namespace
 
@@ -45,16 +43,7 @@ bot_id: str = ""
 params: dict = {}
 """プレースホルダ用パラメータ"""
 
-app_var: dict = {
-    "view": {},
-    "no": 0,
-    "user_id": None,
-    "view_id": None,
-    "screen": None,
-    "operation": None,
-    "sday": (ExtDt() + {"hours": -12}).format("ymd", "-"),
-    "eday": (ExtDt() + {"hours": -12}).format("ymd", "-"),
-}
+app_var: dict = {}
 """ホームタブ用初期値"""
 
 sql: dict = {}

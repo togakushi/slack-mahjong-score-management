@@ -10,10 +10,11 @@ import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.search import CommandCheck
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.commands import results
 from libs.commands.home_tab import home
 from libs.data import comparison, modify
-from libs.data.lookup import textdata, db, api
+from libs.data.lookup import api, db, textdata
 from libs.functions import message, slack_api
 from libs.handler_registry import register
 from libs.registry import member, team
@@ -198,6 +199,17 @@ def register_event_handlers(app):
             client (slack_bolt.App.client): slack_boltオブジェクト
             event (dict): イベント内容
         """
+
+        g.app_var = {
+            "view": {},
+            "no": 0,
+            "user_id": None,
+            "view_id": None,
+            "screen": None,
+            "operation": None,
+            "sday": (ExtDt() + {"hours": -12}).format("ymd", "-"),
+            "eday": (ExtDt() + {"hours": -12}).format("ymd", "-"),
+        }
 
         g.app_var["user_id"] = event["user"]
         if "view" in event:
