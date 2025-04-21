@@ -11,7 +11,7 @@ from contextlib import closing
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data import lookup
+from libs.data.lookup import api, db
 from libs.functions import score, slack_api
 from libs.functions.message import reply
 from libs.utils import formatter
@@ -28,7 +28,7 @@ def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     param = {
         "ts": ts,
-        "playtime": ExtDt(float(ts)),
+        "playtime": ExtDt(float(ts)).format("sql"),
         "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
@@ -55,7 +55,7 @@ def db_update(detection: list, ts: str, reactions_data: list | None = None) -> N
 
     param = {
         "ts": ts,
-        "playtime": ExtDt(float(ts)),
+        "playtime": ExtDt(float(ts)).format("sql"),
         "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
@@ -93,11 +93,11 @@ def db_delete(ts):
             logging.notice("remark: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_remark)  # type: ignore
 
         # リアクションをすべて外す
-        for icon in lookup.api.reactions_status():
+        for icon in api.reactions_status():
             slack_api.call_reactions_remove(icon)
         # メモのアイコンを外す
         for x in delete_list:
-            for icon in lookup.api.reactions_status(ts=x):
+            for icon in api.reactions_status(ts=x):
                 slack_api.call_reactions_remove(icon, ts=x)
 
 
@@ -157,7 +157,7 @@ def remarks_append(remarks: dict | list) -> None:
                         cur.execute(g.sql["REMARKS_INSERT"], para)
                         logging.notice("insert: %s, user=%s", para, g.msg.user_id)  # type: ignore
 
-                        if g.cfg.setting.reaction_ok not in lookup.api.reactions_status(ts=para.get("event_ts")):
+                        if g.cfg.setting.reaction_ok not in api.reactions_status(ts=para.get("event_ts")):
                             slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=para.get("event_ts"))
 
             cur.commit()
@@ -180,7 +180,7 @@ def remarks_delete(ts: str) -> None:
             logging.notice("ts=%s, user=%s, count=%s", ts, g.msg.user_id, count)  # type: ignore
 
         if g.msg.status != "message_deleted":
-            if g.cfg.setting.reaction_ok in lookup.api.reactions_status():
+            if g.cfg.setting.reaction_ok in api.reactions_status():
                 slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=ts)
 
 
@@ -202,16 +202,16 @@ def remarks_delete_compar(para: dict) -> None:
     if g.msg.channel_id:
         ch = g.msg.channel_id
     else:
-        ch = lookup.api.get_channel_id()
+        ch = api.get_channel_id()
 
-    icon = lookup.api.reactions_status(ts=para.get("event_ts"))
+    icon = api.reactions_status(ts=para.get("event_ts"))
     if g.cfg.setting.reaction_ok in icon and left == 0:
         slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ch=ch, ts=para.get("event_ts"))
 
 
 def check_remarks() -> None:
     """メモの内容を拾ってDBに格納する"""
-    game_result = lookup.db.exsist_record(g.msg.thread_ts)
+    game_result = db.exsist_record(g.msg.thread_ts)
     if game_result:  # ゲーム結果のスレッドになっているか
         check_list = [v for k, v in game_result.items() if k.endswith("_name")]
 
@@ -241,7 +241,7 @@ def check_remarks() -> None:
 
 def reprocessing_remarks():
     """スレッドの内容を再処理"""
-    res = lookup.api.get_conversations()
+    res = api.get_conversations()
     msg = res.get("messages")
 
     if msg:

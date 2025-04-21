@@ -4,14 +4,19 @@ timekit - datetime 拡張ユーティリティ
 - ExtendedDatetime: 柔軟な初期化と書式変換ができる datetime ラッパー
 """
 
+from collections.abc import Callable
 from datetime import datetime
+from functools import total_ordering
 from typing import Literal, TypeAlias, Union
 
 from dateutil.relativedelta import relativedelta
 
+from libs.data.lookup import db
+
 __all__ = ["ExtendedDatetime"]
 
 
+@total_ordering
 class ExtendedDatetime:
     """datetime拡張ラップクラス
 
@@ -73,6 +78,9 @@ class ExtendedDatetime:
     - **None**: 未指定
     """
 
+    _range_map: dict[str, Callable[[], list[datetime]]] = {}
+    """範囲指定キーワードマップ"""
+
     def __init__(self, value: AcceptedTypes | None = None):
         """ExtendedDatetimeの初期化
 
@@ -82,12 +90,27 @@ class ExtendedDatetime:
         """
 
         self._dt = self._convert(value) if value else datetime.now()
+        self._register_keywords()
 
     def __str__(self) -> str:
         return self.format("sql")
 
     def __repr__(self) -> str:
         return self.format("sql")
+
+    def __eq__(self, other):
+        if isinstance(other, ExtendedDatetime):
+            return self.dt == other.dt
+        if isinstance(other, datetime):
+            return self.dt == other
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, ExtendedDatetime):
+            return self.dt < other.dt
+        if isinstance(other, datetime):
+            return self.dt < other
+        return NotImplemented
 
     def __add__(self, other: Union[relativedelta, dict]) -> "ExtendedDatetime":
         if isinstance(other, dict):
@@ -220,6 +243,70 @@ class ExtendedDatetime:
                 raise ValueError(f"Unknown format: {fmt}")
 
         return (ret)
+
+    @classmethod
+    def get_range(cls, word: str) -> list["ExtendedDatetime"]:
+        """キーワードが示す範囲をリストで返す"""
+        if not cls._range_map:
+            cls._register_keywords()
+
+        if word in cls._range_map:
+            return [ExtendedDatetime(x) for x in cls._range_map[word]()]
+        else:
+            return []
+
+    @classmethod
+    def valid_keywords(cls) -> list[str]:
+        """有効なキーワード一覧"""
+        return list(cls._range_map.keys())
+
+    @classmethod
+    def _register_keywords(cls):
+        """範囲指定キーワードから日時を取得する"""
+        current_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        appointed_time = (datetime.now() + relativedelta(hours=-12)).replace(hour=12, minute=0, second=0, microsecond=0)
+        try:
+            game_first_record = db.first_record() + relativedelta(days=-1)
+        except AttributeError:
+            game_first_record = datetime.fromtimestamp(0)
+
+        def add_keywords(keys: list[str], func: Callable[[], list[datetime]]):
+            for key in keys:
+                cls._range_map[key] = func
+
+        add_keywords(["当日"], lambda: [appointed_time])
+        add_keywords(["今日"], lambda: [current_time])
+        add_keywords(["昨日"], lambda: [current_time + relativedelta(days=-1)])
+        add_keywords(["今月"], lambda: [
+            appointed_time.replace(day=1, hour=0),
+            appointed_time + relativedelta(day=31, hour=23, minute=59, second=59, microsecond=999999),
+        ])
+        add_keywords(["先月"], lambda: [
+            appointed_time + relativedelta(months=-1, day=1, hour=0),
+            appointed_time + relativedelta(months=-1, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        ])
+        add_keywords(["先々月"], lambda: [
+            appointed_time + relativedelta(months=-2, day=1),
+            appointed_time + relativedelta(months=-2, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        ])
+        add_keywords(["今年"], lambda: [
+            current_time.replace(month=1, day=1),
+            current_time.replace(month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        ])
+        add_keywords(["昨年", "去年"], lambda: [
+            current_time + relativedelta(years=-1, month=1, day=1),
+            current_time + relativedelta(years=-1, month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        ])
+        add_keywords(["一昨年"], lambda: [
+            current_time + relativedelta(years=-2, month=1, day=1),
+            current_time + relativedelta(years=-2, month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        ])
+        add_keywords(["最初"], lambda: [game_first_record])
+        add_keywords(["最後"], lambda: [current_time + relativedelta(days=1)])
+        add_keywords(["全部"], lambda: [
+            game_first_record,
+            current_time + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999),
+        ])
 
     def _convert(self, value: AcceptedTypes) -> datetime:
         """引数の型を判定してdatetimeへ変換

@@ -9,7 +9,7 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from libs.data import loader
+from libs.data.loader import read_data
 from libs.functions import message
 from libs.functions.configuration import graph_setup
 
@@ -26,7 +26,7 @@ def plot():
 
     plt.close()
     # --- データ収集
-    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/monthly.sql"))
+    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/monthly.sql"))
     results = df.transpose().to_dict()
 
     if len(results) == 0:

@@ -9,7 +9,8 @@ import pandas as pd
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from libs.data import aggregate, loader
+from libs.data import aggregate
+from libs.data.loader import read_data
 from libs.functions import message
 from libs.utils import formatter
 
@@ -27,7 +28,7 @@ def aggregation():
     # --- データ収集
     game_info: GameInfoDict = aggregate.game_info()
     df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
-    df_game = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql"))
+    df_game = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql"))
     df_grandslam = df_game.query("grandslam == grandslam")
 
     if g.params.get("anonymous"):

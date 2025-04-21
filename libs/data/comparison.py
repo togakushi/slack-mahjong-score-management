@@ -11,7 +11,8 @@ from dateutil.relativedelta import relativedelta
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import ComparisonDict, SlackSearchData
-from libs.data import lookup, modify
+from libs.data import modify
+from libs.data.lookup import api, db
 from libs.functions import score, search, slack_api
 from libs.utils import dictutil
 
@@ -163,7 +164,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
                 continue
 
             # 更新
-            if lookup.db.exsist_record(key).get("rule_version") == g.cfg.mahjong.rule_version:
+            if db.exsist_record(key).get("rule_version") == g.cfg.mahjong.rule_version:
                 count["mismatch"] += 1
                 logging.notice("mismatch: %s", key)  # type: ignore
                 logging.info("  *  slack: %s", textformat(db_score))
@@ -203,8 +204,8 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
 
         # メッセージが残っているならリアクションを外す
         if not g.msg.channel_id:
-            g.msg.channel_id = lookup.api.get_channel_id()
-        for icon in lookup.api.reactions_status(ts=key):
+            g.msg.channel_id = api.get_channel_id()
+        for icon in api.reactions_status(ts=key):
             slack_api.call_reactions_remove(icon, ts=key)
 
     return (count, msg)
@@ -293,7 +294,7 @@ def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
 
         if not g.cfg.setting.thread_report and val.get("in_thread"):
             continue
-        if lookup.db.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
+        if db.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
             continue
 
         score_data = score.get_score(val.get("score"))

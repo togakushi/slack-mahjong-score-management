@@ -11,7 +11,7 @@ from typing import cast
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from libs.data import lookup
+from libs.data.lookup import db
 
 
 def slash_help(command):
@@ -89,7 +89,7 @@ def help_message():
         msg += f"\t{x}\n"
 
     # ルール識別子
-    rule = lookup.db.rule_version()
+    rule = db.rule_version()
     if rule:
         msg += "\n\n*ルール識別子*\n"
         for key, val in rule.items():
@@ -102,7 +102,7 @@ def help_message():
         \t登録キーワード：{g.cfg.cw.remarks_word}
     """)
 
-    words = lookup.db.regulation_list(1)
+    words = db.regulation_list(1)
     if words:
         msg += "\n\t*卓外ポイントワード(個人清算)*\n"
         for word, ex_point in rule:
@@ -111,13 +111,13 @@ def help_message():
                 str(f"{ex_point:.1f}").replace("-", "▲"),
             )
 
-    words = [word for word, _ in lookup.db.regulation_list(2)]
+    words = [word for word, _ in db.regulation_list(2)]
     if g.cfg.undefined_word == 2:
         words += ["未登録ワードのすべてを個別にカウント"]
     if words:
         msg += f"\n\t*個別カウントワード*\n\t\t{'、'.join(words)}\n"
 
-    words = [word for word, _ in lookup.db.regulation_list(0)]
+    words = [word for word, _ in db.regulation_list(0)]
     if g.cfg.undefined_word == 0:
         words += ["未登録ワードのすべてを役満としてカウント"]
     if words:

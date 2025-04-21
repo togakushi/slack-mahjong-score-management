@@ -9,7 +9,7 @@ import re
 import pandas as pd
 
 import libs.global_value as g
-from libs.data import lookup
+from libs.data.lookup import db
 from libs.utils import textutil
 
 
@@ -218,7 +218,7 @@ def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
 
     if g.params.get("individual", True):
         prefix = "Player"
-        id_list = lookup.db.get_member_id()
+        id_list = db.get_member_id()
     else:
         prefix = "Team"
         id_list = {x["team"]: x["id"] for x in g.team_list}

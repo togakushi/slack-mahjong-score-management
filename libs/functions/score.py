@@ -7,7 +7,7 @@ import logging
 import pandas as pd
 
 import libs.global_value as g
-from libs.data import lookup
+from libs.data.lookup import api
 from libs.functions import message, slack_api
 from libs.utils import formatter
 
@@ -120,7 +120,7 @@ def reactions(param: dict):
     if param["reactions_data"]:
         icon = param["reactions_data"]
     else:
-        icon = lookup.api.reactions_status()
+        icon = api.reactions_status()
 
     if rpoint_sum == correct_score:
         if g.cfg.setting.reaction_ng in icon:

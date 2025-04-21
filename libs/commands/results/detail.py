@@ -11,7 +11,9 @@ import pandas as pd
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from libs.data import aggregate, loader, lookup
+from libs.data import aggregate
+from libs.data.loader import read_data
+from libs.data.lookup import internal
 from libs.functions import message
 from libs.utils import formatter, textutil
 
@@ -30,7 +32,7 @@ def aggregation():
     elif g.params["player_name"] in g.member_list:
         g.params.update(individual=True)
 
-    if not g.params.get("individual") and not lookup.internal.get_teammates():
+    if not g.params.get("individual") and not internal.get_teammates():
         return ("登録されていないチームです", {})
 
     # --- データ収集
@@ -116,13 +118,13 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
     if g.params.get("individual"):
         ret["title"] = "*【個人成績】*"
         ret["プレイヤー名"] = f"{player_name} {message.badge_degree(data["ゲーム数"])}"
-        team_list = lookup.internal.which_team(g.params["player_name"])
+        team_list = internal.which_team(g.params["player_name"])
         if team_list:
             ret["所属チーム"] = team_list
     else:
         ret["title"] = "*【チーム成績】*"
         ret["チーム名"] = f"{g.params["player_name"]} {message.badge_degree(data["ゲーム数"])}"
-        ret["登録メンバー"] = "、".join(lookup.internal.get_teammates())
+        ret["登録メンバー"] = "、".join(internal.get_teammates())
 
     badge_status = message.badge_status(data["ゲーム数"], data["win"])
     ret["検索範囲"] = message.item_search_range(kind="str").strip()
@@ -268,7 +270,7 @@ def get_game_results(mapping_dict: dict) -> str:
 
     target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
     p_list: list = []
-    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql")).fillna(value="")
+    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql")).fillna(value="")
 
     if g.params.get("anonymous"):
         mapping_dict.update(formatter.anonymous_mapping(df["name"].unique().tolist(), len(mapping_dict)))
@@ -346,7 +348,7 @@ def get_versus_matrix(mapping_dict: dict) -> str:
     """
 
     ret: str = "\n*【対戦結果】*\n"
-    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/versus_matrix.sql"))
+    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/versus_matrix.sql"))
 
     if g.params.get("anonymous"):
         mapping_dict.update(formatter.anonymous_mapping(df["vs_name"].unique().tolist(), len(mapping_dict)))

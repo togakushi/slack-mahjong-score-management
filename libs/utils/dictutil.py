@@ -2,14 +2,55 @@
 libs/utils/dictutil.py
 """
 
+import logging
 import re
 from typing import TYPE_CHECKING, Any
 
 import libs.global_value as g
+from cls.parser import CommandParser
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.utils import textutil
 
 if TYPE_CHECKING:
     from cls.subcom import SubCommand
+
+
+def placeholder2(subcom: "SubCommand") -> dict:
+    """置き換え用"""
+    parser = CommandParser()
+    ret_dict: dict = {}
+
+    # 設定周りのパラメータ
+    ret_dict.update(command=subcom.section)
+    ret_dict.update(g.cfg.mahjong.to_dict())
+    ret_dict.update(guest_name=g.cfg.member.guest_name)
+
+    # デフォルト値の取り込み
+    ret_dict.update(subcom.to_dict())
+
+    # always_argumentの処理
+    pre_param = parser.analysis_argument(subcom.always_argument)
+    logging.info("%s", pre_param)
+    ret_dict.update(pre_param.flags)
+
+    # 引数の処理
+    param = parser.analysis_argument(g.msg.argument)
+    logging.info("%s", param)
+    ret_dict.update(param.flags)  # 上書き
+
+    # 検索範囲取得
+    if param.search_range:
+        search_range = param.search_range
+    elif pre_param.search_range:
+        search_range = pre_param.search_range
+    else:
+        search_range = ExtDt.get_range(subcom.aggregation_range)
+
+    ret_dict.update(starttime=min(search_range) + {"hours": 12})
+    ret_dict.update(endtime=max(search_range) + {"hours": 12})
+    ret_dict.update(onday=max(search_range))
+
+    return (ret_dict)
 
 
 def analysis_argument(argument: list) -> dict:

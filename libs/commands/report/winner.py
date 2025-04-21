@@ -9,7 +9,7 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from libs.data import loader
+from libs.data.loader import read_data
 from libs.functions import message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
@@ -29,7 +29,7 @@ def plot() -> str | bool:
 
     plt.close()
     # --- データ取得
-    results_df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/winner.sql"))
+    results_df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/winner.sql"))
     if len(results_df) == 0:
         return (False)
 

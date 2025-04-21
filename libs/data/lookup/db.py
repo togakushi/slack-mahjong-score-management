@@ -7,7 +7,7 @@ from contextlib import closing
 from datetime import datetime
 
 import libs.global_value as g
-from libs.data import loader
+from libs.data.loader import query_modification
 
 
 def get_member_id(name: str | None = None) -> dict:
@@ -55,7 +55,7 @@ def member_info(name: str) -> dict:
             and name = ?
     """
 
-    sql = loader.query_modification(sql)
+    sql = query_modification(sql)
     resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(sql, (g.cfg.mahjong.rule_version, name))

@@ -9,7 +9,7 @@ import pandas as pd
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data import loader
+from libs.data.loader import read_data
 from libs.functions import message
 from libs.utils import formatter
 
@@ -28,8 +28,8 @@ def aggregation():
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ収集
-    df_vs = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/versus_matrix.sql"))
-    df_game = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql")).fillna(value="")
+    df_vs = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/versus_matrix.sql"))
+    df_game = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql")).fillna(value="")
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 
     my_name = formatter.name_replace(g.params["player_name"], add_mark=True)

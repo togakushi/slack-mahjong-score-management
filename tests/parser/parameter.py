@@ -34,7 +34,7 @@ flag_test_case_02 = [
 flag_test_case_03 = [
     ("text", {"format": "text"}),
     ("txt", {"format": "txt"}),
-    ("ファイル名ほげ", {"filename": "ホゲ"}),
+    ("ファイル名ほげ", {"filename": "ほげ"}),
     ("ファイル名", {}),
     ("filename:hoge", {"filename": "hoge"}),
 ]

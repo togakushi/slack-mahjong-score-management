@@ -1,35 +1,40 @@
-# tests/test_parser.py
+"""
+tests/test_parser.py
+"""
 
 import pytest
+
 import libs.global_value as g
 from cls.config import Config
 from cls.search import SearchRange
-from libs.functions import configuration
 from cls.subcom import SubCommand
+from libs.functions import configuration
 
 
 def test_empty_config():
+    """空設定チェック"""
     with pytest.raises(RuntimeError):
         Config("./tests/testdata/empty.ini")
         raise ValueError("must be positive")
 
 
 def test_minimal_config():
+    """最小構成"""
     configuration.set_loglevel()
     cfg = Config("./tests/testdata/minimal.ini")
 
     assert cfg.mahjong.origin_point == 250
     assert cfg.mahjong.return_point == 300
 
-    assert cfg.alias.results == []
-    assert cfg.alias.graph == []
-    assert cfg.alias.ranking == []
-    assert cfg.alias.report == []
-    assert cfg.alias.check == []
-    assert cfg.alias.download == []
-    assert cfg.alias.member == []
-    assert cfg.alias.add == []
-    assert cfg.alias.delete == []
+    assert not cfg.alias.results
+    assert not cfg.alias.graph
+    assert not cfg.alias.ranking
+    assert not cfg.alias.report
+    assert not cfg.alias.check
+    assert not cfg.alias.download
+    assert not cfg.alias.member
+    assert not cfg.alias.add
+    assert not cfg.alias.delete
 
 
 
@@ -38,6 +43,7 @@ def test_minimal_config():
     ["results", "graph", "ranking", "report"]
 )
 def test_config_subcommand_default(input_args):
+    """サブコマンドデフォルト値チェック"""
     configuration.set_loglevel()
     g.cfg = Config("./tests/testdata/minimal.ini")
     g.search_word = SearchRange()

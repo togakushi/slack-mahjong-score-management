@@ -13,7 +13,7 @@ from matplotlib import gridspec
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data import loader
+from libs.data.loader import read_data
 from libs.functions import message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
@@ -34,7 +34,7 @@ def plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
+    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
@@ -140,7 +140,7 @@ def statistics_plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql"))
+    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql"))
 
     if df.empty:
         return (0, message.reply(message="no_hits"))

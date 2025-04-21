@@ -9,7 +9,7 @@ import pandas as pd
 from dateutil.relativedelta import relativedelta
 
 import libs.global_value as g
-from libs.data import lookup
+from libs.data.lookup import db
 
 
 class SearchRange():
@@ -18,7 +18,7 @@ class SearchRange():
     day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 
     def __init__(self) -> None:
-        self.first_record = lookup.db.first_record()
+        self.game_first_record = db.first_record()
         self.update()
 
     def update(self) -> None:
@@ -60,13 +60,13 @@ class SearchRange():
             self.current_time + relativedelta(day=31, month=12, years=-2),
         ]
         self.words["最初"] = [
-            self.first_record + relativedelta(days=-1),
+            self.game_first_record + relativedelta(days=-1),
         ]
         self.words["最後"] = [
             self.current_time + relativedelta(days=1),
         ]
         self.words["全部"] = [
-            self.first_record + relativedelta(days=-1),
+            self.game_first_record + relativedelta(days=-1),
             self.current_time + relativedelta(days=1),
         ]
 

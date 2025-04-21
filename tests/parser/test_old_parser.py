@@ -1,4 +1,6 @@
-# tests/test_parser.py
+"""
+tests/test_parser.py
+"""
 
 import sys
 
@@ -11,9 +13,9 @@ from tests.parser import parameter
 TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini"]
 
 
-# 1. フラグ系テスト
 @pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_01, ids=parameter.flag_test_ids_01)
 def test_flag_commands(input_args, expected_flags, monkeypatch):
+    """1. フラグ系テスト"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
 
     configuration.setup()
@@ -25,9 +27,9 @@ def test_flag_commands(input_args, expected_flags, monkeypatch):
     assert result == expected_flags
 
 
-# 2. 引数付きコマンド(数値)
 @pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_02)
 def test_command_with_argument_int(input_args, expected_flags, monkeypatch):
+    """2. 引数付きコマンド(数値)"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
 
     configuration.setup()
@@ -39,9 +41,9 @@ def test_command_with_argument_int(input_args, expected_flags, monkeypatch):
     assert result == expected_flags
 
 
-# 3. 引数付きコマンド(文字)
 @pytest.mark.parametrize("input_args, expected_flags", parameter.flag_test_case_03)
 def test_command_with_argument_str(input_args, expected_flags, monkeypatch):
+    """3. 引数付きコマンド(文字)"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
 
     configuration.setup()

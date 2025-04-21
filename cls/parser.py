@@ -5,11 +5,13 @@ cls/parser.py
 import logging
 import re
 
+import pandas as pd
 from slack_sdk import WebClient
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import ParsedCommand
-from libs.data import lookup
+from libs.data.lookup.api import get_dm_channel_id
 from libs.utils import textutil
 
 COMMANDS = {
@@ -158,35 +160,53 @@ COMMANDS = {
 
 
 class CommandParser():
-    def __init__(self):
-        pass
+    """引数解析クラス"""
 
-    def parse_user_input(self, argument: list[str]) -> ParsedCommand:
+    words: dict = {}
+    """検索範囲で指定できる単語"""
+
+    def __init__(self):
+        self.day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
+
+    def analysis_argument(self, argument: list[str]) -> ParsedCommand:
+        """引数を解析する
+
+        Args:
+            argument (list[str]): 引数
+
+        Returns:
+            ParsedCommand: 結果
+        """
+
         ret: dict = {}
         unknown: list = []
         args: list = []
+        search_range: list = []
 
         for keyword in argument:
             check_word = textutil.str_conv(keyword.lower(), "h2k")
             check_word = check_word.replace("無シ", "ナシ").replace("有リ", "アリ")
 
+            if re.match(r"^([0-9]{8}|[0-9/.-]{8,10})$", check_word):
+                try_day = pd.to_datetime(check_word, errors="coerce").to_pydatetime()
+                if not pd.isna(try_day):
+                    search_range.append(ExtDt(try_day))
+                continue
+
+            if check_word in ExtDt.valid_keywords():
+                search_range.extend(ExtDt.get_range(check_word))
+                continue
+
             for cmd in COMMANDS.values():
                 assert isinstance(cmd, dict), "cmd should be a dict"
                 for pattern in cmd["match"]:
+                    m = re.match(pattern, keyword)
+                    if m:
+                        ret.update(self._parse_match(cmd, m))
+                        break
                     m = re.match(pattern, check_word)
                     if m:
-                        match len(m.groups()):
-                            case 0:  # 完全一致: ^command$
-                                ret.update(cmd["action"](m.group()))
-                            case 1:  # 選択: ^(command1|command2|...)$
-                                ret.update(cmd["action"](m.groups()[0]))
-                            case 2:  # 引数あり: ^(command)(\d*)$
-                                tmp = cmd["action"](m.groups())
-                                if isinstance(tmp, dict):
-                                    key = next(iter(tmp.keys()))
-                                    val = str(tmp[key][1])
-                                    if "" != val:
-                                        ret.update({key: int(val) if val.isdigit() else val})
+                        ret.update(self._parse_match(cmd, m))
                         break
                 else:
                     continue
@@ -194,7 +214,36 @@ class CommandParser():
             else:
                 unknown.append(keyword)
 
-        return ParsedCommand(flags=ret, arguments=args, unknown=unknown)
+        return ParsedCommand(flags=ret, arguments=args, unknown=unknown, search_range=search_range)
+
+    def _parse_match(self, cmd: dict, m: re.Match) -> dict:
+        """コマンド名に一致したときの処理
+
+        Args:
+            cmd (dict): コマンドマップ
+            m (re.Match): Matchオブジェクト
+
+        Returns:
+            dict: 更新用辞書
+        """
+        ret: dict = {}
+
+        match len(m.groups()):
+            case 0:  # 完全一致: ^command$
+                ret.update(cmd["action"](m.group()))
+            case 1:  # 選択: ^(command1|command2|...)$
+                ret.update(cmd["action"](m.groups()[0]))
+            case 2:  # 引数あり: ^(command)(\d*)$
+                tmp = cmd["action"](m.groups())
+                if isinstance(tmp, dict):
+                    key = next(iter(tmp.keys()))
+                    val = str(tmp[key][1])
+                    if "" != val:
+                        if key == "search_word":
+                            val = f"%{val}%"
+                        ret.update({key: int(val) if val.isdigit() else val})
+
+        return (ret)
 
 
 class MessageParser():
@@ -239,11 +288,11 @@ class MessageParser():
                 if _body.get("channel_name") == "directmessage":
                     self.channel_id = _body.get("channel_id", None)
                 else:
-                    self.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
+                    self.channel_id = get_dm_channel_id(_body.get("user_id", ""))
 
         if _body.get("container"):  # Homeタブ
             self.user_id = _body["user"].get("id")
-            self.channel_id = lookup.api.get_dm_channel_id(self.user_id)
+            self.channel_id = get_dm_channel_id(self.user_id)
             self.text = "dummy"
 
         _event = self.get_event_attribute(_body)
@@ -289,7 +338,7 @@ class MessageParser():
                 if _body.get("channel_name") != "directmessage":
                     self.channel_id = _body["event"].get("channel")
                 else:
-                    self.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
+                    self.channel_id = get_dm_channel_id(_body.get("user_id", ""))
 
             match _body["event"].get("subtype"):
                 case "message_changed":

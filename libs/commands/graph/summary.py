@@ -13,7 +13,8 @@ import pandas as pd
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from libs.data import aggregate, loader
+from libs.data import aggregate
+from libs.data.loader import read_data
 from libs.functions import message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
@@ -205,7 +206,7 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     target_data = pd.DataFrame()
     if g.params.get("individual"):  # 個人集計
-        df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
+        df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
 
@@ -221,7 +222,7 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
     else:  # チーム集計
-        df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
+        df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
 

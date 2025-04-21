@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from libs.data import aggregate, loader
+from libs.data import aggregate
+from libs.data.loader import read_data
 from libs.functions import message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
@@ -31,7 +32,7 @@ def main():
 
     # --- データ取得
     game_info: GameInfoDict = aggregate.game_info()
-    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/results_list.sql")).reset_index(drop=True)
+    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/results_list.sql")).reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
         return (False)
