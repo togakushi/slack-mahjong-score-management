@@ -13,8 +13,7 @@ from cls.search import CommandCheck
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.commands import results
 from libs.commands.home_tab import home
-from libs.data import comparison, modify
-from libs.data.lookup import api, db, textdata
+from libs.data import comparison, lookup, modify
 from libs.functions import message, slack_api
 from libs.handler_registry import register
 from libs.registry import member, team
@@ -61,7 +60,7 @@ def register_event_handlers(app):
                 # ヘルプメッセージ
                 slack_api.post_message(message.help_message(), g.msg.event_ts)
                 # メンバーリスト
-                title, msg = textdata.get_members_list()
+                title, msg = lookup.textdata.get_members_list()
                 slack_api.post_text(g.msg.event_ts, title, msg)
 
             # 成績管理系コマンド
@@ -83,17 +82,17 @@ def register_event_handlers(app):
 
             # メンバーリスト/チームリスト
             case x if re.match(rf"^{g.cfg.cw.member}", x):
-                title, msg = textdata.get_members_list()
+                title, msg = lookup.textdata.get_members_list()
                 slack_api.post_text(g.msg.event_ts, title, msg)
             case x if re.match(rf"^{g.cfg.cw.team}", x):
                 title = "チーム一覧"
-                msg = textdata.get_team_list()
+                msg = lookup.textdata.get_team_list()
                 slack_api.post_text(g.msg.event_ts, title, msg)
 
             case _ as x:
-                record_data = db.exsist_record(g.msg.event_ts)
+                record_data = lookup.db.exsist_record(g.msg.event_ts)
                 if re.match(rf"^{g.cfg.cw.remarks_word}", x) and g.msg.in_thread:  # 追加メモ
-                    if db.exsist_record(g.msg.thread_ts):
+                    if lookup.db.exsist_record(g.msg.thread_ts):
                         modify.check_remarks()
                 else:
                     detection = validator.pattern(str(g.msg.text))
@@ -128,7 +127,7 @@ def register_event_handlers(app):
                     else:
                         if record_data:
                             modify.db_delete(g.msg.event_ts)
-                            for icon in api.reactions_status():
+                            for icon in lookup.api.reactions_status():
                                 slack_api.call_reactions_remove(icon)
 
     @app.command(g.cfg.setting.slash_command)
@@ -166,7 +165,7 @@ def register_event_handlers(app):
 
                 # メンバー管理系コマンド
                 case "member":
-                    title, msg = textdata.get_members_list()
+                    title, msg = lookup.textdata.get_members_list()
                     slack_api.post_text(g.msg.event_ts, title, msg)
                 case "add":
                     slack_api.post_message(member.append(g.msg.argument))
@@ -183,7 +182,7 @@ def register_event_handlers(app):
                 case "team_remove":
                     slack_api.post_message(team.remove(g.msg.argument))
                 case "team_list":
-                    slack_api.post_message(textdata.get_team_list())
+                    slack_api.post_message(lookup.textdata.get_team_list())
                 case "team_clear":
                     slack_api.post_message(team.clear())
 

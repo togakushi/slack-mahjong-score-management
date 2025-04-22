@@ -9,9 +9,8 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from libs.data.loader import read_data
-from libs.functions import message
-from libs.functions.configuration import graph_setup
+from libs.data import loader
+from libs.functions import configuration, message
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -26,14 +25,14 @@ def plot():
 
     plt.close()
     # --- データ収集
-    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/monthly.sql"))
+    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/monthly.sql"))
     results = df.transpose().to_dict()
 
     if len(results) == 0:
         return (False)
 
     # --- グラフフォント設定
-    graph_setup(plt, fm)
+    configuration.graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
 
     # 色彩設定

@@ -11,7 +11,7 @@ from typing import Literal, TypeAlias, Union
 
 from dateutil.relativedelta import relativedelta
 
-from libs.data.lookup import db
+from libs.data import lookup
 
 __all__ = ["ExtendedDatetime"]
 
@@ -266,7 +266,7 @@ class ExtendedDatetime:
         current_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         appointed_time = (datetime.now() + relativedelta(hours=-12)).replace(hour=12, minute=0, second=0, microsecond=0)
         try:
-            game_first_record = db.first_record() + relativedelta(days=-1)
+            game_first_record = lookup.db.first_record() + relativedelta(days=-1)
         except AttributeError:
             game_first_record = datetime.fromtimestamp(0)
 

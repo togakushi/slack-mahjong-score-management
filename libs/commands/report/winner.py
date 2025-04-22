@@ -9,9 +9,8 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from libs.data.loader import read_data
-from libs.functions import message
-from libs.functions.configuration import graph_setup
+from libs.data import loader
+from libs.functions import configuration, message
 from libs.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
@@ -29,7 +28,7 @@ def plot() -> str | bool:
 
     plt.close()
     # --- データ取得
-    results_df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/winner.sql"))
+    results_df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/winner.sql"))
     if len(results_df) == 0:
         return (False)
 
@@ -57,7 +56,7 @@ def plot() -> str | bool:
                 )
 
     # --- グラフ設定
-    graph_setup(plt, fm)
+    configuration.graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,

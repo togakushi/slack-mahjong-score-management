@@ -7,7 +7,7 @@ from dataclasses import dataclass, field, fields
 from math import ceil
 
 from cls.types import CommonMethodMixin
-from libs.data.lookup import internal
+from libs.data import lookup
 from libs.functions.search import search_range
 from libs.utils import dictutil, formatter
 
@@ -104,7 +104,7 @@ class SubCommand(CommonMethodMixin):
         target_player: list = []
         player_list: dict = {}
         competition_list: dict = {}
-        team_list: list = internal.get_team()
+        team_list: list = lookup.internal.get_team()
 
         for x in new_flag["unknown_command"]:
             if x in team_list:
@@ -118,7 +118,7 @@ class SubCommand(CommonMethodMixin):
             player_name = target_player[0]
 
         if self.all_player:  # 全員追加
-            target_player = list(set(internal.get_member() + target_player))
+            target_player = list(set(lookup.internal.get_member() + target_player))
         else:
             target_player = list(set(target_player))
 

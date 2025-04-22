@@ -11,8 +11,7 @@ from tabulate import tabulate
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from libs.data import aggregate
-from libs.data.loader import read_data
+from libs.data import aggregate, loader
 from libs.functions import message, slack_api
 from libs.utils import dictutil, formatter
 
@@ -41,7 +40,7 @@ def aggregation() -> Tuple[str, Any]:
     if game_info["game_count"] == 0:  # 結果が0件のとき
         return (message.reply(message="no_hits"), None)
 
-    result_df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/ranking/aggregate.sql"))
+    result_df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/ranking/aggregate.sql"))
     if result_df.empty:
         return (message.reply(message="no_hits"), None)
 

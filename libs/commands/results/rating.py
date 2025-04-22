@@ -8,8 +8,7 @@ import pandas as pd
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from libs.data import aggregate
-from libs.data.loader import read_data
+from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import formatter
 
@@ -27,7 +26,7 @@ def aggregation():
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info: GameInfoDict = aggregate.game_info()
-    df_results = read_data(os.path.join(g.cfg.script_dir, "libs/queries/ranking/results.sql")).set_index("name")
+    df_results = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/ranking/results.sql")).set_index("name")
     df_ratings = aggregate.calculation_rating()
 
     # 最終的なレーティング

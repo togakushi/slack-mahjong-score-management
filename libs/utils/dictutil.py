@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, cast
 import libs.global_value as g
 from cls.parser import CommandParser
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data.lookup import internal
+from libs.data import lookup
 from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
@@ -56,7 +56,7 @@ def placeholder2(subcom: "SubCommand") -> dict:
     target_player: list = []
     player_list: dict = {}
     competition_list: dict = {}
-    team_list: list = internal.get_team()
+    team_list: list = lookup.internal.get_team()
 
     for x in list(set(pre_param.unknown + param.unknown)):
         if x in team_list:
@@ -70,7 +70,7 @@ def placeholder2(subcom: "SubCommand") -> dict:
         player_name = target_player[0]
 
     if ret_dict.get("all_player"):  # 全員追加
-        target_player = list(set(internal.get_member() + target_player))
+        target_player = list(set(lookup.internal.get_member() + target_player))
     else:
         target_player = list(set(target_player))
 

@@ -11,7 +11,7 @@ from slack_sdk import WebClient
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import CommandSpec, ParsedCommand
-from libs.data.lookup.api import get_dm_channel_id
+from libs.data import lookup
 from libs.utils import textutil
 
 CommandsDict = dict[str, CommandSpec]
@@ -322,11 +322,11 @@ class MessageParser():
                 if _body.get("channel_name") == "directmessage":
                     self.channel_id = _body.get("channel_id", None)
                 else:
-                    self.channel_id = get_dm_channel_id(_body.get("user_id", ""))
+                    self.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
 
         if _body.get("container"):  # Homeタブ
             self.user_id = _body["user"].get("id")
-            self.channel_id = get_dm_channel_id(self.user_id)
+            self.channel_id = lookup.api.get_dm_channel_id(self.user_id)
             self.text = "dummy"
 
         _event = self.get_event_attribute(_body)
@@ -372,7 +372,7 @@ class MessageParser():
                 if _body.get("channel_name") != "directmessage":
                     self.channel_id = _body["event"].get("channel")
                 else:
-                    self.channel_id = get_dm_channel_id(_body.get("user_id", ""))
+                    self.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
 
             match _body["event"].get("subtype"):
                 case "message_changed":

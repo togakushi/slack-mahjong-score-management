@@ -23,8 +23,7 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, TableStyle)
 
 import libs.global_value as g
-from libs.data.loader import load_query, query_modification
-from libs.data.lookup.db import member_info
+from libs.data import loader, lookup
 from libs.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
@@ -44,7 +43,7 @@ def get_game_results() -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query_modification(load_query(os.path.join(g.cfg.script_dir, "libs/queries/report/personal_data.sql"))),
+        loader.query_modification(loader.load_query(os.path.join(g.cfg.script_dir, "libs/queries/report/personal_data.sql"))),
         g.params,
     )
 
@@ -108,7 +107,7 @@ def get_count_results(game_count: int) -> list:
     )
     resultdb.row_factory = sqlite3.Row
     rows = resultdb.execute(
-        query_modification(load_query(os.path.join(g.cfg.script_dir, "libs/queries/report/count_data.sql"))),
+        loader.query_modification(loader.load_query(os.path.join(g.cfg.script_dir, "libs/queries/report/count_data.sql"))),
         g.params,
     )
 
@@ -175,7 +174,7 @@ def get_count_moving(game_count: int) -> list:
 
     g.params.update(interval=game_count)
     rows = resultdb.execute(
-        query_modification(load_query(os.path.join(g.cfg.script_dir, "libs/queries/report/count_moving.sql"))),
+        loader.query_modification(loader.load_query(os.path.join(g.cfg.script_dir, "libs/queries/report/count_moving.sql"))),
         g.params,
     )
 
@@ -369,7 +368,7 @@ def gen_pdf() -> Tuple[str | bool, str | bool]:
         return (False, False)
 
     # 対象メンバーの記録状況
-    target_info = member_info(g.params["player_name"])
+    target_info = lookup.db.member_info(g.params["player_name"])
     logging.info(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし

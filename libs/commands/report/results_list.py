@@ -10,10 +10,8 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from libs.data import aggregate
-from libs.data.loader import read_data
-from libs.functions import message
-from libs.functions.configuration import graph_setup
+from libs.data import aggregate, loader
+from libs.functions import configuration, message
 from libs.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
@@ -32,7 +30,7 @@ def main():
 
     # --- データ取得
     game_info: GameInfoDict = aggregate.game_info()
-    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/results_list.sql")).reset_index(drop=True)
+    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/results_list.sql")).reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
         return (False)
@@ -97,8 +95,9 @@ def graph_generation(game_info: GameInfoDict, df, title):
     )
 
     # フォント/色彩設定
-    graph_setup(plt, fm)
+    configuration.graph_setup(plt, fm)
     plt.rcParams["font.size"] = 6
+
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
         case text_color, bg_color if text_color == "black" and bg_color == "white":
             line_color1 = "#dddddd"

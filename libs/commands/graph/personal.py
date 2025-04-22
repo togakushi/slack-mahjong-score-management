@@ -13,9 +13,8 @@ from matplotlib import gridspec
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data.loader import read_data
-from libs.functions import message
-from libs.functions.configuration import graph_setup
+from libs.data import loader
+from libs.functions import configuration, message
 from libs.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
@@ -34,7 +33,7 @@ def plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
+    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
@@ -59,7 +58,7 @@ def plot() -> Tuple[int, str]:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
-    graph_setup(plt, fm)
+    configuration.graph_setup(plt, fm)
 
     fig = plt.figure(figsize=(12, 8))
 
@@ -140,7 +139,7 @@ def statistics_plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql"))
+    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql"))
 
     if df.empty:
         return (0, message.reply(message="no_hits"))
@@ -246,7 +245,7 @@ def statistics_plot() -> Tuple[int, str]:
     rank_table["平均順位"] = count_df.apply(lambda row: "{:.2f}".format(row["平均順位"]), axis=1)  # pylint: disable=consider-using-f-string
 
     # グラフ設定
-    graph_setup(plt, fm)
+    configuration.graph_setup(plt, fm)
     fig = plt.figure(figsize=(20, 10))
     fig.suptitle(title_text, size=20, weight="bold")
     gs = gridspec.GridSpec(figure=fig, nrows=3, ncols=2)

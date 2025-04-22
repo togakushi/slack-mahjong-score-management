@@ -13,10 +13,8 @@ import pandas as pd
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from libs.data import aggregate
-from libs.data.loader import read_data
-from libs.functions import message
-from libs.functions.configuration import graph_setup
+from libs.data import aggregate, loader
+from libs.functions import configuration, message
 from libs.utils import formatter
 
 mlogger = logging.getLogger("matplotlib")
@@ -206,7 +204,7 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     target_data = pd.DataFrame()
     if g.params.get("individual"):  # 個人集計
-        df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
+        df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
 
@@ -222,7 +220,7 @@ def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
     else:  # チーム集計
-        df = read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
+        df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
         if df.empty:
             return (target_data, df)
 
@@ -265,7 +263,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
-    graph_setup(plt, fm)
+    configuration.graph_setup(plt, fm)
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
         kwargs["kind"] = "barh"
