@@ -158,13 +158,3 @@ def register_personal_handlers(app):
             view_id=g.app_var["view_id"],
             view=build_personal_menu(),
         )
-
-    @app.action("aid-personal_search_range")
-    def handle_view_update(ack, view, client):
-        ack()
-
-        print("!aid-search_range")
-        client.views_update(
-            view_id=g.app_var["view_id"],
-            view=build_personal_menu(),
-        )
