@@ -1,7 +1,28 @@
 """
 timekit - datetime 拡張ユーティリティ
 
-- ExtendedDatetime: 柔軟な初期化と書式変換ができる datetime ラッパー
+ExtendedDatetime: 柔軟な初期化と書式変換ができる datetime ラッパー
+
+Examples:
+    >>> from cls.timekit import ExtendedDatetime
+    >>> t = ExtendedDatetime("2025-04-19 12:34:56")
+    >>> t.format("ymdhm")
+    '2025/04/19 12:34'
+
+    >>> t.set("2025-05-01 00:00:00")
+    >>> t.format("sql")
+    '2025-05-01 00:00:00.000000'
+
+    >>> from dateutil.relativedelta import relativedelta
+    >>> t2 = t + relativedelta(days=93)
+    >>> t2.format("ymd")
+    '2025/08/02'
+
+    >>> t + {"days": 1, "months": 2}
+    2025-07-02 00:00:00.000000
+
+    >>> dict(zip(("start","end"), ExtendedDatetime.get_range("今月").format("ymd")))
+    {'start': '2025/04/01', 'end': '2025/04/30'}
 """
 
 from collections.abc import Callable
@@ -13,31 +34,37 @@ from dateutil.relativedelta import relativedelta
 
 from libs.data import lookup
 
-__all__ = ["ExtendedDatetime"]
+FormatType: TypeAlias = Literal[
+    "ts", "y", "ym", "ymd", "ymdhm", "ymdhms", "hm", "hms", "sql", "ext",
+]
+"""フォーマット変換で指定する種類
+- **ts**: タイムスタンプ
+- **y**: %Y
+- **ym**: %Y/%m
+- **ymd**: %Y/%m/%d
+- **ymdhm**: %Y/%m/%d %H:%M
+- **ymdhms**: %Y/%m/%d %H:%M:%S
+- **hm**: %H:%M:%S
+- **hms**: %H:%M
+- **sql**: SQLite用フォーマット(%Y-%m-%d %H:%M:%S.%f)
+- **ext**: ファイル拡張子用(%Y%m%d-%H%M%S)
+"""
+
+DelimiterStyle: TypeAlias = Literal[
+    "slash", "/", "hyphen", "-", "ja", "number", "num", None
+]
+"""区切り記号
+- **slash** | **/**: スラッシュ(ex: %Y/%m/%d)
+- **hyphen** | **-**: ハイフン(ex: %Y-%m-%d)
+- **number** | **num**: 無し (ex: %Y%m%d)
+- **ja**: Japanese Style (ex: %Y%年m%月d日)
+- **None**: 未指定
+"""
 
 
 @total_ordering
 class ExtendedDatetime:
-    """datetime拡張ラップクラス
-
-    Examples:
-        >>> from cls.timekit import ExtendedDatetime
-        >>> t = ExtendedDatetime("2025-04-19 12:34:56")
-        >>> t.format("ymdhm")
-        '2025/04/19 12:34'
-
-        >>> t.set("2025-05-01 00:00:00")
-        >>> t.format("sql")
-        '2025-05-01 00:00:00.000000'
-
-        >>> from dateutil.relativedelta import relativedelta
-        >>> t2 = t + relativedelta(days=93)
-        >>> t2.format("ymd")
-        '2025/08/02'
-
-        >>> t + {"days": 1, "months": 2}
-        2025-07-02 00:00:00.000000
-    """
+    """datetime拡張クラス"""
 
     _dt: datetime
     """操作対象"""
@@ -48,34 +75,6 @@ class ExtendedDatetime:
     - **str**: 日付文字列（ISO形式など）
     - **float**: UNIXタイムスタンプ
     - **datetime** / **ExtendedDatetime**: オブジェクトをそのまま利用
-    """
-
-    FormatType: TypeAlias = Literal[
-        "ts", "y", "ym", "ymd", "ymdhm", "ymdhms", "hm", "hms",
-        "sql", "ext",
-    ]
-    """フォーマット変換で指定する種類
-    - **ts**: タイムスタンプ
-    - **y**: %Y
-    - **ym**: %Y/%m
-    - **ymd**: %Y/%m/%d
-    - **ymdhm**: %Y/%m/%d %H:%M
-    - **ymdhms**: %Y/%m/%d %H:%M:%S
-    - **hm**: %H:%M:%S
-    - **hms**: %H:%M
-    - **sql**: SQLite用フォーマット(%Y-%m-%d %H:%M:%S.%f)
-    - **ext**: ファイル拡張子用(%Y%m%d-%H%M%S)
-    """
-
-    DelimiterStyle: TypeAlias = Literal[
-        "slash", "/", "hyphen", "-", "ja", "number", "num", None
-    ]
-    """区切り記号
-    - **slash** | **/**: スラッシュ(ex: %Y/%m/%d)
-    - **hyphen** | **-**: ハイフン(ex: %Y-%m-%d)
-    - **number** | **num**: 無し (ex: %Y%m%d)
-    - **ja**: Japanese Style (ex: %Y%年m%月d日)
-    - **None**: 未指定
     """
 
     _range_map: dict[str, Callable[[], list[datetime]]] = {}
@@ -245,15 +244,15 @@ class ExtendedDatetime:
         return (ret)
 
     @classmethod
-    def get_range(cls, word: str) -> list["ExtendedDatetime"]:
+    def get_range(cls, word: str) -> "ExtendedDatetimeList":
         """キーワードが示す範囲をリストで返す"""
         if not cls._range_map:
             cls._register_keywords()
 
         if word in cls._range_map:
-            return [ExtendedDatetime(x) for x in cls._range_map[word]()]
+            return ExtendedDatetimeList([ExtendedDatetime(x) for x in cls._range_map[word]()])
         else:
-            return []
+            return ExtendedDatetimeList([])
 
     @classmethod
     def valid_keywords(cls) -> list[str]:
@@ -334,3 +333,20 @@ class ExtendedDatetime:
                 return datetime.strptime(value, "%Y/%m/%d %H:%M")
         else:
             raise TypeError("Unsupported type for datetime conversion")
+
+
+class ExtendedDatetimeList(list):
+    """ExtendedDatetimeを要素とする日付リストを扱う補助クラス"""
+    @property
+    def start(self) -> ExtendedDatetime | None:
+        """リスト内の最小日付を返す。空ならNone。"""
+        return (min(self) if self else None)
+
+    @property
+    def end(self) -> ExtendedDatetime | None:
+        """リスト内の最大日付を返す。空ならNone。"""
+        return (max(self) if self else None)
+
+    def format(self, fmt: FormatType, delimiter: DelimiterStyle = None) -> list[str]:
+        """リストの全要素にformatを適用した文字列リストを返す"""
+        return [dt.format(fmt, delimiter) for dt in self if isinstance(dt, ExtendedDatetime)]
