@@ -171,7 +171,7 @@ def statistics_plot() -> Tuple[int, str]:
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         player = next(iter(mapping_dict.values()))
 
-    title_text = f"『{player}』の成績 (検索範囲：{message.item_date_range("ymd")})"
+    title_text = f"『{player}』の成績 (検索範囲：{message.item_date_range("ymd_o")})"
 
     rpoint_df = get_data(player_df["rpoint"], g.params["interval"])
     point_sum_df = get_data(player_df["point"], g.params["interval"])
