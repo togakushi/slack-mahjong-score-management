@@ -205,7 +205,6 @@ class CommandParser():
                 for pattern in cmd["match"]:
                     m = re.match(pattern, keyword)
                     if m:
-                        print("match original")
                         ret.update(self._parse_match(cmd, m))
                         break
                     m = re.match(pattern, check_word)
