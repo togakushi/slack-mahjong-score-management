@@ -5,6 +5,7 @@ libs/commands/home_tab/versus.py
 import logging
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.commands import results
 from libs.commands.home_tab import ui_parts
 from libs.functions import slack_api
@@ -23,14 +24,18 @@ def build_versus_menu():
     ui_parts.user_select_pulldown(text="対象プレイヤー")
     ui_parts.multi_select_pulldown(text="対戦相手", add_list=["全員"])
 
+    # 検索範囲設定
+    [s1, e1] = ExtDt.get_range("今月")
+    [s2, e2] = ExtDt.get_range("先月")
+    [s3, e3] = ExtDt.get_range("全部")
     ui_parts.divider()
     ui_parts.radio_buttons(
         id_suffix="search_range",
         title="検索範囲",
         flag={
-            "今月": "今月",
-            "先月": "先月",
-            "全部": "全部",
+            "今月": f"今月：{s1.format("ymd")} ～ {e1.format("ymd")}",
+            "先月": f"先月：{s2.format("ymd")} ～ {e2.format("ymd")}",
+            "全部": f"全部：{s3.format("ymd")} ～ {e3.format("ymd")}",
             "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
         }
     )
