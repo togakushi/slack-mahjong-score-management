@@ -4,14 +4,15 @@
 
 # フラグ更新
 flag_test_case_01 = [
-    ("ゲストナシ", {"guest_skip": False, "guest_skip2": False, "unregistered_replace": True}),
+    ("ゲストなし", {"guest_skip": False, "guest_skip2": False, "unregistered_replace": True}),
     ("比較", {"score_comparisons": True}),
-
+    ("ratings", {"rating": True}),
 ]
 
 flag_test_ids_01 = [
     "guest_skip",
     "score_comparisons",
+    "ratings",
 ]
 
 # 数値引数
@@ -26,8 +27,8 @@ flag_test_case_02 = [
 
     ("直近0", {"target_count": 0}),
     ("直近10", {"target_count": 10}),
-
     ("上位3 規定数20", {"stipulated": 20, "ranked": 3, }),
+    ("区切25", {"interval": 25}),
 ]
 
 # 文字列引数
@@ -37,4 +38,10 @@ flag_test_case_03 = [
     ("ファイル名ほげ", {"filename": "ほげ"}),
     ("ファイル名", {}),
     ("filename:hoge", {"filename": "hoge"}),
+    ("filename:***", {}),
+    ("ルール９９９", {"rule_version": "９９９"}),
+    ("ルール0", {"rule_version": "0"}),
+    ("コメントひらがな", {"search_word": "%ひらがな%"}),
+    ("こめんとかたかな", {"search_word": "%カタカナ%"}),
+    ("コメント数字９９９", {"search_word": "%数字９９９%"}),
 ]
