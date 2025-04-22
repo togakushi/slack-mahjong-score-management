@@ -9,7 +9,8 @@ from typing import TYPE_CHECKING, Any, cast
 import libs.global_value as g
 from cls.parser import CommandParser
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.utils import textutil
+from libs.data.lookup import internal
+from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
     from cls.subcom import SubCommand
@@ -49,6 +50,42 @@ def placeholder2(subcom: "SubCommand") -> dict:
     ret_dict.update(starttime=cast(ExtDt, min(search_range)) + {"hours": 12})
     ret_dict.update(endtime=cast(ExtDt, max(search_range)) + {"hours": 12})
     ret_dict.update(onday=max(search_range))
+
+    # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
+    player_name: str = str()
+    target_player: list = []
+    player_list: dict = {}
+    competition_list: dict = {}
+    team_list: list = internal.get_team()
+
+    for x in list(set(pre_param.unknown + param.unknown)):
+        if x in team_list:
+            target_player.append(x)
+        elif ret_dict.get("individual") and ret_dict.get("unregistered_replace"):
+            target_player.append(formatter.name_replace(x))
+        else:
+            target_player.append(x)
+
+    if target_player:
+        player_name = target_player[0]
+
+    if ret_dict.get("all_player"):  # 全員追加
+        target_player = list(set(internal.get_member() + target_player))
+    else:
+        target_player = list(set(target_player))
+
+    # リスト生成
+    for idx, name in enumerate(target_player):
+        player_list[f"player_{idx}"] = name
+        competition_list[f"competition_{idx}"] = name
+
+    for delete_key in [k for k, v in competition_list.items() if v == player_name]:
+        del competition_list[delete_key]
+
+    ret_dict.update(player_name=player_name)
+    ret_dict.update(target_player=target_player)
+    ret_dict.update(player_list=player_list)
+    ret_dict.update(competition_list=competition_list)
 
     return (ret_dict)
 
@@ -153,6 +190,7 @@ def analysis_argument(argument: list) -> dict:
 
     ret.update(search_range=search_range)
     ret.update(unknown_command=unknown_command)
+
     return (ret)
 
 

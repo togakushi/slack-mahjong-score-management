@@ -5,7 +5,7 @@ cls/types.py
 from collections.abc import Mapping
 from configparser import ConfigParser
 from dataclasses import asdict, dataclass, fields
-from typing import Any, Callable, Tuple, TypedDict, Union
+from typing import Any, Callable, Tuple, TypedDict, Union, Literal
 
 from cls.timekit import ExtendedDatetime as ExtDt
 
@@ -140,7 +140,6 @@ class CommonMethodMixin:
         ret_dict: dict = asdict(self)
         ret_dict.update(format=getattr(self, "format", ""))
         ret_dict.update(filename=getattr(self, "filename", ""))
-        ret_dict.update(interval=getattr(self, "interval", 80))
 
         drop_keys: list = [
             "config",
@@ -211,7 +210,8 @@ CommandResult = Mapping[str, Union[str, int, bool, Tuple[str, ...]]]
 CommandAction = Callable[[Union[str, Tuple[str, ...]]], CommandResult]
 
 
-class CommandSpec(TypedDict):
+class CommandSpec(TypedDict, total=False):
     """コマンドマッピング"""
     match: list[str]
     action: CommandAction
+    type: Literal["int", "str", "sql", "filename"]

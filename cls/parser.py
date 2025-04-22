@@ -34,7 +34,7 @@ COMMANDS: CommandsDict = {
         "action": lambda w: {
             "command_case1": {"test_case": 1},
             "command_case2": {"test_case": 2},
-        }[w],
+        }[w[0] if isinstance(w, tuple) else w],
     },
     # -----------------------------------------------------------------------------------
     "guest": {
@@ -43,7 +43,7 @@ COMMANDS: CommandsDict = {
             "ゲストナシ": {"guest_skip": False, "guest_skip2": False, "unregistered_replace": True},
             "ゲストアリ": {"guest_skip": True, "guest_skip2": True, "unregistered_replace": True},
             "ゲスト無効": {"unregistered_replace": False},
-        }[w],
+        }[w[0] if isinstance(w, tuple) else w],
     },
     "anonymous": {
         "match": [r"^匿名$", r"^anonymous$"],
@@ -111,7 +111,7 @@ COMMANDS: CommandsDict = {
         "action": lambda w: {"stipulated": w}
     },
     "interval": {
-        "match": [r"^(期間|区間|区切リ?|interval)(^d*)$"],
+        "match": [r"^(期間|区間|区切リ?|interval)(\d*)$"],
         "action": lambda w: {"interval": w}
     },
     # --- 集約 / 検索条件
@@ -133,7 +133,8 @@ COMMANDS: CommandsDict = {
     },
     "comment": {
         "match": [r"^(コメント|comment)(.*)$"],
-        "action": lambda w: {"search_word": w}
+        "action": lambda w: {"search_word": w},
+        "type": "sql",
     },
     "grouping": {
         "match": [r"^(集約)(\d*)$"],
@@ -141,7 +142,8 @@ COMMANDS: CommandsDict = {
     },
     "rule_version": {
         "match": [r"^(ルール|rule)(.*)$"],
-        "action": lambda w: {"rule_version": w}
+        "action": lambda w: {"rule_version": w},
+        "type": "str",
     },
     "most_recent": {
         "match": [r"^(直近)(\d*)$"],
@@ -150,11 +152,13 @@ COMMANDS: CommandsDict = {
     # --- 出力オプション
     "format": {
         "match": [r"^(csv|text|txt)$"],
-        "action": lambda w: {"format": w}
+        "action": lambda w: {"format": w},
+        "type": "str",
     },
     "filename": {
         "match": [r"^(filename:|ファイル名)(.*)$"],
-        "action": lambda w: {"filename": w}
+        "action": lambda w: {"filename": w},
+        "type": "filename",
     },
 }
 
@@ -198,10 +202,10 @@ class CommandParser():
                 continue
 
             for cmd in COMMANDS.values():
-                assert isinstance(cmd, dict), "cmd should be a dict"
                 for pattern in cmd["match"]:
                     m = re.match(pattern, keyword)
                     if m:
+                        print("match original")
                         ret.update(self._parse_match(cmd, m))
                         break
                     m = re.match(pattern, check_word)
@@ -239,9 +243,18 @@ class CommandParser():
                     key = next(iter(tmp.keys()))
                     val = str(tmp[key][1])
                     if "" != val:
-                        if key == "search_word":
-                            val = f"%{val}%"
-                        ret.update({key: int(val) if val.isdigit() else val})
+                        match cmd.get("type"):
+                            case "str":
+                                ret.update({key: val})
+                            case "sql":
+                                ret.update({key: f"%{val}%"})
+                            case "filename":
+                                if re.search(r"^[\w\-\.]+$", val):
+                                    ret.update({key: val})
+                            case "int":
+                                ret.update({key: int(val)})
+                            case _:
+                                ret.update({key: int(val) if val.isdigit() else val})
 
         return (ret)
 
