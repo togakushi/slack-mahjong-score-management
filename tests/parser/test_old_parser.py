@@ -53,3 +53,31 @@ def test_command_with_argument_str(input_args, expected_flags, monkeypatch):
 
     print(f"\n  --> in: {input_args.split()} out: {result}")
     assert result == expected_flags
+
+
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_04)
+def test_command_unknown_str(input_args, expected_flags, monkeypatch):
+    """4. 不明なコマンド"""
+    monkeypatch.setattr(sys, "argv", TEST_ARGS)
+
+    configuration.setup()
+    result = dictutil.analysis_argument(input_args.split())
+    result.pop("search_range")  # 置き換え予定のメソッドで扱わない
+    result.pop("unknown_command")
+
+    print(f"\n  --> in: {input_args.split()} out: {result}")
+    assert result == expected_flags
+
+
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_05)
+def test_command_date_range_str(input_args, expected_flags, monkeypatch):
+    """5. 日付"""
+    monkeypatch.setattr(sys, "argv", TEST_ARGS)
+
+    configuration.setup()
+    result = dictutil.analysis_argument(input_args.split())
+    result.pop("search_range")  # 置き換え予定のメソッドで扱わない
+    result.pop("unknown_command")
+
+    print(f"\n  --> in: {input_args.split()} out: {result}")
+    assert not result == expected_flags

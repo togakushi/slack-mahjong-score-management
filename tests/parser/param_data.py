@@ -2,6 +2,9 @@
 テスト用パラメータ
 """
 
+from cls.timekit import ExtendedDatetime as ExtDt
+
+
 # フラグ更新
 flag_test_case_01 = [
     ("ゲストなし", {"guest_skip": False, "guest_skip2": False, "unregistered_replace": True}),
@@ -45,3 +48,17 @@ flag_test_case_03 = [
     ("こめんとかたかな", {"search_word": "%カタカナ%"}),
     ("コメント数字９９９", {"search_word": "%数字９９９%"}),
 ]
+
+# 未定義
+flag_test_case_04 = [
+    ("未定義01", ["未定義01"]),
+    ("未定義02 未定義03", ["未定義02", "未定義03"]),
+]
+
+# 日付
+flag_test_case_05 = [
+    ("今月", ExtDt.get_range("今月").format("sql")),
+    ("20250101", ExtDt("20250101").format("sql")),
+    ("2025-01-01", ExtDt("20250101").format("sql")),
+    ("2025/01/01", ExtDt("20250101").format("sql")),
+    ("2025.01.01", ExtDt("20250101").format("sql")),]

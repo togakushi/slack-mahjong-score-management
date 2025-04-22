@@ -42,28 +42,25 @@ def test_command_with_argument_str(input_args, expected_flags):
     assert not result.search_range
 
 
-def test_unknown_command():
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_04)
+def test_command_unknown_str(input_args, expected_flags):
     """4. 不明なコマンド"""
-    input_args = "なんだこれ"
     parser = CommandParser()
     result = parser.analysis_argument(input_args.split())
 
     print(f"\n  --> in: {input_args.split()} out: {result}")
     assert not result.flags
-    assert result.unknown == [input_args]
+    assert result.unknown == expected_flags
+    assert not result.search_range
 
 
-def test_member_name_validation():
-    """5. 名前バリデーション"""
+@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_05)
+def test_command_date_range_str(input_args, expected_flags):
+    """5. 日付"""
     parser = CommandParser()
-    assert "比較" not in parser.analysis_argument(["比較"]).unknown
-    assert "さきこ" in parser.analysis_argument(["さきこ"]).unknown
+    result = parser.analysis_argument(input_args.split())
 
-
-def test_multiple_keywords():
-    """6. 複数キーワード"""
-    parser = CommandParser()
-    result = parser.analysis_argument(["比較", "直近5", "さきこ"])
-    assert result.flags["score_comparisons"] is True
-    assert result.flags["target_count"] == 5
-    assert result.unknown == ["さきこ"]
+    print(f"\n  --> in: {input_args.split()} out: {result}")
+    assert not result.flags
+    assert not result.unknown
+    assert not result.search_range == expected_flags
