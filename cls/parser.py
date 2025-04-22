@@ -172,8 +172,30 @@ class CommandParser():
     def __init__(self):
         self.day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 
+    @classmethod
+    def is_valid_command(cls, word: str) -> bool:
+        """引数がコマンド名と一致するか判定する
+
+        Args:
+            word (str): チェック文字列
+
+        Returns:
+            bool: 真偽
+        """
+
+        for cmd in COMMANDS.values():
+            for pattern in cmd["match"]:
+                m = re.match(pattern, word)
+                if m:
+                    return (True)
+                m = re.match(pattern, textutil.str_conv(word.lower(), "h2k"))
+                if m:
+                    return (True)
+
+        return (False)
+
     def analysis_argument(self, argument: list[str]) -> ParsedCommand:
-        """引数を解析する
+        """コマンドライン引数を解析する
 
         Args:
             argument (list[str]): 引数
