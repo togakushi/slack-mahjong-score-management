@@ -21,8 +21,11 @@ Examples:
     >>> t + {"days": 1, "months": 2}
     2025-07-02 00:00:00.000000
 
-    >>> dict(zip(("start","end"), ExtendedDatetime.get_range("今月").format("ymd")))
-    {'start': '2025/04/01', 'end': '2025/04/30'}
+    >>> ExtendedDatetime.get_range("今月").format("ymdhm")
+    ['2025/04/01 00:00', '2025/04/30 23:59']
+
+    >>> ExtendedDatetime.get_range("今月").dict_format("ymd", "ja")
+    {'start': '2025年04月01日', 'end': '2025年04月30日'}
 """
 
 from collections.abc import Callable
@@ -76,6 +79,9 @@ class ExtendedDatetime:
     - **float**: UNIXタイムスタンプ
     - **datetime** / **ExtendedDatetime**: オブジェクトをそのまま利用
     """
+
+    FormatType: TypeAlias = FormatType
+    DelimiterStyle: TypeAlias = DelimiterStyle
 
     _range_map: dict[str, Callable[[], list[datetime]]] = {}
     """範囲指定キーワードマップ"""
@@ -347,6 +353,18 @@ class ExtendedDatetimeList(list):
         """リスト内の最大日付を返す。空ならNone。"""
         return (max(self) if self else None)
 
-    def format(self, fmt: FormatType, delimiter: DelimiterStyle = None) -> list[str]:
+    def format(self, fmt: FormatType = "sql", delimiter: DelimiterStyle = None) -> list[str]:
         """リストの全要素にformatを適用した文字列リストを返す"""
         return [dt.format(fmt, delimiter) for dt in self if isinstance(dt, ExtendedDatetime)]
+
+    def dict_format(self, fmt: FormatType = "sql", delimiter: DelimiterStyle = None) -> dict[str, str]:
+        """リストの全要素にformatを適用した辞書を返す"""
+        date_range = [dt.format(fmt, delimiter) for dt in self if isinstance(dt, ExtendedDatetime)]
+
+        if not date_range:
+            return ({})
+
+        s = min(date_range)
+        e = max(date_range)
+
+        return {"start": s, "end": e}
