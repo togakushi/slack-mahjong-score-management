@@ -171,7 +171,7 @@ class ExtendedDatetime:
         """ExtendedDatetimeの初期化
 
         Args:
-            value (`AcceptedType` | None, optional): 引数
+            value (AcceptedType | None, optional): 引数
                - None: 現在時刻(`datetime.now()`)で初期化
         """
 
@@ -238,7 +238,7 @@ class ExtendedDatetime:
         """渡された値をdatetime型に変換して保持
 
         Args:
-            value (`AcceptedType`): 入力値
+            value (AcceptedType): 入力値
         """
 
         self._dt = self.convert(value)
@@ -247,8 +247,8 @@ class ExtendedDatetime:
         """フォーマット変換
 
         Args:
-            fmt (`FormatType`): 変換形式
-            delimiter (`DelimiterStyle`): 区切り
+            fmt (FormatType): 変換形式
+            delimiter (DelimiterStyle): 区切り
 
         Raises:
             ValueError: 受け付けない変換形式
@@ -385,7 +385,7 @@ class ExtendedDatetime:
         """引数の型を判定してdatetimeへ変換
 
         Args:
-            value (`AcceptedType`): 変換対象
+            value (AcceptedType): 変換対象
 
         Raises:
             TypeError: str型が変換できない場合
@@ -429,8 +429,8 @@ class ExtendedDatetimeList(list):
         """全要素にformatを適用した文字列リストを返す
 
         Args:
-            fmt (`FormatType`, optional): フォーマット変換. Defaults to "sql".
-            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.
+            fmt (FormatType, optional): フォーマット変換. Defaults to "sql".
+            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.
 
         Returns:
             list[str]: 生成したリスト
@@ -442,8 +442,8 @@ class ExtendedDatetimeList(list):
         """全要素にformatを適用し、最小日付と最大日付を辞書で返す
 
         Args:
-            fmt (`FormatType`, optional): フォーマット変換. Defaults to "sql".
-            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.
+            fmt (FormatType, optional): フォーマット変換. Defaults to "sql".
+            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.
 
         Returns:
             dict[str, str]: 生成した辞書
