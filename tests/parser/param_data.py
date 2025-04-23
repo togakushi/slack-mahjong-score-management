@@ -57,7 +57,7 @@ flag_test_case_04 = [
 
 # 日付
 flag_test_case_05 = [
-    ("今月", ExtDt.get_range("今月").format("sql")),
+    ("今月", ExtDt.range("今月").format("sql")),
     ("20250101", ExtDt("20250101").format("sql")),
     ("2025-01-01", ExtDt("20250101").format("sql")),
     ("2025/01/01", ExtDt("20250101").format("sql")),

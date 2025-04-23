@@ -21,9 +21,9 @@ def build_summary_menu():
     ui_parts.header("【成績サマリ】")
 
     # 検索範囲設定
-    [s1, e1] = ExtDt.get_range("今月")
-    [s2, e2] = ExtDt.get_range("先月")
-    [s3, e3] = ExtDt.get_range("全部")
+    [s1, e1] = ExtDt.range("今月")
+    [s2, e2] = ExtDt.range("先月")
+    [s3, e3] = ExtDt.range("全部")
     ui_parts.divider()
     ui_parts.radio_buttons(
         id_suffix="search_range",

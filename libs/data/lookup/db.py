@@ -148,17 +148,20 @@ def first_record() -> datetime:
     """
 
     ret = datetime.now()
-    with closing(sqlite3.connect(g.cfg.db.database_file)) as resultdb:
-        table_count = resultdb.execute(
-            "select count() from sqlite_master where type='view' and name='game_results';",
-        ).fetchall()[0][0]
-
-        if table_count:
-            record = resultdb.execute(
-                "select min(playtime) from game_results where rule_version=?;",
-                (g.cfg.mahjong.rule_version, )
+    try:
+        with closing(sqlite3.connect(g.cfg.db.database_file)) as resultdb:
+            table_count = resultdb.execute(
+                "select count() from sqlite_master where type='view' and name='game_results';",
             ).fetchall()[0][0]
-            if record:
-                ret = datetime.fromisoformat(record)
+
+            if table_count:
+                record = resultdb.execute(
+                    "select min(playtime) from game_results where rule_version=?;",
+                    (g.cfg.mahjong.rule_version, )
+                ).fetchall()[0][0]
+                if record:
+                    ret = datetime.fromisoformat(record)
+    except AttributeError:
+        ret = datetime.now()
 
     return (ret)

@@ -45,7 +45,7 @@ def placeholder2(subcom: "SubCommand") -> dict:
     elif pre_param.search_range:
         search_range = pre_param.search_range
     else:
-        search_range = ExtDt.get_range(subcom.aggregation_range)
+        search_range = ExtDt.range(subcom.aggregation_range)
 
     ret_dict.update(starttime=cast(ExtDt, min(search_range)) + {"hours": 12})
     ret_dict.update(endtime=cast(ExtDt, max(search_range)) + {"hours": 12})

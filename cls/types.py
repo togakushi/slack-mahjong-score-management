@@ -5,9 +5,12 @@ cls/types.py
 from collections.abc import Mapping
 from configparser import ConfigParser
 from dataclasses import asdict, dataclass, fields
-from typing import Any, Callable, Tuple, TypedDict, Union, Literal
+from datetime import datetime
+from typing import (TYPE_CHECKING, Any, Callable, Literal, Tuple, TypedDict,
+                    Union)
 
-from cls.timekit import ExtendedDatetime as ExtDt
+if TYPE_CHECKING:
+    from cls.timekit import ExtendedDatetime
 
 
 class GameInfoDict(TypedDict):
@@ -22,8 +25,8 @@ class GameInfoDict(TypedDict):
     """
 
     game_count: int
-    first_game: ExtDt
-    last_game: ExtDt
+    first_game: "ExtendedDatetime"
+    last_game: "ExtendedDatetime"
     first_comment: str | None
     last_comment: str | None
 
@@ -89,6 +92,12 @@ class SlackSearchData(TypedDict, total=False):
     """スコア報告なら結果"""
     remarks: list
     """メモならその内容"""
+
+
+class DateRangeSpec(TypedDict):
+    """日付範囲変換キーワード用辞書"""
+    keyword: list[str]
+    range: Callable[[], list[datetime]]
 
 
 @dataclass
@@ -202,7 +211,7 @@ class ParsedCommand:
     flags: dict[str, Any]
     arguments: list[str]
     unknown: list[str]
-    search_range: list[ExtDt]
+    search_range: list["ExtendedDatetime"]
 
 
 # CommandParser用
