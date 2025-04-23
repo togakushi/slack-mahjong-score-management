@@ -346,7 +346,7 @@
 </span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ExtendedDatetimeの初期化</span>
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>
 </span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">        Args:</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">            value (`AcceptedType` | None, optional): 引数</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">            value (AcceptedType | None, optional): 引数</span>
 </span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">               - None: 現在時刻(`datetime.now()`)で初期化</span>
 </span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>
@@ -413,7 +413,7 @@
 </span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;渡された値をdatetime型に変換して保持</span>
 </span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>
 </span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="sd">        Args:</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">            value (`AcceptedType`): 入力値</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">            value (AcceptedType): 入力値</span>
 </span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>
 </span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -422,8 +422,8 @@
 </span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;フォーマット変換</span>
 </span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>
 </span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a><span class="sd">        Args:</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">            fmt (`FormatType`): 変換形式</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="sd">            delimiter (`DelimiterStyle`): 区切り</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">            fmt (FormatType): 変換形式</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="sd">            delimiter (DelimiterStyle): 区切り</span>
 </span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="sd">        Raises:</span>
 </span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="sd">            ValueError: 受け付けない変換形式</span>
@@ -560,7 +560,7 @@
 </span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;引数の型を判定してdatetimeへ変換</span>
 </span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>
 </span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a><span class="sd">        Args:</span>
-</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a><span class="sd">            value (`AcceptedType`): 変換対象</span>
+</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a><span class="sd">            value (AcceptedType): 変換対象</span>
 </span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>
 </span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a><span class="sd">        Raises:</span>
 </span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a><span class="sd">            TypeError: str型が変換できない場合</span>
@@ -604,8 +604,8 @@
 </span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;全要素にformatを適用した文字列リストを返す</span>
 </span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>
 </span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a><span class="sd">        Args:</span>
-</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a><span class="sd">            fmt (`FormatType`, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
-</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a><span class="sd">            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.</span>
+</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a><span class="sd">            fmt (FormatType, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a><span class="sd">            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.</span>
 </span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>
 </span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a><span class="sd">        Returns:</span>
 </span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a><span class="sd">            list[str]: 生成したリスト</span>
@@ -617,19 +617,19 @@
 </span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;全要素にformatを適用し、最小日付と最大日付を辞書で返す</span>
 </span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>
 </span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a><span class="sd">        Args:</span>
-</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a><span class="sd">            fmt (`FormatType`, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
-</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a><span class="sd">            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.</span>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a><span class="sd">            fmt (FormatType, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
+</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a><span class="sd">            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.</span>
 </span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a>
 </span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a><span class="sd">        Returns:</span>
 </span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a><span class="sd">            dict[str, str]: 生成した辞書</span>
 </span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a>
-</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>        <span class="n">date_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">)</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">ExtendedDatetime</span><span class="p">)]</span>
+</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>        <span class="n">date_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">ExtendedDatetime</span><span class="p">)]</span>
 </span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a>
 </span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">date_range</span><span class="p">:</span>
 </span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a>            <span class="k">return</span> <span class="p">({})</span>
 </span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>
-</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>        <span class="k">return</span> <span class="p">({</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">date_range</span><span class="p">),</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">date_range</span><span class="p">)})</span>
+</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>        <span class="k">return</span> <span class="p">({</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">date_range</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">),</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">date_range</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">)})</span>
 </span></pre></div>
 
 
@@ -732,7 +732,7 @@
 </span><span id="ExtendedDatetime-172"><a href="#ExtendedDatetime-172"><span class="linenos">172</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ExtendedDatetimeの初期化</span>
 </span><span id="ExtendedDatetime-173"><a href="#ExtendedDatetime-173"><span class="linenos">173</span></a>
 </span><span id="ExtendedDatetime-174"><a href="#ExtendedDatetime-174"><span class="linenos">174</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetime-175"><a href="#ExtendedDatetime-175"><span class="linenos">175</span></a><span class="sd">            value (`AcceptedType` | None, optional): 引数</span>
+</span><span id="ExtendedDatetime-175"><a href="#ExtendedDatetime-175"><span class="linenos">175</span></a><span class="sd">            value (AcceptedType | None, optional): 引数</span>
 </span><span id="ExtendedDatetime-176"><a href="#ExtendedDatetime-176"><span class="linenos">176</span></a><span class="sd">               - None: 現在時刻(`datetime.now()`)で初期化</span>
 </span><span id="ExtendedDatetime-177"><a href="#ExtendedDatetime-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="ExtendedDatetime-178"><a href="#ExtendedDatetime-178"><span class="linenos">178</span></a>
@@ -799,7 +799,7 @@
 </span><span id="ExtendedDatetime-239"><a href="#ExtendedDatetime-239"><span class="linenos">239</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;渡された値をdatetime型に変換して保持</span>
 </span><span id="ExtendedDatetime-240"><a href="#ExtendedDatetime-240"><span class="linenos">240</span></a>
 </span><span id="ExtendedDatetime-241"><a href="#ExtendedDatetime-241"><span class="linenos">241</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetime-242"><a href="#ExtendedDatetime-242"><span class="linenos">242</span></a><span class="sd">            value (`AcceptedType`): 入力値</span>
+</span><span id="ExtendedDatetime-242"><a href="#ExtendedDatetime-242"><span class="linenos">242</span></a><span class="sd">            value (AcceptedType): 入力値</span>
 </span><span id="ExtendedDatetime-243"><a href="#ExtendedDatetime-243"><span class="linenos">243</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="ExtendedDatetime-244"><a href="#ExtendedDatetime-244"><span class="linenos">244</span></a>
 </span><span id="ExtendedDatetime-245"><a href="#ExtendedDatetime-245"><span class="linenos">245</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -808,8 +808,8 @@
 </span><span id="ExtendedDatetime-248"><a href="#ExtendedDatetime-248"><span class="linenos">248</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;フォーマット変換</span>
 </span><span id="ExtendedDatetime-249"><a href="#ExtendedDatetime-249"><span class="linenos">249</span></a>
 </span><span id="ExtendedDatetime-250"><a href="#ExtendedDatetime-250"><span class="linenos">250</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetime-251"><a href="#ExtendedDatetime-251"><span class="linenos">251</span></a><span class="sd">            fmt (`FormatType`): 変換形式</span>
-</span><span id="ExtendedDatetime-252"><a href="#ExtendedDatetime-252"><span class="linenos">252</span></a><span class="sd">            delimiter (`DelimiterStyle`): 区切り</span>
+</span><span id="ExtendedDatetime-251"><a href="#ExtendedDatetime-251"><span class="linenos">251</span></a><span class="sd">            fmt (FormatType): 変換形式</span>
+</span><span id="ExtendedDatetime-252"><a href="#ExtendedDatetime-252"><span class="linenos">252</span></a><span class="sd">            delimiter (DelimiterStyle): 区切り</span>
 </span><span id="ExtendedDatetime-253"><a href="#ExtendedDatetime-253"><span class="linenos">253</span></a>
 </span><span id="ExtendedDatetime-254"><a href="#ExtendedDatetime-254"><span class="linenos">254</span></a><span class="sd">        Raises:</span>
 </span><span id="ExtendedDatetime-255"><a href="#ExtendedDatetime-255"><span class="linenos">255</span></a><span class="sd">            ValueError: 受け付けない変換形式</span>
@@ -946,7 +946,7 @@
 </span><span id="ExtendedDatetime-386"><a href="#ExtendedDatetime-386"><span class="linenos">386</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;引数の型を判定してdatetimeへ変換</span>
 </span><span id="ExtendedDatetime-387"><a href="#ExtendedDatetime-387"><span class="linenos">387</span></a>
 </span><span id="ExtendedDatetime-388"><a href="#ExtendedDatetime-388"><span class="linenos">388</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetime-389"><a href="#ExtendedDatetime-389"><span class="linenos">389</span></a><span class="sd">            value (`AcceptedType`): 変換対象</span>
+</span><span id="ExtendedDatetime-389"><a href="#ExtendedDatetime-389"><span class="linenos">389</span></a><span class="sd">            value (AcceptedType): 変換対象</span>
 </span><span id="ExtendedDatetime-390"><a href="#ExtendedDatetime-390"><span class="linenos">390</span></a>
 </span><span id="ExtendedDatetime-391"><a href="#ExtendedDatetime-391"><span class="linenos">391</span></a><span class="sd">        Raises:</span>
 </span><span id="ExtendedDatetime-392"><a href="#ExtendedDatetime-392"><span class="linenos">392</span></a><span class="sd">            TypeError: str型が変換できない場合</span>
@@ -989,7 +989,7 @@
 </span><span id="ExtendedDatetime.__init__-172"><a href="#ExtendedDatetime.__init__-172"><span class="linenos">172</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ExtendedDatetimeの初期化</span>
 </span><span id="ExtendedDatetime.__init__-173"><a href="#ExtendedDatetime.__init__-173"><span class="linenos">173</span></a>
 </span><span id="ExtendedDatetime.__init__-174"><a href="#ExtendedDatetime.__init__-174"><span class="linenos">174</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetime.__init__-175"><a href="#ExtendedDatetime.__init__-175"><span class="linenos">175</span></a><span class="sd">            value (`AcceptedType` | None, optional): 引数</span>
+</span><span id="ExtendedDatetime.__init__-175"><a href="#ExtendedDatetime.__init__-175"><span class="linenos">175</span></a><span class="sd">            value (AcceptedType | None, optional): 引数</span>
 </span><span id="ExtendedDatetime.__init__-176"><a href="#ExtendedDatetime.__init__-176"><span class="linenos">176</span></a><span class="sd">               - None: 現在時刻(`datetime.now()`)で初期化</span>
 </span><span id="ExtendedDatetime.__init__-177"><a href="#ExtendedDatetime.__init__-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="ExtendedDatetime.__init__-178"><a href="#ExtendedDatetime.__init__-178"><span class="linenos">178</span></a>
@@ -1002,7 +1002,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>value (<code><a href="#ExtendedDatetime.AcceptedType">AcceptedType</a></code> | None, optional):</strong>  引数
+<li><strong>value (AcceptedType | None, optional):</strong>  引数
 <ul>
 <li>None: 現在時刻(<code>datetime.now()</code>)で初期化</li>
 </ul></li>
@@ -1091,7 +1091,7 @@
 </span><span id="ExtendedDatetime.set-239"><a href="#ExtendedDatetime.set-239"><span class="linenos">239</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;渡された値をdatetime型に変換して保持</span>
 </span><span id="ExtendedDatetime.set-240"><a href="#ExtendedDatetime.set-240"><span class="linenos">240</span></a>
 </span><span id="ExtendedDatetime.set-241"><a href="#ExtendedDatetime.set-241"><span class="linenos">241</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetime.set-242"><a href="#ExtendedDatetime.set-242"><span class="linenos">242</span></a><span class="sd">            value (`AcceptedType`): 入力値</span>
+</span><span id="ExtendedDatetime.set-242"><a href="#ExtendedDatetime.set-242"><span class="linenos">242</span></a><span class="sd">            value (AcceptedType): 入力値</span>
 </span><span id="ExtendedDatetime.set-243"><a href="#ExtendedDatetime.set-243"><span class="linenos">243</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="ExtendedDatetime.set-244"><a href="#ExtendedDatetime.set-244"><span class="linenos">244</span></a>
 </span><span id="ExtendedDatetime.set-245"><a href="#ExtendedDatetime.set-245"><span class="linenos">245</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -1103,7 +1103,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>value (<code><a href="#ExtendedDatetime.AcceptedType">AcceptedType</a></code>):</strong>  入力値</li>
+<li><strong>value (AcceptedType):</strong>  入力値</li>
 </ul>
 </div>
 
@@ -1124,8 +1124,8 @@
 </span><span id="ExtendedDatetime.format-248"><a href="#ExtendedDatetime.format-248"><span class="linenos">248</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;フォーマット変換</span>
 </span><span id="ExtendedDatetime.format-249"><a href="#ExtendedDatetime.format-249"><span class="linenos">249</span></a>
 </span><span id="ExtendedDatetime.format-250"><a href="#ExtendedDatetime.format-250"><span class="linenos">250</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetime.format-251"><a href="#ExtendedDatetime.format-251"><span class="linenos">251</span></a><span class="sd">            fmt (`FormatType`): 変換形式</span>
-</span><span id="ExtendedDatetime.format-252"><a href="#ExtendedDatetime.format-252"><span class="linenos">252</span></a><span class="sd">            delimiter (`DelimiterStyle`): 区切り</span>
+</span><span id="ExtendedDatetime.format-251"><a href="#ExtendedDatetime.format-251"><span class="linenos">251</span></a><span class="sd">            fmt (FormatType): 変換形式</span>
+</span><span id="ExtendedDatetime.format-252"><a href="#ExtendedDatetime.format-252"><span class="linenos">252</span></a><span class="sd">            delimiter (DelimiterStyle): 区切り</span>
 </span><span id="ExtendedDatetime.format-253"><a href="#ExtendedDatetime.format-253"><span class="linenos">253</span></a>
 </span><span id="ExtendedDatetime.format-254"><a href="#ExtendedDatetime.format-254"><span class="linenos">254</span></a><span class="sd">        Raises:</span>
 </span><span id="ExtendedDatetime.format-255"><a href="#ExtendedDatetime.format-255"><span class="linenos">255</span></a><span class="sd">            ValueError: 受け付けない変換形式</span>
@@ -1216,8 +1216,8 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>fmt (<code><a href="#ExtendedDatetime.FormatType">FormatType</a></code>):</strong>  変換形式</li>
-<li><strong>delimiter (<code><a href="#ExtendedDatetime.DelimiterStyle">DelimiterStyle</a></code>):</strong>  区切り</li>
+<li><strong>fmt (FormatType):</strong>  変換形式</li>
+<li><strong>delimiter (DelimiterStyle):</strong>  区切り</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>
@@ -1360,7 +1360,7 @@
 </span><span id="ExtendedDatetime.convert-386"><a href="#ExtendedDatetime.convert-386"><span class="linenos">386</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;引数の型を判定してdatetimeへ変換</span>
 </span><span id="ExtendedDatetime.convert-387"><a href="#ExtendedDatetime.convert-387"><span class="linenos">387</span></a>
 </span><span id="ExtendedDatetime.convert-388"><a href="#ExtendedDatetime.convert-388"><span class="linenos">388</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetime.convert-389"><a href="#ExtendedDatetime.convert-389"><span class="linenos">389</span></a><span class="sd">            value (`AcceptedType`): 変換対象</span>
+</span><span id="ExtendedDatetime.convert-389"><a href="#ExtendedDatetime.convert-389"><span class="linenos">389</span></a><span class="sd">            value (AcceptedType): 変換対象</span>
 </span><span id="ExtendedDatetime.convert-390"><a href="#ExtendedDatetime.convert-390"><span class="linenos">390</span></a>
 </span><span id="ExtendedDatetime.convert-391"><a href="#ExtendedDatetime.convert-391"><span class="linenos">391</span></a><span class="sd">        Raises:</span>
 </span><span id="ExtendedDatetime.convert-392"><a href="#ExtendedDatetime.convert-392"><span class="linenos">392</span></a><span class="sd">            TypeError: str型が変換できない場合</span>
@@ -1390,7 +1390,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>value (<code><a href="#ExtendedDatetime.AcceptedType">AcceptedType</a></code>):</strong>  変換対象</li>
+<li><strong>value (AcceptedType):</strong>  変換対象</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>
@@ -1440,8 +1440,8 @@
 </span><span id="ExtendedDatetimeList-430"><a href="#ExtendedDatetimeList-430"><span class="linenos">430</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;全要素にformatを適用した文字列リストを返す</span>
 </span><span id="ExtendedDatetimeList-431"><a href="#ExtendedDatetimeList-431"><span class="linenos">431</span></a>
 </span><span id="ExtendedDatetimeList-432"><a href="#ExtendedDatetimeList-432"><span class="linenos">432</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetimeList-433"><a href="#ExtendedDatetimeList-433"><span class="linenos">433</span></a><span class="sd">            fmt (`FormatType`, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
-</span><span id="ExtendedDatetimeList-434"><a href="#ExtendedDatetimeList-434"><span class="linenos">434</span></a><span class="sd">            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.</span>
+</span><span id="ExtendedDatetimeList-433"><a href="#ExtendedDatetimeList-433"><span class="linenos">433</span></a><span class="sd">            fmt (FormatType, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
+</span><span id="ExtendedDatetimeList-434"><a href="#ExtendedDatetimeList-434"><span class="linenos">434</span></a><span class="sd">            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.</span>
 </span><span id="ExtendedDatetimeList-435"><a href="#ExtendedDatetimeList-435"><span class="linenos">435</span></a>
 </span><span id="ExtendedDatetimeList-436"><a href="#ExtendedDatetimeList-436"><span class="linenos">436</span></a><span class="sd">        Returns:</span>
 </span><span id="ExtendedDatetimeList-437"><a href="#ExtendedDatetimeList-437"><span class="linenos">437</span></a><span class="sd">            list[str]: 生成したリスト</span>
@@ -1453,19 +1453,19 @@
 </span><span id="ExtendedDatetimeList-443"><a href="#ExtendedDatetimeList-443"><span class="linenos">443</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;全要素にformatを適用し、最小日付と最大日付を辞書で返す</span>
 </span><span id="ExtendedDatetimeList-444"><a href="#ExtendedDatetimeList-444"><span class="linenos">444</span></a>
 </span><span id="ExtendedDatetimeList-445"><a href="#ExtendedDatetimeList-445"><span class="linenos">445</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetimeList-446"><a href="#ExtendedDatetimeList-446"><span class="linenos">446</span></a><span class="sd">            fmt (`FormatType`, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
-</span><span id="ExtendedDatetimeList-447"><a href="#ExtendedDatetimeList-447"><span class="linenos">447</span></a><span class="sd">            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.</span>
+</span><span id="ExtendedDatetimeList-446"><a href="#ExtendedDatetimeList-446"><span class="linenos">446</span></a><span class="sd">            fmt (FormatType, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
+</span><span id="ExtendedDatetimeList-447"><a href="#ExtendedDatetimeList-447"><span class="linenos">447</span></a><span class="sd">            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.</span>
 </span><span id="ExtendedDatetimeList-448"><a href="#ExtendedDatetimeList-448"><span class="linenos">448</span></a>
 </span><span id="ExtendedDatetimeList-449"><a href="#ExtendedDatetimeList-449"><span class="linenos">449</span></a><span class="sd">        Returns:</span>
 </span><span id="ExtendedDatetimeList-450"><a href="#ExtendedDatetimeList-450"><span class="linenos">450</span></a><span class="sd">            dict[str, str]: 生成した辞書</span>
 </span><span id="ExtendedDatetimeList-451"><a href="#ExtendedDatetimeList-451"><span class="linenos">451</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="ExtendedDatetimeList-452"><a href="#ExtendedDatetimeList-452"><span class="linenos">452</span></a>
-</span><span id="ExtendedDatetimeList-453"><a href="#ExtendedDatetimeList-453"><span class="linenos">453</span></a>        <span class="n">date_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">)</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">ExtendedDatetime</span><span class="p">)]</span>
+</span><span id="ExtendedDatetimeList-453"><a href="#ExtendedDatetimeList-453"><span class="linenos">453</span></a>        <span class="n">date_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">ExtendedDatetime</span><span class="p">)]</span>
 </span><span id="ExtendedDatetimeList-454"><a href="#ExtendedDatetimeList-454"><span class="linenos">454</span></a>
 </span><span id="ExtendedDatetimeList-455"><a href="#ExtendedDatetimeList-455"><span class="linenos">455</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">date_range</span><span class="p">:</span>
 </span><span id="ExtendedDatetimeList-456"><a href="#ExtendedDatetimeList-456"><span class="linenos">456</span></a>            <span class="k">return</span> <span class="p">({})</span>
 </span><span id="ExtendedDatetimeList-457"><a href="#ExtendedDatetimeList-457"><span class="linenos">457</span></a>
-</span><span id="ExtendedDatetimeList-458"><a href="#ExtendedDatetimeList-458"><span class="linenos">458</span></a>        <span class="k">return</span> <span class="p">({</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">date_range</span><span class="p">),</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">date_range</span><span class="p">)})</span>
+</span><span id="ExtendedDatetimeList-458"><a href="#ExtendedDatetimeList-458"><span class="linenos">458</span></a>        <span class="k">return</span> <span class="p">({</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">date_range</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">),</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">date_range</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">)})</span>
 </span></pre></div>
 
 
@@ -1554,8 +1554,8 @@
 </span><span id="ExtendedDatetimeList.format-430"><a href="#ExtendedDatetimeList.format-430"><span class="linenos">430</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;全要素にformatを適用した文字列リストを返す</span>
 </span><span id="ExtendedDatetimeList.format-431"><a href="#ExtendedDatetimeList.format-431"><span class="linenos">431</span></a>
 </span><span id="ExtendedDatetimeList.format-432"><a href="#ExtendedDatetimeList.format-432"><span class="linenos">432</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetimeList.format-433"><a href="#ExtendedDatetimeList.format-433"><span class="linenos">433</span></a><span class="sd">            fmt (`FormatType`, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
-</span><span id="ExtendedDatetimeList.format-434"><a href="#ExtendedDatetimeList.format-434"><span class="linenos">434</span></a><span class="sd">            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.</span>
+</span><span id="ExtendedDatetimeList.format-433"><a href="#ExtendedDatetimeList.format-433"><span class="linenos">433</span></a><span class="sd">            fmt (FormatType, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
+</span><span id="ExtendedDatetimeList.format-434"><a href="#ExtendedDatetimeList.format-434"><span class="linenos">434</span></a><span class="sd">            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.</span>
 </span><span id="ExtendedDatetimeList.format-435"><a href="#ExtendedDatetimeList.format-435"><span class="linenos">435</span></a>
 </span><span id="ExtendedDatetimeList.format-436"><a href="#ExtendedDatetimeList.format-436"><span class="linenos">436</span></a><span class="sd">        Returns:</span>
 </span><span id="ExtendedDatetimeList.format-437"><a href="#ExtendedDatetimeList.format-437"><span class="linenos">437</span></a><span class="sd">            list[str]: 生成したリスト</span>
@@ -1570,8 +1570,8 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>fmt (<code><a href="#ExtendedDatetimeList.FormatType">FormatType</a></code>, optional):</strong>  フォーマット変換. Defaults to "sql".</li>
-<li><strong>delimiter (<code><a href="#ExtendedDatetimeList.DelimiterStyle">DelimiterStyle</a></code>, optional):</strong>  区切り記号指定. Defaults to None.</li>
+<li><strong>fmt (FormatType, optional):</strong>  フォーマット変換. Defaults to "sql".</li>
+<li><strong>delimiter (DelimiterStyle, optional):</strong>  区切り記号指定. Defaults to None.</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -1598,19 +1598,19 @@
 </span><span id="ExtendedDatetimeList.dict_format-443"><a href="#ExtendedDatetimeList.dict_format-443"><span class="linenos">443</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;全要素にformatを適用し、最小日付と最大日付を辞書で返す</span>
 </span><span id="ExtendedDatetimeList.dict_format-444"><a href="#ExtendedDatetimeList.dict_format-444"><span class="linenos">444</span></a>
 </span><span id="ExtendedDatetimeList.dict_format-445"><a href="#ExtendedDatetimeList.dict_format-445"><span class="linenos">445</span></a><span class="sd">        Args:</span>
-</span><span id="ExtendedDatetimeList.dict_format-446"><a href="#ExtendedDatetimeList.dict_format-446"><span class="linenos">446</span></a><span class="sd">            fmt (`FormatType`, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
-</span><span id="ExtendedDatetimeList.dict_format-447"><a href="#ExtendedDatetimeList.dict_format-447"><span class="linenos">447</span></a><span class="sd">            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.</span>
+</span><span id="ExtendedDatetimeList.dict_format-446"><a href="#ExtendedDatetimeList.dict_format-446"><span class="linenos">446</span></a><span class="sd">            fmt (FormatType, optional): フォーマット変換. Defaults to &quot;sql&quot;.</span>
+</span><span id="ExtendedDatetimeList.dict_format-447"><a href="#ExtendedDatetimeList.dict_format-447"><span class="linenos">447</span></a><span class="sd">            delimiter (DelimiterStyle, optional): 区切り記号指定. Defaults to None.</span>
 </span><span id="ExtendedDatetimeList.dict_format-448"><a href="#ExtendedDatetimeList.dict_format-448"><span class="linenos">448</span></a>
 </span><span id="ExtendedDatetimeList.dict_format-449"><a href="#ExtendedDatetimeList.dict_format-449"><span class="linenos">449</span></a><span class="sd">        Returns:</span>
 </span><span id="ExtendedDatetimeList.dict_format-450"><a href="#ExtendedDatetimeList.dict_format-450"><span class="linenos">450</span></a><span class="sd">            dict[str, str]: 生成した辞書</span>
 </span><span id="ExtendedDatetimeList.dict_format-451"><a href="#ExtendedDatetimeList.dict_format-451"><span class="linenos">451</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="ExtendedDatetimeList.dict_format-452"><a href="#ExtendedDatetimeList.dict_format-452"><span class="linenos">452</span></a>
-</span><span id="ExtendedDatetimeList.dict_format-453"><a href="#ExtendedDatetimeList.dict_format-453"><span class="linenos">453</span></a>        <span class="n">date_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">)</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">ExtendedDatetime</span><span class="p">)]</span>
+</span><span id="ExtendedDatetimeList.dict_format-453"><a href="#ExtendedDatetimeList.dict_format-453"><span class="linenos">453</span></a>        <span class="n">date_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">ExtendedDatetime</span><span class="p">)]</span>
 </span><span id="ExtendedDatetimeList.dict_format-454"><a href="#ExtendedDatetimeList.dict_format-454"><span class="linenos">454</span></a>
 </span><span id="ExtendedDatetimeList.dict_format-455"><a href="#ExtendedDatetimeList.dict_format-455"><span class="linenos">455</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">date_range</span><span class="p">:</span>
 </span><span id="ExtendedDatetimeList.dict_format-456"><a href="#ExtendedDatetimeList.dict_format-456"><span class="linenos">456</span></a>            <span class="k">return</span> <span class="p">({})</span>
 </span><span id="ExtendedDatetimeList.dict_format-457"><a href="#ExtendedDatetimeList.dict_format-457"><span class="linenos">457</span></a>
-</span><span id="ExtendedDatetimeList.dict_format-458"><a href="#ExtendedDatetimeList.dict_format-458"><span class="linenos">458</span></a>        <span class="k">return</span> <span class="p">({</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">date_range</span><span class="p">),</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">date_range</span><span class="p">)})</span>
+</span><span id="ExtendedDatetimeList.dict_format-458"><a href="#ExtendedDatetimeList.dict_format-458"><span class="linenos">458</span></a>        <span class="k">return</span> <span class="p">({</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">date_range</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">),</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">date_range</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">)})</span>
 </span></pre></div>
 
 
@@ -1619,8 +1619,8 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>fmt (<code><a href="#ExtendedDatetimeList.FormatType">FormatType</a></code>, optional):</strong>  フォーマット変換. Defaults to "sql".</li>
-<li><strong>delimiter (<code><a href="#ExtendedDatetimeList.DelimiterStyle">DelimiterStyle</a></code>, optional):</strong>  区切り記号指定. Defaults to None.</li>
+<li><strong>fmt (FormatType, optional):</strong>  フォーマット変換. Defaults to "sql".</li>
+<li><strong>delimiter (DelimiterStyle, optional):</strong>  区切り記号指定. Defaults to None.</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
