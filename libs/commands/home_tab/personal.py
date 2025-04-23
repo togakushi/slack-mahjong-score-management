@@ -24,15 +24,16 @@ def build_personal_menu():
     ui_parts.user_select_pulldown(text="対象プレイヤー")
 
     # 検索範囲設定
+    date_dict = {x: ExtDt().range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
     ui_parts.divider()
     ui_parts.radio_buttons(
         id_suffix="search_range",
         title="検索範囲",
         flag={
-            "今月": "今月：{start} ～ {end}".format(**ExtDt().range("今月").dict_format("ymd", "-")),
-            "先月": "先月：{start} ～ {end}".format(**ExtDt().range("先月").dict_format("ymd", "-")),
-            "全部": "全部：{start} ～ {end}".format(**ExtDt().range("全部").dict_format("ymd", "-")),
-            "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
+            "今月": f"今月：{date_dict["今月"]["start"]} ～ {date_dict["今月"]["end"]}",
+            "先月": f"先月：{date_dict["先月"]["start"]} ～ {date_dict["先月"]["end"]}",
+            "全部": f"全部：{date_dict["全部"]["start"]} ～ {date_dict["全部"]["end"]}",
+            "指定": f"範囲指定：{g.app_var["sday"]} ～ {g.app_var["eday"]}",
         }
     )
     ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
