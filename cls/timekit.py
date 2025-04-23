@@ -1,7 +1,8 @@
 """
 timekit - datetime 拡張ユーティリティ
 
-ExtendedDatetime: 柔軟な初期化と書式変換ができる datetime ラッパー
+- `ExtendedDatetime`: 柔軟な初期化と書式変換ができる datetime ラッパー
+- `ExtendedDatetimeList`: ExtendedDatetimeを要素とする日付リストを扱う補助クラス
 
 Examples:
     >>> from cls.timekit import ExtendedDatetime
@@ -73,7 +74,7 @@ class ExtendedDatetime:
     """操作対象"""
 
     # 型アノテーション用定数
-    AcceptedTypes: TypeAlias = Union[str, float, datetime, "ExtendedDatetime"]
+    AcceptedType: TypeAlias = Union[str, float, datetime, "ExtendedDatetime"]
     """引数として受け付ける型
     - **str**: 日付文字列（ISO形式など）
     - **float**: UNIXタイムスタンプ
@@ -86,7 +87,7 @@ class ExtendedDatetime:
     _range_map: dict[str, Callable[[], list[datetime]]] = {}
     """範囲指定キーワードマップ"""
 
-    def __init__(self, value: AcceptedTypes | None = None):
+    def __init__(self, value: AcceptedType | None = None):
         """ExtendedDatetimeの初期化
 
         Args:
@@ -151,7 +152,7 @@ class ExtendedDatetime:
         """datetime型を返すプロパティ"""
         return self._dt
 
-    def set(self, value: AcceptedTypes) -> None:
+    def set(self, value: AcceptedType) -> None:
         """渡された値をdatetime型に変換して保持
 
         Args:
@@ -313,7 +314,7 @@ class ExtendedDatetime:
             current_time + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999),
         ])
 
-    def _convert(self, value: AcceptedTypes) -> datetime:
+    def _convert(self, value: AcceptedType) -> datetime:
         """引数の型を判定してdatetimeへ変換
 
         Args:
@@ -343,28 +344,47 @@ class ExtendedDatetime:
 
 class ExtendedDatetimeList(list):
     """ExtendedDatetimeを要素とする日付リストを扱う補助クラス"""
+
+    FormatType: TypeAlias = FormatType
+    DelimiterStyle: TypeAlias = DelimiterStyle
+
     @property
     def start(self) -> ExtendedDatetime | None:
-        """リスト内の最小日付を返す。空ならNone。"""
+        """最小日付を返す。空ならNone。"""
         return (min(self) if self else None)
 
     @property
     def end(self) -> ExtendedDatetime | None:
-        """リスト内の最大日付を返す。空ならNone。"""
+        """最大日付を返す。空ならNone。"""
         return (max(self) if self else None)
 
     def format(self, fmt: FormatType = "sql", delimiter: DelimiterStyle = None) -> list[str]:
-        """リストの全要素にformatを適用した文字列リストを返す"""
+        """全要素にformatを適用した文字列リストを返す
+
+        Args:
+            fmt (`FormatType`, optional): フォーマット変換. Defaults to "sql".
+            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.
+
+        Returns:
+            list[str]: 生成したリスト
+        """
+
         return [dt.format(fmt, delimiter) for dt in self if isinstance(dt, ExtendedDatetime)]
 
     def dict_format(self, fmt: FormatType = "sql", delimiter: DelimiterStyle = None) -> dict[str, str]:
-        """リストの全要素にformatを適用した辞書を返す"""
+        """全要素にformatを適用し、最小日付と最大日付を辞書で返す
+
+        Args:
+            fmt (`FormatType`, optional): フォーマット変換. Defaults to "sql".
+            delimiter (`DelimiterStyle`, optional): 区切り記号指定. Defaults to None.
+
+        Returns:
+            dict[str, str]: 生成した辞書
+        """
+
         date_range = [dt.format(fmt, delimiter) for dt in self if isinstance(dt, ExtendedDatetime)]
 
         if not date_range:
             return ({})
 
-        s = min(date_range)
-        e = max(date_range)
-
-        return {"start": s, "end": e}
+        return ({"start": min(date_range), "end": max(date_range)})
