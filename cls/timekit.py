@@ -227,6 +227,9 @@ class ExtendedDatetime:
     def __rsub__(self, other: Union[relativedelta, dict]) -> "ExtendedDatetime":
         return self.__sub__(other)
 
+    def __hash__(self):
+        return hash(self.dt)
+
     def __getattr__(self, name):
         return getattr(self._dt, name)
 
