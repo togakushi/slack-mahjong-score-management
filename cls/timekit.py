@@ -449,9 +449,9 @@ class ExtendedDatetimeList(list):
             dict[str, str]: 生成した辞書
         """
 
-        date_range = [dt.format(fmt, delimiter) for dt in self if isinstance(dt, ExtendedDatetime)]
+        date_range = [dt for dt in self if isinstance(dt, ExtendedDatetime)]
 
         if not date_range:
             return ({})
 
-        return ({"start": min(date_range), "end": max(date_range)})
+        return ({"start": min(date_range).format(fmt, delimiter), "end": max(date_range).format(fmt, delimiter)})
