@@ -24,17 +24,14 @@ def build_personal_menu():
     ui_parts.user_select_pulldown(text="対象プレイヤー")
 
     # 検索範囲設定
-    [s1, e1] = ExtDt.range("今月")
-    [s2, e2] = ExtDt.range("先月")
-    [s3, e3] = ExtDt.range("全部")
     ui_parts.divider()
     ui_parts.radio_buttons(
         id_suffix="search_range",
         title="検索範囲",
         flag={
-            "今月": f"今月：{s1.format("ymd")} ～ {e1.format("ymd")}",
-            "先月": f"先月：{s2.format("ymd")} ～ {e2.format("ymd")}",
-            "全部": f"全部：{s3.format("ymd")} ～ {e3.format("ymd")}",
+            "今月": "今月：{start} ～ {end}".format(**ExtDt().range("今月").dict_format("ymd", "-")),
+            "先月": "先月：{start} ～ {end}".format(**ExtDt().range("先月").dict_format("ymd", "-")),
+            "全部": "全部：{start} ～ {end}".format(**ExtDt().range("全部").dict_format("ymd", "-")),
             "指定": f"範囲指定：{g.app_var['sday']} ～ {g.app_var['eday']}",
         }
     )
