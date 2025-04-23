@@ -29,7 +29,6 @@ Examples:
     {'start': '2025年04月01日', 'end': '2025年04月30日'}
 """
 
-from collections.abc import Callable
 from datetime import datetime
 from functools import total_ordering
 from typing import Literal, TypeAlias, Union, cast
@@ -167,9 +166,6 @@ class ExtendedDatetime:
 
     FormatType: TypeAlias = FormatType
     DelimiterStyle: TypeAlias = DelimiterStyle
-
-    _range_map: dict[str, Callable[[], list[datetime]]] = {}
-    """範囲指定キーワードマップ"""
 
     def __init__(self, value: AcceptedType | None = None):
         """ExtendedDatetimeの初期化
