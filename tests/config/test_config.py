@@ -43,7 +43,7 @@ def test_minimal_config(monkeypatch):
     "input_args",
     ["results", "graph", "ranking", "report"]
 )
-def test_config_subcommand_default(input_args, monkeypatch):
+def test_subcommand_default(input_args, monkeypatch):
     """サブコマンドデフォルト値チェック"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
 

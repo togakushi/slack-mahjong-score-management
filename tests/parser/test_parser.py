@@ -8,7 +8,11 @@ from cls.parser import CommandParser
 from tests.parser import param_data
 
 
-@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_01)
+@pytest.mark.parametrize(
+    "input_args, expected_flags",
+    list(param_data.flag_test_case_01.values()),
+    ids=list(param_data.flag_test_case_01.keys()),
+)
 def test_flag_commands(input_args, expected_flags):
     """1. フラグ系テスト"""
     parser = CommandParser()
@@ -18,7 +22,11 @@ def test_flag_commands(input_args, expected_flags):
     assert not result.search_range
 
 
-@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_02)
+@pytest.mark.parametrize(
+    "input_args, expected_flags",
+    list(param_data.flag_test_case_02.values()),
+    ids=list(param_data.flag_test_case_02.keys()),
+)
 def test_command_with_argument_int(input_args, expected_flags):
     """2. 引数付きコマンド(数値)"""
     parser = CommandParser()
@@ -30,7 +38,11 @@ def test_command_with_argument_int(input_args, expected_flags):
     assert not result.search_range
 
 
-@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_03)
+@pytest.mark.parametrize(
+    "input_args, expected_flags",
+    list(param_data.flag_test_case_03.values()),
+    ids=list(param_data.flag_test_case_03.keys()),
+)
 def test_command_with_argument_str(input_args, expected_flags):
     """3. 引数付きコマンド(文字)"""
     parser = CommandParser()
@@ -42,7 +54,11 @@ def test_command_with_argument_str(input_args, expected_flags):
     assert not result.search_range
 
 
-@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_04)
+@pytest.mark.parametrize(
+    "input_args, expected_flags",
+    list(param_data.flag_test_case_04.values()),
+    ids=list(param_data.flag_test_case_04.keys()),
+)
 def test_command_unknown_str(input_args, expected_flags):
     """4. 不明なコマンド"""
     parser = CommandParser()
@@ -54,7 +70,11 @@ def test_command_unknown_str(input_args, expected_flags):
     assert not result.search_range
 
 
-@pytest.mark.parametrize("input_args, expected_flags", param_data.flag_test_case_05)
+@pytest.mark.parametrize(
+    "input_args, expected_flags",
+    list(param_data.flag_test_case_05.values()),
+    ids=list(param_data.flag_test_case_05.keys()),
+)
 def test_command_date_range_str(input_args, expected_flags):
     """5. 日付"""
     parser = CommandParser()
