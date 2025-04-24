@@ -82,7 +82,7 @@ COMMANDS: CommandsDict = {
         "action": lambda w: {"order": True},
     },
     "results": {  # 戦績
-        "match": [r"^順位$"],
+        "match": [r"^戦績$"],
         "action": lambda w: {"game_results": True},
     },
     "versus": {  # 対戦結果
