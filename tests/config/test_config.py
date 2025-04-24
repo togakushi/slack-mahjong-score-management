@@ -2,51 +2,52 @@
 tests/test_parser.py
 """
 
+import sys
+
 import pytest
 
 import libs.global_value as g
-from cls.config import Config
-from cls.search import SearchRange
 from cls.subcom import SubCommand
 from libs.functions import configuration
 
 
-def test_empty_config():
+def test_empty_config(monkeypatch):
     """空設定チェック"""
-    with pytest.raises(RuntimeError):
-        Config("./tests/testdata/empty.ini")
-        raise ValueError("must be positive")
+    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/empty.ini"])
+    with pytest.raises(SystemExit) as e:
+        configuration.setup()
+    assert e.type == SystemExit
+    assert e.value.code == 255
 
 
-def test_minimal_config():
+def test_minimal_config(monkeypatch):
     """最小構成"""
-    configuration.set_loglevel()
-    cfg = Config("./tests/testdata/minimal.ini")
+    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
+    configuration.setup()
 
-    assert cfg.mahjong.origin_point == 250
-    assert cfg.mahjong.return_point == 300
+    assert g.cfg.mahjong.origin_point == 250
+    assert g.cfg.mahjong.return_point == 300
 
-    assert not cfg.alias.results
-    assert not cfg.alias.graph
-    assert not cfg.alias.ranking
-    assert not cfg.alias.report
-    assert not cfg.alias.check
-    assert not cfg.alias.download
-    assert not cfg.alias.member
-    assert not cfg.alias.add
-    assert not cfg.alias.delete
-
+    assert not g.cfg.alias.results
+    assert not g.cfg.alias.graph
+    assert not g.cfg.alias.ranking
+    assert not g.cfg.alias.report
+    assert not g.cfg.alias.check
+    assert not g.cfg.alias.download
+    assert not g.cfg.alias.member
+    assert not g.cfg.alias.add
+    assert not g.cfg.alias.delete
 
 
 @pytest.mark.parametrize(
     "input_args",
     ["results", "graph", "ranking", "report"]
 )
-def test_config_subcommand_default(input_args):
+def test_config_subcommand_default(input_args, monkeypatch):
     """サブコマンドデフォルト値チェック"""
-    configuration.set_loglevel()
-    g.cfg = Config("./tests/testdata/minimal.ini")
-    g.search_word = SearchRange()
+    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
+
+    configuration.setup()
 
     test_subcommand = getattr(g.cfg, input_args)
     assert test_subcommand.aggregation_range == SubCommand.aggregation_range
