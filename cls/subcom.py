@@ -118,11 +118,12 @@ class SubCommand(CommonMethodMixin):
             player_name = target_player[0]
 
         if self.all_player:  # 全員追加
-            target_player = list(set(lookup.internal.get_member() + target_player))
+            target_player += lookup.internal.get_member()
         else:
-            target_player = list(set(target_player))
+            target_player += lookup.internal.get_team()
 
         # リスト生成
+        target_player = list(dict.fromkeys(target_player))
         for idx, name in enumerate(target_player):
             player_list[f"player_{idx}"] = name
             competition_list[f"competition_{idx}"] = name

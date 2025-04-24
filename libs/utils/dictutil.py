@@ -58,7 +58,7 @@ def placeholder2(subcom: "SubCommand") -> dict:
     competition_list: dict = {}
     team_list: list = lookup.internal.get_team()
 
-    for x in list(set(pre_param.unknown + param.unknown)):
+    for x in param.unknown + pre_param.unknown + param.unknown:
         if x in team_list:
             target_player.append(x)
         elif ret_dict.get("individual") and ret_dict.get("unregistered_replace"):
@@ -70,22 +70,30 @@ def placeholder2(subcom: "SubCommand") -> dict:
         player_name = target_player[0]
 
     if ret_dict.get("all_player"):  # 全員追加
-        target_player = list(set(lookup.internal.get_member() + target_player))
-    else:
-        target_player = list(set(target_player))
+        if ret_dict.get("individual"):
+            target_player += lookup.internal.get_member()
+        else:
+            target_player += lookup.internal.get_team()
 
     # リスト生成
+    target_player = list(dict.fromkeys(target_player))
     for idx, name in enumerate(target_player):
         player_list[f"player_{idx}"] = name
-        competition_list[f"competition_{idx}"] = name
-
-    for delete_key in [k for k, v in competition_list.items() if v == player_name]:
-        del competition_list[delete_key]
+        if name != player_name:
+            competition_list[f"competition_{idx}"] = name
 
     ret_dict.update(player_name=player_name)
     ret_dict.update(target_player=target_player)
     ret_dict.update(player_list=player_list)
     ret_dict.update(competition_list=competition_list)
+
+    # プレイヤーリスト/対戦相手リスト
+    if ret_dict["player_list"]:
+        for k, v in ret_dict["player_list"].items():
+            ret_dict[k] = v
+    if ret_dict["competition_list"]:
+        for k, v in ret_dict["competition_list"].items():
+            ret_dict[k] = v
 
     return (ret_dict)
 
