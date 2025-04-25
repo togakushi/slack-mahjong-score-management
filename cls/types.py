@@ -149,6 +149,7 @@ class CommonMethodMixin:
         ret_dict: dict = asdict(self)
         ret_dict.update(format=getattr(self, "format", ""))
         ret_dict.update(filename=getattr(self, "filename", ""))
+        ret_dict.update(interval=getattr(self, "interval", 80))
 
         drop_keys: list = [
             "config",
