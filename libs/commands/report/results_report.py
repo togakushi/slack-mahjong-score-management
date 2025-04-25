@@ -37,6 +37,9 @@ def get_game_results() -> list:
         list: 集計結果のリスト
     """
 
+    g.params.update(starttime=g.params["starttime"].format("sql"))
+    g.params.update(endtime=g.params["endtime"].format("sql"))
+
     resultdb = sqlite3.connect(
         g.cfg.db.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
