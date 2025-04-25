@@ -11,6 +11,7 @@ from pprint import pprint
 import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
+from cls.parser import CommandParser
 from libs.commands import graph, report
 from libs.commands.results import ranking
 from libs.data import initialization
@@ -73,7 +74,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         g.msg.argument = argument.split()
 
         # 追加オプション
-        pre_params = dictutil.analysis_argument(g.msg.argument)
+        pre_params = CommandParser().analysis_argument(g.msg.argument).flags
         if flag.get("target_loop"):
             g.msg.argument.append(f"{loop}")
 

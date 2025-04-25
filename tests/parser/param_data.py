@@ -4,14 +4,16 @@
 
 from cls.timekit import ExtendedDatetime as ExtDt
 
-
 # フラグ更新
 flag_test_case_01 = {
+    # input_args, expected_flags
     "guest": ("ゲストなし", {"guest_skip": False, "guest_skip2": False, "unregistered_replace": True}),
     "score comparisons": ("比較", {"score_comparisons": True}),
     "ratings": ("ratings", {"rating": True}),
+    # --- 個人戦/チーム戦切替
     "individual": ("個人", {"individual": True}),
     "team": ("チーム", {"individual": False}),
+    # --- 上書きチェック
     "individual (over ride)": ("チーム 個人", {"individual": True}),
     "team (over ride)": ("個人 チーム", {"individual": False}),
 }
@@ -76,6 +78,28 @@ name_test_case_01 = {
     # --- 重複パターン
     "duplication 01": ("名前あ 名前あ 名前い", "名前あ", {"player_0": "名前あ", "player_1": "名前い"}, {"competition_1": "名前い"}),
     "duplication 02": ("名前う 名前あ 名前う", "名前う", {"player_0": "名前う", "player_1": "名前あ"}, {"competition_1": "名前あ"}),
+}
+
+# チーム名テスト
+team_saki_test_case = {
+    # input_args, player_name, player_list, competition_list
+    "case 01": ("清澄高校", "清澄高校", {'player_0': "清澄高校"}, {}),
+    "case 02": ("清澄高校 宮永咲", "清澄高校", {'player_0': "清澄高校"}, {}),
+}
+
+# ゲストテスト
+guest_test_case = {
+    # input_args, player_name, replace_name
+    "case 1-01": ("ゲストあり 名前あ", "名前あ", "ゲスト"),
+    "case 1-02": ("ゲストあり 宮永咲", "宮永咲", "宮永咲"),
+    "case 1-03": ("ゲストあり 清澄高校", "清澄高校", "ゲスト"),
+    "case 2-01": ("ゲスト無効 名前あ", "名前あ", "名前あ"),
+    "case 2-02": ("ゲスト無効 宮永咲", "宮永咲", "宮永咲"),
+    "case 2-03": ("ゲスト無効 清澄高校", "清澄高校", "清澄高校"),
+    "case team 1-01": ("チーム ゲストあり 清澄高校", "清澄高校", "清澄高校"),
+    "case team 1-02": ("チーム ゲストあり 清澄高校 宮永咲", "清澄高校", "清澄高校"),
+    "case team 1-03": ("チーム ゲストあり 宮永咲 清澄高校", "宮永咲", "ゲスト"),
+
 }
 
 # フラグ更新コマンドテスト

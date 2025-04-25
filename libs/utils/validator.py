@@ -6,8 +6,9 @@ import re
 from typing import Tuple
 
 import libs.global_value as g
+from cls.parser import CommandParser
 from cls.types import SlackSearchData
-from libs.utils import dictutil, textutil
+from libs.utils import textutil
 
 SlackSearchDict = dict[str, SlackSearchData]
 
@@ -54,10 +55,7 @@ def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
     if g.search_word.find(name):
         return (False, "検索範囲指定に使用される単語では登録できません。")
 
-    check = dictutil.analysis_argument([name, f"{name}999"])
-    check.pop("search_range")
-    check.pop("unknown_command")
-    if check:
+    if CommandParser().is_valid_command(name):
         return (False, "オプションに使用される単語では登録できません。")
 
     if name in g.cfg.word_list():

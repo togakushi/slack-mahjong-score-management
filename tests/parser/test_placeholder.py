@@ -8,10 +8,10 @@ import pytest
 
 import libs.global_value as g
 from libs.functions import configuration
-from libs.utils import dictutil
+from libs.utils import dictutil, formatter
 from tests.parser import param_data
 
-TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini"]
+TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini", "--debug", "--ver"]
 
 
 @pytest.mark.parametrize(
@@ -25,16 +25,12 @@ def test_command_check(input_args, player_name, player_list, competition_list, m
     configuration.setup()
 
     g.msg.argument = input_args.split()
-    param1 = dictutil.placeholder(g.cfg.results)
-    param2 = dictutil.placeholder2(g.cfg.results)
+    param = dictutil.placeholder(g.cfg.results)
 
-    print(f"\n  --> in: {input_args.split()} out: {param2}")
-    assert param2.get("player_name") == player_name
-    assert param2.get("player_list") == player_list
-    assert param2.get("competition_list") == competition_list
-    assert param1.get("player_name") == param2.get("player_name")
-    assert param1.get("player_list") == param2.get("player_list")
-    assert param1.get("competition_list") == param2.get("competition_list")
+    print(f"\n  --> in: {input_args.split()} out: {param}")
+    assert param.get("player_name") == player_name
+    assert param.get("player_list") == player_list
+    assert param.get("competition_list") == competition_list
 
 
 @pytest.mark.parametrize(
@@ -49,12 +45,48 @@ def test_player_check(input_args, player_name, player_list, competition_list, mo
 
     g.msg.argument = input_args.split()
     # param1 = dictutil.placeholder(g.cfg.results)
-    param2 = dictutil.placeholder2(g.cfg.results)
+    param = dictutil.placeholder(g.cfg.results)
 
-    print(f"\n  --> in: {input_args.split()} out: {param2}")
-    assert param2.get("player_name") == player_name
-    assert param2.get("player_list") == player_list
-    assert param2.get("competition_list") == competition_list
-    # assert param1.get("player_name") == param2.get("player_name")
-    # assert param1.get("player_list") == param2.get("player_list")
-    # assert param1.get("competition_list") == param2.get("competition_list")
+    print(f"\n  --> in: {input_args.split()} out: {param}")
+    assert param.get("player_name") == player_name
+    assert param.get("player_list") == player_list
+    assert param.get("competition_list") == competition_list
+
+
+@pytest.mark.parametrize(
+    "input_args, player_name, player_list, competition_list",
+    list(param_data.team_saki_test_case.values()),
+    ids=list(param_data.team_saki_test_case.keys())
+)
+def test_team_check(input_args, player_name, player_list, competition_list, monkeypatch):
+    """チーム名"""
+    monkeypatch.setattr(sys, "argv", TEST_ARGS)
+    configuration.setup()
+
+    input_args += " チーム"
+    g.msg.argument = input_args.split()
+    param = dictutil.placeholder(g.cfg.results)
+
+    print(f"\n  --> in: {input_args.split()} out: {param}")
+    assert param.get("player_name") == player_name
+    assert param.get("player_list") == player_list
+    assert param.get("competition_list") == competition_list
+
+
+@pytest.mark.parametrize(
+    "input_args, player_name, replace_name",
+    list(param_data.guest_test_case.values()),
+    ids=list(param_data.guest_test_case.keys())
+)
+def test_guest_check(input_args, player_name, replace_name, monkeypatch):
+    """ゲストチェック"""
+    monkeypatch.setattr(sys, "argv", TEST_ARGS)
+    configuration.setup()
+    configuration.read_memberslist()
+
+    g.msg.argument = input_args.split()
+    g.params = dictutil.placeholder(g.cfg.results)
+    check_name = formatter.name_replace(g.params.get("player_name"))
+
+    assert g.params.get("player_name") == player_name
+    assert check_name == replace_name

@@ -7,9 +7,6 @@ from dataclasses import dataclass, field, fields
 from math import ceil
 
 from cls.types import CommonMethodMixin
-from libs.data import lookup
-from libs.functions.search import search_range
-from libs.utils import dictutil, formatter
 
 
 @dataclass
@@ -52,91 +49,6 @@ class SubCommand(CommonMethodMixin):
 
     def __post_init__(self):
         self.initialization(self.section)
-
-    def update(self, argument: list) -> dict:
-        """引数を解析し、パラメータの更新、集計範囲のパラメータを返す
-
-        Args:
-            argument (list): 引数
-
-        Returns:
-            dict: 集計範囲パラメータ
-            - player_name: str
-            - search_range: []
-            - player_list: []
-            - competition_list: []
-        """
-
-        self.initialization(self.section)
-        ret_dict: dict = {
-            "player_name": "",
-            "search_range": [],
-            "player_list": [],
-            "competition_list": [],
-        }
-        new_flag: dict = {}
-        tmp_range: list = []
-
-        # 引数解析
-        new_flag = dictutil.analysis_argument(self.always_argument)
-        if new_flag["search_range"]:
-            tmp_range = new_flag["search_range"]
-        else:
-            tmp_range.append(self.aggregation_range)
-        self.update_from_dict(new_flag)
-
-        new_flag = dictutil.analysis_argument(argument)
-        if new_flag["search_range"]:
-            tmp_range = new_flag["search_range"]
-        self.update_from_dict(new_flag)
-
-        ret_dict.update(search_range=search_range(tmp_range))
-
-        if new_flag.get("interval"):
-            ret_dict.update(interval=new_flag.get("interval"))
-        if new_flag.get("format"):
-            ret_dict.update(format=new_flag.get("format"))
-        if new_flag.get("filename"):
-            ret_dict.update(filename=new_flag.get("filename"))
-
-        # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
-        player_name: str = str()
-        target_player: list = []
-        player_list: dict = {}
-        competition_list: dict = {}
-        team_list: list = lookup.internal.get_team()
-
-        for x in new_flag["unknown_command"]:
-            if x in team_list:
-                target_player.append(x)
-            elif self.individual and self.unregistered_replace:
-                target_player.append(formatter.name_replace(x))
-            else:
-                target_player.append(x)
-
-        if target_player:
-            player_name = target_player[0]
-
-        if self.all_player:  # 全員追加
-            target_player += lookup.internal.get_member()
-        else:
-            target_player += lookup.internal.get_team()
-
-        # リスト生成
-        target_player = list(dict.fromkeys(target_player))
-        for idx, name in enumerate(target_player):
-            player_list[f"player_{idx}"] = name
-            competition_list[f"competition_{idx}"] = name
-
-        for delete_key in [k for k, v in competition_list.items() if v == player_name]:
-            del competition_list[delete_key]
-
-        ret_dict.update(player_name=player_name)
-        ret_dict.update(target_player=target_player)
-        ret_dict.update(player_list=player_list)
-        ret_dict.update(competition_list=competition_list)
-
-        return (ret_dict)
 
     def stipulated_calculation(self, game_count: int) -> int:
         """規定打数をゲーム数から計算

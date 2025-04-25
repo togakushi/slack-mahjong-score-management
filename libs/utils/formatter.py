@@ -174,33 +174,45 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
         str: 表記ブレ修正後のプレイヤー名
     """
 
-    pname = textutil.str_conv(pname, "h2z")
-    check_list = list(set(g.member_list.keys()))
+    check_list = list(set(g.member_list.keys()))  # 別名を含むリスト
+    check_team = lookup.internal.get_team()
 
-    if pname in check_list:
-        return (g.member_list[pname])
+    def _judge(check: str) -> bool:
+        if g.params.get("individual"):
+            if check in check_list:
+                return True
+        else:
+            if check in check_team:
+                return True
+        return False
+
+    pname = textutil.str_conv(pname, "h2z")  # 半角数字 -> 全角数字
+    if _judge(pname):
+        return pname
 
     # 敬称削除
     honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
     if re.match(fr".*{honor}", pname):
         if not re.match(fr".*(っ|ッ|ー){honor}", pname):
             pname = re.sub(fr"{honor}", "", pname)
-    if pname in check_list:
-        return (g.member_list[pname])
+    if _judge(pname):
+        return pname
 
-    # ひらがな、カタカナでチェック
-    if textutil.str_conv(pname, "k2h") in check_list:
-        return (g.member_list[textutil.str_conv(pname, "k2h")])
-    if textutil.str_conv(pname, "h2k") in check_list:
-        return (g.member_list[textutil.str_conv(pname, "h2k")])
+    check_name = textutil.str_conv(pname, "k2h")  # カタカナ -> ひらがな
+    if _judge(check_name):
+        return check_name
+
+    check_name = textutil.str_conv(pname, "h2k")  # ひらがな -> カタカナ
+    if _judge(check_name):
+        return check_name
 
     # メンバーリストに見つからない場合
     if g.params.get("unregistered_replace"):
-        return (g.cfg.member.guest_name)
+        return g.cfg.member.guest_name
     if add_mark:
-        return (f"{pname}({g.cfg.setting.guest_mark})")
+        return f"{pname}({g.cfg.setting.guest_mark})"
 
-    return (pname)
+    return pname
 
 
 def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
