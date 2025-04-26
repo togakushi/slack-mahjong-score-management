@@ -23,6 +23,7 @@ def test_command_check(input_args, player_name, player_list, competition_list, m
     """コマンド認識状態チェック"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
+    configuration.read_memberslist()
 
     g.msg.argument = input_args.split()
     param = dictutil.placeholder(g.cfg.results)
@@ -42,9 +43,9 @@ def test_player_check(input_args, player_name, player_list, competition_list, mo
     """プレイヤー名"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
+    configuration.read_memberslist()
 
     g.msg.argument = input_args.split()
-    # param1 = dictutil.placeholder(g.cfg.results)
     param = dictutil.placeholder(g.cfg.results)
 
     print(f"\n  --> in: {input_args.split()} out: {param}")
@@ -62,8 +63,8 @@ def test_team_check(input_args, player_name, player_list, competition_list, monk
     """チーム名"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
+    configuration.read_memberslist()
 
-    input_args += " チーム"
     g.msg.argument = input_args.split()
     param = dictutil.placeholder(g.cfg.results)
 
