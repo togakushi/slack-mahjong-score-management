@@ -86,7 +86,7 @@ def test_guest_check(input_args, player_name, replace_name, monkeypatch):
 
     g.msg.argument = input_args.split()
     g.params = dictutil.placeholder(g.cfg.results)
-    check_name = formatter.name_replace(g.params.get("player_name"))
+    check_name = formatter.name_replace(g.params.get("player_name", ""))
 
     assert g.params.get("player_name") == player_name
     assert check_name == replace_name
