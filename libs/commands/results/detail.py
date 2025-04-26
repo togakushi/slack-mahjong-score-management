@@ -25,13 +25,10 @@ def aggregation():
     # 検索動作を合わせる
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
-    if g.params["player_name"] in [x["team"] for x in g.team_list]:
+    if g.params["player_name"] in lookup.internal.get_team():
         g.params.update(individual=False)
     elif g.params["player_name"] in g.member_list:
         g.params.update(individual=True)
-
-    if not g.params.get("individual") and not lookup.internal.get_teammates():
-        return ("登録されていないチームです", {})
 
     # --- データ収集
     game_info: GameInfoDict = aggregate.game_info()
@@ -39,12 +36,14 @@ def aggregation():
     mapping_dict: dict = {}
 
     if game_info["game_count"] == 0:
-        msg_data["検索範囲"] = f"{ExtDt(g.params["starttime"]).format("ymdhms")}"
-        msg_data["検索範囲"] += f" ～ {ExtDt(g.params["endtime"]).format("ymdhms")}"
-        msg_data["特記事項"] = "、".join(message.remarks())
-        msg_data["検索ワード"] = message.search_word()
-        msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {message.badge_status(0, 0)}"
-        return (message_build(msg_data), {})
+        if g.params.get("individual"):
+            msg_data["検索範囲"] = f"{ExtDt(g.params["starttime"]).format("ymdhms")}"
+            msg_data["検索範囲"] += f" ～ {ExtDt(g.params["endtime"]).format("ymdhms")}"
+            msg_data["特記事項"] = "、".join(message.remarks())
+            msg_data["検索ワード"] = message.search_word()
+            msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {message.badge_status(0, 0)}"
+            return (message_build(msg_data), {})
+        return ("登録されていないチームです", {})
 
     result_df = aggregate.game_results()
     record_df = aggregate.ranking_record()
@@ -122,7 +121,7 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
     else:
         ret["title"] = "*【チーム成績】*"
         ret["チーム名"] = f"{g.params["player_name"]} {message.badge_degree(data["ゲーム数"])}"
-        ret["登録メンバー"] = "、".join(lookup.internal.get_teammates())
+        ret["登録メンバー"] = "、".join(lookup.internal.get_teammates(g.params["player_name"]))
 
     badge_status = message.badge_status(data["ゲーム数"], data["win"])
     ret["検索範囲"] = message.item_search_range(kind="str").strip()

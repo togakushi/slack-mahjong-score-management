@@ -25,15 +25,18 @@ def get_team() -> list:
     return ([x.get("team") for x in g.team_list])
 
 
-def get_teammates():
-    """所属チームのチームメイトを返す
+def get_teammates(team: str) -> list:
+    """指定チームのチームメイト一覧を返す
+
+    Args:
+        name (str): チェック対象のチーム名
 
     Returns:
         list: メンバーリスト
     """
 
     member_list: list = []
-    team_data = [x for x in g.team_list if x["team"] == g.params["player_name"]]
+    team_data = [x for x in g.team_list if x["team"] == team]
     if team_data:
         if team_data[0]["member"]:
             member_list = team_data[0]["member"].split(",")
