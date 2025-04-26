@@ -16,27 +16,6 @@ from libs.utils import textutil
 
 CommandsDict = dict[str, CommandSpec]
 COMMANDS: CommandsDict = {
-    # -----------------------------------------------------------------------------------
-    "test_case1": {
-        "match": [r"^command_test1$", r"^command_test2$"],
-        "action": lambda w: {"test_flag": True},
-    },
-    "test_case2": {
-        "match": [r"^command_test(3|4|5)$"],
-        "action": lambda w: {"test_flag": False},
-    },
-    "test_case3": {  # 引数アリ
-        "match": [r"^(command_val)(\d*)$"],
-        "action": lambda w: {"test_val": w},
-    },
-    "test_case4": {  # 分岐
-        "match": [r"^command_case1$", r"^command_case2$"],
-        "action": lambda w: {
-            "command_case1": {"test_case": 1},
-            "command_case2": {"test_case": 2},
-        }[w[0] if isinstance(w, tuple) else w],
-    },
-    # -----------------------------------------------------------------------------------
     "guest": {
         "match": [r"^ゲストナシ$", r"^ゲストアリ$", r"^ゲスト無効$"],
         "action": lambda w: {
