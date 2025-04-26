@@ -4,3 +4,5 @@ matplotlib
 reportlab
 pandas
 tabulate[widechars] # type: ignore
+pytest
+pdoc
