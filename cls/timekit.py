@@ -333,22 +333,6 @@ class ExtendedDatetime:
         return (ret)
 
     @classmethod
-    def print_range(cls) -> str:
-        """指定可能キーワードで取得できる範囲の一覧
-
-        Returns:
-            str: 出力メッセージ
-        """
-
-        ret: str = ""
-        for _, val in DATE_RANGE_MAP.items():
-            for label in val["keyword"]:
-                scope = " ～ ".join(cls.range(label).format("ymd"))
-                ret += f"{label}： {scope}\n"
-
-        return ret.strip()
-
-    @classmethod
     def range(cls, value: str | list) -> "ExtendedDatetimeList":
         """キーワードが示す範囲をリストで返す
 
@@ -395,6 +379,22 @@ class ExtendedDatetime:
             ret.extend(cast(list, range_map["keyword"]))
 
         return (ret)
+
+    @classmethod
+    def print_range(cls) -> str:
+        """指定可能キーワードで取得できる範囲の一覧
+
+        Returns:
+            str: 出力メッセージ
+        """
+
+        ret: str = ""
+        for _, val in DATE_RANGE_MAP.items():
+            for label in val["keyword"]:
+                scope = " ～ ".join(cls.range(label).format("ymd"))
+                ret += f"{label}： {scope}\n"
+
+        return ret.strip()
 
     @staticmethod
     def convert(value: AcceptedType) -> datetime:
