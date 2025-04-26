@@ -2,10 +2,12 @@
 テスト用パラメータ
 """
 
+from typing import Any, Tuple
+
 from cls.timekit import ExtendedDatetime as ExtDt
 
 # フラグ更新
-flag_test_case_01 = {
+flag_test_case_01: dict[str, Tuple[Any, ...]] = {
     # input_args, expected_flags
     "guest": ("ゲストなし", {"guest_skip": False, "guest_skip2": False, "unregistered_replace": True}),
     "score comparisons": ("比較", {"score_comparisons": True}),
@@ -19,7 +21,7 @@ flag_test_case_01 = {
 }
 
 # 数値引数
-flag_test_case_02 = {
+flag_test_case_02: dict[str, Tuple[Any, ...]] = {
     "ranked 0 (kata)": ("トップ0", {"ranked": 0}),
     "ranked 5 (kan)": ("上位5", {"ranked": 5}),
     "ranked 10 (alp)": ("top10", {"ranked": 10}),
@@ -36,7 +38,7 @@ flag_test_case_02 = {
 }
 
 # 文字列引数
-flag_test_case_03 = {
+flag_test_case_03: dict[str, Tuple[Any, ...]] = {
     "format type (text)": ("text", {"format": "text"}),
     "format type (txt)": ("txt", {"format": "txt"}),
     "format type (CSV)": ("CSV", {"format": "csv"}),
@@ -52,13 +54,13 @@ flag_test_case_03 = {
 }
 
 # 未定義
-flag_test_case_04 = {
+flag_test_case_04: dict[str, Tuple[Any, ...]] = {
     "undefined 01": ("未定義01", ["未定義01"]),
     "undefined 02": ("未定義02 未定義03", ["未定義02", "未定義03"]),
 }
 
 # 日付
-flag_test_case_05 = {
+flag_test_case_05: dict[str, Tuple[Any, ...]] = {
     "keyword": ("今月", ExtDt.range("今月").format("sql")),
     "number only": ("20250101", ExtDt("20250101").format("sql")),
     "hyphen delimiter": ("2025-01-01", ExtDt("20250101").format("sql")),
@@ -67,7 +69,7 @@ flag_test_case_05 = {
 }
 
 # プレイヤーテスト
-name_test_case_01 = {
+name_test_case_01: dict[str, Tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
     # --- 半角数字→全角数字
     "Half -> Full": ("未定義01", "未定義０１", {"player_0": "未定義０１"}, {}),
@@ -81,14 +83,14 @@ name_test_case_01 = {
 }
 
 # チーム名テスト
-team_saki_test_case = {
+team_saki_test_case: dict[str, Tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
     "case 01": ("清澄高校", "清澄高校", {'player_0': "清澄高校"}, {}),
     "case 02": ("清澄高校 宮永咲", "清澄高校", {'player_0': "清澄高校"}, {}),
 }
 
 # ゲストテスト
-guest_test_case = {
+guest_test_case: dict[str, Tuple[Any, ...]] = {
     # input_args, player_name, replace_name
     "case 1-01": ("ゲストあり 名前あ", "名前あ", "ゲスト"),
     "case 1-02": ("ゲストあり 宮永咲", "宮永咲", "宮永咲"),
@@ -103,7 +105,7 @@ guest_test_case = {
 }
 
 # フラグ更新コマンドテスト
-command_test_case_01 = {
+command_test_case_01: dict[str, Tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
     # --- フラグ更新コマンドが誤って認識されていないか
     "verbose": ("詳細 verbose", "", {}, {}),
