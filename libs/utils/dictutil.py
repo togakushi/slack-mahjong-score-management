@@ -28,6 +28,9 @@ def placeholder(subcom: "SubCommand") -> dict:
     parser = CommandParser()
     ret_dict: dict = {}
 
+    # 初期化
+    g.params.clear()
+
     # 設定周りのパラメータ
     ret_dict.update(command=subcom.section)
     ret_dict.update(g.cfg.mahjong.to_dict())
@@ -61,29 +64,24 @@ def placeholder(subcom: "SubCommand") -> dict:
     # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
     player_name: str = str()
     target_player: list = []
-    player_list: dict = {}
-    competition_list: dict = {}
-    team_list: list = lookup.internal.get_team()
 
-    for x in param.unknown + pre_param.unknown + param.unknown:
-        if x in team_list:
-            target_player.append(x)
-        elif ret_dict.get("individual") and ret_dict.get("unregistered_replace"):
-            target_player.append(formatter.name_replace(x))
-        else:
-            target_player.append(x)
+    check_list: list = param.unknown + pre_param.unknown
+    if ret_dict.get("individual"):
+        if ret_dict.get("all_player"):
+            check_list.extend(lookup.internal.get_member())
+        target_player = _collect_member(check_list)
+    else:
+        if ret_dict.get("all_player"):
+            check_list.extend(lookup.internal.get_team())
+        target_player = _collect_team(check_list)
 
     if target_player:
         player_name = target_player[0]
 
-    if ret_dict.get("all_player"):  # 全員追加
-        if ret_dict.get("individual"):
-            target_player += lookup.internal.get_member()
-        else:
-            target_player += lookup.internal.get_team()
-
     # リスト生成
-    target_player = list(dict.fromkeys(target_player))
+    player_list: dict = {}
+    competition_list: dict = {}
+
     for idx, name in enumerate(target_player):
         player_list[f"player_{idx}"] = name
         if name != player_name:
@@ -103,6 +101,31 @@ def placeholder(subcom: "SubCommand") -> dict:
             ret_dict[k] = v
 
     return (ret_dict)
+
+
+def _collect_member(target_list: list) -> list:
+    ret_list: list = []
+    for name in list(dict.fromkeys(target_list)):
+        if name in lookup.internal.get_team():
+            teammates = lookup.internal.get_teammates(name)
+            ret_list.extend(teammates)
+            continue
+        ret_list.append(formatter.name_replace(name))
+
+    return list(dict.fromkeys(ret_list))
+
+
+def _collect_team(target_list: list) -> list:
+    ret_list: list = []
+    for team in list(dict.fromkeys(target_list)):
+        if team in lookup.internal.get_member():
+            name = lookup.internal.which_team(team)
+            if name:
+                ret_list.append(name)
+        else:
+            ret_list.append(team)
+
+    return list(dict.fromkeys(ret_list))
 
 
 def merge_dicts(dict1: Any, dict2: Any) -> dict:
