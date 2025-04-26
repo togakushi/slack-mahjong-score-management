@@ -13,7 +13,6 @@ from functools import partial
 import libs.global_value as g
 from cls.config import Config
 from cls.parser import MessageParser
-from cls.search import SearchRange
 
 
 def set_loglevel():
@@ -164,7 +163,6 @@ def setup() -> None:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
     g.cfg = Config(g.args.config)
-    g.search_word = SearchRange()
     g.msg = MessageParser()
 
     logging.notice("database: %s", g.cfg.db.database_file)  # type: ignore

@@ -268,31 +268,3 @@ def reactions_list(msg: Any) -> Tuple[list, list]:
                         reaction_ng.append(msg.get("ts"))
 
     return (reaction_ok, reaction_ng)
-
-
-def search_range(target_list: list) -> dict:
-    """検索範囲取得
-
-    Args:
-        target_list (list): 日付
-
-    Returns:
-        dict: 取得情報
-        - starttime: 検索開始日時
-        - endtime: 検索終了日次
-        - onday: 終了日時（日を跨がない）
-    """
-
-    day: list = []
-    for x in target_list:
-        day.extend(g.search_word.range(x))
-
-    search_first = min(day)
-    search_last = max(day) + relativedelta(days=1, hour=12)
-    search_onday = max(day)
-
-    return ({
-        "starttime": search_first.replace(hour=12, minute=0, second=0, microsecond=0),
-        "endtime": search_last.replace(hour=11, minute=59, second=59, microsecond=999999),
-        "onday": search_onday.replace(hour=23, minute=59, second=59, microsecond=999999),
-    })

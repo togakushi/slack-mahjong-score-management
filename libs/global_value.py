@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
     from cls.config import Config
     from cls.parser import MessageParser
-    from cls.search import SearchRange
 
 args: "Namespace" = None  # type: ignore
 """コマンドライン引数"""
@@ -24,8 +23,6 @@ cfg: "Config"
 """Configインスタンス共有"""
 msg: "MessageParser"
 """MessageParserインスタンス共有"""
-search_word: "SearchRange"
-"""SearchRangeインスタンス共有"""
 
 # 環境パラメータ
 member_list: dict = {}

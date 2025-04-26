@@ -7,6 +7,7 @@ from typing import Tuple
 
 import libs.global_value as g
 from cls.parser import CommandParser
+from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import SlackSearchData
 from libs.utils import textutil
 
@@ -52,7 +53,7 @@ def check_namepattern(name: str, kind: str | None = None) -> Tuple[bool, str]:
         return (False, "使用できない記号が含まれています。")
 
     # 引数に利用できる名前かチェック
-    if g.search_word.find(name):
+    if name in ExtDt.valid_keywords():
         return (False, "検索範囲指定に使用される単語では登録できません。")
 
     if CommandParser().is_valid_command(name):

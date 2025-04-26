@@ -85,8 +85,7 @@ def help_message():
 
     # 検索範囲
     msg += "\n\n*検索範囲に指定できるキーワード*\n"
-    for x in g.search_word.list().splitlines():
-        msg += f"\t{x}\n"
+    msg += textwrap.indent(ExtDt.print_range(), "\t")
 
     # ルール識別子
     rule = lookup.db.rule_version()
