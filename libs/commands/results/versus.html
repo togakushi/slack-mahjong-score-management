@@ -233,7 +233,7 @@
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="s2">        &quot;&quot;&quot;</span>
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">del_blank_line</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="n">del_blank_line</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="k">def</span><span class="w"> </span><span class="nf">tmpl_vs_table</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -267,7 +267,7 @@
 </span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>        <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
 </span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>    <span class="p">)</span>
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>    <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
 </span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>
 </span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="k">def</span><span class="w"> </span><span class="nf">tmpl_result_verbose</span><span class="p">(</span><span class="n">current_game</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">playtime</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">guest_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -297,7 +297,7 @@
 </span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;▲&quot;</span><span class="p">)</span>
 </span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>    <span class="p">)</span>
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>
-</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>
 </span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>
 </span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="k">def</span><span class="w"> </span><span class="nf">tmpl_result_simple</span><span class="p">(</span><span class="n">my_score</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">vs_score</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">playtime</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">guest_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -322,7 +322,7 @@
 </span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;▲&quot;</span><span class="p">)</span>
 </span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>    <span class="p">)</span>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>    <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -515,7 +515,7 @@
 </span><span id="tmpl_header-163"><a href="#tmpl_header-163"><span class="linenos">163</span></a><span class="s2">        &quot;&quot;&quot;</span>
 </span><span id="tmpl_header-164"><a href="#tmpl_header-164"><span class="linenos">164</span></a>    <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span><span id="tmpl_header-165"><a href="#tmpl_header-165"><span class="linenos">165</span></a>
-</span><span id="tmpl_header-166"><a href="#tmpl_header-166"><span class="linenos">166</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">del_blank_line</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
+</span><span id="tmpl_header-166"><a href="#tmpl_header-166"><span class="linenos">166</span></a>    <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="n">del_blank_line</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -579,7 +579,7 @@
 </span><span id="tmpl_vs_table-197"><a href="#tmpl_vs_table-197"><span class="linenos">197</span></a>        <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
 </span><span id="tmpl_vs_table-198"><a href="#tmpl_vs_table-198"><span class="linenos">198</span></a>    <span class="p">)</span>
 </span><span id="tmpl_vs_table-199"><a href="#tmpl_vs_table-199"><span class="linenos">199</span></a>
-</span><span id="tmpl_vs_table-200"><a href="#tmpl_vs_table-200"><span class="linenos">200</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</span><span id="tmpl_vs_table-200"><a href="#tmpl_vs_table-200"><span class="linenos">200</span></a>    <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -638,7 +638,7 @@
 </span><span id="tmpl_result_verbose-227"><a href="#tmpl_result_verbose-227"><span class="linenos">227</span></a><span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;▲&quot;</span><span class="p">)</span>
 </span><span id="tmpl_result_verbose-228"><a href="#tmpl_result_verbose-228"><span class="linenos">228</span></a>    <span class="p">)</span>
 </span><span id="tmpl_result_verbose-229"><a href="#tmpl_result_verbose-229"><span class="linenos">229</span></a>
-</span><span id="tmpl_result_verbose-230"><a href="#tmpl_result_verbose-230"><span class="linenos">230</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</span><span id="tmpl_result_verbose-230"><a href="#tmpl_result_verbose-230"><span class="linenos">230</span></a>    <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -694,7 +694,7 @@
 </span><span id="tmpl_result_simple-252"><a href="#tmpl_result_simple-252"><span class="linenos">252</span></a><span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;▲&quot;</span><span class="p">)</span>
 </span><span id="tmpl_result_simple-253"><a href="#tmpl_result_simple-253"><span class="linenos">253</span></a>    <span class="p">)</span>
 </span><span id="tmpl_result_simple-254"><a href="#tmpl_result_simple-254"><span class="linenos">254</span></a>
-</span><span id="tmpl_result_simple-255"><a href="#tmpl_result_simple-255"><span class="linenos">255</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</span><span id="tmpl_result_simple-255"><a href="#tmpl_result_simple-255"><span class="linenos">255</span></a>    <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </span></pre></div>
 
 

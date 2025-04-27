@@ -375,7 +375,7 @@
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ret_dict</span><span class="p">:</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>                <span class="n">ret_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">ret_dict</span><span class="p">)</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>        <span class="k">return</span> <span class="n">ret_dict</span>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 </span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;デフォルト値を取得して返す</span>
@@ -413,7 +413,7 @@
 </span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>                <span class="k">else</span><span class="p">:</span>
 </span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>                <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>                <span class="k">return</span> <span class="n">ret</span>
 </span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>
 </span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> has no default or does not exist.&quot;</span><span class="p">)</span>
 </span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>
@@ -1006,7 +1006,7 @@
 </span><span id="CommonMethodMixin-164"><a href="#CommonMethodMixin-164"><span class="linenos">164</span></a>            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ret_dict</span><span class="p">:</span>
 </span><span id="CommonMethodMixin-165"><a href="#CommonMethodMixin-165"><span class="linenos">165</span></a>                <span class="n">ret_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 </span><span id="CommonMethodMixin-166"><a href="#CommonMethodMixin-166"><span class="linenos">166</span></a>
-</span><span id="CommonMethodMixin-167"><a href="#CommonMethodMixin-167"><span class="linenos">167</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">ret_dict</span><span class="p">)</span>
+</span><span id="CommonMethodMixin-167"><a href="#CommonMethodMixin-167"><span class="linenos">167</span></a>        <span class="k">return</span> <span class="n">ret_dict</span>
 </span><span id="CommonMethodMixin-168"><a href="#CommonMethodMixin-168"><span class="linenos">168</span></a>
 </span><span id="CommonMethodMixin-169"><a href="#CommonMethodMixin-169"><span class="linenos">169</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 </span><span id="CommonMethodMixin-170"><a href="#CommonMethodMixin-170"><span class="linenos">170</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;デフォルト値を取得して返す</span>
@@ -1044,7 +1044,7 @@
 </span><span id="CommonMethodMixin-202"><a href="#CommonMethodMixin-202"><span class="linenos">202</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="CommonMethodMixin-203"><a href="#CommonMethodMixin-203"><span class="linenos">203</span></a>                <span class="k">else</span><span class="p">:</span>
 </span><span id="CommonMethodMixin-204"><a href="#CommonMethodMixin-204"><span class="linenos">204</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
-</span><span id="CommonMethodMixin-205"><a href="#CommonMethodMixin-205"><span class="linenos">205</span></a>                <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span><span id="CommonMethodMixin-205"><a href="#CommonMethodMixin-205"><span class="linenos">205</span></a>                <span class="k">return</span> <span class="n">ret</span>
 </span><span id="CommonMethodMixin-206"><a href="#CommonMethodMixin-206"><span class="linenos">206</span></a>
 </span><span id="CommonMethodMixin-207"><a href="#CommonMethodMixin-207"><span class="linenos">207</span></a>        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> has no default or does not exist.&quot;</span><span class="p">)</span>
 </span></pre></div>
@@ -1143,7 +1143,7 @@
 </span><span id="CommonMethodMixin.to_dict-164"><a href="#CommonMethodMixin.to_dict-164"><span class="linenos">164</span></a>            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ret_dict</span><span class="p">:</span>
 </span><span id="CommonMethodMixin.to_dict-165"><a href="#CommonMethodMixin.to_dict-165"><span class="linenos">165</span></a>                <span class="n">ret_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 </span><span id="CommonMethodMixin.to_dict-166"><a href="#CommonMethodMixin.to_dict-166"><span class="linenos">166</span></a>
-</span><span id="CommonMethodMixin.to_dict-167"><a href="#CommonMethodMixin.to_dict-167"><span class="linenos">167</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">ret_dict</span><span class="p">)</span>
+</span><span id="CommonMethodMixin.to_dict-167"><a href="#CommonMethodMixin.to_dict-167"><span class="linenos">167</span></a>        <span class="k">return</span> <span class="n">ret_dict</span>
 </span></pre></div>
 
 
@@ -1205,7 +1205,7 @@
 </span><span id="CommonMethodMixin.get_default-202"><a href="#CommonMethodMixin.get_default-202"><span class="linenos">202</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="CommonMethodMixin.get_default-203"><a href="#CommonMethodMixin.get_default-203"><span class="linenos">203</span></a>                <span class="k">else</span><span class="p">:</span>
 </span><span id="CommonMethodMixin.get_default-204"><a href="#CommonMethodMixin.get_default-204"><span class="linenos">204</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
-</span><span id="CommonMethodMixin.get_default-205"><a href="#CommonMethodMixin.get_default-205"><span class="linenos">205</span></a>                <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span><span id="CommonMethodMixin.get_default-205"><a href="#CommonMethodMixin.get_default-205"><span class="linenos">205</span></a>                <span class="k">return</span> <span class="n">ret</span>
 </span><span id="CommonMethodMixin.get_default-206"><a href="#CommonMethodMixin.get_default-206"><span class="linenos">206</span></a>
 </span><span id="CommonMethodMixin.get_default-207"><a href="#CommonMethodMixin.get_default-207"><span class="linenos">207</span></a>        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> has no default or does not exist.&quot;</span><span class="p">)</span>
 </span></pre></div>

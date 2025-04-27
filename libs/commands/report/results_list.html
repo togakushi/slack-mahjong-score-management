@@ -104,7 +104,7 @@
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;libs/queries/report/results_list.sql&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;anonymous&quot;</span><span class="p">):</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>        <span class="n">mapping_dict</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">anonymous_mapping</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
@@ -136,7 +136,7 @@
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>            <span class="n">file_path</span> <span class="o">=</span> <span class="n">graph_generation</span><span class="p">(</span><span class="n">game_info</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="k">return</span> <span class="n">file_path</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="k">def</span><span class="w"> </span><span class="nf">graph_generation</span><span class="p">(</span><span class="n">game_info</span><span class="p">:</span> <span class="n">GameInfoDict</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
@@ -228,7 +228,7 @@
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
 </span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="k">return</span> <span class="n">report_file_path</span>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="k">def</span><span class="w"> </span><span class="nf">text_generation</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
@@ -275,7 +275,7 @@
 </span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">df_rename</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span><span class="n">report_file_path</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;outline&quot;</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">)</span>
 </span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    <span class="k">return</span> <span class="n">report_file_path</span>
 </span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>
 </span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>
 </span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="k">def</span><span class="w"> </span><span class="nf">csv_generation</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
@@ -318,7 +318,7 @@
 </span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>
 </span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
 </span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>    <span class="k">return</span> <span class="n">report_file_path</span>
 </span></pre></div>
 
 
@@ -361,7 +361,7 @@
 </span><span id="main-34"><a href="#main-34"><span class="linenos">34</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">read_data</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">script_dir</span><span class="p">,</span> <span class="s2">&quot;libs/queries/report/results_list.sql&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="main-35"><a href="#main-35"><span class="linenos">35</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
 </span><span id="main-36"><a href="#main-36"><span class="linenos">36</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-</span><span id="main-37"><a href="#main-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="main-37"><a href="#main-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="main-38"><a href="#main-38"><span class="linenos">38</span></a>
 </span><span id="main-39"><a href="#main-39"><span class="linenos">39</span></a>    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;anonymous&quot;</span><span class="p">):</span>
 </span><span id="main-40"><a href="#main-40"><span class="linenos">40</span></a>        <span class="n">mapping_dict</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">anonymous_mapping</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
@@ -393,7 +393,7 @@
 </span><span id="main-66"><a href="#main-66"><span class="linenos">66</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
 </span><span id="main-67"><a href="#main-67"><span class="linenos">67</span></a>            <span class="n">file_path</span> <span class="o">=</span> <span class="n">graph_generation</span><span class="p">(</span><span class="n">game_info</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
 </span><span id="main-68"><a href="#main-68"><span class="linenos">68</span></a>
-</span><span id="main-69"><a href="#main-69"><span class="linenos">69</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+</span><span id="main-69"><a href="#main-69"><span class="linenos">69</span></a>    <span class="k">return</span> <span class="n">file_path</span>
 </span></pre></div>
 
 
@@ -508,7 +508,7 @@
 </span><span id="graph_generation-158"><a href="#graph_generation-158"><span class="linenos">158</span></a>    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
 </span><span id="graph_generation-159"><a href="#graph_generation-159"><span class="linenos">159</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="graph_generation-160"><a href="#graph_generation-160"><span class="linenos">160</span></a>
-</span><span id="graph_generation-161"><a href="#graph_generation-161"><span class="linenos">161</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
+</span><span id="graph_generation-161"><a href="#graph_generation-161"><span class="linenos">161</span></a>    <span class="k">return</span> <span class="n">report_file_path</span>
 </span></pre></div>
 
 
@@ -586,7 +586,7 @@
 </span><span id="text_generation-205"><a href="#text_generation-205"><span class="linenos">205</span></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">formatter</span><span class="o">.</span><span class="n">df_rename</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 </span><span id="text_generation-206"><a href="#text_generation-206"><span class="linenos">206</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span><span class="n">report_file_path</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;outline&quot;</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">)</span>
 </span><span id="text_generation-207"><a href="#text_generation-207"><span class="linenos">207</span></a>
-</span><span id="text_generation-208"><a href="#text_generation-208"><span class="linenos">208</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
+</span><span id="text_generation-208"><a href="#text_generation-208"><span class="linenos">208</span></a>    <span class="k">return</span> <span class="n">report_file_path</span>
 </span></pre></div>
 
 
@@ -658,7 +658,7 @@
 </span><span id="csv_generation-248"><a href="#csv_generation-248"><span class="linenos">248</span></a>
 </span><span id="csv_generation-249"><a href="#csv_generation-249"><span class="linenos">249</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
 </span><span id="csv_generation-250"><a href="#csv_generation-250"><span class="linenos">250</span></a>
-</span><span id="csv_generation-251"><a href="#csv_generation-251"><span class="linenos">251</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">report_file_path</span><span class="p">)</span>
+</span><span id="csv_generation-251"><a href="#csv_generation-251"><span class="linenos">251</span></a>    <span class="k">return</span> <span class="n">report_file_path</span>
 </span></pre></div>
 
 

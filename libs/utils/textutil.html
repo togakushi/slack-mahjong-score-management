@@ -88,7 +88,7 @@
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">count</span><span class="p">)</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">return</span> <span class="n">count</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="k">def</span><span class="w"> </span><span class="nf">str_conv</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;h2z&quot;</span><span class="p">,</span> <span class="s2">&quot;z2h&quot;</span><span class="p">,</span> <span class="s2">&quot;h2k&quot;</span><span class="p">,</span> <span class="s2">&quot;k2h&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -121,9 +121,9 @@
 </span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="k">case</span> <span class="s2">&quot;k2h&quot;</span><span class="p">:</span>  <span class="c1"># カタカナをひらがなに変換</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>            <span class="n">trans_table</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="n">kana</span><span class="p">,</span> <span class="n">hira</span><span class="p">)</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>            <span class="k">return</span> <span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>            <span class="k">return</span> <span class="n">text</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">trans_table</span><span class="p">))</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">trans_table</span><span class="p">)</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
 </span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
 </span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="k">def</span><span class="w"> </span><span class="nf">count_padding</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -148,8 +148,8 @@
 </span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>                    <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>
 </span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>    <span class="k">if</span> <span class="n">name_list</span><span class="p">:</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>        <span class="k">return</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">len_count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">name_list</span><span class="p">))</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>    <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">len_count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">name_list</span><span class="p">)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>    <span class="k">return</span> <span class="mi">0</span>
 </span></pre></div>
 
 
@@ -182,7 +182,7 @@
 </span><span id="len_count-24"><a href="#len_count-24"><span class="linenos">24</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="len_count-25"><a href="#len_count-25"><span class="linenos">25</span></a>            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 </span><span id="len_count-26"><a href="#len_count-26"><span class="linenos">26</span></a>
-</span><span id="len_count-27"><a href="#len_count-27"><span class="linenos">27</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">count</span><span class="p">)</span>
+</span><span id="len_count-27"><a href="#len_count-27"><span class="linenos">27</span></a>    <span class="k">return</span> <span class="n">count</span>
 </span></pre></div>
 
 
@@ -244,9 +244,9 @@
 </span><span id="str_conv-57"><a href="#str_conv-57"><span class="linenos">57</span></a>        <span class="k">case</span> <span class="s2">&quot;k2h&quot;</span><span class="p">:</span>  <span class="c1"># カタカナをひらがなに変換</span>
 </span><span id="str_conv-58"><a href="#str_conv-58"><span class="linenos">58</span></a>            <span class="n">trans_table</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="n">kana</span><span class="p">,</span> <span class="n">hira</span><span class="p">)</span>
 </span><span id="str_conv-59"><a href="#str_conv-59"><span class="linenos">59</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span id="str_conv-60"><a href="#str_conv-60"><span class="linenos">60</span></a>            <span class="k">return</span> <span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</span><span id="str_conv-60"><a href="#str_conv-60"><span class="linenos">60</span></a>            <span class="k">return</span> <span class="n">text</span>
 </span><span id="str_conv-61"><a href="#str_conv-61"><span class="linenos">61</span></a>
-</span><span id="str_conv-62"><a href="#str_conv-62"><span class="linenos">62</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">trans_table</span><span class="p">))</span>
+</span><span id="str_conv-62"><a href="#str_conv-62"><span class="linenos">62</span></a>    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">trans_table</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -305,8 +305,8 @@
 </span><span id="count_padding-84"><a href="#count_padding-84"><span class="linenos">84</span></a>                    <span class="n">name_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 </span><span id="count_padding-85"><a href="#count_padding-85"><span class="linenos">85</span></a>
 </span><span id="count_padding-86"><a href="#count_padding-86"><span class="linenos">86</span></a>    <span class="k">if</span> <span class="n">name_list</span><span class="p">:</span>
-</span><span id="count_padding-87"><a href="#count_padding-87"><span class="linenos">87</span></a>        <span class="k">return</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">len_count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">name_list</span><span class="p">))</span>
-</span><span id="count_padding-88"><a href="#count_padding-88"><span class="linenos">88</span></a>    <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="count_padding-87"><a href="#count_padding-87"><span class="linenos">87</span></a>        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">len_count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">name_list</span><span class="p">)</span>
+</span><span id="count_padding-88"><a href="#count_padding-88"><span class="linenos">88</span></a>    <span class="k">return</span> <span class="mi">0</span>
 </span></pre></div>
 
 

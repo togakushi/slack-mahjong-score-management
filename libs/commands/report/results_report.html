@@ -180,9 +180,9 @@
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># ヘッダのみ</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="k">return</span> <span class="p">([])</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="k">return</span> <span class="p">[]</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">return</span> <span class="n">results</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_count_results</span><span class="p">(</span><span class="n">game_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -246,9 +246,9 @@
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># ヘッダのみ</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>        <span class="k">return</span> <span class="p">([])</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>        <span class="k">return</span> <span class="p">[]</span>
 </span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="k">return</span> <span class="n">results</span>
 </span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_count_moving</span><span class="p">(</span><span class="n">game_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -281,7 +281,7 @@
 </span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;return record: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
 </span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>    <span class="k">return</span> <span class="n">results</span>
 </span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>
 </span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>
 </span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="k">def</span><span class="w"> </span><span class="nf">graphing_mean_rank</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">whole</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BytesIO</span><span class="p">:</span>
@@ -335,7 +335,7 @@
 </span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">imgdata</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
 </span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">imgdata</span><span class="p">)</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>    <span class="k">return</span> <span class="n">imgdata</span>
 </span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>
 </span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>
 </span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a><span class="k">def</span><span class="w"> </span><span class="nf">graphing_total_points</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">whole</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BytesIO</span><span class="p">:</span>
@@ -398,7 +398,7 @@
 </span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">imgdata</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
 </span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a>
-</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">imgdata</span><span class="p">)</span>
+</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>    <span class="k">return</span> <span class="n">imgdata</span>
 </span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a>
 </span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>
 </span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a><span class="k">def</span><span class="w"> </span><span class="nf">graphing_rank_distribution</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BytesIO</span><span class="p">:</span>
@@ -445,7 +445,7 @@
 </span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">imgdata</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
 </span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>
-</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">imgdata</span><span class="p">)</span>
+</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a>    <span class="k">return</span> <span class="n">imgdata</span>
 </span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>
 </span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>
 </span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a><span class="k">def</span><span class="w"> </span><span class="nf">gen_pdf</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">]:</span>
@@ -563,7 +563,7 @@
 </span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>    <span class="p">)</span>
 </span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>    <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PageBreak</span><span class="p">())</span>
 </span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a>
-</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a>    <span class="k">return</span> <span class="n">elements</span>
 </span><span id="L-475"><a href="#L-475"><span class="linenos">475</span></a>
 </span><span id="L-476"><a href="#L-476"><span class="linenos">476</span></a>
 </span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a><span class="k">def</span><span class="w"> </span><span class="nf">entire_aggregate</span><span class="p">(</span><span class="n">style</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -585,7 +585,7 @@
 </span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a>    <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">get_game_results</span><span class="p">()</span>
 </span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>
 </span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">tmp_data</span><span class="p">:</span>
-</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a>        <span class="k">return</span> <span class="p">([])</span>
+</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a>        <span class="k">return</span> <span class="p">[]</span>
 </span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a>
 </span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp_data</span><span class="p">):</span>  <span class="c1"># ゲーム数を除外</span>
 </span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a>        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
@@ -656,7 +656,7 @@
 </span><span id="L-564"><a href="#L-564"><span class="linenos">564</span></a>
 </span><span id="L-565"><a href="#L-565"><span class="linenos">565</span></a>    <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PageBreak</span><span class="p">())</span>
 </span><span id="L-566"><a href="#L-566"><span class="linenos">566</span></a>
-</span><span id="L-567"><a href="#L-567"><span class="linenos">567</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</span><span id="L-567"><a href="#L-567"><span class="linenos">567</span></a>    <span class="k">return</span> <span class="n">elements</span>
 </span><span id="L-568"><a href="#L-568"><span class="linenos">568</span></a>
 </span><span id="L-569"><a href="#L-569"><span class="linenos">569</span></a>
 </span><span id="L-570"><a href="#L-570"><span class="linenos">570</span></a><span class="k">def</span><span class="w"> </span><span class="nf">periodic_aggregation</span><span class="p">(</span><span class="n">style</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -686,7 +686,7 @@
 </span><span id="L-594"><a href="#L-594"><span class="linenos">594</span></a>        <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">get_game_results</span><span class="p">()</span>
 </span><span id="L-595"><a href="#L-595"><span class="linenos">595</span></a>
 </span><span id="L-596"><a href="#L-596"><span class="linenos">596</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">tmp_data</span><span class="p">:</span>
-</span><span id="L-597"><a href="#L-597"><span class="linenos">597</span></a>            <span class="k">return</span> <span class="p">([])</span>
+</span><span id="L-597"><a href="#L-597"><span class="linenos">597</span></a>            <span class="k">return</span> <span class="p">[]</span>
 </span><span id="L-598"><a href="#L-598"><span class="linenos">598</span></a>
 </span><span id="L-599"><a href="#L-599"><span class="linenos">599</span></a>        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp_data</span><span class="p">):</span>  <span class="c1"># 日時を除外</span>
 </span><span id="L-600"><a href="#L-600"><span class="linenos">600</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">[:</span><span class="mi">15</span><span class="p">])</span>
@@ -731,7 +731,7 @@
 </span><span id="L-639"><a href="#L-639"><span class="linenos">639</span></a>
 </span><span id="L-640"><a href="#L-640"><span class="linenos">640</span></a>        <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PageBreak</span><span class="p">())</span>
 </span><span id="L-641"><a href="#L-641"><span class="linenos">641</span></a>
-</span><span id="L-642"><a href="#L-642"><span class="linenos">642</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</span><span id="L-642"><a href="#L-642"><span class="linenos">642</span></a>    <span class="k">return</span> <span class="n">elements</span>
 </span><span id="L-643"><a href="#L-643"><span class="linenos">643</span></a>
 </span><span id="L-644"><a href="#L-644"><span class="linenos">644</span></a>
 </span><span id="L-645"><a href="#L-645"><span class="linenos">645</span></a><span class="k">def</span><span class="w"> </span><span class="nf">sectional_aggregate</span><span class="p">(</span><span class="n">style</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">target_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -762,7 +762,7 @@
 </span><span id="L-670"><a href="#L-670"><span class="linenos">670</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">get_count_results</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
 </span><span id="L-671"><a href="#L-671"><span class="linenos">671</span></a>
 </span><span id="L-672"><a href="#L-672"><span class="linenos">672</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
-</span><span id="L-673"><a href="#L-673"><span class="linenos">673</span></a>                <span class="k">return</span> <span class="p">([])</span>
+</span><span id="L-673"><a href="#L-673"><span class="linenos">673</span></a>                <span class="k">return</span> <span class="p">[]</span>
 </span><span id="L-674"><a href="#L-674"><span class="linenos">674</span></a>
 </span><span id="L-675"><a href="#L-675"><span class="linenos">675</span></a>            <span class="n">tt</span> <span class="o">=</span> <span class="n">LongTable</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">repeatRows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="L-676"><a href="#L-676"><span class="linenos">676</span></a>            <span class="n">ts</span> <span class="o">=</span> <span class="n">TableStyle</span><span class="p">([</span>
@@ -824,7 +824,7 @@
 </span><span id="L-732"><a href="#L-732"><span class="linenos">732</span></a>
 </span><span id="L-733"><a href="#L-733"><span class="linenos">733</span></a>            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PageBreak</span><span class="p">())</span>
 </span><span id="L-734"><a href="#L-734"><span class="linenos">734</span></a>
-</span><span id="L-735"><a href="#L-735"><span class="linenos">735</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</span><span id="L-735"><a href="#L-735"><span class="linenos">735</span></a>    <span class="k">return</span> <span class="n">elements</span>
 </span></pre></div>
 
 
@@ -910,9 +910,9 @@
 </span><span id="get_game_results-89"><a href="#get_game_results-89"><span class="linenos">89</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="get_game_results-90"><a href="#get_game_results-90"><span class="linenos">90</span></a>
 </span><span id="get_game_results-91"><a href="#get_game_results-91"><span class="linenos">91</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># ヘッダのみ</span>
-</span><span id="get_game_results-92"><a href="#get_game_results-92"><span class="linenos">92</span></a>        <span class="k">return</span> <span class="p">([])</span>
+</span><span id="get_game_results-92"><a href="#get_game_results-92"><span class="linenos">92</span></a>        <span class="k">return</span> <span class="p">[]</span>
 </span><span id="get_game_results-93"><a href="#get_game_results-93"><span class="linenos">93</span></a>
-</span><span id="get_game_results-94"><a href="#get_game_results-94"><span class="linenos">94</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="get_game_results-94"><a href="#get_game_results-94"><span class="linenos">94</span></a>    <span class="k">return</span> <span class="n">results</span>
 </span></pre></div>
 
 
@@ -999,9 +999,9 @@
 </span><span id="get_count_results-155"><a href="#get_count_results-155"><span class="linenos">155</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="get_count_results-156"><a href="#get_count_results-156"><span class="linenos">156</span></a>
 </span><span id="get_count_results-157"><a href="#get_count_results-157"><span class="linenos">157</span></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># ヘッダのみ</span>
-</span><span id="get_count_results-158"><a href="#get_count_results-158"><span class="linenos">158</span></a>        <span class="k">return</span> <span class="p">([])</span>
+</span><span id="get_count_results-158"><a href="#get_count_results-158"><span class="linenos">158</span></a>        <span class="k">return</span> <span class="p">[]</span>
 </span><span id="get_count_results-159"><a href="#get_count_results-159"><span class="linenos">159</span></a>
-</span><span id="get_count_results-160"><a href="#get_count_results-160"><span class="linenos">160</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="get_count_results-160"><a href="#get_count_results-160"><span class="linenos">160</span></a>    <span class="k">return</span> <span class="n">results</span>
 </span></pre></div>
 
 
@@ -1063,7 +1063,7 @@
 </span><span id="get_count_moving-190"><a href="#get_count_moving-190"><span class="linenos">190</span></a>    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;return record: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
 </span><span id="get_count_moving-191"><a href="#get_count_moving-191"><span class="linenos">191</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="get_count_moving-192"><a href="#get_count_moving-192"><span class="linenos">192</span></a>
-</span><span id="get_count_moving-193"><a href="#get_count_moving-193"><span class="linenos">193</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="get_count_moving-193"><a href="#get_count_moving-193"><span class="linenos">193</span></a>    <span class="k">return</span> <span class="n">results</span>
 </span></pre></div>
 
 
@@ -1146,7 +1146,7 @@
 </span><span id="graphing_mean_rank-244"><a href="#graphing_mean_rank-244"><span class="linenos">244</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">imgdata</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
 </span><span id="graphing_mean_rank-245"><a href="#graphing_mean_rank-245"><span class="linenos">245</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="graphing_mean_rank-246"><a href="#graphing_mean_rank-246"><span class="linenos">246</span></a>
-</span><span id="graphing_mean_rank-247"><a href="#graphing_mean_rank-247"><span class="linenos">247</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">imgdata</span><span class="p">)</span>
+</span><span id="graphing_mean_rank-247"><a href="#graphing_mean_rank-247"><span class="linenos">247</span></a>    <span class="k">return</span> <span class="n">imgdata</span>
 </span></pre></div>
 
 
@@ -1244,7 +1244,7 @@
 </span><span id="graphing_total_points-307"><a href="#graphing_total_points-307"><span class="linenos">307</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">imgdata</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
 </span><span id="graphing_total_points-308"><a href="#graphing_total_points-308"><span class="linenos">308</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="graphing_total_points-309"><a href="#graphing_total_points-309"><span class="linenos">309</span></a>
-</span><span id="graphing_total_points-310"><a href="#graphing_total_points-310"><span class="linenos">310</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">imgdata</span><span class="p">)</span>
+</span><span id="graphing_total_points-310"><a href="#graphing_total_points-310"><span class="linenos">310</span></a>    <span class="k">return</span> <span class="n">imgdata</span>
 </span></pre></div>
 
 
@@ -1326,7 +1326,7 @@
 </span><span id="graphing_rank_distribution-354"><a href="#graphing_rank_distribution-354"><span class="linenos">354</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">imgdata</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
 </span><span id="graphing_rank_distribution-355"><a href="#graphing_rank_distribution-355"><span class="linenos">355</span></a>    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="graphing_rank_distribution-356"><a href="#graphing_rank_distribution-356"><span class="linenos">356</span></a>
-</span><span id="graphing_rank_distribution-357"><a href="#graphing_rank_distribution-357"><span class="linenos">357</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">imgdata</span><span class="p">)</span>
+</span><span id="graphing_rank_distribution-357"><a href="#graphing_rank_distribution-357"><span class="linenos">357</span></a>    <span class="k">return</span> <span class="n">imgdata</span>
 </span></pre></div>
 
 
@@ -1502,7 +1502,7 @@
 </span><span id="cover_page-472"><a href="#cover_page-472"><span class="linenos">472</span></a>    <span class="p">)</span>
 </span><span id="cover_page-473"><a href="#cover_page-473"><span class="linenos">473</span></a>    <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PageBreak</span><span class="p">())</span>
 </span><span id="cover_page-474"><a href="#cover_page-474"><span class="linenos">474</span></a>
-</span><span id="cover_page-475"><a href="#cover_page-475"><span class="linenos">475</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</span><span id="cover_page-475"><a href="#cover_page-475"><span class="linenos">475</span></a>    <span class="k">return</span> <span class="n">elements</span>
 </span></pre></div>
 
 
@@ -1554,7 +1554,7 @@
 </span><span id="entire_aggregate-494"><a href="#entire_aggregate-494"><span class="linenos">494</span></a>    <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">get_game_results</span><span class="p">()</span>
 </span><span id="entire_aggregate-495"><a href="#entire_aggregate-495"><span class="linenos">495</span></a>
 </span><span id="entire_aggregate-496"><a href="#entire_aggregate-496"><span class="linenos">496</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">tmp_data</span><span class="p">:</span>
-</span><span id="entire_aggregate-497"><a href="#entire_aggregate-497"><span class="linenos">497</span></a>        <span class="k">return</span> <span class="p">([])</span>
+</span><span id="entire_aggregate-497"><a href="#entire_aggregate-497"><span class="linenos">497</span></a>        <span class="k">return</span> <span class="p">[]</span>
 </span><span id="entire_aggregate-498"><a href="#entire_aggregate-498"><span class="linenos">498</span></a>
 </span><span id="entire_aggregate-499"><a href="#entire_aggregate-499"><span class="linenos">499</span></a>    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp_data</span><span class="p">):</span>  <span class="c1"># ゲーム数を除外</span>
 </span><span id="entire_aggregate-500"><a href="#entire_aggregate-500"><span class="linenos">500</span></a>        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
@@ -1625,7 +1625,7 @@
 </span><span id="entire_aggregate-565"><a href="#entire_aggregate-565"><span class="linenos">565</span></a>
 </span><span id="entire_aggregate-566"><a href="#entire_aggregate-566"><span class="linenos">566</span></a>    <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PageBreak</span><span class="p">())</span>
 </span><span id="entire_aggregate-567"><a href="#entire_aggregate-567"><span class="linenos">567</span></a>
-</span><span id="entire_aggregate-568"><a href="#entire_aggregate-568"><span class="linenos">568</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</span><span id="entire_aggregate-568"><a href="#entire_aggregate-568"><span class="linenos">568</span></a>    <span class="k">return</span> <span class="n">elements</span>
 </span></pre></div>
 
 
@@ -1684,7 +1684,7 @@
 </span><span id="periodic_aggregation-595"><a href="#periodic_aggregation-595"><span class="linenos">595</span></a>        <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">get_game_results</span><span class="p">()</span>
 </span><span id="periodic_aggregation-596"><a href="#periodic_aggregation-596"><span class="linenos">596</span></a>
 </span><span id="periodic_aggregation-597"><a href="#periodic_aggregation-597"><span class="linenos">597</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">tmp_data</span><span class="p">:</span>
-</span><span id="periodic_aggregation-598"><a href="#periodic_aggregation-598"><span class="linenos">598</span></a>            <span class="k">return</span> <span class="p">([])</span>
+</span><span id="periodic_aggregation-598"><a href="#periodic_aggregation-598"><span class="linenos">598</span></a>            <span class="k">return</span> <span class="p">[]</span>
 </span><span id="periodic_aggregation-599"><a href="#periodic_aggregation-599"><span class="linenos">599</span></a>
 </span><span id="periodic_aggregation-600"><a href="#periodic_aggregation-600"><span class="linenos">600</span></a>        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tmp_data</span><span class="p">):</span>  <span class="c1"># 日時を除外</span>
 </span><span id="periodic_aggregation-601"><a href="#periodic_aggregation-601"><span class="linenos">601</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">[:</span><span class="mi">15</span><span class="p">])</span>
@@ -1729,7 +1729,7 @@
 </span><span id="periodic_aggregation-640"><a href="#periodic_aggregation-640"><span class="linenos">640</span></a>
 </span><span id="periodic_aggregation-641"><a href="#periodic_aggregation-641"><span class="linenos">641</span></a>        <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PageBreak</span><span class="p">())</span>
 </span><span id="periodic_aggregation-642"><a href="#periodic_aggregation-642"><span class="linenos">642</span></a>
-</span><span id="periodic_aggregation-643"><a href="#periodic_aggregation-643"><span class="linenos">643</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</span><span id="periodic_aggregation-643"><a href="#periodic_aggregation-643"><span class="linenos">643</span></a>    <span class="k">return</span> <span class="n">elements</span>
 </span></pre></div>
 
 
@@ -1789,7 +1789,7 @@
 </span><span id="sectional_aggregate-671"><a href="#sectional_aggregate-671"><span class="linenos">671</span></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">get_count_results</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
 </span><span id="sectional_aggregate-672"><a href="#sectional_aggregate-672"><span class="linenos">672</span></a>
 </span><span id="sectional_aggregate-673"><a href="#sectional_aggregate-673"><span class="linenos">673</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
-</span><span id="sectional_aggregate-674"><a href="#sectional_aggregate-674"><span class="linenos">674</span></a>                <span class="k">return</span> <span class="p">([])</span>
+</span><span id="sectional_aggregate-674"><a href="#sectional_aggregate-674"><span class="linenos">674</span></a>                <span class="k">return</span> <span class="p">[]</span>
 </span><span id="sectional_aggregate-675"><a href="#sectional_aggregate-675"><span class="linenos">675</span></a>
 </span><span id="sectional_aggregate-676"><a href="#sectional_aggregate-676"><span class="linenos">676</span></a>            <span class="n">tt</span> <span class="o">=</span> <span class="n">LongTable</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">repeatRows</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </span><span id="sectional_aggregate-677"><a href="#sectional_aggregate-677"><span class="linenos">677</span></a>            <span class="n">ts</span> <span class="o">=</span> <span class="n">TableStyle</span><span class="p">([</span>
@@ -1851,7 +1851,7 @@
 </span><span id="sectional_aggregate-733"><a href="#sectional_aggregate-733"><span class="linenos">733</span></a>
 </span><span id="sectional_aggregate-734"><a href="#sectional_aggregate-734"><span class="linenos">734</span></a>            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PageBreak</span><span class="p">())</span>
 </span><span id="sectional_aggregate-735"><a href="#sectional_aggregate-735"><span class="linenos">735</span></a>
-</span><span id="sectional_aggregate-736"><a href="#sectional_aggregate-736"><span class="linenos">736</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+</span><span id="sectional_aggregate-736"><a href="#sectional_aggregate-736"><span class="linenos">736</span></a>    <span class="k">return</span> <span class="n">elements</span>
 </span></pre></div>
 
 

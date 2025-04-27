@@ -103,7 +103,7 @@
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">fmt</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>        <span class="k">return</span> <span class="n">fmt</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="n">field</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
@@ -140,7 +140,7 @@
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="k">return</span> <span class="n">fmt</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="k">def</span><span class="w"> </span><span class="nf">column_alignment</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -157,7 +157,7 @@
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="n">fmt</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># global, right, center, left, decimal, None</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="k">return</span> <span class="n">fmt</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">field</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
@@ -179,7 +179,7 @@
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>                <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>                    <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="k">return</span> <span class="n">fmt</span>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_output</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">headline</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -209,7 +209,7 @@
 </span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>                <span class="c1"># headersalign=column_alignment(df, True),  # ToDo: python-tabulate &gt;= 0.10.0</span>
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="p">)</span>
 </span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>            <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>            <span class="k">return</span> <span class="kc">None</span>
 </span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="c1"># 保存</span>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="n">save_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
@@ -221,7 +221,7 @@
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>        <span class="n">writefile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">save_file</span><span class="p">)</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="k">return</span> <span class="n">save_file</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="k">def</span><span class="w"> </span><span class="nf">debug_out</span><span class="p">(</span><span class="n">msg1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -324,7 +324,7 @@
 </span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">name_list</span><span class="p">):</span>
 </span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>            <span class="n">ret</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">initial</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>    <span class="k">return</span> <span class="n">ret</span>
 </span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>
 </span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="k">def</span><span class="w"> </span><span class="nf">df_rename</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">short</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -425,7 +425,7 @@
 </span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individual&quot;</span><span class="p">):</span>
 </span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>        <span class="n">rename_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;チーム&quot;</span> <span class="k">if</span> <span class="n">short</span> <span class="k">else</span> <span class="s2">&quot;チーム名&quot;</span><span class="p">)</span>
 </span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>
-</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename_dict</span><span class="p">))</span>
+</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename_dict</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -454,7 +454,7 @@
 </span><span id="floatfmt_adjust-27"><a href="#floatfmt_adjust-27"><span class="linenos">27</span></a>
 </span><span id="floatfmt_adjust-28"><a href="#floatfmt_adjust-28"><span class="linenos">28</span></a>    <span class="n">fmt</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
 </span><span id="floatfmt_adjust-29"><a href="#floatfmt_adjust-29"><span class="linenos">29</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-</span><span id="floatfmt_adjust-30"><a href="#floatfmt_adjust-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+</span><span id="floatfmt_adjust-30"><a href="#floatfmt_adjust-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="n">fmt</span>
 </span><span id="floatfmt_adjust-31"><a href="#floatfmt_adjust-31"><span class="linenos">31</span></a>
 </span><span id="floatfmt_adjust-32"><a href="#floatfmt_adjust-32"><span class="linenos">32</span></a>    <span class="n">field</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 </span><span id="floatfmt_adjust-33"><a href="#floatfmt_adjust-33"><span class="linenos">33</span></a>    <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
@@ -491,7 +491,7 @@
 </span><span id="floatfmt_adjust-64"><a href="#floatfmt_adjust-64"><span class="linenos">64</span></a>            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
 </span><span id="floatfmt_adjust-65"><a href="#floatfmt_adjust-65"><span class="linenos">65</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 </span><span id="floatfmt_adjust-66"><a href="#floatfmt_adjust-66"><span class="linenos">66</span></a>
-</span><span id="floatfmt_adjust-67"><a href="#floatfmt_adjust-67"><span class="linenos">67</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+</span><span id="floatfmt_adjust-67"><a href="#floatfmt_adjust-67"><span class="linenos">67</span></a>    <span class="k">return</span> <span class="n">fmt</span>
 </span></pre></div>
 
 
@@ -538,7 +538,7 @@
 </span><span id="column_alignment-81"><a href="#column_alignment-81"><span class="linenos"> 81</span></a>
 </span><span id="column_alignment-82"><a href="#column_alignment-82"><span class="linenos"> 82</span></a>    <span class="n">fmt</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># global, right, center, left, decimal, None</span>
 </span><span id="column_alignment-83"><a href="#column_alignment-83"><span class="linenos"> 83</span></a>    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-</span><span id="column_alignment-84"><a href="#column_alignment-84"><span class="linenos"> 84</span></a>        <span class="k">return</span> <span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+</span><span id="column_alignment-84"><a href="#column_alignment-84"><span class="linenos"> 84</span></a>        <span class="k">return</span> <span class="n">fmt</span>
 </span><span id="column_alignment-85"><a href="#column_alignment-85"><span class="linenos"> 85</span></a>
 </span><span id="column_alignment-86"><a href="#column_alignment-86"><span class="linenos"> 86</span></a>    <span class="n">field</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 </span><span id="column_alignment-87"><a href="#column_alignment-87"><span class="linenos"> 87</span></a>    <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
@@ -560,7 +560,7 @@
 </span><span id="column_alignment-103"><a href="#column_alignment-103"><span class="linenos">103</span></a>                <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
 </span><span id="column_alignment-104"><a href="#column_alignment-104"><span class="linenos">104</span></a>                    <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
 </span><span id="column_alignment-105"><a href="#column_alignment-105"><span class="linenos">105</span></a>
-</span><span id="column_alignment-106"><a href="#column_alignment-106"><span class="linenos">106</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+</span><span id="column_alignment-106"><a href="#column_alignment-106"><span class="linenos">106</span></a>    <span class="k">return</span> <span class="n">fmt</span>
 </span></pre></div>
 
 
@@ -621,7 +621,7 @@
 </span><span id="save_output-133"><a href="#save_output-133"><span class="linenos">133</span></a>                <span class="c1"># headersalign=column_alignment(df, True),  # ToDo: python-tabulate &gt;= 0.10.0</span>
 </span><span id="save_output-134"><a href="#save_output-134"><span class="linenos">134</span></a>            <span class="p">)</span>
 </span><span id="save_output-135"><a href="#save_output-135"><span class="linenos">135</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span id="save_output-136"><a href="#save_output-136"><span class="linenos">136</span></a>            <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="save_output-136"><a href="#save_output-136"><span class="linenos">136</span></a>            <span class="k">return</span> <span class="kc">None</span>
 </span><span id="save_output-137"><a href="#save_output-137"><span class="linenos">137</span></a>
 </span><span id="save_output-138"><a href="#save_output-138"><span class="linenos">138</span></a>    <span class="c1"># 保存</span>
 </span><span id="save_output-139"><a href="#save_output-139"><span class="linenos">139</span></a>    <span class="n">save_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
@@ -633,7 +633,7 @@
 </span><span id="save_output-145"><a href="#save_output-145"><span class="linenos">145</span></a>
 </span><span id="save_output-146"><a href="#save_output-146"><span class="linenos">146</span></a>        <span class="n">writefile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </span><span id="save_output-147"><a href="#save_output-147"><span class="linenos">147</span></a>
-</span><span id="save_output-148"><a href="#save_output-148"><span class="linenos">148</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">save_file</span><span class="p">)</span>
+</span><span id="save_output-148"><a href="#save_output-148"><span class="linenos">148</span></a>    <span class="k">return</span> <span class="n">save_file</span>
 </span></pre></div>
 
 
@@ -827,7 +827,7 @@
 </span><span id="anonymous_mapping-248"><a href="#anonymous_mapping-248"><span class="linenos">248</span></a>        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">name_list</span><span class="p">):</span>
 </span><span id="anonymous_mapping-249"><a href="#anonymous_mapping-249"><span class="linenos">249</span></a>            <span class="n">ret</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">initial</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span id="anonymous_mapping-250"><a href="#anonymous_mapping-250"><span class="linenos">250</span></a>
-</span><span id="anonymous_mapping-251"><a href="#anonymous_mapping-251"><span class="linenos">251</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</span><span id="anonymous_mapping-251"><a href="#anonymous_mapping-251"><span class="linenos">251</span></a>    <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 
@@ -958,7 +958,7 @@
 </span><span id="df_rename-349"><a href="#df_rename-349"><span class="linenos">349</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individual&quot;</span><span class="p">):</span>
 </span><span id="df_rename-350"><a href="#df_rename-350"><span class="linenos">350</span></a>        <span class="n">rename_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;チーム&quot;</span> <span class="k">if</span> <span class="n">short</span> <span class="k">else</span> <span class="s2">&quot;チーム名&quot;</span><span class="p">)</span>
 </span><span id="df_rename-351"><a href="#df_rename-351"><span class="linenos">351</span></a>
-</span><span id="df_rename-352"><a href="#df_rename-352"><span class="linenos">352</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename_dict</span><span class="p">))</span>
+</span><span id="df_rename-352"><a href="#df_rename-352"><span class="linenos">352</span></a>    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename_dict</span><span class="p">)</span>
 </span></pre></div>
 
 
