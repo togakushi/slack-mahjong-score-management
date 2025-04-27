@@ -328,4 +328,4 @@ class Config():
         words = ["del" if x == "delete" else x for x in words]
         words = [x for x in words if x != ""]
 
-        return (words)
+        return words

@@ -60,7 +60,7 @@ def slack_messages(word: str) -> SlackSearchDict:
             "text": x.get("text", ""),
         }
 
-    return (data)
+    return data
 
 
 def get_message_details(matches: dict) -> SlackSearchDict:
@@ -106,7 +106,7 @@ def get_message_details(matches: dict) -> SlackSearchDict:
 
         matches[key].update(val)
 
-    return (matches)
+    return matches
 
 
 def for_slack_score() -> SlackSearchDict:
@@ -136,11 +136,11 @@ def for_slack_score() -> SlackSearchDict:
 
     # 結果が無い場合は空の辞書を返して後続の処理をスキップ
     if not matches:
-        return ({})
+        return {}
 
     matches = get_message_details(matches)
     g.msg.channel_type = "search_messages"
-    return (matches)
+    return matches
 
 
 def for_slack_remarks() -> SlackSearchDict:
@@ -170,11 +170,11 @@ def for_slack_remarks() -> SlackSearchDict:
 
     # 結果が無い場合は空の辞書を返して後続の処理をスキップ
     if not matches:
-        return ({})
+        return {}
 
     matches = get_message_details(matches)
     g.msg.channel_type = "search_messages"
-    return (matches)
+    return matches
 
 
 def for_db_score(first_ts: float | bool = False) -> dict:
@@ -188,7 +188,7 @@ def for_db_score(first_ts: float | bool = False) -> dict:
     """
 
     if not first_ts:
-        return ({})
+        return {}
 
     data: dict = {}
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
@@ -209,7 +209,7 @@ def for_db_score(first_ts: float | bool = False) -> dict:
             data[ts].append(row["p4_str"])
             data[ts].append(row["comment"])
 
-    return (data)
+    return data
 
 
 def for_db_remarks(first_ts: float | bool = False) -> list:
@@ -223,7 +223,7 @@ def for_db_remarks(first_ts: float | bool = False) -> list:
     """
 
     if not first_ts:
-        return ([])
+        return []
 
     # データベースからデータ取得
     data: list = []
@@ -240,7 +240,7 @@ def for_db_remarks(first_ts: float | bool = False) -> list:
                 "matter": row["matter"],
             })
 
-    return (data)
+    return data
 
 
 def reactions_list(msg: Any) -> Tuple[list, list]:

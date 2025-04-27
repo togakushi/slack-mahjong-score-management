@@ -336,4 +336,4 @@ def textformat(text):
     else:
         ret += "[]"
 
-    return (ret)
+    return ret

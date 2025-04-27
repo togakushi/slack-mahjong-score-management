@@ -57,7 +57,7 @@ def determine_point(is_parent: bool, is_tsumo: bool) -> int | tuple:
         "ron_child"
     )
 
-    return (HAN_POINTS[rank][key])
+    return HAN_POINTS[rank][key]
 
 
 def determine_winner(k: int) -> Tuple[list, list]:
@@ -181,7 +181,7 @@ def simulate_game():
         if any(score < 0 for score in scores):
             break
 
-    return (scores)
+    return scores
 
 
 if __name__ == "__main__":

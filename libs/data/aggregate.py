@@ -58,7 +58,7 @@ def game_info() -> GameInfoDict:
         g.params.update(stipulated=new_stipulated)
 
     logging.info("return: %s", ret)
-    return (ret)
+    return ret
 
 
 def game_summary(filter_items: list | None = None, drop_items: list | None = None) -> pd.DataFrame:
@@ -82,7 +82,7 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
         df = df.drop(columns=drop_items)
 
     logging.trace(df)  # type: ignore
-    return (df)
+    return df
 
 
 def remark_count(kind: str):
@@ -103,7 +103,7 @@ def remark_count(kind: str):
         df = df.filter(items=["name", "matter", "count"])
 
     logging.trace(df)  # type: ignore
-    return (df)
+    return df
 
 
 def game_results():
@@ -127,7 +127,7 @@ def game_results():
     df.index = df.index + 1
 
     logging.trace(df)  # type: ignore
-    return (df)
+    return df
 
 
 # ランキング
@@ -185,7 +185,7 @@ def ranking_record():
     record_df["min_rpoint"] = gamedata["min_rpoint"].iloc[0]
 
     logging.trace(record_df)  # type: ignore
-    return (record_df)
+    return record_df
 
 
 def calculation_rating():
@@ -232,7 +232,7 @@ def calculation_rating():
             last_ratings[player] = new_rating
             df_ratings.loc[x.Index, player] = new_rating
 
-    return (df_ratings)
+    return df_ratings
 
 
 # レポート
@@ -297,7 +297,7 @@ def matrix_table():
 
     # 対象リストが0件になった場合は空のデータフレームを返す
     if rank_df.empty:
-        return (rank_df)
+        return rank_df
 
     # 対局対戦マトリックス表の作成
     mtx_df = pd.DataFrame(
@@ -346,4 +346,4 @@ def matrix_table():
         columns=list(sorting_df.index) + ["total"]
     )
 
-    return (mtx_df)
+    return mtx_df

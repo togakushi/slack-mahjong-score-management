@@ -26,7 +26,7 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
 
     fmt: list = []
     if df.empty:
-        return (fmt)
+        return fmt
 
     field: list = df.columns.tolist()
     if index:
@@ -63,7 +63,7 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
             case _:
                 fmt.append("")
 
-    return (fmt)
+    return fmt
 
 
 def column_alignment(df: pd.DataFrame, header: bool = False, index: bool = False) -> list:
@@ -80,7 +80,7 @@ def column_alignment(df: pd.DataFrame, header: bool = False, index: bool = False
 
     fmt: list = []  # global, right, center, left, decimal, None
     if df.empty:
-        return (fmt)
+        return fmt
 
     field: list = df.columns.tolist()
     if index:
@@ -102,7 +102,7 @@ def column_alignment(df: pd.DataFrame, header: bool = False, index: bool = False
                 case _:
                     fmt.append("left")
 
-    return (fmt)
+    return fmt
 
 
 def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None = None) -> str | None:
@@ -132,7 +132,7 @@ def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None
                 # headersalign=column_alignment(df, True),  # ToDo: python-tabulate >= 0.10.0
             )
         case _:
-            return (None)
+            return None
 
     # 保存
     save_file = os.path.join(g.cfg.setting.work_dir, filename)
@@ -144,7 +144,7 @@ def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None
 
         writefile.writelines(data)
 
-    return (save_file)
+    return save_file
 
 
 def debug_out(msg1: str, msg2: str | dict | list | bool | None = None) -> None:
@@ -247,7 +247,7 @@ def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
         for idx, name in enumerate(name_list):
             ret[name] = f"{prefix}_{idx + initial:03d}"
 
-    return (ret)
+    return ret
 
 
 def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
@@ -348,4 +348,4 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
     if not g.params.get("individual"):
         rename_dict.update(name="チーム" if short else "チーム名")
 
-    return (df.rename(columns=rename_dict))
+    return df.rename(columns=rename_dict)

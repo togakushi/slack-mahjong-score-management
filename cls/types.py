@@ -163,7 +163,7 @@ class CommonMethodMixin:
             if key in ret_dict:
                 ret_dict.pop(key)
 
-        return (ret_dict)
+        return ret_dict
 
     def get_default(self, attr: str) -> Any:
         """デフォルト値を取得して返す
@@ -201,7 +201,7 @@ class CommonMethodMixin:
                     ret = []
                 else:
                     ret = config.get(section, x.name, fallback=x.default)
-                return (ret)
+                return ret
 
         raise AttributeError(f"{attr} has no default or does not exist.")
 

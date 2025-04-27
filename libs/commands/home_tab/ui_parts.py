@@ -21,7 +21,7 @@ def plain_text(msg: str) -> dict:
     view["blocks"].append({"type": "section", "text": {}})
     view["blocks"][0]["text"] = {"type": "mrkdwn", "text": msg}
 
-    return (view)
+    return view
 
 
 def divider() -> None:
@@ -226,7 +226,7 @@ def modalperiod_selection() -> dict:
     view["blocks"][1]["element"].update({"action_id": "aid-eday"})
     view["blocks"][1]["label"].update({"type": "plain_text", "text": "終了日"})
 
-    return (view)
+    return view
 
 
 def set_command_option(body):

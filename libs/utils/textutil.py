@@ -23,7 +23,7 @@ def len_count(text: str) -> int:
         else:
             count += 1
 
-    return (count)
+    return count
 
 
 def str_conv(text: str, kind: Literal["h2z", "z2h", "h2k", "k2h"]) -> str:
@@ -56,9 +56,9 @@ def str_conv(text: str, kind: Literal["h2z", "z2h", "h2k", "k2h"]) -> str:
         case "k2h":  # カタカナをひらがなに変換
             trans_table = str.maketrans(kana, hira)
         case _:
-            return (text)
+            return text
 
-    return (text.translate(trans_table))
+    return text.translate(trans_table)
 
 
 def count_padding(data):
@@ -83,5 +83,5 @@ def count_padding(data):
                     name_list.append(name)
 
     if name_list:
-        return (max(len_count(x) for x in name_list))
-    return (0)
+        return max(len_count(x) for x in name_list)
+    return 0

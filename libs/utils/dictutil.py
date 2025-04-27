@@ -100,7 +100,7 @@ def placeholder(subcom: "SubCommand") -> dict:
         for k, v in ret_dict["competition_list"].items():
             ret_dict[k] = v
 
-    return (ret_dict)
+    return ret_dict
 
 
 def _collect_member(target_list: list) -> list:
@@ -154,4 +154,4 @@ def merge_dicts(dict1: Any, dict2: Any) -> dict:
         else:
             merged[key] = val1 if val2 is None else val2
 
-    return (merged)
+    return merged

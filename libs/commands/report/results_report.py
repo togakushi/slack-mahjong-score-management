@@ -88,9 +88,9 @@ def get_game_results() -> list:
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
-        return ([])
+        return []
 
-    return (results)
+    return results
 
 
 def get_count_results(game_count: int) -> list:
@@ -154,9 +154,9 @@ def get_count_results(game_count: int) -> list:
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
-        return ([])
+        return []
 
-    return (results)
+    return results
 
 
 def get_count_moving(game_count: int) -> list:
@@ -189,7 +189,7 @@ def get_count_moving(game_count: int) -> list:
     logging.info("return record: %s", len(results))
     resultdb.close()
 
-    return (results)
+    return results
 
 
 def graphing_mean_rank(df: pd.DataFrame, title: str, whole: bool = False) -> BytesIO:
@@ -243,7 +243,7 @@ def graphing_mean_rank(df: pd.DataFrame, title: str, whole: bool = False) -> Byt
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
     plt.close()
 
-    return (imgdata)
+    return imgdata
 
 
 def graphing_total_points(df: pd.DataFrame, title: str, whole: bool = False) -> BytesIO:
@@ -306,7 +306,7 @@ def graphing_total_points(df: pd.DataFrame, title: str, whole: bool = False) -> 
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
     plt.close()
 
-    return (imgdata)
+    return imgdata
 
 
 def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
@@ -353,7 +353,7 @@ def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
     plt.close()
 
-    return (imgdata)
+    return imgdata
 
 
 def gen_pdf() -> Tuple[str | bool, str | bool]:
@@ -471,7 +471,7 @@ def cover_page(style: dict, target_info: dict) -> list:
     )
     elements.append(PageBreak())
 
-    return (elements)
+    return elements
 
 
 def entire_aggregate(style: dict) -> list:
@@ -493,7 +493,7 @@ def entire_aggregate(style: dict) -> list:
     tmp_data = get_game_results()
 
     if not tmp_data:
-        return ([])
+        return []
 
     for _, val in enumerate(tmp_data):  # ゲーム数を除外
         data.append(val[1:])
@@ -564,7 +564,7 @@ def entire_aggregate(style: dict) -> list:
 
     elements.append(PageBreak())
 
-    return (elements)
+    return elements
 
 
 def periodic_aggregation(style: dict) -> list:
@@ -594,7 +594,7 @@ def periodic_aggregation(style: dict) -> list:
         tmp_data = get_game_results()
 
         if not tmp_data:
-            return ([])
+            return []
 
         for _, val in enumerate(tmp_data):  # 日時を除外
             data.append(val[:15])
@@ -639,7 +639,7 @@ def periodic_aggregation(style: dict) -> list:
 
         elements.append(PageBreak())
 
-    return (elements)
+    return elements
 
 
 def sectional_aggregate(style: dict, target_info: dict) -> list:
@@ -670,7 +670,7 @@ def sectional_aggregate(style: dict, target_info: dict) -> list:
             data = get_count_results(count)
 
             if not data:
-                return ([])
+                return []
 
             tt = LongTable(data, repeatRows=1)
             ts = TableStyle([
@@ -732,4 +732,4 @@ def sectional_aggregate(style: dict, target_info: dict) -> list:
 
             elements.append(PageBreak())
 
-    return (elements)
+    return elements

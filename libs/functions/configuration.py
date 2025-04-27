@@ -133,7 +133,7 @@ def arg_parser():
                 "-t", "--testcase",
             )
 
-    return (p.parse_args())
+    return p.parse_args()
 
 
 def setup() -> None:

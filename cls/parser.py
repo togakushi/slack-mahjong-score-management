@@ -166,12 +166,12 @@ class CommandParser():
             for pattern in cmd["match"]:
                 m = re.match(pattern, word)
                 if m:
-                    return (True)
+                    return True
                 m = re.match(pattern, textutil.str_conv(word.lower(), "h2k"))
                 if m:
-                    return (True)
+                    return True
 
-        return (False)
+        return False
 
     def analysis_argument(self, argument: list[str]) -> ParsedCommand:
         """コマンドライン引数を解析する
@@ -256,7 +256,7 @@ class CommandParser():
                             case _:
                                 ret.update({key: int(val) if val.isdigit() else val})
 
-        return (ret)
+        return ret
 
 
 class MessageParser():
@@ -371,7 +371,7 @@ class MessageParser():
                     _event = _body["event"]
                     logging.info("unknown subtype: %s", _body)
 
-        return (_event)
+        return _event
 
     def get_channel_type(self, _body: dict) -> str | None:
         """レスポンスからchannel_typeを探索して返す
@@ -394,7 +394,7 @@ class MessageParser():
             if _body.get("event"):
                 _channel_type = _body["event"].get("channel_type")
 
-        return (_channel_type)
+        return _channel_type
 
     def check_updatable(self):
         """DB更新可能チャンネルのポストかチェックする"""

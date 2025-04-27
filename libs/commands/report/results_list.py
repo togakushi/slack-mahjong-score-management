@@ -33,7 +33,7 @@ def main():
     df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/results_list.sql")).reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
-        return (False)
+        return False
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
@@ -65,7 +65,7 @@ def main():
         case _:
             file_path = graph_generation(game_info, df, title)
 
-    return (file_path)
+    return file_path
 
 
 def graph_generation(game_info: GameInfoDict, df, title):
@@ -157,7 +157,7 @@ def graph_generation(game_info: GameInfoDict, df, title):
     fig.savefig(report_file_path)
     plt.close()
 
-    return (report_file_path)
+    return report_file_path
 
 
 def text_generation(df):
@@ -204,7 +204,7 @@ def text_generation(df):
     df = formatter.df_rename(df)
     df.to_markdown(report_file_path, tablefmt="outline", floatfmt=fmt)
 
-    return (report_file_path)
+    return report_file_path
 
 
 def csv_generation(df):
@@ -247,4 +247,4 @@ def csv_generation(df):
 
     df.to_csv(report_file_path)
 
-    return (report_file_path)
+    return report_file_path

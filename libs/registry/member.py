@@ -97,7 +97,7 @@ def append(argument):
     resultdb.close()
     configuration.read_memberslist()
 
-    return (msg)
+    return msg
 
 
 def remove(argument):
@@ -147,4 +147,4 @@ def remove(argument):
     resultdb.close()
     configuration.read_memberslist()
 
-    return (msg)
+    return msg

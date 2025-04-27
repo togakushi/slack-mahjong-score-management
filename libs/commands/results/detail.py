@@ -131,7 +131,7 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
     ret["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}"
     ret["_blank1"] = True
 
-    return (ret)
+    return ret
 
 
 def get_totalization(data: dict) -> dict:
@@ -156,7 +156,7 @@ def get_totalization(data: dict) -> dict:
     ret["トビ"] = f"{data['トビ']:2} 回 ({data['トビ率']:6.2f}%)"
     ret["役満"] = f"{data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)"
 
-    return (ret)
+    return ret
 
 
 def get_seat_data(data: dict) -> str:
@@ -178,7 +178,7 @@ def get_seat_data(data: dict) -> str:
         \t{data["北家-順位分布"]:22s} / {data["北家-トビ"]} / {data["北家-役満和了"]}
     """).replace("0.00", "-.--")
 
-    return (ret)
+    return ret
 
 
 def get_record(data: dict) -> dict:
@@ -211,7 +211,7 @@ def get_record(data: dict) -> dict:
         \t最小獲得ポイント：{data['最小獲得ポイント']}pt
     """).replace("-", "▲").replace("：0 連続", "：----").replace("：1 連続", "：----")
 
-    return (ret)
+    return ret
 
 
 def get_regulations(mapping_dict: dict) -> dict:
@@ -252,7 +252,7 @@ def get_regulations(mapping_dict: dict) -> dict:
         for x in df_regulations.query("type != 1").itertuples():
             ret["その他"] += f"\t{x.matter}\t{x.count}回\n"
 
-    return (ret)
+    return ret
 
 
 def get_game_results(mapping_dict: dict) -> str:
@@ -334,7 +334,7 @@ def get_game_results(mapping_dict: dict) -> str:
                 x.rank, int(x.rpoint) * 100, x.point, x.grandslam,
             ).replace("-", "▲")
 
-    return (ret)
+    return ret
 
 
 def get_versus_matrix(mapping_dict: dict) -> str:
@@ -359,7 +359,7 @@ def get_versus_matrix(mapping_dict: dict) -> str:
         ret += f"\t{r["vs_name"]}{" " * padding} ： "
         ret += f"{r["game"]:3d} 戦 {r["win"]:3d} 勝 {r["lose"]:3d} 敗 ({r["win%"]:6.2f}%)\n"
 
-    return (ret)
+    return ret
 
 
 def message_build(data: dict) -> str:
@@ -386,4 +386,4 @@ def message_build(data: dict) -> str:
             case _:
                 msg += f"\t{k}：{v}\n"
 
-    return (msg.strip())
+    return msg.strip()

@@ -299,7 +299,7 @@ def get_data(df: pd.Series, interval: int) -> pd.DataFrame:
         e = s + interval
         rpoint_data[f"{max(1, s + 1 - fraction):3d}G - {(e - fraction):3d}G"] = df.iloc[s:e].tolist()
 
-    return (pd.DataFrame(rpoint_data))
+    return pd.DataFrame(rpoint_data)
 
 
 def subplot_box(df: pd.DataFrame, ax: plt.Axes) -> None:

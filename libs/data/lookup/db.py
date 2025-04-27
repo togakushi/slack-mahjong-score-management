@@ -26,8 +26,8 @@ def get_member_id(name: str | None = None) -> dict:
     resultdb.close()
 
     if name in id_list:
-        return ({name: id_list[name]})
-    return (id_list)
+        return {name: id_list[name]}
+    return id_list
 
 
 def member_info(name: str) -> dict:
@@ -61,7 +61,7 @@ def member_info(name: str) -> dict:
     rows = resultdb.execute(sql, (g.cfg.mahjong.rule_version, name))
     ret = dict(rows.fetchone())
     resultdb.close()
-    return (ret)
+    return ret
 
 
 def rule_version() -> dict:
@@ -92,7 +92,7 @@ def rule_version() -> dict:
                 "last_time": last_time,
             }
 
-    return (rule)
+    return rule
 
 
 def regulation_list(word_type: int = 0) -> list:
@@ -118,7 +118,7 @@ def regulation_list(word_type: int = 0) -> list:
             """, (word_type,)
         ).fetchall()
 
-    return (ret)
+    return ret
 
 
 def exsist_record(ts: str) -> dict:
@@ -136,8 +136,8 @@ def exsist_record(ts: str) -> dict:
         row = cur.execute("select * from result where ts=?", (ts,)).fetchone()
 
     if row:
-        return (dict(row))
-    return ({})
+        return dict(row)
+    return {}
 
 
 def first_record() -> datetime:
@@ -164,4 +164,4 @@ def first_record() -> datetime:
     except AttributeError:
         ret = datetime.now()
 
-    return (ret)
+    return ret

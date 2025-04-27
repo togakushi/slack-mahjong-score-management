@@ -361,4 +361,4 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
         fontsize=16,
     )
 
-    return (save_file)
+    return save_file

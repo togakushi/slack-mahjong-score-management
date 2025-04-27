@@ -85,7 +85,7 @@ def calculation_point(score_df):
         score_df.at[x.Index, x.point] = (x.rpoint - g.cfg.mahjong.return_point) / 10 + rank_point[x.position - 1]
 
     logging.trace("rank_point=%s", rank_point)  # type: ignore
-    return (score_df)
+    return score_df
 
 
 def point_split(point: list):
@@ -104,7 +104,7 @@ def point_split(point: list):
         if sum(point) < 0:
             new_point = list(map(lambda x: x - 1, new_point))
 
-    return (new_point)
+    return new_point
 
 
 def reactions(param: dict):
@@ -196,4 +196,4 @@ def get_score(detection):
         ret["deposit"],
     )
 
-    return (ret)
+    return ret

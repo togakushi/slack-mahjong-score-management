@@ -43,7 +43,7 @@ def get_teammates(team: str) -> list:
         else:
             member_list = ["未エントリー"]
 
-    return (member_list)
+    return member_list
 
 
 def which_team(name: str) -> str | None:
@@ -65,4 +65,4 @@ def which_team(name: str) -> str | None:
             if name in x["member"].split(","):
                 team = x["team"]
 
-    return (team)
+    return team

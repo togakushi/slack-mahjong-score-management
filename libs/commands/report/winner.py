@@ -30,7 +30,7 @@ def plot() -> str | bool:
     # --- データ取得
     results_df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/report/winner.sql"))
     if len(results_df) == 0:
-        return (False)
+        return False
 
     # --- 匿名化
     if g.params.get("anonymous"):
@@ -131,4 +131,4 @@ def plot() -> str | bool:
     fig.savefig(report_file_path)
     plt.close()
 
-    return (report_file_path)
+    return report_file_path

@@ -46,7 +46,7 @@ def create(argument):
                 msg = f"チーム「{team_name}」を登録しました。"
                 logging.notice("add new team: %s", team_name)  # type: ignore
 
-    return (msg)
+    return msg
 
 
 def delete(argument):
@@ -86,7 +86,7 @@ def delete(argument):
             msg += f"\nチーム「{team_name}」を削除しました。"
             logging.notice("team delete: %s", team_name)  # type: ignore
 
-    return (msg)
+    return msg
 
 
 def append(argument):
@@ -147,7 +147,7 @@ def append(argument):
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
             logging.notice("team participation: %s -> %s", team_name, player_name)  # type: ignore
 
-    return (msg)
+    return msg
 
 
 def remove(argument):
@@ -205,7 +205,7 @@ def remove(argument):
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
             logging.notice("team breakaway: %s -> %s", team_name, player_name)  # type: ignore
 
-    return (msg)
+    return msg
 
 
 def clear():
@@ -232,4 +232,4 @@ def clear():
     initialization.initialization_resultdb()
     configuration.read_memberslist()
 
-    return (msg)
+    return msg

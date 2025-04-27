@@ -49,4 +49,4 @@ def db_info(cur, kind):
         case _:
             count = 0
 
-    return (count)
+    return count

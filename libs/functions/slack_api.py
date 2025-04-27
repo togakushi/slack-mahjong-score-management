@@ -30,7 +30,7 @@ def call_chat_post_message(**kwargs) -> SlackResponse | Any:
         logging.error("kwargs=%s", kwargs)
         logging.error("msg: %s", vars(g.msg))
 
-    return (res)
+    return res
 
 
 def call_files_upload(**kwargs) -> SlackResponse | Any:
@@ -50,7 +50,7 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
         logging.error("kwargs=%s", kwargs)
         logging.error("msg: %s", vars(g.msg))
 
-    return (res)
+    return res
 
 
 def post_message(message, ts=False) -> SlackResponse | Any:
@@ -78,7 +78,7 @@ def post_message(message, ts=False) -> SlackResponse | Any:
             thread_ts=ts,
         )
 
-    return (res)
+    return res
 
 
 def post_multi_message(msg: dict | list, ts: bool | None = False, summarize: bool = True) -> None:
@@ -151,7 +151,7 @@ def post_text(event_ts, title, msg) -> SlackResponse | Any:
                 thread_ts=event_ts,
             )
 
-    return (res)
+    return res
 
 
 def post_fileupload(title: str, file: str | bool, ts: str | bool = False) -> SlackResponse | None:
@@ -168,7 +168,7 @@ def post_fileupload(title: str, file: str | bool, ts: str | bool = False) -> Sla
 
     if g.args.testcase:
         debug.debug_out(title, file)
-        return (None)
+        return None
 
     if not ts and g.msg.thread_ts:
         ts = g.msg.thread_ts
@@ -181,7 +181,7 @@ def post_fileupload(title: str, file: str | bool, ts: str | bool = False) -> Sla
         request_file_info=False,
     )
 
-    return (res)
+    return res
 
 
 def slack_post(**kwargs):

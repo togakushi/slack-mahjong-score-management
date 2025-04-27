@@ -108,7 +108,7 @@ def db_backup() -> str:
     """
 
     if not g.cfg.db.backup_dir:  # バックアップ設定がされていない場合は何もしない
-        return ("")
+        return ""
 
     fname = os.path.splitext(g.cfg.db.database_file)[0]
     fext = os.path.splitext(g.cfg.db.database_file)[1]
@@ -121,17 +121,17 @@ def db_backup() -> str:
         except OSError as e:
             logging.error(e, exc_info=True)
             logging.error("Database backup directory creation failed !!!")
-            return ("\nバックアップ用ディレクトリ作成の作成に失敗しました。")
+            return "\nバックアップ用ディレクトリ作成の作成に失敗しました。"
 
     # バックアップディレクトリにコピー
     try:
         shutil.copyfile(g.cfg.db.database_file, bkfname)
         logging.notice("database backup: %s", bkfname)  # type: ignore
-        return ("\nデータベースをバックアップしました。")
+        return "\nデータベースをバックアップしました。"
     except OSError as e:
         logging.error(e, exc_info=True)
         logging.error("Database backup failed !!!")
-        return ("\nデータベースのバックアップに失敗しました。")
+        return "\nデータベースのバックアップに失敗しました。"
 
 
 def remarks_append(remarks: dict | list) -> None:

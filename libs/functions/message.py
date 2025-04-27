@@ -46,7 +46,7 @@ def slash_help(command):
     msg += f"\n\t{command} team_clear                        チームデータをすべて削除"
     msg += "```"
 
-    return (msg)
+    return msg
 
 
 def help_message():
@@ -124,7 +124,7 @@ def help_message():
 
     msg = re.sub(r"\n\n\n", "\n\n", msg, flags=re.MULTILINE)
 
-    return (msg.strip())
+    return msg.strip()
 
 
 def reply(message=None, rpoint_sum=0):
@@ -172,7 +172,7 @@ def reply(message=None, rpoint_sum=0):
         logging.error("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", g.msg.user_id)
 
-    return (msg)
+    return msg
 
 
 def remarks(headword=False):
@@ -207,10 +207,10 @@ def remarks(headword=False):
 
     if headword:
         if remark:
-            return ("特記事項：" + "、".join(remark))
-        return ("特記事項：なし")
+            return "特記事項：" + "、".join(remark)
+        return "特記事項：なし"
 
-    return (remark)
+    return remark
 
 
 def search_word(headword=False):
@@ -233,9 +233,9 @@ def search_word(headword=False):
 
     if headword:
         if ret:
-            return (f"検索ワード：{ret}")
+            return f"検索ワード：{ret}"
 
-    return (ret)
+    return ret
 
 
 def header(game_info: GameInfoDict, add_text="", indent=1):
@@ -286,7 +286,7 @@ def header(game_info: GameInfoDict, add_text="", indent=1):
         if search_word():
             msg += "検索ワード：" + search_word() + "\n"
 
-    return (textwrap.indent(msg, "\t" * indent))
+    return textwrap.indent(msg, "\t" * indent)
 
 
 def del_blank_line(text: str):
@@ -307,7 +307,7 @@ def del_blank_line(text: str):
             continue
         new_text.append(x)
 
-    return ("\n".join(new_text))
+    return "\n".join(new_text)
 
 
 def item_search_range(kind=None, time_pattern=None):
@@ -342,9 +342,9 @@ def item_search_range(kind=None, time_pattern=None):
         case "list":
             return ([starttime, endtime])
         case "str":
-            return (f"{starttime} ～ {endtime}\n")
+            return f"{starttime} ～ {endtime}\n"
         case _:
-            return (f"検索範囲：{starttime} ～ {endtime}\n")
+            return f"検索範囲：{starttime} ～ {endtime}\n"
 
 
 def item_aggregation_range(game_info: GameInfoDict, kind=None):
@@ -372,9 +372,9 @@ def item_aggregation_range(game_info: GameInfoDict, kind=None):
         case "list":
             return ([first, last])
         case "str":
-            return (f"{first} ～ {last}\n")
+            return f"{first} ～ {last}\n"
         case _:
-            return (f"集計範囲：{first} ～ {last}\n")
+            return f"集計範囲：{first} ～ {last}\n"
 
 
 def item_date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None = None) -> str:
@@ -422,7 +422,7 @@ def item_date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None
         else:
             ret = f"{str_st} - {str_et}"
 
-    return (ret)
+    return ret
 
 
 def badge_degree(game_count: int = 0) -> str:
@@ -445,7 +445,7 @@ def badge_degree(game_count: int = 0) -> str:
                 if game_count >= val:
                     badge = degree_badge[idx]
 
-    return (badge)
+    return badge
 
 
 def badge_status(game_count: int = 0, win: int = 0) -> str:
@@ -477,4 +477,4 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
                         index = 2 + i
             badge = status_badge[index]
 
-    return (badge)
+    return badge

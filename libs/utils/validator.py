@@ -121,4 +121,4 @@ def pattern(text: str) -> list | bool:
         case _:
             msg = False
 
-    return (msg)
+    return msg

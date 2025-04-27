@@ -25,7 +25,7 @@ def load_query(filepath: str) -> str:
     with open(filepath, "r", encoding="utf-8") as queryfile:
         sql = queryfile.read().strip()
 
-    return (sql)
+    return sql
 
 
 def read_data(filepath: str) -> pd.DataFrame:
@@ -55,7 +55,7 @@ def read_data(filepath: str) -> pd.DataFrame:
     logging.trace("sql: %s", named_query(sql))  # type: ignore
     logging.trace(df)  # type: ignore
 
-    return (df)
+    return df
 
 
 def query_modification(sql: str) -> str:
@@ -178,7 +178,7 @@ def query_modification(sql: str) -> str:
     sql = re.sub(r"^ *--\[.*$", "", sql, flags=re.MULTILINE)
     sql = re.sub(r"\n+", "\n", sql, flags=re.MULTILINE)
 
-    return (sql)
+    return sql
 
 
 def named_query(query: str) -> str:

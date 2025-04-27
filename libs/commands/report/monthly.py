@@ -29,7 +29,7 @@ def plot():
     results = df.transpose().to_dict()
 
     if len(results) == 0:
-        return (False)
+        return False
 
     # --- グラフフォント設定
     configuration.graph_setup(plt, fm)
@@ -100,4 +100,4 @@ def plot():
     fig.savefig(report_file_path)
     plt.close()
 
-    return (report_file_path)
+    return report_file_path

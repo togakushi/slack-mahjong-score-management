@@ -166,7 +166,7 @@ def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:
         df = df.query(f"{threshold[0]} >= @threshold[1]").copy()
 
     if df.empty:
-        return ("")
+        return ""
 
     df.sort_values(by=["rank", "game_count"], ascending=[True, False], inplace=True)
     df = df.query("rank <= @g.cfg.ranking.ranked")
@@ -175,4 +175,4 @@ def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:
     tbl = "\n".join(tbl.splitlines()[1:-1]).replace(" -", "▲")
     tbl = f"\n```\n{tbl}\n```\n"
 
-    return (tbl)
+    return tbl

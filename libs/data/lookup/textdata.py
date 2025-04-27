@@ -74,4 +74,4 @@ def get_team_list():
                 msg += f"\t{p}\n"
             msg += "\n"
 
-    return (msg)
+    return msg

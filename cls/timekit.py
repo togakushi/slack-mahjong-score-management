@@ -330,7 +330,7 @@ class ExtendedDatetime:
             case _:
                 raise ValueError(f"Unknown format: {fmt}")
 
-        return (ret)
+        return ret
 
     @classmethod
     def range(cls, value: str | list) -> "ExtendedDatetimeList":
@@ -378,7 +378,7 @@ class ExtendedDatetime:
         for _, range_map in DATE_RANGE_MAP.items():
             ret.extend(cast(list, range_map["keyword"]))
 
-        return (ret)
+        return ret
 
     @classmethod
     def print_range(cls) -> str:
@@ -468,6 +468,6 @@ class ExtendedDatetimeList(list):
         date_range = [dt for dt in self if isinstance(dt, ExtendedDatetime)]
 
         if not date_range:
-            return ({})
+            return {}
 
         return ({"start": min(date_range).format(fmt, delimiter), "end": max(date_range).format(fmt, delimiter)})

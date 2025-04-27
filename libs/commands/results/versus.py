@@ -162,7 +162,7 @@ def tmpl_header(my_name: str, vs_name: str) -> str:
         """
     ).strip()
 
-    return (message.del_blank_line(ret))
+    return message.del_blank_line(ret)
 
 
 def tmpl_vs_table(data: dict) -> str:
@@ -196,7 +196,7 @@ def tmpl_vs_table(data: dict) -> str:
         "\t"
     )
 
-    return (ret.strip())
+    return ret.strip()
 
 
 def tmpl_result_verbose(current_game: pd.DataFrame, playtime: str, guest_count: int) -> str:
@@ -226,7 +226,7 @@ def tmpl_result_verbose(current_game: pd.DataFrame, playtime: str, guest_count: 
         """.replace("-", "▲")
     )
 
-    return (ret.strip())
+    return ret.strip()
 
 
 def tmpl_result_simple(my_score: pd.DataFrame, vs_score: pd.DataFrame, playtime: str, guest_count: int) -> str:
@@ -251,4 +251,4 @@ def tmpl_result_simple(my_score: pd.DataFrame, vs_score: pd.DataFrame, playtime:
         """.replace("-", "▲")
     )
 
-    return (ret.strip())
+    return ret.strip()

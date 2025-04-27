@@ -29,7 +29,7 @@ def reactions_status(ch=None, ts=None):
         res = g.app.client.reactions_get(channel=ch, timestamp=ts)
         logging.trace(res.validate())  # type: ignore
     except SlackApiError:
-        return (icon)
+        return icon
 
     if "reactions" in res["message"]:
         for reaction in res["message"]["reactions"]:
@@ -37,7 +37,7 @@ def reactions_status(ch=None, ts=None):
                 icon.append(reaction["name"])
 
     logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.bot_id, icon)
-    return (icon)
+    return icon
 
 
 def get_channel_id() -> str | None:
@@ -65,7 +65,7 @@ def get_channel_id() -> str | None:
     except SlackApiError as e:
         logging.error(e)
 
-    return (channel_id)
+    return channel_id
 
 
 def get_dm_channel_id(user_id: str) -> str | None:
@@ -86,7 +86,7 @@ def get_dm_channel_id(user_id: str) -> str | None:
     except SlackApiError as e:
         logging.error(e)
 
-    return (channel_id)
+    return channel_id
 
 
 def get_conversations(ch=None, ts=None):
@@ -110,4 +110,4 @@ def get_conversations(ch=None, ts=None):
     except SlackApiError as e:
         logging.error(e)
 
-    return (res)
+    return res
