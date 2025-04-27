@@ -1,6 +1,7 @@
 """
 共通処理モジュール
 
+- `libs.functions.events`: イベントAPI処理
 - `libs.functions.configuration`: 設定
 - `libs.functions.message`: メッセージ
 - `libs.functions.score`: 得点計算

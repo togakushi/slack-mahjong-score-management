@@ -1,0 +1,74 @@
+"""
+libs/functions/events/slash_command.py
+"""
+
+import logging
+
+import libs.commands.graph.slackpost
+import libs.commands.report.slackpost
+import libs.commands.results.slackpost
+import libs.global_value as g
+from libs.commands import results
+from libs.data import comparison, lookup
+from libs.functions import message, slack_api
+from libs.registry import member, team
+
+
+def main(ack, body, client):
+    """スラッシュコマンド
+
+    Args:
+        ack (_type_): ack
+        body (dict): ポストされたデータ
+        client (slack_bolt.App.client): slack_boltオブジェクト
+    """
+
+    ack()
+    logging.trace(body)  # type: ignore
+    g.msg.parser(body)
+    g.msg.client = client
+
+    if g.msg.text:
+        match g.msg.keyword:
+            # 成績管理系コマンド
+            case x if x in g.cfg.alias.results:
+                libs.commands.results.slackpost.main()
+            case x if x in g.cfg.alias.graph:
+                libs.commands.graph.slackpost.main()
+            case x if x in g.cfg.alias.ranking:
+                results.ranking.main()
+            case x if x in g.cfg.alias.report:
+                libs.commands.report.slackpost.main()
+
+            # データベース関連コマンド
+            case x if x in g.cfg.alias.check:
+                comparison.main()
+            case "download":
+                slack_api.post_fileupload("resultdb", g.cfg.db.database_file)
+
+            # メンバー管理系コマンド
+            case x if x in g.cfg.alias.member:
+                title, msg = lookup.textdata.get_members_list()
+                slack_api.post_text(g.msg.event_ts, title, msg)
+            case x if x in g.cfg.alias.add:
+                slack_api.post_message(member.append(g.msg.argument))
+            case x if x in g.cfg.alias.delete:
+                slack_api.post_message(member.remove(g.msg.argument))
+
+            # チーム管理系コマンド
+            case "team_create":
+                slack_api.post_message(team.create(g.msg.argument))
+            case "team_del":
+                slack_api.post_message(team.delete(g.msg.argument))
+            case "team_add":
+                slack_api.post_message(team.append(g.msg.argument))
+            case "team_remove":
+                slack_api.post_message(team.remove(g.msg.argument))
+            case "team_list":
+                slack_api.post_message(lookup.textdata.get_team_list())
+            case "team_clear":
+                slack_api.post_message(team.clear())
+
+            # その他
+            case _:
+                slack_api.post_message(message.slash_help(body["command"]))
