@@ -9,7 +9,6 @@ import libs.commands.graph.slackpost
 import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
-from cls.search import CommandCheck
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.commands import results
 from libs.commands.home_tab import home
@@ -146,30 +145,30 @@ def register_event_handlers(app):
         g.msg.client = client
 
         if g.msg.text:
-            match CommandCheck(g.msg.keyword):
+            match g.msg.keyword:
                 # 成績管理系コマンド
-                case "results":
+                case x if x in g.cfg.alias.results:
                     libs.commands.results.slackpost.main()
-                case "graph":
+                case x if x in g.cfg.alias.graph:
                     libs.commands.graph.slackpost.main()
-                case "ranking":
+                case x if x in g.cfg.alias.ranking:
                     results.ranking.main()
-                case "report":
+                case x if x in g.cfg.alias.report:
                     libs.commands.report.slackpost.main()
 
                 # データベース関連コマンド
-                case "check":
+                case x if x in g.cfg.alias.check:
                     comparison.main()
                 case "download":
                     slack_api.post_fileupload("resultdb", g.cfg.db.database_file)
 
                 # メンバー管理系コマンド
-                case "member":
+                case x if x in g.cfg.alias.member:
                     title, msg = lookup.textdata.get_members_list()
                     slack_api.post_text(g.msg.event_ts, title, msg)
-                case "add":
+                case x if x in g.cfg.alias.add:
                     slack_api.post_message(member.append(g.msg.argument))
-                case "del":
+                case x if x in g.cfg.alias.delete:
                     slack_api.post_message(member.remove(g.msg.argument))
 
                 # チーム管理系コマンド

@@ -141,6 +141,11 @@ class AliasSection(CommonMethodMixin):
     def __post_init__(self):
         self.initialization("alias")
 
+        # デフォルト値として自身と同じ名前のコマンドを登録する
+        for name, typ in self.__class__.__annotations__.items():
+            if typ == list:
+                getattr(self, name).append(name)
+
 
 @dataclass
 class CommentSection(CommonMethodMixin):
