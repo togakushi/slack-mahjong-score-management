@@ -28,15 +28,16 @@ def test_minimal_config(monkeypatch):
     assert g.cfg.mahjong.origin_point == 250
     assert g.cfg.mahjong.return_point == 300
 
-    assert not g.cfg.alias.results
-    assert not g.cfg.alias.graph
-    assert not g.cfg.alias.ranking
-    assert not g.cfg.alias.report
-    assert not g.cfg.alias.check
-    assert not g.cfg.alias.download
-    assert not g.cfg.alias.member
-    assert not g.cfg.alias.add
-    assert not g.cfg.alias.delete
+    # default alias
+    assert "results" in g.cfg.alias.results
+    assert "graph" in g.cfg.alias.graph
+    assert "ranking" in g.cfg.alias.ranking
+    assert "report" in g.cfg.alias.report
+    assert "check" in g.cfg.alias.check
+    assert "download" in g.cfg.alias.download
+    assert "member" in g.cfg.alias.member
+    assert "add" in g.cfg.alias.add
+    assert "delete" in g.cfg.alias.delete
 
 
 @pytest.mark.parametrize(
