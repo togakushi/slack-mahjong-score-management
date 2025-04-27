@@ -19,7 +19,7 @@ regulations_type2 = ヤキトリ,チョンボ
 ### 設定 ###
 [setting]
 # スラッシュコマンド名(先頭のスラッシュも含める)
-slash_commandname = /mahjong
+slash_command = /mahjong
 guest_mark = ※
 # 素点合計チェックで付けるリアクション
 reaction_ok = ok
