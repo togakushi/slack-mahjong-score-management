@@ -55,9 +55,6 @@
             <li>
                     <a class="function" href="#reactions_list">reactions_list</a>
             </li>
-            <li>
-                    <a class="function" href="#search_range">search_range</a>
-            </li>
     </ul>
 
 
@@ -351,34 +348,6 @@
 </span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>                        <span class="n">reaction_ng</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ts&quot;</span><span class="p">))</span>
 </span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>
 </span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">reaction_ok</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">)</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a><span class="k">def</span><span class="w"> </span><span class="nf">search_range</span><span class="p">(</span><span class="n">target_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;検索範囲取得</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a><span class="sd">    Args:</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a><span class="sd">        target_list (list): 日付</span>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a><span class="sd">    Returns:</span>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a><span class="sd">        dict: 取得情報</span>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a><span class="sd">        - starttime: 検索開始日時</span>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="sd">        - endtime: 検索終了日次</span>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="sd">        - onday: 終了日時（日を跨がない）</span>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>    <span class="n">day</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">target_list</span><span class="p">:</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>        <span class="n">day</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">search_word</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>
-</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a>    <span class="n">search_first</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
-</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>    <span class="n">search_last</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">day</span><span class="p">)</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>    <span class="n">search_onday</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
-</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>
-</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a>    <span class="k">return</span> <span class="p">({</span>
-</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>        <span class="s2">&quot;starttime&quot;</span><span class="p">:</span> <span class="n">search_first</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>        <span class="s2">&quot;endtime&quot;</span><span class="p">:</span> <span class="n">search_last</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">999999</span><span class="p">),</span>
-</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>        <span class="s2">&quot;onday&quot;</span><span class="p">:</span> <span class="n">search_onday</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">23</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">999999</span><span class="p">),</span>
-</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>    <span class="p">})</span>
 </span></pre></div>
 
 
@@ -837,69 +806,6 @@
   <ul>
   <li>reaction_ok: okが付いているメッセージのタイムスタンプ</li>
   <li>reaction_ng: ngが付いているメッセージのタイムスタンプ</li>
-  </ul>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="search_range">
-                            <input id="search_range-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">search_range</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">target_list</span><span class="p">:</span> <span class="nb">list</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
-
-                <label class="view-source-button" for="search_range-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#search_range"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="search_range-274"><a href="#search_range-274"><span class="linenos">274</span></a><span class="k">def</span><span class="w"> </span><span class="nf">search_range</span><span class="p">(</span><span class="n">target_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="search_range-275"><a href="#search_range-275"><span class="linenos">275</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;検索範囲取得</span>
-</span><span id="search_range-276"><a href="#search_range-276"><span class="linenos">276</span></a>
-</span><span id="search_range-277"><a href="#search_range-277"><span class="linenos">277</span></a><span class="sd">    Args:</span>
-</span><span id="search_range-278"><a href="#search_range-278"><span class="linenos">278</span></a><span class="sd">        target_list (list): 日付</span>
-</span><span id="search_range-279"><a href="#search_range-279"><span class="linenos">279</span></a>
-</span><span id="search_range-280"><a href="#search_range-280"><span class="linenos">280</span></a><span class="sd">    Returns:</span>
-</span><span id="search_range-281"><a href="#search_range-281"><span class="linenos">281</span></a><span class="sd">        dict: 取得情報</span>
-</span><span id="search_range-282"><a href="#search_range-282"><span class="linenos">282</span></a><span class="sd">        - starttime: 検索開始日時</span>
-</span><span id="search_range-283"><a href="#search_range-283"><span class="linenos">283</span></a><span class="sd">        - endtime: 検索終了日次</span>
-</span><span id="search_range-284"><a href="#search_range-284"><span class="linenos">284</span></a><span class="sd">        - onday: 終了日時（日を跨がない）</span>
-</span><span id="search_range-285"><a href="#search_range-285"><span class="linenos">285</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="search_range-286"><a href="#search_range-286"><span class="linenos">286</span></a>
-</span><span id="search_range-287"><a href="#search_range-287"><span class="linenos">287</span></a>    <span class="n">day</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="search_range-288"><a href="#search_range-288"><span class="linenos">288</span></a>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">target_list</span><span class="p">:</span>
-</span><span id="search_range-289"><a href="#search_range-289"><span class="linenos">289</span></a>        <span class="n">day</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">search_word</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-</span><span id="search_range-290"><a href="#search_range-290"><span class="linenos">290</span></a>
-</span><span id="search_range-291"><a href="#search_range-291"><span class="linenos">291</span></a>    <span class="n">search_first</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
-</span><span id="search_range-292"><a href="#search_range-292"><span class="linenos">292</span></a>    <span class="n">search_last</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">day</span><span class="p">)</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-</span><span id="search_range-293"><a href="#search_range-293"><span class="linenos">293</span></a>    <span class="n">search_onday</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
-</span><span id="search_range-294"><a href="#search_range-294"><span class="linenos">294</span></a>
-</span><span id="search_range-295"><a href="#search_range-295"><span class="linenos">295</span></a>    <span class="k">return</span> <span class="p">({</span>
-</span><span id="search_range-296"><a href="#search_range-296"><span class="linenos">296</span></a>        <span class="s2">&quot;starttime&quot;</span><span class="p">:</span> <span class="n">search_first</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-</span><span id="search_range-297"><a href="#search_range-297"><span class="linenos">297</span></a>        <span class="s2">&quot;endtime&quot;</span><span class="p">:</span> <span class="n">search_last</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">999999</span><span class="p">),</span>
-</span><span id="search_range-298"><a href="#search_range-298"><span class="linenos">298</span></a>        <span class="s2">&quot;onday&quot;</span><span class="p">:</span> <span class="n">search_onday</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">23</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">59</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">999999</span><span class="p">),</span>
-</span><span id="search_range-299"><a href="#search_range-299"><span class="linenos">299</span></a>    <span class="p">})</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>検索範囲取得</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>target_list (list):</strong>  日付</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>dict: 取得情報</p>
-  
-  <ul>
-  <li>starttime: 検索開始日時</li>
-  <li>endtime: 検索終了日次</li>
-  <li>onday: 終了日時（日を跨がない）</li>
   </ul>
 </blockquote>
 </div>
