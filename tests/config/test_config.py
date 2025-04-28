@@ -8,6 +8,7 @@ import pytest
 
 import libs.global_value as g
 from cls.subcom import SubCommand
+from cls.config import CommandWord
 from libs.functions import configuration
 
 
@@ -72,3 +73,20 @@ def test_subcommand_default(input_args, monkeypatch):
     assert test_subcommand.search_word == SubCommand.search_word
     assert test_subcommand.group_length == SubCommand.group_length
     # assert test_subcommand.always_argument == SubCommand.always_argument
+
+
+@pytest.mark.parametrize(
+    "input_args",
+    ["results", "graph", "ranking", "report", "help"]
+)
+def test_command_word_default(input_args, monkeypatch):
+    """呼び出しキーワードデフォルト値チェック"""
+    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
+
+    configuration.setup()
+
+    assert g.cfg.cw.results == CommandWord.results
+    assert g.cfg.cw.graph == CommandWord.graph
+    assert g.cfg.cw.ranking == CommandWord.ranking
+    assert g.cfg.cw.report == CommandWord.report
+    assert g.cfg.cw.help == CommandWord.help
