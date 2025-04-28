@@ -41,21 +41,14 @@ def game_info() -> GameInfoDict:
 
     # 規定打数更新
     match g.params.get("command", ""):
-        case "results":
-            old_stipulated = g.cfg.results.stipulated
-            new_stipulated = g.cfg.results.stipulated_calculation(ret["game_count"])
-        case "graph":
-            old_stipulated = g.cfg.graph.stipulated
-            new_stipulated = g.cfg.graph.stipulated_calculation(ret["game_count"])
-        case "ranking":
-            old_stipulated = g.cfg.ranking.stipulated
-            new_stipulated = g.cfg.ranking.stipulated_calculation(ret["game_count"])
-        case "report":
-            old_stipulated = g.cfg.report.stipulated
-            new_stipulated = g.cfg.report.stipulated_calculation(ret["game_count"])
-
-    if not old_stipulated:  # 規定打数が0なら更新
-        g.params.update(stipulated=new_stipulated)
+        case "results" if not g.cfg.results.stipulated:
+            g.cfg.results.stipulated = g.cfg.results.stipulated_calculation(ret["game_count"])
+        case "graph" if not g.cfg.graph.stipulated:
+            g.cfg.graph.stipulated = g.cfg.graph.stipulated_calculation(ret["game_count"])
+        case "ranking" if not g.cfg.ranking.stipulated:
+            g.cfg.ranking.stipulated = g.cfg.ranking.stipulated_calculation(ret["game_count"])
+        case "report" if not g.cfg.report.stipulated:
+            g.cfg.report.stipulated = g.cfg.report.stipulated_calculation(ret["game_count"])
 
     logging.info("return: %s", ret)
     return ret
