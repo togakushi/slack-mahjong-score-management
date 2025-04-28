@@ -45,6 +45,7 @@ def main(client, body):
         return
 
     # キーワード処理
+    print(">>>", g.msg.keyword, g.cfg.cw.results)
     match g.msg.keyword:
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
@@ -55,34 +56,34 @@ def main(client, body):
             slack_api.post_text(g.msg.event_ts, title, msg)
 
         # 成績管理系コマンド
-        case x if re.match(rf"^{g.cfg.cw.results}", x):
+        case x if re.match(rf"^{g.cfg.cw.results}$", x):
             libs.commands.results.slackpost.main()
-        case x if re.match(rf"^{g.cfg.cw.graph}", x):
+        case x if re.match(rf"^{g.cfg.cw.graph}$", x):
             libs.commands.graph.slackpost.main()
-        case x if re.match(rf"^{g.cfg.cw.ranking}", x):
+        case x if re.match(rf"^{g.cfg.cw.ranking}$", x):
             results.ranking.main()
-        case x if re.match(rf"^{g.cfg.cw.report}", x):
+        case x if re.match(rf"^{g.cfg.cw.report}$", x):
             libs.commands.report.slackpost.main()
 
         # データベース関連コマンド
-        case x if re.match(rf"^{g.cfg.cw.check}", x):
+        case x if re.match(rf"^{g.cfg.cw.check}$", x):
             comparison.main()
         case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", str(g.msg.text)):  # Reminderによる突合
             logging.notice("Reminder: %s", g.cfg.cw.check)  # type: ignore
             comparison.main()
 
         # メンバーリスト/チームリスト
-        case x if re.match(rf"^{g.cfg.cw.member}", x):
+        case x if re.match(rf"^{g.cfg.cw.member}$", x):
             title, msg = lookup.textdata.get_members_list()
             slack_api.post_text(g.msg.event_ts, title, msg)
-        case x if re.match(rf"^{g.cfg.cw.team}", x):
+        case x if re.match(rf"^{g.cfg.cw.team}$", x):
             title = "チーム一覧"
             msg = lookup.textdata.get_team_list()
             slack_api.post_text(g.msg.event_ts, title, msg)
 
         case _ as x:
             record_data = lookup.db.exsist_record(g.msg.event_ts)
-            if re.match(rf"^{g.cfg.cw.remarks_word}", x) and g.msg.in_thread:  # 追加メモ
+            if re.match(rf"^{g.cfg.cw.remarks_word}$", x) and g.msg.in_thread:  # 追加メモ
                 if lookup.db.exsist_record(g.msg.thread_ts):
                     modify.check_remarks()
             else:
