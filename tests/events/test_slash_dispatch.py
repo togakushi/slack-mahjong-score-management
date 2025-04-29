@@ -151,7 +151,7 @@ def test_download(config, keyword, monkeypatch):
     list(param_data.slash_member_list.values()),
     ids=list(param_data.slash_member_list.keys()),
 )
-def test_slash_member_list(config, keyword, monkeypatch):
+def test_member_list(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(member)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
@@ -171,7 +171,7 @@ def test_slash_member_list(config, keyword, monkeypatch):
     list(param_data.slash_member_add.values()),
     ids=list(param_data.slash_member_add.keys()),
 )
-def test_slash_member_add(config, keyword, monkeypatch):
+def test_member_add(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(add)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
@@ -191,7 +191,7 @@ def test_slash_member_add(config, keyword, monkeypatch):
     list(param_data.slash_member_del.values()),
     ids=list(param_data.slash_member_del.keys()),
 )
-def test_slash_member_del(config, keyword, monkeypatch):
+def test_member_del(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(del)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
@@ -211,7 +211,7 @@ def test_slash_member_del(config, keyword, monkeypatch):
     list(param_data.slash_team_create.values()),
     ids=list(param_data.slash_team_create.keys()),
 )
-def test_slash_team_create(config, keyword, monkeypatch):
+def test_team_create(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_create)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
@@ -231,7 +231,7 @@ def test_slash_team_create(config, keyword, monkeypatch):
     list(param_data.slash_team_del.values()),
     ids=list(param_data.slash_team_del.keys()),
 )
-def test_slash_team_del(config, keyword, monkeypatch):
+def test_team_del(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_del)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
@@ -251,7 +251,7 @@ def test_slash_team_del(config, keyword, monkeypatch):
     list(param_data.slash_team_add.values()),
     ids=list(param_data.slash_team_add.keys()),
 )
-def test_slash_team_add(config, keyword, monkeypatch):
+def test_team_add(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_add)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
@@ -271,7 +271,7 @@ def test_slash_team_add(config, keyword, monkeypatch):
     list(param_data.slash_team_remove.values()),
     ids=list(param_data.slash_team_remove.keys()),
 )
-def test_slash_team_remove(config, keyword, monkeypatch):
+def test_team_remove(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_remove)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
@@ -291,7 +291,7 @@ def test_slash_team_remove(config, keyword, monkeypatch):
     list(param_data.slash_team_list.values()),
     ids=list(param_data.slash_team_list.keys()),
 )
-def test_slash_team_list(config, keyword, monkeypatch):
+def test_team_list(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_list)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
@@ -311,7 +311,7 @@ def test_slash_team_list(config, keyword, monkeypatch):
     list(param_data.slash_team_clear.values()),
     ids=list(param_data.slash_team_clear.keys()),
 )
-def test_slash_team_clear(config, keyword, monkeypatch):
+def test_team_clear(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_clear)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
