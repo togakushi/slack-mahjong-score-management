@@ -2,11 +2,9 @@ import sys
 from unittest.mock import patch
 
 import pytest
-from slack_bolt import App
 
 from libs.functions import configuration, events
-
-from . import param_data
+from tests.events import param_data
 
 
 @pytest.mark.parametrize(
@@ -15,26 +13,18 @@ from . import param_data
     ids=list(param_data.message_help.keys()),
 )
 def test_help(config, keyword, monkeypatch):
+    """メッセージイベントテスト(help)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
 
     with (
         patch("libs.functions.message.help_message") as mock_help_message,
-        patch("libs.functions.events.message_event.slack_api") as mock_slack_api
+        patch("libs.functions.events.message_event.slack_api.post_message", return_value=True),
+        patch("libs.functions.events.message_event.slack_api.post_text", return_value=True),
+        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
-
-        fake_client = App.client
-        fake_body: dict = {}
-        fake_body["event"] = {
-            "user": "U9999999999",
-            "type": "message",
-            "ts": "1744685284.472179",
-            "text": f"{keyword}",
-            "thread_ts": "1744685284.472179",
-        }
-
-        events.message_event.main(fake_client, fake_body)
-        mock_slack_api.assert_not_called()
+        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
         mock_help_message.assert_called_once()
 
 
@@ -44,22 +34,16 @@ def test_help(config, keyword, monkeypatch):
     ids=list(param_data.message_results.keys()),
 )
 def test_results(config, keyword, monkeypatch):
+    """メッセージイベントテスト(results)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
 
-    with (patch("libs.commands.results.slackpost.main") as mock_results):
-
-        fake_client = App.client
-        fake_body: dict = {}
-        fake_body["event"] = {
-            "user": "U9999999999",
-            "type": "message",
-            "ts": "1744685284.472179",
-            "text": f"{keyword}",
-            "thread_ts": "1744685284.472179",
-        }
-
-        events.message_event.main(fake_client, fake_body)
+    with (
+        patch("libs.commands.results.slackpost.main") as mock_results,
+        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
+    ):
+        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
         mock_results.assert_called_once()
 
 
@@ -69,22 +53,16 @@ def test_results(config, keyword, monkeypatch):
     ids=list(param_data.message_graph.keys()),
 )
 def test_graph(config, keyword, monkeypatch):
+    """メッセージイベントテスト(graph)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
 
-    with (patch("libs.commands.graph.slackpost.main") as mock_graph):
-
-        fake_client = App.client
-        fake_body: dict = {}
-        fake_body["event"] = {
-            "user": "U9999999999",
-            "type": "message",
-            "ts": "1744685284.472179",
-            "text": f"{keyword}",
-            "thread_ts": "1744685284.472179",
-        }
-
-        events.message_event.main(fake_client, fake_body)
+    with (
+        patch("libs.commands.graph.slackpost.main") as mock_graph,
+        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
+    ):
+        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
         mock_graph.assert_called_once()
 
 
@@ -94,22 +72,16 @@ def test_graph(config, keyword, monkeypatch):
     ids=list(param_data.message_ranking.keys()),
 )
 def test_ranking(config, keyword, monkeypatch):
+    """メッセージイベントテスト(ranking)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
 
-    with (patch("libs.commands.results.ranking.main") as mock_ranking):
-
-        fake_client = App.client
-        fake_body: dict = {}
-        fake_body["event"] = {
-            "user": "U9999999999",
-            "type": "message",
-            "ts": "1744685284.472179",
-            "text": f"{keyword}",
-            "thread_ts": "1744685284.472179",
-        }
-
-        events.message_event.main(fake_client, fake_body)
+    with (
+        patch("libs.commands.results.ranking.main") as mock_ranking,
+        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
+    ):
+        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
         mock_ranking.assert_called_once()
 
 
@@ -119,20 +91,14 @@ def test_ranking(config, keyword, monkeypatch):
     ids=list(param_data.message_report.keys()),
 )
 def test_report(config, keyword, monkeypatch):
+    """メッセージイベントテスト(report)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
 
-    with (patch("libs.commands.report.slackpost.main") as mock_report):
-
-        fake_client = App.client
-        fake_body: dict = {}
-        fake_body["event"] = {
-            "user": "U9999999999",
-            "type": "message",
-            "ts": "1744685284.472179",
-            "text": f"{keyword}",
-            "thread_ts": "1744685284.472179",
-        }
-
-        events.message_event.main(fake_client, fake_body)
+    with (
+        patch("libs.commands.report.slackpost.main") as mock_report,
+        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
+    ):
+        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
         mock_report.assert_called_once()

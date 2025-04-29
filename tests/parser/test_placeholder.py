@@ -11,7 +11,7 @@ from libs.functions import configuration
 from libs.utils import dictutil, formatter
 from tests.parser import param_data
 
-TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini", "--debug", "--ver"]
+TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini"]
 
 
 @pytest.mark.parametrize(
