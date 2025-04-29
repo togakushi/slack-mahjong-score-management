@@ -43,7 +43,7 @@ def main(ack, body, client):
             # データベース関連コマンド
             case x if x in g.cfg.alias.check:
                 comparison.main()
-            case "download":
+            case x if x in g.cfg.alias.download:
                 slack_api.post_fileupload("resultdb", g.cfg.db.database_file)
 
             # メンバー管理系コマンド
@@ -56,17 +56,17 @@ def main(ack, body, client):
                 slack_api.post_message(member.remove(g.msg.argument))
 
             # チーム管理系コマンド
-            case "team_create":
+            case x if x in g.cfg.alias.team_create:
                 slack_api.post_message(team.create(g.msg.argument))
-            case "team_del":
+            case x if x in g.cfg.alias.team_del:
                 slack_api.post_message(team.delete(g.msg.argument))
-            case "team_add":
+            case x if x in g.cfg.alias.team_add:
                 slack_api.post_message(team.append(g.msg.argument))
-            case "team_remove":
+            case x if x in g.cfg.alias.team_remove:
                 slack_api.post_message(team.remove(g.msg.argument))
-            case "team_list":
+            case x if x in g.cfg.alias.team_list:
                 slack_api.post_message(lookup.textdata.get_team_list())
-            case "team_clear":
+            case x if x in g.cfg.alias.team_clear:
                 slack_api.post_message(team.clear())
 
             # その他

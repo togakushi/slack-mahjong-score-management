@@ -136,12 +136,19 @@ class AliasSection(CommonMethodMixin):
     download: list = field(default_factory=list)
     member: list = field(default_factory=list)
     add: list = field(default_factory=list)
-    delete: list = field(default_factory=list)
+    delete: list = field(default_factory=list)  # delはbuilt-inで使用
+    team_create: list = field(default_factory=list)
+    team_del: list = field(default_factory=list)
+    team_add: list = field(default_factory=list)
+    team_remove: list = field(default_factory=list)
+    team_list: list = field(default_factory=list)
+    team_clear: list = field(default_factory=list)
 
     def __post_init__(self):
         self.initialization("alias")
 
-        # デフォルト値として自身と同じ名前のコマンドを登録する
+        # デフォルト値として自身と同じ名前のコマンドを登録する #
+        getattr(self, "delete").append("del")
         for name, typ in self.__class__.__annotations__.items():
             if typ == list:
                 getattr(self, name).append(name)

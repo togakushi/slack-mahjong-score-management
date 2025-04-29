@@ -129,6 +129,9 @@ class CommonMethodMixin:
                 tmp_list: list = []
                 for data in config.get(section, x.name, fallback="").split(","):
                     tmp_list.extend(data.split())
+                if x.name == "delete":
+                    for data in config.get(section, "del", fallback="").split(","):
+                        tmp_list.extend(data.split())
                 setattr(self, x.name, tmp_list)
             else:
                 setattr(self, x.name, config.get(section, x.name, fallback=x.default))
