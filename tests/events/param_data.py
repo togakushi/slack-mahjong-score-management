@@ -2,12 +2,19 @@
 テスト用パラメータ
 """
 
-from typing import Any, Tuple
+from typing import Any, Tuple, TypedDict
 
 from slack_bolt import App
 
+
+class FakeBodyDict(TypedDict, total=False):
+    command: str
+    type: str
+    event: dict[str, str]
+
+
 FAKE_CLIENT = App.client
-FAKE_BODY: dict[str, str | dict] = {
+FAKE_BODY: FakeBodyDict = {
     "command": "/mahjong",
     "event": {
         "user": "U9999999999",
