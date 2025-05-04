@@ -50,9 +50,9 @@ def test_message_event_called(monkeypatch):
 
     print(bolt_request.body)
     with (
-        patch("libs.event.events.message_event.main", return_value=None) as mock_message_event,
-        patch("libs.event.events.slash_command.main", return_value=None) as mock_slash_command,
-        patch("libs.event.events.home_tab.main", return_value=None) as mock_home_tab,
+        patch("libs.event.events.message_event.main") as mock_message_event,
+        patch("libs.event.events.slash_command.main") as mock_slash_command,
+        patch("libs.event.events.home_tab.main") as mock_home_tab,
     ):
         app.dispatch(bolt_request)
         mock_message_event.assert_called()
@@ -90,9 +90,9 @@ def test_slash_command_called(monkeypatch):
 
     print(bolt_request.body)
     with (
-        patch("libs.event.events.message_event.main", return_value=None) as mock_message_event,
-        patch("libs.event.events.slash_command.main", return_value=None) as mock_slash_command,
-        patch("libs.event.events.home_tab.main", return_value=None) as mock_home_tab,
+        patch("libs.event.events.message_event.main") as mock_message_event,
+        patch("libs.event.events.slash_command.main") as mock_slash_command,
+        patch("libs.event.events.home_tab.main") as mock_home_tab,
     ):
         app.dispatch(bolt_request)
         mock_message_event.assert_not_called()
@@ -128,11 +128,10 @@ def test_home_tab_event_called(monkeypatch):
         }
     )
 
-    print(bolt_request.body)
     with (
-        patch("libs.event.events.message_event.main", return_value=None) as mock_message_event,
-        patch("libs.event.events.slash_command.main", return_value=None) as mock_slash_command,
-        patch("libs.event.events.home_tab.main", return_value=None) as mock_home_tab,
+        patch("libs.event.events.message_event.main") as mock_message_event,
+        patch("libs.event.events.slash_command.main") as mock_slash_command,
+        patch("libs.event.events.home_tab.main") as mock_home_tab,
     ):
         app.dispatch(bolt_request)
         mock_message_event.assert_not_called()
