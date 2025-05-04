@@ -8,6 +8,7 @@ from slack_bolt import App
 
 
 class FakeBodyDict(TypedDict, total=False):
+    """テスト用疑似Body"""
     command: str
     type: str
     event: dict[str, str]

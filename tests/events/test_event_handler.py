@@ -1,3 +1,7 @@
+"""
+tests/events/test_event_handler.py
+"""
+
 import hashlib
 import hmac
 import json
@@ -15,12 +19,14 @@ __all__ = ["event"]
 
 
 def generate_signature(signing_secret: str, timestamp: str, body: str) -> str:
+    """シグネチャ生成"""
     sig_basestring = f"v0:{timestamp}:{body}"
     digest = hmac.new(signing_secret.encode(), sig_basestring.encode(), hashlib.sha256).hexdigest()
     return f"v0={digest}"
 
 
 def test_message_event_called(monkeypatch):
+    """メッセージイベント"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
     configuration.setup()
 
@@ -61,6 +67,7 @@ def test_message_event_called(monkeypatch):
 
 
 def test_slash_command_called(monkeypatch):
+    """スラッシュコマンド"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
     configuration.setup()
 
@@ -101,6 +108,7 @@ def test_slash_command_called(monkeypatch):
 
 
 def test_home_tab_event_called(monkeypatch):
+    """ホームタブ"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
     configuration.setup()
 

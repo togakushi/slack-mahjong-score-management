@@ -1,3 +1,7 @@
+"""
+tests/events/test_message_dispatch.py
+"""
+
 import sys
 from unittest.mock import patch
 
