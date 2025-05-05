@@ -8,8 +8,7 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.commands import results
 from libs.commands.home_tab import ui_parts
-from libs.functions import slack_api
-from libs.handler_registry import register
+from libs.functions import events, slack_api
 from libs.utils import dictutil
 
 
@@ -64,7 +63,7 @@ def build_versus_menu():
     ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
-@register
+@events.handler_registry.register
 def register_versus_handlers(app):
     """直接対戦メニュー"""
     @app.action("versus_menu")

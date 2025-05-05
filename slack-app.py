@@ -29,7 +29,7 @@ from slack_sdk.errors import SlackApiError
 import libs.global_value as g
 from libs.data import initialization
 from libs.functions import configuration
-from libs.handler_registry import register_all
+from libs.functions.events.handler_registry import register_all
 
 if __name__ == "__main__":
     try:

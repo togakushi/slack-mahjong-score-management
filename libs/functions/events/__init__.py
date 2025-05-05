@@ -8,6 +8,7 @@ Exports:
 
 """
 
-from libs.functions.events import home_tab, message_event, slash_command
+from libs.functions.events import (handler_registry, home_tab, message_event,
+                                   slash_command)
 
-__all__ = ["home_tab", "message_event", "slash_command"]
+__all__ = ["handler_registry", "home_tab", "message_event", "slash_command"]

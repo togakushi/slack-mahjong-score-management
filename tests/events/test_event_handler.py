@@ -12,8 +12,8 @@ from unittest.mock import patch
 from slack_bolt import App
 from slack_bolt.request import BoltRequest
 
-from libs import event, handler_registry
-from libs.functions import configuration
+from libs import event
+from libs.functions import configuration, events
 
 __all__ = ["event"]
 
@@ -33,7 +33,7 @@ def test_message_event_called(monkeypatch):
     timestamp = str(int(time.time()))
     signing_secret = "signing_secret"
     app = App(signing_secret=signing_secret)
-    handler_registry.register_all(app)
+    events.handler_registry.register_all(app)
 
     fake_body = json.dumps({
         "type": "event_callback",
@@ -74,7 +74,7 @@ def test_slash_command_called(monkeypatch):
     timestamp = str(int(time.time()))
     signing_secret = "signing_secret"
     app = App(signing_secret=signing_secret)
-    handler_registry.register_all(app)
+    events.handler_registry.register_all(app)
 
     fake_body = json.dumps({
         "command": "/mahjong",
@@ -115,7 +115,7 @@ def test_home_tab_event_called(monkeypatch):
     timestamp = str(int(time.time()))
     signing_secret = "signing_secret"
     app = App(signing_secret=signing_secret)
-    handler_registry.register_all(app)
+    events.handler_registry.register_all(app)
 
     fake_body = json.dumps({
         "type": "event_callback",

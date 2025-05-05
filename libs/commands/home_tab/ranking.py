@@ -9,7 +9,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.commands import results
 from libs.commands.home_tab import ui_parts
 from libs.functions import message, slack_api
-from libs.handler_registry import register
+from libs.functions.events.handler_registry import register
 from libs.utils import dictutil
 
 
