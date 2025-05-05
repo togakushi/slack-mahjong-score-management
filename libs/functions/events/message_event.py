@@ -45,7 +45,6 @@ def main(client, body):
         return
 
     # キーワード処理
-    print(">>>", g.msg.keyword, g.cfg.cw.results)
     match g.msg.keyword:
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
