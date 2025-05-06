@@ -4,11 +4,3 @@ matplotlib
 reportlab
 pandas
 tabulate[widechars] # type: ignore
-pytest
-pdoc
-mypy
-pylint
-types-python-dateutil
-types-tabulate
-pandas-stubs
-types-reportlab

@@ -1,0 +1,8 @@
+pdoc
+pytest
+mypy
+pylint
+pandas-stubs
+types-python-dateutil
+types-tabulate
+types-reportlab
