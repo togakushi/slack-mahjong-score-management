@@ -4,9 +4,10 @@ lib/event.py
 
 import libs.global_value as g
 from libs.functions import events
+from libs.functions.events.handler_registry import register
 
 
-@events.handler_registry.register
+@register
 def register_event_handlers(app):
     """イベントAPI"""
     @app.event("message")

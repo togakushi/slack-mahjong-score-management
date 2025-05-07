@@ -6,7 +6,7 @@ import logging
 
 import libs.global_value as g
 from libs.commands.home_tab import ui_parts
-from libs.functions import events
+from libs.functions.events.handler_registry import register
 
 
 def build_main_menu():
@@ -20,7 +20,7 @@ def build_main_menu():
     ui_parts.button(text="直接対戦", action_id="versus_menu")
 
 
-@events.handler_registry.register
+@register
 def register_home_handlers(app):
     """ホームタブ操作イベント"""
     @app.action("actionId-back")

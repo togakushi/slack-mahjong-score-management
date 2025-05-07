@@ -8,7 +8,8 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.commands import graph, results
 from libs.commands.home_tab import ui_parts
-from libs.functions import events, message, slack_api
+from libs.functions import message, slack_api
+from libs.functions.events.handler_registry import register
 from libs.utils import dictutil
 
 
@@ -61,7 +62,7 @@ def build_summary_menu():
     ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
 
 
-@events.handler_registry.register
+@register
 def register_summary_handlers(app):
     """サマリメニュー"""
     @app.action("summary_menu")
