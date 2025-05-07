@@ -6,7 +6,7 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.commands import results
+from libs.commands import ranking
 from libs.commands.home_tab import ui_parts
 from libs.functions import message, slack_api
 from libs.functions.events.handler_registry import register
@@ -114,7 +114,7 @@ def register_ranking_handlers(app):
         app_msg.append("集計完了")
         msg1 = message.reply(message="no_hits")
 
-        msg1, msg2 = results.ranking.aggregation()
+        msg1, msg2 = ranking.ranking.aggregation()
         if msg2:
             res = slack_api.post_message(msg1)
             slack_api.post_multi_message(msg2, res["ts"])

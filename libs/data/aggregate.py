@@ -40,15 +40,16 @@ def game_info() -> GameInfoDict:
         ret["last_comment"] = df["last_comment"].to_string(index=False)
 
     # 規定打数更新
-    match g.params.get("command", ""):
-        case "results" if not g.cfg.results.stipulated:
-            g.cfg.results.stipulated = g.cfg.results.stipulated_calculation(ret["game_count"])
-        case "graph" if not g.cfg.graph.stipulated:
-            g.cfg.graph.stipulated = g.cfg.graph.stipulated_calculation(ret["game_count"])
-        case "ranking" if not g.cfg.ranking.stipulated:
-            g.cfg.ranking.stipulated = g.cfg.ranking.stipulated_calculation(ret["game_count"])
-        case "report" if not g.cfg.report.stipulated:
-            g.cfg.report.stipulated = g.cfg.report.stipulated_calculation(ret["game_count"])
+    if not g.params.get("stipulated", 0):
+        match g.params.get("command", ""):
+            case "results":
+                g.params["stipulated"] = g.cfg.results.stipulated_calculation(ret["game_count"])
+            case "graph":
+                g.params["stipulated"] = g.cfg.graph.stipulated_calculation(ret["game_count"])
+            case "ranking":
+                g.params["stipulated"] = g.cfg.ranking.stipulated_calculation(ret["game_count"])
+            case "report":
+                g.params["stipulated"] = g.cfg.report.stipulated_calculation(ret["game_count"])
 
     logging.info("return: %s", ret)
     return ret

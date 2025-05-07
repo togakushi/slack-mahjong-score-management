@@ -3,6 +3,7 @@ libs/commands/results/rating.py
 """
 
 import os
+from typing import Tuple
 
 import pandas as pd
 
@@ -13,7 +14,7 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation():
+def aggregation() -> Tuple[str, dict, dict]:
     """レーティングを集計して返す
 
     Returns:
@@ -23,9 +24,17 @@ def aggregation():
         - dict: 生成ファイルの情報
     """
 
+    # 情報ヘッダ
+    add_text = ""
+    headline = "*【レーティング】*\n"
+
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info: GameInfoDict = aggregate.game_info()
+    if not game_info["game_count"]:  # 検索結果が0件のとき
+        headline += "\t" + message.reply(message="no_hits")
+        return (headline, {}, {})
+
     df_results = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/ranking/results.sql")).set_index("name")
     df_ratings = aggregate.calculation_rating()
 
@@ -59,9 +68,9 @@ def aggregation():
     df["rank_dev"] = (df["rank_avg"] - df["rank_avg"].mean()) / df["rank_avg"].std(ddof=0) * -10 + 50
 
     # 表示
-    # --- 情報ヘッダ
-    add_text = ""
-    headline = "*【レーティング】* （実験的な機能）\n"
+    if df.empty:
+        headline += "\t" + message.reply(message="no_target")
+        return (headline, {}, {})
     headline += message.header(game_info, add_text, 1)
 
     df = formatter.df_rename(df.filter(

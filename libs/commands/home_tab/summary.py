@@ -6,7 +6,7 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.commands import graph, results
+from libs.commands import graph, ranking, results
 from libs.commands.home_tab import ui_parts
 from libs.functions import message, slack_api
 from libs.functions.events.handler_registry import register
@@ -131,7 +131,8 @@ def register_summary_handlers(app):
                 else:
                     slack_api.post_message(ret)
             case "rating":
-                msg1, msg2, file_list = results.rating.aggregation()
+                g.params["command"] = "ranking"
+                msg1, msg2, file_list = ranking.rating.aggregation()
                 slack_api.slack_post(
                     headline=msg1,
                     message=msg2,

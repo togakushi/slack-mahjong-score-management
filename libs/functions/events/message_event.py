@@ -6,10 +6,10 @@ import logging
 import re
 
 import libs.commands.graph.slackpost
+import libs.commands.ranking.slackpost
 import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
-from libs.commands import results
 from libs.data import comparison, lookup, modify
 from libs.functions import message, slack_api
 from libs.utils import validator
@@ -60,7 +60,7 @@ def main(client, body):
         case x if re.match(rf"^{g.cfg.cw.graph}$", x):
             libs.commands.graph.slackpost.main()
         case x if re.match(rf"^{g.cfg.cw.ranking}$", x):
-            results.ranking.main()
+            libs.commands.ranking.slackpost.main()
         case x if re.match(rf"^{g.cfg.cw.report}$", x):
             libs.commands.report.slackpost.main()
 

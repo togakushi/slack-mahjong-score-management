@@ -26,14 +26,6 @@ def main():
             headline=msg1,
             message=msg2,
         )
-    elif g.params.get("rating"):  # レーティング
-        msg1, msg2, file_list = results.rating.aggregation()
-        slack_api.slack_post(
-            headline=msg1,
-            message=msg2,
-            summarize=False,
-            file_list=file_list,
-        )
     elif versus_mode:  # 直接対戦
         msg1, msg2, file_list = results.versus.aggregation()
         slack_api.slack_post(

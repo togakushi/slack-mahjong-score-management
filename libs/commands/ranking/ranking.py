@@ -12,18 +12,8 @@ from tabulate import tabulate
 import libs.global_value as g
 from cls.types import GameInfoDict
 from libs.data import aggregate, loader
-from libs.functions import message, slack_api
-from libs.utils import dictutil, formatter
-
-
-def main():
-    """ランキングをslackにpostする"""
-    g.params = dictutil.placeholder(g.cfg.ranking)
-
-    msg1, msg2 = aggregation()
-    res = slack_api.post_message(msg1)
-    if msg2:
-        slack_api.post_multi_message(msg2, res["ts"])
+from libs.functions import message
+from libs.utils import formatter
 
 
 def aggregation() -> Tuple[str, Any]:
@@ -35,14 +25,22 @@ def aggregation() -> Tuple[str, Any]:
         - dict | Any: 各ランキングの情報
     """
 
-    # --- データ取得
+    # 情報ヘッダ
+    if g.params.get("individual"):  # 個人集計
+        msg = "\n*【ランキング】*\n"
+    else:  # チーム集計
+        msg = "\n*【チームランキング】*\n"
+
+    # データ取得
     game_info: GameInfoDict = aggregate.game_info()
-    if game_info["game_count"] == 0:  # 結果が0件のとき
-        return (message.reply(message="no_hits"), None)
+    if not game_info["game_count"]:  # 検索結果が0件のとき
+        msg += "\t" + message.reply(message="no_hits")
+        return (msg, None)
 
     result_df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/ranking/aggregate.sql"))
     if result_df.empty:
-        return (message.reply(message="no_hits"), None)
+        msg += "\t" + message.reply(message="no_target")
+        return (msg, None)
 
     df = pd.merge(
         result_df, aggregate.ranking_record(),
@@ -54,7 +52,7 @@ def aggregation() -> Tuple[str, Any]:
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
         df["name"] = df["name"].replace(mapping_dict)
 
-    # --- 集計
+    # 集計
     data: dict = {}
 
     # ゲーム参加率
@@ -128,12 +126,7 @@ def aggregation() -> Tuple[str, Any]:
     df["disp"] = df.apply(lambda row: f"<>{row["c_top3"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
     data["連続ラス回避"] = table_conversion(df, ["c_top3", 2])
 
-    # --- 表示
-    if g.params.get("individual"):  # 個人集計
-        msg = "\n*【ランキング】*\n"
-    else:  # チーム集計
-        msg = "\n*【チームランキング】*\n"
-
+    # 表示
     msg += message.header(game_info, "", 1)
 
     for key in list(data.keys()):

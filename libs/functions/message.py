@@ -144,6 +144,7 @@ def reply(message=None, rpoint_sum=0):
     default_message = {
         "invalid_argument": "使い方が間違っています。",
         "no_hits": "{start} ～ {end} に≪{keyword}≫はありません。",
+        "no_target": "集計対象データがありません。",
         "invalid_score": "素点合計：{rpoint_sum}\n点数差分：{rpoint_diff}",
         "restricted_channel": "<@{user_id}> この投稿はデータベースに反映されません。",
         "inside_thread": "<@{user_id}> スレッド内から成績登録はできません。",
@@ -175,7 +176,7 @@ def reply(message=None, rpoint_sum=0):
     return msg
 
 
-def remarks(headword=False):
+def remarks(headword=False) -> str | list:
     """引数で指定された集計方法を注記にまとめる
 
     Args:
@@ -187,7 +188,7 @@ def remarks(headword=False):
         - `headword` がある場合は文字列で返す
     """
 
-    remark = []
+    remark: list = []
 
     if g.params.get("individual"):  # 個人集計時のみ表示
         if not g.params.get("unregistered_replace"):

@@ -5,10 +5,10 @@ libs/functions/events/slash_command.py
 import logging
 
 import libs.commands.graph.slackpost
+import libs.commands.ranking.slackpost
 import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
-from libs.commands import results
 from libs.data import comparison, lookup
 from libs.functions import message, slack_api
 from libs.registry import member, team
@@ -36,7 +36,7 @@ def main(ack, body, client):
             case x if x in g.cfg.alias.graph:
                 libs.commands.graph.slackpost.main()
             case x if x in g.cfg.alias.ranking:
-                results.ranking.main()
+                libs.commands.ranking.slackpost.main()
             case x if x in g.cfg.alias.report:
                 libs.commands.report.slackpost.main()
 
