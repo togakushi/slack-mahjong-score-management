@@ -68,7 +68,7 @@
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">libs.global_value</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">g</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.commands.home_tab</span><span class="w"> </span><span class="kn">import</span> <span class="n">ui_parts</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">events</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.functions.events.handler_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">register</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="k">def</span><span class="w"> </span><span class="nf">build_main_menu</span><span class="p">():</span>
@@ -82,7 +82,7 @@
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">ui_parts</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;直接対戦&quot;</span><span class="p">,</span> <span class="n">action_id</span><span class="o">=</span><span class="s2">&quot;versus_menu&quot;</span><span class="p">)</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="nd">@events</span><span class="o">.</span><span class="n">handler_registry</span><span class="o">.</span><span class="n">register</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="nd">@register</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="k">def</span><span class="w"> </span><span class="nf">register_home_handlers</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ホームタブ操作イベント&quot;&quot;&quot;</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="nd">@app</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="s2">&quot;actionId-back&quot;</span><span class="p">)</span>
