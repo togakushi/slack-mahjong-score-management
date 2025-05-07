@@ -266,23 +266,20 @@ def get_game_results(mapping_dict: dict) -> str:
     data: dict = {}
 
     target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
-    p_list: list = []
     df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql")).fillna(value="")
 
     if g.params.get("anonymous"):
         mapping_dict.update(formatter.anonymous_mapping(df["name"].unique().tolist(), len(mapping_dict)))
         df["name"] = df["name"].replace(mapping_dict)
+        target_player = mapping_dict.get(target_player, target_player)
 
+    p_list: dict = df["name"].unique().tolist()
     if g.params.get("verbose"):
         data["p0"] = df.filter(items=["playtime", "guest_count", "same_team"]).drop_duplicates().set_index("playtime")
         for idx, prefix in enumerate(["p1", "p2", "p3", "p4"]):  # pylint: disable=unused-variable  # noqa: F841
             tmp_df = df.query("seat == @idx + 1").filter(
                 items=["playtime", "name", "rpoint", "rank", "point", "grandslam", "name"]
             )
-
-            for x in tmp_df["name"].unique().tolist():
-                if x not in p_list:
-                    p_list.append(x)
 
             data[prefix] = tmp_df.rename(
                 columns={
