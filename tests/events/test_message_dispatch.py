@@ -81,7 +81,7 @@ def test_ranking(config, keyword, monkeypatch):
     configuration.setup()
 
     with (
-        patch("libs.commands.results.ranking.main") as mock_ranking,
+        patch("libs.commands.ranking.slackpost.main") as mock_ranking,
         patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")

@@ -82,7 +82,7 @@ def test_ranking(config, keyword, monkeypatch):
     configuration.setup()
 
     with (
-        patch("libs.commands.results.ranking.main") as mock_slash_ranking,
+        patch("libs.commands.ranking.slackpost.main") as mock_slash_ranking,
         patch("libs.functions.events.message_event.slack_api.post_message", return_value=None),
         patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):

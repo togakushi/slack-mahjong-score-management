@@ -8,12 +8,12 @@ import random
 import re
 from pprint import pprint
 
+import libs.commands.ranking.slackpost
 import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.parser import CommandParser
 from libs.commands import graph, report
-from libs.commands.results import ranking
 from libs.data import initialization
 from libs.functions import configuration, message
 from libs.utils import dictutil
@@ -143,9 +143,10 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
 
             case "ranking":
                 g.params = dictutil.placeholder(g.cfg.ranking)
+
                 pprint([
-                    "exec: lib.results.ranking.main()",
-                    ranking.main(),
+                    "exec: libs.commands.ranking.slackpost.main()",
+                    libs.commands.ranking.slackpost.main(),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
