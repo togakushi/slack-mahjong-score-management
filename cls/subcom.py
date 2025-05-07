@@ -24,7 +24,7 @@ class SubCommand(CommonMethodMixin):
     all_player: bool = field(default=False)
     daily: bool = field(default=True)
     fourfold: bool = field(default=True)
-    game_results: str | bool = field(default=False)
+    game_results: bool = field(default=False)
     guest_skip: bool = field(default=True)
     guest_skip2: bool = field(default=True)
     ranked: int = field(default=3)

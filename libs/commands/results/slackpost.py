@@ -14,11 +14,9 @@ def main():
 
     # モード切り替え
     versus_mode = False
-    if g.cfg.results.versus_matrix:
+    if g.params.get("versus_matrix"):
         versus_mode = True
-        if len(g.params["player_list"]) == 0:
-            versus_mode = False
-        if len(g.params["player_list"]) == 1 and not g.cfg.results.all_player:
+        if len(g.params["competition_list"]) == 0:  # 対戦相手リストが空ならOFF
             versus_mode = False
 
     # ---

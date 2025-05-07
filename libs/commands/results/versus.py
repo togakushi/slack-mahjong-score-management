@@ -8,7 +8,6 @@ import textwrap
 import pandas as pd
 
 import libs.global_value as g
-from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.functions import message
 from libs.utils import formatter
@@ -80,16 +79,8 @@ def aggregation():
                 for playtime in sorted(set(my_playtime + vs_playtime)):
                     if playtime in my_playtime and playtime in vs_playtime:
                         current_game = df_game.query("playtime == @playtime")
-                        guest_count = current_game["guest"].sum()
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
-
-                        tmp_msg[vs_name][count] = f"{"" if count else "【戦績】\n"}"
-                        if g.params.get("verbose"):  # 詳細表示
-                            tmp_msg[vs_name][count] += tmpl_result_verbose(current_game, playtime, guest_count)
-                        else:  # 簡易表示
-                            tmp_msg[vs_name][count] += tmpl_result_simple(my_score, vs_score, playtime, guest_count)
                         count += 1
-                        df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
         else:  # 対戦記録なし
             tmp_msg[vs_name]["info"] = f"*【{my_name} vs {vs_name}】*\n\t対戦相手が見つかりません。\n\n"
 
@@ -100,8 +91,7 @@ def aggregation():
         msg2[f"{key}_info"] = val.pop("info") + "\n"
         if val:
             for x in val:
-                msg2[f"{key}_{x}"] = textwrap.indent(val[x], "\t")
-            msg2[f"{key}_blank"] += "\n"
+                msg2[f"{key}_{x}"] = textwrap.indent(val[x], "\t") + "\n"
 
     # --- ファイル出力
     if len(df_data) != 0:
@@ -196,59 +186,4 @@ def tmpl_vs_table(data: dict) -> str:
         "\t"
     )
 
-    return ret.strip()
-
-
-def tmpl_result_verbose(current_game: pd.DataFrame, playtime: str, guest_count: int) -> str:
-    """詳細結果テンプレート
-
-    Args:
-        current_game (pd.DataFrame): 成績
-        playtime (str): プレイ時間
-        guest_count (int): ゲスト人数
-
-    Returns:
-        str: 出力データ
-    """
-
-    s1 = current_game.query("seat == 1").to_dict(orient="records")[0]
-    s2 = current_game.query("seat == 2").to_dict(orient="records")[0]
-    s3 = current_game.query("seat == 3").to_dict(orient="records")[0]
-    s4 = current_game.query("seat == 4").to_dict(orient="records")[0]
-
-    ret = textwrap.dedent(
-        f"""\
-        {ExtDt(playtime).format("ymdhms")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
-        \t東家：{s1["name"]} {s1["rank"]}位 {s1["rpoint"] * 100:>7} 点 ({s1["point"]:>+5.1f}pt) {s1["grandslam"]}
-        \t南家：{s2["name"]} {s2["rank"]}位 {s2["rpoint"] * 100:>7} 点 ({s2["point"]:>+5.1f}pt) {s2["grandslam"]}
-        \t西家：{s3["name"]} {s3["rank"]}位 {s3["rpoint"] * 100:>7} 点 ({s3["point"]:>+5.1f}pt) {s3["grandslam"]}
-        \t北家：{s4["name"]} {s4["rank"]}位 {s4["rpoint"] * 100:>7} 点 ({s4["point"]:>+5.1f}pt) {s4["grandslam"]}
-        """.replace("-", "▲")
-    )
-
-    return ret.strip()
-
-
-def tmpl_result_simple(my_score: pd.DataFrame, vs_score: pd.DataFrame, playtime: str, guest_count: int) -> str:
-    """簡易結果テンプレート
-
-    Args:
-        my_score (pd.DataFrame): 自分の成績
-        vs_score (pd.DataFrame): 相手の成績
-        playtime (str): プレイ時間
-        guest_count (int): ゲスト人数
-
-    Returns:
-        str: 出力データ
-    """
-    a1 = my_score.query("playtime == @playtime").to_dict(orient="records")[0]
-    a2 = vs_score.query("playtime == @playtime").to_dict(orient="records")[0]
-    ret = textwrap.dedent(
-        f"""\
-        {playtime.replace("-", "/")} {"(2ゲスト戦)" if guest_count >= 2 else ""}
-        \t{a1["name"]}：{a1["rank"]}位 {a1["rpoint"] * 100:>7} 点 ({a1["point"]:>+5.1f}pt) {a1["grandslam"]}
-        \t{a2["name"]}：{a2["rank"]}位 {a2["rpoint"] * 100:>7} 点 ({a2["point"]:>+5.1f}pt) {a2["grandslam"]}
-        """.replace("-", "▲")
-    )
-
-    return ret.strip()
+    return ret.strip() + "\n"
