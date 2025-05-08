@@ -177,34 +177,32 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
     check_list = list(set(g.member_list.keys()))  # 別名を含むリスト
     check_team = lookup.internal.get_team()
 
-    def _judge(check: str) -> bool:
+    def _judge(check: str) -> str:
         if g.params.get("individual"):
             if check in check_list:
-                return True
+                return g.member_list.get(check, check)
         else:
             if check in check_team:
-                return True
-        return False
+                return check
+        return ""
 
-    pname = textutil.str_conv(pname, "h2z")  # 半角数字 -> 全角数字
-    if _judge(pname):
-        return pname
+    if (ret_name := _judge(textutil.str_conv(pname, "h2z"))):  # 半角数字 -> 全角数字
+        return ret_name
 
     # 敬称削除
     honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
     if re.match(fr".*{honor}", pname):
         if not re.match(fr".*(っ|ッ|ー){honor}", pname):
             pname = re.sub(fr"{honor}", "", pname)
-    if _judge(pname):
-        return pname
 
-    check_name = textutil.str_conv(pname, "k2h")  # カタカナ -> ひらがな
-    if _judge(check_name):
-        return check_name
+    if (ret_name := _judge(pname)):
+        return ret_name
 
-    check_name = textutil.str_conv(pname, "h2k")  # ひらがな -> カタカナ
-    if _judge(check_name):
-        return check_name
+    if (ret_name := _judge(textutil.str_conv(pname, "k2h"))):  # カタカナ -> ひらがな
+        return ret_name
+
+    if (ret_name := _judge(textutil.str_conv(pname, "k2h"))):  # ひらがな -> カタカナ
+        return ret_name
 
     # メンバーリストに見つからない場合
     if g.params.get("unregistered_replace"):

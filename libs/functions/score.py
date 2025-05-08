@@ -157,6 +157,7 @@ def get_score(detection):
     """
 
     g.params.update(unregistered_replace=False)  # ゲスト無効
+    g.params.update(individual=True)
 
     # ポイント計算
     score_df = pd.DataFrame({
