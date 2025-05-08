@@ -105,6 +105,8 @@ def placeholder(subcom: "SubCommand") -> dict:
 
 def _collect_member(target_list: list) -> list:
     ret_list: list = []
+    save_flg = g.params.get("individual")
+    g.params.update(individual=True)
     for name in list(dict.fromkeys(target_list)):
         if name in lookup.internal.get_team():
             teammates = lookup.internal.get_teammates(name)
@@ -112,6 +114,7 @@ def _collect_member(target_list: list) -> list:
             continue
         ret_list.append(formatter.name_replace(name))
 
+    g.params.update(individual=save_flg)
     return list(dict.fromkeys(ret_list))
 
 
