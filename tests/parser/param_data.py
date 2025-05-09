@@ -57,6 +57,7 @@ flag_test_case_03: dict[str, Tuple[Any, ...]] = {
 flag_test_case_04: dict[str, Tuple[Any, ...]] = {
     "undefined 01": ("未定義01", ["未定義01"]),
     "undefined 02": ("未定義02 未定義03", ["未定義02", "未定義03"]),
+    "undefined Full Char": ("未定義０４", ["未定義０４"]),
 }
 
 # 日付
@@ -71,8 +72,6 @@ flag_test_case_05: dict[str, Tuple[Any, ...]] = {
 # プレイヤーテスト
 name_test_case_01: dict[str, Tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
-    # --- 半角数字→全角数字
-    "Half -> Full": ("未定義01", "未定義０１", {"player_0": "未定義０１"}, {}),
     # --- 序列の維持
     "keep order 01": ("名前あ 名前い 名前う", "名前あ", {"player_0": "名前あ", "player_1": "名前い", "player_2": "名前う"}, {"competition_1": "名前い", "competition_2": "名前う"}),
     "keep order 02": ("名前い 名前う 名前あ", "名前い", {"player_0": "名前い", "player_1": "名前う", "player_2": "名前あ"}, {"competition_1": "名前う", "competition_2": "名前あ"}),
