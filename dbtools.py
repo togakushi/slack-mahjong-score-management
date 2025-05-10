@@ -43,3 +43,5 @@ if __name__ == "__main__":
         t.member.import_data()
     if g.args.vacuum:
         t.vacuum.main()
+    if g.args.gen_test_data:
+        t.gen_test_data.main(g.args.gen_test_data)

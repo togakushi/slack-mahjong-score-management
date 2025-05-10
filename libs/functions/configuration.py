@@ -128,6 +128,16 @@ def arg_parser():
                 help="database vacuum",
             )
 
+            group.add_argument(
+                "--gen-test-data",
+                type=int,
+                nargs="?",
+                const=1,
+                default=None,
+                metavar="count",
+                help="テスト用サンプルデータ生成(count=生成回数, default: %(const)s)",
+            )
+
         case "test.py":  # 動作テスト用オプション
             p.add_argument(
                 "-t", "--testcase",
