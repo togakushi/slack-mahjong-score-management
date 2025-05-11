@@ -9,7 +9,7 @@ import sqlite3
 import libs.global_value as g
 from libs.data import modify
 from libs.functions import configuration
-from libs.utils import validator
+from libs.utils import validator, textutil
 
 
 def main():
@@ -57,18 +57,30 @@ def main():
         db = sqlite3.connect(g.cfg.db.database_file)
         db.row_factory = sqlite3.Row
         for alias, name in g.member_list.items():
-            if alias == name:
-                continue
-            rows = db.execute("select ts, p1_name, p2_name, p3_name, p4_name from result where ? in (p1_name, p2_name, p3_name, p4_name);", (alias,))
-            for row in rows:
-                match alias:
-                    case x if x == row["p1_name"]:
-                        db.execute("update result set p1_name=? where p1_name=? and ts=?;", (name, alias, row["ts"]))
-                    case x if x == row["p2_name"]:
-                        db.execute("update result set p2_name=? where p2_name=? and ts=?;", (name, alias, row["ts"]))
-                    case x if x == row["p3_name"]:
-                        db.execute("update result set p3_name=? where p3_name=? and ts=?;", (name, alias, row["ts"]))
-                    case x if x == row["p4_name"]:
-                        db.execute("update result set p4_name=? where p4_name=? and ts=?;", (name, alias, row["ts"]))
+            check_list: list = [
+                textutil.str_conv(name, "k2h"),
+                textutil.str_conv(name, "h2k"),
+                textutil.str_conv(alias, "k2h"),
+                textutil.str_conv(alias, "h2k"),
+            ]
+            for check in list(set(check_list)):
+                if check == name:
+                    continue
+                rows = db.execute("select ts, p1_name, p2_name, p3_name, p4_name from result where ? in (p1_name, p2_name, p3_name, p4_name);", (check,))
+                for row in rows:
+                    match check:
+                        case check if check == row["p1_name"]:
+                            logging.notice("ts=%s, p1_name(%s -> %s)", row["ts"], check, name)
+                            db.execute("update result set p1_name=? where p1_name=? and ts=?;", (name, check, row["ts"]))
+                        case check if check == row["p2_name"]:
+                            logging.notice("ts=%s, p2_name(%s -> %s)", row["ts"], check, name)
+                            db.execute("update result set p2_name=? where p2_name=? and ts=?;", (name, check, row["ts"]))
+                        case check if check == row["p3_name"]:
+                            logging.notice("ts=%s, p3_name(%s -> %s)", row["ts"], check, name)
+                            db.execute("update result set p3_name=? where p3_name=? and ts=?;", (name, check, row["ts"]))
+                        case check if check == row["p4_name"]:
+                            logging.notice("ts=%s, p4_name(%s -> %s)", row["ts"], check, name)
+                            db.execute("update result set p4_name=? where p4_name=? and ts=?;", (name, check, row["ts"]))
+
         db.commit()
         db.close()
