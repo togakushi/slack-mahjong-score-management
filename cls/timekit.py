@@ -69,19 +69,22 @@ DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
     "appointed": {
         "keyword": ["当日"],
         "range": lambda: [
-            (datetime.now() + relativedelta(hours=-12)).replace(hour=12, minute=0, second=0, microsecond=0),
+            (datetime.now() + relativedelta(hours=-12)).replace(hour=0, minute=0, second=0, microsecond=0),
+            (datetime.now() + relativedelta(hours=-12)).replace(hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "today": {
         "keyword": ["今日", "本日"],
         "range": lambda: [
             datetime.now().replace(hour=0, minute=0, second=0, microsecond=0),
+            datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "yesterday": {
         "keyword": ["昨日"],
         "range": lambda: [
             datetime.now() + relativedelta(days=-1, hour=0, minute=0, second=0, microsecond=0),
+            datetime.now() + relativedelta(days=-1, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "this_month": {
