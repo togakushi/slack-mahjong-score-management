@@ -201,7 +201,7 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
     if (ret_name := _judge(textutil.str_conv(pname, "k2h"))):  # カタカナ -> ひらがな
         return ret_name
 
-    if (ret_name := _judge(textutil.str_conv(pname, "k2h"))):  # ひらがな -> カタカナ
+    if (ret_name := _judge(textutil.str_conv(pname, "h2k"))):  # ひらがな -> カタカナ
         return ret_name
 
     # メンバーリストに見つからない場合
