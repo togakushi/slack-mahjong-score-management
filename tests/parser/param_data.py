@@ -130,3 +130,16 @@ command_test_case_01: dict[str, Tuple[Any, ...]] = {
     "guest": ("ゲストあり ゲストなし ゲスト無効", "", {}, {}),
     "anonymous": ("匿名 anonymous", "", {}, {}),
 }
+
+# 検索日付範囲
+search_range: dict[str, Tuple[Any, ...]] = {
+    # keyword, [start, end]
+    "1 day": ("20250101", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt("2025-01-02 11:59:59.999999")]),
+    "2 days": ("20250101 20250102", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt("2025-01-03 11:59:59.999999")]),
+    "single word": ("今月", [x + {"hours": 12} for x in ExtDt().range("今月")]),
+    "double words": ("今月 先月", [ExtDt(x) + {"hours": 12} for x in ExtDt().range("今月 先月").dict_format().values()]),
+    "triple words": ("20250301 20250301 20250101", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt("2025-03-02 11:59:59.999999")]),
+    "mix words": ("20250101 今月", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt().range("今月")[1] + {"hours": 12}]),
+    "inclusive": ("今月 先月 今年", [x + {"hours": 12} for x in ExtDt().range("今年")]),
+    "duplication": ("今月 先月 今月", [ExtDt(x) + {"hours": 12} for x in ExtDt().range("今月 先月").dict_format().values()]),
+}
