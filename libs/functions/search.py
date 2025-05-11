@@ -126,8 +126,9 @@ def for_slack_score() -> SlackSearchDict:
                 logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)
                 matches.pop(key)
                 continue
-            for i in range(0, 8, 2):
-                g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
+            for i in range(0, 8, 2):  # 名前ブレを修正
+                g.params.update(unregistered_replace=False)  # ゲスト無効
+                g.params.update(individual=True)  # チーム戦オフ
                 detection[i] = formatter.name_replace(detection[i], False)
             matches[key]["score"] = detection
             matches[key].pop("text")
