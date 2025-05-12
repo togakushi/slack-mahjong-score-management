@@ -434,6 +434,16 @@ class ExtendedDatetimeList(list):
     FormatType: TypeAlias = FormatType
     DelimiterStyle: TypeAlias = DelimiterStyle
 
+    def __add__(self, other):
+        if isinstance(other, dict):
+            return ExtendedDatetimeList([dt + other for dt in self])
+        return NotImplemented
+
+    def __sub__(self, other):
+        if isinstance(other, dict):
+            return ExtendedDatetimeList([dt - other for dt in self])
+        return NotImplemented
+
     @property
     def start(self) -> ExtendedDatetime | None:
         """最小日付を返す。空ならNone。"""
@@ -443,6 +453,14 @@ class ExtendedDatetimeList(list):
     def end(self) -> ExtendedDatetime | None:
         """最大日付を返す。空ならNone。"""
         return (max(self) if self else None)
+
+    @property
+    def period(self) -> "ExtendedDatetimeList":
+        """最小値と最大値をリストで返す"""
+        min_dt = min(self) if self else None
+        max_dt = max(self) if self else None
+
+        return [min_dt, max_dt]
 
     def format(self, fmt: FormatType = "sql", delimiter: DelimiterStyle = None) -> list[str]:
         """全要素にformatを適用した文字列リストを返す
