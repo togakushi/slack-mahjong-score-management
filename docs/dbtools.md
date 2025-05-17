@@ -31,6 +31,8 @@ options:
   --export [PREFIX]     メンバー設定情報をエクスポート(default prefix: export)
   --import [PREFIX]     メンバー設定情報をインポート(default prefix: export)
   --vacuum              database vacuum
+  --gen-test-data [count]
+                        テスト用サンプルデータ生成(count=生成回数, default: 1)
   ```
 
 ## 固有オプション説明
@@ -96,3 +98,8 @@ PREFIXから始まるファイル名のCSVファイルからメンバー情報�
 
 ### --vacuum
 データベースを最適化する。
+
+### --gen-test-data [count]
+動作確認用のテストデータを生成する。
+
+5人編成16チーム前提。総当たり戦。1countあたり455戦。
