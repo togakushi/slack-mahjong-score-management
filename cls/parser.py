@@ -200,7 +200,7 @@ class CommandParser():
                 continue
 
             if check_word in ExtDt.valid_keywords():
-                search_range.extend(ExtDt.range(check_word))
+                search_range.append(check_word)
                 continue
 
             for cmd in COMMANDS.values():

@@ -351,7 +351,7 @@ class ExtendedDatetime:
         if isinstance(value, str):
             check_list = value.split()
         else:
-            check_list = sum([x.split() for x in value], [])  # 平坦化
+            check_list = sum([str(x).split() for x in value], [])  # 平坦化
 
         ret: list[datetime] = []
         for word in check_list:
@@ -361,7 +361,9 @@ class ExtendedDatetime:
                     break
             else:
                 try:
-                    ret.append(cls.convert(str(word)))
+                    try_time = cls.convert(str(word))
+                    ret.append(try_time.replace(hour=0, minute=0, second=0, microsecond=0)),
+                    ret.append(try_time.replace(hour=23, minute=59, second=59, microsecond=999999)),
                 except ValueError:
                     pass
 

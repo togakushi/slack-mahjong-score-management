@@ -3,7 +3,7 @@ libs/utils/dictutil.py
 """
 
 import logging
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any
 
 import libs.global_value as g
 from cls.parser import CommandParser
@@ -50,6 +50,8 @@ def placeholder(subcom: "SubCommand") -> dict:
     ret_dict.update(param.flags)  # 上書き
 
     # 検索範囲取得
+    if (rule_version := ret_dict.get("rule_version")):  # ルールバージョンのみ先行評価
+        g.params.update(rule_version=rule_version)
     if param.search_range:
         search_range = param.search_range
     elif pre_param.search_range:
@@ -57,9 +59,9 @@ def placeholder(subcom: "SubCommand") -> dict:
     else:
         search_range = ExtDt.range(subcom.aggregation_range)
 
-    ret_dict.update(starttime=cast(ExtDt, min(search_range)) + {"hours": 12})
-    ret_dict.update(endtime=cast(ExtDt, max(search_range)) + {"hours": 12})
-    ret_dict.update(onday=max(search_range))
+    ret_dict.update(starttime=(ExtDt.range(search_range) + {"hours": 12}).start)
+    ret_dict.update(endtime=(ExtDt.range(search_range) + {"hours": 12}).end)
+    ret_dict.update(onday=ExtDt.range(search_range).end)
 
     # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
     player_name: str = str()
