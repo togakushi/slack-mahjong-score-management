@@ -6,6 +6,7 @@ import logging
 import re
 import sqlite3
 from datetime import datetime
+from importlib.resources import files
 
 import pandas as pd
 
@@ -22,7 +23,8 @@ def load_query(filepath: str) -> str:
         str: SQL
     """
 
-    with open(filepath, "r", encoding="utf-8") as queryfile:
+    query_path = str(files("files.queries").joinpath(filepath))
+    with open(query_path, "r", encoding="utf-8") as queryfile:
         sql = queryfile.read().strip()
 
     return sql

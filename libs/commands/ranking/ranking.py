@@ -2,7 +2,6 @@
 libs/commands/results/ranking.py
 """
 
-import os
 import re
 from typing import Any, Tuple
 
@@ -37,7 +36,7 @@ def aggregation() -> Tuple[str, Any]:
         msg += "\t" + message.reply(message="no_hits")
         return (msg, None)
 
-    result_df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/ranking/aggregate.sql"))
+    result_df = loader.read_data("ranking/aggregate.sql")
     if result_df.empty:
         msg += "\t" + message.reply(message="no_target")
         return (msg, None)

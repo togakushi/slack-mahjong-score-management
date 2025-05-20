@@ -2,7 +2,6 @@
 libs/commands/results/rating.py
 """
 
-import os
 from typing import Tuple
 
 import pandas as pd
@@ -35,7 +34,7 @@ def aggregation() -> Tuple[str, dict, dict]:
         headline += "\t" + message.reply(message="no_hits")
         return (headline, {}, {})
 
-    df_results = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/ranking/results.sql")).set_index("name")
+    df_results = loader.read_data("ranking/results.sql").set_index("name")
     df_ratings = aggregate.calculation_rating()
 
     # 最終的なレーティング

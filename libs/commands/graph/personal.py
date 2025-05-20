@@ -33,7 +33,7 @@ def plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/gamedata.sql"))
+    df = loader.read_data("summary/gamedata.sql")
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
@@ -139,7 +139,7 @@ def statistics_plot() -> Tuple[int, str]:
     plt.close()
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = loader.read_data(os.path.join(g.cfg.script_dir, "libs/queries/summary/details.sql"))
+    df = loader.read_data("summary/details.sql")
 
     if df.empty:
         return (0, message.reply(message="no_hits"))
