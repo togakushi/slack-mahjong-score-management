@@ -549,6 +549,7 @@ def badge_grade(rank_list: list) -> str:
         for rank in rank_list:
             point, grade_level = promotion_check(tbl_data, grade_level, point, rank)
 
-        grade_name = tbl_data["table"][grade_level]["grade"]
+        next_point = tbl_data["table"][grade_level]["point"][1]
+        grade_name = f"{tbl_data["table"][grade_level]["grade"]} ({point}/{next_point})"
 
     return grade_name
