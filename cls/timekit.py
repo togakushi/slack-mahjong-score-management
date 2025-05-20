@@ -362,8 +362,8 @@ class ExtendedDatetime:
             else:
                 try:
                     try_time = cls.convert(str(word))
-                    ret.append(try_time.replace(hour=0, minute=0, second=0, microsecond=0)),
-                    ret.append(try_time.replace(hour=23, minute=59, second=59, microsecond=999999)),
+                    ret.append(try_time.replace(hour=0, minute=0, second=0, microsecond=0))
+                    ret.append(try_time.replace(hour=23, minute=59, second=59, microsecond=999999))
                 except ValueError:
                     pass
 
