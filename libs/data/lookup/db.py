@@ -165,3 +165,29 @@ def first_record() -> datetime:
         ret = datetime.now()
 
     return ret
+
+
+def get_rank_list() -> list:
+    """獲得順位リスト生成
+
+    Returns:
+        list: 獲得順位
+    """
+
+    rank_list: list = []
+
+    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+        rows = cur.execute("""
+            select
+                rank
+            from
+                individual_results
+            where
+                rule_version = :rule_version
+                and playtime between :starttime and :endtime
+                and name = :player_name;
+        """, g.params)
+
+        rank_list = [x[0] for x in rows.fetchall()]
+
+    return rank_list

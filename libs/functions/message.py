@@ -2,11 +2,13 @@
 libs/functions/message.py
 """
 
+import json
 import logging
 import random
 import re
 import textwrap
-from typing import cast
+from importlib.resources import files
+from typing import Any, Tuple, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -479,3 +481,74 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
             badge = status_badge[index]
 
     return badge
+
+
+def badge_grade(rank_list: list) -> str:
+    """段位表示
+
+    Args:
+        rank_list (list): 獲得順位のリスト
+
+    Returns:
+        str: 称号
+    """
+
+    def promotion_check(tbl_data: Any, grade_level: int, point: int, rank: int) -> Tuple[int, int]:
+        """昇段チェック
+
+        Args:
+            tbl_data (Any): 昇段テーブル
+            grade_level (int): 現在のレベル(段位)
+            point (int): 現在の昇段ポイント
+            rank (int): 獲得順位
+
+        Returns:
+            Tuple[int, int]: チェック後の昇段ポイント, チェック後のレベル(段位)
+        """
+
+        get_point = tbl_data["table"][grade_level]["acquisition"][rank - 1]
+        new_point = point + get_point
+
+        if new_point >= tbl_data["table"][grade_level]["point"][1]:  # level up
+            if grade_level < len(tbl_data["table"]) - 1:  # カンストしてなければ判定
+                grade_level += 1
+                new_point = tbl_data["table"][grade_level]["point"][0]  # 初期値
+            else:
+                new_point = 0
+
+        if new_point < 0:  # level down
+            if tbl_data["table"][grade_level]["point"][0] == 0:  # 初期値が0は降段しない
+                new_point = 0
+            else:
+                grade_level -= 1
+                new_point = tbl_data["table"][grade_level]["point"][0]  # 初期値
+
+        return (new_point, grade_level)
+
+    # 初期値
+    point: int = 0  # 昇段ポイント
+    grade_level: int = 0  # レベル(段位)
+    grade_name: str = ""  # 段位名称
+
+    if "grade" in g.cfg.config.sections():
+        if not g.cfg.config["grade"].getboolean("display", False):
+            return ""
+
+        # テーブル選択
+        match g.cfg.config["grade"].get("table_name"):
+            case "mahjongsoul" | "雀魂":
+                tbl_file = "mahjongsoul.json"
+            case "tenho" | "天鳳":
+                tbl_file = "tenho.json"
+            case _:
+                return ""
+
+        with open(str(files("files.gradetable").joinpath(tbl_file)), encoding="utf-8") as f:
+            tbl_data = json.load(f)
+
+        for rank in rank_list:
+            point, grade_level = promotion_check(tbl_data, grade_level, point, rank)
+
+        grade_name = tbl_data["table"][grade_level]["grade"]
+
+    return grade_name

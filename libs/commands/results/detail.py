@@ -115,8 +115,7 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
     if g.params.get("individual"):
         ret["title"] = "*【個人成績】*"
         ret["プレイヤー名"] = f"{player_name} {message.badge_degree(data["ゲーム数"])}"
-        team_list = lookup.internal.which_team(g.params["player_name"])
-        if team_list:
+        if (team_list := lookup.internal.which_team(g.params["player_name"])):
             ret["所属チーム"] = team_list
     else:
         ret["title"] = "*【チーム成績】*"
@@ -149,6 +148,10 @@ def get_totalization(data: dict) -> dict:
     ret["通算ポイント"] = f"{data['通算ポイント']:+.1f}pt".replace("-", "▲")
     ret["平均ポイント"] = f"{data['平均ポイント']:+.1f}pt".replace("-", "▲")
     ret["平均順位"] = f"{data['平均順位']:1.2f}"
+    if g.params.get("individual") and ExtDt(g.params.get("starttime", ExtDt())) == ExtDt(lookup.db.first_record()) - {"hours": 12}:
+        if (grade_name := message.badge_grade(lookup.db.get_rank_list())):
+            ret["段位"] = grade_name
+    ret["_blank2"] = True
     ret["1位"] = f"{data['1位']:2} 回 ({data['1位率']:6.2f}%)"
     ret["2位"] = f"{data['2位']:2} 回 ({data['2位率']:6.2f}%)"
     ret["3位"] = f"{data['3位']:2} 回 ({data['3位率']:6.2f}%)"
