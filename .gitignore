@@ -13,6 +13,7 @@ work/
 html/
 
 !requirements.txt
+!files/**
 !tests/testdata/*.ini
 !tests/test_case/test-*.ini
 !tests/test_data/*.csv
