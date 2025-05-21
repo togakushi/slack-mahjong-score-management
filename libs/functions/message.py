@@ -368,8 +368,8 @@ def item_aggregation_range(game_info: GameInfoDict, kind=None):
         first = game_info["first_comment"]
         last = game_info["last_comment"]
     else:
-        first = game_info["first_game"].format("ymdhms")
-        last = game_info["last_game"].format("ymdhms")
+        first = game_info["first_game"].format("ymdhm")
+        last = game_info["last_game"].format("ymdhm")
 
     match kind:
         case "list":
@@ -483,11 +483,11 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
     return badge
 
 
-def badge_grade(rank_list: list) -> str:
+def badge_grade(name: str) -> str:
     """段位表示
 
     Args:
-        rank_list (list): 獲得順位のリスト
+        name (str): 対象プレイヤー名
 
     Returns:
         str: 称号
@@ -546,7 +546,7 @@ def badge_grade(rank_list: list) -> str:
         with open(str(files("files.gradetable").joinpath(tbl_file)), encoding="utf-8") as f:
             tbl_data = json.load(f)
 
-        for rank in rank_list:
+        for rank in lookup.db.get_rank_list(name, g.params.get("rule_version")):
             point, grade_level = promotion_check(tbl_data, grade_level, point, rank)
 
         next_point = tbl_data["table"][grade_level]["point"][1]

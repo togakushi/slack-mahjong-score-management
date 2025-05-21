@@ -167,14 +167,20 @@ def first_record() -> datetime:
     return ret
 
 
-def get_rank_list() -> list:
-    """獲得順位リスト生成
+def get_rank_list(name: str, rule_version: str | None = None)  -> list:
+    """段位集計用順位リスト生成
+
+    Args:
+        name (str): 集計対象メンバー名
+        rule_version (str | None, optional): 集計ルールバージョン. Defaults to None.
 
     Returns:
-        list: 獲得順位
+        list: 獲得順位リスト
     """
 
     rank_list: list = []
+    if not rule_version:
+        rule_version = g.cfg.mahjong.rule_version
 
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         rows = cur.execute("""
@@ -184,9 +190,11 @@ def get_rank_list() -> list:
                 individual_results
             where
                 rule_version = :rule_version
-                and playtime between :starttime and :endtime
                 and name = :player_name;
-        """, g.params)
+        """, {
+            "rule_version": rule_version,
+            "player_name": name,
+        })
 
         rank_list = [x[0] for x in rows.fetchall()]
 
