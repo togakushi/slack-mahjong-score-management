@@ -36,8 +36,8 @@ def aggregation():
 
     if game_info["game_count"] == 0:
         if g.params.get("individual"):
-            msg_data["検索範囲"] = f"{ExtDt(g.params["starttime"]).format("ymdhms")}"
-            msg_data["検索範囲"] += f" ～ {ExtDt(g.params["endtime"]).format("ymdhms")}"
+            msg_data["検索範囲"] = f"{ExtDt(g.params["starttime"]).format("ymdhm")}"
+            msg_data["検索範囲"] += f" ～ {ExtDt(g.params["endtime"]).format("ymdhm")}"
             msg_data["特記事項"] = "、".join(message.remarks())
             msg_data["検索ワード"] = message.search_word()
             msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {message.badge_status(0, 0)}"
@@ -46,6 +46,10 @@ def aggregation():
 
     result_df = aggregate.game_results()
     record_df = aggregate.ranking_record()
+
+    if result_df.empty or record_df.empty:
+        return (message.reply(message="no_target"), {})
+
     result_df = pd.merge(
         result_df, record_df,
         on=["name", "name"],
@@ -122,7 +126,7 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
         ret["登録メンバー"] = "、".join(lookup.internal.get_teammates(g.params["player_name"]))
 
     badge_status = message.badge_status(data["ゲーム数"], data["win"])
-    ret["検索範囲"] = message.item_search_range(kind="str").strip()
+    ret["検索範囲"] = message.item_search_range(kind="str", time_pattern="time").strip()
     ret["集計範囲"] = message.item_aggregation_range(game_info, kind="str").strip()
     ret["特記事項"] = "、".join(message.remarks())
     ret["検索ワード"] = message.search_word()
@@ -147,9 +151,9 @@ def get_totalization(data: dict) -> dict:
     ret["通算ポイント"] = f"{data['通算ポイント']:+.1f}pt".replace("-", "▲")
     ret["平均ポイント"] = f"{data['平均ポイント']:+.1f}pt".replace("-", "▲")
     ret["平均順位"] = f"{data['平均順位']:1.2f}"
-    if g.params.get("individual") and ExtDt(g.params.get("starttime", ExtDt())) == ExtDt(lookup.db.first_record()) - {"hours": 12}:
-        if (grade_name := message.badge_grade(lookup.db.get_rank_list())):
-            ret["段位"] = grade_name
+    if g.params.get("individual") and "grade" in g.cfg.config.sections():
+        if g.cfg.config["grade"].getboolean("display", False):
+            ret["段位"] = message.badge_grade(g.params["player_name"])
     ret["_blank2"] = True
     ret["1位"] = f"{data['1位']:2} 回 ({data['1位率']:6.2f}%)"
     ret["2位"] = f"{data['2位']:2} 回 ({data['2位率']:6.2f}%)"

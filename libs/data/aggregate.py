@@ -148,12 +148,12 @@ def ranking_record():
     record_df = pd.DataFrame(
         {
             "name": player_list,
-            "c_top": [0 for x in player_list],
-            "c_top2": [0 for x in player_list],
-            "c_top3": [0 for x in player_list],
-            "c_low": [0 for x in player_list],
-            "c_low2": [0 for x in player_list],
-            "c_low4": [0 for x in player_list],
+            "c_top": [0 for _ in player_list],
+            "c_top2": [0 for _ in player_list],
+            "c_top3": [0 for _ in player_list],
+            "c_low": [0 for _ in player_list],
+            "c_low2": [0 for _ in player_list],
+            "c_low4": [0 for _ in player_list],
         },
         index=player_list
     )
@@ -172,10 +172,11 @@ def ranking_record():
             record_df.at[pname, key] = tmp_df[[key]].max().values[0]
 
     # 最大値/最小値追加
-    record_df["max_point"] = gamedata["max_point"].iloc[0]
-    record_df["min_point"] = gamedata["min_point"].iloc[0]
-    record_df["max_rpoint"] = gamedata["max_rpoint"].iloc[0]
-    record_df["min_rpoint"] = gamedata["min_rpoint"].iloc[0]
+    if not gamedata.empty:
+        record_df["max_point"] = gamedata["max_point"].iloc[0]
+        record_df["min_point"] = gamedata["min_point"].iloc[0]
+        record_df["max_rpoint"] = gamedata["max_rpoint"].iloc[0]
+        record_df["min_rpoint"] = gamedata["min_rpoint"].iloc[0]
 
     logging.trace(record_df)  # type: ignore
     return record_df
