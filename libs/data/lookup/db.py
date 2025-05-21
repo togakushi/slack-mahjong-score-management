@@ -167,7 +167,7 @@ def first_record() -> datetime:
     return ret
 
 
-def get_rank_list(name: str, rule_version: str | None = None)  -> list:
+def get_rank_list(name: str, rule_version: str | None = None) -> list:
     """段位集計用順位リスト生成
 
     Args:
