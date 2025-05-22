@@ -4,6 +4,7 @@ libs/functions/message.py
 
 import json
 import logging
+import os
 import random
 import re
 import textwrap
@@ -538,15 +539,17 @@ def badge_grade(name: str) -> str:
     grade_level: int = 0  # レベル(段位)
 
     # テーブル選択
-    match g.cfg.config["grade"].get("table_name"):
+    match table_name := g.cfg.config["grade"].get("table_name"):
         case "mahjongsoul" | "雀魂":
-            tbl_file = "mahjongsoul.json"
+            tbl_file = str(files("files.gradetable").joinpath("mahjongsoul.json"))
         case "tenho" | "天鳳":
-            tbl_file = "tenho.json"
+            tbl_file = str(files("files.gradetable").joinpath("tenho.json"))
         case _:
-            return ""
+            tbl_file = os.path.join(g.cfg.config_dir, table_name)
+            if not os.path.isfile(tbl_file):
+                return ""
 
-    with open(str(files("files.gradetable").joinpath(tbl_file)), encoding="utf-8") as f:
+    with open(tbl_file, encoding="utf-8") as f:
         tbl_data = json.load(f)
 
     for rank in lookup.db.get_rank_list(name, g.params.get("rule_version")):
