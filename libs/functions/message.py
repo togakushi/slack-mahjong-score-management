@@ -440,10 +440,13 @@ def badge_degree(game_count: int = 0) -> str:
 
     badge: str = ""
 
-    if "degree" in g.cfg.config.sections():
-        if g.cfg.config["degree"].getboolean("display", False):
-            degree_badge = g.cfg.config.get("degree", "badge").split(",")
-            degree_counter = list(map(int, g.cfg.config.get("degree", "counter").split(",")))
+    if g.cfg.badge.degree:
+        if (degree_list := g.cfg.config.get("degree", "badge", fallback="")):
+            degree_badge = degree_list.split(",")
+        else:
+            return ""
+        if (counter_list := g.cfg.config.get("degree", "counter", fallback="")):
+            degree_counter = list(map(int, counter_list.split(",")))
             for idx, val in enumerate(degree_counter):
                 if game_count >= val:
                     badge = degree_badge[idx]
@@ -464,10 +467,12 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
 
     badge: str = ""
 
-    if "status" in g.cfg.config.sections():
-        if g.cfg.config["status"].getboolean("display", False):
-            status_badge = g.cfg.config.get("status", "badge").split(",")
-            status_step = g.cfg.config.getfloat("status", "step")
+    if g.cfg.badge.status:
+        if (status_list := g.cfg.config.get("status", "badge", fallback="")):
+            status_badge = status_list.split(",")
+        else:
+            return ""
+        if (status_step := g.cfg.config.getfloat("status", "step", fallback=0)):
             if game_count == 0:
                 index = 0
             else:
@@ -525,31 +530,28 @@ def badge_grade(name: str) -> str:
 
         return (new_point, grade_level)
 
+    if not g.cfg.badge.grade:
+        return ""
+
     # 初期値
     point: int = 0  # 昇段ポイント
     grade_level: int = 0  # レベル(段位)
-    grade_name: str = ""  # 段位名称
 
-    if "grade" in g.cfg.config.sections():
-        if not g.cfg.config["grade"].getboolean("display", False):
+    # テーブル選択
+    match g.cfg.config["grade"].get("table_name"):
+        case "mahjongsoul" | "雀魂":
+            tbl_file = "mahjongsoul.json"
+        case "tenho" | "天鳳":
+            tbl_file = "tenho.json"
+        case _:
             return ""
 
-        # テーブル選択
-        match g.cfg.config["grade"].get("table_name"):
-            case "mahjongsoul" | "雀魂":
-                tbl_file = "mahjongsoul.json"
-            case "tenho" | "天鳳":
-                tbl_file = "tenho.json"
-            case _:
-                return ""
+    with open(str(files("files.gradetable").joinpath(tbl_file)), encoding="utf-8") as f:
+        tbl_data = json.load(f)
 
-        with open(str(files("files.gradetable").joinpath(tbl_file)), encoding="utf-8") as f:
-            tbl_data = json.load(f)
+    for rank in lookup.db.get_rank_list(name, g.params.get("rule_version")):
+        point, grade_level = promotion_check(tbl_data, grade_level, point, rank)
 
-        for rank in lookup.db.get_rank_list(name, g.params.get("rule_version")):
-            point, grade_level = promotion_check(tbl_data, grade_level, point, rank)
+    next_point = tbl_data["table"][grade_level]["point"][1]
 
-        next_point = tbl_data["table"][grade_level]["point"][1]
-        grade_name = f"{tbl_data["table"][grade_level]["grade"]} ({point}/{next_point})"
-
-    return grade_name
+    return f"{tbl_data["table"][grade_level]["grade"]} ({point}/{next_point})"

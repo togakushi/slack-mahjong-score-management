@@ -187,6 +187,14 @@ class DropItems:
     report: list = field(default_factory=list)
 
 
+@dataclass
+class BadgeDisplay:
+    """バッジ表示"""
+    degree: bool = False
+    status: bool = False
+    grade: bool = False
+
+
 class Config():
     """コンフィグ解析クラス"""
     # コンフィグセクション
@@ -199,6 +207,7 @@ class Config():
     alias: AliasSection
     comment: CommentSection
     dropitems: DropItems
+    badge: BadgeDisplay
     cw: CommandWord
     # サブコマンド
     results: SubCommand
@@ -285,6 +294,15 @@ class Config():
             ranking=[x.strip() for x in self.config["ranking"].get("dropitems", "").split(",")],
             report=[x.strip() for x in self.config["report"].get("dropitems", "").split(",")],
         )
+
+        # バッジ表示
+        self.badge = BadgeDisplay()
+        if "degree" in self.config.sections():
+            self.badge.degree = self.config.getboolean("degree", "display", fallback=False)
+        if "status" in self.config.sections():
+            self.badge.status = self.config.getboolean("status", "display", fallback=False)
+        if "grade" in self.config.sections():
+            self.badge.grade = self.config.getboolean("grade", "display", fallback=False)
 
         # サブコマンドデフォルト
         self.results = SubCommand(self.config, "results")
