@@ -100,6 +100,19 @@ class DateRangeSpec(TypedDict):
     range: Callable[[], list[datetime]]
 
 
+class RankTableDict(TypedDict):
+    """昇段ポイント計算テーブル用辞書"""
+    grade: str
+    point: list
+    acquisition: list
+
+
+class GradeTableDict(TypedDict, total=False):
+    """段位テーブル用辞書"""
+    name: str
+    table: list[RankTableDict]
+
+
 @dataclass
 class CommonMethodMixin:
     """データクラス共通メソッド"""

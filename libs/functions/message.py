@@ -13,7 +13,7 @@ from typing import Any, Tuple, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import GameInfoDict
+from cls.types import GameInfoDict, GradeTableDict
 from libs.data import lookup
 
 
@@ -499,6 +499,9 @@ def badge_grade(name: str) -> str:
         str: 称号
     """
 
+    if not g.cfg.badge.grade:
+        return ""
+
     def promotion_check(tbl_data: Any, grade_level: int, point: int, rank: int) -> Tuple[int, int]:
         """昇段チェック
 
@@ -531,15 +534,47 @@ def badge_grade(name: str) -> str:
 
         return (new_point, grade_level)
 
-    if not g.cfg.badge.grade:
-        return ""
+    def read_json(tbl_file: str) -> GradeTableDict:
+        with open(tbl_file, encoding="utf-8") as f:
+            try:
+                tbl_data: GradeTableDict = json.load(f)
+            except json.JSONDecodeError as err:
+                logging.error(err)
+                return {}
+
+        if not isinstance(tbl_list := tbl_data.get("table"), list):
+            logging.error("undefined key [table]")
+            return {}
+
+        for x in tbl_list:
+            if isinstance(x, dict):
+                if {"grade", "point", "acquisition"} == set(x.keys()):
+                    if not isinstance(x.get("grade"), str):
+                        return {}
+                    point = x.get("point")
+                    if not isinstance(point, list) or len(point) != 2:
+                        logging.error("point is not match")
+                        return {}
+                    acquisition = x.get("acquisition")
+                    if not isinstance(acquisition, list) or len(acquisition) != 4:
+                        logging.error("acquisition is not match")
+                        return {}
+                else:
+                    logging.error("undefined key [grade, point, acquisition]")
+                    return {}
+            else:
+                return {}
+
+        return tbl_data
 
     # 初期値
     point: int = 0  # 昇段ポイント
     grade_level: int = 0  # レベル(段位)
 
     # テーブル選択
-    match table_name := g.cfg.config["grade"].get("table_name"):
+    match table_name := g.cfg.config["grade"].get("table_name", ""):
+        case "":
+            return ""
         case "mahjongsoul" | "雀魂":
             tbl_file = str(files("files.gradetable").joinpath("mahjongsoul.json"))
         case "tenho" | "天鳳":
@@ -549,8 +584,8 @@ def badge_grade(name: str) -> str:
             if not os.path.isfile(tbl_file):
                 return ""
 
-    with open(tbl_file, encoding="utf-8") as f:
-        tbl_data = json.load(f)
+    if not (tbl_data := read_json(tbl_file)):
+        return ""
 
     for rank in lookup.db.get_rank_list(name, g.params.get("rule_version")):
         point, grade_level = promotion_check(tbl_data, grade_level, point, rank)
