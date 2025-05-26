@@ -10,6 +10,7 @@ from libs.utils import dictutil
 
 def main():
     """グラフをslackにpostする"""
+    g.params.clear()
     g.params = dictutil.placeholder(g.cfg.graph)
 
     if len(g.params["player_list"]) == 1:  # 対象がひとり
