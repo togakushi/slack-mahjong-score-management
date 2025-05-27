@@ -361,7 +361,7 @@ def normalized_expression(expr: str) -> int:
 
     normalized: list = []
 
-    for token in re.findall(r"\d+(?:\d+)?|[+\-*/]", expr):
+    for token in re.findall(r"\d+|[+\-*/]", expr):
         if isinstance(token, str):
             if token.isnumeric():
                 normalized.append(str(int(token)))
