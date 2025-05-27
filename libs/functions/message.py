@@ -91,7 +91,7 @@ def help_message():
     msg += textwrap.indent(ExtDt.print_range(), "\t")
 
     # ルール識別子
-    rule = lookup.db.rule_version()
+    rule = lookup.db.rule_version_range()
     if rule:
         msg += "\n\n*ルール識別子*\n"
         for key, val in rule.items():

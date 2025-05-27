@@ -64,7 +64,7 @@ def member_info(name: str) -> dict:
     return ret
 
 
-def rule_version() -> dict:
+def rule_version_range() -> dict:
     """DBに記録されているルールバージョン毎の範囲を取得する
 
     Returns:
@@ -179,9 +179,6 @@ def get_rank_list(name: str, rule_version: str | None = None) -> list:
     """
 
     rank_list: list = []
-    if not rule_version:
-        rule_version = g.cfg.mahjong.rule_version
-
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         rows = cur.execute("""
             select
@@ -192,7 +189,7 @@ def get_rank_list(name: str, rule_version: str | None = None) -> list:
                 rule_version = :rule_version
                 and name = :player_name;
         """, {
-            "rule_version": rule_version,
+            "rule_version": rule_version if rule_version else g.cfg.mahjong.rule_version,
             "player_name": name,
         })
 
