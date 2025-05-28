@@ -189,11 +189,7 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
     if (ret_name := _judge(textutil.str_conv(pname, "h2z"))):  # 半角数字 -> 全角数字
         return ret_name
 
-    # 敬称削除
-    honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
-    if re.match(fr".*{honor}", pname):
-        if not re.match(fr".*(っ|ッ|ー){honor}", pname):
-            pname = re.sub(fr"{honor}", "", pname)
+    pname = honor_remove(pname)  # 敬称削除
 
     if (ret_name := _judge(pname)):
         return ret_name
@@ -211,6 +207,24 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
         return f"{pname}({g.cfg.setting.guest_mark})"
 
     return pname
+
+
+def honor_remove(name: str) -> str:
+    """敬称削除
+
+    Args:
+        name (str): 対象の名前
+
+    Returns:
+        str: 敬称を削除した名前
+    """
+
+    honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
+    if re.match(fr".*{honor}", name):
+        if not re.match(fr".*(っ|ッ|ー){honor}", name):
+            name = re.sub(fr"{honor}", "", name)
+
+    return name
 
 
 def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
