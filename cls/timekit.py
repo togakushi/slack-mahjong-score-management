@@ -31,7 +31,7 @@ Examples:
 
 from datetime import datetime
 from functools import total_ordering
-from typing import Literal, TypeAlias, Union, cast
+from typing import List, Literal, TypeAlias, Union, cast
 
 from dateutil.relativedelta import relativedelta
 
@@ -457,7 +457,7 @@ class ExtendedDatetimeList(list):
         return (max(self) if self else None)
 
     @property
-    def period(self) -> "ExtendedDatetimeList":
+    def period(self) -> List[ExtendedDatetime | None]:
         """最小値と最大値をリストで返す"""
         min_dt = min(self) if self else None
         max_dt = max(self) if self else None
