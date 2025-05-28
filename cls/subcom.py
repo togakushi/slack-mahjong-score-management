@@ -3,7 +3,7 @@ cls/subcom.py
 """
 
 from configparser import ConfigParser
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field
 from math import ceil
 
 from cls.types import CommonMethodMixin
