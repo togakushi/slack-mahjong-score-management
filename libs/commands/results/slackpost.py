@@ -10,7 +10,6 @@ from libs.utils import dictutil
 
 def main():
     """成績の集計結果をslackにpostする"""
-    g.params.clear()
     g.params = dictutil.placeholder(g.cfg.results)
 
     # モード切り替え

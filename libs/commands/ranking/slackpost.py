@@ -10,7 +10,6 @@ from libs.utils import dictutil
 
 def main():
     """ランキングをslackにpostする"""
-    g.params.clear()
     g.params = dictutil.placeholder(g.cfg.ranking)
 
     if g.params.get("rating"):  # レーティング

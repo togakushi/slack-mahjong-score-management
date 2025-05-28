@@ -61,14 +61,3 @@ class SubCommand(CommonMethodMixin):
         """
 
         return int(ceil(game_count * self.stipulated_rate) + 1)
-
-    def update_from_dict(self, update_dict: dict) -> None:
-        """辞書による値の更新
-
-        Args:
-            update_dict (dict): 更新するデータ
-        """
-
-        for x in fields(self):
-            if x.name in update_dict:
-                setattr(self, x.name, update_dict[x.name])

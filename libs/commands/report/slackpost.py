@@ -10,7 +10,6 @@ from libs.utils import debug, dictutil
 
 def main():
     """レポートをslackにpostする"""
-    g.params.clear()
     g.params = dictutil.placeholder(g.cfg.report)
 
     if len(g.params["player_list"]) == 1:  # 成績レポート

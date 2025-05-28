@@ -104,8 +104,8 @@ def register_summary_handlers(app):
         g.msg.client = client
 
         g.msg.argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        g.cfg.results.update_from_dict(update_flag)
         g.params = dictutil.placeholder(g.cfg.results)
+        g.params.update(update_flag)
 
         client.views_update(
             view_id=g.app_var["view_id"],
