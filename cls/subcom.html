@@ -109,9 +109,6 @@
                         <li>
                                 <a class="function" href="#SubCommand.stipulated_calculation">stipulated_calculation</a>
                         </li>
-                        <li>
-                                <a class="function" href="#SubCommand.update_from_dict">update_from_dict</a>
-                        </li>
                 </ul>
 
             </li>
@@ -201,17 +198,6 @@
 </span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
 </span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">game_count</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">stipulated_rate</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書による値の更新</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">        Args:</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">            update_dict (dict): 更新するデータ</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">update_dict</span><span class="p">:</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">update_dict</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -280,17 +266,6 @@
 </span><span id="SubCommand-62"><a href="#SubCommand-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="SubCommand-63"><a href="#SubCommand-63"><span class="linenos">63</span></a>
 </span><span id="SubCommand-64"><a href="#SubCommand-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">game_count</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">stipulated_rate</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-</span><span id="SubCommand-65"><a href="#SubCommand-65"><span class="linenos">65</span></a>
-</span><span id="SubCommand-66"><a href="#SubCommand-66"><span class="linenos">66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SubCommand-67"><a href="#SubCommand-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書による値の更新</span>
-</span><span id="SubCommand-68"><a href="#SubCommand-68"><span class="linenos">68</span></a>
-</span><span id="SubCommand-69"><a href="#SubCommand-69"><span class="linenos">69</span></a><span class="sd">        Args:</span>
-</span><span id="SubCommand-70"><a href="#SubCommand-70"><span class="linenos">70</span></a><span class="sd">            update_dict (dict): 更新するデータ</span>
-</span><span id="SubCommand-71"><a href="#SubCommand-71"><span class="linenos">71</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SubCommand-72"><a href="#SubCommand-72"><span class="linenos">72</span></a>
-</span><span id="SubCommand-73"><a href="#SubCommand-73"><span class="linenos">73</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="SubCommand-74"><a href="#SubCommand-74"><span class="linenos">74</span></a>            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">update_dict</span><span class="p">:</span>
-</span><span id="SubCommand-75"><a href="#SubCommand-75"><span class="linenos">75</span></a>                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">update_dict</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -643,41 +618,6 @@
 <blockquote>
   <p>int: 規定ゲーム数</p>
 </blockquote>
-</div>
-
-
-                            </div>
-                            <div id="SubCommand.update_from_dict" class="classattr">
-                                        <input id="SubCommand.update_from_dict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">update_from_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">update_dict</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
-
-                <label class="view-source-button" for="SubCommand.update_from_dict-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#SubCommand.update_from_dict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SubCommand.update_from_dict-66"><a href="#SubCommand.update_from_dict-66"><span class="linenos">66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SubCommand.update_from_dict-67"><a href="#SubCommand.update_from_dict-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書による値の更新</span>
-</span><span id="SubCommand.update_from_dict-68"><a href="#SubCommand.update_from_dict-68"><span class="linenos">68</span></a>
-</span><span id="SubCommand.update_from_dict-69"><a href="#SubCommand.update_from_dict-69"><span class="linenos">69</span></a><span class="sd">        Args:</span>
-</span><span id="SubCommand.update_from_dict-70"><a href="#SubCommand.update_from_dict-70"><span class="linenos">70</span></a><span class="sd">            update_dict (dict): 更新するデータ</span>
-</span><span id="SubCommand.update_from_dict-71"><a href="#SubCommand.update_from_dict-71"><span class="linenos">71</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SubCommand.update_from_dict-72"><a href="#SubCommand.update_from_dict-72"><span class="linenos">72</span></a>
-</span><span id="SubCommand.update_from_dict-73"><a href="#SubCommand.update_from_dict-73"><span class="linenos">73</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="SubCommand.update_from_dict-74"><a href="#SubCommand.update_from_dict-74"><span class="linenos">74</span></a>            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">update_dict</span><span class="p">:</span>
-</span><span id="SubCommand.update_from_dict-75"><a href="#SubCommand.update_from_dict-75"><span class="linenos">75</span></a>                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">update_dict</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>辞書による値の更新</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>update_dict (dict):</strong>  更新するデータ</li>
-</ul>
 </div>
 
 
