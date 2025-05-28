@@ -550,20 +550,25 @@ def badge_grade(name: str) -> str:
             if isinstance(x, dict):
                 if {"grade", "point", "acquisition"} == set(x.keys()):
                     if not isinstance(x.get("grade"), str):
-                        return {}
+                        tbl_data = {}
+                        break
                     point = x.get("point")
                     if not isinstance(point, list) or len(point) != 2:
                         logging.error("point is not match")
-                        return {}
+                        tbl_data = {}
+                        break
                     acquisition = x.get("acquisition")
                     if not isinstance(acquisition, list) or len(acquisition) != 4:
                         logging.error("acquisition is not match")
-                        return {}
+                        tbl_data = {}
+                        break
                 else:
                     logging.error("undefined key [grade, point, acquisition]")
-                    return {}
+                    tbl_data = {}
+                    break
             else:
-                return {}
+                tbl_data = {}
+                break
 
         return tbl_data
 
