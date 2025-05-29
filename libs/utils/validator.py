@@ -19,7 +19,7 @@ def check_namepattern(name: str, kind: str = "") -> Tuple[bool, str]:
 
     Args:
         name (str): チェックする名前
-        kind (str | None, optional): チェック種別. Defaults to 空欄.
+        kind (str, optional): チェック種別. Defaults to 空欄.
 
     Returns:
         Tuple[bool,str]: 判定結果
