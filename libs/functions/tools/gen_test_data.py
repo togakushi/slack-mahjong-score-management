@@ -15,6 +15,12 @@ from libs.functions.tools import score_simulator
 
 
 def main(season_times: int = 1):
+    """テスト用ゲーム結果生成処理
+
+    Args:
+        season_times (int, optional): 総当たり回数. Defaults to 1.
+    """
+
     configuration.read_memberslist(log=False)
 
     # 対戦組み合わせ作成
