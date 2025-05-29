@@ -119,21 +119,6 @@
 </span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>            <span class="n">trigger_id</span><span class="o">=</span><span class="n">body</span><span class="p">[</span><span class="s2">&quot;trigger_id&quot;</span><span class="p">],</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>            <span class="n">view</span><span class="o">=</span><span class="n">ui_parts</span><span class="o">.</span><span class="n">modalperiod_selection</span><span class="p">(),</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="p">)</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="nd">@app</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle_debug_action</span><span class="p">(</span><span class="n">ack</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;デバッグ用</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">        Args:</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">            ack (_type_): ack</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">            body (dict): イベント内容</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="n">ack</span><span class="p">()</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>        <span class="n">x</span> <span class="o">=</span> <span class="n">body</span><span class="p">[</span><span class="s1">&#39;view&#39;</span><span class="p">][</span><span class="s1">&#39;state&#39;</span><span class="p">][</span><span class="s1">&#39;values&#39;</span><span class="p">]</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">15</span><span class="p">)</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span></pre></div>
 
 

@@ -93,7 +93,7 @@
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">slack_sdk.web</span><span class="w"> </span><span class="kn">import</span> <span class="n">SlackResponse</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">libs.global_value</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">g</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">debug</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">formatter</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="k">def</span><span class="w"> </span><span class="nf">call_chat_post_message</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SlackResponse</span> <span class="o">|</span> <span class="n">Any</span><span class="p">:</span>
@@ -152,7 +152,7 @@
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>        <span class="n">ts</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">thread_ts</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">testcase</span><span class="p">:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="n">debug</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="n">formatter</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="n">res</span><span class="p">[</span><span class="s2">&quot;ts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># dummy</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="n">res</span> <span class="o">=</span> <span class="n">call_chat_post_message</span><span class="p">(</span>
@@ -174,7 +174,7 @@
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">testcase</span><span class="p">:</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="n">debug</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="n">formatter</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>            <span class="k">if</span> <span class="n">summarize</span><span class="p">:</span>  <span class="c1"># まとめてポスト</span>
@@ -250,7 +250,7 @@
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
 </span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">testcase</span><span class="p">:</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">debug</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">formatter</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
 </span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="k">return</span> <span class="kc">None</span>
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>
 </span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">ts</span> <span class="ow">and</span> <span class="n">g</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">thread_ts</span><span class="p">:</span>
@@ -468,7 +468,7 @@
 </span><span id="post_message-70"><a href="#post_message-70"><span class="linenos">70</span></a>        <span class="n">ts</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">thread_ts</span>
 </span><span id="post_message-71"><a href="#post_message-71"><span class="linenos">71</span></a>
 </span><span id="post_message-72"><a href="#post_message-72"><span class="linenos">72</span></a>    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">testcase</span><span class="p">:</span>
-</span><span id="post_message-73"><a href="#post_message-73"><span class="linenos">73</span></a>        <span class="n">debug</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span id="post_message-73"><a href="#post_message-73"><span class="linenos">73</span></a>        <span class="n">formatter</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </span><span id="post_message-74"><a href="#post_message-74"><span class="linenos">74</span></a>        <span class="n">res</span><span class="p">[</span><span class="s2">&quot;ts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># dummy</span>
 </span><span id="post_message-75"><a href="#post_message-75"><span class="linenos">75</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="post_message-76"><a href="#post_message-76"><span class="linenos">76</span></a>        <span class="n">res</span> <span class="o">=</span> <span class="n">call_chat_post_message</span><span class="p">(</span>
@@ -520,7 +520,7 @@
 </span><span id="post_multi_message-92"><a href="#post_multi_message-92"><span class="linenos"> 92</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="post_multi_message-93"><a href="#post_multi_message-93"><span class="linenos"> 93</span></a>
 </span><span id="post_multi_message-94"><a href="#post_multi_message-94"><span class="linenos"> 94</span></a>    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">testcase</span><span class="p">:</span>
-</span><span id="post_multi_message-95"><a href="#post_multi_message-95"><span class="linenos"> 95</span></a>        <span class="n">debug</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+</span><span id="post_multi_message-95"><a href="#post_multi_message-95"><span class="linenos"> 95</span></a>        <span class="n">formatter</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </span><span id="post_multi_message-96"><a href="#post_multi_message-96"><span class="linenos"> 96</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="post_multi_message-97"><a href="#post_multi_message-97"><span class="linenos"> 97</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="post_multi_message-98"><a href="#post_multi_message-98"><span class="linenos"> 98</span></a>            <span class="k">if</span> <span class="n">summarize</span><span class="p">:</span>  <span class="c1"># まとめてポスト</span>
@@ -652,7 +652,7 @@
 </span><span id="post_fileupload-168"><a href="#post_fileupload-168"><span class="linenos">168</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="post_fileupload-169"><a href="#post_fileupload-169"><span class="linenos">169</span></a>
 </span><span id="post_fileupload-170"><a href="#post_fileupload-170"><span class="linenos">170</span></a>    <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">testcase</span><span class="p">:</span>
-</span><span id="post_fileupload-171"><a href="#post_fileupload-171"><span class="linenos">171</span></a>        <span class="n">debug</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+</span><span id="post_fileupload-171"><a href="#post_fileupload-171"><span class="linenos">171</span></a>        <span class="n">formatter</span><span class="o">.</span><span class="n">debug_out</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
 </span><span id="post_fileupload-172"><a href="#post_fileupload-172"><span class="linenos">172</span></a>        <span class="k">return</span> <span class="kc">None</span>
 </span><span id="post_fileupload-173"><a href="#post_fileupload-173"><span class="linenos">173</span></a>
 </span><span id="post_fileupload-174"><a href="#post_fileupload-174"><span class="linenos">174</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">ts</span> <span class="ow">and</span> <span class="n">g</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">thread_ts</span><span class="p">:</span>
