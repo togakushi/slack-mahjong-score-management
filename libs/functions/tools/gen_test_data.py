@@ -66,10 +66,10 @@ def main(season_times: int = 1):
                     param = {}
                     vs_score = score_simulator.simulate_game()
                     result = score.get_score([
-                        member[0], str(vs_score[0] / 100),
-                        member[1], str(vs_score[1] / 100),
-                        member[2], str(vs_score[2] / 100),
-                        member[3], str(vs_score[3] / 100),
+                        member[0], str(int(vs_score[0] / 100)),
+                        member[1], str(int(vs_score[1] / 100)),
+                        member[2], str(int(vs_score[2] / 100)),
+                        member[3], str(int(vs_score[3] / 100)),
                         f"第{season:02d}期{count + 1:04d}試合_{position[idx]}戦",
                     ])
 
