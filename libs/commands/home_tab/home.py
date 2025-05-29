@@ -57,18 +57,3 @@ def register_home_handlers(app):
             trigger_id=body["trigger_id"],
             view=ui_parts.modalperiod_selection(),
         )
-
-    @app.action("debug")
-    def handle_debug_action(ack, body):
-        """デバッグ用
-
-        Args:
-            ack (_type_): ack
-            body (dict): イベント内容
-        """
-
-        ack()
-        x = body['view']['state']['values']
-        print("-" * 15)
-        print(x.keys())
-        print(x)

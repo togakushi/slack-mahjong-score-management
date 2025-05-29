@@ -5,7 +5,7 @@ libs/commands/report/slackpost.py
 import libs.global_value as g
 from libs.commands import report
 from libs.functions import message, slack_api
-from libs.utils import debug, dictutil
+from libs.utils import dictutil, formatter
 
 
 def main():
@@ -33,7 +33,7 @@ def main():
     elif g.params.get("versus_matrix") or len(g.params["player_list"]) >= 2:  # 対局対戦マトリックス
         msg, file_list = report.matrix.plot()
         if g.args.testcase:
-            debug.debug_out(msg)
+            formatter.debug_out(msg)
         else:
             slack_api.slack_post(
                 headline=msg,
