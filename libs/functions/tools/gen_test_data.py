@@ -83,13 +83,11 @@ def main(season_times: int = 1):
                     param.update(result)
                     cur.execute(g.sql["RESULT_INSERT"], param)
 
-                    output = "{}: [{}位 {} / {} ({}pt)] [{}位 {} / {} ({}pt)] [{}位 {} / {} ({}pt)] [{}位 {} / {} ({}pt)]".format(
-                        position[idx],
-                        result["p1_rank"], result["p1_name"], result["p1_rpoint"] * 100, result["p1_point"],
-                        result["p2_rank"], result["p2_name"], result["p2_rpoint"] * 100, result["p2_point"],
-                        result["p3_rank"], result["p3_name"], result["p3_rpoint"] * 100, result["p3_point"],
-                        result["p4_rank"], result["p4_name"], result["p4_rpoint"] * 100, result["p4_point"],
-                    )
+                    output = f"{position[idx]}: "
+                    output += f"[{result["p1_rank"]}位 {result["p1_name"]} / {result["p1_rpoint"] * 100} ({result["p1_point"]}pt)] "
+                    output += f"[{result["p2_rank"]}位 {result["p2_name"]} / {result["p2_rpoint"] * 100} ({result["p2_point"]}pt)] "
+                    output += f"[{result["p3_rank"]}位 {result["p3_name"]} / {result["p3_rpoint"] * 100} ({result["p3_point"]}pt)] "
+                    output += f"[{result["p4_rank"]}位 {result["p4_name"]} / {result["p4_rpoint"] * 100} ({result["p4_point"]}pt)] "
                     logging.debug(output)
 
         cur.commit()
