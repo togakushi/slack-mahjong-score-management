@@ -6,6 +6,8 @@ import sqlite3
 from contextlib import closing
 from datetime import datetime
 
+import pandas as pd
+
 import libs.global_value as g
 from libs.data import loader
 
@@ -167,32 +169,24 @@ def first_record() -> datetime:
     return ret
 
 
-def get_rank_list(name: str, rule_version: str | None = None) -> list:
+def get_rank_list(name: str, rule_version: str = "") -> pd.DataFrame:
     """段位集計用順位リスト生成
 
     Args:
         name (str): 集計対象メンバー名
-        rule_version (str | None, optional): 集計ルールバージョン. Defaults to None.
+        rule_version (str, optional): 集計ルールバージョン. Defaults to 空欄.
 
     Returns:
-        list: 獲得順位リスト
+        pd.DataFrame: 順位, 素点
     """
 
-    rank_list: list = []
-    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
-        rows = cur.execute("""
-            select
-                rank
-            from
-                individual_results
-            where
-                rule_version = :rule_version
-                and name = :player_name;
-        """, {
+    ret_data = pd.read_sql(
+        g.sql["SELECT_ALL_RESULTS"],
+        sqlite3.connect(g.cfg.db.database_file),
+        params={
             "rule_version": rule_version if rule_version else g.cfg.mahjong.rule_version,
             "player_name": name,
-        })
+        }
+    )
 
-        rank_list = [x[0] for x in rows.fetchall()]
-
-    return rank_list
+    return ret_data

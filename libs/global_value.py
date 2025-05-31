@@ -101,3 +101,14 @@ sql["REMARKS_DELETE_COMPAR"] = """
         and matter=:matter
     ;
 """
+
+sql["SELECT_ALL_RESULTS"] = """
+    select
+        rank, rpoint
+    from
+        individual_results
+    where
+        rule_version = :rule_version
+        and name = :player_name
+    ;
+"""

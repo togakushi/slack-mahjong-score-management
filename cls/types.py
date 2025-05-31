@@ -110,6 +110,7 @@ class RankTableDict(TypedDict):
 class GradeTableDict(TypedDict, total=False):
     """段位テーブル用辞書"""
     name: str
+    addition_expression: str
     table: list[RankTableDict]
 
 

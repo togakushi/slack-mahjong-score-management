@@ -4,6 +4,7 @@ libs/functions/message.py
 
 import json
 import logging
+import math
 import os
 import random
 import re
@@ -515,7 +516,7 @@ def badge_grade(name: str) -> str:
             Tuple[int, int]: チェック後の昇段ポイント, チェック後のレベル(段位)
         """
 
-        get_point = tbl_data["table"][grade_level]["acquisition"][rank - 1]
+        get_point = int(tbl_data["table"][grade_level]["acquisition"][rank - 1])
         new_point = point + get_point
 
         if new_point >= tbl_data["table"][grade_level]["point"][1]:  # level up
@@ -592,8 +593,13 @@ def badge_grade(name: str) -> str:
     if not (tbl_data := read_json(tbl_file)):
         return ""
 
-    for rank in lookup.db.get_rank_list(name, g.params.get("rule_version")):
-        point, grade_level = promotion_check(tbl_data, grade_level, point, rank)
+    result_df = lookup.db.get_rank_list(name, g.params.get("rule_version"))
+    addition_expression = tbl_data.get("addition_expression", "0")
+    for _, data in result_df.iterrows():
+        rank = data["rank"]
+        rpoint = data["rpoint"]
+        addition_point = math.ceil(eval(addition_expression.format(rpoint=rpoint, origin_point=g.cfg.mahjong.origin_point)))
+        point, grade_level = promotion_check(tbl_data, grade_level, point + addition_point, rank)
 
     next_point = tbl_data["table"][grade_level]["point"][1]
 
