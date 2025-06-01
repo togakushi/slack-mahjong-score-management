@@ -175,7 +175,7 @@ class ExtendedDatetime:
 
         Args:
             value (AcceptedType | None, optional): 引数
-               - None: 現在時刻(`datetime.now()`)で初期化
+            - None: 現在時刻(`datetime.now()`)で初期化
         """
 
         self._dt = self.convert(value) if value else datetime.now()
