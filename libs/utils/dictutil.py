@@ -50,6 +50,7 @@ def placeholder(subcom: "SubCommand") -> dict:
     ret_dict.update(param.flags)  # 上書き
 
     # 検索範囲取得
+    departure_time = ExtDt() - {"hours": g.cfg.setting.time_adjust}
     if (rule_version := ret_dict.get("rule_version")):  # ルールバージョンのみ先行評価
         g.params.update(rule_version=rule_version)
     if param.search_range:
@@ -57,11 +58,11 @@ def placeholder(subcom: "SubCommand") -> dict:
     elif pre_param.search_range:
         search_range = pre_param.search_range
     else:
-        search_range = ExtDt.range(subcom.aggregation_range)
+        search_range = departure_time.range(subcom.aggregation_range)
 
-    ret_dict.update(starttime=(ExtDt.range(search_range) + {"hours": 12}).start)
-    ret_dict.update(endtime=(ExtDt.range(search_range) + {"hours": 12}).end)
-    ret_dict.update(onday=ExtDt.range(search_range).end)
+    ret_dict.update(starttime=(departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).start)
+    ret_dict.update(endtime=(departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).end)
+    ret_dict.update(onday=departure_time.range(search_range).end)
 
     # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
     player_name: str = str()

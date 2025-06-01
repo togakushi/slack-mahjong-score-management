@@ -51,6 +51,7 @@ class SettingSection(CommonMethodMixin):
         config (configparser.ConfigParser | None): コンフィグオブジェクト
         slash_command (str): スラッシュコマンド名 (default: "/mahjong")
         thread_report (bool): スレッド内にある得点報告を扱う (default: True)
+        time_adjust (int): 日付変更後、集計範囲に含める追加時間 (default: 12)
         guest_mark (str): ゲスト無効時に未登録メンバーに付与する印 (default: "※")
         reaction_ok (str): DBに取り込んだ時に付けるリアクション (default: "ok")
         reaction_ng (str): DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション (default: "ng")
@@ -62,6 +63,7 @@ class SettingSection(CommonMethodMixin):
     config: configparser.ConfigParser | None = None
     slash_command: str = field(default="/mahjong")
     thread_report: bool = field(default=True)
+    time_adjust: int = field(default=12)
     guest_mark: str = field(default="※")
     reaction_ok: str = field(default="ok")
     reaction_ng: str = field(default="ng")

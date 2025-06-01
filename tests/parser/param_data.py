@@ -62,7 +62,7 @@ flag_test_case_04: dict[str, Tuple[Any, ...]] = {
 
 # 日付
 flag_test_case_05: dict[str, Tuple[Any, ...]] = {
-    "keyword": ("今月", ExtDt.range("今月").format("sql")),
+    "keyword": ("今月", ExtDt().range("今月").format("sql")),
     "number only": ("20250101", ExtDt("20250101").format("sql")),
     "hyphen delimiter": ("2025-01-01", ExtDt("20250101").format("sql")),
     "slash delimiter": ("2025/01/01", ExtDt("20250101").format("sql")),

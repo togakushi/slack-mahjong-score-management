@@ -66,84 +66,77 @@ DelimiterStyle: TypeAlias = Literal[
 """
 
 DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
-    "appointed": {
-        "keyword": ["当日"],
-        "range": lambda: [
-            (datetime.now() + relativedelta(hours=-12)).replace(hour=0, minute=0, second=0, microsecond=0),
-            (datetime.now() + relativedelta(hours=-12)).replace(hour=23, minute=59, second=59, microsecond=999999),
-        ],
-    },
     "today": {
-        "keyword": ["今日", "本日"],
-        "range": lambda: [
-            datetime.now().replace(hour=0, minute=0, second=0, microsecond=0),
-            datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999),
+        "keyword": ["今日", "本日", "当日"],
+        "range": lambda x: [
+            x.replace(hour=0, minute=0, second=0, microsecond=0),
+            x.replace(hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "yesterday": {
         "keyword": ["昨日"],
-        "range": lambda: [
+        "range": lambda _: [
             datetime.now() + relativedelta(days=-1, hour=0, minute=0, second=0, microsecond=0),
             datetime.now() + relativedelta(days=-1, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "this_month": {
         "keyword": ["今月"],
-        "range": lambda: [
-            datetime.now() + relativedelta(day=1, hour=0, minute=0, second=0, microsecond=0),
-            datetime.now() + relativedelta(day=31, hour=23, minute=59, second=59, microsecond=999999),
+        "range": lambda x: [
+            x + relativedelta(day=1, hour=0, minute=0, second=0, microsecond=0),
+            x + relativedelta(day=31, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "last_month": {
         "keyword": ["先月", "昨月"],
-        "range": lambda: [
-            datetime.now() + relativedelta(months=-1, day=1, hour=0, minute=0, second=0, microsecond=0),
-            datetime.now() + relativedelta(months=-1, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        "range": lambda x: [
+            x + relativedelta(months=-1, day=1, hour=0, minute=0, second=0, microsecond=0),
+            x + relativedelta(months=-1, day=31, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "two_months_ago": {
         "keyword": ["先々月"],
-        "range": lambda: [
-            datetime.now() + relativedelta(months=-2, day=1, hour=0, minute=0, second=0, microsecond=0),
-            datetime.now() + relativedelta(months=-2, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        "range": lambda x: [
+            x + relativedelta(months=-2, day=1, hour=0, minute=0, second=0, microsecond=0),
+            x + relativedelta(months=-2, day=31, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "this_year": {
         "keyword": ["今年"],
-        "range": lambda: [
-            datetime.now() + relativedelta(month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
-            datetime.now() + relativedelta(month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        "range": lambda x: [
+            x + relativedelta(month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
+            x + relativedelta(month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "last_year": {
         "keyword": ["去年", "昨年"],
-        "range": lambda: [
-            datetime.now() + relativedelta(years=-1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
-            datetime.now() + relativedelta(years=-1, month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        "range": lambda x: [
+            x + relativedelta(years=-1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
+            x + relativedelta(years=-1, month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "year_before_last": {
         "keyword": ["一昨年"],
-        "range": lambda: [
-            datetime.now() + relativedelta(years=-2, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
-            datetime.now() + relativedelta(years=-2, month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
+        "range": lambda x: [
+            x + relativedelta(years=-2, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
+            x + relativedelta(years=-2, month=12, day=31, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "first_day": {
         "keyword": ["最初"],
-        "range": lambda: [
+        "range": lambda _: [
             lookup.db.first_record() + relativedelta(days=-1),
         ],
     },
     "last_day": {
         "keyword": ["最後"],
-        "range": lambda: [
+        "range": lambda _: [
             datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999)
         ],
     },
     "all": {
         "keyword": ["全部"],
-        "range": lambda: [
+        "range": lambda _: [
             lookup.db.first_record() + relativedelta(days=-1),
             datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999)
         ],
@@ -335,8 +328,7 @@ class ExtendedDatetime:
 
         return ret
 
-    @classmethod
-    def range(cls, value: str | list) -> "ExtendedDatetimeList":
+    def range(self, value: str | list) -> "ExtendedDatetimeList":
         """キーワードが示す範囲をリストで返す
 
         Args:
@@ -357,11 +349,11 @@ class ExtendedDatetime:
         for word in check_list:
             for _, range_map in DATE_RANGE_MAP.items():
                 if word in cast(list, range_map["keyword"]):
-                    ret.extend(range_map["range"]())
+                    ret.extend(range_map["range"](self._dt))
                     break
             else:
                 try:
-                    try_time = cls.convert(str(word))
+                    try_time = self.convert(str(word))
                     ret.append(try_time.replace(hour=0, minute=0, second=0, microsecond=0))
                     ret.append(try_time.replace(hour=23, minute=59, second=59, microsecond=999999))
                 except ValueError:

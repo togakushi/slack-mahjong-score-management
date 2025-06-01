@@ -178,8 +178,8 @@ def setup() -> None:
     logging.notice("database: %s", g.cfg.db.database_file)  # type: ignore
     logging.notice("font: %s", g.cfg.setting.font_file)  # type: ignore
     logging.notice(  # type: ignore
-        "rule_version: %s, origin_point: %s, return_point: %s, undefined_word: %s",
-        g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.undefined_word
+        "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
+        g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.setting.time_adjust
     )
 
     # 作業用ディレクトリ作成

@@ -24,8 +24,8 @@ def main(client, event):
         "view_id": None,
         "screen": None,
         "operation": None,
-        "sday": g.app_var.get("sday", (ExtDt() + {"hours": -12}).format("ymd", "-")),
-        "eday": g.app_var.get("eday", (ExtDt() + {"hours": -12}).format("ymd", "-")),
+        "sday": g.app_var.get("sday", ExtDt().format("ymd", "-")),
+        "eday": g.app_var.get("eday", ExtDt().format("ymd", "-")),
     }
 
     g.app_var["user_id"] = event["user"]
