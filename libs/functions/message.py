@@ -4,11 +4,9 @@ libs/functions/message.py
 
 import logging
 import math
-import os
 import random
 import re
 import textwrap
-from importlib.resources import files
 from typing import Any, Tuple, cast
 
 import libs.global_value as g
@@ -499,7 +497,7 @@ def badge_grade(name: str) -> str:
         str: 称号
     """
 
-    if not g.cfg.badge.grade:
+    if not g.cfg.badge.grade.display:
         return ""
 
     def promotion_check(tbl_data: Any, grade_level: int, point: int, rank: int) -> Tuple[int, int]:
@@ -537,31 +535,16 @@ def badge_grade(name: str) -> str:
     # 初期値
     point: int = 0  # 昇段ポイント
     grade_level: int = 0  # レベル(段位)
-
-    # テーブル選択
-    match table_name := g.cfg.config["grade"].get("table_name", ""):
-        case "":
-            return ""
-        case "mahjongsoul" | "雀魂":
-            tbl_file = str(files("files.gradetable").joinpath("mahjongsoul.json"))
-        case "tenho" | "天鳳":
-            tbl_file = str(files("files.gradetable").joinpath("tenho.json"))
-        case _:
-            tbl_file = os.path.join(g.cfg.config_dir, table_name)
-            if not os.path.isfile(tbl_file):
-                return ""
-
-    if not (tbl_data := initialization.read_grade_table(tbl_file)):
-        return ""
+    initialization.read_grade_table()
 
     result_df = lookup.db.get_rank_list(name, g.params.get("rule_version", ""))
-    addition_expression = tbl_data.get("addition_expression", "0")
+    addition_expression = g.cfg.badge.grade.table.get("addition_expression", "0")
     for _, data in result_df.iterrows():
         rank = data["rank"]
         rpoint = data["rpoint"]
         addition_point = math.ceil(eval(addition_expression.format(rpoint=rpoint, origin_point=g.cfg.mahjong.origin_point)))
-        point, grade_level = promotion_check(tbl_data, grade_level, point + addition_point, rank)
+        point, grade_level = promotion_check(g.cfg.badge.grade.table, grade_level, point + addition_point, rank)
 
-    next_point = tbl_data["table"][grade_level]["point"][1]
+    next_point = g.cfg.badge.grade.table["table"][grade_level]["point"][1]
 
-    return f"{tbl_data["table"][grade_level]["grade"]} ({point}/{next_point})"
+    return f"{g.cfg.badge.grade.table["table"][grade_level]["grade"]} ({point}/{next_point})"

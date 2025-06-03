@@ -11,7 +11,7 @@ from itertools import chain
 from pathlib import Path
 
 from cls.subcom import SubCommand
-from cls.types import CommonMethodMixin
+from cls.types import CommonMethodMixin, GradeTableDict
 
 
 @dataclass
@@ -190,11 +190,17 @@ class DropItems:
 
 
 @dataclass
+class BadgeGradeSpec:
+    display: bool = field(default=False)
+    table: GradeTableDict = field(default_factory=dict)
+
+
+@dataclass
 class BadgeDisplay:
     """バッジ表示"""
     degree: bool = False
     status: bool = False
-    grade: bool = False
+    grade: BadgeGradeSpec = field(default_factory=BadgeGradeSpec)
 
 
 class Config():
@@ -304,7 +310,7 @@ class Config():
         if "status" in self.config.sections():
             self.badge.status = self.config.getboolean("status", "display", fallback=False)
         if "grade" in self.config.sections():
-            self.badge.grade = self.config.getboolean("grade", "display", fallback=False)
+            self.badge.grade.display = self.config.getboolean("grade", "display", fallback=False)
 
         # サブコマンドデフォルト
         self.results = SubCommand(self.config, "results")

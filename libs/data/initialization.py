@@ -4,7 +4,9 @@ lib/data/initialization.py
 
 import json
 import logging
+import os
 import sqlite3
+from importlib.resources import files
 
 import libs.global_value as g
 from cls.types import GradeTableDict
@@ -98,26 +100,32 @@ def initialization_resultdb():
     resultdb.close()
 
 
-def read_grade_table(tbl_file: str) -> GradeTableDict:
-    """段位テーブル読み込み
+def read_grade_table():
+    """段位テーブル読み込み"""
 
-    Args:
-        tbl_file (str): ファイルパス
-
-    Returns:
-        GradeTableDict: 段位テーブル
-    """
+    # テーブル選択
+    match table_name := g.cfg.config["grade"].get("table_name", ""):
+        case "":
+            return
+        case "mahjongsoul" | "雀魂":
+            tbl_file = str(files("files.gradetable").joinpath("mahjongsoul.json"))
+        case "tenho" | "天鳳":
+            tbl_file = str(files("files.gradetable").joinpath("tenho.json"))
+        case _:
+            tbl_file = os.path.join(g.cfg.config_dir, table_name)
+            if not os.path.isfile(tbl_file):
+                return
 
     with open(tbl_file, encoding="utf-8") as f:
         try:
             tbl_data: GradeTableDict = json.load(f)
         except json.JSONDecodeError as err:
             logging.error(err)
-            return {}
+            return
 
     if not isinstance(tbl_list := tbl_data.get("table"), list):
         logging.error("undefined key [table]")
-        return {}
+        return
 
     for x in tbl_list:
         if isinstance(x, dict):
@@ -143,4 +151,4 @@ def read_grade_table(tbl_file: str) -> GradeTableDict:
             tbl_data = {}
             break
 
-    return tbl_data
+    g.cfg.badge.grade.table = tbl_data
