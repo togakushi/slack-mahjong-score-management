@@ -593,7 +593,7 @@ def badge_grade(name: str) -> str:
     if not (tbl_data := read_json(tbl_file)):
         return ""
 
-    result_df = lookup.db.get_rank_list(name, g.params.get("rule_version"))
+    result_df = lookup.db.get_rank_list(name, g.params.get("rule_version", ""))
     addition_expression = tbl_data.get("addition_expression", "0")
     for _, data in result_df.iterrows():
         rank = data["rank"]
