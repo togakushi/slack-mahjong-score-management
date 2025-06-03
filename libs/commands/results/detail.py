@@ -4,6 +4,7 @@ libs/commands/results/detail.py
 
 import re
 import textwrap
+from typing import cast
 
 import pandas as pd
 
@@ -326,16 +327,19 @@ def get_game_results(mapping_dict: dict) -> str:
     else:
         df_data = df.query("name == @target_player").set_index("playtime")
         for x in df_data.itertuples():
+            play_time = str(x.Index).replace("-", "/")
+            rpoint = cast(int, x.rpoint) * 100
+            point = cast(float, x.point)
             vs_guest = ""
-            if x.guest_count >= 2 and g.params["individual"]:
+            guest_count = cast(int, x.guest_count)
+            same_team = cast(int, x.same_team)
+
+            if guest_count >= 2 and g.params.get("individual"):
                 vs_guest = g.cfg.setting.guest_mark
-            if x.same_team == 1 and not g.params["individual"]:
+            if same_team == 1 and not g.params.get("individual"):
                 vs_guest = g.cfg.setting.guest_mark
 
-            ret += "\t{}{}  {}位 {:8d}点 ({:7.1f}pt) {}\n".format(  # pylint: disable=consider-using-f-string
-                vs_guest, x.Index.replace("-", "/"),
-                x.rank, int(x.rpoint) * 100, x.point, x.grandslam,
-            ).replace("-", "▲")
+            ret += f"\t{vs_guest}{play_time}  {x.rank}位 {point:8d}点 ({rpoint:7.1f}pt) {x.grandslam}\n".replace("-", "▲")
 
     return ret
 
