@@ -2,10 +2,12 @@
 lib/data/initialization.py
 """
 
+import json
 import logging
 import sqlite3
 
 import libs.global_value as g
+from cls.types import GradeTableDict
 from libs.data import loader
 
 
@@ -94,3 +96,51 @@ def initialization_resultdb():
 
     resultdb.commit()
     resultdb.close()
+
+
+def read_grade_table(tbl_file: str) -> GradeTableDict:
+    """段位テーブル読み込み
+
+    Args:
+        tbl_file (str): ファイルパス
+
+    Returns:
+        GradeTableDict: 段位テーブル
+    """
+
+    with open(tbl_file, encoding="utf-8") as f:
+        try:
+            tbl_data: GradeTableDict = json.load(f)
+        except json.JSONDecodeError as err:
+            logging.error(err)
+            return {}
+
+    if not isinstance(tbl_list := tbl_data.get("table"), list):
+        logging.error("undefined key [table]")
+        return {}
+
+    for x in tbl_list:
+        if isinstance(x, dict):
+            if {"grade", "point", "acquisition"} == set(x.keys()):
+                if not isinstance(x.get("grade"), str):
+                    tbl_data = {}
+                    break
+                point = x.get("point")
+                if not isinstance(point, list) or len(point) != 2:
+                    logging.error("point is not match")
+                    tbl_data = {}
+                    break
+                acquisition = x.get("acquisition")
+                if not isinstance(acquisition, list) or len(acquisition) != 4:
+                    logging.error("acquisition is not match")
+                    tbl_data = {}
+                    break
+            else:
+                logging.error("undefined key [grade, point, acquisition]")
+                tbl_data = {}
+                break
+        else:
+            tbl_data = {}
+            break
+
+    return tbl_data
