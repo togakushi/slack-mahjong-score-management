@@ -60,7 +60,7 @@ def determine_point(is_parent: bool, is_tsumo: bool) -> int | tuple:
     return HAN_POINTS[rank][key]
 
 
-def determine_winner(k: int) -> Tuple[list, list]:
+def determine_winner(k: int) -> Tuple[list[int], list[int]]:
     """和了役を抽選し、放銃役候補と分けてリストを返す
 
     Args:
@@ -156,6 +156,7 @@ def simulate_game():
             else:  # 被ツモによる点数移動
                 discarder = random.choice(losers)  # 放銃役
                 pay = determine_point(is_parent, False)
+                assert isinstance(pay, int), "pay should be a int"
                 scores[discarder] -= (pay + 300 * renchan_count)
                 scores[winner] += (pay + 300 * renchan_count)
 
