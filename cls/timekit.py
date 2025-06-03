@@ -388,7 +388,7 @@ class ExtendedDatetime:
         ret: str = ""
         for _, val in DATE_RANGE_MAP.items():
             for label in val["keyword"]:
-                scope = " ～ ".join(cls.range(label).format("ymd"))
+                scope = " ～ ".join(cls.range(cls, label).format("ymd"))
                 ret += f"{label}： {scope}\n"
 
         return ret.strip()
