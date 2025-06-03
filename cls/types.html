@@ -339,7 +339,7 @@
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DateRangeSpec</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;日付範囲変換キーワード用辞書&quot;&quot;&quot;</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">keyword</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="nb">range</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">list</span><span class="p">[</span><span class="n">datetime</span><span class="p">]]</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="nb">range</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">datetime</span><span class="p">]]</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
@@ -947,7 +947,7 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="DateRangeSpec-98"><a href="#DateRangeSpec-98"><span class="linenos"> 98</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DateRangeSpec</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
 </span><span id="DateRangeSpec-99"><a href="#DateRangeSpec-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;日付範囲変換キーワード用辞書&quot;&quot;&quot;</span>
 </span><span id="DateRangeSpec-100"><a href="#DateRangeSpec-100"><span class="linenos">100</span></a>    <span class="n">keyword</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="DateRangeSpec-101"><a href="#DateRangeSpec-101"><span class="linenos">101</span></a>    <span class="nb">range</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">list</span><span class="p">[</span><span class="n">datetime</span><span class="p">]]</span>
+</span><span id="DateRangeSpec-101"><a href="#DateRangeSpec-101"><span class="linenos">101</span></a>    <span class="nb">range</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">datetime</span><span class="p">]]</span>
 </span></pre></div>
 
 
@@ -968,7 +968,7 @@
                             </div>
                             <div id="DateRangeSpec.range" class="classattr">
                                 <div class="attr variable">
-            <span class="name">range</span><span class="annotation">: Callable[[], list[datetime.datetime]]</span>
+            <span class="name">range</span><span class="annotation">: Callable[[Any], list[datetime.datetime]]</span>
 
         
     </div>
