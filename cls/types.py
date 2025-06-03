@@ -97,7 +97,7 @@ class SlackSearchData(TypedDict, total=False):
 class DateRangeSpec(TypedDict):
     """日付範囲変換キーワード用辞書"""
     keyword: list[str]
-    range: Callable[[], list[datetime]]
+    range: Callable[[Any], list[datetime]]
 
 
 class RankTableDict(TypedDict):
