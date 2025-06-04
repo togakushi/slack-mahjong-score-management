@@ -9,6 +9,7 @@ import sys
 from dataclasses import dataclass, field
 from itertools import chain
 from pathlib import Path
+from typing import cast
 
 from cls.subcom import SubCommand
 from cls.types import CommonMethodMixin, GradeTableDict
@@ -191,8 +192,9 @@ class DropItems:
 
 @dataclass
 class BadgeGradeSpec:
+    """段位"""
     display: bool = field(default=False)
-    table: GradeTableDict = field(default_factory=dict)
+    table: GradeTableDict = field(default_factory=lambda: cast(GradeTableDict, dict))
 
 
 @dataclass
