@@ -94,7 +94,7 @@ def main(client, body):
                                 modify.db_insert(detection, g.msg.event_ts)
                             else:
                                 slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
-                                logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
+                                logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
                         case "message_changed":
                             if detection == [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]:
                                 return  # 変更箇所がなければ何もしない
@@ -104,7 +104,7 @@ def main(client, body):
                                         assert isinstance(detection, list), "detection should be a list"
                                         modify.db_update(detection, g.msg.event_ts)
                                     else:
-                                        logging.notice("skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
+                                        logging.notice("changed: skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
                                 else:
                                     assert isinstance(detection, list), "detection should be a list"
                                     modify.db_insert(detection, g.msg.event_ts)
