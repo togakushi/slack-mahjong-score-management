@@ -22,10 +22,10 @@ Examples:
     >>> t + {"days": 1, "months": 2}
     2025-07-02 00:00:00.000000
 
-    >>> ExtendedDatetime.get_range("今月").format("ymdhm")
+    >>> ExtendedDatetime.range("今月").format("ymdhm")
     ['2025/04/01 00:00', '2025/04/30 23:59']
 
-    >>> ExtendedDatetime.get_range("今月").dict_format("ymd", "ja")
+    >>> ExtendedDatetime.range("今月").dict_format("ymd", "ja")
     {'start': '2025年04月01日', 'end': '2025年04月30日'}
 """
 
@@ -385,10 +385,12 @@ class ExtendedDatetime:
             str: 出力メッセージ
         """
 
+        base_instance = cls()
         ret: str = ""
+
         for _, val in DATE_RANGE_MAP.items():
             for label in val["keyword"]:
-                scope = " ～ ".join(cls.range(cls, label).format("ymd"))
+                scope = " ～ ".join(base_instance.range(label).format("ymd"))
                 ret += f"{label}： {scope}\n"
 
         return ret.strip()
