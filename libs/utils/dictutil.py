@@ -50,7 +50,7 @@ def placeholder(subcom: "SubCommand") -> dict:
     ret_dict.update(param.flags)  # 上書き
 
     # 検索範囲取得
-    departure_time = ExtDt() - {"hours": g.cfg.setting.time_adjust}
+    departure_time = ExtDt(hours=-g.cfg.setting.time_adjust)
     if (rule_version := ret_dict.get("rule_version")):  # ルールバージョンのみ先行評価
         g.params.update(rule_version=rule_version)
     if param.search_range:

@@ -25,7 +25,7 @@ def build_versus_menu():
     ui_parts.multi_select_pulldown(text="対戦相手", add_list=["全員"])
 
     # 検索範囲設定
-    date_dict = {x: (ExtDt() - {"hours": g.cfg.setting.time_adjust}).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
+    date_dict = {x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
     ui_parts.divider()
     ui_parts.radio_buttons(
         id_suffix="search_range",
