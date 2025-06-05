@@ -79,6 +79,7 @@ def aggregation() -> Tuple[str, dict, dict]:
             "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"
         ]
     ), short=False).copy()
+    df = df.drop(columns=[x for x in g.cfg.dropitems.ranking if x in df.columns.to_list()])  # 非表示項目
 
     msg: dict = {}
     table_param: dict = {
