@@ -184,6 +184,7 @@ def main():
     flag: dict = {}
 
     initialization.initialization_resultdb()
+    initialization.read_grade_table()
     configuration.read_memberslist(False)
 
     for sec in test_conf.sections():
