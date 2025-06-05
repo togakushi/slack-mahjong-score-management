@@ -253,9 +253,8 @@ def grade_promotion_check(grade_level: int, point: int, rank: int) -> Tuple[int,
             new_point = 0
 
     if new_point < 0:  # level down
-        if tbl_data["table"][grade_level]["point"][0] == 0:  # 初期値が0は降段しない
-            new_point = 0
-        else:
+        new_point = 0
+        if tbl_data["table"][grade_level]["demote"]:
             grade_level -= 1
             new_point = tbl_data["table"][grade_level]["point"][0]  # 初期値
 

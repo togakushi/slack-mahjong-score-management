@@ -105,6 +105,7 @@ class RankTableDict(TypedDict):
     grade: str
     point: list
     acquisition: list
+    demote: bool
 
 
 class GradeTableDict(TypedDict, total=False):

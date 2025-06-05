@@ -129,7 +129,8 @@ def read_grade_table():
 
     for x in tbl_list:
         if isinstance(x, dict):
-            if {"grade", "point", "acquisition"} == set(x.keys()):
+            x["demote"] = x.get("demote", True)
+            if {"grade", "point", "acquisition", "demote"} == set(x.keys()):
                 if not isinstance(x.get("grade"), str):
                     tbl_data = {}
                     break
