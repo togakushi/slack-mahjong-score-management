@@ -27,6 +27,9 @@ Examples:
 
     >>> ExtendedDatetime.range("今月").dict_format("ymd", "ja")
     {'start': '2025年04月01日', 'end': '2025年04月30日'}
+
+    >>> ExtendedDatetime("2025-01-01 01:23:45", hours=-12).range("今年")
+    [2024-01-01 00:00:00.000000, 2024-12-31 23:59:59.999999]
 """
 
 from datetime import datetime
@@ -163,15 +166,18 @@ class ExtendedDatetime:
     FormatType: TypeAlias = FormatType
     DelimiterStyle: TypeAlias = DelimiterStyle
 
-    def __init__(self, value: AcceptedType | None = None):
+    def __init__(self, value: AcceptedType | None = None, **relativedelta_kwargs):
         """ExtendedDatetimeの初期化
 
         Args:
             value (AcceptedType | None, optional): 引数
             - None: 現在時刻(`datetime.now()`)で初期化
+            relativedelta_kwargs (dict): 初期化時にrelativedelta()に渡す引数
         """
 
         self._dt = self.convert(value) if value else datetime.now()
+        if relativedelta_kwargs:
+            self._dt += relativedelta(**relativedelta_kwargs)
 
     def __str__(self) -> str:
         return self.format("sql")
