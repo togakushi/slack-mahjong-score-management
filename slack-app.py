@@ -44,6 +44,7 @@ if __name__ == "__main__":
         sys.exit()
 
     initialization.initialization_resultdb()
+    initialization.read_grade_table()
     configuration.read_memberslist()
     g.app = app  # インスタンスグローバル化
     g.bot_id = app.client.auth_test()["user_id"]

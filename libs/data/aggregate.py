@@ -3,7 +3,7 @@ lib/database/aggregate.py
 """
 
 import logging
-from typing import cast
+from typing import Tuple, cast
 
 import numpy as np
 import pandas as pd
@@ -227,6 +227,39 @@ def calculation_rating():
             df_ratings.loc[x.Index, player] = new_rating
 
     return df_ratings
+
+
+def grade_promotion_check(grade_level: int, point: int, rank: int) -> Tuple[int, int]:
+    """昇段チェック
+
+    Args:
+        grade_level (int): 現在のレベル(段位)
+        point (int): 現在の昇段ポイント
+        rank (int): 獲得順位
+
+    Returns:
+        Tuple[int, int]: チェック後の昇段ポイント, チェック後のレベル(段位)
+    """
+
+    tbl_data = g.cfg.badge.grade.table
+    get_point = int(tbl_data["table"][grade_level]["acquisition"][rank - 1])
+    new_point = point + get_point
+
+    if new_point >= tbl_data["table"][grade_level]["point"][1]:  # level up
+        if grade_level < len(tbl_data["table"]) - 1:  # カンストしてなければ判定
+            grade_level += 1
+            new_point = tbl_data["table"][grade_level]["point"][0]  # 初期値
+        else:
+            new_point = 0
+
+    if new_point < 0:  # level down
+        if tbl_data["table"][grade_level]["point"][0] == 0:  # 初期値が0は降段しない
+            new_point = 0
+        else:
+            grade_level -= 1
+            new_point = tbl_data["table"][grade_level]["point"][0]  # 初期値
+
+    return (new_point, grade_level)
 
 
 # レポート

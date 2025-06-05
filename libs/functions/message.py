@@ -7,12 +7,12 @@ import math
 import random
 import re
 import textwrap
-from typing import Any, Tuple, cast
+from typing import cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from libs.data import initialization, lookup
+from libs.data import aggregate, lookup
 
 
 def slash_help(command):
@@ -500,42 +500,9 @@ def badge_grade(name: str) -> str:
     if not g.cfg.badge.grade.display:
         return ""
 
-    def promotion_check(tbl_data: Any, grade_level: int, point: int, rank: int) -> Tuple[int, int]:
-        """昇段チェック
-
-        Args:
-            tbl_data (Any): 昇段テーブル
-            grade_level (int): 現在のレベル(段位)
-            point (int): 現在の昇段ポイント
-            rank (int): 獲得順位
-
-        Returns:
-            Tuple[int, int]: チェック後の昇段ポイント, チェック後のレベル(段位)
-        """
-
-        get_point = int(tbl_data["table"][grade_level]["acquisition"][rank - 1])
-        new_point = point + get_point
-
-        if new_point >= tbl_data["table"][grade_level]["point"][1]:  # level up
-            if grade_level < len(tbl_data["table"]) - 1:  # カンストしてなければ判定
-                grade_level += 1
-                new_point = tbl_data["table"][grade_level]["point"][0]  # 初期値
-            else:
-                new_point = 0
-
-        if new_point < 0:  # level down
-            if tbl_data["table"][grade_level]["point"][0] == 0:  # 初期値が0は降段しない
-                new_point = 0
-            else:
-                grade_level -= 1
-                new_point = tbl_data["table"][grade_level]["point"][0]  # 初期値
-
-        return (new_point, grade_level)
-
     # 初期値
     point: int = 0  # 昇段ポイント
     grade_level: int = 0  # レベル(段位)
-    initialization.read_grade_table()
 
     result_df = lookup.db.get_rank_list(name, g.params.get("rule_version", ""))
     addition_expression = g.cfg.badge.grade.table.get("addition_expression", "0")
@@ -543,7 +510,7 @@ def badge_grade(name: str) -> str:
         rank = data["rank"]
         rpoint = data["rpoint"]
         addition_point = math.ceil(eval(addition_expression.format(rpoint=rpoint, origin_point=g.cfg.mahjong.origin_point)))
-        point, grade_level = promotion_check(g.cfg.badge.grade.table, grade_level, point + addition_point, rank)
+        point, grade_level = aggregate.grade_promotion_check(grade_level, point + addition_point, rank)
 
     next_point = g.cfg.badge.grade.table["table"][grade_level]["point"][1]
 
