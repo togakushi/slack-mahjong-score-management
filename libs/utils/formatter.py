@@ -281,6 +281,7 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
         "point": "獲得ポイント",
         "rpoint_avg": "平均素点",
         "point_dev": "得点偏差", "rank_dev": "順位偏差",
+        "grade": "段位",
         # レコード
         "c_top": "連続トップ", "c_top2": "連続連対", "c_top3": "連続ラス回避",
         "c_low": "連続トップなし", "c_low2": "連続逆連対", "c_low4": "連続ラス",

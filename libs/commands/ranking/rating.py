@@ -39,15 +39,11 @@ def aggregation() -> Tuple[str, dict, dict]:
 
     # 最終的なレーティング
     final = df_ratings.ffill().tail(1).transpose()
-    final["count"] = df_ratings.count() - 1
-    final.columns = ["rate", "count"]
+    final.columns = ["rate"]
     final["name"] = final.copy().index
 
-    # 足切り
-    final = final.query("count >= @g.params['stipulated']")
-    df_results = df_results.query("count >= @g.params['stipulated']")
-
     df = pd.merge(df_results, final, on=["name"]).sort_values(by="rate", ascending=False)
+    df = df.query("count >= @g.params['stipulated']").copy()  # 足切り
 
     # 集計対象外データの削除
     if g.params.get("unregistered_replace"):  # 個人戦
@@ -58,23 +54,29 @@ def aggregation() -> Tuple[str, dict, dict]:
     if not g.params.get("individual"):  # チーム戦
         df = df.copy().query("name != '未所属'")
 
+    # 順位偏差 / 得点偏差
+    df["point_dev"] = (df["rpoint_avg"] - df["rpoint_avg"].mean()) / df["rpoint_avg"].std(ddof=0) * 10 + 50
+    df["rank_dev"] = (df["rank_avg"] - df["rank_avg"].mean()) / df["rank_avg"].std(ddof=0) * -10 + 50
+
+    # 段位
+    if g.cfg.badge.grade.display:
+        for idx, _ in df.iterrows():
+            x = str(df["name"][idx])
+            df.loc[idx, "grade"] = message.badge_grade(x.replace(f"({g.cfg.setting.guest_mark})", ""))
+
+    # 表示
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
         df["name"] = df["name"].replace(mapping_dict)
 
-    # 計算
-    df["point_dev"] = (df["rpoint_avg"] - df["rpoint_avg"].mean()) / df["rpoint_avg"].std(ddof=0) * 10 + 50
-    df["rank_dev"] = (df["rank_avg"] - df["rank_avg"].mean()) / df["rank_avg"].std(ddof=0) * -10 + 50
-
-    # 表示
     if df.empty:
         headline += "\t" + message.reply(message="no_target")
         return (headline, {}, {})
-    headline += message.header(game_info, add_text, 1)
 
+    headline += message.header(game_info, add_text, 1)
     df = formatter.df_rename(df.filter(
         items=[
-            "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev"
+            "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"
         ]
     ), short=False).copy()
 
