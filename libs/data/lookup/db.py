@@ -169,7 +169,7 @@ def first_record() -> datetime:
     return ret
 
 
-def get_rank_list(name: str, rule_version: str = "") -> pd.DataFrame:
+def get_results_list(name: str, rule_version: str = "") -> pd.DataFrame:
     """段位集計用順位リスト生成
 
     Args:

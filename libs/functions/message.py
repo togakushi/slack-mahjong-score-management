@@ -504,7 +504,7 @@ def badge_grade(name: str) -> str:
     point: int = 0  # 昇段ポイント
     grade_level: int = 0  # レベル(段位)
 
-    result_df = lookup.db.get_rank_list(name, g.params.get("rule_version", ""))
+    result_df = lookup.db.get_results_list(name, g.params.get("rule_version", ""))
     addition_expression = g.cfg.badge.grade.table.get("addition_expression", "0")
     for _, data in result_df.iterrows():
         rank = data["rank"]
