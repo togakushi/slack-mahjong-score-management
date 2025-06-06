@@ -23,7 +23,7 @@ def calculation_point(score_df):
     """
 
     # 順位点算出
-    rank_point = list(map(int, g.cfg.mahjong.rank_point))  # ウマ
+    rank_point = g.cfg.mahjong.rank_point  # ウマ
     rank_point[0] += int((g.cfg.mahjong.return_point - g.cfg.mahjong.origin_point) / 10 * 4)  # オカ
 
     if g.cfg.mahjong.draw_split:  # 山分け
