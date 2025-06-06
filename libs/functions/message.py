@@ -487,11 +487,12 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
     return badge
 
 
-def badge_grade(name: str) -> str:
+def badge_grade(name: str, detail: bool = True) -> str:
     """段位表示
 
     Args:
         name (str): 対象プレイヤー名
+        detail (bool, optional): 昇段ポイントの表示. Defaults to True.
 
     Returns:
         str: 称号
@@ -513,5 +514,7 @@ def badge_grade(name: str) -> str:
         point, grade_level = aggregate.grade_promotion_check(grade_level, point + addition_point, rank)
 
     next_point = g.cfg.badge.grade.table["table"][grade_level]["point"][1]
+    grade_name = g.cfg.badge.grade.table["table"][grade_level]["grade"]
+    point_detail = f" ({point}/{next_point})" if detail else ""
 
-    return f"{g.cfg.badge.grade.table["table"][grade_level]["grade"]} ({point}/{next_point})"
+    return f"{grade_name}{point_detail}"

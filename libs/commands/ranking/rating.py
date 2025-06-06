@@ -61,8 +61,8 @@ def aggregation() -> Tuple[str, dict, dict]:
     # 段位
     if g.cfg.badge.grade.display:
         for idx in df.index:
-            name = df.at[idx, "name"]
-            df.at[idx, "grade"] = message.badge_grade(name.replace(f"({g.cfg.setting.guest_mark})", ""))
+            name = str(df.at[idx, "name"]).replace(f"({g.cfg.setting.guest_mark})", "")
+            df.at[idx, "grade"] = message.badge_grade(name, False)
 
     # 表示
     if g.params.get("anonymous"):
