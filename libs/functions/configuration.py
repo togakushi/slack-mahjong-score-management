@@ -244,11 +244,8 @@ def graph_setup(plt, fm) -> None:
     """
 
     # スタイルの適応
-    style = g.cfg.config["setting"].get("graph_style", "ggplot")
-
-    if style not in plt.style.available:
+    if (style := g.cfg.setting.graph_style) not in plt.style.available:
         style = "ggplot"
-
     plt.style.use(style)
 
     # フォント再設定

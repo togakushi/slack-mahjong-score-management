@@ -26,7 +26,7 @@ def create(argument):
 
     if len(argument) == 1:  # 新規追加
         team_name = textutil.str_conv(argument[0], "h2z")
-        if len(g.team_list) > g.cfg.config["team"].getint("registration_limit", 255):
+        if len(g.team_list) > g.cfg.team.registration_limit:
             msg = "登録上限を超えています。"
         else:  # 登録処理
             ret, msg = validator.check_namepattern(team_name, "team")
@@ -128,7 +128,7 @@ def append(argument):
         # select count() from member where team_id=? group by team_id;
         # rows = resultdb.execute("select count() from team where name=?", (team_name,))
         # count = rows.fetchone()[0]
-        # if count > g.cfg.config["team"].getint("member_limit", 16):
+        # if count > g.cfg.team.member_limit:
         #    msg = f"登録上限を超えています。"
         #    registration_flg = False
 

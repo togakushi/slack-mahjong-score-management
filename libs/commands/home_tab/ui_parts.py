@@ -192,7 +192,7 @@ def input_ranked(block_id: str | bool = False) -> None:
 
     g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"type": "number_input"})
     g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"is_decimal_allowed": True})
-    g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"initial_value": str(g.cfg.config["ranking"].getint("ranked", 3))})
+    g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"initial_value": str(g.cfg.ranking.ranked)})
     g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"min_value": "1"})
     g.app_var["view"]["blocks"][g.app_var["no"]]["element"].update({"action_id": "aid-ranked"})
     g.app_var["view"]["blocks"][g.app_var["no"]]["label"].update({"type": "plain_text", "text": "出力順位上限"})

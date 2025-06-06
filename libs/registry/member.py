@@ -34,7 +34,7 @@ def append(argument):
         new_name = textutil.str_conv(argument[0], "h2z")
         rows = resultdb.execute("select count() from member")
         count = rows.fetchone()[0]
-        if count > g.cfg.config["member"].getint("registration_limit", 255):
+        if count > g.cfg.member.registration_limit:
             msg = "登録上限を超えています。"
         else:  # 登録処理
             ret, msg = validator.check_namepattern(new_name, "member")
@@ -59,7 +59,7 @@ def append(argument):
         if count == 0:
             msg = f"「{new_name}」はまだ登録されていません。"
             registration_flg = False
-        if count > g.cfg.config["member"].getint("alias_limit", 16):
+        if count > g.cfg.member.alias_limit:
             msg = "登録上限を超えています。"
             registration_flg = False
 

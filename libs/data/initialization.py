@@ -104,7 +104,7 @@ def read_grade_table():
     """段位テーブル読み込み"""
 
     # テーブル選択
-    match table_name := g.cfg.config["grade"].get("table_name", ""):
+    match table_name := g.cfg.badge.grade.table_name:
         case "":
             return
         case "mahjongsoul" | "雀魂":

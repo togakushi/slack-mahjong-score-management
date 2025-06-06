@@ -82,7 +82,7 @@ def aggregation():
         msg2["対戦"] = get_versus_matrix(mapping_dict)
 
     # 非表示項目
-    if g.cfg.config["mahjong"].getboolean("ignore_flying", False):
+    if g.cfg.mahjong.ignore_flying:
         g.cfg.dropitems.results.append("トビ")
     if "トビ" in g.cfg.dropitems.results:
         msg2["座席データ"] = re.sub(r"/ .* /", "/", msg2["座席データ"], flags=re.MULTILINE)
@@ -153,7 +153,7 @@ def get_totalization(data: dict) -> dict:
     ret["平均ポイント"] = f"{data['平均ポイント']:+.1f}pt".replace("-", "▲")
     ret["平均順位"] = f"{data['平均順位']:1.2f}"
     if g.params.get("individual") and "grade" in g.cfg.config.sections():
-        if g.cfg.config["grade"].getboolean("display", False):
+        if g.cfg.badge.grade.display:
             ret["段位"] = message.badge_grade(g.params["player_name"])
     ret["_blank2"] = True
     ret["1位"] = f"{data['1位']:2} 回 ({data['1位率']:6.2f}%)"

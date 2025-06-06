@@ -57,11 +57,12 @@ class SettingSection(CommonMethodMixin):
         reaction_ok (str): DBに取り込んだ時に付けるリアクション (default: "ok")
         reaction_ng (str): DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション (default: "ng")
         font_file (str): グラフ描写に使用するフォントファイル (default: "ipaexg.ttf")
+        graph_style (str): グラフスタイル (default: "ggplot")
         work_dir (str): 生成したファイルを保存するディレクトリ (default: "work")
         ignore_userid (list): 投稿を無視するユーザのリスト(カンマ区切りで設定) (default: 空欄)
     """
 
-    config: configparser.ConfigParser | None = None
+    config: configparser.ConfigParser | None = field(default=None)
     slash_command: str = field(default="/mahjong")
     thread_report: bool = field(default=True)
     time_adjust: int = field(default=12)
@@ -69,6 +70,7 @@ class SettingSection(CommonMethodMixin):
     reaction_ok: str = field(default="ok")
     reaction_ng: str = field(default="ng")
     font_file: str = field(default="ipaexg.ttf")
+    graph_style: str = field(default="ggplot")
     work_dir: str = field(default="work")
     ignore_userid: list = field(default_factory=list)
 
@@ -79,7 +81,7 @@ class SettingSection(CommonMethodMixin):
 @dataclass
 class SearchSection(CommonMethodMixin):
     """searchセクション初期値"""
-    config: configparser.ConfigParser | None = None
+    config: configparser.ConfigParser | None = field(default=None)
     keyword: str = field(default="終局")
     channel: str | None = field(default=None)
     after: int = field(default=7)
@@ -92,7 +94,7 @@ class SearchSection(CommonMethodMixin):
 @dataclass
 class DatabaseSection(CommonMethodMixin):
     """databaseセクション初期値"""
-    config: configparser.ConfigParser | None = None
+    config: configparser.ConfigParser | None = field(default=None)
     database_file: str = field(default="mahjong.db")
     channel_limitations: str = field(default=str())
     backup_dir: str | None = field(default=None)
@@ -104,7 +106,7 @@ class DatabaseSection(CommonMethodMixin):
 @dataclass
 class MemberSection(CommonMethodMixin):
     """memberセクション初期値"""
-    config: configparser.ConfigParser | None = None
+    config: configparser.ConfigParser | None = field(default=None)
     registration_limit: int = field(default=255)
     character_limit: int = field(default=8)
     alias_limit: int = field(default=16)
@@ -117,7 +119,7 @@ class MemberSection(CommonMethodMixin):
 @dataclass
 class TeamSection(CommonMethodMixin):
     """teamセクション初期値"""
-    config: configparser.ConfigParser | None = None
+    config: configparser.ConfigParser | None = field(default=None)
     registration_limit: int = field(default=255)
     character_limit: int = field(default=16)
     member_limit: int = field(default=16)
@@ -130,7 +132,7 @@ class TeamSection(CommonMethodMixin):
 @dataclass
 class AliasSection(CommonMethodMixin):
     """aliasセクション初期値"""
-    config: configparser.ConfigParser | None = None
+    config: configparser.ConfigParser | None = field(default=None)
     results: list = field(default_factory=list)
     graph: list = field(default_factory=list)
     ranking: list = field(default_factory=list)
@@ -160,7 +162,7 @@ class AliasSection(CommonMethodMixin):
 @dataclass
 class CommentSection(CommonMethodMixin):
     """commentセクション初期値"""
-    config: configparser.ConfigParser | None = None
+    config: configparser.ConfigParser | None = field(default=None)
     group_length: int = field(default=0)
     search_word: str = field(default=str())
 
@@ -171,15 +173,15 @@ class CommentSection(CommonMethodMixin):
 @dataclass
 class CommandWord:
     """チャンネル内呼び出しキーワード初期値"""
-    help: str = "ヘルプ"
-    results: str = "麻雀成績"
-    graph: str = "麻雀グラフ"
-    ranking: str = "麻雀ランキング"
-    report: str = "麻雀成績レポート"
-    member: str = "メンバー一覧"
-    team: str = "チーム一覧"
-    remarks_word: str = "麻雀成績メモ"
-    check: str = "麻雀成績チェック"
+    help: str = field(default="ヘルプ")
+    results: str = field(default="麻雀成績")
+    graph: str = field(default="麻雀グラフ")
+    ranking: str = field(default="麻雀ランキング")
+    report: str = field(default="麻雀成績レポート")
+    member: str = field(default="メンバー一覧")
+    team: str = field(default="チーム一覧")
+    remarks_word: str = field(default="麻雀成績メモ")
+    check: str = field(default="麻雀成績チェック")
 
 
 @dataclass
@@ -194,14 +196,15 @@ class DropItems:
 class BadgeGradeSpec:
     """段位"""
     display: bool = field(default=False)
+    table_name: str = field(default=str())
     table: GradeTableDict = field(default_factory=lambda: cast(GradeTableDict, dict))
 
 
 @dataclass
 class BadgeDisplay:
     """バッジ表示"""
-    degree: bool = False
-    status: bool = False
+    degree: bool = field(default=False)
+    status: bool = field(default=False)
     grade: BadgeGradeSpec = field(default_factory=BadgeGradeSpec)
 
 
@@ -313,6 +316,7 @@ class Config():
             self.badge.status = self.config.getboolean("status", "display", fallback=False)
         if "grade" in self.config.sections():
             self.badge.grade.display = self.config.getboolean("grade", "display", fallback=False)
+            self.badge.grade.table_name = self.config.get("grade", "table_name", fallback="")
 
         # サブコマンドデフォルト
         self.results = SubCommand(self.config, "results")
