@@ -510,7 +510,7 @@ def badge_grade(name: str, detail: bool = True) -> str:
     for _, data in result_df.iterrows():
         rank = data["rank"]
         rpoint = data["rpoint"]
-        addition_point = math.ceil(eval(addition_expression.format(rpoint=rpoint, origin_point=g.cfg.mahjong.origin_point)))
+        addition_point = math.ceil(eval(addition_expression.format(rpoint=rpoint, origin_point=g.cfg.mahjong.origin_point)))  # pylint: disable=eval-used
         point, grade_level = aggregate.grade_promotion_check(grade_level, point + addition_point, rank)
 
     next_point = g.cfg.badge.grade.table["table"][grade_level]["point"][1]
