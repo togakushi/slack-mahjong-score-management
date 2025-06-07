@@ -81,39 +81,49 @@ def main(client, body):
             slack_api.post_text(g.msg.event_ts, title, msg)
 
         case _ as x:
-            record_data = lookup.db.exsist_record(g.msg.event_ts)
-            if re.match(rf"^{g.cfg.cw.remarks_word}$", x) and g.msg.in_thread:  # 追加メモ
-                if lookup.db.exsist_record(g.msg.thread_ts):
-                    modify.check_remarks()
-            else:
-                if (detection := validator.pattern(str(g.msg.text))):  # 結果報告フォーマットに一致したポストの処理
-                    match g.msg.status:
-                        case "message_append":
-                            if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
+            other_words(x)
+
+
+def other_words(word: str):
+    """コマンド以外のワードの処理
+
+    Args:
+        word (str): 入力ワード
+    """
+
+    record_data = lookup.db.exsist_record(g.msg.event_ts)
+    if re.match(rf"^{g.cfg.cw.remarks_word}$", word) and g.msg.in_thread:  # 追加メモ
+        if lookup.db.exsist_record(g.msg.thread_ts):
+            modify.check_remarks()
+    else:
+        if (detection := validator.pattern(str(g.msg.text))):  # 結果報告フォーマットに一致したポストの処理
+            match g.msg.status:
+                case "message_append":
+                    if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
+                        assert isinstance(detection, list), "detection should be a list"
+                        modify.db_insert(detection, g.msg.event_ts)
+                    else:
+                        slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
+                        logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
+                case "message_changed":
+                    if detection == [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]:
+                        return  # 変更箇所がなければ何もしない
+                    if (g.cfg.setting.thread_report == g.msg.in_thread) or (g.msg.event_ts == g.msg.thread_ts):
+                        if record_data:
+                            if record_data.get("rule_version") == g.cfg.mahjong.rule_version:
                                 assert isinstance(detection, list), "detection should be a list"
-                                modify.db_insert(detection, g.msg.event_ts)
+                                modify.db_update(detection, g.msg.event_ts)
                             else:
-                                slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
-                                logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
-                        case "message_changed":
-                            if detection == [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]:
-                                return  # 変更箇所がなければ何もしない
-                            if (g.cfg.setting.thread_report == g.msg.in_thread) or (g.msg.event_ts == g.msg.thread_ts):
-                                if record_data:
-                                    if record_data.get("rule_version") == g.cfg.mahjong.rule_version:
-                                        assert isinstance(detection, list), "detection should be a list"
-                                        modify.db_update(detection, g.msg.event_ts)
-                                    else:
-                                        logging.notice("changed: skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
-                                else:
-                                    assert isinstance(detection, list), "detection should be a list"
-                                    modify.db_insert(detection, g.msg.event_ts)
-                                    modify.reprocessing_remarks()
-                            else:
-                                slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
-                                logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
-                else:
-                    if record_data:
-                        modify.db_delete(g.msg.event_ts)
-                        for icon in lookup.api.reactions_status():
-                            slack_api.call_reactions_remove(icon)
+                                logging.notice("changed: skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
+                        else:
+                            assert isinstance(detection, list), "detection should be a list"
+                            modify.db_insert(detection, g.msg.event_ts)
+                            modify.reprocessing_remarks()
+                    else:
+                        slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
+                        logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
+        else:
+            if record_data:
+                modify.db_delete(g.msg.event_ts)
+                for icon in lookup.api.reactions_status():
+                    slack_api.call_reactions_remove(icon)
