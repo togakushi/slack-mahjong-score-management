@@ -1,5 +1,6 @@
 [MESSAGES CONTROL]
 disable =
+    fixme,
     line-too-long,
     duplicate-code,
     too-many-branches,
