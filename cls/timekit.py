@@ -417,17 +417,17 @@ class ExtendedDatetime:
 
         if isinstance(value, ExtendedDatetime):
             return value.dt
-        elif isinstance(value, datetime):
+        if isinstance(value, datetime):
             return value
-        elif isinstance(value, float):
+        if isinstance(value, float):
             return datetime.fromtimestamp(value)
-        elif isinstance(value, str):
+        if isinstance(value, str):
             try:
                 return datetime.fromisoformat(value)
             except ValueError:
                 return datetime.strptime(value, "%Y/%m/%d %H:%M")
-        else:
-            raise TypeError("Unsupported type for datetime conversion")
+
+        raise TypeError("Unsupported type for datetime conversion")
 
 
 class ExtendedDatetimeList(list):
