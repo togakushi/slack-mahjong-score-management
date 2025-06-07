@@ -21,6 +21,6 @@
     { "grade": "八段", "point": [1600, 3200], "acquisition": [90, 45, 0, -150] },
     { "grade": "九段", "point": [1800, 3600], "acquisition": [90, 45, 0, -165] },
     { "grade": "十段", "point": [2000, 4000], "acquisition": [90, 45, 0, -180] },
-    { "grade": "天鳳位", "point": [0, 0], "acquisition": [0, 0, 0, 0] }
+    { "grade": "天鳳位", "point": [0, 0], "acquisition": [0, 0, 0, 0], "demote": false }
   ]
 }

@@ -17,6 +17,6 @@
     { "grade": "雀聖★☆☆", "point": [2000, 4000], "acquisition": [135, 65, -5, -225] },
     { "grade": "雀聖★★☆", "point": [3000, 6000], "acquisition": [135, 65, -5, -240] },
     { "grade": "雀聖★★★", "point": [4500, 9000], "acquisition": [135, 65, -5, -255] },
-    { "grade": "魂天", "point": [0, 0], "acquisition": [0, 0, 0, 0] }
+    { "grade": "魂天", "point": [0, 0], "acquisition": [0, 0, 0, 0], "demote": false }
   ]
 }

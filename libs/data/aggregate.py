@@ -242,23 +242,16 @@ def grade_promotion_check(grade_level: int, point: int, rank: int) -> Tuple[int,
     """
 
     tbl_data = g.cfg.badge.grade.table["table"]
-    new_point = int(0)
+    new_point = point + int(tbl_data[grade_level]["acquisition"][rank - 1])
 
-    if grade_level < len(tbl_data) - 1:  # カンストしてなければ判定
-        get_point = int(tbl_data[grade_level]["acquisition"][rank - 1])
-        new_point = point + get_point
-
-        # level up
-        if new_point >= int(tbl_data[grade_level]["point"][1]):
-            grade_level += 1
+    if new_point >= int(tbl_data[grade_level]["point"][1]):  # level up
+        grade_level = min(grade_level + 1, len(tbl_data) - 1)
+        new_point = int(tbl_data[grade_level]["point"][0])  # 初期値
+    elif new_point < 0:  # level down
+        new_point = int(0)
+        if tbl_data[grade_level]["demote"]:
+            grade_level = max(grade_level - 1, 0)
             new_point = int(tbl_data[grade_level]["point"][0])  # 初期値
-
-        # level down
-        if new_point < 0:
-            new_point = int(0)
-            if tbl_data[grade_level]["demote"]:
-                grade_level -= 1
-                new_point = int(tbl_data[grade_level]["point"][0])  # 初期値
 
     return (new_point, grade_level)
 
