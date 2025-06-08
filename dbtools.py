@@ -5,7 +5,14 @@ dbtools.py - 補助ツール
 help:
 
     $ ./dbtools.py --help
-    usage: dbtools.py [-h] [--debug] [--verbose] [--moderate] [--notime] [-c CONFIG] [--compar | --unification [UNIFICATION] | --recalculation | --export [PREFIX] | --import [PREFIX] | --vacuum]
+    usage: dbtools.py [-h] [--debug] [--verbose] [--moderate] [--notime] [-c CONFIG]
+                      [--compar |
+                      --unification [UNIFICATION] |
+                      --recalculation |
+                      --export [PREFIX] |
+                      --import [PREFIX] |
+                      --vacuum |
+                      --gen-test-data [count]]
 
     options:
     -h, --help            show this help message and exit
@@ -14,14 +21,16 @@ help:
     --moderate            ログレベルがエラー以下のもを非表示
     --notime              ログフォーマットから日時を削除
     -c CONFIG, --config CONFIG
-                            設定ファイル(default: config.ini)
+                          設定ファイル(default: config.ini)
     --compar              データ突合
     --unification [UNIFICATION]
-                            ファイルの内容に従って記録済みのメンバー名を修正する(default: rename.ini)
+                          ファイルの内容に従って記録済みのメンバー名を修正する(default: rename.ini)
     --recalculation       ポイント再計算
     --export [PREFIX]     メンバー設定情報をエクスポート(default prefix: export)
     --import [PREFIX]     メンバー設定情報をインポート(default prefix: export)
     --vacuum              database vacuum
+    --gen-test-data [count]
+                          テスト用サンプルデータ生成(count=生成回数, default: 1)
 """
 
 import libs.global_value as g
