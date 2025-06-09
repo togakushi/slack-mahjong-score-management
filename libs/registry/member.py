@@ -74,13 +74,13 @@ def append(argument):
         if dbupdate_flg:
             rows = resultdb.execute(
                 """
-                select name from (
+                select distinct name from (
                     select p1_name as name from result
                     union all select p2_name from result
                     union all select p3_name from result
                     union all select p4_name from result
                     union all select name from remarks
-                ) group by name;
+                );
                 """
             )
             name_list = [row["name"] for row in rows.fetchall()]
