@@ -136,13 +136,13 @@
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="k">if</span> <span class="n">dbupdate_flg</span><span class="p">:</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>            <span class="n">rows</span> <span class="o">=</span> <span class="n">resultdb</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">                select name from (</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">                select distinct name from (</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">                    select p1_name as name from result</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">                    union all select p2_name from result</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">                    union all select p3_name from result</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">                    union all select p4_name from result</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">                    union all select name from remarks</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">                ) group by name;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">                );</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">                &quot;&quot;&quot;</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>            <span class="p">)</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>            <span class="n">name_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
@@ -288,13 +288,13 @@
 </span><span id="append-75"><a href="#append-75"><span class="linenos"> 75</span></a>        <span class="k">if</span> <span class="n">dbupdate_flg</span><span class="p">:</span>
 </span><span id="append-76"><a href="#append-76"><span class="linenos"> 76</span></a>            <span class="n">rows</span> <span class="o">=</span> <span class="n">resultdb</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
 </span><span id="append-77"><a href="#append-77"><span class="linenos"> 77</span></a><span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="append-78"><a href="#append-78"><span class="linenos"> 78</span></a><span class="sd">                select name from (</span>
+</span><span id="append-78"><a href="#append-78"><span class="linenos"> 78</span></a><span class="sd">                select distinct name from (</span>
 </span><span id="append-79"><a href="#append-79"><span class="linenos"> 79</span></a><span class="sd">                    select p1_name as name from result</span>
 </span><span id="append-80"><a href="#append-80"><span class="linenos"> 80</span></a><span class="sd">                    union all select p2_name from result</span>
 </span><span id="append-81"><a href="#append-81"><span class="linenos"> 81</span></a><span class="sd">                    union all select p3_name from result</span>
 </span><span id="append-82"><a href="#append-82"><span class="linenos"> 82</span></a><span class="sd">                    union all select p4_name from result</span>
 </span><span id="append-83"><a href="#append-83"><span class="linenos"> 83</span></a><span class="sd">                    union all select name from remarks</span>
-</span><span id="append-84"><a href="#append-84"><span class="linenos"> 84</span></a><span class="sd">                ) group by name;</span>
+</span><span id="append-84"><a href="#append-84"><span class="linenos"> 84</span></a><span class="sd">                );</span>
 </span><span id="append-85"><a href="#append-85"><span class="linenos"> 85</span></a><span class="sd">                &quot;&quot;&quot;</span>
 </span><span id="append-86"><a href="#append-86"><span class="linenos"> 86</span></a>            <span class="p">)</span>
 </span><span id="append-87"><a href="#append-87"><span class="linenos"> 87</span></a>            <span class="n">name_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
