@@ -84,7 +84,6 @@ def calculation_point(score_df):
         score_df.at[x.Index, x.point] = (x.rpoint - g.cfg.mahjong.return_point) / 10 + rank_point[x.position - 1]
 
     logging.trace("rank_point=%s", rank_point)  # type: ignore
-    print(">>>", score_df)
     return score_df
 
 
