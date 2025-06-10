@@ -3,7 +3,7 @@ libs/utils/validator.py
 """
 
 import re
-from typing import Tuple, Literal
+from typing import Tuple
 
 import libs.global_value as g
 from cls.parser import CommandParser
@@ -152,7 +152,12 @@ def pattern(text: str) -> ScoreDataDict:
         case _:
             return score_data
 
+    g.params.update(unregistered_replace=False)  # ゲスト無効
+    g.params.update(individual=True)
     for k, p in position.items():
+        if str(k).endswith("_name"):
+            score_data[k] = formatter.name_replace(str(msg[p]), False)  # type: ignore[literal-required]
+            continue
         score_data[k] = str(msg[p])  # type: ignore[literal-required]
     score_data["comment"] = comment
 
