@@ -174,7 +174,7 @@ def ranking_record():
 
             # 最終値
             record_df.at[pname, key] = tmp_df[key].iloc[-1]
-            record_df[max_key] = record_df[max_key].copy().astype("int")
+            record_df[max_key] = record_df[max_key].fillna(0).copy().astype("int")
 
     # 最大値/最小値追加
     if not gamedata.empty:
