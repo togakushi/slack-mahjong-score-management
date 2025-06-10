@@ -9,6 +9,7 @@ from datetime import datetime
 import pandas as pd
 
 import libs.global_value as g
+from cls.types import ScoreDataDict
 from libs.data import loader
 
 
@@ -123,23 +124,36 @@ def regulation_list(word_type: int = 0) -> list:
     return ret
 
 
-def exsist_record(ts: str) -> dict:
+def exsist_record(ts: str) -> ScoreDataDict:
     """記録されているゲーム結果を返す
 
     Args:
         ts (str): 検索するタイムスタンプ
 
     Returns:
-        dict: 検索結果
+        ScoreDataDict: 検索結果
     """
+
+    ret: ScoreDataDict = {}
 
     with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
         cur.row_factory = sqlite3.Row
-        row = cur.execute("select * from result where ts=?", (ts,)).fetchone()
+        row = cur.execute(g.sql["SELECT_GAME_RESULTS"], (ts,)).fetchone()
 
     if row:
-        return dict(row)
-    return {}
+        tmp_dict = dict(row)
+        ret["p1_name"] = str(tmp_dict["p1_name"])
+        ret["p1_str"] = str(tmp_dict["p1_str"])
+        ret["p2_name"] = str(tmp_dict["p2_name"])
+        ret["p2_str"] = str(tmp_dict["p2_str"])
+        ret["p3_name"] = str(tmp_dict["p3_name"])
+        ret["p3_str"] = str(tmp_dict["p3_str"])
+        ret["p4_name"] = str(tmp_dict["p4_name"])
+        ret["p4_str"] = str(tmp_dict["p4_str"])
+        ret["comment"] = str(tmp_dict["comment"])
+        ret["rule_version"] = str(tmp_dict["rule_version"])
+
+    return ret
 
 
 def first_record() -> datetime:

@@ -8,19 +8,21 @@ import re
 import shutil
 import sqlite3
 from contextlib import closing
+from typing import Any, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.types import ScoreDataDict
 from libs.data import lookup
 from libs.functions import message, score, slack_api
 from libs.utils import formatter
 
 
-def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> None:
+def db_insert(detection: ScoreDataDict, ts: str, reactions_data: list | None = None) -> None:
     """スコアデータをDBに追加する
 
     Args:
-        detection (list): スコア情報
+        detection (ScoreDataDict): スコアデータ
         ts (str): コマンドが発行された時間
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
@@ -31,7 +33,7 @@ def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> N
         "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
-    param.update(score.get_score(detection))
+    param.update(cast(dict[str, Any], score.get_score(detection)))
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
@@ -43,11 +45,11 @@ def db_insert(detection: list, ts: str, reactions_data: list | None = None) -> N
         slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
 
 
-def db_update(detection: list, ts: str, reactions_data: list | None = None) -> None:
+def db_update(detection: ScoreDataDict, ts: str, reactions_data: list | None = None) -> None:
     """スコアデータを変更する
 
     Args:
-        detection (list): スコア情報
+        detection (ScoreDataDict): スコアデータ
         ts (str): コマンドが発行された時間
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
@@ -58,7 +60,7 @@ def db_update(detection: list, ts: str, reactions_data: list | None = None) -> N
         "rule_version": g.cfg.mahjong.rule_version,
         "reactions_data": reactions_data,
     }
-    param.update(score.get_score(detection))
+    param.update(cast(dict[str, Any], score.get_score(detection)))
 
     if g.msg.updatable:
         with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
@@ -70,11 +72,11 @@ def db_update(detection: list, ts: str, reactions_data: list | None = None) -> N
         slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
 
 
-def db_delete(ts):
+def db_delete(ts: str):
     """スコアデータを削除する
 
     Args:
-        ts (datetime): 削除対象レコードのタイムスタンプ
+        ts (str): 削除対象レコードのタイムスタンプ
     """
 
     if g.msg.updatable:

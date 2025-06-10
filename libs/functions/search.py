@@ -6,13 +6,11 @@ import logging
 import re
 import sqlite3
 from contextlib import closing
-from datetime import datetime
 from typing import Any, Tuple
 
-from dateutil.relativedelta import relativedelta
-
-from cls.types import SlackSearchData
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
+from cls.types import ScoreDataDict, SlackSearchData
 from libs.utils import formatter, validator
 
 SlackSearchDict = dict[str, SlackSearchData]
@@ -29,7 +27,7 @@ def slack_messages(word: str) -> SlackSearchDict:
     """
 
     # 検索クエリ
-    after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y-%m-%d")
+    after = ExtDt(days=-g.cfg.search.after).format("ymd", "-")
     query = f"{word} in:{g.cfg.search.channel} after:{after}"
     logging.info("query=%s", query)
 
@@ -119,18 +117,18 @@ def for_slack_score() -> SlackSearchDict:
     matches = slack_messages(g.cfg.search.keyword)
 
     # ゲーム結果の抽出
+    g.params.update(unregistered_replace=False)  # ゲスト無効
+    g.params.update(individual=True)  # チーム戦オフ
     for key in list(matches.keys()):
-        detection = validator.pattern(matches[key].get("text", ""))
-        if isinstance(detection, list):
+        if (detection := validator.pattern(matches[key].get("text", ""))):
             if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)
                 matches.pop(key)
                 continue
-            for i in range(0, 8, 2):  # 名前ブレを修正
-                g.params.update(unregistered_replace=False)  # ゲスト無効
-                g.params.update(individual=True)  # チーム戦オフ
-                detection[i] = formatter.name_replace(detection[i], False)
-            matches[key]["score"] = detection
+            for k, v in detection.items():
+                if k.endswith("_name"):  # 名前ブレを修正
+                    detection[k] = formatter.name_replace(str(v), False)  # type: ignore[literal-required]
+            matches[key]["score"] = dict_to_list(detection)
             matches[key].pop("text")
         else:  # 不一致は破棄
             matches.pop(key)
@@ -198,17 +196,8 @@ def for_db_score(first_ts: float | bool = False) -> dict:
 
         rows = curs.execute("select * from result where ts >= ?", (str(first_ts),))
         for row in rows.fetchall():
-            ts = row["ts"]
-            data[ts] = []
-            data[ts].append(row["p1_name"])
-            data[ts].append(row["p1_str"])
-            data[ts].append(row["p2_name"])
-            data[ts].append(row["p2_str"])
-            data[ts].append(row["p3_name"])
-            data[ts].append(row["p3_str"])
-            data[ts].append(row["p4_name"])
-            data[ts].append(row["p4_str"])
-            data[ts].append(row["comment"])
+            tmp = dict(row)
+            data[tmp.pop("ts")] = [v for k, v in tmp.items() if str(k).endswith("_name") or str(k).endswith("_str") or k == "comment"]
 
     return data
 
@@ -269,3 +258,23 @@ def reactions_list(msg: Any) -> Tuple[list, list]:
                         reaction_ng.append(msg.get("ts"))
 
     return (reaction_ok, reaction_ng)
+
+
+# todo: 移行用関数
+def dict_to_list(detection: ScoreDataDict) -> list:
+    """移行用関数
+
+    Args:
+        detection (ScoreDataDict): スコアデータ
+
+    Returns:
+        list: 旧式スコアデータ
+    """
+
+    return [
+        detection["p1_name"], detection["p1_str"],
+        detection["p2_name"], detection["p2_str"],
+        detection["p3_name"], detection["p3_str"],
+        detection["p4_name"], detection["p4_str"],
+        detection["comment"],
+    ]

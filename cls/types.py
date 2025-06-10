@@ -31,6 +31,35 @@ class GameInfoDict(TypedDict):
     last_comment: str | None
 
 
+class ScoreDataDict(TypedDict, total=False):
+    """スコアデータ格納用辞書"""
+    ts: str
+    p1_name: str
+    p1_str: str
+    p1_rpoint: int
+    p1_point: float
+    p1_rank: int
+    p2_name: str
+    p2_str: str
+    p2_rpoint: int
+    p2_point: float
+    p2_rank: int
+    p3_name: str
+    p3_str: str
+    p3_rpoint: int
+    p3_point: float
+    p3_rank: int
+    p4_name: str
+    p4_str: str
+    p4_rpoint: int
+    p4_point: float
+    p4_rank: int
+    comment: str | None
+    deposit: int
+    rpoint_sum: int
+    rule_version: str
+
+
 class ComparisonDict(TypedDict, total=False):
     """メモ突合用辞書
 

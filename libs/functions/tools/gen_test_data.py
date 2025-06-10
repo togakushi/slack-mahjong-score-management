@@ -8,8 +8,10 @@ import random
 import sqlite3
 from contextlib import closing
 from datetime import datetime
+from typing import Any, cast
 
 import libs.global_value as g
+from cls.types import ScoreDataDict
 from libs.functions import configuration, score
 from libs.functions.tools import score_simulator
 
@@ -36,6 +38,8 @@ def main(season_times: int = 1):
 
     now = datetime.now().timestamp() - ((len(matchup) + 7) * 86400 * season_times)
     dt = now
+    detection: ScoreDataDict = {}
+
     with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
         cur.execute("delete from result;")
         for season in range(1, season_times + 1):
@@ -56,6 +60,7 @@ def main(season_times: int = 1):
                 team_name = list(game)
                 random.shuffle(team_name)
                 for idx in range(5):
+                    # 席順シャッフル
                     member = [
                         vs_member[team_name[0]][idx],
                         vs_member[team_name[1]][idx],
@@ -63,15 +68,19 @@ def main(season_times: int = 1):
                         vs_member[team_name[3]][idx],
                     ]
                     random.shuffle(member)
-                    param = {}
+
+                    # スコアデータ生成
                     vs_score = score_simulator.simulate_game()
-                    result = score.get_score([
-                        member[0], str(int(vs_score[0] / 100)),
-                        member[1], str(int(vs_score[1] / 100)),
-                        member[2], str(int(vs_score[2] / 100)),
-                        member[3], str(int(vs_score[3] / 100)),
-                        f"第{season:02d}期{count + 1:04d}試合_{position[idx]}戦",
-                    ])
+                    detection["p1_name"] = member[0]
+                    detection["p1_str"] = str(int(vs_score[0] / 100))
+                    detection["p2_name"] = member[1]
+                    detection["p2_str"] = str(int(vs_score[1] / 100))
+                    detection["p3_name"] = member[2]
+                    detection["p3_str"] = str(int(vs_score[2] / 100))
+                    detection["p4_name"] = member[3]
+                    detection["p4_str"] = str(int(vs_score[3] / 100))
+                    detection["comment"] = f"第{season:02d}期{count + 1:04d}試合_{position[idx]}戦"
+                    result = score.get_score(detection)
 
                     # データ投入
                     dt = now + total_count * 86400 + idx * 3600 + random.random()
@@ -80,7 +89,7 @@ def main(season_times: int = 1):
                         "playtime": datetime.fromtimestamp(dt).strftime("%Y-%m-%d %H:%M:%S.%f"),
                         "rule_version": g.cfg.mahjong.rule_version,
                     }
-                    param.update(result)
+                    param.update(cast(dict[str, Any], result))
                     cur.execute(g.sql["RESULT_INSERT"], param)
 
                     output = f"{position[idx]}: "

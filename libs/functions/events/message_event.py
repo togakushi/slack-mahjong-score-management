@@ -100,23 +100,20 @@ def other_words(word: str):
             match g.msg.status:
                 case "message_append":
                     if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
-                        assert isinstance(detection, list), "detection should be a list"
                         modify.db_insert(detection, g.msg.event_ts)
                     else:
                         slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
                         logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
                 case "message_changed":
-                    if detection == [record_data.get(x) for x in [f"p{x}_{y}" for x in range(1, 5) for y in ("name", "str")] + ["comment"]]:
+                    if validator.is_data_change(detection, record_data):
                         return  # 変更箇所がなければ何もしない
                     if (g.cfg.setting.thread_report == g.msg.in_thread) or (g.msg.event_ts == g.msg.thread_ts):
                         if record_data:
                             if record_data.get("rule_version") == g.cfg.mahjong.rule_version:
-                                assert isinstance(detection, list), "detection should be a list"
                                 modify.db_update(detection, g.msg.event_ts)
                             else:
                                 logging.notice("changed: skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
                         else:
-                            assert isinstance(detection, list), "detection should be a list"
                             modify.db_insert(detection, g.msg.event_ts)
                             modify.reprocessing_remarks()
                     else:

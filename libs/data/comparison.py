@@ -3,14 +3,11 @@ lib/data/comparison.py
 """
 
 import logging
-from datetime import datetime
 from typing import Tuple
-
-from dateutil.relativedelta import relativedelta
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import ComparisonDict, SlackSearchData
+from cls.types import ComparisonDict, ScoreDataDict, SlackSearchData
 from libs.data import lookup, modify
 from libs.functions import score, search, slack_api
 from libs.utils import dictutil
@@ -29,8 +26,8 @@ def main():
     logging.notice("count=%s", count)  # type: ignore
 
     # 突合結果
-    after = (datetime.now() - relativedelta(days=g.cfg.search.after)).strftime("%Y/%m/%d")
-    before = datetime.now().strftime("%Y/%m/%d")
+    after = ExtDt(days=-g.cfg.search.after).format("ymd")
+    before = ExtDt().format("ymd")
 
     ret = f"*【データ突合】* ({after} - {before})\n"
     if count["pending"]:
@@ -73,17 +70,11 @@ def data_comparison() -> Tuple[dict, dict]:
     if slack_score:
         first_ts = float(min(slack_score))
     else:
-        first_ts = (datetime.now() - relativedelta(days=g.cfg.search.after)).timestamp()
+        first_ts = float(ExtDt(days=-g.cfg.search.after).format("ts"))
 
     # データベースからゲーム結果を取得
     db_score = search.for_db_score(first_ts)
     db_remarks = search.for_db_remarks(first_ts)
-
-    logging.trace("thread_report: %s", g.cfg.setting.thread_report)  # type: ignore
-    logging.trace("slack_score=%s", slack_score)  # type: ignore
-    logging.trace("slack_remarks=%s", slack_score)  # type: ignore
-    logging.trace("db_score=%s", db_score)  # type: ignore
-    logging.trace("db_remarks=%s", db_remarks)  # type: ignore
 
     # --- スコア突合
     ret_count, ret_msg = check_omission(slack_score, db_score)
@@ -116,7 +107,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
         Tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    now_ts = datetime.now().timestamp()
+    now_ts = float(ExtDt().format("ts"))
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
     msg: ComparisonDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
 
@@ -171,7 +162,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
                 msg["mismatch"] += f"\t{ExtDt(float(key)).format("ymdhms")}\n"
                 msg["mismatch"] += f"\t\t修正前：{textformat(db_score)}\n"
                 msg["mismatch"] += f"\t\t修正後：{textformat(slack_score)}\n"
-                modify.db_update(slack_score, key, reactions_data)
+                modify.db_update(list_to_dict(slack_score), key, reactions_data)
             else:
                 logging.info("score check skip: %s %s", ExtDt(float(key)).format("ymdhms"), textformat(db_score))
             continue
@@ -183,7 +174,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
         count["missing"] += 1
         logging.notice("missing: %s, %s", key, slack_score)  # type: ignore
         msg["missing"] += f"\t{ExtDt(float(key)).format("ymdhms")} {textformat(slack_score)}\n"
-        modify.db_insert(slack_score, key, reactions_data)
+        modify.db_insert(list_to_dict(slack_score), key, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         if float(key) + g.cfg.search.wait > now_ts:
@@ -221,7 +212,7 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, Com
         Tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    now_ts = datetime.now().timestamp()
+    now_ts = float(ExtDt().format("ts"))
     count: dict[str, int] = {"remark_mod": 0, "remark_del": 0}
     msg: ComparisonDict = {"remark_mod": "", "remark_del": "", "pending": []}
 
@@ -276,7 +267,7 @@ def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
         Tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    now_ts = datetime.now().timestamp()
+    now_ts = float(ExtDt().format("ts"))
     count: dict[str, int] = {"invalid_score": 0}
     msg: ComparisonDict = {"invalid_score": "", "pending": []}
 
@@ -296,7 +287,7 @@ def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
         if lookup.db.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
             continue
 
-        score_data = score.get_score(val.get("score"))
+        score_data = score.get_score(list_to_dict(val.get("score", "")))
         reaction_ok = val.get("reaction_ok")
         reaction_ng = val.get("reaction_ng")
 
@@ -335,5 +326,28 @@ def textformat(text):
         ret += f"[{text[8]}]"
     else:
         ret += "[]"
+
+    return ret
+
+
+# todo: 移行用関数
+def list_to_dict(detection: list) -> ScoreDataDict:
+    """移行用関数
+
+    Args:
+        detection (list): 旧式スコアデータ
+
+    Returns:
+        ScoreDataDict: スコアデータ
+    """
+
+    ret: ScoreDataDict = {
+        "p1_name": detection[0], "p1_str": detection[1],
+        "p2_name": detection[2], "p2_str": detection[3],
+        "p3_name": detection[4], "p3_str": detection[5],
+        "p4_name": detection[6], "p4_str": detection[7],
+        "comment": detection[8],
+    }
+    ret = score.get_score(ret)
 
     return ret

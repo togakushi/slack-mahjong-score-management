@@ -3,12 +3,12 @@ libs/utils/validator.py
 """
 
 import re
-from typing import Tuple
+from typing import Tuple, Literal
 
 import libs.global_value as g
 from cls.parser import CommandParser
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import SlackSearchData
+from cls.types import ScoreDataDict, SlackSearchData
 from libs.utils import formatter, textutil
 
 SlackSearchDict = dict[str, SlackSearchData]
@@ -72,16 +72,14 @@ def check_namepattern(name: str, kind: str = "") -> Tuple[bool, str]:
     return (ret_flg, ret_msg)
 
 
-def pattern(text: str) -> list | bool:
+def pattern(text: str) -> ScoreDataDict:
     """成績記録用フォーマットチェック
 
     Args:
         text (str): slackにポストされた内容
 
     Returns:
-        Tuple[list,bool]:
-        - list: フォーマットに一致すればスペース区切りの名前と素点のペア
-        - False: メッセージのパースに失敗した場合
+        ScoreDataDict: スコアデータ
     """
 
     # 記号を置換
@@ -111,21 +109,70 @@ def pattern(text: str) -> list | bool:
         r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({g.cfg.search.keyword})\((.+?)\)$"
     )
 
-    msg: list | bool
+    # 情報取り出し
+    score_data: ScoreDataDict = {}
+    position: dict = {}
     match text:
         case text if pattern1.findall(text):
-            m = pattern1.findall(text)[0]
-            msg = [m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], None]
+            msg = pattern1.findall(text)[0]
+            position = {
+                "p1_name": 1, "p1_str": 2,
+                "p2_name": 3, "p2_str": 4,
+                "p3_name": 5, "p3_str": 6,
+                "p4_name": 7, "p4_str": 8,
+            }
+            comment = None
         case text if pattern2.findall(text):
-            m = pattern2.findall(text)[0]
-            msg = [m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], None]
+            msg = pattern2.findall(text)[0]
+            position = {
+                "p1_name": 0, "p1_str": 1,
+                "p2_name": 2, "p2_str": 3,
+                "p3_name": 4, "p3_str": 5,
+                "p4_name": 6, "p4_str": 7,
+            }
+            comment = None
         case text if pattern3.findall(text):
-            m = pattern3.findall(text)[0]
-            msg = [m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[1]]
+            msg = pattern3.findall(text)[0]
+            position = {
+                "p1_name": 2, "p1_str": 3,
+                "p2_name": 4, "p2_str": 5,
+                "p3_name": 6, "p3_str": 7,
+                "p4_name": 8, "p4_str": 9,
+            }
+            comment = str(msg[1])
         case text if pattern4.findall(text):
-            m = pattern4.findall(text)[0]
-            msg = [m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[9]]
+            msg = pattern4.findall(text)[0]
+            position = {
+                "p1_name": 0, "p1_str": 1,
+                "p2_name": 2, "p2_str": 3,
+                "p3_name": 4, "p3_str": 5,
+                "p4_name": 6, "p4_str": 7,
+            }
+            comment = str(msg[9])
         case _:
-            msg = False
+            return score_data
 
-    return msg
+    for k, p in position.items():
+        score_data[k] = str(msg[p])  # type: ignore[literal-required]
+    score_data["comment"] = comment
+
+    return score_data
+
+
+def is_data_change(slack_data: ScoreDataDict, db_data: ScoreDataDict) -> bool:
+    """スコアデータに更新があるかチェックする
+
+    Args:
+        slack_data (ScoreDataDict): ポストされたデータ
+        db_data (ScoreDataDict): DB記録済みデータ
+
+    Returns:
+        bool: 真偽
+    """
+
+    chk_slack = {k: v for k, v in slack_data.items() if k.endswith("_name") or k.endswith("_str") or k == "comment"}
+    chk_db = {k: v for k, v in db_data.items() if k.endswith("_name") or k.endswith("_str") or k == "comment"}
+
+    if chk_slack == chk_db:
+        return True
+    return False

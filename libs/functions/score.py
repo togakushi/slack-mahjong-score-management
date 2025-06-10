@@ -7,12 +7,13 @@ import logging
 import pandas as pd
 
 import libs.global_value as g
+from cls.types import ScoreDataDict
 from libs.data import lookup
 from libs.functions import message, slack_api
 from libs.utils import formatter
 
 
-def calculation_point(score_df):
+def calculation_point(score_df) -> pd.DataFrame:
     """素点データから獲得ポイントと順位を取得する
 
     Args:
@@ -87,7 +88,7 @@ def calculation_point(score_df):
     return score_df
 
 
-def point_split(point: list):
+def point_split(point: list) -> list:
     """順位点を山分けする
 
     Args:
@@ -138,21 +139,14 @@ def reactions(param: dict):
         )
 
 
-def get_score(detection):
+def get_score(detection: ScoreDataDict) -> ScoreDataDict:
     """順位と獲得ポイントを計算する
 
     Args:
-        detection (list): 素点データ(名前, 素点) x 4人分 + ゲームコメント
+        detection (ScoreDataDict): スコアデータ
 
     Returns:
-        dict: 計算結果
-        - p?_name: 名前
-        - p?_str: 素点文字列
-        - p?_rpoint: 素点
-        - p?_point: ポイント
-        - p?_rank: 順位
-        - deposit: 供託
-        - comment: コメント
+        ScoreDataDict: スコアデータ(計算結果追加)
     """
 
     g.params.update(unregistered_replace=False)  # ゲスト無効
@@ -160,40 +154,28 @@ def get_score(detection):
 
     # ポイント計算
     score_df = pd.DataFrame({
-        "name": [
-            formatter.name_replace(detection[x * 2], False)
-            for x in range(4)
-        ],
-        "str": [detection[x * 2 + 1] for x in range(4)],
-        "rpoint": [formatter.normalized_expression(detection[x * 2 + 1]) for x in range(4)],
+        "name": [formatter.name_replace(str(v), False) for k, v in detection.items() if str(k).endswith("_name")],
+        "str": [str(v) for k, v in detection.items() if str(k).endswith("_str")],
+        "rpoint": [formatter.normalized_expression(str(v)) for k, v in detection.items() if str(k).endswith("_str")],
     })
     score_df = calculation_point(score_df)
-    score = score_df.to_dict(orient="records")
+    for idx in score_df.index:
+        point = float(score_df.at[idx, "point"])
+        detection[f"p{int(idx + 1)}_rpoint"] = int(score_df.at[idx, "rpoint"])  # type: ignore[literal-required]
+        detection[f"p{int(idx + 1)}_point"] = float(f"{point:.1f}")  # type: ignore[literal-required]  # 桁ブレ修正
+        detection[f"p{int(idx + 1)}_rank"] = int(score_df.at[idx, "rank"])  # type: ignore[literal-required]
+
     rpoint_sum = int(score_df["rpoint"].sum())
-    deposit = g.cfg.mahjong.origin_point * 4 - rpoint_sum
-
-    ret = {
-        "deposit": deposit,
-        "rpoint_sum": rpoint_sum,
-        "comment": detection[8],
-    }
-    ret.update(dict(zip([f"p1_{x}" for x in list(score[0])], list(score[0].values()))))
-    ret.update(dict(zip([f"p2_{x}" for x in list(score[1])], list(score[1].values()))))
-    ret.update(dict(zip([f"p3_{x}" for x in list(score[2])], list(score[2].values()))))
-    ret.update(dict(zip([f"p4_{x}" for x in list(score[3])], list(score[3].values()))))
-
-    # 桁ブレ修正
-    for x in range(1, 5):
-        point = ret[f"p{x}_point"]
-        ret[f"p{x}_point"] = float(f"{point:.1f}")
+    detection["rpoint_sum"] = rpoint_sum
+    detection["deposit"] = g.cfg.mahjong.origin_point * 4 - rpoint_sum
 
     logging.info(
         "score data:[東 %s %s][南 %s %s][西 %s %s][北 %s %s][供託 %s]",
-        ret["p1_name"], ret["p1_rpoint"],
-        ret["p2_name"], ret["p2_rpoint"],
-        ret["p3_name"], ret["p3_rpoint"],
-        ret["p4_name"], ret["p4_rpoint"],
-        ret["deposit"],
+        detection["p1_name"], detection["p1_rpoint"],
+        detection["p2_name"], detection["p2_rpoint"],
+        detection["p3_name"], detection["p3_rpoint"],
+        detection["p4_name"], detection["p4_rpoint"],
+        detection["deposit"],
     )
 
-    return ret
+    return detection
