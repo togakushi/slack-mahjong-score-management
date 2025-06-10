@@ -198,25 +198,49 @@ def get_record(data: dict) -> dict:
         dict: 集計データ
     """
 
-    ret: dict = {}
+    def current_data(count: int) -> str:
+        if count == 0:
+            ret = "0 回"
+        elif count == 1:
+            ret = "1 回目"
+        else:
+            ret = f"{count} 連続中"
+        return ret
 
+    def max_data(count: int, current: int) -> str:
+        if count == 0:
+            ret = "*****"
+        elif count == 1:
+            ret = "最大 1 回"
+        else:
+            ret = f"最大 {count} 連続"
+
+        if count == current:
+            if count:
+                ret = "記録更新中"
+            else:
+                ret = "記録なし"
+
+        return ret
+
+    ret: dict = {}
     ret["ベストレコード"] = textwrap.dedent(f"""\
         *【ベストレコード】*
-        \t連続トップ：{data["連続トップ"]} 連続
-        \t連続連対：{data["連続連対"]} 連続
-        \t連続ラス回避：{data["連続ラス回避"]} 連続
+        \t連続トップ：{current_data(data["c_top"])} ({max_data(data["連続トップ"], data["c_top"])})
+        \t連続連対：{current_data(data["c_top2"])} ({max_data(data["連続連対"], data["c_top2"])})
+        \t連続ラス回避：{current_data(data["c_top3"])} ({max_data(data["連続ラス回避"], data["c_top3"])})
         \t最大素点：{data["最大素点"] * 100}点
         \t最大獲得ポイント：{data["最大獲得ポイント"]}pt
-    """).replace("-", "▲").replace("：0 連続", "：----").replace("：1 連続", "：----")
+    """).replace("-", "▲").replace("*****", "-----")
 
     ret["ワーストレコード"] = textwrap.dedent(f"""\
         *【ワーストレコード】*
-        \t連続ラス：{data['連続ラス']} 連続
-        \t連続逆連対：{data['連続逆連対']} 連続
-        \t連続トップなし：{data['連続トップなし']} 連続
+        \t連続ラス：{current_data(data["c_low4"])} ({max_data(data["連続ラス"], data["c_low4"])})
+        \t連続逆連対：{current_data(data["c_low2"])} ({max_data(data["連続逆連対"], data["c_low2"])})
+        \t連続トップなし：{current_data(data["c_low"])} ({max_data(data["連続トップなし"], data["c_low"])})
         \t最小素点：{data['最小素点'] * 100}点
         \t最小獲得ポイント：{data['最小獲得ポイント']}pt
-    """).replace("-", "▲").replace("：0 連続", "：----").replace("：1 連続", "：----")
+    """).replace("-", "▲").replace("*****", "-----")
 
     return ret
 

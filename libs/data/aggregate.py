@@ -169,7 +169,12 @@ def ranking_record():
                 (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
             ).cumcount() + 1
             tmp_df.loc[tmp_df["flg"] == 0, key] = 0
-            record_df.at[pname, key] = tmp_df[[key]].max().values[0]
+            max_key = key.replace("c_", "max_")
+            record_df.at[pname, max_key] = int(tmp_df[[key]].max().values[0])
+
+            # 最終値
+            record_df.at[pname, key] = tmp_df[key].iloc[-1]
+            record_df[max_key] = record_df[max_key].copy().astype("int")
 
     # 最大値/最小値追加
     if not gamedata.empty:
