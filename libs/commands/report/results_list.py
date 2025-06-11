@@ -243,7 +243,7 @@ def csv_generation(df):
             case "1st_%" | "2nd_%" | "3rd_%" | "4th_%" | "flying_%" | "yakuman_%":
                 df[x] = df[x].round(2)
             case "rank_avg":
-                df[x] = df[x].round(2)
+                df[x] = df[x].astype(float).round(2)
 
     df.to_csv(report_file_path)
 
