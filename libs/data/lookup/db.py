@@ -2,7 +2,6 @@
 lib/data/lookup/db.py
 """
 
-import sqlite3
 from contextlib import closing
 from datetime import datetime
 
@@ -11,6 +10,7 @@ import pandas as pd
 import libs.global_value as g
 from cls.types import ScoreDataDict
 from libs.data import loader
+from libs.utils import dbutil
 
 
 def get_member_id(name: str | None = None) -> dict:
@@ -23,7 +23,7 @@ def get_member_id(name: str | None = None) -> dict:
         dict: メンバー名とIDのペア
     """
 
-    resultdb = sqlite3.connect(g.cfg.db.database_file)
+    resultdb = dbutil.get_connection()
     rows = resultdb.execute("select name, id from member;")
     id_list = dict(rows.fetchall())
     resultdb.close()
@@ -59,8 +59,7 @@ def member_info(name: str) -> dict:
     """
 
     sql = loader.query_modification(sql)
-    resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
+    resultdb = dbutil.get_connection()
     rows = resultdb.execute(sql, (g.cfg.mahjong.rule_version, name))
     ret = dict(rows.fetchone())
     resultdb.close()
@@ -75,7 +74,7 @@ def rule_version_range() -> dict:
     """
 
     rule: dict = {}
-    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+    with closing(dbutil.get_connection()) as cur:
         ret = cur.execute(
             """
             select
@@ -108,7 +107,7 @@ def regulation_list(word_type: int = 0) -> list:
         list: 取得結果
     """
 
-    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+    with closing(dbutil.get_connection()) as cur:
         ret = cur.execute(
             """
             select
@@ -136,8 +135,7 @@ def exsist_record(ts: str) -> ScoreDataDict:
 
     ret: ScoreDataDict = {}
 
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.row_factory = sqlite3.Row
+    with closing(dbutil.get_connection()) as cur:
         row = cur.execute(g.sql["SELECT_GAME_RESULTS"], (ts,)).fetchone()
 
     if row:
@@ -165,7 +163,7 @@ def first_record() -> datetime:
 
     ret = datetime.now()
     try:
-        with closing(sqlite3.connect(g.cfg.db.database_file)) as resultdb:
+        with closing(dbutil.get_connection()) as resultdb:
             table_count = resultdb.execute(
                 "select count() from sqlite_master where type='view' and name='game_results';",
             ).fetchall()[0][0]
@@ -195,8 +193,8 @@ def get_results_list(name: str, rule_version: str = "") -> pd.DataFrame:
     """
 
     ret_data = pd.read_sql(
-        g.sql["SELECT_ALL_RESULTS"],
-        sqlite3.connect(g.cfg.db.database_file),
+        sql=g.sql["SELECT_ALL_RESULTS"],
+        con=dbutil.get_connection(),
         params={
             "rule_version": rule_version if rule_version else g.cfg.mahjong.rule_version,
             "player_name": name,

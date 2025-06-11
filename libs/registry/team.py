@@ -3,12 +3,11 @@ libs/commands/team.py
 """
 
 import logging
-import sqlite3
 
 import libs.global_value as g
 from libs.data import initialization, modify
 from libs.functions import configuration
-from libs.utils import formatter, textutil, validator
+from libs.utils import dbutil, formatter, textutil, validator
 
 
 def create(argument):
@@ -31,11 +30,7 @@ def create(argument):
         else:  # 登録処理
             ret, msg = validator.check_namepattern(team_name, "team")
             if ret:
-                resultdb = sqlite3.connect(
-                    g.cfg.db.database_file,
-                    detect_types=sqlite3.PARSE_DECLTYPES,
-                )
-                resultdb.row_factory = sqlite3.Row
+                resultdb = dbutil.get_connection()
                 resultdb.execute(
                     "insert into team(name) values (?)",
                     (team_name,)
@@ -68,10 +63,7 @@ def delete(argument):
         else:
             msg = modify.db_backup()
             team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
-            resultdb = sqlite3.connect(
-                g.cfg.db.database_file,
-                detect_types=sqlite3.PARSE_DECLTYPES,
-            )
+            resultdb = dbutil.get_connection()
             resultdb.execute(
                 "delete from team where id = ?",
                 (team_id,)
@@ -133,10 +125,7 @@ def append(argument):
         #    registration_flg = False
 
         if registration_flg and team_id:  # 登録処理
-            resultdb = sqlite3.connect(
-                g.cfg.db.database_file,
-                detect_types=sqlite3.PARSE_DECLTYPES,
-            )
+            resultdb = dbutil.get_connection()
             resultdb.execute(
                 "update member set team_id = ? where name = ?",
                 (team_id, player_name)
@@ -162,13 +151,9 @@ def remove(argument):
         str: slackにpostする内容(処理結果)
     """
 
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
-
     msg = "使い方が間違っています。"
+
+    resultdb = dbutil.get_connection()
 
     # todo: argument == 1のときの処理
 
@@ -191,10 +176,7 @@ def remove(argument):
             registration_flg = False
 
         if registration_flg and team_id:  # 登録処理
-            resultdb = sqlite3.connect(
-                g.cfg.db.database_file,
-                detect_types=sqlite3.PARSE_DECLTYPES,
-            )
+            resultdb = dbutil.get_connection()
             resultdb.execute(
                 "update member set team_id = null where name = ?",
                 (player_name,)
@@ -217,12 +199,7 @@ def clear():
 
     msg = modify.db_backup()
 
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
-
+    resultdb = dbutil.get_connection()
     resultdb.execute("update member set team_id = null;")
     resultdb.execute("drop table team;")
     resultdb.execute("delete from sqlite_sequence where name = 'team';")

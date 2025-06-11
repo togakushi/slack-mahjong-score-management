@@ -5,7 +5,6 @@ libs/functions/tools/gen_test_data.py
 import itertools
 import logging
 import random
-import sqlite3
 from contextlib import closing
 from datetime import datetime
 from typing import Any, cast
@@ -14,6 +13,7 @@ import libs.global_value as g
 from cls.types import ScoreDataDict
 from libs.functions import configuration, score
 from libs.functions.tools import score_simulator
+from libs.utils import dbutil
 
 
 def main(season_times: int = 1):
@@ -40,7 +40,7 @@ def main(season_times: int = 1):
     dt = now
     detection: ScoreDataDict = {}
 
-    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+    with closing(dbutil.get_connection()) as cur:
         cur.execute("delete from result;")
         for season in range(1, season_times + 1):
             random.shuffle(matchup)

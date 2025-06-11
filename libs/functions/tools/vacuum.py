@@ -4,11 +4,11 @@ libs/functions/tools/vacuum.py
 
 import logging
 import os
-import sqlite3
 from contextlib import closing
 
 import libs.global_value as g
 from libs.data import modify
+from libs.utils import dbutil
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
     modify.db_backup()
     before_size = os.path.getsize(g.cfg.db.database_file)
 
-    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+    with closing(dbutil.get_connection()) as cur:
         before_page = db_info(cur, "page_count")
         before_freelist = db_info(cur, "freelist_count")
         cur.execute("vacuum;")

@@ -4,14 +4,13 @@ libs/functions/search.py
 
 import logging
 import re
-import sqlite3
 from contextlib import closing
 from typing import Any, Tuple
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import ScoreDataDict, SlackSearchData
-from libs.utils import formatter, validator
+from libs.utils import dbutil, formatter, validator
 
 SlackSearchDict = dict[str, SlackSearchData]
 
@@ -190,10 +189,8 @@ def for_db_score(first_ts: float | bool = False) -> dict:
         return {}
 
     data: dict = {}
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.row_factory = sqlite3.Row
+    with closing(dbutil.get_connection()) as cur:
         curs = cur.cursor()
-
         rows = curs.execute("select * from result where ts >= ?", (str(first_ts),))
         for row in rows.fetchall():
             tmp = dict(row)
@@ -217,9 +214,7 @@ def for_db_remarks(first_ts: float | bool = False) -> list:
 
     # データベースからデータ取得
     data: list = []
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.row_factory = sqlite3.Row
-
+    with closing(dbutil.get_connection()) as cur:
         # 記録済みメモ内容
         rows = cur.execute("select * from remarks where thread_ts>=?", (str(first_ts),))
         for row in rows.fetchall():

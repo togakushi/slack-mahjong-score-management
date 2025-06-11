@@ -2,10 +2,8 @@
 lib/data/lookup/textdata.py
 """
 
-import sqlite3
-
 import libs.global_value as g
-from libs.utils import textutil
+from libs.utils import dbutil, textutil
 
 
 # slack出力用
@@ -43,11 +41,7 @@ def get_team_list():
         str: slackにpostする内容
     """
 
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
+    resultdb = dbutil.get_connection()
     cur = resultdb.execute("""
         select
             team.name,

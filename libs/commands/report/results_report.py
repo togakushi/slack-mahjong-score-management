@@ -4,7 +4,6 @@ libs/commands/report/results_report.py
 
 import logging
 import os
-import sqlite3
 from datetime import datetime
 from io import BytesIO
 from typing import List, Tuple
@@ -24,7 +23,7 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
 
 import libs.global_value as g
 from libs.data import loader, lookup
-from libs.utils import formatter
+from libs.utils import dbutil, formatter
 
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
@@ -40,11 +39,7 @@ def get_game_results() -> list:
     g.params.update(starttime=g.params["starttime"].format("sql"))
     g.params.update(endtime=g.params["endtime"].format("sql"))
 
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
+    resultdb = dbutil.get_connection()
     rows = resultdb.execute(
         loader.query_modification(loader.load_query("report/personal_data.sql")),
         g.params,
@@ -104,11 +99,7 @@ def get_count_results(game_count: int) -> list:
     """
 
     g.params.update(interval=game_count)
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
+    resultdb = dbutil.get_connection()
     rows = resultdb.execute(
         loader.query_modification(loader.load_query("report/count_data.sql")),
         g.params,
@@ -169,12 +160,7 @@ def get_count_moving(game_count: int) -> list:
         list: 集計結果のリスト
     """
 
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
-
+    resultdb = dbutil.get_connection()
     g.params.update(interval=game_count)
     rows = resultdb.execute(
         loader.query_modification(loader.load_query("report/count_moving.sql")),

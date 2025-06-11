@@ -3,12 +3,11 @@ lib/registry/member_manager.py
 """
 
 import logging
-import sqlite3
 
 import libs.global_value as g
 from libs.data import modify
 from libs.functions import configuration
-from libs.utils import textutil, validator
+from libs.utils import dbutil, textutil, validator
 
 
 def append(argument):
@@ -23,8 +22,7 @@ def append(argument):
         str: slackにpostする内容(処理結果)
     """
 
-    resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
+    resultdb = dbutil.get_connection()
 
     ret = False
     dbupdate_flg = False
@@ -112,12 +110,7 @@ def remove(argument):
         str: slackにpostする内容(処理結果)
     """
 
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES
-    )
-    resultdb.row_factory = sqlite3.Row
-
+    resultdb = dbutil.get_connection()
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # メンバー削除

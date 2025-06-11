@@ -4,12 +4,11 @@ libs/functions/tools/unification.py
 
 import configparser
 import logging
-import sqlite3
 
 import libs.global_value as g
 from libs.data import modify
 from libs.functions import configuration
-from libs.utils import validator, textutil
+from libs.utils import dbutil, textutil, validator
 
 
 def main():
@@ -24,8 +23,7 @@ def main():
         for name, alias in rename_conf["rename"].items():
             name_table.setdefault(name, [x.strip() for x in alias.split(",")])
 
-        db = sqlite3.connect(g.cfg.db.database_file)
-
+        db = dbutil.get_connection()
         for name, alias_list in name_table.items():
             count = 0
             chk, msg = validator.check_namepattern(name)
@@ -54,8 +52,7 @@ def main():
         db.commit()
         db.close()
     else:
-        db = sqlite3.connect(g.cfg.db.database_file)
-        db.row_factory = sqlite3.Row
+        db = dbutil.get_connection()
         for alias, name in g.member_list.items():
             check_list: list = [
                 textutil.str_conv(name, "k2h"),

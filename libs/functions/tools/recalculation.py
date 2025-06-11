@@ -3,21 +3,20 @@ libs/functions/tools/score_simulator.py
 """
 
 import logging
-import sqlite3
 from contextlib import closing
 
 import libs.global_value as g
 from cls.types import ScoreDataDict
 from libs.data import modify
 from libs.functions import score
+from libs.utils import dbutil
 
 
 def main():
     """ポイント再計算"""
     modify.db_backup()
     detection: ScoreDataDict = {}
-    with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-        cur.row_factory = sqlite3.Row
+    with closing(dbutil.get_connection()) as cur:
         rows = cur.execute("select * from result where rule_version=?;", (g.cfg.mahjong.rule_version,))
         count = 0
 

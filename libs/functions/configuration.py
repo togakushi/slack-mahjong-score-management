@@ -6,13 +6,13 @@ import argparse
 import logging
 import os
 import shutil
-import sqlite3
 import sys
 from functools import partial
 
 import libs.global_value as g
 from cls.config import Config
 from cls.parser import MessageParser
+from libs.utils import dbutil
 
 
 def set_loglevel():
@@ -198,9 +198,7 @@ def read_memberslist(log=True):
         log (bool, optional): 読み込み時に内容をログに出力する. Defaults to True.
     """
 
-    resultdb = sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)
-    resultdb.row_factory = sqlite3.Row
-
+    resultdb = dbutil.get_connection()
     rows = resultdb.execute("select name from member where id=0")
     g.cfg.member.guest_name = rows.fetchone()[0]
 

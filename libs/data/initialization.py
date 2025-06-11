@@ -5,22 +5,17 @@ lib/data/initialization.py
 import json
 import logging
 import os
-import sqlite3
 from importlib.resources import files
 
 import libs.global_value as g
 from cls.types import GradeTableDict
 from libs.data import loader
+from libs.utils import dbutil
 
 
 def initialization_resultdb():
     """DB初期化"""
-    resultdb = sqlite3.connect(
-        g.cfg.db.database_file,
-        detect_types=sqlite3.PARSE_DECLTYPES,
-    )
-    resultdb.row_factory = sqlite3.Row
-
+    resultdb = dbutil.get_connection()
     resultdb.execute(loader.load_query("table/member.sql"))  # メンバー登録テーブル
     resultdb.execute(loader.load_query("table/alias.sql"))  # 別名定義テーブル
     resultdb.execute(loader.load_query("table/team.sql"))  # チーム定義テーブル

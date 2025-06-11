@@ -4,13 +4,13 @@ lib/data/loader.py
 
 import logging
 import re
-import sqlite3
 from datetime import datetime
 from importlib.resources import files
 
 import pandas as pd
 
 import libs.global_value as g
+from libs.utils import dbutil
 
 
 def load_query(filepath: str) -> str:
@@ -45,8 +45,8 @@ def read_data(filepath: str) -> pd.DataFrame:
 
     sql = query_modification(load_query(filepath))
     df = pd.read_sql(
-        sql,
-        sqlite3.connect(g.cfg.db.database_file),
+        sql=sql,
+        con=dbutil.get_connection(),
         params=g.params,
     )
 

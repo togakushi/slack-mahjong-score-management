@@ -3,12 +3,12 @@ libs/functions/tools/member.py
 """
 
 import logging
-import sqlite3
 
 import pandas as pd
 
 import libs.global_value as g
 from libs.data import modify
+from libs.utils import dbutil
 
 
 def export_data():
@@ -23,7 +23,7 @@ def export_data():
                 case _:
                     sql = f"select * from {table};"
 
-            df = pd.read_sql(sql, sqlite3.connect(g.cfg.db.database_file))
+            df = pd.read_sql(sql, dbutil.get_connection())
             # 整数値を維持
             if "team_id" in df.columns:
                 df["team_id"] = df["team_id"].astype("Int64")
@@ -36,7 +36,7 @@ def import_data():
     """メンバー情報インポート"""
     if g.args.import_data:
         modify.db_backup()
-        conn = sqlite3.connect(g.cfg.db.database_file)
+        conn = dbutil.get_connection()
         for table in ("member", "alias", "team"):
             csvfile = f"{g.args.import_data}_{table}.csv"
             conn.execute(f"delete from {table};")

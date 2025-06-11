@@ -6,7 +6,6 @@ import logging
 import os
 import re
 import shutil
-import sqlite3
 from contextlib import closing
 from typing import Any, cast
 
@@ -15,7 +14,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import ScoreDataDict
 from libs.data import lookup
 from libs.functions import message, score, slack_api
-from libs.utils import formatter
+from libs.utils import dbutil, formatter
 
 
 def db_insert(detection: ScoreDataDict, ts: str, reactions_data: list | None = None) -> None:
@@ -36,7 +35,7 @@ def db_insert(detection: ScoreDataDict, ts: str, reactions_data: list | None = N
     param.update(cast(dict[str, Any], score.get_score(detection)))
 
     if g.msg.updatable:
-        with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+        with closing(dbutil.get_connection()) as cur:
             cur.execute(g.sql["RESULT_INSERT"], param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
@@ -63,7 +62,7 @@ def db_update(detection: ScoreDataDict, ts: str, reactions_data: list | None = N
     param.update(cast(dict[str, Any], score.get_score(detection)))
 
     if g.msg.updatable:
-        with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+        with closing(dbutil.get_connection()) as cur:
             cur.execute(g.sql["RESULT_UPDATE"], param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
@@ -80,7 +79,7 @@ def db_delete(ts: str):
     """
 
     if g.msg.updatable:
-        with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+        with closing(dbutil.get_connection()) as cur:
             delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
             cur.execute(g.sql["RESULT_DELETE"], (ts,))
             delete_result = cur.execute("select changes();").fetchone()[0]
@@ -147,9 +146,7 @@ def remarks_append(remarks: dict | list) -> None:
         remarks = [remarks]
 
     if g.msg.updatable:
-        with closing(sqlite3.connect(g.cfg.db.database_file, detect_types=sqlite3.PARSE_DECLTYPES)) as cur:
-            cur.row_factory = sqlite3.Row
-
+        with closing(dbutil.get_connection()) as cur:
             for para in remarks:
                 # 親スレッドの情報
                 row = cur.execute("select * from result where ts=:thread_ts", para).fetchone()
@@ -172,7 +169,7 @@ def remarks_delete(ts: str) -> None:
     """
 
     if g.msg.updatable:
-        with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+        with closing(dbutil.get_connection()) as cur:
             cur.execute(g.sql["REMARKS_DELETE_ONE"], (ts,))
             count = cur.execute("select changes();").fetchone()[0]
             cur.commit()
@@ -194,7 +191,7 @@ def remarks_delete_compar(para: dict) -> None:
 
     ch: str | None
 
-    with closing(sqlite3.connect(g.cfg.db.database_file)) as cur:
+    with closing(dbutil.get_connection()) as cur:
         cur.execute(g.sql["REMARKS_DELETE_COMPAR"], para)
         cur.commit()
 
