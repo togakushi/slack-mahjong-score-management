@@ -171,7 +171,7 @@ class ExtendedDatetime:
 
         Args:
             value (AcceptedType | None, optional): 引数
-            - None: 現在時刻(`datetime.now()`)で初期化
+                - None: 現在時刻(`datetime.now()`)で初期化
             relativedelta_kwargs (dict): 初期化時にrelativedelta()に渡す引数
         """
 

@@ -14,21 +14,17 @@ if TYPE_CHECKING:
 
 
 class GameInfoDict(TypedDict):
-    """ゲーム集計情報格納辞書
-
-    Attributes:
-        game_count (int): ゲーム数
-        first_game  (ExtendedDatetime): 記録されている最初のゲーム時間("%Y/%m/%d %H:%M:%S")
-        last_game (ExtendedDatetime): 記録されている最後のゲーム時間("%Y/%m/%d %H:%M:%S")
-        first_comment (str | None): 記録されている最初のゲームコメント
-        last_comment (str | None): 記録されている最後のゲームコメント
-    """
-
+    """ゲーム集計情報格納辞書"""
     game_count: int
+    """ゲーム数"""
     first_game: "ExtendedDatetime"
+    """記録されている最初のゲーム時間"""
     last_game: "ExtendedDatetime"
+    """記録されている最後のゲーム時間"""
     first_comment: str | None
+    """記録されている最初のゲームコメント"""
     last_comment: str | None
+    """記録されている最後のゲームコメント"""
 
 
 class ScoreDataDict(TypedDict, total=False):
@@ -61,44 +57,25 @@ class ScoreDataDict(TypedDict, total=False):
 
 
 class ComparisonDict(TypedDict, total=False):
-    """メモ突合用辞書
-
-    Attributes:
-        mismatch (str): 差分
-        missing (str): 追加
-        delete (str): 削除
-        remark_mod (str): 追加/削除
-        remark_del (str): 削除
-        invalid_score (str): 素点合計不一致
-        pending (list[str]): 保留
-    """
-
+    """メモ突合用辞書"""
     mismatch: str
+    """差分"""
     missing: str
+    """追加"""
     delete: str
+    """削除"""
     remark_mod: str
+    """メモの修正(追加/削除)"""
     remark_del: str
+    """削除"""
     invalid_score: str
+    """素点合計不一致"""
     pending: list[str]
+    """保留"""
 
 
 class SlackSearchData(TypedDict, total=False):
-    """slack検索結果格納辞書
-
-    Attributes:
-        text (str): 本文
-        channel_id (str): チャンネルID
-        user_id (str): ホストしたユーザID
-        event_ts (str | None): ポスト時間
-        thread_ts (str | None): スレッド元時間
-        edited_ts (str | None): 最終編集時間
-        reaction_ok (list): botが付けたOKリアクション
-        reaction_ng (list): botが付けたNGリアクション
-        in_thread (bool): スレッド内のポストか判定
-        score (list): 本文がスコア報告ならパースした結果
-        remarks (list): 本文がメモなら名前と内容のタプルのリスト
-    """
-
+    """slack検索結果格納辞書"""
     text: str
     """検索にヒットした本文の内容"""
     channel_id: str
