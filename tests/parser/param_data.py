@@ -148,27 +148,31 @@ search_range: dict[str, Tuple[Any, ...]] = {
 
 # 得点入力
 score_pattern: dict[str, Tuple[Any, ...]] = {
-    # input_str, result_dict
+    # input_str, result_dict, get_point
     "pattern 01": (
         "終局ひと250いぬ250さる250とり250",
         {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": None},
+        {"p1_point": 45.0, "p2_point": 5.0, "p3_point": -15.0, "p4_point": -35.0},
     ),
     "pattern 02": (
         "ひと250いぬ250さる250とり250終局",
         {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": None},
+        {"p1_point": 45.0, "p2_point": 5.0, "p3_point": -15.0, "p4_point": -35.0},
     ),
     "pattern 03": (
         "終局(先頭のコメント)ひと250いぬ250さる250とり250",
         {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": "先頭のコメント"},
+        {"p1_point": 45.0, "p2_point": 5.0, "p3_point": -15.0, "p4_point": -35.0},
     ),
     "pattern 04": (
         "ひと250いぬ250さる250とり250終局(末尾のコメント)",
         {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": "末尾のコメント"},
+        {"p1_point": 45.0, "p2_point": 5.0, "p3_point": -15.0, "p4_point": -35.0},
     ),
     "invalid pattern 01": (
-        "終局ひと250いぬ250さる250", {},
+        "終局ひと250いぬ250さる250", {}, {},
     ),
     "invalid pattern 02": (
-        "終局ひと250いぬ250さる250とり250おに250", {},
+        "終局ひと250いぬ250さる250とり250おに250", {}, {},
     ),
 }
