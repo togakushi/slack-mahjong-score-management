@@ -145,9 +145,6 @@ COMMANDS: CommandsDict = {
 class CommandParser():
     """引数解析クラス"""
 
-    words: dict = {}
-    """検索範囲で指定できる単語"""
-
     def __init__(self):
         self.day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
 
