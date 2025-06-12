@@ -145,3 +145,30 @@ search_range: dict[str, Tuple[Any, ...]] = {
     "inclusive": ("今月 先月 今年", ExtDt(hours=-12).range("今年") + {"hours": 12}),
     "duplication": ("今月 先月 今月", (ExtDt(hours=-12).range("今月 先月") + {"hours": 12}).period),
 }
+
+# 得点入力
+score_pattern: dict[str, Tuple[Any, ...]] = {
+    # input_str, result_dict
+    "pattern 01": (
+        "終局ひと250いぬ250さる250とり250",
+        {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": None},
+    ),
+    "pattern 02": (
+        "ひと250いぬ250さる250とり250終局",
+        {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": None},
+    ),
+    "pattern 03": (
+        "終局(先頭のコメント)ひと250いぬ250さる250とり250",
+        {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": "先頭のコメント"},
+    ),
+    "pattern 04": (
+        "ひと250いぬ250さる250とり250終局(末尾のコメント)",
+        {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": "末尾のコメント"},
+    ),
+    "invalid pattern 01": (
+        "終局ひと250いぬ250さる250", {},
+    ),
+    "invalid pattern 02": (
+        "終局ひと250いぬ250さる250とり250おに250", {},
+    ),
+}
