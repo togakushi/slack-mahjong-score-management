@@ -2,6 +2,7 @@ pdoc
 pytest
 mypy
 pylint
+pylint-pytest
 pandas-stubs
 types-python-dateutil
 types-tabulate
