@@ -28,6 +28,7 @@ def shared_connection():
 @pytest.fixture(scope="package", autouse=True)
 def initialize_database(shared_connection):
     """DB初期化"""
+    _ = shared_connection  # pylint (W0613: Unused argument)
     initialization.initialization_resultdb()
     with closing(dbutil.get_connection()) as conn:
         pd.read_csv("tests/test_data/saki_member.csv").to_sql(
