@@ -34,24 +34,11 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
 
     score.get_score(score_data)
     ts = ExtDt().format("ts")
-    with (patch("libs.functions.score.reactions")):
+    with patch("libs.functions.score.reactions"):
         modify.db_insert(score_data, ts)
 
     with closing(dbutil.get_connection()) as conn:
-        cur = conn.execute(
-            """
-            select
-                p1_point, p1_rank,
-                p2_point, p2_rank,
-                p3_point, p3_rank,
-                p4_point, p4_rank
-            from
-                result
-            where
-                ts=?
-            ;
-            """, (ts,)
-        )
+        cur = conn.execute("select * from result where ts=?;", (ts,))
         db_data = dict(cur.fetchone())
         assert db_data is not None
 
