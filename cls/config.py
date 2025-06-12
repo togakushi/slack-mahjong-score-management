@@ -43,6 +43,8 @@ class MahjongSection(CommonMethodMixin):
     def __post_init__(self):
         self.initialization("mahjong")
         self.rank_point = list(map(int, self.rank_point))  # 数値化
+        if not self.rank_point:
+            self.rank_point = [30, 10, -10, -30]
 
 
 @dataclass
