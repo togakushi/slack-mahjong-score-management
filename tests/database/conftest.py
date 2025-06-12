@@ -15,7 +15,7 @@ from libs.utils import dbutil
 
 
 @pytest.fixture(scope="package")
-def shared_connection():
+def database_connection():
     """共有インメモリDBと接続"""
     configuration.set_loglevel()
     g.cfg = Config("tests/testdata/minimal.ini")
@@ -26,9 +26,9 @@ def shared_connection():
 
 
 @pytest.fixture(scope="package", autouse=True)
-def initialize_database(shared_connection):
+def initialize_database(database_connection):  # pylint: disable=redefined-outer-name
     """DB初期化"""
-    _ = shared_connection  # pylint (W0613: Unused argument)
+    _ = database_connection  # pylint (W0613: Unused argument)
     initialization.initialization_resultdb()
     with closing(dbutil.get_connection()) as conn:
         pd.read_csv("tests/test_data/saki_member.csv").to_sql(
