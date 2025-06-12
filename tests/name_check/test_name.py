@@ -24,7 +24,7 @@ def test_name_permit(input_args, expected_flags, monkeypatch):
     configuration.setup()
     configuration.read_memberslist()
 
-    flg, _ = validator.check_namepattern(input_args)
+    flg, _ = validator.check_namepattern(input_args, "member")
     assert flg == expected_flags
 
 
@@ -39,5 +39,5 @@ def test_name_refusal(input_args, expected_flags, monkeypatch):
     configuration.setup()
     configuration.read_memberslist()
 
-    flg, _ = validator.check_namepattern(input_args)
+    flg, _ = validator.check_namepattern(input_args, "member")
     assert flg == expected_flags

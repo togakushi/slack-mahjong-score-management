@@ -12,7 +12,7 @@ from cls.types import CommonMethodMixin
 @dataclass
 class SubCommand(CommonMethodMixin):
     """サブコマンド共通デフォルト値"""
-    config: ConfigParser | None = None
+    _config: ConfigParser | None = None
     section: str | None = None
     aggregation_range: str = field(default="当日")
     """検索範囲未指定時に使用される範囲"""

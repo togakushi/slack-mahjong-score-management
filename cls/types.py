@@ -126,8 +126,8 @@ class CommonMethodMixin:
     """データクラス共通メソッド"""
     def initialization(self, section: str | None = None) -> None:
         """設定ファイルから値を取りこみ"""
-        config = getattr(self, "config")
-        assert config is not None, "config must not be None"
+        _config = getattr(self, "_config")
+        assert _config is not None, "config must not be None"
 
         if section is None:
             section = getattr(self, "section")
@@ -139,23 +139,23 @@ class CommonMethodMixin:
             if x.type == Union[str | None] and x.name == "section":
                 setattr(self, x.name, section)
             elif x.type == bool:
-                setattr(self, x.name, config.getboolean(section, x.name, fallback=x.default))
+                setattr(self, x.name, _config.getboolean(section, x.name, fallback=x.default))
             elif x.type == str:
-                setattr(self, x.name, config.get(section, x.name, fallback=x.default))
+                setattr(self, x.name, _config.get(section, x.name, fallback=x.default))
             elif x.type == int:
-                setattr(self, x.name, config.getint(section, x.name, fallback=x.default))
+                setattr(self, x.name, _config.getint(section, x.name, fallback=x.default))
             elif x.type == float:
-                setattr(self, x.name, config.getfloat(section, x.name, fallback=x.default))
+                setattr(self, x.name, _config.getfloat(section, x.name, fallback=x.default))
             elif x.type == list:
                 tmp_list: list = []
-                for data in config.get(section, x.name, fallback="").split(","):
+                for data in _config.get(section, x.name, fallback="").split(","):
                     tmp_list.extend(data.split())
                 if x.name == "delete":
-                    for data in config.get(section, "del", fallback="").split(","):
+                    for data in _config.get(section, "del", fallback="").split(","):
                         tmp_list.extend(data.split())
                 setattr(self, x.name, tmp_list)
             else:
-                setattr(self, x.name, config.get(section, x.name, fallback=x.default))
+                setattr(self, x.name, _config.get(section, x.name, fallback=x.default))
 
         # 共通パラメータ初期化
         self.format = str()
@@ -176,7 +176,7 @@ class CommonMethodMixin:
         ret_dict.update(interval=getattr(self, "interval", 80))
 
         drop_keys: list = [
-            "config",
+            "_config",
             "section",
             "always_argument",
             "regulations_type2",
@@ -206,25 +206,25 @@ class CommonMethodMixin:
 
         for x in fields(self):
             if x.name == attr:
-                config = getattr(self, "config")
-                assert config is not None, "config must not be None"
+                _config = getattr(self, "_config")
+                assert _config is not None, "config must not be None"
                 section = getattr(self, "section")
                 assert section is not None, "section must not be None"
 
                 if x.type == Union[str | None]:
                     ret = None
                 elif x.type == bool:
-                    ret = config.getboolean(section, x.name, fallback=x.default)
+                    ret = _config.getboolean(section, x.name, fallback=x.default)
                 elif x.type == str:
-                    ret = config.get(section, x.name, fallback=x.default)
+                    ret = _config.get(section, x.name, fallback=x.default)
                 elif x.type == int:
-                    ret = config.getint(section, x.name, fallback=x.default)
+                    ret = _config.getint(section, x.name, fallback=x.default)
                 elif x.type == float:
-                    ret = config.getfloat(section, x.name, fallback=x.default)
+                    ret = _config.getfloat(section, x.name, fallback=x.default)
                 elif x.type == list:
                     ret = []
                 else:
-                    ret = config.get(section, x.name, fallback=x.default)
+                    ret = _config.get(section, x.name, fallback=x.default)
                 return ret
 
         raise AttributeError(f"{attr} has no default or does not exist.")

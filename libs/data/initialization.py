@@ -5,7 +5,9 @@ lib/data/initialization.py
 import json
 import logging
 import os
+from configparser import ConfigParser
 from importlib.resources import files
+from typing import cast
 
 import libs.global_value as g
 from cls.types import GradeTableDict
@@ -24,9 +26,9 @@ def initialization_resultdb():
     resultdb.execute(loader.load_query("table/words.sql"))  # レギュレーションワード登録テーブル
 
     # wordsテーブル情報読み込み(regulations)
-    if g.cfg.config.has_section("regulations"):
+    if cast(ConfigParser, getattr(g.cfg, "_config")).has_section("regulations"):
         resultdb.execute("delete from words;")
-        for k, v in g.cfg.config.items("regulations"):
+        for k, v in cast(ConfigParser, getattr(g.cfg, "_config")).items("regulations"):
             match k:
                 case "undefined":
                     continue

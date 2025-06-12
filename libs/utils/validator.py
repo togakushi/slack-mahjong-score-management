@@ -3,7 +3,7 @@ libs/utils/validator.py
 """
 
 import re
-from typing import Tuple
+from typing import Literal, Tuple
 
 import libs.global_value as g
 from cls.parser import CommandParser
@@ -14,15 +14,17 @@ from libs.utils import formatter, textutil
 SlackSearchDict = dict[str, SlackSearchData]
 
 
-def check_namepattern(name: str, kind: str = "") -> Tuple[bool, str]:
+def check_namepattern(name: str, kind: Literal["member", "team"]) -> Tuple[bool, str]:
     """登録制限チェック
 
     Args:
         name (str): チェックする名前
-        kind (str, optional): チェック種別. Defaults to 空欄.
+        kind (str): チェック種別
+        - member
+        - team
 
     Returns:
-        Tuple[bool,str]: 判定結果
+        Tuple[bool, str]: 判定結果
         - bool: 制限チェック結果真偽
         - str: 制限理由
     """
@@ -53,7 +55,7 @@ def check_namepattern(name: str, kind: str = "") -> Tuple[bool, str]:
         ret_flg, ret_msg = False, "使用できない名前です。"
 
     # 登録規定チェック
-    if ret_flg and len(name) > g.cfg.config.getint(kind, "character_limit", fallback=8):  # 文字制限
+    if ret_flg and len(name) > int(getattr(g.cfg, kind).character_limit):  # 文字制限
         ret_flg, ret_msg = False, "登録可能文字数を超えています。"
 
     if ret_flg and re.search("[\\;:<>(),!@#*?/`\"']", name) or not name.isprintable():  # 禁則記号

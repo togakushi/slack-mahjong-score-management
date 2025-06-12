@@ -7,6 +7,7 @@ import math
 import random
 import re
 import textwrap
+from configparser import ConfigParser
 from typing import cast
 
 import libs.global_value as g
@@ -153,13 +154,13 @@ def reply(message=None, rpoint_sum=0):
 
     msg = default_message.get(message, "")
 
-    if g.cfg.config.has_section("custom_message"):
-        key_list = []
-        for i in g.cfg.config["custom_message"]:
-            if i.startswith(message):
-                key_list.append(i)
-        if key_list:
-            msg = g.cfg.config["custom_message"][random.choice(key_list)]
+    if cast(ConfigParser, getattr(g.cfg, "_config")).has_section("custom_message"):
+        msg_list = []
+        for key, val in cast(ConfigParser, getattr(g.cfg, "_config")).items("custom_message"):
+            if key.startswith(message):
+                msg_list.append(val)
+        if msg_list:
+            msg = random.choice(msg_list)
 
     try:
         msg = msg.format(
@@ -440,11 +441,12 @@ def badge_degree(game_count: int = 0) -> str:
     badge: str = ""
 
     if g.cfg.badge.degree:
-        if (degree_list := g.cfg.config.get("degree", "badge", fallback="")):
+
+        if (degree_list := cast(ConfigParser, getattr(g.cfg, "_config")).get("degree", "badge", fallback="")):
             degree_badge = degree_list.split(",")
         else:
             return ""
-        if (counter_list := g.cfg.config.get("degree", "counter", fallback="")):
+        if (counter_list := cast(ConfigParser, getattr(g.cfg, "_config")).get("degree", "counter", fallback="")):
             degree_counter = list(map(int, counter_list.split(",")))
             for idx, val in enumerate(degree_counter):
                 if game_count >= val:
@@ -467,11 +469,11 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
     badge: str = ""
 
     if g.cfg.badge.status:
-        if (status_list := g.cfg.config.get("status", "badge", fallback="")):
+        if (status_list := cast(ConfigParser, getattr(g.cfg, "_config")).get("status", "badge", fallback="")):
             status_badge = status_list.split(",")
         else:
             return ""
-        if (status_step := g.cfg.config.getfloat("status", "step", fallback=0)):
+        if (status_step := cast(ConfigParser, getattr(g.cfg, "_config")).getfloat("status", "step", fallback="")):
             if game_count == 0:
                 index = 0
             else:

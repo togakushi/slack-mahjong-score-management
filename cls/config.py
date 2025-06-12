@@ -237,7 +237,7 @@ class Config():
         self._config: configparser.ConfigParser
         self.script_dir: str
         """メインスクリプト格納ディレクトリ"""
-        self._config_dir: str
+        self.config_dir: str
         """設定ファイル格納ディレクトリ"""
         self.format: str
         self.filename: str
@@ -258,8 +258,8 @@ class Config():
 
         # set base directory
         self.script_dir = os.path.realpath(str(Path(__file__).resolve().parents[1]))
-        self._config_dir = os.path.dirname(os.path.realpath(str(filename)))
-        logging.info("script_dir=%s, config_dir=%s", self.script_dir, self._config_dir)
+        self.config_dir = os.path.dirname(os.path.realpath(str(filename)))
+        logging.info("script_dir=%s, config_dir=%s", self.script_dir, self.config_dir)
 
         try:
             self._config = configparser.ConfigParser()
@@ -323,9 +323,9 @@ class Config():
         self.report = SubCommand(self._config, "report")
 
         # その他/更新
-        self.db.database_file = os.path.realpath(os.path.join(self._config_dir, self.db.database_file))
+        self.db.database_file = os.path.realpath(os.path.join(self.config_dir, self.db.database_file))
         self.setting.work_dir = os.path.realpath(os.path.join(self.script_dir, self.setting.work_dir))
-        self.setting.font_file = os.path.realpath(os.path.join(self._config_dir, self.setting.font_file))
+        self.setting.font_file = os.path.realpath(os.path.join(self.config_dir, self.setting.font_file))
         self.undefined_word = self._config["regulations"].getint("undefined", 2)
         self.format = str()
         self.filename = str()
