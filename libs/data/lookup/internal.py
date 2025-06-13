@@ -36,11 +36,8 @@ def get_teammates(team: str) -> list:
     """
 
     member_list: list = []
-    team_data = [x for x in g.team_list if x["team"] == team]
-    if team_data:
-        if team_data[0]["member"]:
-            member_list = team_data[0]["member"].split(",")
-        else:
+    if (team_data := [x for x in g.team_list if x["team"] == team]):
+        if not (member_list := team_data[0]["member"]):
             member_list = ["未エントリー"]
 
     return member_list
@@ -62,7 +59,7 @@ def which_team(name: str) -> str | None:
 
     for x in g.team_list:
         if x["member"]:
-            if name in x["member"].split(","):
+            if name in x["member"]:
                 team = x["team"]
 
     return team

@@ -12,7 +12,7 @@ from functools import partial
 import libs.global_value as g
 from cls.config import Config
 from cls.parser import MessageParser
-from libs.utils import dbutil
+from libs.data import lookup
 
 
 def set_loglevel():
@@ -198,34 +198,9 @@ def read_memberslist(log=True):
         log (bool, optional): 読み込み時に内容をログに出力する. Defaults to True.
     """
 
-    resultdb = dbutil.get_connection()
-    rows = resultdb.execute("select name from member where id=0")
-    g.cfg.member.guest_name = rows.fetchone()[0]
-
-    rows = resultdb.execute("select name, member from alias")
-    g.member_list = dict(rows.fetchall())
-
-    rows = resultdb.execute(
-        """
-            select
-                team.id as id,
-                team.name as team,
-                group_concat(member.name) as member
-            from
-                team
-            left join member on
-                team.id == member.team_id
-            group by
-                team.id
-        """)
-
-    g.team_list = []
-    for row in rows.fetchall():
-        g.team_list.append(
-            dict(zip(["id", "team", "member"], row))
-        )
-
-    resultdb.close()
+    g.cfg.member.guest_name = lookup.db.get_guest()
+    g.member_list = lookup.db.get_member_list()
+    g.team_list = lookup.db.get_team_list()
 
     if log:
         logging.notice(f"guest_name: {g.cfg.member.guest_name}")  # type: ignore

@@ -27,6 +27,13 @@ class GameInfoDict(TypedDict):
     """記録されている最後のゲームコメント"""
 
 
+class TeamDataDict(TypedDict):
+    """チーム情報格納辞書"""
+    id: int
+    team: str
+    member: list[str]
+
+
 class ScoreDataDict(TypedDict, total=False):
     """スコアデータ格納用辞書"""
     ts: str

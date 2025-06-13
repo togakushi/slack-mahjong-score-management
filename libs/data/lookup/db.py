@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 
 import libs.global_value as g
-from cls.types import ScoreDataDict
+from cls.types import ScoreDataDict, TeamDataDict
 from libs.data import loader
 from libs.utils import dbutil
 
@@ -23,10 +23,9 @@ def get_member_id(name: str | None = None) -> dict:
         dict: メンバー名とIDのペア
     """
 
-    resultdb = dbutil.get_connection()
-    rows = resultdb.execute("select name, id from member;")
-    id_list = dict(rows.fetchall())
-    resultdb.close()
+    with closing(dbutil.get_connection()) as conn:
+        rows = conn.execute("select name, id from member;")
+        id_list = dict(rows.fetchall())
 
     if name in id_list:
         return {name: id_list[name]}
@@ -43,7 +42,8 @@ def member_info(name: str) -> dict:
         dict: 記録情報
     """
 
-    sql = """
+    ret: dict = {}
+    sql = loader.query_modification("""
         select
             count() as game_count,
             min(ts) as first_game,
@@ -56,13 +56,74 @@ def member_info(name: str) -> dict:
         where
             rule_version = ?
             and name = ?
+    """)
+
+    with closing(dbutil.get_connection()) as conn:
+        rows = conn.execute(sql, (g.cfg.mahjong.rule_version, name))
+        ret = dict(rows.fetchone())
+
+    return ret
+
+
+def get_guest() -> str:
+    """ゲスト名取得
+
+    Returns:
+        str: ゲスト名
     """
 
-    sql = loader.query_modification(sql)
-    resultdb = dbutil.get_connection()
-    rows = resultdb.execute(sql, (g.cfg.mahjong.rule_version, name))
-    ret = dict(rows.fetchone())
-    resultdb.close()
+    guest_name: str = ""
+    with closing(dbutil.get_connection()) as conn:
+        rows = conn.execute("select name from member where id=0")
+        guest_name = str(rows.fetchone()[0])
+
+    return guest_name
+
+
+def get_member_list() -> dict[str, str]:
+    """メンバー情報取得
+
+    Returns:
+        dict[str, str]: 別名, 表示名
+    """
+
+    with closing(dbutil.get_connection()) as conn:
+        rows = conn.execute("select name, member from alias")
+        member_list = dict(rows.fetchall())
+
+    return member_list
+
+
+def get_team_list() -> list[TeamDataDict]:
+    """チーム情報取得
+
+    Returns:
+        list[TeamDataDict]: チーム情報
+    """
+
+    ret: list[TeamDataDict] = []
+    with closing(dbutil.get_connection()) as conn:
+        rows = conn.execute(
+            """
+                select
+                    team.id as id,
+                    team.name as team,
+                    group_concat(member.name) as member
+                from
+                    team
+                left join member on
+                    team.id == member.team_id
+                group by
+                    team.id
+            """)
+
+        for row in rows.fetchall():
+            ret.append({
+                "id": int(row["id"]),
+                "team": str(row["team"]),
+                "member": str(row["member"]).split(",")
+            })
+
     return ret
 
 
@@ -74,8 +135,8 @@ def rule_version_range() -> dict:
     """
 
     rule: dict = {}
-    with closing(dbutil.get_connection()) as cur:
-        ret = cur.execute(
+    with closing(dbutil.get_connection()) as conn:
+        ret = conn.execute(
             """
             select
                 rule_version,
@@ -135,8 +196,8 @@ def exsist_record(ts: str) -> ScoreDataDict:
 
     ret: ScoreDataDict = {}
 
-    with closing(dbutil.get_connection()) as cur:
-        row = cur.execute(g.sql["SELECT_GAME_RESULTS"], (ts,)).fetchone()
+    with closing(dbutil.get_connection()) as conn:
+        row = conn.execute(g.sql["SELECT_GAME_RESULTS"], (ts,)).fetchone()
 
     if row:
         tmp_dict = dict(row)
@@ -163,13 +224,13 @@ def first_record() -> datetime:
 
     ret = datetime.now()
     try:
-        with closing(dbutil.get_connection()) as resultdb:
-            table_count = resultdb.execute(
+        with closing(dbutil.get_connection()) as conn:
+            table_count = conn.execute(
                 "select count() from sqlite_master where type='view' and name='game_results';",
             ).fetchall()[0][0]
 
             if table_count:
-                record = resultdb.execute(
+                record = conn.execute(
                     "select min(playtime) from game_results where rule_version=?;",
                     (g.params.get("rule_version", g.cfg.mahjong.rule_version), )
                 ).fetchall()[0][0]

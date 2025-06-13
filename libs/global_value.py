@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
     from cls.config import Config
     from cls.parser import MessageParser
+    from cls.types import TeamDataDict
 
 args: "Namespace" = None  # type: ignore
 """コマンドライン引数"""
@@ -29,11 +30,11 @@ member_list: dict = {}
 """メンバーリスト
 - 別名: 表示名
 """
-team_list: list[dict] = []
+team_list: list["TeamDataDict"] = []
 """チームリスト
 - id: チームID
 - team: チーム名
-- member: 所属メンバー(カンマ区切りの文字列)
+- member: 所属メンバーリスト
 """
 bot_id: str = ""
 """ボットID"""
