@@ -218,7 +218,7 @@ def main():
                 case "target_team":
                     flag["target_player"].clear()
                     choice_list = [x["team"] for x in g.team_list]
-                    for x in range(int(value)):
+                    for _ in range(int(value)):
                         if not choice_list:
                             break
                         choice_name = random.choice(choice_list)
