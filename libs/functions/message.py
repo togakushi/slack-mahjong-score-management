@@ -472,8 +472,11 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
         if (status_list := cast(ConfigParser, getattr(g.cfg, "_config")).get("status", "badge", fallback="")):
             status_badge = status_list.split(",")
         else:
-            return ""
+            return badge
+
         if (status_step := cast(ConfigParser, getattr(g.cfg, "_config")).getfloat("status", "step", fallback="")):
+            if not isinstance(status_step, float):
+                return badge
             if game_count == 0:
                 index = 0
             else:
@@ -484,6 +487,7 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
                         index = 4 - i
                     if winper >= 50 + status_step * i:
                         index = 2 + i
+
             badge = status_badge[index]
 
     return badge
