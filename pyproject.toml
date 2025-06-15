@@ -1,0 +1,27 @@
+[project]
+name = "slack-mahjong-score-management"
+version = "0.1.0"
+description = "Mahjong score management for Slack"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "slack-bolt",
+    "slack-sdk",
+    "matplotlib",
+    "reportlab",
+    "pandas",
+    "tabulate[widechars]",
+]
+
+[dependency-groups]
+dev = [
+    "pdoc",
+    "pytest",
+    "mypy",
+    "pylint",
+    "pylint-pytest",
+    "pandas-stubs",
+    "types-python-dateutil",
+    "types-tabulate",
+    "types-reportlab",
+]
