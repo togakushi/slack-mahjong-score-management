@@ -106,9 +106,13 @@ class MemberSection(CommonMethodMixin):
     """memberセクション初期値"""
     _config: configparser.ConfigParser | None = field(default=None)
     registration_limit: int = field(default=255)
+    """登録メンバー上限数"""
     character_limit: int = field(default=8)
+    """名前に使用できる文字数"""
     alias_limit: int = field(default=16)
+    """別名登録上限数"""
     guest_name: str = field(default="ゲスト")
+    """未登録メンバー名称"""
 
     def __post_init__(self):
         self.initialization("member")
@@ -119,9 +123,13 @@ class TeamSection(CommonMethodMixin):
     """teamセクション初期値"""
     _config: configparser.ConfigParser | None = field(default=None)
     registration_limit: int = field(default=255)
+    """登録チーム上限数"""
     character_limit: int = field(default=16)
+    """チーム名に使用できる文字数"""
     member_limit: int = field(default=16)
+    """チームに所属できるメンバー上限"""
     friendly_fire: bool = field(default=True)
+    """チームメイトが同卓しているゲームを集計対象に含めるか"""
 
     def __post_init__(self):
         self.initialization("team")
