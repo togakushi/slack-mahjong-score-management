@@ -6,7 +6,6 @@ import logging
 import os
 from datetime import datetime
 from io import BytesIO
-from typing import List, Tuple
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -342,11 +341,11 @@ def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
     return imgdata
 
 
-def gen_pdf() -> Tuple[str | bool, str | bool]:
+def gen_pdf() -> tuple[str | bool, str | bool]:
     """成績レポートを生成する
 
     Returns:
-        Tuple[str | bool, str | bool]:
+        tuple[str | bool, str | bool]:
         - str: レポート対象メンバー名
         - str: レポート保存パス
     """
@@ -565,7 +564,7 @@ def periodic_aggregation(style: dict) -> list:
 
     elements: list = []
 
-    pattern: List[Tuple[str, str, str]] = [
+    pattern: list[tuple[str, str, str]] = [
         # 表タイトル, グラフタイトル, フラグ
         ("月別集計", "順位分布（月別）", "M"),
         ("年別集計", "順位分布（年別）", "Y"),
@@ -641,7 +640,7 @@ def sectional_aggregate(style: dict, target_info: dict) -> list:
 
     elements: list = []
 
-    pattern: List[Tuple[int, int, str]] = [
+    pattern: list[tuple[int, int, str]] = [
         # 区切り回数, 閾値, タイトル
         (80, 100, "短期"),
         (200, 240, "中期"),

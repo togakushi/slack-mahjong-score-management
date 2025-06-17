@@ -13,11 +13,11 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation():
+def aggregation() -> tuple[str, dict, dict]:
     """各プレイヤーの通算ポイントを表示
 
     Returns:
-        Tuple[str, dict, dict]
+        tuple[str, dict, dict]
         - str: ヘッダ情報
         - dict: 集計データ
         - dict: 生成ファイル情報

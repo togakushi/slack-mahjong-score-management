@@ -2,12 +2,12 @@
 テスト用パラメータ
 """
 
-from typing import Any, Tuple
+from typing import Any
 
 from cls.timekit import ExtendedDatetime as ExtDt
 
 # フラグ更新
-flag_test_case_01: dict[str, Tuple[Any, ...]] = {
+flag_test_case_01: dict[str, tuple[Any, ...]] = {
     # input_args, expected_flags
     "guest": ("ゲストなし", {"guest_skip": False, "guest_skip2": False, "unregistered_replace": True}),
     "score comparisons": ("比較", {"score_comparisons": True}),
@@ -21,7 +21,7 @@ flag_test_case_01: dict[str, Tuple[Any, ...]] = {
 }
 
 # 数値引数
-flag_test_case_02: dict[str, Tuple[Any, ...]] = {
+flag_test_case_02: dict[str, tuple[Any, ...]] = {
     "ranked 0 (kata)": ("トップ0", {"ranked": 0}),
     "ranked 5 (kan)": ("上位5", {"ranked": 5}),
     "ranked 10 (alp)": ("top10", {"ranked": 10}),
@@ -38,7 +38,7 @@ flag_test_case_02: dict[str, Tuple[Any, ...]] = {
 }
 
 # 文字列引数
-flag_test_case_03: dict[str, Tuple[Any, ...]] = {
+flag_test_case_03: dict[str, tuple[Any, ...]] = {
     "format type (text)": ("text", {"format": "text"}),
     "format type (txt)": ("txt", {"format": "txt"}),
     "format type (CSV)": ("CSV", {"format": "csv"}),
@@ -54,14 +54,14 @@ flag_test_case_03: dict[str, Tuple[Any, ...]] = {
 }
 
 # 未定義
-flag_test_case_04: dict[str, Tuple[Any, ...]] = {
+flag_test_case_04: dict[str, tuple[Any, ...]] = {
     "undefined 01": ("未定義01", ["未定義01"]),
     "undefined 02": ("未定義02 未定義03", ["未定義02", "未定義03"]),
     "undefined Full Char": ("未定義０４", ["未定義０４"]),
 }
 
 # 日付
-flag_test_case_05: dict[str, Tuple[Any, ...]] = {
+flag_test_case_05: dict[str, tuple[Any, ...]] = {
     "keyword": ("今月", ExtDt().range("今月").format("sql")),
     "number only": ("20250101", ExtDt("20250101").format("sql")),
     "hyphen delimiter": ("2025-01-01", ExtDt("20250101").format("sql")),
@@ -70,7 +70,7 @@ flag_test_case_05: dict[str, Tuple[Any, ...]] = {
 }
 
 # プレイヤーテスト
-name_test_case_01: dict[str, Tuple[Any, ...]] = {
+name_test_case_01: dict[str, tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
     # --- 序列の維持
     "keep order 01": ("名前あ 名前い 名前う", "名前あ", {"player_0": "名前あ", "player_1": "名前い", "player_2": "名前う"}, {"competition_1": "名前い", "competition_2": "名前う"}),
@@ -82,7 +82,7 @@ name_test_case_01: dict[str, Tuple[Any, ...]] = {
 }
 
 # チーム名テスト
-team_saki_test_case: dict[str, Tuple[Any, ...]] = {
+team_saki_test_case: dict[str, tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
     "case 01": ("チーム 清澄高校", "清澄高校", {'player_0': "清澄高校"}, {}),
     "case 02": ("チーム 清澄高校 宮永咲", "清澄高校", {'player_0': "清澄高校"}, {}),
@@ -90,7 +90,7 @@ team_saki_test_case: dict[str, Tuple[Any, ...]] = {
 }
 
 # ゲストテスト
-guest_test_case: dict[str, Tuple[Any, ...]] = {
+guest_test_case: dict[str, tuple[Any, ...]] = {
     # input_args, player_name, replace_name
     "case 1-01": ("ゲストあり 名前あ", "名前あ", "ゲスト"),
     "case 1-02": ("ゲストあり 宮永咲", "宮永咲", "宮永咲"),
@@ -105,7 +105,7 @@ guest_test_case: dict[str, Tuple[Any, ...]] = {
 }
 
 # フラグ更新コマンドテスト
-command_test_case_01: dict[str, Tuple[Any, ...]] = {
+command_test_case_01: dict[str, tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
     # --- フラグ更新コマンドが誤って認識されていないか
     "verbose": ("詳細 verbose", "", {}, {}),
@@ -132,7 +132,7 @@ command_test_case_01: dict[str, Tuple[Any, ...]] = {
 }
 
 # 検索日付範囲
-search_range: dict[str, Tuple[Any, ...]] = {
+search_range: dict[str, tuple[Any, ...]] = {
     # keyword, [start, end]
     "1 day": ("20250101", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt("2025-01-02 11:59:59.999999")]),
     "2 days": ("20250101 20250102", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt("2025-01-03 11:59:59.999999")]),
@@ -147,7 +147,7 @@ search_range: dict[str, Tuple[Any, ...]] = {
 }
 
 # 得点入力
-score_pattern: dict[str, Tuple[Any, ...]] = {
+score_pattern: dict[str, tuple[Any, ...]] = {
     # input_str, result_dict, get_point
     "pattern 01": (
         "終局ひと250いぬ250さる250とり250",

@@ -4,7 +4,6 @@ libs/commands/graph/summary.py
 
 import logging
 import os
-from typing import Tuple
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -21,11 +20,11 @@ mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 
 
-def point_plot():
+def point_plot() -> tuple[int, str]:
     """ポイント推移グラフを生成する
 
     Returns:
-        Tuple[int,str]:
+        tuple[int,str]:
         - int: グラフにプロットしたゲーム数
         - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
@@ -105,11 +104,11 @@ def point_plot():
     return (game_info["game_count"], save_file)
 
 
-def rank_plot() -> Tuple[int, str]:
+def rank_plot() -> tuple[int, str]:
     """順位変動グラフを生成する
 
     Returns:
-        Tuple[int,str]:
+        tuple[int,str]:
         - int: グラフにプロットしたゲーム数
         - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
@@ -190,11 +189,11 @@ def rank_plot() -> Tuple[int, str]:
     return (game_info["game_count"], save_file)
 
 
-def _data_collection() -> Tuple[pd.DataFrame, pd.DataFrame]:
+def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
     """データ収集
 
     Returns:
-        Tuple[pd.DataFrame, pd.DataFrame]:
+        tuple[pd.DataFrame, pd.DataFrame]:
         - pd.DataFrame: 収集したデータのサマリ
         - pd.DataFrame: 集計範囲のデータ
     """

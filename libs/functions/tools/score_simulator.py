@@ -7,7 +7,7 @@ Returns:
 """
 
 import random
-from typing import Tuple, Union
+from typing import Union
 
 INITIAL_POINTS: int = 25000
 MAX_ROUNDS: int = 8
@@ -60,14 +60,14 @@ def determine_point(is_parent: bool, is_tsumo: bool) -> int | tuple:
     return HAN_POINTS[rank][key]
 
 
-def determine_winner(k: int) -> Tuple[list[int], list[int]]:
+def determine_winner(k: int) -> tuple[list[int], list[int]]:
     """和了役を抽選し、放銃役候補と分けてリストを返す
 
     Args:
         k (int): 和了役に選ばれる人数
 
     Returns:
-        Tuple[list, list]: 抽選結果
+        tuple[list, list]: 抽選結果
     """
 
     member = list(range(4))
@@ -82,7 +82,7 @@ def should_renchan(
         parent: int,
         tenpai: list,
         total_rounds: int,
-        renchan_count: int) -> Tuple[int, int, int]:
+        renchan_count: int) -> tuple[int, int, int]:
     """連チャンの判定を行う
 
     Args:
@@ -94,7 +94,7 @@ def should_renchan(
 
 
     Returns:
-        Tuple[int, int, int]:
+        tuple[int, int, int]:
         - int: 判定後の局数
         - int: 判定後の連チャン数
         - int: 次の親

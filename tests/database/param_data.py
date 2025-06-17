@@ -2,10 +2,10 @@
 テスト用パラメータ
 """
 
-from typing import Any, Tuple
+from typing import Any
 
 # ユーザ追加
-user_add_case_01: dict[str, Tuple[Any, ...]] = {
+user_add_case_01: dict[str, tuple[Any, ...]] = {
     # user_name, ret_meg, registered
     "append 01": ("めんばー１", "登録しました", True),
     "append 02": ("めんばー２", "登録しました", True),
@@ -22,7 +22,7 @@ user_add_case_01: dict[str, Tuple[Any, ...]] = {
 }
 
 # チーム追加
-team_add_case_01: dict[str, Tuple[Any, ...]] = {
+team_add_case_01: dict[str, tuple[Any, ...]] = {
     # team_name, ret_meg, registered
     "append 01": ("ちーむ１", "登録しました", True),
     "duplication": ("清澄高校", "存在するチーム", True),
@@ -34,7 +34,7 @@ team_add_case_01: dict[str, Tuple[Any, ...]] = {
 }
 
 # スコア登録
-score_insert_case_01: dict[str, Tuple[Any, ...]] = {
+score_insert_case_01: dict[str, tuple[Any, ...]] = {
     # draw split, game_result, get_point, get_rank
     "game 01": (
         False, "終局ひと250いぬ250さる250とり250",

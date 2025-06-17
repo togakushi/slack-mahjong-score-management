@@ -3,7 +3,7 @@ libs/commands/results/ranking.py
 """
 
 import re
-from typing import Any, Tuple
+from typing import Any
 
 import pandas as pd
 from tabulate import tabulate
@@ -15,11 +15,11 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation() -> Tuple[str, Any]:
+def aggregation() -> tuple[str, Any]:
     """ランキングデータを生成
 
     Returns:
-        Tuple[str, Any]: 集計結果
+        tuple[str, Any]: 集計結果
         - str: ランキングの集計情報
         - dict | Any: 各ランキングの情報
     """

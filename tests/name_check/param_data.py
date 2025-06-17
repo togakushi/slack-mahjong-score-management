@@ -2,18 +2,17 @@
 テスト用パラメータ
 """
 
-from typing import Any, Tuple
-
+from typing import Any
 
 # 名前チェック
-flag_name_pattern_01: dict[str, Tuple[Any, ...]] = {
+flag_name_pattern_01: dict[str, tuple[Any, ...]] = {
     # input_args, expected_flags
     "kana": ("カタカナ", True),
     "hira": ("ひらがな", True),
     "alphabet": ("ｘｙｚ", True),
 }
 
-flag_name_pattern_02: dict[str, Tuple[Any, ...]] = {
+flag_name_pattern_02: dict[str, tuple[Any, ...]] = {
     # input_args, expected_flags
     "guest kana": ("ゲスト", False),
     "guest hira": ("げすと", False),

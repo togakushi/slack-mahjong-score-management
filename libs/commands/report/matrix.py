@@ -11,11 +11,11 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def plot():
+def plot() -> tuple[str, dict]:
     """対局対戦マトリックスの表示
 
     Returns:
-        Tuple[str,dict]:
+        tuple[str,dict]:
         - str: ヘッダ情報
         - dict: 生成ファイル情報
     """

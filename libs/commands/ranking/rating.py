@@ -2,8 +2,6 @@
 libs/commands/results/rating.py
 """
 
-from typing import Tuple
-
 import pandas as pd
 
 import libs.global_value as g
@@ -13,11 +11,11 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation() -> Tuple[str, dict, dict]:
+def aggregation() -> tuple[str, dict, dict]:
     """レーティングを集計して返す
 
     Returns:
-        Tuple[str, dict, dict]:
+        tuple[str, dict, dict]:
         - str: ヘッダ情報
         - dict: 集計データ
         - dict: 生成ファイルの情報

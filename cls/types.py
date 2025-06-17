@@ -6,8 +6,7 @@ from collections.abc import Mapping
 from configparser import ConfigParser
 from dataclasses import asdict, dataclass, fields
 from datetime import datetime
-from typing import (TYPE_CHECKING, Any, Callable, Literal, Tuple, TypedDict,
-                    Union)
+from typing import TYPE_CHECKING, Any, Callable, Literal, TypedDict, Union
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime
@@ -247,8 +246,8 @@ class ParsedCommand:
 
 
 # CommandParser用
-CommandResult = Mapping[str, Union[str, int, bool, Tuple[str, ...]]]
-CommandAction = Callable[[Union[str, Tuple[str, ...]]], CommandResult]
+CommandResult = Mapping[str, Union[str, int, bool, tuple[str, ...]]]
+CommandAction = Callable[[Union[str, tuple[str, ...]]], CommandResult]
 
 
 class CommandSpec(TypedDict, total=False):

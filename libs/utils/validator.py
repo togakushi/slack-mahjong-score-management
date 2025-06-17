@@ -3,7 +3,7 @@ libs/utils/validator.py
 """
 
 import re
-from typing import Literal, Tuple
+from typing import Literal
 
 import libs.global_value as g
 from cls.parser import CommandParser
@@ -14,7 +14,7 @@ from libs.utils import formatter, textutil
 SlackSearchDict = dict[str, SlackSearchData]
 
 
-def check_namepattern(name: str, kind: Literal["member", "team"]) -> Tuple[bool, str]:
+def check_namepattern(name: str, kind: Literal["member", "team"]) -> tuple[bool, str]:
     """登録制限チェック
 
     Args:
@@ -24,7 +24,7 @@ def check_namepattern(name: str, kind: Literal["member", "team"]) -> Tuple[bool,
         - team
 
     Returns:
-        Tuple[bool, str]: 判定結果
+        tuple[bool, str]: 判定結果
         - bool: 制限チェック結果真偽
         - str: 制限理由
     """

@@ -7,11 +7,11 @@ from libs.utils import dbutil, textutil
 
 
 # slack出力用
-def get_members_list():
+def get_members_list() -> tuple[str, str]:
     """登録済みのメンバー一覧を取得する(slack出力用)
 
     Returns:
-        Tuple[str, str]:
+        tuple[str, str]:
         - str: post時のタイトル
         - str: メンバー一覧
     """
@@ -34,7 +34,7 @@ def get_members_list():
     return (title, msg)
 
 
-def get_team_list():
+def get_team_list() -> str:
     """チームの登録状況を表示する(slack出力用)
 
     Returns:

@@ -12,11 +12,11 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation():
+def aggregation() -> tuple[str, dict, dict]:
     """直接対戦結果を集計して返す
 
     Returns:
-        Tuple[str, dict, dict]
+        tuple[str, dict, dict]
         - str: ヘッダ情報
         - dict: 集計データ
         - dict: 生成ファイル情報
@@ -54,7 +54,7 @@ def aggregation():
     drop_name: list = []  # 対戦記録なしプレイヤー
     if len(df_vs) == 0:  # 検索結果なし
         msg2[""] = "対戦記録が見つかりません。\n"
-        return (msg1, msg2, "")
+        return (msg1, msg2, {})
 
     for vs_name in vs_list:
         tmp_msg[vs_name] = {}

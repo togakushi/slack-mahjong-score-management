@@ -229,14 +229,14 @@ def modalperiod_selection() -> dict:
     return view
 
 
-def set_command_option(body):
+def set_command_option(body) -> tuple[list, list, dict]:
     """選択オプションの内容のフラグをセット
 
     Args:
         body (dict): イベント内容
 
     Returns:
-        Tuple[list, list, dict]:
+        tuple[list, list, dict]:
         - list: コマンドに追加する文字列
         - list: viewに表示するメッセージ
         - dict: 変更されるフラグ

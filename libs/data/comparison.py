@@ -3,7 +3,6 @@ lib/data/comparison.py
 """
 
 import logging
-from typing import Tuple
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -15,7 +14,7 @@ from libs.utils import dictutil
 SlackSearchDict = dict[str, SlackSearchData]
 
 
-def main():
+def main() -> None:
     """データ突合の実施、その結果をslackにpostする"""
     # チェックコマンドを拾ったイベントの情報を保持(結果の返し先)
     command_ch = g.msg.channel_id
@@ -47,11 +46,11 @@ def main():
     slack_api.post_message(ret, command_ts)
 
 
-def data_comparison() -> Tuple[dict, dict]:
+def data_comparison() -> tuple[dict, dict]:
     """データ突合処理
 
     Returns:
-        Tuple[dict,dict]:
+        tuple[dict,dict]:
         - dict: 処理された更新/追加/削除の件数
         - dict: slackに返すメッセージ
     """
@@ -96,7 +95,7 @@ def data_comparison() -> Tuple[dict, dict]:
     return (count, msg)
 
 
-def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, ComparisonDict]:
+def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, ComparisonDict]:
     """スコア取りこぼしチェック
 
     Args:
@@ -104,7 +103,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
         db_data (dict): DB登録状況
 
     Returns:
-        Tuple[dict, ComparisonDict]: 修正内容(結果)
+        tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
     now_ts = float(ExtDt().format("ts"))
@@ -201,7 +200,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> Tuple[dict, Co
     return (count, msg)
 
 
-def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, ComparisonDict]:
+def check_remarks(slack_data: SlackSearchDict, db_data: list) -> tuple[dict, ComparisonDict]:
     """メモの取りこぼしチェック
 
     Args:
@@ -209,7 +208,7 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, Com
         db_data (list): DB登録状況
 
     Returns:
-        Tuple[dict, ComparisonDict]: 修正内容(結果)
+        tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
     now_ts = float(ExtDt().format("ts"))
@@ -257,14 +256,14 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> Tuple[dict, Com
     return (count, msg)
 
 
-def check_total_score(slack_data: dict) -> Tuple[dict, ComparisonDict]:
+def check_total_score(slack_data: dict) -> tuple[dict, ComparisonDict]:
     """素点合計の再チェック
 
     Args:
         slack_data (dict): slack検索結果
 
     Returns:
-        Tuple[dict, ComparisonDict]: 修正内容(結果)
+        tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
     now_ts = float(ExtDt().format("ts"))

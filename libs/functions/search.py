@@ -5,7 +5,7 @@ libs/functions/search.py
 import logging
 import re
 from contextlib import closing
-from typing import Any, Tuple
+from typing import Any
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -228,14 +228,14 @@ def for_db_remarks(first_ts: float | bool = False) -> list:
     return data
 
 
-def reactions_list(msg: Any) -> Tuple[list, list]:
+def reactions_list(msg: Any) -> tuple[list, list]:
     """botが付けたリアクションを取得
 
     Args:
         msg (Any): メッセージ内容
 
     Returns:
-        Tuple[list, list]:
+        tuple[list, list]:
         - reaction_ok: okが付いているメッセージのタイムスタンプ
         - reaction_ng: ngが付いているメッセージのタイムスタンプ
     """

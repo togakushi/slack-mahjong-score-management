@@ -4,7 +4,6 @@ libs/commands/graph/personal.py
 
 import logging
 import os
-from typing import Tuple
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -21,11 +20,11 @@ mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 
 
-def plot() -> Tuple[int, str]:
+def plot() -> tuple[int, str]:
     """個人成績のグラフを生成する
 
     Returns:
-        Tuple[int,str]:
+        tuple[int,str]:
         - int: グラフにプロットしたゲーム数
         - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """
@@ -127,11 +126,11 @@ def plot() -> Tuple[int, str]:
     return (len(df), save_file)
 
 
-def statistics_plot() -> Tuple[int, str]:
+def statistics_plot() -> tuple[int, str]:
     """個人成績の統計グラフを生成する
 
     Returns:
-        Tuple[int,str]:
+        tuple[int,str]:
         - int: 集計対象のゲーム数
         - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """

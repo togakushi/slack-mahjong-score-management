@@ -19,11 +19,11 @@ mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 
 
-def plot():
+def plot() -> tuple[int, str]:
     """レーティング推移グラフを生成する
 
     Returns:
-        Tuple[int,str]:
+        tuple[int,str]:
         - int: グラフにプロットしたゲーム数
         - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
     """

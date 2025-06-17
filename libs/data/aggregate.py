@@ -3,7 +3,7 @@ lib/database/aggregate.py
 """
 
 import logging
-from typing import Tuple, cast
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -99,7 +99,7 @@ def remark_count(kind: str):
     return df
 
 
-def game_results():
+def game_results() -> pd.DataFrame:
     """成績を集計する
 
     Returns:
@@ -124,7 +124,7 @@ def game_results():
 
 
 # ランキング
-def ranking_record():
+def ranking_record() -> pd.DataFrame:
     """ランキング集計
 
     Returns:
@@ -187,7 +187,7 @@ def ranking_record():
     return record_df
 
 
-def calculation_rating():
+def calculation_rating() -> pd.DataFrame:
     """レーティング集計
 
     Returns:
@@ -234,7 +234,7 @@ def calculation_rating():
     return df_ratings
 
 
-def grade_promotion_check(grade_level: int, point: int, rank: int) -> Tuple[int, int]:
+def grade_promotion_check(grade_level: int, point: int, rank: int) -> tuple[int, int]:
     """昇段チェック
 
     Args:
@@ -243,7 +243,7 @@ def grade_promotion_check(grade_level: int, point: int, rank: int) -> Tuple[int,
         rank (int): 獲得順位
 
     Returns:
-        Tuple[int, int]: チェック後の昇段ポイント, チェック後のレベル(段位)
+        tuple[int, int]: チェック後の昇段ポイント, チェック後のレベル(段位)
     """
 
     tbl_data = g.cfg.badge.grade.table["table"]
@@ -262,7 +262,7 @@ def grade_promotion_check(grade_level: int, point: int, rank: int) -> Tuple[int,
 
 
 # レポート
-def matrix_table():
+def matrix_table() -> pd.DataFrame:
     """対局対戦マトリックス表の作成
 
     Returns:
