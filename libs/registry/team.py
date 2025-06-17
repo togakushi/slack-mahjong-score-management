@@ -10,7 +10,7 @@ from libs.functions import configuration
 from libs.utils import dbutil, formatter, textutil, validator
 
 
-def create(argument):
+def create(argument: list) -> str:
     """チーム作成
 
     Args:
@@ -44,7 +44,7 @@ def create(argument):
     return msg
 
 
-def delete(argument):
+def delete(argument: list) -> str:
     """チーム削除
 
     Args:
@@ -81,7 +81,7 @@ def delete(argument):
     return msg
 
 
-def append(argument):
+def append(argument: list) -> str:
     """チーム所属
 
     Args:
@@ -139,11 +139,11 @@ def append(argument):
     return msg
 
 
-def remove(argument):
+def remove(argument: list) -> str:
     """チームから除名
 
     Args:
-        argument (_type_): 登録情報
+        argument (list): 登録情報
             - argument[0]: 対象チーム名
             - argument[1]: チームから離脱するメンバー名
 
@@ -155,7 +155,8 @@ def remove(argument):
 
     resultdb = dbutil.get_connection()
 
-    # todo: argument == 1のときの処理
+    if len(argument) == 1:
+        pass
 
     if len(argument) == 2:  # チーム名指
         g.params.update(unregistered_replace=False)
@@ -190,7 +191,7 @@ def remove(argument):
     return msg
 
 
-def clear():
+def clear() -> str:
     """全チーム削除
 
     Returns:

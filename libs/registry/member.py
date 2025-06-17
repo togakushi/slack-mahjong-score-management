@@ -10,7 +10,7 @@ from libs.functions import configuration
 from libs.utils import dbutil, textutil, validator
 
 
-def append(argument):
+def append(argument: list) -> str:
     """メンバー追加
 
     Args:
@@ -98,7 +98,7 @@ def append(argument):
     return msg
 
 
-def remove(argument):
+def remove(argument: list) -> str:
     """メンバー削除
 
     Args:
