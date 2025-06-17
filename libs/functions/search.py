@@ -237,13 +237,12 @@ def reactions_list(msg: dict) -> tuple[list, list]:
     reaction_ng: list = []
 
     if msg.get("reactions"):
-        for reactions in msg.get("reactions"):
-            if isinstance(reactions, dict):
-                if g.bot_id in reactions.get("users"):
-                    match reactions.get("name"):
-                        case g.cfg.setting.reaction_ok:
-                            reaction_ok.append(msg.get("ts"))
-                        case g.cfg.setting.reaction_ng:
-                            reaction_ng.append(msg.get("ts"))
+        for reactions in msg.get("reactions", {}):
+            if isinstance(reactions, dict) and g.bot_id in reactions.get("users", []):
+                match reactions.get("name"):
+                    case g.cfg.setting.reaction_ok:
+                        reaction_ok.append(msg.get("ts"))
+                    case g.cfg.setting.reaction_ng:
+                        reaction_ng.append(msg.get("ts"))
 
     return (reaction_ok, reaction_ng)

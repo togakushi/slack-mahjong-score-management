@@ -398,10 +398,10 @@ class MessageParser():
         """DB更新可能チャンネルのポストかチェックする"""
         self.updatable = False
 
-        if len(g.cfg.db.channel_limitations):
-            if self.channel_id in g.cfg.db.channel_limitations.split(","):
+        if g.cfg.db.channel_limitations:
+            if self.channel_id in g.cfg.db.channel_limitations:
                 self.updatable = True
-        else:
+        else:  # リストが空なら全チャンネルが対象
             match self.channel_type:
                 case "channel":  # public channel
                     self.updatable = True
@@ -410,4 +410,4 @@ class MessageParser():
                 case "im":  # direct message
                     self.updatable = False
                 case "search_messages":
-                    self.updatable = True  # ToDo: channel_limitationsのチェックを入れる
+                    self.updatable = True
