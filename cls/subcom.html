@@ -163,38 +163,44 @@
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="n">guest_skip2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">ranked</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">score_comparisons</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">statistics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">stipulated</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;規定打数指定&quot;&quot;&quot;</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">stipulated_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;規定打数計算レート&quot;&quot;&quot;</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">unregistered_replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メンバー未登録プレイヤー名をゲストに置き換えるかフラグ</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">    - True: 置き換える</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">    - False: 置き換えない</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">anonymous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">versus_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="n">collection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">())</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="n">search_word</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">())</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="n">group_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="n">always_argument</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">initialization</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">)</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stipulated_calculation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;規定打数をゲーム数から計算</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコア比較&quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">statistics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;統計情報表示&quot;&quot;&quot;</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">stipulated</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;規定打数指定&quot;&quot;&quot;</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">stipulated_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;規定打数計算レート&quot;&quot;&quot;</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">unregistered_replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メンバー未登録プレイヤー名をゲストに置き換えるかフラグ</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    - True: 置き換える</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">    - False: 置き換えない</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">anonymous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;匿名化フラグ&quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;詳細情報出力フラグ&quot;&quot;&quot;</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="n">versus_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;対戦マトリックス表示&quot;&quot;&quot;</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="n">collection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">())</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="n">search_word</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">())</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="n">group_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="n">always_argument</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;オプションとして常に付与される文字列(カンマ区切り)&quot;&quot;&quot;</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">        Args:</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">            game_count (int): 指定ゲーム数</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">initialization</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">)</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">        Returns:</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">            int: 規定ゲーム数</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">game_count</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">stipulated_rate</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stipulated_calculation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;規定打数をゲーム数から計算</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">        Args:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">            game_count (int): 指定ゲーム数</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">        Returns:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">            int: 規定ゲーム数</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">game_count</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">stipulated_rate</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -231,38 +237,44 @@
 </span><span id="SubCommand-30"><a href="#SubCommand-30"><span class="linenos">30</span></a>    <span class="n">guest_skip2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="SubCommand-31"><a href="#SubCommand-31"><span class="linenos">31</span></a>    <span class="n">ranked</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </span><span id="SubCommand-32"><a href="#SubCommand-32"><span class="linenos">32</span></a>    <span class="n">score_comparisons</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="SubCommand-33"><a href="#SubCommand-33"><span class="linenos">33</span></a>    <span class="n">statistics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="SubCommand-34"><a href="#SubCommand-34"><span class="linenos">34</span></a>    <span class="n">stipulated</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="SubCommand-35"><a href="#SubCommand-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;規定打数指定&quot;&quot;&quot;</span>
-</span><span id="SubCommand-36"><a href="#SubCommand-36"><span class="linenos">36</span></a>    <span class="n">stipulated_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-</span><span id="SubCommand-37"><a href="#SubCommand-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;規定打数計算レート&quot;&quot;&quot;</span>
-</span><span id="SubCommand-38"><a href="#SubCommand-38"><span class="linenos">38</span></a>    <span class="n">unregistered_replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="SubCommand-39"><a href="#SubCommand-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メンバー未登録プレイヤー名をゲストに置き換えるかフラグ</span>
-</span><span id="SubCommand-40"><a href="#SubCommand-40"><span class="linenos">40</span></a><span class="sd">    - True: 置き換える</span>
-</span><span id="SubCommand-41"><a href="#SubCommand-41"><span class="linenos">41</span></a><span class="sd">    - False: 置き換えない</span>
-</span><span id="SubCommand-42"><a href="#SubCommand-42"><span class="linenos">42</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="SubCommand-43"><a href="#SubCommand-43"><span class="linenos">43</span></a>    <span class="n">anonymous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="SubCommand-44"><a href="#SubCommand-44"><span class="linenos">44</span></a>    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="SubCommand-45"><a href="#SubCommand-45"><span class="linenos">45</span></a>    <span class="n">versus_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="SubCommand-46"><a href="#SubCommand-46"><span class="linenos">46</span></a>    <span class="n">collection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">())</span>
-</span><span id="SubCommand-47"><a href="#SubCommand-47"><span class="linenos">47</span></a>    <span class="n">search_word</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">())</span>
-</span><span id="SubCommand-48"><a href="#SubCommand-48"><span class="linenos">48</span></a>    <span class="n">group_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="SubCommand-49"><a href="#SubCommand-49"><span class="linenos">49</span></a>    <span class="n">always_argument</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="SubCommand-50"><a href="#SubCommand-50"><span class="linenos">50</span></a>
-</span><span id="SubCommand-51"><a href="#SubCommand-51"><span class="linenos">51</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="SubCommand-52"><a href="#SubCommand-52"><span class="linenos">52</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">initialization</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">)</span>
-</span><span id="SubCommand-53"><a href="#SubCommand-53"><span class="linenos">53</span></a>
-</span><span id="SubCommand-54"><a href="#SubCommand-54"><span class="linenos">54</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stipulated_calculation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="SubCommand-55"><a href="#SubCommand-55"><span class="linenos">55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;規定打数をゲーム数から計算</span>
+</span><span id="SubCommand-33"><a href="#SubCommand-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコア比較&quot;&quot;&quot;</span>
+</span><span id="SubCommand-34"><a href="#SubCommand-34"><span class="linenos">34</span></a>    <span class="n">statistics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="SubCommand-35"><a href="#SubCommand-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;統計情報表示&quot;&quot;&quot;</span>
+</span><span id="SubCommand-36"><a href="#SubCommand-36"><span class="linenos">36</span></a>    <span class="n">stipulated</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="SubCommand-37"><a href="#SubCommand-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;規定打数指定&quot;&quot;&quot;</span>
+</span><span id="SubCommand-38"><a href="#SubCommand-38"><span class="linenos">38</span></a>    <span class="n">stipulated_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+</span><span id="SubCommand-39"><a href="#SubCommand-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;規定打数計算レート&quot;&quot;&quot;</span>
+</span><span id="SubCommand-40"><a href="#SubCommand-40"><span class="linenos">40</span></a>    <span class="n">unregistered_replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="SubCommand-41"><a href="#SubCommand-41"><span class="linenos">41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メンバー未登録プレイヤー名をゲストに置き換えるかフラグ</span>
+</span><span id="SubCommand-42"><a href="#SubCommand-42"><span class="linenos">42</span></a><span class="sd">    - True: 置き換える</span>
+</span><span id="SubCommand-43"><a href="#SubCommand-43"><span class="linenos">43</span></a><span class="sd">    - False: 置き換えない</span>
+</span><span id="SubCommand-44"><a href="#SubCommand-44"><span class="linenos">44</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="SubCommand-45"><a href="#SubCommand-45"><span class="linenos">45</span></a>    <span class="n">anonymous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="SubCommand-46"><a href="#SubCommand-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;匿名化フラグ&quot;&quot;&quot;</span>
+</span><span id="SubCommand-47"><a href="#SubCommand-47"><span class="linenos">47</span></a>    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="SubCommand-48"><a href="#SubCommand-48"><span class="linenos">48</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;詳細情報出力フラグ&quot;&quot;&quot;</span>
+</span><span id="SubCommand-49"><a href="#SubCommand-49"><span class="linenos">49</span></a>    <span class="n">versus_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="SubCommand-50"><a href="#SubCommand-50"><span class="linenos">50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;対戦マトリックス表示&quot;&quot;&quot;</span>
+</span><span id="SubCommand-51"><a href="#SubCommand-51"><span class="linenos">51</span></a>    <span class="n">collection</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">())</span>
+</span><span id="SubCommand-52"><a href="#SubCommand-52"><span class="linenos">52</span></a>    <span class="n">search_word</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">())</span>
+</span><span id="SubCommand-53"><a href="#SubCommand-53"><span class="linenos">53</span></a>    <span class="n">group_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="SubCommand-54"><a href="#SubCommand-54"><span class="linenos">54</span></a>    <span class="n">always_argument</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="SubCommand-55"><a href="#SubCommand-55"><span class="linenos">55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;オプションとして常に付与される文字列(カンマ区切り)&quot;&quot;&quot;</span>
 </span><span id="SubCommand-56"><a href="#SubCommand-56"><span class="linenos">56</span></a>
-</span><span id="SubCommand-57"><a href="#SubCommand-57"><span class="linenos">57</span></a><span class="sd">        Args:</span>
-</span><span id="SubCommand-58"><a href="#SubCommand-58"><span class="linenos">58</span></a><span class="sd">            game_count (int): 指定ゲーム数</span>
+</span><span id="SubCommand-57"><a href="#SubCommand-57"><span class="linenos">57</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="SubCommand-58"><a href="#SubCommand-58"><span class="linenos">58</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">initialization</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">)</span>
 </span><span id="SubCommand-59"><a href="#SubCommand-59"><span class="linenos">59</span></a>
-</span><span id="SubCommand-60"><a href="#SubCommand-60"><span class="linenos">60</span></a><span class="sd">        Returns:</span>
-</span><span id="SubCommand-61"><a href="#SubCommand-61"><span class="linenos">61</span></a><span class="sd">            int: 規定ゲーム数</span>
-</span><span id="SubCommand-62"><a href="#SubCommand-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SubCommand-63"><a href="#SubCommand-63"><span class="linenos">63</span></a>
-</span><span id="SubCommand-64"><a href="#SubCommand-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">game_count</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">stipulated_rate</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="SubCommand-60"><a href="#SubCommand-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stipulated_calculation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="SubCommand-61"><a href="#SubCommand-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;規定打数をゲーム数から計算</span>
+</span><span id="SubCommand-62"><a href="#SubCommand-62"><span class="linenos">62</span></a>
+</span><span id="SubCommand-63"><a href="#SubCommand-63"><span class="linenos">63</span></a><span class="sd">        Args:</span>
+</span><span id="SubCommand-64"><a href="#SubCommand-64"><span class="linenos">64</span></a><span class="sd">            game_count (int): 指定ゲーム数</span>
+</span><span id="SubCommand-65"><a href="#SubCommand-65"><span class="linenos">65</span></a>
+</span><span id="SubCommand-66"><a href="#SubCommand-66"><span class="linenos">66</span></a><span class="sd">        Returns:</span>
+</span><span id="SubCommand-67"><a href="#SubCommand-67"><span class="linenos">67</span></a><span class="sd">            int: 規定ゲーム数</span>
+</span><span id="SubCommand-68"><a href="#SubCommand-68"><span class="linenos">68</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SubCommand-69"><a href="#SubCommand-69"><span class="linenos">69</span></a>
+</span><span id="SubCommand-70"><a href="#SubCommand-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">game_count</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">stipulated_rate</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -420,7 +432,9 @@
     </div>
     <a class="headerlink" href="#SubCommand.score_comparisons"></a>
     
-    
+            <div class="docstring"><p>スコア比較</p>
+</div>
+
 
                             </div>
                             <div id="SubCommand.statistics" class="classattr">
@@ -432,7 +446,9 @@
     </div>
     <a class="headerlink" href="#SubCommand.statistics"></a>
     
-    
+            <div class="docstring"><p>統計情報表示</p>
+</div>
+
 
                             </div>
                             <div id="SubCommand.stipulated" class="classattr">
@@ -491,7 +507,9 @@
     </div>
     <a class="headerlink" href="#SubCommand.anonymous"></a>
     
-    
+            <div class="docstring"><p>匿名化フラグ</p>
+</div>
+
 
                             </div>
                             <div id="SubCommand.verbose" class="classattr">
@@ -503,7 +521,9 @@
     </div>
     <a class="headerlink" href="#SubCommand.verbose"></a>
     
-    
+            <div class="docstring"><p>詳細情報出力フラグ</p>
+</div>
+
 
                             </div>
                             <div id="SubCommand.versus_matrix" class="classattr">
@@ -515,7 +535,9 @@
     </div>
     <a class="headerlink" href="#SubCommand.versus_matrix"></a>
     
-    
+            <div class="docstring"><p>対戦マトリックス表示</p>
+</div>
+
 
                             </div>
                             <div id="SubCommand.collection" class="classattr">
@@ -562,7 +584,9 @@
     </div>
     <a class="headerlink" href="#SubCommand.always_argument"></a>
     
-    
+            <div class="docstring"><p>オプションとして常に付与される文字列(カンマ区切り)</p>
+</div>
+
 
                             </div>
                             <div id="SubCommand.stipulated_calculation" class="classattr">
@@ -576,17 +600,17 @@
 
     </div>
     <a class="headerlink" href="#SubCommand.stipulated_calculation"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SubCommand.stipulated_calculation-54"><a href="#SubCommand.stipulated_calculation-54"><span class="linenos">54</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stipulated_calculation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="SubCommand.stipulated_calculation-55"><a href="#SubCommand.stipulated_calculation-55"><span class="linenos">55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;規定打数をゲーム数から計算</span>
-</span><span id="SubCommand.stipulated_calculation-56"><a href="#SubCommand.stipulated_calculation-56"><span class="linenos">56</span></a>
-</span><span id="SubCommand.stipulated_calculation-57"><a href="#SubCommand.stipulated_calculation-57"><span class="linenos">57</span></a><span class="sd">        Args:</span>
-</span><span id="SubCommand.stipulated_calculation-58"><a href="#SubCommand.stipulated_calculation-58"><span class="linenos">58</span></a><span class="sd">            game_count (int): 指定ゲーム数</span>
-</span><span id="SubCommand.stipulated_calculation-59"><a href="#SubCommand.stipulated_calculation-59"><span class="linenos">59</span></a>
-</span><span id="SubCommand.stipulated_calculation-60"><a href="#SubCommand.stipulated_calculation-60"><span class="linenos">60</span></a><span class="sd">        Returns:</span>
-</span><span id="SubCommand.stipulated_calculation-61"><a href="#SubCommand.stipulated_calculation-61"><span class="linenos">61</span></a><span class="sd">            int: 規定ゲーム数</span>
-</span><span id="SubCommand.stipulated_calculation-62"><a href="#SubCommand.stipulated_calculation-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SubCommand.stipulated_calculation-63"><a href="#SubCommand.stipulated_calculation-63"><span class="linenos">63</span></a>
-</span><span id="SubCommand.stipulated_calculation-64"><a href="#SubCommand.stipulated_calculation-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">game_count</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">stipulated_rate</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SubCommand.stipulated_calculation-60"><a href="#SubCommand.stipulated_calculation-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stipulated_calculation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="SubCommand.stipulated_calculation-61"><a href="#SubCommand.stipulated_calculation-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;規定打数をゲーム数から計算</span>
+</span><span id="SubCommand.stipulated_calculation-62"><a href="#SubCommand.stipulated_calculation-62"><span class="linenos">62</span></a>
+</span><span id="SubCommand.stipulated_calculation-63"><a href="#SubCommand.stipulated_calculation-63"><span class="linenos">63</span></a><span class="sd">        Args:</span>
+</span><span id="SubCommand.stipulated_calculation-64"><a href="#SubCommand.stipulated_calculation-64"><span class="linenos">64</span></a><span class="sd">            game_count (int): 指定ゲーム数</span>
+</span><span id="SubCommand.stipulated_calculation-65"><a href="#SubCommand.stipulated_calculation-65"><span class="linenos">65</span></a>
+</span><span id="SubCommand.stipulated_calculation-66"><a href="#SubCommand.stipulated_calculation-66"><span class="linenos">66</span></a><span class="sd">        Returns:</span>
+</span><span id="SubCommand.stipulated_calculation-67"><a href="#SubCommand.stipulated_calculation-67"><span class="linenos">67</span></a><span class="sd">            int: 規定ゲーム数</span>
+</span><span id="SubCommand.stipulated_calculation-68"><a href="#SubCommand.stipulated_calculation-68"><span class="linenos">68</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SubCommand.stipulated_calculation-69"><a href="#SubCommand.stipulated_calculation-69"><span class="linenos">69</span></a>
+</span><span id="SubCommand.stipulated_calculation-70"><a href="#SubCommand.stipulated_calculation-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">game_count</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">stipulated_rate</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 </span></pre></div>
 
 
