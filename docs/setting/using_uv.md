@@ -25,8 +25,9 @@ $ export SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxx
 ```
 
 ## 起動
+### 通常起動
 ```
-$ uv run ./slack-app.py
+$ uv run slack-app.py
 ```
 
 自動で以下が行われる
@@ -34,3 +35,14 @@ $ uv run ./slack-app.py
 * 仮想環境の作成
 * 依存パッケージのインストール
 * スクリプトの起動
+
+### バックグラウンド起動
+```
+(venvdir) $ nohup uv run slack-app.py > /dev/null 2>&1 &
+```
+
+#### 停止
+PIDを調べてプロセスをkill。
+
+## その他設定
+* [デーモン化](daemonization.md)

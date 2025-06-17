@@ -38,10 +38,23 @@ IPAexフォント（ipaexg.ttf）を `slack-app.py` と同じディレクトリ�
 (venvdir) $ export SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-### 動かしっぱなしにする
+### 通常起動
 ```
-(venvdir) $ nohup python3 slack-app.py -c config.ini > /dev/null 2>&1 &
+(venvdir) $ python3 slack-app.py
+```
+もしくは、
+```
+(venvdir) $ chmod u+x slack-app.py
+(venvdir) $ ./slack-app.py
 ```
 
-### 停止
+### バックグラウンド起動
+```
+(venvdir) $ nohup python3 ./slack-app.py > /dev/null 2>&1 &
+```
+
+#### 停止
 PIDを調べてプロセスをkill。
+
+## その他設定
+* [デーモン化](daemonization.md)

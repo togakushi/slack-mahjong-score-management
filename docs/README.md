@@ -17,6 +17,7 @@
 
 ## その他
 - [メンテナンスツール](dbtools.md)
+- [デーモン化](setting/daemonization.md)
 - [簡易ヘルプ](help.md)
 - [トラブルシューティング](troubleshooting.md)
 - [用語集](glossary.md)
