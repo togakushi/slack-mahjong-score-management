@@ -94,8 +94,11 @@ class DatabaseSection(CommonMethodMixin):
     """databaseセクション初期値"""
     _config: configparser.ConfigParser | None = field(default=None)
     database_file: str = field(default="mahjong.db")
-    channel_limitations: str = field(default=str())
+    """成績管理データベースファイル名"""
+    channel_limitations: list = field(default_factory=list)
+    """SQLを実行できるチャンネルリスト"""
     backup_dir: str | None = field(default=None)
+    """バックアップ先ディレクトリ"""
 
     def __post_init__(self):
         self.initialization("database")
