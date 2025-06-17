@@ -88,7 +88,7 @@ Settings -> Install App
 
 `User OAuth Token` と `Bot User OAuth Token` が発行される
 
-## 実行環境
+## 実行環境構築
 
 > [!CAUTION]
 > Python3.12以上の実行環境が必要
