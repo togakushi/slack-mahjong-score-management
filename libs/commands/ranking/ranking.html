@@ -65,7 +65,7 @@
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">tabulate</span><span class="w"> </span><span class="kn">import</span> <span class="n">tabulate</span>
@@ -77,11 +77,11 @@
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">formatter</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">def</span><span class="w"> </span><span class="nf">aggregation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">def</span><span class="w"> </span><span class="nf">aggregation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ランキングデータを生成</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">    Returns:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">        Tuple[str, Any]: 集計結果</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">        tuple[str, Any]: 集計結果</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">        - str: ランキングの集計情報</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">        - dict | Any: 各ランキングの情報</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -239,17 +239,17 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">aggregation</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>:</span></span>
+        <span class="name">aggregation</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="aggregation-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#aggregation"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="aggregation-19"><a href="#aggregation-19"><span class="linenos"> 19</span></a><span class="k">def</span><span class="w"> </span><span class="nf">aggregation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="aggregation-19"><a href="#aggregation-19"><span class="linenos"> 19</span></a><span class="k">def</span><span class="w"> </span><span class="nf">aggregation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 </span><span id="aggregation-20"><a href="#aggregation-20"><span class="linenos"> 20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ランキングデータを生成</span>
 </span><span id="aggregation-21"><a href="#aggregation-21"><span class="linenos"> 21</span></a>
 </span><span id="aggregation-22"><a href="#aggregation-22"><span class="linenos"> 22</span></a><span class="sd">    Returns:</span>
-</span><span id="aggregation-23"><a href="#aggregation-23"><span class="linenos"> 23</span></a><span class="sd">        Tuple[str, Any]: 集計結果</span>
+</span><span id="aggregation-23"><a href="#aggregation-23"><span class="linenos"> 23</span></a><span class="sd">        tuple[str, Any]: 集計結果</span>
 </span><span id="aggregation-24"><a href="#aggregation-24"><span class="linenos"> 24</span></a><span class="sd">        - str: ランキングの集計情報</span>
 </span><span id="aggregation-25"><a href="#aggregation-25"><span class="linenos"> 25</span></a><span class="sd">        - dict | Any: 各ランキングの情報</span>
 </span><span id="aggregation-26"><a href="#aggregation-26"><span class="linenos"> 26</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -379,7 +379,7 @@
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>Tuple[str, Any]: 集計結果</p>
+  <p>tuple[str, Any]: 集計結果</p>
   
   <ul>
   <li>str: ランキングの集計情報</li>

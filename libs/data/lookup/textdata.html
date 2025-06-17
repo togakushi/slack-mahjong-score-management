@@ -69,11 +69,11 @@
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="c1"># slack出力用</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_members_list</span><span class="p">():</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_members_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;登録済みのメンバー一覧を取得する(slack出力用)</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">    Returns:</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">        Tuple[str, str]:</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">        tuple[str, str]:</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">        - str: post時のタイトル</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">        - str: メンバー一覧</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -96,7 +96,7 @@
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="k">return</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_team_list</span><span class="p">():</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_team_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チームの登録状況を表示する(slack出力用)</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">    Returns:</span>
@@ -140,17 +140,17 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_members_list</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+        <span class="name">get_members_list</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="get_members_list-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#get_members_list"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_members_list-11"><a href="#get_members_list-11"><span class="linenos">11</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_members_list</span><span class="p">():</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_members_list-11"><a href="#get_members_list-11"><span class="linenos">11</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_members_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 </span><span id="get_members_list-12"><a href="#get_members_list-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;登録済みのメンバー一覧を取得する(slack出力用)</span>
 </span><span id="get_members_list-13"><a href="#get_members_list-13"><span class="linenos">13</span></a>
 </span><span id="get_members_list-14"><a href="#get_members_list-14"><span class="linenos">14</span></a><span class="sd">    Returns:</span>
-</span><span id="get_members_list-15"><a href="#get_members_list-15"><span class="linenos">15</span></a><span class="sd">        Tuple[str, str]:</span>
+</span><span id="get_members_list-15"><a href="#get_members_list-15"><span class="linenos">15</span></a><span class="sd">        tuple[str, str]:</span>
 </span><span id="get_members_list-16"><a href="#get_members_list-16"><span class="linenos">16</span></a><span class="sd">        - str: post時のタイトル</span>
 </span><span id="get_members_list-17"><a href="#get_members_list-17"><span class="linenos">17</span></a><span class="sd">        - str: メンバー一覧</span>
 </span><span id="get_members_list-18"><a href="#get_members_list-18"><span class="linenos">18</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -179,7 +179,7 @@
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>Tuple[str, str]:</p>
+  <p>tuple[str, str]:</p>
   
   <ul>
   <li>str: post時のタイトル</li>
@@ -195,13 +195,13 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_team_list</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+        <span class="name">get_team_list</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="get_team_list-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#get_team_list"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_team_list-38"><a href="#get_team_list-38"><span class="linenos">38</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_team_list</span><span class="p">():</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_team_list-38"><a href="#get_team_list-38"><span class="linenos">38</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_team_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="get_team_list-39"><a href="#get_team_list-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チームの登録状況を表示する(slack出力用)</span>
 </span><span id="get_team_list-40"><a href="#get_team_list-40"><span class="linenos">40</span></a>
 </span><span id="get_team_list-41"><a href="#get_team_list-41"><span class="linenos">41</span></a><span class="sd">    Returns:</span>

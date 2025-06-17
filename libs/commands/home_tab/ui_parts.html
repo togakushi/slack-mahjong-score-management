@@ -318,14 +318,14 @@
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="k">return</span> <span class="n">view</span>
 </span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>
 </span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="k">def</span><span class="w"> </span><span class="nf">set_command_option</span><span class="p">(</span><span class="n">body</span><span class="p">):</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="k">def</span><span class="w"> </span><span class="nf">set_command_option</span><span class="p">(</span><span class="n">body</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 </span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;選択オプションの内容のフラグをセット</span>
 </span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>
 </span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="sd">    Args:</span>
 </span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="sd">        body (dict): イベント内容</span>
 </span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>
 </span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a><span class="sd">    Returns:</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a><span class="sd">        Tuple[list, list, dict]:</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a><span class="sd">        tuple[list, list, dict]:</span>
 </span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="sd">        - list: コマンドに追加する文字列</span>
 </span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="sd">        - list: viewに表示するメッセージ</span>
 </span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="sd">        - dict: 変更されるフラグ</span>
@@ -865,20 +865,20 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">set_command_option</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">body</span></span><span class="return-annotation">):</span></span>
+        <span class="name">set_command_option</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">body</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="set_command_option-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#set_command_option"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="set_command_option-233"><a href="#set_command_option-233"><span class="linenos">233</span></a><span class="k">def</span><span class="w"> </span><span class="nf">set_command_option</span><span class="p">(</span><span class="n">body</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="set_command_option-233"><a href="#set_command_option-233"><span class="linenos">233</span></a><span class="k">def</span><span class="w"> </span><span class="nf">set_command_option</span><span class="p">(</span><span class="n">body</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 </span><span id="set_command_option-234"><a href="#set_command_option-234"><span class="linenos">234</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;選択オプションの内容のフラグをセット</span>
 </span><span id="set_command_option-235"><a href="#set_command_option-235"><span class="linenos">235</span></a>
 </span><span id="set_command_option-236"><a href="#set_command_option-236"><span class="linenos">236</span></a><span class="sd">    Args:</span>
 </span><span id="set_command_option-237"><a href="#set_command_option-237"><span class="linenos">237</span></a><span class="sd">        body (dict): イベント内容</span>
 </span><span id="set_command_option-238"><a href="#set_command_option-238"><span class="linenos">238</span></a>
 </span><span id="set_command_option-239"><a href="#set_command_option-239"><span class="linenos">239</span></a><span class="sd">    Returns:</span>
-</span><span id="set_command_option-240"><a href="#set_command_option-240"><span class="linenos">240</span></a><span class="sd">        Tuple[list, list, dict]:</span>
+</span><span id="set_command_option-240"><a href="#set_command_option-240"><span class="linenos">240</span></a><span class="sd">        tuple[list, list, dict]:</span>
 </span><span id="set_command_option-241"><a href="#set_command_option-241"><span class="linenos">241</span></a><span class="sd">        - list: コマンドに追加する文字列</span>
 </span><span id="set_command_option-242"><a href="#set_command_option-242"><span class="linenos">242</span></a><span class="sd">        - list: viewに表示するメッセージ</span>
 </span><span id="set_command_option-243"><a href="#set_command_option-243"><span class="linenos">243</span></a><span class="sd">        - dict: 変更されるフラグ</span>
@@ -962,7 +962,7 @@
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>Tuple[list, list, dict]:</p>
+  <p>tuple[list, list, dict]:</p>
   
   <ul>
   <li>list: コマンドに追加する文字列</li>
