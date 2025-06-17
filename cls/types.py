@@ -100,7 +100,7 @@ class SlackSearchData(TypedDict, total=False):
     """botが付けたNGリアクション"""
     in_thread: bool
     """スレッドになっていればTrue(スレッド元は除く)"""
-    score: list
+    score: "ScoreDataDict"
     """スコア報告なら結果"""
     remarks: list
     """メモならその内容"""

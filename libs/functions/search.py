@@ -5,11 +5,11 @@ libs/functions/search.py
 import logging
 import re
 from contextlib import closing
-from typing import Any
+from typing import cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import ScoreDataDict, SlackSearchData
+from cls.types import SlackSearchData
 from libs.utils import dbutil, formatter, validator
 
 SlackSearchDict = dict[str, SlackSearchData]
@@ -49,22 +49,23 @@ def slack_messages(word: str) -> SlackSearchDict:
         matches += response["messages"]["matches"]  # 2ページ目以降
 
     # 必要なデータだけ辞書に格納
-    data: SlackSearchDict = {}
+    data: SlackSearchDict = cast(SlackSearchDict, {})
     for x in matches:
-        data[x["ts"]] = {
-            "channel_id": x["channel"].get("id", ""),
-            "user_id": x.get("user", ""),
-            "text": x.get("text", ""),
-        }
+        if isinstance(x, dict):
+            data[x["ts"]] = {
+                "channel_id": str(cast(dict, x["channel"]).get("id", "")),
+                "user_id": str(x.get("user", "")),
+                "text": str(x.get("text", "")),
+            }
 
     return data
 
 
-def get_message_details(matches: dict) -> SlackSearchDict:
+def get_message_details(matches: SlackSearchDict) -> SlackSearchDict:
     """メッセージ詳細情報取得
 
     Args:
-        matches (dict): 対象データ
+        matches (SlackSearchDict): 対象データ
 
     Returns:
         SlackSearchDict: 詳細情報追加データ
@@ -72,36 +73,28 @@ def get_message_details(matches: dict) -> SlackSearchDict:
 
     # 詳細情報取得
     for key, val in matches.items():
-        conversations = g.app.client.conversations_replies(
-            channel=val.get("channel_id"),
-            ts=key,
-        )
-        msg: list = conversations.get("messages", [])
-
-        # 各種時間取得
-        if msg[0].get("ts"):  # イベント発生時間
-            val["event_ts"] = msg[0]["ts"]
-        if msg[0].get("thread_ts"):  # スレッドの先頭
-            val["thread_ts"] = msg[0]["thread_ts"]
+        res: dict = {}
+        if isinstance(channel_id := val.get("channel_id"), str):
+            conversations = g.app.client.conversations_replies(channel=channel_id, ts=key)
+            if (msg := conversations.get("messages")):
+                res = cast(dict, msg[0])
         else:
-            val["thread_ts"] = None
-        if msg[0].get("edited"):  # 編集時間
-            val["edited_ts"] = msg[0]["edited"]["ts"]
-        else:
-            val["edited_ts"] = None
+            continue
 
-        # リアクション取得
-        reaction_ok, reaction_ng = reactions_list(msg[0])
-        val["reaction_ok"] = reaction_ok
-        val["reaction_ng"] = reaction_ng
-
-        # スレッド内フラグ
-        if val.get("event_ts") == val.get("thread_ts") or val.get("thread_ts") is None:
-            val["in_thread"] = False
-        else:
-            val["in_thread"] = True
-
-        matches[key].update(val)
+        if res:
+            # 各種時間取得
+            matches[key].update({"event_ts": res.get("ts")})  # イベント発生時間
+            matches[key].update({"thread_ts": res.get("thread_ts")})  # スレッドの先頭
+            matches[key].update({"edited_ts": cast(dict, res.get("edited", {})).get("ts")})  # 編集時間
+            # リアクション取得
+            reaction_ok, reaction_ng = reactions_list(res)
+            matches[key].update({"reaction_ok": reaction_ok})
+            matches[key].update({"reaction_ng": reaction_ng})
+            # スレッド内フラグ
+            if val.get("event_ts") == val.get("thread_ts") or val.get("thread_ts") is None:
+                matches[key].update({"in_thread": False})
+            else:
+                matches[key].update({"in_thread": True})
 
     return matches
 
@@ -127,14 +120,14 @@ def for_slack_score() -> SlackSearchDict:
             for k, v in detection.items():
                 if k.endswith("_name"):  # 名前ブレを修正
                     detection[k] = formatter.name_replace(str(v), False)  # type: ignore[literal-required]
-            matches[key]["score"] = dict_to_list(detection)
+            matches[key]["score"] = detection
             matches[key].pop("text")
         else:  # 不一致は破棄
             matches.pop(key)
 
     # 結果が無い場合は空の辞書を返して後続の処理をスキップ
     if not matches:
-        return {}
+        return cast(SlackSearchDict, {})
 
     matches = get_message_details(matches)
     g.msg.channel_type = "search_messages"
@@ -168,7 +161,7 @@ def for_slack_remarks() -> SlackSearchDict:
 
     # 結果が無い場合は空の辞書を返して後続の処理をスキップ
     if not matches:
-        return {}
+        return cast(SlackSearchDict, {})
 
     matches = get_message_details(matches)
     g.msg.channel_type = "search_messages"
@@ -228,11 +221,11 @@ def for_db_remarks(first_ts: float | bool = False) -> list:
     return data
 
 
-def reactions_list(msg: Any) -> tuple[list, list]:
+def reactions_list(msg: dict) -> tuple[list, list]:
     """botが付けたリアクションを取得
 
     Args:
-        msg (Any): メッセージ内容
+        msg (dict): メッセージ内容
 
     Returns:
         tuple[list, list]:
@@ -245,31 +238,12 @@ def reactions_list(msg: Any) -> tuple[list, list]:
 
     if msg.get("reactions"):
         for reactions in msg.get("reactions"):
-            if g.bot_id in reactions.get("users"):
-                match reactions.get("name"):
-                    case g.cfg.setting.reaction_ok:
-                        reaction_ok.append(msg.get("ts"))
-                    case g.cfg.setting.reaction_ng:
-                        reaction_ng.append(msg.get("ts"))
+            if isinstance(reactions, dict):
+                if g.bot_id in reactions.get("users"):
+                    match reactions.get("name"):
+                        case g.cfg.setting.reaction_ok:
+                            reaction_ok.append(msg.get("ts"))
+                        case g.cfg.setting.reaction_ng:
+                            reaction_ng.append(msg.get("ts"))
 
     return (reaction_ok, reaction_ng)
-
-
-# todo: 移行用関数
-def dict_to_list(detection: ScoreDataDict) -> list:
-    """移行用関数
-
-    Args:
-        detection (ScoreDataDict): スコアデータ
-
-    Returns:
-        list: 旧式スコアデータ
-    """
-
-    return [
-        detection["p1_name"], detection["p1_str"],
-        detection["p2_name"], detection["p2_str"],
-        detection["p3_name"], detection["p3_str"],
-        detection["p4_name"], detection["p4_str"],
-        detection["comment"],
-    ]

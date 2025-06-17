@@ -3,6 +3,7 @@ lib/data/comparison.py
 """
 
 import logging
+from typing import cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -64,7 +65,7 @@ def data_comparison() -> tuple[dict, dict]:
     for _, val in slack_remarks.items():  # スレッド元のスコアデータを追加
         thread_ts = val.get("thread_ts")
         if thread_ts in slack_score:
-            val["score"] = slack_score[thread_ts].get("score", [])
+            val["score"] = slack_score[thread_ts].get("score", cast(ScoreDataDict, {}))
 
     if slack_score:
         first_ts = float(min(slack_score))
@@ -122,7 +123,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, Co
             logging.info("pending(slack -> DB): %s", ExtDt(float(key)).format("ymdhms"))
             continue
 
-        slack_score = val.get("score", [])
+        slack_score = val.get("score", cast(ScoreDataDict, {}))
         g.msg.channel_id = val.get("channel_id", "")
         g.msg.user_id = val.get("user_id", "")
         g.msg.event_ts = key
@@ -161,7 +162,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, Co
                 msg["mismatch"] += f"\t{ExtDt(float(key)).format("ymdhms")}\n"
                 msg["mismatch"] += f"\t\t修正前：{textformat(db_score)}\n"
                 msg["mismatch"] += f"\t\t修正後：{textformat(slack_score)}\n"
-                modify.db_update(list_to_dict(slack_score), key, reactions_data)
+                modify.db_update(slack_score, key, reactions_data)
             else:
                 logging.info("score check skip: %s %s", ExtDt(float(key)).format("ymdhms"), textformat(db_score))
             continue
@@ -173,7 +174,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, Co
         count["missing"] += 1
         logging.notice("missing: %s, %s", key, slack_score)  # type: ignore
         msg["missing"] += f"\t{ExtDt(float(key)).format("ymdhms")} {textformat(slack_score)}\n"
-        modify.db_insert(list_to_dict(slack_score), key, reactions_data)
+        modify.db_insert(slack_score, key, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         if float(key) + g.cfg.search.wait > now_ts:
@@ -286,7 +287,7 @@ def check_total_score(slack_data: dict) -> tuple[dict, ComparisonDict]:
         if lookup.db.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
             continue
 
-        score_data = score.get_score(list_to_dict(val.get("score", "")))
+        score_data = score.get_score(val.get("score", cast(ScoreDataDict, {})))
         reaction_ok = val.get("reaction_ok")
         reaction_ng = val.get("reaction_ng")
 
@@ -307,7 +308,7 @@ def check_total_score(slack_data: dict) -> tuple[dict, ComparisonDict]:
     return (count, msg)
 
 
-def textformat(text):
+def textformat(text) -> str:
     """メンバーと素点を整形する
 
     Args:
@@ -325,28 +326,5 @@ def textformat(text):
         ret += f"[{text[8]}]"
     else:
         ret += "[]"
-
-    return ret
-
-
-# todo: 移行用関数
-def list_to_dict(detection: list) -> ScoreDataDict:
-    """移行用関数
-
-    Args:
-        detection (list): 旧式スコアデータ
-
-    Returns:
-        ScoreDataDict: スコアデータ
-    """
-
-    ret: ScoreDataDict = {
-        "p1_name": detection[0], "p1_str": detection[1],
-        "p2_name": detection[2], "p2_str": detection[3],
-        "p3_name": detection[4], "p3_str": detection[5],
-        "p4_name": detection[6], "p4_str": detection[7],
-        "comment": detection[8],
-    }
-    ret = score.get_score(ret)
 
     return ret
