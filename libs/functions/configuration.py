@@ -182,6 +182,11 @@ def setup() -> None:
         g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.setting.time_adjust
     )
 
+    # フォントファイルチェック
+    if not os.path.exists(g.cfg.setting.font_file):
+        logging.critical("The specified font file cannot be found.")
+        sys.exit(255)
+
     # 作業用ディレクトリ作成
     try:
         if os.path.isdir(g.cfg.setting.work_dir):
