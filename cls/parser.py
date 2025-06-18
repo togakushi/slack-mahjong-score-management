@@ -4,16 +4,28 @@ cls/parser.py
 
 import logging
 import re
+from dataclasses import dataclass
 from types import UnionType
+from typing import Any
 
 import pandas as pd
 from slack_sdk import WebClient
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import CommandSpec, ParsedCommand
+from cls.types import CommandSpec
 from libs.data import lookup
 from libs.utils import textutil
+
+
+@dataclass
+class ParsedCommand:
+    """コマンド解析結果"""
+    flags: dict[str, Any]
+    arguments: list[str]
+    unknown: list[str]
+    search_range: list["ExtDt"]
+
 
 CommandsDict = dict[str, CommandSpec]
 COMMANDS: CommandsDict = {

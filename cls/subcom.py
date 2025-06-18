@@ -6,7 +6,7 @@ from configparser import ConfigParser
 from dataclasses import dataclass, field
 from math import ceil
 
-from cls.types import CommonMethodMixin
+from cls.mixin import CommonMethodMixin
 
 
 @dataclass

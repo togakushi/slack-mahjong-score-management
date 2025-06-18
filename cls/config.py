@@ -11,8 +11,9 @@ from itertools import chain
 from pathlib import Path
 from typing import cast
 
+from cls.mixin import CommonMethodMixin
 from cls.subcom import SubCommand
-from cls.types import CommonMethodMixin, GradeTableDict
+from cls.types import GradeTableDict
 
 
 @dataclass
