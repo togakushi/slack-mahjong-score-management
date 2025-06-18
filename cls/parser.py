@@ -4,6 +4,7 @@ cls/parser.py
 
 import logging
 import re
+from types import UnionType
 
 import pandas as pd
 from slack_sdk import WebClient
@@ -276,6 +277,20 @@ class MessageParser:
         if isinstance(body, dict):
             self.parser(body)
 
+    def reset(self):
+        """クラス変数のリセット"""
+        for k, v in MessageParser.__annotations__.items():
+            match v:
+                case v if v is type(str()):
+                    setattr(MessageParser, k, str())
+                case v if v is type([]):
+                    setattr(MessageParser, k, [])
+                case v if v is type(bool()):
+                    setattr(MessageParser, k, bool())
+                case v if isinstance(v, UnionType):
+                    if set(v.__args__) == {str, type(None)}:
+                        setattr(MessageParser, k, str())
+
     def parser(self, _body: dict):
         """postされたメッセージをパースする
 
@@ -285,13 +300,8 @@ class MessageParser:
 
         logging.trace(_body)  # type: ignore
 
-        __tmp_client = self.client
-        self.__dict__.clear()
-        MessageParser.client = __tmp_client
-        MessageParser.text = ""
+        self.reset()
         MessageParser.thread_ts = "0"
-        MessageParser.keyword = ""
-        MessageParser.argument = []
 
         if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
             _event = _body
