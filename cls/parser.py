@@ -142,7 +142,7 @@ COMMANDS: CommandsDict = {
 }
 
 
-class CommandParser():
+class CommandParser:
     """引数解析クラス"""
 
     def __init__(self):
@@ -257,7 +257,7 @@ class CommandParser():
         return ret
 
 
-class MessageParser():
+class MessageParser:
     """メッセージ解析クラス"""
     client: WebClient = WebClient()
     channel_id: str | None = str()
@@ -287,42 +287,42 @@ class MessageParser():
 
         __tmp_client = self.client
         self.__dict__.clear()
-        self.client = __tmp_client
-        self.text = ""
-        self.thread_ts = "0"
-        self.keyword = ""
-        self.argument = []
+        MessageParser.client = __tmp_client
+        MessageParser.text = ""
+        MessageParser.thread_ts = "0"
+        MessageParser.keyword = ""
+        MessageParser.argument = []
 
         if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
             _event = _body
-            if not self.channel_id:
+            if not MessageParser.channel_id:
                 if _body.get("channel_name") == "directmessage":
-                    self.channel_id = _body.get("channel_id", None)
+                    MessageParser.channel_id = _body.get("channel_id", None)
                 else:
-                    self.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
+                    MessageParser.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
 
         if _body.get("container"):  # Homeタブ
-            self.user_id = _body["user"].get("id")
-            self.channel_id = lookup.api.get_dm_channel_id(self.user_id)
-            self.text = "dummy"
+            MessageParser.user_id = _body["user"].get("id")
+            MessageParser.channel_id = lookup.api.get_dm_channel_id(self.user_id)
+            MessageParser.text = "dummy"
 
         _event = self.get_event_attribute(_body)
-        self.user_id = _event.get("user", self.user_id)
-        self.event_ts = _event.get("ts", self.event_ts)
-        self.thread_ts = _event.get("thread_ts", self.thread_ts)
-        self.channel_type = self.get_channel_type(_body)
+        MessageParser.user_id = _event.get("user", self.user_id)
+        MessageParser.event_ts = _event.get("ts", self.event_ts)
+        MessageParser.thread_ts = _event.get("thread_ts", self.thread_ts)
+        MessageParser.channel_type = self.get_channel_type(_body)
 
         # スレッド内のポストか判定
         if float(self.thread_ts):
-            self.in_thread = self.event_ts != self.thread_ts
+            MessageParser.in_thread = self.event_ts != self.thread_ts
         else:
-            self.in_thread = False
+            MessageParser.in_thread = False
 
         if "text" in _event:
-            self.text = _event.get("text")
-            if self.text:  # 空文字以外はキーワードと引数に分割
-                self.keyword = self.text.split()[0]
-                self.argument = self.text.split()[1:]
+            MessageParser.text = _event.get("text")
+            if MessageParser.text:  # 空文字以外はキーワードと引数に分割
+                MessageParser.keyword = MessageParser.text.split()[0]
+                MessageParser.argument = MessageParser.text.split()[1:]
         else:  # text属性が見つからないときはログに出力
             if not _event.get("text") and not _body.get("type") == "block_actions":
                 logging.error("text not found: %s", _body)
@@ -345,27 +345,27 @@ class MessageParser():
             _event = _body
 
         if _body.get("event"):
-            if not self.channel_id:
+            if not MessageParser.channel_id:
                 if _body.get("channel_name") != "directmessage":
-                    self.channel_id = _body["event"].get("channel")
+                    MessageParser.channel_id = _body["event"].get("channel")
                 else:
-                    self.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
+                    MessageParser.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
 
             match _body["event"].get("subtype"):
                 case "message_changed":
-                    self.status = "message_changed"
+                    MessageParser.status = "message_changed"
                     _event = _body["event"]["message"]
                 case "message_deleted":
-                    self.status = "message_deleted"
+                    MessageParser.status = "message_deleted"
                     _event = _body["event"]["previous_message"]
                 case "file_share":
-                    self.status = "message_append"
+                    MessageParser.status = "message_append"
                     _event = _body["event"]
                 case None:
-                    self.status = "message_append"
+                    MessageParser.status = "message_append"
                     _event = _body["event"]
                 case _:
-                    self.status = "message_append"
+                    MessageParser.status = "message_append"
                     _event = _body["event"]
                     logging.info("unknown subtype: %s", _body)
 
@@ -396,18 +396,18 @@ class MessageParser():
 
     def check_updatable(self):
         """DB更新可能チャンネルのポストかチェックする"""
-        self.updatable = False
+        MessageParser.updatable = False
 
         if g.cfg.db.channel_limitations:
-            if self.channel_id in g.cfg.db.channel_limitations:
-                self.updatable = True
+            if MessageParser.channel_id in g.cfg.db.channel_limitations:
+                MessageParser.updatable = True
         else:  # リストが空なら全チャンネルが対象
-            match self.channel_type:
+            match MessageParser.channel_type:
                 case "channel":  # public channel
-                    self.updatable = True
+                    MessageParser.updatable = True
                 case "group":  # private channel
-                    self.updatable = True
+                    MessageParser.updatable = True
                 case "im":  # direct message
-                    self.updatable = False
+                    MessageParser.updatable = False
                 case "search_messages":
-                    self.updatable = True
+                    MessageParser.updatable = True

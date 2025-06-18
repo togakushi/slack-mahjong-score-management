@@ -52,25 +52,25 @@ class SettingSection(CommonMethodMixin):
     """settingセクション初期値"""
     _config: configparser.ConfigParser | None = field(default=None)
     slash_command: str = field(default="/mahjong")
-    """スラッシュコマンド名 (default: "/mahjong")"""
+    """スラッシュコマンド名"""
     thread_report: bool = field(default=True)
-    """スレッド内にある得点報告を扱う (default: True)"""
+    """スレッド内にある得点報告を扱う"""
     time_adjust: int = field(default=12)
-    """日付変更後、集計範囲に含める追加時間 (default: 12)"""
+    """日付変更後、集計範囲に含める追加時間"""
     guest_mark: str = field(default="※")
-    """ゲスト無効時に未登録メンバーに付与する印 (default: "※")"""
+    """ゲスト無効時に未登録メンバーに付与する印"""
     reaction_ok: str = field(default="ok")
-    """DBに取り込んだ時に付けるリアクション (default: "ok")"""
+    """DBに取り込んだ時に付けるリアクション"""
     reaction_ng: str = field(default="ng")
-    """DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション (default: "ng")"""
+    """DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション"""
     font_file: str = field(default="ipaexg.ttf")
-    """グラフ描写に使用するフォントファイル (default: "ipaexg.ttf")"""
+    """グラフ描写に使用するフォントファイル"""
     graph_style: str = field(default="ggplot")
-    """グラフスタイル (default: "ggplot")"""
+    """グラフスタイル"""
     work_dir: str = field(default="work")
-    """生成したファイルを保存するディレクトリ (default: "work")"""
+    """生成したファイルを保存するディレクトリ"""
     ignore_userid: list = field(default_factory=list)
-    """投稿を無視するユーザのリスト(カンマ区切りで設定) (default: 空欄)"""
+    """投稿を無視するユーザのリスト(カンマ区切りで設定)"""
 
     def __post_init__(self):
         self.initialization("setting")
@@ -173,7 +173,9 @@ class CommentSection(CommonMethodMixin):
     """commentセクション初期値"""
     _config: configparser.ConfigParser | None = field(default=None)
     group_length: int = field(default=0)
+    """コメント検索時の集約文字数(固定指定)"""
     search_word: str = field(default=str())
+    """コメント検索時の検索文字列(固定指定)"""
 
     def __post_init__(self):
         self.initialization("comment")
@@ -217,7 +219,7 @@ class BadgeDisplay:
     grade: BadgeGradeSpec = field(default_factory=BadgeGradeSpec)
 
 
-class Config():
+class Config:
     """コンフィグ解析クラス"""
     # コンフィグセクション
     mahjong: MahjongSection
@@ -292,15 +294,15 @@ class Config():
                 self._config.add_section(x)
 
         # セクション読み込み
-        self.mahjong = MahjongSection(self._config)
-        self.setting = SettingSection(self._config)
-        self.search = SearchSection(self._config)
-        self.db = DatabaseSection(self._config)
-        self.member = MemberSection(self._config)
-        self.team = TeamSection(self._config)
-        self.alias = AliasSection(self._config)
-        self.comment = CommentSection(self._config)
-        self.cw = CommandWord(  # チャンネル内呼び出しキーワード
+        Config.mahjong = MahjongSection(self._config)
+        Config.setting = SettingSection(self._config)
+        Config.search = SearchSection(self._config)
+        Config.db = DatabaseSection(self._config)
+        Config.member = MemberSection(self._config)
+        Config.team = TeamSection(self._config)
+        Config.alias = AliasSection(self._config)
+        Config.comment = CommentSection(self._config)
+        Config.cw = CommandWord(  # チャンネル内呼び出しキーワード
             help=self._config["help"].get("commandword", CommandWord.help),
             results=self._config["results"].get("commandword", CommandWord.results),
             graph=self._config["graph"].get("commandword", CommandWord.graph),
@@ -311,32 +313,32 @@ class Config():
             remarks_word=self._config["setting"].get("remarks_word", CommandWord.remarks_word),
             check=self._config["database"].get("commandword", CommandWord.check),
         )
-        self.dropitems = DropItems(  # 非表示項目リスト
+        Config.dropitems = DropItems(  # 非表示項目リスト
             results=[x.strip() for x in self._config["results"].get("dropitems", "").split(",")],
             ranking=[x.strip() for x in self._config["ranking"].get("dropitems", "").split(",")],
             report=[x.strip() for x in self._config["report"].get("dropitems", "").split(",")],
         )
 
         # バッジ表示
-        self.badge = BadgeDisplay()
+        Config.badge = BadgeDisplay()
         if "degree" in self._config.sections():
-            self.badge.degree = self._config.getboolean("degree", "display", fallback=False)
+            Config.badge.degree = self._config.getboolean("degree", "display", fallback=False)
         if "status" in self._config.sections():
-            self.badge.status = self._config.getboolean("status", "display", fallback=False)
+            Config.badge.status = self._config.getboolean("status", "display", fallback=False)
         if "grade" in self._config.sections():
-            self.badge.grade.display = self._config.getboolean("grade", "display", fallback=False)
-            self.badge.grade.table_name = self._config.get("grade", "table_name", fallback="")
+            Config.badge.grade.display = self._config.getboolean("grade", "display", fallback=False)
+            Config.badge.grade.table_name = self._config.get("grade", "table_name", fallback="")
 
         # サブコマンドデフォルト
-        self.results = SubCommand(self._config, "results")
-        self.graph = SubCommand(self._config, "graph")
-        self.ranking = SubCommand(self._config, "ranking")
-        self.report = SubCommand(self._config, "report")
+        Config.results = SubCommand(self._config, "results")
+        Config.graph = SubCommand(self._config, "graph")
+        Config.ranking = SubCommand(self._config, "ranking")
+        Config.report = SubCommand(self._config, "report")
 
         # その他/更新
-        self.db.database_file = os.path.realpath(os.path.join(self.config_dir, self.db.database_file))
-        self.setting.work_dir = os.path.realpath(os.path.join(self.script_dir, self.setting.work_dir))
-        self.setting.font_file = os.path.realpath(os.path.join(self.config_dir, self.setting.font_file))
+        Config.db.database_file = os.path.realpath(os.path.join(self.config_dir, self.db.database_file))
+        Config.setting.work_dir = os.path.realpath(os.path.join(self.script_dir, self.setting.work_dir))
+        Config.setting.font_file = os.path.realpath(os.path.join(self.config_dir, self.setting.font_file))
         self.undefined_word = self._config["regulations"].getint("undefined", 2)
         self.format = str()
         self.filename = str()
