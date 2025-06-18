@@ -114,7 +114,7 @@ def db_backup() -> str:
     fname = os.path.splitext(g.cfg.db.database_file)[0]
     fext = os.path.splitext(g.cfg.db.database_file)[1]
     bktime = ExtDt().format("ext")
-    bkfname = os.path.join(g.cfg.db.backup_dir, f"{fname}_{bktime}{fext}")
+    bkfname = os.path.join(g.cfg.db.backup_dir, os.path.basename(f"{fname}_{bktime}{fext}"))
 
     if not os.path.isdir(g.cfg.db.backup_dir):  # バックアップディレクトリ作成
         try:
