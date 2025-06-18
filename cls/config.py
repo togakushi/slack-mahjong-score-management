@@ -81,9 +81,13 @@ class SearchSection(CommonMethodMixin):
     """searchセクション初期値"""
     _config: configparser.ConfigParser | None = field(default=None)
     keyword: str = field(default="終局")
+    """成績記録キーワード"""
     channel: str | None = field(default=None)
+    """テータ突合時に成績記録ワードを検索するチャンネル名"""
     after: int = field(default=7)
+    """データ突合時対象にする日数"""
     wait: int = field(default=180)
+    """指定秒数以内にポストされているデータは突合対象から除外する"""
 
     def __post_init__(self):
         self.initialization("search")
@@ -335,10 +339,19 @@ class Config:
         Config.ranking = SubCommand(self._config, "ranking")
         Config.report = SubCommand(self._config, "report")
 
+        # フォントファイルチェック
+        for chk_dir in (self.config_dir, self.script_dir):
+            chk_path = os.path.realpath(os.path.join(chk_dir, self.setting.font_file))
+            if os.path.exists(chk_path):
+                Config.setting.font_file = chk_path
+                break
+        if chk_path != Config.setting.font_file:
+            logging.critical("The specified font file cannot be found.")
+            sys.exit(255)
+
         # その他/更新
         Config.db.database_file = os.path.realpath(os.path.join(self.config_dir, self.db.database_file))
         Config.setting.work_dir = os.path.realpath(os.path.join(self.script_dir, self.setting.work_dir))
-        Config.setting.font_file = os.path.realpath(os.path.join(self.config_dir, self.setting.font_file))
         self.undefined_word = self._config["regulations"].getint("undefined", 2)
         self.format = str()
         self.filename = str()
