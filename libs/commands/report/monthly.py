@@ -7,11 +7,13 @@ import os
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
+from matplotlib import use
 
 import libs.global_value as g
 from libs.data import loader
 from libs.functions import configuration, message
 
+use(backend="agg")
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 

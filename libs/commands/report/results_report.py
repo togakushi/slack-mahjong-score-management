@@ -10,6 +10,7 @@ from io import BytesIO
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib import use
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import A4, landscape
@@ -24,6 +25,7 @@ import libs.global_value as g
 from libs.data import loader, lookup
 from libs.utils import dbutil, formatter
 
+use(backend="agg")
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 

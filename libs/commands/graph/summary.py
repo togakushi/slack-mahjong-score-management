@@ -8,6 +8,7 @@ import os
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib import use
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -16,6 +17,7 @@ from libs.data import aggregate, loader
 from libs.functions import configuration, message
 from libs.utils import formatter
 
+use(backend="agg")
 mlogger = logging.getLogger("matplotlib")
 mlogger.setLevel(logging.WARNING)
 
