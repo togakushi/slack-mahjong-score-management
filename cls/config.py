@@ -432,7 +432,21 @@ class AppConfig:
                 sys.exit(255)
 
         # オプションセクションチェック
-        for x in ("results", "graph", "ranking", "report", "member", "alias", "team", "database", "comment", "regulations", "help"):
+        option_sections = [
+            "results",
+            "graph",
+            "ranking",
+            "report",
+            "database",
+            "search",
+            "alias",
+            "member",
+            "team",
+            "comment",
+            "regulations",
+            "help",
+        ]
+        for x in option_sections:
             if x not in self._parser.sections():
                 self._parser.add_section(x)
 
