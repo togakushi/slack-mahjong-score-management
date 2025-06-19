@@ -44,7 +44,7 @@ class CommonMethodMixin:
     def items(self):
         return self._section.items()
 
-    def as_dict(self) -> dict[str, str]:
+    def to_dict(self) -> dict[str, str]:
         return dict(self._section.items())
 
 
