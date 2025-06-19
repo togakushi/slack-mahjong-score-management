@@ -18,8 +18,7 @@ from cls.types import GradeTableDict
 
 class CommonMethodMixin:
     """共通メソッド"""
-    def __init__(self):
-        self._section = cast(SectionProxy, self._section)
+    _section: SectionProxy
 
     def get(self, key: str, fallback: Any = None) -> Any:
         return self._section.get(key, fallback)
@@ -30,8 +29,8 @@ class CommonMethodMixin:
     def getfloat(self, key: str, fallback: float = 0.0) -> float:
         return self._section.getfloat(key, fallback)
 
-    def getboolean(self, key: bool, fallback: bool = False) -> bool:
-        return self._section.getboolean(key, fallback)
+    def getboolean(self, key: str, fallback: bool = False) -> bool:
+        return cast(bool, self._section.getboolean(key, fallback))
 
     def getlist(self, key: str) -> list:
         return [x.strip() for x in self._section.get(key, "").split(",")]
@@ -57,6 +56,13 @@ class BaseSection(CommonMethodMixin):
             return
         self._section = parser[section_name]
 
+        self.initialization()
+        self.section = section_name  # セクション名保持
+        logging.info("%s=%s", section_name, self.__dict__)
+
+    def initialization(self):
+        """設定ファイルから値の取り込み"""
+        self.__dict__.update(self.default_load())
         for k in self._section.keys():
             if k in self.__dict__:
                 match type(self.__dict__.get(k)):
@@ -75,8 +81,6 @@ class BaseSection(CommonMethodMixin):
                             setattr(self, k, self.get(k))
                     case _:
                         setattr(self, k, self.__dict__.get(k))
-
-        logging.info("%s=%s", section_name, self.__dict__)
 
     def default_load(self) -> dict:
         """クラス変数からデフォルト値の取り込み"""
@@ -153,7 +157,6 @@ class SettingSection(BaseSection):
 
     def __init__(self, outer, section_name):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, section_name)
 
         self.work_dir = os.path.realpath(os.path.join(outer.script_dir, self.work_dir))
@@ -169,7 +172,7 @@ class SettingSection(BaseSection):
             logging.critical("The specified font file cannot be found.")
             sys.exit(255)
 
-        logging.notice("font file: %s", self.font_file)
+        logging.notice("font file: %s", self.font_file)  # type: ignore
 
 
 class SearchSection(BaseSection):
@@ -185,7 +188,6 @@ class SearchSection(BaseSection):
 
     def __init__(self, outer, section_name):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, section_name)
 
 
@@ -200,7 +202,6 @@ class DatabaseSection(BaseSection):
 
     def __init__(self, outer, section_name):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, section_name)
 
         self.database_file = os.path.realpath(os.path.join(outer.config_dir, self.database_file))
@@ -222,7 +223,6 @@ class MemberSection(BaseSection):
 
     def __init__(self, outer, section_name):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, section_name)
 
 
@@ -239,7 +239,6 @@ class TeamSection(BaseSection):
 
     def __init__(self, outer, section_name):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, section_name)
 
 
@@ -263,13 +262,15 @@ class AliasSection(BaseSection):
 
     def __init__(self, outer, section_name):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, section_name)
 
         # デフォルト値として自身と同じ名前のコマンドを登録する #
         parser = cast(ConfigParser, outer._parser)
         for k in self.to_dict().keys():
-            cast(list, getattr(self, k)).append(k)
+            x = getattr(self, k)
+            if isinstance(x, list):
+                x.append(k)
+
         self.delete.append("del")
         list_data = [x.strip() for x in str(parser.get("alias", "del", fallback="")).split(",")]
         self.delete.extend(list_data)
@@ -284,7 +285,6 @@ class CommentSection(BaseSection):
 
     def __init__(self, outer, section_name):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, section_name)
 
 
@@ -302,7 +302,6 @@ class CommandWord(BaseSection):
 
     def __init__(self, outer):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, "")
 
         self.help = self._parser.get("help", "commandword", fallback=CommandWord.help)
@@ -324,7 +323,6 @@ class DropItems(BaseSection):
 
     def __init__(self, outer):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, "")
 
         self.results = [x.strip() for x in self._parser.get("results", "dropitems", fallback="").split(",")]
@@ -343,11 +341,10 @@ class BadgeDisplay(BaseSection):
 
     degree: bool = False
     status: bool = False
-    grade: BadgeGradeSpec = BadgeGradeSpec
+    grade: "BadgeGradeSpec" = BadgeGradeSpec()
 
     def __init__(self, outer):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         super().__init__(self, "")
 
         self.degree = self._parser.getboolean("degree", "display", fallback=False)
@@ -403,7 +400,6 @@ class SubCommand(BaseSection):
 
     def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
-        self.__dict__.update(super().default_load())
         self.section = section_name
         super().__init__(self, section_name)
 
