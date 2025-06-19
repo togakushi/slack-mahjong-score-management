@@ -5,7 +5,7 @@ tests/parser/test_score.py
 import pytest
 
 import libs.global_value as g
-from cls.config import Config
+from cls.config import AppConfig
 from libs.functions import configuration, score
 from libs.utils import validator
 from tests.parser import param_data
@@ -19,7 +19,7 @@ from tests.parser import param_data
 def test_score_report(input_str, result_dict, get_point):
     """得点入力"""
     configuration.set_loglevel()
-    g.cfg = Config("tests/testdata/minimal.ini")
+    g.cfg = AppConfig("tests/testdata/minimal.ini")
 
     ret = validator.pattern(input_str)
     print("score data:", ret)

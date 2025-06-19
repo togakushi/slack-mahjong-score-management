@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 
 import libs.global_value as g
-from cls.config import Config
+from cls.config import AppConfig
 from libs.data import initialization
 from libs.functions import configuration
 from libs.utils import dbutil
@@ -18,7 +18,7 @@ from libs.utils import dbutil
 def database_connection():
     """共有インメモリDBと接続"""
     configuration.set_loglevel()
-    g.cfg = Config("tests/testdata/minimal.ini")
+    g.cfg = AppConfig("tests/testdata/minimal.ini")
     g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"
     conn = dbutil.get_connection()
     yield conn

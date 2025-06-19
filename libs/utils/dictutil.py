@@ -12,7 +12,7 @@ from libs.data import lookup
 from libs.utils import formatter
 
 if TYPE_CHECKING:
-    from cls.subcom import SubCommand
+    from cls.config import SubCommand
 
 
 def placeholder(subcom: "SubCommand") -> dict:

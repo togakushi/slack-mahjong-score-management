@@ -26,9 +26,9 @@ def initialization_resultdb():
     resultdb.execute(loader.load_query("table/words.sql"))  # レギュレーションワード登録テーブル
 
     # wordsテーブル情報読み込み(regulations)
-    if cast(ConfigParser, getattr(g.cfg, "_config")).has_section("regulations"):
+    if cast(ConfigParser, getattr(g.cfg, "_parser")).has_section("regulations"):
         resultdb.execute("delete from words;")
-        for k, v in cast(ConfigParser, getattr(g.cfg, "_config")).items("regulations"):
+        for k, v in cast(ConfigParser, getattr(g.cfg, "_parser")).items("regulations"):
             match k:
                 case "undefined":
                     continue

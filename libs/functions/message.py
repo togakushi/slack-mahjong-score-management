@@ -154,9 +154,9 @@ def reply(message=None, rpoint_sum=0):
 
     msg = default_message.get(message, "")
 
-    if cast(ConfigParser, getattr(g.cfg, "_config")).has_section("custom_message"):
+    if cast(ConfigParser, getattr(g.cfg, "_parser")).has_section("custom_message"):
         msg_list = []
-        for key, val in cast(ConfigParser, getattr(g.cfg, "_config")).items("custom_message"):
+        for key, val in cast(ConfigParser, getattr(g.cfg, "_parser")).items("custom_message"):
             if key.startswith(message):
                 msg_list.append(val)
         if msg_list:
@@ -442,11 +442,11 @@ def badge_degree(game_count: int = 0) -> str:
 
     if g.cfg.badge.degree:
 
-        if (degree_list := cast(ConfigParser, getattr(g.cfg, "_config")).get("degree", "badge", fallback="")):
+        if (degree_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("degree", "badge", fallback="")):
             degree_badge = degree_list.split(",")
         else:
             return ""
-        if (counter_list := cast(ConfigParser, getattr(g.cfg, "_config")).get("degree", "counter", fallback="")):
+        if (counter_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("degree", "counter", fallback="")):
             degree_counter = list(map(int, counter_list.split(",")))
             for idx, val in enumerate(degree_counter):
                 if game_count >= val:
@@ -469,12 +469,12 @@ def badge_status(game_count: int = 0, win: int = 0) -> str:
     badge: str = ""
 
     if g.cfg.badge.status:
-        if (status_list := cast(ConfigParser, getattr(g.cfg, "_config")).get("status", "badge", fallback="")):
+        if (status_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("status", "badge", fallback="")):
             status_badge = status_list.split(",")
         else:
             return badge
 
-        if (status_step := cast(ConfigParser, getattr(g.cfg, "_config")).getfloat("status", "step", fallback="")):
+        if (status_step := cast(ConfigParser, getattr(g.cfg, "_parser")).getfloat("status", "step", fallback="")):
             if not isinstance(status_step, float):
                 return badge
             if game_count == 0:

@@ -10,7 +10,7 @@ import sys
 from functools import partial
 
 import libs.global_value as g
-from cls.config import Config
+from cls.config import AppConfig
 from cls.parser import MessageParser
 from libs.data import lookup
 
@@ -172,7 +172,7 @@ def setup() -> None:
         else:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
-    g.cfg = Config(g.args.config)
+    g.cfg = AppConfig(g.args.config)
     g.msg = MessageParser()
 
     logging.notice("database: %s", g.cfg.db.database_file)  # type: ignore

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from slack_bolt.app.app import App
     from slack_sdk.web.client import WebClient
 
-    from cls.config import Config
+    from cls.config import AppConfig
     from cls.parser import MessageParser
     from cls.types import TeamDataDict
 
@@ -20,7 +20,7 @@ webclient: "WebClient"
 """slack object"""
 
 # モジュール共通インスタンス
-cfg: "Config"
+cfg: "AppConfig"
 """Configインスタンス共有"""
 msg: "MessageParser"
 """MessageParserインスタンス共有"""
