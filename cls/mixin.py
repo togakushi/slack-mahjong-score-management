@@ -4,7 +4,7 @@ cls/mixin.py
 
 from configparser import ConfigParser
 from dataclasses import asdict, dataclass, fields
-from typing import Any, Union, cast
+from typing import Union, cast
 
 
 @dataclass
@@ -74,43 +74,3 @@ class CommonMethodMixin:
                 ret_dict.pop(key)
 
         return ret_dict
-
-    def get_default(self, attr: str) -> Any:
-        """デフォルト値を取得して返す
-
-        Args:
-            attr (str): 属性
-
-        Raises:
-            AttributeError: 未定義
-
-        Returns:
-            Any: デフォルト値
-        """
-
-        ret: Any
-
-        for x in fields(self):
-            if x.name == attr:
-                _config = getattr(self, "_config")
-                assert _config is not None, "config must not be None"
-                section = getattr(self, "section")
-                assert section is not None, "section must not be None"
-
-                if x.type == Union[str | None]:
-                    ret = None
-                elif x.type == bool:
-                    ret = _config.getboolean(section, x.name, fallback=x.default)
-                elif x.type == str:
-                    ret = _config.get(section, x.name, fallback=x.default)
-                elif x.type == int:
-                    ret = _config.getint(section, x.name, fallback=x.default)
-                elif x.type == float:
-                    ret = _config.getfloat(section, x.name, fallback=x.default)
-                elif x.type == list:
-                    ret = []
-                else:
-                    ret = _config.get(section, x.name, fallback=x.default)
-                return ret
-
-        raise AttributeError(f"{attr} has no default or does not exist.")

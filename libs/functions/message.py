@@ -67,18 +67,18 @@ def help_message():
 
         \t*成績サマリ*
         \t\t呼び出しキーワード：{g.cfg.cw.results}
-        \t\t検索範囲デフォルト：{g.cfg.results.get_default("aggregation_range")}
+        \t\t検索範囲デフォルト：{g.cfg.results.aggregation_range}
         \t*成績グラフ*
         \t\t呼び出しキーワード：{g.cfg.cw.graph}
-        \t\t検索範囲デフォルト：{g.cfg.graph.get_default("aggregation_range")}
+        \t\t検索範囲デフォルト：{g.cfg.graph.aggregation_range}
         \t*ランキング*
         \t\t呼び出しキーワード：{g.cfg.cw.ranking}
-        \t\t検索範囲デフォルト：{g.cfg.ranking.get_default("aggregation_range")}
-        \t\t規定打数デフォルト：全体ゲーム数 × {g.cfg.ranking.get_default("stipulated_rate")} ＋ 1
-        \t\t出力制限デフォルト：上位 {g.cfg.ranking.get_default("ranked")} 名
+        \t\t検索範囲デフォルト：{g.cfg.ranking.aggregation_range}
+        \t\t規定打数デフォルト：全体ゲーム数 × {g.cfg.ranking.stipulated_rate} ＋ 1
+        \t\t出力制限デフォルト：上位 {g.cfg.ranking.ranked} 名
         \t*レポート*
         \t\t呼び出しキーワード：{g.cfg.cw.report}
-        \t\t検索範囲デフォルト：{g.cfg.report.get_default("aggregation_range")}
+        \t\t検索範囲デフォルト：{g.cfg.report.aggregation_range}
         \t*メンバー一覧*
         \t\t呼び出しキーワード：{g.cfg.cw.member}
         \t*チーム一覧*
