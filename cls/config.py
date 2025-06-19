@@ -270,9 +270,7 @@ class AliasSection(BaseSection):
             x = getattr(self, k)
             if isinstance(x, list):
                 x.append(k)
-
-        self.delete.append("del")
-        list_data = [x.strip() for x in str(parser.get("alias", "del", fallback="")).split(",")]
+        list_data = [x.strip() for x in str(parser.get("alias", "del", fallback="")).split(",")] + ["del"]
         self.delete.extend(list_data)
 
 
