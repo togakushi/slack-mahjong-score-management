@@ -67,18 +67,21 @@ class BaseSection(CommonMethodMixin):
             if k in self.__dict__:
                 match type(self.__dict__.get(k)):
                     case v_type if v_type is type(str()):
-                        setattr(self, k, self.get(k))
+                        setattr(self, k, self._section.get(k, fallback=self.get(k)))
                     case v_type if v_type is type(int()):
-                        setattr(self, k, self.getint(k))
+                        setattr(self, k, self._section.getint(k, fallback=self.get(k)))
                     case v_type if v_type is type(float()):
-                        setattr(self, k, self.getfloat(k))
+                        setattr(self, k, self._section.getfloat(k, fallback=self.get(k)))
                     case v_type if v_type is type(bool()):
-                        setattr(self, k, self.getboolean(k))
+                        setattr(self, k, self._section.getboolean(k, fallback=self.get(k)))
                     case v_type if v_type is type([]):
-                        setattr(self, k, self.getlist(k))
+                        v_list = [x.strip() for x in self._section.get(k, fallback=self.get(k)).split(",")]
+                        setattr(self, k, v_list)
                     case v_type if isinstance(v_type, UnionType):
                         if set(v_type.__args__) == {str, type(None)}:
-                            setattr(self, k, self.get(k))
+                            setattr(self, k, self._section.get(k, fallback=self.get(k)))
+                    case v_type if v_type is type(None):
+                        setattr(self, k, self._section.get(k, fallback=self.get(k)))
                     case _:
                         setattr(self, k, self.__dict__.get(k))
 
