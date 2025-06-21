@@ -123,5 +123,6 @@ sql["SELECT_GAME_RESULTS"] = """
         comment,
         rule_version
     from
-        result where ts=?;
+        result where ts=:ts
+    ;
 """
