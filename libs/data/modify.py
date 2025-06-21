@@ -39,7 +39,7 @@ def db_insert(detection: ScoreDataDict, ts: str, reactions_data: list | None = N
             cur.execute(g.sql["RESULT_INSERT"], param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
-        score.reactions(param)
+        score_reactions(param)
     else:
         slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
 
@@ -66,7 +66,7 @@ def db_update(detection: ScoreDataDict, ts: str, reactions_data: list | None = N
             cur.execute(g.sql["RESULT_UPDATE"], param)
             cur.commit()
         logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
-        score.reactions(param)
+        score_reactions(param)
     else:
         slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
 
@@ -257,3 +257,35 @@ def reprocessing_remarks():
 
                 if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):
                     check_remarks()
+
+
+def score_reactions(param: dict):
+    """素点合計をチェックしリアクションを付ける
+
+    Args:
+        param (dict): 素点データ
+    """
+
+    correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
+    rpoint_sum = param["rpoint_sum"]  # 素点合計
+
+    if param["reactions_data"]:
+        icon = param["reactions_data"]
+    else:
+        icon = lookup.api.reactions_status()
+
+    if rpoint_sum == correct_score:
+        if g.cfg.setting.reaction_ng in icon:
+            slack_api.call_reactions_remove(g.cfg.setting.reaction_ng)
+        if g.cfg.setting.reaction_ok not in icon:
+            slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
+    else:
+        if g.cfg.setting.reaction_ok in icon:
+            slack_api.call_reactions_remove(g.cfg.setting.reaction_ok)
+        if g.cfg.setting.reaction_ng not in icon:
+            slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
+
+        slack_api.post_message(
+            message.reply(message="invalid_score", rpoint_sum=rpoint_sum),
+            g.msg.event_ts,
+        )

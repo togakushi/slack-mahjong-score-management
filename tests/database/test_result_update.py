@@ -34,7 +34,7 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
 
     score.get_score(score_data)
     ts = ExtDt().format("ts")
-    with patch("libs.functions.score.reactions"):
+    with patch("libs.data.modify.score_reactions"):
         modify.db_insert(score_data, ts)
 
     with closing(dbutil.get_connection()) as conn:
