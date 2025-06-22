@@ -163,19 +163,3 @@ def pattern(text: str) -> GameResult:
         result.set(**{k: str(msg[p])})
 
     return result
-
-
-def is_data_change(slack_data: GameResult, db_data: GameResult) -> bool:
-    """スコアデータに更新があるかチェックする
-
-    Args:
-        slack_data (GameResult): ポストされたデータ
-        db_data (GameResult): DB記録済みデータ
-
-    Returns:
-        bool: 真偽
-    """
-
-    if slack_data.to_dict() == db_data.to_dict():
-        return True
-    return False
