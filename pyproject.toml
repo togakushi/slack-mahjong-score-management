@@ -13,6 +13,7 @@ dependencies = [
     "reportlab",
     "pandas",
     "tabulate[widechars]",
+    "tqdm",
 ]
 
 [dependency-groups]
@@ -26,4 +27,5 @@ dev = [
     "types-python-dateutil",
     "types-tabulate",
     "types-reportlab",
+    "types-tqdm",
 ]

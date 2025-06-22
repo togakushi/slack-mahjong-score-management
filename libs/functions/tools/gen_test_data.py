@@ -9,6 +9,8 @@ from contextlib import closing
 from datetime import datetime
 from typing import cast
 
+from tqdm import tqdm
+
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -34,9 +36,6 @@ def main(season_times: int = 1):
     teams_count: dict = {x: 0 for x in teams}
     total_count: int = 0
 
-    print(f"{g.team_list=}")
-    print(f"{teams_data=}")
-
     now = datetime.now().timestamp() - ((len(matchup) + 7) * 86400 * season_times)
     dt = now
 
@@ -44,8 +43,7 @@ def main(season_times: int = 1):
         cur.execute("delete from result;")
         for season in range(1, season_times + 1):
             random.shuffle(matchup)
-            for count, game in enumerate(matchup):
-                print(f">>> 第{season:02d}期 {count + 1:04d}試合 /", datetime.fromtimestamp(dt).strftime("%Y-%m-%d"))
+            for count, game in tqdm(enumerate(matchup), total=len(matchup), desc=f"season({season}/{season_times})"):
                 # 対戦メンバーの決定
                 vs_member = {}
                 for team_name in game:
@@ -53,7 +51,6 @@ def main(season_times: int = 1):
                     team_member = teams_data[team_name]
                     random.shuffle(team_member)
                     vs_member[team_name] = team_member
-                # print(game, vs_member)
 
                 # 試合結果
                 total_count += 1
