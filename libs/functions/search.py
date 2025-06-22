@@ -8,11 +8,13 @@ from contextlib import closing
 from typing import cast
 
 import libs.global_value as g
+from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import SlackSearchData
 from libs.utils import dbutil, formatter, validator
 
 SlackSearchDict = dict[str, SlackSearchData]
+DBSearchDict = dict[str, GameResult]
 
 
 def slack_messages(word: str) -> SlackSearchDict:
@@ -112,14 +114,18 @@ def for_slack_score() -> SlackSearchDict:
     g.params.update(unregistered_replace=False)  # ゲスト無効
     g.params.update(individual=True)  # チーム戦オフ
     for key in list(matches.keys()):
-        if (detection := validator.pattern(matches[key].get("text", ""))):
+        detection = validator.pattern(matches[key].get("text", ""))
+        if not detection.is_default():
+            detection.set({
+                "ts": key,
+                "rule_version": g.cfg.mahjong.rule_version,
+            })
+            detection.calc()
             if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)
                 matches.pop(key)
                 continue
-            for k, v in detection.items():
-                if k.endswith("_name"):  # 名前ブレを修正
-                    detection[k] = formatter.name_replace(str(v), False)  # type: ignore[literal-required]
+
             matches[key]["score"] = detection
             matches[key].pop("text")
         else:  # 不一致は破棄
@@ -168,26 +174,28 @@ def for_slack_remarks() -> SlackSearchDict:
     return matches
 
 
-def for_db_score(first_ts: float | bool = False) -> dict:
+def for_db_score(first_ts: float | bool = False) -> DBSearchDict:
     """データベースからスコアを検索して返す
 
     Args:
         first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.
 
     Returns:
-        dict: 検索した結果
+        DBSearchDict: 検索した結果
     """
 
     if not first_ts:
         return {}
 
-    data: dict = {}
-    with closing(dbutil.get_connection()) as cur:
-        curs = cur.cursor()
+    data: DBSearchDict = {}
+    with closing(dbutil.get_connection()) as conn:
+        curs = conn.cursor()
         rows = curs.execute("select * from result where ts >= ?", (str(first_ts),))
         for row in rows.fetchall():
-            tmp = dict(row)
-            data[tmp.pop("ts")] = [v for k, v in tmp.items() if str(k).endswith("_name") or str(k).endswith("_str") or k == "comment"]
+            ts = str(dict(row).get("ts", ""))
+            result = GameResult(ts=ts)
+            result.set(dict(row))
+            data[ts] = result
 
     return data
 

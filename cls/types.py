@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Callable, Literal, TypedDict, Union
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime
+    from cls.score import GameResult
 
 
 class GameInfoDict(TypedDict):
@@ -60,6 +61,16 @@ class ScoreDataDict(TypedDict, total=False):
     rule_version: str
 
 
+class RemarkDict(TypedDict):
+    """メモ格納用辞書"""
+    thread_ts: str
+    """ゲーム終了時間"""
+    event_ts: str
+    """メモ記録時間"""
+    name: str
+    matter: str
+
+
 class ComparisonDict(TypedDict, total=False):
     """メモ突合用辞書"""
     mismatch: str
@@ -98,9 +109,9 @@ class SlackSearchData(TypedDict, total=False):
     """botが付けたNGリアクション"""
     in_thread: bool
     """スレッドになっていればTrue(スレッド元は除く)"""
-    score: "ScoreDataDict"
+    score: "GameResult"
     """スコア報告なら結果"""
-    remarks: list
+    remarks: list["RemarkDict"]
     """メモならその内容"""
 
 

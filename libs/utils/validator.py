@@ -7,11 +7,9 @@ from typing import Literal
 
 import libs.global_value as g
 from cls.parser import CommandParser
+from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import ScoreDataDict, SlackSearchData
 from libs.utils import formatter, textutil
-
-SlackSearchDict = dict[str, SlackSearchData]
 
 
 def check_namepattern(name: str, kind: Literal["member", "team"]) -> tuple[bool, str]:
@@ -74,14 +72,14 @@ def check_namepattern(name: str, kind: Literal["member", "team"]) -> tuple[bool,
     return (ret_flg, ret_msg)
 
 
-def pattern(text: str) -> ScoreDataDict:
+def pattern(text: str) -> GameResult:
     """成績記録用フォーマットチェック
 
     Args:
         text (str): slackにポストされた内容
 
     Returns:
-        ScoreDataDict: スコアデータ
+        GameResult: スコアデータ
     """
 
     # 記号を置換
@@ -112,7 +110,7 @@ def pattern(text: str) -> ScoreDataDict:
     )
 
     # 情報取り出し
-    score_data: ScoreDataDict = {}
+    result = GameResult()
     position: dict = {}
     match text:
         case text if pattern1.findall(text):
@@ -152,34 +150,32 @@ def pattern(text: str) -> ScoreDataDict:
             }
             comment = str(msg[9])
         case _:
-            return score_data
+            return result
 
     g.params.update(unregistered_replace=False)  # ゲスト無効
     g.params.update(individual=True)
+
+    result.set({"comment": comment})
     for k, p in position.items():
         if str(k).endswith("_name"):
-            score_data[k] = formatter.name_replace(str(msg[p]), False)  # type: ignore[literal-required]
+            result.set({k: formatter.name_replace(str(msg[p]), False)})
             continue
-        score_data[k] = str(msg[p])  # type: ignore[literal-required]
-    score_data["comment"] = comment
+        result.set({k: str(msg[p])})
 
-    return score_data
+    return result
 
 
-def is_data_change(slack_data: ScoreDataDict, db_data: ScoreDataDict) -> bool:
+def is_data_change(slack_data: GameResult, db_data: GameResult) -> bool:
     """スコアデータに更新があるかチェックする
 
     Args:
-        slack_data (ScoreDataDict): ポストされたデータ
-        db_data (ScoreDataDict): DB記録済みデータ
+        slack_data (GameResult): ポストされたデータ
+        db_data (GameResult): DB記録済みデータ
 
     Returns:
         bool: 真偽
     """
 
-    chk_slack = {k: v for k, v in slack_data.items() if k.endswith("_name") or k.endswith("_str") or k == "comment"}
-    chk_db = {k: v for k, v in db_data.items() if k.endswith("_name") or k.endswith("_str") or k == "comment"}
-
-    if chk_slack == chk_db:
+    if slack_data.to_dict() == db_data.to_dict():
         return True
     return False

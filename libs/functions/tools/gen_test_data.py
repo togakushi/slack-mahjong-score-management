@@ -7,11 +7,11 @@ import logging
 import random
 from contextlib import closing
 from datetime import datetime
-from typing import Any, cast
 
 import libs.global_value as g
-from cls.types import ScoreDataDict
-from libs.functions import configuration, score
+from cls.score import GameResult
+from cls.timekit import ExtendedDatetime as ExtDt
+from libs.functions import configuration
 from libs.functions.tools import score_simulator
 from libs.utils import dbutil
 
@@ -38,7 +38,6 @@ def main(season_times: int = 1):
 
     now = datetime.now().timestamp() - ((len(matchup) + 7) * 86400 * season_times)
     dt = now
-    detection: ScoreDataDict = {}
 
     with closing(dbutil.get_connection()) as cur:
         cur.execute("delete from result;")
@@ -70,33 +69,28 @@ def main(season_times: int = 1):
                     random.shuffle(member)
 
                     # スコアデータ生成
+                    dt = now + total_count * 86400 + idx * 3600 + random.random()
                     vs_score = score_simulator.simulate_game()
-                    detection["p1_name"] = member[0]
-                    detection["p1_str"] = str(int(vs_score[0] / 100))
-                    detection["p2_name"] = member[1]
-                    detection["p2_str"] = str(int(vs_score[1] / 100))
-                    detection["p3_name"] = member[2]
-                    detection["p3_str"] = str(int(vs_score[2] / 100))
-                    detection["p4_name"] = member[3]
-                    detection["p4_str"] = str(int(vs_score[3] / 100))
-                    detection["comment"] = f"第{season:02d}期{count + 1:04d}試合_{position[idx]}戦"
-                    result = score.get_score(detection)
+                    result = GameResult(ts=str(dt))
+                    result.set({
+                        "p1_name": member[0], "p1_str": str(int(vs_score[0] / 100)),
+                        "p2_name": member[1], "p2_str": str(int(vs_score[1] / 100)),
+                        "p3_name": member[2], "p3_str": str(int(vs_score[2] / 100)),
+                        "p4_name": member[3], "p4_str": str(int(vs_score[3] / 100)),
+                        "comment": f"第{season:02d}期{count + 1:04d}試合_{position[idx]}戦",
+                        "rule_version": g.cfg.mahjong.rule_version
+                    })
+                    result.calc()
 
                     # データ投入
-                    dt = now + total_count * 86400 + idx * 3600 + random.random()
                     param = {
-                        "ts": str(dt),
-                        "playtime": datetime.fromtimestamp(dt).strftime("%Y-%m-%d %H:%M:%S.%f"),
-                        "rule_version": g.cfg.mahjong.rule_version,
+                        "playtime": ExtDt(dt).format("sql"),
                     }
-                    param.update(cast(dict[str, Any], result))
+                    param.update(result.to_dict())
                     cur.execute(g.sql["RESULT_INSERT"], param)
 
                     output = f"{position[idx]}: "
-                    output += f"[{result["p1_rank"]}位 {result["p1_name"]} / {result["p1_rpoint"] * 100} ({result["p1_point"]}pt)] "
-                    output += f"[{result["p2_rank"]}位 {result["p2_name"]} / {result["p2_rpoint"] * 100} ({result["p2_point"]}pt)] "
-                    output += f"[{result["p3_rank"]}位 {result["p3_name"]} / {result["p3_rpoint"] * 100} ({result["p3_point"]}pt)] "
-                    output += f"[{result["p4_rank"]}位 {result["p4_name"]} / {result["p4_rpoint"] * 100} ({result["p4_point"]}pt)] "
+                    output += result.to_text(detail=True)
                     logging.debug(output)
 
         cur.commit()

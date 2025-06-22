@@ -11,7 +11,7 @@ import pytest
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import modify
-from libs.functions import configuration, score
+from libs.functions import configuration
 from libs.utils import dbutil, validator
 from tests.database import param_data
 
@@ -28,22 +28,23 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.msg.updatable = True
     g.cfg.mahjong.draw_split = draw_split
+    g.msg.event_ts = ExtDt().format("ts")
 
     score_data = validator.pattern(game_result)
-    assert score_data
+    assert not score_data.is_default()
 
-    score.get_score(score_data)
-    ts = ExtDt().format("ts")
     with patch("libs.data.modify.score_reactions"):
-        modify.db_insert(score_data, ts)
+        score_data.set({"ts": g.msg.event_ts})
+        score_data.calc()
+        modify.db_insert(score_data)
 
     with closing(dbutil.get_connection()) as conn:
-        cur = conn.execute("select * from result where ts=?;", (ts,))
+        cur = conn.execute("select * from result where ts=?;", (g.msg.event_ts,))
         db_data = dict(cur.fetchone())
         assert db_data is not None
 
     db_point = {k: v for k, v in db_data.items() if str(k).endswith("_point")}
     db_rank = {k: v for k, v in db_data.items() if str(k).endswith("_rank")}
-    print(ts, db_point, db_rank)
+    print(g.msg.event_ts, db_point, db_rank)
     assert db_point == get_point
     assert db_rank == get_rank

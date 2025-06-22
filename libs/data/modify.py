@@ -7,32 +7,34 @@ import os
 import re
 import shutil
 from contextlib import closing
-from typing import Any, cast
 
 import libs.global_value as g
+from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import ScoreDataDict
 from libs.data import lookup
-from libs.functions import message, score, slack_api
+from libs.functions import message, slack_api
 from libs.utils import dbutil, formatter
 
 
-def db_insert(detection: ScoreDataDict, ts: str, reactions_data: list | None = None) -> None:
+def db_insert(detection: GameResult, reactions_data: list | None = None) -> None:
     """スコアデータをDBに追加する
 
     Args:
-        detection (ScoreDataDict): スコアデータ
-        ts (str): コマンドが発行された時間
+        detection (GameResult): スコアデータ
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
-    param = {
-        "ts": ts,
-        "playtime": ExtDt(float(ts)).format("sql"),
+    detection.calc()
+    detection.set({
+        "ts": g.msg.event_ts,
         "rule_version": g.cfg.mahjong.rule_version,
+    })
+    param = {
+        "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
         "reactions_data": reactions_data,
+        "rpoint_sum": detection.rpoint_sum(),
     }
-    param.update(cast(dict[str, Any], score.get_score(detection)))
+    param.update(detection.to_dict())
 
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
@@ -44,22 +46,25 @@ def db_insert(detection: ScoreDataDict, ts: str, reactions_data: list | None = N
         slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
 
 
-def db_update(detection: ScoreDataDict, ts: str, reactions_data: list | None = None) -> None:
+def db_update(detection: GameResult, reactions_data: list | None = None) -> None:
     """スコアデータを変更する
 
     Args:
-        detection (ScoreDataDict): スコアデータ
-        ts (str): コマンドが発行された時間
+        detection (GameResult): スコアデータ
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
-    param = {
-        "ts": ts,
-        "playtime": ExtDt(float(ts)).format("sql"),
+    detection.set({
+        "ts": g.msg.event_ts,
         "rule_version": g.cfg.mahjong.rule_version,
+    })
+    param = {
+        "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
         "reactions_data": reactions_data,
+        "rpoint_sum": detection.rpoint_sum(),
     }
-    param.update(cast(dict[str, Any], score.get_score(detection)))
+    detection.calc()
+    param.update(detection.to_dict())
 
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
@@ -210,9 +215,7 @@ def remarks_delete_compar(para: dict) -> None:
 def check_remarks() -> None:
     """メモの内容を拾ってDBに格納する"""
     game_result = lookup.db.exsist_record(g.msg.thread_ts)
-    if game_result:  # ゲーム結果のスレッドになっているか
-        check_list = [v for k, v in game_result.items() if k.endswith("_name")]
-
+    if not game_result.is_default():  # ゲーム結果のスレッドになっているか
         g.cfg.results.initialization()
         g.cfg.results.unregistered_replace = False  # ゲスト無効
 
@@ -224,7 +227,7 @@ def check_remarks() -> None:
                 "name": formatter.name_replace(name),
                 "matter": matter,
             }
-            if remark["name"] in check_list and remark not in remarks:
+            if remark["name"] in game_result.player_list() and remark not in remarks:
                 remarks.append(remark)
 
         match g.msg.status:

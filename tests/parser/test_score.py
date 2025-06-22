@@ -6,7 +6,7 @@ import pytest
 
 import libs.global_value as g
 from cls.config import AppConfig
-from libs.functions import configuration, score
+from libs.functions import configuration
 from libs.utils import validator
 from tests.parser import param_data
 
@@ -22,15 +22,20 @@ def test_score_report(input_str, result_dict, get_point):
     g.cfg = AppConfig("tests/testdata/minimal.ini")
 
     ret = validator.pattern(input_str)
-    print("score data:", ret)
-    assert ret == result_dict
+    chk_dict: dict = {}
+    if not ret.is_default():
+        chk_dict.update({k: v for k, v in ret.to_dict().items() if str(k).endswith("_name")})
+        chk_dict.update({k: v for k, v in ret.to_dict().items() if str(k).endswith("_str")})
+        chk_dict.update({"comment": ret.comment})
+    print("score data:", chk_dict)
+    assert chk_dict == result_dict
 
-    if ret:
+    if not ret.is_default():
         for x in range(3):
-            tmp_ret = ret.copy()
-            score.get_score(tmp_ret)
-            print("point:", x, [v for k, v in tmp_ret.items() if str(k).endswith("_point")])
-            assert tmp_ret["p1_point"] == get_point["p1_point"]
-            assert tmp_ret["p2_point"] == get_point["p2_point"]
-            assert tmp_ret["p3_point"] == get_point["p3_point"]
-            assert tmp_ret["p4_point"] == get_point["p4_point"]
+            ret.set(ret.to_dict())
+            ret.calc()
+            print("point:", x, [v for k, v in ret.to_dict().items() if str(k).endswith("_point")])
+            assert ret.p1.point == get_point["p1_point"]
+            assert ret.p2.point == get_point["p2_point"]
+            assert ret.p3.point == get_point["p3_point"]
+            assert ret.p4.point == get_point["p4_point"]

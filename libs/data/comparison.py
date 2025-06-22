@@ -3,16 +3,17 @@ lib/data/comparison.py
 """
 
 import logging
-from typing import cast
 
 import libs.global_value as g
+from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import ComparisonDict, ScoreDataDict, SlackSearchData
+from cls.types import ComparisonDict, SlackSearchData, RemarkDict
 from libs.data import lookup, modify
-from libs.functions import score, search, slack_api
+from libs.functions import search, slack_api
 from libs.utils import dictutil
 
 SlackSearchDict = dict[str, SlackSearchData]
+DBSearchDict = dict[str, GameResult]
 
 
 def main() -> None:
@@ -63,9 +64,8 @@ def data_comparison() -> tuple[dict, dict]:
     slack_score = search.for_slack_score()
     slack_remarks = search.for_slack_remarks()
     for _, val in slack_remarks.items():  # スレッド元のスコアデータを追加
-        thread_ts = val.get("thread_ts")
-        if thread_ts in slack_score:
-            val["score"] = slack_score[thread_ts].get("score", cast(ScoreDataDict, {}))
+        if (thread_ts := val.get("thread_ts")):
+            val["score"] = slack_score[thread_ts].get("score", GameResult())
 
     if slack_score:
         first_ts = float(min(slack_score))
@@ -96,12 +96,12 @@ def data_comparison() -> tuple[dict, dict]:
     return (count, msg)
 
 
-def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, ComparisonDict]:
+def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[dict, ComparisonDict]:
     """スコア取りこぼしチェック
 
     Args:
         slack_data (SlackSearchDict): slack検索結果
-        db_data (dict): DB登録状況
+        db_data (DBSearchDict): DB登録状況
 
     Returns:
         tuple[dict, ComparisonDict]: 修正内容(結果)
@@ -123,7 +123,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, Co
             logging.info("pending(slack -> DB): %s", ExtDt(float(key)).format("ymdhms"))
             continue
 
-        slack_score = val.get("score", cast(ScoreDataDict, {}))
+        slack_score = val.get("score", GameResult())
         g.msg.channel_id = val.get("channel_id", "")
         g.msg.user_id = val.get("user_id", "")
         g.msg.event_ts = key
@@ -138,8 +138,8 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, Co
             if not g.cfg.setting.thread_report:  # スレッド内報告が禁止されているパターン
                 if val.get("in_thread"):
                     count["delete"] += 1
-                    logging.notice("delete: %s, %s (In-thread report)", key, slack_score)  # type: ignore
-                    msg["delete"] += f"\t{ExtDt(float(key)).format("ymdhms")} {textformat(slack_score)}\n"
+                    logging.notice("delete: %s (In-thread report)", slack_score)  # type: ignore
+                    msg["delete"] += f"\t{ExtDt(float(key)).format("ymdhms")} {slack_score.to_text()}\n"
                     modify.db_delete(key)
 
                     # リアクションの削除
@@ -149,22 +149,22 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, Co
                         slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
                     continue
 
-            if slack_score == db_score:  # スコア比較
-                logging.info("score check pass: %s %s", ExtDt(float(key)).format("ymdhms"), textformat(db_score))
+            if slack_score.to_dict() == db_score.to_dict():  # スコア比較
+                logging.info("score check pass: %s %s", ExtDt(float(key)).format("ymdhms"), db_score.to_text())
                 continue
 
             # 更新
-            if lookup.db.exsist_record(key).get("rule_version") == g.cfg.mahjong.rule_version:
+            if lookup.db.exsist_record(key).rule_version == g.cfg.mahjong.rule_version:
                 count["mismatch"] += 1
-                logging.notice("mismatch: %s", key)  # type: ignore
-                logging.info("  *  slack: %s", textformat(db_score))
-                logging.info("  *     db: %s", textformat(slack_score))
+                logging.notice("mismatch: %s", ExtDt(float(key)).format("ymdhms"))  # type: ignore
+                logging.info("  *  slack: %s", db_score.to_text())
+                logging.info("  *     db: %s", slack_score.to_text())
                 msg["mismatch"] += f"\t{ExtDt(float(key)).format("ymdhms")}\n"
-                msg["mismatch"] += f"\t\t修正前：{textformat(db_score)}\n"
-                msg["mismatch"] += f"\t\t修正後：{textformat(slack_score)}\n"
-                modify.db_update(slack_score, key, reactions_data)
+                msg["mismatch"] += f"\t\t修正前：{db_score.to_text()}\n"
+                msg["mismatch"] += f"\t\t修正後：{slack_score.to_text()}\n"
+                modify.db_update(slack_score, reactions_data)
             else:
-                logging.info("score check skip: %s %s", ExtDt(float(key)).format("ymdhms"), textformat(db_score))
+                logging.info("score check skip: %s %s", ExtDt(float(key)).format("ymdhms"), db_score.to_text())
             continue
 
         # 追加
@@ -172,9 +172,9 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, Co
             continue
 
         count["missing"] += 1
-        logging.notice("missing: %s, %s", key, slack_score)  # type: ignore
-        msg["missing"] += f"\t{ExtDt(float(key)).format("ymdhms")} {textformat(slack_score)}\n"
-        modify.db_insert(slack_score, key, reactions_data)
+        logging.notice("missing: %s", slack_score)  # type: ignore
+        msg["missing"] += f"\t{ExtDt(float(key)).format("ymdhms")} {slack_score.to_text()}\n"
+        modify.db_insert(slack_score, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         if float(key) + g.cfg.search.wait > now_ts:
@@ -187,8 +187,8 @@ def check_omission(slack_data: SlackSearchDict, db_data: dict) -> tuple[dict, Co
 
         # 削除
         count["delete"] += 1
-        logging.notice("delete: %s, %s (Only database)", key, db_data[key])  # type: ignore
-        msg["delete"] += f"\t{ExtDt(float(key)).format("ymdhms")} {textformat(db_data[key])}\n"
+        logging.notice("delete: %s (Only database)", db_data[key])  # type: ignore
+        msg["delete"] += f"\t{ExtDt(float(key)).format("ymdhms")} {db_data[key].to_text()}\n"
         g.msg.updatable = True
         modify.db_delete(key)
 
@@ -217,11 +217,11 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> tuple[dict, Com
     msg: ComparisonDict = {"remark_mod": "", "remark_del": "", "pending": []}
 
     # 比較用リスト生成
-    slack_remarks: list = []
+    slack_remarks: list[RemarkDict] = []
     for val in slack_data.values():
-        if val.get("remarks", []):
-            for name, matter in val["remarks"]:
-                if name in val.get("score", []) and val.get("in_thread"):
+        if (remark := val.get("remarks", [])):
+            for name, matter in remark:
+                if name in val.get("score", GameResult()).player_list() and val.get("in_thread"):
                     slack_remarks.append({
                         "thread_ts": val.get("thread_ts", ""),
                         "event_ts": val.get("event_ts", ""),
@@ -257,11 +257,11 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> tuple[dict, Com
     return (count, msg)
 
 
-def check_total_score(slack_data: dict) -> tuple[dict, ComparisonDict]:
+def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict]:
     """素点合計の再チェック
 
     Args:
-        slack_data (dict): slack検索結果
+        slack_data (SlackSearchDict): slack検索結果
 
     Returns:
         tuple[dict, ComparisonDict]: 修正内容(結果)
@@ -284,17 +284,18 @@ def check_total_score(slack_data: dict) -> tuple[dict, ComparisonDict]:
 
         if not g.cfg.setting.thread_report and val.get("in_thread"):
             continue
-        if lookup.db.exsist_record(key).get("rule_version") != g.cfg.mahjong.rule_version:
+        if lookup.db.exsist_record(key).rule_version != g.cfg.mahjong.rule_version:
             continue
 
-        score_data = score.get_score(val.get("score", cast(ScoreDataDict, {})))
+        score_data = val.get("score", GameResult())
+        score_data.calc()
         reaction_ok = val.get("reaction_ok")
         reaction_ng = val.get("reaction_ng")
 
-        if score_data["deposit"] != 0:  # 素点合計と配給原点が不一致
+        if score_data.deposit != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
-            logging.notice("invalid score: %s deposit=%s", key, score_data["deposit"])  # type: ignore
-            msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data["deposit"]}]{textformat(val.get("score"))}\n"
+            logging.notice("invalid score: %s deposit=%s", key, score_data.deposit)  # type: ignore
+            msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data.deposit}]{val.get("score").to_text()}\n"
             if key in reaction_ok:
                 slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
             if key not in reaction_ng:
@@ -306,25 +307,3 @@ def check_total_score(slack_data: dict) -> tuple[dict, ComparisonDict]:
                 slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
 
     return (count, msg)
-
-
-def textformat(text) -> str:
-    """メンバーと素点を整形する
-
-    Args:
-        text (list): 素点データ
-
-    Returns:
-        str: 整形テキスト
-    """
-
-    ret = ""
-    for i in range(0, 8, 2):
-        ret += f"[{text[i]} {str(text[i + 1])}]"
-
-    if text[8]:  # ゲームコメントの有無
-        ret += f"[{text[8]}]"
-    else:
-        ret += "[]"
-
-    return ret

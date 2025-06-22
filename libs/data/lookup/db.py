@@ -8,7 +8,8 @@ from datetime import datetime
 import pandas as pd
 
 import libs.global_value as g
-from cls.types import ScoreDataDict, TeamDataDict
+from cls.score import GameResult
+from cls.types import TeamDataDict
 from libs.data import loader
 from libs.utils import dbutil
 
@@ -184,35 +185,25 @@ def regulation_list(word_type: int = 0) -> list:
     return ret
 
 
-def exsist_record(ts: str) -> ScoreDataDict:
+def exsist_record(ts: str) -> GameResult:
     """記録されているゲーム結果を返す
 
     Args:
         ts (str): 検索するタイムスタンプ
 
     Returns:
-        ScoreDataDict: 検索結果
+        GameResult: スコアデータ
     """
 
-    ret: ScoreDataDict = {}
-
+    result = GameResult()
     with closing(dbutil.get_connection()) as conn:
-        row = conn.execute(g.sql["SELECT_GAME_RESULTS"], (ts,)).fetchone()
+        row = conn.execute(g.sql["SELECT_GAME_RESULTS"], {"ts": ts}).fetchone()
 
     if row:
-        tmp_dict = dict(row)
-        ret["p1_name"] = str(tmp_dict["p1_name"])
-        ret["p1_str"] = str(tmp_dict["p1_str"])
-        ret["p2_name"] = str(tmp_dict["p2_name"])
-        ret["p2_str"] = str(tmp_dict["p2_str"])
-        ret["p3_name"] = str(tmp_dict["p3_name"])
-        ret["p3_str"] = str(tmp_dict["p3_str"])
-        ret["p4_name"] = str(tmp_dict["p4_name"])
-        ret["p4_str"] = str(tmp_dict["p4_str"])
-        ret["comment"] = str(tmp_dict["comment"])
-        ret["rule_version"] = str(tmp_dict["rule_version"])
+        result.set(dict(row))
+        result.calc()
 
-    return ret
+    return result
 
 
 def first_record() -> datetime:

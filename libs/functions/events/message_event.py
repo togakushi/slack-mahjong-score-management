@@ -93,14 +93,15 @@ def other_words(word: str):
 
     record_data = lookup.db.exsist_record(g.msg.event_ts)
     if re.match(rf"^{g.cfg.cw.remarks_word}$", word) and g.msg.in_thread:  # 追加メモ
-        if lookup.db.exsist_record(g.msg.thread_ts):
+        if not lookup.db.exsist_record(g.msg.thread_ts).is_default():
             modify.check_remarks()
     else:
-        if (detection := validator.pattern(str(g.msg.text))):  # 結果報告フォーマットに一致したポストの処理
+        detection = validator.pattern(str(g.msg.text))
+        if not detection.is_default():  # 結果報告フォーマットに一致したポストの処理
             match g.msg.status:
                 case "message_append":
                     if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
-                        modify.db_insert(detection, g.msg.event_ts)
+                        modify.db_insert(detection)
                     else:
                         slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
                         logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
@@ -108,13 +109,13 @@ def other_words(word: str):
                     if validator.is_data_change(detection, record_data):
                         return  # 変更箇所がなければ何もしない
                     if (g.cfg.setting.thread_report == g.msg.in_thread) or (g.msg.event_ts == g.msg.thread_ts):
-                        if record_data:
-                            if record_data.get("rule_version") == g.cfg.mahjong.rule_version:
-                                modify.db_update(detection, g.msg.event_ts)
+                        if not record_data.is_default():
+                            if record_data.rule_version == g.cfg.mahjong.rule_version:
+                                modify.db_update(detection)
                             else:
                                 logging.notice("changed: skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
                         else:
-                            modify.db_insert(detection, g.msg.event_ts)
+                            modify.db_insert(detection)
                             modify.reprocessing_remarks()
                     else:
                         slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
