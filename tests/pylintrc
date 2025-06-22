@@ -3,6 +3,7 @@ disable =
     fixme,
     line-too-long,
     duplicate-code,
+    too-few-public-methods,
     too-many-branches,
     too-many-locals,
     too-many-instance-attributes,

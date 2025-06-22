@@ -3,7 +3,7 @@ cls/score.py
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, cast
+from typing import Optional
 
 from cls.types import ScoreDataDict
 from libs.functions.score import get_score
@@ -19,9 +19,19 @@ class Score:
     rank: int = field(default=0)
 
     def is_default(self) -> bool:
+        """更新チェック"""
         return self == Score()
 
     def to_dict(self, prefix: str | None = None) -> dict:
+        """辞書で返す
+
+        Args:
+            prefix (str | None, optional): キーに付与する接頭辞. Defaults to None.
+
+        Returns:
+            dict: 返却する辞書
+        """
+
         ret_dict: dict = {}
         prefix = "" if prefix is None else f"{prefix}_"
         for k, v in self.__dict__.items():
@@ -55,12 +65,13 @@ class GameResult:
             self.p4.is_default(),
         ])
 
-    def set(self, data: ScoreDataDict) -> None:
-        """スコア取り込み
+    def set(self, data: dict | ScoreDataDict) -> None:
+        """辞書型からテータ取り込み
 
         Args:
-            data (ScoreDataDict): スコアデータ
+            data (dict | ScoreDataDict): 取り込みデータ
         """
+
         for prefix in ("p1", "p2", "p3", "p4"):
             x = {str(k).replace(f"{prefix}_", ""): v for k, v in data.items() if str(k).startswith(f"{prefix}_")}
             prefix_obj = getattr(self, prefix)
@@ -71,11 +82,14 @@ class GameResult:
                     case "str" | "r_str":
                         setattr(prefix_obj, "r_str", str(v))
                     case "rpoint":
-                        setattr(prefix_obj, "rpoint", int(v))
+                        if isinstance(v, int):
+                            setattr(prefix_obj, "rpoint", int(v))
                     case "point":
-                        setattr(prefix_obj, "point", float(v))
+                        if isinstance(v, float):
+                            setattr(prefix_obj, "point", float(v))
                     case "rank":
-                        setattr(prefix_obj, "rank", int(v))
+                        if isinstance(v, int):
+                            setattr(prefix_obj, "rank", int(v))
 
         if "ts" in data:
             self.ts = data["ts"]
@@ -93,17 +107,19 @@ class GameResult:
             ScoreDataDict: スコアデータ
         """
 
-        ret_dict: dict = {}
-        ret_dict.update(ts=self.ts)
-        ret_dict.update(comment=self.comment)
-        ret_dict.update(rule_version=self.rule_version)
-        ret_dict.update(deposit=self.deposit)
-        ret_dict.update(self.p1.to_dict("p1"))
-        ret_dict.update(self.p2.to_dict("p2"))
-        ret_dict.update(self.p3.to_dict("p3"))
-        ret_dict.update(self.p4.to_dict("p4"))
+        ret_dict: ScoreDataDict = {}
+        ret_dict.update({
+            "ts": self.ts,
+            "comment": self.comment,
+            "rule_version": self.rule_version,
+            "deposit": self.deposit,
+            **self.p1.to_dict("p1"),
+            **self.p2.to_dict("p2"),
+            **self.p3.to_dict("p3"),
+            **self.p4.to_dict("p4"),
+        })
 
-        return cast(ScoreDataDict, ret_dict)
+        return ret_dict
 
     def to_text(self, detail: bool = False) -> str:
         """テキストで返す

@@ -7,6 +7,7 @@ import logging
 import random
 from contextlib import closing
 from datetime import datetime
+from typing import cast
 
 import libs.global_value as g
 from cls.score import GameResult
@@ -86,7 +87,7 @@ def main(season_times: int = 1):
                     param = {
                         "playtime": ExtDt(dt).format("sql"),
                     }
-                    param.update(result.to_dict())
+                    param.update(cast(dict, result.to_dict()))
                     cur.execute(g.sql["RESULT_INSERT"], param)
 
                     output = f"{position[idx]}: "

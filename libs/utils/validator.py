@@ -3,7 +3,7 @@ libs/utils/validator.py
 """
 
 import re
-from typing import Literal
+from typing import Literal, cast
 
 import libs.global_value as g
 from cls.parser import CommandParser
@@ -111,7 +111,7 @@ def pattern(text: str) -> GameResult:
 
     # 情報取り出し
     result = GameResult()
-    position: dict = {}
+    position: dict[str, int] = {}
     match text:
         case text if pattern1.findall(text):
             msg = pattern1.findall(text)[0]
@@ -158,9 +158,9 @@ def pattern(text: str) -> GameResult:
     result.set({"comment": comment})
     for k, p in position.items():
         if str(k).endswith("_name"):
-            result.set({k: formatter.name_replace(str(msg[p]), False)})
+            result.set(cast(dict, {k: formatter.name_replace(str(msg[p]), False)}))
             continue
-        result.set({k: str(msg[p])})
+        result.set(cast(dict, {k: str(msg[p])}))
 
     return result
 

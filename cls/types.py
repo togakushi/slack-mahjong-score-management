@@ -111,7 +111,7 @@ class SlackSearchData(TypedDict, total=False):
     """スレッドになっていればTrue(スレッド元は除く)"""
     score: "GameResult"
     """スコア報告なら結果"""
-    remarks: list["RemarkDict"]
+    remarks: list
     """メモならその内容"""
 
 

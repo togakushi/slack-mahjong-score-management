@@ -21,30 +21,39 @@ class CommonMethodMixin:
     _section: SectionProxy
 
     def get(self, key: str, fallback: Any = None) -> Any:
+        """値の取得"""
         return self._section.get(key, fallback)
 
     def getint(self, key: str, fallback: int = 0) -> int:
+        """整数値の取得"""
         return self._section.getint(key, fallback)
 
     def getfloat(self, key: str, fallback: float = 0.0) -> float:
+        """数値の取得"""
         return self._section.getfloat(key, fallback)
 
     def getboolean(self, key: str, fallback: bool = False) -> bool:
+        """真偽値の取得"""
         return cast(bool, self._section.getboolean(key, fallback))
 
     def getlist(self, key: str) -> list:
+        """リストの取得"""
         return [x.strip() for x in self._section.get(key, "").split(",")]
 
-    def keys(self):
-        return self._section.keys()
+    def keys(self) -> list:
+        """キーリストの返却"""
+        return list(self._section.keys())
 
-    def values(self):
-        return self._section.values()
+    def values(self) -> list:
+        """値リストの返却"""
+        return list(self._section.values())
 
     def items(self):
+        """ItemsViewを返却"""
         return self._section.items()
 
     def to_dict(self) -> dict[str, str]:
+        """辞書型に変換"""
         return dict(self._section.items())
 
 
@@ -215,6 +224,7 @@ class DatabaseSection(BaseSection):
 
 
 class MemberSection(BaseSection):
+    "memberセクション初期値"""
     registration_limit: int = 255
     """登録メンバー上限数"""
     character_limit: int = 8
@@ -269,7 +279,7 @@ class AliasSection(BaseSection):
 
         # デフォルト値として自身と同じ名前のコマンドを登録する #
         parser = cast(ConfigParser, outer._parser)
-        for k in self.to_dict().keys():
+        for k in self.to_dict():
             x = getattr(self, k)
             if isinstance(x, list):
                 x.append(k)
@@ -356,7 +366,7 @@ class BadgeDisplay(BaseSection):
 
 class SubCommand(BaseSection):
     """サブコマンド共通クラス"""
-    section: str | None = None
+    section: str = ""
     aggregation_range: str = "当日"
     """検索範囲未指定時に使用される範囲"""
     individual: bool = True

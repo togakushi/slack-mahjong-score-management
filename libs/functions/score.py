@@ -3,12 +3,12 @@ libs/functions/score.py
 """
 
 import logging
+import re
 
 import pandas as pd
 
 import libs.global_value as g
 from cls.types import ScoreDataDict
-from libs.utils import formatter
 
 
 def calculation_point(score_df) -> pd.DataFrame:
@@ -120,9 +120,9 @@ def get_score(detection: ScoreDataDict) -> ScoreDataDict:
 
     # ポイント計算
     score_df = pd.DataFrame({
-        "name": [formatter.name_replace(str(v), False) for k, v in detection.items() if str(k).endswith("_name")],
+        "name": [str(v) for k, v in detection.items() if str(k).endswith("_name")],
         "str": [str(v) for k, v in detection.items() if str(k).endswith("_str")],
-        "rpoint": [formatter.normalized_expression(str(v)) for k, v in detection.items() if str(k).endswith("_str")],
+        "rpoint": [normalized_expression(str(v)) for k, v in detection.items() if str(k).endswith("_str")],
     })
     score_df = calculation_point(score_df)
     for idx in score_df.index:
@@ -145,3 +145,25 @@ def get_score(detection: ScoreDataDict) -> ScoreDataDict:
     )
 
     return detection
+
+
+def normalized_expression(expr: str) -> int:
+    """入力文字列を式として評価し、計算結果を返す
+
+    Args:
+        expr (str): 入力式
+
+    Returns:
+        int: 計算結果
+    """
+
+    normalized: list = []
+
+    for token in re.findall(r"\d+|[+\-*/]", expr):
+        if isinstance(token, str):
+            if token.isnumeric():
+                normalized.append(str(int(token)))
+            else:
+                normalized.append(token)
+
+    return eval("".join(normalized))  # pylint: disable=eval-used

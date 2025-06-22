@@ -3,11 +3,12 @@ lib/data/comparison.py
 """
 
 import logging
+from typing import cast
 
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import ComparisonDict, SlackSearchData, RemarkDict
+from cls.types import ComparisonDict, RemarkDict, SlackSearchData
 from libs.data import lookup, modify
 from libs.functions import search, slack_api
 from libs.utils import dictutil
@@ -219,12 +220,12 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> tuple[dict, Com
     # 比較用リスト生成
     slack_remarks: list[RemarkDict] = []
     for val in slack_data.values():
-        if (remark := val.get("remarks", [])):
-            for name, matter in remark:
+        if (remark_list := val.get("remarks", [])):
+            for name, matter in remark_list:
                 if name in val.get("score", GameResult()).player_list() and val.get("in_thread"):
                     slack_remarks.append({
-                        "thread_ts": val.get("thread_ts", ""),
-                        "event_ts": val.get("event_ts", ""),
+                        "thread_ts": str(val.get("thread_ts", "")),
+                        "event_ts": str(val.get("event_ts", "")),
                         "name": name,
                         "matter": matter,
                     })
@@ -242,7 +243,7 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> tuple[dict, Com
         else:
             count["remark_mod"] += 1
             modify.remarks_delete(remark["event_ts"])
-            modify.remarks_append(remark)
+            modify.remarks_append(cast(dict, remark))
             logging.notice("modification(data mismatch): %s", remark)  # type: ignore
 
     # DB -> slack チェック
@@ -295,15 +296,15 @@ def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict
         if score_data.deposit != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
             logging.notice("invalid score: %s deposit=%s", key, score_data.deposit)  # type: ignore
-            msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data.deposit}]{val.get("score").to_text()}\n"
-            if key in reaction_ok:
+            msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data.deposit}]{val["score"].to_text()}\n"
+            if reaction_ok is not None and key in reaction_ok:
                 slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
-            if key not in reaction_ng:
+            if reaction_ng is not None and key not in reaction_ng:
                 slack_api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
         else:
-            if key in reaction_ng:
+            if reaction_ng is not None and key in reaction_ng:
                 slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
-            if key not in reaction_ok:
+            if reaction_ok is not None and key not in reaction_ok:
                 slack_api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
 
     return (count, msg)

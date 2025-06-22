@@ -362,25 +362,3 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
         rename_dict.update(name="チーム" if short else "チーム名")
 
     return df.rename(columns=rename_dict)
-
-
-def normalized_expression(expr: str) -> int:
-    """入力文字列を式として評価し、計算結果を返す
-
-    Args:
-        expr (str): 入力式
-
-    Returns:
-        int: 計算結果
-    """
-
-    normalized: list = []
-
-    for token in re.findall(r"\d+|[+\-*/]", expr):
-        if isinstance(token, str):
-            if token.isnumeric():
-                normalized.append(str(int(token)))
-            else:
-                normalized.append(token)
-
-    return eval("".join(normalized))  # pylint: disable=eval-used

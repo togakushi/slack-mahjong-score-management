@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 from contextlib import closing
+from typing import cast
 
 import libs.global_value as g
 from cls.score import GameResult
@@ -34,7 +35,7 @@ def db_insert(detection: GameResult, reactions_data: list | None = None) -> None
         "reactions_data": reactions_data,
         "rpoint_sum": detection.rpoint_sum(),
     }
-    param.update(detection.to_dict())
+    param.update(cast(dict, detection.to_dict()))
 
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
@@ -64,7 +65,7 @@ def db_update(detection: GameResult, reactions_data: list | None = None) -> None
         "rpoint_sum": detection.rpoint_sum(),
     }
     detection.calc()
-    param.update(detection.to_dict())
+    param.update(cast(dict, detection.to_dict()))
 
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
