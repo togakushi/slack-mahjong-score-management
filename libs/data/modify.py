@@ -26,10 +26,10 @@ def db_insert(detection: GameResult, reactions_data: list | None = None) -> None
     """
 
     detection.calc()
-    detection.set({
-        "ts": g.msg.event_ts,
-        "rule_version": g.cfg.mahjong.rule_version,
-    })
+    detection.set(
+        ts=g.msg.event_ts,
+        rule_version=g.cfg.mahjong.rule_version,
+    )
     param = {
         "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
         "reactions_data": reactions_data,
@@ -55,10 +55,10 @@ def db_update(detection: GameResult, reactions_data: list | None = None) -> None
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
-    detection.set({
-        "ts": g.msg.event_ts,
-        "rule_version": g.cfg.mahjong.rule_version,
-    })
+    detection.set(
+        ts=g.msg.event_ts,
+        rule_version=g.cfg.mahjong.rule_version,
+    )
     param = {
         "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
         "reactions_data": reactions_data,

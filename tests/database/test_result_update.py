@@ -34,7 +34,7 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     assert not score_data.is_default()
 
     with patch("libs.data.modify.score_reactions"):
-        score_data.set({"ts": g.msg.event_ts})
+        score_data.set(ts=g.msg.event_ts)
         score_data.calc()
         modify.db_insert(score_data)
 

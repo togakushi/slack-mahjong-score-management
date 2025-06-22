@@ -20,7 +20,7 @@ def main():
 
         for row in rows:
             result = GameResult(ts=str(row["ts"]))
-            result.set(dict(row))
+            result.set(**dict(row))
             result.calc()
             cur.execute(g.sql["RESULT_UPDATE"], result.to_dict())
             count += 1

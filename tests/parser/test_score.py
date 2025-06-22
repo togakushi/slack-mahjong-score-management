@@ -32,7 +32,7 @@ def test_score_report(input_str, result_dict, get_point):
 
     if not ret.is_default():
         for x in range(3):
-            ret.set(ret.to_dict())
+            ret.set(**ret.to_dict())
             ret.calc()
             print("point:", x, [v for k, v in ret.to_dict().items() if str(k).endswith("_point")])
             assert ret.p1.point == get_point["p1_point"]

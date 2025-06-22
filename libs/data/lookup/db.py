@@ -200,7 +200,7 @@ def exsist_record(ts: str) -> GameResult:
         row = conn.execute(g.sql["SELECT_GAME_RESULTS"], {"ts": ts}).fetchone()
 
     if row:
-        result.set(dict(row))
+        result.set(**dict(row))
         result.calc()
 
     return result

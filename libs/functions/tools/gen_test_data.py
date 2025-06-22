@@ -73,14 +73,14 @@ def main(season_times: int = 1):
                     dt = now + total_count * 86400 + idx * 3600 + random.random()
                     vs_score = score_simulator.simulate_game()
                     result = GameResult(ts=str(dt))
-                    result.set({
-                        "p1_name": member[0], "p1_str": str(int(vs_score[0] / 100)),
-                        "p2_name": member[1], "p2_str": str(int(vs_score[1] / 100)),
-                        "p3_name": member[2], "p3_str": str(int(vs_score[2] / 100)),
-                        "p4_name": member[3], "p4_str": str(int(vs_score[3] / 100)),
-                        "comment": f"第{season:02d}期{count + 1:04d}試合_{position[idx]}戦",
-                        "rule_version": g.cfg.mahjong.rule_version
-                    })
+                    result.set(
+                        p1_name=member[0], p1_str=str(int(vs_score[0] / 100)),
+                        p2_name=member[1], p2_str=str(int(vs_score[1] / 100)),
+                        p3_name=member[2], p3_str=str(int(vs_score[2] / 100)),
+                        p4_name=member[3], p4_str=str(int(vs_score[3] / 100)),
+                        comment=f"第{season:02d}期{count + 1:04d}試合_{position[idx]}戦",
+                        rule_version=g.cfg.mahjong.rule_version
+                    )
                     result.calc()
 
                     # データ投入

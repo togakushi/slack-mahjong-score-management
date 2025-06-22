@@ -65,15 +65,10 @@ class GameResult:
             self.p4.is_default(),
         ])
 
-    def set(self, data: dict | ScoreDataDict) -> None:
-        """辞書型からテータ取り込み
-
-        Args:
-            data (dict | ScoreDataDict): 取り込みデータ
-        """
-
+    def set(self, **kwargs) -> None:
+        """テータ取り込み"""
         for prefix in ("p1", "p2", "p3", "p4"):
-            x = {str(k).replace(f"{prefix}_", ""): v for k, v in data.items() if str(k).startswith(f"{prefix}_")}
+            x = {str(k).replace(f"{prefix}_", ""): v for k, v in kwargs.items() if str(k).startswith(f"{prefix}_")}
             prefix_obj = getattr(self, prefix)
             for k, v in x.items():
                 match k:
@@ -91,14 +86,14 @@ class GameResult:
                         if isinstance(v, int):
                             setattr(prefix_obj, "rank", int(v))
 
-        if "ts" in data:
-            self.ts = data["ts"]
-        if "rule_version" in data:
-            self.rule_version = data["rule_version"]
-        if "deposit" in data:
-            self.deposit = data["deposit"]
-        if "comment" in data:
-            self.comment = data["comment"]
+        if "ts" in kwargs:
+            self.ts = kwargs["ts"]
+        if "rule_version" in kwargs:
+            self.rule_version = kwargs["rule_version"]
+        if "deposit" in kwargs:
+            self.deposit = kwargs["deposit"]
+        if "comment" in kwargs:
+            self.comment = kwargs["comment"]
 
     def to_dict(self) -> ScoreDataDict:
         """辞書で返す
@@ -149,7 +144,7 @@ class GameResult:
 
     def calc(self):
         """順位点計算"""
-        self.set(get_score(self.to_dict()))
+        self.set(**get_score(self.to_dict()))
 
     def player_list(self) -> list[str]:
         """プレイヤーリスト

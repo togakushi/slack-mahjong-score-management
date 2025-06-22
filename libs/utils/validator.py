@@ -3,7 +3,7 @@ libs/utils/validator.py
 """
 
 import re
-from typing import Literal, cast
+from typing import Literal
 
 import libs.global_value as g
 from cls.parser import CommandParser
@@ -155,12 +155,12 @@ def pattern(text: str) -> GameResult:
     g.params.update(unregistered_replace=False)  # ゲスト無効
     g.params.update(individual=True)
 
-    result.set({"comment": comment})
+    result.set(comment=comment)
     for k, p in position.items():
         if str(k).endswith("_name"):
-            result.set(cast(dict, {k: formatter.name_replace(str(msg[p]), False)}))
+            result.set(**{k: formatter.name_replace(str(msg[p]), False)})
             continue
-        result.set(cast(dict, {k: str(msg[p])}))
+        result.set(**{k: str(msg[p])})
 
     return result
 
