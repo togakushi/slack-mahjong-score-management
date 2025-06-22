@@ -433,3 +433,5 @@ class MessageParser:
                     MessageParser.updatable = False
                 case "search_messages":
                     MessageParser.updatable = True
+                case _:
+                    MessageParser.updatable = True
