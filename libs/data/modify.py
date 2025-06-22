@@ -221,7 +221,7 @@ def check_remarks() -> None:
                 "name": formatter.name_replace(name),
                 "matter": matter,
             }
-            if remark["name"] in game_result.player_list() and remark not in remarks:
+            if remark["name"] in game_result.to_list() and remark not in remarks:
                 remarks.append(remark)
 
         match g.msg.status:

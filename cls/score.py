@@ -120,7 +120,9 @@ class GameResult:
         """テキストで返す
 
         Args:
-            kind (Literal["simple", "detail"], optional): 表示形式. Defaults to "simple".
+            kind (Literal, optional): 表示形式
+            - *simple* 簡易情報 (Default)
+            - *detail* 詳細情報
 
         Returns:
             str: スコアデータ
@@ -143,18 +145,29 @@ class GameResult:
 
         return ret_text
 
-    def calc(self):
-        """順位点計算"""
-        self.set(**get_score(self.to_dict()))
+    def to_list(self, kind: Literal["name", "str", "rpoint"] = "name") -> list[str]:
+        """指定データをリストで返す
 
-    def player_list(self) -> list[str]:
-        """プレイヤーリスト
+        Args:
+            kind (Literal, optional): 取得内容
+            - *name* プレイヤー名 (Default)
+            - *str* 入力された素点情報
+            - *rpoint* 素点
 
         Returns:
             list[str]: リスト
         """
 
-        return [self.p1.name, self.p2.name, self.p3.name, self.p4.name]
+        ret_list: list = []
+        match kind:
+            case "name":
+                ret_list = [self.p1.name, self.p2.name, self.p3.name, self.p4.name]
+            case "str":
+                ret_list = [self.p1.r_str, self.p2.r_str, self.p3.r_str, self.p4.r_str]
+            case "rpoint":
+                ret_list = [self.p1.rpoint, self.p2.rpoint, self.p3.rpoint, self.p4.rpoint]
+
+        return ret_list
 
     def rpoint_sum(self) -> int:
         """素点合計
@@ -166,3 +179,7 @@ class GameResult:
         self.calc()
 
         return sum([self.p1.rpoint, self.p2.rpoint, self.p3.rpoint, self.p4.rpoint])
+
+    def calc(self):
+        """順位点計算"""
+        self.set(**get_score(self.to_dict()))

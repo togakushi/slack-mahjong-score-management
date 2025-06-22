@@ -222,7 +222,7 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> tuple[dict, Com
     for val in slack_data.values():
         if (remark_list := val.get("remarks", [])):
             for name, matter in remark_list:
-                if name in val.get("score", GameResult()).player_list() and val.get("in_thread"):
+                if name in val.get("score", GameResult()).to_list() and val.get("in_thread"):
                     slack_remarks.append({
                         "thread_ts": str(val.get("thread_ts", "")),
                         "event_ts": str(val.get("event_ts", "")),
