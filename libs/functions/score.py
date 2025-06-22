@@ -115,9 +115,6 @@ def get_score(detection: ScoreDataDict) -> ScoreDataDict:
         ScoreDataDict: スコアデータ(計算結果追加)
     """
 
-    g.params.update(unregistered_replace=False)  # ゲスト無効
-    g.params.update(individual=True)
-
     # ポイント計算
     score_df = pd.DataFrame({
         "name": [str(v) for k, v in detection.items() if str(k).endswith("_name")],
