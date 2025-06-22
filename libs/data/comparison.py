@@ -150,7 +150,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
                         slack_api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
                     continue
 
-            if slack_score.to_dict() == db_score.to_dict():  # スコア比較
+            if slack_score == db_score:  # スコア比較
                 logging.info("score check pass: %s %s", ExtDt(float(key)).format("ymdhms"), db_score.to_text())
                 continue
 

@@ -106,7 +106,7 @@ def other_words(word: str):
                         slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
                         logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
                 case "message_changed":
-                    if detection.to_dict() == record_data.to_dict():
+                    if detection == record_data:  # スコア比較
                         return  # 変更箇所がなければ何もしない
                     if (g.cfg.setting.thread_report == g.msg.in_thread) or (g.msg.event_ts == g.msg.thread_ts):
                         if not record_data.is_default():
