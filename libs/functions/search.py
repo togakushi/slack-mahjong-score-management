@@ -116,10 +116,7 @@ def for_slack_score() -> SlackSearchDict:
     for key in list(matches.keys()):
         detection = validator.pattern(matches[key].get("text", ""))
         if not detection.is_default():
-            detection.set(
-                ts=key,
-                rule_version=g.cfg.mahjong.rule_version,
-            )
+            detection.set(ts=key)
             detection.calc()
             if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)

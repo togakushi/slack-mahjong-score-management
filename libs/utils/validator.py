@@ -110,7 +110,7 @@ def pattern(text: str) -> GameResult:
     )
 
     # 情報取り出し
-    result = GameResult()
+    result = GameResult(rule_version=g.cfg.mahjong.rule_version)
     position: dict[str, int] = {}
     match text:
         case text if pattern1.findall(text):
