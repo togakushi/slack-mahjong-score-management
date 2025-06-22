@@ -3,7 +3,7 @@ cls/score.py
 """
 
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Literal, Optional
 
 from cls.types import ScoreDataDict
 from libs.functions.score import get_score
@@ -116,29 +116,30 @@ class GameResult:
 
         return ret_dict
 
-    def to_text(self, detail: bool = False) -> str:
+    def to_text(self, kind: Literal["simple", "detail"] = "simple") -> str:
         """テキストで返す
 
         Args:
-            detail (bool, optional): 出力切替. Defaults to False.
+            kind (Literal["simple", "detail"], optional): 表示形式. Defaults to "simple".
 
         Returns:
             str: スコアデータ
         """
 
         ret_text: str = ""
-        if detail:
-            ret_text += f"[{self.p1.rank}位 {self.p1.name} / {self.p1.rpoint * 100} ({self.p1.point}pt)] "
-            ret_text += f"[{self.p2.rank}位 {self.p2.name} / {self.p2.rpoint * 100} ({self.p2.point}pt)] "
-            ret_text += f"[{self.p3.rank}位 {self.p3.name} / {self.p3.rpoint * 100} ({self.p3.point}pt)] "
-            ret_text += f"[{self.p4.rank}位 {self.p4.name} / {self.p4.rpoint * 100} ({self.p4.point}pt)] "
-            ret_text += f"[{self.comment if self.comment else ""}]"
-        else:
-            ret_text += f"[{self.p1.name} {self.p1.r_str}]"
-            ret_text += f"[{self.p2.name} {self.p2.r_str}]"
-            ret_text += f"[{self.p3.name} {self.p3.r_str}]"
-            ret_text += f"[{self.p4.name} {self.p4.r_str}]"
-            ret_text += f"[{self.comment if self.comment else ""}]"
+        match kind:
+            case "simple":
+                ret_text += f"[{self.p1.name} {self.p1.r_str}]"
+                ret_text += f"[{self.p2.name} {self.p2.r_str}]"
+                ret_text += f"[{self.p3.name} {self.p3.r_str}]"
+                ret_text += f"[{self.p4.name} {self.p4.r_str}]"
+                ret_text += f"[{self.comment if self.comment else ""}]"
+            case "detail":
+                ret_text += f"[{self.p1.rank}位 {self.p1.name} {self.p1.rpoint * 100}点 ({self.p1.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.comment if self.comment else ""}]"
 
         return ret_text
 

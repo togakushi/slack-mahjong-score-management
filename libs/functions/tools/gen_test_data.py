@@ -88,7 +88,7 @@ def main(season_times: int = 1):
                     cur.execute(g.sql["RESULT_INSERT"], param)
 
                     output = f"{position[idx]}: "
-                    output += result.to_text(detail=True)
+                    output += result.to_text("detail")
                     logging.debug(output)
 
         cur.commit()
