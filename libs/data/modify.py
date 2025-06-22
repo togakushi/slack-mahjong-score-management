@@ -7,7 +7,6 @@ import os
 import re
 import shutil
 from contextlib import closing
-from typing import cast
 
 import libs.global_value as g
 from cls.score import GameResult
@@ -25,20 +24,20 @@ def db_insert(detection: GameResult, reactions_data: list | None = None) -> None
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
-    detection.calc()
     detection.set(ts=g.msg.event_ts)
+    detection.calc()
     param = {
         "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
         "reactions_data": reactions_data,
         "rpoint_sum": detection.rpoint_sum(),
+        **detection.to_dict(),
     }
-    param.update(cast(dict, detection.to_dict()))
 
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
             cur.execute(g.sql["RESULT_INSERT"], param)
             cur.commit()
-        logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
+        logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
         score_reactions(param)
     else:
         slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
@@ -53,19 +52,19 @@ def db_update(detection: GameResult, reactions_data: list | None = None) -> None
     """
 
     detection.set(ts=g.msg.event_ts)
+    detection.calc()
     param = {
         "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
         "reactions_data": reactions_data,
         "rpoint_sum": detection.rpoint_sum(),
+        **detection.to_dict(),
     }
-    detection.calc()
-    param.update(cast(dict, detection.to_dict()))
 
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
             cur.execute(g.sql["RESULT_UPDATE"], param)
             cur.commit()
-        logging.notice("user=%s, param=%s", g.msg.user_id, param)  # type: ignore
+        logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
         score_reactions(param)
     else:
         slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
