@@ -80,7 +80,7 @@ class GameResult:
                         if isinstance(v, int):
                             setattr(prefix_obj, "rpoint", int(v))
                     case "point":
-                        if isinstance(v, float):
+                        if isinstance(v, (float, int)):
                             setattr(prefix_obj, "point", float(v))
                     case "rank":
                         if isinstance(v, int):
