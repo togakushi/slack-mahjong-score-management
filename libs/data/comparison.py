@@ -175,7 +175,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
 
         # 追加
         if not g.cfg.setting.thread_report and val.get("in_thread"):
-            logging.notice("skip: %s (In-thread report)", slack_score)
+            logging.notice("skip: %s (In-thread report)", slack_score)  # type: ignore
             continue
 
         count["missing"] += 1
