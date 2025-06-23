@@ -116,6 +116,7 @@ sql["SELECT_ALL_RESULTS"] = """
 
 sql["SELECT_GAME_RESULTS"] = """
     select
+        ts,
         p1_name, p1_str,
         p2_name, p2_str,
         p3_name, p3_str,
