@@ -275,19 +275,19 @@ class MessageParser:
     client: WebClient = WebClient()
 
     def __init__(self, body: dict | None = None):
-        if isinstance(body, dict):
-            self.channel_id: str | None = str()
-            self.channel_type: str | None = str()
-            self.user_id: str = str()
-            self.text: str | None = str()  # post本文
-            self.event_ts: str = str()  # テキストのまま処理する
-            self.thread_ts: str = str()  # テキストのまま処理する
-            self.status: str = str()  # event subtype
-            self.keyword: str = str()
-            self.argument: list = []
-            self.updatable: bool = bool()
-            self.in_thread: bool = bool()
+        self.channel_id: str | None = str()
+        self.channel_type: str | None = str()
+        self.user_id: str = str()
+        self.text: str | None = str()  # post本文
+        self.event_ts: str = str()  # テキストのまま処理する
+        self.thread_ts: str = str()  # テキストのまま処理する
+        self.status: str = str()  # event subtype
+        self.keyword: str = str()
+        self.argument: list = []
+        self.updatable: bool = bool()
+        self.in_thread: bool = bool()
 
+        if isinstance(body, dict):
             self.parser(body)
 
     def reset(self):
@@ -314,7 +314,10 @@ class MessageParser:
         logging.trace(_body)  # type: ignore
 
         self.reset()
+        self.text = ""
         self.thread_ts = "0"
+        self.keyword = ""
+        self.argument = []
 
         if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
             _event = _body
