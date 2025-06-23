@@ -290,20 +290,6 @@ class MessageParser:
         if isinstance(body, dict):
             self.parser(body)
 
-    def reset(self):
-        """クラス変数のリセット"""
-        for k, v in MessageParser.__annotations__.items():
-            match v:
-                case v if v is type(str()):
-                    setattr(MessageParser, k, str())
-                case v if v is type([]):
-                    setattr(MessageParser, k, [])
-                case v if v is type(bool()):
-                    setattr(MessageParser, k, bool())
-                case v if isinstance(v, UnionType):
-                    if set(v.__args__) == {str, type(None)}:
-                        setattr(MessageParser, k, str())
-
     def parser(self, _body: dict):
         """postされたメッセージをパースする
 
@@ -312,8 +298,7 @@ class MessageParser:
         """
 
         logging.trace(_body)  # type: ignore
-
-        self.reset()
+        # 初期値
         self.text = ""
         self.thread_ts = "0"
         self.keyword = ""
