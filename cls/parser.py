@@ -5,7 +5,6 @@ cls/parser.py
 import logging
 import re
 from dataclasses import dataclass
-from types import UnionType
 from typing import Any
 
 import pandas as pd
@@ -298,8 +297,11 @@ class MessageParser:
         """
 
         logging.trace(_body)  # type: ignore
+
         # 初期値
         self.text = ""
+        self.channel_id = ""
+        self.user_id = ""
         self.thread_ts = "0"
         self.keyword = ""
         self.argument = []
@@ -339,6 +341,7 @@ class MessageParser:
                 logging.error("text not found: %s", _body)
 
         self.check_updatable()
+        logging.info("channel_id=%s, channel_type=%s", self.channel_id, self.channel_type)
 
     def get_event_attribute(self, _body: dict) -> dict:
         """レスポンスからevent属性を探索して返す
