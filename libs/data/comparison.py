@@ -124,7 +124,12 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
             logging.info("pending(slack -> DB): %s", ExtDt(float(key)).format("ymdhms"))
             continue
 
+        # "score"が取得できていない場合は処理をスキップ
         slack_score = val.get("score", GameResult())
+        if slack_score.is_default():
+            continue
+
+        # 情報更新
         g.msg.channel_id = val.get("channel_id", "")
         g.msg.user_id = val.get("user_id", "")
         g.msg.event_ts = key
@@ -155,7 +160,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
                 continue
 
             # 更新
-            if lookup.db.exsist_record(key).rule_version == g.cfg.mahjong.rule_version:
+            if db_score.rule_version == g.cfg.mahjong.rule_version:
                 count["mismatch"] += 1
                 logging.notice("mismatch: %s", ExtDt(float(key)).format("ymdhms"))  # type: ignore
                 logging.info("  *  slack: %s", db_score.to_text())
@@ -170,6 +175,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
 
         # 追加
         if not g.cfg.setting.thread_report and val.get("in_thread"):
+            logging.notice("skip: %s (In-thread report)", slack_score)
             continue
 
         count["missing"] += 1
@@ -178,11 +184,13 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
         modify.db_insert(slack_score, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
+        # 保留チェック
         if float(key) + g.cfg.search.wait > now_ts:
             msg["pending"].append(str(key))
             logging.info("pending(DB -> slack): %s", ExtDt(float(key)).format("ymdhms"))
             continue
 
+        # 登録済みデータは処理をスキップ
         if key in slack_data:
             continue
 
@@ -273,6 +281,7 @@ def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict
     msg: ComparisonDict = {"invalid_score": "", "pending": []}
 
     for key, val in slack_data.items():
+        # 保留チェック
         if val["edited_ts"]:
             check_ts = float(max(val["edited_ts"])) + g.cfg.search.wait
         else:
@@ -283,12 +292,17 @@ def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict
             logging.info("pending(slack -> DB): %s", ExtDt(float(key)).format("ymdhms"))
             continue
 
-        if not g.cfg.setting.thread_report and val.get("in_thread"):
-            continue
-        if lookup.db.exsist_record(key).rule_version != g.cfg.mahjong.rule_version:
+        # "score"が取得できていない場合は処理をスキップ
+        score_data = val.get("score", GameResult())
+        if score_data.is_default():
             continue
 
-        score_data = val.get("score", GameResult())
+        # 判定条件外のデータはスキップ
+        if not g.cfg.setting.thread_report and val.get("in_thread", False):
+            continue
+        if score_data.rule_version != g.cfg.mahjong.rule_version:
+            continue
+
         score_data.calc()
         reaction_ok = val.get("reaction_ok")
         reaction_ng = val.get("reaction_ng")
@@ -296,7 +310,7 @@ def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict
         if score_data.deposit != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
             logging.notice("invalid score: %s deposit=%s", key, score_data.deposit)  # type: ignore
-            msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data.deposit}]{val["score"].to_text()}\n"
+            msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data.deposit}]{score_data.to_text()}\n"
             if reaction_ok is not None and key in reaction_ok:
                 slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
             if reaction_ng is not None and key not in reaction_ng:
