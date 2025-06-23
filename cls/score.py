@@ -145,7 +145,7 @@ class GameResult:
 
         return ret_text
 
-    def to_list(self, kind: Literal["name", "str", "rpoint"] = "name") -> list[str]:
+    def to_list(self, kind: Literal["name", "str", "rpoint", "point"] = "name") -> list[str]:
         """指定データをリストで返す
 
         Args:
@@ -153,6 +153,7 @@ class GameResult:
             - *name* プレイヤー名 (Default)
             - *str* 入力された素点情報
             - *rpoint* 素点
+            - *point* ポイント
 
         Returns:
             list[str]: リスト
@@ -166,6 +167,8 @@ class GameResult:
                 ret_list = [self.p1.r_str, self.p2.r_str, self.p3.r_str, self.p4.r_str]
             case "rpoint":
                 ret_list = [self.p1.rpoint, self.p2.rpoint, self.p3.rpoint, self.p4.rpoint]
+            case "point":
+                ret_list = [self.p1.point, self.p2.point, self.p3.point, self.p4.point]
 
         return ret_list
 
