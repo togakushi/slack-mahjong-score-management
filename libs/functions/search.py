@@ -190,7 +190,7 @@ def for_db_score(first_ts: float | bool = False) -> DBSearchDict:
         rows = curs.execute("select * from result where ts >= ?", (str(first_ts),))
         for row in rows.fetchall():
             ts = str(dict(row).get("ts", ""))
-            result = GameResult(ts=ts)
+            result = GameResult()
             result.set(**dict(row))
             data[ts] = result
 
