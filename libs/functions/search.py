@@ -111,13 +111,9 @@ def for_slack_score() -> SlackSearchDict:
     matches = slack_messages(g.cfg.search.keyword)
 
     # ゲーム結果の抽出
-    g.params.update(unregistered_replace=False)  # ゲスト無効
-    g.params.update(individual=True)  # チーム戦オフ
     for key in list(matches.keys()):
-        detection = validator.pattern(matches[key].get("text", ""))
-        detection.set(ts=key)
-        detection.calc()
-        if detection.has_valid_data():
+        if (detection := validator.pattern(matches[key].get("text", ""))):
+            detection.calc(ts=key)
             if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)
                 matches.pop(key)

@@ -31,13 +31,11 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     g.msg.event_ts = ExtDt().format("ts")
 
     score_data = validator.pattern(game_result)
-    score_data.set(ts="1234567890.123456")
-    score_data.calc()
+    score_data.calc(ts="1234567890.123456")
     assert score_data.has_valid_data()
 
     with patch("libs.data.modify.score_reactions"):
-        score_data.set(ts=g.msg.event_ts)
-        score_data.calc()
+        score_data.calc(ts=g.msg.event_ts)
         modify.db_insert(score_data)
 
     with closing(dbutil.get_connection()) as conn:

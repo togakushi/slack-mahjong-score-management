@@ -22,8 +22,7 @@ def test_score_report(input_str, result_dict, get_point):
     g.cfg = AppConfig("tests/testdata/minimal.ini")
 
     ret = validator.pattern(input_str)
-    ret.set(ts="1234567890.123456")
-    ret.calc()
+    ret.calc(ts="1234567890.123456")
     chk_dict: dict = {}
     if ret.has_valid_data():
         chk_dict.update({k: v for k, v in ret.to_dict().items() if str(k).endswith("_name")})
@@ -34,8 +33,7 @@ def test_score_report(input_str, result_dict, get_point):
 
     if ret.has_valid_data():
         for x in range(3):
-            ret.set(**ret.to_dict())
-            ret.calc()
+            ret.calc(**ret.to_dict())
             print("point:", x, [v for k, v in ret.to_dict().items() if str(k).endswith("_point")])
             assert ret.p1.point == get_point["p1_point"]
             assert ret.p2.point == get_point["p2_point"]
