@@ -105,6 +105,7 @@ def calculation_point(score_list: list) -> dict:
         ascending=False, method="first"
     ).astype("int")
     score_df["point"] = (score_df["rpoint"] - g.cfg.mahjong.return_point) / 10 + score_df["position"].apply(lambda p: rank_point[p - 1])
+    score_df["point"] = score_df["point"].apply(lambda p: float(f"{p:.1f}"))  # 桁ブレ修正
 
     # 返却値用辞書
     ret_dict = {f"{k}_{x}": v for x in score_df.columns for k, v in score_df[x].to_dict().items()}
