@@ -178,7 +178,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
             continue
 
         count["missing"] += 1
-        logging.notice("missing: %s", slack_score)  # type: ignore
+        logging.notice("missing: %s (%s)", slack_score.ts, ExtDt(float(slack_score.ts)).format("ymdhms"))  # type: ignore
         msg["missing"] += f"\t{ExtDt(float(key)).format("ymdhms")} {slack_score.to_text()}\n"
         modify.db_insert(slack_score, reactions_data)
 
