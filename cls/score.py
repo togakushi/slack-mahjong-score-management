@@ -68,7 +68,7 @@ class GameResult:
     """ルールバージョン"""
 
     def __bool__(self) -> bool:
-        return all(self.to_list())
+        return all(self.to_list("name") + self.to_list("str"))
 
     def has_valid_data(self) -> bool:
         """有効なデータを持っているかチェック"""
@@ -173,7 +173,7 @@ class GameResult:
                 - *rank*: 順位
 
         Returns:
-            list[str]: リスト
+            list[str | int | float]: リスト
         """
 
         ret_list: list = []
