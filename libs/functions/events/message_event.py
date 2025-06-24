@@ -97,7 +97,7 @@ def other_words(word: str):
     else:
         record_data = lookup.db.exsist_record(g.msg.event_ts)
         detection = validator.pattern(str(g.msg.text))
-        if detection.has_valid_data():  # 結果報告フォーマットに一致したポストの処理
+        if all([bool(x) for x in detection.to_list()]):  # 結果報告フォーマットに一致したポストの処理
             match g.msg.status:
                 case "message_append":
                     if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
