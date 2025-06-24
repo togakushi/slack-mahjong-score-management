@@ -121,7 +121,7 @@ def other_words(word: str):
                         slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
                         logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
         else:
-            if record_data:
+            if record_data and g.msg.status == "message_changed":
                 modify.db_delete(g.msg.event_ts)
                 for icon in lookup.api.reactions_status():
                     slack_api.call_reactions_remove(icon)
