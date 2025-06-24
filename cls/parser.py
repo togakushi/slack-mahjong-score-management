@@ -159,6 +159,12 @@ class CommandParser:
 
     def __init__(self):
         self.day_format = re.compile(r"^([0-9]{8}|[0-9/.-]{8,10})$")
+        """日付文字列判定用正規表現
+        - *yyyymmdd*
+        - *yyyy/mm/dd*, *yyyy/m/d*
+        - *yyyy-mm-dd*, *yyyy-m-d*
+        - *yyyy.mm.dd*, *yyyy.m.d*
+        """
 
     @classmethod
     def is_valid_command(cls, word: str) -> bool:
@@ -272,15 +278,32 @@ class CommandParser:
 class MessageParser:
     """メッセージ解析クラス"""
     client: WebClient = WebClient()
+    """slack WebClient オブジェクト"""
 
     def __init__(self, body: dict | None = None):
         self.channel_id: str | None = str()
+        """ポストされたチャンネルのID"""
         self.channel_type: str | None = str()
+        """チャンネルタイプ
+        - *channel*: 通常チャンネル
+        - *group*: プライベートチャンネル
+        - *im*: ダイレクトメッセージ
+        - *search_messages*: 検索API
+        """
         self.user_id: str = str()
-        self.text: str | None = str()  # post本文
+        """ポストしたユーザのID"""
+        self.text: str | None = str()
+        """ポストされた文字列"""
         self.event_ts: str = str()  # テキストのまま処理する
+        """タイムスタンプ"""
         self.thread_ts: str = str()  # テキストのまま処理する
+        """スレッドになっている場合のスレッド元のタイムスタンプ"""
         self.status: str = str()  # event subtype
+        """イベントステータス
+        - *message_append*: 新規ポスト
+        - *message_changed*: 編集
+        - *message_deleted*: 削除
+        """
         self.keyword: str = str()
         self.argument: list = []
         self.updatable: bool = bool()
