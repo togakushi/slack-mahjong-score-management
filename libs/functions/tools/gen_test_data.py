@@ -92,4 +92,6 @@ def main(season_times: int = 1):
 
         cur.commit()
 
-    logging.notice(teams_count)  # type: ignore
+    with closing(dbutil.get_connection()) as cur:
+        rows = cur.execute("select name, round(sum(point), 1) as point from team_results group by name order by point desc;")
+        logging.notice(dict(rows.fetchall()))  # type: ignore
