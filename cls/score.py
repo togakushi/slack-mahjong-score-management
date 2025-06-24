@@ -3,27 +3,32 @@ cls/score.py
 """
 
 from dataclasses import dataclass, field
-from typing import Literal, Optional
+from typing import Literal, Optional, cast
 
 from cls.types import ScoreDataDict
-from libs.functions.score import get_score
+from libs.functions.score import calculation_point
 
 
 @dataclass
 class Score:
-    """個人成績"""
+    """プレイヤー成績"""
     name: str = field(default="")
+    """プレイヤー名"""
     r_str: str = field(default="")
+    """入力された素点情報(文字列)"""
     rpoint: int = field(default=0)
+    """素点(入力文字列評価後)"""
     point: float = field(default=0.0)
+    """獲得ポイント"""
     rank: int = field(default=0)
+    """獲得順位"""
 
     def is_default(self) -> bool:
         """更新チェック"""
         return self == Score()
 
     def to_dict(self, prefix: str | None = None) -> dict:
-        """辞書で返す
+        """データを辞書で返す
 
         Args:
             prefix (str | None, optional): キーに付与する接頭辞. Defaults to None.
@@ -46,13 +51,21 @@ class Score:
 class GameResult:
     """ゲーム結果"""
     ts: str = field(default="")
+    """タイムスタンプ"""
     p1: Score = field(default_factory=Score)
+    """東家成績"""
     p2: Score = field(default_factory=Score)
+    """南家成績"""
     p3: Score = field(default_factory=Score)
+    """西家成績"""
     p4: Score = field(default_factory=Score)
+    """北家成績"""
     comment: Optional[str] = field(default=None)
+    """ゲームコメント"""
     deposit: int = field(default=0)
+    """供託"""
     rule_version: str = field(default="")
+    """ルールバージョン"""
 
     def is_default(self) -> bool:
         """更新チェック"""
@@ -89,14 +102,14 @@ class GameResult:
         if "ts" in kwargs:
             self.ts = kwargs["ts"]
         if "rule_version" in kwargs:
-            self.rule_version = kwargs["rule_version"]
+            self.rule_version = str(kwargs["rule_version"])
         if "deposit" in kwargs:
-            self.deposit = kwargs["deposit"]
+            self.deposit = int(kwargs["deposit"])
         if "comment" in kwargs:
             self.comment = kwargs["comment"]
 
     def to_dict(self) -> ScoreDataDict:
-        """辞書で返す
+        """データを辞書で返す
 
         Returns:
             ScoreDataDict: スコアデータ
@@ -117,12 +130,12 @@ class GameResult:
         return ret_dict
 
     def to_text(self, kind: Literal["simple", "detail"] = "simple") -> str:
-        """テキストで返す
+        """データをテキストで返す
 
         Args:
             kind (Literal, optional): 表示形式
-            - *simple* 簡易情報 (Default)
-            - *detail* 詳細情報
+                - *simple* 簡易情報 (Default)
+                - *detail* 詳細情報
 
         Returns:
             str: スコアデータ
@@ -145,15 +158,16 @@ class GameResult:
 
         return ret_text
 
-    def to_list(self, kind: Literal["name", "str", "rpoint", "point"] = "name") -> list[str]:
+    def to_list(self, kind: Literal["name", "str", "rpoint", "point", "rank"] = "name") -> list[str | int | float]:
         """指定データをリストで返す
 
         Args:
             kind (Literal, optional): 取得内容
-            - *name* プレイヤー名 (Default)
-            - *str* 入力された素点情報
-            - *rpoint* 素点
-            - *point* ポイント
+                - *name*: プレイヤー名 (Default)
+                - *str*: 入力された素点情報
+                - *rpoint*: 素点
+                - *point*: ポイント
+                - *rank*: 順位
 
         Returns:
             list[str]: リスト
@@ -169,6 +183,10 @@ class GameResult:
                 ret_list = [self.p1.rpoint, self.p2.rpoint, self.p3.rpoint, self.p4.rpoint]
             case "point":
                 ret_list = [self.p1.point, self.p2.point, self.p3.point, self.p4.point]
+            case "point":
+                ret_list = [self.p1.point, self.p2.point, self.p3.point, self.p4.point]
+            case "rank":
+                ret_list = [self.p1.rank, self.p2.rank, self.p3.rank, self.p4.rank]
 
         return ret_list
 
@@ -179,10 +197,11 @@ class GameResult:
             int: 素点合計
         """
 
-        self.calc()
+        if not all(self.to_list("rank")):  # 順位が確定していない場合は先に計算
+            self.calc()
 
-        return sum([self.p1.rpoint, self.p2.rpoint, self.p3.rpoint, self.p4.rpoint])
+        return sum(cast(list[int], self.to_list("rpoint")))
 
     def calc(self):
-        """順位点計算"""
-        self.set(**get_score(self.to_dict()))
+        """獲得ポイント計算"""
+        self.set(**calculation_point(self.to_list("str")))

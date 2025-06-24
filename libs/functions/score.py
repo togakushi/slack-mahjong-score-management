@@ -8,18 +8,42 @@ import re
 import pandas as pd
 
 import libs.global_value as g
-from cls.types import ScoreDataDict
 
 
-def calculation_point(score_df) -> pd.DataFrame:
-    """素点データから獲得ポイントと順位を取得する
+def point_split(point: list) -> list:
+    """順位点を山分けする
 
     Args:
-        score_df (pd.DataFrame): 全員分の素点データ(東家から順)
+        point (list): 山分けするポイントのリスト
 
     Returns:
-        pd.DataFrame: 順位と獲得ポイントを追加したデータ
+        list: 山分けした結果
     """
+
+    new_point = [int(sum(point) / len(point))] * len(point)
+    if sum(point) % len(point):
+        new_point[0] += sum(point) % len(point)
+        if sum(point) < 0:
+            new_point = list(map(lambda x: x - 1, new_point))
+
+    return new_point
+
+
+def calculation_point(score_list: list) -> dict:
+    """獲得ポイントと順位を計算する
+
+    Args:
+        score_list (list): 素点リスト
+
+    Returns:
+        dict: 更新用辞書(順位と獲得ポイントのデータ)
+    """
+
+    # 計算用データフレーム
+    score_df = pd.DataFrame(
+        {"rpoint": [normalized_expression(x) for x in score_list]},
+        index=["p1", "p2", "p3", "p4"]
+    )
 
     # 順位点算出
     rank_point = g.cfg.mahjong.rank_point.copy()  # ウマ
@@ -74,74 +98,19 @@ def calculation_point(score_df) -> pd.DataFrame:
             ascending=False, method="first"
         ).astype("int")
 
-    # 獲得ポイント計算
-    score_df["point"] = "point"
-    score_df["position"] = score_df["rpoint"].rank(
+    logging.trace("rank_point=%s", rank_point)  # type: ignore
+
+    # 獲得ポイントの計算 (素点-配給原点)/10+順位点
+    score_df["position"] = score_df["rpoint"].rank(  # 加算する順位点リストの位置
         ascending=False, method="first"
     ).astype("int")
-    for x in score_df.itertuples():
-        score_df.at[x.Index, x.point] = (x.rpoint - g.cfg.mahjong.return_point) / 10 + rank_point[x.position - 1]
+    score_df["point"] = (score_df["rpoint"] - g.cfg.mahjong.return_point) / 10 + score_df["position"].apply(lambda p: rank_point[p - 1])
 
-    logging.trace("rank_point=%s", rank_point)  # type: ignore
-    return score_df
+    # 返却値用辞書
+    ret_dict = {f"{k}_{x}": v for x in score_df.columns for k, v in score_df[x].to_dict().items()}
+    ret_dict.update(deposit=int(g.cfg.mahjong.origin_point * 4 - score_df["rpoint"].sum()))
 
-
-def point_split(point: list) -> list:
-    """順位点を山分けする
-
-    Args:
-        point (list): 山分けするポイントのリスト
-
-    Returns:
-        list: 山分けした結果
-    """
-
-    new_point = [int(sum(point) / len(point))] * len(point)
-    if sum(point) % len(point):
-        new_point[0] += sum(point) % len(point)
-        if sum(point) < 0:
-            new_point = list(map(lambda x: x - 1, new_point))
-
-    return new_point
-
-
-def get_score(detection: ScoreDataDict) -> ScoreDataDict:
-    """順位と獲得ポイントを計算する
-
-    Args:
-        detection (ScoreDataDict): スコアデータ
-
-    Returns:
-        ScoreDataDict: スコアデータ(計算結果追加)
-    """
-
-    # ポイント計算
-    score_df = pd.DataFrame({
-        "name": [str(v) for k, v in detection.items() if str(k).endswith("_name")],
-        "str": [str(v) for k, v in detection.items() if str(k).endswith("_str")],
-        "rpoint": [normalized_expression(str(v)) for k, v in detection.items() if str(k).endswith("_str")],
-    })
-    score_df = calculation_point(score_df)
-    for idx in score_df.index:
-        point = float(score_df.at[idx, "point"])
-        detection[f"p{int(idx + 1)}_rpoint"] = int(score_df.at[idx, "rpoint"])  # type: ignore[literal-required]
-        detection[f"p{int(idx + 1)}_point"] = float(f"{point:.1f}")  # type: ignore[literal-required]  # 桁ブレ修正
-        detection[f"p{int(idx + 1)}_rank"] = int(score_df.at[idx, "rank"])  # type: ignore[literal-required]
-
-    rpoint_sum = int(score_df["rpoint"].sum())
-    detection["rpoint_sum"] = rpoint_sum
-    detection["deposit"] = g.cfg.mahjong.origin_point * 4 - rpoint_sum
-
-    logging.info(
-        "score data:[東 %s %s][南 %s %s][西 %s %s][北 %s %s][供託 %s]",
-        detection["p1_name"], detection["p1_rpoint"],
-        detection["p2_name"], detection["p2_rpoint"],
-        detection["p3_name"], detection["p3_rpoint"],
-        detection["p4_name"], detection["p4_rpoint"],
-        detection["deposit"],
-    )
-
-    return detection
+    return ret_dict
 
 
 def normalized_expression(expr: str) -> int:
