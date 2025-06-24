@@ -68,7 +68,7 @@ class GameResult:
     """ルールバージョン"""
 
     def __bool__(self) -> bool:
-        return all([bool(x) for x in self.to_list()])
+        return all(self.to_list())
 
     def has_valid_data(self) -> bool:
         """有効なデータを持っているかチェック"""
