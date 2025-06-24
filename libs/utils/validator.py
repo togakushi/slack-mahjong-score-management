@@ -153,7 +153,7 @@ def pattern(text: str) -> GameResult:
             return result
 
     g.params.update(unregistered_replace=False)  # ゲスト無効
-    g.params.update(individual=True)
+    g.params.update(individual=True)  # チーム戦オフ
 
     result.set(comment=comment)
     for k, p in position.items():
