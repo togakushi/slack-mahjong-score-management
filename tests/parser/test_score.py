@@ -34,7 +34,7 @@ def test_score_report(input_str, result_dict, get_point):
     if ret.has_valid_data():
         for x in range(3):
             ret.calc(**ret.to_dict())
-            print("point:", x, [v for k, v in ret.to_dict().items() if str(k).endswith("_point")])
+            print("point:", x, ret.to_list("point"))
             assert ret.p1.point == get_point["p1_point"]
             assert ret.p2.point == get_point["p2_point"]
             assert ret.p3.point == get_point["p3_point"]
