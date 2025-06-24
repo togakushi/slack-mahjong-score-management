@@ -7,7 +7,7 @@
 > * [uvを使った環境構築](using_uv.md)
 > * [venvを使った環境構築](using_venv.md)
 
-環境変数を記録したファイルを準備する(app.env)
+環境変数を記録したファイルを準備する(.env)
 ```
 SLACK_APP_TOKEN=xapp-x-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 SLACK_WEB_TOKEN=xoxp-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -26,7 +26,7 @@ After=network.target
 User=<user name>
 Type=simple
 WorkingDirectory=/path/to/<app-dir>/
-EnvironmentFile=/path/to/<app-dir>/app.env
+EnvironmentFile=/path/to/<app-dir>/.env
 #ExecStartPre=git pull
 ExecStart=/path/to/<venv-dir>/bin/python3 /path/to/<app-dir>/slack-app.py --notime
 #Restart=always
@@ -37,7 +37,7 @@ WantedBy=default.target
 * `User`にスクリプトを起動するユーザ名を指定
 * `WorkingDirectory`に指定するディレクトリは`git clone`したときに作成したディレクトリ
 * `/path/to/<venv-dir>/bin/python3`は仮想環境のPython
-* `/path/to/<app-dir>/app.env`は環境変数を記述したファイル
+* `/path/to/<app-dir>/.env`は環境変数を記述したファイル
 * `ExecStartPre`、`Restart`はお好みで
 
 ### unitファイル反映
