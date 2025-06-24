@@ -22,15 +22,17 @@ def test_score_report(input_str, result_dict, get_point):
     g.cfg = AppConfig("tests/testdata/minimal.ini")
 
     ret = validator.pattern(input_str)
+    ret.set(ts="1234567890.123456")
+    ret.calc()
     chk_dict: dict = {}
-    if not ret.is_default():
+    if ret.has_valid_data():
         chk_dict.update({k: v for k, v in ret.to_dict().items() if str(k).endswith("_name")})
         chk_dict.update({k: v for k, v in ret.to_dict().items() if str(k).endswith("_str")})
         chk_dict.update({"comment": ret.comment})
     print("score data:", chk_dict)
     assert chk_dict == result_dict
 
-    if not ret.is_default():
+    if ret.has_valid_data():
         for x in range(3):
             ret.set(**ret.to_dict())
             ret.calc()

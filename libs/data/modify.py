@@ -209,7 +209,7 @@ def remarks_delete_compar(para: dict) -> None:
 def check_remarks() -> None:
     """メモの内容を拾ってDBに格納する"""
     game_result = lookup.db.exsist_record(g.msg.thread_ts)
-    if not game_result.is_default():  # ゲーム結果のスレッドになっているか
+    if game_result.has_valid_data():  # ゲーム結果のスレッドになっているか
         g.cfg.results.initialization()
         g.cfg.results.unregistered_replace = False  # ゲスト無効
 

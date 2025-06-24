@@ -31,7 +31,9 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     g.msg.event_ts = ExtDt().format("ts")
 
     score_data = validator.pattern(game_result)
-    assert not score_data.is_default()
+    score_data.set(ts="1234567890.123456")
+    score_data.calc()
+    assert score_data.has_valid_data()
 
     with patch("libs.data.modify.score_reactions"):
         score_data.set(ts=g.msg.event_ts)

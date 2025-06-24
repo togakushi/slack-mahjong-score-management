@@ -23,9 +23,9 @@ class Score:
     rank: int = field(default=0)
     """獲得順位"""
 
-    def is_default(self) -> bool:
-        """更新チェック"""
-        return self == Score()
+    def has_valid_data(self) -> bool:
+        """有効なデータを持っているかチェック"""
+        return self != Score()
 
     def to_dict(self, prefix: str | None = None) -> dict:
         """データを辞書で返す
@@ -67,15 +67,15 @@ class GameResult:
     rule_version: str = field(default="")
     """ルールバージョン"""
 
-    def is_default(self) -> bool:
-        """更新チェック"""
+    def has_valid_data(self) -> bool:
+        """有効なデータを持っているかチェック"""
         return all([
-            self.ts == GameResult.ts,
-            self.comment == GameResult.comment,
-            self.p1.is_default(),
-            self.p2.is_default(),
-            self.p3.is_default(),
-            self.p4.is_default(),
+            self.ts != GameResult.ts,
+            self.p1.has_valid_data(),
+            self.p2.has_valid_data(),
+            self.p3.has_valid_data(),
+            self.p4.has_valid_data(),
+            all(self.to_list("rank")),
         ])
 
     def set(self, **kwargs) -> None:
@@ -204,4 +204,5 @@ class GameResult:
 
     def calc(self):
         """獲得ポイント計算"""
-        self.set(**calculation_point(self.to_list("str")))
+        if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]):
+            self.set(**calculation_point(self.to_list("str")))

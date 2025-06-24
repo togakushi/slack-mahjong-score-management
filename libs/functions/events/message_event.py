@@ -91,13 +91,13 @@ def other_words(word: str):
         word (str): 入力ワード
     """
 
-    record_data = lookup.db.exsist_record(g.msg.event_ts)
     if re.match(rf"^{g.cfg.cw.remarks_word}$", word) and g.msg.in_thread:  # 追加メモ
-        if not lookup.db.exsist_record(g.msg.thread_ts).is_default():
+        if lookup.db.exsist_record(g.msg.thread_ts).has_valid_data():
             modify.check_remarks()
     else:
+        record_data = lookup.db.exsist_record(g.msg.event_ts)
         detection = validator.pattern(str(g.msg.text))
-        if not detection.is_default():  # 結果報告フォーマットに一致したポストの処理
+        if detection.has_valid_data():  # 結果報告フォーマットに一致したポストの処理
             match g.msg.status:
                 case "message_append":
                     if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
@@ -106,10 +106,10 @@ def other_words(word: str):
                         slack_api.post_message(message.reply(message="inside_thread"), g.msg.event_ts)
                         logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
                 case "message_changed":
-                    if detection == record_data:  # スコア比較
+                    if detection.to_dict() == record_data.to_dict():  # スコア比較
                         return  # 変更箇所がなければ何もしない
                     if (g.cfg.setting.thread_report == g.msg.in_thread) or (g.msg.event_ts == g.msg.thread_ts):
-                        if not record_data.is_default():
+                        if record_data.has_valid_data():
                             if record_data.rule_version == g.cfg.mahjong.rule_version:
                                 modify.db_update(detection)
                             else:

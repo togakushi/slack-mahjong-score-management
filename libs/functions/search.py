@@ -115,7 +115,7 @@ def for_slack_score() -> SlackSearchDict:
     g.params.update(individual=True)  # チーム戦オフ
     for key in list(matches.keys()):
         detection = validator.pattern(matches[key].get("text", ""))
-        if not detection.is_default():
+        if detection.has_valid_data():
             detection.set(ts=key)
             detection.calc()
             if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
