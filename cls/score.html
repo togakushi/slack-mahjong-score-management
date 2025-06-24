@@ -208,7 +208,7 @@
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルールバージョン&quot;&quot;&quot;</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_list</span><span class="p">()])</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="s2">&quot;str&quot;</span><span class="p">))</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">has_valid_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なデータを持っているかチェック&quot;&quot;&quot;</span>
@@ -313,7 +313,7 @@
 </span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">                - *rank*: 順位</span>
 </span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>
 </span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">        Returns:</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">            list[str]: リスト</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">            list[str | int | float]: リスト</span>
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
 </span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>        <span class="n">ret_list</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -598,7 +598,7 @@
 </span><span id="GameResult-69"><a href="#GameResult-69"><span class="linenos"> 69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルールバージョン&quot;&quot;&quot;</span>
 </span><span id="GameResult-70"><a href="#GameResult-70"><span class="linenos"> 70</span></a>
 </span><span id="GameResult-71"><a href="#GameResult-71"><span class="linenos"> 71</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="GameResult-72"><a href="#GameResult-72"><span class="linenos"> 72</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_list</span><span class="p">()])</span>
+</span><span id="GameResult-72"><a href="#GameResult-72"><span class="linenos"> 72</span></a>        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="s2">&quot;str&quot;</span><span class="p">))</span>
 </span><span id="GameResult-73"><a href="#GameResult-73"><span class="linenos"> 73</span></a>
 </span><span id="GameResult-74"><a href="#GameResult-74"><span class="linenos"> 74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">has_valid_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="GameResult-75"><a href="#GameResult-75"><span class="linenos"> 75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なデータを持っているかチェック&quot;&quot;&quot;</span>
@@ -703,7 +703,7 @@
 </span><span id="GameResult-174"><a href="#GameResult-174"><span class="linenos">174</span></a><span class="sd">                - *rank*: 順位</span>
 </span><span id="GameResult-175"><a href="#GameResult-175"><span class="linenos">175</span></a>
 </span><span id="GameResult-176"><a href="#GameResult-176"><span class="linenos">176</span></a><span class="sd">        Returns:</span>
-</span><span id="GameResult-177"><a href="#GameResult-177"><span class="linenos">177</span></a><span class="sd">            list[str]: リスト</span>
+</span><span id="GameResult-177"><a href="#GameResult-177"><span class="linenos">177</span></a><span class="sd">            list[str | int | float]: リスト</span>
 </span><span id="GameResult-178"><a href="#GameResult-178"><span class="linenos">178</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="GameResult-179"><a href="#GameResult-179"><span class="linenos">179</span></a>
 </span><span id="GameResult-180"><a href="#GameResult-180"><span class="linenos">180</span></a>        <span class="n">ret_list</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1077,7 +1077,7 @@
 </span><span id="GameResult.to_list-174"><a href="#GameResult.to_list-174"><span class="linenos">174</span></a><span class="sd">                - *rank*: 順位</span>
 </span><span id="GameResult.to_list-175"><a href="#GameResult.to_list-175"><span class="linenos">175</span></a>
 </span><span id="GameResult.to_list-176"><a href="#GameResult.to_list-176"><span class="linenos">176</span></a><span class="sd">        Returns:</span>
-</span><span id="GameResult.to_list-177"><a href="#GameResult.to_list-177"><span class="linenos">177</span></a><span class="sd">            list[str]: リスト</span>
+</span><span id="GameResult.to_list-177"><a href="#GameResult.to_list-177"><span class="linenos">177</span></a><span class="sd">            list[str | int | float]: リスト</span>
 </span><span id="GameResult.to_list-178"><a href="#GameResult.to_list-178"><span class="linenos">178</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="GameResult.to_list-179"><a href="#GameResult.to_list-179"><span class="linenos">179</span></a>
 </span><span id="GameResult.to_list-180"><a href="#GameResult.to_list-180"><span class="linenos">180</span></a>        <span class="n">ret_list</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1117,7 +1117,7 @@
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>list[str]: リスト</p>
+  <p>list[str | int | float]: リスト</p>
 </blockquote>
 </div>
 
