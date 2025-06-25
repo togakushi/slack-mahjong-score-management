@@ -29,11 +29,11 @@ def point_split(point: list) -> list:
     return new_point
 
 
-def calculation_point(score_list: list) -> dict:
+def calculation_point(score_list: list[str]) -> dict:
     """獲得ポイントと順位を計算する
 
     Args:
-        score_list (list): 素点リスト
+        score_list (list[str]): 素点リスト
 
     Returns:
         dict: 更新用辞書(順位と獲得ポイントのデータ)
