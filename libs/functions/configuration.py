@@ -54,7 +54,8 @@ def arg_parser():
     )
 
     p.add_argument(
-        "--verbose",
+        "--verbose", "--trace",
+        dest="verbose",
         action="store_true",
         help="詳細デバッグ情報表示",
     )
@@ -131,6 +132,7 @@ def arg_parser():
             group.add_argument(
                 "--gen-test-data",
                 type=int,
+                dest="gen_test_data",
                 nargs="?",
                 const=1,
                 default=None,
@@ -141,6 +143,7 @@ def arg_parser():
         case "test.py":  # 動作テスト用オプション
             p.add_argument(
                 "-t", "--testcase",
+                dest="testcase",
             )
 
     return p.parse_args()

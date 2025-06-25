@@ -10,7 +10,7 @@ help:
 
     options:
     -h, --help            show this help message and exit
-    --debug               デバッグ情報表示
+    --debug, --trace      デバッグ情報表示
     --verbose             詳細デバッグ情報表示
     --moderate            ログレベルがエラー以下のもを非表示
     --notime              ログフォーマットから日時を削除
