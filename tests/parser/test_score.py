@@ -6,7 +6,7 @@ import pytest
 
 import libs.global_value as g
 from cls.config import AppConfig
-from libs.functions import configuration
+from libs.functions import configuration, score
 from libs.utils import validator
 from tests.parser import param_data
 
@@ -39,3 +39,41 @@ def test_score_report(input_str, result_dict, get_point):
             assert ret.p2.point == get_point["p2_point"]
             assert ret.p3.point == get_point["p3_point"]
             assert ret.p4.point == get_point["p4_point"]
+
+
+@pytest.mark.parametrize(
+    "rpoint_list, point_dict, rank_dict",
+    list(param_data.point_calculation_pattern01.values()),
+    ids=list(param_data.point_calculation_pattern01.keys()),
+)
+def test_point_calc_seat(rpoint_list, point_dict, rank_dict):
+    """ポイント計算 (同点席順)"""
+    configuration.set_loglevel()
+    g.cfg = AppConfig("tests/testdata/minimal.ini")
+    g.cfg.mahjong.draw_split = False
+
+    res = score.calculation_point(rpoint_list)
+    res_point = {k: v for k, v in res.items() if str(k).endswith("_point")}
+    res_rank = {k: v for k, v in res.items() if str(k).endswith("_rank")}
+
+    assert res_point == point_dict
+    assert res_rank == rank_dict
+
+
+@pytest.mark.parametrize(
+    "rpoint_list, point_dict, rank_dict",
+    list(param_data.point_calculation_pattern02.values()),
+    ids=list(param_data.point_calculation_pattern02.keys()),
+)
+def test_point_calc_division(rpoint_list, point_dict, rank_dict):
+    """ポイント計算 (同点山分け)"""
+    configuration.set_loglevel()
+    g.cfg = AppConfig("tests/testdata/minimal.ini")
+    g.cfg.mahjong.draw_split = True
+
+    res = score.calculation_point(rpoint_list)
+    res_point = {k: v for k, v in res.items() if str(k).endswith("_point")}
+    res_rank = {k: v for k, v in res.items() if str(k).endswith("_rank")}
+
+    assert res_point == point_dict
+    assert res_rank == rank_dict
