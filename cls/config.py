@@ -184,7 +184,7 @@ class SettingSection(BaseSection):
             logging.critical("The specified font file cannot be found.")
             sys.exit(255)
 
-        logging.notice("font file: %s", self.font_file)  # type: ignore
+        logging.notice("fontfile: %s", self.font_file)  # type: ignore
 
 
 class SearchSection(BaseSection):
