@@ -41,7 +41,7 @@ def plot() -> tuple[int, str]:
 
     new_index = {}
     for x in df_sorted[1:].index:
-        new_index[x] = x.replace("-", "/")
+        new_index[x] = str(x).replace("-", "/")
     df_sorted = df_sorted.rename(index=new_index)
 
     if g.params.get("anonymous"):
