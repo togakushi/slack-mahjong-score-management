@@ -27,7 +27,7 @@ def set_loglevel():
     # CRITICAL : 50
 
     # TRACE
-    logging.TRACE = 19  # type: ignore
+    logging.TRACE = 5  # type: ignore
     logging.trace = partial(logging.log, logging.TRACE)  # type: ignore
     logging.addLevelName(logging.TRACE, "TRACE")  # type: ignore
 
@@ -37,7 +37,7 @@ def set_loglevel():
     logging.addLevelName(logging.NOTICE, "NOTICE")  # type: ignore
 
 
-def arg_parser():
+def arg_parser() -> argparse.Namespace:
     """コマンドライン解析
 
     Returns:
