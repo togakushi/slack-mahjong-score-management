@@ -40,7 +40,7 @@ def plot() -> tuple[str, dict]:
         f"{g.params["filename"]}" if g.params.get("filename") else "matrix",
     )
 
-    if g.params.get("format", "default").lower() == "csv":
+    if str(g.params.get("format", "default")).lower() == "csv":
         file_path = file_name + ".csv"
         df.to_csv(file_path)
     else:
