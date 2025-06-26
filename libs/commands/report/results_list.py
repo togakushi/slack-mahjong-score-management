@@ -53,7 +53,7 @@ def main():
     if "役満和了" in g.cfg.dropitems.report:
         df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_%"])
 
-    match g.params.get("format", "default").lower():
+    match str(g.params.get("format", "default")).lower():
         case "text" | "txt":
             file_path = text_generation(df)
         case "csv":
