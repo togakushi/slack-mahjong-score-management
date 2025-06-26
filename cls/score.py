@@ -211,4 +211,4 @@ class GameResult:
             self.set(**kwargs)
 
         if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]):
-            self.set(**calculation_point(self.to_list("str")))
+            self.set(**calculation_point(cast(list[str], self.to_list("str"))))
