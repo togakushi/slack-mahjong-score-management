@@ -149,18 +149,18 @@ def get_totalization(data: dict) -> dict:
 
     ret: dict = {}
 
-    ret["通算ポイント"] = f"{data['通算ポイント']:+.1f}pt".replace("-", "▲")
-    ret["平均ポイント"] = f"{data['平均ポイント']:+.1f}pt".replace("-", "▲")
-    ret["平均順位"] = f"{data['平均順位']:1.2f}"
+    ret["通算ポイント"] = f"{data["通算ポイント"]:+.1f}pt".replace("-", "▲")
+    ret["平均ポイント"] = f"{data["平均ポイント"]:+.1f}pt".replace("-", "▲")
+    ret["平均順位"] = f"{data["平均順位"]:1.2f}"
     if g.params.get("individual") and g.cfg.badge.grade.display:
         ret["段位"] = message.badge_grade(g.params["player_name"])
     ret["_blank2"] = True
-    ret["1位"] = f"{data['1位']:2} 回 ({data['1位率']:6.2f}%)"
-    ret["2位"] = f"{data['2位']:2} 回 ({data['2位率']:6.2f}%)"
-    ret["3位"] = f"{data['3位']:2} 回 ({data['3位率']:6.2f}%)"
-    ret["4位"] = f"{data['4位']:2} 回 ({data['4位率']:6.2f}%)"
-    ret["トビ"] = f"{data['トビ']:2} 回 ({data['トビ率']:6.2f}%)"
-    ret["役満"] = f"{data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)"
+    ret["1位"] = f"{data["1位"]:2} 回 ({data["1位率"]:6.2f}%)"
+    ret["2位"] = f"{data["2位"]:2} 回 ({data["2位率"]:6.2f}%)"
+    ret["3位"] = f"{data["3位"]:2} 回 ({data["3位率"]:6.2f}%)"
+    ret["4位"] = f"{data["4位"]:2} 回 ({data["4位率"]:6.2f}%)"
+    ret["トビ"] = f"{data["トビ"]:2} 回 ({data["トビ率"]:6.2f}%)"
+    ret["役満"] = f"{data["役満和了"]:2} 回 ({data["役満和了率"]:6.2f}%)"
 
     return ret
 
