@@ -409,7 +409,7 @@ def message_build(data: dict) -> str:
         match k:
             case k if k in g.cfg.dropitems.results:  # 非表示
                 pass
-            case k if k.startswith("_blank"):
+            case k if str(k).startswith("_blank"):
                 msg += "\t\n"
             case "title":
                 msg += f"{v}\n"
