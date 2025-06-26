@@ -243,7 +243,7 @@ def reprocessing_remarks():
 
         for x in range(1, reply_count + 1):
             g.msg.event_ts = msg[x].get("ts")
-            text = msg[x].get("text")
+            text = str(msg[x].get("text", ""))
             logging.info("(%s/%s) thread_ts=%s, event_ts=%s, %s", x, reply_count, g.msg.thread_ts, g.msg.event_ts, text)
 
             if text:
