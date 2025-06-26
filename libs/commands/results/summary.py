@@ -168,7 +168,7 @@ def memo_count(df_game: pd.DataFrame) -> str:
         for _, v in df_grandslam.iterrows():
             if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
                 continue
-            memo_grandslam += f"\t{v["playtime"].replace("-", "/")}：{v["grandslam"]} （{v["name"]}）\n"
+            memo_grandslam += f"\t{str(v["playtime"]).replace("-", "/")}：{v["grandslam"]} （{v["name"]}）\n"
     if memo_grandslam:
         memo_grandslam = f"\n*【役満和了】*\n{memo_grandslam}"
 
@@ -177,7 +177,7 @@ def memo_count(df_game: pd.DataFrame) -> str:
         for _, v in df_regulations.iterrows():
             if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
                 continue
-            memo_regulation += f"\t{v["playtime"].replace("-", "/")}：{v["regulation"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）\n"
+            memo_regulation += f"\t{str(v["playtime"]).replace("-", "/")}：{v["regulation"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）\n"
     if memo_regulation:
         memo_regulation = f"\n*【卓外ポイント】*\n{memo_regulation}"
 
@@ -186,7 +186,7 @@ def memo_count(df_game: pd.DataFrame) -> str:
         for _, v in df_wordcount.iterrows():
             if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
                 continue
-            memo_wordcount += f"\t{v["playtime"].replace("-", "/")}：{v["regulation"]} （{v["name"]}）\n"
+            memo_wordcount += f"\t{str(v["playtime"]).replace("-", "/")}：{v["regulation"]} （{v["name"]}）\n"
     if memo_wordcount:
         memo_wordcount = f"\n*【その他】*\n{memo_wordcount}"
 
