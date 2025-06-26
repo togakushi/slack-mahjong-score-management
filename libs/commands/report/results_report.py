@@ -501,10 +501,10 @@ def entire_aggregate(style: dict) -> list:
     gdata = pd.DataFrame(
         {
             "順位分布": [
-                float(data[1][4].replace("%", "")),
-                float(data[1][6].replace("%", "")),
-                float(data[1][8].replace("%", "")),
-                float(data[1][10].replace("%", "")),
+                float(str(data[1][4]).replace("%", "")),
+                float(str(data[1][6]).replace("%", "")),
+                float(str(data[1][8]).replace("%", "")),
+                float(str(data[1][10]).replace("%", "")),
             ],
         }, index=["1位率", "2位率", "3位率", "4位率"]
     )
@@ -608,10 +608,10 @@ def periodic_aggregation(style: dict) -> list:
         # 順位分布
         df = pd.DataFrame(
             {
-                "1位率": [float(data[x + 1][5].replace("%", "")) for x in range(len(data) - 1)],
-                "2位率": [float(data[x + 1][7].replace("%", "")) for x in range(len(data) - 1)],
-                "3位率": [float(data[x + 1][9].replace("%", "")) for x in range(len(data) - 1)],
-                "4位率": [float(data[x + 1][11].replace("%", "")) for x in range(len(data) - 1)],
+                "1位率": [float(str(data[x + 1][5]).replace("%", "")) for x in range(len(data) - 1)],
+                "2位率": [float(str(data[x + 1][7]).replace("%", "")) for x in range(len(data) - 1)],
+                "3位率": [float(str(data[x + 1][9]).replace("%", "")) for x in range(len(data) - 1)],
+                "4位率": [float(str(data[x + 1][11]).replace("%", "")) for x in range(len(data) - 1)],
             }, index=[data[x + 1][0] for x in range(len(data) - 1)]
         )
 
@@ -679,10 +679,10 @@ def sectional_aggregate(style: dict, target_info: dict) -> list:
             # 順位分布
             df = pd.DataFrame(
                 {
-                    "1位率": [float(data[x + 1][6].replace("%", "")) for x in range(len(data) - 1)],
-                    "2位率": [float(data[x + 1][8].replace("%", "")) for x in range(len(data) - 1)],
-                    "3位率": [float(data[x + 1][10].replace("%", "")) for x in range(len(data) - 1)],
-                    "4位率": [float(data[x + 1][12].replace("%", "")) for x in range(len(data) - 1)],
+                    "1位率": [float(str(data[x + 1][6]).replace("%", "")) for x in range(len(data) - 1)],
+                    "2位率": [float(str(data[x + 1][8]).replace("%", "")) for x in range(len(data) - 1)],
+                    "3位率": [float(str(data[x + 1][10]).replace("%", "")) for x in range(len(data) - 1)],
+                    "4位率": [float(str(data[x + 1][12]).replace("%", "")) for x in range(len(data) - 1)],
                 }, index=[f"{str(data[x + 1][0])} - {str(data[x + 1][1])}" for x in range(len(data) - 1)]
             )
 
