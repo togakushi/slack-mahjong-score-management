@@ -2,12 +2,10 @@
 libs/commands/graph/rating.py
 """
 
-import logging
 import os
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
-from matplotlib import use
 
 import libs.global_value as g
 from cls.types import GameInfoDict
@@ -15,10 +13,6 @@ from libs.data import aggregate
 from libs.functions import message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
-
-use(backend="agg")
-mlogger = logging.getLogger("matplotlib")
-mlogger.setLevel(logging.WARNING)
 
 
 def plot() -> tuple[int, str]:

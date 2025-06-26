@@ -9,6 +9,8 @@ import shutil
 import sys
 from functools import partial
 
+from matplotlib import use
+
 import libs.global_value as g
 from cls.config import AppConfig
 from cls.parser import MessageParser
@@ -216,6 +218,10 @@ def graph_setup(plt, fm) -> None:
         plt (matplotlib.font_manager): matplotlibオブジェクト
         fm (matplotlib.pyplot): matplotlibオブジェクト
     """
+
+    use(backend="agg")
+    mlogger = logging.getLogger("matplotlib")
+    mlogger.setLevel(logging.WARNING)
 
     # スタイルの適応
     if (style := g.cfg.setting.graph_style) not in plt.style.available:
