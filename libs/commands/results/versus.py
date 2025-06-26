@@ -102,7 +102,7 @@ def aggregation() -> tuple[str, dict, dict]:
     )
 
     namelist = list(g.params["competition_list"].values())  # pylint: disable=unused-variable  # noqa: F841
-    df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: x.strip())
+    df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: str(x).strip())
     df_vs["my_rpoint_avg"] = (df_vs["my_rpoint_avg"] * 100).astype("int")
     df_vs["vs_rpoint_avg"] = (df_vs["vs_rpoint_avg"] * 100).astype("int")
     df_vs = formatter.df_rename(df_vs)
@@ -114,7 +114,7 @@ def aggregation() -> tuple[str, dict, dict]:
         ]
     ).drop_duplicates()
 
-    match g.params.get("format", "default").lower().lower():
+    match str(g.params.get("format", "default")).lower():
         case "csv":
             file_list = {
                 "対戦結果": formatter.save_output(df_data, "csv", "result.csv"),
