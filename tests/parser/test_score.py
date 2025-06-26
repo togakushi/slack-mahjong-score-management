@@ -52,12 +52,13 @@ def test_point_calc_seat(rpoint_list, point_dict, rank_dict):
     g.cfg = AppConfig("tests/testdata/minimal.ini")
     g.cfg.mahjong.draw_split = False
 
-    res = score.calculation_point(rpoint_list)
-    res_point = {k: v for k, v in res.items() if str(k).endswith("_point")}
-    res_rank = {k: v for k, v in res.items() if str(k).endswith("_rank")}
+    ret = score.calculation_point(rpoint_list)
+    ret_point = {k: v for k, v in ret.items() if str(k).endswith("_point")}
+    ret_rank = {k: v for k, v in ret.items() if str(k).endswith("_rank")}
 
-    assert res_point == point_dict
-    assert res_rank == rank_dict
+    assert ret_point == point_dict
+    assert ret_rank == rank_dict
+    assert ret.get("deposit") == 0
 
 
 @pytest.mark.parametrize(
@@ -71,9 +72,10 @@ def test_point_calc_division(rpoint_list, point_dict, rank_dict):
     g.cfg = AppConfig("tests/testdata/minimal.ini")
     g.cfg.mahjong.draw_split = True
 
-    res = score.calculation_point(rpoint_list)
-    res_point = {k: v for k, v in res.items() if str(k).endswith("_point")}
-    res_rank = {k: v for k, v in res.items() if str(k).endswith("_rank")}
+    ret = score.calculation_point(rpoint_list)
+    ret_point = {k: v for k, v in ret.items() if str(k).endswith("_point")}
+    ret_rank = {k: v for k, v in ret.items() if str(k).endswith("_rank")}
 
-    assert res_point == point_dict
-    assert res_rank == rank_dict
+    assert ret_point == point_dict
+    assert ret_rank == rank_dict
+    assert ret.get("deposit") == 0
