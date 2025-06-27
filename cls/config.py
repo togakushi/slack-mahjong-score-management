@@ -167,7 +167,7 @@ class SettingSection(BaseSection):
     ignore_userid: list = []
     """投稿を無視するユーザのリスト(カンマ区切りで設定)"""
 
-    def __init__(self, outer, section_name):
+    def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
 
@@ -198,7 +198,7 @@ class SearchSection(BaseSection):
     wait: int = 180
     """指定秒数以内にポストされているデータは突合対象から除外する"""
 
-    def __init__(self, outer, section_name):
+    def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
 
@@ -212,7 +212,7 @@ class DatabaseSection(BaseSection):
     backup_dir: str | None = None
     """バックアップ先ディレクトリ"""
 
-    def __init__(self, outer, section_name):
+    def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
 
@@ -234,7 +234,7 @@ class MemberSection(BaseSection):
     guest_name: str = "ゲスト"
     """未登録メンバー名称"""
 
-    def __init__(self, outer, section_name):
+    def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
 
@@ -250,7 +250,7 @@ class TeamSection(BaseSection):
     friendly_fire: bool = True
     """チームメイトが同卓しているゲームを集計対象に含めるか"""
 
-    def __init__(self, outer, section_name):
+    def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
 
@@ -273,7 +273,7 @@ class AliasSection(BaseSection):
     team_list: list = []
     team_clear: list = []
 
-    def __init__(self, outer, section_name):
+    def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
 
@@ -294,7 +294,7 @@ class CommentSection(BaseSection):
     search_word: str = ""
     """コメント検索時の検索文字列(固定指定)"""
 
-    def __init__(self, outer, section_name):
+    def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
 
