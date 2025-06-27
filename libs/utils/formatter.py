@@ -147,12 +147,12 @@ def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None
     return save_file
 
 
-def debug_out(msg1: str, msg2: str | dict | list | bool | None = None) -> None:
+def debug_out(msg1: str | list, msg2: str | dict | list | bool | None = None) -> None:
     """メッセージ標準出力(テスト用)
 
     Args:
-        msg1 (str): _description_
-        msg2 (str | dict | list | bool | None, optional): _description_. Defaults to None.
+        msg1 (str | list): メッセージ1
+        msg2 (str | dict | list | bool | None, optional): メッセージ2. Defaults to None.
     """
 
     print(msg1)
