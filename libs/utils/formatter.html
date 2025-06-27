@@ -227,12 +227,12 @@
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>    <span class="k">return</span> <span class="n">save_file</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="k">def</span><span class="w"> </span><span class="nf">debug_out</span><span class="p">(</span><span class="n">msg1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="k">def</span><span class="w"> </span><span class="nf">debug_out</span><span class="p">(</span><span class="n">msg1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">,</span> <span class="n">msg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ標準出力(テスト用)</span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">    Args:</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        msg1 (str): _description_</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">        msg2 (str | dict | list | bool | None, optional): _description_. Defaults to None.</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        msg1 (str | list): メッセージ1</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">        msg2 (str | dict | list | bool | None, optional): メッセージ2. Defaults to None.</span>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
 </span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">msg1</span><span class="p">)</span>
@@ -683,18 +683,18 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">debug_out</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">msg1</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">msg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">debug_out</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">msg1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span>, </span><span class="param"><span class="n">msg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="debug_out-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#debug_out"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="debug_out-151"><a href="#debug_out-151"><span class="linenos">151</span></a><span class="k">def</span><span class="w"> </span><span class="nf">debug_out</span><span class="p">(</span><span class="n">msg1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="debug_out-151"><a href="#debug_out-151"><span class="linenos">151</span></a><span class="k">def</span><span class="w"> </span><span class="nf">debug_out</span><span class="p">(</span><span class="n">msg1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">,</span> <span class="n">msg2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="debug_out-152"><a href="#debug_out-152"><span class="linenos">152</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ標準出力(テスト用)</span>
 </span><span id="debug_out-153"><a href="#debug_out-153"><span class="linenos">153</span></a>
 </span><span id="debug_out-154"><a href="#debug_out-154"><span class="linenos">154</span></a><span class="sd">    Args:</span>
-</span><span id="debug_out-155"><a href="#debug_out-155"><span class="linenos">155</span></a><span class="sd">        msg1 (str): _description_</span>
-</span><span id="debug_out-156"><a href="#debug_out-156"><span class="linenos">156</span></a><span class="sd">        msg2 (str | dict | list | bool | None, optional): _description_. Defaults to None.</span>
+</span><span id="debug_out-155"><a href="#debug_out-155"><span class="linenos">155</span></a><span class="sd">        msg1 (str | list): メッセージ1</span>
+</span><span id="debug_out-156"><a href="#debug_out-156"><span class="linenos">156</span></a><span class="sd">        msg2 (str | dict | list | bool | None, optional): メッセージ2. Defaults to None.</span>
 </span><span id="debug_out-157"><a href="#debug_out-157"><span class="linenos">157</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="debug_out-158"><a href="#debug_out-158"><span class="linenos">158</span></a>
 </span><span id="debug_out-159"><a href="#debug_out-159"><span class="linenos">159</span></a>    <span class="nb">print</span><span class="p">(</span><span class="n">msg1</span><span class="p">)</span>
@@ -711,8 +711,8 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>msg1 (str):</strong>  _description_</li>
-<li><strong>msg2 (str | dict | list | bool | None, optional):</strong>  _description_. Defaults to None.</li>
+<li><strong>msg1 (str | list):</strong>  メッセージ1</li>
+<li><strong>msg2 (str | dict | list | bool | None, optional):</strong>  メッセージ2. Defaults to None.</li>
 </ul>
 </div>
 
