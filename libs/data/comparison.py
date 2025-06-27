@@ -33,14 +33,14 @@ def main() -> None:
 
     ret = f"*【データ突合】* ({after} - {before})\n"
     if count["pending"]:
-        ret += f"＊ 保留：{count['pending']}件\n"
+        ret += f"＊ 保留：{count["pending"]}件\n"
         for x in msg["pending"]:
             ret += f"\t\t{ExtDt(float(x)).format("ymdhms")}\n"
-    ret += f"＊ 不一致：{count['mismatch']}件\n{msg['mismatch']}"
-    ret += f"＊ 取りこぼし：{count['missing']}件\n{msg['missing']}"
-    ret += f"＊ 削除漏れ：{count['delete']}件\n{msg['delete']}"
-    ret += f"＊ メモ更新：{count['remark_mod']}件\n{msg['remark_mod']}"
-    ret += f"＊ メモ削除：{count['remark_del']}件\n{msg['remark_del']}"
+    ret += f"＊ 不一致：{count["mismatch"]}件\n{msg["mismatch"]}"
+    ret += f"＊ 取りこぼし：{count["missing"]}件\n{msg["missing"]}"
+    ret += f"＊ 削除漏れ：{count["delete"]}件\n{msg["delete"]}"
+    ret += f"＊ メモ更新：{count["remark_mod"]}件\n{msg["remark_mod"]}"
+    ret += f"＊ メモ削除：{count["remark_del"]}件\n{msg["remark_del"]}"
     if count["invalid_score"] > 0:
         ret += "\n*【素点合計不一致】*\n"
         ret += msg["invalid_score"]

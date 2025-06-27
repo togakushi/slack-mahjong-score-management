@@ -67,7 +67,7 @@ def plot() -> tuple[int, str]:
     # ---
     df_sorted.plot(
         figsize=(21, 7),
-        xlabel=f"集計日（総ゲーム数：{game_info['game_count']}）",
+        xlabel=f"集計日（総ゲーム数：{game_info["game_count"]}）",
         ylabel="レート",
         marker="." if len(df_sorted) < 50 else None,
     )

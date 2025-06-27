@@ -42,31 +42,31 @@ def point_plot() -> tuple[int, str]:
     pivot_index = "playtime"
     if g.params.get("target_count"):
         title_text = f"ポイント推移 (直近 {g.params["target_count"]} ゲーム)"
-        xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+        xlabel_text = f"集計日（総ゲーム数：{game_info["game_count"]}）"
     else:
         match g.params["collection"]:
             case "daily":
-                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計日（総ゲーム数：{game_info["game_count"]}）"
                 title_text = message.item_date_range("ymd_o", "通算ポイント", "ポイント推移")
             case "monthly":
-                xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計月（総ゲーム数：{game_info["game_count"]}）"
                 title_text = message.item_date_range("jym_o", "通算ポイント", "ポイント推移")
             case "yearly":
-                xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計年（総ゲーム数：{game_info["game_count"]}）"
                 title_text = message.item_date_range("jy_o", "通算ポイント", "ポイント推移")
             case "all":
-                xlabel_text = f"総ゲーム数：{game_info['game_count']}"
+                xlabel_text = f"総ゲーム数：{game_info["game_count"]}"
                 title_text = message.item_date_range("ymdhm", "通算ポイント", "ポイント推移")
             case _:
                 if g.params.get("search_word"):
                     pivot_index = "comment"
-                    xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
+                    xlabel_text = f"（総ゲーム数：{game_info["game_count"]} ）"
                     if game_info["first_comment"] == game_info["last_comment"]:
-                        title_text = f"通算ポイント ({game_info['first_comment']})"
+                        title_text = f"通算ポイント ({game_info["first_comment"]})"
                     else:
-                        title_text = f"ポイント推移 ({game_info['first_comment']} - {game_info['last_comment']})"
+                        title_text = f"ポイント推移 ({game_info["first_comment"]} - {game_info["last_comment"]})"
                 else:
-                    xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+                    xlabel_text = f"ゲーム終了日時（{game_info["game_count"]} ゲーム）"
                     title_text = message.item_date_range("ymdhm", "通算ポイント", "ポイント推移")
                     if ExtDt(g.params["starttime"]).format("ymd") == ExtDt(g.params["onday"]).format("ymd") and game_info["game_count"] == 1:
                         title_text = f"獲得ポイント ({ExtDt(g.params["starttime"]).format("ymd")})"
@@ -126,31 +126,31 @@ def rank_plot() -> tuple[int, str]:
     pivot_index = "playtime"
     if g.params.get("target_count"):
         title_text = f"順位変動 (直近 {g.params["target_count"]} ゲーム)"
-        xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+        xlabel_text = f"集計日（総ゲーム数：{game_info["game_count"]}）"
     else:
         match g.params["collection"]:
             case "daily":
-                xlabel_text = f"集計日（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計日（総ゲーム数：{game_info["game_count"]}）"
                 title_text = message.item_date_range("ymd_o", "順位", "順位変動")
             case "monthly":
-                xlabel_text = f"集計月（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計月（総ゲーム数：{game_info["game_count"]}）"
                 title_text = message.item_date_range("jym", "順位", "順位変動")
             case "yearly":
-                xlabel_text = f"集計年（総ゲーム数：{game_info['game_count']}）"
+                xlabel_text = f"集計年（総ゲーム数：{game_info["game_count"]}）"
                 title_text = message.item_date_range("jy", "順位", "順位変動")
             case "all":
-                xlabel_text = f"総ゲーム数：{game_info['game_count']}"
+                xlabel_text = f"総ゲーム数：{game_info["game_count"]}"
                 title_text = message.item_date_range("ymdhm", "順位", "順位変動")
             case _:
                 if g.params.get("search_word"):
                     pivot_index = "comment"
-                    xlabel_text = f"（総ゲーム数：{game_info['game_count']} ）"
+                    xlabel_text = f"（総ゲーム数：{game_info["game_count"]} ）"
                     if game_info["first_comment"] == game_info["last_comment"]:
-                        title_text = f"順位 ({game_info['first_comment']})"
+                        title_text = f"順位 ({game_info["first_comment"]})"
                     else:
-                        title_text = f"順位変動 ({game_info['first_comment']} - {game_info['last_comment']})"
+                        title_text = f"順位変動 ({game_info["first_comment"]} - {game_info["last_comment"]})"
                 else:
-                    xlabel_text = f"ゲーム終了日時（{game_info['game_count']} ゲーム）"
+                    xlabel_text = f"ゲーム終了日時（{game_info["game_count"]} ゲーム）"
                     title_text = message.item_date_range("ymdhm", "順位", "順位変動")
                     if ExtDt(g.params["starttime"]).format("ymd") == ExtDt(g.params["onday"]).format("ymd") and game_info["game_count"] == 1:
                         title_text = f"順位 ({ExtDt(g.params["starttime"]).format("ymd")})"
@@ -285,7 +285,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
         tmpdf.plot.barh(
             figsize=(8, 2 + tmpdf.count().iloc[0] / 5),
             y="point",
-            xlabel=f"総ゲーム数：{kwargs['total_game_count']}",
+            xlabel=f"総ゲーム数：{kwargs["total_game_count"]}",
             color=color[::-1],
         )
 

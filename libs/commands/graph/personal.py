@@ -357,8 +357,8 @@ def subplot_table(df: pd.DataFrame, ax: plt.Axes) -> None:
         cellText=df.values.tolist(),
         colLabels=df.columns.tolist(),
         rowLabels=df.index.tolist(),
-        cellLoc='center',
-        loc='center',
+        cellLoc="center",
+        loc="center",
     )
     table.auto_set_font_size(False)
     ax.axis("off")

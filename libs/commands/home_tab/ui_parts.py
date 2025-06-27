@@ -207,7 +207,7 @@ def modalperiod_selection() -> dict:
         dict: ブロック要素
     """
 
-    view: dict = {"type": "modal", "callback_id": f"{g.app_var['screen']}_ModalPeriodSelection"}
+    view: dict = {"type": "modal", "callback_id": f"{g.app_var["screen"]}_ModalPeriodSelection"}
     view["title"] = {"type": "plain_text", "text": "検索範囲指定"}
     view["submit"] = {"type": "plain_text", "text": "決定"}
     view["close"] = {"type": "plain_text", "text": "取消"}
@@ -268,7 +268,7 @@ def set_command_option(body) -> tuple[list, list, dict]:
     if "bid-search_range" in search_options:
         match search_options["bid-search_range"]["aid-search_range"]["selected_option"]["value"]:
             case "指定":
-                app_msg.append(f"集計範囲：{g.app_var['sday']} ～ {g.app_var['eday']}")
+                app_msg.append(f"集計範囲：{g.app_var["sday"]} ～ {g.app_var["eday"]}")
                 argument.extend([g.app_var["sday"], g.app_var["eday"]])
             case "全部":
                 app_msg.append("集計範囲：全部")

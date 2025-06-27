@@ -67,12 +67,12 @@ def get_game_results() -> list:
                 row["ゲーム数"],
                 str(row["通算ポイント"]).replace("-", "▲") + "pt",
                 str(row["平均ポイント"]).replace("-", "▲") + "pt",
-                row["1位"], f"{row['1位率']:.2f}%",
-                row["2位"], f"{row['2位率']:.2f}%",
-                row["3位"], f"{row['3位率']:.2f}%",
-                row["4位"], f"{row['4位率']:.2f}%",
-                f"{row['平均順位']:.2f}",
-                row["トビ"], f"{row['トビ率']:.2f}%",
+                row["1位"], f"{row["1位率"]:.2f}%",
+                row["2位"], f"{row["2位率"]:.2f}%",
+                row["3位"], f"{row["3位率"]:.2f}%",
+                row["4位"], f"{row["4位率"]:.2f}%",
+                f"{row["平均順位"]:.2f}",
+                row["トビ"], f"{row["トビ率"]:.2f}%",
             ]
         )
     logging.info("return record: %s", len(results))
@@ -129,12 +129,12 @@ def get_count_results(game_count: int) -> list:
                 row["ゲーム数"],
                 str(row["通算ポイント"]).replace("-", "▲") + "pt",
                 str(row["平均ポイント"]).replace("-", "▲") + "pt",
-                row["1位"], f"{row['1位率']:.2f}%",
-                row["2位"], f"{row['2位率']:.2f}%",
-                row["3位"], f"{row['3位率']:.2f}%",
-                row["4位"], f"{row['4位率']:.2f}%",
-                f"{row['平均順位']:.2f}",
-                row["トビ"], f"{row['トビ率']:.2f}%",
+                row["1位"], f"{row["1位率"]:.2f}%",
+                row["2位"], f"{row["2位率"]:.2f}%",
+                row["3位"], f"{row["3位率"]:.2f}%",
+                row["4位"], f"{row["4位率"]:.2f}%",
+                f"{row["平均順位"]:.2f}",
+                row["トビ"], f"{row["トビ率"]:.2f}%",
             ]
         )
     logging.info("return record: %s", len(results))

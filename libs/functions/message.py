@@ -94,7 +94,7 @@ def help_message():
     if rule:
         msg += "\n\n*ルール識別子*\n"
         for key, val in rule.items():
-            msg += f"\t{key}：{val['first_time']} ～ {val['last_time']}\n"
+            msg += f"\t{key}：{val["first_time"]} ～ {val["last_time"]}\n"
 
     # メモ機能
     msg += textwrap.dedent(f"""\
@@ -257,32 +257,32 @@ def header(game_info: GameInfoDict, add_text="", indent=1):
 
     # 集計範囲
     if g.params.get("search_word"):  # コメント検索の場合はコメントで表示
-        game_range1 = f"最初のゲーム：{game_info['first_comment']}\n"
-        game_range1 += f"最後のゲーム：{game_info['last_comment']}\n"
+        game_range1 = f"最初のゲーム：{game_info["first_comment"]}\n"
+        game_range1 += f"最後のゲーム：{game_info["last_comment"]}\n"
     else:
-        game_range1 = f"最初のゲーム：{game_info['first_game'].format("ymdhms")}\n"
-        game_range1 += f"最後のゲーム：{game_info['last_game'].format("ymdhms")}\n"
+        game_range1 = f"最初のゲーム：{game_info["first_game"].format("ymdhms")}\n"
+        game_range1 += f"最後のゲーム：{game_info["last_game"].format("ymdhms")}\n"
     game_range2 = item_aggregation_range(game_info)
 
     # ゲーム数
     if game_info["game_count"] == 0:
-        msg += f"{reply(message='no_hits')}"
+        msg += f"{reply(message="no_hits")}"
     else:
         match g.params.get("command"):
             case "results":
                 if g.params.get("target_count"):  # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1
-                    msg += f"総ゲーム数：{game_info['game_count']} 回{add_text}\n"
+                    msg += f"総ゲーム数：{game_info["game_count"]} 回{add_text}\n"
                 else:
                     msg += item_search_range()
                     msg += game_range1
-                    msg += f"ゲーム数：{game_info['game_count']} 回{add_text}\n"
+                    msg += f"ゲーム数：{game_info["game_count"]} 回{add_text}\n"
             case "ranking" | "report":
                 msg += game_range2
-                msg += f"集計ゲーム数：{game_info['game_count']}\n"
+                msg += f"集計ゲーム数：{game_info["game_count"]}\n"
             case _:
                 msg += game_range2
-                msg += f"総ゲーム数：{game_info['game_count']} 回\n"
+                msg += f"総ゲーム数：{game_info["game_count"]} 回\n"
 
         if remarks():
             msg += "特記事項：" + "、".join(remarks()) + "\n"

@@ -237,8 +237,8 @@ def get_record(data: dict) -> dict:
         \t連続ラス：{current_data(data["c_low4"])} ({max_data(data["連続ラス"], data["c_low4"])})
         \t連続逆連対：{current_data(data["c_low2"])} ({max_data(data["連続逆連対"], data["c_low2"])})
         \t連続トップなし：{current_data(data["c_low"])} ({max_data(data["連続トップなし"], data["c_low"])})
-        \t最小素点：{data['最小素点'] * 100}点
-        \t最小獲得ポイント：{data['最小獲得ポイント']}pt
+        \t最小素点：{data["最小素点"] * 100}点
+        \t最小獲得ポイント：{data["最小獲得ポイント"]}pt
     """).replace("-", "▲").replace("*****", "-----")
 
     return ret
