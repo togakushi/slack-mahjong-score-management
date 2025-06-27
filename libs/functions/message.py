@@ -129,11 +129,11 @@ def help_message():
     return msg.strip()
 
 
-def reply(message=None, rpoint_sum=0):
+def reply(message: str, rpoint_sum=0) -> str:
     """メッセージをランダムに返す
 
     Args:
-        message (str, optional): 選択するメッセージ. Defaults to None.
+        message (str): 選択するメッセージ
         rpoint_sum (int, optional): 素点合計(1/100). Defaults to 0.
 
     Returns:
@@ -163,14 +163,14 @@ def reply(message=None, rpoint_sum=0):
             msg = random.choice(msg_list)
 
     try:
-        msg = msg.format(
+        msg = str(msg.format(
             user_id=g.msg.user_id,
             keyword=g.cfg.search.keyword,
             start=ExtDt(g.params.get("starttime", ExtDt())).format("ymd"),
             end=ExtDt(g.params.get("onday", ExtDt())).format("ymd"),
             rpoint_diff=rpoint_diff * 100,
             rpoint_sum=rpoint_sum * 100,
-        )
+        ))
     except KeyError as e:
         logging.error("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", g.msg.user_id)

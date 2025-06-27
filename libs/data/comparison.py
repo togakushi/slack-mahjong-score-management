@@ -49,13 +49,13 @@ def main() -> None:
     slack_api.post_message(ret, command_ts)
 
 
-def data_comparison() -> tuple[dict, dict]:
+def data_comparison() -> tuple[dict, ComparisonDict]:
     """データ突合処理
 
     Returns:
         tuple[dict,dict]:
         - dict: 処理された更新/追加/削除の件数
-        - dict: slackに返すメッセージ
+        - ComparisonDict: slackに返すメッセージ
     """
 
     count: dict = {}
@@ -94,7 +94,7 @@ def data_comparison() -> tuple[dict, dict]:
 
     count.update(pending=len(msg["pending"]))
 
-    return (count, msg)
+    return (count, cast(ComparisonDict, msg))
 
 
 def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[dict, ComparisonDict]:

@@ -22,8 +22,8 @@ def aggregation() -> tuple[str, dict, dict]:
     """
 
     # 情報ヘッダ
-    add_text = ""
-    headline = "*【レーティング】*\n"
+    add_text: str = ""
+    headline: str = "*【レーティング】*\n"
 
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
@@ -100,10 +100,11 @@ def aggregation() -> tuple[str, dict, dict]:
         table = df[s:e].to_markdown(**table_param)
         msg[s] = f"```\n{table}\n```\n"
 
-    prefix_rating = "rating"
+    prefix_rating: str = "rating"
     if g.params.get("filename"):
         prefix_rating = f"{g.params["filename"]}"
 
+    file_list: dict = {"レーティング": ""}
     match g.params.get("format", "default").lower().lower():
         case "csv":
             file_list = {
@@ -113,7 +114,5 @@ def aggregation() -> tuple[str, dict, dict]:
             file_list = {
                 "レーティング": formatter.save_output(df, "txt", f"{prefix_rating}.txt", headline),
             }
-        case _:
-            file_list = {}
 
     return (headline, msg, file_list)

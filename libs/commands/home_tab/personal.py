@@ -126,7 +126,7 @@ def register_personal_handlers(app):
         msg1, msg2 = results.detail.aggregation()
         res = slack_api.post_message(msg1)
         for _, val in msg2.items():
-            slack_api.post_message(val + "\n", res["ts"])
+            slack_api.post_message(str(val + "\n"), res["ts"])
 
         client.views_update(
             view_id=g.app_var["view_id"],

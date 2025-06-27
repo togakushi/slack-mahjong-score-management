@@ -114,8 +114,8 @@ def register_summary_handlers(app):
 
         app_msg.pop()
         app_msg.append("集計完了")
-        msg1 = ""
-        msg2 = message.reply(message="no_hits")
+        msg1: str = ""
+        msg2: str | dict = message.reply(message="no_hits")
 
         match g.app_var.get("operation"):
             case "point":

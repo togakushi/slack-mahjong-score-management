@@ -3,7 +3,6 @@ libs/commands/results/ranking.py
 """
 
 import re
-from typing import Any
 
 import pandas as pd
 from tabulate import tabulate
@@ -15,13 +14,13 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation() -> tuple[str, Any]:
+def aggregation() -> tuple[str, dict]:
     """ランキングデータを生成
 
     Returns:
-        tuple[str, Any]: 集計結果
+        tuple[str, dict]: 集計結果
         - str: ランキングの集計情報
-        - dict | Any: 各ランキングの情報
+        - dict: 各ランキングの情報
     """
 
     # 情報ヘッダ
@@ -34,12 +33,12 @@ def aggregation() -> tuple[str, Any]:
     game_info: GameInfoDict = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
         msg += "\t" + message.reply(message="no_hits")
-        return (msg, None)
+        return (msg, {})
 
     result_df = loader.read_data("ranking/aggregate.sql")
     if result_df.empty:
         msg += "\t" + message.reply(message="no_target")
-        return (msg, None)
+        return (msg, {})
 
     df = pd.merge(
         result_df, aggregate.ranking_record(),

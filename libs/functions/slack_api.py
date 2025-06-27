@@ -4,7 +4,7 @@ libs/functions/slack_api.py
 
 import logging
 import re
-from typing import Any
+from typing import Any, cast
 
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
@@ -53,7 +53,7 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
     return res
 
 
-def post_message(message, ts=False) -> SlackResponse | Any:
+def post_message(message: str, ts=False) -> SlackResponse | Any:
     """chat_postMessageに渡すパラメータを設定
 
     Args:
@@ -81,11 +81,11 @@ def post_message(message, ts=False) -> SlackResponse | Any:
     return res
 
 
-def post_multi_message(msg: dict | list, ts: bool | None = False, summarize: bool = True) -> None:
+def post_multi_message(msg: dict, ts: bool | None = False, summarize: bool = True) -> None:
     """メッセージを分割してポスト
 
     Args:
-        msg (Union[dict, list]): ポストするメッセージ
+        msg (dict): ポストするメッセージ
         ts (bool, optional): スレッドに返す. Defaults to False.
         summarize (bool, optional): 可能な限り1つのブロックにまとめる. Defaults to True.
     """
@@ -95,7 +95,7 @@ def post_multi_message(msg: dict | list, ts: bool | None = False, summarize: boo
     else:
         if isinstance(msg, dict):
             if summarize:  # まとめてポスト
-                key_list = list(msg.keys())
+                key_list = list(map(str, msg.keys()))
                 post_msg = msg[key_list[0]]
                 for i in key_list[1:]:
                     if len((post_msg + msg[i])) < 3800:  # 3800文字を超える直前までまとめる
@@ -111,7 +111,7 @@ def post_multi_message(msg: dict | list, ts: bool | None = False, summarize: boo
             post_message(msg, ts)
 
 
-def post_text(event_ts, title, msg) -> SlackResponse | Any:
+def post_text(event_ts: str, title: str, msg: str) -> SlackResponse | Any:
     """コードブロック修飾付きポスト
 
     Args:
@@ -186,11 +186,12 @@ def post_fileupload(title: str, file: str | bool, ts: str | bool = False) -> Sla
 
 def slack_post(**kwargs):
     """パラメータの内容によって呼び出すAPIを振り分ける"""
+
     logging.debug(kwargs)
-    headline = kwargs.get("headline")
+    headline = str(kwargs.get("headline", ""))
     message = kwargs.get("message")
-    summarize = kwargs.get("summarize", True)
-    file_list = kwargs.get("file_list", {})
+    summarize = bool(kwargs.get("summarize", True))
+    file_list = cast(dict, kwargs.get("file_list", {}))
 
     # 見出しポスト
     res = post_message(headline)
@@ -239,13 +240,13 @@ def call_reactions_add(icon: str, ch: str | None = None, ts: str | None = None):
                 logging.error("msg: %s", vars(g.msg))
 
 
-def call_reactions_remove(icon, ch=None, ts=None):
+def call_reactions_remove(icon: str, ch: str | None = None, ts: str | None = None):
     """リアクションを外す
 
     Args:
         icon (str): 外すリアクション
-        ch (str, optional): チャンネルID. Defaults to None.
-        ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
+        ch (str | None, optional): チャンネルID. Defaults to None.
+        ts (str | None, optional): メッセージのタイムスタンプ. Defaults to None.
     """
 
     if not ch:
