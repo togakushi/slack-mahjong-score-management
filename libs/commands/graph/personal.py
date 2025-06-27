@@ -39,13 +39,9 @@ def plot() -> tuple[int, str]:
         player = next(iter(mapping_dict.values()))
 
     # 最終値（凡例追加用）
-    point_sum = "{:+.1f}".format(  # pylint: disable=consider-using-f-string
-        float(df["point_sum"].iloc[-1])
-    ).replace("-", "▲")
-    point_avg = "{:+.1f}".format(  # pylint: disable=consider-using-f-string
-        float(df["point_avg"].iloc[-1])
-    ).replace("-", "▲")
-    rank_avg = "{:.2f}".format(float(df["rank_avg"].iloc[-1]))  # pylint: disable=consider-using-f-string
+    point_sum = f"{float(df["point_sum"].iloc[-1]):+.1f}".replace("-", "▲")
+    point_avg = f"{float(df["point_avg"].iloc[-1]):+.1f}".replace("-", "▲")
+    rank_avg = f"{float(df["rank_avg"].iloc[-1]):.2f}"
 
     # --- グラフ生成
     save_file = os.path.join(
@@ -233,11 +229,11 @@ def statistics_plot() -> tuple[int, str]:
     # テーブル用データ
     rank_table = pd.DataFrame()
     rank_table["ゲーム数"] = count_df["ゲーム数"].astype("int")
-    rank_table["1位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["1位(%)"], row["1位"]), axis=1)  # pylint: disable=consider-using-f-string
-    rank_table["2位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["2位(%)"], row["2位"]), axis=1)  # pylint: disable=consider-using-f-string
-    rank_table["3位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["3位(%)"], row["3位"]), axis=1)  # pylint: disable=consider-using-f-string
-    rank_table["4位"] = count_df.apply(lambda row: "{:.2f}% ({:.0f})".format(row["4位(%)"], row["4位"]), axis=1)  # pylint: disable=consider-using-f-string
-    rank_table["平均順位"] = count_df.apply(lambda row: "{:.2f}".format(row["平均順位"]), axis=1)  # pylint: disable=consider-using-f-string
+    rank_table["1位"] = count_df.apply(lambda row: f"{row["1位(%)"]:.2f}% ({row["1位"]:.0f})", axis=1)
+    rank_table["2位"] = count_df.apply(lambda row: f"{row["2位(%)"]:.2f}% ({row["2位"]:.0f})", axis=1)
+    rank_table["3位"] = count_df.apply(lambda row: f"{row["3位(%)"]:.2f}% ({row["3位"]:.0f})", axis=1)
+    rank_table["4位"] = count_df.apply(lambda row: f"{row["4位(%)"]:.2f}% ({row["4位"]:.0f})", axis=1)
+    rank_table["平均順位"] = count_df.apply(lambda row: f"{row["平均順位"]:.2f}", axis=1)
 
     # グラフ設定
     configuration.graph_setup(plt, fm)

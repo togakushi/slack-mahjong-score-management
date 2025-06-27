@@ -438,12 +438,12 @@ def cover_page(style: dict, target_info: dict) -> list:
     elements.append(Spacer(1, 40 * mm))
     elements.append(Paragraph(f"成績レポート：{target_player}", style["Title"]))
     elements.append(Spacer(1, 10 * mm))
-    elements.append(Paragraph(
-        "集計期間：{} - {}".format(  # pylint: disable=consider-using-f-string
-            first_game.strftime("%Y-%m-%d %H:%M"),
-            last_game.strftime("%Y-%m-%d %H:%M"),
-        ), style["Normal"]
-    ))
+    elements.append(
+        Paragraph(
+            f"集計期間：{first_game.strftime("%Y-%m-%d %H:%M")} - {last_game.strftime("%Y-%m-%d %H:%M")}",
+            style["Normal"]
+        )
+    )
     elements.append(Spacer(1, 100 * mm))
     elements.append(
         Paragraph(
