@@ -323,13 +323,13 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
                 rename_dict[x] = "3位"
             case "4th" | "rank4" | "4th_mix":
                 rename_dict[x] = "4位"
-            case "1st(%)" | "1st_%" | "rank1_rate":
+            case "1st(%)" | "rank1_rate":
                 rename_dict[x] = "1位率"
-            case "2nd(%)" | "2nd_%" | "rank2_rate":
+            case "2nd(%)" | "rank2_rate":
                 rename_dict[x] = "2位率"
-            case "3rd(%)" | "3rd_%" | "rank3_rate":
+            case "3rd(%)" | "rank3_rate":
                 rename_dict[x] = "3位率"
-            case "4th(%)" | "4th_%" | "rank4_rate":
+            case "4th(%)" | "rank4_rate":
                 rename_dict[x] = "4位率"
             case "1st_count":
                 rename_dict[x] = "1位数"
@@ -343,7 +343,7 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
                 rename_dict[x] = "トビ"
             case "flying_count":
                 rename_dict[x] = "トビ数"
-            case "flying_rate" | "flying_%":
+            case "flying_rate" | "flying(%)":
                 rename_dict[x] = "トビ率"
             case "pt_diff":
                 rename_dict[x] = "差分"
@@ -355,7 +355,7 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
                 rename_dict[x] = "役満和了"
             case "yakuman_count":
                 rename_dict[x] = "役満和了数"
-            case "yakuman_%":
+            case "yakuman(%)":
                 rename_dict[x] = "役満和了率"
 
     if not g.params.get("individual"):
