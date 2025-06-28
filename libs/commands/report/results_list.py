@@ -33,7 +33,7 @@ def main() -> str:
     df = loader.read_data("report/results_list.sql").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
-        return False
+        return ""
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())

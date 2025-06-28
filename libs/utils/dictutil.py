@@ -3,7 +3,7 @@ libs/utils/dictutil.py
 """
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import libs.global_value as g
 from cls.parser import CommandParser
@@ -97,10 +97,10 @@ def placeholder(subcom: "SubCommand") -> dict:
 
     # プレイヤーリスト/対戦相手リスト
     if ret_dict["player_list"]:
-        for k, v in ret_dict["player_list"].items():
+        for k, v in cast(dict, ret_dict["player_list"]).items():
             ret_dict[k] = v
     if ret_dict["competition_list"]:
-        for k, v in ret_dict["competition_list"].items():
+        for k, v in cast(dict, ret_dict["competition_list"]).items():
             ret_dict[k] = v
 
     return ret_dict

@@ -25,7 +25,7 @@ def plot() -> str:
     results = df.transpose().to_dict()
 
     if len(results) == 0:
-        return False
+        return ""
 
     # --- グラフフォント設定
     configuration.graph_setup(plt, fm)
