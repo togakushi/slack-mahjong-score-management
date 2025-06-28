@@ -31,7 +31,7 @@ def placeholder(subcom: "SubCommand") -> dict:
     # 初期化
     g.params.clear()
 
-    # 設定周りのパラメータ
+    # 設定周りのパラメータの取り込み
     ret_dict.update(command=subcom.section)
     ret_dict.update(g.cfg.mahjong.to_dict())
     ret_dict.update(guest_name=g.cfg.member.guest_name)
