@@ -3,16 +3,18 @@ lib/database/aggregate.py
 """
 
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
-import pandas as pd
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
 from libs.data import loader
 from libs.utils import formatter
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 def game_info() -> GameInfoDict:

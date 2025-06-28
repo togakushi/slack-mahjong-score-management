@@ -3,6 +3,7 @@ libs/commands/report/results_list.py
 """
 
 import os
+from typing import TYPE_CHECKING
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -13,8 +14,11 @@ from libs.data import aggregate, loader
 from libs.functions import configuration, message
 from libs.utils import formatter
 
+if TYPE_CHECKING:
+    import pandas as pd
 
-def main():
+
+def main() -> str:
     """成績一覧表を生成する
 
     Returns:
@@ -64,7 +68,7 @@ def main():
     return file_path
 
 
-def graph_generation(game_info: GameInfoDict, df, title):
+def graph_generation(game_info: GameInfoDict, df: pd.DataFrame, title) -> str:
     """グラフ生成処理
 
     Args:
@@ -156,7 +160,7 @@ def graph_generation(game_info: GameInfoDict, df, title):
     return report_file_path
 
 
-def text_generation(df):
+def text_generation(df: pd.DataFrame) -> str:
     """テキストテーブル生成
 
     Args:
@@ -191,7 +195,7 @@ def text_generation(df):
     return report_file_path
 
 
-def csv_generation(df):
+def csv_generation(df: pd.DataFrame) -> str:
     """CSV生成
 
     Args:

@@ -3,14 +3,16 @@ libs/commands/results/summary.py
 """
 
 import re
-
-import pandas as pd
+from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from cls.types import GameInfoDict
 from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import formatter
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 def aggregation() -> tuple[str, dict, dict]:

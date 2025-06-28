@@ -232,7 +232,7 @@ def check_remarks() -> None:
                 remarks_delete(g.msg.event_ts)
 
 
-def reprocessing_remarks():
+def reprocessing_remarks() -> None:
     """スレッドの内容を再処理"""
     res = lookup.api.get_conversations()
     msg = res.get("messages")
@@ -254,7 +254,7 @@ def reprocessing_remarks():
                     check_remarks()
 
 
-def score_reactions(param: dict):
+def score_reactions(param: dict) -> None:
     """素点合計をチェックしリアクションを付ける
 
     Args:

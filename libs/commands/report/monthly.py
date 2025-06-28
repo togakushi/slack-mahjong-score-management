@@ -12,7 +12,7 @@ from libs.data import loader
 from libs.functions import configuration, message
 
 
-def plot():
+def plot() -> str:
     """月別ゲーム統計表の生成
 
     Returns:
