@@ -191,22 +191,22 @@ def slack_post(**kwargs):
     headline = str(kwargs.get("headline", ""))
     message = kwargs.get("message")
     summarize = bool(kwargs.get("summarize", True))
-    file_list = cast(dict, kwargs.get("file_list", {}))
+    file_list = cast(dict, kwargs.get("file_list", {"dummy": ""}))
 
     # 見出しポスト
-    res = post_message(headline)
-    if res:
+    if (res := post_message(headline)):
         ts = res.get("ts", False)
     else:
         ts = False
 
     # 本文ポスト
-    if file_list:
-        for x in file_list.keys():
-            post_fileupload(str(x), str(file_list[x]), ts)
-    else:
-        if message:
-            post_multi_message(message, ts, summarize)
+    for x in file_list:
+        if (file_path := file_list.get(x)):
+            post_fileupload(str(x), str(file_path), ts)
+            message = {}  # ファイルがあるメッセージは不要
+
+    if message:
+        post_multi_message(message, ts, summarize)
 
 
 def call_reactions_add(icon: str, ch: str | None = None, ts: str | None = None):
