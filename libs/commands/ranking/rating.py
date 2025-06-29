@@ -7,7 +7,7 @@ import pandas as pd
 import libs.global_value as g
 from cls.types import GameInfoDict
 from libs.data import aggregate, loader
-from libs.functions import message
+from libs.functions import compose, message
 from libs.utils import formatter
 
 
@@ -60,7 +60,7 @@ def aggregation() -> tuple[str, dict, dict]:
     if g.cfg.badge.grade.display:
         for idx in df.index:
             name = str(df.at[idx, "name"]).replace(f"({g.cfg.setting.guest_mark})", "")
-            df.at[idx, "grade"] = message.badge_grade(name, False)
+            df.at[idx, "grade"] = compose.badge.grade(name, False)
 
     # 表示
     if g.params.get("anonymous"):
