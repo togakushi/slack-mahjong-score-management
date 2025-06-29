@@ -11,7 +11,7 @@ import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from libs.data import comparison, lookup, modify
-from libs.functions import message, slack_api
+from libs.functions import compose, message, slack_api
 from libs.utils import validator
 
 
@@ -49,7 +49,7 @@ def main(client, body):
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
             # ヘルプメッセージ
-            slack_api.post_message(message.help_message(), g.msg.event_ts)
+            slack_api.post_message(compose.help.event_message(), g.msg.event_ts)
             # メンバーリスト
             title, msg = lookup.textdata.get_members_list()
             slack_api.post_text(g.msg.event_ts, title, msg)

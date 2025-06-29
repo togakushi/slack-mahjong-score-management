@@ -10,7 +10,7 @@ import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from libs.data import comparison, lookup
-from libs.functions import message, slack_api
+from libs.functions import compose, message, slack_api
 from libs.registry import member, team
 
 
@@ -71,4 +71,4 @@ def main(ack, body, client):
 
             # その他
             case _:
-                slack_api.post_message(message.slash_help(body["command"]))
+                slack_api.post_message(compose.help.slash_command(body["command"]))

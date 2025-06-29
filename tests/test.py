@@ -15,7 +15,7 @@ import libs.global_value as g
 from cls.parser import CommandParser
 from libs.commands import graph, report
 from libs.data import initialization
-from libs.functions import configuration, message
+from libs.functions import compose, configuration
 from libs.utils import dictutil
 
 
@@ -99,7 +99,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pprint(g.team_list)
 
             case "help":
-                pprint(message.help_message(), width=200)
+                pprint(compose.help.event_message(), width=200)
 
             case "summary":
                 g.params = dictutil.placeholder(g.cfg.results)
