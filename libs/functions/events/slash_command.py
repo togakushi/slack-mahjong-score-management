@@ -71,4 +71,4 @@ def main(ack, body, client):
 
             # その他
             case _:
-                slack_api.post_message(compose.help.slash_command(body["command"]))
+                slack_api.post_message(compose.msg_help.slash_command(body["command"]))

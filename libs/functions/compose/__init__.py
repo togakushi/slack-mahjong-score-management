@@ -4,6 +4,6 @@
 - `libs.functions.compose.help.py`: ヘルプメッセージ
 """
 
-from libs.functions.compose import help
+from libs.functions.compose import msg_help
 
-__all__ = ["help"]
+__all__ = ["msg_help"]

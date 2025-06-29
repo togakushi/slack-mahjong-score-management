@@ -49,7 +49,7 @@ def main(client, body):
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
             # ヘルプメッセージ
-            slack_api.post_message(compose.help.event_message(), g.msg.event_ts)
+            slack_api.post_message(compose.msg_help.event_message(), g.msg.event_ts)
             # メンバーリスト
             title, msg = lookup.textdata.get_members_list()
             slack_api.post_text(g.msg.event_ts, title, msg)

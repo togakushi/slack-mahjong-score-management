@@ -99,7 +99,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pprint(g.team_list)
 
             case "help":
-                pprint(compose.help.event_message(), width=200)
+                pprint(compose.msg_help.event_message(), width=200)
 
             case "summary":
                 g.params = dictutil.placeholder(g.cfg.results)
