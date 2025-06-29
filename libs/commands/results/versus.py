@@ -151,7 +151,7 @@ def tmpl_header(my_name: str, vs_name: str) -> str:
         """
     ).strip()
 
-    return message.del_blank_line(ret)
+    return formatter.del_blank_line(ret)
 
 
 def tmpl_vs_table(data: dict) -> str:

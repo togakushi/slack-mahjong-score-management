@@ -362,3 +362,24 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
         rename_dict.update(name="チーム" if short else "チーム名")
 
     return df.rename(columns=rename_dict)
+
+
+def del_blank_line(text: str) -> str:
+    """空行を取り除く
+
+    Args:
+        text (str): 処理するテキスト
+
+    Returns:
+        str: 処理されたテキスト
+    """
+
+    new_text = []
+    for x in text.split("\n"):
+        if x.strip() == "":
+            continue
+        if x.strip() == "\t":
+            continue
+        new_text.append(x)
+
+    return "\n".join(new_text)

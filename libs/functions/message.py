@@ -178,27 +178,6 @@ def header(game_info: GameInfoDict, add_text="", indent=1):
     return textwrap.indent(msg, "\t" * indent)
 
 
-def del_blank_line(text: str):
-    """空行を取り除く
-
-    Args:
-        text (str): 処理するテキスト
-
-    Returns:
-        str: 処理されたテキスト
-    """
-
-    new_text = []
-    for x in text.split("\n"):
-        if x.strip() == "":
-            continue
-        if x.strip() == "\t":
-            continue
-        new_text.append(x)
-
-    return "\n".join(new_text)
-
-
 def item_search_range(kind=None, time_pattern=None):
     """検索範囲を返す（ヘッダ出力用）
 
