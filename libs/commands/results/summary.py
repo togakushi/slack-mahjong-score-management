@@ -141,7 +141,7 @@ def aggregation() -> tuple[str, dict, dict]:
     return (headline, msg, file_list)
 
 
-def memo_count(df_game: pd.DataFrame) -> str:
+def memo_count(df_game: "pd.DataFrame") -> str:
     """メモ集計
 
     Args:

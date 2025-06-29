@@ -3,18 +3,16 @@ lib/database/aggregate.py
 """
 
 import logging
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import numpy as np
+import pandas as pd
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
 from libs.data import loader
 from libs.utils import formatter
-
-if TYPE_CHECKING:
-    import pandas as pd
 
 
 def game_info() -> GameInfoDict:
@@ -56,7 +54,7 @@ def game_info() -> GameInfoDict:
     return ret
 
 
-def game_summary(filter_items: list | None = None, drop_items: list | None = None) -> pd.DataFrame:
+def game_summary(filter_items: list | None = None, drop_items: list | None = None) -> "pd.DataFrame":
     """ゲーム結果をサマライズする
 
     Args:
@@ -134,7 +132,7 @@ def ranking_record() -> pd.DataFrame:
     """
 
     # データ収集
-    gamedata: pd.DataFrame = loader.read_data("ranking/record_count.sql")
+    gamedata = loader.read_data("ranking/record_count.sql")
     player_list = gamedata["name"].unique().tolist()
 
     # 連続順位カウント

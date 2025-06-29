@@ -68,7 +68,7 @@ def main() -> str:
     return file_path
 
 
-def graph_generation(game_info: GameInfoDict, df: pd.DataFrame, title) -> str:
+def graph_generation(game_info: GameInfoDict, df: "pd.DataFrame", title) -> str:
     """グラフ生成処理
 
     Args:
@@ -160,7 +160,7 @@ def graph_generation(game_info: GameInfoDict, df: pd.DataFrame, title) -> str:
     return report_file_path
 
 
-def text_generation(df: pd.DataFrame) -> str:
+def text_generation(df: "pd.DataFrame") -> str:
     """テキストテーブル生成
 
     Args:
@@ -195,7 +195,7 @@ def text_generation(df: pd.DataFrame) -> str:
     return report_file_path
 
 
-def csv_generation(df: pd.DataFrame) -> str:
+def csv_generation(df: "pd.DataFrame") -> str:
     """CSV生成
 
     Args:
