@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import libs.global_value as g
 from cls.types import GameInfoDict
 from libs.data import aggregate
-from libs.functions import message
+from libs.functions import compose, message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
 
@@ -30,7 +30,7 @@ def plot() -> tuple[int, str]:
     df_ratings = aggregate.calculation_rating()
 
     if df_ratings.empty:
-        return (0, message.reply(message="no_hits"))
+        return (0, message.random_reply(message="no_hits"))
 
     # 足切り
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
@@ -56,7 +56,7 @@ def plot() -> tuple[int, str]:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "rating.png",
     )
 
-    title_text = f"レーティング推移 ({message.item_date_range("ymdhm")})"
+    title_text = f"レーティング推移 ({compose.text_item.date_range("ymdhm")})"
 
     legend_text = []
     count = 1

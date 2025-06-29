@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from libs.data import loader
-from libs.functions import configuration, message
+from libs.functions import compose, configuration
 
 
 def plot() -> str:
@@ -88,7 +88,7 @@ def plot() -> str:
     # 追加テキスト
     fig.text(
         0.01, 0.02,  # 表示位置(左下0,0 右下0,1)
-        f"[{message.item_search_range().strip()}] [特記：すべてのゲーム結果を含む]",
+        f"[{compose.text_item.search_range().strip()}] [特記：すべてのゲーム結果を含む]",
         transform=fig.transFigure,
         fontsize=6,
     )

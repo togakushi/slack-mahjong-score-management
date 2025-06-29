@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import libs.global_value as g
 from cls.types import GameInfoDict
 from libs.data import aggregate, loader
-from libs.functions import configuration, message
+from libs.functions import compose, configuration
 from libs.utils import formatter
 
 if TYPE_CHECKING:
@@ -141,9 +141,9 @@ def graph_generation(game_info: GameInfoDict, df: "pd.DataFrame", title) -> str:
             tb[j, i].set_text_props(ha="center")
 
     # 追加テキスト
-    remark_text = message.remarks(True) + message.search_word(True)
+    remark_text = "".join(compose.text_item.remarks(True)) + compose.text_item.search_word(True)
     add_text = "[{}] [総ゲーム数：{}] {}".format(  # pylint: disable=consider-using-f-string
-        message.item_search_range(None, "time").strip(),
+        compose.text_item.search_range(None, "time").strip(),
         game_info["game_count"],
         f"[{remark_text}]" if remark_text else "",
     )

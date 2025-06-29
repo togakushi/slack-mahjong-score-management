@@ -39,7 +39,7 @@ def db_insert(detection: GameResult, reactions_data: list | None = None) -> None
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
         score_reactions(param)
     else:
-        slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
+        slack_api.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
 
 def db_update(detection: GameResult, reactions_data: list | None = None) -> None:
@@ -65,7 +65,7 @@ def db_update(detection: GameResult, reactions_data: list | None = None) -> None
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
         score_reactions(param)
     else:
-        slack_api.post_message(message.reply(message="restricted_channel"), g.msg.event_ts)
+        slack_api.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
 
 def db_delete(ts: str):
@@ -281,6 +281,6 @@ def score_reactions(param: dict) -> None:
             slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
 
         slack_api.post_message(
-            message.reply(message="invalid_score", rpoint_sum=rpoint_sum),
+            message.random_reply(message="invalid_score", rpoint_sum=rpoint_sum),
             g.msg.event_ts,
         )

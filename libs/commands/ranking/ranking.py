@@ -32,12 +32,12 @@ def aggregation() -> tuple[str, dict]:
     # データ取得
     game_info: GameInfoDict = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        msg += "\t" + message.reply(message="no_hits")
+        msg += "\t" + message.random_reply(message="no_hits")
         return (msg, {})
 
     result_df = loader.read_data("ranking/aggregate.sql")
     if result_df.empty:
-        msg += "\t" + message.reply(message="no_target")
+        msg += "\t" + message.random_reply(message="no_target")
         return (msg, {})
 
     df = pd.merge(

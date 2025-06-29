@@ -29,7 +29,7 @@ def aggregation() -> tuple[str, dict, dict]:
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info: GameInfoDict = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        headline += "\t" + message.reply(message="no_hits")
+        headline += "\t" + message.random_reply(message="no_hits")
         return (headline, {}, {})
 
     df_results = loader.read_data("ranking/results.sql").set_index("name")
@@ -68,7 +68,7 @@ def aggregation() -> tuple[str, dict, dict]:
         df["name"] = df["name"].replace(mapping_dict)
 
     if df.empty:
-        headline += "\t" + message.reply(message="no_target")
+        headline += "\t" + message.random_reply(message="no_target")
         return (headline, {}, {})
 
     headline += message.header(game_info, add_text, 1)

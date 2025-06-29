@@ -12,7 +12,7 @@ from matplotlib import gridspec
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
-from libs.functions import configuration, message
+from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
@@ -32,7 +32,7 @@ def plot() -> tuple[int, str]:
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
-        return (0, message.reply(message="no_hits"))
+        return (0, message.random_reply(message="no_hits"))
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
@@ -133,7 +133,7 @@ def statistics_plot() -> tuple[int, str]:
     df = loader.read_data("summary/details.sql")
 
     if df.empty:
-        return (0, message.reply(message="no_hits"))
+        return (0, message.random_reply(message="no_hits"))
 
     if g.params.get("individual"):  # 個人成績
         player = formatter.name_replace(g.params["player_name"], add_mark=True)
@@ -147,7 +147,7 @@ def statistics_plot() -> tuple[int, str]:
     player_df = df.query("name == @player").reset_index(drop=True)
 
     if player_df.empty:
-        return (0, message.reply(message="no_hits"))
+        return (0, message.random_reply(message="no_hits"))
 
     player_df["sum_point"] = player_df["point"].cumsum()
 
@@ -161,7 +161,7 @@ def statistics_plot() -> tuple[int, str]:
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         player = next(iter(mapping_dict.values()))
 
-    title_text = f"『{player}』の成績 (検索範囲：{message.item_date_range("ymd_o")})"
+    title_text = f"『{player}』の成績 (検索範囲：{compose.text_item.date_range("ymd_o")})"
 
     rpoint_df = get_data(player_df["rpoint"], g.params["interval"])
     point_sum_df = get_data(player_df["point"], g.params["interval"])

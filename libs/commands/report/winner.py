@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from libs.data import loader
-from libs.functions import configuration, message
+from libs.functions import compose, configuration
 from libs.utils import formatter
 
 
@@ -111,9 +111,9 @@ def plot() -> str | bool:
             tb[i, j].set_text_props(ha="center")
 
     # 追加テキスト
-    remark_text = message.remarks(True) + message.search_word(True)
+    remark_text = "".join(compose.text_item.remarks(True)) + compose.text_item.search_word(True)
     add_text = "{} {}".format(  # pylint: disable=consider-using-f-string
-        f"[{message.item_search_range().strip()}]",
+        f"[{compose.text_item.search_range().strip()}]",
         f"[{remark_text}]" if remark_text else "",
     )
 

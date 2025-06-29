@@ -121,7 +121,7 @@ def register_personal_handlers(app):
 
         app_msg.pop()
         app_msg.append("集計完了")
-        msg1 = message.reply(message="no_hits")
+        msg1 = message.random_reply(message="no_hits")
 
         msg1, msg2 = results.detail.aggregation()
         res = slack_api.post_message(msg1)

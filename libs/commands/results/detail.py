@@ -39,8 +39,8 @@ def aggregation():
         if g.params.get("individual"):
             msg_data["検索範囲"] = f"{ExtDt(g.params["starttime"]).format("ymdhm")}"
             msg_data["検索範囲"] += f" ～ {ExtDt(g.params["endtime"]).format("ymdhm")}"
-            msg_data["特記事項"] = "、".join(message.remarks())
-            msg_data["検索ワード"] = message.search_word()
+            msg_data["特記事項"] = "、".join(compose.text_item.remarks())
+            msg_data["検索ワード"] = compose.text_item.search_word()
             msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {compose.badge.status(0, 0)}"
             return (message_build(msg_data), {})
         return ("登録されていないチームです", {})
@@ -49,7 +49,7 @@ def aggregation():
     record_df = aggregate.ranking_record()
 
     if result_df.empty or record_df.empty:
-        return (message.reply(message="no_target"), {})
+        return (message.random_reply(message="no_target"), {})
 
     result_df = pd.merge(
         result_df, record_df,
@@ -127,10 +127,10 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
         ret["登録メンバー"] = "、".join(lookup.internal.get_teammates(g.params["player_name"]))
 
     badge_status = compose.badge.status(data["ゲーム数"], data["win"])
-    ret["検索範囲"] = message.item_search_range(kind="str", time_pattern="time").strip()
-    ret["集計範囲"] = message.item_aggregation_range(game_info, kind="str").strip()
-    ret["特記事項"] = "、".join(message.remarks())
-    ret["検索ワード"] = message.search_word()
+    ret["検索範囲"] = compose.text_item.search_range(kind="str", time_pattern="time").strip()
+    ret["集計範囲"] = compose.text_item.aggregation_range(game_info, kind="str").strip()
+    ret["特記事項"] = "、".join(compose.text_item.remarks())
+    ret["検索ワード"] = compose.text_item.search_word()
     ret["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}"
     ret["_blank1"] = True
 
@@ -386,7 +386,7 @@ def get_versus_matrix(mapping_dict: dict) -> str:
 
     for _, r in df.iterrows():
         padding = max_len - textutil.len_count(r["vs_name"])
-        ret += f"\t{r["vs_name"]}{" " * padding} ： "
+        ret += f"\t{r["vs_name"]}{" " * padding} ："
         ret += f"{r["game"]:3d} 戦 {r["win"]:3d} 勝 {r["lose"]:3d} 敗 ({r["win%"]:6.2f}%)\n"
 
     return ret

@@ -8,7 +8,7 @@ import pandas as pd
 
 import libs.global_value as g
 from libs.data import loader
-from libs.functions import message
+from libs.functions import compose
 from libs.utils import formatter
 
 
@@ -146,8 +146,8 @@ def tmpl_header(my_name: str, vs_name: str) -> str:
         *【直接対戦結果】*
         \tプレイヤー名：{my_name}
         \t対戦相手：{vs_name}
-        \t{message.item_search_range()}
-        \t{message.remarks(True)}
+        \t{compose.text_item.search_range()}
+        \t{compose.text_item.remarks(True)}
         """
     ).strip()
 
