@@ -22,14 +22,14 @@ def test_help(config, keyword, monkeypatch):
     configuration.setup()
 
     with (
-        patch("libs.functions.message.help_message") as mock_help_message,
+        patch("libs.functions.compose.msg_help.event_message") as mock_help_event_message,
         patch("libs.functions.events.message_event.slack_api.post_message", return_value=True),
         patch("libs.functions.events.message_event.slack_api.post_text", return_value=True),
         patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
-        mock_help_message.assert_called_once()
+        mock_help_event_message.assert_called_once()
 
 
 @pytest.mark.parametrize(
