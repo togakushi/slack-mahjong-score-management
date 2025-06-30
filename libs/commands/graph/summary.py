@@ -247,7 +247,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
     """グラフ生成共通処理
 
     Args:
-        df (pd.DataFrame): _description_
+        df (pd.DataFrame): グラフ描写データ
         kwargs (dict): グラフ生成パラメータ
 
     Returns:

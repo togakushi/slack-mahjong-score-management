@@ -109,7 +109,7 @@ def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None
     """指定されたフォーマットでdfを保存する
 
     Args:
-        df (pd.DataFrame): _description_
+        df (pd.DataFrame): 描写対象データ
         kind (str): フォーマット
         filename (str): 保存ファイル名
         headline (str | None, optional): 集計情報（ヘッダコメント）. Defaults to None.
