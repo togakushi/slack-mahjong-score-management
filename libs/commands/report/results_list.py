@@ -142,8 +142,8 @@ def graph_generation(game_info: GameInfoDict, df: "pd.DataFrame", title) -> str:
 
     # 追加テキスト
     remark_text = "".join(compose.text_item.remarks(True)) + compose.text_item.search_word(True)
-    add_text = "[{}] [総ゲーム数：{}] {}".format(  # pylint: disable=consider-using-f-string
-        compose.text_item.search_range(None, "time").strip(),
+    add_text = "[検索範囲：{}] [総ゲーム数：{}] {}".format(  # pylint: disable=consider-using-f-string
+        compose.text_item.search_range(time_pattern="time"),
         game_info["game_count"],
         f"[{remark_text}]" if remark_text else "",
     )

@@ -37,8 +37,8 @@ def aggregation():
 
     if game_info["game_count"] == 0:
         if g.params.get("individual"):
-            msg_data["検索範囲"] = f"{ExtDt(g.params["starttime"]).format("ymdhm")}"
-            msg_data["検索範囲"] += f" ～ {ExtDt(g.params["endtime"]).format("ymdhm")}"
+            compose.text_item.search_range(time_pattern="time")
+            msg_data["検索範囲"] = f"{compose.text_item.search_range(time_pattern="time")}"
             msg_data["特記事項"] = "、".join(compose.text_item.remarks())
             msg_data["検索ワード"] = compose.text_item.search_word()
             msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {compose.badge.status(0, 0)}"
@@ -127,8 +127,8 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
         ret["登録メンバー"] = "、".join(lookup.internal.get_teammates(g.params["player_name"]))
 
     badge_status = compose.badge.status(data["ゲーム数"], data["win"])
-    ret["検索範囲"] = compose.text_item.search_range(kind="str", time_pattern="time").strip()
-    ret["集計範囲"] = compose.text_item.aggregation_range(game_info, kind="str").strip()
+    ret["検索範囲"] = compose.text_item.search_range(time_pattern="time")
+    ret["集計範囲"] = str(compose.text_item.aggregation_range(game_info))
     ret["特記事項"] = "、".join(compose.text_item.remarks())
     ret["検索ワード"] = compose.text_item.search_word()
     ret["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}"

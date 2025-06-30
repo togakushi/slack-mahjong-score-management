@@ -84,7 +84,7 @@ def header(game_info: GameInfoDict, add_text="", indent=1):
     else:
         game_range1 = f"最初のゲーム：{game_info["first_game"].format("ymdhms")}\n"
         game_range1 += f"最後のゲーム：{game_info["last_game"].format("ymdhms")}\n"
-    game_range2 = compose.text_item.aggregation_range(game_info)
+    game_range2 = f"集計範囲：{compose.text_item.aggregation_range(game_info)}\n"
 
     # ゲーム数
     if game_info["game_count"] == 0:

@@ -2,7 +2,7 @@
 libs/functions/compose/text_item.py
 """
 
-from typing import cast
+from typing import Literal, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -71,18 +71,17 @@ def search_word(headword=False) -> str:
     return ret
 
 
-def search_range(kind=None, time_pattern=None):
+def search_range(kind: Literal["str", "list"] = "str", time_pattern=None) -> list | str:
     """検索範囲を返す（ヘッダ出力用）
 
     Args:
-        kind (str, optional): 返値のタイプ. Defaults to None.
+        kind (str): 返値のタイプ. Defaults to str.
         time_pattern (str, optional): 表示させるフォーマットを選択. Defaults to None.
 
     Returns:
         Union[list, str]:
         - `kind` にlistが指定されている場合はリスト
         - `kind` にstrが指定されている場合は文字列
-        - `kind` がNone場合は見出し付き文字列
     """
 
     starttime: str
@@ -104,22 +103,21 @@ def search_range(kind=None, time_pattern=None):
             return ([starttime, endtime])
         case "str":
             return f"{starttime} ～ {endtime}\n"
-        case _:
-            return f"検索範囲：{starttime} ～ {endtime}\n"
 
 
-def aggregation_range(game_info: GameInfoDict, kind=None):
+def aggregation_range(game_info: GameInfoDict, kind: Literal["list", "str"] = "str") -> list | str:
     """集計範囲を返す（ヘッダ出力用）
 
     Args:
         game_info (GameInfoDict): 集計範囲のゲーム情報
-        kind (str, optional): 表示させるフォーマットを選択. Defaults to None.
+        kind (str): 表示させるフォーマットを選択. Defaults to str.
+            - list: リストで受け取る
+            - str: 文字列で受け取る
 
     Returns:
         Union[list, str]:
-        - `kind` にlistが指定されている場合はリスト
-        - `kind` にstrが指定されている場合は文字列
-        - `kind` がNone場合は見出し付き文字列
+        - `kind` にlistが指定されている場合はリストで返す
+        - `kind` にstrが指定されている場合は文字列で返す
     """
 
     if g.params.get("search_word"):  # コメント検索の場合はコメントで表示
@@ -133,9 +131,7 @@ def aggregation_range(game_info: GameInfoDict, kind=None):
         case "list":
             return ([first, last])
         case "str":
-            return f"{first} ～ {last}\n"
-        case _:
-            return f"集計範囲：{first} ～ {last}\n"
+            return f"{first} ～ {last}"
 
 
 def date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None = None) -> str:
