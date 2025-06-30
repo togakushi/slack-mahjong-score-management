@@ -68,7 +68,7 @@ def db_update(detection: GameResult, reactions_data: list | None = None) -> None
         slack_api.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
 
-def db_delete(ts: str):
+def db_delete(ts: str) -> None:
     """スコアデータを削除する
 
     Args:
@@ -261,26 +261,26 @@ def score_reactions(param: dict) -> None:
         param (dict): 素点データ
     """
 
-    correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
-    rpoint_sum = param["rpoint_sum"]  # 素点合計
+    if not param in "deposit":
+        return
 
     if param["reactions_data"]:
         icon = param["reactions_data"]
     else:
         icon = lookup.api.reactions_status()
 
-    if rpoint_sum == correct_score:
-        if g.cfg.setting.reaction_ng in icon:
-            slack_api.call_reactions_remove(g.cfg.setting.reaction_ng)
-        if g.cfg.setting.reaction_ok not in icon:
-            slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
-    else:
+    if param["deposit"]:
         if g.cfg.setting.reaction_ok in icon:
             slack_api.call_reactions_remove(g.cfg.setting.reaction_ok)
         if g.cfg.setting.reaction_ng not in icon:
             slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
 
         slack_api.post_message(
-            message.random_reply(message="invalid_score", rpoint_sum=rpoint_sum),
+            message.random_reply(message="invalid_score", rpoint_sum=param["rpoint_sum"]),
             g.msg.event_ts,
         )
+    else:
+        if g.cfg.setting.reaction_ng in icon:
+            slack_api.call_reactions_remove(g.cfg.setting.reaction_ng)
+        if g.cfg.setting.reaction_ok not in icon:
+            slack_api.call_reactions_add(g.cfg.setting.reaction_ok)

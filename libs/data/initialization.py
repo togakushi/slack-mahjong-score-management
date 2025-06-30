@@ -15,7 +15,7 @@ from libs.data import loader
 from libs.utils import dbutil
 
 
-def initialization_resultdb():
+def initialization_resultdb() -> None:
     """DB初期化"""
     resultdb = dbutil.get_connection()
     resultdb.execute(loader.load_query("table/member.sql"))  # メンバー登録テーブル
@@ -97,7 +97,7 @@ def initialization_resultdb():
     resultdb.close()
 
 
-def read_grade_table():
+def read_grade_table() -> None:
     """段位テーブル読み込み"""
 
     # テーブル選択

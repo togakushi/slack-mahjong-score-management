@@ -78,7 +78,7 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
     return df
 
 
-def remark_count(kind: str):
+def remark_count(kind: str) -> pd.DataFrame:
     """メモの内容を種別でカウント
 
     Args:

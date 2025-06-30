@@ -10,7 +10,7 @@ from slack_sdk.web import SlackResponse
 import libs.global_value as g
 
 
-def reactions_status(ch=None, ts=None):
+def reactions_status(ch=None, ts=None) -> list:
     """botが付けたリアクションの種類を返す
 
     Args:
@@ -89,7 +89,7 @@ def get_dm_channel_id(user_id: str) -> str | None:
     return channel_id
 
 
-def get_conversations(ch=None, ts=None):
+def get_conversations(ch=None, ts=None) -> SlackResponse:
     """スレッド情報の取得
 
     Args:
