@@ -125,7 +125,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
             continue
 
         # "score"が取得できていない場合は処理をスキップ
-        if (slack_score := val.get("score", GameResult())):
+        if not (slack_score := val.get("score", GameResult())):
             continue
 
         # 情報更新
