@@ -261,7 +261,7 @@ def score_reactions(param: dict) -> None:
         param (dict): 素点データ
     """
 
-    if param not in "deposit":
+    if "deposit" not in param:
         return
 
     if param["reactions_data"]:
