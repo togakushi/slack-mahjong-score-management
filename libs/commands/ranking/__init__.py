@@ -5,6 +5,6 @@ Exports:
 - `libs.commands.ranking.rating`: レーティング集計
 """
 
-from . import ranking, rating
+from libs.commands.ranking import ranking, rating
 
 __all__ = ["ranking", "rating"]

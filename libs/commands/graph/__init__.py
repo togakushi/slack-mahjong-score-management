@@ -6,6 +6,6 @@ Exports:
 - `libs.commands.graph.summary`: ポイント推移/順位推移グラフ生成
 """
 
-from . import personal, rating, summary
+from libs.commands.graph import personal, rating, summary
 
 __all__ = ["personal", "rating", "summary"]

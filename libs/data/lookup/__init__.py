@@ -6,6 +6,6 @@ Exports:
     - `libs.data.lookup.internal`: 内部辞書から取得
     - `libs.data.lookup.textdata`: プレーンテキスト形式で取得(slackポスト用)
 """
-from . import api, db, internal, textdata
+from libs.data.lookup import api, db, internal, textdata
 
 __all__ = ["api", "db", "internal", "textdata"]

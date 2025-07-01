@@ -7,6 +7,6 @@ Exports:
 - `libs.functions.events.slash_command`: スラッシュコマンドイベント
 """
 
-from . import home_tab, message_event, slash_command
+from libs.functions.events import home_tab, message_event, slash_command
 
 __all__ = ["home_tab", "message_event", "slash_command"]

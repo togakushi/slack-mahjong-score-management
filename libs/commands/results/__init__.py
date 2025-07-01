@@ -6,6 +6,6 @@ Exports:
 - `libs.commands.results.versus`: 直接対戦成績集計
 """
 
-from . import detail, summary, versus
+from libs.commands.results import detail, summary, versus
 
 __all__ = ["detail", "summary", "versus"]
