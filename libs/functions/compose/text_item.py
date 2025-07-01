@@ -102,7 +102,7 @@ def search_range(kind: Literal["str", "list"] = "str", time_pattern=None) -> lis
         case "list":
             return ([starttime, endtime])
         case "str":
-            return f"{starttime} ～ {endtime}\n"
+            return f"{starttime} ～ {endtime}"
 
 
 def aggregation_range(game_info: GameInfoDict, kind: Literal["list", "str"] = "str") -> list | str:

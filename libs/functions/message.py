@@ -96,7 +96,7 @@ def header(game_info: GameInfoDict, add_text="", indent=1):
                     msg += game_range1
                     msg += f"総ゲーム数：{game_info["game_count"]} 回{add_text}\n"
                 else:
-                    msg += str(compose.text_item.search_range())
+                    msg += str(compose.text_item.search_range()) + "\n"
                     msg += game_range1
                     msg += f"ゲーム数：{game_info["game_count"]} 回{add_text}\n"
             case "ranking" | "report":
