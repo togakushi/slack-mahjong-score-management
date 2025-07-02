@@ -3,7 +3,6 @@ lib/database/aggregate.py
 """
 
 import logging
-from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -32,7 +31,7 @@ def game_info() -> GameInfoDict:
         "last_comment": None,
     }
 
-    if cast(int, ret["game_count"]) >= 1:
+    if ret.get("game_count", 0) >= 1:
         ret["first_game"] = ExtDt(df["first_game"].to_string(index=False))
         ret["last_game"] = ExtDt(df["last_game"].to_string(index=False))
         ret["first_comment"] = df["first_comment"].to_string(index=False)
