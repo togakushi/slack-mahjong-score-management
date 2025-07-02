@@ -79,10 +79,10 @@ def data_comparison() -> tuple[dict, ComparisonDict]:
 
     #
     if g.args.debug:
-        for _, val in slack_score.items():
-            logging.info("slack data: %s", val.get("score"))
-        for _, val in db_score.items():
-            logging.info("db data: %s", val)
+        for _, s_val in slack_score.items():
+            logging.info("slack data: %s", s_val.get("score"))
+        for _, d_val in db_score.items():
+            logging.info("db data: %s", d_val)
 
     # --- スコア突合
     ret_count, ret_msg = check_omission(slack_score, db_score)
