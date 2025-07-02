@@ -67,7 +67,7 @@ class BaseSection(CommonMethodMixin):
 
         self.initialization()
         self.section = section_name  # セクション名保持
-        logging.info("%s=%s", section_name, self.__dict__)
+        logging.info("%s=%s", section_name, {k: v for k, v in vars(self).items() if not str(k).startswith("_")})
 
     def initialization(self):
         """設定ファイルから値の取り込み"""

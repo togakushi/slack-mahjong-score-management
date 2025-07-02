@@ -77,6 +77,13 @@ def data_comparison() -> tuple[dict, ComparisonDict]:
     db_score = search.for_db_score(first_ts)
     db_remarks = search.for_db_remarks(first_ts)
 
+    #
+    if g.args.debug:
+        for _, val in slack_score.items():
+            logging.info("slack data: %s", val.get("score"))
+        for _, val in db_score.items():
+            logging.info("db data: %s", val)
+
     # --- スコア突合
     ret_count, ret_msg = check_omission(slack_score, db_score)
     count = dictutil.merge_dicts(count, ret_count)
