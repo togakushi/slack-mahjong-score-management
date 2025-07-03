@@ -67,7 +67,10 @@ class BaseSection(CommonMethodMixin):
 
         self.initialization()
         self.section = section_name  # セクション名保持
-        logging.info("%s=%s", section_name, {k: v for k, v in vars(self).items() if not str(k).startswith("_")})
+        logging.info("%s=%s", section_name, self)
+
+    def __repr__(self) -> str:
+        return str({k: v for k, v in vars(self).items() if not str(k).startswith("_")})
 
     def initialization(self):
         """設定ファイルから値の取り込み"""
@@ -105,10 +108,13 @@ class BaseSection(CommonMethodMixin):
             dict: 返却値
         """
 
-        ret_dict = self.__dict__
-        for key in ["_parser", "_section", "always_argument"]:
-            if key in ret_dict:
-                ret_dict.pop(key)
+        ret_dict: dict = {}
+        for key in vars(self):
+            if key.startswith("_"):
+                continue
+            if key in ["always_argument"]:
+                continue
+            ret_dict[key] = getattr(self, key)
 
         return ret_dict
 
