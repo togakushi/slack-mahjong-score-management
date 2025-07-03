@@ -236,6 +236,11 @@ class ExtendedDatetime:
         """datetime型を返すプロパティ"""
         return self._dt
 
+    @dt.setter
+    def dt(self, value: AcceptedType) -> None:
+        """dtに対するsetter"""
+        self._dt = self.convert(value)
+
     def set(self, value: AcceptedType) -> None:
         """渡された値をdatetime型に変換して保持
 
