@@ -10,6 +10,9 @@ from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
+from cls.score import GameResult
+from libs.data import lookup
+from libs.functions import message
 from libs.utils import formatter
 
 
@@ -53,7 +56,7 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
     return res
 
 
-def post_message(message: str, ts=False) -> SlackResponse | Any:
+def post_message(msg: str, ts=False) -> SlackResponse | Any:
     """chat_postMessageに渡すパラメータを設定
 
     Args:
@@ -74,7 +77,7 @@ def post_message(message: str, ts=False) -> SlackResponse | Any:
     else:
         res = call_chat_post_message(
             channel=g.msg.channel_id,
-            text=f"{message.strip()}",
+            text=f"{msg.strip()}",
             thread_ts=ts,
         )
 
@@ -189,7 +192,7 @@ def slack_post(**kwargs):
 
     logging.debug(kwargs)
     headline = str(kwargs.get("headline", ""))
-    message = kwargs.get("message")
+    msg = kwargs.get("message")
     summarize = bool(kwargs.get("summarize", True))
     file_list = cast(dict, kwargs.get("file_list", {"dummy": ""}))
 
@@ -203,10 +206,10 @@ def slack_post(**kwargs):
     for x in file_list:
         if (file_path := file_list.get(x)):
             post_fileupload(str(x), str(file_path), ts)
-            message = {}  # ファイルがあるメッセージは不要
+            msg = {}  # ファイルがあるメッセージは不要
 
-    if message:
-        post_multi_message(message, ts, summarize)
+    if msg:
+        post_multi_message(msg, ts, summarize)
 
 
 def call_reactions_add(icon: str, ch: str | None = None, ts: str | None = None):
@@ -269,3 +272,44 @@ def call_reactions_remove(icon: str, ch: str | None = None, ts: str | None = Non
                 logging.critical(e)
                 logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
                 logging.error("msg: %s", vars(g.msg))
+
+
+def score_reactions(detection: GameResult, reactions_data: list | None = None) -> None:
+    """素点合計をチェックしリアクションを付ける
+
+    Args:
+        detection (GameResult): スコアデータ
+        reactions_data (list | None, optional): リアクションリスト. Defaults to None.
+    """
+
+    if not reactions_data:
+        reactions_data = lookup.api.reactions_status()
+
+    if detection.deposit:
+        if g.cfg.setting.reaction_ok in reactions_data:
+            call_reactions_remove(g.cfg.setting.reaction_ok)
+        if g.cfg.setting.reaction_ng not in reactions_data:
+            call_reactions_add(g.cfg.setting.reaction_ng)
+
+        post_message(
+            message.random_reply(message="invalid_score", rpoint_sum=detection.rpoint_sum()),
+            g.msg.event_ts,
+        )
+    else:
+        if g.cfg.setting.reaction_ng in reactions_data:
+            call_reactions_remove(g.cfg.setting.reaction_ng)
+        if g.cfg.setting.reaction_ok not in reactions_data:
+            call_reactions_add(g.cfg.setting.reaction_ok)
+
+
+def all_remove_reactions(delete_list: list):
+    """すべてのリアクションを削除する
+
+    Args:
+        delete_list (list): 削除対象のタイムスタンプ
+    """
+
+    for ts in set(delete_list):
+        for icon in lookup.api.reactions_status(ts=ts):
+            call_reactions_remove(icon, ts=ts)
+            logging.info("ts=%s, icon=%s", ts, icon)

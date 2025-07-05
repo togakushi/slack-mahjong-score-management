@@ -4,7 +4,6 @@ tests/database/test_registration.py
 
 import sys
 from contextlib import closing
-from unittest.mock import patch
 
 import pytest
 
@@ -34,9 +33,8 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     score_data.calc(ts="1234567890.123456")
     assert score_data.has_valid_data()
 
-    with patch("libs.data.modify.score_reactions"):
-        score_data.calc(ts=g.msg.event_ts)
-        modify.db_insert(score_data)
+    score_data.calc(ts=g.msg.event_ts)
+    modify.db_insert(score_data)
 
     with closing(dbutil.get_connection()) as conn:
         cur = conn.execute("select * from result where ts=?;", (g.msg.event_ts,))

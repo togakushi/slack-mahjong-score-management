@@ -10,6 +10,7 @@ import libs.commands.ranking.slackpost
 import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
+from cls.score import GameResult
 from libs.data import comparison, lookup, modify
 from libs.functions import compose, message, slack_api
 from libs.utils import validator
@@ -38,10 +39,7 @@ def main(client, body):
 
     # 投稿済みメッセージが削除された場合
     if g.msg.status == "message_deleted":
-        if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):  # 追加メモ
-            modify.remarks_delete(g.msg.event_ts)
-        else:
-            modify.db_delete(g.msg.event_ts)
+        message_deleted()
         return
 
     # キーワード処理
@@ -99,28 +97,61 @@ def other_words(word: str):
         if (detection := validator.pattern(str(g.msg.text))):  # 結果報告フォーマットに一致したポストの処理
             match g.msg.status:
                 case "message_append":
-                    if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
-                        modify.db_insert(detection)
-                    else:
-                        slack_api.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
-                        logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
+                    message_append(detection)
                 case "message_changed":
-                    if detection.to_dict() == record_data.to_dict():  # スコア比較
-                        return  # 変更箇所がなければ何もしない
-                    if (g.cfg.setting.thread_report == g.msg.in_thread) or (g.msg.event_ts == g.msg.thread_ts):
-                        if record_data.has_valid_data():
-                            if record_data.rule_version == g.cfg.mahjong.rule_version:
-                                modify.db_update(detection)
-                            else:
-                                logging.notice("changed: skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
-                        else:
-                            modify.db_insert(detection)
-                            modify.reprocessing_remarks()
-                    else:
-                        slack_api.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
-                        logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
+                    message_changed(detection)
         else:
             if record_data and g.msg.status == "message_changed":
-                modify.db_delete(g.msg.event_ts)
-                for icon in lookup.api.reactions_status():
-                    slack_api.call_reactions_remove(icon)
+                message_deleted()
+
+
+def message_append(detection: GameResult):
+    """メッセージの追加処理
+
+    Args:
+        detection (GameResult): スコアデータ
+    """
+
+    if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
+        modify.db_insert(detection)
+        slack_api.score_reactions(detection)
+    else:
+        slack_api.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
+        logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
+
+
+def message_changed(detection: GameResult):
+    """メッセージの変更処理
+
+    Args:
+        detection (GameResult): スコアデータ
+    """
+
+    record_data = lookup.db.exsist_record(g.msg.event_ts)
+    if detection.to_dict() == record_data.to_dict():  # スコア比較
+        return  # 変更箇所がなければ何もしない
+    if (g.cfg.setting.thread_report == g.msg.in_thread) or (g.msg.event_ts == g.msg.thread_ts):
+        if record_data.has_valid_data():
+            if record_data.rule_version == g.cfg.mahjong.rule_version:
+                modify.db_update(detection)
+                slack_api.score_reactions(detection)
+            else:
+                logging.notice("changed: skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
+        else:
+            modify.db_insert(detection)
+            slack_api.score_reactions(detection)
+            modify.reprocessing_remarks()
+    else:
+        slack_api.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
+        logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
+
+
+def message_deleted():
+    """メッセージの削除処理"""
+
+    if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):  # 追加メモ
+        delete_list = modify.remarks_delete(g.msg.event_ts)
+    else:
+        delete_list = modify.db_delete(g.msg.event_ts)
+
+    slack_api.all_remove_reactions(delete_list)

@@ -174,7 +174,8 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
                 msg["mismatch"] += f"\t{ExtDt(float(key)).format("ymdhms")}\n"
                 msg["mismatch"] += f"\t\t修正前：{db_score.to_text()}\n"
                 msg["mismatch"] += f"\t\t修正後：{slack_score.to_text()}\n"
-                modify.db_update(slack_score, reactions_data)
+                modify.db_update(slack_score)
+                slack_api.score_reactions(slack_score, reactions_data)
             else:
                 logging.info("score check skip: %s %s", ExtDt(float(key)).format("ymdhms"), db_score.to_text())
             continue
@@ -187,7 +188,8 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
         count["missing"] += 1
         logging.notice("missing: %s (%s)", slack_score.ts, ExtDt(float(slack_score.ts)).format("ymdhms"))  # type: ignore
         msg["missing"] += f"\t{ExtDt(float(key)).format("ymdhms")} {slack_score.to_text()}\n"
-        modify.db_insert(slack_score, reactions_data)
+        modify.db_insert(slack_score)
+        slack_api.score_reactions(slack_score, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         # 保留チェック
@@ -257,7 +259,7 @@ def check_remarks(slack_data: SlackSearchDict, db_data: list) -> tuple[dict, Com
         else:
             count["remark_mod"] += 1
             modify.remarks_delete(remark["event_ts"])
-            modify.remarks_append(cast(dict, remark))
+            modify.remarks_append([remark])
             logging.notice("modification(data mismatch): %s", remark)  # type: ignore
 
     # DB -> slack チェック

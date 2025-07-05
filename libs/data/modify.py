@@ -11,91 +11,87 @@ from contextlib import closing
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
+from cls.types import RemarkDict
 from libs.data import lookup
 from libs.functions import message, slack_api
 from libs.utils import dbutil, formatter
 
 
-def db_insert(detection: GameResult, reactions_data: list | None = None) -> None:
+def db_insert(detection: GameResult) -> int:
     """スコアデータをDBに追加する
 
     Args:
         detection (GameResult): スコアデータ
-        reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
+    changes: int = 0
     detection.calc(ts=g.msg.event_ts)
-    param = {
-        "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
-        "reactions_data": reactions_data,
-        "rpoint_sum": detection.rpoint_sum(),
-        **detection.to_dict(),
-    }
-
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
-            cur.execute(g.sql["RESULT_INSERT"], param)
+            cur.execute(g.sql["RESULT_INSERT"], {
+                "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
+                "rpoint_sum": detection.rpoint_sum(),
+                **detection.to_dict(),
+            })
+            changes = cur.total_changes
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
-        score_reactions(param)
     else:
         slack_api.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
+    return changes
 
-def db_update(detection: GameResult, reactions_data: list | None = None) -> None:
+
+def db_update(detection: GameResult) -> None:
     """スコアデータを変更する
 
     Args:
         detection (GameResult): スコアデータ
-        reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
     detection.calc(ts=g.msg.event_ts)
-    param = {
-        "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
-        "reactions_data": reactions_data,
-        "rpoint_sum": detection.rpoint_sum(),
-        **detection.to_dict(),
-    }
-
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
-            cur.execute(g.sql["RESULT_UPDATE"], param)
+            cur.execute(g.sql["RESULT_UPDATE"], {
+                "playtime": ExtDt(float(g.msg.event_ts)).format("sql"),
+                "rpoint_sum": detection.rpoint_sum(),
+                **detection.to_dict(),
+            })
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
-        score_reactions(param)
     else:
         slack_api.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
 
-def db_delete(ts: str) -> None:
+def db_delete(ts: str) -> list:
     """スコアデータを削除する
 
     Args:
         ts (str): 削除対象レコードのタイムスタンプ
+
+    Returns:
+        list: 削除したタイムスタンプ
     """
 
+    delete_list: list = []
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
-            delete_list = cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()
+            # ゲーム結果の削除
             cur.execute(g.sql["RESULT_DELETE"], (ts,))
-            delete_result = cur.execute("select changes();").fetchone()[0]
-            cur.execute(g.sql["REMARKS_DELETE_ALL"], (ts,))
-            delete_remark = cur.execute("select changes();").fetchone()[0]
+            if (delete_result := cur.execute("select changes();").fetchone()[0]):
+                delete_list.append(ts)
+                logging.notice("result: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_result)  # type: ignore
+
+            # メモの削除
+            if (remark_list := cur.execute("select event_ts from remarks where thread_ts=?", (ts,)).fetchall()):
+                cur.execute(g.sql["REMARKS_DELETE_ALL"], (ts,))
+                if (delete_remark := cur.execute("select changes();").fetchone()[0]):
+                    delete_list.extend([x.get("event_ts") for x in list(map(dict, remark_list))])
+                    logging.notice("remark: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_remark)  # type: ignore
+
             cur.commit()
 
-        if delete_result:
-            logging.notice("result: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_result)  # type: ignore
-        if delete_remark:
-            logging.notice("remark: ts=%s, user=%s, count=%s", ts, g.msg.user_id, delete_remark)  # type: ignore
-
-        # リアクションをすべて外す
-        for icon in lookup.api.reactions_status():
-            slack_api.call_reactions_remove(icon)
-        # メモのアイコンを外す
-        for x in delete_list:
-            for icon in lookup.api.reactions_status(ts=x):
-                slack_api.call_reactions_remove(icon, ts=x)
+    return delete_list
 
 
 def db_backup() -> str:
@@ -132,15 +128,12 @@ def db_backup() -> str:
         return "\nデータベースのバックアップに失敗しました。"
 
 
-def remarks_append(remarks: dict | list) -> None:
+def remarks_append(remarks: list[RemarkDict]) -> None:
     """メモをDBに記録する
 
     Args:
-        remarks (dict | list): メモに残す内容
+        remarks (list[RemarkDict]): メモに残す内容
     """
-
-    if isinstance(remarks, dict):
-        remarks = [remarks]
 
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
@@ -158,25 +151,26 @@ def remarks_append(remarks: dict | list) -> None:
             cur.commit()
 
 
-def remarks_delete(ts: str) -> None:
+def remarks_delete(ts: str) -> list:
     """DBからメモを削除する
 
     Args:
         ts (str): 削除対象レコードのタイムスタンプ
+
+    Returns:
+        list: 削除したタイムスタンプ
     """
 
+    delete_list: list = []
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
             cur.execute(g.sql["REMARKS_DELETE_ONE"], (ts,))
-            count = cur.execute("select changes();").fetchone()[0]
             cur.commit()
+            if (count := cur.execute("select changes();").fetchone()[0]):
+                delete_list.append(ts)
+                logging.notice("ts=%s, user=%s, count=%s", ts, g.msg.user_id, count)  # type: ignore
 
-        if count:
-            logging.notice("ts=%s, user=%s, count=%s", ts, g.msg.user_id, count)  # type: ignore
-
-        if g.msg.status != "message_deleted":
-            if g.cfg.setting.reaction_ok in lookup.api.reactions_status():
-                slack_api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=ts)
+    return delete_list
 
 
 def remarks_delete_compar(para: dict) -> None:
@@ -186,17 +180,13 @@ def remarks_delete_compar(para: dict) -> None:
         para (dict): パラメータ
     """
 
-    ch: str | None
-
     with closing(dbutil.get_connection()) as cur:
         cur.execute(g.sql["REMARKS_DELETE_COMPAR"], para)
         cur.commit()
 
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]
 
-    if g.msg.channel_id:
-        ch = g.msg.channel_id
-    else:
+    if not (ch := g.msg.channel_id):
         ch = lookup.api.get_channel_id()
 
     icon = lookup.api.reactions_status(ts=para.get("event_ts"))
@@ -211,9 +201,9 @@ def check_remarks() -> None:
         g.cfg.results.initialization()
         g.cfg.results.unregistered_replace = False  # ゲスト無効
 
-        remarks: list = []
+        remarks: list[RemarkDict] = []
         for name, matter in zip(g.msg.argument[0::2], g.msg.argument[1::2]):
-            remark = {
+            remark: RemarkDict = {
                 "thread_ts": g.msg.thread_ts,
                 "event_ts": g.msg.event_ts,
                 "name": formatter.name_replace(name),
@@ -252,35 +242,3 @@ def reprocessing_remarks() -> None:
 
                 if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):
                     check_remarks()
-
-
-def score_reactions(param: dict) -> None:
-    """素点合計をチェックしリアクションを付ける
-
-    Args:
-        param (dict): 素点データ
-    """
-
-    if "deposit" not in param:
-        return
-
-    if param["reactions_data"]:
-        icon = param["reactions_data"]
-    else:
-        icon = lookup.api.reactions_status()
-
-    if param["deposit"]:
-        if g.cfg.setting.reaction_ok in icon:
-            slack_api.call_reactions_remove(g.cfg.setting.reaction_ok)
-        if g.cfg.setting.reaction_ng not in icon:
-            slack_api.call_reactions_add(g.cfg.setting.reaction_ng)
-
-        slack_api.post_message(
-            message.random_reply(message="invalid_score", rpoint_sum=param["rpoint_sum"]),
-            g.msg.event_ts,
-        )
-    else:
-        if g.cfg.setting.reaction_ng in icon:
-            slack_api.call_reactions_remove(g.cfg.setting.reaction_ng)
-        if g.cfg.setting.reaction_ok not in icon:
-            slack_api.call_reactions_add(g.cfg.setting.reaction_ok)
