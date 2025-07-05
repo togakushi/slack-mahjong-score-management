@@ -3,6 +3,7 @@ libs/commands/ranking/slackpost.py
 """
 
 import libs.global_value as g
+from libs.api import slack
 from libs.commands import ranking
 from libs.functions import slack_api
 from libs.utils import dictutil
@@ -22,6 +23,6 @@ def main():
         )
     else:  # ランキング
         msg1, msg2 = ranking.ranking.aggregation()
-        res = slack_api.post_message(msg1)
+        res = slack.post.post_message(msg1)
         if msg2:
-            slack_api.post_multi_message(msg2, res["ts"])
+            slack.post.post_multi_message(msg2, res["ts"])

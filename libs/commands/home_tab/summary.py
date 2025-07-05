@@ -6,6 +6,7 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
+from libs.api import slack
 from libs.commands import graph, ranking, results
 from libs.commands.home_tab import ui_parts
 from libs.functions import message, slack_api
@@ -121,15 +122,15 @@ def register_summary_handlers(app):
             case "point":
                 count, ret = graph.summary.point_plot()
                 if count:
-                    slack_api.post_fileupload("ポイント推移", ret)
+                    slack.post.post_fileupload("ポイント推移", ret)
                 else:
-                    slack_api.post_message(ret)
+                    slack.post.post_message(ret)
             case "rank":
                 count, ret = graph.summary.rank_plot()
                 if count:
-                    slack_api.post_fileupload("順位変動", ret)
+                    slack.post.post_fileupload("順位変動", ret)
                 else:
-                    slack_api.post_message(ret)
+                    slack.post.post_message(ret)
             case "rating":
                 g.params["command"] = "ranking"
                 msg1, msg2, file_list = ranking.rating.aggregation()

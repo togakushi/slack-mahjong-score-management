@@ -47,7 +47,7 @@ def main() -> None:
         ret += msg["invalid_score"]
 
     g.msg.channel_id = command_ch
-    slack_api.post_message(ret, command_ts)
+    slack.post.post_message(ret, command_ts)
 
 
 def data_comparison() -> tuple[dict, ComparisonDict]:

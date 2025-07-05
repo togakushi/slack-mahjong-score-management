@@ -3,8 +3,8 @@ libs/commands/graph/slackpost.py
 """
 
 import libs.global_value as g
+from libs.api import slack
 from libs.commands.graph import personal, rating, summary
-from libs.functions import slack_api
 from libs.utils import dictutil
 
 
@@ -31,6 +31,6 @@ def main():
                 count, ret = summary.point_plot()
 
     if count == 0:
-        slack_api.post_message(ret)
+        slack.post.post_message(ret)
     else:
-        slack_api.post_fileupload(title, ret)
+        slack.post.post_fileupload(title, ret)

@@ -14,7 +14,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
 from libs.api import slack
 from libs.data import lookup
-from libs.functions import message, slack_api
+from libs.functions import message
 from libs.utils import dbutil, formatter
 
 
@@ -38,7 +38,7 @@ def db_insert(detection: GameResult) -> int:
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
     else:
-        slack_api.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
+        slack.post.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
     return changes
 
@@ -61,7 +61,7 @@ def db_update(detection: GameResult) -> None:
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
     else:
-        slack_api.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
+        slack.post.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
 
 def db_delete(ts: str) -> list:
