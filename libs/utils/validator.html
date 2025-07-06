@@ -172,7 +172,7 @@
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="p">)</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="c1"># 情報取り出し</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">GameResult</span><span class="p">(</span><span class="n">rule_version</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">mahjong</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">GameResult</span><span class="p">(</span><span class="n">ts</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">event_ts</span><span class="p">,</span> <span class="n">rule_version</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">mahjong</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="n">position</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="k">match</span> <span class="n">text</span><span class="p">:</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="k">case</span> <span class="n">text</span> <span class="k">if</span> <span class="n">pattern1</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -224,7 +224,8 @@
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>            <span class="k">continue</span>
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>        <span class="n">result</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="n">p</span><span class="p">])})</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="k">return</span> <span class="n">result</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="n">result</span><span class="o">.</span><span class="n">calc</span><span class="p">()</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>    <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
@@ -380,7 +381,7 @@
 </span><span id="pattern-111"><a href="#pattern-111"><span class="linenos">111</span></a>    <span class="p">)</span>
 </span><span id="pattern-112"><a href="#pattern-112"><span class="linenos">112</span></a>
 </span><span id="pattern-113"><a href="#pattern-113"><span class="linenos">113</span></a>    <span class="c1"># 情報取り出し</span>
-</span><span id="pattern-114"><a href="#pattern-114"><span class="linenos">114</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">GameResult</span><span class="p">(</span><span class="n">rule_version</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">mahjong</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
+</span><span id="pattern-114"><a href="#pattern-114"><span class="linenos">114</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">GameResult</span><span class="p">(</span><span class="n">ts</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">event_ts</span><span class="p">,</span> <span class="n">rule_version</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">mahjong</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
 </span><span id="pattern-115"><a href="#pattern-115"><span class="linenos">115</span></a>    <span class="n">position</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 </span><span id="pattern-116"><a href="#pattern-116"><span class="linenos">116</span></a>    <span class="k">match</span> <span class="n">text</span><span class="p">:</span>
 </span><span id="pattern-117"><a href="#pattern-117"><span class="linenos">117</span></a>        <span class="k">case</span> <span class="n">text</span> <span class="k">if</span> <span class="n">pattern1</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -432,7 +433,8 @@
 </span><span id="pattern-163"><a href="#pattern-163"><span class="linenos">163</span></a>            <span class="k">continue</span>
 </span><span id="pattern-164"><a href="#pattern-164"><span class="linenos">164</span></a>        <span class="n">result</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="n">p</span><span class="p">])})</span>
 </span><span id="pattern-165"><a href="#pattern-165"><span class="linenos">165</span></a>
-</span><span id="pattern-166"><a href="#pattern-166"><span class="linenos">166</span></a>    <span class="k">return</span> <span class="n">result</span>
+</span><span id="pattern-166"><a href="#pattern-166"><span class="linenos">166</span></a>    <span class="n">result</span><span class="o">.</span><span class="n">calc</span><span class="p">()</span>
+</span><span id="pattern-167"><a href="#pattern-167"><span class="linenos">167</span></a>    <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
