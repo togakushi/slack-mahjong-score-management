@@ -12,7 +12,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
-from libs.api import slack
+from integrations.slack import api
 from libs.data import lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
@@ -37,7 +37,7 @@ def db_insert(detection: GameResult) -> int:
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
     else:
-        slack.post.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
+        api.post.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
     return changes
 
@@ -60,7 +60,7 @@ def db_update(detection: GameResult) -> None:
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
     else:
-        slack.post.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
+        api.post.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
 
 def db_delete(ts: str) -> list:
@@ -146,7 +146,7 @@ def remarks_append(remarks: list[RemarkDict]) -> None:
                         logging.notice("insert: %s, user=%s", para, g.msg.user_id)  # type: ignore
 
                         if g.cfg.setting.reaction_ok not in lookup.api.reactions_status(ts=para.get("event_ts")):
-                            slack.reactions.call_reactions_add(g.cfg.setting.reaction_ok, ts=para.get("event_ts"))
+                            api.reactions.call_reactions_add(g.cfg.setting.reaction_ok, ts=para.get("event_ts"))
 
             cur.commit()
 
@@ -191,7 +191,7 @@ def remarks_delete_compar(para: dict) -> None:
 
     icon = lookup.api.reactions_status(ts=para.get("event_ts"))
     if g.cfg.setting.reaction_ok in icon and left == 0:
-        slack.reactions.call_reactions_remove(g.cfg.setting.reaction_ok, ch=ch, ts=para.get("event_ts"))
+        api.reactions.call_reactions_remove(g.cfg.setting.reaction_ok, ch=ch, ts=para.get("event_ts"))
 
 
 def check_remarks() -> None:

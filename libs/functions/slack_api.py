@@ -7,7 +7,7 @@ from typing import cast
 
 import libs.global_value as g
 from cls.score import GameResult
-from libs.api import slack
+from integrations.slack import api
 from libs.data import lookup
 from libs.functions import message
 
@@ -22,7 +22,7 @@ def slack_post(**kwargs):
     file_list = cast(dict, kwargs.get("file_list", {"dummy": ""}))
 
     # 見出しポスト
-    if (res := slack.post.post_message(headline)):
+    if (res := api.post.post_message(headline)):
         ts = res.get("ts", False)
     else:
         ts = False
@@ -30,11 +30,11 @@ def slack_post(**kwargs):
     # 本文ポスト
     for x in file_list:
         if (file_path := file_list.get(x)):
-            slack.post.post_fileupload(str(x), str(file_path), ts)
+            api.post.post_fileupload(str(x), str(file_path), ts)
             msg = {}  # ファイルがあるメッセージは不要
 
     if msg:
-        slack.post.post_multi_message(msg, ts, summarize)
+        api.post.post_multi_message(msg, ts, summarize)
 
 
 def score_reactions(detection: GameResult, reactions_data: list | None = None) -> None:
@@ -50,16 +50,16 @@ def score_reactions(detection: GameResult, reactions_data: list | None = None) -
 
     if detection.deposit:
         if g.cfg.setting.reaction_ok in reactions_data:
-            slack.reactions.call_reactions_remove(g.cfg.setting.reaction_ok)
+            api.reactions.call_reactions_remove(g.cfg.setting.reaction_ok)
         if g.cfg.setting.reaction_ng not in reactions_data:
-            slack.reactions.call_reactions_add(g.cfg.setting.reaction_ng)
+            api.reactions.call_reactions_add(g.cfg.setting.reaction_ng)
 
-        slack.post.post_message(
+        api.post.post_message(
             message.random_reply(message="invalid_score", rpoint_sum=detection.rpoint_sum()),
             g.msg.event_ts,
         )
     else:
         if g.cfg.setting.reaction_ng in reactions_data:
-            slack.reactions.call_reactions_remove(g.cfg.setting.reaction_ng)
+            api.reactions.call_reactions_remove(g.cfg.setting.reaction_ng)
         if g.cfg.setting.reaction_ok not in reactions_data:
-            slack.reactions.call_reactions_add(g.cfg.setting.reaction_ok)
+            api.reactions.call_reactions_add(g.cfg.setting.reaction_ok)

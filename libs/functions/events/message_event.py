@@ -11,8 +11,8 @@ import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.score import GameResult
-from libs.api import slack
-from libs.api.slack import comparison
+from integrations.slack import api
+from integrations.slack.functions import comparison
 from libs.data import lookup, modify
 from libs.functions import compose, message, slack_api
 from libs.utils import validator
@@ -49,10 +49,10 @@ def main(client, body):
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
             # ヘルプメッセージ
-            slack.post.post_message(compose.msg_help.event_message(), g.msg.event_ts)
+            api.post.post_message(compose.msg_help.event_message(), g.msg.event_ts)
             # メンバーリスト
             title, msg = lookup.textdata.get_members_list()
-            slack.post.post_text(g.msg.event_ts, title, msg)
+            api.post.post_text(g.msg.event_ts, title, msg)
 
         # 成績管理系コマンド
         case x if re.match(rf"^{g.cfg.cw.results}$", x):
@@ -74,11 +74,11 @@ def main(client, body):
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}$", x):
             title, msg = lookup.textdata.get_members_list()
-            slack.post.post_text(g.msg.event_ts, title, msg)
+            api.post.post_text(g.msg.event_ts, title, msg)
         case x if re.match(rf"^{g.cfg.cw.team}$", x):
             title = "チーム一覧"
             msg = lookup.textdata.get_team_list()
-            slack.post.post_text(g.msg.event_ts, title, msg)
+            api.post.post_text(g.msg.event_ts, title, msg)
 
         case _ as x:
             other_words(x)
@@ -118,7 +118,7 @@ def message_append(detection: GameResult):
         modify.db_insert(detection)
         slack_api.score_reactions(detection)
     else:
-        slack.post.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
+        api.post.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
         logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
 
 
@@ -144,7 +144,7 @@ def message_changed(detection: GameResult):
             slack_api.score_reactions(detection)
             modify.reprocessing_remarks()
     else:
-        slack.post.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
+        api.post.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
         logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
 
 
@@ -156,4 +156,4 @@ def message_deleted():
     else:
         delete_list = modify.db_delete(g.msg.event_ts)
 
-    slack.reactions.all_remove_reactions(delete_list)
+    api.reactions.all_remove_reactions(delete_list)
