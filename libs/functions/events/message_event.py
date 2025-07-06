@@ -155,4 +155,4 @@ def message_deleted():
     else:
         delete_list = modify.db_delete(g.msg.event_ts)
 
-    slack_api.all_remove_reactions(delete_list)
+    slack.reactions.all_remove_reactions(delete_list)

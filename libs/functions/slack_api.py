@@ -63,16 +63,3 @@ def score_reactions(detection: GameResult, reactions_data: list | None = None) -
             slack.reactions.call_reactions_remove(g.cfg.setting.reaction_ng)
         if g.cfg.setting.reaction_ok not in reactions_data:
             slack.reactions.call_reactions_add(g.cfg.setting.reaction_ok)
-
-
-def all_remove_reactions(delete_list: list):
-    """すべてのリアクションを削除する
-
-    Args:
-        delete_list (list): 削除対象のタイムスタンプ
-    """
-
-    for ts in set(delete_list):
-        for icon in lookup.api.reactions_status(ts=ts):
-            slack.reactions.call_reactions_remove(icon, ts=ts)
-            logging.info("ts=%s, icon=%s", ts, icon)
