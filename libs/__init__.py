@@ -1,6 +1,7 @@
 """
 ライブラリ
 
+- `libs.api`: 外部サービスAPI操作
 - `libs.commands`: サブコマンド
 - `libs.data`: データ操作モジュール
 - `libs.functions`: 共通処理モジュール
