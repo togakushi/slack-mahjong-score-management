@@ -10,7 +10,8 @@ import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from libs.api import slack
-from libs.data import comparison, lookup
+from libs.api.slack import comparison
+from libs.data import lookup
 from libs.functions import compose
 from libs.registry import member, team
 

@@ -1,5 +1,5 @@
 """
-lib/data/comparison.py
+libs/api/slack/comparison.py
 """
 
 import logging

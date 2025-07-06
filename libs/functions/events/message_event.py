@@ -12,7 +12,8 @@ import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.score import GameResult
 from libs.api import slack
-from libs.data import comparison, lookup, modify
+from libs.api.slack import comparison
+from libs.data import lookup, modify
 from libs.functions import compose, message, slack_api
 from libs.utils import validator
 
