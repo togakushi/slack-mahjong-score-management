@@ -110,7 +110,7 @@ def pattern(text: str) -> GameResult:
     )
 
     # 情報取り出し
-    result = GameResult(rule_version=g.cfg.mahjong.rule_version)
+    result = GameResult(ts=g.msg.event_ts, rule_version=g.cfg.mahjong.rule_version)
     position: dict[str, int] = {}
     match text:
         case text if pattern1.findall(text):
@@ -162,4 +162,5 @@ def pattern(text: str) -> GameResult:
             continue
         result.set(**{k: str(msg[p])})
 
+    result.calc()
     return result

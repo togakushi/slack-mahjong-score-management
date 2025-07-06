@@ -26,7 +26,6 @@ def db_insert(detection: GameResult) -> int:
     """
 
     changes: int = 0
-    detection.calc(ts=g.msg.event_ts)
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
             cur.execute(g.sql["RESULT_INSERT"], {
