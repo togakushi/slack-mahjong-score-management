@@ -37,9 +37,6 @@
             <li>
                     <a class="function" href="#score_reactions">score_reactions</a>
             </li>
-            <li>
-                    <a class="function" href="#all_remove_reactions">all_remove_reactions</a>
-            </li>
     </ul>
 
 
@@ -128,19 +125,6 @@
 </span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="n">slack</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">call_reactions_remove</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">reaction_ng</span><span class="p">)</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">reaction_ok</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reactions_data</span><span class="p">:</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>            <span class="n">slack</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">call_reactions_add</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">reaction_ok</span><span class="p">)</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="k">def</span><span class="w"> </span><span class="nf">all_remove_reactions</span><span class="p">(</span><span class="n">delete_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;すべてのリアクションを削除する</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">    Args:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">        delete_list (list): 削除対象のタイムスタンプ</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">delete_list</span><span class="p">):</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>        <span class="k">for</span> <span class="n">icon</span> <span class="ow">in</span> <span class="n">lookup</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">reactions_status</span><span class="p">(</span><span class="n">ts</span><span class="o">=</span><span class="n">ts</span><span class="p">):</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>            <span class="n">slack</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">call_reactions_remove</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="n">ts</span><span class="p">)</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ts=</span><span class="si">%s</span><span class="s2">, icon=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">icon</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -234,42 +218,6 @@
 <ul>
 <li><strong>detection (GameResult):</strong>  スコアデータ</li>
 <li><strong>reactions_data (list | None, optional):</strong>  リアクションリスト. Defaults to None.</li>
-</ul>
-</div>
-
-
-                </section>
-                <section id="all_remove_reactions">
-                            <input id="all_remove_reactions-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">all_remove_reactions</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">delete_list</span><span class="p">:</span> <span class="nb">list</span></span><span class="return-annotation">):</span></span>
-
-                <label class="view-source-button" for="all_remove_reactions-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#all_remove_reactions"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="all_remove_reactions-69"><a href="#all_remove_reactions-69"><span class="linenos">69</span></a><span class="k">def</span><span class="w"> </span><span class="nf">all_remove_reactions</span><span class="p">(</span><span class="n">delete_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="all_remove_reactions-70"><a href="#all_remove_reactions-70"><span class="linenos">70</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;すべてのリアクションを削除する</span>
-</span><span id="all_remove_reactions-71"><a href="#all_remove_reactions-71"><span class="linenos">71</span></a>
-</span><span id="all_remove_reactions-72"><a href="#all_remove_reactions-72"><span class="linenos">72</span></a><span class="sd">    Args:</span>
-</span><span id="all_remove_reactions-73"><a href="#all_remove_reactions-73"><span class="linenos">73</span></a><span class="sd">        delete_list (list): 削除対象のタイムスタンプ</span>
-</span><span id="all_remove_reactions-74"><a href="#all_remove_reactions-74"><span class="linenos">74</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="all_remove_reactions-75"><a href="#all_remove_reactions-75"><span class="linenos">75</span></a>
-</span><span id="all_remove_reactions-76"><a href="#all_remove_reactions-76"><span class="linenos">76</span></a>    <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">delete_list</span><span class="p">):</span>
-</span><span id="all_remove_reactions-77"><a href="#all_remove_reactions-77"><span class="linenos">77</span></a>        <span class="k">for</span> <span class="n">icon</span> <span class="ow">in</span> <span class="n">lookup</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">reactions_status</span><span class="p">(</span><span class="n">ts</span><span class="o">=</span><span class="n">ts</span><span class="p">):</span>
-</span><span id="all_remove_reactions-78"><a href="#all_remove_reactions-78"><span class="linenos">78</span></a>            <span class="n">slack</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">call_reactions_remove</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="n">ts</span><span class="p">)</span>
-</span><span id="all_remove_reactions-79"><a href="#all_remove_reactions-79"><span class="linenos">79</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;ts=</span><span class="si">%s</span><span class="s2">, icon=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">icon</span><span class="p">)</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>すべてのリアクションを削除する</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>delete_list (list):</strong>  削除対象のタイムスタンプ</li>
 </ul>
 </div>
 

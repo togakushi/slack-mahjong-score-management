@@ -226,7 +226,7 @@
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="n">delete_list</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">db_delete</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">event_ts</span><span class="p">)</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="n">slack_api</span><span class="o">.</span><span class="n">all_remove_reactions</span><span class="p">(</span><span class="n">delete_list</span><span class="p">)</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="n">slack</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">all_remove_reactions</span><span class="p">(</span><span class="n">delete_list</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -473,7 +473,7 @@
 </span><span id="message_deleted-156"><a href="#message_deleted-156"><span class="linenos">156</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="message_deleted-157"><a href="#message_deleted-157"><span class="linenos">157</span></a>        <span class="n">delete_list</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">db_delete</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">event_ts</span><span class="p">)</span>
 </span><span id="message_deleted-158"><a href="#message_deleted-158"><span class="linenos">158</span></a>
-</span><span id="message_deleted-159"><a href="#message_deleted-159"><span class="linenos">159</span></a>    <span class="n">slack_api</span><span class="o">.</span><span class="n">all_remove_reactions</span><span class="p">(</span><span class="n">delete_list</span><span class="p">)</span>
+</span><span id="message_deleted-159"><a href="#message_deleted-159"><span class="linenos">159</span></a>    <span class="n">slack</span><span class="o">.</span><span class="n">reactions</span><span class="o">.</span><span class="n">all_remove_reactions</span><span class="p">(</span><span class="n">delete_list</span><span class="p">)</span>
 </span></pre></div>
 
 
