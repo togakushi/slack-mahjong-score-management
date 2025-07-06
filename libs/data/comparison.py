@@ -63,8 +63,8 @@ def data_comparison() -> tuple[dict, ComparisonDict]:
     msg: dict = {}
 
     # slackログからゲーム結果を取得
-    slack_score = search.for_slack_score()
-    slack_remarks = search.for_slack_remarks()
+    slack_score = slack.search.get_score()
+    slack_remarks = slack.search.get_remarks()
     for _, val in slack_remarks.items():  # スレッド元のスコアデータを追加
         if (thread_ts := val.get("thread_ts")):
             val["score"] = slack_score[thread_ts].get("score", GameResult())
