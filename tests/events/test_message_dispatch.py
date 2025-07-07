@@ -23,8 +23,8 @@ def test_help(config, keyword, monkeypatch):
 
     with (
         patch("libs.functions.compose.msg_help.event_message") as mock_help_event_message,
-        patch("integrations.slack.api.post.post_message", return_value=True),
-        patch("integrations.slack.api.post.post_text", return_value=True),
+        patch("integrations.slack.functions.message.post_message", return_value=True),
+        patch("integrations.slack.functions.message.post_text", return_value=True),
         patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
