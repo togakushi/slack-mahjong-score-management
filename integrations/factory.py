@@ -10,7 +10,8 @@ from integrations.slack.adapter import SlackAPI
 def get_api_adapter(selected_service: str) -> APIInterface:
     """メッセージインターフェース"""
 
-    if selected_service == "slack":
-        return SlackAPI()
-    else:
-        return StandardOut()
+    match selected_service:
+        case "slack":
+            return SlackAPI()
+        case _:
+            return StandardOut()
