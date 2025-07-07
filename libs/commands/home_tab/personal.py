@@ -6,7 +6,7 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack.functions import message as slack_message
+from integrations.slack.functions import conversation
 from libs.commands import results
 from libs.commands.home_tab import ui_parts
 from libs.functions import message
@@ -125,9 +125,9 @@ def register_personal_handlers(app):
         msg1 = message.random_reply(message="no_hits")
 
         msg1, msg2 = results.detail.aggregation()
-        res = slack_message.post_message(msg1)
+        res = conversation.post_message(msg1)
         for _, val in msg2.items():
-            slack_message.post_message(str(val + "\n"), res["ts"])
+            conversation.post_message(str(val + "\n"), res["ts"])
 
         client.views_update(
             view_id=g.app_var["view_id"],

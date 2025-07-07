@@ -10,7 +10,7 @@ from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import ComparisonDict, RemarkDict, SlackSearchData
 from integrations.slack import api
-from integrations.slack.functions import message, reactions
+from integrations.slack.functions import conversation, reactions
 from libs.data import lookup, modify
 from libs.functions import search
 from libs.utils import dictutil
@@ -48,7 +48,7 @@ def main() -> None:
         ret += msg["invalid_score"]
 
     g.msg.channel_id = command_ch
-    message.post_message(ret, command_ts)
+    conversation.post_message(ret, command_ts)
 
 
 def data_comparison() -> tuple[dict, ComparisonDict]:

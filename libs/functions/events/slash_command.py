@@ -9,7 +9,7 @@ import libs.commands.ranking.slackpost
 import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
-from integrations.slack.functions import comparison, message
+from integrations.slack.functions import comparison, conversation
 from libs.data import lookup
 from libs.functions import compose
 from libs.registry import member, team
@@ -45,31 +45,31 @@ def main(ack, body, client):
             case x if x in g.cfg.alias.check:
                 comparison.main()
             case x if x in g.cfg.alias.download:
-                message.post_fileupload("resultdb", g.cfg.db.database_file)
+                conversation.post_fileupload("resultdb", g.cfg.db.database_file)
 
             # メンバー管理系コマンド
             case x if x in g.cfg.alias.member:
                 title, msg = lookup.textdata.get_members_list()
-                message.post_text(g.msg.event_ts, title, msg)
+                conversation.post_text(g.msg.event_ts, title, msg)
             case x if x in g.cfg.alias.add:
-                message.post_message(member.append(g.msg.argument))
+                conversation.post_message(member.append(g.msg.argument))
             case x if x in g.cfg.alias.delete:
-                message.post_message(member.remove(g.msg.argument))
+                conversation.post_message(member.remove(g.msg.argument))
 
             # チーム管理系コマンド
             case x if x in g.cfg.alias.team_create:
-                message.post_message(team.create(g.msg.argument))
+                conversation.post_message(team.create(g.msg.argument))
             case x if x in g.cfg.alias.team_del:
-                message.post_message(team.delete(g.msg.argument))
+                conversation.post_message(team.delete(g.msg.argument))
             case x if x in g.cfg.alias.team_add:
-                message.post_message(team.append(g.msg.argument))
+                conversation.post_message(team.append(g.msg.argument))
             case x if x in g.cfg.alias.team_remove:
-                message.post_message(team.remove(g.msg.argument))
+                conversation.post_message(team.remove(g.msg.argument))
             case x if x in g.cfg.alias.team_list:
-                message.post_message(lookup.textdata.get_team_list())
+                conversation.post_message(lookup.textdata.get_team_list())
             case x if x in g.cfg.alias.team_clear:
-                message.post_message(team.clear())
+                conversation.post_message(team.clear())
 
             # その他
             case _:
-                message.post_message(compose.msg_help.slash_command(body["command"]))
+                conversation.post_message(compose.msg_help.slash_command(body["command"]))

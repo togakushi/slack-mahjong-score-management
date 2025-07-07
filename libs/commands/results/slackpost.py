@@ -3,7 +3,7 @@ libs/commands/results/slackpost.py
 """
 
 import libs.global_value as g
-from integrations.slack.functions import message
+from integrations.slack.functions import conversation
 from libs.commands import results
 from libs.utils import dictutil
 
@@ -22,20 +22,20 @@ def main():
     # ---
     if len(g.params["player_list"]) == 1 and not versus_mode:  # 個人/チーム成績詳細
         msg1, msg2 = results.detail.aggregation()
-        message.slack_post(
+        conversation.slack_post(
             headline=msg1,
             message=msg2,
         )
     elif versus_mode:  # 直接対戦
         msg1, msg2, file_list = results.versus.aggregation()
-        message.slack_post(
+        conversation.slack_post(
             headline=msg1,
             message=msg2,
             file_list=file_list,
         )
     else:  # 成績サマリ
         headline, msg2, file_list = results.summary.aggregation()
-        message.slack_post(
+        conversation.slack_post(
             headline=headline,
             message=msg2,
             summarize=False,

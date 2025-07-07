@@ -7,7 +7,7 @@ import logging
 import libs.global_value as g
 from cls.score import GameResult
 from integrations.slack import api
-from integrations.slack.functions import message as slack_message
+from integrations.slack.functions import conversation
 from libs.data import lookup
 from libs.functions import message
 
@@ -29,7 +29,7 @@ def score_verification(detection: GameResult, reactions_data: list | None = None
         if g.cfg.setting.reaction_ng not in reactions_data:
             api.reactions.call_reactions_add(g.cfg.setting.reaction_ng)
 
-        slack_message.post_message(
+        conversation.post_message(
             message.random_reply(message="invalid_score", rpoint_sum=detection.rpoint_sum()),
             g.msg.event_ts,
         )
