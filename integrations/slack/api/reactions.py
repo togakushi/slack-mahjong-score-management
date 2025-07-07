@@ -8,7 +8,6 @@ from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
-from libs.data import lookup
 
 
 def call_reactions_add(icon: str, ch: str | None = None, ts: str | None = None):
@@ -71,16 +70,3 @@ def call_reactions_remove(icon: str, ch: str | None = None, ts: str | None = Non
                 logging.critical(e)
                 logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
                 logging.error("msg: %s", vars(g.msg))
-
-
-def all_remove_reactions(delete_list: list):
-    """すべてのリアクションを削除する
-
-    Args:
-        delete_list (list): 削除対象のタイムスタンプ
-    """
-
-    for ts in set(delete_list):
-        for icon in lookup.api.reactions_status(ts=ts):
-            call_reactions_remove(icon, ts=ts)
-            logging.info("ts=%s, icon=%s", ts, icon)

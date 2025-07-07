@@ -10,8 +10,9 @@ from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import ComparisonDict, RemarkDict, SlackSearchData
 from integrations.slack import api
+from integrations.slack.functions import message, reactions
 from libs.data import lookup, modify
-from libs.functions import search, slack_api
+from libs.functions import search
 from libs.utils import dictutil
 
 SlackSearchDict = dict[str, SlackSearchData]
@@ -47,7 +48,7 @@ def main() -> None:
         ret += msg["invalid_score"]
 
     g.msg.channel_id = command_ch
-    api.post.post_message(ret, command_ts)
+    message.post_message(ret, command_ts)
 
 
 def data_comparison() -> tuple[dict, ComparisonDict]:
@@ -176,7 +177,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
                 msg["mismatch"] += f"\t\t修正前：{db_score.to_text()}\n"
                 msg["mismatch"] += f"\t\t修正後：{slack_score.to_text()}\n"
                 modify.db_update(slack_score)
-                slack_api.score_reactions(slack_score, reactions_data)
+                reactions.score_verification(slack_score, reactions_data)
             else:
                 logging.info("score check skip: %s %s", ExtDt(float(key)).format("ymdhms"), db_score.to_text())
             continue
@@ -190,7 +191,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
         logging.notice("missing: %s (%s)", slack_score.ts, ExtDt(float(slack_score.ts)).format("ymdhms"))  # type: ignore
         msg["missing"] += f"\t{ExtDt(float(key)).format("ymdhms")} {slack_score.to_text()}\n"
         modify.db_insert(slack_score)
-        slack_api.score_reactions(slack_score, reactions_data)
+        reactions.score_verification(slack_score, reactions_data)
 
     for key in db_data:  # DB -> slack チェック
         # 保留チェック
