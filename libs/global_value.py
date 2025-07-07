@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from cls.parser import MessageParser
     from cls.types import TeamDataDict
 
+selected_service: str = "slack"
+
 args: "Namespace" = None  # type: ignore
 """コマンドライン引数"""
 app: "App"

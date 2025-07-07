@@ -158,6 +158,8 @@ def setup() -> None:
     g.args = arg_parser()
     if not hasattr(g.args, "testcase"):
         g.args.testcase = False
+    else:
+        g.selected_service = "debug_out"
 
     if g.args.notime:
         fmt = "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"

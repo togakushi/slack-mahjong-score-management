@@ -9,8 +9,9 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import ComparisonDict, RemarkDict, SlackSearchData
+from integrations import factory
 from integrations.slack import api
-from integrations.slack.functions import conversation, reactions
+from integrations.slack.functions import reactions
 from libs.data import lookup, modify
 from libs.functions import search
 from libs.utils import dictutil
@@ -21,6 +22,8 @@ DBSearchDict = dict[str, GameResult]
 
 def main() -> None:
     """データ突合の実施、その結果をslackにpostする"""
+    message_adapter = factory.get_message_adapter(g.selected_service)
+
     # チェックコマンドを拾ったイベントの情報を保持(結果の返し先)
     command_ch = g.msg.channel_id
     command_ts = g.msg.event_ts
@@ -48,7 +51,7 @@ def main() -> None:
         ret += msg["invalid_score"]
 
     g.msg.channel_id = command_ch
-    conversation.post_message(ret, command_ts)
+    message_adapter.post_message(ret, command_ts)
 
 
 def data_comparison() -> tuple[dict, ComparisonDict]:

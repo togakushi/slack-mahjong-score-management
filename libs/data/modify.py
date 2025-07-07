@@ -12,8 +12,8 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
+from integrations import factory
 from integrations.slack import api
-from integrations.slack.functions import conversation
 from libs.data import lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
@@ -25,6 +25,8 @@ def db_insert(detection: GameResult) -> int:
     Args:
         detection (GameResult): スコアデータ
     """
+
+    message_adapter = factory.get_message_adapter(g.selected_service)
 
     changes: int = 0
     if g.msg.updatable:
@@ -38,7 +40,7 @@ def db_insert(detection: GameResult) -> int:
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
     else:
-        conversation.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
+        message_adapter.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
     return changes
 
@@ -49,6 +51,8 @@ def db_update(detection: GameResult) -> None:
     Args:
         detection (GameResult): スコアデータ
     """
+
+    message_adapter = factory.get_message_adapter(g.selected_service)
 
     detection.calc(ts=g.msg.event_ts)
     if g.msg.updatable:
@@ -61,7 +65,7 @@ def db_update(detection: GameResult) -> None:
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
     else:
-        conversation.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
+        message_adapter.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
 
 def db_delete(ts: str) -> list:

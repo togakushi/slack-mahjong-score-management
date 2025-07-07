@@ -24,6 +24,7 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     """スコア登録テスト"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
     configuration.setup()
+    g.selected_service = "test"
     g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.msg.updatable = True
     g.cfg.mahjong.draw_split = draw_split

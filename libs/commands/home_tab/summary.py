@@ -6,7 +6,7 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack.functions import conversation
+from integrations import factory
 from libs.commands import graph, ranking, results
 from libs.commands.home_tab import ui_parts
 from libs.functions import message
@@ -101,6 +101,9 @@ def register_summary_handlers(app):
 
         ack()
         logging.trace(body)  # type: ignore
+
+        message_adapter = factory.get_message_adapter(g.selected_service)
+
         g.msg.parser(body)
         g.msg.client = client
 
@@ -122,19 +125,19 @@ def register_summary_handlers(app):
             case "point":
                 count, ret = graph.summary.point_plot()
                 if count:
-                    conversation.post_fileupload("ポイント推移", ret)
+                    message_adapter.fileupload("ポイント推移", ret)
                 else:
-                    conversation.post_message(ret)
+                    message_adapter.post_message(ret)
             case "rank":
                 count, ret = graph.summary.rank_plot()
                 if count:
-                    conversation.post_fileupload("順位変動", ret)
+                    message_adapter.fileupload("順位変動", ret)
                 else:
-                    conversation.post_message(ret)
+                    message_adapter.post_message(ret)
             case "rating":
                 g.params["command"] = "ranking"
                 msg1, msg2, file_list = ranking.rating.aggregation()
-                conversation.slack_post(
+                message_adapter.post(
                     headline=msg1,
                     message=msg2,
                     summarize=False,
@@ -142,7 +145,7 @@ def register_summary_handlers(app):
                 )
             case _:
                 msg1, msg2, file_list = results.summary.aggregation()
-                conversation.slack_post(
+                message_adapter.post(
                     headline=msg1,
                     message=msg2,
                     summarize=False,

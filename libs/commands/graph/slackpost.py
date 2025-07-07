@@ -3,13 +3,15 @@ libs/commands/graph/slackpost.py
 """
 
 import libs.global_value as g
-from integrations.slack.functions import conversation
+from integrations import factory
 from libs.commands.graph import personal, rating, summary
 from libs.utils import dictutil
 
 
 def main():
     """グラフをslackにpostする"""
+    message_adapter = factory.get_message_adapter(g.selected_service)
+
     g.params = dictutil.placeholder(g.cfg.graph)
 
     if len(g.params["player_list"]) == 1:  # 対象がひとり
@@ -31,6 +33,6 @@ def main():
                 count, ret = summary.point_plot()
 
     if count == 0:
-        conversation.post_message(ret)
+        message_adapter.post_message(ret)
     else:
-        conversation.post_fileupload(title, ret)
+        message_adapter.fileupload(title, ret)

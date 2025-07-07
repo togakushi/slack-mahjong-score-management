@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
+import libs.global_value as g
 from libs.functions import configuration, events
 from tests.events import param_data
 
@@ -20,11 +21,10 @@ def test_help(config, keyword, monkeypatch):
     """メッセージイベントテスト(help)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
+    g.selected_service = "test"
 
     with (
         patch("libs.functions.compose.msg_help.event_message") as mock_help_event_message,
-        patch("integrations.slack.functions.message.post_message", return_value=True),
-        patch("integrations.slack.functions.message.post_text", return_value=True),
         patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -41,6 +41,7 @@ def test_results(config, keyword, monkeypatch):
     """メッセージイベントテスト(results)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
+    g.selected_service = "test"
 
     with (
         patch("libs.commands.results.slackpost.main") as mock_results,
@@ -60,6 +61,8 @@ def test_graph(config, keyword, monkeypatch):
     """メッセージイベントテスト(graph)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
+    g.selected_service = "test"
+
 
     with (
         patch("libs.commands.graph.slackpost.main") as mock_graph,
@@ -79,6 +82,7 @@ def test_ranking(config, keyword, monkeypatch):
     """メッセージイベントテスト(ranking)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
+    g.selected_service = "test"
 
     with (
         patch("libs.commands.ranking.slackpost.main") as mock_ranking,
@@ -98,6 +102,7 @@ def test_report(config, keyword, monkeypatch):
     """メッセージイベントテスト(report)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
+    g.selected_service = "test"
 
     with (
         patch("libs.commands.report.slackpost.main") as mock_report,

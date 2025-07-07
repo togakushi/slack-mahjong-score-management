@@ -11,7 +11,8 @@ import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.score import GameResult
-from integrations.slack.functions import comparison, conversation, reactions
+from integrations import factory
+from integrations.slack.functions import comparison, reactions
 from libs.data import lookup, modify
 from libs.functions import compose, message
 from libs.utils import validator
@@ -24,6 +25,8 @@ def main(client, body):
         client (slack_bolt.App.client): slack_boltオブジェクト
         body (dict): ポストされたデータ
     """
+
+    message_adapter = factory.get_message_adapter(g.selected_service)
 
     logging.trace(body)  # type: ignore
     g.msg.parser(body)
@@ -48,10 +51,10 @@ def main(client, body):
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
             # ヘルプメッセージ
-            conversation.post_message(compose.msg_help.event_message(), g.msg.event_ts)
+            message_adapter.post_message(compose.msg_help.event_message(), g.msg.event_ts)
             # メンバーリスト
             title, msg = lookup.textdata.get_members_list()
-            conversation.post_text(g.msg.event_ts, title, msg)
+            message_adapter.post_text(g.msg.event_ts, title, msg)
 
         # 成績管理系コマンド
         case x if re.match(rf"^{g.cfg.cw.results}$", x):
@@ -73,11 +76,11 @@ def main(client, body):
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}$", x):
             title, msg = lookup.textdata.get_members_list()
-            conversation.post_text(g.msg.event_ts, title, msg)
+            message_adapter.post_text(g.msg.event_ts, title, msg)
         case x if re.match(rf"^{g.cfg.cw.team}$", x):
             title = "チーム一覧"
             msg = lookup.textdata.get_team_list()
-            conversation.post_text(g.msg.event_ts, title, msg)
+            message_adapter.post_text(g.msg.event_ts, title, msg)
 
         case _ as x:
             other_words(x)
@@ -113,11 +116,13 @@ def message_append(detection: GameResult):
         detection (GameResult): スコアデータ
     """
 
+    message_adapter = factory.get_message_adapter(g.selected_service)
+
     if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
         modify.db_insert(detection)
         reactions.score_verification(detection)
     else:
-        conversation.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
+        message_adapter.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
         logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
 
 
@@ -127,6 +132,8 @@ def message_changed(detection: GameResult):
     Args:
         detection (GameResult): スコアデータ
     """
+
+    message_adapter = factory.get_message_adapter(g.selected_service)
 
     record_data = lookup.db.exsist_record(g.msg.event_ts)
     if detection.to_dict() == record_data.to_dict():  # スコア比較
@@ -143,7 +150,7 @@ def message_changed(detection: GameResult):
             reactions.score_verification(detection)
             modify.reprocessing_remarks()
     else:
-        conversation.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
+        message_adapter.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
         logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
 
 

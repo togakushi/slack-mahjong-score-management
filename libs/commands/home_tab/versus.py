@@ -6,7 +6,7 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack.functions import conversation
+from integrations import factory
 from libs.commands import results
 from libs.commands.home_tab import ui_parts
 from libs.functions.events.handler_registry import register
@@ -102,6 +102,9 @@ def register_versus_handlers(app):
 
         ack()
         logging.trace(body)  # type: ignore
+
+        message_adapter = factory.get_message_adapter(g.selected_service)
+
         g.msg.parser(body)
         g.msg.client = client
 
@@ -127,7 +130,7 @@ def register_versus_handlers(app):
         app_msg.append("集計完了")
 
         msg1, msg2, file_list = results.versus.aggregation()
-        conversation.slack_post(
+        message_adapter.post(
             headline=msg1,
             message=msg2,
             file_list=file_list,
