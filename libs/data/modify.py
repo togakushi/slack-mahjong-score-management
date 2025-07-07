@@ -140,6 +140,8 @@ def remarks_append(remarks: list[RemarkDict]) -> None:
         remarks (list[RemarkDict]): メモに残す内容
     """
 
+    api_adapter = factory.get_api_adapter(g.selected_service)
+
     if g.msg.updatable:
         with closing(dbutil.get_connection()) as cur:
             for para in remarks:
@@ -150,7 +152,7 @@ def remarks_append(remarks: list[RemarkDict]) -> None:
                         cur.execute(g.sql["REMARKS_INSERT"], para)
                         logging.notice("insert: %s, user=%s", para, g.msg.user_id)  # type: ignore
 
-                        if g.cfg.setting.reaction_ok not in lookup.api.reactions_status(ts=para.get("event_ts")):
+                        if g.cfg.setting.reaction_ok not in api_adapter.reactions_status(ts=para.get("event_ts")):
                             api.call_reactions_add(g.cfg.setting.reaction_ok, ts=para.get("event_ts"))
 
             cur.commit()
@@ -185,6 +187,8 @@ def remarks_delete_compar(para: dict) -> None:
         para (dict): パラメータ
     """
 
+    api_adapter = factory.get_api_adapter(g.selected_service)
+
     with closing(dbutil.get_connection()) as cur:
         cur.execute(g.sql["REMARKS_DELETE_COMPAR"], para)
         cur.commit()
@@ -192,9 +196,9 @@ def remarks_delete_compar(para: dict) -> None:
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]
 
     if not (ch := g.msg.channel_id):
-        ch = lookup.api.get_channel_id()
+        ch = api_adapter.get_channel_id()
 
-    icon = lookup.api.reactions_status(ts=para.get("event_ts"))
+    icon = api_adapter.reactions_status(ts=para.get("event_ts"))
     if g.cfg.setting.reaction_ok in icon and left == 0:
         api.call_reactions_remove(g.cfg.setting.reaction_ok, ch=ch, ts=para.get("event_ts"))
 
@@ -229,7 +233,10 @@ def check_remarks() -> None:
 
 def reprocessing_remarks() -> None:
     """スレッドの内容を再処理"""
-    res = lookup.api.get_conversations()
+
+    api_adapter = factory.get_api_adapter(g.selected_service)
+
+    res = api_adapter.get_conversations()
     msg = res.get("messages")
 
     if msg:

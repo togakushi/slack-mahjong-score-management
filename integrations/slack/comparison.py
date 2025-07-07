@@ -11,7 +11,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import ComparisonDict, RemarkDict, SlackSearchData
 from integrations import factory
 from integrations.slack import api, functions
-from libs.data import lookup, modify
+from libs.data import modify
 from libs.functions import search
 from libs.utils import dictutil
 
@@ -119,6 +119,8 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
+    api_adapter = factory.get_api_adapter(g.selected_service)
+
     now_ts = float(ExtDt().format("ts"))
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
     msg: ComparisonDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
@@ -215,8 +217,8 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
 
         # メッセージが残っているならリアクションを外す
         if not g.msg.channel_id:
-            g.msg.channel_id = lookup.api.get_channel_id()
-        for icon in lookup.api.reactions_status(ts=key):
+            g.msg.channel_id = api_adapter.get_channel_id()
+        for icon in api_adapter.reactions_status(ts=key):
             api.call_reactions_remove(icon, ts=key)
 
     return (count, msg)

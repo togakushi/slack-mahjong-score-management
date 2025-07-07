@@ -62,3 +62,58 @@ class APIInterface(ABC):
             file (str): アップロードファイルパス
             ts (str | bool, optional): スレッドに返す. Defaults to False.
         """
+
+    @abstractmethod
+    def reactions_status(self, ch=None, ts=None) -> list:
+        """botが付けたリアクションの種類を返す
+
+        Args:
+            ch (str, optional): チャンネルID. Defaults to None.
+            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
+
+        Returns:
+            list: リアクション
+        """
+        return []
+
+    @abstractmethod
+    def all_reactions_remove(self, delete_list: list):
+        """すべてのリアクションを削除する
+
+        Args:
+            delete_list (list): 削除対象のタイムスタンプ
+        """
+
+    @abstractmethod
+    def get_channel_id(self) -> str | None:
+        """チャンネルIDを取得する
+
+        Returns:
+            str: チャンネルID
+        """
+        return None
+
+    @abstractmethod
+    def get_dm_channel_id(self, user_id: str) -> str | None:
+        """DMのチャンネルIDを取得する
+
+        Args:
+            user_id (str): DMの相手
+
+        Returns:
+            str: チャンネルID
+        """
+        return None
+
+    @abstractmethod
+    def get_conversations(self, ch=None, ts=None) -> dict:
+        """スレッド情報の取得
+
+        Args:
+            ch (str, optional): チャンネルID. Defaults to None.
+            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
+
+        Returns:
+            dict: API response
+        """
+        return {}

@@ -13,7 +13,7 @@ from slack_sdk import WebClient
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import CommandSpec
-from libs.data import lookup
+from integrations import factory
 from libs.utils import textutil
 
 
@@ -320,6 +320,7 @@ class MessageParser:
         """
 
         logging.trace(_body)  # type: ignore
+        api_adapter = factory.get_api_adapter(g.selected_service)
 
         # 初期値
         self.text = ""
@@ -335,11 +336,11 @@ class MessageParser:
                 if _body.get("channel_name") == "directmessage":
                     self.channel_id = _body.get("channel_id", None)
                 else:
-                    self.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
+                    self.channel_id = api_adapter.get_dm_channel_id(_body.get("user_id", ""))
 
         if _body.get("container"):  # Homeタブ
             self.user_id = _body["user"].get("id")
-            self.channel_id = lookup.api.get_dm_channel_id(self.user_id)
+            self.channel_id = api_adapter.get_dm_channel_id(self.user_id)
             self.text = "dummy"
 
         _event = self.get_event_attribute(_body)
@@ -376,6 +377,8 @@ class MessageParser:
             dict: event属性
         """
 
+        api_adapter = factory.get_api_adapter(g.selected_service)
+
         _event: dict = {}
 
         if _body.get("command") == g.cfg.setting.slash_command:
@@ -386,7 +389,7 @@ class MessageParser:
                 if _body.get("channel_name") != "directmessage":
                     self.channel_id = _body["event"].get("channel")
                 else:
-                    self.channel_id = lookup.api.get_dm_channel_id(_body.get("user_id", ""))
+                    self.channel_id = api_adapter.get_dm_channel_id(_body.get("user_id", ""))
 
             match _body["event"].get("subtype"):
                 case "message_changed":

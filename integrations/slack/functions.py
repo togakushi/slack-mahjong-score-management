@@ -12,7 +12,6 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import SlackSearchData
 from integrations import factory
 from integrations.slack import api
-from libs.data import lookup
 from libs.functions import message
 from libs.utils import formatter, validator
 
@@ -31,7 +30,7 @@ def score_verification(detection: GameResult, reactions_data: list | None = None
     api_adapter = factory.get_api_adapter(g.selected_service)
 
     if not reactions_data:
-        reactions_data = lookup.api.reactions_status()
+        reactions_data = api_adapter.reactions_status()
 
     if detection.deposit:
         if g.cfg.setting.reaction_ok in reactions_data:
@@ -48,19 +47,6 @@ def score_verification(detection: GameResult, reactions_data: list | None = None
             api.call_reactions_remove(g.cfg.setting.reaction_ng)
         if g.cfg.setting.reaction_ok not in reactions_data:
             api.call_reactions_add(g.cfg.setting.reaction_ok)
-
-
-def all_remove(delete_list: list):
-    """すべてのリアクションを削除する
-
-    Args:
-        delete_list (list): 削除対象のタイムスタンプ
-    """
-
-    for ts in set(delete_list):
-        for icon in lookup.api.reactions_status(ts=ts):
-            api.call_reactions_remove(icon, ts=ts)
-            logging.info("ts=%s, icon=%s", ts, icon)
 
 
 def get_messages(word: str) -> SlackSearchDict:

@@ -157,9 +157,11 @@ def message_changed(detection: GameResult):
 def message_deleted():
     """メッセージの削除処理"""
 
+    api_adapter = factory.get_api_adapter(g.selected_service)
+
     if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):  # 追加メモ
         delete_list = modify.remarks_delete(g.msg.event_ts)
     else:
         delete_list = modify.db_delete(g.msg.event_ts)
 
-    functions.all_remove(delete_list)
+    api_adapter.all_reactions_remove(delete_list)
