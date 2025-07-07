@@ -11,7 +11,7 @@ prospector:
 .PHONY: docs
 docs:
 	rm -rf docs/html
-	pdoc -d google --output-dir docs/html --logo '' --logo-link '' *.py libs cls tests
+	pdoc -d google --output-dir docs/html --logo '' --logo-link '' *.py libs cls integrations tests
 
 # --
 config_file = ../config.ini
