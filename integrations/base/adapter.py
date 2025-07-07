@@ -11,30 +11,54 @@ class APIInterface(ABC):
         """メッセージをポストする
 
         Args:
-            ts (str): スレッドにする
             msg (str): ポストする内容
+            ts (bool, optional): スレッドにする
+
+        Returns:
+            dict: API response
         """
-        pass
+        return {}
 
     @abstractmethod
     def post_multi_message(self, msg: dict, ts: bool | None = False, summarize: bool = True):
-        pass
+        """辞書の要素単位でメッセージをポストする
+
+        Args:
+            msg (dict): ポストする内容
+            ts (bool | None, optional): _description_. Defaults to False.
+            summarize (bool, optional): _description_. Defaults to True.
+        """
 
     @abstractmethod
     def post_text(self, event_ts: str, title: str, msg: str) -> dict:
-        pass
+        """コードブロック修飾付きでメッセージをポストする
+
+        Args:
+            event_ts (str): スレッドに返す
+            title (str): タイトル行
+            msg (str): ポストする内容
+
+        Returns:
+            dict: API response
+        """
+        return {}
 
     @abstractmethod
     def post(self, **kwargs):
-        pass
+        """kwargsの内容でポストのふるまいを変える
+
+        - headline:
+        - message:
+        - summarize:
+        - file_list:
+        """
 
     @abstractmethod
     def fileupload(self, title: str, file: str | bool, ts: str | bool = False):
-        """files_upload_v2に渡すパラメータを設定
+        """ファイルをアップロードする
 
         Args:
             title (str): タイトル行
             file (str): アップロードファイルパス
             ts (str | bool, optional): スレッドに返す. Defaults to False.
         """
-        pass

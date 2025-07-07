@@ -14,6 +14,7 @@ from integrations.slack import api
 
 
 class SlackAPI(APIInterface):
+    """Slack API操作クラス"""
     def post_message(self, msg: str, ts=False) -> dict:
         """メッセージをポストする
 
@@ -71,7 +72,7 @@ class SlackAPI(APIInterface):
             msg (str): 本文
 
         Returns:
-            dict | Any: API response
+            dict: API response
         """
 
         # コードブロック修飾付きポスト

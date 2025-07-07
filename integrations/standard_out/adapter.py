@@ -9,12 +9,16 @@ from integrations.base.adapter import APIInterface
 
 
 class StandardOut(APIInterface):
+    """メッセージ標準出力クラス"""
     def post_message(self, msg: str, ts=False) -> dict:
         """標準出力
 
         Args:
-            message (str): 出力するメッセージ
-            ts (bool): ダミー
+            message (str): 本文
+            ts (bool): 未使用
+
+        Returns:
+            dict: ダミー
         """
 
         _ = ts
@@ -23,11 +27,29 @@ class StandardOut(APIInterface):
         return {}
 
     def post_multi_message(self, msg: dict, ts: bool | None = False, summarize: bool = True):
+        """標準出力
+
+        Args:
+            msg (dict): 本文
+            ts (bool | None, optional): 未使用
+            summarize (bool, optional): 未使用
+        """
         _ = ts
         _ = summarize
         pprint(msg)
 
     def post_text(self, event_ts: str, title: str, msg: str) -> dict:
+        """標準出力
+
+        Args:
+            event_ts (str): 未使用
+            title (str): タイトル行
+            msg (str): 本文
+
+        Returns:
+            dict: ダミー
+        """
+
         _ = event_ts
         pprint(title)
         pprint(msg)
@@ -52,6 +74,14 @@ class StandardOut(APIInterface):
                 pprint(["file:", x, str(file_path)])
 
     def fileupload(self, title: str, file: str | bool, ts: str | bool = False):
+        """標準出力
+
+        Args:
+            title (str): タイトル
+            file (str | bool): 保存ファイルパス
+            ts (str | bool, optional): 未使用
+        """
+
         _ = ts
         pprint(title)
         pprint(file)
