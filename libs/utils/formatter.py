@@ -147,22 +147,6 @@ def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None
     return save_file
 
 
-def debug_out(msg1: str | list, msg2: str | dict | list | bool | None = None) -> None:
-    """メッセージ標準出力(テスト用)
-
-    Args:
-        msg1 (str | list): メッセージ1
-        msg2 (str | dict | list | bool | None, optional): メッセージ2. Defaults to None.
-    """
-
-    print(msg1)
-    if isinstance(msg2, dict):
-        for _, val in msg2.items():
-            print(val)
-    elif msg2:
-        print(msg2)
-
-
 def name_replace(pname: str, add_mark: bool = False) -> str:
     """表記ブレ修正(正規化)
 
