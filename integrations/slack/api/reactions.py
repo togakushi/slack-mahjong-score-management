@@ -1,5 +1,5 @@
 """
-libs/api/slack/reactions.py
+integrations/slack/api/reactions.py
 """
 
 import logging

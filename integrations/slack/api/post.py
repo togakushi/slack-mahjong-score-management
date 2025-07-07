@@ -1,5 +1,5 @@
 """
-libs/api/slack/post.py
+integrations/slack/api/post.py
 """
 
 import logging

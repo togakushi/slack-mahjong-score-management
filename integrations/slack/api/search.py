@@ -1,5 +1,5 @@
 """
-libs/api/slack/search.py
+integrations/slack/api/search.py
 """
 
 import logging
