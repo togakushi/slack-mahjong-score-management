@@ -12,7 +12,7 @@ import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
-from integrations.slack.functions import comparison, reactions
+from integrations.slack import comparison, functions
 from libs.data import lookup, modify
 from libs.functions import compose, message
 from libs.utils import validator
@@ -26,7 +26,7 @@ def main(client, body):
         body (dict): ポストされたデータ
     """
 
-    message_adapter = factory.get_message_adapter(g.selected_service)
+    api_adapter = factory.get_api_adapter(g.selected_service)
 
     logging.trace(body)  # type: ignore
     g.msg.parser(body)
@@ -51,10 +51,10 @@ def main(client, body):
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
             # ヘルプメッセージ
-            message_adapter.post_message(compose.msg_help.event_message(), g.msg.event_ts)
+            api_adapter.post_message(compose.msg_help.event_message(), g.msg.event_ts)
             # メンバーリスト
             title, msg = lookup.textdata.get_members_list()
-            message_adapter.post_text(g.msg.event_ts, title, msg)
+            api_adapter.post_text(g.msg.event_ts, title, msg)
 
         # 成績管理系コマンド
         case x if re.match(rf"^{g.cfg.cw.results}$", x):
@@ -76,11 +76,11 @@ def main(client, body):
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}$", x):
             title, msg = lookup.textdata.get_members_list()
-            message_adapter.post_text(g.msg.event_ts, title, msg)
+            api_adapter.post_text(g.msg.event_ts, title, msg)
         case x if re.match(rf"^{g.cfg.cw.team}$", x):
             title = "チーム一覧"
             msg = lookup.textdata.get_team_list()
-            message_adapter.post_text(g.msg.event_ts, title, msg)
+            api_adapter.post_text(g.msg.event_ts, title, msg)
 
         case _ as x:
             other_words(x)
@@ -116,13 +116,13 @@ def message_append(detection: GameResult):
         detection (GameResult): スコアデータ
     """
 
-    message_adapter = factory.get_message_adapter(g.selected_service)
+    api_adapter = factory.get_api_adapter(g.selected_service)
 
     if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
         modify.db_insert(detection)
-        reactions.score_verification(detection)
+        functions.score_verification(detection)
     else:
-        message_adapter.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
+        api_adapter.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
         logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
 
 
@@ -133,7 +133,7 @@ def message_changed(detection: GameResult):
         detection (GameResult): スコアデータ
     """
 
-    message_adapter = factory.get_message_adapter(g.selected_service)
+    api_adapter = factory.get_api_adapter(g.selected_service)
 
     record_data = lookup.db.exsist_record(g.msg.event_ts)
     if detection.to_dict() == record_data.to_dict():  # スコア比較
@@ -142,15 +142,15 @@ def message_changed(detection: GameResult):
         if record_data.has_valid_data():
             if record_data.rule_version == g.cfg.mahjong.rule_version:
                 modify.db_update(detection)
-                reactions.score_verification(detection)
+                functions.score_verification(detection)
             else:
                 logging.notice("changed: skip update(rule_version not match). event_ts=%s", g.msg.event_ts)  # type: ignore
         else:
             modify.db_insert(detection)
-            reactions.score_verification(detection)
+            functions.score_verification(detection)
             modify.reprocessing_remarks()
     else:
-        message_adapter.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
+        api_adapter.post_message(message.random_reply(message="inside_thread"), g.msg.event_ts)
         logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", g.msg.event_ts, g.msg.thread_ts)  # type: ignore
 
 
@@ -162,4 +162,4 @@ def message_deleted():
     else:
         delete_list = modify.db_delete(g.msg.event_ts)
 
-    reactions.all_remove(delete_list)
+    functions.all_remove(delete_list)

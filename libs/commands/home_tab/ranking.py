@@ -93,7 +93,7 @@ def register_ranking_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        message_adapter = factory.get_message_adapter(g.selected_service)
+        api_adapter = factory.get_api_adapter(g.selected_service)
 
         g.msg.parser(body)
         g.msg.client = client
@@ -120,8 +120,8 @@ def register_ranking_handlers(app):
 
         msg1, msg2 = ranking.ranking.aggregation()
         if msg2:
-            res = message_adapter.post_message(msg1)
-            message_adapter.post_multi_message(msg2, res["ts"])
+            res = api_adapter.post_message(msg1)
+            api_adapter.post_multi_message(msg2, res["ts"])
 
         client.views_update(
             view_id=g.app_var["view_id"],

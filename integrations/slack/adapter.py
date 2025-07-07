@@ -3,17 +3,18 @@ integrations/slack/message.py
 """
 
 import logging
+import re
 from typing import cast
 
 from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
-from integrations.base.message import MessageInterface
+from integrations.base.adapter import APIInterface
 from integrations.slack import api
 
 
-class SlackMessage(MessageInterface):
-    def post_message(self, msg: str, ts=False) -> SlackResponse:
+class SlackAPI(APIInterface):
+    def post_message(self, msg: str, ts=False) -> dict:
         """メッセージをポストする
 
         Args:
@@ -21,19 +22,19 @@ class SlackMessage(MessageInterface):
             ts (bool, optional): スレッドに返す. Defaults to False.
 
         Returns:
-            SlackResponse: API response
+            dict: API response
         """
 
         if not ts and g.msg.thread_ts:
             ts = g.msg.thread_ts
 
-        res = api.post.call_chat_post_message(
+        res = api.call_chat_post_message(
             channel=g.msg.channel_id,
             text=f"{msg.strip()}",
             thread_ts=ts,
         )
 
-        return res
+        return cast(dict, res)
 
     def post_multi_message(self, msg: dict, ts: bool | None = False, summarize: bool = True) -> None:
         """メッセージを分割してポスト
@@ -60,6 +61,48 @@ class SlackMessage(MessageInterface):
                     self.post_message(msg[i], ts)
         else:
             self.post_message(msg, ts)
+
+    def post_text(self, event_ts: str, title: str, msg: str) -> dict:
+        """コードブロック修飾付きポスト
+
+        Args:
+            event_ts (str): スレッドに返す
+            title (str): タイトル行
+            msg (str): 本文
+
+        Returns:
+            dict | Any: API response
+        """
+
+        # コードブロック修飾付きポスト
+        if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
+            res = api.call_chat_post_message(
+                channel=g.msg.channel_id,
+                text=f"{title}\n{msg.strip()}",
+                thread_ts=event_ts,
+            )
+        else:
+            # ポスト予定のメッセージをstep行単位のブロックに分割
+            step = 50
+            post_msg = []
+            for count in range(int(len(msg.splitlines()) / step) + 1):
+                post_msg.append(
+                    "\n".join(msg.splitlines()[count * step:(count + 1) * step])
+                )
+
+            # 最終ブロックがstepの半分以下なら直前のブロックにまとめる
+            if len(post_msg) > 1 and step / 2 > len(post_msg[count].splitlines()):
+                post_msg[count - 1] += "\n" + post_msg.pop(count)
+
+            # ブロック単位でポスト
+            for _, val in enumerate(post_msg):
+                res = api.call_chat_post_message(
+                    channel=g.msg.channel_id,
+                    text=f"\n{title}\n\n```{val.strip()}```",
+                    thread_ts=event_ts,
+                )
+
+        return cast(dict, res)
 
     def post(self, **kwargs):
         """パラメータの内容によって呼び出すAPIを振り分ける"""
@@ -100,7 +143,7 @@ class SlackMessage(MessageInterface):
         if not ts and g.msg.thread_ts:
             ts = g.msg.thread_ts
 
-        res = api.post.call_files_upload(
+        res = api.call_files_upload(
             channel=g.msg.channel_id,
             title=title,
             file=file,

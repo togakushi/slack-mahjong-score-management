@@ -1,10 +1,10 @@
-"""メッセージ抽象化"""
+"""抽象化基底クラス"""
 
 from abc import ABC, abstractmethod
 
 
-class MessageInterface(ABC):
-    """メッセージ抽象化インターフェース"""
+class APIInterface(ABC):
+    """API抽象化インターフェース"""
 
     @abstractmethod
     def post_message(self, msg: str, ts=False) -> dict:
@@ -21,7 +21,7 @@ class MessageInterface(ABC):
         pass
 
     @abstractmethod
-    def post_text(self, event_ts: str, title: str, msg: str):
+    def post_text(self, event_ts: str, title: str, msg: str) -> dict:
         pass
 
     @abstractmethod

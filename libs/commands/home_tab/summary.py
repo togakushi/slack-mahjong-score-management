@@ -102,7 +102,7 @@ def register_summary_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        message_adapter = factory.get_message_adapter(g.selected_service)
+        api_adapter = factory.get_api_adapter(g.selected_service)
 
         g.msg.parser(body)
         g.msg.client = client
@@ -125,19 +125,19 @@ def register_summary_handlers(app):
             case "point":
                 count, ret = graph.summary.point_plot()
                 if count:
-                    message_adapter.fileupload("ポイント推移", ret)
+                    api_adapter.fileupload("ポイント推移", ret)
                 else:
-                    message_adapter.post_message(ret)
+                    api_adapter.post_message(ret)
             case "rank":
                 count, ret = graph.summary.rank_plot()
                 if count:
-                    message_adapter.fileupload("順位変動", ret)
+                    api_adapter.fileupload("順位変動", ret)
                 else:
-                    message_adapter.post_message(ret)
+                    api_adapter.post_message(ret)
             case "rating":
                 g.params["command"] = "ranking"
                 msg1, msg2, file_list = ranking.rating.aggregation()
-                message_adapter.post(
+                api_adapter.post(
                     headline=msg1,
                     message=msg2,
                     summarize=False,
@@ -145,7 +145,7 @@ def register_summary_handlers(app):
                 )
             case _:
                 msg1, msg2, file_list = results.summary.aggregation()
-                message_adapter.post(
+                api_adapter.post(
                     headline=msg1,
                     message=msg2,
                     summarize=False,

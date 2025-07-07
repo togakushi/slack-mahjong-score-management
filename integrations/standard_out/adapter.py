@@ -5,10 +5,10 @@ integrations/standard_out/message.py
 from pprint import pprint
 from typing import cast
 
-from integrations.base.message import MessageInterface
+from integrations.base.adapter import APIInterface
 
 
-class StandardOutMessage(MessageInterface):
+class StandardOut(APIInterface):
     def post_message(self, msg: str, ts=False) -> dict:
         """標準出力
 
@@ -27,10 +27,12 @@ class StandardOutMessage(MessageInterface):
         _ = summarize
         pprint(msg)
 
-    def post_text(self, event_ts: str, title: str, msg: str):
+    def post_text(self, event_ts: str, title: str, msg: str) -> dict:
         _ = event_ts
         pprint(title)
         pprint(msg)
+
+        return {}
 
     def post(self, **kwargs):
         """パラメータの内容によって呼び出すAPIを振り分ける"""

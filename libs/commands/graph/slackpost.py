@@ -10,7 +10,7 @@ from libs.utils import dictutil
 
 def main():
     """グラフをslackにpostする"""
-    message_adapter = factory.get_message_adapter(g.selected_service)
+    api_adapter = factory.get_api_adapter(g.selected_service)
 
     g.params = dictutil.placeholder(g.cfg.graph)
 
@@ -33,6 +33,6 @@ def main():
                 count, ret = summary.point_plot()
 
     if count == 0:
-        message_adapter.post_message(ret)
+        api_adapter.post_message(ret)
     else:
-        message_adapter.fileupload(title, ret)
+        api_adapter.fileupload(title, ret)

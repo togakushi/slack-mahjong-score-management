@@ -103,7 +103,7 @@ def register_versus_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        message_adapter = factory.get_message_adapter(g.selected_service)
+        api_adapter = factory.get_api_adapter(g.selected_service)
 
         g.msg.parser(body)
         g.msg.client = client
@@ -130,7 +130,7 @@ def register_versus_handlers(app):
         app_msg.append("集計完了")
 
         msg1, msg2, file_list = results.versus.aggregation()
-        message_adapter.post(
+        api_adapter.post(
             headline=msg1,
             message=msg2,
             file_list=file_list,

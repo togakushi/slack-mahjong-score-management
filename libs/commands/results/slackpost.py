@@ -10,7 +10,7 @@ from libs.utils import dictutil
 
 def main():
     """成績の集計結果をslackにpostする"""
-    message_adapter = factory.get_message_adapter(g.selected_service)
+    api_adapter = factory.get_api_adapter(g.selected_service)
 
     g.params = dictutil.placeholder(g.cfg.results)
 
@@ -24,20 +24,20 @@ def main():
     # ---
     if len(g.params["player_list"]) == 1 and not versus_mode:  # 個人/チーム成績詳細
         msg1, msg2 = results.detail.aggregation()
-        message_adapter.post(
+        api_adapter.post(
             headline=msg1,
             message=msg2,
         )
     elif versus_mode:  # 直接対戦
         msg1, msg2, file_list = results.versus.aggregation()
-        message_adapter.post(
+        api_adapter.post(
             headline=msg1,
             message=msg2,
             file_list=file_list,
         )
     else:  # 成績サマリ
         headline, msg2, file_list = results.summary.aggregation()
-        message_adapter.post(
+        api_adapter.post(
             headline=headline,
             message=msg2,
             summarize=False,

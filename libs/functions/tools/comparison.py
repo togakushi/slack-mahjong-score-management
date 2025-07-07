@@ -9,7 +9,7 @@ from slack_bolt import App
 from slack_sdk import WebClient
 
 import libs.global_value as g
-from integrations.slack.functions import comparison
+from integrations.slack import comparison
 from libs.functions import configuration
 
 

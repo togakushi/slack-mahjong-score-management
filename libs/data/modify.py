@@ -26,7 +26,7 @@ def db_insert(detection: GameResult) -> int:
         detection (GameResult): スコアデータ
     """
 
-    message_adapter = factory.get_message_adapter(g.selected_service)
+    api_adapter = factory.get_api_adapter(g.selected_service)
 
     changes: int = 0
     if g.msg.updatable:
@@ -40,7 +40,7 @@ def db_insert(detection: GameResult) -> int:
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
     else:
-        message_adapter.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
+        api_adapter.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
     return changes
 
@@ -52,7 +52,7 @@ def db_update(detection: GameResult) -> None:
         detection (GameResult): スコアデータ
     """
 
-    message_adapter = factory.get_message_adapter(g.selected_service)
+    api_adapter = factory.get_api_adapter(g.selected_service)
 
     detection.calc(ts=g.msg.event_ts)
     if g.msg.updatable:
@@ -65,7 +65,7 @@ def db_update(detection: GameResult) -> None:
             cur.commit()
         logging.notice("%s, user=%s", detection, g.msg.user_id)  # type: ignore
     else:
-        message_adapter.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
+        api_adapter.post_message(message.random_reply(message="restricted_channel"), g.msg.event_ts)
 
 
 def db_delete(ts: str) -> list:
@@ -151,7 +151,7 @@ def remarks_append(remarks: list[RemarkDict]) -> None:
                         logging.notice("insert: %s, user=%s", para, g.msg.user_id)  # type: ignore
 
                         if g.cfg.setting.reaction_ok not in lookup.api.reactions_status(ts=para.get("event_ts")):
-                            api.reactions.call_reactions_add(g.cfg.setting.reaction_ok, ts=para.get("event_ts"))
+                            api.call_reactions_add(g.cfg.setting.reaction_ok, ts=para.get("event_ts"))
 
             cur.commit()
 
@@ -196,7 +196,7 @@ def remarks_delete_compar(para: dict) -> None:
 
     icon = lookup.api.reactions_status(ts=para.get("event_ts"))
     if g.cfg.setting.reaction_ok in icon and left == 0:
-        api.reactions.call_reactions_remove(g.cfg.setting.reaction_ok, ch=ch, ts=para.get("event_ts"))
+        api.call_reactions_remove(g.cfg.setting.reaction_ok, ch=ch, ts=para.get("event_ts"))
 
 
 def check_remarks() -> None:
