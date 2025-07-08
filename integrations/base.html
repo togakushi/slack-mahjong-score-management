@@ -28,10 +28,88 @@
                    pattern=".+" required>
 
 
-            <h2>Submodules</h2>
-            <ul>
-                    <li><a href="base/adapter.html">adapter</a></li>
-            </ul>
+
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
+            <li>
+                    <a class="class" href="#APIInterface">APIInterface</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#APIInterface.lookup">lookup</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#APIInterface.reactions">reactions</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#APIInterface.post_message">post_message</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#APIInterface.post_multi_message">post_multi_message</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#APIInterface.post_text">post_text</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#APIInterface.post">post</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#APIInterface.fileupload">fileupload</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#APIInterface.get_conversations">get_conversations</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#MessageParserInterface">MessageParserInterface</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.client">client</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.text">text</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.keyword">keyword</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.argument">argument</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.channel_id">channel_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.channel_type">channel_type</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.event_ts">event_ts</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.thread_ts">thread_ts</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.user_id">user_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.updatable">updatable</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.in_thread">in_thread</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MessageParserInterface.status">status</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#MessageParserInterface.parser">parser</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#MessageParserInterface.check_updatable">check_updatable</a>
+                        </li>
+                </ul>
+
+            </li>
+    </ul>
 
 
 
@@ -56,10 +134,592 @@
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;基底クラス</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.base.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIInterface</span><span class="p">,</span> <span class="n">MessageParserInterface</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;APIInterface&quot;</span><span class="p">,</span> <span class="s2">&quot;MessageParserInterface&quot;</span><span class="p">]</span>
 </span></pre></div>
 
 
             </section>
+                <section id="APIInterface">
+                            <input id="APIInterface-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">APIInterface</span><wbr>(<span class="base">abc.ABC</span>):
+
+                <label class="view-source-button" for="APIInterface-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#APIInterface"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface-56"><a href="#APIInterface-56"><span class="linenos"> 56</span></a><span class="k">class</span><span class="w"> </span><span class="nc">APIInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="APIInterface-57"><a href="#APIInterface-57"><span class="linenos"> 57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;API抽象化インターフェース&quot;&quot;&quot;</span>
+</span><span id="APIInterface-58"><a href="#APIInterface-58"><span class="linenos"> 58</span></a>    <span class="n">lookup</span><span class="p">:</span> <span class="s2">&quot;LookupInterface&quot;</span>
+</span><span id="APIInterface-59"><a href="#APIInterface-59"><span class="linenos"> 59</span></a>    <span class="n">reactions</span><span class="p">:</span> <span class="s2">&quot;ReactionsInterface&quot;</span>
+</span><span id="APIInterface-60"><a href="#APIInterface-60"><span class="linenos"> 60</span></a>
+</span><span id="APIInterface-61"><a href="#APIInterface-61"><span class="linenos"> 61</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-62"><a href="#APIInterface-62"><span class="linenos"> 62</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface-63"><a href="#APIInterface-63"><span class="linenos"> 63</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
+</span><span id="APIInterface-64"><a href="#APIInterface-64"><span class="linenos"> 64</span></a>
+</span><span id="APIInterface-65"><a href="#APIInterface-65"><span class="linenos"> 65</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-66"><a href="#APIInterface-66"><span class="linenos"> 66</span></a><span class="sd">            msg (str): ポストする内容</span>
+</span><span id="APIInterface-67"><a href="#APIInterface-67"><span class="linenos"> 67</span></a><span class="sd">            ts (bool, optional): スレッドにする</span>
+</span><span id="APIInterface-68"><a href="#APIInterface-68"><span class="linenos"> 68</span></a>
+</span><span id="APIInterface-69"><a href="#APIInterface-69"><span class="linenos"> 69</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface-70"><a href="#APIInterface-70"><span class="linenos"> 70</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface-71"><a href="#APIInterface-71"><span class="linenos"> 71</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-72"><a href="#APIInterface-72"><span class="linenos"> 72</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="APIInterface-73"><a href="#APIInterface-73"><span class="linenos"> 73</span></a>
+</span><span id="APIInterface-74"><a href="#APIInterface-74"><span class="linenos"> 74</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-75"><a href="#APIInterface-75"><span class="linenos"> 75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+</span><span id="APIInterface-76"><a href="#APIInterface-76"><span class="linenos"> 76</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書の要素単位でメッセージをポストする</span>
+</span><span id="APIInterface-77"><a href="#APIInterface-77"><span class="linenos"> 77</span></a>
+</span><span id="APIInterface-78"><a href="#APIInterface-78"><span class="linenos"> 78</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-79"><a href="#APIInterface-79"><span class="linenos"> 79</span></a><span class="sd">            msg (dict): ポストする内容</span>
+</span><span id="APIInterface-80"><a href="#APIInterface-80"><span class="linenos"> 80</span></a><span class="sd">            ts (bool | None, optional): _description_. Defaults to False.</span>
+</span><span id="APIInterface-81"><a href="#APIInterface-81"><span class="linenos"> 81</span></a><span class="sd">            summarize (bool, optional): _description_. Defaults to True.</span>
+</span><span id="APIInterface-82"><a href="#APIInterface-82"><span class="linenos"> 82</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-83"><a href="#APIInterface-83"><span class="linenos"> 83</span></a>
+</span><span id="APIInterface-84"><a href="#APIInterface-84"><span class="linenos"> 84</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-85"><a href="#APIInterface-85"><span class="linenos"> 85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface-86"><a href="#APIInterface-86"><span class="linenos"> 86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コードブロック修飾付きでメッセージをポストする</span>
+</span><span id="APIInterface-87"><a href="#APIInterface-87"><span class="linenos"> 87</span></a>
+</span><span id="APIInterface-88"><a href="#APIInterface-88"><span class="linenos"> 88</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-89"><a href="#APIInterface-89"><span class="linenos"> 89</span></a><span class="sd">            event_ts (str): スレッドに返す</span>
+</span><span id="APIInterface-90"><a href="#APIInterface-90"><span class="linenos"> 90</span></a><span class="sd">            title (str): タイトル行</span>
+</span><span id="APIInterface-91"><a href="#APIInterface-91"><span class="linenos"> 91</span></a><span class="sd">            msg (str): ポストする内容</span>
+</span><span id="APIInterface-92"><a href="#APIInterface-92"><span class="linenos"> 92</span></a>
+</span><span id="APIInterface-93"><a href="#APIInterface-93"><span class="linenos"> 93</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface-94"><a href="#APIInterface-94"><span class="linenos"> 94</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface-95"><a href="#APIInterface-95"><span class="linenos"> 95</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-96"><a href="#APIInterface-96"><span class="linenos"> 96</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="APIInterface-97"><a href="#APIInterface-97"><span class="linenos"> 97</span></a>
+</span><span id="APIInterface-98"><a href="#APIInterface-98"><span class="linenos"> 98</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-99"><a href="#APIInterface-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="APIInterface-100"><a href="#APIInterface-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;kwargsの内容でポストのふるまいを変える</span>
+</span><span id="APIInterface-101"><a href="#APIInterface-101"><span class="linenos">101</span></a>
+</span><span id="APIInterface-102"><a href="#APIInterface-102"><span class="linenos">102</span></a><span class="sd">        - headline:</span>
+</span><span id="APIInterface-103"><a href="#APIInterface-103"><span class="linenos">103</span></a><span class="sd">        - message:</span>
+</span><span id="APIInterface-104"><a href="#APIInterface-104"><span class="linenos">104</span></a><span class="sd">        - summarize:</span>
+</span><span id="APIInterface-105"><a href="#APIInterface-105"><span class="linenos">105</span></a><span class="sd">        - file_list:</span>
+</span><span id="APIInterface-106"><a href="#APIInterface-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-107"><a href="#APIInterface-107"><span class="linenos">107</span></a>
+</span><span id="APIInterface-108"><a href="#APIInterface-108"><span class="linenos">108</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-109"><a href="#APIInterface-109"><span class="linenos">109</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="APIInterface-110"><a href="#APIInterface-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファイルをアップロードする</span>
+</span><span id="APIInterface-111"><a href="#APIInterface-111"><span class="linenos">111</span></a>
+</span><span id="APIInterface-112"><a href="#APIInterface-112"><span class="linenos">112</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-113"><a href="#APIInterface-113"><span class="linenos">113</span></a><span class="sd">            title (str): タイトル行</span>
+</span><span id="APIInterface-114"><a href="#APIInterface-114"><span class="linenos">114</span></a><span class="sd">            file (str): アップロードファイルパス</span>
+</span><span id="APIInterface-115"><a href="#APIInterface-115"><span class="linenos">115</span></a><span class="sd">            ts (str | bool, optional): スレッドに返す. Defaults to False.</span>
+</span><span id="APIInterface-116"><a href="#APIInterface-116"><span class="linenos">116</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-117"><a href="#APIInterface-117"><span class="linenos">117</span></a>
+</span><span id="APIInterface-118"><a href="#APIInterface-118"><span class="linenos">118</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-119"><a href="#APIInterface-119"><span class="linenos">119</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface-120"><a href="#APIInterface-120"><span class="linenos">120</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
+</span><span id="APIInterface-121"><a href="#APIInterface-121"><span class="linenos">121</span></a>
+</span><span id="APIInterface-122"><a href="#APIInterface-122"><span class="linenos">122</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-123"><a href="#APIInterface-123"><span class="linenos">123</span></a><span class="sd">            ch (str, optional): チャンネルID. Defaults to None.</span>
+</span><span id="APIInterface-124"><a href="#APIInterface-124"><span class="linenos">124</span></a><span class="sd">            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.</span>
+</span><span id="APIInterface-125"><a href="#APIInterface-125"><span class="linenos">125</span></a>
+</span><span id="APIInterface-126"><a href="#APIInterface-126"><span class="linenos">126</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface-127"><a href="#APIInterface-127"><span class="linenos">127</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface-128"><a href="#APIInterface-128"><span class="linenos">128</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-129"><a href="#APIInterface-129"><span class="linenos">129</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>API抽象化インターフェース</p>
+</div>
+
+
+                            <div id="APIInterface.lookup" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lookup</span><span class="annotation">: integrations.base.interface.LookupInterface</span>
+
+        
+    </div>
+    <a class="headerlink" href="#APIInterface.lookup"></a>
+    
+    
+
+                            </div>
+                            <div id="APIInterface.reactions" class="classattr">
+                                <div class="attr variable">
+            <span class="name">reactions</span><span class="annotation">: integrations.base.interface.ReactionsInterface</span>
+
+        
+    </div>
+    <a class="headerlink" href="#APIInterface.reactions"></a>
+    
+    
+
+                            </div>
+                            <div id="APIInterface.post_message" class="classattr">
+                                        <input id="APIInterface.post_message-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">post_message</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">ts</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+                <label class="view-source-button" for="APIInterface.post_message-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#APIInterface.post_message"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_message-61"><a href="#APIInterface.post_message-61"><span class="linenos">61</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post_message-62"><a href="#APIInterface.post_message-62"><span class="linenos">62</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface.post_message-63"><a href="#APIInterface.post_message-63"><span class="linenos">63</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
+</span><span id="APIInterface.post_message-64"><a href="#APIInterface.post_message-64"><span class="linenos">64</span></a>
+</span><span id="APIInterface.post_message-65"><a href="#APIInterface.post_message-65"><span class="linenos">65</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.post_message-66"><a href="#APIInterface.post_message-66"><span class="linenos">66</span></a><span class="sd">            msg (str): ポストする内容</span>
+</span><span id="APIInterface.post_message-67"><a href="#APIInterface.post_message-67"><span class="linenos">67</span></a><span class="sd">            ts (bool, optional): スレッドにする</span>
+</span><span id="APIInterface.post_message-68"><a href="#APIInterface.post_message-68"><span class="linenos">68</span></a>
+</span><span id="APIInterface.post_message-69"><a href="#APIInterface.post_message-69"><span class="linenos">69</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface.post_message-70"><a href="#APIInterface.post_message-70"><span class="linenos">70</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface.post_message-71"><a href="#APIInterface.post_message-71"><span class="linenos">71</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface.post_message-72"><a href="#APIInterface.post_message-72"><span class="linenos">72</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>メッセージをポストする</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>msg (str):</strong>  ポストする内容</li>
+<li><strong>ts (bool, optional):</strong>  スレッドにする</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict: API response</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="APIInterface.post_multi_message" class="classattr">
+                                        <input id="APIInterface.post_multi_message-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">post_multi_message</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span>, </span><span class="param"><span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>, </span><span class="param"><span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="APIInterface.post_multi_message-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#APIInterface.post_multi_message"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_multi_message-74"><a href="#APIInterface.post_multi_message-74"><span class="linenos">74</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post_multi_message-75"><a href="#APIInterface.post_multi_message-75"><span class="linenos">75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+</span><span id="APIInterface.post_multi_message-76"><a href="#APIInterface.post_multi_message-76"><span class="linenos">76</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書の要素単位でメッセージをポストする</span>
+</span><span id="APIInterface.post_multi_message-77"><a href="#APIInterface.post_multi_message-77"><span class="linenos">77</span></a>
+</span><span id="APIInterface.post_multi_message-78"><a href="#APIInterface.post_multi_message-78"><span class="linenos">78</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.post_multi_message-79"><a href="#APIInterface.post_multi_message-79"><span class="linenos">79</span></a><span class="sd">            msg (dict): ポストする内容</span>
+</span><span id="APIInterface.post_multi_message-80"><a href="#APIInterface.post_multi_message-80"><span class="linenos">80</span></a><span class="sd">            ts (bool | None, optional): _description_. Defaults to False.</span>
+</span><span id="APIInterface.post_multi_message-81"><a href="#APIInterface.post_multi_message-81"><span class="linenos">81</span></a><span class="sd">            summarize (bool, optional): _description_. Defaults to True.</span>
+</span><span id="APIInterface.post_multi_message-82"><a href="#APIInterface.post_multi_message-82"><span class="linenos">82</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>辞書の要素単位でメッセージをポストする</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>msg (dict):</strong>  ポストする内容</li>
+<li><strong>ts (bool | None, optional):</strong>  _description_. Defaults to False.</li>
+<li><strong>summarize (bool, optional):</strong>  _description_. Defaults to True.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="APIInterface.post_text" class="classattr">
+                                        <input id="APIInterface.post_text-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">post_text</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">title</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+                <label class="view-source-button" for="APIInterface.post_text-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#APIInterface.post_text"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_text-84"><a href="#APIInterface.post_text-84"><span class="linenos">84</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post_text-85"><a href="#APIInterface.post_text-85"><span class="linenos">85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface.post_text-86"><a href="#APIInterface.post_text-86"><span class="linenos">86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コードブロック修飾付きでメッセージをポストする</span>
+</span><span id="APIInterface.post_text-87"><a href="#APIInterface.post_text-87"><span class="linenos">87</span></a>
+</span><span id="APIInterface.post_text-88"><a href="#APIInterface.post_text-88"><span class="linenos">88</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.post_text-89"><a href="#APIInterface.post_text-89"><span class="linenos">89</span></a><span class="sd">            event_ts (str): スレッドに返す</span>
+</span><span id="APIInterface.post_text-90"><a href="#APIInterface.post_text-90"><span class="linenos">90</span></a><span class="sd">            title (str): タイトル行</span>
+</span><span id="APIInterface.post_text-91"><a href="#APIInterface.post_text-91"><span class="linenos">91</span></a><span class="sd">            msg (str): ポストする内容</span>
+</span><span id="APIInterface.post_text-92"><a href="#APIInterface.post_text-92"><span class="linenos">92</span></a>
+</span><span id="APIInterface.post_text-93"><a href="#APIInterface.post_text-93"><span class="linenos">93</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface.post_text-94"><a href="#APIInterface.post_text-94"><span class="linenos">94</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface.post_text-95"><a href="#APIInterface.post_text-95"><span class="linenos">95</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface.post_text-96"><a href="#APIInterface.post_text-96"><span class="linenos">96</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>コードブロック修飾付きでメッセージをポストする</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>event_ts (str):</strong>  スレッドに返す</li>
+<li><strong>title (str):</strong>  タイトル行</li>
+<li><strong>msg (str):</strong>  ポストする内容</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict: API response</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="APIInterface.post" class="classattr">
+                                        <input id="APIInterface.post-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">post</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="APIInterface.post-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#APIInterface.post"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post-98"><a href="#APIInterface.post-98"><span class="linenos"> 98</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post-99"><a href="#APIInterface.post-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="APIInterface.post-100"><a href="#APIInterface.post-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;kwargsの内容でポストのふるまいを変える</span>
+</span><span id="APIInterface.post-101"><a href="#APIInterface.post-101"><span class="linenos">101</span></a>
+</span><span id="APIInterface.post-102"><a href="#APIInterface.post-102"><span class="linenos">102</span></a><span class="sd">        - headline:</span>
+</span><span id="APIInterface.post-103"><a href="#APIInterface.post-103"><span class="linenos">103</span></a><span class="sd">        - message:</span>
+</span><span id="APIInterface.post-104"><a href="#APIInterface.post-104"><span class="linenos">104</span></a><span class="sd">        - summarize:</span>
+</span><span id="APIInterface.post-105"><a href="#APIInterface.post-105"><span class="linenos">105</span></a><span class="sd">        - file_list:</span>
+</span><span id="APIInterface.post-106"><a href="#APIInterface.post-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>kwargsの内容でポストのふるまいを変える</p>
+
+<ul>
+<li>headline:</li>
+<li>message:</li>
+<li>summarize:</li>
+<li>file_list:</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="APIInterface.fileupload" class="classattr">
+                                        <input id="APIInterface.fileupload-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">fileupload</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">title</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span>, </span><span class="param"><span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="APIInterface.fileupload-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#APIInterface.fileupload"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.fileupload-108"><a href="#APIInterface.fileupload-108"><span class="linenos">108</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.fileupload-109"><a href="#APIInterface.fileupload-109"><span class="linenos">109</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="APIInterface.fileupload-110"><a href="#APIInterface.fileupload-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファイルをアップロードする</span>
+</span><span id="APIInterface.fileupload-111"><a href="#APIInterface.fileupload-111"><span class="linenos">111</span></a>
+</span><span id="APIInterface.fileupload-112"><a href="#APIInterface.fileupload-112"><span class="linenos">112</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.fileupload-113"><a href="#APIInterface.fileupload-113"><span class="linenos">113</span></a><span class="sd">            title (str): タイトル行</span>
+</span><span id="APIInterface.fileupload-114"><a href="#APIInterface.fileupload-114"><span class="linenos">114</span></a><span class="sd">            file (str): アップロードファイルパス</span>
+</span><span id="APIInterface.fileupload-115"><a href="#APIInterface.fileupload-115"><span class="linenos">115</span></a><span class="sd">            ts (str | bool, optional): スレッドに返す. Defaults to False.</span>
+</span><span id="APIInterface.fileupload-116"><a href="#APIInterface.fileupload-116"><span class="linenos">116</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>ファイルをアップロードする</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>title (str):</strong>  タイトル行</li>
+<li><strong>file (str):</strong>  アップロードファイルパス</li>
+<li><strong>ts (str | bool, optional):</strong>  スレッドに返す. Defaults to False.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="APIInterface.get_conversations" class="classattr">
+                                        <input id="APIInterface.get_conversations-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">get_conversations</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">ch</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">ts</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+                <label class="view-source-button" for="APIInterface.get_conversations-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#APIInterface.get_conversations"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.get_conversations-118"><a href="#APIInterface.get_conversations-118"><span class="linenos">118</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.get_conversations-119"><a href="#APIInterface.get_conversations-119"><span class="linenos">119</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface.get_conversations-120"><a href="#APIInterface.get_conversations-120"><span class="linenos">120</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
+</span><span id="APIInterface.get_conversations-121"><a href="#APIInterface.get_conversations-121"><span class="linenos">121</span></a>
+</span><span id="APIInterface.get_conversations-122"><a href="#APIInterface.get_conversations-122"><span class="linenos">122</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.get_conversations-123"><a href="#APIInterface.get_conversations-123"><span class="linenos">123</span></a><span class="sd">            ch (str, optional): チャンネルID. Defaults to None.</span>
+</span><span id="APIInterface.get_conversations-124"><a href="#APIInterface.get_conversations-124"><span class="linenos">124</span></a><span class="sd">            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.</span>
+</span><span id="APIInterface.get_conversations-125"><a href="#APIInterface.get_conversations-125"><span class="linenos">125</span></a>
+</span><span id="APIInterface.get_conversations-126"><a href="#APIInterface.get_conversations-126"><span class="linenos">126</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface.get_conversations-127"><a href="#APIInterface.get_conversations-127"><span class="linenos">127</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface.get_conversations-128"><a href="#APIInterface.get_conversations-128"><span class="linenos">128</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface.get_conversations-129"><a href="#APIInterface.get_conversations-129"><span class="linenos">129</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>スレッド情報の取得</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>ch (str, optional):</strong>  チャンネルID. Defaults to None.</li>
+<li><strong>ts (str, optional):</strong>  メッセージのタイムスタンプ. Defaults to None.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict: API response</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="MessageParserInterface">
+                            <input id="MessageParserInterface-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">MessageParserInterface</span><wbr>(<span class="base">abc.ABC</span>):
+
+                <label class="view-source-button" for="MessageParserInterface-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MessageParserInterface"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface-132"><a href="#MessageParserInterface-132"><span class="linenos">132</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="MessageParserInterface-133"><a href="#MessageParserInterface-133"><span class="linenos">133</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-134"><a href="#MessageParserInterface-134"><span class="linenos">134</span></a>
+</span><span id="MessageParserInterface-135"><a href="#MessageParserInterface-135"><span class="linenos">135</span></a>    <span class="n">client</span><span class="p">:</span> <span class="n">Any</span>
+</span><span id="MessageParserInterface-136"><a href="#MessageParserInterface-136"><span class="linenos">136</span></a>    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="MessageParserInterface-137"><a href="#MessageParserInterface-137"><span class="linenos">137</span></a>    <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="MessageParserInterface-138"><a href="#MessageParserInterface-138"><span class="linenos">138</span></a>    <span class="n">argument</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="MessageParserInterface-139"><a href="#MessageParserInterface-139"><span class="linenos">139</span></a>    <span class="n">channel_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="MessageParserInterface-140"><a href="#MessageParserInterface-140"><span class="linenos">140</span></a>    <span class="n">channel_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="MessageParserInterface-141"><a href="#MessageParserInterface-141"><span class="linenos">141</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="MessageParserInterface-142"><a href="#MessageParserInterface-142"><span class="linenos">142</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="MessageParserInterface-143"><a href="#MessageParserInterface-143"><span class="linenos">143</span></a>    <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="MessageParserInterface-144"><a href="#MessageParserInterface-144"><span class="linenos">144</span></a>    <span class="n">updatable</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="MessageParserInterface-145"><a href="#MessageParserInterface-145"><span class="linenos">145</span></a>    <span class="n">in_thread</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="MessageParserInterface-146"><a href="#MessageParserInterface-146"><span class="linenos">146</span></a>    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="MessageParserInterface-147"><a href="#MessageParserInterface-147"><span class="linenos">147</span></a>
+</span><span id="MessageParserInterface-148"><a href="#MessageParserInterface-148"><span class="linenos">148</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-149"><a href="#MessageParserInterface-149"><span class="linenos">149</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="MessageParserInterface-150"><a href="#MessageParserInterface-150"><span class="linenos">150</span></a>        <span class="k">pass</span>
+</span><span id="MessageParserInterface-151"><a href="#MessageParserInterface-151"><span class="linenos">151</span></a>
+</span><span id="MessageParserInterface-152"><a href="#MessageParserInterface-152"><span class="linenos">152</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-153"><a href="#MessageParserInterface-153"><span class="linenos">153</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="MessageParserInterface-154"><a href="#MessageParserInterface-154"><span class="linenos">154</span></a>        <span class="k">pass</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>メッセージ解析インターフェース</p>
+</div>
+
+
+                            <div id="MessageParserInterface.client" class="classattr">
+                                <div class="attr variable">
+            <span class="name">client</span><span class="annotation">: Any</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.client"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.text" class="classattr">
+                                <div class="attr variable">
+            <span class="name">text</span><span class="annotation">: str | None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.text"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.keyword" class="classattr">
+                                <div class="attr variable">
+            <span class="name">keyword</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.keyword"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.argument" class="classattr">
+                                <div class="attr variable">
+            <span class="name">argument</span><span class="annotation">: list</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.argument"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.channel_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">channel_id</span><span class="annotation">: str | None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.channel_id"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.channel_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">channel_type</span><span class="annotation">: str | None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.channel_type"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.event_ts" class="classattr">
+                                <div class="attr variable">
+            <span class="name">event_ts</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.event_ts"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.thread_ts" class="classattr">
+                                <div class="attr variable">
+            <span class="name">thread_ts</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.thread_ts"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.user_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">user_id</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.user_id"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.updatable" class="classattr">
+                                <div class="attr variable">
+            <span class="name">updatable</span><span class="annotation">: bool</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.updatable"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.in_thread" class="classattr">
+                                <div class="attr variable">
+            <span class="name">in_thread</span><span class="annotation">: bool</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.in_thread"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.status" class="classattr">
+                                <div class="attr variable">
+            <span class="name">status</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.status"></a>
+    
+    
+
+                            </div>
+                            <div id="MessageParserInterface.parser" class="classattr">
+                                        <input id="MessageParserInterface.parser-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">parser</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">_body</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="MessageParserInterface.parser-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.parser"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.parser-148"><a href="#MessageParserInterface.parser-148"><span class="linenos">148</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.parser-149"><a href="#MessageParserInterface.parser-149"><span class="linenos">149</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="MessageParserInterface.parser-150"><a href="#MessageParserInterface.parser-150"><span class="linenos">150</span></a>        <span class="k">pass</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="MessageParserInterface.check_updatable" class="classattr">
+                                        <input id="MessageParserInterface.check_updatable-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">check_updatable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="MessageParserInterface.check_updatable-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.check_updatable"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-152"><a href="#MessageParserInterface.check_updatable-152"><span class="linenos">152</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.check_updatable-153"><a href="#MessageParserInterface.check_updatable-153"><span class="linenos">153</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="MessageParserInterface.check_updatable-154"><a href="#MessageParserInterface.check_updatable-154"><span class="linenos">154</span></a>        <span class="k">pass</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
     </main>
 <script>
     function escapeHTML(html) {

@@ -35,6 +35,12 @@
                     <a class="class" href="#StandardOut">StandardOut</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="variable" href="#StandardOut.lookup">lookup</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StandardOut.reactions">reactions</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#StandardOut.post_message">post_message</a>
                         </li>
                         <li>
@@ -48,6 +54,9 @@
                         </li>
                         <li>
                                 <a class="function" href="#StandardOut.fileupload">fileupload</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#StandardOut.get_conversations">get_conversations</a>
                         </li>
                 </ul>
 
@@ -75,93 +84,120 @@
 
                         <label class="view-source-button" for="mod-adapter-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">integrations/standard_out/message.py</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.base.adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIInterface</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StandardOut</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ標準出力クラス&quot;&quot;&quot;</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">        Args:</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">            message (str): 本文</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">            ts (bool): 未使用</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">        Returns:</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">            dict: ダミー</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="k">return</span> <span class="p">{}</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        Args:</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">            msg (dict): 本文</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">            ts (bool | None, optional): 未使用</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">            summarize (bool, optional): 未使用</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">summarize</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">        Args:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">            event_ts (str): 未使用</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">            title (str): タイトル行</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">            msg (str): 本文</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">        Returns:</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">            dict: ダミー</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">event_ts</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="k">return</span> <span class="p">{}</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;パラメータの内容によって呼び出すAPIを振り分ける&quot;&quot;&quot;</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="n">headline</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;headline&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="n">file_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_list&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;dummy&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}))</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="c1"># 見出しポスト</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">headline</span><span class="p">)</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="c1"># 本文ポスト</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>            <span class="k">if</span> <span class="p">(</span><span class="n">file_path</span> <span class="o">:=</span> <span class="n">file_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>                <span class="n">pprint</span><span class="p">([</span><span class="s2">&quot;file:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">)])</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="sd">        Args:</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="sd">            title (str): タイトル</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="sd">            file (str | bool): 保存ファイルパス</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">            ts (str | bool, optional): 未使用</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">integrations/standard_out/message.py</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.base.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIInterface</span><span class="p">,</span> <span class="n">LookupInterface</span><span class="p">,</span> <span class="n">ReactionsInterface</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="k">class</span><span class="w"> </span><span class="nc">_ReactionsDummy</span><span class="p">(</span><span class="n">ReactionsInterface</span><span class="p">):</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ch</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>        <span class="k">return</span> <span class="p">[]</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">all_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delete_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">delete_list</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="k">class</span><span class="w"> </span><span class="nc">_LookupDummy</span><span class="p">(</span><span class="n">LookupInterface</span><span class="p">):</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>        <span class="k">pass</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dm_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">user_id</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StandardOut</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ標準出力クラス&quot;&quot;&quot;</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span> <span class="o">=</span> <span class="n">_LookupDummy</span><span class="p">()</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span> <span class="o">=</span> <span class="n">_ReactionsDummy</span><span class="p">()</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        Args:</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">            message (str): 本文</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">            ts (bool): 未使用</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">        Returns:</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">            dict: ダミー</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        Args:</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">            msg (dict): 本文</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">            ts (bool | None, optional): 未使用</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">            summarize (bool, optional): 未使用</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">summarize</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        Args:</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">            event_ts (str): 未使用</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">            title (str): タイトル行</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">            msg (str): 本文</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        Returns:</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">            dict: ダミー</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">event_ts</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;パラメータの内容によって呼び出すAPIを振り分ける&quot;&quot;&quot;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="n">headline</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;headline&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="n">file_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_list&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;dummy&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}))</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="c1"># 見出しポスト</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">headline</span><span class="p">)</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="c1"># 本文ポスト</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>            <span class="k">if</span> <span class="p">(</span><span class="n">file_path</span> <span class="o">:=</span> <span class="n">file_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>                <span class="n">pprint</span><span class="p">([</span><span class="s2">&quot;file:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">)])</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        Args:</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">            title (str): タイトル</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">            file (str | bool): 保存ファイルパス</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">            ts (str | bool, optional): 未使用</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ch</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -171,89 +207,98 @@
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">StandardOut</span><wbr>(<span class="base"><a href="../base/adapter.html#APIInterface">integrations.base.adapter.APIInterface</a></span>):
+    <span class="name">StandardOut</span><wbr>(<span class="base">integrations.base.interface.APIInterface</span>):
 
                 <label class="view-source-button" for="StandardOut-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#StandardOut"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut-12"><a href="#StandardOut-12"><span class="linenos">12</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StandardOut</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
-</span><span id="StandardOut-13"><a href="#StandardOut-13"><span class="linenos">13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ標準出力クラス&quot;&quot;&quot;</span>
-</span><span id="StandardOut-14"><a href="#StandardOut-14"><span class="linenos">14</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="StandardOut-15"><a href="#StandardOut-15"><span class="linenos">15</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="StandardOut-16"><a href="#StandardOut-16"><span class="linenos">16</span></a>
-</span><span id="StandardOut-17"><a href="#StandardOut-17"><span class="linenos">17</span></a><span class="sd">        Args:</span>
-</span><span id="StandardOut-18"><a href="#StandardOut-18"><span class="linenos">18</span></a><span class="sd">            message (str): 本文</span>
-</span><span id="StandardOut-19"><a href="#StandardOut-19"><span class="linenos">19</span></a><span class="sd">            ts (bool): 未使用</span>
-</span><span id="StandardOut-20"><a href="#StandardOut-20"><span class="linenos">20</span></a>
-</span><span id="StandardOut-21"><a href="#StandardOut-21"><span class="linenos">21</span></a><span class="sd">        Returns:</span>
-</span><span id="StandardOut-22"><a href="#StandardOut-22"><span class="linenos">22</span></a><span class="sd">            dict: ダミー</span>
-</span><span id="StandardOut-23"><a href="#StandardOut-23"><span class="linenos">23</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StandardOut-24"><a href="#StandardOut-24"><span class="linenos">24</span></a>
-</span><span id="StandardOut-25"><a href="#StandardOut-25"><span class="linenos">25</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="StandardOut-26"><a href="#StandardOut-26"><span class="linenos">26</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="StandardOut-27"><a href="#StandardOut-27"><span class="linenos">27</span></a>
-</span><span id="StandardOut-28"><a href="#StandardOut-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="p">{}</span>
-</span><span id="StandardOut-29"><a href="#StandardOut-29"><span class="linenos">29</span></a>
-</span><span id="StandardOut-30"><a href="#StandardOut-30"><span class="linenos">30</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-</span><span id="StandardOut-31"><a href="#StandardOut-31"><span class="linenos">31</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="StandardOut-32"><a href="#StandardOut-32"><span class="linenos">32</span></a>
-</span><span id="StandardOut-33"><a href="#StandardOut-33"><span class="linenos">33</span></a><span class="sd">        Args:</span>
-</span><span id="StandardOut-34"><a href="#StandardOut-34"><span class="linenos">34</span></a><span class="sd">            msg (dict): 本文</span>
-</span><span id="StandardOut-35"><a href="#StandardOut-35"><span class="linenos">35</span></a><span class="sd">            ts (bool | None, optional): 未使用</span>
-</span><span id="StandardOut-36"><a href="#StandardOut-36"><span class="linenos">36</span></a><span class="sd">            summarize (bool, optional): 未使用</span>
-</span><span id="StandardOut-37"><a href="#StandardOut-37"><span class="linenos">37</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StandardOut-38"><a href="#StandardOut-38"><span class="linenos">38</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="StandardOut-39"><a href="#StandardOut-39"><span class="linenos">39</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">summarize</span>
-</span><span id="StandardOut-40"><a href="#StandardOut-40"><span class="linenos">40</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="StandardOut-41"><a href="#StandardOut-41"><span class="linenos">41</span></a>
-</span><span id="StandardOut-42"><a href="#StandardOut-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="StandardOut-43"><a href="#StandardOut-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="StandardOut-44"><a href="#StandardOut-44"><span class="linenos">44</span></a>
-</span><span id="StandardOut-45"><a href="#StandardOut-45"><span class="linenos">45</span></a><span class="sd">        Args:</span>
-</span><span id="StandardOut-46"><a href="#StandardOut-46"><span class="linenos">46</span></a><span class="sd">            event_ts (str): 未使用</span>
-</span><span id="StandardOut-47"><a href="#StandardOut-47"><span class="linenos">47</span></a><span class="sd">            title (str): タイトル行</span>
-</span><span id="StandardOut-48"><a href="#StandardOut-48"><span class="linenos">48</span></a><span class="sd">            msg (str): 本文</span>
-</span><span id="StandardOut-49"><a href="#StandardOut-49"><span class="linenos">49</span></a>
-</span><span id="StandardOut-50"><a href="#StandardOut-50"><span class="linenos">50</span></a><span class="sd">        Returns:</span>
-</span><span id="StandardOut-51"><a href="#StandardOut-51"><span class="linenos">51</span></a><span class="sd">            dict: ダミー</span>
-</span><span id="StandardOut-52"><a href="#StandardOut-52"><span class="linenos">52</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StandardOut-53"><a href="#StandardOut-53"><span class="linenos">53</span></a>
-</span><span id="StandardOut-54"><a href="#StandardOut-54"><span class="linenos">54</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">event_ts</span>
-</span><span id="StandardOut-55"><a href="#StandardOut-55"><span class="linenos">55</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-</span><span id="StandardOut-56"><a href="#StandardOut-56"><span class="linenos">56</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="StandardOut-57"><a href="#StandardOut-57"><span class="linenos">57</span></a>
-</span><span id="StandardOut-58"><a href="#StandardOut-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="p">{}</span>
-</span><span id="StandardOut-59"><a href="#StandardOut-59"><span class="linenos">59</span></a>
-</span><span id="StandardOut-60"><a href="#StandardOut-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="StandardOut-61"><a href="#StandardOut-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;パラメータの内容によって呼び出すAPIを振り分ける&quot;&quot;&quot;</span>
-</span><span id="StandardOut-62"><a href="#StandardOut-62"><span class="linenos">62</span></a>
-</span><span id="StandardOut-63"><a href="#StandardOut-63"><span class="linenos">63</span></a>        <span class="n">headline</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;headline&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="StandardOut-64"><a href="#StandardOut-64"><span class="linenos">64</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>
-</span><span id="StandardOut-65"><a href="#StandardOut-65"><span class="linenos">65</span></a>        <span class="n">file_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_list&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;dummy&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}))</span>
-</span><span id="StandardOut-66"><a href="#StandardOut-66"><span class="linenos">66</span></a>
-</span><span id="StandardOut-67"><a href="#StandardOut-67"><span class="linenos">67</span></a>        <span class="c1"># 見出しポスト</span>
-</span><span id="StandardOut-68"><a href="#StandardOut-68"><span class="linenos">68</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">headline</span><span class="p">)</span>
-</span><span id="StandardOut-69"><a href="#StandardOut-69"><span class="linenos">69</span></a>
-</span><span id="StandardOut-70"><a href="#StandardOut-70"><span class="linenos">70</span></a>        <span class="c1"># 本文ポスト</span>
-</span><span id="StandardOut-71"><a href="#StandardOut-71"><span class="linenos">71</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="StandardOut-72"><a href="#StandardOut-72"><span class="linenos">72</span></a>
-</span><span id="StandardOut-73"><a href="#StandardOut-73"><span class="linenos">73</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
-</span><span id="StandardOut-74"><a href="#StandardOut-74"><span class="linenos">74</span></a>            <span class="k">if</span> <span class="p">(</span><span class="n">file_path</span> <span class="o">:=</span> <span class="n">file_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-</span><span id="StandardOut-75"><a href="#StandardOut-75"><span class="linenos">75</span></a>                <span class="n">pprint</span><span class="p">([</span><span class="s2">&quot;file:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">)])</span>
-</span><span id="StandardOut-76"><a href="#StandardOut-76"><span class="linenos">76</span></a>
-</span><span id="StandardOut-77"><a href="#StandardOut-77"><span class="linenos">77</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span id="StandardOut-78"><a href="#StandardOut-78"><span class="linenos">78</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="StandardOut-79"><a href="#StandardOut-79"><span class="linenos">79</span></a>
-</span><span id="StandardOut-80"><a href="#StandardOut-80"><span class="linenos">80</span></a><span class="sd">        Args:</span>
-</span><span id="StandardOut-81"><a href="#StandardOut-81"><span class="linenos">81</span></a><span class="sd">            title (str): タイトル</span>
-</span><span id="StandardOut-82"><a href="#StandardOut-82"><span class="linenos">82</span></a><span class="sd">            file (str | bool): 保存ファイルパス</span>
-</span><span id="StandardOut-83"><a href="#StandardOut-83"><span class="linenos">83</span></a><span class="sd">            ts (str | bool, optional): 未使用</span>
-</span><span id="StandardOut-84"><a href="#StandardOut-84"><span class="linenos">84</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StandardOut-85"><a href="#StandardOut-85"><span class="linenos">85</span></a>
-</span><span id="StandardOut-86"><a href="#StandardOut-86"><span class="linenos">86</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="StandardOut-87"><a href="#StandardOut-87"><span class="linenos">87</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-</span><span id="StandardOut-88"><a href="#StandardOut-88"><span class="linenos">88</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut-30"><a href="#StandardOut-30"><span class="linenos"> 30</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StandardOut</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
+</span><span id="StandardOut-31"><a href="#StandardOut-31"><span class="linenos"> 31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ標準出力クラス&quot;&quot;&quot;</span>
+</span><span id="StandardOut-32"><a href="#StandardOut-32"><span class="linenos"> 32</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="StandardOut-33"><a href="#StandardOut-33"><span class="linenos"> 33</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span> <span class="o">=</span> <span class="n">_LookupDummy</span><span class="p">()</span>
+</span><span id="StandardOut-34"><a href="#StandardOut-34"><span class="linenos"> 34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span> <span class="o">=</span> <span class="n">_ReactionsDummy</span><span class="p">()</span>
+</span><span id="StandardOut-35"><a href="#StandardOut-35"><span class="linenos"> 35</span></a>
+</span><span id="StandardOut-36"><a href="#StandardOut-36"><span class="linenos"> 36</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="StandardOut-37"><a href="#StandardOut-37"><span class="linenos"> 37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="StandardOut-38"><a href="#StandardOut-38"><span class="linenos"> 38</span></a>
+</span><span id="StandardOut-39"><a href="#StandardOut-39"><span class="linenos"> 39</span></a><span class="sd">        Args:</span>
+</span><span id="StandardOut-40"><a href="#StandardOut-40"><span class="linenos"> 40</span></a><span class="sd">            message (str): 本文</span>
+</span><span id="StandardOut-41"><a href="#StandardOut-41"><span class="linenos"> 41</span></a><span class="sd">            ts (bool): 未使用</span>
+</span><span id="StandardOut-42"><a href="#StandardOut-42"><span class="linenos"> 42</span></a>
+</span><span id="StandardOut-43"><a href="#StandardOut-43"><span class="linenos"> 43</span></a><span class="sd">        Returns:</span>
+</span><span id="StandardOut-44"><a href="#StandardOut-44"><span class="linenos"> 44</span></a><span class="sd">            dict: ダミー</span>
+</span><span id="StandardOut-45"><a href="#StandardOut-45"><span class="linenos"> 45</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StandardOut-46"><a href="#StandardOut-46"><span class="linenos"> 46</span></a>
+</span><span id="StandardOut-47"><a href="#StandardOut-47"><span class="linenos"> 47</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="StandardOut-48"><a href="#StandardOut-48"><span class="linenos"> 48</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="StandardOut-49"><a href="#StandardOut-49"><span class="linenos"> 49</span></a>
+</span><span id="StandardOut-50"><a href="#StandardOut-50"><span class="linenos"> 50</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="StandardOut-51"><a href="#StandardOut-51"><span class="linenos"> 51</span></a>
+</span><span id="StandardOut-52"><a href="#StandardOut-52"><span class="linenos"> 52</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+</span><span id="StandardOut-53"><a href="#StandardOut-53"><span class="linenos"> 53</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="StandardOut-54"><a href="#StandardOut-54"><span class="linenos"> 54</span></a>
+</span><span id="StandardOut-55"><a href="#StandardOut-55"><span class="linenos"> 55</span></a><span class="sd">        Args:</span>
+</span><span id="StandardOut-56"><a href="#StandardOut-56"><span class="linenos"> 56</span></a><span class="sd">            msg (dict): 本文</span>
+</span><span id="StandardOut-57"><a href="#StandardOut-57"><span class="linenos"> 57</span></a><span class="sd">            ts (bool | None, optional): 未使用</span>
+</span><span id="StandardOut-58"><a href="#StandardOut-58"><span class="linenos"> 58</span></a><span class="sd">            summarize (bool, optional): 未使用</span>
+</span><span id="StandardOut-59"><a href="#StandardOut-59"><span class="linenos"> 59</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StandardOut-60"><a href="#StandardOut-60"><span class="linenos"> 60</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="StandardOut-61"><a href="#StandardOut-61"><span class="linenos"> 61</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">summarize</span>
+</span><span id="StandardOut-62"><a href="#StandardOut-62"><span class="linenos"> 62</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="StandardOut-63"><a href="#StandardOut-63"><span class="linenos"> 63</span></a>
+</span><span id="StandardOut-64"><a href="#StandardOut-64"><span class="linenos"> 64</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="StandardOut-65"><a href="#StandardOut-65"><span class="linenos"> 65</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="StandardOut-66"><a href="#StandardOut-66"><span class="linenos"> 66</span></a>
+</span><span id="StandardOut-67"><a href="#StandardOut-67"><span class="linenos"> 67</span></a><span class="sd">        Args:</span>
+</span><span id="StandardOut-68"><a href="#StandardOut-68"><span class="linenos"> 68</span></a><span class="sd">            event_ts (str): 未使用</span>
+</span><span id="StandardOut-69"><a href="#StandardOut-69"><span class="linenos"> 69</span></a><span class="sd">            title (str): タイトル行</span>
+</span><span id="StandardOut-70"><a href="#StandardOut-70"><span class="linenos"> 70</span></a><span class="sd">            msg (str): 本文</span>
+</span><span id="StandardOut-71"><a href="#StandardOut-71"><span class="linenos"> 71</span></a>
+</span><span id="StandardOut-72"><a href="#StandardOut-72"><span class="linenos"> 72</span></a><span class="sd">        Returns:</span>
+</span><span id="StandardOut-73"><a href="#StandardOut-73"><span class="linenos"> 73</span></a><span class="sd">            dict: ダミー</span>
+</span><span id="StandardOut-74"><a href="#StandardOut-74"><span class="linenos"> 74</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StandardOut-75"><a href="#StandardOut-75"><span class="linenos"> 75</span></a>
+</span><span id="StandardOut-76"><a href="#StandardOut-76"><span class="linenos"> 76</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">event_ts</span>
+</span><span id="StandardOut-77"><a href="#StandardOut-77"><span class="linenos"> 77</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</span><span id="StandardOut-78"><a href="#StandardOut-78"><span class="linenos"> 78</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="StandardOut-79"><a href="#StandardOut-79"><span class="linenos"> 79</span></a>
+</span><span id="StandardOut-80"><a href="#StandardOut-80"><span class="linenos"> 80</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="StandardOut-81"><a href="#StandardOut-81"><span class="linenos"> 81</span></a>
+</span><span id="StandardOut-82"><a href="#StandardOut-82"><span class="linenos"> 82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="StandardOut-83"><a href="#StandardOut-83"><span class="linenos"> 83</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;パラメータの内容によって呼び出すAPIを振り分ける&quot;&quot;&quot;</span>
+</span><span id="StandardOut-84"><a href="#StandardOut-84"><span class="linenos"> 84</span></a>
+</span><span id="StandardOut-85"><a href="#StandardOut-85"><span class="linenos"> 85</span></a>        <span class="n">headline</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;headline&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+</span><span id="StandardOut-86"><a href="#StandardOut-86"><span class="linenos"> 86</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>
+</span><span id="StandardOut-87"><a href="#StandardOut-87"><span class="linenos"> 87</span></a>        <span class="n">file_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_list&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;dummy&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}))</span>
+</span><span id="StandardOut-88"><a href="#StandardOut-88"><span class="linenos"> 88</span></a>
+</span><span id="StandardOut-89"><a href="#StandardOut-89"><span class="linenos"> 89</span></a>        <span class="c1"># 見出しポスト</span>
+</span><span id="StandardOut-90"><a href="#StandardOut-90"><span class="linenos"> 90</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">headline</span><span class="p">)</span>
+</span><span id="StandardOut-91"><a href="#StandardOut-91"><span class="linenos"> 91</span></a>
+</span><span id="StandardOut-92"><a href="#StandardOut-92"><span class="linenos"> 92</span></a>        <span class="c1"># 本文ポスト</span>
+</span><span id="StandardOut-93"><a href="#StandardOut-93"><span class="linenos"> 93</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="StandardOut-94"><a href="#StandardOut-94"><span class="linenos"> 94</span></a>
+</span><span id="StandardOut-95"><a href="#StandardOut-95"><span class="linenos"> 95</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+</span><span id="StandardOut-96"><a href="#StandardOut-96"><span class="linenos"> 96</span></a>            <span class="k">if</span> <span class="p">(</span><span class="n">file_path</span> <span class="o">:=</span> <span class="n">file_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+</span><span id="StandardOut-97"><a href="#StandardOut-97"><span class="linenos"> 97</span></a>                <span class="n">pprint</span><span class="p">([</span><span class="s2">&quot;file:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">)])</span>
+</span><span id="StandardOut-98"><a href="#StandardOut-98"><span class="linenos"> 98</span></a>
+</span><span id="StandardOut-99"><a href="#StandardOut-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="StandardOut-100"><a href="#StandardOut-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="StandardOut-101"><a href="#StandardOut-101"><span class="linenos">101</span></a>
+</span><span id="StandardOut-102"><a href="#StandardOut-102"><span class="linenos">102</span></a><span class="sd">        Args:</span>
+</span><span id="StandardOut-103"><a href="#StandardOut-103"><span class="linenos">103</span></a><span class="sd">            title (str): タイトル</span>
+</span><span id="StandardOut-104"><a href="#StandardOut-104"><span class="linenos">104</span></a><span class="sd">            file (str | bool): 保存ファイルパス</span>
+</span><span id="StandardOut-105"><a href="#StandardOut-105"><span class="linenos">105</span></a><span class="sd">            ts (str | bool, optional): 未使用</span>
+</span><span id="StandardOut-106"><a href="#StandardOut-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StandardOut-107"><a href="#StandardOut-107"><span class="linenos">107</span></a>
+</span><span id="StandardOut-108"><a href="#StandardOut-108"><span class="linenos">108</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="StandardOut-109"><a href="#StandardOut-109"><span class="linenos">109</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</span><span id="StandardOut-110"><a href="#StandardOut-110"><span class="linenos">110</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</span><span id="StandardOut-111"><a href="#StandardOut-111"><span class="linenos">111</span></a>
+</span><span id="StandardOut-112"><a href="#StandardOut-112"><span class="linenos">112</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="StandardOut-113"><a href="#StandardOut-113"><span class="linenos">113</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ch</span>
+</span><span id="StandardOut-114"><a href="#StandardOut-114"><span class="linenos">114</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="StandardOut-115"><a href="#StandardOut-115"><span class="linenos">115</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -261,6 +306,28 @@
 </div>
 
 
+                            <div id="StandardOut.lookup" class="classattr">
+                                <div class="attr variable">
+            <span class="name">lookup</span>
+
+        
+    </div>
+    <a class="headerlink" href="#StandardOut.lookup"></a>
+    
+    
+
+                            </div>
+                            <div id="StandardOut.reactions" class="classattr">
+                                <div class="attr variable">
+            <span class="name">reactions</span>
+
+        
+    </div>
+    <a class="headerlink" href="#StandardOut.reactions"></a>
+    
+    
+
+                            </div>
                             <div id="StandardOut.post_message" class="classattr">
                                         <input id="StandardOut.post_message-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -272,21 +339,21 @@
 
     </div>
     <a class="headerlink" href="#StandardOut.post_message"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.post_message-14"><a href="#StandardOut.post_message-14"><span class="linenos">14</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="StandardOut.post_message-15"><a href="#StandardOut.post_message-15"><span class="linenos">15</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="StandardOut.post_message-16"><a href="#StandardOut.post_message-16"><span class="linenos">16</span></a>
-</span><span id="StandardOut.post_message-17"><a href="#StandardOut.post_message-17"><span class="linenos">17</span></a><span class="sd">        Args:</span>
-</span><span id="StandardOut.post_message-18"><a href="#StandardOut.post_message-18"><span class="linenos">18</span></a><span class="sd">            message (str): 本文</span>
-</span><span id="StandardOut.post_message-19"><a href="#StandardOut.post_message-19"><span class="linenos">19</span></a><span class="sd">            ts (bool): 未使用</span>
-</span><span id="StandardOut.post_message-20"><a href="#StandardOut.post_message-20"><span class="linenos">20</span></a>
-</span><span id="StandardOut.post_message-21"><a href="#StandardOut.post_message-21"><span class="linenos">21</span></a><span class="sd">        Returns:</span>
-</span><span id="StandardOut.post_message-22"><a href="#StandardOut.post_message-22"><span class="linenos">22</span></a><span class="sd">            dict: ダミー</span>
-</span><span id="StandardOut.post_message-23"><a href="#StandardOut.post_message-23"><span class="linenos">23</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StandardOut.post_message-24"><a href="#StandardOut.post_message-24"><span class="linenos">24</span></a>
-</span><span id="StandardOut.post_message-25"><a href="#StandardOut.post_message-25"><span class="linenos">25</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="StandardOut.post_message-26"><a href="#StandardOut.post_message-26"><span class="linenos">26</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="StandardOut.post_message-27"><a href="#StandardOut.post_message-27"><span class="linenos">27</span></a>
-</span><span id="StandardOut.post_message-28"><a href="#StandardOut.post_message-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.post_message-36"><a href="#StandardOut.post_message-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="StandardOut.post_message-37"><a href="#StandardOut.post_message-37"><span class="linenos">37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="StandardOut.post_message-38"><a href="#StandardOut.post_message-38"><span class="linenos">38</span></a>
+</span><span id="StandardOut.post_message-39"><a href="#StandardOut.post_message-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
+</span><span id="StandardOut.post_message-40"><a href="#StandardOut.post_message-40"><span class="linenos">40</span></a><span class="sd">            message (str): 本文</span>
+</span><span id="StandardOut.post_message-41"><a href="#StandardOut.post_message-41"><span class="linenos">41</span></a><span class="sd">            ts (bool): 未使用</span>
+</span><span id="StandardOut.post_message-42"><a href="#StandardOut.post_message-42"><span class="linenos">42</span></a>
+</span><span id="StandardOut.post_message-43"><a href="#StandardOut.post_message-43"><span class="linenos">43</span></a><span class="sd">        Returns:</span>
+</span><span id="StandardOut.post_message-44"><a href="#StandardOut.post_message-44"><span class="linenos">44</span></a><span class="sd">            dict: ダミー</span>
+</span><span id="StandardOut.post_message-45"><a href="#StandardOut.post_message-45"><span class="linenos">45</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StandardOut.post_message-46"><a href="#StandardOut.post_message-46"><span class="linenos">46</span></a>
+</span><span id="StandardOut.post_message-47"><a href="#StandardOut.post_message-47"><span class="linenos">47</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="StandardOut.post_message-48"><a href="#StandardOut.post_message-48"><span class="linenos">48</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="StandardOut.post_message-49"><a href="#StandardOut.post_message-49"><span class="linenos">49</span></a>
+</span><span id="StandardOut.post_message-50"><a href="#StandardOut.post_message-50"><span class="linenos">50</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -319,17 +386,17 @@
 
     </div>
     <a class="headerlink" href="#StandardOut.post_multi_message"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.post_multi_message-30"><a href="#StandardOut.post_multi_message-30"><span class="linenos">30</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-</span><span id="StandardOut.post_multi_message-31"><a href="#StandardOut.post_multi_message-31"><span class="linenos">31</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="StandardOut.post_multi_message-32"><a href="#StandardOut.post_multi_message-32"><span class="linenos">32</span></a>
-</span><span id="StandardOut.post_multi_message-33"><a href="#StandardOut.post_multi_message-33"><span class="linenos">33</span></a><span class="sd">        Args:</span>
-</span><span id="StandardOut.post_multi_message-34"><a href="#StandardOut.post_multi_message-34"><span class="linenos">34</span></a><span class="sd">            msg (dict): 本文</span>
-</span><span id="StandardOut.post_multi_message-35"><a href="#StandardOut.post_multi_message-35"><span class="linenos">35</span></a><span class="sd">            ts (bool | None, optional): 未使用</span>
-</span><span id="StandardOut.post_multi_message-36"><a href="#StandardOut.post_multi_message-36"><span class="linenos">36</span></a><span class="sd">            summarize (bool, optional): 未使用</span>
-</span><span id="StandardOut.post_multi_message-37"><a href="#StandardOut.post_multi_message-37"><span class="linenos">37</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StandardOut.post_multi_message-38"><a href="#StandardOut.post_multi_message-38"><span class="linenos">38</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="StandardOut.post_multi_message-39"><a href="#StandardOut.post_multi_message-39"><span class="linenos">39</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">summarize</span>
-</span><span id="StandardOut.post_multi_message-40"><a href="#StandardOut.post_multi_message-40"><span class="linenos">40</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.post_multi_message-52"><a href="#StandardOut.post_multi_message-52"><span class="linenos">52</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+</span><span id="StandardOut.post_multi_message-53"><a href="#StandardOut.post_multi_message-53"><span class="linenos">53</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="StandardOut.post_multi_message-54"><a href="#StandardOut.post_multi_message-54"><span class="linenos">54</span></a>
+</span><span id="StandardOut.post_multi_message-55"><a href="#StandardOut.post_multi_message-55"><span class="linenos">55</span></a><span class="sd">        Args:</span>
+</span><span id="StandardOut.post_multi_message-56"><a href="#StandardOut.post_multi_message-56"><span class="linenos">56</span></a><span class="sd">            msg (dict): 本文</span>
+</span><span id="StandardOut.post_multi_message-57"><a href="#StandardOut.post_multi_message-57"><span class="linenos">57</span></a><span class="sd">            ts (bool | None, optional): 未使用</span>
+</span><span id="StandardOut.post_multi_message-58"><a href="#StandardOut.post_multi_message-58"><span class="linenos">58</span></a><span class="sd">            summarize (bool, optional): 未使用</span>
+</span><span id="StandardOut.post_multi_message-59"><a href="#StandardOut.post_multi_message-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StandardOut.post_multi_message-60"><a href="#StandardOut.post_multi_message-60"><span class="linenos">60</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="StandardOut.post_multi_message-61"><a href="#StandardOut.post_multi_message-61"><span class="linenos">61</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">summarize</span>
+</span><span id="StandardOut.post_multi_message-62"><a href="#StandardOut.post_multi_message-62"><span class="linenos">62</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -357,23 +424,23 @@
 
     </div>
     <a class="headerlink" href="#StandardOut.post_text"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.post_text-42"><a href="#StandardOut.post_text-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="StandardOut.post_text-43"><a href="#StandardOut.post_text-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="StandardOut.post_text-44"><a href="#StandardOut.post_text-44"><span class="linenos">44</span></a>
-</span><span id="StandardOut.post_text-45"><a href="#StandardOut.post_text-45"><span class="linenos">45</span></a><span class="sd">        Args:</span>
-</span><span id="StandardOut.post_text-46"><a href="#StandardOut.post_text-46"><span class="linenos">46</span></a><span class="sd">            event_ts (str): 未使用</span>
-</span><span id="StandardOut.post_text-47"><a href="#StandardOut.post_text-47"><span class="linenos">47</span></a><span class="sd">            title (str): タイトル行</span>
-</span><span id="StandardOut.post_text-48"><a href="#StandardOut.post_text-48"><span class="linenos">48</span></a><span class="sd">            msg (str): 本文</span>
-</span><span id="StandardOut.post_text-49"><a href="#StandardOut.post_text-49"><span class="linenos">49</span></a>
-</span><span id="StandardOut.post_text-50"><a href="#StandardOut.post_text-50"><span class="linenos">50</span></a><span class="sd">        Returns:</span>
-</span><span id="StandardOut.post_text-51"><a href="#StandardOut.post_text-51"><span class="linenos">51</span></a><span class="sd">            dict: ダミー</span>
-</span><span id="StandardOut.post_text-52"><a href="#StandardOut.post_text-52"><span class="linenos">52</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StandardOut.post_text-53"><a href="#StandardOut.post_text-53"><span class="linenos">53</span></a>
-</span><span id="StandardOut.post_text-54"><a href="#StandardOut.post_text-54"><span class="linenos">54</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">event_ts</span>
-</span><span id="StandardOut.post_text-55"><a href="#StandardOut.post_text-55"><span class="linenos">55</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-</span><span id="StandardOut.post_text-56"><a href="#StandardOut.post_text-56"><span class="linenos">56</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="StandardOut.post_text-57"><a href="#StandardOut.post_text-57"><span class="linenos">57</span></a>
-</span><span id="StandardOut.post_text-58"><a href="#StandardOut.post_text-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.post_text-64"><a href="#StandardOut.post_text-64"><span class="linenos">64</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="StandardOut.post_text-65"><a href="#StandardOut.post_text-65"><span class="linenos">65</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="StandardOut.post_text-66"><a href="#StandardOut.post_text-66"><span class="linenos">66</span></a>
+</span><span id="StandardOut.post_text-67"><a href="#StandardOut.post_text-67"><span class="linenos">67</span></a><span class="sd">        Args:</span>
+</span><span id="StandardOut.post_text-68"><a href="#StandardOut.post_text-68"><span class="linenos">68</span></a><span class="sd">            event_ts (str): 未使用</span>
+</span><span id="StandardOut.post_text-69"><a href="#StandardOut.post_text-69"><span class="linenos">69</span></a><span class="sd">            title (str): タイトル行</span>
+</span><span id="StandardOut.post_text-70"><a href="#StandardOut.post_text-70"><span class="linenos">70</span></a><span class="sd">            msg (str): 本文</span>
+</span><span id="StandardOut.post_text-71"><a href="#StandardOut.post_text-71"><span class="linenos">71</span></a>
+</span><span id="StandardOut.post_text-72"><a href="#StandardOut.post_text-72"><span class="linenos">72</span></a><span class="sd">        Returns:</span>
+</span><span id="StandardOut.post_text-73"><a href="#StandardOut.post_text-73"><span class="linenos">73</span></a><span class="sd">            dict: ダミー</span>
+</span><span id="StandardOut.post_text-74"><a href="#StandardOut.post_text-74"><span class="linenos">74</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StandardOut.post_text-75"><a href="#StandardOut.post_text-75"><span class="linenos">75</span></a>
+</span><span id="StandardOut.post_text-76"><a href="#StandardOut.post_text-76"><span class="linenos">76</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">event_ts</span>
+</span><span id="StandardOut.post_text-77"><a href="#StandardOut.post_text-77"><span class="linenos">77</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</span><span id="StandardOut.post_text-78"><a href="#StandardOut.post_text-78"><span class="linenos">78</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="StandardOut.post_text-79"><a href="#StandardOut.post_text-79"><span class="linenos">79</span></a>
+</span><span id="StandardOut.post_text-80"><a href="#StandardOut.post_text-80"><span class="linenos">80</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -407,22 +474,22 @@
 
     </div>
     <a class="headerlink" href="#StandardOut.post"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.post-60"><a href="#StandardOut.post-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="StandardOut.post-61"><a href="#StandardOut.post-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;パラメータの内容によって呼び出すAPIを振り分ける&quot;&quot;&quot;</span>
-</span><span id="StandardOut.post-62"><a href="#StandardOut.post-62"><span class="linenos">62</span></a>
-</span><span id="StandardOut.post-63"><a href="#StandardOut.post-63"><span class="linenos">63</span></a>        <span class="n">headline</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;headline&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="StandardOut.post-64"><a href="#StandardOut.post-64"><span class="linenos">64</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>
-</span><span id="StandardOut.post-65"><a href="#StandardOut.post-65"><span class="linenos">65</span></a>        <span class="n">file_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_list&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;dummy&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}))</span>
-</span><span id="StandardOut.post-66"><a href="#StandardOut.post-66"><span class="linenos">66</span></a>
-</span><span id="StandardOut.post-67"><a href="#StandardOut.post-67"><span class="linenos">67</span></a>        <span class="c1"># 見出しポスト</span>
-</span><span id="StandardOut.post-68"><a href="#StandardOut.post-68"><span class="linenos">68</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">headline</span><span class="p">)</span>
-</span><span id="StandardOut.post-69"><a href="#StandardOut.post-69"><span class="linenos">69</span></a>
-</span><span id="StandardOut.post-70"><a href="#StandardOut.post-70"><span class="linenos">70</span></a>        <span class="c1"># 本文ポスト</span>
-</span><span id="StandardOut.post-71"><a href="#StandardOut.post-71"><span class="linenos">71</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="StandardOut.post-72"><a href="#StandardOut.post-72"><span class="linenos">72</span></a>
-</span><span id="StandardOut.post-73"><a href="#StandardOut.post-73"><span class="linenos">73</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
-</span><span id="StandardOut.post-74"><a href="#StandardOut.post-74"><span class="linenos">74</span></a>            <span class="k">if</span> <span class="p">(</span><span class="n">file_path</span> <span class="o">:=</span> <span class="n">file_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
-</span><span id="StandardOut.post-75"><a href="#StandardOut.post-75"><span class="linenos">75</span></a>                <span class="n">pprint</span><span class="p">([</span><span class="s2">&quot;file:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">)])</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.post-82"><a href="#StandardOut.post-82"><span class="linenos">82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="StandardOut.post-83"><a href="#StandardOut.post-83"><span class="linenos">83</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;パラメータの内容によって呼び出すAPIを振り分ける&quot;&quot;&quot;</span>
+</span><span id="StandardOut.post-84"><a href="#StandardOut.post-84"><span class="linenos">84</span></a>
+</span><span id="StandardOut.post-85"><a href="#StandardOut.post-85"><span class="linenos">85</span></a>        <span class="n">headline</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;headline&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+</span><span id="StandardOut.post-86"><a href="#StandardOut.post-86"><span class="linenos">86</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span>
+</span><span id="StandardOut.post-87"><a href="#StandardOut.post-87"><span class="linenos">87</span></a>        <span class="n">file_list</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_list&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;dummy&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}))</span>
+</span><span id="StandardOut.post-88"><a href="#StandardOut.post-88"><span class="linenos">88</span></a>
+</span><span id="StandardOut.post-89"><a href="#StandardOut.post-89"><span class="linenos">89</span></a>        <span class="c1"># 見出しポスト</span>
+</span><span id="StandardOut.post-90"><a href="#StandardOut.post-90"><span class="linenos">90</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">headline</span><span class="p">)</span>
+</span><span id="StandardOut.post-91"><a href="#StandardOut.post-91"><span class="linenos">91</span></a>
+</span><span id="StandardOut.post-92"><a href="#StandardOut.post-92"><span class="linenos">92</span></a>        <span class="c1"># 本文ポスト</span>
+</span><span id="StandardOut.post-93"><a href="#StandardOut.post-93"><span class="linenos">93</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="StandardOut.post-94"><a href="#StandardOut.post-94"><span class="linenos">94</span></a>
+</span><span id="StandardOut.post-95"><a href="#StandardOut.post-95"><span class="linenos">95</span></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+</span><span id="StandardOut.post-96"><a href="#StandardOut.post-96"><span class="linenos">96</span></a>            <span class="k">if</span> <span class="p">(</span><span class="n">file_path</span> <span class="o">:=</span> <span class="n">file_list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+</span><span id="StandardOut.post-97"><a href="#StandardOut.post-97"><span class="linenos">97</span></a>                <span class="n">pprint</span><span class="p">([</span><span class="s2">&quot;file:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">)])</span>
 </span></pre></div>
 
 
@@ -442,18 +509,18 @@
 
     </div>
     <a class="headerlink" href="#StandardOut.fileupload"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.fileupload-77"><a href="#StandardOut.fileupload-77"><span class="linenos">77</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span id="StandardOut.fileupload-78"><a href="#StandardOut.fileupload-78"><span class="linenos">78</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
-</span><span id="StandardOut.fileupload-79"><a href="#StandardOut.fileupload-79"><span class="linenos">79</span></a>
-</span><span id="StandardOut.fileupload-80"><a href="#StandardOut.fileupload-80"><span class="linenos">80</span></a><span class="sd">        Args:</span>
-</span><span id="StandardOut.fileupload-81"><a href="#StandardOut.fileupload-81"><span class="linenos">81</span></a><span class="sd">            title (str): タイトル</span>
-</span><span id="StandardOut.fileupload-82"><a href="#StandardOut.fileupload-82"><span class="linenos">82</span></a><span class="sd">            file (str | bool): 保存ファイルパス</span>
-</span><span id="StandardOut.fileupload-83"><a href="#StandardOut.fileupload-83"><span class="linenos">83</span></a><span class="sd">            ts (str | bool, optional): 未使用</span>
-</span><span id="StandardOut.fileupload-84"><a href="#StandardOut.fileupload-84"><span class="linenos">84</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StandardOut.fileupload-85"><a href="#StandardOut.fileupload-85"><span class="linenos">85</span></a>
-</span><span id="StandardOut.fileupload-86"><a href="#StandardOut.fileupload-86"><span class="linenos">86</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
-</span><span id="StandardOut.fileupload-87"><a href="#StandardOut.fileupload-87"><span class="linenos">87</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-</span><span id="StandardOut.fileupload-88"><a href="#StandardOut.fileupload-88"><span class="linenos">88</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.fileupload-99"><a href="#StandardOut.fileupload-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="StandardOut.fileupload-100"><a href="#StandardOut.fileupload-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;標準出力</span>
+</span><span id="StandardOut.fileupload-101"><a href="#StandardOut.fileupload-101"><span class="linenos">101</span></a>
+</span><span id="StandardOut.fileupload-102"><a href="#StandardOut.fileupload-102"><span class="linenos">102</span></a><span class="sd">        Args:</span>
+</span><span id="StandardOut.fileupload-103"><a href="#StandardOut.fileupload-103"><span class="linenos">103</span></a><span class="sd">            title (str): タイトル</span>
+</span><span id="StandardOut.fileupload-104"><a href="#StandardOut.fileupload-104"><span class="linenos">104</span></a><span class="sd">            file (str | bool): 保存ファイルパス</span>
+</span><span id="StandardOut.fileupload-105"><a href="#StandardOut.fileupload-105"><span class="linenos">105</span></a><span class="sd">            ts (str | bool, optional): 未使用</span>
+</span><span id="StandardOut.fileupload-106"><a href="#StandardOut.fileupload-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StandardOut.fileupload-107"><a href="#StandardOut.fileupload-107"><span class="linenos">107</span></a>
+</span><span id="StandardOut.fileupload-108"><a href="#StandardOut.fileupload-108"><span class="linenos">108</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="StandardOut.fileupload-109"><a href="#StandardOut.fileupload-109"><span class="linenos">109</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</span><span id="StandardOut.fileupload-110"><a href="#StandardOut.fileupload-110"><span class="linenos">110</span></a>        <span class="n">pprint</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -466,6 +533,42 @@
 <li><strong>file (str | bool):</strong>  保存ファイルパス</li>
 <li><strong>ts (str | bool, optional):</strong>  未使用</li>
 </ul>
+</div>
+
+
+                            </div>
+                            <div id="StandardOut.get_conversations" class="classattr">
+                                        <input id="StandardOut.get_conversations-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_conversations</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">ch</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">ts</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+                <label class="view-source-button" for="StandardOut.get_conversations-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#StandardOut.get_conversations"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StandardOut.get_conversations-112"><a href="#StandardOut.get_conversations-112"><span class="linenos">112</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="StandardOut.get_conversations-113"><a href="#StandardOut.get_conversations-113"><span class="linenos">113</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ch</span>
+</span><span id="StandardOut.get_conversations-114"><a href="#StandardOut.get_conversations-114"><span class="linenos">114</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">ts</span>
+</span><span id="StandardOut.get_conversations-115"><a href="#StandardOut.get_conversations-115"><span class="linenos">115</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>スレッド情報の取得</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>ch (str, optional):</strong>  チャンネルID. Defaults to None.</li>
+<li><strong>ts (str, optional):</strong>  メッセージのタイムスタンプ. Defaults to None.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict: API response</p>
+</blockquote>
 </div>
 
 
