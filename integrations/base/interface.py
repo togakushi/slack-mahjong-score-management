@@ -3,8 +3,58 @@
 from abc import ABC, abstractmethod
 
 
+class ReactionsInterface(ABC):
+    """リアクション操作抽象インターフェース"""
+    @abstractmethod
+    def status(self, ch=None, ts=None) -> list:
+        """botが付けたリアクションの種類を返す
+
+        Args:
+            ch (str, optional): チャンネルID. Defaults to None.
+            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
+
+        Returns:
+            list: リアクション
+        """
+        return []
+
+    @abstractmethod
+    def all_remove(self, delete_list: list):
+        """すべてのリアクションを削除する
+
+        Args:
+            delete_list (list): 削除対象のタイムスタンプ
+        """
+
+
+class LookupInterface(ABC):
+    """情報取得API操作抽象化ンターフェース"""
+    @abstractmethod
+    def get_channel_id(self) -> str:
+        """チャンネルIDを取得する
+
+        Returns:
+            str: チャンネルID
+        """
+        return ""
+
+    @abstractmethod
+    def get_dm_channel_id(self, user_id: str) -> str:
+        """DMのチャンネルIDを取得する
+
+        Args:
+            user_id (str): DMの相手
+
+        Returns:
+            str: チャンネルID
+        """
+        return ""
+
+
 class APIInterface(ABC):
     """API抽象化インターフェース"""
+    lookup: "LookupInterface"
+    reactions: "ReactionsInterface"
 
     @abstractmethod
     def post_message(self, msg: str, ts=False) -> dict:
@@ -64,48 +114,6 @@ class APIInterface(ABC):
         """
 
     @abstractmethod
-    def reactions_status(self, ch=None, ts=None) -> list:
-        """botが付けたリアクションの種類を返す
-
-        Args:
-            ch (str, optional): チャンネルID. Defaults to None.
-            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
-
-        Returns:
-            list: リアクション
-        """
-        return []
-
-    @abstractmethod
-    def all_reactions_remove(self, delete_list: list):
-        """すべてのリアクションを削除する
-
-        Args:
-            delete_list (list): 削除対象のタイムスタンプ
-        """
-
-    @abstractmethod
-    def get_channel_id(self) -> str | None:
-        """チャンネルIDを取得する
-
-        Returns:
-            str: チャンネルID
-        """
-        return None
-
-    @abstractmethod
-    def get_dm_channel_id(self, user_id: str) -> str | None:
-        """DMのチャンネルIDを取得する
-
-        Args:
-            user_id (str): DMの相手
-
-        Returns:
-            str: チャンネルID
-        """
-        return None
-
-    @abstractmethod
     def get_conversations(self, ch=None, ts=None) -> dict:
         """スレッド情報の取得
 
@@ -117,3 +125,9 @@ class APIInterface(ABC):
             dict: API response
         """
         return {}
+
+
+class MessageParserInterface(ABC):
+    @abstractmethod
+    def parser(self):
+        pass

@@ -5,11 +5,33 @@ integrations/standard_out/message.py
 from pprint import pprint
 from typing import cast
 
-from integrations.base.adapter import APIInterface
+from integrations.base.interface import APIInterface, LookupInterface, ReactionsInterface
+
+
+class _ReactionsDummy(ReactionsInterface):
+    def status(self, ch=None, ts=None) -> list:
+        _ = ch
+        _ = ts
+        return []
+
+    def all_remove(self, delete_list: list):
+        _ = delete_list
+
+
+class _LookupDummy(LookupInterface):
+    def get_channel_id(self):
+        pass
+
+    def get_dm_channel_id(self, user_id: str):
+        _ = user_id
 
 
 class StandardOut(APIInterface):
     """メッセージ標準出力クラス"""
+    def __init__(self):
+        self.lookup = _LookupDummy()
+        self.reactions = _ReactionsDummy()
+
     def post_message(self, msg: str, ts=False) -> dict:
         """標準出力
 
@@ -85,20 +107,6 @@ class StandardOut(APIInterface):
         _ = ts
         pprint(title)
         pprint(file)
-
-    def reactions_status(self, ch=None, ts=None) -> list:
-        _ = ch
-        _ = ts
-        return []
-
-    def all_reactions_remove(self, delete_list: list):
-        _ = delete_list
-
-    def get_channel_id(self):
-        pass
-
-    def get_dm_channel_id(self, user_id: str):
-        _ = user_id
 
     def get_conversations(self, ch=None, ts=None) -> dict:
         _ = ch

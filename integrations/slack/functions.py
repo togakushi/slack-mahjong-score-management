@@ -27,10 +27,10 @@ def score_verification(detection: GameResult, reactions_data: list | None = None
         reactions_data (list | None, optional): リアクションリスト. Defaults to None.
     """
 
-    api_adapter = factory.get_api_adapter(g.selected_service)
+    api_adapter = factory.select_adapter(g.selected_service)
 
     if not reactions_data:
-        reactions_data = api_adapter.reactions_status()
+        reactions_data = api_adapter.reactions.status()
 
     if detection.deposit:
         if g.cfg.setting.reaction_ok in reactions_data:

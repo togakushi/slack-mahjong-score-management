@@ -25,7 +25,6 @@ def test_help(config, keyword, monkeypatch):
 
     with (
         patch("libs.functions.compose.msg_help.event_message") as mock_help_event_message,
-        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
@@ -45,7 +44,6 @@ def test_results(config, keyword, monkeypatch):
 
     with (
         patch("libs.commands.results.slackpost.main") as mock_results,
-        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
@@ -63,10 +61,8 @@ def test_graph(config, keyword, monkeypatch):
     configuration.setup()
     g.selected_service = "test"
 
-
     with (
         patch("libs.commands.graph.slackpost.main") as mock_graph,
-        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
@@ -86,7 +82,6 @@ def test_ranking(config, keyword, monkeypatch):
 
     with (
         patch("libs.commands.ranking.slackpost.main") as mock_ranking,
-        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
@@ -106,7 +101,6 @@ def test_report(config, keyword, monkeypatch):
 
     with (
         patch("libs.commands.report.slackpost.main") as mock_report,
-        patch("cls.parser.lookup.api.get_dm_channel_id", return_value="dummy"),
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)

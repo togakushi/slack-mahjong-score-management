@@ -26,7 +26,7 @@ def main(client, body):
         body (dict): ポストされたデータ
     """
 
-    api_adapter = factory.get_api_adapter(g.selected_service)
+    api_adapter = factory.select_adapter(g.selected_service)
 
     logging.trace(body)  # type: ignore
     g.msg.parser(body)
@@ -116,7 +116,7 @@ def message_append(detection: GameResult):
         detection (GameResult): スコアデータ
     """
 
-    api_adapter = factory.get_api_adapter(g.selected_service)
+    api_adapter = factory.select_adapter(g.selected_service)
 
     if (g.cfg.setting.thread_report == g.msg.in_thread) or not float(g.msg.thread_ts):
         modify.db_insert(detection)
@@ -133,7 +133,7 @@ def message_changed(detection: GameResult):
         detection (GameResult): スコアデータ
     """
 
-    api_adapter = factory.get_api_adapter(g.selected_service)
+    api_adapter = factory.select_adapter(g.selected_service)
 
     record_data = lookup.db.exsist_record(g.msg.event_ts)
     if detection.to_dict() == record_data.to_dict():  # スコア比較
@@ -157,11 +157,11 @@ def message_changed(detection: GameResult):
 def message_deleted():
     """メッセージの削除処理"""
 
-    api_adapter = factory.get_api_adapter(g.selected_service)
+    api_adapter = factory.select_adapter(g.selected_service)
 
     if re.match(rf"^{g.cfg.cw.remarks_word}", g.msg.keyword):  # 追加メモ
         delete_list = modify.remarks_delete(g.msg.event_ts)
     else:
         delete_list = modify.db_delete(g.msg.event_ts)
 
-    api_adapter.all_reactions_remove(delete_list)
+    api_adapter.all_remove(delete_list)

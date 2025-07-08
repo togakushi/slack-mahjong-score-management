@@ -10,7 +10,7 @@ from libs.utils import dictutil
 
 def main():
     """成績の集計結果をslackにpostする"""
-    api_adapter = factory.get_api_adapter(g.selected_service)
+    api_adapter = factory.select_adapter(g.selected_service)
 
     g.params = dictutil.placeholder(g.cfg.results)
 

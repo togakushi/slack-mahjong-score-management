@@ -2,16 +2,26 @@
 integrations/factory.py
 """
 
-from integrations.base.adapter import APIInterface
-from integrations.standard_out.adapter import StandardOut
-from integrations.slack.adapter import SlackAPI
+from integrations.base import interface as base
+from integrations import slack
+from integrations import standard_out
 
 
-def get_api_adapter(selected_service: str) -> APIInterface:
-    """メッセージインターフェース"""
+def select_adapter(selected_service: str) -> base.APIInterface:
+    """AIPインターフェース"""
 
     match selected_service:
         case "slack":
-            return SlackAPI()
+            return slack.adapter.SlackAPI()
         case _:
-            return StandardOut()
+            return standard_out.adapter.StandardOut()
+
+
+def select_parser(selected_service: str) -> base.MessageParserInterface:
+    """メッセージパーサ"""
+
+    match selected_service:
+        case "slack":
+            return slack.parser.MessageParser()
+        case _:
+            return standard_out.parser.MessageParser()

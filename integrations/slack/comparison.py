@@ -21,7 +21,7 @@ DBSearchDict = dict[str, GameResult]
 
 def main() -> None:
     """データ突合の実施、その結果をslackにpostする"""
-    api_adapter = factory.get_api_adapter(g.selected_service)
+    api_adapter = factory.select_adapter(g.selected_service)
 
     # チェックコマンドを拾ったイベントの情報を保持(結果の返し先)
     command_ch = g.msg.channel_id
@@ -119,7 +119,7 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    api_adapter = factory.get_api_adapter(g.selected_service)
+    api_adapter = factory.select_adapter(g.selected_service)
 
     now_ts = float(ExtDt().format("ts"))
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
@@ -162,9 +162,9 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
 
                     # リアクションの削除
                     if key in val.get("reaction_ok", []):
-                        api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
+                        api.call_remove(g.cfg.setting.reaction_ok, ts=key)
                     if key in val.get("reaction_ng", []):
-                        api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
+                        api.call_remove(g.cfg.setting.reaction_ng, ts=key)
                     continue
 
             if slack_score.to_dict() == db_score.to_dict():  # スコア比較
@@ -217,8 +217,8 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
 
         # メッセージが残っているならリアクションを外す
         if not g.msg.channel_id:
-            g.msg.channel_id = api_adapter.get_channel_id()
-        for icon in api_adapter.reactions_status(ts=key):
+            g.msg.channel_id = api_adapter.lookup.get_channel_id()
+        for icon in api_adapter.reactions.status(ts=key):
             api.call_reactions_remove(icon, ts=key)
 
     return (count, msg)
@@ -325,12 +325,12 @@ def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict
             logging.notice("invalid score: %s deposit=%s", key, score_data.deposit)  # type: ignore
             msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data.deposit}]{score_data.to_text()}\n"
             if reaction_ok is not None and key in reaction_ok:
-                api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
+                api.call_remove(g.cfg.setting.reaction_ok, ts=key)
             if reaction_ng is not None and key not in reaction_ng:
                 api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
         else:
             if reaction_ng is not None and key in reaction_ng:
-                api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
+                api.call_remove(g.cfg.setting.reaction_ng, ts=key)
             if reaction_ok is not None and key not in reaction_ok:
                 api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
 

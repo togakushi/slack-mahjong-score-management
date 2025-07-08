@@ -103,7 +103,7 @@ def register_personal_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        api_adapter = factory.get_api_adapter(g.selected_service)
+        api_adapter = factory.select_adapter(g.selected_service)
 
         g.msg.parser(body)
         g.msg.client = client
