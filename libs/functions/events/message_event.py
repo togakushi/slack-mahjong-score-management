@@ -164,4 +164,4 @@ def message_deleted():
     else:
         delete_list = modify.db_delete(g.msg.event_ts)
 
-    api_adapter.all_remove(delete_list)
+    api_adapter.reactions.all_remove(delete_list)

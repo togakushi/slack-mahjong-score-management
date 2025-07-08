@@ -162,9 +162,9 @@ def check_omission(slack_data: SlackSearchDict, db_data: DBSearchDict) -> tuple[
 
                     # リアクションの削除
                     if key in val.get("reaction_ok", []):
-                        api.call_remove(g.cfg.setting.reaction_ok, ts=key)
+                        api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
                     if key in val.get("reaction_ng", []):
-                        api.call_remove(g.cfg.setting.reaction_ng, ts=key)
+                        api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
                     continue
 
             if slack_score.to_dict() == db_score.to_dict():  # スコア比較
@@ -325,12 +325,12 @@ def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict
             logging.notice("invalid score: %s deposit=%s", key, score_data.deposit)  # type: ignore
             msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data.deposit}]{score_data.to_text()}\n"
             if reaction_ok is not None and key in reaction_ok:
-                api.call_remove(g.cfg.setting.reaction_ok, ts=key)
+                api.call_reactions_remove(g.cfg.setting.reaction_ok, ts=key)
             if reaction_ng is not None and key not in reaction_ng:
                 api.call_reactions_add(g.cfg.setting.reaction_ng, ts=key)
         else:
             if reaction_ng is not None and key in reaction_ng:
-                api.call_remove(g.cfg.setting.reaction_ng, ts=key)
+                api.call_reactions_remove(g.cfg.setting.reaction_ng, ts=key)
             if reaction_ok is not None and key not in reaction_ok:
                 api.call_reactions_add(g.cfg.setting.reaction_ok, ts=key)
 
