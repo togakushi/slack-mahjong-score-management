@@ -9,8 +9,8 @@ if TYPE_CHECKING:
     from slack_sdk.web.client import WebClient
 
     from cls.config import AppConfig
-    from cls.parser import MessageParser
     from cls.types import TeamDataDict
+    from integrations.base.interface import MessageParserInterface
 
 selected_service: str = "slack"
 
@@ -24,7 +24,7 @@ webclient: "WebClient"
 # モジュール共通インスタンス
 cfg: "AppConfig"
 """Configインスタンス共有"""
-msg: "MessageParser"
+msg: "MessageParserInterface"
 """MessageParserインスタンス共有"""
 
 # 環境パラメータ

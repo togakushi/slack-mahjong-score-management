@@ -8,7 +8,7 @@ from integrations import standard_out
 
 
 def select_adapter(selected_service: str) -> base.APIInterface:
-    """AIPインターフェース"""
+    """AIPインターフェース選択"""
 
     match selected_service:
         case "slack":
@@ -18,7 +18,7 @@ def select_adapter(selected_service: str) -> base.APIInterface:
 
 
 def select_parser(selected_service: str) -> base.MessageParserInterface:
-    """メッセージパーサ"""
+    """メッセージパーサ選択"""
 
     match selected_service:
         case "slack":

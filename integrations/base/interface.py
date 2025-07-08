@@ -1,6 +1,7 @@
 """抽象化基底クラス"""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class ReactionsInterface(ABC):
@@ -128,6 +129,25 @@ class APIInterface(ABC):
 
 
 class MessageParserInterface(ABC):
+    """メッセージ解析インターフェース"""
+
+    client: Any
+    text: str | None
+    keyword: str
+    argument: list
+    channel_id: str | None
+    channel_type: str | None
+    event_ts: str
+    thread_ts: str
+    user_id: str
+    updatable: bool
+    in_thread: bool
+    status: str
+
     @abstractmethod
-    def parser(self):
+    def parser(self, _body: dict):
+        pass
+
+    @abstractmethod
+    def check_updatable(self):
         pass

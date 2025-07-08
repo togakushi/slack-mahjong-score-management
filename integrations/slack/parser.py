@@ -8,9 +8,10 @@ from slack_sdk import WebClient
 
 import libs.global_value as g
 from integrations import factory
+from integrations.base.interface import MessageParserInterface
 
 
-class MessageParser:
+class MessageParser(MessageParserInterface):
     """メッセージ解析クラス"""
     client: WebClient = WebClient()
     """slack WebClient オブジェクト"""

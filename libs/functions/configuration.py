@@ -13,7 +13,7 @@ from matplotlib import use
 
 import libs.global_value as g
 from cls.config import AppConfig
-from cls.parser import MessageParser
+from integrations import factory
 from libs.data import lookup
 
 
@@ -180,7 +180,7 @@ def setup() -> None:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
     g.cfg = AppConfig(g.args.config)
-    g.msg = MessageParser()
+    g.msg = factory.select_parser(g.selected_service)
 
     logging.notice(  # type: ignore
         "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
