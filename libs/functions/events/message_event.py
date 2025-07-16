@@ -140,7 +140,7 @@ def message_append(detection: GameResult, m: MessageParserInterface):
         m.post.message_type = "inside_thread"
         m.post.message = message.random_reply(m)
         api_adapter.post_message(m)
-        logging.notice("append: skip update(inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
+        logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
 def message_changed(detection: GameResult, m: MessageParserInterface):
@@ -161,7 +161,7 @@ def message_changed(detection: GameResult, m: MessageParserInterface):
                 modify.db_update(detection, m)
                 functions.score_verification(detection, m)
             else:
-                logging.notice("changed: skip update(rule_version not match). event_ts=%s", m.data.event_ts)  # type: ignore
+                logging.notice("skip (rule_version not match). event_ts=%s", m.data.event_ts)  # type: ignore
         else:
             modify.db_insert(detection, m)
             functions.score_verification(detection, m)
@@ -170,7 +170,7 @@ def message_changed(detection: GameResult, m: MessageParserInterface):
         m.post.message_type = "inside_thread"
         m.post.message = message.random_reply(m)
         api_adapter.post_message(m)
-        logging.notice("skip update(inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
+        logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
 def message_deleted(m: MessageParserInterface):
