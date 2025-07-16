@@ -4,35 +4,39 @@ libs/commands/graph/slackpost.py
 
 import libs.global_value as g
 from integrations import factory
+from integrations.base import MessageParserInterface
 from libs.commands.graph import personal, rating, summary
 from libs.utils import dictutil
 
 
-def main():
+def main(m: MessageParserInterface):
     """グラフをslackにpostする"""
     api_adapter = factory.select_adapter(g.selected_service)
-
-    g.params = dictutil.placeholder(g.cfg.graph)
+    g.params = dictutil.placeholder(g.cfg.graph, m)
 
     if len(g.params["player_list"]) == 1:  # 対象がひとり
-        title = "個人成績"
+        m.post.title = "個人成績"
         if g.params.get("statistics"):
-            count, ret = personal.statistics_plot()
+            count, ret = personal.statistics_plot(m)
         else:
-            count, ret = personal.plot()
+            count, ret = personal.plot(m)
     else:  # 対象が複数
         if g.params.get("rating"):  # レーティング
-            title = "レーティング推移"
-            count, ret = rating.plot()
+            m.post.title = "レーティング推移"
+            count, ret = rating.plot(m)
         else:
             if g.params.get("order"):
-                title = "順位変動"
-                count, ret = summary.rank_plot()
+                m.post.title = "順位変動"
+                count, ret = summary.rank_plot(m)
             else:
-                title = "ポイント推移"
-                count, ret = summary.point_plot()
+                m.post.title = "ポイント推移"
+                count, ret = summary.point_plot(m)
 
     if count == 0:
-        api_adapter.post_message(ret)
+        m.post.message = ret
+        m.post.thread = False
+        api_adapter.post_message(m)
     else:
-        api_adapter.fileupload(title, ret)
+        m.post.file_list = [{m.post.title: ret}]
+        m.post.thread = False
+        api_adapter.fileupload(m)

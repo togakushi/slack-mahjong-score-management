@@ -103,13 +103,14 @@ def register_versus_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
+        g.webclient = client
         api_adapter = factory.select_adapter(g.selected_service)
+        m = factory.select_parser(g.selected_service)
 
-        g.msg.parser(body)
-        g.msg.client = client
-
-        g.msg.argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        g.params = dictutil.placeholder(g.cfg.results)
+        m.parser(body)
+        add_argument, app_msg, update_flag = ui_parts.set_command_option(body)
+        g.cfg.results.always_argument.extend(add_argument)
+        g.params = dictutil.placeholder(g.cfg.results, m)
         g.params.update(update_flag)
 
         search_options = body["view"]["state"]["values"]
@@ -129,16 +130,12 @@ def register_versus_handlers(app):
         app_msg.pop()
         app_msg.append("集計完了")
 
-        msg1, msg2, file_list = results.versus.aggregation()
-        api_adapter.post(
-            headline=msg1,
-            message=msg2,
-            file_list=file_list,
-        )
+        m.post.headline, m.post.message, m.post.file_list = results.versus.aggregation()
+        api_adapter.post(m)
 
         client.views_update(
             view_id=g.app_var["view_id"],
-            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{m.post.headline}"),
         )
 
     @app.view("VersusMenu_ModalPeriodSelection")

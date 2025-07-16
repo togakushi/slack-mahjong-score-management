@@ -7,7 +7,6 @@ from typing import Literal
 
 import libs.global_value as g
 from cls.parser import CommandParser
-from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.utils import formatter, textutil
 
@@ -70,97 +69,3 @@ def check_namepattern(name: str, kind: Literal["member", "team"]) -> tuple[bool,
         ret_flg, ret_msg = False, "コマンドに使用される単語では登録できません。"
 
     return (ret_flg, ret_msg)
-
-
-def pattern(text: str) -> GameResult:
-    """成績記録用フォーマットチェック
-
-    Args:
-        text (str): slackにポストされた内容
-
-    Returns:
-        GameResult: スコアデータ
-    """
-
-    # 記号を置換
-    replace_chr = [
-        (chr(0xff0b), "+"),  # 全角プラス符号
-        (chr(0x2212), "-"),  # 全角マイナス符号
-        (chr(0xff08), "("),  # 全角丸括弧
-        (chr(0xff09), ")"),  # 全角丸括弧
-        (chr(0x2017), "_"),  # DOUBLE LOW LINE(半角)
-    ]
-    for z, h in replace_chr:
-        text = text.replace(z, h)
-
-    text = "".join(text.split())
-
-    # パターンマッチング
-    pattern1 = re.compile(
-        rf"^({g.cfg.search.keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
-    )
-    pattern2 = re.compile(
-        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({g.cfg.search.keyword})$"
-    )
-    pattern3 = re.compile(
-        rf"^({g.cfg.search.keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
-    )
-    pattern4 = re.compile(
-        r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({g.cfg.search.keyword})\((.+?)\)$"
-    )
-
-    # 情報取り出し
-    result = GameResult(ts=g.msg.event_ts, rule_version=g.cfg.mahjong.rule_version)
-    position: dict[str, int] = {}
-    match text:
-        case text if pattern1.findall(text):
-            msg = pattern1.findall(text)[0]
-            position = {
-                "p1_name": 1, "p1_str": 2,
-                "p2_name": 3, "p2_str": 4,
-                "p3_name": 5, "p3_str": 6,
-                "p4_name": 7, "p4_str": 8,
-            }
-            comment = None
-        case text if pattern2.findall(text):
-            msg = pattern2.findall(text)[0]
-            position = {
-                "p1_name": 0, "p1_str": 1,
-                "p2_name": 2, "p2_str": 3,
-                "p3_name": 4, "p3_str": 5,
-                "p4_name": 6, "p4_str": 7,
-            }
-            comment = None
-        case text if pattern3.findall(text):
-            msg = pattern3.findall(text)[0]
-            position = {
-                "p1_name": 2, "p1_str": 3,
-                "p2_name": 4, "p2_str": 5,
-                "p3_name": 6, "p3_str": 7,
-                "p4_name": 8, "p4_str": 9,
-            }
-            comment = str(msg[1])
-        case text if pattern4.findall(text):
-            msg = pattern4.findall(text)[0]
-            position = {
-                "p1_name": 0, "p1_str": 1,
-                "p2_name": 2, "p2_str": 3,
-                "p3_name": 4, "p3_str": 5,
-                "p4_name": 6, "p4_str": 7,
-            }
-            comment = str(msg[9])
-        case _:
-            return result
-
-    g.params.update(unregistered_replace=False)  # ゲスト無効
-    g.params.update(individual=True)  # チーム戦オフ
-
-    result.set(comment=comment)
-    for k, p in position.items():
-        if str(k).endswith("_name"):
-            result.set(**{k: formatter.name_replace(str(msg[p]), False)})
-            continue
-        result.set(**{k: str(msg[p])})
-
-    result.calc()
-    return result

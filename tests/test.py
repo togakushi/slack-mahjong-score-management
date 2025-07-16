@@ -13,6 +13,7 @@ import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.parser import CommandParser
+from integrations import factory
 from libs.commands import graph, report
 from libs.data import initialization
 from libs.functions import compose, configuration
@@ -29,39 +30,41 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         pattern (str): 実行パターン
     """
 
-    def graph_point():
+    def graph_point(m):
         """ポイント推移グラフ"""
         if len(g.params["player_list"]) == 1:
             pprint([
                 "exec: lib.graph.personal.plot()",
-                graph.personal.plot(),
+                graph.personal.plot(m),
                 f"{g.params=}" if flag.get("dump") else "g.params={...}",
             ], width=120)
         else:
             pprint([
                 "exec: lib.graph.summary.point_plot()",
-                graph.summary.point_plot(),
+                graph.summary.point_plot(m),
                 f"{g.params=}" if flag.get("dump") else "g.params={...}",
             ], width=120)
 
-    def graph_rank():
+    def graph_rank(m):
         """順位推移グラフ"""
         pprint([
             "exec: lib.graph.summary.rank_plot()",
-            graph.summary.rank_plot(),
+            graph.summary.rank_plot(m),
             f"{g.params=}" if flag.get("dump") else "g.params={...}",
         ], width=120)
 
-    def graph_statistics():
+    def graph_statistics(m):
         """統計グラフ"""
         pprint([
             "exec: lib.graph.personal.statistics_plot()",
-            graph.personal.statistics_plot(),
+            graph.personal.statistics_plot(m),
             f"{g.params=}" if flag.get("dump") else "g.params={...}",
         ], width=120)
 
     # ---------------------------------------------------------------------------------------------
+    m = factory.select_parser("test")
     target_loop: list = []
+
     if flag.get("target_loop"):
         target_loop += flag.get("target_player", [])
         target_loop += flag.get("target_team", [])
@@ -71,24 +74,24 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         argument += " ".join(flag.get("target_team", []))
 
     for loop in target_loop:
-        g.msg.argument = argument.split()
+        add_argument = argument.split()
 
         # 追加オプション
-        pre_params = CommandParser().analysis_argument(g.msg.argument).flags
+        pre_params = CommandParser().analysis_argument(add_argument).flags
         if flag.get("target_loop"):
-            g.msg.argument.append(f"{loop}")
+            add_argument.append(f"{loop}")
 
         if flag.get("save"):
             if pre_params.get("filename"):
                 pass
             else:
                 if flag.get("target_loop"):
-                    g.msg.argument.append(f"filename:{sec}_{pattern}_{loop}")
+                    add_argument.append(f"filename:{sec}_{pattern}_{loop}")
                 else:
-                    g.msg.argument.append(f"filename:{sec}_{pattern}")
+                    add_argument.append(f"filename:{sec}_{pattern}")
 
         print("-" * 120)
-        print(f"{pattern=} argument={g.msg.argument}")
+        print(f"{pattern=} argument={add_argument}")
 
         match test_case:
             case "skip":
@@ -102,64 +105,72 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pprint(compose.msg_help.event_message(), width=200)
 
             case "summary":
-                g.params = dictutil.placeholder(g.cfg.results)
+                g.cfg.results.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.results, m)
                 pprint([
                     "exec: lib.command.results.slackpost.main()",
-                    libs.commands.results.slackpost.main(),
+                    libs.commands.results.slackpost.main(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
             case "graph":
-                g.params = dictutil.placeholder(g.cfg.graph)
+                g.cfg.graph.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.graph, m)
                 if g.params.get("filename"):
                     save_filename = g.params["filename"]
                     g.params.update(filename=f"{save_filename}_point")
-                    graph_point()
+                    graph_point(m)
                     g.params.update(filename=f"{save_filename}_rank")
-                    graph_rank()
+                    graph_rank(m)
                     if g.params.get("statistics"):
                         g.params.update(filename=f"{save_filename}")
-                        graph_statistics()
+                        graph_statistics(m)
                 else:
                     g.params.update(filename=f"point_{sec}_{pattern}")
-                    graph_point()
+                    graph_point(m)
                     g.params.update(filename=f"rank_{sec}_{pattern}")
-                    graph_rank()
+                    graph_rank(m)
                     if g.params.get("statistics"):
                         g.params.update(filename=f"statistics_{sec}_{pattern}")
-                        graph_statistics()
+                        graph_statistics(m)
 
             case "graph_point":
-                g.params = dictutil.placeholder(g.cfg.graph)
-                graph_point()
+                g.cfg.graph.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.graph, m)
+                graph_point(m)
 
             case "graph_rank":
-                g.params = dictutil.placeholder(g.cfg.graph)
-                graph_rank()
+                g.cfg.graph.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.graph, m)
+                graph_rank(m)
 
             case "graph_statistics":
-                g.params = dictutil.placeholder(g.cfg.graph)
-                graph_statistics()
+                g.cfg.graph.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.graph, m)
+                graph_statistics(m)
 
             case "ranking":
-                g.params = dictutil.placeholder(g.cfg.ranking)
+                g.cfg.ranking.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.ranking, m)
 
                 pprint([
                     "exec: libs.commands.ranking.slackpost.main()",
-                    libs.commands.ranking.slackpost.main(),
+                    libs.commands.ranking.slackpost.main(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
             case "report":
-                g.params = dictutil.placeholder(g.cfg.report)
+                g.cfg.report.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.report, m)
                 pprint([
                     "exec: lib.command.report.slackpost.main()",
-                    libs.commands.report.slackpost.main(),
+                    libs.commands.report.slackpost.main(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
             case "pdf":
-                g.params = dictutil.placeholder(g.cfg.report)
+                g.cfg.report.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.report, m)
                 pprint([
                     "exec: lib.report.slackpost.results_report.gen_pdf()",
                     report.results_report.gen_pdf(),
@@ -167,10 +178,11 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 ], width=120)
 
             case "rating":
-                g.params = dictutil.placeholder(g.cfg.results)
+                g.cfg.results.always_argument = add_argument
+                g.params = dictutil.placeholder(g.cfg.results, m)
                 pprint([
                     "exec: lib.graph.rating.plot()",
-                    graph.rating.plot(),
+                    graph.rating.plot(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 

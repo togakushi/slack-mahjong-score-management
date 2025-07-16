@@ -12,14 +12,14 @@ from libs.functions import compose
 from libs.utils import formatter
 
 
-def aggregation() -> tuple[str, dict, dict]:
+def aggregation() -> tuple[str, dict, list]:
     """直接対戦結果を集計して返す
 
     Returns:
         tuple[str, dict, dict]
         - str: ヘッダ情報
         - dict: 集計データ
-        - dict: 生成ファイル情報
+        - list: 生成ファイル情報
     """
 
     # 検索動作を合わせる
@@ -54,7 +54,7 @@ def aggregation() -> tuple[str, dict, dict]:
     drop_name: list = []  # 対戦記録なしプレイヤー
     if len(df_vs) == 0:  # 検索結果なし
         msg2[""] = "対戦記録が見つかりません。\n"
-        return (msg1, msg2, {})
+        return (msg1, msg2, [{"dummy": ""}])
 
     for vs_name in vs_list:
         tmp_msg[vs_name] = {}
@@ -116,17 +116,17 @@ def aggregation() -> tuple[str, dict, dict]:
 
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            file_list = {
-                "対戦結果": formatter.save_output(df_data, "csv", "result.csv"),
-                "成績": formatter.save_output(df_vs2, "csv", "versus.csv"),
-            }
+            file_list = [
+                {"対戦結果": formatter.save_output(df_data, "csv", "result.csv")},
+                {"成績": formatter.save_output(df_vs2, "csv", "versus.csv")},
+            ]
         case "text" | "txt":
-            file_list = {
-                "対戦結果": formatter.save_output(df_data, "txt", "result.txt"),
-                "成績": formatter.save_output(df_vs2, "txt", "versus.txt"),
-            }
+            file_list = [
+                {"対戦結果": formatter.save_output(df_data, "txt", "result.txt")},
+                {"成績": formatter.save_output(df_vs2, "txt", "versus.txt")},
+            ]
         case _:
-            file_list = {}
+            file_list = [{"dummy": ""}]
 
     return (msg1, msg2, file_list)
 

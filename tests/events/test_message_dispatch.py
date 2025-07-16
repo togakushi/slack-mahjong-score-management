@@ -27,7 +27,7 @@ def test_help(config, keyword, monkeypatch):
         patch("libs.functions.compose.msg_help.event_message") as mock_help_event_message,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
+        events.message_event.main(param_data.FAKE_BODY)
         mock_help_event_message.assert_called_once()
 
 
@@ -39,14 +39,14 @@ def test_help(config, keyword, monkeypatch):
 def test_results(config, keyword, monkeypatch):
     """メッセージイベントテスト(results)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    configuration.setup()
     g.selected_service = "test"
+    configuration.setup()
 
     with (
         patch("libs.commands.results.slackpost.main") as mock_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
+        events.message_event.main(param_data.FAKE_BODY)
         mock_results.assert_called_once()
 
 
@@ -65,7 +65,7 @@ def test_graph(config, keyword, monkeypatch):
         patch("libs.commands.graph.slackpost.main") as mock_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
+        events.message_event.main(param_data.FAKE_BODY)
         mock_graph.assert_called_once()
 
 
@@ -84,7 +84,7 @@ def test_ranking(config, keyword, monkeypatch):
         patch("libs.commands.ranking.slackpost.main") as mock_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
+        events.message_event.main(param_data.FAKE_BODY)
         mock_ranking.assert_called_once()
 
 
@@ -103,5 +103,5 @@ def test_report(config, keyword, monkeypatch):
         patch("libs.commands.report.slackpost.main") as mock_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.message_event.main(param_data.FAKE_CLIENT, param_data.FAKE_BODY)
+        events.message_event.main(param_data.FAKE_BODY)
         mock_report.assert_called_once()

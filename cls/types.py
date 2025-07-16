@@ -146,25 +146,3 @@ class CommandSpec(TypedDict, total=False):
     match: list[str]
     action: CommandAction
     type: Literal["int", "str", "sql", "filename"]
-
-
-class MsgDict(TypedDict):
-    """メッセージ情報格納辞書"""
-    text: str
-    channel_id: str
-    channel_type: Literal["channel", "group", "im", "search_messages"]
-    """チャンネルタイプ
-    - *channel*: 通常チャンネル
-    - *group*: プライベートチャンネル
-    - *im*: ダイレクトメッセージ
-    - *search_messages*: 検索API
-    """
-    event_ts: str
-    thread_ts: str
-    user_id: str
-    status: Literal["message_append", "message_changed", "message_deleted"]
-    """イベントステータス
-    - *message_append*: 新規ポスト
-    - *message_changed*: 編集
-    - *message_deleted*: 削除
-    """

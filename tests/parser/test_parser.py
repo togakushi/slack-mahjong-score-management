@@ -8,6 +8,7 @@ import pytest
 
 import libs.global_value as g
 from cls.parser import CommandParser
+from integrations import factory
 from libs.functions import configuration
 from libs.utils import dictutil
 from tests.parser import param_data
@@ -102,9 +103,10 @@ def test_search_range(keyword, search_range, monkeypatch):
     """検索範囲"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
+    m = factory.select_parser("test")
+    m.parser({"event": {"text": keyword}})
 
-    g.msg.argument = keyword.split()
-    ret_range = [v for k, v in dictutil.placeholder(g.cfg.results).items() if k in ["starttime", "endtime"]]
+    ret_range = [v for k, v in dictutil.placeholder(g.cfg.results, m).items() if k in ["starttime", "endtime"]]
 
     print(f"\n  --> in: {keyword.split()} out: {ret_range}")
     assert ret_range == search_range

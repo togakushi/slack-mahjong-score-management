@@ -105,7 +105,7 @@ def column_alignment(df: pd.DataFrame, header: bool = False, index: bool = False
     return fmt
 
 
-def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None = None) -> str | None:
+def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None = None) -> str:
     """指定されたフォーマットでdfを保存する
 
     Args:
@@ -115,9 +115,7 @@ def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None
         headline (str | None, optional): 集計情報（ヘッダコメント）. Defaults to None.
 
     Returns:
-        Union[str, None]
-        - str: 保存したファイルパス
-        - None: 指定したフォーマットで保存できなかった場合
+        str: 保存したファイルパス
     """
 
     match kind.lower():
@@ -132,7 +130,7 @@ def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None
                 # headersalign=column_alignment(df, True),  # ToDo: python-tabulate >= 0.10.0
             )
         case _:
-            return None
+            return ""
 
     # 保存
     save_file = os.path.join(g.cfg.setting.work_dir, filename)

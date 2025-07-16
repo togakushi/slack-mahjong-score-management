@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from cls.types import GameInfoDict
+from integrations.base import MessageParserInterface
 from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import formatter
@@ -15,14 +16,14 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-def aggregation() -> tuple[str, dict, dict]:
+def aggregation(m: MessageParserInterface) -> tuple[str, dict, list]:
     """各プレイヤーの通算ポイントを表示
 
     Returns:
         tuple[str, dict, dict]
         - str: ヘッダ情報
         - dict: 集計データ
-        - dict: 生成ファイル情報
+        - list: 生成ファイル情報
     """
 
     # --- データ収集
@@ -55,10 +56,10 @@ def aggregation() -> tuple[str, dict, dict]:
     if not g.cfg.mahjong.ignore_flying:
         add_text = f" / トバされた人（延べ）：{df_summary["トビ"].sum()} 人"
 
-    headline += message.header(game_info, add_text, 1)
+    headline += message.header(game_info, m, add_text, 1)
 
     if df_summary.empty:
-        return (headline, {}, {})
+        return (headline, {}, [{"dummy": ""}])
 
     # --- 集計結果
     msg: dict = {}
@@ -126,17 +127,17 @@ def aggregation() -> tuple[str, dict, dict]:
 
     match g.params.get("format", "default").lower().lower():
         case "csv":
-            file_list = {
-                "集計結果": formatter.save_output(df_summary, "csv", f"{prefix_summary}.csv", headline),
-                "役満和了": formatter.save_output(df_grandslam, "csv", f"{prefix_yakuman}.csv", headline),
-            }
+            file_list = [
+                {"集計結果": formatter.save_output(df_summary, "csv", f"{prefix_summary}.csv", headline)},
+                {"役満和了": formatter.save_output(df_grandslam, "csv", f"{prefix_yakuman}.csv", headline)},
+            ]
         case "text" | "txt":
-            file_list = {
-                "集計結果": formatter.save_output(df_summary, "txt", f"{prefix_summary}.txt", headline),
-                "役満和了": formatter.save_output(df_grandslam, "txt", f"{prefix_yakuman}.txt", headline),
-            }
+            file_list = [
+                {"集計結果": formatter.save_output(df_summary, "txt", f"{prefix_summary}.txt", headline)},
+                {"役満和了": formatter.save_output(df_grandslam, "txt", f"{prefix_yakuman}.txt", headline)},
+            ]
         case _:
-            file_list = {}
+            file_list = [{"dummy": ""}]
 
     return (headline, msg, file_list)
 

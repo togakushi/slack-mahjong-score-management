@@ -4,21 +4,28 @@ libs/commands/results/detail.py
 
 import re
 import textwrap
-from typing import cast
+from typing import Tuple, cast
 
 import pandas as pd
 
 import libs.global_value as g
 from cls.types import GameInfoDict
+from integrations.base import MessageParserInterface
 from libs.data import aggregate, loader, lookup
 from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
 
-def aggregation():
+def aggregation(m: MessageParserInterface) -> Tuple[str, dict]:
     """個人/チーム成績詳細を集計して返す
+
+    Args:
+        m (MessageParserInterface): メッセージデータ
+
     Returns:
-        dict: slackにpostするデータ
+        Tuple[str,dict]: 集計結果
+        - **str**: メッセージ
+        - **dict**: postするデータ
     """
 
     # 検索動作を合わせる
@@ -48,7 +55,8 @@ def aggregation():
     record_df = aggregate.ranking_record()
 
     if result_df.empty or record_df.empty:
-        return (message.random_reply(message="no_target"), {})
+        m.post.message_type = "no_target"
+        return (message.random_reply(m), {})
 
     result_df = pd.merge(
         result_df, record_df,

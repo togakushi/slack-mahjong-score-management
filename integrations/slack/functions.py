@@ -3,23 +3,20 @@ integrations/slack/functions.py
 """
 
 import logging
-import re
 from typing import cast
 
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import SlackSearchData
 from integrations import factory
-from integrations.slack import api
+from integrations.base import MessageParserInterface
 from libs.functions import message
-from libs.utils import formatter, validator
 
-SlackSearchDict = dict[str, SlackSearchData]
+SlackSearchDict = dict[str, MessageParserInterface]
 DBSearchDict = dict[str, GameResult]
 
 
-def score_verification(detection: GameResult, reactions_data: list | None = None) -> None:
+def score_verification(detection: GameResult, m: MessageParserInterface, reactions_list: list | None = None) -> None:
     """素点合計をチェックしリアクションを付ける
 
     Args:
@@ -29,24 +26,30 @@ def score_verification(detection: GameResult, reactions_data: list | None = None
 
     api_adapter = factory.select_adapter(g.selected_service)
 
-    if not reactions_data:
-        reactions_data = api_adapter.reactions.status()
+    if not reactions_list:
+        reactions_list = api_adapter.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
 
     if detection.deposit:
-        if g.cfg.setting.reaction_ok in reactions_data:
-            api.call_reactions_remove(g.cfg.setting.reaction_ok)
-        if g.cfg.setting.reaction_ng not in reactions_data:
-            api.call_reactions_add(g.cfg.setting.reaction_ng)
-
-        api_adapter.post_message(
-            message.random_reply(message="invalid_score", rpoint_sum=detection.rpoint_sum()),
-            g.msg.event_ts,
+        api_adapter.reactions.ng(
+            ok_icon=g.cfg.setting.reaction_ok,
+            ng_icon=g.cfg.setting.reaction_ng,
+            ch=m.data.channel_id,
+            ts=m.data.event_ts,
+            reactions_list=reactions_list,
         )
+        m.post.message_type = "invalid_score"
+        m.post.rpoint_sum = detection.rpoint_sum()
+        m.post.message = message.random_reply(m)
+        m.post.thread = True
+        api_adapter.post_message(m)
     else:
-        if g.cfg.setting.reaction_ng in reactions_data:
-            api.call_reactions_remove(g.cfg.setting.reaction_ng)
-        if g.cfg.setting.reaction_ok not in reactions_data:
-            api.call_reactions_add(g.cfg.setting.reaction_ok)
+        api_adapter.reactions.ok(
+            ok_icon=g.cfg.setting.reaction_ok,
+            ng_icon=g.cfg.setting.reaction_ng,
+            ch=m.data.channel_id,
+            ts=m.data.event_ts,
+            reactions_list=reactions_list,
+        )
 
 
 def get_messages(word: str) -> SlackSearchDict:
@@ -84,14 +87,17 @@ def get_messages(word: str) -> SlackSearchDict:
 
     # 必要なデータだけ辞書に格納
     data: SlackSearchDict = cast(SlackSearchDict, {})
+    m = factory.select_parser(g.selected_service)
     for x in matches:
         if isinstance(x, dict):
-            data[x["ts"]] = {
-                "channel_id": str(cast(dict, x["channel"]).get("id", "")),
-                "user_id": str(x.get("user", "")),
-                "text": str(x.get("text", "")),
-            }
-
+            m.data.text = str(x.get("text", ""))
+            m.data.event_ts = str(x.get("ts", "0"))
+            m.data.thread_ts = "undetermined"
+            m.data.channel_id = str(cast(dict, x["channel"]).get("id", ""))
+            m.data.channel_type = "search_messages"
+            m.data.user_id = str(x.get("user", ""))
+            m.data.status = "message_append"
+            data[x["ts"]] = m
     return data
 
 
@@ -108,32 +114,24 @@ def get_message_details(matches: SlackSearchDict) -> SlackSearchDict:
     # 詳細情報取得
     for key, val in matches.items():
         res: dict = {}
-        if isinstance(channel_id := val.get("channel_id"), str):
-            conversations = g.app.client.conversations_replies(channel=channel_id, ts=key)
-            if (msg := conversations.get("messages")):
-                res = cast(dict, msg[0])
+        conversations = g.app.client.conversations_replies(channel=val.data.channel_id, ts=val.data.event_ts)
+        if (msg := conversations.get("messages")):
+            res = cast(dict, msg[0])
         else:
             continue
 
         if res:
             # 各種時間取得
-            matches[key].update({"event_ts": res.get("ts")})  # イベント発生時間
-            matches[key].update({"thread_ts": res.get("thread_ts")})  # スレッドの先頭
-            matches[key].update({"edited_ts": cast(dict, res.get("edited", {})).get("ts")})  # 編集時間
+            matches[key].data.event_ts = str(res.get("ts", "0"))  # イベント発生時間
+            matches[key].data.thread_ts = str(res.get("thread_ts", "0"))  # スレッドの先頭
+            matches[key].data.edited_ts = str(cast(dict, res.get("edited", {})).get("ts", "0"))  # 編集時間
             # リアクション取得
-            reaction_ok, reaction_ng = get_reactions_list(res)
-            matches[key].update({"reaction_ok": reaction_ok})
-            matches[key].update({"reaction_ng": reaction_ng})
-            # スレッド内フラグ
-            if val.get("event_ts") == val.get("thread_ts") or val.get("thread_ts") is None:
-                matches[key].update({"in_thread": False})
-            else:
-                matches[key].update({"in_thread": True})
+            matches[key].data.reaction_ok, matches[key].data.reaction_ng = get_reactions_list(res)
 
     return matches
 
 
-def get_score() -> SlackSearchDict:
+def pickup_score() -> SlackSearchDict:
     """過去ログからスコア記録を検索して返す
 
     Returns:
@@ -143,15 +141,14 @@ def get_score() -> SlackSearchDict:
     matches = get_messages(g.cfg.search.keyword)
 
     # ゲーム結果の抽出
+    detection = GameResult()
     for key in list(matches.keys()):
-        if (detection := validator.pattern(matches[key].get("text", ""))):
-            detection.calc(ts=key)
-            if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
-                logging.info("skip ignore user: %s (%s)", matches[key]["user_id"], detection)
+        detection.calc(**matches[key].get_score(g.cfg.search.keyword))
+        if detection:
+            if matches[key].data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
+                logging.info("skip ignore user: %s (%s)", matches[key].data.user_id, detection)
                 matches.pop(key)
                 continue
-            matches[key]["score"] = detection
-            matches[key].pop("text")
         else:  # 不一致は破棄
             matches.pop(key)
 
@@ -160,11 +157,10 @@ def get_score() -> SlackSearchDict:
         return cast(SlackSearchDict, {})
 
     matches = get_message_details(matches)
-    g.msg.channel_type = "search_messages"
     return matches
 
 
-def get_remarks() -> SlackSearchDict:
+def pickup_remarks() -> SlackSearchDict:
     """slackログからメモを検索して返す
 
     Returns:
@@ -172,20 +168,16 @@ def get_remarks() -> SlackSearchDict:
     """
 
     matches = get_messages(g.cfg.cw.remarks_word)
-
+    remarks: list = []
     # メモの抽出
     for key in list(matches.keys()):
-        if re.match(rf"^{g.cfg.cw.remarks_word}", matches[key].get("text", "")):  # キーワードが先頭に存在するかチェック
-            text = matches[key]["text"].replace(g.cfg.cw.remarks_word, "").strip().split()
-            if matches[key].get("user_id", "") in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
-                logging.info("skip ignore user: %s, (%s)", matches[key]["user_id"], text)
-                matches.pop(key)
-                continue
-            matches[key]["remarks"] = []
-            g.params.update(unregistered_replace=False)  # 名前ブレを修正(ゲスト無効)
-            for name, matter in zip(text[0::2], text[1::2]):
-                matches[key]["remarks"].append((formatter.name_replace(name, False), matter))
-            matches[key].pop("text")
+        if matches[key].data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
+            logging.info("skip ignore user: %s", matches[key].data.user_id)
+            matches.pop(key)
+            continue
+
+        if not (remark := matches[key].get_remarks(g.cfg.cw.remarks_word)):
+            remarks += remark
         else:  # 不一致は破棄
             matches.pop(key)
 
@@ -194,7 +186,6 @@ def get_remarks() -> SlackSearchDict:
         return cast(SlackSearchDict, {})
 
     matches = get_message_details(matches)
-    g.msg.channel_type = "search_messages"
     return matches
 
 
@@ -205,7 +196,7 @@ def get_reactions_list(msg: dict) -> tuple[list, list]:
         msg (dict): メッセージ内容
 
     Returns:
-        tuple[list, list]:
+        tuple[list,list]:
         - reaction_ok: okが付いているメッセージのタイムスタンプ
         - reaction_ng: ngが付いているメッセージのタイムスタンプ
     """

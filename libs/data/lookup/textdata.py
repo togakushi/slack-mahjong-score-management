@@ -11,9 +11,9 @@ def get_members_list() -> tuple[str, str]:
     """登録済みのメンバー一覧を取得する(slack出力用)
 
     Returns:
-        tuple[str, str]:
-        - str: post時のタイトル
-        - str: メンバー一覧
+        tuple[str,str]:
+        - **str**: post時のタイトル
+        - **str**: メンバー一覧
     """
 
     title = "登録済みメンバー一覧"

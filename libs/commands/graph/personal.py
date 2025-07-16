@@ -11,12 +11,13 @@ from matplotlib import gridspec
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
+from integrations.base import MessageParserInterface
 from libs.data import loader
 from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
-def plot() -> tuple[int, str]:
+def plot(m: MessageParserInterface) -> tuple[int, str]:
     """個人成績のグラフを生成する
 
     Returns:
@@ -26,13 +27,15 @@ def plot() -> tuple[int, str]:
     """
 
     plt.close()
+    m.post.message_type = "no_hits"
+
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = loader.read_data("summary/gamedata.sql")
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
-        return (0, message.random_reply(message="no_hits"))
+        return (0, message.random_reply(m))
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
@@ -118,7 +121,7 @@ def plot() -> tuple[int, str]:
     return (len(df), save_file)
 
 
-def statistics_plot() -> tuple[int, str]:
+def statistics_plot(m: MessageParserInterface) -> tuple[int, str]:
     """個人成績の統計グラフを生成する
 
     Returns:
@@ -133,7 +136,7 @@ def statistics_plot() -> tuple[int, str]:
     df = loader.read_data("summary/details.sql")
 
     if df.empty:
-        return (0, message.random_reply(message="no_hits"))
+        return (0, message.random_reply(m))
 
     if g.params.get("individual"):  # 個人成績
         player = formatter.name_replace(g.params["player_name"], add_mark=True)
@@ -147,7 +150,7 @@ def statistics_plot() -> tuple[int, str]:
     player_df = df.query("name == @player").reset_index(drop=True)
 
     if player_df.empty:
-        return (0, message.random_reply(message="no_hits"))
+        return (0, message.random_reply(m))
 
     player_df["sum_point"] = player_df["point"].cumsum()
 

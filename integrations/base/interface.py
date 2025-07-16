@@ -1,8 +1,9 @@
 """抽象化基底クラス"""
 
+import re
 from abc import ABC, abstractmethod
-from typing import Any
-from cls.types import MsgDict
+from dataclasses import dataclass, field
+from typing import Any, Literal
 
 
 class ReactionsInterface(ABC):
@@ -53,6 +54,26 @@ class ReactionsInterface(ABC):
             reactions_list (list): 付与済みリアクションリスト
         """
 
+    @abstractmethod
+    def append(self, icon: str, ch: str, ts: str) -> None:
+        """リアクションを付ける
+
+        Args:
+            icon (str): リアクションの種類
+            ch (str): チャンネルID
+            ts (str): タイムスタンプ
+        """
+
+    @abstractmethod
+    def remove(self, icon: str, ch: str, ts: str) -> None:
+        """リアクションを外す
+
+        Args:
+            icon (str): リアクションの種類
+            ch (str): チャンネルID
+            ts (str): タイムスタンプ
+        """
+
 
 class LookupInterface(ABC):
     """情報取得API操作抽象化ンターフェース"""
@@ -84,12 +105,16 @@ class APIInterface(ABC):
     reactions: "ReactionsInterface"
 
     @abstractmethod
-    def post_message(self, msg: str, ts=False) -> dict:
+    def post_message(self, m: "MessageParserInterface") -> dict:
         """メッセージをポストする
 
         Args:
-            msg (str): ポストする内容
-            ts (bool, optional): スレッドにする
+            kwargs (dict): パラメータ
+                - **thread** (bool): スレッドにポストするか
+                - **msg** (str): ポストするメッセージ
+                - **channel_id** (str): ポストするチャンネル
+                - **event_ts** (str): リプライ先のタイムスタンプ
+                - **thread_ts** (str): リプライ先のタイムスタンプ(スレッド)
 
         Returns:
             dict: API response
@@ -97,151 +122,225 @@ class APIInterface(ABC):
         return {}
 
     @abstractmethod
-    def post_multi_message(self, msg: dict, ts: bool | None = False, summarize: bool = True):
-        """辞書の要素単位でメッセージをポストする
-
-        Args:
-            msg (dict): ポストする内容
-            ts (bool | None, optional): _description_. Defaults to False.
-            summarize (bool, optional): _description_. Defaults to True.
-        """
+    def post_multi_message(self, m: "MessageParserInterface"):
+        """辞書の要素単位でメッセージをポストする"""
 
     @abstractmethod
-    def post_text(self, event_ts: str, title: str, msg: str) -> dict:
+    def post_text(self, m: "MessageParserInterface") -> dict:
         """コードブロック修飾付きでメッセージをポストする
 
-        Args:
-            event_ts (str): スレッドに返す
-            title (str): タイトル行
-            msg (str): ポストする内容
-
         Returns:
             dict: API response
         """
         return {}
 
     @abstractmethod
-    def post(self, **kwargs):
-        """kwargsの内容でポストのふるまいを変える
-
-        - headline:
-        - message:
-        - summarize:
-        - file_list:
-        """
+    def post(self, m: "MessageParserInterface"):
+        """メッセージデータの内容でポストのふるまいを変える"""
 
     @abstractmethod
-    def fileupload(self, title: str, file: str | bool, ts: str | bool = False):
+    def fileupload(self, m: "MessageParserInterface"):
         """ファイルをアップロードする
 
         Args:
-            title (str): タイトル行
-            file (str): アップロードファイルパス
-            ts (str | bool, optional): スレッドに返す. Defaults to False.
+            m (MessageParserInterface): メッセージデータ
         """
 
     @abstractmethod
-    def get_conversations(self, ch=str, ts=str) -> dict:
+    def get_conversations(self, m: "MessageParserInterface") -> dict:
         """スレッド情報の取得
-
-        Args:
-            ch (str, optional): チャンネルID. Defaults to None.
-            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
 
         Returns:
             dict: API response
         """
         return {}
+
+
+@dataclass
+class MsgData:
+    """ポストされたメッセージデータ"""
+    text: str = field(default=str())
+    event_ts: str = field(default="undetermined")
+    thread_ts: str = field(default="undetermined")
+    """スレッド元タイムスタンプ
+    - *0*: スレッドになっていない
+    - *undetermined*: 未定義状態
+    """
+    edited_ts: str = field(default="undetermined")
+    channel_id: str = field(default=str())
+    channel_type: Literal["channel", "group", "im", "search_messages", "undetermined"] = field(default="undetermined")
+    """チャンネルタイプ
+    - *channel*: 通常チャンネル
+    - *group*: プライベートチャンネル
+    - *im*: ダイレクトメッセージ
+    - *search_messages*: 検索API
+    - *undetermined*: 未定義状態
+    """
+    user_id: str = field(default=str())
+    status: Literal["message_append", "message_changed", "message_deleted", "undetermined"] = field(default="undetermined")
+    """イベントステータス
+    - *message_append*: 新規ポスト
+    - *message_changed*: 編集
+    - *message_deleted*: 削除
+    - *undetermined*: 未定義状態
+    """
+    reaction_ok: list = field(default_factory=list)
+    reaction_ng: list = field(default_factory=list)
+
+
+@dataclass
+class PostData:
+    """ポストするデータ"""
+    title: str = field(default=str())
+    headline: str = field(default=str())
+    message: str | dict[str, str] = field(default=str())
+    message_type: str = field(default="invalid_argument")
+    summarize: bool = field(default=True)
+    thread: bool = field(default=False)
+    file_list: list[dict[str, str]] = field(default_factory=list)
+    ts: str = field(default="undetermined")
+    rpoint_sum: int = field(default=0)
 
 
 class MessageParserInterface(ABC):
     """メッセージ解析インターフェース"""
 
-    client: Any
-    text: str | None
-    keyword: str
-    argument: list
-    channel_id: str | None
-    channel_type: str | None
-    event_ts: str
-    thread_ts: str
-    user_id: str
-    updatable: bool
-    in_thread: bool
-    status: str
-
-    @abstractmethod
-    def parser(self, _body: dict):
-        pass
-
-    @abstractmethod
-    def check_updatable(self):
-        pass
-
-
-class NewMsgParserInterface(ABC):
-    data: MsgDict
-
     def __init__(self):
-        self.data: MsgDict = MsgDict()
+        self.data = MsgData()
+        self.post = PostData()
 
     @abstractmethod
     def parser(self, body: Any):
         pass
 
     @property
+    @abstractmethod
+    def check_updatable(self) -> bool:
+        pass
+
+    @property
     def in_thread(self) -> bool:
-        if self.data["thread_ts"] == "0":
+        if self.data.thread_ts == "0":
             return False
-        elif self.data["event_ts"] == self.data["thread_ts"]:
+        elif self.data.event_ts == self.data.thread_ts:
             return False
         return True
 
     @property
-    def text(self) -> str:
-        return self.data.get("text", "")
-
-    @property
     def keyword(self) -> str:
-        if (ret := self.data["text"].split()):
+        if (ret := self.data.text.split()):
             return ret[0]
-        return ret
+        return self.data.text
 
     @property
     def argument(self) -> list:
-        if (ret := self.data["text"].split()):
+        if (ret := self.data.text.split()):
             return ret[1:]
         return ret
 
-    @argument.setter
-    def argument(self, value: list) -> None:
-        if isinstance(value, license):
-            self.argument = value
+    def get_score(self, keyword: str) -> dict:
+        """textからスコアを抽出する
 
-    @property
-    def event_ts(self) -> str:
-        return self.data.get("event_ts", "0")
+        Args:
+            keyword (str): 成績報告キーワード
 
-    @event_ts.setter
-    def event_ts(self, value: str) -> None:
-        self.data["event_ts"] = value
+        Returns:
+            dict: 結果
+        """
 
-    @property
-    def thread_ts(self) -> str:
-        return self.data.get("thread_ts", "0")
+        text = self.data.text
+        ret: dict = {}
 
-    @property
-    def channel_id(self) -> str:
-        return self.data.get("channel_id", "")
+        # 記号を置換
+        replace_chr = [
+            (chr(0xff0b), "+"),  # 全角プラス符号
+            (chr(0x2212), "-"),  # 全角マイナス符号
+            (chr(0xff08), "("),  # 全角丸括弧
+            (chr(0xff09), ")"),  # 全角丸括弧
+            (chr(0x2017), "_"),  # DOUBLE LOW LINE(半角)
+        ]
+        for z, h in replace_chr:
+            text = text.replace(z, h)
 
-    @property
-    def channel_type(self) -> str:
-        return self.data.get("channel_type", "dummy")
+        text = "".join(text.split())  # 改行削除
 
-    @property
-    def user_id(self) -> str:
-        return self.data.get("user_id", "")
+        # パターンマッチング
+        pattern1 = re.compile(
+            rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
+        )
+        pattern2 = re.compile(
+            r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$"
+        )
+        pattern3 = re.compile(
+            rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$"
+        )
+        pattern4 = re.compile(
+            r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$"
+        )
 
-    @property
-    def status(self) -> str:
-        return self.data.get("status", "dummy")
+        # 情報取り出し
+        position: dict[str, int] = {}
+        match text:
+            case text if pattern1.findall(text):
+                msg = pattern1.findall(text)[0]
+                position = {
+                    "p1_name": 1, "p1_str": 2,
+                    "p2_name": 3, "p2_str": 4,
+                    "p3_name": 5, "p3_str": 6,
+                    "p4_name": 7, "p4_str": 8,
+                }
+                comment = None
+            case text if pattern2.findall(text):
+                msg = pattern2.findall(text)[0]
+                position = {
+                    "p1_name": 0, "p1_str": 1,
+                    "p2_name": 2, "p2_str": 3,
+                    "p3_name": 4, "p3_str": 5,
+                    "p4_name": 6, "p4_str": 7,
+                }
+                comment = None
+            case text if pattern3.findall(text):
+                msg = pattern3.findall(text)[0]
+                position = {
+                    "p1_name": 2, "p1_str": 3,
+                    "p2_name": 4, "p2_str": 5,
+                    "p3_name": 6, "p3_str": 7,
+                    "p4_name": 8, "p4_str": 9,
+                }
+                comment = str(msg[1])
+            case text if pattern4.findall(text):
+                msg = pattern4.findall(text)[0]
+                position = {
+                    "p1_name": 0, "p1_str": 1,
+                    "p2_name": 2, "p2_str": 3,
+                    "p3_name": 4, "p3_str": 5,
+                    "p4_name": 6, "p4_str": 7,
+                }
+                comment = str(msg[9])
+            case _:
+                return ret
+
+        for k, p in position.items():
+            ret.update({k: str(msg[p])})
+
+        ret.update(comment=comment)
+        ret.update(ts=self.data.event_ts)
+
+        return ret
+
+    def get_remarks(self, keyword: str) -> list:
+        """textからメモを抽出する
+
+        Args:
+            keyword (str): メモ記録キーワード
+
+        Returns:
+            list: 結果
+        """
+
+        ret: list = []
+        if re.match(rf"^{keyword}", self.data.text):  # キーワードが先頭に存在するかチェック
+            text = self.data.text.replace(keyword, "").strip().split()
+            for name, matter in zip(text[0::2], text[1::2]):
+                ret.append([name, matter])
+        return ret

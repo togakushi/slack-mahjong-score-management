@@ -6,19 +6,20 @@ import pandas as pd
 
 import libs.global_value as g
 from cls.types import GameInfoDict
+from integrations.base import MessageParserInterface
 from libs.data import aggregate, loader
 from libs.functions import compose, message
 from libs.utils import formatter
 
 
-def aggregation() -> tuple[str, dict, dict]:
+def aggregation(m: MessageParserInterface) -> tuple[str, dict, list]:
     """レーティングを集計して返す
 
     Returns:
         tuple[str, dict, dict]:
         - str: ヘッダ情報
         - dict: 集計データ
-        - dict: 生成ファイルの情報
+        - list: 生成ファイルの情報
     """
 
     # 情報ヘッダ
@@ -29,8 +30,9 @@ def aggregation() -> tuple[str, dict, dict]:
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info: GameInfoDict = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        headline += "\t" + message.random_reply(message="no_hits")
-        return (headline, {}, {})
+        m.post.message_type = "no_hits"
+        headline += "\t" + message.random_reply(m)
+        return (headline, {}, [{"dummy": ""}])
 
     df_results = loader.read_data("ranking/results.sql").set_index("name")
     df_ratings = aggregate.calculation_rating()
@@ -68,10 +70,11 @@ def aggregation() -> tuple[str, dict, dict]:
         df["name"] = df["name"].replace(mapping_dict)
 
     if df.empty:
-        headline += "\t" + message.random_reply(message="no_target")
-        return (headline, {}, {})
+        m.post.message_type = "no_target"
+        headline += "\t" + message.random_reply(m)
+        return (headline, {}, [{"dummy": ""}])
 
-    headline += message.header(game_info, add_text, 1)
+    headline += message.header(game_info, m, add_text, 1)
     df = formatter.df_rename(df.filter(
         items=[
             "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"
@@ -104,15 +107,16 @@ def aggregation() -> tuple[str, dict, dict]:
     if g.params.get("filename"):
         prefix_rating = f"{g.params["filename"]}"
 
-    file_list: dict = {"レーティング": ""}
     match g.params.get("format", "default").lower().lower():
         case "csv":
-            file_list = {
-                "レーティング": formatter.save_output(df, "csv", f"{prefix_rating}.csv", headline),
-            }
+            file_list = [
+                {"レーティング": formatter.save_output(df, "csv", f"{prefix_rating}.csv", headline)},
+            ]
         case "text" | "txt":
-            file_list = {
-                "レーティング": formatter.save_output(df, "txt", f"{prefix_rating}.txt", headline),
-            }
+            file_list = [
+                {"レーティング": formatter.save_output(df, "txt", f"{prefix_rating}.txt", headline)},
+            ]
+        case _:
+            file_list = [{"レーティング": ""}]
 
     return (headline, msg, file_list)

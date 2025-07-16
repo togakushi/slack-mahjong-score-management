@@ -16,7 +16,7 @@ from libs.functions import compose
 from libs.registry import member, team
 
 
-def main(ack, body, client):
+def main(ack, body):
     """スラッシュコマンド
 
     Args:
@@ -29,51 +29,60 @@ def main(ack, body, client):
     logging.trace(body)  # type: ignore
 
     api_adapter = factory.select_adapter(g.selected_service)
+    m = factory.select_parser(g.selected_service)
+    m.parser(body)
 
-    g.msg.parser(body)
-    g.msg.client = client
-
-    if g.msg.text:
-        match g.msg.keyword:
+    if m.data.text:
+        match m.keyword:
             # 成績管理系コマンド
             case x if x in g.cfg.alias.results:
-                libs.commands.results.slackpost.main()
+                libs.commands.results.slackpost.main(m)
             case x if x in g.cfg.alias.graph:
-                libs.commands.graph.slackpost.main()
+                libs.commands.graph.slackpost.main(m)
             case x if x in g.cfg.alias.ranking:
-                libs.commands.ranking.slackpost.main()
+                libs.commands.ranking.slackpost.main(m)
             case x if x in g.cfg.alias.report:
-                libs.commands.report.slackpost.main()
+                libs.commands.report.slackpost.main(m)
 
             # データベース関連コマンド
             case x if x in g.cfg.alias.check:
-                comparison.main()
+                comparison.main(m)
             case x if x in g.cfg.alias.download:
-                api_adapter.fileupload("resultdb", g.cfg.db.database_file)
+                m.post.file_list = [{m.post.title: g.cfg.db.database_file}]
+                api_adapter.fileupload(m)
 
             # メンバー管理系コマンド
             case x if x in g.cfg.alias.member:
-                title, msg = lookup.textdata.get_members_list()
-                api_adapter.post_text(g.msg.event_ts, title, msg)
+                m.post.title, m.post.message = lookup.textdata.get_members_list()
+                api_adapter.post_text(m)
             case x if x in g.cfg.alias.add:
-                api_adapter.post_message(member.append(g.msg.argument))
+                m.post.message = member.append(m.argument)
+                api_adapter.post_message(m)
             case x if x in g.cfg.alias.delete:
-                api_adapter.post_message(member.remove(g.msg.argument))
+                m.post.message = member.remove(m.argument)
+                api_adapter.post_message(m)
 
             # チーム管理系コマンド
             case x if x in g.cfg.alias.team_create:
-                api_adapter.post_message(team.create(g.msg.argument))
+                m.post.message = team.create(m.argument)
+                api_adapter.post_message(m)
             case x if x in g.cfg.alias.team_del:
-                api_adapter.post_message(team.delete(g.msg.argument))
+                m.post.message = team.delete(m.argument)
+                api_adapter.post_message(m)
             case x if x in g.cfg.alias.team_add:
-                api_adapter.post_message(team.append(g.msg.argument))
+                m.post.message = team.append(m.argument)
+                api_adapter.post_message(m)
             case x if x in g.cfg.alias.team_remove:
-                api_adapter.post_message(team.remove(g.msg.argument))
+                m.post.message = team.remove(m.argument)
+                api_adapter.post_message(m)
             case x if x in g.cfg.alias.team_list:
-                api_adapter.post_message(lookup.textdata.get_team_list())
+                m.post.message = lookup.textdata.get_team_list()
+                api_adapter.post_message(m)
             case x if x in g.cfg.alias.team_clear:
-                api_adapter.post_message(team.clear())
+                m.post.message = team.clear()
+                api_adapter.post_message(m)
 
             # その他
             case _:
-                api_adapter.post_message(compose.msg_help.slash_command(body["command"]))
+                m.post.message = compose.msg_help.slash_command(g.cfg.setting.slash_command)
+                api_adapter.post_message(m)

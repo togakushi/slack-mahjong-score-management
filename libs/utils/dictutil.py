@@ -13,9 +13,10 @@ from libs.utils import formatter
 
 if TYPE_CHECKING:
     from cls.config import SubCommand
+    from integrations.base import MessageParserInterface
 
 
-def placeholder(subcom: "SubCommand") -> dict:
+def placeholder(subcom: "SubCommand", m: "MessageParserInterface") -> dict:
     """プレースホルダに使用する辞書を生成
 
     Args:
@@ -45,7 +46,7 @@ def placeholder(subcom: "SubCommand") -> dict:
     ret_dict.update(pre_param.flags)
 
     # 引数の処理
-    param = parser.analysis_argument(g.msg.argument)
+    param = parser.analysis_argument(m.argument)
     logging.info("%s", param)
     ret_dict.update(param.flags)  # 上書き
 

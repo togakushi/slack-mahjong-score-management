@@ -2,9 +2,8 @@
 integrations/factory.py
 """
 
+from integrations import slack, standard_out
 from integrations.base import interface as base
-from integrations import slack
-from integrations import standard_out
 
 
 def select_adapter(selected_service: str) -> base.APIInterface:
@@ -17,7 +16,7 @@ def select_adapter(selected_service: str) -> base.APIInterface:
             return standard_out.adapter.StandardOut()
 
 
-def select_parser(selected_service: str) -> base.MessageParserInterface:
+def select_parser(selected_service: str):
     """メッセージパーサ選択"""
 
     match selected_service:

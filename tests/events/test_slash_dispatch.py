@@ -27,7 +27,7 @@ def test_help(config, keyword, monkeypatch):
         patch("libs.functions.compose.msg_help.slash_command") as mock_help_slash_command,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_help_slash_command.assert_called_once()
 
 
@@ -46,7 +46,7 @@ def test_results(config, keyword, monkeypatch):
         patch("libs.commands.results.slackpost.main") as mock_slash_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_results.assert_called_once()
 
 
@@ -65,7 +65,7 @@ def test_graph(config, keyword, monkeypatch):
         patch("libs.commands.graph.slackpost.main") as mock_slash_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_graph.assert_called_once()
 
 
@@ -84,7 +84,7 @@ def test_ranking(config, keyword, monkeypatch):
         patch("libs.commands.ranking.slackpost.main") as mock_slash_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_ranking.assert_called_once()
 
 
@@ -103,7 +103,7 @@ def test_report(config, keyword, monkeypatch):
         patch("libs.commands.report.slackpost.main") as mock_slash_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_report.assert_called_once()
 
 
@@ -122,7 +122,7 @@ def test_check(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.comparison.main") as mock_slash_check,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_check.assert_called_once()
 
 
@@ -138,7 +138,7 @@ def test_download(config, keyword, monkeypatch):
     g.selected_service = "test"
 
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-    events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+    events.slash_command.main(str, param_data.FAKE_BODY)
 
 
 @pytest.mark.parametrize(
@@ -156,7 +156,7 @@ def test_member_list(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.lookup.textdata.get_members_list", return_value=("", "")) as mock_slash_member_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_member_list.assert_called_once()
 
 
@@ -175,7 +175,7 @@ def test_member_add(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.member.append", return_value=None) as mock_slash_member_add,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_member_add.assert_called_once()
 
 
@@ -194,7 +194,7 @@ def test_member_del(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.member.remove", return_value=None) as mock_slash_member_del,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_member_del.assert_called_once()
 
 
@@ -213,7 +213,7 @@ def test_team_create(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.team.create", return_value=None) as mock_slash_team_create,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_team_create.assert_called_once()
 
 
@@ -232,7 +232,7 @@ def test_team_del(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.team.delete", return_value=None) as mock_slash_team_del,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_team_del.assert_called_once()
 
 
@@ -251,7 +251,7 @@ def test_team_add(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.team.append", return_value=None) as mock_slash_team_add,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_team_add.assert_called_once()
 
 
@@ -270,7 +270,7 @@ def test_team_remove(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.team.remove", return_value=None) as mock_slash_team_remove,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_team_remove.assert_called_once()
 
 
@@ -289,7 +289,7 @@ def test_team_list(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.lookup.textdata.get_team_list", return_value="") as mock_slash_team_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_team_list.assert_called_once()
 
 
@@ -308,5 +308,5 @@ def test_team_clear(config, keyword, monkeypatch):
         patch("libs.functions.events.slash_command.team.clear", return_value="") as mock_slash_team_clear,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        events.slash_command.main(str, param_data.FAKE_BODY, param_data.FAKE_CLIENT)
+        events.slash_command.main(str, param_data.FAKE_BODY)
         mock_slash_team_clear.assert_called_once()

@@ -9,13 +9,14 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from cls.types import GameInfoDict
+from integrations.base import MessageParserInterface
 from libs.data import aggregate
 from libs.functions import compose, message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
 
 
-def plot() -> tuple[int, str]:
+def plot(m: MessageParserInterface) -> tuple[int, str]:
     """レーティング推移グラフを生成する
 
     Returns:
@@ -30,7 +31,8 @@ def plot() -> tuple[int, str]:
     df_ratings = aggregate.calculation_rating()
 
     if df_ratings.empty:
-        return (0, message.random_reply(message="no_hits"))
+        m.post.message_type = "no_hits"
+        return (0, message.random_reply(m))
 
     # 足切り
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()

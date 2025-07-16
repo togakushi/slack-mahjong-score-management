@@ -2,6 +2,7 @@
 libs/commands/home_tab/ranking.py
 """
 
+import copy
 import logging
 
 import libs.global_value as g
@@ -9,7 +10,6 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
 from libs.commands import ranking
 from libs.commands.home_tab import ui_parts
-from libs.functions import message
 from libs.functions.events.handler_registry import register
 from libs.utils import dictutil
 
@@ -93,13 +93,14 @@ def register_ranking_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
+        g.webclient = client
         api_adapter = factory.select_adapter(g.selected_service)
+        m = factory.select_parser(g.selected_service)
 
-        g.msg.parser(body)
-        g.msg.client = client
-
-        g.msg.argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        g.params = dictutil.placeholder(g.cfg.ranking)
+        m.parser(body)
+        add_argument, app_msg, update_flag = ui_parts.set_command_option(body)
+        g.cfg.ranking.always_argument.extend(add_argument)
+        g.params = dictutil.placeholder(g.cfg.ranking, m)
         g.params.update(update_flag)
 
         client.views_update(
@@ -116,16 +117,17 @@ def register_ranking_handlers(app):
 
         app_msg.pop()
         app_msg.append("集計完了")
-        msg1 = message.random_reply(message="no_hits")
+        tmp_m = copy.deepcopy(m)
 
-        msg1, msg2 = ranking.ranking.aggregation()
-        if msg2:
-            res = api_adapter.post_message(msg1)
-            api_adapter.post_multi_message(msg2, res["ts"])
+        tmp_m.post.message, m.post.message = ranking.ranking.aggregation(m)
+        if m.post.message:
+            res = api_adapter.post_message(tmp_m)
+            m.post.ts = str(res.get("ts", "undetermined"))
+            api_adapter.post_multi_message(m)
 
         client.views_update(
             view_id=g.app_var["view_id"],
-            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}"),
+            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{tmp_m.post.message}"),
         )
 
     @app.view("RankingMenu_ModalPeriodSelection")

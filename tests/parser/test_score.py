@@ -6,9 +6,10 @@ import pytest
 
 import libs.global_value as g
 from cls.config import AppConfig
+from cls.score import GameResult
 from libs.functions import configuration, score
-from libs.utils import validator
 from tests.parser import param_data
+from integrations.standard_out.parser import MessageParser
 
 
 @pytest.mark.parametrize(
@@ -20,25 +21,28 @@ def test_score_report(input_str, result_dict, get_point):
     """得点入力"""
     configuration.set_loglevel()
     g.cfg = AppConfig("tests/testdata/minimal.ini")
+    m = MessageParser()
+    m.data.text = input_str
+    m.data.event_ts = "1234567890.123456"
 
-    ret = validator.pattern(input_str)
-    ret.calc(ts="1234567890.123456")
+    result = GameResult()
+    result.calc(**m.get_score(g.cfg.search.keyword))
     chk_dict: dict = {}
-    if ret.has_valid_data():
-        chk_dict.update({k: v for k, v in ret.to_dict().items() if str(k).endswith("_name")})
-        chk_dict.update({k: v for k, v in ret.to_dict().items() if str(k).endswith("_str")})
-        chk_dict.update({"comment": ret.comment})
+    if result.has_valid_data():
+        chk_dict.update({k: v for k, v in result.to_dict().items() if str(k).endswith("_name")})
+        chk_dict.update({k: v for k, v in result.to_dict().items() if str(k).endswith("_str")})
+        chk_dict.update({"comment": result.comment})
     print("score data:", chk_dict)
     assert chk_dict == result_dict
 
-    if ret.has_valid_data():
+    if result.has_valid_data():
         for x in range(3):
-            ret.calc(**ret.to_dict())
-            print("point:", x, ret.to_list("point"))
-            assert ret.p1.point == get_point["p1_point"]
-            assert ret.p2.point == get_point["p2_point"]
-            assert ret.p3.point == get_point["p3_point"]
-            assert ret.p4.point == get_point["p4_point"]
+            result.calc(**result.to_dict())
+            print("point:", x, result.to_list("point"))
+            assert result.p1.point == get_point["p1_point"]
+            assert result.p2.point == get_point["p2_point"]
+            assert result.p3.point == get_point["p3_point"]
+            assert result.p4.point == get_point["p4_point"]
 
 
 @pytest.mark.parametrize(

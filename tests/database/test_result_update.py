@@ -8,10 +8,12 @@ from contextlib import closing
 import pytest
 
 import libs.global_value as g
+from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
+from integrations import factory
 from libs.data import modify
 from libs.functions import configuration
-from libs.utils import dbutil, validator
+from libs.utils import dbutil
 from tests.database import param_data
 
 
@@ -24,26 +26,26 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     """スコア登録テスト"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
     configuration.setup()
-    g.selected_service = "test"
     g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
-    g.msg.updatable = True
+    g.selected_service = "test"
     g.cfg.mahjong.draw_split = draw_split
-    g.msg.event_ts = ExtDt().format("ts")
 
-    score_data = validator.pattern(game_result)
-    score_data.calc(ts="1234567890.123456")
+    m = factory.select_parser("text")
+    m.data.text = game_result
+    m.data.event_ts = ExtDt().format("ts")
+
+    score_data = GameResult()
+    score_data.calc(**m.get_score(g.cfg.search.keyword))
     assert score_data.has_valid_data()
-
-    score_data.calc(ts=g.msg.event_ts)
-    modify.db_insert(score_data)
+    modify.db_insert(score_data, m)
 
     with closing(dbutil.get_connection()) as conn:
-        cur = conn.execute("select * from result where ts=?;", (g.msg.event_ts,))
+        cur = conn.execute("select * from result where ts=?;", (m.data.event_ts,))
         db_data = dict(cur.fetchone())
         assert db_data is not None
 
     db_point = {k: v for k, v in db_data.items() if str(k).endswith("_point")}
     db_rank = {k: v for k, v in db_data.items() if str(k).endswith("_rank")}
-    print(g.msg.event_ts, db_point, db_rank)
+    print(m.data.event_ts, db_point, db_rank)
     assert db_point == get_point
     assert db_rank == get_rank

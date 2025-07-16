@@ -11,10 +11,11 @@ from typing import cast
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
+from integrations.base import MessageParserInterface
 from libs.functions import compose
 
 
-def random_reply(message: str, rpoint_sum=0) -> str:
+def random_reply(m: MessageParserInterface) -> str:
     """メッセージをランダムに返す
 
     Args:
@@ -26,9 +27,9 @@ def random_reply(message: str, rpoint_sum=0) -> str:
     """
 
     correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
-    rpoint_diff = abs(correct_score - rpoint_sum)
+    rpoint_diff = abs(correct_score - m.post.rpoint_sum)
 
-    default_message = {
+    default_message_type = {
         "invalid_argument": "使い方が間違っています。",
         "no_hits": "{start} ～ {end} に≪{keyword}≫はありません。",
         "no_target": "集計対象データがありません。",
@@ -37,33 +38,33 @@ def random_reply(message: str, rpoint_sum=0) -> str:
         "inside_thread": "<@{user_id}> スレッド内から成績登録はできません。",
     }
 
-    msg = default_message.get(message, "")
+    msg = default_message_type.get(m.post.message_type, "invalid_argument")
 
     if cast(ConfigParser, getattr(g.cfg, "_parser")).has_section("custom_message"):
         msg_list = []
         for key, val in cast(ConfigParser, getattr(g.cfg, "_parser")).items("custom_message"):
-            if key.startswith(message):
+            if key.startswith(m.post.message_type):
                 msg_list.append(val)
         if msg_list:
             msg = random.choice(msg_list)
 
     try:
         msg = str(msg.format(
-            user_id=g.msg.user_id,
+            user_id=m.data.user_id,
             keyword=g.cfg.search.keyword,
             start=ExtDt(g.params.get("starttime", ExtDt())).format("ymd"),
             end=ExtDt(g.params.get("onday", ExtDt())).format("ymd"),
             rpoint_diff=rpoint_diff * 100,
-            rpoint_sum=rpoint_sum * 100,
+            rpoint_sum=m.post.rpoint_sum * 100,
         ))
     except KeyError as e:
         logging.error("[unknown keywords] %s: %s", e, msg)
-        msg = msg.replace("{user_id}", g.msg.user_id)
+        msg = msg.replace("{user_id}", m.data.user_id)
 
     return msg
 
 
-def header(game_info: GameInfoDict, add_text="", indent=1):
+def header(game_info: GameInfoDict, m: MessageParserInterface, add_text="", indent=1):
     """見出し生成
 
     Args:
@@ -88,7 +89,8 @@ def header(game_info: GameInfoDict, add_text="", indent=1):
 
     # ゲーム数
     if game_info["game_count"] == 0:
-        msg += f"{random_reply(message="no_hits")}"
+        m.post.message_type = "no_hits"
+        msg += f"{random_reply(m)}"
     else:
         match g.params.get("command"):
             case "results":

@@ -9,18 +9,19 @@ from tabulate import tabulate
 
 import libs.global_value as g
 from cls.types import GameInfoDict
+from integrations.base import MessageParserInterface
 from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation() -> tuple[str, dict]:
+def aggregation(m: MessageParserInterface) -> tuple[str, dict]:
     """ランキングデータを生成
 
     Returns:
-        tuple[str, dict]: 集計結果
-        - str: ランキングの集計情報
-        - dict: 各ランキングの情報
+        tuple[str,dict]: 集計結果
+        - **str**: ランキングの集計情報
+        - **dict**: 各ランキングの情報
     """
 
     # 情報ヘッダ
@@ -32,12 +33,14 @@ def aggregation() -> tuple[str, dict]:
     # データ取得
     game_info: GameInfoDict = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        msg += "\t" + message.random_reply(message="no_hits")
+        m.post.message_type = "no_hits"
+        msg += "\t" + message.random_reply(m)
         return (msg, {})
 
     result_df = loader.read_data("ranking/aggregate.sql")
     if result_df.empty:
-        msg += "\t" + message.random_reply(message="no_target")
+        m.post.message_type = "no_target"
+        msg += "\t" + message.random_reply(m)
         return (msg, {})
 
     df = pd.merge(
@@ -125,7 +128,7 @@ def aggregation() -> tuple[str, dict]:
     data["連続ラス回避"] = table_conversion(df, ["c_top3", 2])
 
     # 表示
-    msg += message.header(game_info, "", 1)
+    msg += message.header(game_info, m, "", 1)
 
     for key in list(data.keys()):
         if key in g.cfg.dropitems.ranking:  # 非表示項目

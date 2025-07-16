@@ -6,18 +6,19 @@ import os
 
 import libs.global_value as g
 from cls.types import GameInfoDict
+from integrations.base import MessageParserInterface
 from libs.data import aggregate
 from libs.functions import message
 from libs.utils import formatter
 
 
-def plot() -> tuple[str, dict]:
+def plot(m: MessageParserInterface) -> tuple[str, list]:
     """対局対戦マトリックスの表示
 
     Returns:
         tuple[str,dict]:
         - str: ヘッダ情報
-        - dict: 生成ファイル情報
+        - list: 生成ファイル情報
     """
 
     # データ集計
@@ -29,10 +30,10 @@ def plot() -> tuple[str, dict]:
 
     # 表示
     msg = "*【対局対戦マトリックス】*\n"
-    msg += message.header(game_info, "", 1)
+    msg += message.header(game_info, m, "", 1)
 
     if df.empty:
-        return (msg, {})
+        return (msg, [{"dummy": ""}])
 
     # 保存
     file_name = os.path.join(
@@ -47,4 +48,4 @@ def plot() -> tuple[str, dict]:
         file_path = file_name + ".txt"
         df.to_markdown(file_path, tablefmt="outline")
 
-    return (msg, {"対局対戦マトリックス表": file_path})
+    return (msg, [{"対局対戦マトリックス表": file_path}])

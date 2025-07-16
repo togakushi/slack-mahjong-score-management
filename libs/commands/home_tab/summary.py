@@ -9,7 +9,6 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
 from libs.commands import graph, ranking, results
 from libs.commands.home_tab import ui_parts
-from libs.functions import message
 from libs.functions.events.handler_registry import register
 from libs.utils import dictutil
 
@@ -102,13 +101,14 @@ def register_summary_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
+        g.webclient = client
         api_adapter = factory.select_adapter(g.selected_service)
+        m = factory.select_parser(g.selected_service)
 
-        g.msg.parser(body)
-        g.msg.client = client
-
-        g.msg.argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        g.params = dictutil.placeholder(g.cfg.results)
+        m.parser(body)
+        add_argument, app_msg, update_flag = ui_parts.set_command_option(body)
+        g.cfg.results.always_argument.extend(add_argument)
+        g.params = dictutil.placeholder(g.cfg.results, m)
         g.params.update(update_flag)
 
         client.views_update(
@@ -119,38 +119,33 @@ def register_summary_handlers(app):
         app_msg.pop()
         app_msg.append("集計完了")
         msg1: str = ""
-        msg2: str | dict = message.random_reply(message="no_hits")
 
         match g.app_var.get("operation"):
             case "point":
-                count, ret = graph.summary.point_plot()
+                count, ret = graph.summary.point_plot(m)
                 if count:
-                    api_adapter.fileupload("ポイント推移", ret)
+                    m.post.file_list = [{"ポイント推移": ret}]
+                    api_adapter.fileupload(m)
                 else:
-                    api_adapter.post_message(ret)
+                    m.post.message = ret
+                    api_adapter.post_message(m)
             case "rank":
-                count, ret = graph.summary.rank_plot()
+                count, ret = graph.summary.rank_plot(m)
                 if count:
-                    api_adapter.fileupload("順位変動", ret)
+                    m.post.file_list = [{"順位変動": ret}]
+                    api_adapter.fileupload(m)
                 else:
-                    api_adapter.post_message(ret)
+                    m.post.message = ret
+                    api_adapter.post_message(m)
             case "rating":
                 g.params["command"] = "ranking"
-                msg1, msg2, file_list = ranking.rating.aggregation()
-                api_adapter.post(
-                    headline=msg1,
-                    message=msg2,
-                    summarize=False,
-                    file_list=file_list,
-                )
+                m.post.headline, m.post.message, m.post.file_list = ranking.rating.aggregation(m)
+                m.post.summarize = False
+                api_adapter.post(m)
             case _:
-                msg1, msg2, file_list = results.summary.aggregation()
-                api_adapter.post(
-                    headline=msg1,
-                    message=msg2,
-                    summarize=False,
-                    file_list=file_list,
-                )
+                m.post.headline, m.post.message, m.post.file_list = results.summary.aggregation(m)
+                m.post.summarize = False
+                api_adapter.post(m)
 
         client.views_update(
             view_id=g.app_var["view_id"],

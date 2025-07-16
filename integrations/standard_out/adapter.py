@@ -3,19 +3,31 @@ integrations/standard_out/message.py
 """
 
 from pprint import pprint
-from typing import cast
 
-from integrations.base.interface import APIInterface, LookupInterface, ReactionsInterface
+from integrations.base import MessageParserInterface
+from integrations.base.interface import (APIInterface, LookupInterface,
+                                         ReactionsInterface)
 
 
 class _ReactionsDummy(ReactionsInterface):
-    def status(self, ch=None, ts=None) -> list:
-        _ = ch
-        _ = ts
+    def status(self, ch=str, ts=str) -> list:
+        _ = (ch, ts)
         return []
 
-    def all_remove(self, delete_list: list):
-        _ = delete_list
+    def all_remove(self, delete_list: list, ch: str) -> None:
+        _ = (delete_list, ch)
+
+    def ok(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list) -> None:
+        _ = (ok_icon, ng_icon, ch, ts, reactions_list)
+
+    def ng(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list) -> None:
+        _ = (ok_icon, ng_icon, ch, ts, reactions_list)
+
+    def append(self, icon, ch, ts) -> None:
+        _ = (icon, ch, ts)
+
+    def remove(self, icon, ch, ts) -> None:
+        _ = (icon, ch, ts)
 
 
 class _LookupDummy(LookupInterface):
@@ -32,39 +44,22 @@ class StandardOut(APIInterface):
         self.lookup = _LookupDummy()
         self.reactions = _ReactionsDummy()
 
-    def post_message(self, msg: str, ts=False) -> dict:
-        """標準出力
+    def post_message(self, m: MessageParserInterface) -> dict:
+        """標準出力"""
 
-        Args:
-            message (str): 本文
-            ts (bool): 未使用
-
-        Returns:
-            dict: ダミー
-        """
-
-        _ = ts
-        pprint(msg)
+        pprint(m.post.message)
 
         return {}
 
-    def post_multi_message(self, msg: dict, ts: bool | None = False, summarize: bool = True):
+    def post_multi_message(self, m: MessageParserInterface):
+        """標準出力"""
+
+        pprint(m.post.message)
+
+    def post_text(self, m: MessageParserInterface) -> dict:
         """標準出力
 
         Args:
-            msg (dict): 本文
-            ts (bool | None, optional): 未使用
-            summarize (bool, optional): 未使用
-        """
-        _ = ts
-        _ = summarize
-        pprint(msg)
-
-    def post_text(self, event_ts: str, title: str, msg: str) -> dict:
-        """標準出力
-
-        Args:
-            event_ts (str): 未使用
             title (str): タイトル行
             msg (str): 本文
 
@@ -72,43 +67,23 @@ class StandardOut(APIInterface):
             dict: ダミー
         """
 
-        _ = event_ts
-        pprint(title)
-        pprint(msg)
+        pprint(m.post.title)
+        pprint(m.post.message)
 
         return {}
 
-    def post(self, **kwargs):
+    def post(self, m: MessageParserInterface):
         """パラメータの内容によって呼び出すAPIを振り分ける"""
 
-        headline = str(kwargs.get("headline", ""))
-        msg = kwargs.get("message")
-        file_list = cast(dict, kwargs.get("file_list", {"dummy": ""}))
+        pprint(m.post.headline)
+        pprint(m.post.message)
+        pprint(m.post.file_list)
 
-        # 見出しポスト
-        pprint(headline)
+    def fileupload(self, m: MessageParserInterface):
+        """標準出力"""
+        pprint(m.post.title)
+        pprint(m.post.file_list)
 
-        # 本文ポスト
-        pprint(msg)
-
-        for x in file_list:
-            if (file_path := file_list.get(x)):
-                pprint(["file:", x, str(file_path)])
-
-    def fileupload(self, title: str, file: str | bool, ts: str | bool = False):
-        """標準出力
-
-        Args:
-            title (str): タイトル
-            file (str | bool): 保存ファイルパス
-            ts (str | bool, optional): 未使用
-        """
-
-        _ = ts
-        pprint(title)
-        pprint(file)
-
-    def get_conversations(self, ch=None, ts=None) -> dict:
-        _ = ch
-        _ = ts
+    def get_conversations(self, m: MessageParserInterface) -> dict:
+        _ = m
         return {}

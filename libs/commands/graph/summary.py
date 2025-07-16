@@ -12,12 +12,13 @@ import pandas as pd
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
+from integrations.base import MessageParserInterface
 from libs.data import aggregate, loader
 from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
-def point_plot() -> tuple[int, str]:
+def point_plot(m: MessageParserInterface) -> tuple[int, str]:
     """ポイント推移グラフを生成する
 
     Returns:
@@ -36,7 +37,8 @@ def point_plot() -> tuple[int, str]:
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        return (len(target_data), message.random_reply(message="no_hits"))
+        m.post.message_type = "no_hits"
+        return (len(target_data), message.random_reply(m))
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
@@ -101,7 +103,7 @@ def point_plot() -> tuple[int, str]:
     return (game_info["game_count"], save_file)
 
 
-def rank_plot() -> tuple[int, str]:
+def rank_plot(m: MessageParserInterface) -> tuple[int, str]:
     """順位変動グラフを生成する
 
     Returns:
@@ -120,7 +122,8 @@ def rank_plot() -> tuple[int, str]:
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        return (len(target_data), message.random_reply(message="no_hits"))
+        m.post.message_type = "no_hits"
+        return (len(target_data), message.random_reply(m))
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"

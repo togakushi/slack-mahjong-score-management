@@ -2,6 +2,7 @@
 integrations/slack/message.py
 """
 
+import copy
 import logging
 import re
 from typing import cast
@@ -10,29 +11,29 @@ from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
-from integrations.base.interface import APIInterface, LookupInterface, ReactionsInterface
+from integrations.base import MessageParserInterface
+from integrations.base.interface import (APIInterface, LookupInterface,
+                                         ReactionsInterface)
 from integrations.slack import api
 
 
 class _ReactionsAPI(ReactionsInterface):
     """リアクション操作"""
-    def status(self, ch=None, ts=None) -> list:
+    def status(self, ch=str, ts=str) -> list:
         """botが付けたリアクションの種類を返す
 
         Args:
-            ch (str, optional): チャンネルID. Defaults to None.
-            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
+            ch (str): チャンネルID
+            ts (str): メッセージのタイムスタンプ
 
         Returns:
             list: リアクション
         """
 
-        ch = ch if ch else g.msg.channel_id
-        ts = ts if ts else g.msg.event_ts
         icon: list = []
 
         try:  # 削除済みメッセージはエラーになるので潰す
-            res = g.app.client.reactions_get(channel=ch, timestamp=ts)
+            res = g.webclient.reactions_get(channel=ch, timestamp=ts)
             logging.trace(res.validate())  # type: ignore
         except SlackApiError:
             return icon
@@ -45,17 +46,36 @@ class _ReactionsAPI(ReactionsInterface):
         logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.bot_id, icon)
         return icon
 
-    def all_remove(self, delete_list: list):
+    def all_remove(self, delete_list: list, ch: str):
         """すべてのリアクションを削除する
 
         Args:
             delete_list (list): 削除対象のタイムスタンプ
+            ch (str): 対象チャンネルID
         """
 
         for ts in set(delete_list):
-            for icon in self.status(ts=ts):
-                api.call_reactions_remove(icon, ts=ts)
-                logging.info("ts=%s, icon=%s", ts, icon)
+            for icon in self.status(ts=ts, ch=ch):
+                api.call_reactions_remove(icon, ts=ts, ch=ch)
+                logging.info("ch=%s, ts=%s, icon=%s", ch, ts, icon)
+
+    def ok(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list):
+        if ng_icon in reactions_list:
+            api.call_reactions_remove(icon=ng_icon, ch=ch, ts=ts)
+        if ok_icon not in reactions_list:
+            api.call_reactions_add(icon=ok_icon, ch=ch, ts=ts)
+
+    def ng(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list):
+        if ok_icon in reactions_list:
+            api.call_reactions_remove(icon=ok_icon, ch=ch, ts=ts)
+        if ng_icon not in reactions_list:
+            api.call_reactions_add(icon=ng_icon, ch=ch, ts=ts)
+
+    def append(self, icon: str, ch: str, ts: str):
+        api.call_reactions_add(icon=icon, ch=ch, ts=ts)
+
+    def remove(self, icon: str, ch: str, ts: str):
+        api.call_reactions_remove(icon=icon, ch=ch, ts=ts)
 
 
 class _LookupAPI(LookupInterface):
@@ -100,7 +120,7 @@ class _LookupAPI(LookupInterface):
         channel_id = ""
 
         try:
-            response = g.app.client.conversations_open(users=[user_id])
+            response = g.webclient.conversations_open(users=[user_id])
             channel_id = response["channel"]["id"]
         except SlackApiError as e:
             logging.error(e)
@@ -110,84 +130,85 @@ class _LookupAPI(LookupInterface):
 
 class SlackAPI(APIInterface):
     """Slack API操作クラス"""
+
     def __init__(self):
         self.lookup = _LookupAPI()
         self.reactions = _ReactionsAPI()
 
-    def post_message(self, msg: str, ts=False) -> dict:
+    def post_message(self, m: MessageParserInterface) -> dict:
         """メッセージをポストする
-
-        Args:
-            message (str): ポストするメッセージ
-            ts (bool, optional): スレッドに返す. Defaults to False.
 
         Returns:
             dict: API response
         """
 
-        if not ts and g.msg.thread_ts:
-            ts = g.msg.thread_ts
+        if isinstance(m.post.message, dict):  # 辞書型のメッセージは受け付けない
+            return {}
 
+        if m.post.ts != "undetermined":
+            thread_ts = m.post.ts
+        elif not m.post.thread:
+            thread_ts = "0"
+        else:
+            if not m.post.thread and m.data.thread_ts != "0":
+                thread_ts = m.data.thread_ts
+            else:
+                thread_ts = m.data.event_ts
         res = api.call_chat_post_message(
-            channel=g.msg.channel_id,
-            text=f"{msg.strip()}",
-            thread_ts=ts,
+            channel=m.data.channel_id,
+            text=f"{m.post.message.strip()}",
+            thread_ts=thread_ts,
         )
 
         return cast(dict, res)
 
-    def post_multi_message(self, msg: dict, ts: bool | None = False, summarize: bool = True) -> None:
-        """メッセージを分割してポスト
-
-        Args:
-            msg (dict): ポストするメッセージ
-            ts (bool, optional): スレッドに返す. Defaults to False.
-            summarize (bool, optional): 可能な限り1つのブロックにまとめる. Defaults to True.
-        """
-
-        if isinstance(msg, dict):
-            if summarize:  # まとめてポスト
-                key_list = list(map(str, msg.keys()))
-                post_msg = msg[key_list[0]]
+    def post_multi_message(self, m: MessageParserInterface) -> None:
+        """メッセージを分割してポスト"""
+        tmp_m = copy.deepcopy(m)
+        if isinstance(m.post.message, dict):
+            if m.post.summarize:  # まとめてポスト
+                key_list = list(map(str, m.post.message.keys()))
+                post_msg = m.post.message[key_list[0]]
                 for i in key_list[1:]:
-                    if len((post_msg + msg[i])) < 3800:  # 3800文字を超える直前までまとめる
-                        post_msg += msg[i]
+                    if len((post_msg + m.post.message[i])) < 3800:  # 3800文字を超える直前までまとめる
+                        post_msg += m.post.message[i]
                     else:
-                        self.post_message(post_msg, ts)
-                        post_msg = msg[i]
-                self.post_message(post_msg, ts)
+                        tmp_m.post.message = post_msg
+                        self.post_message(m)
+                        post_msg = m.post.message[i]
+                tmp_m.post.message = post_msg
+                self.post_message(tmp_m)
             else:  # そのままポスト
-                for i in msg.keys():
-                    self.post_message(msg[i], ts)
+                for i in m.post.message.keys():
+                    tmp_m.post.message = m.post.message[i]
+                    self.post_message(tmp_m)
         else:
-            self.post_message(msg, ts)
+            self.post_message(m)
 
-    def post_text(self, event_ts: str, title: str, msg: str) -> dict:
+    def post_text(self, m: MessageParserInterface) -> dict:
         """コードブロック修飾付きポスト
-
-        Args:
-            event_ts (str): スレッドに返す
-            title (str): タイトル行
-            msg (str): 本文
 
         Returns:
             dict: API response
         """
 
+        if isinstance(m.post.message, dict):  # 辞書型のメッセージは受け付けない
+            return {}
+
         # コードブロック修飾付きポスト
-        if len(re.sub(r"\n+", "\n", f"{msg.strip()}").splitlines()) == 1:
+        if len(re.sub(r"\n+", "\n", f"{m.post.message.strip()}").splitlines()) == 1:
             res = api.call_chat_post_message(
-                channel=g.msg.channel_id,
-                text=f"{title}\n{msg.strip()}",
-                thread_ts=event_ts,
+                channel=m.data.channel_id,
+                text=f"{m.post.title}\n{m.post.message.strip()}",
+                thread_ts=m.data.thread_ts if m.in_thread else m.data.event_ts,
             )
         else:
             # ポスト予定のメッセージをstep行単位のブロックに分割
             step = 50
-            post_msg = []
-            for count in range(int(len(msg.splitlines()) / step) + 1):
+            post_msg: list[str] = []
+            for count in range(int(len(m.post.message.splitlines()) / step) + 1):
                 post_msg.append(
-                    "\n".join(msg.splitlines()[count * step:(count + 1) * step])
+                    "\n".join(m.post.message.splitlines()[count * step:(count + 1) * step])
                 )
 
             # 最終ブロックがstepの半分以下なら直前のブロックにまとめる
@@ -197,80 +218,69 @@ class SlackAPI(APIInterface):
             # ブロック単位でポスト
             for _, val in enumerate(post_msg):
                 res = api.call_chat_post_message(
-                    channel=g.msg.channel_id,
-                    text=f"\n{title}\n\n```{val.strip()}```",
-                    thread_ts=event_ts,
+                    channel=m.data.channel_id,
+                    text=f"\n{m.post.title}\n\n```{val.strip()}```",
+                    thread_ts=m.data.thread_ts if m.in_thread else m.data.event_ts,
                 )
 
         return cast(dict, res)
 
-    def post(self, **kwargs):
+    def post(self, m: MessageParserInterface):
         """パラメータの内容によって呼び出すAPIを振り分ける"""
 
-        logging.debug(kwargs)
-        headline = str(kwargs.get("headline", ""))
-        msg = kwargs.get("message")
-        summarize = bool(kwargs.get("summarize", True))
-        file_list = cast(dict, kwargs.get("file_list", {"dummy": ""}))
-
-        # 見出しポスト
-        if (res := self.post_message(headline)):
-            ts = res.get("ts", False)
-        else:
-            ts = False
+        if m.post.headline:  # 見出し付き
+            tmp_m = copy.deepcopy(m)
+            tmp_m.post.message = m.post.headline
+            if (res := self.post_message(tmp_m)):
+                m.post.ts = res.get("ts", "undetermined")
+                m.post.thread = True  # 見出しがある場合はスレッドにする
+            else:
+                m.post.ts = "undetermined"
 
         # 本文ポスト
-        for x in file_list:
-            if (file_path := file_list.get(x)):
-                self.fileupload(str(x), str(file_path), ts)
-                msg = {}  # ファイルがあるメッセージは不要
+        if m.post.file_list:
+            if self.fileupload(m):
+                return  # ファイルをポストしたら終了
 
-        if msg:
-            self.post_multi_message(msg, ts, summarize)
+        if m.post.message:
+            self.post_multi_message(m)
 
-    def fileupload(self, title: str, file: str | bool, ts: str | bool = False) -> SlackResponse | None:
+    def fileupload(self, m: MessageParserInterface) -> dict:
         """files_upload_v2に渡すパラメータを設定
 
-        Args:
-            title (str): タイトル行
-            file (str): アップロードファイルパス
-            ts (str | bool, optional): スレッドに返す. Defaults to False.
-
         Returns:
-            SlackResponse | None: 結果
+            dict: 結果(SlackResponse)
         """
 
-        if not ts and g.msg.thread_ts:
-            ts = g.msg.thread_ts
+        res: SlackResponse | None = None
+        for attache_file in m.post.file_list:
+            for title, file_path in attache_file.items():
+                if title == "dummy":
+                    continue
+                if file_path:
+                    res = api.call_files_upload(
+                        channel=m.data.channel_id,
+                        title=title,
+                        file=file_path,
+                        thread_ts=m.data.thread_ts if m.in_thread else m.data.event_ts,
+                        request_file_info=False,
+                    )
 
-        res = api.call_files_upload(
-            channel=g.msg.channel_id,
-            title=title,
-            file=file,
-            thread_ts=ts,
-            request_file_info=False,
-        )
+        if isinstance(res, SlackResponse):
+            return cast(dict, res)
+        return {}
 
-        return res
-
-    def get_conversations(self, ch=None, ts=None) -> dict:
+    def get_conversations(self, m: MessageParserInterface) -> dict:
         """スレッド情報の取得
-
-        Args:
-            ch (str, optional): チャンネルID. Defaults to None.
-            ts (str, optional): メッセージのタイムスタンプ. Defaults to None.
 
         Returns:
             dict: API response
         """
 
-        ch = ch if ch else g.msg.channel_id
-        ts = ts if ts else g.msg.event_ts
-
         try:
-            res = g.app.client.conversations_replies(channel=ch, ts=ts)
+            res = g.webclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
             logging.trace(res.validate())  # type: ignore
+            return cast(dict, res)
         except SlackApiError as e:
             logging.error(e)
-
-        return cast(dict, res)
+            return {}

@@ -13,20 +13,18 @@ from libs.functions import compose, configuration
 from libs.utils import formatter
 
 
-def plot() -> str | bool:
+def plot() -> str:
     """成績上位者を一覧化
 
     Returns:
-        Union[str,bool]:
-        - str: 生成ファイルパス
-        - False: 描写データなし
+        str: 生成ファイルパス
     """
 
     plt.close()
     # --- データ取得
     results_df = loader.read_data("report/winner.sql")
     if len(results_df) == 0:
-        return False
+        return ""
 
     # --- 匿名化
     if g.params.get("anonymous"):

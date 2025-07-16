@@ -2,28 +2,29 @@
 libs/commands/ranking/slackpost.py
 """
 
+import copy
+
 import libs.global_value as g
 from integrations import factory
+from integrations.base import MessageParserInterface
 from libs.commands import ranking
 from libs.utils import dictutil
 
 
-def main():
+def main(m: MessageParserInterface):
     """ランキングをslackにpostする"""
     api_adapter = factory.select_adapter(g.selected_service)
 
-    g.params = dictutil.placeholder(g.cfg.ranking)
+    g.params = dictutil.placeholder(g.cfg.ranking, m)
 
     if g.params.get("rating"):  # レーティング
-        msg1, msg2, file_list = ranking.rating.aggregation()
-        api_adapter.post(
-            headline=msg1,
-            message=msg2,
-            summarize=False,
-            file_list=file_list,
-        )
+        m.post.headline, m.post.message, m.post.file_list = ranking.rating.aggregation(m)
+        m.post.summarize = False
+        api_adapter.post(m)
     else:  # ランキング
-        msg1, msg2 = ranking.ranking.aggregation()
-        res = api_adapter.post_message(msg1)
-        if msg2:
-            api_adapter.post_multi_message(msg2, res.get("ts"))
+        tmp_m = copy.deepcopy(m)
+        tmp_m.post.message, m.post.message = ranking.ranking.aggregation(m)
+        res = api_adapter.post_message(tmp_m)
+        if m.post.message:
+            m.post.ts = str(res.get("ts", "undetermined"))
+            api_adapter.post_multi_message(m)
