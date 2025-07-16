@@ -5,7 +5,6 @@ cls/score.py
 from dataclasses import dataclass, field
 from typing import Literal, Optional, cast
 
-from cls.types import ScoreDataDict
 from libs.functions.score import calculation_point
 
 
@@ -111,14 +110,14 @@ class GameResult:
         if "comment" in kwargs:
             self.comment = kwargs["comment"]
 
-    def to_dict(self) -> ScoreDataDict:
+    def to_dict(self) -> dict:
         """データを辞書で返す
 
         Returns:
-            ScoreDataDict: スコアデータ
+            dict: スコアデータ
         """
 
-        ret_dict: ScoreDataDict = {}
+        ret_dict: dict = {}
         ret_dict.update({
             "ts": self.ts,
             "comment": self.comment,
