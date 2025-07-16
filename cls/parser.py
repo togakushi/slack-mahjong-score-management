@@ -3,23 +3,25 @@ cls/parser.py
 """
 
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Callable, Literal, TypedDict, Union
 
 import pandas as pd
 
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import CommandSpec
 from libs.utils import textutil
 
 
-@dataclass
-class ParsedCommand:
-    """コマンド解析結果"""
-    flags: dict[str, Any]
-    arguments: list[str]
-    unknown: list[str]
-    search_range: list["ExtDt"]
+CommandResult = Mapping[str, Union[str, int, bool, tuple[str, ...]]]
+CommandAction = Callable[[Union[str, tuple[str, ...]]], CommandResult]
+
+
+class CommandSpec(TypedDict, total=False):
+    """コマンドマッピング"""
+    match: list[str]
+    action: CommandAction
+    type: Literal["int", "str", "sql", "filename"]
 
 
 CommandsDict = dict[str, CommandSpec]
@@ -148,6 +150,15 @@ COMMANDS: CommandsDict = {
         "type": "filename",
     },
 }
+
+
+@dataclass
+class ParsedCommand:
+    """コマンド解析結果"""
+    flags: dict[str, Any]
+    arguments: list[str]
+    unknown: list[str]
+    search_range: list["ExtDt"]
 
 
 class CommandParser:

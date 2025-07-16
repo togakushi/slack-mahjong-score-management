@@ -2,9 +2,8 @@
 cls/types.py
 """
 
-from collections.abc import Mapping
 from datetime import datetime
-from typing import TYPE_CHECKING, Callable, Literal, TypedDict, Union
+from typing import TYPE_CHECKING, Callable, TypedDict
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime
@@ -78,15 +77,3 @@ class GradeTableDict(TypedDict, total=False):
     name: str
     addition_expression: str
     table: list[RankTableDict]
-
-
-# CommandParser用
-CommandResult = Mapping[str, Union[str, int, bool, tuple[str, ...]]]
-CommandAction = Callable[[Union[str, tuple[str, ...]]], CommandResult]
-
-
-class CommandSpec(TypedDict, total=False):
-    """コマンドマッピング"""
-    match: list[str]
-    action: CommandAction
-    type: Literal["int", "str", "sql", "filename"]
