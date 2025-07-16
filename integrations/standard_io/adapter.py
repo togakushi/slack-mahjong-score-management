@@ -45,14 +45,22 @@ class StandardOut(APIInterface):
         self.reactions = _ReactionsDummy()
 
     def post_message(self, m: MessageParserInterface) -> dict:
-        """標準出力"""
+        """標準出力
+
+        Args:
+            m (MessageParserInterface): メッセージデータ
+        """
 
         pprint(m.post.message)
 
         return {}
 
     def post_multi_message(self, m: MessageParserInterface):
-        """標準出力"""
+        """標準出力
+
+        Args:
+            m (MessageParserInterface): メッセージデータ
+        """
 
         pprint(m.post.message)
 
@@ -60,8 +68,7 @@ class StandardOut(APIInterface):
         """標準出力
 
         Args:
-            title (str): タイトル行
-            msg (str): 本文
+            m (MessageParserInterface): メッセージデータ
 
         Returns:
             dict: ダミー
@@ -73,17 +80,35 @@ class StandardOut(APIInterface):
         return {}
 
     def post(self, m: MessageParserInterface):
-        """パラメータの内容によって呼び出すAPIを振り分ける"""
+        """パラメータの内容によって呼び出すAPIを振り分ける
+
+        Args:
+            m (MessageParserInterface): メッセージデータ
+        """
 
         pprint(m.post.headline)
         pprint(m.post.message)
         pprint(m.post.file_list)
 
     def fileupload(self, m: MessageParserInterface):
-        """標準出力"""
+        """標準出力
+
+        Args:
+            m (MessageParserInterface): メッセージデータ
+        """
+
         pprint(m.post.title)
         pprint(m.post.file_list)
 
     def get_conversations(self, m: MessageParserInterface) -> dict:
+        """ダミー
+
+        Args:
+            m (MessageParserInterface): メッセージデータ
+
+        Returns:
+            dict: ダミー
+        """
+
         _ = m
         return {}

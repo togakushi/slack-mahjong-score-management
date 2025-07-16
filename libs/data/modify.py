@@ -25,7 +25,7 @@ def db_insert(detection: GameResult, m: MessageParserInterface) -> int:
 
     Args:
         detection (GameResult): スコアデータ
-        m (MessageParserInterface): メッセージ内容
+        m (MessageParserInterface): メッセージデータ
 
     Returns:
         int: _description_
@@ -57,7 +57,7 @@ def db_update(detection: GameResult, m: MessageParserInterface) -> None:
 
     Args:
         detection (GameResult): スコアデータ
-        m (MessageParserInterface): メッセージ内容
+        m (MessageParserInterface): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -198,6 +198,7 @@ def remarks_delete_compar(para: dict, m: MessageParserInterface) -> None:
 
     Args:
         para (dict): パラメータ
+        m (MessageParserInterface): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)

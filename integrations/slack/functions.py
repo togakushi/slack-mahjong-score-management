@@ -20,8 +20,7 @@ def score_verification(detection: GameResult, m: MessageParserInterface, reactio
     """素点合計をチェックしリアクションを付ける
 
     Args:
-        detection (GameResult): スコアデータ
-        reactions_data (list | None, optional): リアクションリスト. Defaults to None.
+        m (MessageParserInterface): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)

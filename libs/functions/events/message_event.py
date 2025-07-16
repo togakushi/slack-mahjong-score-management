@@ -93,6 +93,7 @@ def other_words(word: str, m: MessageParserInterface):
 
     Args:
         word (str): 入力ワード
+        m (MessageParserInterface): メッセージデータ
     """
 
     if re.match(rf"^{g.cfg.cw.remarks_word}$", word) and m.in_thread:  # 追加メモ
@@ -129,6 +130,7 @@ def message_append(detection: GameResult, m: MessageParserInterface):
 
     Args:
         detection (GameResult): スコアデータ
+        m (MessageParserInterface): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -149,6 +151,7 @@ def message_changed(detection: GameResult, m: MessageParserInterface):
 
     Args:
         detection (GameResult): スコアデータ
+        m (MessageParserInterface): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -176,7 +179,11 @@ def message_changed(detection: GameResult, m: MessageParserInterface):
 
 
 def message_deleted(m: MessageParserInterface):
-    """メッセージの削除処理"""
+    """メッセージの削除処理
+
+    Args:
+        m (MessageParserInterface): メッセージデータ
+    """
 
     api_adapter = factory.select_adapter(g.selected_service)
 

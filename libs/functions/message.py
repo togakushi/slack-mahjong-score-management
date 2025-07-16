@@ -19,8 +19,7 @@ def random_reply(m: MessageParserInterface) -> str:
     """メッセージをランダムに返す
 
     Args:
-        message (str): 選択するメッセージ
-        rpoint_sum (int, optional): 素点合計(1/100). Defaults to 0.
+        m (MessageParserInterface): メッセージデータ
 
     Returns:
         str: メッセージ
@@ -69,6 +68,7 @@ def header(game_info: GameInfoDict, m: MessageParserInterface, add_text="", inde
 
     Args:
         game_info (GameInfoDict): 集計範囲のゲーム情報
+        m (MessageParserInterface): メッセージデータ
         add_text (str, optional): 追加表示するテキスト. Defaults to "".
         indent (int, optional): 先頭のタブ数. Defaults to 1.
 
