@@ -114,6 +114,7 @@ def other_words(word: str, m: MessageParserInterface):
                     continue
                 detection.set(**{k: str(p)})
 
+            detection.calc()
             match m.data.status:
                 case "message_append":
                     message_append(detection, m)
@@ -157,6 +158,11 @@ def message_changed(detection: GameResult, m: MessageParserInterface):
     api_adapter = factory.select_adapter(g.selected_service)
 
     record_data = lookup.db.exsist_record(m.data.event_ts)
+    print("=" * 80)
+    print(detection.to_dict())
+    print(record_data.to_dict())
+    print(">>>", vars(m.data))
+
     if detection.to_dict() == record_data.to_dict():  # スコア比較
         return  # 変更箇所がなければ何もしない
     if g.cfg.setting.thread_report == m.in_thread:
