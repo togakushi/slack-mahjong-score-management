@@ -13,7 +13,6 @@ from matplotlib import use
 
 import libs.global_value as g
 from cls.config import AppConfig
-from integrations import factory
 from libs.data import lookup
 
 
