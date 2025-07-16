@@ -38,7 +38,7 @@ class _LookupDummy(LookupInterface):
         _ = user_id
 
 
-class StandardOut(APIInterface):
+class StandardIO(APIInterface):
     """メッセージ標準出力クラス"""
     def __init__(self):
         self.lookup = _LookupDummy()

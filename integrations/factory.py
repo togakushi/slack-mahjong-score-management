@@ -13,7 +13,7 @@ def select_adapter(selected_service: str) -> base.APIInterface:
         case "slack":
             return slack.adapter.SlackAPI()
         case _:
-            return standard_io.adapter.StandardOut()
+            return standard_io.adapter.StandardIO()
 
 
 def select_parser(selected_service: str):
