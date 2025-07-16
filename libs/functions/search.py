@@ -5,10 +5,8 @@ libs/functions/search.py
 from contextlib import closing
 
 from cls.score import GameResult
-from cls.types import SlackSearchData
 from libs.utils import dbutil
 
-SlackSearchDict = dict[str, SlackSearchData]
 DBSearchDict = dict[str, GameResult]
 
 

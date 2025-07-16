@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Callable, Literal, TypedDict, Union
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime
-    from cls.score import GameResult
 
 
 class GameInfoDict(TypedDict):
@@ -58,32 +57,6 @@ class ComparisonDict(TypedDict, total=False):
     """素点合計不一致"""
     pending: list[str]
     """保留"""
-
-
-class SlackSearchData(TypedDict, total=False):
-    """slack検索結果格納辞書"""
-    text: str
-    """検索にヒットした本文の内容"""
-    channel_id: str
-    """見つけたチャンネルID"""
-    user_id: str
-    """投稿者のユーザID"""
-    event_ts: str | None
-    """ポストされた時間"""
-    thread_ts: str | None
-    """スレッドになっている場合、スレッド元の時間"""
-    edited_ts: str | None
-    """最後に編集された時間"""
-    reaction_ok: list
-    """botが付けたOKリアクション"""
-    reaction_ng: list
-    """botが付けたNGリアクション"""
-    in_thread: bool
-    """スレッドになっていればTrue(スレッド元は除く)"""
-    score: "GameResult"
-    """スコア報告なら結果"""
-    remarks: list
-    """メモならその内容"""
 
 
 class DateRangeSpec(TypedDict):
