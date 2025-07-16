@@ -154,6 +154,7 @@ class SlackAPI(APIInterface):
                 thread_ts = m.data.thread_ts
             else:
                 thread_ts = m.data.event_ts
+
         res = api.call_chat_post_message(
             channel=m.data.channel_id,
             text=f"{m.post.message.strip()}",

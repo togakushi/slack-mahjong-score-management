@@ -21,6 +21,7 @@ def call_chat_post_message(**kwargs) -> SlackResponse:
     res = cast(SlackResponse, {})
     if kwargs["thread_ts"] == "0":
         kwargs.pop("thread_ts")
+
     try:
         res = g.webclient.chat_postMessage(**kwargs)
     except SlackApiError as e:
