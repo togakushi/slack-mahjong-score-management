@@ -180,7 +180,6 @@ def setup() -> None:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
     g.cfg = AppConfig(g.args.config)
-    g.msg = factory.select_parser(g.selected_service)
 
     logging.notice(  # type: ignore
         "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",

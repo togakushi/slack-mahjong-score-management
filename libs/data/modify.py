@@ -192,7 +192,7 @@ def remarks_delete(m: MessageParserInterface) -> list:
             cur.commit()
             if (count := cur.execute("select changes();").fetchone()[0]):
                 delete_list.append(m.data.event_ts)
-                logging.notice("ts=%s, user=%s, count=%s", m.data.event_ts, g.msg.user_id, count)  # type: ignore
+                logging.notice("ts=%s, user=%s, count=%s", m.data.event_ts, m.data.user_id, count)  # type: ignore
 
     return delete_list
 
