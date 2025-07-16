@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import shutil
+import sqlite3
 from contextlib import closing
 from typing import cast
 
@@ -36,13 +37,16 @@ def db_insert(detection: GameResult, m: MessageParserInterface) -> int:
     changes: int = 0
     if m.check_updatable:
         with closing(dbutil.get_connection()) as cur:
-            cur.execute(g.sql["RESULT_INSERT"], {
-                "playtime": ExtDt(float(detection.ts)).format("sql"),
-                "rpoint_sum": detection.rpoint_sum(),
-                **detection.to_dict(),
-            })
-            changes = cur.total_changes
-            cur.commit()
+            try:
+                cur.execute(g.sql["RESULT_INSERT"], {
+                    "playtime": ExtDt(float(detection.ts)).format("sql"),
+                    "rpoint_sum": detection.rpoint_sum(),
+                    **detection.to_dict(),
+                })
+                changes = cur.total_changes
+                cur.commit()
+            except sqlite3.IntegrityError as err:
+                logging.error(err)
         logging.notice("%s", detection)  # type: ignore
     else:
         m.post.message_type = "restricted_channel"
