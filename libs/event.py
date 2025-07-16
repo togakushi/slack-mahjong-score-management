@@ -11,19 +11,17 @@ from libs.functions.events.handler_registry import register
 def register_event_handlers(app):
     """イベントAPI"""
     @app.event("message")
-    def handle_message_events(body, client):
+    def handle_message_events(body):
         """ポストされた内容で処理を分岐
 
         Args:
             client (slack_bolt.App.client): slack_boltオブジェクト
             body (dict): ポストされたデータ
         """
-
-        g.webclient = client
         events.message_event.main(body)
 
     @app.command(g.cfg.setting.slash_command)
-    def slash_command(ack, body, client):
+    def slash_command(ack, body):
         """スラッシュコマンド
 
         Args:
@@ -31,7 +29,6 @@ def register_event_handlers(app):
             body (dict): ポストされたデータ
             client (slack_bolt.App.client): slack_boltオブジェクト
         """
-        g.webclient = client
         events.slash_command.main(ack, body)
 
     @app.event("app_home_opened")
@@ -42,6 +39,4 @@ def register_event_handlers(app):
             client (slack_bolt.App.client): slack_boltオブジェクト
             event (dict): イベント内容
         """
-
-        g.webclient = client
         events.home_tab.main(client, event)

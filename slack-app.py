@@ -37,6 +37,7 @@ if __name__ == "__main__":
         configuration.setup()
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
         g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+        g.appclient = app.client
         from libs import event
         __all__ = ["event"]
         register_all(app)  # イベント遅延登録

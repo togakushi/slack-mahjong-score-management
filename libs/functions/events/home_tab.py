@@ -9,7 +9,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.commands.home_tab import home
 
 
-def main(client, event):
+def main(event):
     """ホームタブオープン
 
     Args:
@@ -35,7 +35,7 @@ def main(client, event):
     logging.trace(g.app_var)  # type: ignore
 
     home.build_main_menu()
-    result = client.views_publish(
+    result = g.appclient.views_publish(
         user_id=g.app_var["user_id"],
         view=g.app_var["view"],
     )

@@ -68,13 +68,12 @@ def build_personal_menu():
 def register_personal_handlers(app):
     """個人成績メニュー"""
     @app.action("personal_menu")
-    def handle_menu_action(ack, body, client):
+    def handle_menu_action(ack, body):
         """メニュー項目生成
 
         Args:
             ack (_type_): ack
             body (dict): イベント内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
@@ -85,25 +84,23 @@ def register_personal_handlers(app):
         logging.info("[personal_menu] %s", g.app_var)
 
         build_personal_menu()
-        client.views_publish(
+        g.appclient.views_publish(
             user_id=g.app_var["user_id"],
             view=g.app_var["view"],
         )
 
     @app.action("personal_aggregation")
-    def handle_aggregation_action(ack, body, client):
+    def handle_aggregation_action(ack, body):
         """メニュー項目生成
 
         Args:
             ack (_type_): ack
             body (dict): イベント内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
         logging.trace(body)  # type: ignore
 
-        g.webclient = client
         api_adapter = factory.select_adapter(g.selected_service)
         m = factory.select_parser(g.selected_service)
 
@@ -119,7 +116,7 @@ def register_personal_handlers(app):
             if user_select is None:
                 return
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}")
         )
@@ -135,19 +132,18 @@ def register_personal_handlers(app):
             tmp_m.post.ts = str(res.get("ts", "undetermined"))
             api_adapter.post_message(tmp_m)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{tmp_m.post.message}"),
         )
 
     @app.view("PersonalMenu_ModalPeriodSelection")
-    def handle_view_submission(ack, view, client):
+    def handle_view_submission(ack, view):
         """view更新
 
         Args:
             ack (_type_): ack
             view (dict): 描写内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
@@ -159,7 +155,7 @@ def register_personal_handlers(app):
 
         logging.info("[global var] %s", g.app_var)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=build_personal_menu(),
         )

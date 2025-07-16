@@ -23,7 +23,7 @@ def call_chat_post_message(**kwargs) -> SlackResponse:
         kwargs.pop("thread_ts")
 
     try:
-        res = g.webclient.chat_postMessage(**kwargs)
+        res = g.appclient.chat_postMessage(**kwargs)
     except SlackApiError as e:
         logging.critical(e)
         logging.error("kwargs=%s", kwargs)
@@ -42,7 +42,7 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
     if not kwargs["thread_ts"]:
         kwargs.pop("thread_ts")
     try:
-        res = g.webclient.files_upload_v2(**kwargs)
+        res = g.appclient.files_upload_v2(**kwargs)
     except SlackApiError as e:
         logging.critical(e)
         logging.error("kwargs=%s", kwargs)
@@ -60,7 +60,7 @@ def call_reactions_add(icon: str, ch: str, ts: str):
     """
 
     try:
-        res: SlackResponse = g.webclient.reactions_add(
+        res: SlackResponse = g.appclient.reactions_add(
             channel=str(ch),
             name=icon,
             timestamp=str(ts),
@@ -85,16 +85,16 @@ def call_reactions_remove(icon: str, ch: str, ts: str):
     """
 
     try:
-        res = g.webclient.reactions_remove(
+        res = g.appclient.reactions_remove(
             channel=ch,
             name=icon,
             timestamp=ts,
         )
         logging.info("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
-    except SlackApiError as e:
-        match e.response.get("error"):
+    except SlackApiError as err:
+        match err.response.get("error"):
             case "no_reaction":
                 pass
             case _:
-                logging.critical(e)
+                logging.critical(err)
                 logging.critical("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon)

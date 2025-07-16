@@ -58,13 +58,12 @@ def build_ranking_menu():
 def register_ranking_handlers(app):
     """ランキングメニュー"""
     @app.action("ranking_menu")
-    def handle_menu_action(ack, body, client):
+    def handle_menu_action(ack, body):
         """メニュー項目生成
 
         Args:
             ack (_type_): ack
             body (dict): イベント内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
@@ -75,25 +74,23 @@ def register_ranking_handlers(app):
         logging.info("[ranking_menu] %s", g.app_var)
 
         build_ranking_menu()
-        client.views_publish(
+        g.appclient.views_publish(
             user_id=g.app_var["user_id"],
             view=g.app_var["view"],
         )
 
     @app.action("ranking_aggregation")
-    def handle_aggregation_action(ack, body, client):
+    def handle_aggregation_action(ack, body):
         """メニュー項目生成
 
         Args:
             ack (_type_): ack
             body (dict): イベント内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
         logging.trace(body)  # type: ignore
 
-        g.webclient = client
         api_adapter = factory.select_adapter(g.selected_service)
         m = factory.select_parser(g.selected_service)
 
@@ -103,7 +100,7 @@ def register_ranking_handlers(app):
         g.params = dictutil.placeholder(g.cfg.ranking, m)
         g.params.update(update_flag)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
         )
@@ -125,19 +122,18 @@ def register_ranking_handlers(app):
             m.post.ts = str(res.get("ts", "undetermined"))
             api_adapter.post_multi_message(m)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{tmp_m.post.message}"),
         )
 
     @app.view("RankingMenu_ModalPeriodSelection")
-    def handle_view_submission(ack, view, client):
+    def handle_view_submission(ack, view):
         """view更新
 
         Args:
             ack (_type_): ack
             view (dict): 描写内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
@@ -147,7 +143,7 @@ def register_ranking_handlers(app):
             if "aid-eday" in view["state"]["values"][i]:
                 g.app_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=build_ranking_menu(),
         )

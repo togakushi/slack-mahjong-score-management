@@ -33,7 +33,7 @@ class _ReactionsAPI(ReactionsInterface):
         icon: list = []
 
         try:  # 削除済みメッセージはエラーになるので潰す
-            res = g.webclient.reactions_get(channel=ch, timestamp=ts)
+            res = g.appclient.reactions_get(channel=ch, timestamp=ts)
             logging.trace(res.validate())  # type: ignore
         except SlackApiError:
             return icon
@@ -90,7 +90,7 @@ class _LookupAPI(LookupInterface):
         channel_id = ""
 
         try:
-            response = g.webclient.search_messages(
+            response = g.appclient.search_messages(
                 query=f"in:{g.cfg.search.channel}",
                 count=1,
             )
@@ -120,7 +120,7 @@ class _LookupAPI(LookupInterface):
         channel_id = ""
 
         try:
-            response = g.webclient.conversations_open(users=[user_id])
+            response = g.appclient.conversations_open(users=[user_id])
             channel_id = response["channel"]["id"]
         except SlackApiError as e:
             logging.error(e)
@@ -299,7 +299,7 @@ class SlackAPI(APIInterface):
         """
 
         try:
-            res = g.webclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
+            res = g.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
             logging.trace(res.validate())  # type: ignore
             return cast(dict, res)
         except SlackApiError as e:

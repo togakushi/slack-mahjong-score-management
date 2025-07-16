@@ -68,13 +68,12 @@ def build_versus_menu():
 def register_versus_handlers(app):
     """直接対戦メニュー"""
     @app.action("versus_menu")
-    def handle_menu_action(ack, body, client):
+    def handle_menu_action(ack, body):
         """メニュー項目生成
 
         Args:
             ack (_type_): ack
             body (dict): イベント内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
@@ -85,25 +84,23 @@ def register_versus_handlers(app):
         logging.info("[versus_menu] %s", g.app_var)
 
         build_versus_menu()
-        client.views_publish(
+        g.appclient.views_publish(
             user_id=g.app_var["user_id"],
             view=g.app_var["view"],
         )
 
     @app.action("versus_aggregation")
-    def handle_aggregation_action(ack, body, client):
+    def handle_aggregation_action(ack, body):
         """メニュー項目生成
 
         Args:
             ack (_type_): ack
             body (dict): イベント内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
         logging.trace(body)  # type: ignore
 
-        g.webclient = client
         api_adapter = factory.select_adapter(g.selected_service)
         m = factory.select_parser(g.selected_service)
 
@@ -122,7 +119,7 @@ def register_versus_handlers(app):
             if len(search_options["bid-multi_select"]["player"]["selected_options"]) == 0:
                 return
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}")
         )
@@ -133,13 +130,13 @@ def register_versus_handlers(app):
         m.post.headline, m.post.message, m.post.file_list = results.versus.aggregation()
         api_adapter.post(m)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{m.post.headline}"),
         )
 
     @app.view("VersusMenu_ModalPeriodSelection")
-    def handle_view_submission(ack, view, client):
+    def handle_view_submission(ack, view):
         """view更新
 
         Args:
@@ -157,7 +154,7 @@ def register_versus_handlers(app):
 
         logging.info("[global var] %s", g.app_var)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=build_versus_menu(),
         )

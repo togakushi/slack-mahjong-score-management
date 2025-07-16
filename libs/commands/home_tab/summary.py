@@ -66,13 +66,12 @@ def build_summary_menu():
 def register_summary_handlers(app):
     """サマリメニュー"""
     @app.action("summary_menu")
-    def handle_menu_action(ack, body, client):
+    def handle_menu_action(ack, body):
         """メニュー項目生成
 
         Args:
             ack (_type_): ack
             body (dict): イベント内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
@@ -83,13 +82,13 @@ def register_summary_handlers(app):
         logging.info("[summary_menu] %s", g.app_var)
 
         build_summary_menu()
-        client.views_publish(
+        g.appclient.views_publish(
             user_id=g.app_var["user_id"],
             view=g.app_var["view"],
         )
 
     @app.action("summary_aggregation")
-    def handle_aggregation_action(ack, body, client):
+    def handle_aggregation_action(ack, body):
         """成績サマリ集計
 
         Args:
@@ -101,7 +100,6 @@ def register_summary_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        g.webclient = client
         api_adapter = factory.select_adapter(g.selected_service)
         m = factory.select_parser(g.selected_service)
 
@@ -111,7 +109,7 @@ def register_summary_handlers(app):
         g.params = dictutil.placeholder(g.cfg.results, m)
         g.params.update(update_flag)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
         )
@@ -147,13 +145,13 @@ def register_summary_handlers(app):
                 m.post.summarize = False
                 api_adapter.post(m)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}".strip()),
         )
 
     @app.view("SummaryMenu_ModalPeriodSelection")
-    def handle_view_submission(ack, view, client):
+    def handle_view_submission(ack, view):
         """view更新
 
         Args:
@@ -171,7 +169,7 @@ def register_summary_handlers(app):
 
         logging.info("[global var] %s", g.app_var)
 
-        client.views_update(
+        g.appclient.views_update(
             view_id=g.app_var["view_id"],
             view=build_summary_menu(),
         )

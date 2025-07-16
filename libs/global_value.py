@@ -10,22 +10,20 @@ if TYPE_CHECKING:
 
     from cls.config import AppConfig
     from cls.types import TeamDataDict
-    from integrations.base.interface import MessageParserInterface
 
 selected_service: str = "slack"
 
 args: "Namespace" = None  # type: ignore
 """コマンドライン引数"""
+
 app: "App"
-"""slack object"""
+appclient: "WebClient"
 webclient: "WebClient"
 """slack object"""
 
 # モジュール共通インスタンス
 cfg: "AppConfig"
 """Configインスタンス共有"""
-msg: "MessageParserInterface"
-"""MessageParserインスタンス共有"""
 
 # 環境パラメータ
 member_list: dict = {}
