@@ -9,7 +9,7 @@ from cls.config import AppConfig
 from cls.score import GameResult
 from libs.functions import configuration, score
 from tests.parser import param_data
-from integrations.standard_out.parser import MessageParser
+from integrations.standard_io.parser import MessageParser
 
 
 @pytest.mark.parametrize(

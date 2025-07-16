@@ -2,7 +2,7 @@
 integrations/factory.py
 """
 
-from integrations import slack, standard_out
+from integrations import slack, standard_io
 from integrations.base import interface as base
 
 
@@ -13,7 +13,7 @@ def select_adapter(selected_service: str) -> base.APIInterface:
         case "slack":
             return slack.adapter.SlackAPI()
         case _:
-            return standard_out.adapter.StandardOut()
+            return standard_io.adapter.StandardOut()
 
 
 def select_parser(selected_service: str):
@@ -23,4 +23,4 @@ def select_parser(selected_service: str):
         case "slack":
             return slack.parser.MessageParser()
         case _:
-            return standard_out.parser.MessageParser()
+            return standard_io.parser.MessageParser()

@@ -1,5 +1,5 @@
 """
-integrations/standard_out/message.py
+integrations/standard_io/message.py
 """
 
 from pprint import pprint
