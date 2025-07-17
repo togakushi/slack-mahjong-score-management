@@ -68,7 +68,7 @@
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.commands.home_tab</span><span class="w"> </span><span class="kn">import</span> <span class="n">home</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ホームタブオープン</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">    Args:</span>
@@ -94,7 +94,7 @@
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">logging</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">app_var</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">home</span><span class="o">.</span><span class="n">build_main_menu</span><span class="p">()</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">views_publish</span><span class="p">(</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">appclient</span><span class="o">.</span><span class="n">views_publish</span><span class="p">(</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="n">user_id</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">app_var</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">],</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="n">view</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">app_var</span><span class="p">[</span><span class="s2">&quot;view&quot;</span><span class="p">],</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="p">)</span>
@@ -108,13 +108,13 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">main</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">client</span>, </span><span class="param"><span class="n">event</span></span><span class="return-annotation">):</span></span>
+        <span class="name">main</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">event</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="main-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#main"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="main-13"><a href="#main-13"><span class="linenos">13</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="main-13"><a href="#main-13"><span class="linenos">13</span></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
 </span><span id="main-14"><a href="#main-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ホームタブオープン</span>
 </span><span id="main-15"><a href="#main-15"><span class="linenos">15</span></a>
 </span><span id="main-16"><a href="#main-16"><span class="linenos">16</span></a><span class="sd">    Args:</span>
@@ -140,7 +140,7 @@
 </span><span id="main-36"><a href="#main-36"><span class="linenos">36</span></a>    <span class="n">logging</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">app_var</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 </span><span id="main-37"><a href="#main-37"><span class="linenos">37</span></a>
 </span><span id="main-38"><a href="#main-38"><span class="linenos">38</span></a>    <span class="n">home</span><span class="o">.</span><span class="n">build_main_menu</span><span class="p">()</span>
-</span><span id="main-39"><a href="#main-39"><span class="linenos">39</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">views_publish</span><span class="p">(</span>
+</span><span id="main-39"><a href="#main-39"><span class="linenos">39</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">appclient</span><span class="o">.</span><span class="n">views_publish</span><span class="p">(</span>
 </span><span id="main-40"><a href="#main-40"><span class="linenos">40</span></a>        <span class="n">user_id</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">app_var</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">],</span>
 </span><span id="main-41"><a href="#main-41"><span class="linenos">41</span></a>        <span class="n">view</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">app_var</span><span class="p">[</span><span class="s2">&quot;view&quot;</span><span class="p">],</span>
 </span><span id="main-42"><a href="#main-42"><span class="linenos">42</span></a>    <span class="p">)</span>
