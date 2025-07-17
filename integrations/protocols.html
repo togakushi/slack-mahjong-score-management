@@ -137,7 +137,7 @@
                                 <a class="function" href="#MessageParserProtocol.parser">parser</a>
                         </li>
                         <li>
-                                <a class="function" href="#MessageParserProtocol.check_updatable">check_updatable</a>
+                                <a class="variable" href="#MessageParserProtocol.check_updatable">check_updatable</a>
                         </li>
                 </ul>
 
@@ -220,8 +220,8 @@
 </span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">MsgData</span><span class="p">()</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">post</span> <span class="o">=</span> <span class="n">PostData</span><span class="p">()</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="nd">@property</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -244,8 +244,9 @@
 </span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="o">...</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="o">...</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="nd">@property</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -619,8 +620,8 @@
     </div>
     <a class="headerlink" href="#MessageParserProtocol"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol-56"><a href="#MessageParserProtocol-56"><span class="linenos">56</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="MessageParserProtocol-57"><a href="#MessageParserProtocol-57"><span class="linenos">57</span></a>    <span class="n">data</span> <span class="o">=</span> <span class="n">MsgData</span><span class="p">()</span>
-</span><span id="MessageParserProtocol-58"><a href="#MessageParserProtocol-58"><span class="linenos">58</span></a>    <span class="n">post</span> <span class="o">=</span> <span class="n">PostData</span><span class="p">()</span>
+</span><span id="MessageParserProtocol-57"><a href="#MessageParserProtocol-57"><span class="linenos">57</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
+</span><span id="MessageParserProtocol-58"><a href="#MessageParserProtocol-58"><span class="linenos">58</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
 </span><span id="MessageParserProtocol-59"><a href="#MessageParserProtocol-59"><span class="linenos">59</span></a>
 </span><span id="MessageParserProtocol-60"><a href="#MessageParserProtocol-60"><span class="linenos">60</span></a>    <span class="nd">@property</span>
 </span><span id="MessageParserProtocol-61"><a href="#MessageParserProtocol-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -643,8 +644,9 @@
 </span><span id="MessageParserProtocol-78"><a href="#MessageParserProtocol-78"><span class="linenos">78</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 </span><span id="MessageParserProtocol-79"><a href="#MessageParserProtocol-79"><span class="linenos">79</span></a>        <span class="o">...</span>
 </span><span id="MessageParserProtocol-80"><a href="#MessageParserProtocol-80"><span class="linenos">80</span></a>
-</span><span id="MessageParserProtocol-81"><a href="#MessageParserProtocol-81"><span class="linenos">81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-82"><a href="#MessageParserProtocol-82"><span class="linenos">82</span></a>        <span class="o">...</span>
+</span><span id="MessageParserProtocol-81"><a href="#MessageParserProtocol-81"><span class="linenos">81</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-82"><a href="#MessageParserProtocol-82"><span class="linenos">82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-83"><a href="#MessageParserProtocol-83"><span class="linenos">83</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -729,9 +731,7 @@ Protocol classes can be generic, they are defined as::</p>
                             </div>
                             <div id="MessageParserProtocol.data" class="classattr">
                                 <div class="attr variable">
-            <span class="name">data</span>        =
-<input id="MessageParserProtocol.data-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="MessageParserProtocol.data-view-value"></label><span class="default_value">MsgData(text=&#39;&#39;, event_ts=&#39;undetermined&#39;, thread_ts=&#39;undetermined&#39;, edited_ts=&#39;undetermined&#39;, channel_id=&#39;&#39;, channel_type=&#39;undetermined&#39;, user_id=&#39;&#39;, status=&#39;undetermined&#39;, reaction_ok=[], reaction_ng=[])</span>
+            <span class="name">data</span><span class="annotation">: <a href="#MsgData">MsgData</a></span>
 
         
     </div>
@@ -742,9 +742,7 @@ Protocol classes can be generic, they are defined as::</p>
                             </div>
                             <div id="MessageParserProtocol.post" class="classattr">
                                 <div class="attr variable">
-            <span class="name">post</span>        =
-<input id="MessageParserProtocol.post-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="MessageParserProtocol.post-view-value"></label><span class="default_value">PostData(title=&#39;&#39;, headline=&#39;&#39;, message=&#39;&#39;, message_type=&#39;invalid_argument&#39;, summarize=True, thread=False, file_list=[], ts=&#39;undetermined&#39;, rpoint_sum=0)</span>
+            <span class="name">post</span><span class="annotation">: <a href="#PostData">PostData</a></span>
 
         
     </div>
@@ -866,17 +864,16 @@ Protocol classes can be generic, they are defined as::</p>
                             </div>
                             <div id="MessageParserProtocol.check_updatable" class="classattr">
                                         <input id="MessageParserProtocol.check_updatable-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">check_updatable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+<div class="attr variable">
+            <span class="name">check_updatable</span><span class="annotation">: bool</span>
 
                 <label class="view-source-button" for="MessageParserProtocol.check_updatable-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.check_updatable-81"><a href="#MessageParserProtocol.check_updatable-81"><span class="linenos">81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.check_updatable-82"><a href="#MessageParserProtocol.check_updatable-82"><span class="linenos">82</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.check_updatable-81"><a href="#MessageParserProtocol.check_updatable-81"><span class="linenos">81</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.check_updatable-82"><a href="#MessageParserProtocol.check_updatable-82"><span class="linenos">82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.check_updatable-83"><a href="#MessageParserProtocol.check_updatable-83"><span class="linenos">83</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
