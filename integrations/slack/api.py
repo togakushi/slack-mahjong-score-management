@@ -97,4 +97,4 @@ def call_reactions_remove(icon: str, ch: str, ts: str):
                 pass
             case _:
                 logging.critical(err)
-                logging.critical("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon)
+                logging.critical("ch=%s, ts=%s, icon=%s", ch, ts, icon)
