@@ -6,21 +6,22 @@ import logging
 from typing import cast
 
 import libs.global_value as g
-from integrations import factory
-from integrations.base.interface import MessageParserInterface
+from integrations.base.interface import (MessageParserDataMixin,
+                                         MessageParserInterface)
+from integrations.slack import adapter
 
 
-class MessageParser(MessageParserInterface):
+class MessageParser(MessageParserDataMixin, MessageParserInterface):
     """メッセージ解析クラス"""
 
     def __init__(self):
-        super().__init__()
+        MessageParserDataMixin.__init__(self)
 
     def parser(self, _body: dict):
-        api_adapter = factory.select_adapter("slack")
+        api_adapter = adapter.SlackAPI()
 
         # 対象のevent抽出
-        _event = cast(dict, _body.get("event", {}))
+        _event = cast(dict, _body.get("event", _body))
 
         if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
             if _body.get("channel_name") == "directmessage":
@@ -32,6 +33,12 @@ class MessageParser(MessageParserInterface):
             self.data.channel_id = api_adapter.lookup.get_dm_channel_id(self.data.user_id)
             self.data.channel_type = "channel"
             self.data.text = "dummy"
+        elif _body.get("iid"):  # 検索結果
+            if (channel_id := str(cast(dict, _event["channel"]).get("id", ""))):
+                self.data.channel_id = channel_id
+                _event.pop("channel")
+            self.data.channel_type = "search_messages"
+            self.data.status = "message_append"
         else:
             match _event.get("subtype"):
                 case "message_changed":
@@ -50,10 +57,10 @@ class MessageParser(MessageParserInterface):
                     self.data.status = "message_append"
                     logging.info("unknown subtype: %s", _body)
 
-        self.data.text = _event.get("text", "")
-        self.data.channel_id = _event.get("channel", "")
-        self.data.channel_type = _event.get("channel_type", "")
-        self.data.user_id = _event.get("user", "")
+        self.data.text = _event.get("text", self.data.text)
+        self.data.channel_id = _event.get("channel", self.data.channel_id)
+        self.data.channel_type = _event.get("channel_type", self.data.channel_type)
+        self.data.user_id = _event.get("user", self.data.user_id)
         self.data.event_ts = _event.get("ts", "0")
         self.data.thread_ts = _event.get("thread_ts", "0")
 

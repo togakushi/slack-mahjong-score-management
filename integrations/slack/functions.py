@@ -2,6 +2,7 @@
 integrations/slack/functions.py
 """
 
+import copy
 import logging
 from typing import cast
 
@@ -9,18 +10,17 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.functions import message
 
-SlackSearchDict = dict[str, MessageParserInterface]
-DBSearchDict = dict[str, GameResult]
+SlackSearchDict = dict[str, MessageParserProtocol]
 
 
-def score_verification(detection: GameResult, m: MessageParserInterface, reactions_list: list | None = None) -> None:
+def score_verification(detection: GameResult, m: MessageParserProtocol, reactions_list: list | None = None) -> None:
     """素点合計をチェックしリアクションを付ける
 
     Args:
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -89,14 +89,10 @@ def get_messages(word: str) -> SlackSearchDict:
     m = factory.select_parser(g.selected_service)
     for x in matches:
         if isinstance(x, dict):
-            m.data.text = str(x.get("text", ""))
-            m.data.event_ts = str(x.get("ts", "0"))
-            m.data.thread_ts = "undetermined"
-            m.data.channel_id = str(cast(dict, x["channel"]).get("id", ""))
-            m.data.channel_type = "search_messages"
-            m.data.user_id = str(x.get("user", ""))
-            m.data.status = "message_append"
-            data[x["ts"]] = m
+            tmp_m = copy.deepcopy(m)
+            tmp_m.parser(x)
+            data[x["ts"]] = tmp_m
+
     return data
 
 
@@ -140,12 +136,10 @@ def pickup_score() -> SlackSearchDict:
     matches = get_messages(g.cfg.search.keyword)
 
     # ゲーム結果の抽出
-    detection = GameResult()
     for key in list(matches.keys()):
-        detection.calc(**matches[key].get_score(g.cfg.search.keyword))
-        if detection:
+        if matches[key].get_score(g.cfg.search.keyword):
             if matches[key].data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
-                logging.info("skip ignore user: %s (%s)", matches[key].data.user_id, detection)
+                logging.info("skip ignore user: %s", matches[key].data.user_id)
                 matches.pop(key)
                 continue
         else:  # 不一致は破棄
@@ -155,7 +149,9 @@ def pickup_score() -> SlackSearchDict:
     if not matches:
         return cast(SlackSearchDict, {})
 
+    # イベント詳細取得
     matches = get_message_details(matches)
+
     return matches
 
 
