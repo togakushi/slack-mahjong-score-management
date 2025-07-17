@@ -53,8 +53,8 @@ class PostData:
 
 
 class MessageParserProtocol(Protocol):
-    data = MsgData()
-    post = PostData()
+    data: MsgData
+    post: PostData
 
     @property
     def in_thread(self) -> bool:
@@ -77,5 +77,6 @@ class MessageParserProtocol(Protocol):
     def parser(self, body: Any):
         ...
 
+    @property
     def check_updatable(self) -> bool:
         ...
