@@ -32,11 +32,11 @@ def register_event_handlers(app):
         events.slash_command.main(ack, body)
 
     @app.event("app_home_opened")
-    def handle_home_events(client, event):
+    def handle_home_events(event):
         """ホームタブオープン
 
         Args:
             client (slack_bolt.App.client): slack_boltオブジェクト
             event (dict): イベント内容
         """
-        events.home_tab.main(client, event)
+        events.home_tab.main(event)
