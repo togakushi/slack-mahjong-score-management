@@ -170,7 +170,7 @@
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Protocol</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">runtime_checkable</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="nd">@dataclass</span>
@@ -219,34 +219,35 @@
 </span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="nd">@property</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>        <span class="o">...</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="nd">@property</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="o">...</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="nd">@property</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="o">...</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="o">...</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>        <span class="o">...</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="o">...</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="nd">@property</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="o">...</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="nd">@runtime_checkable</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="nd">@property</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="o">...</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="nd">@property</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="o">...</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="nd">@property</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="o">...</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>        <span class="o">...</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>        <span class="o">...</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>        <span class="o">...</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="nd">@property</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -611,7 +612,8 @@
                 <section id="MessageParserProtocol">
                             <input id="MessageParserProtocol-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
-            
+                    <div class="decorator decorator-runtime_checkable">@runtime_checkable</div>
+
     <span class="def">class</span>
     <span class="name">MessageParserProtocol</span><wbr>(<span class="base">typing.Protocol</span>):
 
@@ -619,34 +621,35 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol-56"><a href="#MessageParserProtocol-56"><span class="linenos">56</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="MessageParserProtocol-57"><a href="#MessageParserProtocol-57"><span class="linenos">57</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
-</span><span id="MessageParserProtocol-58"><a href="#MessageParserProtocol-58"><span class="linenos">58</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
-</span><span id="MessageParserProtocol-59"><a href="#MessageParserProtocol-59"><span class="linenos">59</span></a>
-</span><span id="MessageParserProtocol-60"><a href="#MessageParserProtocol-60"><span class="linenos">60</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-61"><a href="#MessageParserProtocol-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-62"><a href="#MessageParserProtocol-62"><span class="linenos">62</span></a>        <span class="o">...</span>
-</span><span id="MessageParserProtocol-63"><a href="#MessageParserProtocol-63"><span class="linenos">63</span></a>
-</span><span id="MessageParserProtocol-64"><a href="#MessageParserProtocol-64"><span class="linenos">64</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-65"><a href="#MessageParserProtocol-65"><span class="linenos">65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-66"><a href="#MessageParserProtocol-66"><span class="linenos">66</span></a>        <span class="o">...</span>
-</span><span id="MessageParserProtocol-67"><a href="#MessageParserProtocol-67"><span class="linenos">67</span></a>
-</span><span id="MessageParserProtocol-68"><a href="#MessageParserProtocol-68"><span class="linenos">68</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-69"><a href="#MessageParserProtocol-69"><span class="linenos">69</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-70"><a href="#MessageParserProtocol-70"><span class="linenos">70</span></a>        <span class="o">...</span>
-</span><span id="MessageParserProtocol-71"><a href="#MessageParserProtocol-71"><span class="linenos">71</span></a>
-</span><span id="MessageParserProtocol-72"><a href="#MessageParserProtocol-72"><span class="linenos">72</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-73"><a href="#MessageParserProtocol-73"><span class="linenos">73</span></a>        <span class="o">...</span>
-</span><span id="MessageParserProtocol-74"><a href="#MessageParserProtocol-74"><span class="linenos">74</span></a>
-</span><span id="MessageParserProtocol-75"><a href="#MessageParserProtocol-75"><span class="linenos">75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-76"><a href="#MessageParserProtocol-76"><span class="linenos">76</span></a>        <span class="o">...</span>
-</span><span id="MessageParserProtocol-77"><a href="#MessageParserProtocol-77"><span class="linenos">77</span></a>
-</span><span id="MessageParserProtocol-78"><a href="#MessageParserProtocol-78"><span class="linenos">78</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserProtocol-79"><a href="#MessageParserProtocol-79"><span class="linenos">79</span></a>        <span class="o">...</span>
-</span><span id="MessageParserProtocol-80"><a href="#MessageParserProtocol-80"><span class="linenos">80</span></a>
-</span><span id="MessageParserProtocol-81"><a href="#MessageParserProtocol-81"><span class="linenos">81</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-82"><a href="#MessageParserProtocol-82"><span class="linenos">82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-83"><a href="#MessageParserProtocol-83"><span class="linenos">83</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol-56"><a href="#MessageParserProtocol-56"><span class="linenos">56</span></a><span class="nd">@runtime_checkable</span>
+</span><span id="MessageParserProtocol-57"><a href="#MessageParserProtocol-57"><span class="linenos">57</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="MessageParserProtocol-58"><a href="#MessageParserProtocol-58"><span class="linenos">58</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
+</span><span id="MessageParserProtocol-59"><a href="#MessageParserProtocol-59"><span class="linenos">59</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
+</span><span id="MessageParserProtocol-60"><a href="#MessageParserProtocol-60"><span class="linenos">60</span></a>
+</span><span id="MessageParserProtocol-61"><a href="#MessageParserProtocol-61"><span class="linenos">61</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-62"><a href="#MessageParserProtocol-62"><span class="linenos">62</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-63"><a href="#MessageParserProtocol-63"><span class="linenos">63</span></a>        <span class="o">...</span>
+</span><span id="MessageParserProtocol-64"><a href="#MessageParserProtocol-64"><span class="linenos">64</span></a>
+</span><span id="MessageParserProtocol-65"><a href="#MessageParserProtocol-65"><span class="linenos">65</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-66"><a href="#MessageParserProtocol-66"><span class="linenos">66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-67"><a href="#MessageParserProtocol-67"><span class="linenos">67</span></a>        <span class="o">...</span>
+</span><span id="MessageParserProtocol-68"><a href="#MessageParserProtocol-68"><span class="linenos">68</span></a>
+</span><span id="MessageParserProtocol-69"><a href="#MessageParserProtocol-69"><span class="linenos">69</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-70"><a href="#MessageParserProtocol-70"><span class="linenos">70</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-71"><a href="#MessageParserProtocol-71"><span class="linenos">71</span></a>        <span class="o">...</span>
+</span><span id="MessageParserProtocol-72"><a href="#MessageParserProtocol-72"><span class="linenos">72</span></a>
+</span><span id="MessageParserProtocol-73"><a href="#MessageParserProtocol-73"><span class="linenos">73</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-74"><a href="#MessageParserProtocol-74"><span class="linenos">74</span></a>        <span class="o">...</span>
+</span><span id="MessageParserProtocol-75"><a href="#MessageParserProtocol-75"><span class="linenos">75</span></a>
+</span><span id="MessageParserProtocol-76"><a href="#MessageParserProtocol-76"><span class="linenos">76</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-77"><a href="#MessageParserProtocol-77"><span class="linenos">77</span></a>        <span class="o">...</span>
+</span><span id="MessageParserProtocol-78"><a href="#MessageParserProtocol-78"><span class="linenos">78</span></a>
+</span><span id="MessageParserProtocol-79"><a href="#MessageParserProtocol-79"><span class="linenos">79</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserProtocol-80"><a href="#MessageParserProtocol-80"><span class="linenos">80</span></a>        <span class="o">...</span>
+</span><span id="MessageParserProtocol-81"><a href="#MessageParserProtocol-81"><span class="linenos">81</span></a>
+</span><span id="MessageParserProtocol-82"><a href="#MessageParserProtocol-82"><span class="linenos">82</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-83"><a href="#MessageParserProtocol-83"><span class="linenos">83</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-84"><a href="#MessageParserProtocol-84"><span class="linenos">84</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -760,9 +763,9 @@ Protocol classes can be generic, they are defined as::</p>
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.in_thread"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.in_thread-60"><a href="#MessageParserProtocol.in_thread-60"><span class="linenos">60</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.in_thread-61"><a href="#MessageParserProtocol.in_thread-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.in_thread-62"><a href="#MessageParserProtocol.in_thread-62"><span class="linenos">62</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.in_thread-61"><a href="#MessageParserProtocol.in_thread-61"><span class="linenos">61</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.in_thread-62"><a href="#MessageParserProtocol.in_thread-62"><span class="linenos">62</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.in_thread-63"><a href="#MessageParserProtocol.in_thread-63"><span class="linenos">63</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -778,9 +781,9 @@ Protocol classes can be generic, they are defined as::</p>
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.keyword"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.keyword-64"><a href="#MessageParserProtocol.keyword-64"><span class="linenos">64</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.keyword-65"><a href="#MessageParserProtocol.keyword-65"><span class="linenos">65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.keyword-66"><a href="#MessageParserProtocol.keyword-66"><span class="linenos">66</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.keyword-65"><a href="#MessageParserProtocol.keyword-65"><span class="linenos">65</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.keyword-66"><a href="#MessageParserProtocol.keyword-66"><span class="linenos">66</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.keyword-67"><a href="#MessageParserProtocol.keyword-67"><span class="linenos">67</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -796,9 +799,9 @@ Protocol classes can be generic, they are defined as::</p>
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.argument"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.argument-68"><a href="#MessageParserProtocol.argument-68"><span class="linenos">68</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.argument-69"><a href="#MessageParserProtocol.argument-69"><span class="linenos">69</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.argument-70"><a href="#MessageParserProtocol.argument-70"><span class="linenos">70</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.argument-69"><a href="#MessageParserProtocol.argument-69"><span class="linenos">69</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.argument-70"><a href="#MessageParserProtocol.argument-70"><span class="linenos">70</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.argument-71"><a href="#MessageParserProtocol.argument-71"><span class="linenos">71</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -816,8 +819,8 @@ Protocol classes can be generic, they are defined as::</p>
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.get_score"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.get_score-72"><a href="#MessageParserProtocol.get_score-72"><span class="linenos">72</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.get_score-73"><a href="#MessageParserProtocol.get_score-73"><span class="linenos">73</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.get_score-73"><a href="#MessageParserProtocol.get_score-73"><span class="linenos">73</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.get_score-74"><a href="#MessageParserProtocol.get_score-74"><span class="linenos">74</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -835,8 +838,8 @@ Protocol classes can be generic, they are defined as::</p>
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.get_remarks"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.get_remarks-75"><a href="#MessageParserProtocol.get_remarks-75"><span class="linenos">75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.get_remarks-76"><a href="#MessageParserProtocol.get_remarks-76"><span class="linenos">76</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.get_remarks-76"><a href="#MessageParserProtocol.get_remarks-76"><span class="linenos">76</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.get_remarks-77"><a href="#MessageParserProtocol.get_remarks-77"><span class="linenos">77</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -854,8 +857,8 @@ Protocol classes can be generic, they are defined as::</p>
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.parser"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.parser-78"><a href="#MessageParserProtocol.parser-78"><span class="linenos">78</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserProtocol.parser-79"><a href="#MessageParserProtocol.parser-79"><span class="linenos">79</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.parser-79"><a href="#MessageParserProtocol.parser-79"><span class="linenos">79</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserProtocol.parser-80"><a href="#MessageParserProtocol.parser-80"><span class="linenos">80</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -871,9 +874,9 @@ Protocol classes can be generic, they are defined as::</p>
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.check_updatable-81"><a href="#MessageParserProtocol.check_updatable-81"><span class="linenos">81</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.check_updatable-82"><a href="#MessageParserProtocol.check_updatable-82"><span class="linenos">82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.check_updatable-83"><a href="#MessageParserProtocol.check_updatable-83"><span class="linenos">83</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.check_updatable-82"><a href="#MessageParserProtocol.check_updatable-82"><span class="linenos">82</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.check_updatable-83"><a href="#MessageParserProtocol.check_updatable-83"><span class="linenos">83</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.check_updatable-84"><a href="#MessageParserProtocol.check_updatable-84"><span class="linenos">84</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
