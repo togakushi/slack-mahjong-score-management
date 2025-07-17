@@ -4,13 +4,18 @@ libs/commands/graph/slackpost.py
 
 import libs.global_value as g
 from integrations import factory
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.commands.graph import personal, rating, summary
 from libs.utils import dictutil
 
 
-def main(m: MessageParserInterface):
-    """グラフをslackにpostする"""
+def main(m: MessageParserProtocol):
+    """グラフをslackにpostする
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
+
     api_adapter = factory.select_adapter(g.selected_service)
     g.params = dictutil.placeholder(g.cfg.graph, m)
 

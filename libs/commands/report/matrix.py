@@ -6,14 +6,17 @@ import os
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate
 from libs.functions import message
 from libs.utils import formatter
 
 
-def plot(m: MessageParserInterface) -> tuple[str, list]:
+def plot(m: MessageParserProtocol) -> tuple[str, list]:
     """対局対戦マトリックスの表示
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[str,dict]:

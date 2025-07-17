@@ -4,14 +4,19 @@ libs/commands/report/slackpost.py
 
 import libs.global_value as g
 from integrations import factory
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.commands import report
 from libs.functions import message
 from libs.utils import dictutil
 
 
-def main(m: MessageParserInterface):
-    """レポートをslackにpostする"""
+def main(m: MessageParserProtocol):
+    """レポートをslackにpostする
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
+
     api_adapter = factory.select_adapter(g.selected_service)
     g.params = dictutil.placeholder(g.cfg.report, m)
     m.post.message_type = "no_hits"

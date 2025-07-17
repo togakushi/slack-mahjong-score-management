@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import formatter
@@ -16,8 +16,11 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-def aggregation(m: MessageParserInterface) -> tuple[str, dict, list]:
+def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
     """各プレイヤーの通算ポイントを表示
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[str, dict, dict]

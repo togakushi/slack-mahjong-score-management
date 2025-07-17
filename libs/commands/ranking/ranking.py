@@ -9,14 +9,17 @@ from tabulate import tabulate
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserInterface) -> tuple[str, dict]:
+def aggregation(m: MessageParserProtocol) -> tuple[str, dict]:
     """ランキングデータを生成
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[str,dict]: 集計結果

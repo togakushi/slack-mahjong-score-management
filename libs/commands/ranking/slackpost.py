@@ -6,13 +6,18 @@ import copy
 
 import libs.global_value as g
 from integrations import factory
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.commands import ranking
 from libs.utils import dictutil
 
 
-def main(m: MessageParserInterface):
-    """ランキングをslackにpostする"""
+def main(m: MessageParserProtocol):
+    """ランキングをslackにpostする
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
+
     api_adapter = factory.select_adapter(g.selected_service)
 
     g.params = dictutil.placeholder(g.cfg.ranking, m)

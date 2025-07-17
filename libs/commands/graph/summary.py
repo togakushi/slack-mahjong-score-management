@@ -12,14 +12,17 @@ import pandas as pd
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
-def point_plot(m: MessageParserInterface) -> tuple[int, str]:
+def point_plot(m: MessageParserProtocol) -> tuple[int, str]:
     """ポイント推移グラフを生成する
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[int,str]:
@@ -103,8 +106,11 @@ def point_plot(m: MessageParserInterface) -> tuple[int, str]:
     return (game_info["game_count"], save_file)
 
 
-def rank_plot(m: MessageParserInterface) -> tuple[int, str]:
+def rank_plot(m: MessageParserProtocol) -> tuple[int, str]:
     """順位変動グラフを生成する
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[int,str]:

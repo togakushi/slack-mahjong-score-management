@@ -9,15 +9,18 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate
 from libs.functions import compose, message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
 
 
-def plot(m: MessageParserInterface) -> tuple[int, str]:
+def plot(m: MessageParserProtocol) -> tuple[int, str]:
     """レーティング推移グラフを生成する
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[int,str]:

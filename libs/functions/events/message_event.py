@@ -12,7 +12,7 @@ import libs.commands.results.slackpost
 import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from integrations.slack import comparison, functions
 from libs.data import lookup, modify
 from libs.functions import compose, message
@@ -88,12 +88,12 @@ def main(body):
             other_words(x, m)
 
 
-def other_words(word: str, m: MessageParserInterface):
+def other_words(word: str, m: MessageParserProtocol):
     """コマンド以外のワードの処理
 
     Args:
         word (str): 入力ワード
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
     """
 
     if re.match(rf"^{g.cfg.cw.remarks_word}$", word) and m.in_thread:  # 追加メモ
@@ -126,12 +126,12 @@ def other_words(word: str, m: MessageParserInterface):
                 message_deleted(m)
 
 
-def message_append(detection: GameResult, m: MessageParserInterface):
+def message_append(detection: GameResult, m: MessageParserProtocol):
     """メッセージの追加処理
 
     Args:
         detection (GameResult): スコアデータ
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -147,12 +147,12 @@ def message_append(detection: GameResult, m: MessageParserInterface):
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
-def message_changed(detection: GameResult, m: MessageParserInterface):
+def message_changed(detection: GameResult, m: MessageParserProtocol):
     """メッセージの変更処理
 
     Args:
         detection (GameResult): スコアデータ
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -184,11 +184,11 @@ def message_changed(detection: GameResult, m: MessageParserInterface):
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
-def message_deleted(m: MessageParserInterface):
+def message_deleted(m: MessageParserProtocol):
     """メッセージの削除処理
 
     Args:
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)

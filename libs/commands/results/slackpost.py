@@ -4,13 +4,18 @@ libs/commands/results/slackpost.py
 
 import libs.global_value as g
 from integrations import factory
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.commands import results
 from libs.utils import dictutil
 
 
-def main(m: MessageParserInterface):
-    """成績集計結果"""
+def main(m: MessageParserProtocol):
+    """成績集計結果
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
+
     api_adapter = factory.select_adapter(g.selected_service)
     g.params = dictutil.placeholder(g.cfg.results, m)
     m.post.thread = False

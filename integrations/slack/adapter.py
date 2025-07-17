@@ -11,9 +11,9 @@ from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
-from integrations.base import MessageParserInterface
 from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
+from integrations.protocols import MessageParserProtocol
 from integrations.slack import api
 
 
@@ -135,10 +135,10 @@ class SlackAPI(APIInterface):
         self.lookup = _LookupAPI()
         self.reactions = _ReactionsAPI()
 
-    def post_message(self, m: MessageParserInterface) -> dict:
+    def post_message(self, m: MessageParserProtocol) -> dict:
         """メッセージをポストする
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: API response
@@ -165,11 +165,11 @@ class SlackAPI(APIInterface):
 
         return cast(dict, res)
 
-    def post_multi_message(self, m: MessageParserInterface) -> None:
+    def post_multi_message(self, m: MessageParserProtocol) -> None:
         """メッセージを分割してポスト
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
         """
 
         tmp_m = copy.deepcopy(m)
@@ -193,11 +193,11 @@ class SlackAPI(APIInterface):
         else:
             self.post_message(m)
 
-    def post_text(self, m: MessageParserInterface) -> dict:
+    def post_text(self, m: MessageParserProtocol) -> dict:
         """コードブロック修飾付きポスト
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: API response
@@ -236,11 +236,11 @@ class SlackAPI(APIInterface):
 
         return cast(dict, res)
 
-    def post(self, m: MessageParserInterface):
+    def post(self, m: MessageParserProtocol):
         """パラメータの内容によって呼び出すAPIを振り分ける
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
         """
 
         if m.post.headline:  # 見出し付き
@@ -260,11 +260,11 @@ class SlackAPI(APIInterface):
         if m.post.message:
             self.post_multi_message(m)
 
-    def fileupload(self, m: MessageParserInterface) -> dict:
+    def fileupload(self, m: MessageParserProtocol) -> dict:
         """files_upload_v2に渡すパラメータを設定
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: 結果(SlackResponse)
@@ -288,11 +288,11 @@ class SlackAPI(APIInterface):
             return cast(dict, res)
         return {}
 
-    def get_conversations(self, m: MessageParserInterface) -> dict:
+    def get_conversations(self, m: MessageParserProtocol) -> dict:
         """スレッド情報の取得
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: API response

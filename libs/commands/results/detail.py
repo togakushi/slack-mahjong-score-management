@@ -10,17 +10,17 @@ import pandas as pd
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader, lookup
 from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
 
-def aggregation(m: MessageParserInterface) -> Tuple[str, dict]:
+def aggregation(m: MessageParserProtocol) -> Tuple[str, dict]:
     """個人/チーム成績詳細を集計して返す
 
     Args:
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         Tuple[str,dict]: 集計結果

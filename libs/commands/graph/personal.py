@@ -11,14 +11,17 @@ from matplotlib import gridspec
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import loader
 from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
-def plot(m: MessageParserInterface) -> tuple[int, str]:
+def plot(m: MessageParserProtocol) -> tuple[int, str]:
     """個人成績のグラフを生成する
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[int,str]:
@@ -121,8 +124,11 @@ def plot(m: MessageParserInterface) -> tuple[int, str]:
     return (len(df), save_file)
 
 
-def statistics_plot(m: MessageParserInterface) -> tuple[int, str]:
+def statistics_plot(m: MessageParserProtocol) -> tuple[int, str]:
     """個人成績の統計グラフを生成する
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[int,str]:

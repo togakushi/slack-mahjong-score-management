@@ -13,14 +13,15 @@ from libs.utils import formatter
 
 if TYPE_CHECKING:
     from cls.config import SubCommand
-    from integrations.base import MessageParserInterface
+    from integrations.protocols import MessageParserProtocol
 
 
-def placeholder(subcom: "SubCommand", m: "MessageParserInterface") -> dict:
+def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
     """プレースホルダに使用する辞書を生成
 
     Args:
         subcom (SubCommand): パラメータ
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         dict: プレースホルダ用辞書

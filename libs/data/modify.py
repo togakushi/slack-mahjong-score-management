@@ -15,18 +15,18 @@ from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
 from integrations import factory
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
 
 
-def db_insert(detection: GameResult, m: MessageParserInterface) -> int:
+def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
     """スコアデータをDBに追加する
 
     Args:
         detection (GameResult): スコアデータ
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         int: _description_
@@ -56,12 +56,12 @@ def db_insert(detection: GameResult, m: MessageParserInterface) -> int:
     return changes
 
 
-def db_update(detection: GameResult, m: MessageParserInterface) -> None:
+def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
     """スコアデータを変更する
 
     Args:
         detection (GameResult): スコアデータ
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -82,11 +82,11 @@ def db_update(detection: GameResult, m: MessageParserInterface) -> None:
         api_adapter.post_message(m)
 
 
-def db_delete(m: MessageParserInterface) -> list:
+def db_delete(m: MessageParserProtocol) -> list:
     """スコアデータを削除する
 
     Args:
-        m (MessageParserInterface): メッセージ内容
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         list: 削除したタイムスタンプ
@@ -147,10 +147,11 @@ def db_backup() -> str:
         return "\nデータベースのバックアップに失敗しました。"
 
 
-def remarks_append(m: MessageParserInterface, remarks: list[RemarkDict]) -> None:
+def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
     """メモをDBに記録する
 
     Args:
+        m (MessageParserProtocol): メッセージデータ
         remarks (list[RemarkDict]): メモに残す内容
     """
 
@@ -175,11 +176,11 @@ def remarks_append(m: MessageParserInterface, remarks: list[RemarkDict]) -> None
             cur.commit()
 
 
-def remarks_delete(m: MessageParserInterface) -> list:
+def remarks_delete(m: MessageParserProtocol) -> list:
     """DBからメモを削除する
 
     Args:
-        ts (str): 削除対象レコードのタイムスタンプ
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         list: 削除したタイムスタンプ
@@ -197,12 +198,12 @@ def remarks_delete(m: MessageParserInterface) -> list:
     return delete_list
 
 
-def remarks_delete_compar(para: dict, m: MessageParserInterface) -> None:
+def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
     """DBからメモを削除する(突合)
 
     Args:
         para (dict): パラメータ
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -221,8 +222,14 @@ def remarks_delete_compar(para: dict, m: MessageParserInterface) -> None:
         api_adapter.reactions.remove(g.cfg.setting.reaction_ok, ch=ch, ts=para["event_ts"])
 
 
-def check_remarks(m: MessageParserInterface) -> None:
-    """メモの内容を拾ってDBに格納する"""
+def check_remarks(m: MessageParserProtocol) -> None:
+    """メモの内容を拾ってDBに格納する
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+
+    """
+
     game_result = lookup.db.exsist_record(m.data.thread_ts)
     if game_result.has_valid_data():  # ゲーム結果のスレッドになっているか
         g.cfg.results.initialization()
@@ -249,8 +256,12 @@ def check_remarks(m: MessageParserInterface) -> None:
                 remarks_delete(m)
 
 
-def reprocessing_remarks(m: MessageParserInterface) -> None:
-    """スレッドの内容を再処理"""
+def reprocessing_remarks(m: MessageParserProtocol) -> None:
+    """スレッドの内容を再処理
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
 
     api_adapter = factory.select_adapter(g.selected_service)
 

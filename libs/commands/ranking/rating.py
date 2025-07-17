@@ -6,14 +6,17 @@ import pandas as pd
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import compose, message
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserInterface) -> tuple[str, dict, list]:
+def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
     """レーティングを集計して返す
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         tuple[str, dict, dict]:

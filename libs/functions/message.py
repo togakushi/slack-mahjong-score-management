@@ -11,15 +11,15 @@ from typing import cast
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from integrations.base import MessageParserInterface
+from integrations.protocols import MessageParserProtocol
 from libs.functions import compose
 
 
-def random_reply(m: MessageParserInterface) -> str:
+def random_reply(m: MessageParserProtocol) -> str:
     """メッセージをランダムに返す
 
     Args:
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         str: メッセージ
@@ -63,12 +63,12 @@ def random_reply(m: MessageParserInterface) -> str:
     return msg
 
 
-def header(game_info: GameInfoDict, m: MessageParserInterface, add_text="", indent=1):
+def header(game_info: GameInfoDict, m: MessageParserProtocol, add_text="", indent=1):
     """見出し生成
 
     Args:
         game_info (GameInfoDict): 集計範囲のゲーム情報
-        m (MessageParserInterface): メッセージデータ
+        m (MessageParserProtocol): メッセージデータ
         add_text (str, optional): 追加表示するテキスト. Defaults to "".
         indent (int, optional): 先頭のタブ数. Defaults to 1.
 

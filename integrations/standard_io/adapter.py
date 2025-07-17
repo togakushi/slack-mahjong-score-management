@@ -4,9 +4,9 @@ integrations/standard_io/message.py
 
 from pprint import pprint
 
-from integrations.base import MessageParserInterface
 from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
+from integrations.protocols import MessageParserProtocol
 
 
 class _ReactionsDummy(ReactionsInterface):
@@ -44,31 +44,31 @@ class StandardIO(APIInterface):
         self.lookup = _LookupDummy()
         self.reactions = _ReactionsDummy()
 
-    def post_message(self, m: MessageParserInterface) -> dict:
+    def post_message(self, m: MessageParserProtocol) -> dict:
         """標準出力
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
         """
 
         pprint(m.post.message)
 
         return {}
 
-    def post_multi_message(self, m: MessageParserInterface):
+    def post_multi_message(self, m: MessageParserProtocol):
         """標準出力
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
         """
 
         pprint(m.post.message)
 
-    def post_text(self, m: MessageParserInterface) -> dict:
+    def post_text(self, m: MessageParserProtocol) -> dict:
         """標準出力
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: ダミー
@@ -79,32 +79,32 @@ class StandardIO(APIInterface):
 
         return {}
 
-    def post(self, m: MessageParserInterface):
+    def post(self, m: MessageParserProtocol):
         """パラメータの内容によって呼び出すAPIを振り分ける
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
         """
 
         pprint(m.post.headline)
         pprint(m.post.message)
         pprint(m.post.file_list)
 
-    def fileupload(self, m: MessageParserInterface):
+    def fileupload(self, m: MessageParserProtocol):
         """標準出力
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
         """
 
         pprint(m.post.title)
         pprint(m.post.file_list)
 
-    def get_conversations(self, m: MessageParserInterface) -> dict:
+    def get_conversations(self, m: MessageParserProtocol) -> dict:
         """ダミー
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: ダミー

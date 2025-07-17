@@ -4,6 +4,7 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Literal
+from integrations.protocols import MessageParserProtocol
 
 
 class ReactionsInterface(ABC):
@@ -105,7 +106,7 @@ class APIInterface(ABC):
     reactions: "ReactionsInterface"
 
     @abstractmethod
-    def post_message(self, m: "MessageParserInterface") -> dict:
+    def post_message(self, m: "MessageParserProtocol") -> dict:
         """メッセージをポストする
 
         Args:
@@ -122,11 +123,11 @@ class APIInterface(ABC):
         return {}
 
     @abstractmethod
-    def post_multi_message(self, m: "MessageParserInterface"):
+    def post_multi_message(self, m: "MessageParserProtocol"):
         """辞書の要素単位でメッセージをポストする"""
 
     @abstractmethod
-    def post_text(self, m: "MessageParserInterface") -> dict:
+    def post_text(self, m: "MessageParserProtocol") -> dict:
         """コードブロック修飾付きでメッセージをポストする
 
         Returns:
@@ -135,19 +136,19 @@ class APIInterface(ABC):
         return {}
 
     @abstractmethod
-    def post(self, m: "MessageParserInterface"):
+    def post(self, m: "MessageParserProtocol"):
         """メッセージデータの内容でポストのふるまいを変える"""
 
     @abstractmethod
-    def fileupload(self, m: "MessageParserInterface"):
+    def fileupload(self, m: "MessageParserProtocol"):
         """ファイルをアップロードする
 
         Args:
-            m (MessageParserInterface): メッセージデータ
+            m (MessageParserProtocol): メッセージデータ
         """
 
     @abstractmethod
-    def get_conversations(self, m: "MessageParserInterface") -> dict:
+    def get_conversations(self, m: "MessageParserProtocol") -> dict:
         """スレッド情報の取得
 
         Returns:
@@ -202,24 +203,15 @@ class PostData:
     rpoint_sum: int = field(default=0)
 
 
-class MessageParserInterface(ABC):
-    """メッセージ解析インターフェース"""
-
+class MessageParserDataMixin:
+    """メッセージ解析共通処理"""
     def __init__(self):
         self.data = MsgData()
         self.post = PostData()
 
-    @abstractmethod
-    def parser(self, body: Any):
-        pass
-
-    @property
-    @abstractmethod
-    def check_updatable(self) -> bool:
-        pass
-
     @property
     def in_thread(self) -> bool:
+        """スレッド内のメッセージか判定"""
         if self.data.thread_ts == "0":
             return False
         elif self.data.event_ts == self.data.thread_ts:
@@ -228,12 +220,24 @@ class MessageParserInterface(ABC):
 
     @property
     def keyword(self) -> str:
+        """コマンドとして認識している文字列を返す
+
+        Returns:
+            str: コマンド名
+        """
+
         if (ret := self.data.text.split()):
             return ret[0]
         return self.data.text
 
     @property
     def argument(self) -> list:
+        """コマンド引数として認識している文字列をリストで返す
+
+        Returns:
+            list: 引数リスト
+        """
+
         if (ret := self.data.text.split()):
             return ret[1:]
         return ret
@@ -344,3 +348,25 @@ class MessageParserInterface(ABC):
             for name, matter in zip(text[0::2], text[1::2]):
                 ret.append([name, matter])
         return ret
+
+
+class MessageParserInterface(ABC):
+    """メッセージ解析インターフェース"""
+    @abstractmethod
+    def parser(self, body: Any):
+        """メッセージ解析
+
+        Args:
+            body (Any): 解析データ
+        """
+
+    @property
+    @abstractmethod
+    def check_updatable(self) -> bool:
+        """DB操作の許可チェック
+
+        Returns:
+            bool: 真偽値
+            - **True** : 許可
+            - **False** : 禁止
+        """

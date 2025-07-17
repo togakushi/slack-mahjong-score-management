@@ -1,11 +1,17 @@
+"""
+integrations/standard_io/parser.py
+"""
+
 from typing import cast
 
-from integrations.base.interface import MessageParserInterface
+from integrations.base.interface import (MessageParserDataMixin,
+                                         MessageParserInterface)
 
 
-class MessageParser(MessageParserInterface):
+class MessageParser(MessageParserDataMixin, MessageParserInterface):
+    """メッセージ解析クラス"""
     def __init__(self):
-        super().__init__()
+        MessageParserDataMixin.__init__(self)
 
     def parser(self, body: dict):
         self.data.channel_id = "dummy"
