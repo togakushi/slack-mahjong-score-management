@@ -3,7 +3,7 @@ integrations/protocols.py
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Literal, Protocol
+from typing import Any, Literal, Protocol, runtime_checkable
 
 
 @dataclass
@@ -52,6 +52,7 @@ class PostData:
     rpoint_sum: int = field(default=0)
 
 
+@runtime_checkable
 class MessageParserProtocol(Protocol):
     data: MsgData
     post: PostData
