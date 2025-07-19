@@ -24,8 +24,8 @@ def call_chat_post_message(**kwargs) -> SlackResponse:
 
     try:
         res = g.appclient.chat_postMessage(**kwargs)
-    except SlackApiError as e:
-        logging.critical(e)
+    except SlackApiError as err:
+        logging.critical(err)
         logging.error("kwargs=%s", kwargs)
 
     return res
@@ -43,8 +43,8 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
         kwargs.pop("thread_ts")
     try:
         res = g.appclient.files_upload_v2(**kwargs)
-    except SlackApiError as e:
-        logging.critical(e)
+    except SlackApiError as err:
+        logging.critical(err)
         logging.error("kwargs=%s", kwargs)
 
     return res
@@ -58,6 +58,10 @@ def call_reactions_add(icon: str, ch: str, ts: str):
         ch (str): チャンネルID
         ts (str): メッセージのタイムスタンプ
     """
+
+    if not all([icon, ch, ts]):
+        logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
+        return
 
     try:
         res: SlackResponse = g.appclient.reactions_add(
@@ -83,6 +87,10 @@ def call_reactions_remove(icon: str, ch: str, ts: str):
         ch (str): チャンネルID
         ts (str): メッセージのタイムスタンプ
     """
+
+    if not all([icon, ch, ts]):
+        logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
+        return
 
     try:
         res = g.appclient.reactions_remove(
