@@ -2,10 +2,11 @@
 cls/score.py
 """
 
+import re
 from dataclasses import dataclass, field
 from typing import Literal, Optional, cast
 
-from libs.functions.score import calculation_point
+import pandas as pd
 
 
 @dataclass
@@ -46,33 +47,44 @@ class Score:
         return ret_dict
 
 
-@dataclass
 class GameResult:
-    """ゲーム結果"""
-    ts: str = field(default="")
-    """タイムスタンプ"""
-    p1: Score = field(default_factory=Score)
-    """東家成績"""
-    p2: Score = field(default_factory=Score)
-    """南家成績"""
-    p3: Score = field(default_factory=Score)
-    """西家成績"""
-    p4: Score = field(default_factory=Score)
-    """北家成績"""
-    comment: Optional[str] = field(default=None)
-    """ゲームコメント"""
-    deposit: int = field(default=0)
-    """供託"""
-    rule_version: str = field(default="")
-    """ルールバージョン"""
+    """スコアデータ"""
+    def __init__(self, **kwargs):
+        """ゲーム結果"""
+        self.ts: str = ""
+        """タイムスタンプ"""
+        self.p1: Score = Score()
+        """東家成績"""
+        self.p2: Score = Score()
+        """南家成績"""
+        self.p3: Score = Score()
+        """西家成績"""
+        self.p4: Score = Score()
+        """北家成績"""
+        self.comment: Optional[str] = None
+        """ゲームコメント"""
+        self.deposit: int = 0
+        """供託"""
+        self.rule_version: str = ""
+        """ルールバージョン"""
+        self.origin_point: int = 250
+        """配給原点"""
+        self.return_point: int = 300
+        """返し点"""
+        self.rank_point: list = [30, 10, -10, -30]
+        """順位点"""
+        self.draw_split: bool = False
+        """同着時に順位点を山分けにするか"""
+
+        self.calc(**kwargs)
 
     def __bool__(self) -> bool:
         return all(self.to_list("name") + self.to_list("str"))
 
     def has_valid_data(self) -> bool:
-        """有効なデータを持っているかチェック"""
+        """DB更新に必要なデータを持っているかチェック"""
         return all([
-            self.ts != GameResult.ts,
+            self.ts, isinstance(self.ts, str),
             self.p1.has_valid_data(),
             self.p2.has_valid_data(),
             self.p3.has_valid_data(),
@@ -83,32 +95,34 @@ class GameResult:
     def set(self, **kwargs) -> None:
         """テータ取り込み"""
         for prefix in ("p1", "p2", "p3", "p4"):
-            x = {str(k).replace(f"{prefix}_", ""): v for k, v in kwargs.items() if str(k).startswith(f"{prefix}_")}
-            prefix_obj = getattr(self, prefix)
-            for k, v in x.items():
-                match k:
-                    case "name":
-                        setattr(prefix_obj, "name", str(v))
-                    case "str" | "r_str":
-                        setattr(prefix_obj, "r_str", str(v))
-                    case "rpoint":
-                        if isinstance(v, int):
-                            setattr(prefix_obj, "rpoint", int(v))
-                    case "point":
-                        if isinstance(v, (float, int)):
-                            setattr(prefix_obj, "point", float(v))
-                    case "rank":
-                        if isinstance(v, int):
-                            setattr(prefix_obj, "rank", int(v))
+            prefix_obj = cast(Score, getattr(self, prefix))
+            if f"{prefix}_name" in kwargs:
+                prefix_obj.name = str(kwargs[f"{prefix}_name"])
+            if f"{prefix}_str" in kwargs:
+                prefix_obj.r_str = kwargs[f"{prefix}_str"]
+            if f"{prefix}_r_str" in kwargs:
+                prefix_obj.r_str = kwargs[f"{prefix}_str"]
+            if f"{prefix}_rpoint" in kwargs and isinstance(kwargs[f"{prefix}_rpoint"], int):
+                prefix_obj.rank = int(kwargs[f"{prefix}_rpoint"])
+            if f"{prefix}_point" in kwargs and isinstance(kwargs[f"{prefix}_point"], (float, int)):
+                prefix_obj.point = float(kwargs[f"{prefix}_point"])
+            if f"{prefix}_rank" in kwargs and isinstance(kwargs[f"{prefix}_rank"], int):
+                prefix_obj.rank = int(kwargs[f"{prefix}_rank"])
 
-        if "ts" in kwargs:
+        if "ts" in kwargs and isinstance(kwargs["ts"], str):
             self.ts = kwargs["ts"]
-        if "rule_version" in kwargs:
+        if "rule_version" in kwargs and isinstance(kwargs["rule_version"], str):
             self.rule_version = str(kwargs["rule_version"])
-        if "deposit" in kwargs:
+        if "deposit" in kwargs and isinstance(kwargs["deposit"], int):
             self.deposit = int(kwargs["deposit"])
-        if "comment" in kwargs:
-            self.comment = kwargs["comment"]
+        if "comment" in kwargs and kwargs["comment"]:
+            self.comment = str(kwargs["comment"])
+        if "origin_point" in kwargs and isinstance(kwargs["origin_point"], int):
+            self.origin_point = int(kwargs["origin_point"])
+        if "return_point" in kwargs and isinstance(kwargs["return_point"], int):
+            self.return_point = int(kwargs["return_point"])
+        if "draw_split" in kwargs and isinstance(kwargs["draw_split"], bool):
+            self.draw_split = kwargs["draw_split"]
 
     def to_dict(self) -> dict:
         """データを辞書で返す
@@ -210,4 +224,121 @@ class GameResult:
             self.set(**kwargs)
 
         if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]):
-            self.set(**calculation_point(cast(list[str], self.to_list("str"))))
+            self.set(**self._calculation_point())
+
+    def _calculation_point(self) -> dict:
+        """獲得ポイントと順位を計算する
+
+        Returns:
+            dict: 更新用辞書(順位と獲得ポイントのデータ)
+        """
+
+        def normalized_expression(expr: str) -> int:
+            """入力文字列を式として評価し、計算結果を返す
+
+            Args:
+                expr (str): 入力式
+
+            Returns:
+                int: 計算結果
+            """
+
+            normalized: list = []
+
+            for token in re.findall(r"\d+|[+\-*/]", expr):
+                if isinstance(token, str):
+                    if token.isnumeric():
+                        normalized.append(str(int(token)))
+                    else:
+                        normalized.append(token)
+
+            return eval("".join(normalized))  # pylint: disable=eval-used
+
+        def point_split(point: list) -> list:
+            """順位点を山分けする
+
+            Args:
+                point (list): 山分けするポイントのリスト
+
+            Returns:
+                list: 山分けした結果
+            """
+
+            new_point = [int(sum(point) / len(point))] * len(point)
+            if sum(point) % len(point):
+                new_point[0] += sum(point) % len(point)
+                if sum(point) < 0:
+                    new_point = list(map(lambda x: x - 1, new_point))
+
+            return new_point
+
+        # 計算用データフレーム
+        score_df = pd.DataFrame(
+            {"rpoint": [normalized_expression(x) for x in self.to_list("str")]},
+            index=["p1", "p2", "p3", "p4"]
+        )
+
+        work_rank_point = self.rank_point.copy()  # ウマ
+        work_rank_point[0] += int((self.return_point - self.origin_point) / 10 * 4)  # オカ
+
+        if self.draw_split:  # 山分け
+            score_df["rank"] = score_df["rpoint"].rank(
+                ascending=False, method="min"
+            ).astype("int")
+
+            # 順位点リストの更新
+            rank_sequence = "".join(
+                score_df["rank"].sort_values().to_string(index=False).split()
+            )
+            match rank_sequence:
+                case "1111":
+                    work_rank_point = point_split(work_rank_point)
+                case "1114":
+                    new_point = point_split(work_rank_point[0:3])
+                    work_rank_point[0] = new_point[0]
+                    work_rank_point[1] = new_point[1]
+                    work_rank_point[2] = new_point[2]
+                case "1134":
+                    new_point = point_split(work_rank_point[0:2])
+                    work_rank_point[0] = new_point[0]
+                    work_rank_point[1] = new_point[1]
+                case "1133":
+                    new_point = point_split(work_rank_point[0:2])
+                    work_rank_point[0] = new_point[0]
+                    work_rank_point[1] = new_point[1]
+                    new_point = point_split(work_rank_point[2:4])
+                    work_rank_point[2] = new_point[0]
+                    work_rank_point[3] = new_point[1]
+                case "1222":
+                    new_point = point_split(work_rank_point[1:4])
+                    work_rank_point[1] = new_point[0]
+                    work_rank_point[2] = new_point[1]
+                    work_rank_point[3] = new_point[2]
+                case "1224":
+                    new_point = point_split(work_rank_point[1:3])
+                    work_rank_point[1] = new_point[0]
+                    work_rank_point[2] = new_point[1]
+                case "1233":
+                    new_point = point_split(work_rank_point[2:4])
+                    work_rank_point[2] = new_point[0]
+                    work_rank_point[3] = new_point[1]
+                case _:
+                    pass
+
+        else:  # 席順
+            score_df["rank"] = score_df["rpoint"].rank(
+                ascending=False, method="first"
+            ).astype("int")
+
+        # 獲得ポイントの計算 (素点-配給原点)/10+順位点
+        score_df["position"] = score_df["rpoint"].rank(  # 加算する順位点リストの位置
+            ascending=False, method="first"
+        ).astype("int")
+        score_df["point"] = (score_df["rpoint"] - self.return_point) / 10 + score_df["position"].apply(lambda p: work_rank_point[p - 1])
+        score_df["point"] = score_df["point"].apply(lambda p: float(f"{p:.1f}"))  # 桁ブレ修正
+
+        # 返却値用辞書
+        ret_dict = {f"{k}_{x}": v for x in score_df.columns for k, v in score_df[x].to_dict().items()}
+        ret_dict.update(deposit=int(self.origin_point * 4 - score_df["rpoint"].sum()))
+
+        return ret_dict

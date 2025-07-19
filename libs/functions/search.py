@@ -30,7 +30,7 @@ def for_db_score(first_ts: float | bool = False) -> DBSearchDict:
         for row in rows.fetchall():
             ts = str(dict(row).get("ts", ""))
             result = GameResult()
-            result.set(**dict(row))
+            result.set(**dict(row))  # データ取り込みのみ（再計算しない）
             data[ts] = result
 
     return data

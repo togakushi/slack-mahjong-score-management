@@ -69,8 +69,8 @@ def main(season_times: int = 1):
                     # スコアデータ生成
                     dt = now + total_count * 86400 + idx * 3600 + random.random()
                     vs_score = score_simulator.simulate_game()
-                    result = GameResult(ts=str(dt))
-                    result.calc(
+                    result = GameResult(
+                        ts=str(dt),
                         p1_name=member[0], p1_str=str(int(vs_score[0] / 100)),
                         p2_name=member[1], p2_str=str(int(vs_score[1] / 100)),
                         p3_name=member[2], p3_str=str(int(vs_score[2] / 100)),

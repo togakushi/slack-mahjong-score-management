@@ -19,8 +19,7 @@ def main():
         count = 0
 
         for row in rows:
-            result = GameResult(ts=str(row["ts"]))
-            result.calc(**dict(row))
+            result = GameResult(**dict(row), **g.cfg.mahjong.to_dict())  # 現行ルールで上書き
             cur.execute(g.sql["RESULT_UPDATE"], result.to_dict())
             count += 1
 

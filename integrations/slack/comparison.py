@@ -99,8 +99,7 @@ def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
     # 比較データ
     if g.args.debug:
         for _, s_val in slack_score.items():
-            result = GameResult()
-            result.calc(**s_val.get_score(g.cfg.search.keyword), rule_version=g.cfg.mahjong.rule_version)
+            result = GameResult(**s_val.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
             logging.info("slack data: %s", result)
         for _, d_val in db_score.items():
             logging.info("db data: %s", d_val)
@@ -156,8 +155,7 @@ def check_omission(m: MessageParserProtocol, slack_data: SlackSearchDict, db_dat
             continue
 
         # "score"が取得できていない場合は処理をスキップ
-        slack_score = GameResult()
-        slack_score.calc(**val.get_score(g.cfg.search.keyword), rule_version=g.cfg.mahjong.rule_version)
+        slack_score = GameResult(**val.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
         if not slack_score:
             continue
 
@@ -203,7 +201,7 @@ def check_omission(m: MessageParserProtocol, slack_data: SlackSearchDict, db_dat
 
         # 追加
         if not g.cfg.setting.thread_report and val.in_thread:
-            logging.notice("skip: %s (In-thread report)", slack_score)  # type: ignore
+            logging.notice("skip: %s (In-thread report)", slack_score.to_text())  # type: ignore
             continue
 
         count["missing"] += 1
@@ -256,9 +254,8 @@ def check_remarks(m: MessageParserProtocol, slack_data: SlackSearchDict, db_data
 
     # 比較用リスト生成
     slack_remarks: list[RemarkDict] = []
-    detection = GameResult()
     for val in slack_data.values():
-        detection.calc(**val.get_score(g.cfg.search.keyword))
+        detection = GameResult(**val.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
         remark_list = val.get_remarks(g.cfg.cw.remarks_word)
         if remark_list:
             for name, matter in remark_list:
@@ -329,8 +326,8 @@ def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict
             continue
 
         # "score"が取得できていない場合は処理をスキップ
-        score_data = GameResult()  # fixme  バージョン情報がない
-        score_data.calc(**val.get_score(g.cfg.search.keyword))
+        score_data = GameResult(**val.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
+        score_data.calc()
         if score_data:
             continue
 

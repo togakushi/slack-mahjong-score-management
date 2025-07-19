@@ -101,9 +101,7 @@ def other_words(word: str, m: MessageParserProtocol):
             modify.check_remarks(m)
     else:
         # スコア取り出し
-        detection = GameResult(ts=m.data.event_ts, rule_version=g.cfg.mahjong.rule_version)
-        detection.set(**m.get_score(g.cfg.search.keyword))
-
+        detection = GameResult(**m.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
         if detection:  # 結果報告フォーマットに一致したポストの処理
             # 名前ブレ修正
             g.params.update(unregistered_replace=False)  # ゲスト無効
@@ -114,7 +112,6 @@ def other_words(word: str, m: MessageParserProtocol):
                     continue
                 detection.set(**{k: str(p)})
 
-            detection.calc()
             match m.data.status:
                 case "message_append":
                     message_append(detection, m)
@@ -156,12 +153,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
-
     record_data = lookup.db.exsist_record(m.data.event_ts)
-    print("=" * 80)
-    print(detection.to_dict())
-    print(record_data.to_dict())
-    print(">>>", vars(m.data))
 
     if detection.to_dict() == record_data.to_dict():  # スコア比較
         return  # 変更箇所がなければ何もしない

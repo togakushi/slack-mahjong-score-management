@@ -90,7 +90,7 @@ class _LookupAPI(LookupInterface):
         channel_id = ""
 
         try:
-            response = g.appclient.search_messages(
+            response = g.webclient.search_messages(
                 query=f"in:{g.cfg.search.channel}",
                 count=1,
             )

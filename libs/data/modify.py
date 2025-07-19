@@ -47,7 +47,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
                 cur.commit()
             except sqlite3.IntegrityError as err:
                 logging.error(err)
-        logging.notice("%s", detection)  # type: ignore
+        logging.notice("%s", detection.to_text("detail"))  # type: ignore
     else:
         m.post.message_type = "restricted_channel"
         m.post.message = message.random_reply(m)
@@ -75,7 +75,7 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
                 **detection.to_dict(),
             })
             cur.commit()
-        logging.notice("%s", detection)  # type: ignore
+        logging.notice("%s", detection.to_text("detail"))  # type: ignore
     else:
         m.post.message_type = "restricted_channel"
         m.post.message = message.random_reply(m)

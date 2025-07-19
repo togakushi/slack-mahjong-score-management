@@ -28,14 +28,17 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     configuration.setup()
     g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.selected_service = "test"
-    g.cfg.mahjong.draw_split = draw_split
 
     m = factory.select_parser("text")
     m.data.text = game_result
     m.data.event_ts = ExtDt().format("ts")
 
-    score_data = GameResult()
-    score_data.calc(**m.get_score(g.cfg.search.keyword))
+    score_data = GameResult(
+        draw_split=draw_split,
+        rule_version="test",
+        **m.get_score(g.cfg.search.keyword),
+    )
+    score_data.calc()
     assert score_data.has_valid_data()
     modify.db_insert(score_data, m)
 
