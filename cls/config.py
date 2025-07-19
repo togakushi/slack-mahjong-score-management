@@ -112,8 +112,6 @@ class BaseSection(CommonMethodMixin):
         for key in vars(self):
             if key.startswith("_"):
                 continue
-            if key in ["always_argument"]:
-                continue
             ret_dict[key] = getattr(self, key)
 
         return ret_dict
@@ -410,7 +408,7 @@ class SubCommand(BaseSection):
     search_word: str = ""
     group_length: int = 0
     always_argument: list = []
-    """オプションとして常に付与される文字列(カンマ区切り)"""
+    """オプションとして常に付与される文字列"""
     format: str = ""
     filename: str = ""
     interval: int = 80
