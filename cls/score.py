@@ -274,7 +274,7 @@ class GameResult:
 
         # 計算用データフレーム
         score_df = pd.DataFrame(
-            {"rpoint": [normalized_expression(x) for x in self.to_list("str")]},
+            {"rpoint": [normalized_expression(str(x)) for x in self.to_list("str")]},
             index=["p1", "p2", "p3", "p4"]
         )
 
