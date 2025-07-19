@@ -19,7 +19,7 @@ from integrations.slack import api
 
 class _ReactionsAPI(ReactionsInterface):
     """リアクション操作"""
-    def status(self, ch=str, ts=str) -> list:
+    def status(self, ch=str, ts=str) -> dict[str, list]:
         """botが付けたリアクションの種類を返す
 
         Args:
@@ -27,10 +27,13 @@ class _ReactionsAPI(ReactionsInterface):
             ts (str): メッセージのタイムスタンプ
 
         Returns:
-            list: リアクション
+            dict[str,list]: リアクション
         """
 
-        icon: list = []
+        icon: dict[str, list] = {
+            "ok": [],
+            "ng": [],
+        }
 
         try:  # 削除済みメッセージはエラーになるので潰す
             res = g.appclient.reactions_get(channel=ch, timestamp=ts)
@@ -38,10 +41,12 @@ class _ReactionsAPI(ReactionsInterface):
         except SlackApiError:
             return icon
 
-        if "reactions" in res["message"]:
-            for reaction in res["message"]["reactions"]:
-                if g.bot_id in reaction["users"]:
-                    icon.append(reaction["name"])
+        if (reactions := cast(dict, res["message"]).get("reactions")):
+            for reaction in cast(list[dict], reactions):
+                if g.cfg.setting.reaction_ok == reaction.get("name") and g.bot_id in reaction["users"]:
+                    icon["ok"].append(res["message"]["ts"])
+                if g.cfg.setting.reaction_ng == reaction.get("name") and g.bot_id in reaction["users"]:
+                    icon["ng"].append(res["message"]["ts"])
 
         logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.bot_id, icon)
         return icon
@@ -55,21 +60,11 @@ class _ReactionsAPI(ReactionsInterface):
         """
 
         for ts in set(delete_list):
-            for icon in self.status(ts=ts, ch=ch):
-                api.call_reactions_remove(icon, ts=ts, ch=ch)
-                logging.info("ch=%s, ts=%s, icon=%s", ch, ts, icon)
-
-    def ok(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list):
-        if ng_icon in reactions_list:
-            api.call_reactions_remove(icon=ng_icon, ch=ch, ts=ts)
-        if ok_icon not in reactions_list:
-            api.call_reactions_add(icon=ok_icon, ch=ch, ts=ts)
-
-    def ng(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list):
-        if ok_icon in reactions_list:
-            api.call_reactions_remove(icon=ok_icon, ch=ch, ts=ts)
-        if ng_icon not in reactions_list:
-            api.call_reactions_add(icon=ng_icon, ch=ch, ts=ts)
+            reactions = self.status(ch=ch, ts=ts)
+            if reactions.get("ok"):
+                self.remove(g.cfg.setting.reaction_ok, ch=ch, ts=ts)
+            if reactions.get("ng"):
+                self.remove(g.cfg.setting.reaction_ng, ch=ch, ts=ts)
 
     def append(self, icon: str, ch: str, ts: str):
         api.call_reactions_add(icon=icon, ch=ch, ts=ts)

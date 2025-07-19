@@ -16,39 +16,33 @@ from libs.functions import message
 SlackSearchDict = dict[str, MessageParserProtocol]
 
 
-def score_verification(detection: GameResult, m: MessageParserProtocol, reactions_list: list | None = None) -> None:
+def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
     """素点合計をチェックしリアクションを付ける
 
     Args:
+        detection (GameResult): ゲーム結果
         m (MessageParserProtocol): メッセージデータ
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
-
-    if not reactions_list:
-        reactions_list = api_adapter.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
+    reactions = api_adapter.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
 
     if detection.deposit:
-        api_adapter.reactions.ng(
-            ok_icon=g.cfg.setting.reaction_ok,
-            ng_icon=g.cfg.setting.reaction_ng,
-            ch=m.data.channel_id,
-            ts=m.data.event_ts,
-            reactions_list=reactions_list,
-        )
+        if reactions.get("ok"):
+            api_adapter.reactions.remove(icon=m.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
+        if not reactions.get("ng"):
+            api_adapter.reactions.append(icon=m.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
+
         m.post.message_type = "invalid_score"
         m.post.rpoint_sum = detection.rpoint_sum()
         m.post.message = message.random_reply(m)
         m.post.thread = True
         api_adapter.post_message(m)
     else:
-        api_adapter.reactions.ok(
-            ok_icon=g.cfg.setting.reaction_ok,
-            ng_icon=g.cfg.setting.reaction_ng,
-            ch=m.data.channel_id,
-            ts=m.data.event_ts,
-            reactions_list=reactions_list,
-        )
+        if not reactions.get("ok"):
+            api_adapter.reactions.append(icon=m.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
+        if reactions.get("ng"):
+            api_adapter.reactions.remove(icon=m.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
 
 
 def get_messages(word: str) -> SlackSearchDict:
@@ -86,7 +80,7 @@ def get_messages(word: str) -> SlackSearchDict:
 
     # 必要なデータだけ辞書に格納
     data: SlackSearchDict = cast(SlackSearchDict, {})
-    m = factory.select_parser(g.selected_service)
+    m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
     for x in matches:
         if isinstance(x, dict):
             tmp_m = copy.deepcopy(m)
@@ -163,7 +157,7 @@ def pickup_remarks() -> SlackSearchDict:
     """
 
     matches = get_messages(g.cfg.cw.remarks_word)
-    remarks: list = []
+
     # メモの抽出
     for key in list(matches.keys()):
         if matches[key].data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
@@ -171,8 +165,8 @@ def pickup_remarks() -> SlackSearchDict:
             matches.pop(key)
             continue
 
-        if not (remark := matches[key].get_remarks(g.cfg.cw.remarks_word)):
-            remarks += remark
+        if (remark := matches[key].get_remarks(g.cfg.cw.remarks_word)):
+            matches[key].data.remarks = remark
         else:  # 不一致は破棄
             matches.pop(key)
 

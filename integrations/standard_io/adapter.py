@@ -10,18 +10,12 @@ from integrations.protocols import MessageParserProtocol
 
 
 class _ReactionsDummy(ReactionsInterface):
-    def status(self, ch=str, ts=str) -> list:
+    def status(self, ch=str, ts=str) -> dict[str, list]:
         _ = (ch, ts)
-        return []
+        return {"ok": [], "ng": []}
 
     def all_remove(self, delete_list: list, ch: str) -> None:
         _ = (delete_list, ch)
-
-    def ok(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list) -> None:
-        _ = (ok_icon, ng_icon, ch, ts, reactions_list)
-
-    def ng(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list) -> None:
-        _ = (ok_icon, ng_icon, ch, ts, reactions_list)
 
     def append(self, icon, ch, ts) -> None:
         _ = (icon, ch, ts)

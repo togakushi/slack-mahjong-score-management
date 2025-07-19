@@ -16,11 +16,14 @@ def select_adapter(selected_service: str) -> base.APIInterface:
             return standard_io.adapter.StandardIO()
 
 
-def select_parser(selected_service: str):
+def select_parser(selected_service: str, **kwargs):
     """メッセージパーサ選択"""
+
+    reaction_ok = str(kwargs.get("reaction_ok", "ok"))
+    reaction_ng = str(kwargs.get("reaction_ng", "ng"))
 
     match selected_service:
         case "slack":
-            return slack.parser.MessageParser()
+            return slack.parser.MessageParser(reaction_ok, reaction_ng)
         case _:
-            return standard_io.parser.MessageParser()
+            return standard_io.parser.MessageParser(reaction_ok, reaction_ng)

@@ -14,8 +14,8 @@ from integrations.slack import adapter
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
     """メッセージ解析クラス"""
 
-    def __init__(self):
-        MessageParserDataMixin.__init__(self)
+    def __init__(self, reaction_ok: str, reaction_ng: str):
+        MessageParserDataMixin.__init__(self, reaction_ok, reaction_ng)
 
     def parser(self, _body: dict):
         api_adapter = adapter.SlackAPI()

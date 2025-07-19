@@ -29,7 +29,7 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.selected_service = "test"
 
-    m = factory.select_parser("text")
+    m = factory.select_parser("text", **g.cfg.setting.to_dict())
     m.data.text = game_result
     m.data.event_ts = ExtDt().format("ts")
 

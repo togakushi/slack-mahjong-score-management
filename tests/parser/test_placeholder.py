@@ -25,7 +25,7 @@ def test_command_check(input_args, player_name, player_list, competition_list, m
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
     configuration.read_memberslist()
-    m = factory.select_parser("test")
+    m = factory.select_parser("test", **g.cfg.setting.to_dict())
 
     param = dictutil.placeholder(g.cfg.results, m)
 
@@ -46,7 +46,7 @@ def test_player_check(input_args, player_name, player_list, competition_list, mo
     configuration.setup()
     configuration.read_memberslist()
 
-    m = factory.select_parser("text")
+    m = factory.select_parser("text", **g.cfg.setting.to_dict())
     m.parser({"text": f"{g.cfg.search.keyword} {input_args}"})
     g.cfg.results.always_argument.extend(m.argument)
     param = dictutil.placeholder(g.cfg.results, m)
@@ -68,7 +68,7 @@ def test_team_check(input_args, player_name, player_list, competition_list, monk
     configuration.setup()
     configuration.read_memberslist()
 
-    m = factory.select_parser("text")
+    m = factory.select_parser("text", **g.cfg.setting.to_dict())
     m.parser({"event": {"text": f"{g.cfg.search.keyword} {input_args}"}})
     g.cfg.results.always_argument.extend(m.argument)
     param = dictutil.placeholder(g.cfg.results, m)
@@ -90,7 +90,7 @@ def test_guest_check(input_args, player_name, replace_name, monkeypatch):
     configuration.setup()
     configuration.read_memberslist()
 
-    m = factory.select_parser("text")
+    m = factory.select_parser("text", **g.cfg.setting.to_dict())
     m.parser({"text": f"{g.cfg.search.keyword} {input_args}"})
     g.cfg.results.always_argument.extend(m.argument)
     param = dictutil.placeholder(g.cfg.results, m)

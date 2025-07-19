@@ -41,6 +41,8 @@ class MsgData:
     """
     reaction_ok: list = field(default_factory=list)
     reaction_ng: list = field(default_factory=list)
+    remarks: list = field(default_factory=list)
+    """メモ格納用"""
 
 
 @dataclass
@@ -68,6 +70,8 @@ class MessageParserProtocol(Protocol):
     """受け取ったメッセージデータ"""
     post: PostData
     """送信する内容"""
+    reaction_ok: str
+    reaction_ng: str
 
     @property
     def in_thread(self) -> bool:

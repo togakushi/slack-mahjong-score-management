@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class ReactionsInterface(ABC):
     """リアクション操作抽象インターフェース"""
     @abstractmethod
-    def status(self, ch=str, ts=str) -> list:
+    def status(self, ch=str, ts=str) -> dict[str, list]:
         """botが付けたリアクションの種類を返す
 
         Args:
@@ -21,9 +21,11 @@ class ReactionsInterface(ABC):
             ts (str): メッセージのタイムスタンプ
 
         Returns:
-            list: リアクション
+            dict[str,list]: リアクション
+            - **str**: 種類
+            - **list**: タイムスタンプ
         """
-        return []
+        return {"ok": [], "ng": []}
 
     @abstractmethod
     def all_remove(self, delete_list: list, ch: str):
@@ -32,30 +34,6 @@ class ReactionsInterface(ABC):
         Args:
             delete_list (list): 削除対象のタイムスタンプ
             ch (str): 対象チャンネルID
-        """
-
-    @abstractmethod
-    def ok(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list) -> None:
-        """OKリアクションを付ける
-
-        Args:
-            ok_icon (str): OKリアクション
-            ng_icon (str): NGリアクション
-            ch (str): チャンネルID
-            ts (str): タイムスタンプ
-            reactions_list (list): 付与済みリアクションリスト
-        """
-
-    @abstractmethod
-    def ng(self, ok_icon: str, ng_icon: str, ch: str, ts: str, reactions_list: list) -> None:
-        """NGリアクションを付ける
-
-        Args:
-            ok_icon (str): OKリアクション
-            ng_icon (str): NGリアクション
-            ch (str): チャンネルID
-            ts (str): タイムスタンプ
-            reactions_list (list): 付与済みリアクションリスト
         """
 
     @abstractmethod
@@ -162,9 +140,11 @@ class APIInterface(ABC):
 
 class MessageParserDataMixin:
     """メッセージ解析共通処理"""
-    def __init__(self):
+    def __init__(self, reaction_ok: str, reaction_ng: str):
         self.data = MsgData()
         self.post = PostData()
+        self.reaction_ok = reaction_ok
+        self.reaction_ng = reaction_ng
 
     @property
     def in_thread(self) -> bool:
@@ -304,6 +284,7 @@ class MessageParserDataMixin:
             text = self.data.text.replace(keyword, "").strip().split()
             for name, matter in zip(text[0::2], text[1::2]):
                 ret.append([name, matter])
+
         return ret
 
 

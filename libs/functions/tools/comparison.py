@@ -16,7 +16,7 @@ from libs.functions import configuration
 
 def main():
     """データ突合処理"""
-    m = factory.select_parser("test")
+    m = factory.select_parser("test", **g.cfg.setting.to_dict())
     if g.args.compar:
         try:
             g.app = App(token=os.environ["SLACK_BOT_TOKEN"])

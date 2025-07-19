@@ -47,7 +47,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
                 cur.commit()
             except sqlite3.IntegrityError as err:
                 logging.error(err)
-        logging.notice("%s", detection.to_text("detail"))  # type: ignore
+        logging.notice("%s", detection.to_text("logging"))  # type: ignore
     else:
         m.post.message_type = "restricted_channel"
         m.post.message = message.random_reply(m)
@@ -75,7 +75,7 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
                 **detection.to_dict(),
             })
             cur.commit()
-        logging.notice("%s", detection.to_text("detail"))  # type: ignore
+        logging.notice("%s", detection.to_text("logging"))  # type: ignore
     else:
         m.post.message_type = "restricted_channel"
         m.post.message = message.random_reply(m)
@@ -170,8 +170,12 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
                         if not (ch := m.data.channel_id):
                             ch = api_adapter.lookup.get_channel_id()
 
-                        if g.cfg.setting.reaction_ok not in api_adapter.reactions.status(ts=para["event_ts"], ch=ch):
-                            api_adapter.reactions.append(g.cfg.setting.reaction_ok, ts=para["event_ts"], ch=ch)
+                        # リアクション処理
+                        reactions = api_adapter.reactions.status(ts=para["event_ts"], ch=ch)
+                        if not reactions.get("ok"):
+                            api_adapter.reactions.append(m.reaction_ok, ts=para["event_ts"], ch=ch)
+                        if reactions.get("ng"):
+                            api_adapter.reactions.remove(m.reaction_ng, ts=para["event_ts"], ch=ch)
 
             cur.commit()
 
@@ -217,8 +221,8 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
     if not (ch := m.data.channel_id):
         ch = api_adapter.lookup.get_channel_id()
 
-    icon = api_adapter.reactions.status(ch=ch, ts=para["event_ts"])
-    if g.cfg.setting.reaction_ok in icon and left == 0:
+    reactions = api_adapter.reactions.status(ch=ch, ts=para["event_ts"])
+    if reactions.get("ok") and left == 0:
         api_adapter.reactions.remove(g.cfg.setting.reaction_ok, ch=ch, ts=para["event_ts"])
 
 

@@ -66,12 +66,12 @@ def call_reactions_add(icon: str, ch: str, ts: str):
             timestamp=str(ts),
         )
         logging.info("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
-    except SlackApiError as e:
-        match e.response.get("error"):
+    except SlackApiError as err:
+        match err.response.get("error"):
             case "already_reacted":
                 pass
             case _:
-                logging.critical(e)
+                logging.critical(err)
                 logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
 
 

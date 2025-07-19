@@ -13,6 +13,7 @@ from integrations import factory
 from integrations.protocols import MessageParserProtocol
 from integrations.slack import functions
 from libs.data import modify
+from libs.data.lookup import db
 from libs.functions import search
 from libs.utils import dictutil
 
@@ -41,6 +42,7 @@ class ComparisonDict(TypedDict, total=False):
 def main(m: MessageParserProtocol) -> None:
     """データ突合の実施、その結果をslackにpostする"""
     api_adapter = factory.select_adapter(g.selected_service)
+    comparison_ts = m.data.event_ts  # コマンド発行イベントタイムスタンプ
 
     # データ突合
     count, msg = data_comparison(m)
@@ -65,6 +67,7 @@ def main(m: MessageParserProtocol) -> None:
         m.post.message += msg["invalid_score"]
 
     m.post.thread = True
+    m.post.ts = comparison_ts
     api_adapter.post_message(m)
 
 
@@ -144,7 +147,7 @@ def check_omission(m: MessageParserProtocol, slack_data: SlackSearchDict, db_dat
 
     for key, val in slack_data.items():
         # 保留チェック
-        if val.data.edited_ts:
+        if val.data.edited_ts != "undetermined":
             check_ts = float(max(val.data.edited_ts)) + g.cfg.search.wait
         else:
             check_ts = float(key) + g.cfg.search.wait
@@ -159,10 +162,6 @@ def check_omission(m: MessageParserProtocol, slack_data: SlackSearchDict, db_dat
         if not slack_score:
             continue
 
-        reactions_data = []
-        reactions_data.append(val.data.reaction_ok)
-        reactions_data.append(val.data.reaction_ng)
-
         if key in db_data:  # slack -> DB チェック
             m.data.event_ts = key  # event_ts
             db_score = db_data[m.data.event_ts]
@@ -175,9 +174,9 @@ def check_omission(m: MessageParserProtocol, slack_data: SlackSearchDict, db_dat
 
                     # リアクションの削除
                     if key in val.data.reaction_ok:
-                        api_adapter.reactions.remove(g.cfg.setting.reaction_ok, ts=m.data.event_ts, ch=val.data.channel_id)
+                        api_adapter.reactions.remove(m.reaction_ok, ts=m.data.event_ts, ch=val.data.channel_id)
                     if key in val.data.reaction_ng:
-                        api_adapter.reactions.remove(g.cfg.setting.reaction_ng, ts=m.data.event_ts, ch=val.data.channel_id)
+                        api_adapter.reactions.remove(m.reaction_ng, ts=m.data.event_ts, ch=val.data.channel_id)
                     continue
 
             if slack_score.to_dict() == db_score.to_dict():  # スコア比較
@@ -187,14 +186,14 @@ def check_omission(m: MessageParserProtocol, slack_data: SlackSearchDict, db_dat
             # 更新
             if db_score.rule_version == g.cfg.mahjong.rule_version:
                 count["mismatch"] += 1
-                logging.notice("mismatch: %s", ExtDt(float(key)).format("ymdhms"))  # type: ignore
-                logging.info("  *  slack: %s", db_score.to_text())
-                logging.info("  *     db: %s", slack_score.to_text())
+                logging.notice("mismatch: %s (%s)", key, ExtDt(float(key)).format("ymdhms"))  # type: ignore
+                logging.info("  *  slack: %s", db_score.to_text("detail"))
+                logging.info("  *     db: %s", slack_score.to_text("detail"))
                 msg["mismatch"] += f"\t{ExtDt(float(key)).format("ymdhms")}\n"
                 msg["mismatch"] += f"\t\t修正前：{db_score.to_text()}\n"
                 msg["mismatch"] += f"\t\t修正後：{slack_score.to_text()}\n"
                 modify.db_update(slack_score, m)
-                functions.score_verification(slack_score, m, reactions_data)
+                functions.score_verification(slack_score, m)
             else:
                 logging.info("score check skip: %s %s", ExtDt(float(key)).format("ymdhms"), db_score.to_text())
             continue
@@ -208,7 +207,7 @@ def check_omission(m: MessageParserProtocol, slack_data: SlackSearchDict, db_dat
         logging.notice("missing: %s (%s)", slack_score.ts, ExtDt(float(slack_score.ts)).format("ymdhms"))  # type: ignore
         msg["missing"] += f"\t{ExtDt(float(key)).format("ymdhms")} {slack_score.to_text()}\n"
         modify.db_insert(slack_score, val)
-        functions.score_verification(slack_score, val, reactions_data)
+        functions.score_verification(slack_score, val)
 
     for key in db_data:  # DB -> slack チェック
         m.data.event_ts = key  # event_ts
@@ -231,8 +230,7 @@ def check_omission(m: MessageParserProtocol, slack_data: SlackSearchDict, db_dat
         # メッセージが残っているならリアクションを外す
         if not m.data.channel_id:
             m.data.channel_id = api_adapter.lookup.get_channel_id()
-        for icon in api_adapter.reactions.status(ts=m.data.event_ts, ch=m.data.channel_id):
-            api_adapter.reactions.remove(icon, ts=m.data.event_ts, ch=m.data.channel_id)
+        api_adapter.reactions.all_remove(delete_list=[m.data.event_ts], ch=m.data.channel_id)
 
     return (count, msg)
 
@@ -255,17 +253,15 @@ def check_remarks(m: MessageParserProtocol, slack_data: SlackSearchDict, db_data
     # 比較用リスト生成
     slack_remarks: list[RemarkDict] = []
     for val in slack_data.values():
-        detection = GameResult(**val.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
-        remark_list = val.get_remarks(g.cfg.cw.remarks_word)
-        if remark_list:
-            for name, matter in remark_list:
-                if name in detection.to_list() and val.in_thread:
-                    slack_remarks.append({
-                        "thread_ts": str(val.data.thread_ts),
-                        "event_ts": str(val.data.event_ts),
-                        "name": name,
-                        "matter": matter,
-                    })
+        detection = db.exsist_record(val.data.thread_ts)
+        for (name, matter) in val.data.remarks:
+            if name in detection.to_list() and val.in_thread:
+                slack_remarks.append({
+                    "thread_ts": str(val.data.thread_ts),
+                    "event_ts": str(val.data.event_ts),
+                    "name": name,
+                    "matter": matter,
+                })
 
     # slack -> DB チェック
     for remark in slack_remarks:
@@ -349,13 +345,13 @@ def check_total_score(slack_data: SlackSearchDict) -> tuple[dict, ComparisonDict
             logging.notice("invalid score: %s deposit=%s", key, score_data.deposit)  # type: ignore
             msg["invalid_score"] += f"\t{ExtDt(float(key)).format("ymdhms")} [供託：{score_data.deposit}]{score_data.to_text()}\n"
             if reaction_ok is not None and key in reaction_ok:
-                api_adapter.reactions.remove(g.cfg.setting.reaction_ok, ts=key, ch=channel_id)
+                api_adapter.reactions.remove(val.reaction_ok, ts=key, ch=channel_id)
             if reaction_ng is not None and key not in reaction_ng:
-                api_adapter.reactions.append(g.cfg.setting.reaction_ng, ts=key, ch=channel_id)
+                api_adapter.reactions.append(val.reaction_ng, ts=key, ch=channel_id)
         else:
             if reaction_ng is not None and key in reaction_ng:
-                api_adapter.reactions.remove(g.cfg.setting.reaction_ng, ts=key, ch=channel_id)
+                api_adapter.reactions.remove(val.reaction_ng, ts=key, ch=channel_id)
             if reaction_ok is not None and key not in reaction_ok:
-                api_adapter.reactions.append(g.cfg.setting.reaction_ok, ts=key, ch=channel_id)
+                api_adapter.reactions.append(val.reaction_ok, ts=key, ch=channel_id)
 
     return (count, msg)

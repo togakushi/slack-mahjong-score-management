@@ -28,7 +28,7 @@ def main(body):
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
-    m = factory.select_parser(g.selected_service)
+    m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
     m.parser(body)
 
     logging.trace(body)  # type: ignore

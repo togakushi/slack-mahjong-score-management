@@ -103,7 +103,7 @@ class GameResult:
             if f"{prefix}_r_str" in kwargs:
                 prefix_obj.r_str = kwargs[f"{prefix}_str"]
             if f"{prefix}_rpoint" in kwargs and isinstance(kwargs[f"{prefix}_rpoint"], int):
-                prefix_obj.rank = int(kwargs[f"{prefix}_rpoint"])
+                prefix_obj.rpoint = int(kwargs[f"{prefix}_rpoint"])
             if f"{prefix}_point" in kwargs and isinstance(kwargs[f"{prefix}_point"], (float, int)):
                 prefix_obj.point = float(kwargs[f"{prefix}_point"])
             if f"{prefix}_rank" in kwargs and isinstance(kwargs[f"{prefix}_rank"], int):
@@ -116,7 +116,7 @@ class GameResult:
         if "deposit" in kwargs and isinstance(kwargs["deposit"], int):
             self.deposit = int(kwargs["deposit"])
         if "comment" in kwargs and kwargs["comment"]:
-            self.comment = str(kwargs["comment"])
+            self.comment = str(kwargs["comment"]) if kwargs["comment"] else None
         if "origin_point" in kwargs and isinstance(kwargs["origin_point"], int):
             self.origin_point = int(kwargs["origin_point"])
         if "return_point" in kwargs and isinstance(kwargs["return_point"], int):
@@ -145,13 +145,14 @@ class GameResult:
 
         return ret_dict
 
-    def to_text(self, kind: Literal["simple", "detail"] = "simple") -> str:
+    def to_text(self, kind: Literal["simple", "detail", "logging"] = "simple") -> str:
         """データをテキストで返す
 
         Args:
             kind (Literal, optional): 表示形式
-                - *simple* 簡易情報 (Default)
-                - *detail* 詳細情報
+                - **simple**: 簡易情報 (Default)
+                - **detail**: 詳細情報
+                - **logging**: ロギング用
 
         Returns:
             str: スコアデータ
@@ -171,6 +172,10 @@ class GameResult:
                 ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.comment if self.comment else ""}]"
+            case "logging":
+                ret_text += f"ts={self.ts}, deposit={self.deposit}, "
+                ret_text += f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
+                ret_text += f"comment={self.comment if self.comment else ""}"
 
         return ret_text
 
@@ -179,11 +184,11 @@ class GameResult:
 
         Args:
             kind (Literal, optional): 取得内容
-                - *name*: プレイヤー名 (Default)
-                - *str*: 入力された素点情報
-                - *rpoint*: 素点
-                - *point*: ポイント
-                - *rank*: 順位
+                - **name**: プレイヤー名 (Default)
+                - **str**: 入力された素点情報
+                - **rpoint**: 素点
+                - **point**: ポイント
+                - **rank**: 順位
 
         Returns:
             list[str | int | float]: リスト
