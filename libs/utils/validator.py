@@ -6,7 +6,7 @@ import re
 from typing import Literal
 
 import libs.global_value as g
-from cls.parser import CommandParser
+from cls.command import CommandParser
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.utils import formatter, textutil
 

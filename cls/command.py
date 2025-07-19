@@ -1,5 +1,5 @@
 """
-cls/parser.py
+cls/command.py
 """
 
 import re

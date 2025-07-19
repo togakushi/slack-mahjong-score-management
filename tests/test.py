@@ -12,7 +12,7 @@ import libs.commands.ranking.slackpost
 import libs.commands.report.slackpost
 import libs.commands.results.slackpost
 import libs.global_value as g
-from cls.parser import CommandParser
+from cls.command import CommandParser
 from integrations import factory
 from libs.commands import graph, report
 from libs.data import initialization
