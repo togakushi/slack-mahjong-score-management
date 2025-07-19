@@ -47,7 +47,7 @@ def test_player_check(input_args, player_name, player_list, competition_list, mo
     configuration.read_memberslist()
 
     m = factory.select_parser("text")
-    m.parser({"event": {"text": f"{g.cfg.search.keyword} {input_args}"}})
+    m.parser({"text": f"{g.cfg.search.keyword} {input_args}"})
     g.cfg.results.always_argument.extend(m.argument)
     param = dictutil.placeholder(g.cfg.results, m)
 
@@ -91,11 +91,10 @@ def test_guest_check(input_args, player_name, replace_name, monkeypatch):
     configuration.read_memberslist()
 
     m = factory.select_parser("text")
-    m.parser({"event": {"text": f"{g.cfg.search.keyword} {input_args}"}})
+    m.parser({"text": f"{g.cfg.search.keyword} {input_args}"})
     g.cfg.results.always_argument.extend(m.argument)
     param = dictutil.placeholder(g.cfg.results, m)
+    check_name = formatter.name_replace(str(param.get("player_name")))
 
-    check_name = formatter.name_replace(param.get("player_name", ""))
-
-    assert g.params.get("player_name") == player_name
+    assert str(param.get("player_name")) == player_name
     assert check_name == replace_name

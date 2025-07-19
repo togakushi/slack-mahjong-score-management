@@ -104,7 +104,7 @@ def test_search_range(keyword, search_range, monkeypatch):
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
     m = factory.select_parser("test")
-    m.parser({"event": {"text": keyword}})
+    m.parser({"text": f"dummy_command {keyword}"})
 
     ret_range = [v for k, v in dictutil.placeholder(g.cfg.results, m).items() if k in ["starttime", "endtime"]]
 
