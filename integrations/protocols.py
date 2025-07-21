@@ -85,6 +85,10 @@ class MessageParserProtocol(Protocol):
     def argument(self) -> list:
         """コマンド引数として認識しているオプションを文字列のリストで返す"""
 
+    @property
+    def check_updatable(self) -> bool:
+        """DB更新可能チャンネルか判定"""
+
     def get_score(self, keyword: str) -> dict:
         """本文からスコアデータを取り出す"""
 
@@ -93,7 +97,3 @@ class MessageParserProtocol(Protocol):
 
     def parser(self, body: Any):
         """メッセージ解析メソッド"""
-
-    @property
-    def check_updatable(self) -> bool:
-        """DB更新可能チャンネルか判定"""
