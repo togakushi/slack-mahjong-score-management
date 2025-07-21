@@ -261,6 +261,7 @@ class SlackAPI(APIInterface):
                         title=title,
                         file=file_path,
                         thread_ts=m.data.thread_ts if m.in_thread else m.data.event_ts,
+                        thread=m.post.thread,
                         request_file_info=False,
                     )
 

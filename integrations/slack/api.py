@@ -39,8 +39,9 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
     """
 
     res = None
-    if not kwargs["thread_ts"]:
+    if not kwargs.get("thread") or not kwargs["thread_ts"]:
         kwargs.pop("thread_ts")
+
     try:
         res = g.appclient.files_upload_v2(**kwargs)
     except SlackApiError as err:
