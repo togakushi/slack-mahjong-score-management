@@ -2,7 +2,6 @@
 integrations/slack/functions.py
 """
 
-import copy
 import logging
 from typing import cast
 
@@ -12,8 +11,6 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
 from libs.functions import message
-
-SlackSearchDict = dict[str, MessageParserProtocol]
 
 
 def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
@@ -45,14 +42,14 @@ def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
             api_adapter.reactions.remove(icon=m.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
 
 
-def get_messages(word: str) -> SlackSearchDict:
+def get_messages(word: str) -> list[MessageParserProtocol]:
     """slackログからメッセージを検索して返す
 
     Args:
         word (str): 検索するワード
 
     Returns:
-        SlackSearchDict: 検索した結果
+        list[MessageParserProtocol]: 検索した結果
     """
 
     # 検索クエリ
@@ -79,31 +76,31 @@ def get_messages(word: str) -> SlackSearchDict:
         matches += response["messages"]["matches"]  # 2ページ目以降
 
     # 必要なデータだけ辞書に格納
-    data: SlackSearchDict = cast(SlackSearchDict, {})
-    m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+    data: list[MessageParserProtocol] = []
     for x in matches:
         if isinstance(x, dict):
-            tmp_m = copy.deepcopy(m)
-            tmp_m.parser(x)
-            data[x["ts"]] = tmp_m
+            m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+            m.parser(x)
+            data.append(cast(MessageParserProtocol, m))
 
     return data
 
 
-def get_message_details(matches: SlackSearchDict) -> SlackSearchDict:
+def get_message_details(matches: list[MessageParserProtocol]) -> list[MessageParserProtocol]:
     """メッセージ詳細情報取得
 
     Args:
-        matches (SlackSearchDict): 対象データ
+        matches (list[MessageParserProtocol]): 対象データ
 
     Returns:
-        SlackSearchDict: 詳細情報追加データ
+        list[MessageParserProtocol]: 詳細情報追加データ
     """
 
+    new_matches: list[MessageParserProtocol] = []
+
     # 詳細情報取得
-    for key, val in matches.items():
-        res: dict = {}
-        conversations = g.app.client.conversations_replies(channel=val.data.channel_id, ts=val.data.event_ts)
+    for key in matches:
+        conversations = g.app.client.conversations_replies(channel=key.data.channel_id, ts=key.data.event_ts)
         if (msg := conversations.get("messages")):
             res = cast(dict, msg[0])
         else:
@@ -111,71 +108,67 @@ def get_message_details(matches: SlackSearchDict) -> SlackSearchDict:
 
         if res:
             # 各種時間取得
-            matches[key].data.event_ts = str(res.get("ts", "0"))  # イベント発生時間
-            matches[key].data.thread_ts = str(res.get("thread_ts", "0"))  # スレッドの先頭
-            matches[key].data.edited_ts = str(cast(dict, res.get("edited", {})).get("ts", "0"))  # 編集時間
+            key.data.event_ts = str(res.get("ts", "0"))  # イベント発生時間
+            key.data.thread_ts = str(res.get("thread_ts", "0"))  # スレッドの先頭
+            key.data.edited_ts = str(cast(dict, res.get("edited", {})).get("ts", "0"))  # 編集時間
             # リアクション取得
-            matches[key].data.reaction_ok, matches[key].data.reaction_ng = get_reactions_list(res)
+            key.data.reaction_ok, key.data.reaction_ng = get_reactions_list(res)
 
-    return matches
+        new_matches.append(key)
+
+    return new_matches
 
 
-def pickup_score() -> SlackSearchDict:
+def pickup_score() -> list[MessageParserProtocol]:
     """過去ログからスコア記録を検索して返す
 
     Returns:
-        SlackSearchDict: 検索した結果
+        list[MessageParserProtocol]: 検索した結果
     """
 
-    matches = get_messages(g.cfg.search.keyword)
+    score_matches: list[MessageParserProtocol] = []
 
     # ゲーム結果の抽出
-    for key in list(matches.keys()):
-        if matches[key].get_score(g.cfg.search.keyword):
-            if matches[key].data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
-                logging.info("skip ignore user: %s", matches[key].data.user_id)
-                matches.pop(key)
+    for match in get_messages(g.cfg.search.keyword):
+        if match.get_score(g.cfg.search.keyword):
+            if match.data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
+                logging.info("skip ignore user: %s", match.data.user_id)
                 continue
-        else:  # 不一致は破棄
-            matches.pop(key)
 
-    # 結果が無い場合は空の辞書を返して後続の処理をスキップ
-    if not matches:
-        return cast(SlackSearchDict, {})
+            score_matches.append(match)
 
     # イベント詳細取得
-    matches = get_message_details(matches)
+    if score_matches:
+        return get_message_details(score_matches)
+    return score_matches
 
-    return matches
 
-
-def pickup_remarks() -> SlackSearchDict:
+def pickup_remarks() -> list[MessageParserProtocol]:
     """slackログからメモを検索して返す
 
     Returns:
-        SlackSearchDict: 検索した結果
+        list[MessageParserProtocol]: 検索した結果
     """
 
-    matches = get_messages(g.cfg.cw.remarks_word)
+    remarks_matches: list[MessageParserProtocol] = []
 
     # メモの抽出
-    for key in list(matches.keys()):
-        if matches[key].data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
-            logging.info("skip ignore user: %s", matches[key].data.user_id)
-            matches.pop(key)
+    for match in get_messages(g.cfg.cw.remarks_word):
+        if match.data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
+            logging.info("skip ignore user: %s", match.data.user_id)
             continue
 
-        if (remark := matches[key].get_remarks(g.cfg.cw.remarks_word)):
-            matches[key].data.remarks = remark
+        if (remark := match.get_remarks(g.cfg.cw.remarks_word)):
+            match.data.remarks = remark
         else:  # 不一致は破棄
-            matches.pop(key)
+            continue
 
-    # 結果が無い場合は空の辞書を返して後続の処理をスキップ
-    if not matches:
-        return cast(SlackSearchDict, {})
+        remarks_matches.append(match)
 
-    matches = get_message_details(matches)
-    return matches
+    # イベント詳細取得
+    if remarks_matches:
+        return get_message_details(remarks_matches)
+    return remarks_matches
 
 
 def get_reactions_list(msg: dict) -> tuple[list, list]:

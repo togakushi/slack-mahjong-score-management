@@ -16,7 +16,7 @@ from libs.functions import configuration
 
 def main():
     """データ突合処理"""
-    m = factory.select_parser("test", **g.cfg.setting.to_dict())
+
     if g.args.compar:
         try:
             g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
@@ -26,6 +26,10 @@ def main():
             configuration.read_memberslist(False)
         except Exception as e:
             raise RuntimeError(e) from e
+
+        api_adapter = factory.select_adapter(g.selected_service)
+        m = factory.select_parser("test", **g.cfg.setting.to_dict())
+        m.data.channel_id = api_adapter.lookup.get_channel_id()
 
         count, _ = comparison.data_comparison(m)
         logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))  # type: ignore
