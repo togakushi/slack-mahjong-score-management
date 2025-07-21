@@ -51,21 +51,6 @@ class _ReactionsAPI(ReactionsInterface):
         logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.bot_id, icon)
         return icon
 
-    def all_remove(self, delete_list: list, ch: str):
-        """すべてのリアクションを削除する
-
-        Args:
-            delete_list (list): 削除対象のタイムスタンプ
-            ch (str): 対象チャンネルID
-        """
-
-        for ts in set(delete_list):
-            reactions = self.status(ch=ch, ts=ts)
-            if reactions.get("ok"):
-                self.remove(g.cfg.setting.reaction_ok, ch=ch, ts=ts)
-            if reactions.get("ng"):
-                self.remove(g.cfg.setting.reaction_ng, ch=ch, ts=ts)
-
     def append(self, icon: str, ch: str, ts: str):
         api.call_reactions_add(icon=icon, ch=ch, ts=ts)
 

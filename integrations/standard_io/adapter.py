@@ -14,9 +14,6 @@ class _ReactionsDummy(ReactionsInterface):
         _ = (ch, ts)
         return {"ok": [], "ng": []}
 
-    def all_remove(self, delete_list: list, ch: str) -> None:
-        _ = (delete_list, ch)
-
     def append(self, icon, ch, ts) -> None:
         _ = (icon, ch, ts)
 

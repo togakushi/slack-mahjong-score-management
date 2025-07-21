@@ -28,15 +28,6 @@ class ReactionsInterface(ABC):
         return {"ok": [], "ng": []}
 
     @abstractmethod
-    def all_remove(self, delete_list: list, ch: str):
-        """すべてのリアクションを削除する
-
-        Args:
-            delete_list (list): 削除対象のタイムスタンプ
-            ch (str): 対象チャンネルID
-        """
-
-    @abstractmethod
     def append(self, icon: str, ch: str, ts: str) -> None:
         """リアクションを付ける
 
