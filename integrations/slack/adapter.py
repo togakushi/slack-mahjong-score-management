@@ -127,20 +127,10 @@ class SlackAPI(APIInterface):
         if isinstance(m.post.message, dict):  # 辞書型のメッセージは受け付けない
             return {}
 
-        if m.post.ts != "undetermined":
-            thread_ts = m.post.ts
-        elif not m.post.thread:
-            thread_ts = "0"
-        else:
-            if not m.post.thread and m.data.thread_ts != "0":
-                thread_ts = m.data.thread_ts
-            else:
-                thread_ts = m.data.event_ts
-
         res = api.call_chat_post_message(
             channel=m.data.channel_id,
             text=f"{m.post.message.strip()}",
-            thread_ts=thread_ts,
+            thread_ts=m.reply_ts,
         )
 
         return cast(dict, res)
@@ -191,7 +181,7 @@ class SlackAPI(APIInterface):
             res = api.call_chat_post_message(
                 channel=m.data.channel_id,
                 text=f"{m.post.title}\n{m.post.message.strip()}",
-                thread_ts=m.data.thread_ts if m.in_thread else m.data.event_ts,
+                thread_ts=m.reply_ts,
             )
         else:
             # ポスト予定のメッセージをstep行単位のブロックに分割
@@ -211,7 +201,7 @@ class SlackAPI(APIInterface):
                 res = api.call_chat_post_message(
                     channel=m.data.channel_id,
                     text=f"\n{m.post.title}\n\n```{val.strip()}```",
-                    thread_ts=m.data.thread_ts if m.in_thread else m.data.event_ts,
+                    thread_ts=m.reply_ts,
                 )
 
         return cast(dict, res)
@@ -260,8 +250,7 @@ class SlackAPI(APIInterface):
                         channel=m.data.channel_id,
                         title=title,
                         file=file_path,
-                        thread_ts=m.data.thread_ts if m.in_thread else m.data.event_ts,
-                        thread=m.post.thread,
+                        thread_ts=m.reply_ts,
                         request_file_info=False,
                     )
 

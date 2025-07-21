@@ -55,7 +55,7 @@ class PostData:
     message_type: str = field(default="invalid_argument")
     """ランダムリプライが返すメッセージ種類"""
     summarize: bool = field(default=True)
-    thread: bool = field(default=False)
+    thread: bool = field(default=True)
     """スレッドに返す"""
     file_list: list[dict[str, str]] = field(default_factory=list)
     ts: str = field(default="undetermined")
@@ -84,6 +84,10 @@ class MessageParserProtocol(Protocol):
     @property
     def argument(self) -> list:
         """コマンド引数として認識しているオプションを文字列のリストで返す"""
+
+    @property
+    def reply_ts(self) -> str:
+        """リプライ先のタイムスタンプ"""
 
     @property
     def check_updatable(self) -> bool:

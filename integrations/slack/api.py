@@ -39,7 +39,7 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
     """
 
     res = None
-    if not kwargs.get("thread") or not kwargs["thread_ts"]:
+    if kwargs.get("thread_ts", "0") == "0":
         kwargs.pop("thread_ts")
 
     try:

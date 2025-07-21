@@ -170,6 +170,27 @@ class MessageParserDataMixin:
             return ret[1:]
         return ret
 
+    @property
+    def reply_ts(self) -> str:
+        """リプライ先のタイムスタンプを取得する
+
+        Returns:
+            str: タイムスタンプ
+        """
+
+        ret_ts: str = "0"
+
+        if self.post.ts != "undetermined":  # tsが指定されていれば最優先
+            return self.post.ts
+
+        if self.in_thread and self.post.thread:  # スレッドに返すか
+            if self.data.thread_ts == "undetermined":
+                ret_ts = "0"
+            else:
+                ret_ts = self.data.thread_ts
+
+        return ret_ts
+
     def get_score(self, keyword: str) -> dict:
         """textからスコアを抽出する
 
