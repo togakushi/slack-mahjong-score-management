@@ -190,4 +190,6 @@ def message_deleted(m: MessageParserProtocol):
     else:
         delete_list = modify.db_delete(m)
 
-    api_adapter.reactions.all_remove(delete_list, ch=m.data.channel_id)
+    for ts in delete_list:
+        api_adapter.reactions.remove(icon=m.reaction_ok, ch=m.data.channel_id, ts=ts)
+        api_adapter.reactions.remove(icon=m.reaction_ng, ch=m.data.channel_id, ts=ts)
