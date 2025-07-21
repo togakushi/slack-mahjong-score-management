@@ -16,9 +16,11 @@ def main(m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
+    if m.data.status != "message_append":
+        return
+
     api_adapter = factory.select_adapter(g.selected_service)
     g.params = dictutil.placeholder(g.cfg.results, m)
-    m.post.thread = False
 
     # モード切り替え
     versus_mode = False

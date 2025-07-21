@@ -18,8 +18,10 @@ def main(m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
+    if m.data.status != "message_append":
+        return
 
+    api_adapter = factory.select_adapter(g.selected_service)
     g.params = dictutil.placeholder(g.cfg.ranking, m)
 
     if g.params.get("rating"):  # レーティング

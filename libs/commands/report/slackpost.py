@@ -17,10 +17,12 @@ def main(m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
+    if m.data.status != "message_append":
+        return
+
     api_adapter = factory.select_adapter(g.selected_service)
     g.params = dictutil.placeholder(g.cfg.report, m)
     m.post.message_type = "no_hits"
-    m.post.thread = False
 
     if len(g.params["player_list"]) == 1:  # 成績レポート
         name, pdf_file = report.results_report.gen_pdf()

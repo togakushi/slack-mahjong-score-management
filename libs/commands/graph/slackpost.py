@@ -16,6 +16,9 @@ def main(m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
+    if m.data.status != "message_append":
+        return
+
     api_adapter = factory.select_adapter(g.selected_service)
     g.params = dictutil.placeholder(g.cfg.graph, m)
 
@@ -39,9 +42,7 @@ def main(m: MessageParserProtocol):
 
     if count == 0:
         m.post.message = ret
-        m.post.thread = False
         api_adapter.post_message(m)
     else:
         m.post.file_list = [{m.post.title: ret}]
-        m.post.thread = False
         api_adapter.fileupload(m)
