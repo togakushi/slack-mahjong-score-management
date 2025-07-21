@@ -94,7 +94,7 @@ def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
     slack_remarks = functions.pickup_remarks()
 
     if slack_score:
-        first_ts = float(min([x.data.event_ts for x in slack_score]))
+        first_ts = float(min(x.data.event_ts for x in slack_score))
     else:
         first_ts = float(ExtDt(days=-g.cfg.search.after).format("ts"))
 
