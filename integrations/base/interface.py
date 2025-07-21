@@ -142,7 +142,7 @@ class MessageParserDataMixin:
         """スレッド内のメッセージか判定"""
         if self.data.thread_ts == "0":
             return False
-        elif self.data.event_ts == self.data.thread_ts:
+        if self.data.event_ts == self.data.thread_ts:
             return False
         return True
 
