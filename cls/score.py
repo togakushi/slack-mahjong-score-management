@@ -161,21 +161,21 @@ class GameResult:
         ret_text: str = ""
         match kind:
             case "simple":
-                ret_text += f"[{self.p1.name} {self.p1.r_str}]"
-                ret_text += f"[{self.p2.name} {self.p2.r_str}]"
-                ret_text += f"[{self.p3.name} {self.p3.r_str}]"
-                ret_text += f"[{self.p4.name} {self.p4.r_str}]"
-                ret_text += f"[{self.comment if self.comment else ""}]"
+                ret_text += f"[{self.p1.name} {self.p1.r_str}] "
+                ret_text += f"[{self.p2.name} {self.p2.r_str}] "
+                ret_text += f"[{self.p3.name} {self.p3.r_str}] "
+                ret_text += f"[{self.p4.name} {self.p4.r_str}] "
+                ret_text += f"供託[{self.deposit}] [{self.comment if self.comment else None}]"
             case "detail":
                 ret_text += f"[{self.p1.rank}位 {self.p1.name} {self.p1.rpoint * 100}点 ({self.p1.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace("-", "▲")
-                ret_text += f"[{self.comment if self.comment else ""}]"
+                ret_text += f"[{self.comment if self.comment else None}]"
             case "logging":
                 ret_text += f"ts={self.ts}, deposit={self.deposit}, "
                 ret_text += f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
-                ret_text += f"comment={self.comment if self.comment else ""}"
+                ret_text += f"comment={self.comment if self.comment else None}"
 
         return ret_text
 
