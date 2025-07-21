@@ -35,6 +35,9 @@
                     <a class="class" href="#MessageParser">MessageParser</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="function" href="#MessageParser.__init__">MessageParser</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#MessageParser.parser">parser</a>
                         </li>
                         <li>
@@ -82,8 +85,8 @@
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParser</span><span class="p">(</span><span class="n">MessageParserDataMixin</span><span class="p">,</span> <span class="n">MessageParserInterface</span><span class="p">):</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="n">MessageParserDataMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="n">MessageParserDataMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">)</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">api_adapter</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">SlackAPI</span><span class="p">()</span>
@@ -170,8 +173,8 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser-15"><a href="#MessageParser-15"><span class="linenos">15</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParser</span><span class="p">(</span><span class="n">MessageParserDataMixin</span><span class="p">,</span> <span class="n">MessageParserInterface</span><span class="p">):</span>
 </span><span id="MessageParser-16"><a href="#MessageParser-16"><span class="linenos">16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
 </span><span id="MessageParser-17"><a href="#MessageParser-17"><span class="linenos">17</span></a>
-</span><span id="MessageParser-18"><a href="#MessageParser-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="MessageParser-19"><a href="#MessageParser-19"><span class="linenos">19</span></a>        <span class="n">MessageParserDataMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="MessageParser-18"><a href="#MessageParser-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="MessageParser-19"><a href="#MessageParser-19"><span class="linenos">19</span></a>        <span class="n">MessageParserDataMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">)</span>
 </span><span id="MessageParser-20"><a href="#MessageParser-20"><span class="linenos">20</span></a>
 </span><span id="MessageParser-21"><a href="#MessageParser-21"><span class="linenos">21</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="MessageParser-22"><a href="#MessageParser-22"><span class="linenos">22</span></a>        <span class="n">api_adapter</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">SlackAPI</span><span class="p">()</span>
@@ -247,6 +250,24 @@
 </div>
 
 
+                            <div id="MessageParser.__init__" class="classattr">
+                                        <input id="MessageParser.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">MessageParser</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
+
+                <label class="view-source-button" for="MessageParser.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MessageParser.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.__init__-18"><a href="#MessageParser.__init__-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="MessageParser.__init__-19"><a href="#MessageParser.__init__-19"><span class="linenos">19</span></a>        <span class="n">MessageParserDataMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
                             <div id="MessageParser.parser" class="classattr">
                                         <input id="MessageParser.parser-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">

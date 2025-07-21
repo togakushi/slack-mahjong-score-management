@@ -124,61 +124,61 @@
 
     </div>
     <a class="headerlink" href="#APIInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface-107"><a href="#APIInterface-107"><span class="linenos">107</span></a><span class="k">class</span><span class="w"> </span><span class="nc">APIInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="APIInterface-108"><a href="#APIInterface-108"><span class="linenos">108</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;API抽象化インターフェース&quot;&quot;&quot;</span>
-</span><span id="APIInterface-109"><a href="#APIInterface-109"><span class="linenos">109</span></a>    <span class="n">lookup</span><span class="p">:</span> <span class="s2">&quot;LookupInterface&quot;</span>
-</span><span id="APIInterface-110"><a href="#APIInterface-110"><span class="linenos">110</span></a>    <span class="n">reactions</span><span class="p">:</span> <span class="s2">&quot;ReactionsInterface&quot;</span>
-</span><span id="APIInterface-111"><a href="#APIInterface-111"><span class="linenos">111</span></a>
-</span><span id="APIInterface-112"><a href="#APIInterface-112"><span class="linenos">112</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface-113"><a href="#APIInterface-113"><span class="linenos">113</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="APIInterface-114"><a href="#APIInterface-114"><span class="linenos">114</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
-</span><span id="APIInterface-115"><a href="#APIInterface-115"><span class="linenos">115</span></a>
-</span><span id="APIInterface-116"><a href="#APIInterface-116"><span class="linenos">116</span></a><span class="sd">        Args:</span>
-</span><span id="APIInterface-117"><a href="#APIInterface-117"><span class="linenos">117</span></a><span class="sd">            kwargs (dict): パラメータ</span>
-</span><span id="APIInterface-118"><a href="#APIInterface-118"><span class="linenos">118</span></a><span class="sd">                - **thread** (bool): スレッドにポストするか</span>
-</span><span id="APIInterface-119"><a href="#APIInterface-119"><span class="linenos">119</span></a><span class="sd">                - **msg** (str): ポストするメッセージ</span>
-</span><span id="APIInterface-120"><a href="#APIInterface-120"><span class="linenos">120</span></a><span class="sd">                - **channel_id** (str): ポストするチャンネル</span>
-</span><span id="APIInterface-121"><a href="#APIInterface-121"><span class="linenos">121</span></a><span class="sd">                - **event_ts** (str): リプライ先のタイムスタンプ</span>
-</span><span id="APIInterface-122"><a href="#APIInterface-122"><span class="linenos">122</span></a><span class="sd">                - **thread_ts** (str): リプライ先のタイムスタンプ(スレッド)</span>
-</span><span id="APIInterface-123"><a href="#APIInterface-123"><span class="linenos">123</span></a>
-</span><span id="APIInterface-124"><a href="#APIInterface-124"><span class="linenos">124</span></a><span class="sd">        Returns:</span>
-</span><span id="APIInterface-125"><a href="#APIInterface-125"><span class="linenos">125</span></a><span class="sd">            dict: API response</span>
-</span><span id="APIInterface-126"><a href="#APIInterface-126"><span class="linenos">126</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface-127"><a href="#APIInterface-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="p">{}</span>
-</span><span id="APIInterface-128"><a href="#APIInterface-128"><span class="linenos">128</span></a>
-</span><span id="APIInterface-129"><a href="#APIInterface-129"><span class="linenos">129</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface-130"><a href="#APIInterface-130"><span class="linenos">130</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="APIInterface-131"><a href="#APIInterface-131"><span class="linenos">131</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書の要素単位でメッセージをポストする&quot;&quot;&quot;</span>
-</span><span id="APIInterface-132"><a href="#APIInterface-132"><span class="linenos">132</span></a>
-</span><span id="APIInterface-133"><a href="#APIInterface-133"><span class="linenos">133</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface-134"><a href="#APIInterface-134"><span class="linenos">134</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="APIInterface-135"><a href="#APIInterface-135"><span class="linenos">135</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コードブロック修飾付きでメッセージをポストする</span>
-</span><span id="APIInterface-136"><a href="#APIInterface-136"><span class="linenos">136</span></a>
-</span><span id="APIInterface-137"><a href="#APIInterface-137"><span class="linenos">137</span></a><span class="sd">        Returns:</span>
-</span><span id="APIInterface-138"><a href="#APIInterface-138"><span class="linenos">138</span></a><span class="sd">            dict: API response</span>
-</span><span id="APIInterface-139"><a href="#APIInterface-139"><span class="linenos">139</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface-140"><a href="#APIInterface-140"><span class="linenos">140</span></a>        <span class="k">return</span> <span class="p">{}</span>
-</span><span id="APIInterface-141"><a href="#APIInterface-141"><span class="linenos">141</span></a>
-</span><span id="APIInterface-142"><a href="#APIInterface-142"><span class="linenos">142</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface-143"><a href="#APIInterface-143"><span class="linenos">143</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="APIInterface-144"><a href="#APIInterface-144"><span class="linenos">144</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータの内容でポストのふるまいを変える&quot;&quot;&quot;</span>
-</span><span id="APIInterface-145"><a href="#APIInterface-145"><span class="linenos">145</span></a>
-</span><span id="APIInterface-146"><a href="#APIInterface-146"><span class="linenos">146</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface-147"><a href="#APIInterface-147"><span class="linenos">147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="APIInterface-148"><a href="#APIInterface-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファイルをアップロードする</span>
-</span><span id="APIInterface-149"><a href="#APIInterface-149"><span class="linenos">149</span></a>
-</span><span id="APIInterface-150"><a href="#APIInterface-150"><span class="linenos">150</span></a><span class="sd">        Args:</span>
-</span><span id="APIInterface-151"><a href="#APIInterface-151"><span class="linenos">151</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="APIInterface-152"><a href="#APIInterface-152"><span class="linenos">152</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface-153"><a href="#APIInterface-153"><span class="linenos">153</span></a>
-</span><span id="APIInterface-154"><a href="#APIInterface-154"><span class="linenos">154</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface-155"><a href="#APIInterface-155"><span class="linenos">155</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="APIInterface-156"><a href="#APIInterface-156"><span class="linenos">156</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
-</span><span id="APIInterface-157"><a href="#APIInterface-157"><span class="linenos">157</span></a>
-</span><span id="APIInterface-158"><a href="#APIInterface-158"><span class="linenos">158</span></a><span class="sd">        Returns:</span>
-</span><span id="APIInterface-159"><a href="#APIInterface-159"><span class="linenos">159</span></a><span class="sd">            dict: API response</span>
-</span><span id="APIInterface-160"><a href="#APIInterface-160"><span class="linenos">160</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface-161"><a href="#APIInterface-161"><span class="linenos">161</span></a>        <span class="k">return</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface-76"><a href="#APIInterface-76"><span class="linenos"> 76</span></a><span class="k">class</span><span class="w"> </span><span class="nc">APIInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="APIInterface-77"><a href="#APIInterface-77"><span class="linenos"> 77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;API抽象化インターフェース&quot;&quot;&quot;</span>
+</span><span id="APIInterface-78"><a href="#APIInterface-78"><span class="linenos"> 78</span></a>    <span class="n">lookup</span><span class="p">:</span> <span class="s2">&quot;LookupInterface&quot;</span>
+</span><span id="APIInterface-79"><a href="#APIInterface-79"><span class="linenos"> 79</span></a>    <span class="n">reactions</span><span class="p">:</span> <span class="s2">&quot;ReactionsInterface&quot;</span>
+</span><span id="APIInterface-80"><a href="#APIInterface-80"><span class="linenos"> 80</span></a>
+</span><span id="APIInterface-81"><a href="#APIInterface-81"><span class="linenos"> 81</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-82"><a href="#APIInterface-82"><span class="linenos"> 82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface-83"><a href="#APIInterface-83"><span class="linenos"> 83</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
+</span><span id="APIInterface-84"><a href="#APIInterface-84"><span class="linenos"> 84</span></a>
+</span><span id="APIInterface-85"><a href="#APIInterface-85"><span class="linenos"> 85</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-86"><a href="#APIInterface-86"><span class="linenos"> 86</span></a><span class="sd">            kwargs (dict): パラメータ</span>
+</span><span id="APIInterface-87"><a href="#APIInterface-87"><span class="linenos"> 87</span></a><span class="sd">                - **thread** (bool): スレッドにポストするか</span>
+</span><span id="APIInterface-88"><a href="#APIInterface-88"><span class="linenos"> 88</span></a><span class="sd">                - **msg** (str): ポストするメッセージ</span>
+</span><span id="APIInterface-89"><a href="#APIInterface-89"><span class="linenos"> 89</span></a><span class="sd">                - **channel_id** (str): ポストするチャンネル</span>
+</span><span id="APIInterface-90"><a href="#APIInterface-90"><span class="linenos"> 90</span></a><span class="sd">                - **event_ts** (str): リプライ先のタイムスタンプ</span>
+</span><span id="APIInterface-91"><a href="#APIInterface-91"><span class="linenos"> 91</span></a><span class="sd">                - **thread_ts** (str): リプライ先のタイムスタンプ(スレッド)</span>
+</span><span id="APIInterface-92"><a href="#APIInterface-92"><span class="linenos"> 92</span></a>
+</span><span id="APIInterface-93"><a href="#APIInterface-93"><span class="linenos"> 93</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface-94"><a href="#APIInterface-94"><span class="linenos"> 94</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface-95"><a href="#APIInterface-95"><span class="linenos"> 95</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-96"><a href="#APIInterface-96"><span class="linenos"> 96</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="APIInterface-97"><a href="#APIInterface-97"><span class="linenos"> 97</span></a>
+</span><span id="APIInterface-98"><a href="#APIInterface-98"><span class="linenos"> 98</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-99"><a href="#APIInterface-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="APIInterface-100"><a href="#APIInterface-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書の要素単位でメッセージをポストする&quot;&quot;&quot;</span>
+</span><span id="APIInterface-101"><a href="#APIInterface-101"><span class="linenos">101</span></a>
+</span><span id="APIInterface-102"><a href="#APIInterface-102"><span class="linenos">102</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-103"><a href="#APIInterface-103"><span class="linenos">103</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface-104"><a href="#APIInterface-104"><span class="linenos">104</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コードブロック修飾付きでメッセージをポストする</span>
+</span><span id="APIInterface-105"><a href="#APIInterface-105"><span class="linenos">105</span></a>
+</span><span id="APIInterface-106"><a href="#APIInterface-106"><span class="linenos">106</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface-107"><a href="#APIInterface-107"><span class="linenos">107</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface-108"><a href="#APIInterface-108"><span class="linenos">108</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-109"><a href="#APIInterface-109"><span class="linenos">109</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="APIInterface-110"><a href="#APIInterface-110"><span class="linenos">110</span></a>
+</span><span id="APIInterface-111"><a href="#APIInterface-111"><span class="linenos">111</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-112"><a href="#APIInterface-112"><span class="linenos">112</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="APIInterface-113"><a href="#APIInterface-113"><span class="linenos">113</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータの内容でポストのふるまいを変える&quot;&quot;&quot;</span>
+</span><span id="APIInterface-114"><a href="#APIInterface-114"><span class="linenos">114</span></a>
+</span><span id="APIInterface-115"><a href="#APIInterface-115"><span class="linenos">115</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-116"><a href="#APIInterface-116"><span class="linenos">116</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="APIInterface-117"><a href="#APIInterface-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファイルをアップロードする</span>
+</span><span id="APIInterface-118"><a href="#APIInterface-118"><span class="linenos">118</span></a>
+</span><span id="APIInterface-119"><a href="#APIInterface-119"><span class="linenos">119</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-120"><a href="#APIInterface-120"><span class="linenos">120</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="APIInterface-121"><a href="#APIInterface-121"><span class="linenos">121</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-122"><a href="#APIInterface-122"><span class="linenos">122</span></a>
+</span><span id="APIInterface-123"><a href="#APIInterface-123"><span class="linenos">123</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-124"><a href="#APIInterface-124"><span class="linenos">124</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface-125"><a href="#APIInterface-125"><span class="linenos">125</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
+</span><span id="APIInterface-126"><a href="#APIInterface-126"><span class="linenos">126</span></a>
+</span><span id="APIInterface-127"><a href="#APIInterface-127"><span class="linenos">127</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface-128"><a href="#APIInterface-128"><span class="linenos">128</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface-129"><a href="#APIInterface-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-130"><a href="#APIInterface-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -220,22 +220,22 @@
 
     </div>
     <a class="headerlink" href="#APIInterface.post_message"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_message-112"><a href="#APIInterface.post_message-112"><span class="linenos">112</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface.post_message-113"><a href="#APIInterface.post_message-113"><span class="linenos">113</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="APIInterface.post_message-114"><a href="#APIInterface.post_message-114"><span class="linenos">114</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
-</span><span id="APIInterface.post_message-115"><a href="#APIInterface.post_message-115"><span class="linenos">115</span></a>
-</span><span id="APIInterface.post_message-116"><a href="#APIInterface.post_message-116"><span class="linenos">116</span></a><span class="sd">        Args:</span>
-</span><span id="APIInterface.post_message-117"><a href="#APIInterface.post_message-117"><span class="linenos">117</span></a><span class="sd">            kwargs (dict): パラメータ</span>
-</span><span id="APIInterface.post_message-118"><a href="#APIInterface.post_message-118"><span class="linenos">118</span></a><span class="sd">                - **thread** (bool): スレッドにポストするか</span>
-</span><span id="APIInterface.post_message-119"><a href="#APIInterface.post_message-119"><span class="linenos">119</span></a><span class="sd">                - **msg** (str): ポストするメッセージ</span>
-</span><span id="APIInterface.post_message-120"><a href="#APIInterface.post_message-120"><span class="linenos">120</span></a><span class="sd">                - **channel_id** (str): ポストするチャンネル</span>
-</span><span id="APIInterface.post_message-121"><a href="#APIInterface.post_message-121"><span class="linenos">121</span></a><span class="sd">                - **event_ts** (str): リプライ先のタイムスタンプ</span>
-</span><span id="APIInterface.post_message-122"><a href="#APIInterface.post_message-122"><span class="linenos">122</span></a><span class="sd">                - **thread_ts** (str): リプライ先のタイムスタンプ(スレッド)</span>
-</span><span id="APIInterface.post_message-123"><a href="#APIInterface.post_message-123"><span class="linenos">123</span></a>
-</span><span id="APIInterface.post_message-124"><a href="#APIInterface.post_message-124"><span class="linenos">124</span></a><span class="sd">        Returns:</span>
-</span><span id="APIInterface.post_message-125"><a href="#APIInterface.post_message-125"><span class="linenos">125</span></a><span class="sd">            dict: API response</span>
-</span><span id="APIInterface.post_message-126"><a href="#APIInterface.post_message-126"><span class="linenos">126</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface.post_message-127"><a href="#APIInterface.post_message-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_message-81"><a href="#APIInterface.post_message-81"><span class="linenos">81</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post_message-82"><a href="#APIInterface.post_message-82"><span class="linenos">82</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface.post_message-83"><a href="#APIInterface.post_message-83"><span class="linenos">83</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
+</span><span id="APIInterface.post_message-84"><a href="#APIInterface.post_message-84"><span class="linenos">84</span></a>
+</span><span id="APIInterface.post_message-85"><a href="#APIInterface.post_message-85"><span class="linenos">85</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.post_message-86"><a href="#APIInterface.post_message-86"><span class="linenos">86</span></a><span class="sd">            kwargs (dict): パラメータ</span>
+</span><span id="APIInterface.post_message-87"><a href="#APIInterface.post_message-87"><span class="linenos">87</span></a><span class="sd">                - **thread** (bool): スレッドにポストするか</span>
+</span><span id="APIInterface.post_message-88"><a href="#APIInterface.post_message-88"><span class="linenos">88</span></a><span class="sd">                - **msg** (str): ポストするメッセージ</span>
+</span><span id="APIInterface.post_message-89"><a href="#APIInterface.post_message-89"><span class="linenos">89</span></a><span class="sd">                - **channel_id** (str): ポストするチャンネル</span>
+</span><span id="APIInterface.post_message-90"><a href="#APIInterface.post_message-90"><span class="linenos">90</span></a><span class="sd">                - **event_ts** (str): リプライ先のタイムスタンプ</span>
+</span><span id="APIInterface.post_message-91"><a href="#APIInterface.post_message-91"><span class="linenos">91</span></a><span class="sd">                - **thread_ts** (str): リプライ先のタイムスタンプ(スレッド)</span>
+</span><span id="APIInterface.post_message-92"><a href="#APIInterface.post_message-92"><span class="linenos">92</span></a>
+</span><span id="APIInterface.post_message-93"><a href="#APIInterface.post_message-93"><span class="linenos">93</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface.post_message-94"><a href="#APIInterface.post_message-94"><span class="linenos">94</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface.post_message-95"><a href="#APIInterface.post_message-95"><span class="linenos">95</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface.post_message-96"><a href="#APIInterface.post_message-96"><span class="linenos">96</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -275,9 +275,9 @@
 
     </div>
     <a class="headerlink" href="#APIInterface.post_multi_message"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_multi_message-129"><a href="#APIInterface.post_multi_message-129"><span class="linenos">129</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface.post_multi_message-130"><a href="#APIInterface.post_multi_message-130"><span class="linenos">130</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="APIInterface.post_multi_message-131"><a href="#APIInterface.post_multi_message-131"><span class="linenos">131</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書の要素単位でメッセージをポストする&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_multi_message-98"><a href="#APIInterface.post_multi_message-98"><span class="linenos"> 98</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post_multi_message-99"><a href="#APIInterface.post_multi_message-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_multi_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="APIInterface.post_multi_message-100"><a href="#APIInterface.post_multi_message-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;辞書の要素単位でメッセージをポストする&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -298,14 +298,14 @@
 
     </div>
     <a class="headerlink" href="#APIInterface.post_text"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_text-133"><a href="#APIInterface.post_text-133"><span class="linenos">133</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface.post_text-134"><a href="#APIInterface.post_text-134"><span class="linenos">134</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="APIInterface.post_text-135"><a href="#APIInterface.post_text-135"><span class="linenos">135</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コードブロック修飾付きでメッセージをポストする</span>
-</span><span id="APIInterface.post_text-136"><a href="#APIInterface.post_text-136"><span class="linenos">136</span></a>
-</span><span id="APIInterface.post_text-137"><a href="#APIInterface.post_text-137"><span class="linenos">137</span></a><span class="sd">        Returns:</span>
-</span><span id="APIInterface.post_text-138"><a href="#APIInterface.post_text-138"><span class="linenos">138</span></a><span class="sd">            dict: API response</span>
-</span><span id="APIInterface.post_text-139"><a href="#APIInterface.post_text-139"><span class="linenos">139</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface.post_text-140"><a href="#APIInterface.post_text-140"><span class="linenos">140</span></a>        <span class="k">return</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post_text-102"><a href="#APIInterface.post_text-102"><span class="linenos">102</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post_text-103"><a href="#APIInterface.post_text-103"><span class="linenos">103</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface.post_text-104"><a href="#APIInterface.post_text-104"><span class="linenos">104</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コードブロック修飾付きでメッセージをポストする</span>
+</span><span id="APIInterface.post_text-105"><a href="#APIInterface.post_text-105"><span class="linenos">105</span></a>
+</span><span id="APIInterface.post_text-106"><a href="#APIInterface.post_text-106"><span class="linenos">106</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface.post_text-107"><a href="#APIInterface.post_text-107"><span class="linenos">107</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface.post_text-108"><a href="#APIInterface.post_text-108"><span class="linenos">108</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface.post_text-109"><a href="#APIInterface.post_text-109"><span class="linenos">109</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -332,9 +332,9 @@
 
     </div>
     <a class="headerlink" href="#APIInterface.post"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post-142"><a href="#APIInterface.post-142"><span class="linenos">142</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface.post-143"><a href="#APIInterface.post-143"><span class="linenos">143</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="APIInterface.post-144"><a href="#APIInterface.post-144"><span class="linenos">144</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータの内容でポストのふるまいを変える&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post-111"><a href="#APIInterface.post-111"><span class="linenos">111</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post-112"><a href="#APIInterface.post-112"><span class="linenos">112</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="APIInterface.post-113"><a href="#APIInterface.post-113"><span class="linenos">113</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータの内容でポストのふるまいを変える&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -355,13 +355,13 @@
 
     </div>
     <a class="headerlink" href="#APIInterface.fileupload"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.fileupload-146"><a href="#APIInterface.fileupload-146"><span class="linenos">146</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface.fileupload-147"><a href="#APIInterface.fileupload-147"><span class="linenos">147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="APIInterface.fileupload-148"><a href="#APIInterface.fileupload-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファイルをアップロードする</span>
-</span><span id="APIInterface.fileupload-149"><a href="#APIInterface.fileupload-149"><span class="linenos">149</span></a>
-</span><span id="APIInterface.fileupload-150"><a href="#APIInterface.fileupload-150"><span class="linenos">150</span></a><span class="sd">        Args:</span>
-</span><span id="APIInterface.fileupload-151"><a href="#APIInterface.fileupload-151"><span class="linenos">151</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="APIInterface.fileupload-152"><a href="#APIInterface.fileupload-152"><span class="linenos">152</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.fileupload-115"><a href="#APIInterface.fileupload-115"><span class="linenos">115</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.fileupload-116"><a href="#APIInterface.fileupload-116"><span class="linenos">116</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">fileupload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="APIInterface.fileupload-117"><a href="#APIInterface.fileupload-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ファイルをアップロードする</span>
+</span><span id="APIInterface.fileupload-118"><a href="#APIInterface.fileupload-118"><span class="linenos">118</span></a>
+</span><span id="APIInterface.fileupload-119"><a href="#APIInterface.fileupload-119"><span class="linenos">119</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.fileupload-120"><a href="#APIInterface.fileupload-120"><span class="linenos">120</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="APIInterface.fileupload-121"><a href="#APIInterface.fileupload-121"><span class="linenos">121</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -388,14 +388,14 @@
 
     </div>
     <a class="headerlink" href="#APIInterface.get_conversations"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.get_conversations-154"><a href="#APIInterface.get_conversations-154"><span class="linenos">154</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface.get_conversations-155"><a href="#APIInterface.get_conversations-155"><span class="linenos">155</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="APIInterface.get_conversations-156"><a href="#APIInterface.get_conversations-156"><span class="linenos">156</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
-</span><span id="APIInterface.get_conversations-157"><a href="#APIInterface.get_conversations-157"><span class="linenos">157</span></a>
-</span><span id="APIInterface.get_conversations-158"><a href="#APIInterface.get_conversations-158"><span class="linenos">158</span></a><span class="sd">        Returns:</span>
-</span><span id="APIInterface.get_conversations-159"><a href="#APIInterface.get_conversations-159"><span class="linenos">159</span></a><span class="sd">            dict: API response</span>
-</span><span id="APIInterface.get_conversations-160"><a href="#APIInterface.get_conversations-160"><span class="linenos">160</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface.get_conversations-161"><a href="#APIInterface.get_conversations-161"><span class="linenos">161</span></a>        <span class="k">return</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.get_conversations-123"><a href="#APIInterface.get_conversations-123"><span class="linenos">123</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.get_conversations-124"><a href="#APIInterface.get_conversations-124"><span class="linenos">124</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface.get_conversations-125"><a href="#APIInterface.get_conversations-125"><span class="linenos">125</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
+</span><span id="APIInterface.get_conversations-126"><a href="#APIInterface.get_conversations-126"><span class="linenos">126</span></a>
+</span><span id="APIInterface.get_conversations-127"><a href="#APIInterface.get_conversations-127"><span class="linenos">127</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface.get_conversations-128"><a href="#APIInterface.get_conversations-128"><span class="linenos">128</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface.get_conversations-129"><a href="#APIInterface.get_conversations-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface.get_conversations-130"><a href="#APIInterface.get_conversations-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -422,26 +422,26 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface-311"><a href="#MessageParserInterface-311"><span class="linenos">311</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="MessageParserInterface-312"><a href="#MessageParserInterface-312"><span class="linenos">312</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-313"><a href="#MessageParserInterface-313"><span class="linenos">313</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-314"><a href="#MessageParserInterface-314"><span class="linenos">314</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserInterface-315"><a href="#MessageParserInterface-315"><span class="linenos">315</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
-</span><span id="MessageParserInterface-316"><a href="#MessageParserInterface-316"><span class="linenos">316</span></a>
-</span><span id="MessageParserInterface-317"><a href="#MessageParserInterface-317"><span class="linenos">317</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserInterface-318"><a href="#MessageParserInterface-318"><span class="linenos">318</span></a><span class="sd">            body (Any): 解析データ</span>
-</span><span id="MessageParserInterface-319"><a href="#MessageParserInterface-319"><span class="linenos">319</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-320"><a href="#MessageParserInterface-320"><span class="linenos">320</span></a>
-</span><span id="MessageParserInterface-321"><a href="#MessageParserInterface-321"><span class="linenos">321</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-322"><a href="#MessageParserInterface-322"><span class="linenos">322</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-323"><a href="#MessageParserInterface-323"><span class="linenos">323</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-324"><a href="#MessageParserInterface-324"><span class="linenos">324</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="MessageParserInterface-325"><a href="#MessageParserInterface-325"><span class="linenos">325</span></a>
-</span><span id="MessageParserInterface-326"><a href="#MessageParserInterface-326"><span class="linenos">326</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-327"><a href="#MessageParserInterface-327"><span class="linenos">327</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-328"><a href="#MessageParserInterface-328"><span class="linenos">328</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface-329"><a href="#MessageParserInterface-329"><span class="linenos">329</span></a><span class="sd">            - **False** : 禁止</span>
-</span><span id="MessageParserInterface-330"><a href="#MessageParserInterface-330"><span class="linenos">330</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface-283"><a href="#MessageParserInterface-283"><span class="linenos">283</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="MessageParserInterface-284"><a href="#MessageParserInterface-284"><span class="linenos">284</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-285"><a href="#MessageParserInterface-285"><span class="linenos">285</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-286"><a href="#MessageParserInterface-286"><span class="linenos">286</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserInterface-287"><a href="#MessageParserInterface-287"><span class="linenos">287</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
+</span><span id="MessageParserInterface-288"><a href="#MessageParserInterface-288"><span class="linenos">288</span></a>
+</span><span id="MessageParserInterface-289"><a href="#MessageParserInterface-289"><span class="linenos">289</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserInterface-290"><a href="#MessageParserInterface-290"><span class="linenos">290</span></a><span class="sd">            body (Any): 解析データ</span>
+</span><span id="MessageParserInterface-291"><a href="#MessageParserInterface-291"><span class="linenos">291</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-292"><a href="#MessageParserInterface-292"><span class="linenos">292</span></a>
+</span><span id="MessageParserInterface-293"><a href="#MessageParserInterface-293"><span class="linenos">293</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-294"><a href="#MessageParserInterface-294"><span class="linenos">294</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-295"><a href="#MessageParserInterface-295"><span class="linenos">295</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-296"><a href="#MessageParserInterface-296"><span class="linenos">296</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface-297"><a href="#MessageParserInterface-297"><span class="linenos">297</span></a>
+</span><span id="MessageParserInterface-298"><a href="#MessageParserInterface-298"><span class="linenos">298</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-299"><a href="#MessageParserInterface-299"><span class="linenos">299</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-300"><a href="#MessageParserInterface-300"><span class="linenos">300</span></a><span class="sd">            - **True** : 許可</span>
+</span><span id="MessageParserInterface-301"><a href="#MessageParserInterface-301"><span class="linenos">301</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface-302"><a href="#MessageParserInterface-302"><span class="linenos">302</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -461,13 +461,13 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.parser"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.parser-313"><a href="#MessageParserInterface.parser-313"><span class="linenos">313</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.parser-314"><a href="#MessageParserInterface.parser-314"><span class="linenos">314</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserInterface.parser-315"><a href="#MessageParserInterface.parser-315"><span class="linenos">315</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
-</span><span id="MessageParserInterface.parser-316"><a href="#MessageParserInterface.parser-316"><span class="linenos">316</span></a>
-</span><span id="MessageParserInterface.parser-317"><a href="#MessageParserInterface.parser-317"><span class="linenos">317</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserInterface.parser-318"><a href="#MessageParserInterface.parser-318"><span class="linenos">318</span></a><span class="sd">            body (Any): 解析データ</span>
-</span><span id="MessageParserInterface.parser-319"><a href="#MessageParserInterface.parser-319"><span class="linenos">319</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.parser-285"><a href="#MessageParserInterface.parser-285"><span class="linenos">285</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.parser-286"><a href="#MessageParserInterface.parser-286"><span class="linenos">286</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserInterface.parser-287"><a href="#MessageParserInterface.parser-287"><span class="linenos">287</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
+</span><span id="MessageParserInterface.parser-288"><a href="#MessageParserInterface.parser-288"><span class="linenos">288</span></a>
+</span><span id="MessageParserInterface.parser-289"><a href="#MessageParserInterface.parser-289"><span class="linenos">289</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserInterface.parser-290"><a href="#MessageParserInterface.parser-290"><span class="linenos">290</span></a><span class="sd">            body (Any): 解析データ</span>
+</span><span id="MessageParserInterface.parser-291"><a href="#MessageParserInterface.parser-291"><span class="linenos">291</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -491,16 +491,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-321"><a href="#MessageParserInterface.check_updatable-321"><span class="linenos">321</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.check_updatable-322"><a href="#MessageParserInterface.check_updatable-322"><span class="linenos">322</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.check_updatable-323"><a href="#MessageParserInterface.check_updatable-323"><span class="linenos">323</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.check_updatable-324"><a href="#MessageParserInterface.check_updatable-324"><span class="linenos">324</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="MessageParserInterface.check_updatable-325"><a href="#MessageParserInterface.check_updatable-325"><span class="linenos">325</span></a>
-</span><span id="MessageParserInterface.check_updatable-326"><a href="#MessageParserInterface.check_updatable-326"><span class="linenos">326</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.check_updatable-327"><a href="#MessageParserInterface.check_updatable-327"><span class="linenos">327</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.check_updatable-328"><a href="#MessageParserInterface.check_updatable-328"><span class="linenos">328</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface.check_updatable-329"><a href="#MessageParserInterface.check_updatable-329"><span class="linenos">329</span></a><span class="sd">            - **False** : 禁止</span>
-</span><span id="MessageParserInterface.check_updatable-330"><a href="#MessageParserInterface.check_updatable-330"><span class="linenos">330</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-293"><a href="#MessageParserInterface.check_updatable-293"><span class="linenos">293</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.check_updatable-294"><a href="#MessageParserInterface.check_updatable-294"><span class="linenos">294</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.check_updatable-295"><a href="#MessageParserInterface.check_updatable-295"><span class="linenos">295</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.check_updatable-296"><a href="#MessageParserInterface.check_updatable-296"><span class="linenos">296</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface.check_updatable-297"><a href="#MessageParserInterface.check_updatable-297"><span class="linenos">297</span></a>
+</span><span id="MessageParserInterface.check_updatable-298"><a href="#MessageParserInterface.check_updatable-298"><span class="linenos">298</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.check_updatable-299"><a href="#MessageParserInterface.check_updatable-299"><span class="linenos">299</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.check_updatable-300"><a href="#MessageParserInterface.check_updatable-300"><span class="linenos">300</span></a><span class="sd">            - **True** : 許可</span>
+</span><span id="MessageParserInterface.check_updatable-301"><a href="#MessageParserInterface.check_updatable-301"><span class="linenos">301</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface.check_updatable-302"><a href="#MessageParserInterface.check_updatable-302"><span class="linenos">302</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
