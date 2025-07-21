@@ -160,7 +160,7 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
     check_team = lookup.internal.get_team()
 
     def _judge(check: str) -> str:
-        if g.params.get("individual"):
+        if g.params.get("individual", True):
             if check in check_list:
                 return g.member_list.get(check, check)
         else:
