@@ -35,6 +35,7 @@ def random_reply(m: MessageParserProtocol) -> str:
         "invalid_score": "素点合計：{rpoint_sum}\n点数差分：{rpoint_diff}",
         "restricted_channel": "<@{user_id}> この投稿はデータベースに反映されません。",
         "inside_thread": "<@{user_id}> スレッド内から成績登録はできません。",
+        "same_player": "同名のプレイヤーがいます。",
     }
 
     msg = default_message_type.get(m.post.message_type, "invalid_argument")

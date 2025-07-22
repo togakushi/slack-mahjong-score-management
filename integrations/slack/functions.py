@@ -23,23 +23,36 @@ def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
 
     api_adapter = factory.select_adapter(g.selected_service)
     reactions = api_adapter.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
+    status_flg: bool = True  # リアクション最終状態(True: OK, False: NG)
 
+    # 素点合計チェック
     if detection.deposit:
-        if reactions.get("ok"):
-            api_adapter.reactions.remove(icon=m.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
-        if not reactions.get("ng"):
-            api_adapter.reactions.append(icon=m.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
-
+        status_flg = False
         m.post.message_type = "invalid_score"
         m.post.rpoint_sum = detection.rpoint_sum()
         m.post.message = message.random_reply(m)
-        m.post.thread = True
+        m.post.ts = m.data.event_ts
         api_adapter.post_message(m)
-    else:
+
+    # プレイヤー名重複チェック
+    if len(set(detection.to_list())) != 4:
+        status_flg = False
+        m.post.message_type = "same_player"
+        m.post.message = message.random_reply(m)
+        m.post.ts = m.data.event_ts
+        api_adapter.post_message(m)
+
+    # リアクション処理
+    if status_flg:  # NGを外してOKを付ける
         if not reactions.get("ok"):
             api_adapter.reactions.append(icon=m.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
         if reactions.get("ng"):
             api_adapter.reactions.remove(icon=m.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
+    else:  # OKを外してNGを付ける
+        if reactions.get("ok"):
+            api_adapter.reactions.remove(icon=m.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
+        if not reactions.get("ng"):
+            api_adapter.reactions.append(icon=m.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
 
 
 def get_messages(word: str) -> list[MessageParserProtocol]:
