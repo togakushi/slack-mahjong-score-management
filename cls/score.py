@@ -115,14 +115,14 @@ class GameResult:
             self.rule_version = str(kwargs["rule_version"])
         if "deposit" in kwargs and isinstance(kwargs["deposit"], int):
             self.deposit = int(kwargs["deposit"])
-        if "comment" in kwargs and kwargs["comment"]:
-            self.comment = str(kwargs["comment"]) if kwargs["comment"] else None
         if "origin_point" in kwargs and isinstance(kwargs["origin_point"], int):
             self.origin_point = int(kwargs["origin_point"])
         if "return_point" in kwargs and isinstance(kwargs["return_point"], int):
             self.return_point = int(kwargs["return_point"])
         if "draw_split" in kwargs and isinstance(kwargs["draw_split"], bool):
             self.draw_split = kwargs["draw_split"]
+
+        self.comment = kwargs.get("comment")
 
     def to_dict(self) -> dict:
         """データを辞書で返す
