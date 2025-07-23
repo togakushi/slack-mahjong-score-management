@@ -26,6 +26,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
             if _body.get("channel_name") == "directmessage":
                 self.data.channel_type = "im"
+                self.data.channel_id = _body.get("channel_id", "")
             else:
                 self.data.channel_id = api_adapter.lookup.get_dm_channel_id(_body.get("user_id", ""))
         elif _body.get("container"):  # Homeタブ
