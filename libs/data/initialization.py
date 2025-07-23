@@ -31,7 +31,7 @@ def initialization_resultdb() -> None:
         for k, v in cast(ConfigParser, getattr(g.cfg, "_parser")).items("regulations"):
             match k:
                 case "undefined":
-                    continue
+                    g.cfg.undefined_word = int(v)
                 case "type0" | "yakuman":
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
