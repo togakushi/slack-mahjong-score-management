@@ -24,26 +24,25 @@ def build_main_menu():
 def register_home_handlers(app):
     """ホームタブ操作イベント"""
     @app.action("actionId-back")
-    def handle_action(ack, body, client):
+    def handle_action(ack, body):
         """戻るボタン
 
         Args:
             ack (_type_): ack
             body (dict): イベント内容
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
 
         ack()
         logging.trace(body)  # type: ignore
 
         build_main_menu()
-        client.views_publish(
+        g.appclient.views_publish(
             user_id=g.app_var["user_id"],
             view=g.app_var["view"],
         )
 
     @app.action("modal-open-period")
-    def handle_open_modal_button_clicks(ack, body, client):
+    def handle_open_modal_button_clicks(ack, body):
         """検索範囲設定選択イベント
 
         Args:
@@ -53,7 +52,7 @@ def register_home_handlers(app):
         """
 
         ack()
-        client.views_open(
+        g.appclient.views_open(
             trigger_id=body["trigger_id"],
             view=ui_parts.modalperiod_selection(),
         )
