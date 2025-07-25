@@ -116,19 +116,19 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict]:
     data["最大素点"] = table_conversion(df)
 
     # 連続トップ
-    df["rank"] = df["c_top"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["c_top"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
-    data["連続トップ"] = table_conversion(df, ["c_top", 2])
+    df["rank"] = df["max_top"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["max_top"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
+    data["連続トップ"] = table_conversion(df, ["max_top", 2])
 
     # 連続連対
-    df["rank"] = df["c_top2"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["c_top2"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
-    data["連続連対"] = table_conversion(df, ["c_top2", 2])
+    df["rank"] = df["max_top2"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["max_top2"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
+    data["連続連対"] = table_conversion(df, ["max_top2", 2])
 
     # 連続ラス回避
-    df["rank"] = df["c_top3"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["c_top3"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
-    data["連続ラス回避"] = table_conversion(df, ["c_top3", 2])
+    df["rank"] = df["max_top3"].rank(ascending=False, method="dense").astype("int")
+    df["disp"] = df.apply(lambda row: f"<>{row["max_top3"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
+    data["連続ラス回避"] = table_conversion(df, ["max_top3", 2])
 
     # 表示
     msg += message.header(game_info, m, "", 1)
