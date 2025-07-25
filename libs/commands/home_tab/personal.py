@@ -108,7 +108,7 @@ def register_personal_handlers(app):
 
         m.parser(body)
         add_argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        g.cfg.results.always_argument.extend(add_argument)
+        m.data.text = f"dummy {" ".join(add_argument)}"
         g.params = dictutil.placeholder(g.cfg.results, m)
         g.params.update(update_flag)
 

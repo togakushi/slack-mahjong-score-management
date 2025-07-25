@@ -98,7 +98,7 @@ def register_ranking_handlers(app):
 
         m.parser(body)
         add_argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        g.cfg.ranking.always_argument.extend(add_argument)
+        m.data.text = f"dummy {" ".join(add_argument)}"
         g.params = dictutil.placeholder(g.cfg.ranking, m)
         g.params.update(update_flag)
 
