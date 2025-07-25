@@ -18,6 +18,8 @@ def build_summary_menu():
     g.app_var["screen"] = "SummaryMenu"
     g.app_var["no"] = 0
     g.app_var["view"] = {"type": "home", "blocks": []}
+    g.app_var.setdefault("sday", ExtDt().format("ymd", "-"))
+    g.app_var.setdefault("eday", ExtDt().format("ymd", "-"))
     ui_parts.header("【成績サマリ】")
 
     # 検索範囲設定
