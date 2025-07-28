@@ -50,7 +50,7 @@ def arg_parser() -> argparse.Namespace:
 
     p.add_argument(
         "--service",
-        choices=["slack", "std"],
+        choices=["slack", "standard_io", "std"],
         default="slack",
         help="連携先サービス",
     )

@@ -34,7 +34,7 @@ if __name__ == "__main__":
         case "slack":
             from integrations.slack.events import handler
             handler.main()
-        case "std":
+        case "standard_io" | "std":
             sys.exit()
         case _:
             sys.exit()
