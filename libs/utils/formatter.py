@@ -244,12 +244,13 @@ def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
     return ret
 
 
-def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
+def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
     """カラム名をリネームする
 
     Args:
         df (pd.DataFrame): 対象データフレーム
         short (bool, optional): 略語にリネーム. Defaults to True.
+        kind (int, optional): メモの種類
 
     Returns:
         pd.DataFrame: リネーム後のデータフレーム
@@ -339,6 +340,14 @@ def df_rename(df: pd.DataFrame, short=True) -> pd.DataFrame:
                 rename_dict[x] = "役満和了数"
             case "yakuman(%)":
                 rename_dict[x] = "役満和了率"
+            case "matter":
+                match kind:
+                    case 0:
+                        rename_dict[x] = "和了役"
+                    case 1:
+                        rename_dict[x] = "内容"
+                    case 2:
+                        rename_dict[x] = "内容"
 
     if not g.params.get("individual"):
         rename_dict.update(name="チーム" if short else "チーム名")

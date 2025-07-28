@@ -37,6 +37,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
     ret_dict.update(command=subcom.section)
     ret_dict.update(g.cfg.mahjong.to_dict())
     ret_dict.update(guest_name=g.cfg.member.guest_name)
+    ret_dict.update(undefined_word=g.cfg.undefined_word)
 
     # デフォルト値の取り込み
     ret_dict.update(subcom.to_dict())

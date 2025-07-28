@@ -3,7 +3,7 @@ libs/commands/results/summary.py
 """
 
 import re
-from typing import TYPE_CHECKING
+from typing import cast
 
 import libs.global_value as g
 from cls.types import GameInfoDict
@@ -11,9 +11,6 @@ from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import formatter
-
-if TYPE_CHECKING:
-    import pandas as pd
 
 
 def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
@@ -33,40 +30,39 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
     game_info: GameInfoDict = aggregate.game_info()
     df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
     df_game = loader.read_data("summary/details.sql")
-    df_grandslam = df_game.query("grandslam == grandslam")
+    df_remarks = loader.read_data("remarks.info.sql")
+    df_remarks = df_remarks[df_remarks["playtime"].isin(df_game["playtime"].unique())]
 
     if g.params.get("anonymous"):
-        col = "team"
-        if g.params.get("individual"):
-            col = "name"
+        col = "name" if g.params.get("individual") else "team"
         mapping_dict = formatter.anonymous_mapping(df_game["name"].unique().tolist())
         df_game["name"] = df_game["name"].replace(mapping_dict)
         df_summary[col] = df_summary[col].replace(mapping_dict)
-        df_grandslam["name"] = df_grandslam["name"].replace(mapping_dict)
+        df_remarks["name"] = df_remarks["name"].replace(mapping_dict)
 
     df_summary = formatter.df_rename(df_summary)
 
-    # 表示
-    # --- 情報ヘッダ
+    # --- 表示
+    # 情報ヘッダ
     add_text = ""
     if g.params.get("individual"):  # 個人集計
-        headline = "*【成績サマリ】*\n"
+        headline_title = "*【成績サマリ】*\n"
         column_name = "名前"
     else:  # チーム集計
-        headline = "*【チーム成績サマリ】*\n"
+        headline_title = "*【チーム成績サマリ】*\n"
         column_name = "チーム"
 
     if not g.cfg.mahjong.ignore_flying:
         add_text = f" / トバされた人（延べ）：{df_summary["トビ"].sum()} 人"
 
-    headline += message.header(game_info, m, add_text, 1)
+    header_text = message.header(game_info, m, add_text, 1)
+    headline = headline_title + header_text
 
     if df_summary.empty:
         return (headline, {}, [{"dummy": ""}])
 
-    # --- 集計結果
+    # 集計結果
     msg: dict = {}
-    msg_memo: str = memo_count(df_game)
 
     if not g.params.get("score_comparisons"):  # 通常表示
         header_list: list = [column_name, "通算", "平均", "順位分布", "トビ"]
@@ -75,12 +71,11 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
             header_list.remove("トビ")
             filter_list.remove("トビ")
     else:  # 差分表示
-        df_grandslam = df_grandslam[:0]  # 非表示のため破棄
         msg_memo = ""  # 非表示のため破棄
         header_list = ["#", column_name, "通算", "順位差", "トップ差"]
         filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
 
-    # --- メッセージ整形
+    # メッセージ整形
     step: int = 40
     step_count: list = []
     print_df = df_summary.filter(items=header_list)
@@ -107,93 +102,61 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
         msg[s_line] = "```\n" + re.sub(r"  -([0-9]+)", r" ▲\1", t) + "\n```\n"  # マイナスを記号に置換
 
     # メモ追加
+    msg_memo = ""
+    df_yakuman = df_remarks.query("type == 0").drop(columns=["type", "ex_point"])
+    df_regulations = df_remarks.query("type == 1").drop(columns=["type"])
+    df_others = df_remarks.query("type == 2").drop(columns=["type", "ex_point"])
+
+    if not df_yakuman.empty:
+        msg_memo += "\n*【役満和了】*\n"
+        for _, v in df_yakuman.iterrows():
+            msg_memo += f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} （{v["name"]}）\n"
+
+    if not df_regulations.empty:
+        msg_memo += "\n*【卓外ポイント】*\n"
+        for _, v in df_regulations.iterrows():
+            msg_memo += f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）\n"
+
+    if not df_others.empty:
+        msg_memo += "\n*【その他】*\n"
+        for _, v in df_others.iterrows():
+            msg_memo += f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} （{v["name"]}）\n"
+
     if msg_memo:
         msg["メモ"] = msg_memo
 
     # --- ファイル出力
-    df_summary = df_summary.filter(items=filter_list).fillna("*****")
-    df_grandslam = df_grandslam.filter(
-        items=["playtime", "grandslam", "name"]
-    ).rename(
-        columns={
-            "playtime": "日時",
-            "grandslam": "和了役",
-            "name": "和了者",
-        }
-    )
-
-    prefix_summary = "summary"
-    prefix_yakuman = "yakuman"
-    if g.params.get("filename"):
-        prefix_summary = f"{g.params["filename"]}"
-        prefix_yakuman = f"{g.params["filename"]}_yakuman"
-
-    match g.params.get("format", "default").lower().lower():
+    match cast(str, g.params.get("format", "default")).lower():
         case "csv":
-            file_list = [
-                {"集計結果": formatter.save_output(df_summary, "csv", f"{prefix_summary}.csv", headline)},
-                {"役満和了": formatter.save_output(df_grandslam, "csv", f"{prefix_yakuman}.csv", headline)},
-            ]
+            extension = "csv"
         case "text" | "txt":
-            file_list = [
-                {"集計結果": formatter.save_output(df_summary, "txt", f"{prefix_summary}.txt", headline)},
-                {"役満和了": formatter.save_output(df_grandslam, "txt", f"{prefix_yakuman}.txt", headline)},
-            ]
+            extension = "txt"
         case _:
-            file_list = [{"dummy": ""}]
+            extension = ""
+
+    file_list: list = []
+    if extension:
+        if not df_summary.empty:
+            headline = headline_title.replace("*", "") + header_text
+            df_summary = df_summary.filter(items=filter_list).fillna("*****")
+            prefix = "summary" if g.params.get("filename") else f"{g.params["filename"]}"
+            file_list.append({"集計結果": formatter.save_output(df_summary, extension, f"{prefix}.{extension}", headline)})
+        if not df_yakuman.empty:
+            headline = "【役満和了】\n" + header_text
+            df_yakuman = formatter.df_rename(df_yakuman, kind=0)
+            prefix = "yakuman" if g.params.get("filename") else f"{g.params["filename"]}_yakuman"
+            file_list.append({"役満和了": formatter.save_output(df_yakuman, extension, f"{prefix}.{extension}", headline)})
+        if not df_regulations.empty:
+            headline = "【卓外ポイント】\n" + header_text
+            df_regulations = formatter.df_rename(df_regulations, short=False, kind=1)
+            prefix = "regulations" if g.params.get("filename") else f"{g.params["filename"]}_regulations"
+            file_list.append({"卓外ポイント": formatter.save_output(df_regulations, extension, f"{prefix}.{extension}", headline)})
+        if not df_others.empty:
+            headline = "【その他】\n" + header_text
+            df_others = formatter.df_rename(df_others, kind=2)
+            prefix = "others" if g.params.get("filename") else f"{g.params["filename"]}_others"
+            file_list.append({"その他": formatter.save_output(df_others, extension, f"{prefix}.{extension}", headline)})
+    else:
+        file_list.append({"dummy": ""})
 
     return (headline, msg, file_list)
-
-
-def memo_count(df_game: "pd.DataFrame") -> str:
-    """メモ集計
-
-    Args:
-        df_game (pd.DataFrame): ゲーム情報
-
-    Returns:
-        str: 集計結果
-    """
-
-    # データ収集
-    df_grandslam = df_game.query("grandslam == grandslam")
-    match g.cfg.undefined_word:
-        case 1:
-            df_regulations = df_game.query("regulation == regulation and (type == 1 or type != type)")
-            df_wordcount = df_game.query("regulation == regulation and (type == 2 or type == type)")
-        case 2:
-            df_regulations = df_game.query("regulation == regulation and (type == 1 or type == type)")
-            df_wordcount = df_game.query("regulation == regulation and (type == 2 or type != type)")
-        case _:
-            df_regulations = df_game.query("regulation == regulation and type == 1")
-            df_wordcount = df_game.query("regulation == regulation and type == 2")
-
-    # メモ表示
-    memo_grandslam = ""
-    if not df_grandslam.empty:
-        for _, v in df_grandslam.iterrows():
-            if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
-                continue
-            memo_grandslam += f"\t{str(v["playtime"]).replace("-", "/")}：{v["grandslam"]} （{v["name"]}）\n"
-    if memo_grandslam:
-        memo_grandslam = f"\n*【役満和了】*\n{memo_grandslam}"
-
-    memo_regulation = ""
-    if not df_regulations.empty:
-        for _, v in df_regulations.iterrows():
-            if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
-                continue
-            memo_regulation += f"\t{str(v["playtime"]).replace("-", "/")}：{v["regulation"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）\n"
-    if memo_regulation:
-        memo_regulation = f"\n*【卓外ポイント】*\n{memo_regulation}"
-
-    memo_wordcount = ""
-    if not df_wordcount.empty:
-        for _, v in df_wordcount.iterrows():
-            if not g.params.get("guest_skip") and v["name"] == g.cfg.member.guest_name:  # ゲストなし
-                continue
-            memo_wordcount += f"\t{str(v["playtime"]).replace("-", "/")}：{v["regulation"]} （{v["name"]}）\n"
-    if memo_wordcount:
-        memo_wordcount = f"\n*【その他】*\n{memo_wordcount}"
-
-    return (memo_grandslam + memo_regulation + memo_wordcount).strip()
