@@ -12,11 +12,11 @@ from unittest.mock import patch
 from slack_bolt import App
 from slack_bolt.request import BoltRequest
 
-from libs import event
+from integrations.slack.events import handler
 from libs.functions import configuration
-from libs.functions.events.handler_registry import register_all
+from integrations.slack.events.handler_registry import register_all
 
-__all__ = ["event"]
+__all__ = ["handler"]
 
 
 def generate_signature(signing_secret: str, timestamp: str, body: str) -> str:

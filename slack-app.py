@@ -18,38 +18,23 @@ help:
                             設定ファイル(default: config.ini)
 """
 
-import logging
-import os
 import sys
-
-from slack_bolt import App
-from slack_bolt.adapter.socket_mode import SocketModeHandler
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 
 import libs.global_value as g
 from libs.data import initialization
 from libs.functions import configuration
-from libs.functions.events.handler_registry import register_all
 
 if __name__ == "__main__":
-    try:
-        configuration.setup()
-        app = App(token=os.environ["SLACK_BOT_TOKEN"])
-        g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-        g.appclient = app.client
-        from libs import event
-        __all__ = ["event"]
-        register_all(app)  # イベント遅延登録
-    except SlackApiError as err:
-        logging.error(err)
-        sys.exit()
-
+    configuration.setup()
     initialization.initialization_resultdb()
     initialization.read_grade_table()
     configuration.read_memberslist()
-    g.app = app  # インスタンスグローバル化
-    g.bot_id = app.client.auth_test()["user_id"]
 
-    handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
-    handler.start()
+    match g.args.service:
+        case "slack":
+            from integrations.slack import events
+            events.main()
+        case "std":
+            sys.exit()
+        case _:
+            sys.exit()

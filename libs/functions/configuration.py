@@ -49,6 +49,13 @@ def arg_parser() -> argparse.Namespace:
     )
 
     p.add_argument(
+        "--service",
+        choices=["slack", "std"],
+        default="slack",
+        help="連携先サービス",
+    )
+
+    p.add_argument(
         "--debug",
         action="store_true",
         help="デバッグ情報表示",

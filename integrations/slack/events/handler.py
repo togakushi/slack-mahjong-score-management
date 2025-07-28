@@ -3,8 +3,8 @@ lib/event.py
 """
 
 import libs.global_value as g
-from libs.functions import events
-from libs.functions.events.handler_registry import register
+from integrations.slack.events import message_event, slash_event, tab_event
+from integrations.slack.events.handler_registry import register
 
 
 @register
@@ -18,7 +18,7 @@ def register_event_handlers(app):
             client (slack_bolt.App.client): slack_boltオブジェクト
             body (dict): ポストされたデータ
         """
-        events.message_event.main(body)
+        message_event.main(body)
 
     @app.command(g.cfg.setting.slash_command)
     def slash_command(ack, body):
@@ -29,7 +29,7 @@ def register_event_handlers(app):
             body (dict): ポストされたデータ
             client (slack_bolt.App.client): slack_boltオブジェクト
         """
-        events.slash_command.main(ack, body)
+        slash_event.main(ack, body)
 
     @app.event("app_home_opened")
     def handle_home_events(event):
@@ -39,4 +39,4 @@ def register_event_handlers(app):
             client (slack_bolt.App.client): slack_boltオブジェクト
             event (dict): イベント内容
         """
-        events.home_tab.main(event)
+        tab_event.main(event)

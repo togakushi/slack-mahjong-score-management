@@ -9,7 +9,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
 from libs.commands import graph, ranking, results
 from libs.commands.home_tab import ui_parts
-from libs.functions.events.handler_registry import register
+from integrations.slack.events.handler_registry import register
 from libs.utils import dictutil
 
 
