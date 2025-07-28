@@ -8,8 +8,8 @@ from unittest.mock import patch
 import pytest
 
 import libs.global_value as g
-from libs.functions import configuration
 from integrations.slack.events import message_event
+from libs.functions import configuration
 from tests.events import param_data
 
 

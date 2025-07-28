@@ -1,5 +1,5 @@
 """
-libs/functions/events/home_tab.py
+integrations/slack/events/tab_event.py
 """
 
 import logging

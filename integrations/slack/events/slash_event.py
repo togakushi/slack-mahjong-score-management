@@ -1,5 +1,5 @@
 """
-libs/functions/events/slash_command.py
+integrations/slack/events/slash_event.py
 """
 
 import logging

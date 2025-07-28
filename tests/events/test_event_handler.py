@@ -13,8 +13,8 @@ from slack_bolt import App
 from slack_bolt.request import BoltRequest
 
 from integrations.slack.events import handler
-from libs.functions import configuration
 from integrations.slack.events.handler_registry import register_all
+from libs.functions import configuration
 
 __all__ = ["handler"]
 

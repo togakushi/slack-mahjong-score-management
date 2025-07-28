@@ -1,5 +1,5 @@
 """
-libs/commands/home_tab/home.py
+integrations/slack/events/handler_registry.py
 """
 
 import logging

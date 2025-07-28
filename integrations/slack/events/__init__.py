@@ -23,6 +23,7 @@ from integrations.slack.events.handler_registry import register_all
 
 
 def main():
+    """メイン処理"""
     try:
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
         g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
