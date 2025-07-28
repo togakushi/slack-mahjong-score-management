@@ -32,8 +32,8 @@ if __name__ == "__main__":
 
     match g.args.service:
         case "slack":
-            from integrations.slack import events
-            events.main()
+            from integrations.slack.events import handler
+            handler.main()
         case "std":
             sys.exit()
         case _:
