@@ -12,8 +12,10 @@ def select_adapter(selected_service: str) -> base.APIInterface:
     match selected_service:
         case "slack":
             return slack.adapter.SlackAPI()
-        case _:
+        case "standard_io":
             return standard_io.adapter.StandardIO()
+        case _:
+            raise ValueError("No match service name.")
 
 
 def select_parser(selected_service: str, **kwargs):
@@ -25,5 +27,7 @@ def select_parser(selected_service: str, **kwargs):
     match selected_service:
         case "slack":
             return slack.parser.MessageParser(reaction_ok, reaction_ng)
-        case _:
+        case "standard_io":
             return standard_io.parser.MessageParser(reaction_ok, reaction_ng)
+        case _:
+            raise ValueError("No match service name.")
