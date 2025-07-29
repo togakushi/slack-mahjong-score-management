@@ -1,5 +1,5 @@
 """
-lib/event.py
+integrations/slack/events/handler.py
 """
 
 import logging
