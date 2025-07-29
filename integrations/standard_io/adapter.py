@@ -2,6 +2,7 @@
 integrations/standard_io/message.py
 """
 
+import textwrap
 from pprint import pprint
 
 from integrations.base.interface import (APIInterface, LookupInterface,
@@ -35,6 +36,26 @@ class StandardIO(APIInterface):
         self.lookup = _LookupDummy()
         self.reactions = _ReactionsDummy()
 
+    def _text_formatter(self, text: str) -> str:
+        """テキスト整形
+
+        Args:
+            text (str): 対象テキスト
+
+        Returns:
+            str: 整形済みテキスト
+        """
+
+        ret: str = ""
+        for line in text.splitlines():
+            line = line.replace("*【", "【")
+            line = line.replace("】*", "】")
+            line = line.replace("```", "")
+            line = textwrap.dedent(line)
+            if line:
+                ret += f"{line}\n"
+        return ret.strip()
+
     def post_message(self, m: MessageParserProtocol) -> dict:
         """標準出力
 
@@ -42,7 +63,10 @@ class StandardIO(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        pprint(m.post.message)
+        print("=" * 80)
+        print(self._text_formatter(m.post.message))
+        print("=" * 80)
+        print("\n")
 
         return {}
 
@@ -53,7 +77,7 @@ class StandardIO(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        pprint(m.post.message)
+        self.post(m)
 
     def post_text(self, m: MessageParserProtocol) -> dict:
         """標準出力
@@ -77,19 +101,39 @@ class StandardIO(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        pprint(m.post.headline)
-        pprint(m.post.message)
-        pprint(m.post.file_list)
+        if self.fileupload(m):  # ファイル生成
+            return
 
-    def fileupload(self, m: MessageParserProtocol):
+        if m.post.headline:  # 見出し
+            print("=" * 80)
+            print(self._text_formatter(m.post.headline))
+            print("=" * 80)
+            print("\n")
+
+        if m.post.message:  # 本文
+            if isinstance(m.post.message, dict):
+                for _, text in m.post.message.items():
+                    print(self._text_formatter(text))
+                    print("\n")
+        else:
+            print(self._text_formatter(m.post.message))
+
+    def fileupload(self, m: MessageParserProtocol) -> bool:
         """標準出力
 
         Args:
             m (MessageParserProtocol): メッセージデータ
         """
 
-        pprint(m.post.title)
-        pprint(m.post.file_list)
+        ret_flg: bool = False
+        for file_list in m.post.file_list:
+            title, path = next(iter(file_list.items()))
+            if not path:
+                continue
+            ret_flg = True
+            print(f"{title}: {path}")
+
+        return ret_flg
 
     def get_conversations(self, m: MessageParserProtocol) -> dict:
         """ダミー

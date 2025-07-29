@@ -14,7 +14,9 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         MessageParserDataMixin.__init__(self, reaction_ok, reaction_ng)
 
     def parser(self, body: dict):
+        self.data.status = "message_append"
         self.data.channel_id = "dummy"
+
         if body.get("event"):
             body = cast(dict, body["event"])
 

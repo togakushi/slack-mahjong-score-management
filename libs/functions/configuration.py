@@ -56,6 +56,12 @@ def arg_parser() -> argparse.Namespace:
     )
 
     p.add_argument(
+        "--text",
+        type=str,
+        help="Only allowed when --service=standard_io",
+    )
+
+    p.add_argument(
         "--debug",
         action="store_true",
         help="デバッグ情報表示",
