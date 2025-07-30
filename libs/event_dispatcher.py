@@ -1,5 +1,5 @@
 """
-integrations/slack/events/message_event.py
+libs/event_dispatcher.py
 """
 
 import logging
@@ -19,19 +19,11 @@ from libs.functions import compose, message
 from libs.utils import formatter
 
 
-def main(body):
-    """ポストされた内容で処理を分岐
-
-    Args:
-        client (slack_bolt.App.client): slack_boltオブジェクト
-        body (dict): ポストされたデータ
-    """
+def dispatch_by_keyword(m: MessageParserProtocol):
+    """メイン処理"""
 
     api_adapter = factory.select_adapter(g.selected_service)
-    m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
-    m.parser(body)
 
-    logging.trace(body)  # type: ignore
     logging.info(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, keyword=%s, user_id=%s,",
         m.data.status, m.data.event_ts, m.data.thread_ts, m.in_thread, m.keyword, m.data.user_id,
@@ -47,7 +39,6 @@ def main(body):
         message_deleted(m)
         return
 
-    # キーワード処理
     match m.keyword:
         # ヘルプ
         case x if re.match(rf"^{g.cfg.cw.help}$", x):

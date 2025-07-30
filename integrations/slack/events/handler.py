@@ -11,8 +11,10 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+import libs.event_dispatcher
 import libs.global_value as g
-from integrations.slack.events import message_event, slash_event, tab_event
+from integrations import factory
+from integrations.slack.events import slash_event, tab_event
 from integrations.slack.events.handler_registry import register, register_all
 
 
@@ -42,10 +44,15 @@ def register_event_handlers(app):
         """ポストされた内容で処理を分岐
 
         Args:
-            client (slack_bolt.App.client): slack_boltオブジェクト
             body (dict): ポストされたデータ
         """
-        message_event.main(body)
+
+        logging.trace(body)  # type: ignore
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(body)
+
+        # キーワード処理
+        libs.event_dispatcher.dispatch_by_keyword(m)
 
     @app.command(g.cfg.setting.slash_command)
     def slash_command(ack, body):
@@ -54,7 +61,6 @@ def register_event_handlers(app):
         Args:
             ack (_type_): ack
             body (dict): ポストされたデータ
-            client (slack_bolt.App.client): slack_boltオブジェクト
         """
         slash_event.main(ack, body)
 
@@ -63,7 +69,6 @@ def register_event_handlers(app):
         """ホームタブオープン
 
         Args:
-            client (slack_bolt.App.client): slack_boltオブジェクト
             event (dict): イベント内容
         """
         tab_event.main(event)
