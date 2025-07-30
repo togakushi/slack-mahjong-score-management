@@ -7,8 +7,9 @@ from unittest.mock import patch
 
 import pytest
 
+import libs.event_dispatcher
 import libs.global_value as g
-from integrations.slack.events import message_event
+from integrations import factory
 from libs.functions import configuration
 from tests.events import param_data
 
@@ -21,14 +22,16 @@ from tests.events import param_data
 def test_help(config, keyword, monkeypatch):
     """メッセージイベントテスト(help)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.functions.compose.msg_help.event_message") as mock_help_event_message,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        message_event.main(param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_help_event_message.assert_called_once()
 
 
@@ -40,14 +43,16 @@ def test_help(config, keyword, monkeypatch):
 def test_results(config, keyword, monkeypatch):
     """メッセージイベントテスト(results)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    g.selected_service = "test"
+    g.selected_service = "standard_io"
     configuration.setup()
 
     with (
         patch("libs.commands.results.slackpost.main") as mock_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        message_event.main(param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_results.assert_called_once()
 
 
@@ -59,14 +64,16 @@ def test_results(config, keyword, monkeypatch):
 def test_graph(config, keyword, monkeypatch):
     """メッセージイベントテスト(graph)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.commands.graph.slackpost.main") as mock_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        message_event.main(param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_graph.assert_called_once()
 
 
@@ -78,14 +85,16 @@ def test_graph(config, keyword, monkeypatch):
 def test_ranking(config, keyword, monkeypatch):
     """メッセージイベントテスト(ranking)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.commands.ranking.slackpost.main") as mock_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        message_event.main(param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_ranking.assert_called_once()
 
 
@@ -97,12 +106,14 @@ def test_ranking(config, keyword, monkeypatch):
 def test_report(config, keyword, monkeypatch):
     """メッセージイベントテスト(report)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.commands.report.slackpost.main") as mock_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        message_event.main(param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_report.assert_called_once()

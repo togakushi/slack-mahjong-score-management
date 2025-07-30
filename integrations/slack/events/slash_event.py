@@ -22,7 +22,6 @@ def main(ack, body):
     Args:
         ack (_type_): ack
         body (dict): ポストされたデータ
-        client (slack_bolt.App.client): slack_boltオブジェクト
     """
 
     ack()
