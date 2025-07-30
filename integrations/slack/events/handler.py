@@ -13,9 +13,11 @@ from slack_sdk.errors import SlackApiError
 
 import libs.event_dispatcher
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
-from integrations.slack.events import slash_event, tab_event
+from integrations.slack.events import slash_event
 from integrations.slack.events.handler_registry import register, register_all
+from libs.commands.home_tab import home
 
 
 def main():
@@ -71,4 +73,27 @@ def register_event_handlers(app):
         Args:
             event (dict): イベント内容
         """
-        tab_event.main(event)
+
+        g.app_var = {
+            "view": {},
+            "no": 0,
+            "user_id": None,
+            "view_id": None,
+            "screen": None,
+            "operation": None,
+            "sday": g.app_var.get("sday", ExtDt().format("ymd", "-")),
+            "eday": g.app_var.get("eday", ExtDt().format("ymd", "-")),
+        }
+
+        g.app_var["user_id"] = event["user"]
+        if "view" in event:
+            g.app_var["view_id"] = event["view"]["id"]
+
+        logging.trace(g.app_var)  # type: ignore
+
+        home.build_main_menu()
+        result = g.appclient.views_publish(
+            user_id=g.app_var["user_id"],
+            view=g.app_var["view"],
+        )
+        logging.trace(result)  # type: ignore
