@@ -26,5 +26,9 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
             self.data.text = ""
 
     @property
+    def is_command(self):
+        return False
+
+    @property
     def check_updatable(self) -> bool:
         return True

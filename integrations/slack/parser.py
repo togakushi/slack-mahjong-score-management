@@ -17,6 +17,8 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     def __init__(self, reaction_ok: str, reaction_ng: str):
         MessageParserDataMixin.__init__(self, reaction_ok, reaction_ng)
 
+        self._command_flg: bool = False
+
     def parser(self, _body: dict):
         api_adapter = adapter.SlackAPI()
 
@@ -25,7 +27,9 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
         if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
             if _body.get("channel_name") == "directmessage":
+                self._command_flg = True
                 self.data.channel_type = "im"
+                self.data.status = "message_append"
                 self.data.channel_id = _body.get("channel_id", "")
             else:
                 self.data.channel_id = api_adapter.lookup.get_dm_channel_id(_body.get("user_id", ""))
@@ -64,6 +68,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data.user_id = _event.get("user", self.data.user_id)
         self.data.event_ts = _event.get("ts", "0")
         self.data.thread_ts = _event.get("thread_ts", "0")
+
+    @property
+    def is_command(self):
+        return self._command_flg
 
     @property
     def check_updatable(self) -> bool:

@@ -78,6 +78,14 @@ class MessageParserProtocol(Protocol):
         """スレッド内のメッセージか判定"""
 
     @property
+    def is_command(self) -> bool:
+        """コマンドとして実行されたか
+
+        - **True**: スラッシュコマンド
+        - **False**: チャンネル内呼び出しキーワード
+        """
+
+    @property
     def keyword(self) -> str:
         """コマンドとして認識している文字列を返す"""
 

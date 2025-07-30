@@ -15,7 +15,6 @@ import libs.event_dispatcher
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
-from integrations.slack.events import slash_event
 from integrations.slack.events.handler_registry import register, register_all
 from libs.commands.home_tab import home
 
@@ -43,17 +42,14 @@ def register_event_handlers(app):
     """イベントAPI"""
     @app.event("message")
     def handle_message_events(body):
-        """ポストされた内容で処理を分岐
+        """メッセージイベント
 
         Args:
             body (dict): ポストされたデータ
         """
 
-        logging.trace(body)  # type: ignore
         m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
         m.parser(body)
-
-        # キーワード処理
         libs.event_dispatcher.dispatch_by_keyword(m)
 
     @app.command(g.cfg.setting.slash_command)
@@ -64,7 +60,13 @@ def register_event_handlers(app):
             ack (_type_): ack
             body (dict): ポストされたデータ
         """
-        slash_event.main(ack, body)
+
+        ack()
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(body)
+        libs.event_dispatcher.dispatch_by_keyword(m)
+
+        # slash_event.main(ack, body)
 
     @app.event("app_home_opened")
     def handle_home_events(event):
