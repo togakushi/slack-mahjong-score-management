@@ -18,6 +18,7 @@ FAKE_CLIENT = App.client
 FAKE_BODY: FakeBodyDict = {
     "command": "/mahjong",
     "event": {
+        "channel_name": "directmessage",
         "user": "U9999999999",
         "type": "message",
         "ts": "1234567890.123456",

@@ -7,8 +7,9 @@ from unittest.mock import patch
 
 import pytest
 
+import libs.event_dispatcher
 import libs.global_value as g
-from integrations.slack.events import slash_event
+from integrations import factory
 from libs.functions import configuration
 from tests.events import param_data
 
@@ -21,14 +22,16 @@ from tests.events import param_data
 def test_help(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(help)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.functions.compose.msg_help.slash_command") as mock_help_slash_command,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_help_slash_command.assert_called_once()
 
 
@@ -40,14 +43,16 @@ def test_help(config, keyword, monkeypatch):
 def test_results(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(results)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.commands.results.slackpost.main") as mock_slash_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_results.assert_called_once()
 
 
@@ -59,14 +64,16 @@ def test_results(config, keyword, monkeypatch):
 def test_graph(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(graph)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.commands.graph.slackpost.main") as mock_slash_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_graph.assert_called_once()
 
 
@@ -78,14 +85,16 @@ def test_graph(config, keyword, monkeypatch):
 def test_ranking(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(ranking)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.commands.ranking.slackpost.main") as mock_slash_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_ranking.assert_called_once()
 
 
@@ -97,14 +106,16 @@ def test_ranking(config, keyword, monkeypatch):
 def test_report(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(report)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
         patch("libs.commands.report.slackpost.main") as mock_slash_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_report.assert_called_once()
 
 
@@ -116,14 +127,16 @@ def test_report(config, keyword, monkeypatch):
 def test_check(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(check)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.comparison.main") as mock_slash_check,
+        patch("libs.event_dispatcher.comparison.main") as mock_slash_check,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_check.assert_called_once()
 
 
@@ -135,11 +148,13 @@ def test_check(config, keyword, monkeypatch):
 def test_download(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(download)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-    slash_event.main(str, param_data.FAKE_BODY)
+    m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+    m.parser(param_data.FAKE_BODY)
+    libs.event_dispatcher.dispatch_by_keyword(m)
 
 
 @pytest.mark.parametrize(
@@ -150,14 +165,16 @@ def test_download(config, keyword, monkeypatch):
 def test_member_list(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(member)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.lookup.textdata.get_members_list", return_value=("", "")) as mock_slash_member_list,
+        patch("libs.event_dispatcher.lookup.textdata.get_members_list", return_value=("", "")) as mock_slash_member_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_list.assert_called_once()
 
 
@@ -169,14 +186,16 @@ def test_member_list(config, keyword, monkeypatch):
 def test_member_add(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(add)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.member.append", return_value=None) as mock_slash_member_add,
+        patch("libs.event_dispatcher.member.append", return_value=None) as mock_slash_member_add,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_add.assert_called_once()
 
 
@@ -188,14 +207,16 @@ def test_member_add(config, keyword, monkeypatch):
 def test_member_del(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(del)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.member.remove", return_value=None) as mock_slash_member_del,
+        patch("libs.event_dispatcher.member.remove", return_value=None) as mock_slash_member_del,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_del.assert_called_once()
 
 
@@ -207,14 +228,16 @@ def test_member_del(config, keyword, monkeypatch):
 def test_team_create(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_create)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.team.create", return_value=None) as mock_slash_team_create,
+        patch("libs.event_dispatcher.team.create", return_value=None) as mock_slash_team_create,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_create.assert_called_once()
 
 
@@ -226,14 +249,16 @@ def test_team_create(config, keyword, monkeypatch):
 def test_team_del(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_del)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.team.delete", return_value=None) as mock_slash_team_del,
+        patch("libs.event_dispatcher.team.delete", return_value=None) as mock_slash_team_del,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_del.assert_called_once()
 
 
@@ -245,14 +270,16 @@ def test_team_del(config, keyword, monkeypatch):
 def test_team_add(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_add)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.team.append", return_value=None) as mock_slash_team_add,
+        patch("libs.event_dispatcher.team.append", return_value=None) as mock_slash_team_add,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_add.assert_called_once()
 
 
@@ -264,14 +291,16 @@ def test_team_add(config, keyword, monkeypatch):
 def test_team_remove(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_remove)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.team.remove", return_value=None) as mock_slash_team_remove,
+        patch("libs.event_dispatcher.team.remove", return_value=None) as mock_slash_team_remove,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_remove.assert_called_once()
 
 
@@ -283,14 +312,16 @@ def test_team_remove(config, keyword, monkeypatch):
 def test_team_list(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_list)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.lookup.textdata.get_team_list", return_value="") as mock_slash_team_list,
+        patch("libs.event_dispatcher.lookup.textdata.get_team_list", return_value="") as mock_slash_team_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_list.assert_called_once()
 
 
@@ -302,12 +333,14 @@ def test_team_list(config, keyword, monkeypatch):
 def test_team_clear(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_clear)"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    g.selected_service = "standard_io"
     configuration.setup()
-    g.selected_service = "test"
 
     with (
-        patch("integrations.slack.events.slash_event.team.clear", return_value="") as mock_slash_team_clear,
+        patch("libs.event_dispatcher.team.clear", return_value="") as mock_slash_team_clear,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        slash_event.main(str, param_data.FAKE_BODY)
+        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m.parser(param_data.FAKE_BODY)
+        libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_clear.assert_called_once()

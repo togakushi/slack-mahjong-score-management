@@ -63,10 +63,11 @@ class StandardIO(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        print("=" * 80)
-        print(self._text_formatter(m.post.message))
-        print("=" * 80)
-        print("\n")
+        if m.post.message:
+            print("=" * 80)
+            print(self._text_formatter(m.post.message))
+            print("=" * 80)
+            print("\n")
 
         return {}
 

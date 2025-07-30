@@ -24,7 +24,7 @@ def append(argument: list) -> str:
 
     resultdb = dbutil.get_connection()
 
-    ret = False
+    ret = ""
     dbupdate_flg = False
     msg = "使い方が間違っています。"
 

@@ -66,8 +66,6 @@ def register_event_handlers(app):
         m.parser(body)
         libs.event_dispatcher.dispatch_by_keyword(m)
 
-        # slash_event.main(ack, body)
-
     @app.event("app_home_opened")
     def handle_home_events(event):
         """ホームタブオープン
