@@ -21,6 +21,7 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, TableStyle)
 
 import libs.global_value as g
+from integrations.protocols import MessageParserProtocol
 from libs.data import loader, lookup
 from libs.utils import dbutil, formatter
 
@@ -338,26 +339,29 @@ def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
     return imgdata
 
 
-def gen_pdf() -> tuple[str | bool, str | bool]:
+def gen_pdf(m: MessageParserProtocol) -> bool:
     """成績レポートを生成する
 
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+
     Returns:
-        tuple[str | bool, str | bool]:
-        - str: レポート対象メンバー名
-        - str: レポート保存パス
+        bool: 生成処理結果
+        - **True**: レポート生成
+        - **False**: 対象データなし
     """
 
     plt.close()
 
     if not g.params.get("player_name"):  # レポート対象の指定なし
-        return (False, False)
+        return False
 
     # 対象メンバーの記録状況
     target_info = lookup.db.member_info(g.params["player_name"])
     logging.info(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし
-        return (False, False)
+        return False
 
     # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
@@ -405,7 +409,8 @@ def gen_pdf() -> tuple[str | bool, str | bool]:
     doc.build(elements)
     logging.notice("report generation: %s", g.params["player_name"])  # type: ignore
 
-    return (g.params["player_name"], pdf_path)
+    m.post.file_list = [{f"成績レポート({g.params["player_name"]})": str(pdf_path)}]
+    return True
 
 
 def cover_page(style: dict, target_info: dict) -> list:

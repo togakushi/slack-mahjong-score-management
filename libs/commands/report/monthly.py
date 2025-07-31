@@ -8,15 +8,21 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
+from integrations.protocols import MessageParserProtocol
 from libs.data import loader
 from libs.functions import compose, configuration
 
 
-def plot() -> str:
+def plot(m: MessageParserProtocol) -> bool:
     """月別ゲーム統計表の生成
 
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+
     Returns:
-        str: 生成ファイルパス
+        bool: 生成処理結果
+        - **True**: レポート生成
+        - **False**: 対象データなし
     """
 
     plt.close()
@@ -25,7 +31,7 @@ def plot() -> str:
     results = df.transpose().to_dict()
 
     if len(results) == 0:
-        return ""
+        return False
 
     # --- グラフフォント設定
     configuration.graph_setup(plt, fm)
@@ -96,4 +102,5 @@ def plot() -> str:
     fig.savefig(report_file_path)
     plt.close()
 
-    return report_file_path
+    m.post.file_list = [{"月別ゲーム統計": report_file_path}]
+    return True

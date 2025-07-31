@@ -107,7 +107,7 @@ def register_summary_handlers(app):
 
         m.parser(body)
         add_argument, app_msg, update_flag = ui_parts.set_command_option(body)
-        m.data.text = f"dummy {" ".join(add_argument)}"
+        m.data.text = f"dummy {" ".join(add_argument)}"  # 引数の位置を調整
         g.params = dictutil.placeholder(g.cfg.results, m)
         g.params.update(update_flag)
 
@@ -118,38 +118,31 @@ def register_summary_handlers(app):
 
         app_msg.pop()
         app_msg.append("集計完了")
-        msg1: str = ""
 
         match g.app_var.get("operation"):
             case "point":
-                count, ret = graph.summary.point_plot(m)
+                count = graph.summary.point_plot(m)
                 if count:
-                    m.post.file_list = [{"ポイント推移": ret}]
                     api_adapter.fileupload(m)
                 else:
-                    m.post.message = ret
                     api_adapter.post_message(m)
             case "rank":
-                count, ret = graph.summary.rank_plot(m)
+                count = graph.summary.rank_plot(m)
                 if count:
-                    m.post.file_list = [{"順位変動": ret}]
                     api_adapter.fileupload(m)
                 else:
-                    m.post.message = ret
                     api_adapter.post_message(m)
             case "rating":
                 g.params["command"] = "ranking"
-                m.post.headline, m.post.message, m.post.file_list = ranking.rating.aggregation(m)
-                m.post.summarize = False
+                ranking.rating.aggregation(m)
                 api_adapter.post(m)
             case _:
-                m.post.headline, m.post.message, m.post.file_list = results.summary.aggregation(m)
-                m.post.summarize = False
+                results.summary.aggregation(m)
                 api_adapter.post(m)
 
         g.appclient.views_update(
             view_id=g.app_var["view_id"],
-            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{msg1}".strip()),
+            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{m.post.headline}".strip()),
         )
 
     @app.view("SummaryMenu_ModalPeriodSelection")

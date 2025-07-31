@@ -8,23 +8,30 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
+from integrations.protocols import MessageParserProtocol
 from libs.data import loader
 from libs.functions import compose, configuration
 from libs.utils import formatter
 
 
-def plot() -> str:
+def plot(m: MessageParserProtocol) -> bool:
     """成績上位者を一覧化
 
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+
     Returns:
-        str: 生成ファイルパス
+        bool: 生成処理結果
+        - **True**: レポート生成
+        - **False**: 対象データなし
     """
 
     plt.close()
+
     # --- データ取得
     results_df = loader.read_data("report/winner.sql")
     if len(results_df) == 0:
-        return ""
+        return False
 
     # --- 匿名化
     if g.params.get("anonymous"):
@@ -125,4 +132,5 @@ def plot() -> str:
     fig.savefig(report_file_path)
     plt.close()
 
-    return report_file_path
+    m.post.file_list = [{"成績上位者": report_file_path}]
+    return True

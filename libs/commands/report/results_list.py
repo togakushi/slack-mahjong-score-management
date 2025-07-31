@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from cls.types import GameInfoDict
+from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import compose, configuration
 from libs.utils import formatter
@@ -18,11 +19,16 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-def main() -> str:
+def main(m: MessageParserProtocol) -> bool:
     """成績一覧表を生成する
 
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+
     Returns:
-        str: 生成ファイルパス
+        bool: 生成処理結果
+        - **True**: レポート生成
+        - **False**: 対象データなし
     """
 
     # 検索動作を合わせる
@@ -33,7 +39,7 @@ def main() -> str:
     df = loader.read_data("report/results_list.sql").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
-        return ""
+        return False
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
@@ -65,7 +71,8 @@ def main() -> str:
         case _:
             file_path = graph_generation(game_info, df, title)
 
-    return file_path
+    m.post.file_list = [{"成績一覧": file_path}]
+    return True
 
 
 def graph_generation(game_info: GameInfoDict, df: "pd.DataFrame", title) -> str:

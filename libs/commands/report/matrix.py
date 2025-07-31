@@ -12,16 +12,16 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def plot(m: MessageParserProtocol) -> tuple[str, list]:
+def plot(m: MessageParserProtocol) -> bool:
     """対局対戦マトリックスの表示
 
     Args:
         m (MessageParserProtocol): メッセージデータ
 
     Returns:
-        tuple[str,dict]:
-        - str: ヘッダ情報
-        - list: 生成ファイル情報
+        bool: 生成処理結果
+        - **True**: レポート生成
+        - **False**: 対象データなし
     """
 
     # データ集計
@@ -36,7 +36,7 @@ def plot(m: MessageParserProtocol) -> tuple[str, list]:
     msg += message.header(game_info, m, "", 1)
 
     if df.empty:
-        return (msg, [{"dummy": ""}])
+        return False
 
     # 保存
     file_name = os.path.join(
@@ -51,4 +51,6 @@ def plot(m: MessageParserProtocol) -> tuple[str, list]:
         file_path = file_name + ".txt"
         df.to_markdown(file_path, tablefmt="outline")
 
-    return (msg, [{"対局対戦マトリックス表": file_path}])
+    m.post.headline = msg
+    m.post.file_list = [{"対局対戦マトリックス表": file_path}]
+    return True
