@@ -13,17 +13,11 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
+def aggregation(m: MessageParserProtocol):
     """各プレイヤーの通算ポイントを表示
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        tuple[str, dict, dict]
-        - str: ヘッダ情報
-        - dict: 集計データ
-        - list: 生成ファイル情報
     """
 
     # --- データ収集
@@ -159,4 +153,7 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
     else:
         file_list.append({"dummy": ""})
 
-    return (headline, msg, file_list)
+    m.post.headline = headline
+    m.post.message = msg
+    m.post.file_list = file_list
+    m.post.summarize = False

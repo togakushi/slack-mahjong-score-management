@@ -17,20 +17,17 @@ from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
-def plot(m: MessageParserProtocol) -> tuple[int, str]:
+def plot(m: MessageParserProtocol) -> int:
     """個人成績のグラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
 
     Returns:
-        tuple[int,str]:
-        - int: グラフにプロットしたゲーム数
-        - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
+        int: グラフにプロットしたゲーム数
     """
 
     plt.close()
-    m.post.message_type = "no_hits"
 
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
@@ -38,7 +35,9 @@ def plot(m: MessageParserProtocol) -> tuple[int, str]:
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
-        return (0, message.random_reply(m))
+        m.post.message_type = "no_hits"
+        message.random_reply(m)
+        return 0
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
@@ -56,7 +55,6 @@ def plot(m: MessageParserProtocol) -> tuple[int, str]:
     )
 
     configuration.graph_setup(plt, fm)
-
     fig = plt.figure(figsize=(12, 8))
 
     if g.params.get("target_count", 0) == 0:
@@ -121,28 +119,29 @@ def plot(m: MessageParserProtocol) -> tuple[int, str]:
     fig.tight_layout()
     plt.savefig(save_file, bbox_inches="tight")
 
-    return (len(df), save_file)
+    m.post.file_list = [{f"『{player}』の成績": save_file}]
+    return len(df)
 
 
-def statistics_plot(m: MessageParserProtocol) -> tuple[int, str]:
+def statistics_plot(m: MessageParserProtocol) -> int:
     """個人成績の統計グラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
 
     Returns:
-        tuple[int,str]:
-        - int: 集計対象のゲーム数
-        - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
+        int: 集計対象のゲーム数
     """
 
     plt.close()
+
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = loader.read_data("summary/details.sql")
 
     if df.empty:
-        return (0, message.random_reply(m))
+        message.random_reply(m)
+        return 0
 
     if g.params.get("individual"):  # 個人成績
         player = formatter.name_replace(g.params["player_name"], add_mark=True)
@@ -156,7 +155,7 @@ def statistics_plot(m: MessageParserProtocol) -> tuple[int, str]:
     player_df = df.query("name == @player").reset_index(drop=True)
 
     if player_df.empty:
-        return (0, message.random_reply(m))
+        return 0
 
     player_df["sum_point"] = player_df["point"].cumsum()
 
@@ -273,7 +272,9 @@ def statistics_plot(m: MessageParserProtocol) -> tuple[int, str]:
 
     plt.savefig(save_file, bbox_inches="tight")
     plt.close()
-    return (len(player_df), save_file)
+
+    m.post.file_list = [{"個人成績": save_file}]
+    return len(player_df)
 
 
 def get_data(df: pd.Series, interval: int) -> pd.DataFrame:

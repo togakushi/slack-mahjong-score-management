@@ -18,16 +18,14 @@ from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
-def point_plot(m: MessageParserProtocol) -> tuple[int, str]:
+def point_plot(m: MessageParserProtocol) -> int:
     """ポイント推移グラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
 
     Returns:
-        tuple[int,str]:
-        - int: グラフにプロットしたゲーム数
-        - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
+        int: グラフにプロットしたゲーム数
     """
 
     plt.close()
@@ -41,7 +39,8 @@ def point_plot(m: MessageParserProtocol) -> tuple[int, str]:
 
     if target_data.empty:  # 描写対象が0人の場合は終了
         m.post.message_type = "no_hits"
-        return (len(target_data), message.random_reply(m))
+        message.random_reply(m)
+        return len(target_data)
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
@@ -103,19 +102,18 @@ def point_plot(m: MessageParserProtocol) -> tuple[int, str]:
     save_file = _graph_generation(pivot, **args)
     plt.savefig(save_file, bbox_inches="tight")
 
-    return (game_info["game_count"], save_file)
+    m.post.file_list = [{"ポイント推移": save_file}]
+    return game_info["game_count"]
 
 
-def rank_plot(m: MessageParserProtocol) -> tuple[int, str]:
+def rank_plot(m: MessageParserProtocol) -> int:
     """順位変動グラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
 
     Returns:
-        tuple[int,str]:
-        - int: グラフにプロットしたゲーム数
-        - str: 検索結果が0件のときのメッセージ or グラフ画像保存パス
+        int: グラフにプロットしたゲーム数
     """
 
     plt.close()
@@ -129,7 +127,8 @@ def rank_plot(m: MessageParserProtocol) -> tuple[int, str]:
 
     if target_data.empty:  # 描写対象が0人の場合は終了
         m.post.message_type = "no_hits"
-        return (len(target_data), message.random_reply(m))
+        message.random_reply(m)
+        return len(target_data)
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
@@ -192,7 +191,8 @@ def rank_plot(m: MessageParserProtocol) -> tuple[int, str]:
     save_file = _graph_generation(pivot, **args)
     plt.savefig(save_file, bbox_inches="tight")
 
-    return (game_info["game_count"], save_file)
+    m.post.file_list = [{"順位変動": save_file}]
+    return game_info["game_count"]
 
 
 def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:

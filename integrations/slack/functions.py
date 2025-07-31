@@ -30,16 +30,16 @@ def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
         status_flg = False
         m.post.message_type = "invalid_score"
         m.post.rpoint_sum = detection.rpoint_sum()
-        m.post.message = message.random_reply(m)
         m.post.ts = m.data.event_ts
+        message.random_reply(m)
         api_adapter.post_message(m)
 
     # プレイヤー名重複チェック
     if len(set(detection.to_list())) != 4:
         status_flg = False
         m.post.message_type = "same_player"
-        m.post.message = message.random_reply(m)
         m.post.ts = m.data.event_ts
+        message.random_reply(m)
         api_adapter.post_message(m)
 
     # リアクション処理

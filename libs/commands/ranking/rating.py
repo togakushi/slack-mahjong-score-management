@@ -12,17 +12,11 @@ from libs.functions import compose, message
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
+def aggregation(m: MessageParserProtocol):
     """レーティングを集計して返す
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        tuple[str, dict, dict]:
-        - str: ヘッダ情報
-        - dict: 集計データ
-        - list: 生成ファイルの情報
     """
 
     # 情報ヘッダ
@@ -122,4 +116,7 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
         case _:
             file_list = [{"レーティング": ""}]
 
-    return (headline, msg, file_list)
+    m.post.headline = headline
+    m.post.message = msg
+    m.post.file_list = file_list
+    m.post.summarize = False

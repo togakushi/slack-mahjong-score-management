@@ -7,12 +7,13 @@ import textwrap
 import pandas as pd
 
 import libs.global_value as g
+from integrations.protocols import MessageParserProtocol
 from libs.data import loader
 from libs.functions import compose
 from libs.utils import formatter
 
 
-def aggregation() -> tuple[str, dict, list]:
+def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
     """直接対戦結果を集計して返す
 
     Returns:
@@ -128,7 +129,9 @@ def aggregation() -> tuple[str, dict, list]:
         case _:
             file_list = [{"dummy": ""}]
 
-    return (msg1, msg2, file_list)
+    m.post.headline = msg1
+    m.post.message = msg2
+    m.post.file_list = file_list
 
 
 def tmpl_header(my_name: str, vs_name: str) -> str:

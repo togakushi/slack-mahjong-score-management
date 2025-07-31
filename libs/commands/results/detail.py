@@ -4,7 +4,7 @@ libs/commands/results/detail.py
 
 import re
 import textwrap
-from typing import Tuple, cast
+from typing import cast
 
 import pandas as pd
 
@@ -16,16 +16,11 @@ from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
 
-def aggregation(m: MessageParserProtocol) -> Tuple[str, dict]:
+def aggregation(m: MessageParserProtocol):
     """個人/チーム成績詳細を集計して返す
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        Tuple[str,dict]: 集計結果
-        - **str**: メッセージ
-        - **dict**: postするデータ
     """
 
     # 検索動作を合わせる
@@ -106,7 +101,8 @@ def aggregation(m: MessageParserProtocol) -> Tuple[str, dict]:
         if k in g.cfg.dropitems.results:
             msg2.pop(k)
 
-    return (message_build(msg_data), msg2)
+    m.post.headline = message_build(msg_data)
+    m.post.message = msg2
 
 
 def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:

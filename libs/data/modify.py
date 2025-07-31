@@ -50,7 +50,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
         logging.notice("%s", detection.to_text("logging"))  # type: ignore
     else:
         m.post.message_type = "restricted_channel"
-        m.post.message = message.random_reply(m)
+        message.random_reply(m)
         api_adapter.post_message(m)
 
     return changes
@@ -78,7 +78,7 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
         logging.notice("%s", detection.to_text("logging"))  # type: ignore
     else:
         m.post.message_type = "restricted_channel"
-        m.post.message = message.random_reply(m)
+        message.random_reply(m)
         api_adapter.post_message(m)
 
 

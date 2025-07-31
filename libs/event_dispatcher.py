@@ -5,10 +5,7 @@ libs/event_dispatcher.py
 import logging
 import re
 
-import libs.commands.graph.slackpost
-import libs.commands.ranking.slackpost
-import libs.commands.report.slackpost
-import libs.commands.results.slackpost
+import libs.commands.dispatcher
 import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
@@ -52,13 +49,17 @@ def dispatch_by_keyword(m: MessageParserProtocol):
 
         # 成績管理系コマンド
         case x if re.match(rf"^{g.cfg.cw.results}$", x) or (m.is_command and x in g.cfg.alias.results):
-            libs.commands.results.slackpost.main(m)
+            m.command_type = "results"
+            libs.commands.dispatcher.main(m)
         case x if re.match(rf"^{g.cfg.cw.graph}$", x) or (m.is_command and x in g.cfg.alias.graph):
-            libs.commands.graph.slackpost.main(m)
+            m.command_type = "graph"
+            libs.commands.dispatcher.main(m)
         case x if re.match(rf"^{g.cfg.cw.ranking}$", x) or (m.is_command and x in g.cfg.alias.ranking):
-            libs.commands.ranking.slackpost.main(m)
+            m.command_type = "ranking"
+            libs.commands.dispatcher.main(m)
         case x if re.match(rf"^{g.cfg.cw.report}$", x) or (m.is_command and x in g.cfg.alias.report):
-            libs.commands.report.slackpost.main(m)
+            m.command_type = "report"
+            libs.commands.dispatcher.main(m)
 
         # データベース関連コマンド
         case x if re.match(rf"^{g.cfg.cw.check}$", x) or (m.is_command and x in g.cfg.alias.check):
@@ -170,7 +171,7 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
     else:
         m.post.message_type = "inside_thread"
         m.post.thread = True
-        m.post.message = message.random_reply(m)
+        message.random_reply(m)
         api_adapter.post_message(m)
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
@@ -202,7 +203,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
     else:
         m.post.message_type = "inside_thread"
         m.post.thread = True
-        m.post.message = message.random_reply(m)
+        message.random_reply(m)
         api_adapter.post_message(m)
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 

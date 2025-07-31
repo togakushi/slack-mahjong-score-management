@@ -15,14 +15,11 @@ from integrations.protocols import MessageParserProtocol
 from libs.functions import compose
 
 
-def random_reply(m: MessageParserProtocol) -> str:
+def random_reply(m: MessageParserProtocol):
     """メッセージをランダムに返す
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        str: メッセージ
     """
 
     correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
@@ -61,7 +58,7 @@ def random_reply(m: MessageParserProtocol) -> str:
         logging.error("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", m.data.user_id)
 
-    return msg
+    m.post.message = msg
 
 
 def header(game_info: GameInfoDict, m: MessageParserProtocol, add_text="", indent=1):
