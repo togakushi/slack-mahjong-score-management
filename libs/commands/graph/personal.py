@@ -35,8 +35,7 @@ def plot(m: MessageParserProtocol) -> int:
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
-        m.post.message_type = "no_hits"
-        message.random_reply(m)
+        message.random_reply(m, "no_hits")
         return 0
 
     if g.params.get("anonymous"):
@@ -140,7 +139,7 @@ def statistics_plot(m: MessageParserProtocol) -> int:
     df = loader.read_data("summary/details.sql")
 
     if df.empty:
-        message.random_reply(m)
+        message.random_reply(m, "no_hits")
         return 0
 
     if g.params.get("individual"):  # 個人成績

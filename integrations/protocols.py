@@ -52,8 +52,6 @@ class PostData:
     headline: str = field(default=str())
     message: str | dict[str, str] = field(default=str())
     """本文"""
-    message_type: str = field(default="invalid_argument")
-    """ランダムリプライが返すメッセージ種類"""
     summarize: bool = field(default=True)
     thread: bool = field(default=True)
     """スレッドに返す"""

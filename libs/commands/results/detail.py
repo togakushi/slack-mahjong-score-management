@@ -50,8 +50,8 @@ def aggregation(m: MessageParserProtocol):
     record_df = aggregate.ranking_record()
 
     if result_df.empty or record_df.empty:
-        m.post.message_type = "no_target"
-        return (message.random_reply(m), {})
+        message.random_reply(m, "no_target")
+        return
 
     result_df = pd.merge(
         result_df, record_df,

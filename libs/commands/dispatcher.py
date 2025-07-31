@@ -67,38 +67,36 @@ def main(m: MessageParserProtocol):
                     api_adapter.post_multi_message(m)
         case "report":
             g.params = dictutil.placeholder(g.cfg.report, m)
-            m.post.message_type = "no_hits"
             if len(g.params["player_list"]) == 1:  # 成績レポート
                 name, pdf_file = report.results_report.gen_pdf()
                 if pdf_file:
                     m.post.file_list = [{f"成績レポート({name})": str(pdf_file)}]
                     api_adapter.fileupload(m)
                 else:
-                    m.post.message_type = "invalid_argument"
-                    message.random_reply(m)
+                    message.random_reply(m, "no_hits")
                     api_adapter.post_message(m)
             elif g.params.get("order"):
                 if (file_path := report.winner.plot()):
                     m.post.file_list = [{"成績上位者": file_path}]
                     api_adapter.fileupload(m)
                 else:
-                    message.random_reply(m)
+                    message.random_reply(m, "no_hits")
                     api_adapter.post_message(m)
             elif g.params.get("statistics"):
                 if (file_path := report.monthly.plot()):
                     m.post.file_list = [{"月別ゲーム統計": file_path}]
                     api_adapter.fileupload(m)
                 else:
-                    message.random_reply(m)
+                    message.random_reply(m, "no_hits")
                     api_adapter.post_message(m)
             elif g.params.get("versus_matrix") or len(g.params["player_list"]) >= 2:  # 対局対戦マトリックス
                 m.post.headline, m.post.file_list = report.matrix.plot(m)
-                message.random_reply(m)
+                message.random_reply(m, "no_hits")
                 api_adapter.post(m)
             else:
                 if (file_path := report.results_list.main()):
                     m.post.file_list = [{"成績一覧": file_path}]
                     api_adapter.fileupload(m)
                 else:
-                    message.random_reply(m)
+                    message.random_reply(m, "invalid_argument")
                     api_adapter.post_message(m)

@@ -49,8 +49,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
                 logging.error(err)
         logging.notice("%s", detection.to_text("logging"))  # type: ignore
     else:
-        m.post.message_type = "restricted_channel"
-        message.random_reply(m)
+        message.random_reply(m, "restricted_channel")
         api_adapter.post_message(m)
 
     return changes
@@ -77,8 +76,7 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
             cur.commit()
         logging.notice("%s", detection.to_text("logging"))  # type: ignore
     else:
-        m.post.message_type = "restricted_channel"
-        message.random_reply(m)
+        message.random_reply(m, "restricted_channel")
         api_adapter.post_message(m)
 
 

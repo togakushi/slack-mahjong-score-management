@@ -15,11 +15,15 @@ from integrations.protocols import MessageParserProtocol
 from libs.functions import compose
 
 
-def random_reply(m: MessageParserProtocol):
+def random_reply(m: MessageParserProtocol, message_type: str) -> str:
     """メッセージをランダムに返す
 
     Args:
         m (MessageParserProtocol): メッセージデータ
+        message_type (str): 応答メッセージの種類
+
+    Returns:
+        str: 応答メッセージ(m.post.message)
     """
 
     correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
@@ -35,12 +39,12 @@ def random_reply(m: MessageParserProtocol):
         "same_player": "同名のプレイヤーがいます。",
     }
 
-    msg = default_message_type.get(m.post.message_type, "invalid_argument")
+    msg = default_message_type.get(message_type, "invalid_argument")
 
     if cast(ConfigParser, getattr(g.cfg, "_parser")).has_section("custom_message"):
         msg_list = []
         for key, val in cast(ConfigParser, getattr(g.cfg, "_parser")).items("custom_message"):
-            if key.startswith(m.post.message_type):
+            if key.startswith(message_type):
                 msg_list.append(val)
         if msg_list:
             msg = random.choice(msg_list)
@@ -59,6 +63,7 @@ def random_reply(m: MessageParserProtocol):
         msg = msg.replace("{user_id}", m.data.user_id)
 
     m.post.message = msg
+    return msg
 
 
 def header(game_info: GameInfoDict, m: MessageParserProtocol, add_text="", indent=1):
@@ -87,8 +92,7 @@ def header(game_info: GameInfoDict, m: MessageParserProtocol, add_text="", inden
 
     # ゲーム数
     if game_info["game_count"] == 0:
-        m.post.message_type = "no_hits"
-        msg += f"{random_reply(m)}"
+        msg += f"{random_reply(m, "no_hits")}"
     else:
         match g.params.get("command"):
             case "results":

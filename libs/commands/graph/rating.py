@@ -33,8 +33,7 @@ def plot(m: MessageParserProtocol) -> int:
     df_ratings = aggregate.calculation_rating()
 
     if df_ratings.empty:
-        m.post.message_type = "no_hits"
-        message.random_reply(m)
+        message.random_reply(m, "no_hits")
         return 0
 
     # 足切り

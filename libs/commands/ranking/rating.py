@@ -26,10 +26,11 @@ def aggregation(m: MessageParserProtocol):
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info: GameInfoDict = aggregate.game_info()
+
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        m.post.message_type = "no_hits"
-        headline += "\t" + message.random_reply(m)
-        return (headline, {}, [{"dummy": ""}])
+        m.post.message = headline + message.random_reply(m, "no_hits")
+        m.post.file_list = [{"dummy": ""}]
+        return
 
     df_results = loader.read_data("ranking/results.sql").set_index("name")
     df_ratings = aggregate.calculation_rating()
@@ -67,9 +68,9 @@ def aggregation(m: MessageParserProtocol):
         df["name"] = df["name"].replace(mapping_dict)
 
     if df.empty:
-        m.post.message_type = "no_target"
-        headline += "\t" + message.random_reply(m)
-        return (headline, {}, [{"dummy": ""}])
+        m.post.message = headline + message.random_reply(m, "no_target")
+        m.post.file_list = [{"dummy": ""}]
+        return
 
     headline += message.header(game_info, m, add_text, 1)
     df = formatter.df_rename(df.filter(
@@ -100,23 +101,16 @@ def aggregation(m: MessageParserProtocol):
         table = df[s:e].to_markdown(**table_param)
         msg[s] = f"```\n{table}\n```\n"
 
-    prefix_rating: str = "rating"
-    if g.params.get("filename"):
-        prefix_rating = f"{g.params["filename"]}"
-
-    match g.params.get("format", "default").lower().lower():
+    prefix_rating = str(g.params.get("filename", "rating"))
+    match str(g.params.get("format", "default")).lower():
         case "csv":
-            file_list = [
-                {"レーティング": formatter.save_output(df, "csv", f"{prefix_rating}.csv", headline)},
-            ]
+            save_file = formatter.save_output(df, "csv", f"{prefix_rating}.csv", headline)
         case "text" | "txt":
-            file_list = [
-                {"レーティング": formatter.save_output(df, "txt", f"{prefix_rating}.txt", headline)},
-            ]
+            save_file = formatter.save_output(df, "txt", f"{prefix_rating}.txt", headline)
         case _:
-            file_list = [{"レーティング": ""}]
+            save_file = ""
 
     m.post.headline = headline
     m.post.message = msg
-    m.post.file_list = file_list
+    m.post.file_list = [{"レーティング": save_file}]
     m.post.summarize = False

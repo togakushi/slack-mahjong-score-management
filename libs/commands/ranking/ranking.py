@@ -36,14 +36,12 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict]:
     # データ取得
     game_info: GameInfoDict = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        m.post.message_type = "no_hits"
-        msg += "\t" + message.random_reply(m)
+        msg += "\t" + message.random_reply(m, "no_hits")
         return (msg, {})
 
     result_df = loader.read_data("ranking/aggregate.sql")
     if result_df.empty:
-        m.post.message_type = "no_target"
-        msg += "\t" + message.random_reply(m)
+        msg += "\t" + message.random_reply(m, "no_target")
         return (msg, {})
 
     df = pd.merge(

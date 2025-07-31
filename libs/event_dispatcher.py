@@ -169,9 +169,8 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
         modify.db_insert(detection, m)
         functions.score_verification(detection, m)
     else:
-        m.post.message_type = "inside_thread"
         m.post.thread = True
-        message.random_reply(m)
+        message.random_reply(m, "inside_thread")
         api_adapter.post_message(m)
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
@@ -201,9 +200,8 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
             functions.score_verification(detection, m)
             modify.reprocessing_remarks(m)
     else:
-        m.post.message_type = "inside_thread"
         m.post.thread = True
-        message.random_reply(m)
+        message.random_reply(m, "inside_thread")
         api_adapter.post_message(m)
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
