@@ -68,8 +68,6 @@ class MessageParserProtocol(Protocol):
     """受け取ったメッセージデータ"""
     post: PostData
     """送信する内容"""
-    command_type: Literal["results", "graph", "ranking", "report"]
-    """サブコマンド種別"""
     reaction_ok: str
     """リアクション文字(OK)"""
     reaction_ng: str

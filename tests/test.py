@@ -8,9 +8,7 @@ import random
 import re
 from pprint import pprint
 
-import libs.commands.ranking.slackpost
-import libs.commands.report.slackpost
-import libs.commands.results.slackpost
+import libs.commands.dispatcher
 import libs.global_value as g
 from cls.command import CommandParser
 from integrations import factory
@@ -109,7 +107,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.params = dictutil.placeholder(g.cfg.results, m)
                 pprint([
                     "exec: lib.command.results.slackpost.main()",
-                    libs.commands.results.slackpost.main(m),
+                    libs.commands.dispatcher.main(m, "results"),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 

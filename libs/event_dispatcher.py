@@ -49,17 +49,13 @@ def dispatch_by_keyword(m: MessageParserProtocol):
 
         # 成績管理系コマンド
         case x if re.match(rf"^{g.cfg.cw.results}$", x) or (m.is_command and x in g.cfg.alias.results):
-            m.command_type = "results"
-            libs.commands.dispatcher.main(m)
+            libs.commands.dispatcher.main(m, "results")
         case x if re.match(rf"^{g.cfg.cw.graph}$", x) or (m.is_command and x in g.cfg.alias.graph):
-            m.command_type = "graph"
-            libs.commands.dispatcher.main(m)
+            libs.commands.dispatcher.main(m, "graph")
         case x if re.match(rf"^{g.cfg.cw.ranking}$", x) or (m.is_command and x in g.cfg.alias.ranking):
-            m.command_type = "ranking"
-            libs.commands.dispatcher.main(m)
+            libs.commands.dispatcher.main(m, "ranking")
         case x if re.match(rf"^{g.cfg.cw.report}$", x) or (m.is_command and x in g.cfg.alias.report):
-            m.command_type = "report"
-            libs.commands.dispatcher.main(m)
+            libs.commands.dispatcher.main(m, "report")
 
         # データベース関連コマンド
         case x if re.match(rf"^{g.cfg.cw.check}$", x) or (m.is_command and x in g.cfg.alias.check):
