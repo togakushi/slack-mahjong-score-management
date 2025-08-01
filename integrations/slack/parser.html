@@ -145,28 +145,29 @@
 </span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
 </span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="nd">@property</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="nd">@property</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルのポストかチェックする&quot;&quot;&quot;</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos">95</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="nd">@property</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルのポストかチェックする&quot;&quot;&quot;</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos">95</span></a>
+</span><span id="L-96"><a href="#L-96"><span class="linenos">96</span></a>        <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 
@@ -242,28 +243,29 @@
 </span><span id="MessageParser-72"><a href="#MessageParser-72"><span class="linenos">72</span></a>
 </span><span id="MessageParser-73"><a href="#MessageParser-73"><span class="linenos">73</span></a>    <span class="nd">@property</span>
 </span><span id="MessageParser-74"><a href="#MessageParser-74"><span class="linenos">74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="MessageParser-75"><a href="#MessageParser-75"><span class="linenos">75</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
-</span><span id="MessageParser-76"><a href="#MessageParser-76"><span class="linenos">76</span></a>
-</span><span id="MessageParser-77"><a href="#MessageParser-77"><span class="linenos">77</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-78"><a href="#MessageParser-78"><span class="linenos">78</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-79"><a href="#MessageParser-79"><span class="linenos">79</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルのポストかチェックする&quot;&quot;&quot;</span>
-</span><span id="MessageParser-80"><a href="#MessageParser-80"><span class="linenos">80</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-81"><a href="#MessageParser-81"><span class="linenos">81</span></a>
-</span><span id="MessageParser-82"><a href="#MessageParser-82"><span class="linenos">82</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="MessageParser-83"><a href="#MessageParser-83"><span class="linenos">83</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="MessageParser-84"><a href="#MessageParser-84"><span class="linenos">84</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-85"><a href="#MessageParser-85"><span class="linenos">85</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
-</span><span id="MessageParser-86"><a href="#MessageParser-86"><span class="linenos">86</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
-</span><span id="MessageParser-87"><a href="#MessageParser-87"><span class="linenos">87</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
-</span><span id="MessageParser-88"><a href="#MessageParser-88"><span class="linenos">88</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-89"><a href="#MessageParser-89"><span class="linenos">89</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
-</span><span id="MessageParser-90"><a href="#MessageParser-90"><span class="linenos">90</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-91"><a href="#MessageParser-91"><span class="linenos">91</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
-</span><span id="MessageParser-92"><a href="#MessageParser-92"><span class="linenos">92</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="MessageParser-93"><a href="#MessageParser-93"><span class="linenos">93</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
-</span><span id="MessageParser-94"><a href="#MessageParser-94"><span class="linenos">94</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-95"><a href="#MessageParser-95"><span class="linenos">95</span></a>
-</span><span id="MessageParser-96"><a href="#MessageParser-96"><span class="linenos">96</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="MessageParser-75"><a href="#MessageParser-75"><span class="linenos">75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
+</span><span id="MessageParser-76"><a href="#MessageParser-76"><span class="linenos">76</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
+</span><span id="MessageParser-77"><a href="#MessageParser-77"><span class="linenos">77</span></a>
+</span><span id="MessageParser-78"><a href="#MessageParser-78"><span class="linenos">78</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser-79"><a href="#MessageParser-79"><span class="linenos">79</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-80"><a href="#MessageParser-80"><span class="linenos">80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルのポストかチェックする&quot;&quot;&quot;</span>
+</span><span id="MessageParser-81"><a href="#MessageParser-81"><span class="linenos">81</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser-82"><a href="#MessageParser-82"><span class="linenos">82</span></a>
+</span><span id="MessageParser-83"><a href="#MessageParser-83"><span class="linenos">83</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="MessageParser-84"><a href="#MessageParser-84"><span class="linenos">84</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="MessageParser-85"><a href="#MessageParser-85"><span class="linenos">85</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser-86"><a href="#MessageParser-86"><span class="linenos">86</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
+</span><span id="MessageParser-87"><a href="#MessageParser-87"><span class="linenos">87</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
+</span><span id="MessageParser-88"><a href="#MessageParser-88"><span class="linenos">88</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
+</span><span id="MessageParser-89"><a href="#MessageParser-89"><span class="linenos">89</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser-90"><a href="#MessageParser-90"><span class="linenos">90</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+</span><span id="MessageParser-91"><a href="#MessageParser-91"><span class="linenos">91</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser-92"><a href="#MessageParser-92"><span class="linenos">92</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
+</span><span id="MessageParser-93"><a href="#MessageParser-93"><span class="linenos">93</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="MessageParser-94"><a href="#MessageParser-94"><span class="linenos">94</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
+</span><span id="MessageParser-95"><a href="#MessageParser-95"><span class="linenos">95</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser-96"><a href="#MessageParser-96"><span class="linenos">96</span></a>
+</span><span id="MessageParser-97"><a href="#MessageParser-97"><span class="linenos">97</span></a>        <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 
@@ -376,11 +378,14 @@
     <a class="headerlink" href="#MessageParser.is_command"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_command-73"><a href="#MessageParser.is_command-73"><span class="linenos">73</span></a>    <span class="nd">@property</span>
 </span><span id="MessageParser.is_command-74"><a href="#MessageParser.is_command-74"><span class="linenos">74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="MessageParser.is_command-75"><a href="#MessageParser.is_command-75"><span class="linenos">75</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
+</span><span id="MessageParser.is_command-75"><a href="#MessageParser.is_command-75"><span class="linenos">75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
+</span><span id="MessageParser.is_command-76"><a href="#MessageParser.is_command-76"><span class="linenos">76</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>コマンドで実行されているか</p>
+</div>
+
 
                             </div>
                             <div id="MessageParser.check_updatable" class="classattr">
@@ -392,26 +397,26 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-77"><a href="#MessageParser.check_updatable-77"><span class="linenos">77</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.check_updatable-78"><a href="#MessageParser.check_updatable-78"><span class="linenos">78</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-79"><a href="#MessageParser.check_updatable-79"><span class="linenos">79</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルのポストかチェックする&quot;&quot;&quot;</span>
-</span><span id="MessageParser.check_updatable-80"><a href="#MessageParser.check_updatable-80"><span class="linenos">80</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-81"><a href="#MessageParser.check_updatable-81"><span class="linenos">81</span></a>
-</span><span id="MessageParser.check_updatable-82"><a href="#MessageParser.check_updatable-82"><span class="linenos">82</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-83"><a href="#MessageParser.check_updatable-83"><span class="linenos">83</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-84"><a href="#MessageParser.check_updatable-84"><span class="linenos">84</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-85"><a href="#MessageParser.check_updatable-85"><span class="linenos">85</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
-</span><span id="MessageParser.check_updatable-86"><a href="#MessageParser.check_updatable-86"><span class="linenos">86</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-87"><a href="#MessageParser.check_updatable-87"><span class="linenos">87</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
-</span><span id="MessageParser.check_updatable-88"><a href="#MessageParser.check_updatable-88"><span class="linenos">88</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-89"><a href="#MessageParser.check_updatable-89"><span class="linenos">89</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
-</span><span id="MessageParser.check_updatable-90"><a href="#MessageParser.check_updatable-90"><span class="linenos">90</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-91"><a href="#MessageParser.check_updatable-91"><span class="linenos">91</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
-</span><span id="MessageParser.check_updatable-92"><a href="#MessageParser.check_updatable-92"><span class="linenos">92</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="MessageParser.check_updatable-93"><a href="#MessageParser.check_updatable-93"><span class="linenos">93</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-94"><a href="#MessageParser.check_updatable-94"><span class="linenos">94</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-95"><a href="#MessageParser.check_updatable-95"><span class="linenos">95</span></a>
-</span><span id="MessageParser.check_updatable-96"><a href="#MessageParser.check_updatable-96"><span class="linenos">96</span></a>        <span class="k">return</span> <span class="n">ret</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-78"><a href="#MessageParser.check_updatable-78"><span class="linenos">78</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.check_updatable-79"><a href="#MessageParser.check_updatable-79"><span class="linenos">79</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-80"><a href="#MessageParser.check_updatable-80"><span class="linenos">80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルのポストかチェックする&quot;&quot;&quot;</span>
+</span><span id="MessageParser.check_updatable-81"><a href="#MessageParser.check_updatable-81"><span class="linenos">81</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser.check_updatable-82"><a href="#MessageParser.check_updatable-82"><span class="linenos">82</span></a>
+</span><span id="MessageParser.check_updatable-83"><a href="#MessageParser.check_updatable-83"><span class="linenos">83</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-84"><a href="#MessageParser.check_updatable-84"><span class="linenos">84</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-85"><a href="#MessageParser.check_updatable-85"><span class="linenos">85</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser.check_updatable-86"><a href="#MessageParser.check_updatable-86"><span class="linenos">86</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
+</span><span id="MessageParser.check_updatable-87"><a href="#MessageParser.check_updatable-87"><span class="linenos">87</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-88"><a href="#MessageParser.check_updatable-88"><span class="linenos">88</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
+</span><span id="MessageParser.check_updatable-89"><a href="#MessageParser.check_updatable-89"><span class="linenos">89</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser.check_updatable-90"><a href="#MessageParser.check_updatable-90"><span class="linenos">90</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+</span><span id="MessageParser.check_updatable-91"><a href="#MessageParser.check_updatable-91"><span class="linenos">91</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser.check_updatable-92"><a href="#MessageParser.check_updatable-92"><span class="linenos">92</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
+</span><span id="MessageParser.check_updatable-93"><a href="#MessageParser.check_updatable-93"><span class="linenos">93</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="MessageParser.check_updatable-94"><a href="#MessageParser.check_updatable-94"><span class="linenos">94</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-95"><a href="#MessageParser.check_updatable-95"><span class="linenos">95</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser.check_updatable-96"><a href="#MessageParser.check_updatable-96"><span class="linenos">96</span></a>
+</span><span id="MessageParser.check_updatable-97"><a href="#MessageParser.check_updatable-97"><span class="linenos">97</span></a>        <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 

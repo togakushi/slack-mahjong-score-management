@@ -108,11 +108,12 @@
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="nd">@property</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="nd">@property</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="nd">@property</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -154,11 +155,12 @@
 </span><span id="MessageParser-35"><a href="#MessageParser-35"><span class="linenos">35</span></a>
 </span><span id="MessageParser-36"><a href="#MessageParser-36"><span class="linenos">36</span></a>    <span class="nd">@property</span>
 </span><span id="MessageParser-37"><a href="#MessageParser-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="MessageParser-38"><a href="#MessageParser-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
-</span><span id="MessageParser-39"><a href="#MessageParser-39"><span class="linenos">39</span></a>
-</span><span id="MessageParser-40"><a href="#MessageParser-40"><span class="linenos">40</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-41"><a href="#MessageParser-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-42"><a href="#MessageParser-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="MessageParser-38"><a href="#MessageParser-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
+</span><span id="MessageParser-39"><a href="#MessageParser-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
+</span><span id="MessageParser-40"><a href="#MessageParser-40"><span class="linenos">40</span></a>
+</span><span id="MessageParser-41"><a href="#MessageParser-41"><span class="linenos">41</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser-42"><a href="#MessageParser-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-43"><a href="#MessageParser-43"><span class="linenos">43</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -238,11 +240,14 @@
     <a class="headerlink" href="#MessageParser.is_command"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_command-36"><a href="#MessageParser.is_command-36"><span class="linenos">36</span></a>    <span class="nd">@property</span>
 </span><span id="MessageParser.is_command-37"><a href="#MessageParser.is_command-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="MessageParser.is_command-38"><a href="#MessageParser.is_command-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
+</span><span id="MessageParser.is_command-38"><a href="#MessageParser.is_command-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
+</span><span id="MessageParser.is_command-39"><a href="#MessageParser.is_command-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>コマンドで実行されているか</p>
+</div>
+
 
                             </div>
                             <div id="MessageParser.check_updatable" class="classattr">
@@ -254,9 +259,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-40"><a href="#MessageParser.check_updatable-40"><span class="linenos">40</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.check_updatable-41"><a href="#MessageParser.check_updatable-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-42"><a href="#MessageParser.check_updatable-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-41"><a href="#MessageParser.check_updatable-41"><span class="linenos">41</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.check_updatable-42"><a href="#MessageParser.check_updatable-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-43"><a href="#MessageParser.check_updatable-43"><span class="linenos">43</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
