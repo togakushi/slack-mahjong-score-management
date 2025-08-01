@@ -53,7 +53,10 @@ def aggregation(m: MessageParserProtocol):
     headline = headline_title + header_text
 
     if df_summary.empty:
-        return (headline, {}, [{"dummy": ""}])
+        m.post.headline = headline
+        m.post.message = {}
+        m.post.file_list = [{"dummy": ""}]
+        return
 
     # 集計結果
     msg: dict = {}

@@ -34,6 +34,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     @property
     def is_command(self):
+        """コマンドで実行されているか"""
         return self._command_flg
 
     @property

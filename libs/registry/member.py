@@ -24,9 +24,9 @@ def append(argument: list) -> str:
 
     resultdb = dbutil.get_connection()
 
-    ret = ""
-    dbupdate_flg = False
-    msg = "使い方が間違っています。"
+    ret: bool = False
+    dbupdate_flg: bool = False
+    msg: str = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規追加
         new_name = textutil.str_conv(argument[0], "h2z")

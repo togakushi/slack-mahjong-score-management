@@ -8,11 +8,10 @@ import random
 import re
 from pprint import pprint
 
-import libs.commands.dispatcher
 import libs.global_value as g
 from cls.command import CommandParser
 from integrations import factory
-from libs.commands import graph, report
+from libs.commands import graph, ranking, report, results
 from libs.data import initialization
 from libs.functions import compose, configuration
 from libs.utils import dictutil
@@ -32,13 +31,14 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         """ポイント推移グラフ"""
         if len(g.params["player_list"]) == 1:
             pprint([
-                "exec: lib.graph.personal.plot()",
+                "exec: graph.personal.plot()",
                 graph.personal.plot(m),
                 f"{g.params=}" if flag.get("dump") else "g.params={...}",
             ], width=120)
         else:
+            graph.summary.point_plot(m)
             pprint([
-                "exec: lib.graph.summary.point_plot()",
+                "exec: graph.summary.point_plot()",
                 graph.summary.point_plot(m),
                 f"{g.params=}" if flag.get("dump") else "g.params={...}",
             ], width=120)
@@ -46,15 +46,15 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
     def graph_rank(m):
         """順位推移グラフ"""
         pprint([
-            "exec: lib.graph.summary.rank_plot()",
-            graph.summary.rank_plot(m),
+            "exec: graph.summary.rank_plot()",
+            graph.summary.point_plot(m),
             f"{g.params=}" if flag.get("dump") else "g.params={...}",
         ], width=120)
 
     def graph_statistics(m):
         """統計グラフ"""
         pprint([
-            "exec: lib.graph.personal.statistics_plot()",
+            "exec: graph.personal.statistics_plot()",
             graph.personal.statistics_plot(m),
             f"{g.params=}" if flag.get("dump") else "g.params={...}",
         ], width=120)
@@ -106,8 +106,8 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.cfg.results.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.results, m)
                 pprint([
-                    "exec: lib.command.results.slackpost.main()",
-                    libs.commands.dispatcher.main(m, "results"),
+                    "exec: results.summary.aggregate()",
+                    results.summary.aggregation(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
@@ -152,8 +152,8 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.params = dictutil.placeholder(g.cfg.ranking, m)
 
                 pprint([
-                    "exec: libs.commands.ranking.slackpost.main()",
-                    libs.commands.ranking.slackpost.main(m),
+                    "exec: ranking.ranking.aggregation()",
+                    ranking.ranking.aggregation(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
@@ -161,8 +161,8 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.cfg.report.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.report, m)
                 pprint([
-                    "exec: lib.command.report.slackpost.main()",
-                    libs.commands.report.slackpost.main(m),
+                    "exec: report.results_list.main()",
+                    report.results_list.main(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
@@ -170,8 +170,8 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.cfg.report.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.report, m)
                 pprint([
-                    "exec: lib.report.slackpost.results_report.gen_pdf()",
-                    report.results_report.gen_pdf(),
+                    "exec: report.slackpost.results_report.gen_pdf()",
+                    report.results_report.gen_pdf(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)
 
@@ -179,7 +179,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.cfg.results.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.results, m)
                 pprint([
-                    "exec: lib.graph.rating.plot()",
+                    "exec: graph.rating.plot()",
                     graph.rating.plot(m),
                     f"{g.params=}" if flag.get("dump") else "g.params={...}",
                 ], width=120)

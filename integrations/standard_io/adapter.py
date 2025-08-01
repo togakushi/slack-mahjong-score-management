@@ -63,7 +63,7 @@ class StandardIO(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        if m.post.message:
+        if m.post.message and isinstance(m.post.message, str):
             print("=" * 80)
             print(self._text_formatter(m.post.message))
             print("=" * 80)
@@ -105,7 +105,7 @@ class StandardIO(APIInterface):
         if self.fileupload(m):  # ファイル生成
             return
 
-        if m.post.headline:  # 見出し
+        if m.post.headline and isinstance(m.post.headline, str):  # 見出し
             print("=" * 80)
             print(self._text_formatter(m.post.headline))
             print("=" * 80)
@@ -117,7 +117,8 @@ class StandardIO(APIInterface):
                     print(self._text_formatter(text))
                     print("\n")
         else:
-            print(self._text_formatter(m.post.message))
+            if isinstance(m.post.message, str):
+                print(self._text_formatter(m.post.message))
 
     def fileupload(self, m: MessageParserProtocol) -> bool:
         """標準出力

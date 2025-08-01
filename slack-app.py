@@ -35,11 +35,11 @@ if __name__ == "__main__":
     match g.args.service:
         case "slack":
             g.selected_service = "slack"
-            from integrations.slack.events import handler
-            handler.main()
+            import integrations.slack.events.handler as slack
+            slack.main()
         case "standard_io" | "std":
             g.selected_service = "standard_io"
-            from integrations.standard_io.events import handler
-            handler.main()
+            import integrations.standard_io.events.handler as standard_io
+            standard_io.main()
         case _:
             sys.exit()

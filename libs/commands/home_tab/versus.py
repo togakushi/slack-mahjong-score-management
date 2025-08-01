@@ -129,7 +129,7 @@ def register_versus_handlers(app):
         app_msg.pop()
         app_msg.append("集計完了")
 
-        m.post.headline, m.post.message, m.post.file_list = results.versus.aggregation()
+        results.versus.aggregation(m)
         api_adapter.post(m)
 
         g.appclient.views_update(

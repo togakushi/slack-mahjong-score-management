@@ -43,8 +43,10 @@ def aggregation(m: MessageParserProtocol):
             msg_data["特記事項"] = "、".join(compose.text_item.remarks())
             msg_data["検索ワード"] = compose.text_item.search_word()
             msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {compose.badge.status(0, 0)}"
-            return (message_build(msg_data), {})
-        return ("登録されていないチームです", {})
+            m.post.headline = message_build(msg_data)
+        else:
+            m.post.headline = "登録されていないチームです。"
+        return
 
     result_df = aggregate.game_results()
     record_df = aggregate.ranking_record()

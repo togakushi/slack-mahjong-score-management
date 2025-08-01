@@ -9,6 +9,6 @@ slack連携
 - `integrations.slack.comparison`: 突合処理
 """
 
-from integrations.slack import adapter, api, comparison, functions, parser
+from integrations.slack import adapter, api, parser
 
-__all__ = ["adapter", "api", "comparison", "functions", "parser"]
+__all__ = ["adapter", "api", "parser"]

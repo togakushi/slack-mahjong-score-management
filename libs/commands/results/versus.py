@@ -13,15 +13,8 @@ from libs.functions import compose
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
-    """直接対戦結果を集計して返す
-
-    Returns:
-        tuple[str, dict, dict]
-        - str: ヘッダ情報
-        - dict: 集計データ
-        - list: 生成ファイル情報
-    """
+def aggregation(m: MessageParserProtocol):
+    """直接対戦結果を集計して返す"""
 
     # 検索動作を合わせる
     g.params.update(guest_skip=g.params.get("guest_skip2"))
@@ -54,8 +47,10 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict, list]:
     tmp_msg: dict = {}
     drop_name: list = []  # 対戦記録なしプレイヤー
     if len(df_vs) == 0:  # 検索結果なし
-        msg2[""] = "対戦記録が見つかりません。\n"
-        return (msg1, msg2, [{"dummy": ""}])
+        m.post.headline = msg1
+        m.post.message = {"": "対戦記録が見つかりません。\n"}
+        m.post.file_list = [{"dummy": ""}]
+        return
 
     for vs_name in vs_list:
         tmp_msg[vs_name] = {}
