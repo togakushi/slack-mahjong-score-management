@@ -237,7 +237,7 @@ class SlackAPI(APIInterface):
             m (MessageParserProtocol): メッセージデータ
 
         Returns:
-            dict: 結果(SlackResponse)
+            dict: API response
         """
 
         res: SlackResponse | None = None

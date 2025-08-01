@@ -82,12 +82,7 @@ class APIInterface(ABC):
         """メッセージをポストする
 
         Args:
-            kwargs (dict): パラメータ
-                - **thread** (bool): スレッドにポストするか
-                - **msg** (str): ポストするメッセージ
-                - **channel_id** (str): ポストするチャンネル
-                - **event_ts** (str): リプライ先のタイムスタンプ
-                - **thread_ts** (str): リプライ先のタイムスタンプ(スレッド)
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: API response
@@ -96,11 +91,18 @@ class APIInterface(ABC):
 
     @abstractmethod
     def post_multi_message(self, m: "MessageParserProtocol"):
-        """辞書の要素単位でメッセージをポストする"""
+        """辞書の要素単位でメッセージをポストする
+
+        Args:
+            m (MessageParserProtocol): メッセージデータ
+        """
 
     @abstractmethod
     def post_text(self, m: "MessageParserProtocol") -> dict:
         """コードブロック修飾付きでメッセージをポストする
+
+        Args:
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: API response
@@ -109,7 +111,11 @@ class APIInterface(ABC):
 
     @abstractmethod
     def post(self, m: "MessageParserProtocol"):
-        """メッセージデータの内容でポストのふるまいを変える"""
+        """メッセージデータの内容でポストのふるまいを変える
+
+        Args:
+            m (MessageParserProtocol): メッセージデータ
+        """
 
     @abstractmethod
     def fileupload(self, m: "MessageParserProtocol"):
@@ -122,6 +128,9 @@ class APIInterface(ABC):
     @abstractmethod
     def get_conversations(self, m: "MessageParserProtocol") -> dict:
         """スレッド情報の取得
+
+        Args:
+            m (MessageParserProtocol): メッセージデータ
 
         Returns:
             dict: API response
