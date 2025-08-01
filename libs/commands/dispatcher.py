@@ -2,8 +2,6 @@
 libs/commands/dispatcher.py
 """
 
-import copy
-
 import libs.global_value as g
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
@@ -69,12 +67,8 @@ def main(m: MessageParserProtocol, command_type: str):
                 ranking.rating.aggregation(m)
                 api_adapter.post(m)
             else:  # ランキング
-                tmp_m = copy.deepcopy(m)
-                tmp_m.post.message, m.post.message = ranking.ranking.aggregation(m)
-                res = api_adapter.post_message(tmp_m)
-                if m.post.message:
-                    m.post.ts = str(res.get("ts", "undetermined"))
-                    api_adapter.post_multi_message(m)
+                ranking.ranking.aggregation(m)
+                api_adapter.post(m)
         case "report":
             g.params = dictutil.placeholder(g.cfg.report, m)
             if len(g.params["player_list"]) == 1:  # 成績レポート

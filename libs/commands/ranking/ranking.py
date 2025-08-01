@@ -15,16 +15,11 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserProtocol) -> tuple[str, dict]:
+def aggregation(m: MessageParserProtocol):
     """ランキングデータを生成
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        tuple[str,dict]: 集計結果
-        - **str**: ランキングの集計情報
-        - **dict**: 各ランキングの情報
     """
 
     # 情報ヘッダ
@@ -143,7 +138,8 @@ def aggregation(m: MessageParserProtocol) -> tuple[str, dict]:
 
         data[key] = f"*{key}*\n" + data[key]
 
-    return (msg, data)
+    m.post.headline = msg
+    m.post.message = data
 
 
 def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:

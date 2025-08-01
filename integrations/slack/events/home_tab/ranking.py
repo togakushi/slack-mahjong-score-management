@@ -2,7 +2,6 @@
 libs/commands/home_tab/ranking.py
 """
 
-import copy
 import logging
 
 import libs.global_value as g
@@ -116,17 +115,13 @@ def register_ranking_handlers(app):
 
         app_msg.pop()
         app_msg.append("集計完了")
-        tmp_m = copy.deepcopy(m)
 
-        tmp_m.post.message, m.post.message = ranking.ranking.aggregation(m)
-        if m.post.message:
-            res = api_adapter.post_message(tmp_m)
-            m.post.ts = str(res.get("ts", "undetermined"))
-            api_adapter.post_multi_message(m)
+        ranking.ranking.aggregation(m)
+        api_adapter.post(m)
 
         g.appclient.views_update(
             view_id=g.app_var["view_id"],
-            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{tmp_m.post.message}"),
+            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{m.post.headline}"),
         )
 
     @app.view("RankingMenu_ModalPeriodSelection")
