@@ -5,8 +5,8 @@ integrations/slack/events/handler_registry.py
 import logging
 
 import libs.global_value as g
-from libs.commands.home_tab import ui_parts
 from integrations.slack.events.handler_registry import register
+from integrations.slack.events.home_tab import ui_parts
 
 
 def build_main_menu():

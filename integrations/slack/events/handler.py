@@ -16,7 +16,7 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
 from integrations.slack.events.handler_registry import register, register_all
-from libs.commands.home_tab import home
+from integrations.slack.events.home_tab import home
 
 
 def main():

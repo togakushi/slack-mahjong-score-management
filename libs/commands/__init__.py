@@ -5,5 +5,5 @@
 - `libs.commands.results`: 成績集計
 - `libs.commands.graph`: グラフ描写
 - `libs.commands.report`: レポート作成
-- `libs.commands.home_tab`: ホームApp
+- `integrations.slack.events.home_tab`: ホームApp
 """
