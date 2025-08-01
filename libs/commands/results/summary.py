@@ -2,7 +2,6 @@
 libs/commands/results/summary.py
 """
 
-import re
 from typing import cast
 
 import libs.global_value as g
@@ -73,30 +72,8 @@ def aggregation(m: MessageParserProtocol):
         filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
 
     # メッセージ整形
-    step: int = 40
-    step_count: list = []
-    print_df = df_summary.filter(items=header_list)
-    floatfmt = formatter.floatfmt_adjust(print_df)
-    last_line = len(print_df)
-
-    for i in range(int(last_line / step + 1)):  # step行毎に分割
-        s_line = i * step
-        e_line = (i + 1) * step
-
-        if last_line - e_line < step / 2:  # 最終ブロックがstep/2で収まるならまとめる
-            step_count.append((s_line, last_line))
-            break
-        step_count.append((s_line, e_line))
-
-    for s_line, e_line in step_count:
-        t = print_df[s_line:e_line].to_markdown(
-            index=False,
-            tablefmt="simple",
-            numalign="right",
-            maxheadercolwidths=8,
-            floatfmt=floatfmt,
-        ).replace("   nan", "******")
-        msg[s_line] = "```\n" + re.sub(r"  -([0-9]+)", r" ▲\1", t) + "\n```\n"  # マイナスを記号に置換
+    text_dict = formatter.pd_to_dict(df_summary.filter(items=header_list), step=40, codeblock=True)
+    msg.update(text_dict)
 
     # メモ追加
     msg_memo = ""

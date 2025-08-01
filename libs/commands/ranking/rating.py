@@ -80,27 +80,7 @@ def aggregation(m: MessageParserProtocol):
     ), short=False).copy()
     df = df.drop(columns=[x for x in g.cfg.dropitems.ranking if x in df.columns.to_list()])  # 非表示項目
 
-    msg: dict = {}
-    table_param: dict = {
-        "index": False,
-        "tablefmt": "simple",
-        "numalign": "right",
-        "floatfmt": ["", ".1f", "", ".2f", ".0f", ".1f", ".0f"],
-    }
-
-    step = 30
-    length = len(df)
-    for i in range(int(length / step) + 1):
-        s = step * i
-        e = step * (i + 1)
-        if e + step / 2 > length:
-            table = df[s:].to_markdown(**table_param)
-            msg[s] = f"```\n{table}\n```\n"
-            break
-
-        table = df[s:e].to_markdown(**table_param)
-        msg[s] = f"```\n{table}\n```\n"
-
+    msg = formatter.pd_to_dict(df, step=30, codeblock=True)
     prefix_rating = str(g.params.get("filename", "rating"))
     match str(g.params.get("format", "default")).lower():
         case "csv":

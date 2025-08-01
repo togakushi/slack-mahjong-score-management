@@ -54,7 +54,7 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
                 fmt.append(".2f")
             case "順位差" | "トップ差":
                 fmt.append(".1f")
-            case "レート":
+            case "平均素点" | "レート":
                 fmt.append(".1f")
             case "順位偏差" | "得点偏差":
                 fmt.append(".0f")
@@ -374,3 +374,51 @@ def del_blank_line(text: str) -> str:
         new_text.append(x)
 
     return "\n".join(new_text)
+
+
+def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index: bool = False) -> dict:
+    # メッセージ整形
+    msg: dict = {}
+    step_count: list = []
+    floatfmt = floatfmt_adjust(df, index)
+    last_line = len(df)
+
+    # インデックスの振りなおし
+    df.reset_index(inplace=True, drop=True)
+    df.index = range(1, len(df) + 1)
+
+    def _to_text(tmp_df: pd.DataFrame) -> str:
+        ret = tmp_df.to_markdown(
+            index=index,
+            tablefmt="simple",
+            numalign="right",
+            floatfmt=floatfmt,
+        ).replace("   nan", "******")
+        ret = re.sub(r"  -([0-9]+)", r" ▲\1", ret)  # マイナスを記号に置換
+        return ret
+
+    if step:
+        # step行毎に分割
+        for i in range(int(last_line / step + 1)):
+            s_line = i * step
+            e_line = (i + 1) * step
+
+            if last_line - e_line < step / 2:  # 最終ブロックがstep/2で収まるならまとめる
+                step_count.append((s_line, last_line))
+                break
+            step_count.append((s_line, e_line))
+
+        for s_line, e_line in step_count:
+            t = _to_text(df[s_line:e_line])
+            if codeblock:
+                msg[s_line] = f"```\n{t}\n```\n"
+            else:
+                msg[s_line] = t
+    else:
+        t = _to_text(df)
+        if codeblock:
+            msg[0] = f"```\n{t}\n```\n"
+        else:
+            msg[0] = t
+
+    return msg
