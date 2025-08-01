@@ -377,7 +377,18 @@ def del_blank_line(text: str) -> str:
 
 
 def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index: bool = False) -> dict:
-    # メッセージ整形
+    """DataFrameからテキスト変換
+
+    Args:
+        df (pd.DataFrame): 対象データ
+        step (int, optional): 分割行. Defaults to 40.
+        codeblock (bool, optional): コードブロックにするか. Defaults to False.
+        index (bool, optional): インデックスを含める. Defaults to False.
+
+    Returns:
+        dict: 整形テキスト
+    """
+
     msg: dict = {}
     step_count: list = []
     floatfmt = floatfmt_adjust(df, index)
