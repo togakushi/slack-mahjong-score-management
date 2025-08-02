@@ -36,6 +36,7 @@ def plot(m: MessageParserProtocol) -> bool:
     msg += message.header(game_info, m, "", 1)
 
     if df.empty:
+        m.post.headline = message.random_reply(m, "no_hits", False)
         return False
 
     # 保存

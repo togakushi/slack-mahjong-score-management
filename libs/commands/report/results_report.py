@@ -23,6 +23,7 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
 from libs.data import loader, lookup
+from libs.functions import message
 from libs.utils import dbutil, formatter
 
 
@@ -354,6 +355,7 @@ def gen_pdf(m: MessageParserProtocol) -> bool:
     plt.close()
 
     if not g.params.get("player_name"):  # レポート対象の指定なし
+        m.post.headline = message.random_reply(m, "no_target", False)
         return False
 
     # 対象メンバーの記録状況
@@ -361,6 +363,7 @@ def gen_pdf(m: MessageParserProtocol) -> bool:
     logging.info(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし
+        m.post.headline = message.random_reply(m, "no_hits", False)
         return False
 
     # 書式設定

@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
 from libs.data import loader
-from libs.functions import compose, configuration
+from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
@@ -31,6 +31,7 @@ def plot(m: MessageParserProtocol) -> bool:
     # --- データ取得
     results_df = loader.read_data("report/winner.sql")
     if len(results_df) == 0:
+        m.post.headline = message.random_reply(m, "no_hits", False)
         return False
 
     # --- 匿名化

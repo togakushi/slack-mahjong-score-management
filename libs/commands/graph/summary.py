@@ -18,17 +18,15 @@ from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
-def point_plot(m: MessageParserProtocol) -> int:
+def point_plot(m: MessageParserProtocol) -> bool:
     """ポイント推移グラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        int: グラフにプロットしたゲーム数
     """
 
     plt.close()
+
     # 初期化
     title_text = None
     xlabel_text = None
@@ -38,8 +36,8 @@ def point_plot(m: MessageParserProtocol) -> int:
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        message.random_reply(m, "no_hits")
-        return len(target_data)
+        m.post.headline = message.random_reply(m, "no_hits", False)
+        return False
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
@@ -102,17 +100,14 @@ def point_plot(m: MessageParserProtocol) -> int:
     plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"ポイント推移": save_file}]
-    return game_info["game_count"]
+    return True
 
 
-def rank_plot(m: MessageParserProtocol) -> int:
+def rank_plot(m: MessageParserProtocol) -> bool:
     """順位変動グラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        int: グラフにプロットしたゲーム数
     """
 
     plt.close()
@@ -125,8 +120,8 @@ def rank_plot(m: MessageParserProtocol) -> int:
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        message.random_reply(m, "no_hits")
-        return len(target_data)
+        m.post.headline = message.random_reply(m, "no_hits", False)
+        return False
 
     # グラフタイトル/X軸ラベル
     pivot_index = "playtime"
@@ -190,7 +185,7 @@ def rank_plot(m: MessageParserProtocol) -> int:
     plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"順位変動": save_file}]
-    return game_info["game_count"]
+    return True
 
 
 def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:

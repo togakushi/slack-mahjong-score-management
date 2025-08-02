@@ -16,7 +16,7 @@ from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
 
-def aggregation(m: MessageParserProtocol):
+def aggregation(m: MessageParserProtocol) -> bool:
     """個人/チーム成績詳細を集計して返す
 
     Args:
@@ -46,7 +46,7 @@ def aggregation(m: MessageParserProtocol):
             m.post.headline = message_build(msg_data)
         else:
             m.post.headline = "登録されていないチームです。"
-        return
+        return False
 
     result_df = aggregate.game_results()
     record_df = aggregate.ranking_record()
@@ -105,6 +105,7 @@ def aggregation(m: MessageParserProtocol):
 
     m.post.headline = message_build(msg_data)
     m.post.message = msg2
+    return True
 
 
 def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:

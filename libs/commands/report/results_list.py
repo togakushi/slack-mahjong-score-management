@@ -12,7 +12,7 @@ import libs.global_value as g
 from cls.types import GameInfoDict
 from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
-from libs.functions import compose, configuration
+from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 if TYPE_CHECKING:
@@ -39,6 +39,7 @@ def main(m: MessageParserProtocol) -> bool:
     df = loader.read_data("report/results_list.sql").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
+        m.post.headline = message.random_reply(m, "no_hits", False)
         return False
 
     if g.params.get("anonymous"):

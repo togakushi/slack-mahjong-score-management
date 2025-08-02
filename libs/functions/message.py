@@ -15,12 +15,15 @@ from integrations.protocols import MessageParserProtocol
 from libs.functions import compose
 
 
-def random_reply(m: MessageParserProtocol, message_type: str) -> str:
+def random_reply(m: MessageParserProtocol, message_type: str, update: bool = True) -> str:
     """メッセージをランダムに返す
 
     Args:
         m (MessageParserProtocol): メッセージデータ
         message_type (str): 応答メッセージの種類
+        update (bool, optional): メッセージデータを更新する Defaults to True.
+            - **True**: 内容を`m.post.message`にセット + 返値
+            - **False**: 返値のみ
 
     Returns:
         str: 応答メッセージ(m.post.message)
@@ -62,7 +65,9 @@ def random_reply(m: MessageParserProtocol, message_type: str) -> str:
         logging.error("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", m.data.user_id)
 
-    m.post.message = msg
+    if update:
+        m.post.message = msg
+
     return msg
 
 

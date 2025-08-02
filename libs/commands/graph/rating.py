@@ -16,14 +16,12 @@ from libs.functions.configuration import graph_setup
 from libs.utils import formatter
 
 
-def plot(m: MessageParserProtocol) -> int:
+def plot(m: MessageParserProtocol) -> bool:
     """レーティング推移グラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
 
-    Returns:
-        int: グラフにプロットしたゲーム数
     """
 
     plt.close()
@@ -33,8 +31,8 @@ def plot(m: MessageParserProtocol) -> int:
     df_ratings = aggregate.calculation_rating()
 
     if df_ratings.empty:
-        message.random_reply(m, "no_hits")
-        return 0
+        m.post.headline = message.random_reply(m, "no_hits", False)
+        return False
 
     # 足切り
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
@@ -94,4 +92,4 @@ def plot(m: MessageParserProtocol) -> int:
     plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"レーティング推移": save_file}]
-    return len(df_sorted)
+    return True

@@ -15,7 +15,7 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserProtocol):
+def aggregation(m: MessageParserProtocol) -> bool:
     """ランキングデータを生成
 
     Args:
@@ -31,13 +31,13 @@ def aggregation(m: MessageParserProtocol):
     # データ取得
     game_info: GameInfoDict = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        msg += "\t" + message.random_reply(m, "no_hits")
-        return (msg, {})
+        m.post.headline = f"{msg}{message.random_reply(m, "no_hits", False)}"
+        return False
 
     result_df = loader.read_data("ranking/aggregate.sql")
     if result_df.empty:
-        msg += "\t" + message.random_reply(m, "no_target")
-        return (msg, {})
+        m.post.headline = f"{msg}{message.random_reply(m, "no_target", False)}"
+        return False
 
     df = pd.merge(
         result_df, aggregate.ranking_record(),
@@ -140,6 +140,7 @@ def aggregation(m: MessageParserProtocol):
 
     m.post.headline = msg
     m.post.message = data
+    return True
 
 
 def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:

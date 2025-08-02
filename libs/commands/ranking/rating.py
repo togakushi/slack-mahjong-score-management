@@ -12,7 +12,7 @@ from libs.functions import compose, message
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserProtocol):
+def aggregation(m: MessageParserProtocol) -> bool:
     """レーティングを集計して返す
 
     Args:
@@ -28,9 +28,8 @@ def aggregation(m: MessageParserProtocol):
     game_info: GameInfoDict = aggregate.game_info()
 
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        m.post.message = headline + message.random_reply(m, "no_hits")
-        m.post.file_list = [{"dummy": ""}]
-        return
+        m.post.headline = headline + message.random_reply(m, "no_hits")
+        return False
 
     df_results = loader.read_data("ranking/results.sql").set_index("name")
     df_ratings = aggregate.calculation_rating()
@@ -68,9 +67,8 @@ def aggregation(m: MessageParserProtocol):
         df["name"] = df["name"].replace(mapping_dict)
 
     if df.empty:
-        m.post.message = headline + message.random_reply(m, "no_target")
-        m.post.file_list = [{"dummy": ""}]
-        return
+        m.post.headline = headline + message.random_reply(m, "no_target")
+        return False
 
     headline += message.header(game_info, m, add_text, 1)
     df = formatter.df_rename(df.filter(
@@ -94,3 +92,4 @@ def aggregation(m: MessageParserProtocol):
     m.post.message = msg
     m.post.file_list = [{"レーティング": save_file}]
     m.post.summarize = False
+    return True

@@ -13,7 +13,7 @@ from libs.functions import compose
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserProtocol):
+def aggregation(m: MessageParserProtocol) -> bool:
     """直接対戦結果を集計して返す"""
 
     # 検索動作を合わせる
@@ -47,10 +47,8 @@ def aggregation(m: MessageParserProtocol):
     tmp_msg: dict = {}
     drop_name: list = []  # 対戦記録なしプレイヤー
     if len(df_vs) == 0:  # 検索結果なし
-        m.post.headline = msg1
-        m.post.message = {"": "対戦記録が見つかりません。\n"}
-        m.post.file_list = [{"dummy": ""}]
-        return
+        m.post.headline = msg1 + "対戦記録が見つかりません。\n"
+        return False
 
     for vs_name in vs_list:
         tmp_msg[vs_name] = {}
@@ -127,6 +125,7 @@ def aggregation(m: MessageParserProtocol):
     m.post.headline = msg1
     m.post.message = msg2
     m.post.file_list = file_list
+    return True
 
 
 def tmpl_header(my_name: str, vs_name: str) -> str:

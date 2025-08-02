@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
 from libs.data import loader
-from libs.functions import compose, configuration
+from libs.functions import compose, configuration, message
 
 
 def plot(m: MessageParserProtocol) -> bool:
@@ -31,6 +31,7 @@ def plot(m: MessageParserProtocol) -> bool:
     results = df.transpose().to_dict()
 
     if len(results) == 0:
+        m.post.headline = message.random_reply(m, "no_hits", False)
         return False
 
     # --- グラフフォント設定

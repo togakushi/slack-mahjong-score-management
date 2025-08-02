@@ -12,7 +12,7 @@ from libs.functions import message
 from libs.utils import formatter
 
 
-def aggregation(m: MessageParserProtocol):
+def aggregation(m: MessageParserProtocol) -> bool:
     """各プレイヤーの通算ポイントを表示
 
     Args:
@@ -53,9 +53,7 @@ def aggregation(m: MessageParserProtocol):
 
     if df_summary.empty:
         m.post.headline = headline
-        m.post.message = {}
-        m.post.file_list = [{"dummy": ""}]
-        return
+        return False
 
     # 集計結果
     msg: dict = {}
@@ -137,3 +135,4 @@ def aggregation(m: MessageParserProtocol):
     m.post.message = msg
     m.post.file_list = file_list
     m.post.summarize = False
+    return True

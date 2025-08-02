@@ -17,14 +17,11 @@ from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
 
-def plot(m: MessageParserProtocol) -> int:
+def plot(m: MessageParserProtocol) -> bool:
     """個人成績のグラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        int: グラフにプロットしたゲーム数
     """
 
     plt.close()
@@ -35,8 +32,8 @@ def plot(m: MessageParserProtocol) -> int:
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
-        message.random_reply(m, "no_hits")
-        return 0
+        m.post.headline = message.random_reply(m, "no_hits", False)
+        return False
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
@@ -119,17 +116,14 @@ def plot(m: MessageParserProtocol) -> int:
     plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{f"『{player}』の成績": save_file}]
-    return len(df)
+    return True
 
 
-def statistics_plot(m: MessageParserProtocol) -> int:
+def statistics_plot(m: MessageParserProtocol) -> bool:
     """個人成績の統計グラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        int: 集計対象のゲーム数
     """
 
     plt.close()
@@ -139,8 +133,8 @@ def statistics_plot(m: MessageParserProtocol) -> int:
     df = loader.read_data("summary/details.sql")
 
     if df.empty:
-        message.random_reply(m, "no_hits")
-        return 0
+        m.post.headline = message.random_reply(m, "no_hits", False)
+        return False
 
     if g.params.get("individual"):  # 個人成績
         player = formatter.name_replace(g.params["player_name"], add_mark=True)
@@ -154,7 +148,8 @@ def statistics_plot(m: MessageParserProtocol) -> int:
     player_df = df.query("name == @player").reset_index(drop=True)
 
     if player_df.empty:
-        return 0
+        m.post.headline = message.random_reply(m, "no_hits", False)
+        return False
 
     player_df["sum_point"] = player_df["point"].cumsum()
 
@@ -273,7 +268,7 @@ def statistics_plot(m: MessageParserProtocol) -> int:
     plt.close()
 
     m.post.file_list = [{"個人成績": save_file}]
-    return len(player_df)
+    return True
 
 
 def get_data(df: pd.Series, interval: int) -> pd.DataFrame:
