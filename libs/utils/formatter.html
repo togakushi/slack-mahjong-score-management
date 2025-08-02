@@ -55,6 +55,9 @@
             <li>
                     <a class="function" href="#del_blank_line">del_blank_line</a>
             </li>
+            <li>
+                    <a class="function" href="#pd_to_dict">pd_to_dict</a>
+            </li>
     </ul>
 
 
@@ -134,7 +137,7 @@
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.2f&quot;</span><span class="p">)</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>            <span class="k">case</span> <span class="s2">&quot;順位差&quot;</span> <span class="o">|</span> <span class="s2">&quot;トップ差&quot;</span><span class="p">:</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.1f&quot;</span><span class="p">)</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>            <span class="k">case</span> <span class="s2">&quot;レート&quot;</span><span class="p">:</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>            <span class="k">case</span> <span class="s2">&quot;平均素点&quot;</span> <span class="o">|</span> <span class="s2">&quot;レート&quot;</span><span class="p">:</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.1f&quot;</span><span class="p">)</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>            <span class="k">case</span> <span class="s2">&quot;順位偏差&quot;</span> <span class="o">|</span> <span class="s2">&quot;得点偏差&quot;</span><span class="p">:</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.0f&quot;</span><span class="p">)</span>
@@ -454,6 +457,65 @@
 </span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>        <span class="n">new_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>
 </span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_text</span><span class="p">)</span>
+</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>
+</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>
+</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a><span class="k">def</span><span class="w"> </span><span class="nf">pd_to_dict</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DataFrameからテキスト変換</span>
+</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>
+</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a><span class="sd">    Args:</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a><span class="sd">        df (pd.DataFrame): 対象データ</span>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a><span class="sd">        step (int, optional): 分割行. Defaults to 40.</span>
+</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a><span class="sd">        codeblock (bool, optional): コードブロックにするか. Defaults to False.</span>
+</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a><span class="sd">        index (bool, optional): インデックスを含める. Defaults to False.</span>
+</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>
+</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a><span class="sd">    Returns:</span>
+</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a><span class="sd">        dict: 整形テキスト</span>
+</span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>
+</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>    <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>    <span class="n">step_count</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>    <span class="n">floatfmt</span> <span class="o">=</span> <span class="n">floatfmt_adjust</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>    <span class="n">last_line</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>
+</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>    <span class="c1"># インデックスの振りなおし</span>
+</span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>
+</span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_to_text</span><span class="p">(</span><span class="n">tmp_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>        <span class="n">ret</span> <span class="o">=</span> <span class="n">tmp_df</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span>
+</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a>            <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+</span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a>            <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">,</span>
+</span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a>            <span class="n">numalign</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span>
+</span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a>            <span class="n">floatfmt</span><span class="o">=</span><span class="n">floatfmt</span><span class="p">,</span>
+</span><span id="L-407"><a href="#L-407"><span class="linenos">407</span></a>        <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;   nan&quot;</span><span class="p">,</span> <span class="s2">&quot;******&quot;</span><span class="p">)</span>
+</span><span id="L-408"><a href="#L-408"><span class="linenos">408</span></a>        <span class="n">ret</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;  -([0-9]+)&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot; ▲\1&quot;</span><span class="p">,</span> <span class="n">ret</span><span class="p">)</span>  <span class="c1"># マイナスを記号に置換</span>
+</span><span id="L-409"><a href="#L-409"><span class="linenos">409</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="L-410"><a href="#L-410"><span class="linenos">410</span></a>
+</span><span id="L-411"><a href="#L-411"><span class="linenos">411</span></a>    <span class="k">if</span> <span class="n">step</span><span class="p">:</span>
+</span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a>        <span class="c1"># step行毎に分割</span>
+</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_line</span> <span class="o">/</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+</span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>            <span class="n">s_line</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>            <span class="n">e_line</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>
+</span><span id="L-417"><a href="#L-417"><span class="linenos">417</span></a>            <span class="k">if</span> <span class="n">last_line</span> <span class="o">-</span> <span class="n">e_line</span> <span class="o">&lt;</span> <span class="n">step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 最終ブロックがstep/2で収まるならまとめる</span>
+</span><span id="L-418"><a href="#L-418"><span class="linenos">418</span></a>                <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">last_line</span><span class="p">))</span>
+</span><span id="L-419"><a href="#L-419"><span class="linenos">419</span></a>                <span class="k">break</span>
+</span><span id="L-420"><a href="#L-420"><span class="linenos">420</span></a>            <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">e_line</span><span class="p">))</span>
+</span><span id="L-421"><a href="#L-421"><span class="linenos">421</span></a>
+</span><span id="L-422"><a href="#L-422"><span class="linenos">422</span></a>        <span class="k">for</span> <span class="n">s_line</span><span class="p">,</span> <span class="n">e_line</span> <span class="ow">in</span> <span class="n">step_count</span><span class="p">:</span>
+</span><span id="L-423"><a href="#L-423"><span class="linenos">423</span></a>            <span class="n">t</span> <span class="o">=</span> <span class="n">_to_text</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">s_line</span><span class="p">:</span><span class="n">e_line</span><span class="p">])</span>
+</span><span id="L-424"><a href="#L-424"><span class="linenos">424</span></a>            <span class="k">if</span> <span class="n">codeblock</span><span class="p">:</span>
+</span><span id="L-425"><a href="#L-425"><span class="linenos">425</span></a>                <span class="n">msg</span><span class="p">[</span><span class="n">s_line</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;```</span><span class="se">\n</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="L-426"><a href="#L-426"><span class="linenos">426</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="L-427"><a href="#L-427"><span class="linenos">427</span></a>                <span class="n">msg</span><span class="p">[</span><span class="n">s_line</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+</span><span id="L-428"><a href="#L-428"><span class="linenos">428</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-429"><a href="#L-429"><span class="linenos">429</span></a>        <span class="n">t</span> <span class="o">=</span> <span class="n">_to_text</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span><span id="L-430"><a href="#L-430"><span class="linenos">430</span></a>        <span class="k">if</span> <span class="n">codeblock</span><span class="p">:</span>
+</span><span id="L-431"><a href="#L-431"><span class="linenos">431</span></a>            <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;```</span><span class="se">\n</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="L-432"><a href="#L-432"><span class="linenos">432</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-433"><a href="#L-433"><span class="linenos">433</span></a>            <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+</span><span id="L-434"><a href="#L-434"><span class="linenos">434</span></a>
+</span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a>    <span class="k">return</span> <span class="n">msg</span>
 </span></pre></div>
 
 
@@ -510,7 +572,7 @@
 </span><span id="floatfmt_adjust-55"><a href="#floatfmt_adjust-55"><span class="linenos">55</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.2f&quot;</span><span class="p">)</span>
 </span><span id="floatfmt_adjust-56"><a href="#floatfmt_adjust-56"><span class="linenos">56</span></a>            <span class="k">case</span> <span class="s2">&quot;順位差&quot;</span> <span class="o">|</span> <span class="s2">&quot;トップ差&quot;</span><span class="p">:</span>
 </span><span id="floatfmt_adjust-57"><a href="#floatfmt_adjust-57"><span class="linenos">57</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.1f&quot;</span><span class="p">)</span>
-</span><span id="floatfmt_adjust-58"><a href="#floatfmt_adjust-58"><span class="linenos">58</span></a>            <span class="k">case</span> <span class="s2">&quot;レート&quot;</span><span class="p">:</span>
+</span><span id="floatfmt_adjust-58"><a href="#floatfmt_adjust-58"><span class="linenos">58</span></a>            <span class="k">case</span> <span class="s2">&quot;平均素点&quot;</span> <span class="o">|</span> <span class="s2">&quot;レート&quot;</span><span class="p">:</span>
 </span><span id="floatfmt_adjust-59"><a href="#floatfmt_adjust-59"><span class="linenos">59</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.1f&quot;</span><span class="p">)</span>
 </span><span id="floatfmt_adjust-60"><a href="#floatfmt_adjust-60"><span class="linenos">60</span></a>            <span class="k">case</span> <span class="s2">&quot;順位偏差&quot;</span> <span class="o">|</span> <span class="s2">&quot;得点偏差&quot;</span><span class="p">:</span>
 </span><span id="floatfmt_adjust-61"><a href="#floatfmt_adjust-61"><span class="linenos">61</span></a>                <span class="n">fmt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.0f&quot;</span><span class="p">)</span>
@@ -1058,6 +1120,97 @@
 
 <blockquote>
   <p>str: 処理されたテキスト</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="pd_to_dict">
+                            <input id="pd_to_dict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">pd_to_dict</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">df</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span>,</span><span class="param">	<span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+                <label class="view-source-button" for="pd_to_dict-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#pd_to_dict"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="pd_to_dict-380"><a href="#pd_to_dict-380"><span class="linenos">380</span></a><span class="k">def</span><span class="w"> </span><span class="nf">pd_to_dict</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="pd_to_dict-381"><a href="#pd_to_dict-381"><span class="linenos">381</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DataFrameからテキスト変換</span>
+</span><span id="pd_to_dict-382"><a href="#pd_to_dict-382"><span class="linenos">382</span></a>
+</span><span id="pd_to_dict-383"><a href="#pd_to_dict-383"><span class="linenos">383</span></a><span class="sd">    Args:</span>
+</span><span id="pd_to_dict-384"><a href="#pd_to_dict-384"><span class="linenos">384</span></a><span class="sd">        df (pd.DataFrame): 対象データ</span>
+</span><span id="pd_to_dict-385"><a href="#pd_to_dict-385"><span class="linenos">385</span></a><span class="sd">        step (int, optional): 分割行. Defaults to 40.</span>
+</span><span id="pd_to_dict-386"><a href="#pd_to_dict-386"><span class="linenos">386</span></a><span class="sd">        codeblock (bool, optional): コードブロックにするか. Defaults to False.</span>
+</span><span id="pd_to_dict-387"><a href="#pd_to_dict-387"><span class="linenos">387</span></a><span class="sd">        index (bool, optional): インデックスを含める. Defaults to False.</span>
+</span><span id="pd_to_dict-388"><a href="#pd_to_dict-388"><span class="linenos">388</span></a>
+</span><span id="pd_to_dict-389"><a href="#pd_to_dict-389"><span class="linenos">389</span></a><span class="sd">    Returns:</span>
+</span><span id="pd_to_dict-390"><a href="#pd_to_dict-390"><span class="linenos">390</span></a><span class="sd">        dict: 整形テキスト</span>
+</span><span id="pd_to_dict-391"><a href="#pd_to_dict-391"><span class="linenos">391</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="pd_to_dict-392"><a href="#pd_to_dict-392"><span class="linenos">392</span></a>
+</span><span id="pd_to_dict-393"><a href="#pd_to_dict-393"><span class="linenos">393</span></a>    <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="pd_to_dict-394"><a href="#pd_to_dict-394"><span class="linenos">394</span></a>    <span class="n">step_count</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="pd_to_dict-395"><a href="#pd_to_dict-395"><span class="linenos">395</span></a>    <span class="n">floatfmt</span> <span class="o">=</span> <span class="n">floatfmt_adjust</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+</span><span id="pd_to_dict-396"><a href="#pd_to_dict-396"><span class="linenos">396</span></a>    <span class="n">last_line</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span><span id="pd_to_dict-397"><a href="#pd_to_dict-397"><span class="linenos">397</span></a>
+</span><span id="pd_to_dict-398"><a href="#pd_to_dict-398"><span class="linenos">398</span></a>    <span class="c1"># インデックスの振りなおし</span>
+</span><span id="pd_to_dict-399"><a href="#pd_to_dict-399"><span class="linenos">399</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="pd_to_dict-400"><a href="#pd_to_dict-400"><span class="linenos">400</span></a>    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</span><span id="pd_to_dict-401"><a href="#pd_to_dict-401"><span class="linenos">401</span></a>
+</span><span id="pd_to_dict-402"><a href="#pd_to_dict-402"><span class="linenos">402</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_to_text</span><span class="p">(</span><span class="n">tmp_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="pd_to_dict-403"><a href="#pd_to_dict-403"><span class="linenos">403</span></a>        <span class="n">ret</span> <span class="o">=</span> <span class="n">tmp_df</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span>
+</span><span id="pd_to_dict-404"><a href="#pd_to_dict-404"><span class="linenos">404</span></a>            <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+</span><span id="pd_to_dict-405"><a href="#pd_to_dict-405"><span class="linenos">405</span></a>            <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">,</span>
+</span><span id="pd_to_dict-406"><a href="#pd_to_dict-406"><span class="linenos">406</span></a>            <span class="n">numalign</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span>
+</span><span id="pd_to_dict-407"><a href="#pd_to_dict-407"><span class="linenos">407</span></a>            <span class="n">floatfmt</span><span class="o">=</span><span class="n">floatfmt</span><span class="p">,</span>
+</span><span id="pd_to_dict-408"><a href="#pd_to_dict-408"><span class="linenos">408</span></a>        <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;   nan&quot;</span><span class="p">,</span> <span class="s2">&quot;******&quot;</span><span class="p">)</span>
+</span><span id="pd_to_dict-409"><a href="#pd_to_dict-409"><span class="linenos">409</span></a>        <span class="n">ret</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;  -([0-9]+)&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot; ▲\1&quot;</span><span class="p">,</span> <span class="n">ret</span><span class="p">)</span>  <span class="c1"># マイナスを記号に置換</span>
+</span><span id="pd_to_dict-410"><a href="#pd_to_dict-410"><span class="linenos">410</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="pd_to_dict-411"><a href="#pd_to_dict-411"><span class="linenos">411</span></a>
+</span><span id="pd_to_dict-412"><a href="#pd_to_dict-412"><span class="linenos">412</span></a>    <span class="k">if</span> <span class="n">step</span><span class="p">:</span>
+</span><span id="pd_to_dict-413"><a href="#pd_to_dict-413"><span class="linenos">413</span></a>        <span class="c1"># step行毎に分割</span>
+</span><span id="pd_to_dict-414"><a href="#pd_to_dict-414"><span class="linenos">414</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_line</span> <span class="o">/</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+</span><span id="pd_to_dict-415"><a href="#pd_to_dict-415"><span class="linenos">415</span></a>            <span class="n">s_line</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="pd_to_dict-416"><a href="#pd_to_dict-416"><span class="linenos">416</span></a>            <span class="n">e_line</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="pd_to_dict-417"><a href="#pd_to_dict-417"><span class="linenos">417</span></a>
+</span><span id="pd_to_dict-418"><a href="#pd_to_dict-418"><span class="linenos">418</span></a>            <span class="k">if</span> <span class="n">last_line</span> <span class="o">-</span> <span class="n">e_line</span> <span class="o">&lt;</span> <span class="n">step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 最終ブロックがstep/2で収まるならまとめる</span>
+</span><span id="pd_to_dict-419"><a href="#pd_to_dict-419"><span class="linenos">419</span></a>                <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">last_line</span><span class="p">))</span>
+</span><span id="pd_to_dict-420"><a href="#pd_to_dict-420"><span class="linenos">420</span></a>                <span class="k">break</span>
+</span><span id="pd_to_dict-421"><a href="#pd_to_dict-421"><span class="linenos">421</span></a>            <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">e_line</span><span class="p">))</span>
+</span><span id="pd_to_dict-422"><a href="#pd_to_dict-422"><span class="linenos">422</span></a>
+</span><span id="pd_to_dict-423"><a href="#pd_to_dict-423"><span class="linenos">423</span></a>        <span class="k">for</span> <span class="n">s_line</span><span class="p">,</span> <span class="n">e_line</span> <span class="ow">in</span> <span class="n">step_count</span><span class="p">:</span>
+</span><span id="pd_to_dict-424"><a href="#pd_to_dict-424"><span class="linenos">424</span></a>            <span class="n">t</span> <span class="o">=</span> <span class="n">_to_text</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">s_line</span><span class="p">:</span><span class="n">e_line</span><span class="p">])</span>
+</span><span id="pd_to_dict-425"><a href="#pd_to_dict-425"><span class="linenos">425</span></a>            <span class="k">if</span> <span class="n">codeblock</span><span class="p">:</span>
+</span><span id="pd_to_dict-426"><a href="#pd_to_dict-426"><span class="linenos">426</span></a>                <span class="n">msg</span><span class="p">[</span><span class="n">s_line</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;```</span><span class="se">\n</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="pd_to_dict-427"><a href="#pd_to_dict-427"><span class="linenos">427</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="pd_to_dict-428"><a href="#pd_to_dict-428"><span class="linenos">428</span></a>                <span class="n">msg</span><span class="p">[</span><span class="n">s_line</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+</span><span id="pd_to_dict-429"><a href="#pd_to_dict-429"><span class="linenos">429</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="pd_to_dict-430"><a href="#pd_to_dict-430"><span class="linenos">430</span></a>        <span class="n">t</span> <span class="o">=</span> <span class="n">_to_text</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span><span id="pd_to_dict-431"><a href="#pd_to_dict-431"><span class="linenos">431</span></a>        <span class="k">if</span> <span class="n">codeblock</span><span class="p">:</span>
+</span><span id="pd_to_dict-432"><a href="#pd_to_dict-432"><span class="linenos">432</span></a>            <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;```</span><span class="se">\n</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="pd_to_dict-433"><a href="#pd_to_dict-433"><span class="linenos">433</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="pd_to_dict-434"><a href="#pd_to_dict-434"><span class="linenos">434</span></a>            <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+</span><span id="pd_to_dict-435"><a href="#pd_to_dict-435"><span class="linenos">435</span></a>
+</span><span id="pd_to_dict-436"><a href="#pd_to_dict-436"><span class="linenos">436</span></a>    <span class="k">return</span> <span class="n">msg</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>DataFrameからテキスト変換</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>df (pd.DataFrame):</strong>  対象データ</li>
+<li><strong>step (int, optional):</strong>  分割行. Defaults to 40.</li>
+<li><strong>codeblock (bool, optional):</strong>  コードブロックにするか. Defaults to False.</li>
+<li><strong>index (bool, optional):</strong>  インデックスを含める. Defaults to False.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict: 整形テキスト</p>
 </blockquote>
 </div>
 
