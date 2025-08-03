@@ -171,6 +171,7 @@ class GameResult:
                 ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace("-", "▲")
+                ret_text += f"[供託 {self.deposit * 100}点] "
                 ret_text += f"[{self.comment if self.comment else None}]"
             case "logging":
                 ret_text += f"ts={self.ts}, deposit={self.deposit}, "
