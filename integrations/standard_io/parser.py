@@ -2,6 +2,7 @@
 integrations/standard_io/parser.py
 """
 
+from datetime import datetime
 from typing import cast
 
 from integrations.base.interface import (MessageParserDataMixin,
@@ -17,6 +18,8 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     def parser(self, body: dict):
         self.data.status = "message_append"
         self.data.channel_id = "dummy"
+        self.data.event_ts = str(datetime.now().timestamp())
+        self.data.thread_ts = self.data.event_ts
 
         if body.get("event"):
             body = cast(dict, body["event"])

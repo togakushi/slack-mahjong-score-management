@@ -10,7 +10,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
-from integrations.slack import comparison, functions
+from integrations.slack import comparison
 from libs.data import lookup, modify
 from libs.functions import compose, message
 from libs.registry import member, team
@@ -160,10 +160,11 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
+    f = factory.select_function(g.selected_service)
 
     if not m.in_thread or (m.in_thread == g.cfg.setting.thread_report):
         modify.db_insert(detection, m)
-        functions.score_verification(detection, m)
+        f.score_verification(detection, m)
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
@@ -180,6 +181,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
     """
 
     api_adapter = factory.select_adapter(g.selected_service)
+    f = factory.select_function(g.selected_service)
     record_data = lookup.db.exsist_record(m.data.event_ts)
 
     if detection.to_dict() == record_data.to_dict():  # スコア比較
@@ -188,12 +190,12 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
         if record_data.has_valid_data():
             if record_data.rule_version == g.cfg.mahjong.rule_version:
                 modify.db_update(detection, m)
-                functions.score_verification(detection, m)
+                f.score_verification(detection, m)
             else:
                 logging.notice("skip (rule_version not match). event_ts=%s", m.data.event_ts)  # type: ignore
         else:
             modify.db_insert(detection, m)
-            functions.score_verification(detection, m)
+            f.score_verification(detection, m)
             modify.reprocessing_remarks(m)
     else:
         m.post.thread = True
