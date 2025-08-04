@@ -72,7 +72,7 @@ def call_reactions_add(icon: str, ch: str, ts: str):
         )
         logging.info("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
     except SlackApiError as err:
-        match err.response.get("error"):
+        match cast(dict, err.response).get("error"):
             case "already_reacted":
                 pass
             case _:
@@ -101,8 +101,10 @@ def call_reactions_remove(icon: str, ch: str, ts: str):
         )
         logging.info("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
     except SlackApiError as err:
-        match err.response.get("error"):
+        match cast(dict, err.response).get("error"):
             case "no_reaction":
+                pass
+            case "message_not_found":
                 pass
             case _:
                 logging.critical(err)
