@@ -37,6 +37,9 @@
             <li>
                     <a class="function" href="#select_parser">select_parser</a>
             </li>
+            <li>
+                    <a class="function" href="#select_function">select_function</a>
+            </li>
     </ul>
 
 
@@ -93,6 +96,20 @@
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>            <span class="k">return</span> <span class="n">standard_io</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">MessageParser</span><span class="p">(</span><span class="n">reaction_ok</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">)</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No match service name.&quot;</span><span class="p">)</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="k">def</span><span class="w"> </span><span class="nf">select_function</span><span class="p">(</span><span class="n">selected_service</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;関数選択&quot;&quot;&quot;</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="k">match</span> <span class="n">selected_service</span><span class="p">:</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="k">case</span> <span class="s2">&quot;slack&quot;</span><span class="p">:</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.slack.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">functions</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="k">case</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">:</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.standard_io.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">functions</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown service: </span><span class="si">{</span><span class="n">selected_service</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="k">return</span> <span class="n">functions</span>
 </span></pre></div>
 
 
@@ -154,6 +171,37 @@
 
 
             <div class="docstring"><p>メッセージパーサ選択</p>
+</div>
+
+
+                </section>
+                <section id="select_function">
+                            <input id="select_function-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">select_function</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">selected_service</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="select_function-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#select_function"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="select_function-37"><a href="#select_function-37"><span class="linenos">37</span></a><span class="k">def</span><span class="w"> </span><span class="nf">select_function</span><span class="p">(</span><span class="n">selected_service</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="select_function-38"><a href="#select_function-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;関数選択&quot;&quot;&quot;</span>
+</span><span id="select_function-39"><a href="#select_function-39"><span class="linenos">39</span></a>
+</span><span id="select_function-40"><a href="#select_function-40"><span class="linenos">40</span></a>    <span class="k">match</span> <span class="n">selected_service</span><span class="p">:</span>
+</span><span id="select_function-41"><a href="#select_function-41"><span class="linenos">41</span></a>        <span class="k">case</span> <span class="s2">&quot;slack&quot;</span><span class="p">:</span>
+</span><span id="select_function-42"><a href="#select_function-42"><span class="linenos">42</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.slack.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">functions</span>
+</span><span id="select_function-43"><a href="#select_function-43"><span class="linenos">43</span></a>        <span class="k">case</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">:</span>
+</span><span id="select_function-44"><a href="#select_function-44"><span class="linenos">44</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.standard_io.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">functions</span>
+</span><span id="select_function-45"><a href="#select_function-45"><span class="linenos">45</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+</span><span id="select_function-46"><a href="#select_function-46"><span class="linenos">46</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown service: </span><span class="si">{</span><span class="n">selected_service</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="select_function-47"><a href="#select_function-47"><span class="linenos">47</span></a>
+</span><span id="select_function-48"><a href="#select_function-48"><span class="linenos">48</span></a>    <span class="k">return</span> <span class="n">functions</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>関数選択</p>
 </div>
 
 
