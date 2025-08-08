@@ -36,59 +36,59 @@ COMMANDS: CommandsDict = {
     },
     "anonymous": {
         "match": [r"^匿名$", r"^anonymous$"],
-        "action": lambda w: {"anonymous": True},
+        "action": lambda _: {"anonymous": True},
     },
 
     "individual": {
         "match": [r"^個人$", "^個人成績$"],
-        "action": lambda w: {"individual": True},
+        "action": lambda _: {"individual": True},
     },
     "team": {
         "match": [r"^チーム$", "^チーム成績$", "^team$"],
-        "action": lambda w: {"individual": False},
+        "action": lambda _: {"individual": False},
     },
 
     "all_player": {
         "match": [r"^全員$", r"^all$"],
-        "action": lambda w: {"all_player": True},
+        "action": lambda _: {"all_player": True},
     },
 
     "a": {
         "match": [r"^(チーム同卓アリ|コンビアリ|同士討チ)$"],
-        "action": lambda w: {"friendly_fire": True},
+        "action": lambda _: {"friendly_fire": True},
     },
     "b": {
         "match": [r"^(チーム同卓ナシ|コンビナシ)$"],
-        "action": lambda w: {"friendly_fire": False},
+        "action": lambda _: {"friendly_fire": False},
     },
     # --- 動作変更フラグ
     "score_comparisons": {  # 比較
         "match": [r"^比較$", r"^点差$", r"^差分$"],
-        "action": lambda w: {"score_comparisons": True},
+        "action": lambda _: {"score_comparisons": True},
     },
     "order": {  # 順位出力
         "match": [r"^順位$"],
-        "action": lambda w: {"order": True},
+        "action": lambda _: {"order": True},
     },
     "results": {  # 戦績
         "match": [r"^戦績$"],
-        "action": lambda w: {"game_results": True},
+        "action": lambda _: {"game_results": True},
     },
     "versus": {  # 対戦結果
         "match": [r"^対戦結果$", r"^対戦$"],
-        "action": lambda w: {"versus_matrix": True},
+        "action": lambda _: {"versus_matrix": True},
     },
     "statistics": {  # 統計
         "match": [r"^統計$"],
-        "action": lambda w: {"statistics": True},
+        "action": lambda _: {"statistics": True},
     },
     "rating": {  # レーティング
         "match": [r"^レート$", r"^レーティング$", r"^rate$", r"^ratings?$"],
-        "action": lambda w: {"rating": True},
+        "action": lambda _: {"rating": True},
     },
     "verbose": {  # 詳細
         "match": [r"^詳細$", r"^verbose$"],
-        "action": lambda w: {"verbose": True},
+        "action": lambda _: {"verbose": True},
     },
     # --- 集計条件
     "ranked": {
@@ -106,19 +106,19 @@ COMMANDS: CommandsDict = {
     # --- 集約 / 検索条件
     "daily": {
         "match": [r"^daily$", r"^日次$", r"^デイリー$"],
-        "action": lambda w: {"collection": "daily"},
+        "action": lambda _: {"collection": "daily"},
     },
     "monthly": {
         "match": [r"^monthly$", r"^月次$", r"^マンスリー$"],
-        "action": lambda w: {"collection": "monthly"},
+        "action": lambda _: {"collection": "monthly"},
     },
     "yearly": {
         "match": [r"^yearly$", r"^年次$", r"^イヤーリー$"],
-        "action": lambda w: {"collection": "yearly"},
+        "action": lambda _: {"collection": "yearly"},
     },
     "collection": {
         "match": [r"^全体$"],
-        "action": lambda w: {"collection": "all"}
+        "action": lambda _: {"collection": "all"}
     },
     "comment": {
         "match": [r"^(コメント|comment)(.*)$"],
