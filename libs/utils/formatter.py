@@ -48,7 +48,7 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
                 fmt.append(".2f")
             case "トビ" | "flying":
                 fmt.append(".0f")
-            case "トビ率":
+            case "トビ率" | "flying(%)" | "yakuman(%)":
                 fmt.append(".2f")
             case "平均順位" | "平順" | "rank_avg":
                 fmt.append(".2f")
@@ -396,7 +396,7 @@ def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index:
 
     # インデックスの振りなおし
     df.reset_index(inplace=True, drop=True)
-    df.index = range(1, len(df) + 1)
+    df.index += 1
 
     def _to_text(tmp_df: pd.DataFrame) -> str:
         ret = tmp_df.to_markdown(
@@ -433,3 +433,38 @@ def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index:
             msg[0] = t
 
     return msg
+
+
+def group_strings(lines: list[str], limit: int = 3000) -> list[str]:
+    """指定文字数まで改行で連結
+
+    Args:
+        lines (list[str]): 連結対象
+        limit (int, optional): 制限値. Defaults to 3000.
+
+    Returns:
+        list[str]: 連結結果
+    """
+
+    result: list = []
+    buffer: list = []
+
+    for i, line in enumerate(lines):
+        is_last = (i == len(lines) - 1)  # 最終ブロック判定
+        max_char = limit * 1.5 if is_last else limit  # 1ブロックの最大値
+
+        # 仮に追加したときの文字列長を計算
+        temp = buffer + [line]
+        total_len = len("".join(temp))
+
+        if total_len <= max_char:
+            buffer.append(line)
+        else:
+            if buffer:
+                result.append("\n".join(buffer))
+            buffer = [line]
+
+    if buffer:
+        result.append("\n".join(buffer))
+
+    return result
