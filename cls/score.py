@@ -121,8 +121,8 @@ class GameResult:
             self.return_point = int(kwargs["return_point"])
         if "draw_split" in kwargs and isinstance(kwargs["draw_split"], bool):
             self.draw_split = kwargs["draw_split"]
-
-        self.comment = kwargs.get("comment")
+        if "comment" in kwargs:
+            self.comment = kwargs["comment"]
 
     def to_dict(self) -> dict:
         """データを辞書で返す
