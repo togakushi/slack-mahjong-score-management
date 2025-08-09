@@ -185,8 +185,8 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
     # メンバーリストに見つからない場合
     if g.params.get("unregistered_replace"):
         pname = g.cfg.member.guest_name
-    elif add_mark:
-        pname = f"{pname}({g.cfg.setting.guest_mark})"
+        if add_mark:
+            pname = f"{pname}({g.cfg.setting.guest_mark})"
 
     return pname
 
