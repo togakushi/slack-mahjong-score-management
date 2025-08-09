@@ -48,8 +48,6 @@ class StandardIO(APIInterface):
 
         ret: str = ""
         for line in text.splitlines():
-            line = line.replace("*【", "【")
-            line = line.replace("】*", "】")
             line = line.replace("```", "")
             line = textwrap.dedent(line)
             if line:
@@ -105,17 +103,24 @@ class StandardIO(APIInterface):
         if self.fileupload(m):  # ファイル生成
             return
 
-        if m.post.headline and isinstance(m.post.headline, str):  # 見出し
+        if m.post.headline:  # 見出し
             print("=" * 80)
-            print(self._text_formatter(m.post.headline))
+            if isinstance(m.post.headline, str):
+                print(self._text_formatter(m.post.headline))
+            if isinstance(m.post.headline, dict):
+                k, v = next(iter(m.post.headline.items()))
+                if isinstance(k, str) and m.post.key_header:
+                    print(f"【{k}】")
+                print(textwrap.dedent(v).strip())
             print("=" * 80)
-            print("\n")
 
         if m.post.message:  # 本文
             if isinstance(m.post.message, dict):
-                for _, text in m.post.message.items():
-                    print(self._text_formatter(text))
-                    print("\n")
+                for k, v in m.post.message.items():
+                    if isinstance(k, str) and m.post.key_header:
+                        print(f"【{k}】")
+                    print(self._text_formatter(v))
+                    print("")
         else:
             if isinstance(m.post.message, str):
                 print(self._text_formatter(m.post.message))

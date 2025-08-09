@@ -136,10 +136,10 @@ def aggregation(m: MessageParserProtocol) -> bool:
                 data.pop(key)
                 continue
 
-        data[key] = f"*{key}*\n" + data[key]
-
     m.post.headline = msg
     m.post.message = data
+    m.post.key_header = True
+    m.post.codeblock = True
     return True
 
 
@@ -160,11 +160,11 @@ def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:
     if df.empty:
         return ""
 
+    ranked = g.params.get("ranked", g.cfg.ranking.ranked)  # pylint: disable=unused-variable  # noqa: F841
     df.sort_values(by=["rank", "game_count"], ascending=[True, False], inplace=True)
-    df = df.query("rank <= @g.cfg.ranking.ranked")
+    df = df.query("rank <= @ranked")
     tbl = tabulate(df.filter(items=["rank", "name", "disp"]).values)
     tbl = re.sub(r"( *[0-9]+)\s(.*)<>(.*)", r"\1:\2\3", tbl)
     tbl = "\n".join(tbl.splitlines()[1:-1]).replace(" -", "▲")
-    tbl = f"\n```\n{tbl}\n```\n"
 
     return tbl

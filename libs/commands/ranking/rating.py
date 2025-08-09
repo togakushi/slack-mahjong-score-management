@@ -21,7 +21,8 @@ def aggregation(m: MessageParserProtocol) -> bool:
 
     # 情報ヘッダ
     add_text: str = ""
-    headline: str = "*【レーティング】*\n"
+    headline: str = ""
+    m.post.headline = {"レーティング": ""}
 
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
@@ -67,10 +68,10 @@ def aggregation(m: MessageParserProtocol) -> bool:
         df["name"] = df["name"].replace(mapping_dict)
 
     if df.empty:
-        m.post.headline = headline + message.random_reply(m, "no_target")
+        m.post.headline = {"レーティング": message.random_reply(m, "no_target", False)}
         return False
 
-    headline += message.header(game_info, m, add_text, 1)
+    m.post.headline = {"レーティング": message.header(game_info, m, add_text, 1)}
     df = formatter.df_rename(df.filter(
         items=[
             "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"
@@ -88,7 +89,6 @@ def aggregation(m: MessageParserProtocol) -> bool:
         case _:
             save_file = ""
 
-    m.post.headline = headline
     m.post.message = msg
     m.post.file_list = [{"レーティング": save_file}]
     m.post.summarize = False

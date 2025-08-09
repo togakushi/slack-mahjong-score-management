@@ -15,7 +15,7 @@ def select_adapter(selected_service: str) -> base.APIInterface:
         case "standard_io":
             return standard_io.adapter.StandardIO()
         case _:
-            raise ValueError("No match service name.")
+            raise ValueError(f"Unknown service: {selected_service}")
 
 
 def select_parser(selected_service: str, **kwargs):
@@ -38,10 +38,10 @@ def select_function(selected_service: str):
 
     match selected_service:
         case "slack":
-            import integrations.slack.functions as functions
+            import integrations.slack.functions as func
         case "standard_io":
-            import integrations.standard_io.functions as functions
+            import integrations.standard_io.functions as func
         case _:
             raise ValueError(f"Unknown service: {selected_service}")
 
-    return functions
+    return func

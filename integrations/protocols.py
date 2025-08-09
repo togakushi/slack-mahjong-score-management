@@ -49,16 +49,22 @@ class MsgData:
 class PostData:
     """ポストするデータ"""
     title: str = field(default=str())
-    headline: str = field(default=str())
-    message: str | dict[str, str] = field(default=str())
+    headline: str | dict[str | int, str] = field(default=str())
+    message: str | dict[str | int, str] = field(default=str())
     """本文"""
     summarize: bool = field(default=True)
+    """本文を集約する"""
+    key_header: bool = field(default=True)
+    """辞書のキーを見出しにする"""
+    codeblock: bool = field(default=False)
+    """本文をコードブロックにする"""
     thread: bool = field(default=True)
     """スレッドに返す"""
     file_list: list[dict[str, str]] = field(default_factory=list)
     ts: str = field(default="undetermined")
     """指定タイムスタンプへのリプライ"""
     rpoint_sum: int = field(default=0)
+    """素点合計格納用"""
 
 
 @runtime_checkable

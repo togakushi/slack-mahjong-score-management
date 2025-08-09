@@ -15,6 +15,7 @@ from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
 from integrations.protocols import MessageParserProtocol
 from integrations.slack import api
+from libs.utils import formatter
 
 
 class _ReactionsAPI(ReactionsInterface):
@@ -124,12 +125,17 @@ class SlackAPI(APIInterface):
             dict: API response
         """
 
-        if isinstance(m.post.message, dict):  # 辞書型のメッセージは受け付けない
-            return {}
+        if isinstance(m.post.message, dict):
+            k, v = next(iter(m.post.message.items()))  # 先頭のみ処理
+            text = f"```\n{v.strip()}\n```" if m.post.codeblock else v
+            if isinstance(k, str) and m.post.key_header:
+                text = f"*【{k}】*\n{text}"
+        else:
+            text = m.post.message
 
         res = api.call_chat_post_message(
             channel=m.data.channel_id,
-            text=f"{m.post.message.strip()}",
+            text=text,
             thread_ts=m.reply_ts,
         )
 
@@ -144,21 +150,22 @@ class SlackAPI(APIInterface):
 
         tmp_m = copy.deepcopy(m)
         if isinstance(m.post.message, dict):
-            if m.post.summarize:  # まとめてポスト
-                key_list = list(map(str, m.post.message.keys()))
-                post_msg = m.post.message[key_list[0]]
-                for i in key_list[1:]:
-                    if len((post_msg + m.post.message[i])) < 3800:  # 3800文字を超える直前までまとめる
-                        post_msg += m.post.message[i]
-                    else:
-                        tmp_m.post.message = post_msg
-                        self.post_message(m)
-                        post_msg = m.post.message[i]
-                tmp_m.post.message = post_msg
-                self.post_message(tmp_m)
-            else:  # そのままポスト
-                for i in m.post.message.keys():
-                    tmp_m.post.message = m.post.message[i]
+            # テキストブロック生成
+            text_block: list = []
+            for k, v in m.post.message.items():
+                text = f"```\n{v.strip()}\n```" if m.post.codeblock else v
+                if isinstance(k, str) and m.post.key_header:
+                    text_block.append(f"*【{k}】*\n{text.rstrip()}\n")
+                else:
+                    text_block.append(f"{text.rstrip()}\n")
+
+            if m.post.summarize:
+                for text in formatter.group_strings(text_block):
+                    tmp_m.post.message = text
+                    self.post_message(tmp_m)
+            else:
+                for text in text_block:
+                    tmp_m.post.message = text
                     self.post_message(tmp_m)
         else:
             self.post_message(m)
@@ -227,8 +234,10 @@ class SlackAPI(APIInterface):
             if self.fileupload(m):
                 return  # ファイルをポストしたら終了
 
-        if m.post.message:
+        if isinstance(m.post.message, dict):
             self.post_multi_message(m)
+        elif m.post.message:
+            self.post_message(m)
 
     def fileupload(self, m: MessageParserProtocol) -> dict:
         """files_upload_v2に渡すパラメータを設定

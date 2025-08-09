@@ -23,6 +23,9 @@ def aggregation(m: MessageParserProtocol) -> bool:
         m (MessageParserProtocol): メッセージデータ
     """
 
+    # 見出し
+    title = "個人成績" if g.params.get("individual") else "チーム成績"
+
     # 検索動作を合わせる
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
@@ -43,9 +46,9 @@ def aggregation(m: MessageParserProtocol) -> bool:
             msg_data["特記事項"] = "、".join(compose.text_item.remarks())
             msg_data["検索ワード"] = compose.text_item.search_word()
             msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {compose.badge.status(0, 0)}"
-            m.post.headline = message_build(msg_data)
+            m.post.headline = {title: message_build(msg_data)}
         else:
-            m.post.headline = "登録されていないチームです。"
+            m.post.headline = {title: "登録されていないチームです。"}
         return False
 
     result_df = aggregate.game_results()
@@ -53,7 +56,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
 
     if result_df.empty or record_df.empty:
         message.random_reply(m, "no_target")
-        return
+        return False
 
     result_df = pd.merge(
         result_df, record_df,
@@ -83,7 +86,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
         msg2["戦績"] = get_game_results(mapping_dict)
 
     if g.params.get("versus_matrix"):  # 対戦結果
-        msg2["対戦"] = get_versus_matrix(mapping_dict)
+        msg2["対戦結果"] = get_versus_matrix(mapping_dict)
 
     # 非表示項目
     if g.cfg.mahjong.ignore_flying:
@@ -103,7 +106,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
         if k in g.cfg.dropitems.results:
             msg2.pop(k)
 
-    m.post.headline = message_build(msg_data)
+    m.post.headline = {title: message_build(msg_data)}
     m.post.message = msg2
     return True
 
@@ -123,12 +126,10 @@ def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
     ret: dict = {}
 
     if g.params.get("individual"):
-        ret["title"] = "*【個人成績】*"
         ret["プレイヤー名"] = f"{player_name} {compose.badge.degree(data["ゲーム数"])}"
         if (team_list := lookup.internal.which_team(g.params["player_name"])):
             ret["所属チーム"] = team_list
     else:
-        ret["title"] = "*【チーム成績】*"
         ret["チーム名"] = f"{g.params["player_name"]} {compose.badge.degree(data["ゲーム数"])}"
         ret["登録メンバー"] = "、".join(lookup.internal.get_teammates(g.params["player_name"]))
 
@@ -182,7 +183,6 @@ def get_seat_data(data: dict) -> str:
     """
 
     ret: str = textwrap.dedent(f"""\
-        *【座席データ】*
         \t# 席：順位分布(平均順位) / トビ / 役満 #
         \t{data["東家-順位分布"]:22s} / {data["東家-トビ"]} / {data["東家-役満和了"]}
         \t{data["南家-順位分布"]:22s} / {data["南家-トビ"]} / {data["南家-役満和了"]}
@@ -230,7 +230,6 @@ def get_record(data: dict) -> dict:
 
     ret: dict = {}
     ret["ベストレコード"] = textwrap.dedent(f"""\
-        *【ベストレコード】*
         \t連続トップ：{current_data(data["c_top"])} ({max_data(data["連続トップ"], data["c_top"])})
         \t連続連対：{current_data(data["c_top2"])} ({max_data(data["連続連対"], data["c_top2"])})
         \t連続ラス回避：{current_data(data["c_top3"])} ({max_data(data["連続ラス回避"], data["c_top3"])})
@@ -239,7 +238,6 @@ def get_record(data: dict) -> dict:
     """).replace("-", "▲").replace("*****", "-----")
 
     ret["ワーストレコード"] = textwrap.dedent(f"""\
-        *【ワーストレコード】*
         \t連続ラス：{current_data(data["c_low4"])} ({max_data(data["連続ラス"], data["c_low4"])})
         \t連続逆連対：{current_data(data["c_low2"])} ({max_data(data["連続逆連対"], data["c_low2"])})
         \t連続トップなし：{current_data(data["c_low"])} ({max_data(data["連続トップなし"], data["c_low"])})
@@ -273,20 +271,27 @@ def get_regulations(mapping_dict: dict) -> dict:
         df_regulations["name"] = df_regulations["name"].replace(mapping_dict)
 
     if not df_grandslam.empty:
+        tmp = ""
         ret["役満和了"] = "\n*【役満和了】*\n"
         for x in df_grandslam.itertuples():
-            ret["役満和了"] += f"\t{x.matter}\t{x.count}回\n"
+            tmp += f"\t{x.matter}\t{x.count}回\n"
+        if tmp:
+            ret["役満和了"] = tmp
 
     if not df_regulations.query("type == 1").empty:
-        ret["卓外ポイント"] = "\n*【卓外ポイント】*\n"
+        tmp = ""
         for x in df_regulations.query("type == 1").itertuples():
             ex_point = str(x.ex_point).replace("-", "▲")
-            ret["卓外ポイント"] += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
+            tmp += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
+        if tmp:
+            ret["卓外ポイント"] = tmp
 
     if not df_regulations.query("type != 1").empty:
-        ret["その他"] = "\n*【その他】*\n"
+        tmp = ""
         for x in df_regulations.query("type != 1").itertuples():
-            ret["その他"] += f"\t{x.matter}\t{x.count}回\n"
+            tmp += f"\t{x.matter}\t{x.count}回\n"
+        if tmp:
+            ret["その他"] = tmp
 
     return ret
 
@@ -298,7 +303,7 @@ def get_game_results(mapping_dict: dict) -> str:
         str: 出力メッセージ
     """
 
-    ret: str = "\n*【戦績】*\n"
+    ret: str = ""
     data: dict = {}
 
     target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)
@@ -380,7 +385,7 @@ def get_versus_matrix(mapping_dict: dict) -> str:
         str: 出力メッセージ
     """
 
-    ret: str = "\n*【対戦結果】*\n"
+    ret: str = ""
     df = loader.read_data("summary/versus_matrix.sql")
 
     if g.params.get("anonymous"):
@@ -416,10 +421,10 @@ def message_build(data: dict) -> str:
             case k if k in g.cfg.dropitems.results:  # 非表示
                 pass
             case k if str(k).startswith("_blank"):
-                msg += "\t\n"
+                msg += "\n"
             case "title":
                 msg += f"{v}\n"
             case _:
-                msg += f"\t{k}：{v}\n"
+                msg += f"{k}：{v}\n"
 
-    return msg.strip()
+    return textwrap.indent(msg.strip(), "\t")

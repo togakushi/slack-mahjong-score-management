@@ -37,65 +37,57 @@ def aggregation(m: MessageParserProtocol) -> bool:
 
     # --- 表示
     # 情報ヘッダ
-    add_text = ""
     if g.params.get("individual"):  # 個人集計
-        headline_title = "*【成績サマリ】*\n"
+        headline_title = "成績サマリ"
         column_name = "名前"
     else:  # チーム集計
-        headline_title = "*【チーム成績サマリ】*\n"
+        headline_title = "チーム成績サマリ"
         column_name = "チーム"
 
-    if not g.cfg.mahjong.ignore_flying:
-        add_text = f" / トバされた人（延べ）：{df_summary["トビ"].sum()} 人"
-
+    add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary["トビ"].sum()} 人"
     header_text = message.header(game_info, m, add_text, 1)
-    headline = headline_title + header_text
+    m.post.headline = {headline_title: header_text}
 
     if df_summary.empty:
-        m.post.headline = headline
         return False
 
     # 集計結果
     msg: dict = {}
 
-    if not g.params.get("score_comparisons"):  # 通常表示
+    if g.params.get("score_comparisons"):  # 差分表示
+        header_list = ["#", column_name, "通算", "順位差", "トップ差"]
+        filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
+    else:  # 通常表示
         header_list: list = [column_name, "通算", "平均", "順位分布", "トビ"]
         filter_list: list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
         if g.cfg.mahjong.ignore_flying:  # トビカウントなし
             header_list.remove("トビ")
             filter_list.remove("トビ")
-    else:  # 差分表示
-        msg_memo = ""  # 非表示のため破棄
-        header_list = ["#", column_name, "通算", "順位差", "トップ差"]
-        filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
 
     # メッセージ整形
-    text_dict = formatter.pd_to_dict(df_summary.filter(items=header_list), step=40, codeblock=True)
-    msg.update(text_dict)
+    msg.update(formatter.pd_to_dict(df_summary.filter(items=header_list), step=40, codeblock=True))
 
     # メモ追加
-    msg_memo = ""
     df_yakuman = df_remarks.query("type == 0").drop(columns=["type", "ex_point"])
-    df_regulations = df_remarks.query("type == 1").drop(columns=["type"])
-    df_others = df_remarks.query("type == 2").drop(columns=["type", "ex_point"])
-
     if not df_yakuman.empty:
-        msg_memo += "\n*【役満和了】*\n"
-        for _, v in df_yakuman.iterrows():
-            msg_memo += f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} （{v["name"]}）\n"
+        msg["役満和了"] = "\n".join([
+            f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} （{v["name"]}）"
+            for _, v in df_yakuman.iterrows()
+        ])
 
+    df_regulations = df_remarks.query("type == 1").drop(columns=["type"])
     if not df_regulations.empty:
-        msg_memo += "\n*【卓外ポイント】*\n"
-        for _, v in df_regulations.iterrows():
-            msg_memo += f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）\n"
+        msg["卓外ポイント"] = "\n".join([
+            f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）"
+            for _, v in df_regulations.iterrows()
+        ])
 
+    df_others = df_remarks.query("type == 2").drop(columns=["type", "ex_point"])
     if not df_others.empty:
-        msg_memo += "\n*【その他】*\n"
-        for _, v in df_others.iterrows():
-            msg_memo += f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} （{v["name"]}）\n"
-
-    if msg_memo:
-        msg["メモ"] = msg_memo
+        msg["その他"] = "\n".join([
+            f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} （{v["name"]}）"
+            for _, v in df_others.iterrows()
+        ])
 
     # --- ファイル出力
     match cast(str, g.params.get("format", "default")).lower():
@@ -109,7 +101,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     file_list: list = []
     if extension:
         if not df_summary.empty:
-            headline = headline_title.replace("*", "") + header_text
+            headline = headline_title + header_text
             df_summary = df_summary.filter(items=filter_list).fillna("*****")
             prefix = f"{g.params["filename"]}" if g.params.get("filename") else "summary"
             file_list.append({"集計結果": formatter.save_output(df_summary, extension, f"{prefix}.{extension}", headline)})
@@ -131,8 +123,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     else:
         file_list.append({"dummy": ""})
 
-    m.post.headline = headline
     m.post.message = msg
     m.post.file_list = file_list
-    m.post.summarize = False
+    m.post.summarize = True
     return True

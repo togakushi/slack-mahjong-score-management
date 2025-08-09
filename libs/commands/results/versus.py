@@ -125,6 +125,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     m.post.headline = msg1
     m.post.message = msg2
     m.post.file_list = file_list
+    m.post.key_header = False
     return True
 
 
