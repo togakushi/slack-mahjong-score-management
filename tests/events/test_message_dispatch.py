@@ -47,7 +47,7 @@ def test_results(config, keyword, monkeypatch):
     configuration.setup()
 
     with (
-        patch("libs.commands.results.slackpost.main") as mock_results,
+        patch("libs.commands.dispatcher.main") as mock_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
@@ -68,7 +68,7 @@ def test_graph(config, keyword, monkeypatch):
     configuration.setup()
 
     with (
-        patch("libs.commands.graph.slackpost.main") as mock_graph,
+        patch("libs.commands.dispatcher.main") as mock_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
@@ -89,7 +89,7 @@ def test_ranking(config, keyword, monkeypatch):
     configuration.setup()
 
     with (
-        patch("libs.commands.ranking.slackpost.main") as mock_ranking,
+        patch("libs.commands.dispatcher.main") as mock_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
@@ -110,7 +110,7 @@ def test_report(config, keyword, monkeypatch):
     configuration.setup()
 
     with (
-        patch("libs.commands.report.slackpost.main") as mock_report,
+        patch("libs.commands.dispatcher.main") as mock_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())

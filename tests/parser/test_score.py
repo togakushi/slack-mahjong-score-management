@@ -35,7 +35,8 @@ def test_score_report(input_str, result_dict, get_point):
         chk_dict.update({k: v for k, v in result.to_dict().items() if str(k).endswith("_name")})
         chk_dict.update({k: v for k, v in result.to_dict().items() if str(k).endswith("_str")})
         chk_dict.update({"comment": result.comment})
-    print("score data:", chk_dict)
+    print("in:", input_str)
+    print("score data:", chk_dict, "->", result_dict)
     assert chk_dict == result_dict
 
     if result.has_valid_data():
