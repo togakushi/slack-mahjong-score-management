@@ -132,10 +132,7 @@ def register_versus_handlers(app):
         results.versus.aggregation(m)
         api_adapter.post(m)
 
-        g.appclient.views_update(
-            view_id=g.app_var["view_id"],
-            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{m.post.headline}"),
-        )
+        ui_parts.update_view(m, app_msg)
 
     @app.view("VersusMenu_ModalPeriodSelection")
     def handle_view_submission(ack, view):

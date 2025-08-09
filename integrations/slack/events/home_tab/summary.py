@@ -140,10 +140,7 @@ def register_summary_handlers(app):
                 results.summary.aggregation(m)
                 api_adapter.post(m)
 
-        g.appclient.views_update(
-            view_id=g.app_var["view_id"],
-            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{m.post.headline}".strip()),
-        )
+        ui_parts.update_view(m, app_msg)
 
     @app.view("SummaryMenu_ModalPeriodSelection")
     def handle_view_submission(ack, view):

@@ -5,6 +5,7 @@ libs/commands/home_tab/ui_parts.py
 import logging
 
 import libs.global_value as g
+from integrations.protocols import MessageParserProtocol
 
 
 def plain_text(msg: str) -> dict:
@@ -306,3 +307,23 @@ def set_command_option(body) -> tuple[list, list, dict]:
 
     app_msg.append("集計中…")
     return (argument, app_msg, update_flag)
+
+
+def update_view(m: MessageParserProtocol, msg: list):
+    """viewを更新する
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+        msg (list): 表示テキスト
+    """
+
+    if isinstance(m.post.headline, dict):
+        k, v = next(iter(m.post.headline.items()))
+        text = f"\n【{k}】\n{v}"
+    else:
+        text = m.post.headline
+
+    g.appclient.views_update(
+        view_id=g.app_var["view_id"],
+        view=plain_text(f"{chr(10).join(msg)}\n\n{text}".strip()),
+    )

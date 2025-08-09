@@ -134,10 +134,7 @@ def register_personal_handlers(app):
             tmp_m.post.ts = str(res.get("ts", "undetermined"))
             api_adapter.post_message(tmp_m)
 
-        g.appclient.views_update(
-            view_id=g.app_var["view_id"],
-            view=ui_parts.plain_text(f"{chr(10).join(app_msg)}\n\n{tmp_m.post.message}"),
-        )
+        ui_parts.update_view(m, app_msg)
 
     @app.view("PersonalMenu_ModalPeriodSelection")
     def handle_view_submission(ack, view):
