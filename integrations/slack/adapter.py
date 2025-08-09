@@ -127,7 +127,7 @@ class SlackAPI(APIInterface):
 
         if isinstance(m.post.message, dict):
             k, v = next(iter(m.post.message.items()))  # 先頭のみ処理
-            text = f"```\n{v.strip()}\n```" if m.post.codeblock else v
+            text = f"```\n{v.rstrip()}\n```" if m.post.codeblock else v
             if isinstance(k, str) and m.post.key_header:
                 text = f"*【{k}】*\n{text}"
         else:
@@ -153,7 +153,7 @@ class SlackAPI(APIInterface):
             # テキストブロック生成
             text_block: list = []
             for k, v in m.post.message.items():
-                text = f"```\n{v.strip()}\n```" if m.post.codeblock else v
+                text = f"```\n{v.rstrip()}\n```" if m.post.codeblock else v
                 if isinstance(k, str) and m.post.key_header:
                     text_block.append(f"*【{k}】*\n{text.rstrip()}\n")
                 else:
@@ -207,7 +207,7 @@ class SlackAPI(APIInterface):
             for _, val in enumerate(post_msg):
                 res = api.call_chat_post_message(
                     channel=m.data.channel_id,
-                    text=f"\n{m.post.title}\n\n```{val.strip()}```",
+                    text=f"\n{m.post.title}\n\n```{val.rstrip()}```",
                     thread_ts=m.reply_ts,
                 )
 
