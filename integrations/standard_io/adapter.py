@@ -109,7 +109,7 @@ class StandardIO(APIInterface):
                 print(self._text_formatter(m.post.headline))
             if isinstance(m.post.headline, dict):
                 k, v = next(iter(m.post.headline.items()))
-                if isinstance(k, str) and m.post.key_header:
+                if isinstance(k, str) and k and m.post.key_header:
                     print(f"【{k}】")
                 print(textwrap.dedent(v).strip())
             print("=" * 80)
@@ -117,7 +117,7 @@ class StandardIO(APIInterface):
         if m.post.message:  # 本文
             if isinstance(m.post.message, dict):
                 for k, v in m.post.message.items():
-                    if isinstance(k, str) and m.post.key_header:
+                    if isinstance(k, str) and k and m.post.key_header:
                         print(f"【{k}】")
                     print(self._text_formatter(v))
                     print("")

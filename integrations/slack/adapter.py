@@ -128,7 +128,7 @@ class SlackAPI(APIInterface):
         if isinstance(m.post.message, dict):
             k, v = next(iter(m.post.message.items()))  # 先頭のみ処理
             text = f"```\n{v.rstrip()}\n```" if m.post.codeblock else v
-            if isinstance(k, str) and m.post.key_header:
+            if isinstance(k, str) and k and m.post.key_header:
                 text = f"*【{k}】*\n{text}"
         else:
             text = m.post.message
@@ -154,7 +154,7 @@ class SlackAPI(APIInterface):
             text_block: list = []
             for k, v in m.post.message.items():
                 text = f"```\n{v.rstrip()}\n```" if m.post.codeblock else v
-                if isinstance(k, str) and m.post.key_header:
+                if isinstance(k, str) and k and m.post.key_header:
                     text_block.append(f"*【{k}】*\n{text.rstrip()}\n")
                 else:
                     text_block.append(f"{text.rstrip()}\n")
