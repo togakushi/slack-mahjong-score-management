@@ -8,8 +8,8 @@ from typing import cast
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations import factory
 from integrations.protocols import MessageParserProtocol
+from integrations.slack import adapter, parser
 from libs.functions import message
 
 
@@ -21,7 +21,7 @@ def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
         m (MessageParserProtocol): メッセージデータ
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
+    api_adapter = adapter.SlackAPI()
     reactions = api_adapter.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
     status_flg: bool = True  # リアクション最終状態(True: OK, False: NG)
 
@@ -90,7 +90,7 @@ def get_messages(word: str) -> list[MessageParserProtocol]:
     data: list[MessageParserProtocol] = []
     for x in matches:
         if isinstance(x, dict):
-            m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+            m = parser.MessageParser(g.cfg.setting.reaction_ok, g.cfg.setting.reaction_ng)
             m.parser(x)
             data.append(cast(MessageParserProtocol, m))
 
