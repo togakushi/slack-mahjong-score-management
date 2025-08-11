@@ -355,27 +355,6 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
     return df.rename(columns=rename_dict)
 
 
-def del_blank_line(text: str) -> str:
-    """空行を取り除く
-
-    Args:
-        text (str): 処理するテキスト
-
-    Returns:
-        str: 処理されたテキスト
-    """
-
-    new_text = []
-    for x in text.split("\n"):
-        if x.strip() == "":
-            continue
-        if x.strip() == "\t":
-            continue
-        new_text.append(x)
-
-    return "\n".join(new_text)
-
-
 def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index: bool = False) -> dict:
     """DataFrameからテキスト変換
 
@@ -450,7 +429,7 @@ def group_strings(lines: list[str], limit: int = 3000) -> list[str]:
     buffer: list = []
 
     for i, line in enumerate(lines):
-        is_last = (i == len(lines) - 1)  # 最終ブロック判定
+        is_last = i == len(lines) - 1  # 最終ブロック判定
         max_char = limit * 1.5 if is_last else limit  # 1ブロックの最大値
 
         # 仮に追加したときの文字列長を計算

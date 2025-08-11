@@ -58,8 +58,8 @@ def aggregation(m: MessageParserProtocol) -> bool:
         header_list = ["#", column_name, "通算", "順位差", "トップ差"]
         filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
     else:  # 通常表示
-        header_list: list = [column_name, "通算", "平均", "順位分布", "トビ"]
-        filter_list: list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
+        header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
+        filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
         if g.cfg.mahjong.ignore_flying:  # トビカウントなし
             header_list.remove("トビ")
             filter_list.remove("トビ")

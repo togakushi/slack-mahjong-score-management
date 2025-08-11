@@ -41,25 +41,25 @@ def aggregation(m: MessageParserProtocol) -> bool:
     else:
         vs = ",".join(vs_list)
 
-    msg1 = tmpl_header(my_name, vs)
-    msg2: dict = {}  # 対戦結果格納用
-
-    tmp_msg: dict = {}
+    game_result: dict = {}  # 対戦結果格納用
     drop_name: list = []  # 対戦記録なしプレイヤー
+
     if len(df_vs) == 0:  # 検索結果なし
-        m.post.headline = msg1 + "対戦記録が見つかりません。\n"
+        m.post.headline = {"直接対戦結果": "対戦記録が見つかりません。"}
         return False
+    m.post.headline = {"直接対戦結果": tmpl_header(my_name, vs)}
 
     for vs_name in vs_list:
-        tmp_msg[vs_name] = {}
+        title = f"{my_name} vs {vs_name}"
         if vs_name in vs_list:
             data = df_vs.query("my_name == @my_name and vs_name == @vs_name")
             if data.empty:
-                drop_name.append(vs_name)
-                tmp_msg[vs_name]["info"] = f"*【{my_name} vs {vs_name}】*\n\t対戦記録はありません。"
+                if len(vs_list) <= 5 and not g.params.get("all_player"):
+                    drop_name.append(vs_name)
+                    game_result[title] = "対戦記録はありません。"
                 continue
 
-            tmp_msg[vs_name]["info"] = tmpl_vs_table(data.to_dict(orient="records")[0])
+            game_result[title] = tmpl_vs_table(data.to_dict(orient="records")[0])
 
             # ゲーム結果
             if g.params.get("game_results"):
@@ -75,16 +75,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
                         df_data = current_game if df_data.empty else pd.concat([df_data, current_game])
                         count += 1
         else:  # 対戦記録なし
-            tmp_msg[vs_name]["info"] = f"*【{my_name} vs {vs_name}】*\n\t対戦相手が見つかりません。\n\n"
-
-    # --- データ整列&まとめ
-    for key, val in tmp_msg.items():
-        if key in drop_name and len(vs_list) > 5 and not g.params.get("all_player"):
-            continue
-        msg2[f"{key}_info"] = val.pop("info") + "\n"
-        if val:
-            for x in val:
-                msg2[f"{key}_{x}"] = textwrap.indent(val[x], "\t") + "\n"
+            game_result[title] = "\t対戦相手が見つかりません。\n\n"
 
     # --- ファイル出力
     if len(df_data) != 0:
@@ -121,12 +112,14 @@ def aggregation(m: MessageParserProtocol) -> bool:
             ]
         case _:
             file_list = [{"dummy": ""}]
-
-    m.post.headline = msg1
-    m.post.message = msg2
     m.post.file_list = file_list
-    m.post.key_header = False
-    return True
+
+    # 結果
+    if len(game_result):
+        m.post.message = game_result
+        return True
+    m.post.message = {"": "対戦記録が見つかりません。"}
+    return False
 
 
 def tmpl_header(my_name: str, vs_name: str) -> str:
@@ -141,15 +134,14 @@ def tmpl_header(my_name: str, vs_name: str) -> str:
     """
     ret = textwrap.dedent(
         f"""\
-        *【直接対戦結果】*
         \tプレイヤー名：{my_name}
         \t対戦相手：{vs_name}
-        \t{compose.text_item.search_range()}
+        \t集計範囲：{compose.text_item.search_range()}
         \t{compose.text_item.remarks(True)}
         """
-    ).strip()
+    ).rstrip()
 
-    return formatter.del_blank_line(ret)
+    return ret
 
 
 def tmpl_vs_table(data: dict) -> str:
@@ -162,8 +154,7 @@ def tmpl_vs_table(data: dict) -> str:
         str: 出力データ
     """
 
-    ret = f"*【{data["my_name"].strip()} vs {data["vs_name"].strip()}】*\n"
-    ret += textwrap.indent(
+    ret = textwrap.indent(
         "".join([
             textwrap.dedent(
                 f"""\
@@ -183,4 +174,4 @@ def tmpl_vs_table(data: dict) -> str:
         "\t"
     )
 
-    return ret.strip() + "\n"
+    return ret.rstrip() + "\n"
