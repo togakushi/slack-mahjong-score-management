@@ -38,10 +38,10 @@ def select_function(selected_service: str):
 
     match selected_service:
         case "slack":
-            import integrations.slack.functions as func
+            import integrations.slack.functions as slack_func  # pylint: disable=import-outside-toplevel
+            return slack_func
         case "standard_io":
-            import integrations.standard_io.functions as func
+            import integrations.standard_io.functions as stdio_func  # pylint: disable=import-outside-toplevel
+            return stdio_func
         case _:
             raise ValueError(f"Unknown service: {selected_service}")
-
-    return func
