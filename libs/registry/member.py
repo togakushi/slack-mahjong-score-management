@@ -10,7 +10,7 @@ from libs.functions import configuration
 from libs.utils import dbutil, textutil, validator
 
 
-def append(argument: list) -> str:
+def append(argument: list) -> dict:
     """メンバー追加
 
     Args:
@@ -19,7 +19,7 @@ def append(argument: list) -> str:
             - argument[1]: 登録する別名
 
     Returns:
-        str: slackにpostする内容(処理結果)
+        dict: 処理結果
     """
 
     resultdb = dbutil.get_connection()
@@ -95,10 +95,10 @@ def append(argument: list) -> str:
     resultdb.close()
     configuration.read_memberslist()
 
-    return msg
+    return {"メンバー追加": msg}
 
 
-def remove(argument: list) -> str:
+def remove(argument: list) -> dict:
     """メンバー削除
 
     Args:
@@ -107,7 +107,7 @@ def remove(argument: list) -> str:
             - argument[1]: 削除する別名
 
     Returns:
-        str: slackにpostする内容(処理結果)
+        dict: slackにpostする内容(処理結果)
     """
 
     resultdb = dbutil.get_connection()
@@ -140,4 +140,4 @@ def remove(argument: list) -> str:
     resultdb.close()
     configuration.read_memberslist()
 
-    return msg
+    return {"メンバー削除": msg}

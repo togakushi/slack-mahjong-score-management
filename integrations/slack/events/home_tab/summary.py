@@ -125,13 +125,13 @@ def register_summary_handlers(app):
                 if count:
                     api_adapter.fileupload(m)
                 else:
-                    api_adapter.post_message(m)
+                    api_adapter.post(m)
             case "rank":
                 count = graph.summary.rank_plot(m)
                 if count:
                     api_adapter.fileupload(m)
                 else:
-                    api_adapter.post_message(m)
+                    api_adapter.post(m)
             case "rating":
                 g.params["command"] = "ranking"
                 ranking.rating.aggregation(m)

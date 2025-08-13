@@ -2,9 +2,7 @@
 integrations/slack/message.py
 """
 
-import copy
 import logging
-import re
 from typing import cast
 
 from slack_sdk.errors import SlackApiError
@@ -116,128 +114,64 @@ class SlackAPI(APIInterface):
         self.lookup = _LookupAPI()
         self.reactions = _ReactionsAPI()
 
-    def post_message(self, m: MessageParserProtocol) -> dict:
+    def post(self, m: MessageParserProtocol):
         """メッセージをポストする
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: API response
-        """
-
-        if isinstance(m.post.message, dict):
-            k, v = next(iter(m.post.message.items()))  # 先頭のみ処理
-            text = f"```\n{v.rstrip()}\n```" if m.post.codeblock else v
-            if isinstance(k, str) and k and m.post.key_header:
-                text = f"*【{k}】*\n{text}"
-        else:
-            text = m.post.message
-
-        res = api.call_chat_post_message(
-            channel=m.data.channel_id,
-            text=text,
-            thread_ts=m.reply_ts,
-        )
-
-        return cast(dict, res)
-
-    def post_multi_message(self, m: MessageParserProtocol) -> None:
-        """メッセージを分割してポスト
 
         Args:
             m (MessageParserProtocol): メッセージデータ
         """
 
-        tmp_m = copy.deepcopy(m)
-        if isinstance(m.post.message, dict):
-            # テキストブロック生成
-            text_block: list = []
-            for k, v in m.post.message.items():
-                text = f"```\n{v.rstrip()}\n```" if m.post.codeblock else v
-                if isinstance(k, str) and k and m.post.key_header:
-                    text_block.append(f"*【{k}】*\n{text.rstrip()}\n")
-                else:
-                    text_block.append(f"{text.rstrip()}\n")
+        if not m.in_thread:
+            m.post.thread = False
 
-            if m.post.summarize:
-                for text in formatter.group_strings(text_block):
-                    tmp_m.post.message = text
-                    self.post_message(tmp_m)
+        # 見出し付きポスト
+        if m.post.headline:
+            if isinstance(m.post.headline, dict):
+                (msg,) = m.post.headline.values()
             else:
-                for text in text_block:
-                    tmp_m.post.message = text
-                    self.post_message(tmp_m)
-        else:
-            self.post_message(m)
+                msg = m.post.headline
 
-    def post_text(self, m: MessageParserProtocol) -> dict:
-        """コードブロック修飾付きポスト
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: API response
-        """
-
-        if isinstance(m.post.message, dict):  # 辞書型のメッセージは受け付けない
-            return {}
-
-        # コードブロック修飾付きポスト
-        if len(re.sub(r"\n+", "\n", f"{m.post.message.strip()}").splitlines()) == 1:
             res = api.call_chat_post_message(
                 channel=m.data.channel_id,
-                text=f"{m.post.title}\n{m.post.message.strip()}",
+                text=msg,
                 thread_ts=m.reply_ts,
             )
-        else:
-            # ポスト予定のメッセージをstep行単位のブロックに分割
-            step = 50
-            post_msg: list[str] = []
-            for count in range(int(len(m.post.message.splitlines()) / step) + 1):
-                post_msg.append(
-                    "\n".join(m.post.message.splitlines()[count * step:(count + 1) * step])
-                )
 
-            # 最終ブロックがstepの半分以下なら直前のブロックにまとめる
-            if len(post_msg) > 1 and step / 2 > len(post_msg[count].splitlines()):
-                post_msg[count - 1] += "\n" + post_msg.pop(count)
-
-            # ブロック単位でポスト
-            for _, val in enumerate(post_msg):
-                res = api.call_chat_post_message(
-                    channel=m.data.channel_id,
-                    text=f"\n{m.post.title}\n\n```{val.rstrip()}```",
-                    thread_ts=m.reply_ts,
-                )
-
-        return cast(dict, res)
-
-    def post(self, m: MessageParserProtocol):
-        """パラメータの内容によって呼び出すAPIを振り分ける
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-        """
-
-        if m.post.headline:  # 見出し付き
-            tmp_m = copy.deepcopy(m)
-            tmp_m.post.message = m.post.headline
-            if (res := self.post_message(tmp_m)):
+            if res:
                 m.post.ts = res.get("ts", "undetermined")
                 m.post.thread = True  # 見出しがある場合はスレッドにする
             else:
                 m.post.ts = "undetermined"
 
-        # 本文ポスト
+        # 本文
         if m.post.file_list:
             if self.fileupload(m):
                 return  # ファイルをポストしたら終了
 
-        if isinstance(m.post.message, dict):
-            self.post_multi_message(m)
-        elif m.post.message:
-            self.post_message(m)
+        post_msg: list = []
+        match m.post.message:
+            case x if isinstance(x, str):
+                if m.post.codeblock:
+                    post_msg.append(f"```\n{x}\n```\n")
+                else:
+                    post_msg.append(f"{x}\n")
+            case x if isinstance(x, dict):
+                for k, v in m.post.message.items():
+                    text = ""
+                    if isinstance(k, str) and k and m.post.key_header:
+                        text += f"*【{k}】*\n{text.rstrip()}\n"
+                    text += f"```\n{v.rstrip()}\n```\n" if m.post.codeblock else v
+                    post_msg.append(text + "\n")
+
+        if m.post.summarize:
+            post_msg = formatter.group_strings(post_msg)
+
+        for msg in post_msg:
+            api.call_chat_post_message(
+                channel=m.data.channel_id,
+                text=msg,
+                thread_ts=m.reply_ts,
+            )
 
     def fileupload(self, m: MessageParserProtocol) -> dict:
         """files_upload_v2に渡すパラメータを設定

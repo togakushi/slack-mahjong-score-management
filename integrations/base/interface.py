@@ -78,40 +78,8 @@ class APIInterface(ABC):
     reactions: "ReactionsInterface"
 
     @abstractmethod
-    def post_message(self, m: "MessageParserProtocol") -> dict:
-        """メッセージをポストする
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: API response
-        """
-        return {}
-
-    @abstractmethod
-    def post_multi_message(self, m: "MessageParserProtocol"):
-        """辞書の要素単位でメッセージをポストする
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-        """
-
-    @abstractmethod
-    def post_text(self, m: "MessageParserProtocol") -> dict:
-        """コードブロック修飾付きでメッセージをポストする
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: API response
-        """
-        return {}
-
-    @abstractmethod
     def post(self, m: "MessageParserProtocol"):
-        """メッセージデータの内容でポストのふるまいを変える
+        """メッセージをポストする
 
         Args:
             m (MessageParserProtocol): メッセージデータ
@@ -189,14 +157,16 @@ class MessageParserDataMixin:
 
         ret_ts: str = "0"
 
-        if self.post.ts != "undetermined":  # tsが指定されていれば最優先
+        # tsが指定されていれば最優先
+        if self.post.ts != "undetermined":
             return self.post.ts
 
-        if self.in_thread and self.post.thread:  # スレッドに返すか
-            if self.data.thread_ts == "undetermined":
-                ret_ts = "0"
-            else:
+        # スレッドに返すか
+        if self.post.thread and self.in_thread:  # スレッド内
+            if self.data.thread_ts != "undetermined":
                 ret_ts = self.data.thread_ts
+        elif self.post.thread and not self.in_thread:  # スレッド外
+            ret_ts = self.data.event_ts
 
         return ret_ts
 

@@ -6,17 +6,13 @@ import libs.global_value as g
 from libs.utils import dbutil, textutil
 
 
-# slack出力用
-def get_members_list() -> tuple[str, str]:
-    """登録済みのメンバー一覧を取得する(slack出力用)
+def get_members_list() -> dict:
+    """登録済みのメンバー一覧を取得する
 
     Returns:
-        tuple[str,str]:
-        - **str**: post時のタイトル
-        - **str**: メンバー一覧
+        dict: メンバーリスト
     """
 
-    title = "登録済みメンバー一覧"
     padding = textutil.count_padding(list(set(g.member_list.values())))
     msg = f"# 表示名{" " * (padding - 8)}：登録されている名前 #\n"
 
@@ -31,14 +27,14 @@ def get_members_list() -> tuple[str, str]:
             ", ".join(name_list),
         )
 
-    return (title, msg)
+    return {"登録済みメンバー": msg}
 
 
-def get_team_list() -> str:
-    """チームの登録状況を表示する(slack出力用)
+def get_team_list() -> dict:
+    """チームの登録状況を取得する
 
     Returns:
-        str: slackにpostする内容
+        dict: チームリスト
     """
 
     resultdb = dbutil.get_connection()
@@ -68,4 +64,4 @@ def get_team_list() -> str:
                 msg += f"\t{p}\n"
             msg += "\n"
 
-    return msg
+    return {"登録済みチーム": msg}

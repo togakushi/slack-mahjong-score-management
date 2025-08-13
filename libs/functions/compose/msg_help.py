@@ -10,14 +10,14 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import lookup
 
 
-def slash_command(command):
+def slash_command(command: str) -> dict[str, str]:
     """スラッシュコマンド用ヘルプ
 
     Args:
         command (str): スラッシュコマンド名
 
     Returns:
-        str: ヘルプメッセージ
+        dict[str, str]: ヘルプメッセージ
     """
 
     msg = "```使い方："
@@ -42,14 +42,14 @@ def slash_command(command):
     msg += f"\n\t{command} team_clear                        チームデータをすべて削除"
     msg += "```"
 
-    return msg
+    return {"ヘルプ": msg}
 
 
-def event_message():
+def event_message() -> dict[str, str]:
     """チャンネル内呼び出しキーワード用ヘルプ
 
     Returns:
-        str: ヘルプメッセージ
+        dict[str, str]: ヘルプメッセージ
     """
 
     msg = textwrap.dedent(f"""\
@@ -100,7 +100,7 @@ def event_message():
     words = lookup.db.regulation_list(1)
     if words:
         msg += "\n\t*卓外ポイントワード(個人清算)*\n"
-        for word, ex_point in rule:
+        for word, ex_point in words:
             msg += "\t\t{}：{}pt\n".format(  # pylint: disable=consider-using-f-string
                 word,
                 str(f"{ex_point:.1f}").replace("-", "▲"),
@@ -120,4 +120,4 @@ def event_message():
 
     msg = re.sub(r"\n\n\n", "\n\n", msg, flags=re.MULTILINE)
 
-    return msg.strip()
+    return {"ヘルプ": msg.rstrip()}

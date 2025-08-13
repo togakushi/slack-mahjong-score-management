@@ -55,23 +55,24 @@ def main(m: MessageParserProtocol) -> None:
     after = ExtDt(days=-g.cfg.search.after).format("ymd")
     before = ExtDt().format("ymd")
 
-    m.post.message = f"*【データ突合】* ({after} - {before})\n"
+    message = f"*【データ突合】* ({after} - {before})\n"
     if count["pending"]:
-        m.post.message += f"＊ 保留：{count["pending"]}件\n"
+        message += f"＊ 保留：{count["pending"]}件\n"
         for x in msg["pending"]:
-            m.post.message += f"\t\t{ExtDt(float(x)).format("ymdhms")}\n"
-    m.post.message += f"＊ 不一致：{count["mismatch"]}件\n{msg["mismatch"]}"
-    m.post.message += f"＊ 取りこぼし：{count["missing"]}件\n{msg["missing"]}"
-    m.post.message += f"＊ 削除漏れ：{count["delete"]}件\n{msg["delete"]}"
-    m.post.message += f"＊ メモ更新：{count["remark_mod"]}件\n{msg["remark_mod"]}"
-    m.post.message += f"＊ メモ削除：{count["remark_del"]}件\n{msg["remark_del"]}"
+            message += f"\t\t{ExtDt(float(x)).format("ymdhms")}\n"
+    message += f"＊ 不一致：{count["mismatch"]}件\n{msg["mismatch"]}"
+    message += f"＊ 取りこぼし：{count["missing"]}件\n{msg["missing"]}"
+    message += f"＊ 削除漏れ：{count["delete"]}件\n{msg["delete"]}"
+    message += f"＊ メモ更新：{count["remark_mod"]}件\n{msg["remark_mod"]}"
+    message += f"＊ メモ削除：{count["remark_del"]}件\n{msg["remark_del"]}"
     if count["invalid_score"] > 0:
-        m.post.message += "\n*【素点合計不一致】*\n"
-        m.post.message += msg["invalid_score"]
+        message += "\n*【素点合計不一致】*\n"
+        message += msg["invalid_score"]
 
-    m.post.thread = True
+    m.post.message = {"データ突合": message}
+    m.post.key_header = False
     m.post.ts = m.data.event_ts
-    api_adapter.post_message(m)
+    api_adapter.post(m)
 
 
 def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:

@@ -31,14 +31,14 @@ def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
         m.post.rpoint_sum = detection.rpoint_sum()
         m.post.ts = m.data.event_ts
         message.random_reply(m, "invalid_score")
-        api_adapter.post_message(m)
+        api_adapter.post(m)
 
     # プレイヤー名重複チェック
     if len(set(detection.to_list())) != 4:
         status_flg = False
         m.post.ts = m.data.event_ts
         message.random_reply(m, "same_player")
-        api_adapter.post_message(m)
+        api_adapter.post(m)
 
     # リアクション処理
     if status_flg:  # NGを外してOKを付ける

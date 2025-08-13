@@ -125,14 +125,9 @@ def register_personal_handlers(app):
 
         app_msg.pop()
         app_msg.append("集計完了")
-        tmp_m = copy.deepcopy(m)
 
         results.detail.aggregation(m)
-        res = api_adapter.post_message(tmp_m)
-        for _, val in m.post.message.items():
-            tmp_m.post.message = str(val + "\n")
-            tmp_m.post.ts = str(res.get("ts", "undetermined"))
-            api_adapter.post_message(tmp_m)
+        api_adapter.post(m)
 
         ui_parts.update_view(m, app_msg)
 

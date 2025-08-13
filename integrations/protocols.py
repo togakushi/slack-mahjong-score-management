@@ -48,7 +48,6 @@ class MsgData:
 @dataclass
 class PostData:
     """ポストするデータ"""
-    title: str = field(default=str())
     headline: str | dict[str | int, str] = field(default=str())
     message: str | dict[str | int, str] = field(default=str())
     """本文"""
@@ -62,7 +61,7 @@ class PostData:
     """スレッドに返す"""
     file_list: list[dict[str, str]] = field(default_factory=list)
     ts: str = field(default="undetermined")
-    """指定タイムスタンプへのリプライ"""
+    """指定タイムスタンプへの強制リプライ"""
     rpoint_sum: int = field(default=0)
     """素点合計格納用"""
 

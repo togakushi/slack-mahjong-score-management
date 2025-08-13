@@ -3,7 +3,6 @@ integrations/standard_io/message.py
 """
 
 import textwrap
-from pprint import pprint
 
 from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
@@ -53,45 +52,6 @@ class StandardIO(APIInterface):
             if line:
                 ret += f"{line}\n"
         return ret.strip()
-
-    def post_message(self, m: MessageParserProtocol) -> dict:
-        """標準出力
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-        """
-
-        if m.post.message and isinstance(m.post.message, str):
-            print("=" * 80)
-            print(self._text_formatter(m.post.message))
-            print("=" * 80)
-            print("\n")
-
-        return {}
-
-    def post_multi_message(self, m: MessageParserProtocol):
-        """標準出力
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-        """
-
-        self.post(m)
-
-    def post_text(self, m: MessageParserProtocol) -> dict:
-        """標準出力
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: ダミー
-        """
-
-        pprint(m.post.title)
-        pprint(m.post.message)
-
-        return {}
 
     def post(self, m: MessageParserProtocol):
         """パラメータの内容によって呼び出すAPIを振り分ける

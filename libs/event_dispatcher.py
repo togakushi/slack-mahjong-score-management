@@ -42,10 +42,14 @@ def dispatch_by_keyword(m: MessageParserProtocol):
         case x if re.match(rf"^{g.cfg.cw.help}$", x):
             # ヘルプメッセージ
             m.post.message = compose.msg_help.event_message()
-            api_adapter.post_message(m)
+            m.post.ts = m.data.event_ts
+            m.post.key_header = False
+            api_adapter.post(m)
             # メンバーリスト
-            m.post.title, m.post.message = lookup.textdata.get_members_list()
-            api_adapter.post_text(m)
+            m.post.message = lookup.textdata.get_members_list()
+            m.post.codeblock = True
+            m.post.key_header = True
+            api_adapter.post(m)
 
         # 成績管理系コマンド
         case x if re.match(rf"^{g.cfg.cw.results}$", x) or (m.is_command and x in g.cfg.alias.results):
@@ -64,54 +68,69 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             logging.notice("Reminder: %s", g.cfg.cw.check)  # type: ignore
             comparison.main(m)
         case x if m.is_command and x in g.cfg.alias.download:
-            m.post.file_list = [{m.post.title: g.cfg.db.database_file}]
+            m.post.file_list = [{"成績記録DB": g.cfg.db.database_file}]
             api_adapter.fileupload(m)
 
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}$", x) or (m.is_command and x in g.cfg.alias.member):
-            m.post.title, m.post.message = lookup.textdata.get_members_list()
-            api_adapter.post_text(m)
+            m.post.message = lookup.textdata.get_members_list()
+            m.post.codeblock = True
+            m.post.key_header = True
+            m.post.ts = m.data.event_ts
+            api_adapter.post(m)
         case x if re.match(rf"^{g.cfg.cw.team}$", x) or (m.is_command and x in g.cfg.alias.team_list):
-            m.post.title = "チーム一覧"
             m.post.message = lookup.textdata.get_team_list()
-            api_adapter.post_text(m)
+            m.post.codeblock = True
+            m.post.key_header = True
+            m.post.ts = m.data.event_ts
+            api_adapter.post(m)
 
         # メンバー管理系コマンド
         case x if m.is_command and x in g.cfg.alias.member:
-            m.post.title, m.post.message = lookup.textdata.get_members_list()
-            api_adapter.post_text(m)
+            m.post.message = lookup.textdata.get_members_list()
+            m.post.codeblock = True
+            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.add:
             m.post.message = member.append(m.argument)
-            api_adapter.post_message(m)
+            m.post.key_header = False
+            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.delete:
             m.post.message = member.remove(m.argument)
-            api_adapter.post_message(m)
+            m.post.key_header = False
+            api_adapter.post(m)
 
         # チーム管理系コマンド
         case x if m.is_command and x in g.cfg.alias.team_create:
             m.post.message = team.create(m.argument)
-            api_adapter.post_message(m)
+            m.post.key_header = False
+            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_del:
             m.post.message = team.delete(m.argument)
-            api_adapter.post_message(m)
+            m.post.key_header = False
+            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_add:
             m.post.message = team.append(m.argument)
-            api_adapter.post_message(m)
+            m.post.key_header = False
+            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_remove:
             m.post.message = team.remove(m.argument)
-            api_adapter.post_message(m)
+            m.post.key_header = False
+            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_list:
+            m.post.codeblock = True
+            m.post.key_header = False
             m.post.message = lookup.textdata.get_team_list()
-            api_adapter.post_message(m)
+            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_clear:
             m.post.message = team.clear()
-            api_adapter.post_message(m)
+            m.post.key_header = False
+            api_adapter.post(m)
 
         # その他
         case _ as x:
             if m.is_command:
                 m.post.message = compose.msg_help.slash_command(g.cfg.setting.slash_command)
-                api_adapter.post_message(m)
+                api_adapter.post(m)
             else:
                 other_words(x, m)
 
@@ -168,7 +187,7 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
-        api_adapter.post_message(m)
+        api_adapter.post(m)
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
@@ -200,7 +219,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
-        api_adapter.post_message(m)
+        api_adapter.post(m)
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
