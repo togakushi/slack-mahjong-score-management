@@ -1,8 +1,7 @@
 """
-libs/commands/home_tab/personal.py
+integrations/slack/events/home_tab/personal.py
 """
 
-import copy
 import logging
 
 import libs.global_value as g

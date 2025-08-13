@@ -1,5 +1,5 @@
 """
-libs/commands/home_tab/versus.py
+integrations/slack/events/home_tab/versus.py
 """
 
 import logging

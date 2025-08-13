@@ -1,5 +1,5 @@
 """
-libs/commands/home_tab/ui_parts.py
+integrations/slack/events/home_tab/ui_parts.py
 """
 
 import logging

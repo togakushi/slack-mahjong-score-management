@@ -1,5 +1,5 @@
 """
-libs/commands/home_tab/ranking.py
+integrations/slack/events/home_tab/ranking.py
 """
 
 import logging

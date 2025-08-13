@@ -1,5 +1,5 @@
 """
-libs/commands/home_tab/summary.py
+integrations/slack/events/home_tab/summary.py
 """
 
 import logging
