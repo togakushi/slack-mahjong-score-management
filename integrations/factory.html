@@ -103,13 +103,13 @@
 </span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="k">match</span> <span class="n">selected_service</span><span class="p">:</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="k">case</span> <span class="s2">&quot;slack&quot;</span><span class="p">:</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.slack.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">func</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="k">case</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">:</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.standard_io.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">func</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown service: </span><span class="si">{</span><span class="n">selected_service</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="k">return</span> <span class="n">func</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.slack.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">slack_func</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>            <span class="k">return</span> <span class="n">slack_func</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="k">case</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.standard_io.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stdio_func</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>            <span class="k">return</span> <span class="n">stdio_func</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown service: </span><span class="si">{</span><span class="n">selected_service</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -191,13 +191,13 @@
 </span><span id="select_function-39"><a href="#select_function-39"><span class="linenos">39</span></a>
 </span><span id="select_function-40"><a href="#select_function-40"><span class="linenos">40</span></a>    <span class="k">match</span> <span class="n">selected_service</span><span class="p">:</span>
 </span><span id="select_function-41"><a href="#select_function-41"><span class="linenos">41</span></a>        <span class="k">case</span> <span class="s2">&quot;slack&quot;</span><span class="p">:</span>
-</span><span id="select_function-42"><a href="#select_function-42"><span class="linenos">42</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.slack.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">func</span>
-</span><span id="select_function-43"><a href="#select_function-43"><span class="linenos">43</span></a>        <span class="k">case</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">:</span>
-</span><span id="select_function-44"><a href="#select_function-44"><span class="linenos">44</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.standard_io.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">func</span>
-</span><span id="select_function-45"><a href="#select_function-45"><span class="linenos">45</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span id="select_function-46"><a href="#select_function-46"><span class="linenos">46</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown service: </span><span class="si">{</span><span class="n">selected_service</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="select_function-47"><a href="#select_function-47"><span class="linenos">47</span></a>
-</span><span id="select_function-48"><a href="#select_function-48"><span class="linenos">48</span></a>    <span class="k">return</span> <span class="n">func</span>
+</span><span id="select_function-42"><a href="#select_function-42"><span class="linenos">42</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.slack.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">slack_func</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+</span><span id="select_function-43"><a href="#select_function-43"><span class="linenos">43</span></a>            <span class="k">return</span> <span class="n">slack_func</span>
+</span><span id="select_function-44"><a href="#select_function-44"><span class="linenos">44</span></a>        <span class="k">case</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">:</span>
+</span><span id="select_function-45"><a href="#select_function-45"><span class="linenos">45</span></a>            <span class="kn">import</span><span class="w"> </span><span class="nn">integrations.standard_io.functions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stdio_func</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+</span><span id="select_function-46"><a href="#select_function-46"><span class="linenos">46</span></a>            <span class="k">return</span> <span class="n">stdio_func</span>
+</span><span id="select_function-47"><a href="#select_function-47"><span class="linenos">47</span></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+</span><span id="select_function-48"><a href="#select_function-48"><span class="linenos">48</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown service: </span><span class="si">{</span><span class="n">selected_service</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
