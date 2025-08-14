@@ -124,19 +124,13 @@ class SlackAPI(APIInterface):
         if not m.in_thread:
             m.post.thread = False
 
-        # 見出し付きポスト
+        # 見出し
         if m.post.headline:
-            if isinstance(m.post.headline, dict):
-                (msg,) = m.post.headline.values()
-            else:
-                msg = m.post.headline
-
             res = api.call_chat_post_message(
                 channel=m.data.channel_id,
-                text=msg,
+                text=m.post.headline.rstrip(),
                 thread_ts=m.reply_ts,
             )
-
             if res:
                 m.post.ts = res.get("ts", "undetermined")
                 m.post.thread = True  # 見出しがある場合はスレッドにする
@@ -149,19 +143,18 @@ class SlackAPI(APIInterface):
                 return  # ファイルをポストしたら終了
 
         post_msg: list = []
-        match m.post.message:
-            case x if isinstance(x, str):
+        for k, v in m.post.message.items():
+            text = ""
+            if k.isnumeric():  # 数値のキーにはヘッダは付けない
                 if m.post.codeblock:
-                    post_msg.append(f"```\n{x}\n```\n")
+                    post_msg.append(f"```\n{v}\n```\n")
                 else:
-                    post_msg.append(f"{x}\n")
-            case x if isinstance(x, dict):
-                for k, v in m.post.message.items():
-                    text = ""
-                    if isinstance(k, str) and k and m.post.key_header:
-                        text += f"*【{k}】*\n{text.rstrip()}\n"
-                    text += f"```\n{v.rstrip()}\n```\n" if m.post.codeblock else v
-                    post_msg.append(text + "\n")
+                    post_msg.append(f"{v}\n")
+            else:
+                if m.post.key_header:
+                    text += f"*【{k}】*\n{text.rstrip()}\n"
+                text += f"```\n{v.rstrip()}\n```\n" if m.post.codeblock else v
+            post_msg.append(text + "\n")
 
         if m.post.summarize:
             post_msg = formatter.group_strings(post_msg)

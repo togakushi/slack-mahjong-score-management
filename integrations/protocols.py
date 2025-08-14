@@ -48,11 +48,12 @@ class MsgData:
 @dataclass
 class PostData:
     """ポストするデータ"""
-    headline: str | dict[str | int, str] = field(default=str())
-    message: str | dict[str | int, str] = field(default=str())
+    headline: str = field(default=str())
+    """ヘッダ文"""
+    message: dict[str, str] = field(default_factory=dict)
     """本文"""
     summarize: bool = field(default=True)
-    """本文を集約する"""
+    """本文の集約"""
     key_header: bool = field(default=True)
     """辞書のキーを見出しにする"""
     codeblock: bool = field(default=False)
@@ -63,7 +64,7 @@ class PostData:
     ts: str = field(default="undetermined")
     """指定タイムスタンプへの強制リプライ"""
     rpoint_sum: int = field(default=0)
-    """素点合計格納用"""
+    """素点合計値格納用"""
 
 
 @runtime_checkable

@@ -66,7 +66,7 @@ def random_reply(m: MessageParserProtocol, message_type: str, update: bool = Tru
         msg = msg.replace("{user_id}", m.data.user_id)
 
     if update:
-        m.post.message = {0: msg}
+        m.post.message = {"0": msg}
 
     return msg
 

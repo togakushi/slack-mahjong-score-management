@@ -54,30 +54,26 @@ class StandardIO(APIInterface):
         return ret.strip()
 
     def post(self, m: MessageParserProtocol):
-        """パラメータの内容によって呼び出すAPIを振り分ける
+        """メッセージ出力
 
         Args:
             m (MessageParserProtocol): メッセージデータ
         """
 
+        # 見出し
+        if m.post.headline:
+            print("=" * 80)
+            print(m.post.headline.rstrip())
+            print("=" * 80)
+
+        # 本文
         if self.fileupload(m):  # ファイル生成
             return
 
-        if m.post.headline:  # 見出し
-            print("=" * 80)
-            if isinstance(m.post.headline, str):
-                print(self._text_formatter(m.post.headline))
-            if isinstance(m.post.headline, dict):
-                k, v = next(iter(m.post.headline.items()))
-                if isinstance(k, str) and k and m.post.key_header:
-                    print(f"【{k}】")
-                print(textwrap.dedent(v).strip())
-            print("=" * 80)
-
-        if m.post.message:  # 本文
+        if m.post.message:
             if isinstance(m.post.message, dict):
                 for k, v in m.post.message.items():
-                    if isinstance(k, str) and k and m.post.key_header:
+                    if not k.isnumeric() and k and m.post.key_header:
                         print(f"【{k}】")
                     print(self._text_formatter(v))
                     print("")

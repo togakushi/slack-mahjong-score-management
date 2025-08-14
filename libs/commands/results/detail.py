@@ -23,9 +23,6 @@ def aggregation(m: MessageParserProtocol) -> bool:
         m (MessageParserProtocol): メッセージデータ
     """
 
-    # 見出し
-    title = "個人成績" if g.params.get("individual") else "チーム成績"
-
     # 検索動作を合わせる
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
@@ -46,9 +43,9 @@ def aggregation(m: MessageParserProtocol) -> bool:
             msg_data["特記事項"] = "、".join(compose.text_item.remarks())
             msg_data["検索ワード"] = compose.text_item.search_word()
             msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {compose.badge.status(0, 0)}"
-            m.post.headline = {title: message_build(msg_data)}
+            m.post.headline = message_build(msg_data)
         else:
-            m.post.headline = {title: "登録されていないチームです。"}
+            m.post.headline = "登録されていないチームです。"
         return False
 
     result_df = aggregate.game_results()
@@ -77,37 +74,37 @@ def aggregation(m: MessageParserProtocol) -> bool:
     msg_data.update(get_headline(data, game_info, player_name))
     msg_data.update(get_totalization(data))
 
-    msg2: dict = {}
-    msg2["座席データ"] = get_seat_data(data)
-    msg2.update(get_record(data))  # ベスト/ワーストレコード
-    msg2.update(get_regulations(mapping_dict))  # レギュレーション
+    msg: dict = {}
+    msg["座席データ"] = get_seat_data(data)
+    msg.update(get_record(data))  # ベスト/ワーストレコード
+    msg.update(get_regulations(mapping_dict))  # レギュレーション
 
     if g.params.get("game_results"):  # 戦績
-        msg2["戦績"] = get_game_results(mapping_dict)
+        msg["戦績"] = get_game_results(mapping_dict)
 
     if g.params.get("versus_matrix"):  # 対戦結果
-        msg2["対戦結果"] = get_versus_matrix(mapping_dict)
+        msg["対戦結果"] = get_versus_matrix(mapping_dict)
 
     # 非表示項目
     if g.cfg.mahjong.ignore_flying:
         g.cfg.dropitems.results.append("トビ")
     if "トビ" in g.cfg.dropitems.results:
-        msg2["座席データ"] = re.sub(r"/ .* /", "/", msg2["座席データ"], flags=re.MULTILINE)
+        msg["座席データ"] = re.sub(r"/ .* /", "/", msg["座席データ"], flags=re.MULTILINE)
     if "役満" in g.cfg.dropitems.results:
-        msg2["座席データ"] = msg2["座席データ"].replace(" / 役満", "")
-        msg2["座席データ"] = re.sub(r" / [0-9]+$", "", msg2["座席データ"], flags=re.MULTILINE)
-        msg2.pop("役満和了", None)
+        msg["座席データ"] = msg["座席データ"].replace(" / 役満", "")
+        msg["座席データ"] = re.sub(r" / [0-9]+$", "", msg["座席データ"], flags=re.MULTILINE)
+        msg.pop("役満和了", None)
 
     if not g.params.get("statistics"):  # 統計
         for k in ("座席データ", "ベストレコード", "ワーストレコード"):
-            msg2.pop(k, None)
+            msg.pop(k, None)
 
-    for k in list(msg2.keys()):
+    for k in list(msg.keys()):
         if k in g.cfg.dropitems.results:
-            msg2.pop(k)
+            msg.pop(k)
 
-    m.post.headline = {title: message_build(msg_data)}
-    m.post.message = msg2
+    m.post.headline = message_build(msg_data)
+    m.post.message = msg
     return True
 
 
