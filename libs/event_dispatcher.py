@@ -157,7 +157,6 @@ def other_words(word: str, m: MessageParserProtocol):
                 if str(k).endswith("_name"):
                     detection.set(**{k: formatter.name_replace(str(p), False)})
                     continue
-                detection.set(**{k: str(p)})
 
             match m.data.status:
                 case "message_append":
