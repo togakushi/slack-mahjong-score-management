@@ -86,14 +86,6 @@ class APIInterface(ABC):
         """
 
     @abstractmethod
-    def fileupload(self, m: "MessageParserProtocol"):
-        """ファイルをアップロードする
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-        """
-
-    @abstractmethod
     def get_conversations(self, m: "MessageParserProtocol") -> dict:
         """スレッド情報の取得
 

@@ -69,7 +69,7 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             comparison.main(m)
         case x if m.is_command and x in g.cfg.alias.download:
             m.post.file_list = [{"成績記録DB": g.cfg.db.database_file}]
-            api_adapter.fileupload(m)
+            api_adapter.post(m)
 
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}$", x) or (m.is_command and x in g.cfg.alias.member):

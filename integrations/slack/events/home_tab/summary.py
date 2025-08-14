@@ -121,17 +121,11 @@ def register_summary_handlers(app):
 
         match g.app_var.get("operation"):
             case "point":
-                count = graph.summary.point_plot(m)
-                if count:
-                    api_adapter.fileupload(m)
-                else:
-                    api_adapter.post(m)
+                graph.summary.point_plot(m)
+                api_adapter.post(m)
             case "rank":
-                count = graph.summary.rank_plot(m)
-                if count:
-                    api_adapter.fileupload(m)
-                else:
-                    api_adapter.post(m)
+                graph.summary.rank_plot(m)
+                api_adapter.post(m)
             case "rating":
                 g.params["command"] = "ranking"
                 ranking.rating.aggregation(m)

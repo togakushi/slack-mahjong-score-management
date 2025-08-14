@@ -6,7 +6,6 @@ import logging
 from typing import cast
 
 from slack_sdk.errors import SlackApiError
-from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
 from integrations.base.interface import (APIInterface, LookupInterface,
@@ -137,11 +136,23 @@ class SlackAPI(APIInterface):
             else:
                 m.post.ts = "undetermined"
 
-        # 本文
-        if m.post.file_list:
-            if self.fileupload(m):
-                return  # ファイルをポストしたら終了
+        # ファイルアップロード
+        upload_flg: bool = False
+        for attache_file in m.post.file_list:
+            for title, file_path in attache_file.items():
+                if file_path:
+                    upload_flg = True
+                    api.call_files_upload(
+                        channel=m.data.channel_id,
+                        title=title,
+                        file=file_path,
+                        thread_ts=m.reply_ts,
+                        request_file_info=False,
+                    )
+        if upload_flg:
+            return  # ファイルをポストしたら終了
 
+        # 本文
         post_msg: list = []
         for k, v in m.post.message.items():
             header = ""
@@ -162,34 +173,6 @@ class SlackAPI(APIInterface):
                 text=msg,
                 thread_ts=m.reply_ts,
             )
-
-    def fileupload(self, m: MessageParserProtocol) -> dict:
-        """files_upload_v2に渡すパラメータを設定
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: API response
-        """
-
-        res: SlackResponse | None = None
-        for attache_file in m.post.file_list:
-            for title, file_path in attache_file.items():
-                if title == "dummy":
-                    continue
-                if file_path:
-                    res = api.call_files_upload(
-                        channel=m.data.channel_id,
-                        title=title,
-                        file=file_path,
-                        thread_ts=m.reply_ts,
-                        request_file_info=False,
-                    )
-
-        if isinstance(res, SlackResponse):
-            return cast(dict, res)
-        return {}
 
     def get_conversations(self, m: MessageParserProtocol) -> dict:
         """スレッド情報の取得

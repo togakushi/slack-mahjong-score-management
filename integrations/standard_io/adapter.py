@@ -63,40 +63,25 @@ class StandardIO(APIInterface):
         # 見出し
         if m.post.headline:
             print("=" * 80)
-            print(m.post.headline.rstrip())
+            print(textwrap.dedent(m.post.headline.rstrip()))
             print("=" * 80)
 
-        # 本文
-        if self.fileupload(m):  # ファイル生成
-            return
-
-        if m.post.message:
-            if isinstance(m.post.message, dict):
-                for k, v in m.post.message.items():
-                    if not k.isnumeric() and k and m.post.key_header:
-                        print(f"【{k}】")
-                    print(self._text_formatter(v))
-                    print("")
-        else:
-            if isinstance(m.post.message, str):
-                print(self._text_formatter(m.post.message))
-
-    def fileupload(self, m: MessageParserProtocol) -> bool:
-        """標準出力
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-        """
-
+        # ファイル
         ret_flg: bool = False
         for file_list in m.post.file_list:
-            title, path = next(iter(file_list.items()))
-            if not path:
-                continue
-            ret_flg = True
-            print(f"{title}: {path}")
+            title, file_path = next(iter(file_list.items()))
+            if file_path:
+                ret_flg = True
+                print(f"{title}: {file_path}")
+        if ret_flg:
+            return
 
-        return ret_flg
+        # 本文
+        for k, v in m.post.message.items():
+            if not k.isnumeric() and k and m.post.key_header:
+                print(f"【{k}】")
+            print(self._text_formatter(v))
+            print("")
 
     def get_conversations(self, m: MessageParserProtocol) -> dict:
         """ダミー
