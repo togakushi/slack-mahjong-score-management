@@ -401,15 +401,15 @@ def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index:
         for s_line, e_line in step_count:
             t = _to_text(df[s_line:e_line])
             if codeblock:
-                msg[s_line] = f"```\n{t}\n```\n"
+                msg[str(s_line)] = f"```\n{t}\n```\n"
             else:
-                msg[s_line] = t
+                msg[str(s_line)] = t
     else:
         t = _to_text(df)
         if codeblock:
-            msg[0] = f"```\n{t}\n```\n"
+            msg["0"] = f"```\n{t}\n```\n"
         else:
-            msg[0] = t
+            msg["0"] = t
 
     return msg
 
