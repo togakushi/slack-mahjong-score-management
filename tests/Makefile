@@ -1,9 +1,3 @@
-mypy:
-	@uv run mypy --check-untyped-defs $(shell git ls-files '../*.py')
-
-pylint:
-	@uv run pylint $(shell git ls-files '../*.py')
-
 prospector:
 	@uv run prospector -W mccabe ..
 
