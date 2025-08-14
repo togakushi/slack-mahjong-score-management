@@ -131,9 +131,9 @@ class SlackAPI(APIInterface):
                 text=m.post.headline.rstrip(),
                 thread_ts=m.reply_ts,
             )
-            if res:
+            if res:  # 見出しがある場合はスレッドにする
                 m.post.ts = res.get("ts", "undetermined")
-                m.post.thread = True  # 見出しがある場合はスレッドにする
+                m.post.thread = True
             else:
                 m.post.ts = "undetermined"
 
@@ -144,17 +144,14 @@ class SlackAPI(APIInterface):
 
         post_msg: list = []
         for k, v in m.post.message.items():
-            text = ""
-            if k.isnumeric():  # 数値のキーにはヘッダは付けない
-                if m.post.codeblock:
-                    post_msg.append(f"```\n{v}\n```\n")
-                else:
-                    post_msg.append(f"{v}\n")
+            header = ""
+            if m.post.key_header:
+                if not k.isnumeric() and k:  # 数値のキーはヘッダにしない
+                    header = f"*【{k}】*\n"
+            if m.post.codeblock:
+                post_msg.append(f"{header}```\n{v}\n```\n\n")
             else:
-                if m.post.key_header:
-                    text += f"*【{k}】*\n{text.rstrip()}\n"
-                text += f"```\n{v.rstrip()}\n```\n" if m.post.codeblock else v
-            post_msg.append(text + "\n")
+                post_msg.append(f"{header}{v}\n")
 
         if m.post.summarize:
             post_msg = formatter.group_strings(post_msg)
