@@ -31,15 +31,10 @@ def plot(m: MessageParserProtocol) -> bool:
         mapping_dict = formatter.anonymous_mapping(df.index.tolist())
         df = df.rename(columns=mapping_dict, index=mapping_dict)
 
-    # 表示
-    msg = "*【対局対戦マトリックス】*\n"
-    msg += message.header(game_info, m, "", 1)
-
     if df.empty:
-        m.post.headline = message.random_reply(m, "no_hits", False)
+        m.post.headline = {"対局対戦マトリックス": message.random_reply(m, "no_hits", False)}
         return False
 
-    # 保存
     file_name = os.path.join(
         g.cfg.setting.work_dir,
         f"{g.params["filename"]}" if g.params.get("filename") else "matrix",
@@ -52,6 +47,6 @@ def plot(m: MessageParserProtocol) -> bool:
         file_path = file_name + ".txt"
         df.to_markdown(file_path, tablefmt="outline")
 
-    m.post.headline = msg
+    m.post.headline = {"対局対戦マトリックス": message.header(game_info, m, "", 1)}
     m.post.file_list = [{"対局対戦マトリックス表": file_path}]
     return True

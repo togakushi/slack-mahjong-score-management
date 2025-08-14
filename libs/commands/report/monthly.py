@@ -31,7 +31,7 @@ def plot(m: MessageParserProtocol) -> bool:
     results = df.transpose().to_dict()
 
     if len(results) == 0:
-        m.post.headline = message.random_reply(m, "no_hits", False)
+        m.post.headline = {"月別ゲーム統計": message.random_reply(m, "no_hits", False)}
         return False
 
     # --- グラフフォント設定

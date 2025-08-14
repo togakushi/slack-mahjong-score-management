@@ -46,7 +46,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
 
     add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary["トビ"].sum()} 人"
     header_text = message.header(game_info, m, add_text, 1)
-    m.post.headline = header_text
+    m.post.headline = {headline_title: header_text}
 
     if df_summary.empty:
         return False

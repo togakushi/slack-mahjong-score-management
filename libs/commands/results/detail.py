@@ -36,23 +36,28 @@ def aggregation(m: MessageParserProtocol) -> bool:
     msg_data: dict = {}
     mapping_dict: dict = {}
 
+    # タイトル
+    if g.params.get("individual"):
+        title = "個人成績詳細"
+    else:
+        title = "チーム成績詳細"
+
     if game_info["game_count"] == 0:
         if g.params.get("individual"):
-            compose.text_item.search_range(time_pattern="time")
             msg_data["検索範囲"] = f"{compose.text_item.search_range(time_pattern="time")}"
             msg_data["特記事項"] = "、".join(compose.text_item.remarks())
             msg_data["検索ワード"] = compose.text_item.search_word()
             msg_data["対戦数"] = f"0 戦 (0 勝 0 敗 0 分) {compose.badge.status(0, 0)}"
-            m.post.headline = message_build(msg_data)
+            m.post.headline = {"個人成績詳細": message_build(msg_data)}
         else:
-            m.post.headline = "登録されていないチームです。"
+            m.post.headline = {"チーム成績詳細": "登録されていないチームです。"}
         return False
 
     result_df = aggregate.game_results()
     record_df = aggregate.ranking_record()
 
     if result_df.empty or record_df.empty:
-        message.random_reply(m, "no_target")
+        m.post.headline = {title: message.random_reply(m, "no_target")}
         return False
 
     result_df = pd.merge(
@@ -103,7 +108,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
         if k in g.cfg.dropitems.results:
             msg.pop(k)
 
-    m.post.headline = message_build(msg_data)
+    m.post.headline = {title: message_build(msg_data)}
     m.post.message = msg
     return True
 

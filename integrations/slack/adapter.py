@@ -120,19 +120,24 @@ class SlackAPI(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
+        def _header_text(title: str) -> str:
+            if not title.isnumeric() and title:  # 数値のキーはヘッダにしない
+                return f"*【{title}】*\n"
+            return ""
+
         if not m.in_thread:
             m.post.thread = False
 
         # 見出し
         if m.post.headline:
+            title, text = next(iter(m.post.headline.items()))
             res = api.call_chat_post_message(
                 channel=m.data.channel_id,
-                text=m.post.headline.rstrip(),
+                text=f"{_header_text(title)}{text.rstrip()}",
                 thread_ts=m.reply_ts,
             )
-            if res:  # 見出しがある場合はスレッドにする
+            if res.status_code == 200:  # 見出しがある場合はスレッドにする
                 m.post.ts = res.get("ts", "undetermined")
-                m.post.thread = True
             else:
                 m.post.ts = "undetermined"
 
@@ -153,16 +158,15 @@ class SlackAPI(APIInterface):
             return  # ファイルをポストしたら終了
 
         # 本文
-        post_msg: list = []
-        for k, v in m.post.message.items():
-            header = ""
+        post_msg: list[str] = []
+        for title, text in m.post.message.items():
+            header: str = str()
             if m.post.key_header:
-                if not k.isnumeric() and k:  # 数値のキーはヘッダにしない
-                    header = f"*【{k}】*\n"
+                header = _header_text(title)
             if m.post.codeblock:
-                post_msg.append(f"{header}```\n{v}\n```\n\n")
+                post_msg.append(f"{header}```\n{text}\n```\n\n")
             else:
-                post_msg.append(f"{header}{v}\n")
+                post_msg.append(f"{header}{text}\n")
 
         if m.post.summarize:
             post_msg = formatter.group_strings(post_msg)

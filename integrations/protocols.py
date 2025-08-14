@@ -48,7 +48,7 @@ class MsgData:
 @dataclass
 class PostData:
     """ポストするデータ"""
-    headline: str = field(default=str())
+    headline: dict[str, str] = field(default_factory=dict)
     """ヘッダ文"""
     message: dict[str, str] = field(default_factory=dict)
     """本文"""

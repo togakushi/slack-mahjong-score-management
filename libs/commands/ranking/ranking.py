@@ -24,19 +24,19 @@ def aggregation(m: MessageParserProtocol) -> bool:
 
     # 情報ヘッダ
     if g.params.get("individual"):  # 個人集計
-        msg = "\n*【ランキング】*\n"
+        title = "ランキング"
     else:  # チーム集計
-        msg = "\n*【チームランキング】*\n"
+        title = "チームランキング"
 
     # データ取得
     game_info: GameInfoDict = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        m.post.headline = f"{msg}{message.random_reply(m, "no_hits", False)}"
+        m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         return False
 
     result_df = loader.read_data("ranking/aggregate.sql")
     if result_df.empty:
-        m.post.headline = f"{msg}{message.random_reply(m, "no_target", False)}"
+        m.post.headline = {title: message.random_reply(m, "no_target", False)}
         return False
 
     df = pd.merge(
@@ -124,7 +124,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     data["連続ラス回避"] = table_conversion(df, ["max_top3", 2])
 
     # 表示
-    msg += message.header(game_info, m, "", 1)
+    m.post.headline = {title: message.header(game_info, m, "", 1)}
 
     for key in list(data.keys()):
         if key in g.cfg.dropitems.ranking:  # 非表示項目
@@ -136,7 +136,6 @@ def aggregation(m: MessageParserProtocol) -> bool:
                 data.pop(key)
                 continue
 
-    m.post.headline = msg
     m.post.message = data
     m.post.key_header = True
     m.post.codeblock = True

@@ -39,7 +39,7 @@ def main(m: MessageParserProtocol) -> bool:
     df = loader.read_data("report/results_list.sql").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
-        m.post.headline = message.random_reply(m, "no_hits", False)
+        m.post.headline = {"成績一覧": message.random_reply(m, "no_hits", False)}
         return False
 
     if g.params.get("anonymous"):

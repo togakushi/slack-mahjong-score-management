@@ -22,14 +22,13 @@ def aggregation(m: MessageParserProtocol) -> bool:
     # 情報ヘッダ
     add_text: str = ""
     headline: str = ""
-    m.post.headline = ""
 
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info: GameInfoDict = aggregate.game_info()
 
     if not game_info["game_count"]:  # 検索結果が0件のとき
-        m.post.headline = message.random_reply(m, "no_hits")
+        m.post.headline = {"レーティング": message.random_reply(m, "no_hits", False)}
         return False
 
     df_results = loader.read_data("ranking/results.sql").set_index("name")
@@ -68,10 +67,10 @@ def aggregation(m: MessageParserProtocol) -> bool:
         df["name"] = df["name"].replace(mapping_dict)
 
     if df.empty:
-        m.post.headline = message.random_reply(m, "no_target", False)
+        m.post.headline = {"レーティング": message.random_reply(m, "no_target", False)}
         return False
 
-    m.post.headline = message.header(game_info, m, add_text, 1)
+    m.post.headline = {"レーティング": message.header(game_info, m, add_text, 1)}
     df = formatter.df_rename(df.filter(
         items=[
             "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"

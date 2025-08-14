@@ -36,7 +36,7 @@ def point_plot(m: MessageParserProtocol) -> bool:
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        m.post.headline = message.random_reply(m, "no_hits", False)
+        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         return False
 
     # グラフタイトル/X軸ラベル
@@ -120,7 +120,7 @@ def rank_plot(m: MessageParserProtocol) -> bool:
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        m.post.headline = message.random_reply(m, "no_hits", False)
+        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         return False
 
     # グラフタイトル/X軸ラベル

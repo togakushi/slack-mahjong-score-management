@@ -62,9 +62,13 @@ class StandardIO(APIInterface):
 
         # 見出し
         if m.post.headline:
-            print("=" * 80)
-            print(textwrap.dedent(m.post.headline.rstrip()))
-            print("=" * 80)
+            title, text = next(iter(m.post.headline.items()))
+            if text:
+                print("=" * 80)
+                if not title.isnumeric() and title:
+                    print(f"【{title}】")
+                print(textwrap.dedent(text).rstrip())
+                print("=" * 80)
 
         # ファイル
         ret_flg: bool = False
