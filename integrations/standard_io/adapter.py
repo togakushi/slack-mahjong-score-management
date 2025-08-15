@@ -81,10 +81,10 @@ class StandardIO(APIInterface):
             return
 
         # 本文
-        for k, v in m.post.message.items():
-            if not k.isnumeric() and k and m.post.key_header:
-                print(f"【{k}】")
-            print(self._text_formatter(v))
+        for title, text in m.post.message.items():
+            if not title.isnumeric() and title and m.post.key_header:
+                print(f"【{title}】")
+            print(self._text_formatter(text))
             print("")
 
     def get_conversations(self, m: MessageParserProtocol) -> dict:
