@@ -49,8 +49,8 @@ def member_info(name: str) -> dict:
             count() as game_count,
             min(ts) as first_game,
             max(ts) as last_game,
-            max(rpoint) as max_rpoint,
-            min(rpoint) as min_rpoint
+            max(rpoint) as rpoint_max,
+            min(rpoint) as rpoint_min
         from
             --[individual] individual_results as results
             --[team] team_results as results

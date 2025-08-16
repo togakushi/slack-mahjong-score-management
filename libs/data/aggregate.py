@@ -177,10 +177,10 @@ def ranking_record() -> pd.DataFrame:
 
     # 最大値/最小値追加
     if not gamedata.empty:
-        record_df["max_point"] = gamedata["max_point"].iloc[0]
-        record_df["min_point"] = gamedata["min_point"].iloc[0]
-        record_df["max_rpoint"] = gamedata["max_rpoint"].iloc[0]
-        record_df["min_rpoint"] = gamedata["min_rpoint"].iloc[0]
+        record_df["point_max"] = gamedata["point_max"].iloc[0]
+        record_df["point_min"] = gamedata["point_min"].iloc[0]
+        record_df["rpoint_max"] = gamedata["rpoint_max"].iloc[0]
+        record_df["rpoint_min"] = gamedata["rpoint_min"].iloc[0]
 
     logging.trace(record_df)  # type: ignore
     return record_df

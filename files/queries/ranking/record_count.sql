@@ -33,10 +33,10 @@ select
     point as "獲得ポイント",
     rpoint as "最終素点",
     count(*) over (partition by name) as count,
-    max(point) over (partition by name) as max_point,
-    min(point) over (partition by name) as min_point,
-    max(rpoint) over (partition by name) as max_rpoint,
-    min(rpoint) over (partition by name) as min_rpoint
+    max(point) over (partition by name) as point_max,
+    min(point) over (partition by name) as point_min,
+    max(rpoint) over (partition by name) as rpoint_max,
+    min(rpoint) over (partition by name) as rpoint_min
 from
     target_data
 ;
