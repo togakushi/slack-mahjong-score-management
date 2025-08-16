@@ -26,6 +26,10 @@ def aggregation(m: MessageParserProtocol) -> bool:
     df_remarks = loader.read_data("remarks.info.sql")
     df_remarks = df_remarks[df_remarks["playtime"].isin(df_game["playtime"].unique())]
 
+    # インデックスの振りなおし
+    df_summary.reset_index(inplace=True, drop=True)
+    df_summary.index += 1
+
     if g.params.get("anonymous"):
         col = "name" if g.params.get("individual") else "team"
         mapping_dict = formatter.anonymous_mapping(df_game["name"].unique().tolist())
@@ -57,37 +61,26 @@ def aggregation(m: MessageParserProtocol) -> bool:
     if g.params.get("score_comparisons"):  # 差分表示
         header_list = ["#", column_name, "通算", "順位差", "トップ差"]
         filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
+        msg["ポイント差分"] = df_summary.filter(items=header_list)
     else:  # 通常表示
         header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
         filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
         if g.cfg.mahjong.ignore_flying:  # トビカウントなし
             header_list.remove("トビ")
             filter_list.remove("トビ")
-
-    # メッセージ整形
-    msg.update(formatter.pd_to_dict(df_summary.filter(items=header_list), step=40, codeblock=True))
+        msg["通算ポイント"] = df_summary.filter(items=header_list)
 
     # メモ追加
-    df_yakuman = df_remarks.query("type == 0").drop(columns=["type", "ex_point"])
+    df_yakuman = formatter.df_rename(df_remarks.query("type == 0").drop(columns=["type", "ex_point"]), kind=0)
+    df_regulations = formatter.df_rename(df_remarks.query("type == 1").drop(columns=["type"]), kind=1)
+    df_others = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type", "ex_point"]), kind=2)
+
     if not df_yakuman.empty:
-        msg["役満和了"] = "\n".join([
-            f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} （{v["name"]}）"
-            for _, v in df_yakuman.iterrows()
-        ])
-
-    df_regulations = df_remarks.query("type == 1").drop(columns=["type"])
+        msg["役満和了"] = df_yakuman
     if not df_regulations.empty:
-        msg["卓外ポイント"] = "\n".join([
-            f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} {str(v["ex_point"]).replace("-", "▲")}pt（{v["name"]}）"
-            for _, v in df_regulations.iterrows()
-        ])
-
-    df_others = df_remarks.query("type == 2").drop(columns=["type", "ex_point"])
+        msg["卓外ポイント"] = df_regulations
     if not df_others.empty:
-        msg["その他"] = "\n".join([
-            f"\t{str(v["playtime"]).replace("-", "/")}：{v["matter"]} （{v["name"]}）"
-            for _, v in df_others.iterrows()
-        ])
+        msg["その他"] = df_others
 
     # --- ファイル出力
     match cast(str, g.params.get("format", "default")).lower():
@@ -126,4 +119,5 @@ def aggregation(m: MessageParserProtocol) -> bool:
     m.post.message = msg
     m.post.file_list = file_list
     m.post.summarize = True
+    m.post.codeblock = True
     return True

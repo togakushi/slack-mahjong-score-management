@@ -5,6 +5,7 @@ integrations/slack/message.py
 import logging
 from typing import cast
 
+import pandas as pd
 from slack_sdk.errors import SlackApiError
 
 import libs.global_value as g
@@ -125,6 +126,23 @@ class SlackAPI(APIInterface):
                 return f"*【{title}】*\n"
             return ""
 
+        def _table_data(data: dict) -> list:
+            ret_list: list = []
+            text_data = iter(data.values())
+            # 先頭ブロックの処理
+            v = next(text_data)
+            if m.post.codeblock:
+                ret_list.append(f"{header}```\n{v}\n```\n\n")
+            else:
+                ret_list.append(f"{header}{v}\n")
+            # 残りのブロック
+            for v in text_data:
+                if m.post.codeblock:
+                    ret_list.append(f"```\n{v}\n```\n\n")
+                else:
+                    ret_list.append(f"{v}\n")
+            return ret_list
+
         if not m.in_thread:
             m.post.thread = False
 
@@ -159,14 +177,29 @@ class SlackAPI(APIInterface):
 
         # 本文
         post_msg: list[str] = []
-        for title, text in m.post.message.items():
+        for title, msg in m.post.message.items():
             header: str = str()
             if m.post.key_header:
                 header = _header_text(title)
-            if m.post.codeblock:
-                post_msg.append(f"{header}```\n{text}\n```\n\n")
-            else:
-                post_msg.append(f"{header}{text}\n")
+
+            if isinstance(msg, str):
+                if m.post.codeblock:
+                    post_msg.append(f"{header}```\n{msg}\n```\n\n")
+                else:
+                    post_msg.append(f"{header}{msg}\n")
+
+            if isinstance(msg, pd.DataFrame):
+                match m.data.command_type:
+                    case "results":
+                        match title:
+                            case "通算ポイント" | "ポイント差分":
+                                post_msg.extend(_table_data(formatter.df_to_dict(msg, step=40)))
+                            case _:
+                                post_msg.extend(_table_data(formatter.df_to_remarks(msg)))
+                    case "rating":
+                        post_msg.extend(_table_data(formatter.df_to_dict(msg, step=20)))
+                    case "ranking":
+                        post_msg.extend(_table_data(formatter.df_to_ranking(msg, title, step=50)))
 
         if m.post.summarize:
             post_msg = formatter.group_strings(post_msg)

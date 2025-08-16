@@ -9,12 +9,11 @@ from libs.commands import graph, ranking, report, results
 from libs.utils import dictutil
 
 
-def main(m: MessageParserProtocol, command_type: str):
+def main(m: MessageParserProtocol):
     """サブコマンドディスパッチャー
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-        command_type (str): サブコマンドタイプ
     """
 
     if m.data.status != "message_append":
@@ -22,7 +21,7 @@ def main(m: MessageParserProtocol, command_type: str):
 
     api_adapter = factory.select_adapter(g.selected_service)
 
-    match command_type:
+    match m.data.command_type:
         case "results":
             g.params = dictutil.placeholder(g.cfg.results, m)
             # モード切り替え

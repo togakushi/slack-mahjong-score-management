@@ -2,10 +2,7 @@
 libs/commands/results/ranking.py
 """
 
-import re
-
 import pandas as pd
-from tabulate import tabulate
 
 import libs.global_value as g
 from cls.types import GameInfoDict
@@ -44,126 +41,119 @@ def aggregation(m: MessageParserProtocol) -> bool:
         on=["name", "name"],
         suffixes=["", "_x"]
     )
+    df["rank"] = 0  # 順位表示用カラム
+    df["total_count"] = game_info["game_count"]  # 集計ゲーム数
+    df["participation_rate"] = df["game_count"] / df["total_count"]  # 参加率
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
         df["name"] = df["name"].replace(mapping_dict)
 
     # 集計
-    data: dict = {}
+    data: dict[str, pd.DataFrame] = {}
+    ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # pylint: disable=unused-variable  # noqa: F841
 
     # ゲーム参加率
-    df["participation_rate"] = df["game_count"] / game_info["game_count"]
-    df["rank"] = df["participation_rate"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["participation_rate"]:>7.2%} ({row["game_count"]:3d}G / {game_info["game_count"]:4d}G)", axis=1)
-    data["ゲーム参加率"] = table_conversion(df)
+    filter_item = ["rank", "name", "participation_rate", "game_count", "total_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["participation_rate", "game_count"], ascending=[False, False])
+    work_df["rank"] = df["participation_rate"].rank(ascending=False, method="dense").astype("int")
+    data["ゲーム参加率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 通算ポイント
-    df["rank"] = df["point_sum"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["point_sum"]:>+7.1f}pt ({row["game_count"]:3d}G)", axis=1)
-    data["通算ポイント"] = table_conversion(df)
+    filter_item = ["rank", "name", "point_sum", "game_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["point_sum", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["point_sum"].rank(ascending=False, method="dense").astype("int")
+    data["通算ポイント"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 平均ポイント
-    df["rank"] = df["point_avg"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["point_avg"]:>+7.1f}pt ({row["point_sum"]:>+7.1f}pt / {row["game_count"]:3d}G)", axis=1)
-    data["平均ポイント"] = table_conversion(df)
+    filter_item = ["rank", "name", "point_avg", "point_sum", "game_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["point_avg", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["point_avg"].rank(ascending=False, method="dense").astype("int")
+    data["平均ポイント"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 平均収支
-    df["rank"] = df["rpoint_avg"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["rpoint_avg"] - 25000:>6.0f}点 ({row["rpoint_avg"]:>6.0f}点 / {row["game_count"]:3d}G)", axis=1)
-    data["平均収支"] = table_conversion(df)
+    filter_item = ["rank", "name", "rpoint_avg", "game_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["rpoint_avg", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["rpoint_avg"].rank(ascending=False, method="dense").astype("int")
+    data["平均収支"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # トップ率
-    df["rank"] = df["rank1_rate"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["rank1_rate"]:>7.2%} ({row["rank1"]:3d} / {row["game_count"]:3d}G)", axis=1)
-    data["トップ率"] = table_conversion(df)
+    filter_item = ["rank", "name", "rank1_rate", "rank1", "game_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["rank1_rate", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["rank1_rate"].rank(ascending=False, method="dense").astype("int")
+    data["トップ率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 連対率
-    df["rank"] = df["top2_rate"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["top2_rate"]:>7.2%} ({row["top2"]:3d} / {row["game_count"]:3d}G)", axis=1)
-    data["連対率"] = table_conversion(df)
+    filter_item = ["rank", "name", "top2_rate", "top2", "game_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["top2_rate", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["top2_rate"].rank(ascending=False, method="dense").astype("int")
+    data["連対率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # ラス回避率
-    df["rank"] = df["top3_rate"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["top3_rate"]:>7.2%} ({row["top3"]:3d} / {row["game_count"]:3d}G)", axis=1)
-    data["ラス回避率"] = table_conversion(df)
+    filter_item = ["rank", "name", "top3_rate", "top3", "game_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["top3_rate", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["top3_rate"].rank(ascending=False, method="dense").astype("int")
+    data["ラス回避率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # トビ率
-    df["rank"] = df["flying_rate"].rank(ascending=True, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["flying_rate"]:>7.2%} ({row["flying"]:3d} / {row["game_count"]:3d}G)", axis=1)
-    data["トビ率"] = table_conversion(df)
+    filter_item = ["rank", "name", "flying_rate", "flying", "game_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["flying_rate", "game_count"], ascending=[True, False])
+    work_df["rank"] = work_df["flying_rate"].rank(ascending=True, method="dense").astype("int")
+    data["トビ率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 平均順位
-    df["rank"] = df["rank_avg"].rank(ascending=True, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["rank_avg"]:>4.2f} ({row["rank_dist"]})", axis=1)
-    data["平均順位"] = table_conversion(df)
+    work_df = df.sort_values(by=["rank_avg", "game_count"], ascending=[True, False])
+    work_df["rank"] = work_df["rank_avg"].rank(ascending=True, method="dense").astype("int")
+    filter_item = ["rank", "name", "rank_avg", "rank_distr"]
+    work_df = work_df.filter(items=filter_item).sort_values(by="rank", ascending=True)
+    data["平均順位"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 役満和了率
-    df["rank"] = df["gs_rate"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["gs_rate"]:>7.2%} ({row["gs_count"]:3d} / {row["game_count"]:3d}G)", axis=1)
-    data["役満和了率"] = table_conversion(df, ["gs_count", 1])
+    work_df = df.query("gs_count > 0")
+    filter_item = ["rank", "name", "gs_rate", "gs_count", "game_count"]
+    work_df = work_df.filter(items=filter_item).sort_values(by=["gs_rate", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["gs_rate"].rank(ascending=False, method="dense").astype("int")
+    data["役満和了率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 最大素点
-    df["rank"] = df["rpoint_max"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["rpoint_max"]:>6.0f}点 ({row["point_max"]:>+7.1f}pt)", axis=1)
-    data["最大素点"] = table_conversion(df)
+    filter_item = ["rank", "name", "rpoint_max", "point_max", "game_count"]
+    work_df = df.filter(items=filter_item).sort_values(by=["rpoint_max", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["rpoint_max"].rank(ascending=False, method="dense").astype("int")
+    data["最大素点"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 連続トップ
-    df["rank"] = df["max_top"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["max_top"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
-    data["連続トップ"] = table_conversion(df, ["max_top", 2])
+    work_df = df.query("max_top > 1")
+    filter_item = ["rank", "name", "max_top", "game_count"]
+    work_df = work_df.filter(items=filter_item).sort_values(by=["max_top", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["max_top"].rank(ascending=False, method="dense").astype("int")
+    data["連続トップ"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 連続連対
-    df["rank"] = df["max_top2"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["max_top2"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
-    data["連続連対"] = table_conversion(df, ["max_top2", 2])
+    work_df = df.query("max_top2 > 1")
+    filter_item = ["rank", "name", "max_top2", "game_count"]
+    work_df = work_df.filter(items=filter_item).sort_values(by=["max_top2", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["max_top2"].rank(ascending=False, method="dense").astype("int")
+    data["連続連対"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 連続ラス回避
-    df["rank"] = df["max_top3"].rank(ascending=False, method="dense").astype("int")
-    df["disp"] = df.apply(lambda row: f"<>{row["max_top3"]:>2d}連続 ({row["game_count"]:3d}G)", axis=1)
-    data["連続ラス回避"] = table_conversion(df, ["max_top3", 2])
+    work_df = df.query("max_top3 > 1")
+    filter_item = ["rank", "name", "max_top3", "game_count"]
+    work_df = work_df.filter(items=filter_item).sort_values(by=["max_top3", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["max_top3"].rank(ascending=False, method="dense").astype("int")
+    data["連続ラス回避"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
-    # 表示
-    m.post.headline = {title: message.header(game_info, m, "", 1)}
-
+    # 項目整理
     for key in list(data.keys()):
         if key in g.cfg.dropitems.ranking:  # 非表示項目
             data.pop(key)
             continue
 
         if key in data:  # 対象者がいなければ項目を削除
-            if not data[key]:
+            if data[key].empty:
                 data.pop(key)
-                continue
 
+    m.post.headline = {title: message.header(game_info, m, "", 1)}
     m.post.message = data
     m.post.key_header = True
     m.post.codeblock = True
     return True
-
-
-def table_conversion(df: pd.DataFrame, threshold: list | None = None) -> str:
-    """テーブル変換
-
-    Args:
-        df (pd.DataFrame): 変換対象データ
-        threshold (list | None, optional): 非表示にする閾値. Defaults to None.
-
-    Returns:
-        str: 作成したテーブル
-    """
-
-    if isinstance(threshold, list):
-        df = df.query(f"{threshold[0]} >= @threshold[1]").copy()
-
-    if df.empty:
-        return ""
-
-    ranked = g.params.get("ranked", g.cfg.ranking.ranked)  # pylint: disable=unused-variable  # noqa: F841
-    df.sort_values(by=["rank", "game_count"], ascending=[True, False], inplace=True)
-    df = df.query("rank <= @ranked")
-    tbl = tabulate(df.filter(items=["rank", "name", "disp"]).values)
-    tbl = re.sub(r"( *[0-9]+)\s(.*)<>(.*)", r"\1:\2\3", tbl)
-    tbl = "\n".join(tbl.splitlines()[1:-1]).replace(" -", "▲")
-
-    return tbl

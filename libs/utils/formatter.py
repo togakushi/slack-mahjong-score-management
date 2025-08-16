@@ -7,6 +7,7 @@ import random
 import re
 
 import pandas as pd
+from tabulate import tabulate
 
 import libs.global_value as g
 from libs.data import lookup
@@ -45,11 +46,15 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
             case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位" | "rank1" | "rank2" | "rank3" | "rank4":
                 fmt.append(".0f")
             case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)" | "1位率" | "2位率" | "3位率" | "4位率":
-                fmt.append(".2f")
+                fmt.append(".2%")
+            case "top2_rate" | "連対率" | "top3_rate" | "ラス回避率":
+                fmt.append(".2%")
+            case"yakuman(%)" | "gs_rate" | "役満和了率":
+                fmt.append(".2%")
             case "トビ" | "flying":
                 fmt.append(".0f")
             case "トビ率" | "flying(%)" | "yakuman(%)":
-                fmt.append(".2f")
+                fmt.append(".2%")
             case "平均順位" | "平順" | "rank_avg":
                 fmt.append(".2f")
             case "順位差" | "トップ差":
@@ -60,6 +65,8 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
                 fmt.append(".0f")
             case "rpoint_max" | "rpoint_min" | "rpoint_mean":
                 fmt.append(".0f")
+            case "participation_rate" | "ゲーム参加率":
+                fmt.append(".2%")
             case _:
                 fmt.append("")
 
@@ -259,17 +266,21 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
     rename_dict: dict = {
         "playtime": "日時",
         "rate": "レート",
+        "participation_rate": "ゲーム参加率",
+        "total_count": "集計ゲーム数",
         #
         "rpoint": "素点",
         "point": "獲得ポイント",
         "rpoint_avg": "平均素点",
+        "top2_rate": "連対率", "top2": "連対数",
+        "top3_rate": "ラス回避率", "top3": "ラス回避数",
         "point_dev": "得点偏差", "rank_dev": "順位偏差",
         "grade": "段位",
         # レコード
         "max_top": "連続トップ", "max_top2": "連続連対", "max_top3": "連続ラス回避",
         "max_low": "連続トップなし", "max_low2": "連続逆連対", "max_low4": "連続ラス",
-        "max_point": "最大獲得ポイント", "min_point": "最小獲得ポイント",
-        "max_rpoint": "最大素点", "min_rpoint": "最小素点",
+        "point_max": "最大獲得ポイント", "point_min": "最小獲得ポイント",
+        "rpoint_max": "最大素点", "rpoint_min": "最小素点",
         # 直接対決
         "results": "対戦結果", "win%": "勝率",
         "my_point_sum": "獲得ポイント(自分)", "my_point_avg": "平均ポイント(自分)",
@@ -286,7 +297,7 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
                 rename_dict[x] = "名前" if short else "プレイヤー名"
             case "team":
                 rename_dict[x] = "チーム" if short else "チーム名"
-            case "count" | "game":
+            case "count" | "game" | "game_count":
                 rename_dict[x] = "ゲーム数"
             case "pt_total" | "total_point" | "point_sum" | "total_mix":
                 rename_dict[x] = "通算" if short else "通算ポイント"
@@ -299,13 +310,13 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
             case "rank_avg":
                 rename_dict[x] = "平順" if short else "平均順位"
             case "1st" | "rank1" | "1st_mix":
-                rename_dict[x] = "1位"
+                rename_dict[x] = "1位数"
             case "2nd" | "rank2" | "2nd_mix":
-                rename_dict[x] = "2位"
+                rename_dict[x] = "2位数"
             case "3rd" | "rank3" | "3rd_mix":
-                rename_dict[x] = "3位"
+                rename_dict[x] = "3位数"
             case "4th" | "rank4" | "4th_mix":
-                rename_dict[x] = "4位"
+                rename_dict[x] = "4位数"
             case "1st(%)" | "rank1_rate":
                 rename_dict[x] = "1位率"
             case "2nd(%)" | "rank2_rate":
@@ -323,7 +334,7 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
             case "4th_count":
                 rename_dict[x] = "4位数"
             case "flying" | "flying_mix":
-                rename_dict[x] = "トビ"
+                rename_dict[x] = "トビ" if short else "トビ数"
             case "flying_count":
                 rename_dict[x] = "トビ数"
             case "flying_rate" | "flying(%)":
@@ -336,9 +347,9 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
                 rename_dict[x] = "トップ差"
             case "yakuman_mix" | "grandslam":
                 rename_dict[x] = "役満和了"
-            case "yakuman_count":
+            case "yakuman_count" | "gs_count":
                 rename_dict[x] = "役満和了数"
-            case "yakuman(%)":
+            case "yakuman(%)" | "gs_rate":
                 rename_dict[x] = "役満和了率"
             case "matter":
                 match kind:
@@ -355,13 +366,12 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
     return df.rename(columns=rename_dict)
 
 
-def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index: bool = False) -> dict:
+def df_to_dict(df: pd.DataFrame, step: int = 40, index: bool = False) -> dict:
     """DataFrameからテキスト変換
 
     Args:
         df (pd.DataFrame): 対象データ
         step (int, optional): 分割行. Defaults to 40.
-        codeblock (bool, optional): コードブロックにするか. Defaults to False.
         index (bool, optional): インデックスを含める. Defaults to False.
 
     Returns:
@@ -369,9 +379,7 @@ def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index:
     """
 
     msg: dict = {}
-    step_count: list = []
     floatfmt = floatfmt_adjust(df, index)
-    last_line = len(df)
 
     # インデックスの振りなおし
     df.reset_index(inplace=True, drop=True)
@@ -388,30 +396,104 @@ def pd_to_dict(df: pd.DataFrame, step: int = 40, codeblock: bool = False, index:
         return ret
 
     if step:
-        # step行毎に分割
-        for i in range(int(last_line / step + 1)):
-            s_line = i * step
-            e_line = (i + 1) * step
-
-            if last_line - e_line < step / 2:  # 最終ブロックがstep/2で収まるならまとめる
-                step_count.append((s_line, last_line))
-                break
-            step_count.append((s_line, e_line))
-
-        for s_line, e_line in step_count:
+        for s_line, e_line in textutil.split_line(len(df), step):
             t = _to_text(df[s_line:e_line])
-            if codeblock:
-                msg[str(s_line)] = f"```\n{t}\n```\n"
-            else:
-                msg[str(s_line)] = t
+            msg[str(s_line)] = t
     else:
         t = _to_text(df)
-        if codeblock:
-            msg["0"] = f"```\n{t}\n```\n"
-        else:
-            msg["0"] = t
+        msg["0"] = t
 
     return msg
+
+
+def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
+    """DataFrameからランキングテーブルを生成
+
+    Args:
+        df (pd.DataFrame): ランキングデータ
+        title (str): 種別
+        step (int, optional): 分割行. Defaults to 40.
+
+    Returns:
+        dict: 整形テキスト
+    """
+
+    # 表示内容
+    match title:
+        case "ゲーム参加率":
+            df["内容"] = df.apply(lambda x: f"<>{x["ゲーム参加率"]:>7.2%} ({x["ゲーム数"]:4d}G /{x["集計ゲーム数"]:4d}G)", axis=1)
+        case "通算ポイント":
+            df["内容"] = df.apply(lambda x: f"<>{x["通算ポイント"]:>+7.1f}pt ({x["ゲーム数"]:4d}G)", axis=1)
+        case "平均ポイント":
+            df["内容"] = df.apply(lambda x: f"<>{x["平均ポイント"]:>+7.1f}pt ( {x["通算ポイント"]:>+7.1f}pt /{x["ゲーム数"]:4d}G)", axis=1)
+        case "平均収支":
+            df["内容"] = df.apply(lambda x: f"<>{x["平均素点"] - 25000:>6.0f}点 ({x["平均素点"]:>6.0f}点 /{x["ゲーム数"]:4d}G)", axis=1)
+        case "トップ率":
+            df["内容"] = df.apply(lambda x: f"<>{x["1位率"]:>7.2%} ({x["1位数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+        case "連対率":
+            df["内容"] = df.apply(lambda x: f"<>{x["連対率"]:>7.2%} ({x["連対数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+        case "ラス回避率":
+            df["内容"] = df.apply(lambda x: f"<>{x["ラス回避率"]:>7.2%} ({x["ラス回避数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+        case "トビ率":
+            df["内容"] = df.apply(lambda x: f"<>{x["トビ率"]:>7.2%} ({x["トビ数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+        case "平均順位":
+            df["内容"] = df.apply(lambda x: f"<>{x["平均順位"]:>4.2f} ({x["順位分布"]})", axis=1)
+        case "役満和了率":
+            df["内容"] = df.apply(lambda x: f"<>{x["役満和了率"]:>7.2%} ({x["役満和了数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+        case "最大素点":
+            df["内容"] = df.apply(lambda x: f"<>{x["最大素点"]:>6.0f}点 ({x["最大獲得ポイント"]:>+7.1f}pt)", axis=1)
+        case "連続トップ":
+            df["内容"] = df.apply(lambda x: f"<>{x["連続トップ"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
+        case "連続連対":
+            df["内容"] = df.apply(lambda x: f"<>{x["連続連対"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
+        case "連続ラス回避":
+            df["内容"] = df.apply(lambda x: f"<>{x["連続ラス回避"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
+        case _:
+            return {}
+
+    # 整形と分割
+    ret_list: list = []
+    for s_line, e_line in textutil.split_line(len(df), step):
+        work_df = df[s_line:e_line]
+        tbl = tabulate(work_df.filter(items=["順位", "プレイヤー名", "内容"]).values, showindex=False)
+        ret = ""
+        for line in tbl.splitlines()[1:-1]:
+            line = re.sub(r"^(\s*\d+)(.*)", r"\1：\2", line)
+            line = line.replace(" -", "▲")
+            line = line.replace("<>", "")
+            ret += f"{line}\n"
+        ret_list.append(ret.rstrip())
+
+    return {str(idx): data for idx, data in enumerate(ret_list)}
+
+
+def df_to_remarks(df: pd.DataFrame) -> dict:
+    """DataFrameからメモテーブルを生成
+
+    Args:
+        df (pd.DataFrame): データ
+
+    Returns:
+        dict: 整形テキスト
+    """
+
+    for col in df.columns:
+        match col:
+            case "日時":
+                df["日時"] = df["日時"].map(lambda x: str(x).replace("-", "/"))
+            case "卓外":
+                df["卓外"] = df["卓外"].map(lambda x: f"{x}pt".replace("-", "▲"))
+
+    if "卓外" in df.columns:
+        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["内容"]} {x["卓外"]} ({x["名前"]})", axis=1)
+    elif "和了役" in df.columns:
+        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["和了役"]} ({x["名前"]})", axis=1)
+    else:
+        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["内容"]} ({x["名前"]})", axis=1)
+
+    tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
+
+    return {"0": "\n".join(tbl)}
 
 
 def group_strings(lines: list[str], limit: int = 3000) -> list[str]:

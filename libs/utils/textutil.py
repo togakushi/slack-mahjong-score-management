@@ -85,3 +85,28 @@ def count_padding(data):
     if name_list:
         return max(len_count(x) for x in name_list)
     return 0
+
+
+def split_line(last_line: int, step: int) -> list[tuple[int, int]]:
+    """step単位で分割する
+
+    Args:
+        last_line (int): 最終位置
+        step (int): 分割単位
+
+    Returns:
+        list[tuple[int, int]]: 分割単位のペア
+    """
+
+    step_count: list = []
+
+    for i in range(int(last_line / step + 1)):
+        s_line = i * step
+        e_line = (i + 1) * step
+
+        if last_line - e_line < step / 2:  # 最終ブロックがstep/2で収まるならまとめる
+            step_count.append((s_line, last_line))
+            break
+        step_count.append((s_line, e_line))
+
+    return step_count

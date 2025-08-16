@@ -2,13 +2,25 @@
 integrations/protocols.py
 """
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any, Literal, Protocol, runtime_checkable
+
+import pandas as pd
 
 
 @dataclass
 class MsgData:
     """ポストされたメッセージデータ"""
+
+    command_type = Literal["results", "graph", "ranking", "rating", "report"]
+    """サブコマンド
+    - *results*: 成績サマリ
+    - *graph*: グラフ生成
+    - *ranking*: ランキング
+    - *rating*: レーティング
+    - *report*: レポート
+    """
     text: str = field(default=str())
     """本文"""
     event_ts: str = field(default="undetermined")
@@ -50,7 +62,7 @@ class PostData:
     """ポストするデータ"""
     headline: dict[str, str] = field(default_factory=dict)
     """ヘッダ文"""
-    message: dict[str, str] = field(default_factory=dict)
+    message: Mapping[str, str | pd.DataFrame] = field(default_factory=dict)
     """本文"""
     summarize: bool = field(default=True)
     """本文の集約"""

@@ -4,9 +4,12 @@ integrations/standard_io/message.py
 
 import textwrap
 
+import pandas as pd
+
 from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
 from integrations.protocols import MessageParserProtocol
+from libs.utils import formatter
 
 
 class _ReactionsDummy(ReactionsInterface):
@@ -81,10 +84,21 @@ class StandardIO(APIInterface):
             return
 
         # 本文
-        for title, text in m.post.message.items():
+        for title, msg in m.post.message.items():
             if not title.isnumeric() and title and m.post.key_header:
                 print(f"【{title}】")
-            print(self._text_formatter(text))
+
+            if isinstance(msg, str):
+                print(self._text_formatter(msg))
+
+            if isinstance(msg, pd.DataFrame):
+                match m.data.command_type:
+                    case "ranking":
+                        fmt = formatter.floatfmt_adjust(msg, index=False)
+                    case _:
+                        fmt = formatter.floatfmt_adjust(msg, index=True)
+                print(msg.to_markdown(index=False, tablefmt="simple_outline", floatfmt=fmt).replace("nan", "---"))
+
             print("")
 
     def get_conversations(self, m: MessageParserProtocol) -> dict:

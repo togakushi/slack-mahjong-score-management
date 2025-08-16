@@ -19,6 +19,8 @@ def aggregation(m: MessageParserProtocol) -> bool:
         m (MessageParserProtocol): メッセージデータ
     """
 
+    m.data.command_type = "rating"  # 更新
+
     # 情報ヘッダ
     add_text: str = ""
     headline: str = ""
@@ -26,6 +28,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info: GameInfoDict = aggregate.game_info()
+    ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # pylint: disable=unused-variable  # noqa: F841
 
     if not game_info["game_count"]:  # 検索結果が0件のとき
         m.post.headline = {"レーティング": message.random_reply(m, "no_hits", False)}
@@ -41,6 +44,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
 
     df = pd.merge(df_results, final, on=["name"]).sort_values(by="rate", ascending=False)
     df = df.query("count >= @g.params['stipulated']").copy()  # 足切り
+    df["rank"] = 0  # 順位表示用カラム
 
     # 集計対象外データの削除
     if g.params.get("unregistered_replace"):  # 個人戦
@@ -70,15 +74,15 @@ def aggregation(m: MessageParserProtocol) -> bool:
         m.post.headline = {"レーティング": message.random_reply(m, "no_target", False)}
         return False
 
-    m.post.headline = {"レーティング": message.header(game_info, m, add_text, 1)}
-    df = formatter.df_rename(df.filter(
+    df["rank"] = df["rate"].rank(ascending=False, method="dense").astype("int")
+    df = formatter.df_rename(df.query("rank <= @ranked").filter(
         items=[
-            "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"
+            "rank", "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"
         ]
     ), short=False).copy()
+
     df = df.drop(columns=[x for x in g.cfg.dropitems.ranking if x in df.columns.to_list()])  # 非表示項目
 
-    msg = formatter.pd_to_dict(df, step=30, codeblock=True)
     prefix_rating = str(g.params.get("filename", "rating"))
     match str(g.params.get("format", "default")).lower():
         case "csv":
@@ -88,7 +92,9 @@ def aggregation(m: MessageParserProtocol) -> bool:
         case _:
             save_file = ""
 
-    m.post.message = msg
+    m.post.headline = {"レーティング": message.header(game_info, m, add_text, 1)}
+    m.post.message = {"0": df}
     m.post.file_list = [{"レーティング": save_file}]
     m.post.summarize = False
+    m.post.codeblock = True
     return True
