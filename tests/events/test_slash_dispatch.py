@@ -169,7 +169,7 @@ def test_member_list(config, keyword, monkeypatch):
     configuration.setup()
 
     with (
-        patch("libs.event_dispatcher.lookup.textdata.get_members_list", return_value=("", "")) as mock_slash_member_list,
+        patch("libs.event_dispatcher.lookup.textdata.get_members_list", return_value={}) as mock_slash_member_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())

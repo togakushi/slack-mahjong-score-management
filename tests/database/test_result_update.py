@@ -27,9 +27,9 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
     configuration.setup()
     g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
-    g.selected_service = "test"
+    g.selected_service = "standard_io"
 
-    m = factory.select_parser("text", **g.cfg.setting.to_dict())
+    m = factory.select_parser("standard_io", **g.cfg.setting.to_dict())
     m.data.text = game_result
     m.data.event_ts = ExtDt().format("ts")
 

@@ -30,7 +30,8 @@ def test_guest_name():
 def test_member_add(user_name, ret_meg, registered):
     """ユーザ登録テスト"""
     ret = member.append(str(user_name).split())
-    assert ret_meg in ret
+    print(ret)
+    assert ret_meg in next(iter(ret.values()))
 
     with closing(dbutil.get_connection()) as conn:
         cur = conn.execute("select name from member;")
@@ -51,7 +52,7 @@ def test_member_add(user_name, ret_meg, registered):
 def test_team_create(team_name, ret_meg, registered):
     """チーム作成テスト"""
     ret = team.create(str(team_name).split())
-    assert ret_meg in ret
+    assert ret_meg in next(iter(ret.values()))
 
     with closing(dbutil.get_connection()) as conn:
         cur = conn.execute("select name from team;")
