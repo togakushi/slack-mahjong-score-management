@@ -84,22 +84,23 @@ class StandardIO(APIInterface):
             return
 
         # 本文
-        for title, msg in m.post.message.items():
-            if not title.isnumeric() and title and m.post.key_header:
-                print(f"【{title}】")
+        if m.post.message:
+            for title, msg in m.post.message.items():
+                if not title.isnumeric() and title and m.post.key_header:
+                    print(f"【{title}】")
 
-            if isinstance(msg, str):
-                print(self._text_formatter(msg))
+                if isinstance(msg, str):
+                    print(self._text_formatter(msg))
 
-            if isinstance(msg, pd.DataFrame):
-                match m.data.command_type:
-                    case "ranking":
-                        fmt = formatter.floatfmt_adjust(msg, index=False)
-                    case _:
-                        fmt = formatter.floatfmt_adjust(msg, index=True)
-                print(msg.to_markdown(index=False, tablefmt="simple_outline", floatfmt=fmt).replace("nan", "---"))
+                if isinstance(msg, pd.DataFrame):
+                    match m.data.command_type:
+                        case "ranking":
+                            fmt = formatter.floatfmt_adjust(msg, index=False)
+                        case _:
+                            fmt = formatter.floatfmt_adjust(msg, index=True)
+                    print(msg.to_markdown(index=False, tablefmt="simple_outline", floatfmt=fmt).replace("nan", "---"))
 
-            print("")
+                print("")
 
     def get_conversations(self, m: MessageParserProtocol) -> dict:
         """ダミー
