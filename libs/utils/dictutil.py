@@ -118,7 +118,10 @@ def _collect_member(target_list: list) -> list:
             teammates = lookup.internal.get_teammates(name)
             ret_list.extend(teammates)
             continue
-        ret_list.append(formatter.name_replace(name))
+        if g.params.get("unregistered_replace", True):
+            ret_list.append(name)
+        else:
+            ret_list.append(formatter.name_replace(name))
 
     g.params.update(individual=save_flg)
     return list(dict.fromkeys(ret_list))
