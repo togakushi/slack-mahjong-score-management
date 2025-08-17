@@ -77,27 +77,6 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
     return df
 
 
-def remark_count(kind: str) -> pd.DataFrame:
-    """メモの内容を種別でカウント
-
-    Args:
-        kind (str): 集計種別
-
-    Returns:
-        pd.DataFrame: 集計結果
-    """
-
-    # データ収集
-    g.params.update(kind=kind)
-    df = loader.read_data("summary/remark_count.sql")
-
-    if kind == "grandslam":
-        df = df.filter(items=["name", "matter", "count"])
-
-    logging.trace(df)  # type: ignore
-    return df
-
-
 def game_results() -> pd.DataFrame:
     """成績を集計する
 

@@ -194,6 +194,8 @@ class SlackAPI(APIInterface):
                         match title:
                             case "通算ポイント" | "ポイント差分":
                                 post_msg.extend(_table_data(formatter.df_to_dict(msg, step=40)))
+                            case "役満和了" | "卓外ポイント" | "その他":
+                                post_msg.extend(_table_data(formatter.df_to_count(msg, title, 1)))
                             case _:
                                 post_msg.extend(_table_data(formatter.df_to_remarks(msg)))
                     case "rating":

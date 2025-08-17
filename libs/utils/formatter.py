@@ -5,6 +5,7 @@ libs/utils/formatter.py
 import os
 import random
 import re
+import textwrap
 
 import pandas as pd
 from tabulate import tabulate
@@ -494,6 +495,20 @@ def df_to_remarks(df: pd.DataFrame) -> dict:
     tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
 
     return {"0": "\n".join(tbl)}
+
+
+def df_to_count(df: pd.DataFrame, title: str, indent: int = 0) -> dict:
+
+    match title:
+        case "役満和了":
+            df["表示"] = df.apply(lambda x: f"{x["和了役"]}： {x["回数"]} 回", axis=1)
+        case "卓外ポイント":
+            df["表示"] = df.apply(lambda x: f"{x["内容"]}： {x["回数"]} 回 ({x["ポイント合計"]:.1f}pt)".replace("-", "▲"), axis=1)
+        case "その他":
+            df["表示"] = df.apply(lambda x: f"{x["内容"]}： {x["回数"]} 回", axis=1)
+
+    tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
+    return {"0": textwrap.indent("\n".join(tbl), "\t" * indent)}
 
 
 def group_strings(lines: list[str], limit: int = 3000) -> list[str]:

@@ -82,7 +82,14 @@ def aggregation(m: MessageParserProtocol) -> bool:
     msg: dict = {}
     msg["座席データ"] = get_seat_data(data)
     msg.update(get_record(data))  # ベスト/ワーストレコード
-    msg.update(get_regulations(mapping_dict))  # レギュレーション
+
+    # レギュレーション
+    remarks_df = loader.read_data("summary/remarks.sql")
+    count_df = remarks_df.groupby("matter").agg(count=("matter", "count"), total=("ex_point", "sum"), type=("type", "max"))
+    count_df["matter"] = count_df.index
+    msg["役満和了"] = count_df.query("type == 0").filter(items=["matter", "count"]).rename(columns={"matter": "和了役", "count": "回数"})
+    msg["卓外ポイント"] = count_df.query("type == 1").filter(items=["matter", "count", "total"]).rename(columns={"matter": "内容", "count": "回数", "total": "ポイント合計"})
+    msg["その他"] = count_df.query("type == 2").filter(items=["matter", "count"]).rename(columns={"matter": "内容", "count": "回数"})
 
     if g.params.get("game_results"):  # 戦績
         msg["戦績"] = get_game_results(mapping_dict)
@@ -246,54 +253,6 @@ def get_record(data: dict) -> dict:
         \t最小素点：{data["最小素点"] * 100}点
         \t最小獲得ポイント：{data["最小獲得ポイント"]}pt
     """).replace("-", "▲").replace("*****", "-----")
-
-    return ret
-
-
-def get_regulations(mapping_dict: dict) -> dict:
-    """レギュレーション情報メッセージ生成
-
-    Returns:
-        dict: 集計データ
-    """
-
-    ret: dict = {}
-
-    df_grandslam = aggregate.remark_count("grandslam")
-    df_regulations = aggregate.remark_count("regulation")
-
-    if g.params.get("anonymous"):
-        new_list = list(set(df_grandslam["name"].unique().tolist() + df_regulations["name"].unique().tolist()))
-        for name in new_list:
-            if name in mapping_dict:
-                new_list.remove(name)
-
-        mapping_dict.update(formatter.anonymous_mapping(new_list, len(mapping_dict)))
-        df_grandslam["name"] = df_grandslam["name"].replace(mapping_dict)
-        df_regulations["name"] = df_regulations["name"].replace(mapping_dict)
-
-    if not df_grandslam.empty:
-        tmp = ""
-        ret["役満和了"] = "\n*【役満和了】*\n"
-        for x in df_grandslam.itertuples():
-            tmp += f"\t{x.matter}\t{x.count}回\n"
-        if tmp:
-            ret["役満和了"] = tmp
-
-    if not df_regulations.query("type == 1").empty:
-        tmp = ""
-        for x in df_regulations.query("type == 1").itertuples():
-            ex_point = str(x.ex_point).replace("-", "▲")
-            tmp += f"\t{x.matter}\t{x.count}回 ({ex_point}pt)\n"
-        if tmp:
-            ret["卓外ポイント"] = tmp
-
-    if not df_regulations.query("type != 1").empty:
-        tmp = ""
-        for x in df_regulations.query("type != 1").itertuples():
-            tmp += f"\t{x.matter}\t{x.count}回\n"
-        if tmp:
-            ret["その他"] = tmp
 
     return ret
 
