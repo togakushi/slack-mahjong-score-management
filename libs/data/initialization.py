@@ -66,19 +66,15 @@ def initialization_resultdb() -> None:
     match g.cfg.undefined_word:
         case 0:
             grandslam_where = "words.type is null or words.type == 0"
-            regulation_where = "words.type in (1, 2)"
         case 1:
             grandslam_where = "words.type == 0"
-            regulation_where = "words.type is null or words.type == 1"
         case 2:
             grandslam_where = "words.type == 0"
-            regulation_where = "words.type is null or words.type == 2"
         case _:
             grandslam_where = "words.type == 0"
-            regulation_where = "words.type in (1, 2)"
 
     resultdb.executescript(loader.load_query("view/grandslam.sql").format(grandslam_where=grandslam_where))
-    resultdb.executescript(loader.load_query("view/regulations.sql").format(regulation_where=regulation_where))
+    resultdb.executescript(loader.load_query("view/regulations.sql").format(undefined_word=g.cfg.undefined_word))
 
     # ゲスト設定チェック
     ret = resultdb.execute("select * from member where id=0;")
