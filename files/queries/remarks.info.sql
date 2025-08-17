@@ -20,5 +20,6 @@ left join team on
 where
     game_info.rule_version = :rule_version
     and playtime between :starttime and :endtime -- 検索範囲
+    --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
     --[search_word] and game_info.comment like :search_word
 ;
