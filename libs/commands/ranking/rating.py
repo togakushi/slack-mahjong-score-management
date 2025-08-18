@@ -9,7 +9,7 @@ from cls.types import GameInfoDict
 from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import compose, message
-from libs.utils import formatter
+from libs.utils import converter, formatter
 
 
 def aggregation(m: MessageParserProtocol) -> bool:
@@ -86,9 +86,9 @@ def aggregation(m: MessageParserProtocol) -> bool:
     prefix_rating = str(g.params.get("filename", "rating"))
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            save_file = formatter.save_output(df, "csv", f"{prefix_rating}.csv", headline)
+            save_file = converter.save_output(df, "csv", f"{prefix_rating}.csv", headline)
         case "text" | "txt":
-            save_file = formatter.save_output(df, "txt", f"{prefix_rating}.txt", headline)
+            save_file = converter.save_output(df, "txt", f"{prefix_rating}.txt", headline)
         case _:
             save_file = ""
 

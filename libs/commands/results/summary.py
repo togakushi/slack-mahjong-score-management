@@ -9,7 +9,7 @@ from cls.types import GameInfoDict
 from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import message
-from libs.utils import formatter
+from libs.utils import converter, formatter
 
 
 def aggregation(m: MessageParserProtocol) -> bool:
@@ -97,22 +97,22 @@ def aggregation(m: MessageParserProtocol) -> bool:
             headline = headline_title + header_text
             df_summary = df_summary.filter(items=filter_list).fillna("*****")
             prefix = f"{g.params["filename"]}" if g.params.get("filename") else "summary"
-            file_list.append({"集計結果": formatter.save_output(df_summary, extension, f"{prefix}.{extension}", headline)})
+            file_list.append({"集計結果": converter.save_output(df_summary, extension, f"{prefix}.{extension}", headline)})
         if not df_yakuman.empty:
             headline = "【役満和了】\n" + header_text
             df_yakuman = formatter.df_rename(df_yakuman, kind=0)
             prefix = f"{g.params["filename"]}_yakuman" if g.params.get("filename") else "yakuman"
-            file_list.append({"役満和了": formatter.save_output(df_yakuman, extension, f"{prefix}.{extension}", headline)})
+            file_list.append({"役満和了": converter.save_output(df_yakuman, extension, f"{prefix}.{extension}", headline)})
         if not df_regulations.empty:
             headline = "【卓外ポイント】\n" + header_text
             df_regulations = formatter.df_rename(df_regulations, short=False, kind=1)
             prefix = f"{g.params["filename"]}_regulations" if g.params.get("filename") else "regulations"
-            file_list.append({"卓外ポイント": formatter.save_output(df_regulations, extension, f"{prefix}.{extension}", headline)})
+            file_list.append({"卓外ポイント": converter.save_output(df_regulations, extension, f"{prefix}.{extension}", headline)})
         if not df_others.empty:
             headline = "【その他】\n" + header_text
             df_others = formatter.df_rename(df_others, kind=2)
             prefix = f"{g.params["filename"]}_others" if g.params.get("filename") else "others"
-            file_list.append({"その他": formatter.save_output(df_others, extension, f"{prefix}.{extension}", headline)})
+            file_list.append({"その他": converter.save_output(df_others, extension, f"{prefix}.{extension}", headline)})
     else:
         file_list.append({"dummy": ""})
 

@@ -10,7 +10,7 @@ import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
 from libs.data import loader
 from libs.functions import compose
-from libs.utils import formatter
+from libs.utils import converter, formatter
 
 
 def aggregation(m: MessageParserProtocol) -> bool:
@@ -102,13 +102,13 @@ def aggregation(m: MessageParserProtocol) -> bool:
     match str(g.params.get("format", "default")).lower():
         case "csv":
             file_list = [
-                {"対戦結果": formatter.save_output(df_data, "csv", "result.csv")},
-                {"成績": formatter.save_output(df_vs2, "csv", "versus.csv")},
+                {"対戦結果": converter.save_output(df_data, "csv", "result.csv")},
+                {"成績": converter.save_output(df_vs2, "csv", "versus.csv")},
             ]
         case "text" | "txt":
             file_list = [
-                {"対戦結果": formatter.save_output(df_data, "txt", "result.txt")},
-                {"成績": formatter.save_output(df_vs2, "txt", "versus.txt")},
+                {"対戦結果": converter.save_output(df_data, "txt", "result.txt")},
+                {"成績": converter.save_output(df_vs2, "txt", "versus.txt")},
             ]
         case _:
             file_list = [{"dummy": ""}]

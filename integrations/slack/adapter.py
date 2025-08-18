@@ -13,7 +13,7 @@ from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
 from integrations.protocols import MessageParserProtocol
 from integrations.slack import api
-from libs.utils import formatter
+from libs.utils import converter, formatter
 
 
 class _ReactionsAPI(ReactionsInterface):
@@ -193,15 +193,15 @@ class SlackAPI(APIInterface):
                     case "results":
                         match title:
                             case "通算ポイント" | "ポイント差分":
-                                post_msg.extend(_table_data(formatter.df_to_dict(msg, step=40)))
+                                post_msg.extend(_table_data(converter.df_to_dict(msg, step=40)))
                             case "役満和了" | "卓外ポイント" | "その他":
-                                post_msg.extend(_table_data(formatter.df_to_count(msg, title, 1)))
+                                post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
                             case _:
-                                post_msg.extend(_table_data(formatter.df_to_remarks(msg)))
+                                post_msg.extend(_table_data(converter.df_to_remarks(msg)))
                     case "rating":
-                        post_msg.extend(_table_data(formatter.df_to_dict(msg, step=20)))
+                        post_msg.extend(_table_data(converter.df_to_dict(msg, step=20)))
                     case "ranking":
-                        post_msg.extend(_table_data(formatter.df_to_ranking(msg, title, step=50)))
+                        post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
 
         if m.post.summarize:
             post_msg = formatter.group_strings(post_msg)
