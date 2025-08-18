@@ -98,7 +98,7 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
     """DataFrameからランキングテーブルを生成
 
     Args:
-        df (pd.DataFrame): ランキングデータ
+        df (pd.DataFrame): 対象データ
         title (str): 種別
         step (int, optional): 分割行. Defaults to 40.
 
@@ -159,7 +159,7 @@ def df_to_remarks(df: pd.DataFrame) -> dict:
     """DataFrameからメモテーブルを生成
 
     Args:
-        df (pd.DataFrame): データ
+        df (pd.DataFrame): 対象データ
 
     Returns:
         dict: 整形テキスト
@@ -185,7 +185,16 @@ def df_to_remarks(df: pd.DataFrame) -> dict:
 
 
 def df_to_count(df: pd.DataFrame, title: str, indent: int = 0) -> dict:
+    """_summary_
 
+    Args:
+        df (pd.DataFrame): 対象データ
+        title (str): _description_
+        indent (int, optional): インデント. Defaults to 0.
+
+    Returns:
+        dict: 整形テキスト
+    """
     match title:
         case "役満和了":
             df["表示"] = df.apply(lambda x: f"{x["和了役"]}： {x["回数"]} 回", axis=1)
@@ -196,3 +205,36 @@ def df_to_count(df: pd.DataFrame, title: str, indent: int = 0) -> dict:
 
     tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
     return {"0": textwrap.indent("\n".join(tbl), "\t" * indent)}
+
+
+def df_to_seat_data(df: pd.DataFrame, indent: int = 0) -> dict:
+    """座席データ生成
+
+    Args:
+        df (pd.DataFrame): 対象データ
+        indent (int, optional): インデント. Defaults to 0.
+
+    Returns:
+        dict: 整形テキスト
+    """
+
+    # 表示加工
+    df["順位分布(平均順位)"] = df.apply(lambda x: f"{x["順位分布"]} ({x["平均順位"]})", axis=1)
+    df.drop(columns=["順位分布", "平均順位"], inplace=True)
+    df["席"] = df.apply(lambda x: f"{x["席"]}：", axis=1)
+    if "トビ" in df.columns:
+        df["トビ"] = df.apply(lambda x: f"/ {x["トビ"]:3d}", axis=1)
+    if "役満和了" in df.columns:
+        df["役満和了"] = df.apply(lambda x: f"/ {x["役満和了"]:3d}", axis=1)
+
+    #
+    df = df.filter(items=["席", "順位分布(平均順位)", "トビ", "役満和了"]).rename(
+        columns={
+            "席": "# 席：",
+            "トビ": "/ トビ",
+            "役満和了": "/ 役満 #"
+        }
+    )
+
+    tbl = df.to_markdown(tablefmt="tsv", index=False).replace(" \t", "")
+    return {"0": textwrap.indent(tbl, "\t" * indent)}

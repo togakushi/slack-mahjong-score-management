@@ -2,7 +2,6 @@
 libs/commands/results/detail.py
 """
 
-import re
 import textwrap
 from typing import cast
 
@@ -80,31 +79,47 @@ def aggregation(m: MessageParserProtocol) -> bool:
     msg_data.update(get_totalization(data))
 
     msg: dict = {}
-    msg["座席データ"] = get_seat_data(data)
+    msg["座席データ"] = pd.DataFrame({
+        "席": ["東家", "南家", "西家", "北家"],
+        "順位分布": [v for k, v in data.items() if str(k).endswith("-順位分布")],
+        "平均順位": [f"\u200b{float(v):.2f}".replace("0.00", "-.--") for k, v in data.items() if str(k).endswith("-平均順位")],
+        "トビ": [v for k, v in data.items() if str(k).endswith("-トビ")],
+        "役満和了": [v for k, v in data.items() if str(k).endswith("-役満和了")],
+    })
+
     msg.update(get_record(data))  # ベスト/ワーストレコード
 
     # レギュレーション
     remarks_df = loader.read_data("summary/remarks.sql")
     count_df = remarks_df.groupby("matter").agg(count=("matter", "count"), total=("ex_point", "sum"), type=("type", "max"))
     count_df["matter"] = count_df.index
-    msg["役満和了"] = count_df.query("type == 0").filter(items=["matter", "count"]).rename(columns={"matter": "和了役", "count": "回数"})
-    msg["卓外ポイント"] = count_df.query("type == 1").filter(items=["matter", "count", "total"]).rename(columns={"matter": "内容", "count": "回数", "total": "ポイント合計"})
-    msg["その他"] = count_df.query("type == 2").filter(items=["matter", "count"]).rename(columns={"matter": "内容", "count": "回数"})
 
-    if g.params.get("game_results"):  # 戦績
+    work_df = count_df.query("type == 0").filter(items=["matter", "count"])
+    if not work_df.empty:
+        msg["役満和了"] = work_df.rename(columns={"matter": "和了役", "count": "回数"})
+
+    work_df = count_df.query("type == 1").filter(items=["matter", "count", "total"])
+    if not work_df.empty:
+        msg["卓外ポイント"] = work_df.rename(columns={"matter": "内容", "count": "回数", "total": "ポイント合計"})
+
+    work_df = count_df.query("type == 2").filter(items=["matter", "count"])
+    if not work_df.empty:
+        msg["その他"] = work_df.rename(columns={"matter": "内容", "count": "回数"})
+
+    # 戦績
+    if g.params.get("game_results"):
         msg["戦績"] = get_game_results(mapping_dict)
 
-    if g.params.get("versus_matrix"):  # 対戦結果
+    if g.params.get("versus_matrix"):
         msg["対戦結果"] = get_versus_matrix(mapping_dict)
 
     # 非表示項目
     if g.cfg.mahjong.ignore_flying:
         g.cfg.dropitems.results.append("トビ")
     if "トビ" in g.cfg.dropitems.results:
-        msg["座席データ"] = re.sub(r"/ .* /", "/", msg["座席データ"], flags=re.MULTILINE)
+        msg["座席データ"].drop(columns=["トビ"], inplace=True)
     if "役満" in g.cfg.dropitems.results:
-        msg["座席データ"] = msg["座席データ"].replace(" / 役満", "")
-        msg["座席データ"] = re.sub(r" / [0-9]+$", "", msg["座席データ"], flags=re.MULTILINE)
+        msg["座席データ"].drop(columns=["役満和了"], inplace=True)
         msg.pop("役満和了", None)
 
     if not g.params.get("statistics"):  # 統計
@@ -181,27 +196,6 @@ def get_totalization(data: dict) -> dict:
     return ret
 
 
-def get_seat_data(data: dict) -> str:
-    """座席データメッセージ生成
-
-    Args:
-        data (dict): 生成内容が格納された辞書
-
-    Returns:
-        str: 生成メッセージ
-    """
-
-    ret: str = textwrap.dedent(f"""\
-        \t# 席：順位分布(平均順位) / トビ / 役満 #
-        \t{data["東家-順位分布"]:22s} / {data["東家-トビ"]} / {data["東家-役満和了"]}
-        \t{data["南家-順位分布"]:22s} / {data["南家-トビ"]} / {data["南家-役満和了"]}
-        \t{data["西家-順位分布"]:22s} / {data["西家-トビ"]} / {data["西家-役満和了"]}
-        \t{data["北家-順位分布"]:22s} / {data["北家-トビ"]} / {data["北家-役満和了"]}
-    """).replace("0.00", "-.--")
-
-    return ret
-
-
 def get_record(data: dict) -> dict:
     """レコード情報メッセージ生成
 
@@ -238,21 +232,23 @@ def get_record(data: dict) -> dict:
         return ret
 
     ret: dict = {}
-    ret["ベストレコード"] = textwrap.dedent(f"""\
-        \t連続トップ：{current_data(data["c_top"])} ({max_data(data["連続トップ"], data["c_top"])})
-        \t連続連対：{current_data(data["c_top2"])} ({max_data(data["連続連対"], data["c_top2"])})
-        \t連続ラス回避：{current_data(data["c_top3"])} ({max_data(data["連続ラス回避"], data["c_top3"])})
-        \t最大素点：{data["最大素点"] * 100}点
-        \t最大獲得ポイント：{data["最大獲得ポイント"]}pt
+    work_text = textwrap.dedent(f"""\
+        連続トップ：{current_data(data["c_top"])} ({max_data(data["連続トップ"], data["c_top"])})
+        連続連対：{current_data(data["c_top2"])} ({max_data(data["連続連対"], data["c_top2"])})
+        連続ラス回避：{current_data(data["c_top3"])} ({max_data(data["連続ラス回避"], data["c_top3"])})
+        最大素点：{data["最大素点"] * 100}点
+        最大獲得ポイント：{data["最大獲得ポイント"]}pt
     """).replace("-", "▲").replace("*****", "-----")
+    ret["ベストレコード"] = textwrap.indent(work_text, "\t")
 
-    ret["ワーストレコード"] = textwrap.dedent(f"""\
-        \t連続ラス：{current_data(data["c_low4"])} ({max_data(data["連続ラス"], data["c_low4"])})
-        \t連続逆連対：{current_data(data["c_low2"])} ({max_data(data["連続逆連対"], data["c_low2"])})
-        \t連続トップなし：{current_data(data["c_low"])} ({max_data(data["連続トップなし"], data["c_low"])})
-        \t最小素点：{data["最小素点"] * 100}点
-        \t最小獲得ポイント：{data["最小獲得ポイント"]}pt
+    work_text = textwrap.dedent(f"""\
+        連続ラス：{current_data(data["c_low4"])} ({max_data(data["連続ラス"], data["c_low4"])})
+        連続逆連対：{current_data(data["c_low2"])} ({max_data(data["連続逆連対"], data["c_low2"])})
+        連続トップなし：{current_data(data["c_low"])} ({max_data(data["連続トップなし"], data["c_low"])})
+        最小素点：{data["最小素点"] * 100}点
+        最小獲得ポイント：{data["最小獲得ポイント"]}pt
     """).replace("-", "▲").replace("*****", "-----")
+    ret["ワーストレコード"] = textwrap.indent(work_text, "\t")
 
     return ret
 

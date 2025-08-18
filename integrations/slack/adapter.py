@@ -184,9 +184,9 @@ class SlackAPI(APIInterface):
 
             if isinstance(msg, str):
                 if m.post.codeblock:
-                    post_msg.append(f"{header}```\n{msg}\n```\n\n")
+                    post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n\n")
                 else:
-                    post_msg.append(f"{header}{msg}\n")
+                    post_msg.append(f"{header}{msg.rstrip()}\n")
 
             if isinstance(msg, pd.DataFrame):
                 match m.data.command_type:
@@ -196,6 +196,8 @@ class SlackAPI(APIInterface):
                                 post_msg.extend(_table_data(converter.df_to_dict(msg, step=40)))
                             case "役満和了" | "卓外ポイント" | "その他":
                                 post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
+                            case "座席データ":
+                                post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
                             case _:
                                 post_msg.extend(_table_data(converter.df_to_remarks(msg)))
                     case "rating":
