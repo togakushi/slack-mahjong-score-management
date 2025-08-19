@@ -7,16 +7,12 @@ with target_data as (
         --[team] results.name as name,
         point,
         rpoint,
-        rank,
-        gs_count
+        rank
     from
         --[individual] individual_results as results
         --[team] team_results as results
     join game_info on
         game_info.ts == results.ts
-    left join grandslam on
-        grandslam.thread_ts == results.ts
-        and grandslam.name == results.name
     where
         results.rule_version = :rule_version
         and results.playtime between :starttime and :endtime -- 検索範囲

@@ -4,10 +4,12 @@ with target_data as (
         datetime(remarks.thread_ts, 'unixepoch') as playtime,
         remarks.name as name,
         ifnull(team.name, '未所属') as team,
+        game_info.same_team,
         case when member.id isnull then 1 else 0 end as guest,
         remarks.matter as matter,
         ifnull(words.type, :undefined_word) as type,
         ifnull(words.ex_point, 0) as ex_point,
+        game_info.comment,
         game_info.rule_version
     from
         remarks

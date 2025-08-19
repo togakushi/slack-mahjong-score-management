@@ -61,19 +61,6 @@ def initialization_resultdb() -> None:
     resultdb.executescript(loader.load_query("view/team_results.sql"))
     resultdb.executescript(loader.load_query("view/game_results.sql"))
     resultdb.executescript(loader.load_query("view/game_info.sql"))
-
-    # メモ
-    match g.cfg.undefined_word:
-        case 0:
-            grandslam_where = "words.type is null or words.type == 0"
-        case 1:
-            grandslam_where = "words.type == 0"
-        case 2:
-            grandslam_where = "words.type == 0"
-        case _:
-            grandslam_where = "words.type == 0"
-
-    resultdb.executescript(loader.load_query("view/grandslam.sql").format(grandslam_where=grandslam_where))
     resultdb.executescript(loader.load_query("view/regulations.sql").format(undefined_word=g.cfg.undefined_word))
 
     # ゲスト設定チェック

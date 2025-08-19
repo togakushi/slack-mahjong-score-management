@@ -105,16 +105,18 @@ from (
         point,
         seat,
         --[individual] results.grandslam,
-        ifnull(gs_count, 0) as gs_count
+        ifnull(count, 0) as gs_count
     from
         --[individual] individual_results as results
         --[team] team_results as results
     join game_info on
         game_info.ts == results.ts
-    left join grandslam on
-        grandslam.thread_ts == results.ts
-        --[individual] and grandslam.name == results.name
-        --[team] and grandslam.team == results.name
+    left join regulations as grandslam
+        on
+            grandslam.type == 0
+            and grandslam.thread_ts == results.ts
+            --[individual] and grandslam.name == results.name
+            --[team] and grandslam.team == results.name
     where
         results.rule_version = :rule_version
         and results.playtime between :starttime and :endtime
