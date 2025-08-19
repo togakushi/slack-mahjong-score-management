@@ -94,7 +94,7 @@ class StandardIO(APIInterface):
 
                 if isinstance(msg, pd.DataFrame):
                     match m.data.command_type:
-                        case "ranking":
+                        case "ranking" | "rating":
                             fmt = formatter.floatfmt_adjust(msg, index=False)
                         case _:
                             fmt = formatter.floatfmt_adjust(msg, index=True)
