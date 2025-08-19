@@ -6,6 +6,7 @@ create view if not exists regulations as
         ifnull(team.name, '未所属') as team,
         case when member.id isnull then 1 else 0 end as guest,
         group_concat(remarks.matter) as word,
+        count() as count,
         ifnull(words.type, {undefined_word}) as type,
         sum(ifnull(words.ex_point, 0)) as ex_point
     from
@@ -17,5 +18,5 @@ create view if not exists regulations as
     left join words on
         words.word == remarks.matter
     group by
-        remarks.thread_ts, remarks.name
+        remarks.thread_ts, remarks.name, words.type
 ;
