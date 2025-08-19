@@ -9,6 +9,8 @@ import shutil
 import sys
 from functools import partial
 
+import matplotlib.font_manager as fm
+import matplotlib.pyplot as plt
 from matplotlib import use
 
 import libs.global_value as g
@@ -224,7 +226,7 @@ def read_memberslist(log=True):
         logging.notice(f"team_list: {[x["team"] for x in g.team_list]}")  # type: ignore
 
 
-def graph_setup(plt, fm) -> None:
+def graph_setup(plt: plt, fm: fm) -> None:
     """グラフ設定
 
     Args:
