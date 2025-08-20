@@ -195,7 +195,10 @@ class SlackAPI(APIInterface):
                             case "通算ポイント" | "ポイント差分":
                                 post_msg.extend(_table_data(converter.df_to_dict(msg, step=40)))
                             case "役満和了" | "卓外ポイント" | "その他":
-                                post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
+                                if "回数" in msg.columns:
+                                    post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
+                                else:
+                                    post_msg.extend(_table_data(converter.df_to_remarks(msg)))
                             case "座席データ":
                                 post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
                             case _:
