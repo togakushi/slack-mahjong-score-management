@@ -3,7 +3,7 @@
 with point_table as (
     select
         --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
-        --[individual] --[unregistered_not_replace] name, -- ゲスト無効
+        --[individual] --[unregistered_not_replace] case when results.guest = 0 then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
         --[team] name as team,
         --[individual] guest,
         rpoint,
@@ -70,7 +70,7 @@ ranked_points as (
 )
 select
     overall_ranking as rank,
-    --[individual] case when guest = 0 or name = :guest_name then name else name || '(<<guest_mark>>)' end as name,
+    --[individual] name,
     --[team] team,
     count,
     round(cast(total_point as real), 1) as total_point,

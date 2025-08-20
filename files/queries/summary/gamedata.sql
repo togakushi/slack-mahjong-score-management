@@ -23,7 +23,7 @@ from (
         --[collection_yearly] substr(collection_daily, 1, 4) as collection,
         --[collection_all] "" as collection,
         --[individual] --[unregistered_replace] case when guest = 0 then name else :guest_name end as name, -- ゲスト有効
-        --[individual] --[unregistered_not_replace] case when guest = 0 or name = :guest_name then name else name || '(<<guest_mark>>)' end as name, -- ゲスト無効
+        --[individual] --[unregistered_not_replace] case when guest = 0 then name else name || '(<<guest_mark>>)' end as name, -- ゲスト無効
         --[team] name as team,
         --[not_collection] rank,
         --[collection] round(avg(rank), 2) as rank,

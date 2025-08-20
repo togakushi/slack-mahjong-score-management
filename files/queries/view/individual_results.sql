@@ -12,7 +12,7 @@ select * from (
         case when type == 0 then word else null end as grandslam,
         case when type == 1 then word else null end as regulation,
         ifnull(ex_point, 0) as ex_point,
-        p1_name not in (select name from member) as guest,
+        p1_name not in (select name from member where id != 0) as guest,
         date(playtime, '-12 hours') as collection_daily,
         rule_version,
         comment
@@ -37,7 +37,7 @@ select * from (
         case when type == 0 then word else null end,
         case when type == 1 then word else null end,
         ifnull(ex_point, 0),
-        p2_name not in (select name from member),
+        p2_name not in (select name from member where id != 0),
         date(playtime, '-12 hours'),
         rule_version,
         comment
@@ -62,7 +62,7 @@ select * from (
         case when type == 0 then word else null end,
         case when type == 1 then word else null end,
         ifnull(ex_point, 0),
-        p3_name not in (select name from member),
+        p3_name not in (select name from member where id != 0),
         date(playtime, '-12 hours'),
         rule_version,
         comment
@@ -87,7 +87,7 @@ select * from (
         case when type == 0 then word else null end,
         case when type == 1 then word else null end,
         ifnull(ex_point, 0),
-        p4_name not in (select name from member),
+        p4_name not in (select name from member where id != 0),
         date(playtime, '-12 hours'),
         rule_version,
         comment

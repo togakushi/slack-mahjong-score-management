@@ -98,7 +98,7 @@ from (
     select
         results.playtime,
         --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
-        --[individual] --[unregistered_not_replace] case when results.guest = 0 or results.name = :guest_name then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
+        --[individual] --[unregistered_not_replace] case when results.guest = 0 then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
         --[team] results.name,
         rpoint,
         rank,
