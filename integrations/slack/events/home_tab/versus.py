@@ -129,6 +129,7 @@ def register_versus_handlers(app):
         app_msg.pop()
         app_msg.append("集計完了")
 
+        m.data.command_type = "results"
         results.versus.aggregation(m)
         api_adapter.post(m)
 

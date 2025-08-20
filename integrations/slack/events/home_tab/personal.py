@@ -125,6 +125,7 @@ def register_personal_handlers(app):
         app_msg.pop()
         app_msg.append("集計完了")
 
+        m.data.command_type = "results"
         results.detail.aggregation(m)
         api_adapter.post(m)
 

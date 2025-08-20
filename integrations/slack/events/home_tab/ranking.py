@@ -116,6 +116,7 @@ def register_ranking_handlers(app):
         app_msg.pop()
         app_msg.append("集計完了")
 
+        m.data.command_type = "ranking"
         ranking.ranking.aggregation(m)
         api_adapter.post(m)
 
