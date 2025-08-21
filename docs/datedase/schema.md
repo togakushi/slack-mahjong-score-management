@@ -123,87 +123,90 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 
 ## game_results
 
-個人戦結果の横持ちデータ。<br />
+ゲーム結果の横持ちデータ。<br />
 1レコードに1ゲーム分の結果(4人分の成績)を持つ。
 
 ### 内容
 
-|     カラム名     |       参照元        |             内容             |
-| ---------------- | ------------------- | ---------------------------- |
-| playtime         |                     | タイムスタンプ(tsを変換)     |
-| ts               | result.ts           | slackにポストされた時間      |
-| p1_name          | result.p1_name      | 東家プレイヤー名             |
-| p1_team          | team.name           | 東家所属チーム名             |
-| p1_guest         |                     | 東家ゲストフラグ(`1`=ゲスト) |
-| p1_rpoint        | result.p1_rpoint    | 東家素点(計算後)             |
-| p1_rank          | result.p1_rank      | 東家順位                     |
-| p1_point         | result.p1_point     | 東家が獲得したポイント       |
-| p2_name          | result.p2_name      | 南家プレイヤー名             |
-| p2_team          | team.name           | 南家所属チーム名             |
-| p2_guest         |                     | 南家ゲストフラグ(`1`=ゲスト) |
-| p2_rpoint        | result.p2_rpoint    | 南家素点(計算後)             |
-| p2_rank          | result.p2_rank      | 南家順位                     |
-| p2_point         | result.p3_point     | 南家が獲得したポイント       |
-| p3_name          | result.p3_name      | 西家プレイヤー名             |
-| p3_team          | team.name           | 西家所属チーム名             |
-| p3_guest         |                     | 西家ゲストフラグ(`1`=ゲスト) |
-| p3_rpoint        | result.p3_rpoint    | 西家素点(計算後)             |
-| p3_rank          | result.p3_rank      | 西家順位                     |
-| p3_point         | result.p3_point     | 西家が獲得したポイント       |
-| p4_name          | result.p4_name      | 北家プレイヤー名             |
-| p4_team          | team.name           | 北家所属チーム名             |
-| p4_guest         |                     | 北家ゲストフラグ(`1`=ゲスト) |
-| p4_rpoint        | result.p4_rpoint    | 北家素点(計算後)             |
-| p4_rank          | result.p4_rank      | 北家順位                     |
-| p4_point         | result.p4_point     | 北家が獲得したポイント       |
-| deposit          |                     | 供託                         |
-| collection_daily |                     | 集計対象年月日(YYYY-MM-DD)   |
-| comment          | result.comment      | コメント                     |
-| guest_count      |                     | ゲーム内のゲストの合計人数   |
-| same_team        |                     | `1`=チーム同卓あり           |
-| rule_version     | result.rule_version | ルールバージョンを示す文字列 |
+|     カラム名     |        参照元        |                    内容                    |
+| ---------------- | -------------------- | ------------------------------------------ |
+| playtime         |                      | タイムスタンプ(tsを変換)                   |
+| ts               | result.ts            | slackにポストされた時間                    |
+| p1_name          | result.p1_name       | 東家プレイヤー名                           |
+| p1_team          | team.name            | 東家所属チーム名                           |
+| p1_guest         |                      | 東家ゲストフラグ(`1`=ゲスト)               |
+| p1_rpoint        | result.p1_rpoint     | 東家素点(計算後)                           |
+| p1_rank          | result.p1_rank       | 東家順位                                   |
+| p1_point         | result.p1_point      | 東家が獲得したポイント(卓外ポイントを含む) |
+| p1_grandslam     | regulations.word     | 役満和了メモ                               |
+| p1_regulation1   | regulations.word     | `type=1`のレギュレーション                 |
+| p1_regulation2   | regulations.word     | `type=2`のレギュレーション                 |
+| p1_type          | regulations.type     | レギュレーションの種別                     |
+| p1_ex_point      | regulations.ex_point | 卓外ポイントの合計値                       |
+| p2_name          | result.p2_name       | 南家プレイヤー名                           |
+| p2_team          | team.name            | 南家所属チーム名                           |
+| p2_guest         |                      | 南家ゲストフラグ(`1`=ゲスト)               |
+| p2_rpoint        | result.p2_rpoint     | 南家素点(計算後)                           |
+| p2_rank          | result.p2_rank       | 南家順位                                   |
+| p2_point         | result.p2_point      | 南家が獲得したポイント(卓外ポイントを含む) |
+| p2_grandslam     | regulations.word     | 役満和了メモ                               |
+| p2_regulation1   | regulations.word     | `type=1`のレギュレーション                 |
+| p2_regulation2   | regulations.word     | `type=2`のレギュレーション                 |
+| p2_type          | regulations.type     | レギュレーションの種別                     |
+| p2_ex_point      | regulations.ex_point | 卓外ポイントの合計値                       |
+| p3_name          | result.p3_name       | 西家プレイヤー名                           |
+| p3_team          | team.name            | 西家所属チーム名                           |
+| p3_guest         |                      | 西家ゲストフラグ(`1`=ゲスト)               |
+| p3_rpoint        | result.p3_rpoint     | 西家素点(計算後)                           |
+| p3_rank          | result.p3_rank       | 西家順位                                   |
+| p3_point         | result.p3_point      | 西家が獲得したポイント(卓外ポイントを含む) |
+| p3_grandslam     | regulations.word     | 役満和了メモ                               |
+| p3_regulation1   | regulations.word     | `type=1`のレギュレーション                 |
+| p3_regulation2   | regulations.word     | `type=2`のレギュレーション                 |
+| p3_type          | regulations.type     | レギュレーションの種別                     |
+| p3_ex_point      | regulations.ex_point | 卓外ポイントの合計値                       |
+| p4_name          | result.p4_name       | 北家プレイヤー名                           |
+| p4_team          | team.name            | 北家所属チーム名                           |
+| p4_guest         |                      | 北家ゲストフラグ(`1`=ゲスト)               |
+| p4_rpoint        | result.p4_rpoint     | 北家素点(計算後)                           |
+| p4_rank          | result.p4_rank       | 北家順位                                   |
+| p4_point         | result.p4_point      | 北家が獲得したポイント(卓外ポイントを含む) |
+| p4_grandslam     | regulations.word     | 役満和了メモ                               |
+| p4_regulation1   | regulations.word     | `type=1`のレギュレーション                 |
+| p4_regulation2   | regulations.word     | `type=2`のレギュレーション                 |
+| p4_type          | regulations.type     | レギュレーションの種別                     |
+| p4_ex_point      | regulations.ex_point | 卓外ポイントの合計値                       |
+| deposit          |                      | 供託                                       |
+| collection_daily |                      | 集計対象年月日(YYYY-MM-DD)                 |
+| comment          | result.comment       | コメント                                   |
+| guest_count      |                      | ゲーム内のゲストの合計人数                 |
+| same_team        |                      | `1`=チーム同卓あり                         |
+| rule_version     | result.rule_version  | ルールバージョンを示す文字列               |
 
 ## individual_results
 
-個人戦結果の縦持ちデータ。<br />
+ゲーム結果の縦持ちデータ。<br />
 1レコードに1人分の成績を持つ。
 
 ### 内容
 
-|     カラム名     |        参照元        |                内容                |
-| ---------------- | -------------------- | ---------------------------------- |
-| playtime         |                      | タイムスタンプ(tsを変換)           |
-| ts               | result.ts            | slackにポストされた時間            |
-| seat             |                      | 席(`1`=東、`2`=南、`3`=西、`4`=北) |
-| name             | result.p?_name       | プレイヤー名                       |
-| rpoint           | result.p?_rpoint     | 素点(計算後)                       |
-| rank             | result.p?_rank       | 順位                               |
-| point            | result.p?_point      | 獲得ポイント(卓外ポイント込み)     |
-| grandslam        |                      | 和了した役満( `remarks` から取得)  |
-| ex_point         | regulations.ex_point | 卓外ポイント                       |
-| guest            |                      | ゲストフラグ(`1`=ゲスト)           |
-| collection_daily |                      | 集計対象年月日(YYYY-MM-DD)         |
-| rule_version     | result.rule_version  | ルールバージョンを示す文字列       |
-| comment          | result.comment       | ゲームコメント                     |
-
-## team_results
-
-チーム戦結果の縦持ちデータ。<br />
-1レコードに1人分の成績を持つ。
-
-|     カラム名     |        参照元        |                内容                |
-| ---------------- | -------------------- | ---------------------------------- |
-| playtime         |                      | タイムスタンプ(tsを変換)           |
-| ts               | result.ts            | slackにポストされた時間            |
-| seat             |                      | 席(`1`=東、`2`=南、`3`=西、`4`=北) |
-| name             |                      | チーム名                           |
-| rpoint           | result.p?_rpoint     | 素点(計算後)                       |
-| rank             | result.p?_rank       | 順位                               |
-| point            | result.p?_point      | 獲得ポイント(卓外ポイント込み)     |
-| ex_point         | regulations.ex_point | 卓外ポイント                       |
-| collection_daily |                      | 集計対象年月日(YYYY-MM-DD)         |
-| rule_version     | result.rule_version  | ルールバージョンを示す文字列       |
-| comment          | result.comment       | ゲームコメント                     |
+|     カラム名     |        参照元        |                 内容                  |
+| ---------------- | -------------------- | ------------------------------------- |
+| playtime         |                      | タイムスタンプ(tsを変換)              |
+| ts               | result.ts            | slackにポストされた時間               |
+| seat             |                      | 席(`1`=東、`2`=南、`3`=西、`4`=北)    |
+| name             | result.p?_name       | プレイヤー名                          |
+| team             |                      | チーム名                              |
+| rpoint           | result.p?_rpoint     | 素点(数式評価後)                      |
+| rank             | result.p?_rank       | 順位                                  |
+| point            | result.p?_point      | 獲得ポイント(卓外ポイント込み)        |
+| grandslam        | regulations.word     | 和了した役満(`regulations`から取得)   |
+| regulation       | regulations.word     | 役満以外のメモ(`regulations`から取得) |
+| ex_point         | regulations.ex_point | 卓外ポイント                          |
+| guest            |                      | ゲストフラグ(`1`=ゲスト)              |
+| collection_daily |                      | 集計対象年月日(YYYY-MM-DD)            |
+| rule_version     | result.rule_version  | ルールバージョンを示す文字列          |
+| comment          | result.comment       | ゲームコメント                        |
 
 ## game_info
 
@@ -218,23 +221,9 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | rule_version | result.rule_version | ルールバージョンを示す文字列                   |
 | comment      | result.comment      | ゲームコメント                                 |
 
-## grandslam
-
-`remarks` から役満に関するレコードだけを抽出したもの。
-
-### 内容
-
-| カラム名  |      参照元       |                         内容                         |
-| --------- | ----------------- | ---------------------------------------------------- |
-| thread_ts | remarks.thread_ts | 対象のゲームのタイムスタンプ                         |
-| name      | remarks.name      | 記録対象プレイヤー名                                 |
-| team      | team.name         | 記録対象チーム名                                     |
-| grandslam | remarks.matter    | 内容(複数レコードある場合はカンマ区切りで連結される) |
-| gs_count  |                   | 1ゲーム内での発生回数                                |
-
 ## regulations
 
-`remarks` から卓外ポイントに関するレコードだけを抽出したもの。
+`remarks` の情報を集約。
 
 ### 内容
 
@@ -243,5 +232,8 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | thread_ts | remarks.thread_ts | 対象のゲームのタイムスタンプ                         |
 | name      | remarks.name      | 記録対象プレイヤー名                                 |
 | team      | team.name         | 記録対象チーム名                                     |
+| guest     |                   | ゲストフラグ(`1`=ゲスト)                             |
 | word      | remarks.matter    | 内容(複数レコードある場合はカンマ区切りで連結される) |
-| ex_point  | words.ex_point    | 追加計算されるポイント合計(卓外ポイント)             |
+| count     |                   | 1レコードに集約された`matter`の個数                  |
+| type      | words.type        | remarksの種別                                        |
+| ex_point  | words.ex_point    | 追加計算されるポイント合計(卓外ポイント合計値)       |
