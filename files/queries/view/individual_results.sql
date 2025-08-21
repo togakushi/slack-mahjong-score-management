@@ -1,11 +1,13 @@
 drop view if exists individual_results;
 create view if not exists individual_results as
 select * from (
+    -- 東家
     select
         datetime(playtime) as playtime,
         ts,
         1 as seat,
         p1_name as name,
+        ifnull(team.name, '未所属') as team,
         p1_rpoint as rpoint,
         p1_rank as rank,
         p1_point + ifnull(ex_point, 0) as point,
@@ -21,16 +23,20 @@ select * from (
     left join member
         on
             member.name = result.p1_name
+    left join team
+        on
+            team.id = member.team_id
     left join regulations
         on
             regulations.thread_ts == result.ts
             and regulations.name == result.p1_name
-    group by ts, seat
+    -- 南家
     union all select
         datetime(playtime),
         ts,
         2 as seat,
         p2_name,
+        ifnull(team.name, '未所属'),
         p2_rpoint,
         p2_rank,
         p2_point + ifnull(ex_point, 0),
@@ -46,16 +52,20 @@ select * from (
     left join member
         on
             member.name = result.p2_name
+    left join team
+        on
+            team.id = member.team_id
     left join regulations
         on
             regulations.thread_ts == result.ts
             and regulations.name == result.p2_name
-    group by ts, seat
+    -- 西家
     union all select
         datetime(playtime),
         ts,
         3 as seat,
         p3_name,
+        ifnull(team.name, '未所属'),
         p3_rpoint,
         p3_rank,
         p3_point + ifnull(ex_point, 0),
@@ -71,16 +81,20 @@ select * from (
     left join member
         on
             member.name = result.p3_name
+    left join team
+        on
+            team.id = member.team_id
     left join regulations
         on
             regulations.thread_ts == result.ts
             and regulations.name == result.p3_name
-    group by ts, seat
+    -- 北家
     union all select
         datetime(playtime),
         ts,
         4 as seat,
         p4_name,
+        ifnull(team.name, '未所属'),
         p4_rpoint,
         p4_rank,
         p4_point + ifnull(ex_point, 0),
@@ -96,11 +110,13 @@ select * from (
     left join member
         on
             member.name = result.p4_name
+    left join team
+        on
+            team.id = member.team_id
     left join regulations
         on
             regulations.thread_ts == result.ts
             and regulations.name == result.p4_name
-    group by ts, seat
 )
 order by ts, seat
 ;
