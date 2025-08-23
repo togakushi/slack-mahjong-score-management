@@ -4,7 +4,6 @@ libs/commands/graph/rating.py
 
 import os
 
-import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
@@ -23,8 +22,6 @@ def plot(m: MessageParserProtocol) -> bool:
         m (MessageParserProtocol): メッセージデータ
 
     """
-
-    plt.close()
 
     # データ収集
     game_info: GameInfoDict = aggregate.game_info()
@@ -51,7 +48,7 @@ def plot(m: MessageParserProtocol) -> bool:
         df_sorted = df_sorted.rename(columns=mapping_dict)
 
     # --- グラフ生成
-    graph_setup(plt, fm)
+    graph_setup()
 
     save_file = os.path.join(
         g.cfg.setting.work_dir,

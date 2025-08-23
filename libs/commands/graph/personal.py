@@ -4,7 +4,6 @@ libs/commands/graph/personal.py
 
 import os
 
-import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib import gridspec
@@ -23,8 +22,6 @@ def plot(m: MessageParserProtocol) -> bool:
     Args:
         m (MessageParserProtocol): メッセージデータ
     """
-
-    plt.close()
 
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
@@ -50,7 +47,7 @@ def plot(m: MessageParserProtocol) -> bool:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
-    configuration.graph_setup(plt, fm)
+    configuration.graph_setup()
     fig = plt.figure(figsize=(12, 8))
 
     if g.params.get("target_count", 0) == 0:
@@ -125,8 +122,6 @@ def statistics_plot(m: MessageParserProtocol) -> bool:
     Args:
         m (MessageParserProtocol): メッセージデータ
     """
-
-    plt.close()
 
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
@@ -237,7 +232,7 @@ def statistics_plot(m: MessageParserProtocol) -> bool:
     rank_table["平均順位"] = count_df.apply(lambda row: f"{row["平均順位"]:.2f}", axis=1)
 
     # グラフ設定
-    configuration.graph_setup(plt, fm)
+    configuration.graph_setup()
     fig = plt.figure(figsize=(20, 10))
     fig.suptitle(title_text, size=20, weight="bold")
     gs = gridspec.GridSpec(figure=fig, nrows=3, ncols=2)
@@ -264,8 +259,6 @@ def statistics_plot(m: MessageParserProtocol) -> bool:
     subplot_table(stats_df, ax_rpoint2)
 
     plt.savefig(save_file, bbox_inches="tight")
-    plt.close()
-
     m.post.file_list = [{"個人成績": save_file}]
     return True
 

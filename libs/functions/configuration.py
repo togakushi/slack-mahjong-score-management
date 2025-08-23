@@ -226,14 +226,10 @@ def read_memberslist(log=True):
         logging.notice(f"team_list: {[x["team"] for x in g.team_list]}")  # type: ignore
 
 
-def graph_setup(plt: plt, fm: fm) -> None:
-    """グラフ設定
+def graph_setup() -> None:
+    """グラフ設定初期化"""
 
-    Args:
-        plt (matplotlib.font_manager): matplotlibオブジェクト
-        fm (matplotlib.pyplot): matplotlibオブジェクト
-    """
-
+    plt.close()
     use(backend="agg")
     mlogger = logging.getLogger("matplotlib")
     mlogger.setLevel(logging.WARNING)

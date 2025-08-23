@@ -5,7 +5,6 @@ libs/commands/graph/summary.py
 import logging
 import os
 
-import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -24,8 +23,6 @@ def point_plot(m: MessageParserProtocol) -> bool:
     Args:
         m (MessageParserProtocol): メッセージデータ
     """
-
-    plt.close()
 
     # 初期化
     title_text = None
@@ -105,7 +102,6 @@ def rank_plot(m: MessageParserProtocol) -> bool:
         m (MessageParserProtocol): メッセージデータ
     """
 
-    plt.close()
     # 初期化
     title_text = None
     xlabel_text = None
@@ -248,7 +244,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
-    configuration.graph_setup(plt, fm)
+    configuration.graph_setup()
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
         kwargs["kind"] = "barh"

@@ -4,7 +4,6 @@ libs/commands/report/slackpost.py
 
 import os
 
-import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
@@ -25,8 +24,6 @@ def plot(m: MessageParserProtocol) -> bool:
         - **True**: レポート生成
         - **False**: 対象データなし
     """
-
-    plt.close()
 
     # --- データ取得
     results_df = loader.read_data("report/winner.sql")
@@ -58,7 +55,7 @@ def plot(m: MessageParserProtocol) -> bool:
                 )
 
     # --- グラフ設定
-    configuration.graph_setup(plt, fm)
+    configuration.graph_setup()
     plt.rcParams["font.size"] = 6
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,
@@ -131,7 +128,5 @@ def plot(m: MessageParserProtocol) -> bool:
     )
 
     fig.savefig(report_file_path)
-    plt.close()
-
     m.post.file_list = [{"成績上位者": report_file_path}]
     return True

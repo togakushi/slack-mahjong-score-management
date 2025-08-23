@@ -225,8 +225,6 @@ def graphing_mean_rank(df: pd.DataFrame, title: str, whole: bool = False) -> Byt
     plt.xlabel("ゲーム数", fontsize=14)
 
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
-    plt.close()
-
     return imgdata
 
 
@@ -288,8 +286,6 @@ def graphing_total_points(df: pd.DataFrame, title: str, whole: bool = False) -> 
     plt.xlabel("ゲーム数", fontsize=14)
 
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
-    plt.close()
-
     return imgdata
 
 
@@ -335,8 +331,6 @@ def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
         plt.xticks(rotation=30)
 
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
-    plt.close()
-
     return imgdata
 
 
@@ -351,8 +345,6 @@ def gen_pdf(m: MessageParserProtocol) -> bool:
         - **True**: レポート生成
         - **False**: 対象データなし
     """
-
-    plt.close()
 
     if not g.params.get("player_name"):  # レポート対象の指定なし
         m.post.headline = {"成績レポート": message.random_reply(m, "no_target", False)}
@@ -538,7 +530,6 @@ def entire_aggregate(style: dict) -> list:
 
     elements.append(Spacer(1, 5 * mm))
     elements.append(Image(imgdata, width=600 * 0.5, height=600 * 0.5))
-    plt.close()
 
     data = get_count_moving(0)
     df = pd.DataFrame(data)

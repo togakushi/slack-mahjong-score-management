@@ -4,7 +4,6 @@ libs/commands/report/monthly.py
 
 import os
 
-import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
@@ -25,7 +24,6 @@ def plot(m: MessageParserProtocol) -> bool:
         - **False**: 対象データなし
     """
 
-    plt.close()
     # --- データ収集
     df = loader.read_data("report/monthly.sql")
     results = df.transpose().to_dict()
@@ -35,7 +33,7 @@ def plot(m: MessageParserProtocol) -> bool:
         return False
 
     # --- グラフフォント設定
-    configuration.graph_setup(plt, fm)
+    configuration.graph_setup()
     plt.rcParams["font.size"] = 6
 
     # 色彩設定
@@ -101,7 +99,5 @@ def plot(m: MessageParserProtocol) -> bool:
     )
 
     fig.savefig(report_file_path)
-    plt.close()
-
     m.post.file_list = [{"月別ゲーム統計": report_file_path}]
     return True

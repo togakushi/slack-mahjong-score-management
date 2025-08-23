@@ -5,7 +5,6 @@ libs/commands/report/results_list.py
 import os
 from typing import TYPE_CHECKING
 
-import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
@@ -103,7 +102,7 @@ def graph_generation(game_info: GameInfoDict, df: "pd.DataFrame", title) -> str:
     )
 
     # フォント/色彩設定
-    configuration.graph_setup(plt, fm)
+    configuration.graph_setup()
     plt.rcParams["font.size"] = 6
 
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
@@ -162,9 +161,8 @@ def graph_generation(game_info: GameInfoDict, df: "pd.DataFrame", title) -> str:
         transform=fig.transFigure,
         fontsize=6,
     )
-    fig.savefig(report_file_path)
-    plt.close()
 
+    fig.savefig(report_file_path)
     return report_file_path
 
 
