@@ -6,6 +6,7 @@ libs/utils/converter.py
 import os
 import re
 import textwrap
+from typing import cast
 
 import pandas as pd
 from tabulate import tabulate
@@ -92,6 +93,29 @@ def df_to_dict(df: pd.DataFrame, step: int = 40, index: bool = False) -> dict:
         msg["0"] = t
 
     return msg
+
+
+def df_to_results_details(df: pd.DataFrame) -> dict:
+    data_list: list = []
+    for x in df.to_dict(orient="index").values():
+        work_df = pd.DataFrame({
+            "東家：": [v for k, v in cast(dict, x).items() if str(k).startswith("p1_")],
+            "南家：": [v for k, v in cast(dict, x).items() if str(k).startswith("p2_")],
+            "西家：": [v for k, v in cast(dict, x).items() if str(k).startswith("p3_")],
+            "北家：": [v for k, v in cast(dict, x).items() if str(k).startswith("p4_")],
+        }, index=["name", "rpoint", "rank", "point", "grandslam"]).T
+
+        work_df["rpoint"] = work_df.apply(lambda v: f"<>{v["rpoint"] * 100:8d}点".replace("-", "▲"), axis=1)
+        work_df["point"] = work_df.apply(lambda v: f"(<>{v["point"]:7.1f}pt)".replace("-", "▲"), axis=1)
+        work_df["rank"] = work_df.apply(lambda v: f"{v["rank"]}位", axis=1)
+        data = work_df.to_markdown(tablefmt="tsv", headers=[], floatfmt=formatter.floatfmt_adjust(work_df)).replace("<>", "")
+
+        ret = f"{str(x["playtime"]).replace("-", "/")} {x["備考"]}\n"
+        ret += textwrap.indent(data, "\t") + "\n"
+
+        data_list.append(ret)
+
+    return {idx: x for idx, x in enumerate(formatter.group_strings(data_list, 2000))}
 
 
 def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:

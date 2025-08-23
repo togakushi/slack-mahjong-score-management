@@ -245,6 +245,11 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "vs_point_sum": "獲得ポイント(相手)", "vs_point_avg": "平均ポイント(相手)",
         "my_rpoint_avg": "平均素点(自分)", "my_rank_avg": "平均順位(自分)", "my_rank_distr": "順位分布(自分)",
         "vs_rpoint_avg": "平均素点(相手)", "vs_rank_avg": "平均順位(相手)", "vs_rank_distr": "順位分布(相手)",
+        #
+        "p1_name": "東家 名前", "p1_grandslam": "東家 メモ", "p1_rpoint": "東家 素点", "p1_rank": "東家 順位", "p1_point": "東家 獲得pt",
+        "p2_name": "南家 名前", "p2_grandslam": "南家 メモ", "p2_rpoint": "南家 素点", "p2_rank": "南家 順位", "p2_point": "南家 獲得pt",
+        "p3_name": "西家 名前", "p3_grandslam": "西家 メモ", "p3_rpoint": "西家 素点", "p3_rank": "西家 順位", "p3_point": "西家 獲得pt",
+        "p4_name": "北家 名前", "p4_grandslam": "北家 メモ", "p4_rpoint": "北家 素点", "p4_rank": "北家 順位", "p4_point": "北家 獲得pt",
     }
 
     for x in df.columns:

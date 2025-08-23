@@ -201,6 +201,11 @@ class SlackAPI(APIInterface):
                                     post_msg.extend(_table_data(converter.df_to_remarks(msg)))
                             case "座席データ":
                                 post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
+                            case "戦績":
+                                if "name" in msg.columns:  # 縦持ちデータ
+                                    pass
+                                else:
+                                    post_msg.extend(_table_data(converter.df_to_results_details(msg)))
                             case _:
                                 post_msg.extend(_table_data(converter.df_to_remarks(msg)))
                     case "rating":
