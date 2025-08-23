@@ -1,5 +1,4 @@
-drop view if exists grandslam; -- 旧情報
-drop view if exists regulations;
+
 create view if not exists regulations as
     select
         remarks.thread_ts,

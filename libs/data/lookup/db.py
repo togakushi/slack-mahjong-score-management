@@ -52,11 +52,11 @@ def member_info(name: str) -> dict:
             max(rpoint) as rpoint_max,
             min(rpoint) as rpoint_min
         from
-            --[individual] individual_results as results
-            --[team] team_results as results
+            individual_results as results
         where
             rule_version = ?
-            and name = ?
+            --[individual] and name = ?
+            --[team] and team = ?
     """)
 
     with closing(dbutil.get_connection()) as conn:

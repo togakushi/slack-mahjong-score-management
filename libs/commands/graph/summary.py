@@ -73,16 +73,11 @@ def point_plot(m: MessageParserProtocol) -> bool:
                         title_text = f"獲得ポイント ({ExtDt(g.params["starttime"]).format("ymd")})"
 
     # 集計
-    if g.params.get("individual"):  # 個人集計
-        legend = "name"
-    else:  # チーム集計
-        legend = "team"
-
     pivot = pd.pivot_table(
-        df, index=pivot_index, columns=legend, values="point_sum"
+        df, index=pivot_index, columns="name", values="point_sum"
     ).ffill()
     pivot = pivot.reindex(  # 並び替え
-        target_data[legend].to_list(), axis="columns"
+        target_data["name"].to_list(), axis="columns"
     )
 
     # グラフ生成
@@ -91,7 +86,7 @@ def point_plot(m: MessageParserProtocol) -> bool:
         "title_text": title_text,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
-        "legend": legend,
+        "legend": "name",
         "xlabel_text": xlabel_text,
         "ylabel_text": "通算ポイント",
         "horizontal": True,
@@ -157,16 +152,11 @@ def rank_plot(m: MessageParserProtocol) -> bool:
                         title_text = f"順位 ({ExtDt(g.params["starttime"]).format("ymd")})"
 
     # 集計
-    if g.params.get("individual"):  # 個人集計
-        legend = "name"
-    else:  # チーム集計
-        legend = "team"
-
     pivot = pd.pivot_table(
-        df, index=pivot_index, columns=legend, values="point_sum"
+        df, index=pivot_index, columns="name", values="point_sum"
     ).ffill()
     pivot = pivot.reindex(  # 並び替え
-        target_data[legend].to_list(), axis="columns"
+        target_data["name"].to_list(), axis="columns"
     )
     pivot = pivot.rank(method="dense", ascending=False, axis=1)
 
@@ -176,7 +166,7 @@ def rank_plot(m: MessageParserProtocol) -> bool:
         "title_text": title_text,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
-        "legend": legend,
+        "legend": "name",
         "xlabel_text": xlabel_text,
         "ylabel_text": "順位 (通算ポイント順)",
         "horizontal": False,
@@ -222,11 +212,11 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
         if df.empty:
             return (target_data, df)
 
-        target_data["last_point"] = df.groupby("team").last()["point_sum"]
+        target_data["last_point"] = df.groupby("name").last()["point_sum"]
         target_data["game_count"] = (
-            df.groupby("team").max(numeric_only=True)["count"]
+            df.groupby("name").max(numeric_only=True)["count"]
         )
-        target_data["team"] = target_data.index
+        target_data["name"] = target_data.index
         target_data = target_data.sort_values("last_point", ascending=False)
 
     # 順位付け
@@ -235,12 +225,9 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
     )
 
     if g.params.get("anonymous"):
-        col = "team"
-        if g.params.get("individual"):
-            col = "name"
-        mapping_dict = formatter.anonymous_mapping(df[col].unique().tolist())
-        df[col] = df[col].replace(mapping_dict)
-        target_data[col] = target_data[col].replace(mapping_dict)
+        mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
+        df["name"] = df["name"].replace(mapping_dict)
+        target_data["name"] = target_data["name"].replace(mapping_dict)
 
     return (target_data.sort_values("position"), df)
 

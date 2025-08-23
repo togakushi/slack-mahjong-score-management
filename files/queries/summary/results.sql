@@ -1,7 +1,6 @@
 -- summary.results
 select
-    --[team] name as name,
-    --[individual] name,
+    name,
     count() as count,
     count(point > 0 or null) as 'win',
     count(point < 0 or null) as 'lose',
@@ -99,16 +98,15 @@ from (
         results.playtime,
         --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
         --[individual] --[unregistered_not_replace] case when results.guest = 0 then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
-        --[team] results.name,
+        --[team] results.team as name,
         rpoint,
         rank,
         point,
         seat,
-        --[individual] results.grandslam,
+        grandslam,
         ifnull(count, 0) as gs_count
     from
-        --[individual] individual_results as results
-        --[team] team_results as results
+        individual_results as results
     join game_info on
         game_info.ts == results.ts
     left join regulations as grandslam
@@ -116,15 +114,16 @@ from (
             grandslam.type == 0
             and grandslam.thread_ts == results.ts
             --[individual] and grandslam.name == results.name
-            --[team] and grandslam.team == results.name
+            --[team] and grandslam.name == results.team
     where
         results.rule_version = :rule_version
         and results.playtime between :starttime and :endtime
         --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
         --[individual] --[guest_skip] and results.guest = 0 -- ゲストなし
         --[friendly_fire] and game_info.same_team = 0
-        --[team] and results.name notnull
-        --[player_name] and results.name in (<<player_list>>) -- 対象プレイヤー
+        --[team] and results.team != "未所属" -- 未所属除外
+        --[individual] --[player_name] and results.name in (<<player_list>>) -- 対象プレイヤー
+        --[team] --[player_name] and results.team in (<<player_list>>) -- 対象チーム
         --[search_word] and game_info.comment like :search_word
     order by
         results.playtime desc

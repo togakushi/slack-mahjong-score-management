@@ -1,4 +1,3 @@
-drop view if exists game_info;
 create view if not exists game_info as
     select
         datetime(playtime) as playtime,

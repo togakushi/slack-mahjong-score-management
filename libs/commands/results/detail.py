@@ -90,7 +90,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     msg.update(get_record(data))  # ベスト/ワーストレコード
 
     # レギュレーション
-    remarks_df = loader.read_data("summary/remarks.sql")
+    remarks_df = loader.read_data("remarks.info.sql")
     count_df = remarks_df.groupby("matter").agg(count=("matter", "count"), total=("ex_point", "sum"), type=("type", "max"))
     count_df["matter"] = count_df.index
 

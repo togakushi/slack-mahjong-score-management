@@ -139,7 +139,6 @@ def statistics_plot(m: MessageParserProtocol) -> bool:
     if g.params.get("individual"):  # 個人成績
         player = formatter.name_replace(g.params["player_name"], add_mark=True)
     else:  # チーム成績
-        df = df.rename(columns={"team": "name"})
         player = g.params["player_name"]
 
     df = df.filter(items=["playtime", "name", "rpoint", "rank", "point"])

@@ -31,10 +31,9 @@ def aggregation(m: MessageParserProtocol) -> bool:
     df_summary.index += 1
 
     if g.params.get("anonymous"):
-        col = "name" if g.params.get("individual") else "team"
         mapping_dict = formatter.anonymous_mapping(df_game["name"].unique().tolist())
         df_game["name"] = df_game["name"].replace(mapping_dict)
-        df_summary[col] = df_summary[col].replace(mapping_dict)
+        df_summary["name"] = df_summary["name"].replace(mapping_dict)
         df_remarks["name"] = df_remarks["name"].replace(mapping_dict)
 
     df_summary = formatter.df_rename(df_summary)

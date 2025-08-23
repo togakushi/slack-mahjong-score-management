@@ -1,5 +1,4 @@
 -- ranking.ratings
-
 select
     game_results.playtime,
     --[individual] --[unregistered_not_replace] case when p1_guest = 0 then p1_name else p1_name || '(<<guest_mark>>)' end as p1_name, -- ゲスト無効

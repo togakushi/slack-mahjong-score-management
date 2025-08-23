@@ -57,8 +57,18 @@ def initialization_resultdb() -> None:
                     )
                     logging.info("regulations table(type1): %s, %s", word, ex_point)
 
+    # VIEW
+    resultdb.executescript(
+        """
+        drop view if exists game_info;
+        drop view if exists game_results;
+        drop view if exists individual_results;
+        drop view if exists team_results; -- 旧情報
+        drop view if exists grandslam; -- 旧情報
+        drop view if exists regulations;
+        """
+    )
     resultdb.executescript(loader.load_query("view/individual_results.sql"))
-    resultdb.executescript(loader.load_query("view/team_results.sql"))
     resultdb.executescript(loader.load_query("view/game_results.sql"))
     resultdb.executescript(loader.load_query("view/game_info.sql"))
     resultdb.executescript(loader.load_query("view/regulations.sql").format(undefined_word=g.cfg.undefined_word))

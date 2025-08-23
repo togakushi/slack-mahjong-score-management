@@ -16,11 +16,11 @@ from (
             row_number() over (order by playtime) as total_count,
             playtime, rank, point, rpoint
         from
-            --[individual] individual_results as results
-            --[team] team_results as results
+            individual_results as results
         where
             rule_version = :rule_version
-            and name = :player_name
+            --[individual] and name = :player_name
+            --[team] and team = :player_name
     )
     order by
         total_count desc

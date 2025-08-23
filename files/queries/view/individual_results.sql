@@ -1,4 +1,3 @@
-drop view if exists individual_results;
 create view if not exists individual_results as
 select * from (
     -- 東家

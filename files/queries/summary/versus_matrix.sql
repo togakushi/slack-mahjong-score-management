@@ -4,13 +4,12 @@ with target_data as (
         results.playtime,
         --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
         --[individual] --[unregistered_not_replace] case when results.guest = 0 then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
-        --[team] results.name as name,
+        --[team] results.team as name,
         point,
         rpoint,
         rank
     from
-        --[individual] individual_results as results
-        --[team] team_results as results
+        individual_results as results
     join game_info on
         game_info.ts == results.ts
     where
@@ -19,7 +18,7 @@ with target_data as (
         --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
         --[individual] --[guest_skip] and results.guest = 0 -- ゲストナシ
         --[team] --[friendly_fire] and game_info.same_team = 0
-        --[team] and team_id notnull -- 未所属除外
+        --[team] and results.team != "未所属" -- 未所属除外
         --[search_word] and game_info.comment like :search_word
 )
 select
