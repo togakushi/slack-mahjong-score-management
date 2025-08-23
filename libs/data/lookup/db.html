@@ -138,11 +138,11 @@
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="s2">            max(rpoint) as rpoint_max,</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="s2">            min(rpoint) as rpoint_min</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="s2">        from</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="s2">            --[individual] individual_results as results</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="s2">            --[team] team_results as results</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="s2">        where</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="s2">            rule_version = ?</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="s2">            and name = ?</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="s2">            individual_results as results</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="s2">        where</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="s2">            rule_version = ?</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="s2">            --[individual] and name = ?</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="s2">            --[team] and team = ?</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="s2">    &quot;&quot;&quot;</span><span class="p">)</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">get_connection</span><span class="p">())</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
@@ -421,11 +421,11 @@
 </span><span id="member_info-53"><a href="#member_info-53"><span class="linenos">53</span></a><span class="s2">            max(rpoint) as rpoint_max,</span>
 </span><span id="member_info-54"><a href="#member_info-54"><span class="linenos">54</span></a><span class="s2">            min(rpoint) as rpoint_min</span>
 </span><span id="member_info-55"><a href="#member_info-55"><span class="linenos">55</span></a><span class="s2">        from</span>
-</span><span id="member_info-56"><a href="#member_info-56"><span class="linenos">56</span></a><span class="s2">            --[individual] individual_results as results</span>
-</span><span id="member_info-57"><a href="#member_info-57"><span class="linenos">57</span></a><span class="s2">            --[team] team_results as results</span>
-</span><span id="member_info-58"><a href="#member_info-58"><span class="linenos">58</span></a><span class="s2">        where</span>
-</span><span id="member_info-59"><a href="#member_info-59"><span class="linenos">59</span></a><span class="s2">            rule_version = ?</span>
-</span><span id="member_info-60"><a href="#member_info-60"><span class="linenos">60</span></a><span class="s2">            and name = ?</span>
+</span><span id="member_info-56"><a href="#member_info-56"><span class="linenos">56</span></a><span class="s2">            individual_results as results</span>
+</span><span id="member_info-57"><a href="#member_info-57"><span class="linenos">57</span></a><span class="s2">        where</span>
+</span><span id="member_info-58"><a href="#member_info-58"><span class="linenos">58</span></a><span class="s2">            rule_version = ?</span>
+</span><span id="member_info-59"><a href="#member_info-59"><span class="linenos">59</span></a><span class="s2">            --[individual] and name = ?</span>
+</span><span id="member_info-60"><a href="#member_info-60"><span class="linenos">60</span></a><span class="s2">            --[team] and team = ?</span>
 </span><span id="member_info-61"><a href="#member_info-61"><span class="linenos">61</span></a><span class="s2">    &quot;&quot;&quot;</span><span class="p">)</span>
 </span><span id="member_info-62"><a href="#member_info-62"><span class="linenos">62</span></a>
 </span><span id="member_info-63"><a href="#member_info-63"><span class="linenos">63</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">get_connection</span><span class="p">())</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
