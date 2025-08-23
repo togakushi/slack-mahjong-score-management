@@ -1,5 +1,5 @@
 """
-integrations/standard_io/message.py
+integrations/standard_io/adapter.py
 """
 
 import textwrap
