@@ -5,19 +5,17 @@ select
     --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
     --[individual] --[unregistered_not_replace] case when results.guest = 0 then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
     --[team] results.team as name,
-    game_info.guest_count,
-    game_info.same_team,
+    --[individual] results.guest,
+    --[team] 0 as guest,
     seat,
     rpoint,
     rank,
     point,
-    --[individual] results.guest,
-    --[team] 0 as guest,
-    --[not_group_length] game_info.comment
-    --[group_length] substr(game_info.comment, 1, :group_length) as comment
     grandslam,
     regulation,
-    ex_point
+    ex_point,
+    game_info.guest_count,
+    game_info.same_team
 from
     individual_results as results
 join game_info

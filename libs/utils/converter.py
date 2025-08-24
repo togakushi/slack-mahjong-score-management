@@ -96,26 +96,58 @@ def df_to_dict(df: pd.DataFrame, step: int = 40, index: bool = False) -> dict:
 
 
 def df_to_results_details(df: pd.DataFrame) -> dict:
+    """戦績(詳細)データをテキスト変換
+
+    Args:
+        df (pd.DataFrame): 対象データ
+
+    Returns:
+        dict: 整形テキスト
+    """
+
     data_list: list = []
     for x in df.to_dict(orient="index").values():
         work_df = pd.DataFrame({
-            "東家：": [v for k, v in cast(dict, x).items() if str(k).startswith("p1_")],
-            "南家：": [v for k, v in cast(dict, x).items() if str(k).startswith("p2_")],
-            "西家：": [v for k, v in cast(dict, x).items() if str(k).startswith("p3_")],
-            "北家：": [v for k, v in cast(dict, x).items() if str(k).startswith("p4_")],
+            "東家：": [v for k, v in cast(dict, x).items() if str(k).startswith("東家")],
+            "南家：": [v for k, v in cast(dict, x).items() if str(k).startswith("南家")],
+            "西家：": [v for k, v in cast(dict, x).items() if str(k).startswith("西家")],
+            "北家：": [v for k, v in cast(dict, x).items() if str(k).startswith("北家")],
         }, index=["name", "rpoint", "rank", "point", "grandslam"]).T
 
-        work_df["rpoint"] = work_df.apply(lambda v: f"<>{v["rpoint"] * 100:8d}点".replace("-", "▲"), axis=1)
+        work_df["rpoint"] = work_df.apply(lambda v: f"<>{v["rpoint"]:8d}点".replace("-", "▲"), axis=1)
         work_df["point"] = work_df.apply(lambda v: f"(<>{v["point"]:7.1f}pt)".replace("-", "▲"), axis=1)
         work_df["rank"] = work_df.apply(lambda v: f"{v["rank"]}位", axis=1)
         data = work_df.to_markdown(tablefmt="tsv", headers=[], floatfmt=formatter.floatfmt_adjust(work_df)).replace("<>", "")
 
-        ret = f"{str(x["playtime"]).replace("-", "/")} {x["備考"]}\n"
+        ret = f"{str(x["日時"]).replace("-", "/")} {x["備考"]}\n"
         ret += textwrap.indent(data, "\t") + "\n"
 
         data_list.append(ret)
 
-    return {idx: x for idx, x in enumerate(formatter.group_strings(data_list, 2000))}
+    return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, 2000))}
+
+
+def df_to_results_simple(df: pd.DataFrame) -> dict:
+    """戦績(簡易)データをテキスト変換
+
+    Args:
+        df (pd.DataFrame): 対象データ
+
+    Returns:
+        dict: 整形テキスト
+    """
+
+    data_list: list = []
+    for x in df.to_dict(orient="index").values():
+        vs_guest = ""
+        if x["備考"] != "":
+            vs_guest = f"({g.cfg.setting.guest_mark}) "
+
+        ret = f"\t{vs_guest}{str(x["日時"]).replace("-", "/")}  "
+        ret += f"{x["座席"]}\t{x["順位"]}位\t{x["素点"]:8d}点\t({x["獲得ポイント"]:7.1f}pt)\t{x["役満和了"]}".replace("-", "▲")
+        data_list.append(ret)
+
+    return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, 2500))}
 
 
 def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:

@@ -3,7 +3,6 @@ libs/commands/results/detail.py
 """
 
 import textwrap
-from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -112,7 +111,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
         if g.params.get("verbose"):
             msg["戦績"] = get_results_details(mapping_dict)
         else:
-            msg["戦績"] = get_results(mapping_dict)
+            msg["戦績"] = get_results_simple(mapping_dict)
 
     if g.params.get("versus_matrix"):
         msg["対戦結果"] = get_versus_matrix(mapping_dict)
@@ -257,14 +256,15 @@ def get_record(data: dict) -> dict:
     return ret
 
 
-def get_results(mapping_dict: dict) -> str:
-    """戦績データ出力用メッセージ生成
+def get_results_simple(mapping_dict: dict) -> pd.DataFrame:
+    """戦績(簡易)データ取得
+
+    Args:
+        mapping_dict (dict): 匿名化オプション用マップ
 
     Returns:
-        str: 出力メッセージ
+        pd.DataFrame: 戦績データ
     """
-
-    ret: str = ""
 
     target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
 
@@ -274,27 +274,24 @@ def get_results(mapping_dict: dict) -> str:
         df["name"] = df["name"].replace(mapping_dict)
         target_player = mapping_dict.get(target_player, target_player)
 
-    df_data = df.query("name == @target_player").set_index("playtime")
-    for x in df_data.itertuples():
-        play_time = str(x.Index).replace("-", "/")
-        rpoint = cast(int, x.rpoint) * 100
-        point = cast(float, x.point)
-        vs_guest = ""
-        guest_count = cast(int, x.guest_count)
-        same_team = cast(int, x.same_team)
+    df_data = df.query("name == @target_player")
+    df_data["seat"] = df_data.apply(lambda v: ["東家", "南家", "西家", "北家"][(v["seat"] - 1)], axis=1)
+    df_data["rpoint"] = df_data["rpoint"] * 100
+    pd.options.mode.copy_on_write = True
+    if g.params.get("individual"):
+        df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
+    else:
+        df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
+    df_data = formatter.df_rename(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "grandslam", "備考"]), short=False)
 
-        if guest_count >= 2 and g.params.get("individual"):
-            vs_guest = g.cfg.setting.guest_mark
-        if same_team == 1 and not g.params.get("individual"):
-            vs_guest = g.cfg.setting.guest_mark
-
-        ret += f"\t{vs_guest}{play_time}  {x.rank}位 {rpoint:8d}点 ({point:7.1f}pt) {x.grandslam}\n".replace("-", "▲")
-
-    return ret
+    return df_data
 
 
 def get_results_details(mapping_dict: dict) -> pd.DataFrame:
     """戦績(詳細)データ取得
+
+    Args:
+        mapping_dict (dict): 匿名化オプション用マップ
 
     Returns:
         pd.DataFrame: 戦績データ
@@ -304,8 +301,16 @@ def get_results_details(mapping_dict: dict) -> pd.DataFrame:
 
     df = loader.read_data("summary/details2.sql").fillna(value="")
     if g.params.get("anonymous"):
-        mapping_dict.update(formatter.anonymous_mapping(df["name"].unique().tolist(), len(mapping_dict)))
-        df["name"] = df["name"].replace(mapping_dict)
+        name_list: list = []
+        name_list.extend(df["p1_name"].unique().tolist())
+        name_list.extend(df["p2_name"].unique().tolist())
+        name_list.extend(df["p3_name"].unique().tolist())
+        name_list.extend(df["p4_name"].unique().tolist())
+        mapping_dict.update(formatter.anonymous_mapping(list(set(name_list)), len(mapping_dict)))
+        df["p1_name"] = df["p1_name"].replace(mapping_dict)
+        df["p2_name"] = df["p2_name"].replace(mapping_dict)
+        df["p3_name"] = df["p3_name"].replace(mapping_dict)
+        df["p4_name"] = df["p4_name"].replace(mapping_dict)
         target_player = mapping_dict.get(target_player, target_player)
 
     df_data = df.query("p1_name == @target_player or p2_name == @target_player or p3_name == @target_player or p4_name == @target_player")

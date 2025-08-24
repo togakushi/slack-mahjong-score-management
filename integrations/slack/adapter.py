@@ -189,6 +189,7 @@ class SlackAPI(APIInterface):
                     post_msg.append(f"{header}{msg.rstrip()}\n")
 
             if isinstance(msg, pd.DataFrame):
+
                 match m.data.command_type:
                     case "results":
                         match title:
@@ -202,10 +203,10 @@ class SlackAPI(APIInterface):
                             case "座席データ":
                                 post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
                             case "戦績":
-                                if "name" in msg.columns:  # 縦持ちデータ
-                                    pass
-                                else:
+                                if "東家 名前" in msg.columns:  # 縦持ちデータ
                                     post_msg.extend(_table_data(converter.df_to_results_details(msg)))
+                                else:
+                                    post_msg.extend(_table_data(converter.df_to_results_simple(msg)))
                             case _:
                                 post_msg.extend(_table_data(converter.df_to_remarks(msg)))
                     case "rating":

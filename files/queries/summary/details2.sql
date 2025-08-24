@@ -6,7 +6,7 @@ select
     --[individual] --[unregistered_replace] case when results.p1_guest = 0 then results.p1_name else :guest_name end as p1_name, -- ゲスト有効
     --[individual] --[unregistered_not_replace] case when results.p1_guest = 0 then results.p1_name else results.p1_name || '(<<guest_mark>>)' end as p1_name, -- ゲスト無効
     --[team] results.p1_team as p1_name,
-    p1_rpoint,
+    p1_rpoint * 100 as p1_rpoint,
     p1_rank,
     p1_point,
     p1_grandslam,
@@ -14,7 +14,7 @@ select
     --[individual] --[unregistered_replace] case when results.p2_guest = 0 then results.p2_name else :guest_name end as p2_name, -- ゲスト有効
     --[individual] --[unregistered_not_replace] case when results.p2_guest = 0 then results.p2_name else results.p2_name || '(<<guest_mark>>)' end as p2_name, -- ゲスト無効
     --[team] results.p2_team as p2_name,
-    p2_rpoint,
+    p2_rpoint * 100 as p2_rpoint,
     p2_rank,
     p2_point,
     p2_grandslam,
@@ -22,7 +22,7 @@ select
     --[individual] --[unregistered_replace] case when results.p3_guest = 0 then results.p3_name else :guest_name end as p3_name, -- ゲスト有効
     --[individual] --[unregistered_not_replace] case when results.p3_guest = 0 then results.p3_name else results.p3_name || '(<<guest_mark>>)' end as p3_name, -- ゲスト無効
     --[team] results.p3_team as p3_name,
-    p3_rpoint,
+    p3_rpoint * 100 as p3_rpoint,
     p3_rank,
     p3_point,
     p3_grandslam,
@@ -30,7 +30,7 @@ select
     --[individual] --[unregistered_replace] case when results.p4_guest = 0 then results.p4_name else :guest_name end as p4_name, -- ゲスト有効
     --[individual] --[unregistered_not_replace] case when results.p4_guest = 0 then results.p4_name else results.p4_name || '(<<guest_mark>>)' end as p4_name, -- ゲスト無効
     --[team] results.p4_team as p4_name,
-    p4_rpoint,
+    p4_rpoint * 100 as p4_rpoint,
     p4_rank,
     p4_point,
     p4_grandslam,
