@@ -24,7 +24,6 @@ def aggregation(m: MessageParserProtocol) -> bool:
     df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
     df_game = loader.read_data("summary/details.sql")
     df_remarks = loader.read_data("remarks.info.sql")
-    df_remarks = df_remarks[df_remarks["playtime"].isin(df_game["playtime"].unique())]
 
     # インデックスの振りなおし
     df_summary.reset_index(inplace=True, drop=True)
