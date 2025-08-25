@@ -11,6 +11,7 @@ from functools import partial
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib import use
 
 import libs.global_value as g
@@ -52,7 +53,11 @@ def arg_parser() -> argparse.Namespace:
 
     p.add_argument(
         "--service",
-        choices=["slack", "standard_io", "std"],
+        choices=[
+            "slack",
+            "standard_io", "std",
+            "web", "flask",
+        ],
         default="slack",
         help="連携先サービス",
     )
@@ -228,6 +233,10 @@ def read_memberslist(log=True):
 
 def graph_setup() -> None:
     """グラフ設定初期化"""
+
+    match pd.options.plotting.backend:
+        case "plotly":
+            return
 
     plt.close()
     use(backend="agg")

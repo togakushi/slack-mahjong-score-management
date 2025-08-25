@@ -2,7 +2,9 @@
 integrations/factory.py
 """
 
-from integrations import slack, standard_io
+import pandas as pd
+
+from integrations import slack, standard_io, web
 from integrations.base import interface as base
 
 
@@ -14,6 +16,8 @@ def select_adapter(selected_service: str) -> base.APIInterface:
             return slack.adapter.SlackAPI()
         case "standard_io":
             return standard_io.adapter.StandardIO()
+        case "web":
+            return web.adapter.StandardIO()
         case _:
             raise ValueError(f"Unknown service: {selected_service}")
 
@@ -26,9 +30,14 @@ def select_parser(selected_service: str, **kwargs):
 
     match selected_service:
         case "slack":
+            pd.options.plotting.backend = "matplotlib"
             return slack.parser.MessageParser(reaction_ok, reaction_ng)
         case "standard_io":
+            pd.options.plotting.backend = "matplotlib"
             return standard_io.parser.MessageParser(reaction_ok, reaction_ng)
+        case "web":
+            pd.options.plotting.backend = "plotly"
+            return web.parser.MessageParser(reaction_ok, reaction_ng)
         case _:
             raise ValueError("No match service name.")
 

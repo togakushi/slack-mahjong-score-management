@@ -93,12 +93,8 @@ class StandardIO(APIInterface):
                     print(self._text_formatter(msg))
 
                 if isinstance(msg, pd.DataFrame):
-                    match m.data.command_type:
-                        case "ranking" | "rating":
-                            fmt = formatter.floatfmt_adjust(msg, index=False)
-                        case _:
-                            fmt = formatter.floatfmt_adjust(msg, index=True)
-                    print(msg.to_markdown(index=False, tablefmt="simple_outline", floatfmt=fmt).replace("nan", "---"))
+                    fmt = formatter.floatfmt_adjust(msg, index=False)
+                    print(msg.to_markdown(index=False, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----"))
 
                 print("")
 

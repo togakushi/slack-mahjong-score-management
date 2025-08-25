@@ -41,5 +41,9 @@ if __name__ == "__main__":
             g.selected_service = "standard_io"
             import integrations.standard_io.events.handler as standard_io
             standard_io.main()
+        case "web" | "flask":
+            g.selected_service = "web"
+            import integrations.web.events.handler as webapp
+            webapp.main()
         case _:
             sys.exit()

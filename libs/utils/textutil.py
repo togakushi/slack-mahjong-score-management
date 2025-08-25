@@ -2,8 +2,11 @@
 libs/utils/textutil.py
 """
 
+import os
 import unicodedata
 from typing import Literal
+
+import libs.global_value as g
 
 
 def len_count(text: str) -> int:
@@ -85,6 +88,22 @@ def count_padding(data):
     if name_list:
         return max(len_count(x) for x in name_list)
     return 0
+
+
+def save_file_path(extension: str) -> str:
+    """保存ファイルのフルパスを取得
+
+    Args:
+        extension (str): 拡張子(ドットを含める)
+
+    Returns:
+        str: 保存ファイルパス
+    """
+
+    return os.path.join(
+        g.cfg.setting.work_dir,
+        f"{g.params["filename"]}{extension}" if g.params.get("filename") else f"graph{extension}",
+    )
 
 
 def split_line(last_line: int, step: int) -> list[tuple[int, int]]:

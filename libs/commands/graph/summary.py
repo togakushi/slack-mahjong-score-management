@@ -3,7 +3,6 @@ libs/commands/graph/summary.py
 """
 
 import logging
-import os
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,7 +13,7 @@ from cls.types import GameInfoDict
 from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import compose, configuration, message
-from libs.utils import formatter
+from libs.utils import formatter, textutil
 
 
 def point_plot(m: MessageParserProtocol) -> bool:
@@ -88,8 +87,16 @@ def point_plot(m: MessageParserProtocol) -> bool:
         "ylabel_text": "通算ポイント",
         "horizontal": True,
     }
-    save_file = _graph_generation(pivot, **args)
-    plt.savefig(save_file, bbox_inches="tight")
+
+    match pd.options.plotting.backend:
+        case "plotly":
+            save_file = textutil.save_file_path(".html")
+            fig = _graph_generation_plotly(pivot, **args)
+            fig.write_html(save_file)
+        case _:
+            save_file = textutil.save_file_path(".png")
+            fig = _graph_generation(pivot, **args)
+            plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"ポイント推移": save_file}]
     return True
@@ -167,8 +174,17 @@ def rank_plot(m: MessageParserProtocol) -> bool:
         "ylabel_text": "順位 (通算ポイント順)",
         "horizontal": False,
     }
-    save_file = _graph_generation(pivot, **args)
-    plt.savefig(save_file, bbox_inches="tight")
+
+    match pd.options.plotting.backend:
+        case "plotly":
+            save_file = textutil.save_file_path(".html")
+            fig = _graph_generation_plotly(pivot, **args)
+            fig.update_layout(yaxis=dict(autorange="reversed"))
+            fig.write_html(save_file)
+        case _:
+            save_file = textutil.save_file_path(".png")
+            fig = _graph_generation(pivot, **args)
+            plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"順位変動": save_file}]
     return True
@@ -228,21 +244,14 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
     return (target_data.sort_values("position"), df)
 
 
-def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
+def _graph_generation(df: pd.DataFrame, **kwargs):
     """グラフ生成共通処理
 
     Args:
         df (pd.DataFrame): グラフ描写データ
         kwargs (dict): グラフ生成パラメータ
 
-    Returns:
-        str: 生成したグラフの保存パス
     """
-
-    save_file = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
-    )
 
     configuration.graph_setup()
 
@@ -267,12 +276,12 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
             index=lab[::-1],
         )
 
-        tmpdf.plot.barh(
+        fig = tmpdf.plot.barh(
             figsize=(8, 2 + tmpdf.count().iloc[0] / 5),
             y="point",
             xlabel=f"総ゲーム数：{kwargs["total_game_count"]} ゲーム",
             color=color[::-1],
-        )
+        ).get_figure()
 
         plt.legend().remove()
         plt.gca().yaxis.tick_right()
@@ -284,12 +293,12 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
 
         logging.info("plot data:\n%s", tmpdf)
     else:
-        df.plot(
+        fig = df.plot(
             figsize=(8, 6),
             xlabel=kwargs["xlabel_text"],
             ylabel=kwargs["ylabel_text"],
             marker="." if len(df) < 50 else None,
-        )
+        ).get_figure()
 
         # 凡例
         legend_text = []
@@ -342,4 +351,34 @@ def _graph_generation(df: pd.DataFrame, **kwargs) -> str:
         fontsize=16,
     )
 
-    return save_file
+    return fig
+
+
+def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
+    """グラフ生成共通処理
+
+    Args:
+        df (pd.DataFrame): グラフ描写データ
+        kwargs (dict): グラフ生成パラメータ
+
+    """
+
+    fig = df.plot(backend="plotly")
+    fig.update_layout(
+        width=1280,
+        height=800,
+        title=dict(
+            text=kwargs["title_text"],
+            x=0.5,
+            font=dict(size=32),
+        ),
+        xaxis=dict(
+            title=dict(text=kwargs["xlabel_text"])
+        ),
+        yaxis=dict(
+            title=dict(text=kwargs["ylabel_text"])
+        ),
+        legend=dict(title="プレイヤー名")
+    )
+
+    return fig

@@ -1,6 +1,6 @@
 [project]
 name = "slack-mahjong-score-management"
-version = "0.1.0"
+version = "0.2.0"
 description = "Mahjong score management for Slack"
 readme = "README.md"
 license = "MIT"
@@ -14,6 +14,8 @@ dependencies = [
     "pandas",
     "tabulate[widechars]",
     "tqdm",
+    "plotly",
+    "flask",
 ]
 
 [dependency-groups]
