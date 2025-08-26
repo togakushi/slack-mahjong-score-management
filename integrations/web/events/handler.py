@@ -38,10 +38,11 @@ def main():
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
                 message += f"<h2>{k}</h2>"
+
             if isinstance(v, pd.DataFrame):
                 # 戦績(詳細)はマルチカラムで表示
                 if k == "戦績" and g.params.get("verbose"):
-                    padding = "0.25em 1em"
+                    padding = "0.25em 0.75em"
                     if not isinstance(v.columns, pd.MultiIndex):
                         new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
                         v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
@@ -51,13 +52,13 @@ def main():
                     .hide(axis="index")
                     .format(
                         {
-                            "通算": "{:.1f} pt",
-                            "ポイント": "{:.1f} pt",
-                            ("東家", "ポイント"): "{:.1f} pt",
-                            ("南家", "ポイント"): "{:.1f} pt",
-                            ("西家", "ポイント"): "{:.1f} pt",
-                            ("北家", "ポイント"): "{:.1f} pt",
-                            "平均": "{:.1f} pt",
+                            "通算": "{:+.1f} pt",
+                            "ポイント": "{:+.1f} pt",
+                            ("東家", "ポイント"): "{:+.1f} pt",
+                            ("南家", "ポイント"): "{:+.1f} pt",
+                            ("西家", "ポイント"): "{:+.1f} pt",
+                            ("北家", "ポイント"): "{:+.1f} pt",
+                            "平均": "{:+.1f} pt",
                             "順位差": "{:.1f} pt",
                             "トップ差": "{:.1f} pt",
                         },
@@ -74,6 +75,7 @@ def main():
                 message = re.sub(r" >-(\d+\.\d) pt</td>", r" >▲\1 pt</td>", message)  # ポイント
             else:
                 message += v.replace("\n", "<br>")
+
         return message
 
     @app.route("/graph")
@@ -101,6 +103,9 @@ def main():
         message = f"<h1>{title}</h1>"
         message += headline.replace("\n", "<br>")
         for k, v in m.post.message.items():
+            if not k.isnumeric() and k:
+                message += f"<h2>{k}</h2>"
+
             if isinstance(v, pd.DataFrame):
                 styled = (
                     v.style
@@ -108,9 +113,11 @@ def main():
                     .format(
                         {
                             "ゲーム参加率": "{:.2%}",
-                            "通算ポイント": "{:.1f} pt",
-                            "平均ポイント": "{:.1f} pt",
+                            "通算ポイント": "{:+.1f} pt",
+                            "平均ポイント": "{:+.1f} pt",
                             "最大獲得ポイント": "{:.1f} pt",
+                            "平均収支": "{:+.1f}",
+                            "平均素点": "{:.1f}",
                             "平均順位": "{:.2f}",
                             "1位率": "{:.2%}",
                             "連対率": "{:.2%}",
@@ -120,7 +127,6 @@ def main():
                             "レート": "{:.1f}",
                             "順位偏差": "{:.0f}",
                             "得点偏差": "{:.0f}",
-                            "平均素点": "{:.1f}",
                         },
                         na_rep="-----",
                     )
@@ -130,13 +136,13 @@ def main():
                         {"selector": "tr:nth-child(even)", "props": [("background-color", "#dddddd")]},
                     ])
                 )
-                if not k.isnumeric() and k:
-                    message += f"<h2>{k}</h2>"
+                message = re.sub(r" >-(\d+)</td>", r" >▲\1</td>", message)  # 素点
+                message = re.sub(r" >-(\d+\.\d)</td>", r" >▲\1</td>", message)  # 素点(小数点付き)
+                message = re.sub(r" >-(\d+\.\d) pt</td>", r" >▲\1 pt</td>", message)  # ポイント
                 message += styled.to_html()
             elif isinstance(v, str):
-                if not k.isnumeric() and k:
-                    message += f"<h2>{k}</h2>"
                 message += v.replace("\n", "<br>")
+
         return message
 
     app.run(port=8000)
