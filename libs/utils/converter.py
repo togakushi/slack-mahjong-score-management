@@ -167,9 +167,9 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
         case "ゲーム参加率":
             df["内容"] = df.apply(lambda x: f"<>{x["ゲーム参加率"]:>7.2%} ({x["ゲーム数"]:4d}G /{x["集計ゲーム数"]:4d}G)", axis=1)
         case "通算ポイント":
-            df["内容"] = df.apply(lambda x: f"<>{x["通算ポイント"]:>+7.1f}pt ({x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<>{x["通算ポイント"]:>+8.1f}pt ({x["ゲーム数"]:4d}G)", axis=1)
         case "平均ポイント":
-            df["内容"] = df.apply(lambda x: f"<>{x["平均ポイント"]:>+7.1f}pt ( {x["通算ポイント"]:>+7.1f}pt /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<>{x["平均ポイント"]:>+8.1f}pt ( {x["通算ポイント"]:>+8.1f}pt /{x["ゲーム数"]:4d}G)", axis=1)
         case "平均収支":
             df["内容"] = df.apply(lambda x: f"<>{x["平均収支"]:>6.0f}点 ({x["平均素点"]:>6.0f}点 /{x["ゲーム数"]:4d}G)", axis=1)
         case "トップ率":
@@ -185,7 +185,7 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
         case "役満和了率":
             df["内容"] = df.apply(lambda x: f"<>{x["役満和了率"]:>7.2%} ({x["役満和了数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
         case "最大素点":
-            df["内容"] = df.apply(lambda x: f"<>{x["最大素点"]:>6.0f}点 ({x["最大獲得ポイント"]:>+7.1f}pt)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<>{x["最大素点"]:>6.0f}点 ({x["最大獲得ポイント"]:>+8.1f}pt)", axis=1)
         case "連続トップ":
             df["内容"] = df.apply(lambda x: f"<>{x["連続トップ"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
         case "連続連対":
