@@ -184,7 +184,7 @@ class SlackAPI(APIInterface):
 
             if isinstance(msg, str):
                 if m.post.codeblock:
-                    post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n\n")
+                    post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n")
                 else:
                     post_msg.append(f"{header}{msg.rstrip()}\n")
 
