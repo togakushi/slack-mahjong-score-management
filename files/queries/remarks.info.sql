@@ -1,6 +1,6 @@
 -- remarks.info
 select
-    datetime(remarks.thread_ts, "unixepoch") as playtime,
+    datetime(remarks.thread_ts, "unixepoch", "localtime") as playtime,
     --[individual] --[unregistered_replace] case when member.id isnull then :guest_name else remarks.name end as name, -- ゲスト有効
     --[individual] --[unregistered_not_replace] case when member.id isnull then remarks.name || '(<<guest_mark>>)' else remarks.name end as name, -- ゲスト無効
     --[team] ifnull(team.name, "未所属") as name,
