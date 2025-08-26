@@ -51,6 +51,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     m.post.headline = {headline_title: header_text}
 
     if df_summary.empty:
+        m.post.message = {}  # 破棄
         return False
 
     # 集計結果
