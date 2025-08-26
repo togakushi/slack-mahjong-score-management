@@ -44,6 +44,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     df["rank"] = 0  # 順位表示用カラム
     df["total_count"] = game_info["game_count"]  # 集計ゲーム数
     df["participation_rate"] = df["game_count"] / df["total_count"]  # 参加率
+    df["balance_avg"] = df["rpoint_avg"] - g.cfg.mahjong.origin_point * 100  # 平均収支
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
@@ -72,9 +73,9 @@ def aggregation(m: MessageParserProtocol) -> bool:
     data["平均ポイント"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 平均収支
-    filter_item = ["rank", "name", "rpoint_avg", "game_count"]
+    filter_item = ["rank", "name", "balance_avg", "rpoint_avg", "game_count"]
     work_df = df.filter(items=filter_item).sort_values(by=["rpoint_avg", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["rpoint_avg"].rank(ascending=False, method="dense").astype("int")
+    work_df["rank"] = work_df["balance_avg"].rank(ascending=False, method="dense").astype("int")
     data["平均収支"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # トップ率

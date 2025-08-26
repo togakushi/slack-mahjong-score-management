@@ -171,7 +171,7 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
         case "平均ポイント":
             df["内容"] = df.apply(lambda x: f"<>{x["平均ポイント"]:>+7.1f}pt ( {x["通算ポイント"]:>+7.1f}pt /{x["ゲーム数"]:4d}G)", axis=1)
         case "平均収支":
-            df["内容"] = df.apply(lambda x: f"<>{x["平均素点"] - 25000:>6.0f}点 ({x["平均素点"]:>6.0f}点 /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<>{x["平均収支"]:>6.0f}点 ({x["平均素点"]:>6.0f}点 /{x["ゲーム数"]:4d}G)", axis=1)
         case "トップ率":
             df["内容"] = df.apply(lambda x: f"<>{x["1位率"]:>7.2%} ({x["1位数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
         case "連対率":

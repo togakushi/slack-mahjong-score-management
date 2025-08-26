@@ -39,7 +39,7 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
                 fmt.append(".0f")
             case "通算" | "通算ポイント" | "point_sum":
                 fmt.append("+.1f")
-            case "平均" | "平均ポイント" | "point_avg" | "区間ポイント" | "区間平均":
+            case "平均" | "平均ポイント" | "point_avg" | "平均収支" | "区間ポイント" | "区間平均":
                 fmt.append("+.1f")
             case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位" | "rank1" | "rank2" | "rank3" | "rank4":
                 fmt.append(".0f")
@@ -230,6 +230,7 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "rpoint": "素点",
         "point": "ポイント",
         "rpoint_avg": "平均素点",
+        "balance_avg": "平均収支",
         "top2_rate": "連対率", "top2": "連対数",
         "top3_rate": "ラス回避率", "top3": "ラス回避数",
         "point_dev": "得点偏差", "rank_dev": "順位偏差",

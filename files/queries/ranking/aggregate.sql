@@ -74,7 +74,7 @@ select
 
     max(rpoint) * 100 as rpoint_max,
     min(rpoint) * 100 as rpoint_min,
-    cast(avg(rpoint) as integer) * 100 as rpoint_avg
+    round(avg(rpoint) * 100, 1) as rpoint_avg
 from
     target_data
 group by
