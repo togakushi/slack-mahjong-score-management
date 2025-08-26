@@ -16,12 +16,14 @@ def main():
     m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
     app = Flask(__name__, static_folder="../../../files/html", static_url_path="")
 
+    padding = "0.25em 1.5em"
+
     @app.route("/")
     def index():
         return app.send_static_file("index.html")
 
     @app.route("/results")
-    def results():
+    def results(padding=padding):
         message = ""
         m.data.status = "message_append"
         m.data.text = f"{g.cfg.cw.results} " + request.args.get("text", "")
@@ -32,15 +34,15 @@ def main():
         message = f"<h1>{title}</h1>"
         message += headline.replace("\n", "<br>")
         for k, v in m.post.message.items():
+            if not k.isnumeric() and k:
+                message += f"<h2>{k}</h2>"
             if isinstance(v, pd.DataFrame):
-                match k:
-                    case "戦績":
-                        if g.params.get("verbose"):
-                            padding = "3px 3px"
-                        else:
-                            padding = "3px 20px"
-                    case _:
-                        padding = "3px 20px"
+                # 戦績(詳細)はマルチカラムで表示
+                if k == "戦績" and g.params.get("verbose"):
+                    padding = "0.25em 1em"
+                    if not isinstance(v.columns, pd.MultiIndex):
+                        new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
+                        v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
 
                 styled = (
                     v.style
@@ -48,11 +50,11 @@ def main():
                     .format(
                         {
                             "通算": "{:.1f} pt",
-                            "獲得ポイント": "{:.1f} pt",
-                            "東家 獲得pt": "{:.1f} pt",
-                            "南家 獲得pt": "{:.1f} pt",
-                            "西家 獲得pt": "{:.1f} pt",
-                            "北家 獲得pt": "{:.1f} pt",
+                            "ポイント": "{:.1f} pt",
+                            ("東家", "ポイント"): "{:.1f} pt",
+                            ("南家", "ポイント"): "{:.1f} pt",
+                            ("西家", "ポイント"): "{:.1f} pt",
+                            ("北家", "ポイント"): "{:.1f} pt",
                             "平均": "{:.1f} pt",
                             "順位差": "{:.1f} pt",
                             "トップ差": "{:.1f} pt",
@@ -65,10 +67,8 @@ def main():
                         {"selector": "tr:nth-child(even)", "props": [("background-color", "#dddddd")]},
                     ])
                 )
-                message += f"<h2>{k}</h2>"
                 message += styled.to_html()
-            elif isinstance(v, str):
-                message += f"<h2>{k}</h2>"
+            else:
                 message += v.replace("\n", "<br>")
         return message
 
@@ -98,15 +98,6 @@ def main():
         message += headline.replace("\n", "<br>")
         for k, v in m.post.message.items():
             if isinstance(v, pd.DataFrame):
-                match k:
-                    case "戦績":
-                        if g.params.get("verbose"):
-                            padding = "3px 3px"
-                        else:
-                            padding = "3px 20px"
-                    case _:
-                        padding = "3px 20px"
-
                 styled = (
                     v.style
                     .hide(axis="index")
@@ -143,6 +134,5 @@ def main():
                     message += f"<h2>{k}</h2>"
                 message += v.replace("\n", "<br>")
         return message
-
 
     app.run(port=8000)
