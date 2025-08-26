@@ -2,6 +2,8 @@
 integrations/web/events/handler.py
 """
 
+import re
+
 import pandas as pd
 from flask import Flask, request
 
@@ -68,6 +70,8 @@ def main():
                     ])
                 )
                 message += styled.to_html()
+                message = re.sub(r" >-(\d+)</td>", r" >▲\1</td>", message)  # 素点
+                message = re.sub(r" >-(\d+\.\d) pt</td>", r" >▲\1 pt</td>", message)  # ポイント
             else:
                 message += v.replace("\n", "<br>")
         return message
