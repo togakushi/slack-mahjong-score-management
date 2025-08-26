@@ -3,11 +3,10 @@ libs/commands/graph/summary.py
 """
 
 import logging
-from typing import cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import plotly.graph_objects as go  # type: ignore
+import plotly.express as px
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -365,7 +364,47 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
 
     """
 
-    fig = cast(go.Figure, df.plot(backend="plotly"))
+    if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
+        df_t = df.T
+        df_t.columns = ["point"]
+        df_t["rank"] = df_t["point"].rank(ascending=False, method="dense").astype("int")
+        df_t["positive"] = df_t["point"] > 0
+        df_t["label"] = df_t.apply(lambda x: f"{x["rank"]:3d}位：{x.name} ({x["point"]:+.1f} pt)", axis=1)
+
+        fig = px.bar(
+            df_t,
+            orientation="h",
+            color="positive",
+            color_discrete_map={True: "blue", False: "red"},
+            x=df_t["point"],
+            y=df_t["label"],
+        )
+        fig.update_traces(
+            hovertemplate="%{y}<extra></extra>"
+        )
+        fig.update_layout(
+            xaxis={
+                "title": {"text": f"獲得ポイント (総ゲーム数：{kwargs["total_game_count"]} ゲーム)"}
+            },
+            yaxis={
+                "autorange": "reversed",
+                "side": "right",
+                "title": None,
+            },
+            showlegend=False,
+        )
+    else:
+        fig = px.line(df)
+        fig.update_layout(
+            xaxis={
+                "title": {"text": kwargs["xlabel_text"]}
+            },
+            yaxis={
+                "title": {"text": kwargs["ylabel_text"]}
+            },
+            legend={"title": "プレイヤー名"}
+        )
+
     fig.update_layout(
         width=1280,
         height=800,
@@ -373,14 +412,7 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
             "text": kwargs["title_text"],
             "x": 0.5,
             "font": {"size": 32},
-        },
-        xaxis={
-            "title": {"text": kwargs["xlabel_text"]}
-        },
-        yaxis={
-            "title": {"text": kwargs["ylabel_text"]}
-        },
-        legend={"title": "プレイヤー名"}
+        }
     )
 
     return fig
