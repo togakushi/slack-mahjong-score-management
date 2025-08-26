@@ -3,9 +3,11 @@ libs/commands/graph/summary.py
 """
 
 import logging
+from typing import cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.graph_objects as go  # type: ignore
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -179,7 +181,7 @@ def rank_plot(m: MessageParserProtocol) -> bool:
         case "plotly":
             save_file = textutil.save_file_path(".html")
             fig = _graph_generation_plotly(pivot, **args)
-            fig.update_layout(yaxis=dict(autorange="reversed"))
+            fig.update_layout(yaxis={"autorange": "reversed"})
             fig.write_html(save_file)
         case _:
             save_file = textutil.save_file_path(".png")
@@ -363,22 +365,22 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
 
     """
 
-    fig = df.plot(backend="plotly")
+    fig = cast(go.Figure, df.plot(backend="plotly"))
     fig.update_layout(
         width=1280,
         height=800,
-        title=dict(
-            text=kwargs["title_text"],
-            x=0.5,
-            font=dict(size=32),
-        ),
-        xaxis=dict(
-            title=dict(text=kwargs["xlabel_text"])
-        ),
-        yaxis=dict(
-            title=dict(text=kwargs["ylabel_text"])
-        ),
-        legend=dict(title="プレイヤー名")
+        title={
+            "text": kwargs["title_text"],
+            "x": 0.5,
+            "font": {"size": 32},
+        },
+        xaxis={
+            "title": {"text": kwargs["xlabel_text"]}
+        },
+        yaxis={
+            "title": {"text": kwargs["ylabel_text"]}
+        },
+        legend={"title": "プレイヤー名"}
     )
 
     return fig

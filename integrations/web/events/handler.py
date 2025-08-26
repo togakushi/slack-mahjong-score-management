@@ -88,8 +88,9 @@ def main():
         for file_list in m.post.file_list:
             _, file_path = next(iter(file_list.items()))
             if file_path:
-                with open(file_path) as f:
+                with open(file_path, encoding="utf-8") as f:
                     return f.read()
+        return app.send_static_file("index.html")
 
     @app.route("/ranking")
     def ranking():
