@@ -5,3 +5,5 @@ reportlab
 pandas
 tabulate[widechars] # type: ignore
 tqdm
+plotly
+flask
