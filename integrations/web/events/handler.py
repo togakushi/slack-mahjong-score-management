@@ -5,7 +5,7 @@ integrations/web/events/handler.py
 import re
 
 import pandas as pd
-from flask import Flask, request
+from flask import Flask, render_template, request
 
 import libs.event_dispatcher
 import libs.global_value as g
@@ -16,7 +16,7 @@ def main():
     """メイン処理"""
 
     m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
-    app = Flask(__name__, static_folder="../../../files/html", static_url_path="")
+    app = Flask(__name__, static_folder="../../../files/html", template_folder="../../../files/html")
 
     padding = "0.25em 1.5em"
 
@@ -76,7 +76,7 @@ def main():
             else:
                 message += v.replace("\n", "<br>")
 
-        return message
+        return render_template("page.html", body=message)
 
     @app.route("/graph")
     def graph():
@@ -89,7 +89,8 @@ def main():
             _, file_path = next(iter(file_list.items()))
             if file_path:
                 with open(file_path, encoding="utf-8") as f:
-                    return f.read()
+                    message = f.read()
+                    return render_template("page.html", body=message)
         return app.send_static_file("index.html")
 
     @app.route("/ranking")
@@ -144,6 +145,6 @@ def main():
             elif isinstance(v, str):
                 message += v.replace("\n", "<br>")
 
-        return message
+        return render_template("page.html", body=message)
 
     app.run(port=8000)

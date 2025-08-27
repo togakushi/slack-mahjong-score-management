@@ -181,7 +181,7 @@ def rank_plot(m: MessageParserProtocol) -> bool:
             save_file = textutil.save_file_path(".html")
             fig = _graph_generation_plotly(pivot, **args)
             fig.update_layout(yaxis={"autorange": "reversed"})
-            fig.write_html(save_file)
+            fig.write_html(save_file, full_html=False)
         case _:
             save_file = textutil.save_file_path(".png")
             fig = _graph_generation(pivot, **args)
