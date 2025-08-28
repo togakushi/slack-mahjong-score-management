@@ -35,9 +35,6 @@
                     <a class="class" href="#MessageParser">MessageParser</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#MessageParser.__init__">MessageParser</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#MessageParser.parser">parser</a>
                         </li>
                         <li>
@@ -76,47 +73,23 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">integrations/web/parser.py</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.base.interface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">MessageParserDataMixin</span><span class="p">,</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>                                         <span class="n">MessageParserInterface</span><span class="p">)</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.base.interface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">MessageParserDataMixin</span><span class="p">,</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>                                         <span class="n">MessageParserInterface</span><span class="p">)</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParser</span><span class="p">(</span><span class="n">MessageParserDataMixin</span><span class="p">,</span> <span class="n">MessageParserInterface</span><span class="p">):</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParser</span><span class="p">(</span><span class="n">MessageParserDataMixin</span><span class="p">,</span> <span class="n">MessageParserInterface</span><span class="p">):</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>        <span class="n">MessageParserDataMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">)</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;message_append&quot;</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">=</span> <span class="s2">&quot;dummy&quot;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">())</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">):</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>            <span class="n">body</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">body</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">])</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">):</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;directmessage&quot;</span><span class="p">:</span>  <span class="c1"># スラッシュコマンド扱い</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span> <span class="o">=</span> <span class="s2">&quot;im&quot;</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;message_append&quot;</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="nd">@property</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="nd">@property</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">body</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="nd">@property</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="nd">@property</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -132,40 +105,19 @@
 
     </div>
     <a class="headerlink" href="#MessageParser"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser-13"><a href="#MessageParser-13"><span class="linenos">13</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParser</span><span class="p">(</span><span class="n">MessageParserDataMixin</span><span class="p">,</span> <span class="n">MessageParserInterface</span><span class="p">):</span>
-</span><span id="MessageParser-14"><a href="#MessageParser-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
-</span><span id="MessageParser-15"><a href="#MessageParser-15"><span class="linenos">15</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="MessageParser-16"><a href="#MessageParser-16"><span class="linenos">16</span></a>        <span class="n">MessageParserDataMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">)</span>
-</span><span id="MessageParser-17"><a href="#MessageParser-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="MessageParser-18"><a href="#MessageParser-18"><span class="linenos">18</span></a>
-</span><span id="MessageParser-19"><a href="#MessageParser-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="MessageParser-20"><a href="#MessageParser-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;message_append&quot;</span>
-</span><span id="MessageParser-21"><a href="#MessageParser-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">=</span> <span class="s2">&quot;dummy&quot;</span>
-</span><span id="MessageParser-22"><a href="#MessageParser-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">())</span>
-</span><span id="MessageParser-23"><a href="#MessageParser-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
-</span><span id="MessageParser-24"><a href="#MessageParser-24"><span class="linenos">24</span></a>
-</span><span id="MessageParser-25"><a href="#MessageParser-25"><span class="linenos">25</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">):</span>
-</span><span id="MessageParser-26"><a href="#MessageParser-26"><span class="linenos">26</span></a>            <span class="n">body</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">body</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">])</span>
-</span><span id="MessageParser-27"><a href="#MessageParser-27"><span class="linenos">27</span></a>
-</span><span id="MessageParser-28"><a href="#MessageParser-28"><span class="linenos">28</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">):</span>
-</span><span id="MessageParser-29"><a href="#MessageParser-29"><span class="linenos">29</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="MessageParser-30"><a href="#MessageParser-30"><span class="linenos">30</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="MessageParser-31"><a href="#MessageParser-31"><span class="linenos">31</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-</span><span id="MessageParser-32"><a href="#MessageParser-32"><span class="linenos">32</span></a>
-</span><span id="MessageParser-33"><a href="#MessageParser-33"><span class="linenos">33</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;directmessage&quot;</span><span class="p">:</span>  <span class="c1"># スラッシュコマンド扱い</span>
-</span><span id="MessageParser-34"><a href="#MessageParser-34"><span class="linenos">34</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-35"><a href="#MessageParser-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span> <span class="o">=</span> <span class="s2">&quot;im&quot;</span>
-</span><span id="MessageParser-36"><a href="#MessageParser-36"><span class="linenos">36</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;message_append&quot;</span>
-</span><span id="MessageParser-37"><a href="#MessageParser-37"><span class="linenos">37</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="MessageParser-38"><a href="#MessageParser-38"><span class="linenos">38</span></a>
-</span><span id="MessageParser-39"><a href="#MessageParser-39"><span class="linenos">39</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-40"><a href="#MessageParser-40"><span class="linenos">40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="MessageParser-41"><a href="#MessageParser-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
-</span><span id="MessageParser-42"><a href="#MessageParser-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
-</span><span id="MessageParser-43"><a href="#MessageParser-43"><span class="linenos">43</span></a>
-</span><span id="MessageParser-44"><a href="#MessageParser-44"><span class="linenos">44</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-45"><a href="#MessageParser-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-46"><a href="#MessageParser-46"><span class="linenos">46</span></a>        <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser-10"><a href="#MessageParser-10"><span class="linenos">10</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParser</span><span class="p">(</span><span class="n">MessageParserDataMixin</span><span class="p">,</span> <span class="n">MessageParserInterface</span><span class="p">):</span>
+</span><span id="MessageParser-11"><a href="#MessageParser-11"><span class="linenos">11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
+</span><span id="MessageParser-12"><a href="#MessageParser-12"><span class="linenos">12</span></a>
+</span><span id="MessageParser-13"><a href="#MessageParser-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="MessageParser-14"><a href="#MessageParser-14"><span class="linenos">14</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">body</span>
+</span><span id="MessageParser-15"><a href="#MessageParser-15"><span class="linenos">15</span></a>
+</span><span id="MessageParser-16"><a href="#MessageParser-16"><span class="linenos">16</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser-17"><a href="#MessageParser-17"><span class="linenos">17</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-18"><a href="#MessageParser-18"><span class="linenos">18</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="MessageParser-19"><a href="#MessageParser-19"><span class="linenos">19</span></a>
+</span><span id="MessageParser-20"><a href="#MessageParser-20"><span class="linenos">20</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser-21"><a href="#MessageParser-21"><span class="linenos">21</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-22"><a href="#MessageParser-22"><span class="linenos">22</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -173,25 +125,6 @@
 </div>
 
 
-                            <div id="MessageParser.__init__" class="classattr">
-                                        <input id="MessageParser.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="name">MessageParser</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
-
-                <label class="view-source-button" for="MessageParser.__init__-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#MessageParser.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.__init__-15"><a href="#MessageParser.__init__-15"><span class="linenos">15</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="MessageParser.__init__-16"><a href="#MessageParser.__init__-16"><span class="linenos">16</span></a>        <span class="n">MessageParserDataMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reaction_ok</span><span class="p">,</span> <span class="n">reaction_ng</span><span class="p">)</span>
-</span><span id="MessageParser.__init__-17"><a href="#MessageParser.__init__-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span></pre></div>
-
-
-    
-
-                            </div>
                             <div id="MessageParser.parser" class="classattr">
                                         <input id="MessageParser.parser-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -203,25 +136,8 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.parser"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.parser-19"><a href="#MessageParser.parser-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="MessageParser.parser-20"><a href="#MessageParser.parser-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;message_append&quot;</span>
-</span><span id="MessageParser.parser-21"><a href="#MessageParser.parser-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">=</span> <span class="s2">&quot;dummy&quot;</span>
-</span><span id="MessageParser.parser-22"><a href="#MessageParser.parser-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">())</span>
-</span><span id="MessageParser.parser-23"><a href="#MessageParser.parser-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">thread_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">event_ts</span>
-</span><span id="MessageParser.parser-24"><a href="#MessageParser.parser-24"><span class="linenos">24</span></a>
-</span><span id="MessageParser.parser-25"><a href="#MessageParser.parser-25"><span class="linenos">25</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;event&quot;</span><span class="p">):</span>
-</span><span id="MessageParser.parser-26"><a href="#MessageParser.parser-26"><span class="linenos">26</span></a>            <span class="n">body</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">body</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">])</span>
-</span><span id="MessageParser.parser-27"><a href="#MessageParser.parser-27"><span class="linenos">27</span></a>
-</span><span id="MessageParser.parser-28"><a href="#MessageParser.parser-28"><span class="linenos">28</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">):</span>
-</span><span id="MessageParser.parser-29"><a href="#MessageParser.parser-29"><span class="linenos">29</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="MessageParser.parser-30"><a href="#MessageParser.parser-30"><span class="linenos">30</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="MessageParser.parser-31"><a href="#MessageParser.parser-31"><span class="linenos">31</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-</span><span id="MessageParser.parser-32"><a href="#MessageParser.parser-32"><span class="linenos">32</span></a>
-</span><span id="MessageParser.parser-33"><a href="#MessageParser.parser-33"><span class="linenos">33</span></a>        <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel_name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;directmessage&quot;</span><span class="p">:</span>  <span class="c1"># スラッシュコマンド扱い</span>
-</span><span id="MessageParser.parser-34"><a href="#MessageParser.parser-34"><span class="linenos">34</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.parser-35"><a href="#MessageParser.parser-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span> <span class="o">=</span> <span class="s2">&quot;im&quot;</span>
-</span><span id="MessageParser.parser-36"><a href="#MessageParser.parser-36"><span class="linenos">36</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;message_append&quot;</span>
-</span><span id="MessageParser.parser-37"><a href="#MessageParser.parser-37"><span class="linenos">37</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channel_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.parser-13"><a href="#MessageParser.parser-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="MessageParser.parser-14"><a href="#MessageParser.parser-14"><span class="linenos">14</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">body</span>
 </span></pre></div>
 
 
@@ -239,20 +155,30 @@
                             <div id="MessageParser.is_command" class="classattr">
                                         <input id="MessageParser.is_command-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr variable">
-            <span class="name">is_command</span>
+            <span class="name">is_command</span><span class="annotation">: bool</span>
 
                 <label class="view-source-button" for="MessageParser.is_command-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#MessageParser.is_command"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_command-39"><a href="#MessageParser.is_command-39"><span class="linenos">39</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.is_command-40"><a href="#MessageParser.is_command-40"><span class="linenos">40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="MessageParser.is_command-41"><a href="#MessageParser.is_command-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか&quot;&quot;&quot;</span>
-</span><span id="MessageParser.is_command-42"><a href="#MessageParser.is_command-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_command_flg</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_command-16"><a href="#MessageParser.is_command-16"><span class="linenos">16</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.is_command-17"><a href="#MessageParser.is_command-17"><span class="linenos">17</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.is_command-18"><a href="#MessageParser.is_command-18"><span class="linenos">18</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>コマンドで実行されているか</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>bool: 真偽値</p>
+  
+  <ul>
+  <li><strong>True</strong> : コマンド</li>
+  <li><strong>False</strong> : 非コマンド</li>
+  </ul>
+</blockquote>
 </div>
 
 
@@ -266,9 +192,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-44"><a href="#MessageParser.check_updatable-44"><span class="linenos">44</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.check_updatable-45"><a href="#MessageParser.check_updatable-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-46"><a href="#MessageParser.check_updatable-46"><span class="linenos">46</span></a>        <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-20"><a href="#MessageParser.check_updatable-20"><span class="linenos">20</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.check_updatable-21"><a href="#MessageParser.check_updatable-21"><span class="linenos">21</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-22"><a href="#MessageParser.check_updatable-22"><span class="linenos">22</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 

@@ -56,6 +56,9 @@
                                 <a class="function" href="#MessageParserInterface.parser">parser</a>
                         </li>
                         <li>
+                                <a class="variable" href="#MessageParserInterface.is_command">is_command</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#MessageParserInterface.check_updatable">check_updatable</a>
                         </li>
                 </ul>
@@ -265,14 +268,25 @@
 </span><span id="MessageParserInterface-284"><a href="#MessageParserInterface-284"><span class="linenos">284</span></a>
 </span><span id="MessageParserInterface-285"><a href="#MessageParserInterface-285"><span class="linenos">285</span></a>    <span class="nd">@property</span>
 </span><span id="MessageParserInterface-286"><a href="#MessageParserInterface-286"><span class="linenos">286</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-287"><a href="#MessageParserInterface-287"><span class="linenos">287</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-288"><a href="#MessageParserInterface-288"><span class="linenos">288</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface-287"><a href="#MessageParserInterface-287"><span class="linenos">287</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-288"><a href="#MessageParserInterface-288"><span class="linenos">288</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか</span>
 </span><span id="MessageParserInterface-289"><a href="#MessageParserInterface-289"><span class="linenos">289</span></a>
 </span><span id="MessageParserInterface-290"><a href="#MessageParserInterface-290"><span class="linenos">290</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface-291"><a href="#MessageParserInterface-291"><span class="linenos">291</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-292"><a href="#MessageParserInterface-292"><span class="linenos">292</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface-293"><a href="#MessageParserInterface-293"><span class="linenos">293</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface-292"><a href="#MessageParserInterface-292"><span class="linenos">292</span></a><span class="sd">            - **True** : コマンド</span>
+</span><span id="MessageParserInterface-293"><a href="#MessageParserInterface-293"><span class="linenos">293</span></a><span class="sd">            - **False** : 非コマンド</span>
 </span><span id="MessageParserInterface-294"><a href="#MessageParserInterface-294"><span class="linenos">294</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-295"><a href="#MessageParserInterface-295"><span class="linenos">295</span></a>
+</span><span id="MessageParserInterface-296"><a href="#MessageParserInterface-296"><span class="linenos">296</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-297"><a href="#MessageParserInterface-297"><span class="linenos">297</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-298"><a href="#MessageParserInterface-298"><span class="linenos">298</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-299"><a href="#MessageParserInterface-299"><span class="linenos">299</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface-300"><a href="#MessageParserInterface-300"><span class="linenos">300</span></a>
+</span><span id="MessageParserInterface-301"><a href="#MessageParserInterface-301"><span class="linenos">301</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-302"><a href="#MessageParserInterface-302"><span class="linenos">302</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-303"><a href="#MessageParserInterface-303"><span class="linenos">303</span></a><span class="sd">            - **True** : 許可</span>
+</span><span id="MessageParserInterface-304"><a href="#MessageParserInterface-304"><span class="linenos">304</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface-305"><a href="#MessageParserInterface-305"><span class="linenos">305</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -313,6 +327,44 @@
 
 
                             </div>
+                            <div id="MessageParserInterface.is_command" class="classattr">
+                                        <input id="MessageParserInterface.is_command-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">is_command</span><span class="annotation">: bool</span>
+
+                <label class="view-source-button" for="MessageParserInterface.is_command-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.is_command"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.is_command-285"><a href="#MessageParserInterface.is_command-285"><span class="linenos">285</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.is_command-286"><a href="#MessageParserInterface.is_command-286"><span class="linenos">286</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.is_command-287"><a href="#MessageParserInterface.is_command-287"><span class="linenos">287</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.is_command-288"><a href="#MessageParserInterface.is_command-288"><span class="linenos">288</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか</span>
+</span><span id="MessageParserInterface.is_command-289"><a href="#MessageParserInterface.is_command-289"><span class="linenos">289</span></a>
+</span><span id="MessageParserInterface.is_command-290"><a href="#MessageParserInterface.is_command-290"><span class="linenos">290</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.is_command-291"><a href="#MessageParserInterface.is_command-291"><span class="linenos">291</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.is_command-292"><a href="#MessageParserInterface.is_command-292"><span class="linenos">292</span></a><span class="sd">            - **True** : コマンド</span>
+</span><span id="MessageParserInterface.is_command-293"><a href="#MessageParserInterface.is_command-293"><span class="linenos">293</span></a><span class="sd">            - **False** : 非コマンド</span>
+</span><span id="MessageParserInterface.is_command-294"><a href="#MessageParserInterface.is_command-294"><span class="linenos">294</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>コマンドで実行されているか</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>bool: 真偽値</p>
+  
+  <ul>
+  <li><strong>True</strong> : コマンド</li>
+  <li><strong>False</strong> : 非コマンド</li>
+  </ul>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="MessageParserInterface.check_updatable" class="classattr">
                                         <input id="MessageParserInterface.check_updatable-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr variable">
@@ -322,16 +374,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-285"><a href="#MessageParserInterface.check_updatable-285"><span class="linenos">285</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.check_updatable-286"><a href="#MessageParserInterface.check_updatable-286"><span class="linenos">286</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.check_updatable-287"><a href="#MessageParserInterface.check_updatable-287"><span class="linenos">287</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.check_updatable-288"><a href="#MessageParserInterface.check_updatable-288"><span class="linenos">288</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="MessageParserInterface.check_updatable-289"><a href="#MessageParserInterface.check_updatable-289"><span class="linenos">289</span></a>
-</span><span id="MessageParserInterface.check_updatable-290"><a href="#MessageParserInterface.check_updatable-290"><span class="linenos">290</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.check_updatable-291"><a href="#MessageParserInterface.check_updatable-291"><span class="linenos">291</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.check_updatable-292"><a href="#MessageParserInterface.check_updatable-292"><span class="linenos">292</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface.check_updatable-293"><a href="#MessageParserInterface.check_updatable-293"><span class="linenos">293</span></a><span class="sd">            - **False** : 禁止</span>
-</span><span id="MessageParserInterface.check_updatable-294"><a href="#MessageParserInterface.check_updatable-294"><span class="linenos">294</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-296"><a href="#MessageParserInterface.check_updatable-296"><span class="linenos">296</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.check_updatable-297"><a href="#MessageParserInterface.check_updatable-297"><span class="linenos">297</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.check_updatable-298"><a href="#MessageParserInterface.check_updatable-298"><span class="linenos">298</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.check_updatable-299"><a href="#MessageParserInterface.check_updatable-299"><span class="linenos">299</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface.check_updatable-300"><a href="#MessageParserInterface.check_updatable-300"><span class="linenos">300</span></a>
+</span><span id="MessageParserInterface.check_updatable-301"><a href="#MessageParserInterface.check_updatable-301"><span class="linenos">301</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.check_updatable-302"><a href="#MessageParserInterface.check_updatable-302"><span class="linenos">302</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.check_updatable-303"><a href="#MessageParserInterface.check_updatable-303"><span class="linenos">303</span></a><span class="sd">            - **True** : 許可</span>
+</span><span id="MessageParserInterface.check_updatable-304"><a href="#MessageParserInterface.check_updatable-304"><span class="linenos">304</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface.check_updatable-305"><a href="#MessageParserInterface.check_updatable-305"><span class="linenos">305</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
