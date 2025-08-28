@@ -6,7 +6,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import pandas as pd
-import plotly.express as px
+import plotly.express as px  # type: ignore
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
