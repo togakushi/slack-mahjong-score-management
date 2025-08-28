@@ -4,11 +4,37 @@
   <meta charset="UTF-8">
 </head>
 <body>
+  <div>
     [ <a href="/">top</a> / <a href="results">results</a> / <a href="graph">graph</a> / <a href="ranking">ranking</a> ]
+  </div>
+
+  <form method="GET" action="">
+    <div class="form-item">
+      <label>検索範囲：</label>
+        <label><input type="radio" name="range" value="今月">今月</label>
+        <label><input type="radio" name="range" value="先月">先月</label>
+        <label><input type="radio" name="range" value="全部">全部</label>
+        <label><input type="radio" name="range" value="" checked>デフォルト</label>
+    </div>
+    <div class="form-item">
+      <label>ゲスト：</label>
+        <label><input type="radio" name="guest" value="ゲストなし" checked>なし</label>
+        <label><input type="radio" name="guest" value="ゲストあり">あり</label>
+        <label><input type="radio" name="guest" value="ゲスト無効">無効</label>
+    </div>
+    <div class="form-item">
+      <label for="text">追加オプション：</label>
+      <input type="text" id="text" name="text">
+    </div>
+    <div>
+      <input type="submit" value="更新">
+    </div>
+  </form>
+
     {% block content %}
         {{ body|safe }}
     {% endblock %}
-    <br><br><hr>
-    [ <a href="/">top</a> / <a href="results">results</a> / <a href="graph">graph</a> / <a href="ranking">ranking</a> ]
+  <br><br><hr>
+  [ <a href="/">top</a> / <a href="results">results</a> / <a href="graph">graph</a> / <a href="ranking">ranking</a> ]
 </body>
 </html>

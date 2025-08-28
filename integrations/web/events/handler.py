@@ -26,15 +26,18 @@ def main():
 
     @app.route("/results")
     def results(padding=padding):
-        message = ""
+        text = " ".join(request.args.values())
         m.data.status = "message_append"
-        m.data.text = f"{g.cfg.cw.results} " + request.args.get("text", "")
+        m.data.text = f"{g.cfg.cw.results} {text}"
 
         libs.event_dispatcher.dispatch_by_keyword(m)
 
+        message = ""
         title, headline = next(iter(m.post.headline.items()))
-        message = f"<h1>{title}</h1>"
+        if not title.isnumeric() and title:
+            message = f"<h1>{title}</h1>"
         message += headline.replace("\n", "<br>")
+
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
                 message += f"<h2>{k}</h2>"
@@ -80,30 +83,40 @@ def main():
 
     @app.route("/graph")
     def graph():
+        text = " ".join(request.args.values())
         m.data.status = "message_append"
-        m.data.text = f"{g.cfg.cw.graph} " + request.args.get("text", "")
-
+        m.data.text = f"{g.cfg.cw.graph} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
+
+        message = ""
+        title, headline = next(iter(m.post.headline.items()))
+        if not title.isnumeric() and title:
+            message = f"<h1>{title}</h1>"
 
         for file_list in m.post.file_list:
             _, file_path = next(iter(file_list.items()))
             if file_path:
                 with open(file_path, encoding="utf-8") as f:
-                    message = f.read()
-                    return render_template("page.html", body=message)
-        return app.send_static_file("index.html")
+                    message += f.read()
+            else:
+                message += headline.replace("\n", "<br>")
+
+        return render_template("page.html", body=message)
 
     @app.route("/ranking")
     def ranking():
-        message = ""
+        text = " ".join(request.args.values())
         m.data.status = "message_append"
-        m.data.text = f"{g.cfg.cw.ranking} " + request.args.get("text", "")
+        m.data.text = f"{g.cfg.cw.ranking} {text}"
 
         libs.event_dispatcher.dispatch_by_keyword(m)
 
+        message = ""
         title, headline = next(iter(m.post.headline.items()))
-        message = f"<h1>{title}</h1>"
+        if not title.isnumeric() and title:
+            message = f"<h1>{title}</h1>"
         message += headline.replace("\n", "<br>")
+
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
                 message += f"<h2>{k}</h2>"
