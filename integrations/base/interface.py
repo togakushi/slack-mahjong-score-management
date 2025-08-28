@@ -283,6 +283,17 @@ class MessageParserInterface(ABC):
 
     @property
     @abstractmethod
+    def is_command(self) -> bool:
+        """コマンドで実行されているか
+
+        Returns:
+            bool: 真偽値
+            - **True** : コマンド
+            - **False** : 非コマンド
+        """
+
+    @property
+    @abstractmethod
     def check_updatable(self) -> bool:
         """DB操作の許可チェック
 

@@ -8,14 +8,13 @@ from integrations.protocols import MessageParserProtocol
 
 
 class _ReactionsDummy(ReactionsInterface):
-    def status(self, ch=str, ts=str) -> dict[str, list]:
+    def status(self, ch=str, ts=str):
         _ = (ch, ts)
-        return {"ok": [], "ng": []}
 
-    def append(self, icon, ch, ts) -> None:
+    def append(self, icon, ch, ts):
         _ = (icon, ch, ts)
 
-    def remove(self, icon, ch, ts) -> None:
+    def remove(self, icon, ch, ts):
         _ = (icon, ch, ts)
 
 
@@ -27,28 +26,14 @@ class _LookupDummy(LookupInterface):
         _ = user_id
 
 
-class StandardIO(APIInterface):
+class WebResponse(APIInterface):
     """メッセージ出力クラス"""
     def __init__(self):
         self.lookup = _LookupDummy()
         self.reactions = _ReactionsDummy()
 
     def post(self, m: MessageParserProtocol):
-        """メッセージ出力
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-        """
-
-    def get_conversations(self, m: MessageParserProtocol) -> dict:
-        """ダミー
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: ダミー
-        """
-
         _ = m
-        return {}
+
+    def get_conversations(self, m: MessageParserProtocol):
+        _ = m

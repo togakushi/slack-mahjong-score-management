@@ -2,43 +2,19 @@
 integrations/web/parser.py
 """
 
-from datetime import datetime
-from typing import cast
-
 from integrations.base.interface import (MessageParserDataMixin,
                                          MessageParserInterface)
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
     """メッセージ解析クラス"""
-    def __init__(self, reaction_ok: str, reaction_ng: str):
-        MessageParserDataMixin.__init__(self, reaction_ok, reaction_ng)
-        self._command_flg: bool = False
 
     def parser(self, body: dict):
-        self.data.status = "message_append"
-        self.data.channel_id = "dummy"
-        self.data.event_ts = str(datetime.now().timestamp())
-        self.data.thread_ts = self.data.event_ts
-
-        if body.get("event"):
-            body = cast(dict, body["event"])
-
-        if body.get("text"):
-            self.data.text = str(body.get("text", ""))
-        else:
-            self.data.text = ""
-
-        if body.get("channel_name") == "directmessage":  # スラッシュコマンド扱い
-            self._command_flg = True
-            self.data.channel_type = "im"
-            self.data.status = "message_append"
-            self.data.channel_id = body.get("channel_id", "")
+        _ = body
 
     @property
-    def is_command(self):
-        """コマンドで実行されているか"""
-        return self._command_flg
+    def is_command(self) -> bool:
+        return False
 
     @property
     def check_updatable(self) -> bool:

@@ -17,7 +17,7 @@ def select_adapter(selected_service: str) -> base.APIInterface:
         case "standard_io":
             return standard_io.adapter.StandardIO()
         case "web":
-            return web.adapter.StandardIO()
+            return web.adapter.WebResponse()
         case _:
             raise ValueError(f"Unknown service: {selected_service}")
 
