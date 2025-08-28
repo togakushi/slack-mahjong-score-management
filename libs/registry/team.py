@@ -1,5 +1,5 @@
 """
-libs/commands/team.py
+libs/registry/team.py
 """
 
 import logging
