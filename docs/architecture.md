@@ -1,101 +1,50 @@
-# データベース操作
-## 成績登録
+# インターフェース
 ```mermaid
-sequenceDiagram
-    participant results db
-    participant app
-    participant Slack
-    actor member
+---
+config:
+  flowchart:
+    curve: linear
+---
+flowchart LR
+    event(event handler);
+    a(API);
+    m1[["MessageParser(data)"]];
 
-    app->>Slack: Socket Mode
-    activate app
-    member-)Slack: Message Posting(Game Results)
-    Slack->>app: Event API
-    app->>results db: Data Insert
-    app->>app: Score Total Check
-    app-)Slack: Reaction add
-    alt failing to agree on a score
-    app-)member: Warning Mentions
-    end
-    deactivate app
-```
+    event --> m1 --> d["dispatcher()"] --> f1 & f2 & f3 & f4;
 
-## 成績修正
-```mermaid
-sequenceDiagram
-    participant results db
-    participant app
-    participant Slack
-    actor member
-
-    app->>Slack: Socket Mode
-    member-)Slack: Message Modification(Game Results)
-    Slack->>app: Event API
-    app->>results db: Data Update
-    app->>app: Score Total Check
-    app-)Slack: Reaction add
-    alt failing to agree on a score
-    app-)member: Warning Mentions
-    end
-```
-
-## 成績削除
-```mermaid
-sequenceDiagram
-    participant results db
-    participant app
-    participant Slack
-    actor member
-
-    app->>Slack: Socket Mode
-    activate app
-    member-)Slack: Message Deletion(Game Results)
-    Slack->>app: Event API
-    app->>results db: Data Delete
-    app-)Slack: Reaction remove
-    deactivate app
-```
-
-## 突合
-```mermaid
-sequenceDiagram
-    participant results db
-    participant app
-    participant Slack
-    actor member
-
-    app->>Slack: Socket Mode
-    activate app
-
-    alt Message
-    member-)Slack: Message Posting(comparison)
-    Slack->>app: Event API
-    else Reminder
-    Slack->>Slack: Reminder
-    Slack->>app: Event API
+    subgraph f1[Sub command]
+        direction LR
+        c([command]) --> cp[[CommandParser]];
+        cp --> sc1(results) --> p1(aggregation);
+        cp --> sc2(graph) --> p2(aggregation);
+        cp --> sc3(ranking) --> p3(aggregation);
+        cp --> sc4(report) --> p4(aggregation);
+        p1 & p2 & p3 & p4 --> mp1[["MessageParser(post)"]];
     end
 
-    app->>Slack: search
-    Slack-->>app: response
-    app->>results db: Data Select
-    results db-->>app: response
-
-    alt Game results that exist in Slack log but not in Database records
-    app->>results db: Data Insert
-    app-)Slack: Reaction add
-    alt failing to agree on a score
-    app-)member: Warning Mentions
-    end
-    else Different game results for Slack log and Database records
-    app->>results db: Data Update
-    app-)Slack: Reaction add
-    alt failing to agree on a score
-    app-)member: Warning Mentions
-    end
-    else Game results that exist in Database records but not in Slack log
-    app->>results db: Data Delete
+    subgraph f2[Results record]
+        direction LR
+        r2([record]);
+        r2 --> a1(score) --> results[(results)] --- j2;
+        r2 --> a2(remark) --> remarks[(remarks)] --- j2;
+        j2@{shape: f-circ};
+        j2 --> mp2[["MessageParser(post)"]];
     end
 
-    app->>Slack: Notification of results
-    deactivate app
+    subgraph f3[Member management]
+        direction LR
+        r1([registry]);
+        r1 --> a4(team) --> db2[(team)] & db1;
+        r1 --> a3(member) --> db1[(member)] & db3[(alias)];
+        r1 --> a5(alias) --> db3;
+        db1 & db2 & db3 --- j1@{shape: f-circ};
+        j1 --> mp3[["MessageParser(post)"]];
+    end
+
+    subgraph f4[Others]
+        direction LR
+        h([help]) --> mp4[["MessageParser(post)"]];
+    end
+
+    f1 & f2 & f3 & f4 --> post["post()<br>(API Interface)"] --> a;
 ```
