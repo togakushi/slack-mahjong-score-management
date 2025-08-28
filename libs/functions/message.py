@@ -105,7 +105,7 @@ def header(game_info: GameInfoDict, m: MessageParserProtocol, add_text="", inden
                     msg += game_range1
                     msg += f"総ゲーム数：{game_info["game_count"]} 回{add_text}\n"
                 else:
-                    msg += f"検索範囲：{str(compose.text_item.search_range())}\n"
+                    msg += f"検索範囲：{str(compose.text_item.search_range(time_pattern="time"))}\n"
                     msg += game_range1
                     msg += f"ゲーム数：{game_info["game_count"]} 回{add_text}\n"
             case "ranking" | "report":
