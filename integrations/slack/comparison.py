@@ -45,8 +45,6 @@ def main(m: MessageParserProtocol) -> None:
     if m.data.status == "message_changed":  # 編集イベントは無視
         return
 
-    api_adapter = factory.select_adapter(g.selected_service)
-
     # データ突合
     count, msg = data_comparison(m)
     logging.notice("count=%s", count)  # type: ignore
@@ -72,7 +70,6 @@ def main(m: MessageParserProtocol) -> None:
     m.post.message = {"データ突合": message}
     m.post.key_header = False
     m.post.ts = m.data.event_ts
-    api_adapter.post(m)
 
 
 def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:

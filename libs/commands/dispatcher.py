@@ -3,7 +3,6 @@ libs/commands/dispatcher.py
 """
 
 import libs.global_value as g
-from integrations import factory
 from integrations.protocols import MessageParserProtocol
 from libs.commands import graph, ranking, report, results
 from libs.utils import dictutil
@@ -18,8 +17,6 @@ def main(m: MessageParserProtocol):
 
     if m.data.status != "message_append":
         return
-
-    api_adapter = factory.select_adapter(g.selected_service)
 
     match m.data.command_type:
         case "results":
@@ -70,5 +67,3 @@ def main(m: MessageParserProtocol):
                 report.matrix.plot(m)
             else:
                 report.results_list.main(m)
-
-    api_adapter.post(m)

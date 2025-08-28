@@ -24,21 +24,20 @@ def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
     api_adapter = adapter.SlackAPI()
     reactions = api_adapter.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
     status_flg: bool = True  # リアクション最終状態(True: OK, False: NG)
+    m.post.message = {}
 
     # 素点合計チェック
     if detection.deposit:
         status_flg = False
         m.post.rpoint_sum = detection.rpoint_sum()
         m.post.ts = m.data.event_ts
-        message.random_reply(m, "invalid_score")
-        api_adapter.post(m)
+        m.post.message.update({"0": message.random_reply(m, "invalid_score", False)})
 
     # プレイヤー名重複チェック
     if len(set(detection.to_list())) != 4:
         status_flg = False
         m.post.ts = m.data.event_ts
-        message.random_reply(m, "same_player")
-        api_adapter.post(m)
+        m.post.message.update({"1": message.random_reply(m, "same_player", False)})
 
     # リアクション処理
     if status_flg:  # NGを外してOKを付ける

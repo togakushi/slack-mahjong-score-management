@@ -44,12 +44,10 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             m.post.message = compose.msg_help.event_message()
             m.post.ts = m.data.event_ts
             m.post.key_header = False
-            api_adapter.post(m)
             # メンバーリスト
             m.post.message = lookup.textdata.get_members_list()
             m.post.codeblock = True
             m.post.key_header = True
-            api_adapter.post(m)
 
         # 成績管理系コマンド
         case x if re.match(rf"^{g.cfg.cw.results}$", x) or (m.is_command and x in g.cfg.alias.results):
@@ -73,7 +71,6 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             comparison.main(m)
         case x if m.is_command and x in g.cfg.alias.download:
             m.post.file_list = [{"成績記録DB": g.cfg.db.database_file}]
-            api_adapter.post(m)
 
         # メンバーリスト/チームリスト
         case x if re.match(rf"^{g.cfg.cw.member}$", x) or (m.is_command and x in g.cfg.alias.member):
@@ -81,62 +78,52 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             m.post.codeblock = True
             m.post.key_header = True
             m.post.ts = m.data.event_ts
-            api_adapter.post(m)
         case x if re.match(rf"^{g.cfg.cw.team}$", x) or (m.is_command and x in g.cfg.alias.team_list):
             m.post.message = lookup.textdata.get_team_list()
             m.post.codeblock = True
             m.post.key_header = True
             m.post.ts = m.data.event_ts
-            api_adapter.post(m)
 
         # メンバー管理系コマンド
         case x if m.is_command and x in g.cfg.alias.member:
             m.post.message = lookup.textdata.get_members_list()
             m.post.codeblock = True
-            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.add:
             m.post.message = member.append(m.argument)
             m.post.key_header = False
-            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.delete:
             m.post.message = member.remove(m.argument)
             m.post.key_header = False
-            api_adapter.post(m)
 
         # チーム管理系コマンド
         case x if m.is_command and x in g.cfg.alias.team_create:
             m.post.message = team.create(m.argument)
             m.post.key_header = False
-            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_del:
             m.post.message = team.delete(m.argument)
             m.post.key_header = False
-            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_add:
             m.post.message = team.append(m.argument)
             m.post.key_header = False
-            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_remove:
             m.post.message = team.remove(m.argument)
             m.post.key_header = False
-            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_list:
             m.post.codeblock = True
             m.post.key_header = False
             m.post.message = lookup.textdata.get_team_list()
-            api_adapter.post(m)
         case x if m.is_command and x in g.cfg.alias.team_clear:
             m.post.message = team.clear()
             m.post.key_header = False
-            api_adapter.post(m)
 
         # その他
         case _ as x:
             if m.is_command:
                 m.post.message = compose.msg_help.slash_command(g.cfg.setting.slash_command)
-                api_adapter.post(m)
             else:
                 other_words(x, m)
+
+    api_adapter.post(m)
 
 
 def other_words(word: str, m: MessageParserProtocol):
@@ -181,7 +168,6 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
     f = factory.select_function(g.selected_service)
 
     if not m.in_thread or (m.in_thread == g.cfg.setting.thread_report):
@@ -190,7 +176,6 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
-        api_adapter.post(m)
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
@@ -202,7 +187,6 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
     f = factory.select_function(g.selected_service)
     record_data = lookup.db.exsist_record(m.data.event_ts)
 
@@ -222,7 +206,6 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
-        api_adapter.post(m)
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
