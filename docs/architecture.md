@@ -14,11 +14,11 @@ flowchart LR
 
     subgraph f1[Sub command]
         direction LR
-        c([command]) --> cp[[CommandParser]];
-        cp --> sc1(results) --> p1(aggregation);
-        cp --> sc2(graph) --> p2(aggregation);
-        cp --> sc3(ranking) --> p3(aggregation);
-        cp --> sc4(report) --> p4(aggregation);
+        c([command]) --> sc1 & sc2 & sc3 & sc4;
+        sc1(results) --> cp1[[CommandParser]] --> p1(aggregation);
+        sc2(graph) --> cp2[[CommandParser]] --> p2(aggregation);
+        sc3(ranking) --> cp3[[CommandParser]] --> p3(aggregation);
+        sc4(report) --> cp4[[CommandParser]] --> p4(aggregation);
         p1 & p2 & p3 & p4 --> mp1[["MessageParser(post)"]];
     end
 
