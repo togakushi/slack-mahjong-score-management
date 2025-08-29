@@ -52,59 +52,72 @@ def arg_parser() -> argparse.Namespace:
     )
 
     p.add_argument(
-        "--service",
-        choices=[
-            "slack",
-            "standard_io", "std",
-            "web", "flask",
-        ],
-        default="slack",
-        help="連携先サービス",
-    )
-
-    p.add_argument(
-        "--text",
-        type=str,
-        help="Only allowed when --service=standard_io",
-    )
-
-    p.add_argument(
-        "--debug",
-        action="store_true",
-        help="デバッグ情報表示",
-    )
-
-    p.add_argument(
-        "--verbose", "--trace",
-        dest="verbose",
-        action="store_true",
-        help="詳細デバッグ情報表示",
-    )
-
-    p.add_argument(
-        "--moderate",
-        action="store_true",
-        help="ログレベルがエラー以下のもを非表示",
-    )
-
-    p.add_argument(
-        "--notime",
-        action="store_true",
-        help="ログフォーマットから日時を削除",
-    )
-
-    p.add_argument(
         "-c", "--config",
         default="config.ini",
         help="設定ファイル(default: %(default)s)",
     )
-
     p.add_argument(
         "--profile",
         help=argparse.SUPPRESS,
     )
 
+    logging_group = p.add_argument_group("logging options")
+    logging_group.add_argument(
+        "--debug",
+        action="store_true",
+        help="デバッグ情報表示",
+    )
+    logging_group.add_argument(
+        "--verbose", "--trace",
+        dest="verbose",
+        action="store_true",
+        help="詳細デバッグ情報表示",
+    )
+    logging_group.add_argument(
+        "--moderate",
+        action="store_true",
+        help="ログレベルがエラー以下のもを非表示",
+    )
+    logging_group.add_argument(
+        "--notime",
+        action="store_true",
+        help="ログフォーマットから日時を削除",
+    )
+
     match os.path.basename(sys.argv[0]):
+        case "slack-app.py":
+            p.add_argument(
+                "--service",
+                choices=[
+                    "slack",
+                    "standard_io", "std",
+                    "web", "flask",
+                ],
+                default="slack",
+                help="連携先サービス",
+            )
+
+            service_stdio = p.add_argument_group("Only allowed when --service=standard_io")
+            service_stdio.add_argument(
+                "--text",
+                type=str,
+                help="input text strings",
+            )
+
+            service_web = p.add_argument_group("Only allowed when --service=web")
+            service_web.add_argument(
+                "--host",
+                type=str,
+                default="127.0.0.1",
+                help="listen  address(default: %(default)s)",
+            )
+            service_web.add_argument(
+                "--port",
+                type=int,
+                default=8000,
+                help="bind port(default: %(default)s)",
+            )
+
         case "dbtools.py":  # dbtools専用オプション
             group = p.add_mutually_exclusive_group()
             group.add_argument(
@@ -112,20 +125,17 @@ def arg_parser() -> argparse.Namespace:
                 action="store_true",
                 help="データ突合",
             )
-
             group.add_argument(
                 "--unification",
                 nargs="?",
                 const="rename.ini",
                 help="ファイルの内容に従って記録済みのメンバー名を修正する(default: %(const)s)",
             )
-
             group.add_argument(
                 "--recalculation",
                 action="store_true",
                 help="ポイント再計算",
             )
-
             group.add_argument(
                 "--export",
                 dest="export_data",
@@ -134,7 +144,6 @@ def arg_parser() -> argparse.Namespace:
                 metavar="PREFIX",
                 help="メンバー設定情報をエクスポート(default prefix: %(const)s)",
             )
-
             group.add_argument(
                 "--import",
                 nargs="?",
@@ -143,13 +152,11 @@ def arg_parser() -> argparse.Namespace:
                 metavar="PREFIX",
                 help="メンバー設定情報をインポート(default prefix: %(const)s)",
             )
-
             group.add_argument(
                 "--vacuum",
                 action="store_true",
                 help="database vacuum",
             )
-
             group.add_argument(
                 "--gen-test-data",
                 type=int,

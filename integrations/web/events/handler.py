@@ -161,4 +161,4 @@ def main():
 
         return render_template("page.html", body=message)
 
-    app.run(port=8000)
+    app.run(host=g.args.host, port=g.args.port)

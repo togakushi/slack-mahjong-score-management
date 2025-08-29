@@ -6,18 +6,7 @@ slack-app.py - Slackに投稿された麻雀のスコアを記録し、集計し
 help:
 
     $ ./slack-app.py --help
-    usage: slack-app.py [-h] [--service {slack,standard_io,std}] [--debug] [--verbose] [--moderate] [--notime] [-c CONFIG]
-
-    options:
-    -h, --help            show this help message and exit
-    --service {slack,standard_io,std}
-                          連携先サービス
-    --debug, --trace      デバッグ情報表示
-    --verbose             詳細デバッグ情報表示
-    --moderate            ログレベルがエラー以下のもを非表示
-    --notime              ログフォーマットから日時を削除
-    -c CONFIG, --config CONFIG
-                            設定ファイル(default: config.ini)
+    usage: slack-app.py [-h] ...
 """
 
 import sys
