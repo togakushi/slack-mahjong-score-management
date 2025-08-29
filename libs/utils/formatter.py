@@ -270,7 +270,7 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
             case "pt_avg" | "avg_point" | "point_avg" | "avg_mix":
                 rename_dict[x] = "平均" if short else "平均ポイント"
             case "ex_point":
-                rename_dict[x] = "卓外" if short else "卓外ポイント"
+                rename_dict[x] = "ポイント" if short else "卓外ポイント"
             case "rank_distr" | "rank_distr1" | "rank_distr2":
                 rename_dict[x] = "順位分布"
             case "rank_avg":
