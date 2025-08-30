@@ -94,8 +94,11 @@ class StandardIO(APIInterface):
 
                 if isinstance(msg, pd.DataFrame):
                     fmt = formatter.floatfmt_adjust(msg, index=False)
-                    print(msg.to_markdown(index=False, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----"))
-
+                    disp = msg.to_markdown(index=False, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
+                    match title:
+                        case "座席データ":
+                            disp = disp.replace("0.00", "-.--")
+                    print(disp)
                 print("")
 
     def get_conversations(self, m: MessageParserProtocol) -> dict:

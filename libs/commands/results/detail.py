@@ -82,7 +82,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     msg["座席データ"] = pd.DataFrame({
         "席": ["東家", "南家", "西家", "北家"],
         "順位分布": [v for k, v in data.items() if str(k).endswith("-順位分布")],
-        "平均順位": [f"\u200b{float(v):.2f}".replace("0.00", "-.--") for k, v in data.items() if str(k).endswith("-平均順位")],
+        "平均順位": [v for k, v in data.items() if str(k).endswith("-平均順位")],
         "トビ": [v for k, v in data.items() if str(k).endswith("-トビ")],
         "役満和了": [v for k, v in data.items() if str(k).endswith("-役満和了")],
     })
