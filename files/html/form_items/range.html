@@ -1,0 +1,7 @@
+    <div class="form-item">
+      <label>検索範囲：</label>
+      <label><input type="radio" name="range" value="今月" {{ "checked" if range == "今月" else "" }}>今月</label>
+      <label><input type="radio" name="range" value="先月" {{ "checked" if range == "先月" else "" }}>先月</label>
+      <label><input type="radio" name="range" value="全部" {{ "checked" if range == "全部" else "" }}>全部</label>
+      <label><input type="radio" name="range" value="" {{ "checked" if range == "" else "" }}>デフォルト</label>
+    </div>

@@ -2,14 +2,15 @@
 integrations/web/events/handler.py
 """
 
-import re
-
 import pandas as pd
 from flask import Flask, render_template, request
 
 import libs.event_dispatcher
 import libs.global_value as g
 from integrations import factory
+from integrations.web import functions
+from libs.data import lookup
+from libs.utils import dbutil
 
 
 def main():
@@ -24,12 +25,15 @@ def main():
     def index():
         return app.send_static_file("index.html")
 
-    @app.route("/results")
-    def results(padding=padding):
-        text = " ".join(request.args.values())
+    @app.route("/summary", methods=["GET", "POST"])
+    def summary(padding=padding):
         m.data.status = "message_append"
-        m.data.text = f"{g.cfg.cw.results} {text}"
+        m.post.message = {}
 
+        cookie_data = functions.get_cookie(request)
+
+        text = " ".join(cookie_data.values())
+        m.data.text = f"{g.cfg.cw.results} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
 
         message = ""
@@ -50,42 +54,22 @@ def main():
                         new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
                         v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
 
-                styled = (
-                    v.style
-                    .hide(axis="index")
-                    .format(
-                        {
-                            "通算": "{:+.1f} pt",
-                            "ポイント": "{:+.1f} pt",
-                            ("東家", "ポイント"): "{:+.1f} pt",
-                            ("南家", "ポイント"): "{:+.1f} pt",
-                            ("西家", "ポイント"): "{:+.1f} pt",
-                            ("北家", "ポイント"): "{:+.1f} pt",
-                            "平均": "{:+.1f} pt",
-                            "順位差": "{:.1f} pt",
-                            "トップ差": "{:.1f} pt",
-                            "ポイント合計": "{:.1f} pt",
-                        },
-                        na_rep="-----",
-                    )
-                    .set_table_styles([
-                        {"selector": "th", "props": [("color", "#ffffff"), ("background-color", "#000000"), ("text-align", "center"), ("padding", padding)]},
-                        {"selector": "td", "props": [("text-align", "center"), ("padding", padding)]},
-                        {"selector": "tr:nth-child(even)", "props": [("background-color", "#dddddd")]},
-                    ])
-                )
-                message += styled.to_html()
-                message = re.sub(r" >-(\d+)</td>", r" >▲\1</td>", message)  # 素点
-                message = re.sub(r" >-(\d+\.\d) pt</td>", r" >▲\1 pt</td>", message)  # ポイント
+                message += functions.to_styled_html(v, padding)
             else:
                 message += v.replace("\n", "<br>")
 
-        return render_template("page.html", body=message)
+        cookie_data.update(body=message)
+        page = functions.set_cookie("summary.html", request, cookie_data)
 
-    @app.route("/graph")
+        return page
+
+    @app.route("/graph", methods=["GET", "POST"])
     def graph():
-        text = " ".join(request.args.values())
         m.data.status = "message_append"
+        m.post.message = {}
+        cookie_data = functions.get_cookie(request)
+
+        text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.graph} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
 
@@ -102,14 +86,19 @@ def main():
             else:
                 message += headline.replace("\n", "<br>")
 
-        return render_template("page.html", body=message)
+        cookie_data.update(body=message)
+        page = functions.set_cookie("graph.html", request, cookie_data)
 
-    @app.route("/ranking")
+        return page
+
+    @app.route("/ranking", methods=["GET", "POST"])
     def ranking():
-        text = " ".join(request.args.values())
         m.data.status = "message_append"
-        m.data.text = f"{g.cfg.cw.ranking} {text}"
+        m.post.message = {}
+        cookie_data = functions.get_cookie(request)
 
+        text = " ".join(cookie_data.values())
+        m.data.text = f"{g.cfg.cw.ranking} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
 
         message = ""
@@ -123,42 +112,60 @@ def main():
                 message += f"<h2>{k}</h2>"
 
             if isinstance(v, pd.DataFrame):
-                styled = (
-                    v.style
-                    .hide(axis="index")
-                    .format(
-                        {
-                            "ゲーム参加率": "{:.2%}",
-                            "通算ポイント": "{:+.1f} pt",
-                            "平均ポイント": "{:+.1f} pt",
-                            "最大獲得ポイント": "{:.1f} pt",
-                            "平均収支": "{:+.1f}",
-                            "平均素点": "{:.1f}",
-                            "平均順位": "{:.2f}",
-                            "1位率": "{:.2%}",
-                            "連対率": "{:.2%}",
-                            "ラス回避率": "{:.2%}",
-                            "トビ率": "{:.2%}",
-                            "役満和了率": "{:.2%}",
-                            "レート": "{:.1f}",
-                            "順位偏差": "{:.0f}",
-                            "得点偏差": "{:.0f}",
-                        },
-                        na_rep="-----",
-                    )
-                    .set_table_styles([
-                        {"selector": "th", "props": [("color", "#ffffff"), ("background-color", "#000000"), ("text-align", "center"), ("padding", padding)]},
-                        {"selector": "td", "props": [("text-align", "center"), ("padding", padding)]},
-                        {"selector": "tr:nth-child(even)", "props": [("background-color", "#dddddd")]},
-                    ])
-                )
-                message = re.sub(r" >-(\d+)</td>", r" >▲\1</td>", message)  # 素点
-                message = re.sub(r" >-(\d+\.\d)</td>", r" >▲\1</td>", message)  # 素点(小数点付き)
-                message = re.sub(r" >-(\d+\.\d) pt</td>", r" >▲\1 pt</td>", message)  # ポイント
-                message += styled.to_html()
+                message += functions.to_styled_html(v, padding)
             elif isinstance(v, str):
                 message += v.replace("\n", "<br>")
 
+        cookie_data.update(body=message)
+        page = functions.set_cookie("ranking.html", request, cookie_data)
+
+        return page
+
+    @app.route("/detail", methods=["GET", "POST"])
+    def detail(padding=padding):
+        m.data.status = "message_append"
+        m.post.message = {}
+        cookie_data = functions.get_cookie(request)
+
+        text = " ".join(cookie_data.values())
+        m.data.text = f"{g.cfg.cw.results} {text}"
+        libs.event_dispatcher.dispatch_by_keyword(m)
+
+        players = lookup.internal.get_member()
+        message = ""
+
+        title, headline = next(iter(m.post.headline.items()))
+        if not title.isnumeric() and title:
+            message = f"<h1>{title}</h1>"
+        message += headline.replace("\n", "<br>")
+
+        for k, v in m.post.message.items():
+            if not k.isnumeric() and k:
+                message += f"<h2>{k}</h2>"
+            if isinstance(v, pd.DataFrame):
+                # 戦績(詳細)はマルチカラムで表示
+                if k == "戦績" and g.params.get("verbose"):
+                    padding = "0.25em 0.75em"
+                    if not isinstance(v.columns, pd.MultiIndex):
+                        new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
+                        v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
+                message += functions.to_styled_html(v, padding)
+            else:
+                message += v.replace("\n", "<br>")
+
+        cookie_data.update(body=message, players=players)
+        page = functions.set_cookie("detail.html", request, cookie_data)
+
+        return page
+
+    @app.route("/management")
+    def management():
+        df = pd.read_sql(
+            sql="select member.name, team.name as team from member left join team on member.team_id == team.id where member.id != 0;",
+            con=dbutil.get_connection(),
+            params=g.params,
+        )
+        message = functions.to_styled_html(df, padding)
         return render_template("page.html", body=message)
 
     app.run(host=g.args.host, port=g.args.port)

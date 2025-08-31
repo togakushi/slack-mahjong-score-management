@@ -1,0 +1,6 @@
+    <div class="form-item">
+      <label>ゲスト：</label>
+      <label><input type="radio" name="guest" value="ゲストなし" {{ "checked" if guest == "ゲストなし" else "" }}>なし</label>
+      <label><input type="radio" name="guest" value="ゲストあり" {{ "checked" if guest == "ゲストあり" else "" }}>あり</label>
+      <label><input type="radio" name="guest" value="ゲスト無効" {{ "checked" if guest == "ゲスト無効" else "" }}>無効</label>
+    </div>

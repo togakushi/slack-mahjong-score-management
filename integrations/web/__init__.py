@@ -5,6 +5,6 @@ Web出力
 - `integrations.web.parser`: 具体クラス
 """
 
-from integrations.web import adapter, parser
+from integrations.web import adapter, functions, parser
 
-__all__ = ["adapter", "parser"]
+__all__ = ["adapter", "functions", "parser"]
