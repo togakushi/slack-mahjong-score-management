@@ -54,26 +54,26 @@ SELECT
     collection AS 集計月,
     max(CASE WHEN rank = 1 THEN name END) AS "1位",
     max(CASE WHEN rank = 1 THEN total END) AS "ポイント",
-    max(CASE WHEN rank = 1 THEN geme_count END) AS "ゲーム数",
+    max(CASE WHEN rank = 1 THEN game_count END) AS "ゲーム数",
     max(CASE WHEN rank = 2 THEN name END) AS "2位",
     max(CASE WHEN rank = 2 THEN total END) AS "ポイント",
-    max(CASE WHEN rank = 2 THEN geme_count END) AS "ゲーム数",
+    max(CASE WHEN rank = 2 THEN game_count END) AS "ゲーム数",
     max(CASE WHEN rank = 3 THEN name END) AS "3位",
     max(CASE WHEN rank = 3 THEN total END) AS "ポイント",
-    max(CASE WHEN rank = 3 THEN geme_count END) AS "ゲーム数",
+    max(CASE WHEN rank = 3 THEN game_count END) AS "ゲーム数",
     max(CASE WHEN rank = 4 THEN name END) AS "4位",
     max(CASE WHEN rank = 4 THEN total END) AS "ポイント",
-    max(CASE WHEN rank = 4 THEN geme_count END) AS "ゲーム数",
+    max(CASE WHEN rank = 4 THEN game_count END) AS "ゲーム数",
     max(CASE WHEN rank = 5 THEN name END) AS "5位",
     max(CASE WHEN rank = 5 THEN total END) AS "ポイント",
-    max(CASE WHEN rank = 5 THEN geme_count END) AS "ゲーム数"
+    max(CASE WHEN rank = 5 THEN game_count END) AS "ゲーム数"
 FROM (
     SELECT
         substr(collection_daily, 1, 7) AS collection,
         rank() OVER (PARTITION BY substr(collection_daily, 1, 7) ORDER BY round(sum(point), 1) DESC) AS rank,
         name,
         round(sum(point), 1) AS total,
-        count() AS geme_count
+        count() AS game_count
     FROM
         individual_results
     GROUP BY
