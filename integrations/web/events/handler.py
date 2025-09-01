@@ -3,13 +3,14 @@ integrations/web/events/handler.py
 """
 
 import pandas as pd
-from flask import Flask, render_template, request
+from flask import Flask, flash, render_template, request
 
 import libs.event_dispatcher
 import libs.global_value as g
 from integrations import factory
 from integrations.web import functions
 from libs.data import lookup
+from libs.registry import member
 from libs.utils import dbutil
 
 
@@ -17,7 +18,9 @@ def main():
     """メイン処理"""
 
     m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+    m.data.status = "message_append"
     app = Flask(__name__, static_folder="../../../files/html", template_folder="../../../files/html")
+    app.secret_key = "your-secret-key"
 
     padding = "0.25em 1.5em"
 
@@ -27,11 +30,8 @@ def main():
 
     @app.route("/summary", methods=["GET", "POST"])
     def summary(padding=padding):
-        m.data.status = "message_append"
         m.post.message = {}
-
         cookie_data = functions.get_cookie(request)
-
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.results} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
@@ -65,10 +65,8 @@ def main():
 
     @app.route("/graph", methods=["GET", "POST"])
     def graph():
-        m.data.status = "message_append"
         m.post.message = {}
         cookie_data = functions.get_cookie(request)
-
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.graph} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
@@ -93,10 +91,8 @@ def main():
 
     @app.route("/ranking", methods=["GET", "POST"])
     def ranking():
-        m.data.status = "message_append"
         m.post.message = {}
         cookie_data = functions.get_cookie(request)
-
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.ranking} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
@@ -123,10 +119,8 @@ def main():
 
     @app.route("/detail", methods=["GET", "POST"])
     def detail(padding=padding):
-        m.data.status = "message_append"
         m.post.message = {}
         cookie_data = functions.get_cookie(request)
-
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.results} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
@@ -158,14 +152,70 @@ def main():
 
         return page
 
-    @app.route("/management")
+    @app.route("/management", methods=["GET", "POST"])
     def management():
+        match request.form.get("action"):
+            case "add_member":
+                if (name := request.form.get("member").strip()):
+                    ret = member.append(name.split()[0:2])
+                    flash(str(next(iter(ret.values()))).strip())
+            case "del_member":
+                if (name := request.form.get("member").strip()):
+                    ret = member.remove(name.split()[0:2])
+                    flash(str(next(iter(ret.values()))).strip())
+
         df = pd.read_sql(
-            sql="select member.name, team.name as team from member left join team on member.team_id == team.id where member.id != 0;",
+            sql="""
+            with member_status as (
+                select
+                name,
+                max(playtime) as last_update,
+                (strftime('%s', datetime('now', 'localtime')) - strftime('%s', max(playtime))) / 60 / 60 / 24 as elapsed_day,
+                count() as game_count
+            from
+                individual_results
+            where
+                rule_version = :rule_version
+                and guest = 0
+            group by
+                name
+            ),
+            alias_list as (
+            select
+                name,
+                group_concat(name) as alias_list
+            from
+                alias
+            group by
+                member
+            )
+            select
+                member.id,
+                member.name as '名前',
+                alias_list as '別名',
+                ifnull(team.name, '未所属') as '所属チーム',
+                last_update as '最終更新日',
+                elapsed_day as '経過日数',
+                game_count as 'プレイ回数'
+            from
+                member
+            left join team on
+                team.id == member.team_id
+            left join member_status on
+                member_status.name == member.name
+            left join alias_list on
+                alias_list.name == member.name
+            where
+                member.id != 0
+            order by
+                member.id
+            ;
+            """,
             con=dbutil.get_connection(),
-            params=g.params,
+            params={"rule_version": g.cfg.mahjong.rule_version},
         )
+
         message = functions.to_styled_html(df, padding)
-        return render_template("page.html", body=message)
+        return render_template("registry.html", body=message)
 
     app.run(host=g.args.host, port=g.args.port)

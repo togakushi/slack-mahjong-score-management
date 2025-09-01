@@ -49,6 +49,8 @@ def to_styled_html(df: pd.DataFrame, padding: str) -> str:
                 "レート": "{:.1f}",
                 "順位偏差": "{:.0f}",
                 "得点偏差": "{:.0f}",
+                "経過日数": "{:.0f} 日",
+                "プレイ回数": "{:.0f} ゲーム"
             },
             na_rep="-----",
         )
@@ -87,6 +89,7 @@ def set_cookie(html: str, req: Request, data: dict) -> Response:
                 page.delete_cookie(k, path=req.path)
             page.set_cookie("range", "", path=req.path)
             page.set_cookie("guest", "ゲストなし", path=req.path)
+            page.set_cookie("mode", "", path=req.path)
         else:
             for k, v in req.form.to_dict().items():
                 if k == "action":
@@ -108,13 +111,21 @@ def get_cookie(req: Request) -> dict:
         dict: cookieデータ
     """
 
+    initial_value: dict = {
+        "range": "",
+        "guest": "ゲストなし",
+        "mode": "",
+        "result": "",
+    }
+
     if req.method == "POST":
         cookie_data = req.form.to_dict()
         if req.form.get("action") == "reset":
-            cookie_data = {"range": "", "guest": "ゲストなし"}
+            cookie_data = initial_value
         else:
             cookie_data.pop("action")
     else:
-        cookie_data = {k: v for k, v in req.cookies.items()}
+        cookie_data = initial_value
+        cookie_data.update({k: v for k, v in req.cookies.items()})
 
     return cookie_data

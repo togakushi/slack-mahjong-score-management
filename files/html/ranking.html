@@ -8,6 +8,11 @@
   <form method="POST" action="">
     {% include "form_items/range.html" %}
     {% include "form_items/guest.html" %}
+    <div class="form-item">
+      <label>表示：</label>
+      <label><input type="radio" name="mode" value="" {{ "checked" if mode == "" else "" }}>通常</label>
+      <label><input type="radio" name="mode" value="レート" {{ "checked" if mode == "レート" else "" }}>レーティング</label>
+    </div>
     {% include "form_items/options.html" %}
     {% include "form_items/submit.html" %}
   </form>

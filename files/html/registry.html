@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+      window.onload = function() {
+        alert("{{ messages }}");
+      }
+    </script>
+    {% endif %}
+  {% endwith %}
+</head>
+<body>
+  {% include "menu_bar.html" %}
+  <h1>登録メンバー</h1>
+  {% block content %}
+    {{ body|safe }}
+  {% endblock %}
+  <form method="POST" action="">
+    <div class="form-item">
+      <input type="text" id="add_member" name="member" placeholder="メンバー名">
+      <button type="submit" name="action" value="add_member">登録</button>
+      <button type="submit" name="action" value="del_member">削除</button>
+    </div>
+  </form>
+  <br><br><hr>
+  {% include "menu_bar.html" %}
+</body>
+</html>
