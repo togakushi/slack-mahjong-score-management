@@ -132,13 +132,13 @@ class SlackAPI(APIInterface):
             # 先頭ブロックの処理
             v = next(text_data)
             if m.post.codeblock:
-                ret_list.append(f"{header}```\n{v}\n```\n\n")
+                ret_list.append(f"{header}```\n{v}\n```\n")
             else:
                 ret_list.append(f"{header}{v}\n")
             # 残りのブロック
             for v in text_data:
                 if m.post.codeblock:
-                    ret_list.append(f"```\n{v}\n```\n\n")
+                    ret_list.append(f"```\n{v}\n```\n")
                 else:
                     ret_list.append(f"{v}\n")
             return ret_list
