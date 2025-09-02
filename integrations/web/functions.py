@@ -82,8 +82,8 @@ def set_cookie(html: str, req: Request, data: dict) -> Response:
         Response: Response
     """
 
+    page = make_response(render_template(html, **data))
     if req.method == "POST":
-        page = make_response(render_template(html, **data))
         if req.form.get("action") == "reset":  # cookie削除
             for k in req.cookies.keys():
                 page.delete_cookie(k, path=req.path)
@@ -95,8 +95,6 @@ def set_cookie(html: str, req: Request, data: dict) -> Response:
                 if k == "action":
                     continue
                 page.set_cookie(k, v, path=req.path)
-    else:
-        page = render_template(html, **data)
 
     return page
 
@@ -126,6 +124,6 @@ def get_cookie(req: Request) -> dict:
             cookie_data.pop("action")
     else:
         cookie_data = initial_value
-        cookie_data.update({k: v for k, v in req.cookies.items()})
+        cookie_data.update(req.cookies)
 
     return cookie_data
