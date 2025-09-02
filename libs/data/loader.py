@@ -40,8 +40,10 @@ def read_data(filepath: str) -> pd.DataFrame:
         pd.DataFrame: 集計結果
     """
 
-    g.params.update(starttime=g.params["starttime"].format("sql"))
-    g.params.update(endtime=g.params["endtime"].format("sql"))
+    if "starttime" in g.params:
+        g.params.update(starttime=g.params["starttime"].format("sql"))
+    if "endtime" in g.params:
+        g.params.update(endtime=g.params["endtime"].format("sql"))
 
     sql = query_modification(load_query(filepath))
     df = pd.read_sql(
