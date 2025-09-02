@@ -3,7 +3,7 @@ integrations/web/events/handler.py
 """
 
 import pandas as pd
-from flask import Flask, flash, render_template, request
+from flask import Flask, render_template, request
 
 import libs.event_dispatcher
 import libs.global_value as g
@@ -20,8 +20,6 @@ def main():
     m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
     m.data.status = "message_append"
     app = Flask(__name__, static_folder="../../../files/html", template_folder="../../../files/html")
-    app.secret_key = "your-secret-key"
-
     padding = "0.25em 1.5em"
 
     @app.route("/")
@@ -154,15 +152,18 @@ def main():
 
     @app.route("/management", methods=["GET", "POST"])
     def management():
-        match request.form.get("action"):
-            case "add_member":
-                if (name := request.form.get("member").strip()):
-                    ret = member.append(name.split()[0:2])
-                    flash(str(next(iter(ret.values()))).strip())
-            case "del_member":
-                if (name := request.form.get("member").strip()):
-                    ret = member.remove(name.split()[0:2])
-                    flash(str(next(iter(ret.values()))).strip())
+        data: dict = {}
+
+        if request.method == "POST":
+            match request.form.get("action"):
+                case "add_member":
+                    if (name := request.form.get("member").strip()):
+                        ret = member.append(name.split()[0:2])
+                        data.update(result_msg=next(iter(ret.values())))
+                case "del_member":
+                    if (name := request.form.get("member").strip()):
+                        ret = member.remove(name.split()[0:2])
+                        data.update(result_msg=next(iter(ret.values())))
 
         df = pd.read_sql(
             sql="""
@@ -215,7 +216,7 @@ def main():
             params={"rule_version": g.cfg.mahjong.rule_version},
         )
 
-        message = functions.to_styled_html(df, padding)
-        return render_template("registry.html", body=message)
+        data.update(member_table=functions.to_styled_html(df, padding))
+        return render_template("registry.html", **data)
 
     app.run(host=g.args.host, port=g.args.port)

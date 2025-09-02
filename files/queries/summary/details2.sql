@@ -40,7 +40,7 @@ from
     game_results as results
 join game_info
     on
-        game_info.ts == results.ts
+        game_info.ts = results.ts
 where
     results.rule_version = :rule_version
     and results.playtime between :starttime and :endtime

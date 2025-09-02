@@ -108,13 +108,13 @@ from (
     from
         individual_results as results
     join game_info on
-        game_info.ts == results.ts
+        game_info.ts = results.ts
     left join regulations as grandslam
         on
-            grandslam.type == 0
-            and grandslam.thread_ts == results.ts
-            --[individual] and grandslam.name == results.name
-            --[team] and grandslam.name == results.team
+            grandslam.type = 0
+            and grandslam.thread_ts = results.ts
+            --[individual] and grandslam.name = results.name
+            --[team] and grandslam.name = results.team
     where
         results.rule_version = :rule_version
         and results.playtime between :starttime and :endtime

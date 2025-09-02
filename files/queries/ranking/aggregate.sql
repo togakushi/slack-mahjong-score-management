@@ -11,11 +11,11 @@ with target_data as (
     from
         individual_results as results
     join game_info on
-        game_info.ts == results.ts
+        game_info.ts = results.ts
 	left join regulations on
-		regulations.thread_ts == results.ts
-		and regulations.name == results.name
-		and regulations.type == 0
+		regulations.thread_ts = results.ts
+		and regulations.name = results.name
+		and regulations.type = 0
     where
         results.rule_version = :rule_version
         and results.playtime between :starttime and :endtime -- 検索範囲

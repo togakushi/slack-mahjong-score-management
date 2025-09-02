@@ -21,7 +21,7 @@ select
 from
     game_results
 join game_info on
-    game_info.ts == game_results.ts
+    game_info.ts = game_results.ts
 where
     game_results.rule_version = :rule_version
     and game_results.playtime between :starttime and :endtime
