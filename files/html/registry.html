@@ -2,29 +2,38 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <script>
-      window.onload = function() {
-        alert("{{ messages }}");
-      }
-    </script>
-    {% endif %}
-  {% endwith %}
 </head>
 <body>
   {% include "menu_bar.html" %}
-  <h1>登録メンバー</h1>
+
   {% block content %}
-    {{ body|safe }}
-  {% endblock %}
+  <h1>メンバー一覧</h1>
+  {{ member_table|safe }}
   <form method="POST" action="">
     <div class="form-item">
-      <input type="text" id="add_member" name="member" placeholder="メンバー名">
+      <input type="text" name="member" placeholder="メンバー名">
       <button type="submit" name="action" value="add_member">登録</button>
       <button type="submit" name="action" value="del_member">削除</button>
     </div>
   </form>
+
+  <h1>チーム一覧</h1>
+  {{ team_table|safe }}
+  <form method="POST" action="">
+    <div class="form-item">
+      <input type="text" name="team" placeholder="チーム名">
+      <button type="submit" name="action" value="add_team">登録</button>
+      <button type="submit" name="action" value="del_team">削除</button>
+    </div>
+  </form>
+  <form method="POST" action="" onsubmit="return confirm('すべてのチーム情報を削除します。');">
+    <div class="form-item">
+      <button type="submit" name="action" value="delete_all_team">全チーム削除</button>
+    </div>
+  </form>
+  {% endblock %}
+
+  {% include "form_items/result.html" %}
   <br><br><hr>
   {% include "menu_bar.html" %}
 </body>

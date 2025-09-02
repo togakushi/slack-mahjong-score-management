@@ -1,0 +1,16 @@
+  {% if result_msg %}
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const dialog = document.querySelector("dialog");
+      dialog.showModal();
+    });
+  </script>
+  <dialog>
+    <form method="dialog">
+      <p>{{ result_msg }}</p>
+      <div style="text-align: center;">
+        <button>閉じる</button>
+      </div>
+    <form>
+  </dialog>
+  {% endif %}

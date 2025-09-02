@@ -44,6 +44,8 @@ def read_data(filepath: str) -> pd.DataFrame:
         g.params.update(starttime=g.params["starttime"].format("sql"))
     if "endtime" in g.params:
         g.params.update(endtime=g.params["endtime"].format("sql"))
+    if "rule_version" not in g.params:
+        g.params.update(rule_version=g.cfg.mahjong.rule_version)
 
     sql = query_modification(load_query(filepath))
     df = pd.read_sql(

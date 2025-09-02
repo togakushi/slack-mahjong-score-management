@@ -156,7 +156,7 @@ def remove(argument: list) -> dict[str, str]:
     resultdb = dbutil.get_connection()
 
     if len(argument) == 1:
-        pass
+        (msg,) = delete(argument).values()
 
     if len(argument) == 2:  # チーム名指
         g.params.update(unregistered_replace=False)
