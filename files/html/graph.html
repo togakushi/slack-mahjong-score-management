@@ -14,6 +14,7 @@
       <label><input type="radio" name="collect" value="日次" {{ "checked" if collect == "日次" else "" }}>日次</label>
       <label><input type="radio" name="collect" value="月次" {{ "checked" if collect == "月次" else "" }}>月次</label>
       <label><input type="radio" name="collect" value="年次" {{ "checked" if collect == "年次" else "" }}>年次</label>
+      <label><input type="radio" name="collect" value="全体" {{ "checked" if collect == "全体" else "" }}>全体</label>
     </div>
     {% include "form_items/options.html" %}
     {% include "form_items/submit.html" %}
