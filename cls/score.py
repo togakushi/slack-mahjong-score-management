@@ -99,7 +99,12 @@ class GameResult:
             if f"{prefix}_name" in kwargs:
                 prefix_obj.name = str(kwargs[f"{prefix}_name"])
             if f"{prefix}_str" in kwargs:
-                prefix_obj.r_str = kwargs[f"{prefix}_str"]
+                input_str = cast(str, kwargs[f"{prefix}_str"]).strip()
+                input_str = re.sub(r"(-)+|(\+)+", r"\1\2", input_str)  # 連続した符号を集約
+                input_str = re.sub(r"(-|\+)0+", r"\1", input_str)  # 符号の直後のゼロを削除
+                if input_str != "0":  # 先頭のゼロとプラス記号を削除
+                    input_str = re.sub(r"^[0+]+", "", input_str)
+                prefix_obj.r_str = input_str
             if f"{prefix}_r_str" in kwargs:
                 prefix_obj.r_str = kwargs[f"{prefix}_str"]
             if f"{prefix}_rpoint" in kwargs and isinstance(kwargs[f"{prefix}_rpoint"], int):
