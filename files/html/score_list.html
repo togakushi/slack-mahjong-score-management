@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  {% include "menu_bar.html" %}
+  <hr>
+  <h1>スコア管理</h1>
+  {% block content %}
+  <form method="POST" action="" onsubmit="return handleSubmit(event);">
+    <div class="form-item">
+      {{ table|safe }}
+    </div>
+    <div>
+      <button type="submit" name="action" value="modify">追加 / 編集</button>
+      <button type="submit" name="action" value="delete">削除</button>
+      <button type="reset" name="action" value="reset">リセット</button>
+    </div>
+  </form>
+  <script>
+    function handleSubmit(event) {
+      const button = event.submitter;
+      if (button && button.value === "delete") {
+        const checked = document.querySelector('input[name="ts"]:checked');
+        if (!checked) {
+          return false;
+        }
+        return confirm("削除します。");
+      }
+    return true;
+  }
+  </script>
+  {% endblock %}
+
+  {% include "form_items/result.html" %}
+  <br><br><hr>
+  {% include "menu_bar.html" %}
+</body>
+</html>

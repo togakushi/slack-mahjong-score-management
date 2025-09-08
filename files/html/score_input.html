@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  {% include "menu_bar.html" %}
+  <hr>
+  {% block content %}
+  <h1>{{ playtime }}</h1>
+  <form id="player_select" method="POST" action="">
+    <div class="form-item">
+      <label>東家：</label>
+      <select class="name-select" id="p1_name" name="p1_name" required="required">
+        <option value="other" {{ "" if p1_name in players else "selected" }}>ゲスト</option>
+        {% for item in players %}
+        <option value="{{ item }}" {{ "selected" if p1_name == item else "" }}>{{ item }}</option>
+        {% endfor %}
+      </select>
+      {% if p1_name in players %}
+      <input type="text" class="name-other" id="p1_other" name="p1_other" disabled="disabled" placeholder="---">
+      {% else %}
+      <input type="text" class="name-other" id="p1_other" name="p1_other" placeholder="ゲストの名前を入力" value={{ p1_name }}>
+      {% endif %}
+      <input type="text" class="score-input" id="p1_str" name="p1_str" placeholder="素点" value={{ p1_str }}>
+    </div>
+
+    <div class="form-item">
+      <label>南家：</label>
+      <select class="name-select" id="p2_name" name="p2_name" required="required">
+        <option value="other" {{ "" if p2_name in players else "selected" }}>ゲスト</option>
+        {% for item in players %}
+        <option value="{{ item }}" {{ "selected" if p2_name == item else "" }}>{{ item }}</option>
+        {% endfor %}
+      </select>
+      {% if p2_name in players %}
+      <input type="text" class="name-other" id="p2_other" name="p2_other" disabled="disabled" placeholder="---">
+      {% else %}
+      <input type="text" class="name-other" id="p2_other" name="p2_other" placeholder="ゲストの名前を入力" value={{ p2_name }}>
+      {% endif %}
+      <input type="text" class="score-input" id="p2_str" name="p2_str" placeholder="素点" value={{ p2_str }}>
+    </div>
+
+    <div class="form-item">
+      <label>西家：</label>
+      <select class="name-select" id="p3_name" name="p3_name" required="required">
+        <option value="other" {{ "" if p3_name in players else "selected" }}>ゲスト</option>
+        {% for item in players %}
+        <option value="{{ item }}" {{ "selected" if p3_name == item else "" }}>{{ item }}</option>
+        {% endfor %}
+      </select>
+      {% if p3_name in players %}
+      <input type="text" class="name-other" id="p3_other" name="p3_other" disabled="disabled" placeholder="---">
+      {% else %}
+      <input type="text" class="name-other" id="p3_other" name="p3_other" placeholder="ゲストの名前を入力" value={{ p3_name }}>
+      {% endif %}
+      <input type="text" class="score-input" id="p3_str" name="p3_str" placeholder="素点" value={{ p3_str }}>
+    </div>
+
+    <div class="form-item">
+      <label>北家：</label>
+      <select class="name-select" id="p4_name" name="p4_name" required="required">
+        <option value="other" {{ "" if p4_name in players else "selected" }}>ゲスト</option>
+        {% for item in players %}
+        <option value="{{ item }}" {{ "selected" if p4_name == item else "" }}>{{ item }}</option>
+        {% endfor %}
+      </select>
+      {% if p4_name in players %}
+      <input type="text" class="name-other" id="p4_other" name="p4_other" disabled="disabled" placeholder="---">
+      {% else %}
+      <input type="text" class="name-other" id="p4_other" name="p4_other" placeholder="ゲストの名前を入力" value={{ p4_name }}>
+      {% endif %}
+      <input type="text" class="score-input" id="p4_str" name="p4_str" placeholder="素点" value={{ p4_str }}>
+    </div>
+    <div id="scoreCheck""></div>
+    <div class="form-item">
+      <label>コメント：</label>
+      <input type="text" id="comment" name="comment" placeholder="コメント" value={{ comment if comment != None else "" }}>
+    <div>
+      <button type="submit" name="action" value="update">更新</button>
+      <button type="reset" name="action" value="reset">リセット</button>
+    </div>
+    <input type="hidden" id="mode" name="mode" value="{{ mode }}">
+    <input type="hidden" id="playtime" name="playtime" value="{{ playtime }}">
+    <input type="hidden" id="ts" name="ts" value="{{ ts }}">
+  </form>
+
+  <div id="nameError" style="color:red; font-weight:bold;"></div>
+
+  <script>
+    function updateOtherState(selectEl) {
+      const otherInput = document.getElementById(selectEl.id.replace("_name", "_other"));
+
+      if (selectEl.value === "other") {
+        otherInput.disabled = false;
+        otherInput.required = true;
+        otherInput.placeholder = "ゲストの名前を入力";
+      } else {
+        otherInput.disabled = true;
+        otherInput.required = false;
+        otherInput.placeholder = "---";
+        otherInput.value = "";
+      }
+    }
+
+    // セレクトの初期化とイベント登録
+    const selects = document.querySelectorAll("select[id$='_name']");
+    selects.forEach(selectEl => {
+      selectEl.addEventListener("change", () => updateOtherState(selectEl));
+      updateOtherState(selectEl); // 初期状態
+    });
+
+    // リセット後に再適用
+    document.getElementById("player_select").addEventListener("reset", function() {
+      setTimeout(() => {
+        selects.forEach(selectEl => updateOtherState(selectEl));
+         updateChecks();
+      }, 0);
+    });
+
+  function evaluateExpression(expr) {
+    try {
+      if (!expr.trim()) return 0;
+      return Function('"use strict";return (' + expr + ')')();
+    } catch (e) {
+      return 0; // 無効な式は0扱い
+    }
+  }
+
+  function updateChecks() {
+    const selects = document.querySelectorAll(".name-select");
+    const others  = document.querySelectorAll(".name-other");
+    const scores  = document.querySelectorAll(".score-input");
+
+// --- 名前のユニークチェック ---
+  let names = [];
+  selects.forEach((sel, i) => {
+    if (sel.value === "other") {
+      names.push(others[i].value.trim());
+    } else {
+      names.push(sel.value.trim());
+    }
+  });
+
+  let hasDuplicate = new Set(names).size !== names.length;
+  document.getElementById("nameError").textContent =
+    hasDuplicate ? "名前に重複があります" : "";
+    // --- 点数合計チェック ---
+    let total = 0;
+    scores.forEach(sc => {
+      total += evaluateExpression(sc.value);
+    });
+    let diff = 1000 - total;
+    document.getElementById("scoreCheck").textContent = `供託：${diff}`;
+  }
+
+  // プルダウンのother制御 + チェック
+  document.querySelectorAll(".name-select").forEach((sel, i) => {
+    sel.addEventListener("change", () => {
+      updateChecks();
+    });
+  });
+
+  // other入力、点数入力のフォーカスアウトでチェック
+  document.querySelectorAll(".name-other, .score-input").forEach(el => {
+    el.addEventListener("blur", updateChecks);
+  });
+
+  // 初期チェック
+  updateChecks();
+  </script>
+  {% endblock %}
+
+  <br><br><hr>
+  {% include "menu_bar.html" %}
+</body>
+</html>

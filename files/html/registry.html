@@ -5,7 +5,7 @@
 </head>
 <body>
   {% include "menu_bar.html" %}
-
+  <hr>
   {% block content %}
   <h1>メンバー一覧</h1>
   {{ member_table|safe }}
@@ -34,7 +34,7 @@
   {% endblock %}
 
   {% include "form_items/result.html" %}
-  <br><br><hr>
+  <br><hr>
   {% include "menu_bar.html" %}
 </body>
 </html>
