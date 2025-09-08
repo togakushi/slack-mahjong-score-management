@@ -20,9 +20,9 @@
         <label>プレイヤー：</label>
         <select name="player" required="required">
           <option value="">-- 選択して下さい --</option>
-          {% for item in players %}
+          {%- for item in players %}
           <option value="{{ item }}" {{ "selected" if player == item else "" }}>{{ item }}</option>
-          {% endfor %}
+          {%- endfor %}
         </select>
       </div>
       {% include "form_items/options.html" %}

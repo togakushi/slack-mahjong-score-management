@@ -13,15 +13,11 @@
       <label>東家：</label>
       <select class="name-select" id="p1_name" name="p1_name" required="required">
         <option value="other" {{ "" if p1_name in players else "selected" }}>ゲスト</option>
-        {% for item in players %}
+        {%- for item in players %}
         <option value="{{ item }}" {{ "selected" if p1_name == item else "" }}>{{ item }}</option>
-        {% endfor %}
+        {%- endfor %}
       </select>
-      {% if p1_name in players %}
-      <input type="text" class="name-other" id="p1_other" name="p1_other" disabled="disabled" placeholder="---">
-      {% else %}
       <input type="text" class="name-other" id="p1_other" name="p1_other" placeholder="ゲストの名前を入力" value={{ p1_name }}>
-      {% endif %}
       <input type="text" class="score-input" id="p1_str" name="p1_str" placeholder="素点" value={{ p1_str }}>
     </div>
 
@@ -29,15 +25,11 @@
       <label>南家：</label>
       <select class="name-select" id="p2_name" name="p2_name" required="required">
         <option value="other" {{ "" if p2_name in players else "selected" }}>ゲスト</option>
-        {% for item in players %}
+        {%- for item in players %}
         <option value="{{ item }}" {{ "selected" if p2_name == item else "" }}>{{ item }}</option>
-        {% endfor %}
+        {%- endfor %}
       </select>
-      {% if p2_name in players %}
-      <input type="text" class="name-other" id="p2_other" name="p2_other" disabled="disabled" placeholder="---">
-      {% else %}
       <input type="text" class="name-other" id="p2_other" name="p2_other" placeholder="ゲストの名前を入力" value={{ p2_name }}>
-      {% endif %}
       <input type="text" class="score-input" id="p2_str" name="p2_str" placeholder="素点" value={{ p2_str }}>
     </div>
 
@@ -45,15 +37,11 @@
       <label>西家：</label>
       <select class="name-select" id="p3_name" name="p3_name" required="required">
         <option value="other" {{ "" if p3_name in players else "selected" }}>ゲスト</option>
-        {% for item in players %}
+        {%- for item in players %}
         <option value="{{ item }}" {{ "selected" if p3_name == item else "" }}>{{ item }}</option>
-        {% endfor %}
+        {%- endfor %}
       </select>
-      {% if p3_name in players %}
-      <input type="text" class="name-other" id="p3_other" name="p3_other" disabled="disabled" placeholder="---">
-      {% else %}
       <input type="text" class="name-other" id="p3_other" name="p3_other" placeholder="ゲストの名前を入力" value={{ p3_name }}>
-      {% endif %}
       <input type="text" class="score-input" id="p3_str" name="p3_str" placeholder="素点" value={{ p3_str }}>
     </div>
 
@@ -61,15 +49,11 @@
       <label>北家：</label>
       <select class="name-select" id="p4_name" name="p4_name" required="required">
         <option value="other" {{ "" if p4_name in players else "selected" }}>ゲスト</option>
-        {% for item in players %}
+        {%- for item in players %}
         <option value="{{ item }}" {{ "selected" if p4_name == item else "" }}>{{ item }}</option>
-        {% endfor %}
+        {%- endfor %}
       </select>
-      {% if p4_name in players %}
-      <input type="text" class="name-other" id="p4_other" name="p4_other" disabled="disabled" placeholder="---">
-      {% else %}
       <input type="text" class="name-other" id="p4_other" name="p4_other" placeholder="ゲストの名前を入力" value={{ p4_name }}>
-      {% endif %}
       <input type="text" class="score-input" id="p4_str" name="p4_str" placeholder="素点" value={{ p4_str }}>
     </div>
     <div id="scoreCheck""></div>
