@@ -234,7 +234,7 @@ def read_memberslist(log=True):
 
     if log:
         logging.notice(f"guest_name: {g.cfg.member.guest_name}")  # type: ignore
-        logging.notice(f"member_list: {set(g.member_list.values())}")  # type: ignore
+        logging.notice(f"member_list: {sorted(set(g.member_list.values()))}")  # type: ignore
         logging.notice(f"team_list: {[x["team"] for x in g.team_list]}")  # type: ignore
 
 

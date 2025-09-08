@@ -12,7 +12,7 @@ def get_member() -> list:
         list: メンバーリスト
     """
 
-    return (list(set(g.member_list.values())))
+    return sorted(list(set(g.member_list.values())))
 
 
 def get_team() -> list:
