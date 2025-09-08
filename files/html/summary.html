@@ -5,21 +5,24 @@
 </head>
 <body>
   {% include "menu_bar.html" %}
-  <form method="POST" action="">
-    {% include "form_items/range.html" %}
-    {% include "form_items/guest.html" %}
-    <div class="form-item">
-      <label>表示：</label>
-      <label><input type="radio" name="mode" value="" {{ "checked" if mode == "" else "" }}>通常</label>
-      <label><input type="radio" name="mode" value="差分" {{ "checked" if mode == "差分" else "" }}>差分</label>
-    </div>
-    {% include "form_items/options.html" %}
-    {% include "form_items/submit.html" %}
-  </form>
-    {% block content %}
-      {{ body|safe }}
-    {% endblock %}
-  <br><br><hr>
+  <hr>
+  <p>
+    <form method="POST" action="">
+      {% include "form_items/range.html" %}
+      {% include "form_items/guest.html" %}
+      <div class="form-item">
+        <label>表示：</label>
+        <label><input type="radio" name="display" value="" {{ "checked" if display == "" else "" }}>通常</label>
+        <label><input type="radio" name="display" value="差分" {{ "checked" if display == "差分" else "" }}>差分</label>
+      </div>
+      {% include "form_items/options.html" %}
+      {% include "form_items/submit.html" %}
+    </form>
+  </p>
+  {% block content %}
+    {{ body|safe }}
+  {% endblock %}
+  <br><hr>
   {% include "menu_bar.html" %}
 </body>
 </html>
