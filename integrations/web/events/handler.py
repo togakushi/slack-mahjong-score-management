@@ -43,12 +43,12 @@ def main():
         message = ""
         title, headline = next(iter(m.post.headline.items()))
         if not title.isnumeric() and title:
-            message = f"<h1>{title}</h1>"
-        message += f"<p>{headline.replace("\n", "<br>")}</p>"
+            message = f"<h1>{title}</h1>\n"
+        message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
 
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
-                message += f"<h2>{k}</h2>"
+                message += f"<h2>{k}</h2>\n"
 
             if isinstance(v, pd.DataFrame):
                 # 戦績(詳細)はマルチカラムで表示
@@ -60,7 +60,7 @@ def main():
 
                 message += functions.to_styled_html(v, padding)
             else:
-                message += f"<p>{v.replace("\n", "<br>")}</p>"
+                message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
         cookie_data.update(body=message)
         page = functions.set_cookie("summary.html", request, cookie_data)
@@ -101,17 +101,17 @@ def main():
         message = ""
         title, headline = next(iter(m.post.headline.items()))
         if not title.isnumeric() and title:
-            message = f"<h1>{title}</h1>"
-        message += f"<p>{headline.replace("\n", "<br>")}</p>"
+            message = f"<h1>{title}</h1>\n"
+        message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
 
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
-                message += f"<h2>{k}</h2>"
+                message += f"<h2>{k}</h2>\n"
 
             if isinstance(v, pd.DataFrame):
                 message += functions.to_styled_html(v, padding)
             elif isinstance(v, str):
-                message += f"<p>{v.replace("\n", "<br>")}</p>"
+                message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
         cookie_data.update(body=message)
         page = functions.set_cookie("ranking.html", request, cookie_data)
@@ -129,12 +129,12 @@ def main():
         message = ""
         title, headline = next(iter(m.post.headline.items()))
         if not title.isnumeric() and title:
-            message = f"<h1>{title}</h1>"
-        message += f"<p>{headline.replace("\n", "<br>")}</p>"
+            message = f"<h1>{title}</h1>\n"
+        message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
 
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
-                message += f"<h2>{k}</h2>"
+                message += f"<h2>{k}</h2>\n"
             if isinstance(v, pd.DataFrame):
                 # 戦績(詳細)はマルチカラムで表示
                 if k == "戦績" and g.params.get("verbose"):
@@ -144,7 +144,7 @@ def main():
                         v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
                 message += functions.to_styled_html(v, padding)
             else:
-                message += f"<p>{v.replace("\n", "<br>")}</p>"
+                message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
         cookie_data.update(body=message, players=players)
         page = functions.set_cookie("detail.html", request, cookie_data)
