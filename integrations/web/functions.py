@@ -87,9 +87,6 @@ def set_cookie(html: str, req: Request, data: dict) -> Response:
         if req.form.get("action") == "reset":  # cookie削除
             for k in req.cookies.keys():
                 page.delete_cookie(k, path=req.path)
-            page.set_cookie("range", "", path=req.path)
-            page.set_cookie("guest", "ゲストなし", path=req.path)
-            page.set_cookie("mode", "", path=req.path)
         else:
             for k, v in req.form.to_dict().items():
                 if k == "action":
@@ -112,8 +109,9 @@ def get_cookie(req: Request) -> dict:
     initial_value: dict = {
         "range": "",
         "guest": "ゲストなし",
-        "mode": "",
+        "display": "",
         "result": "",
+        "collect": "",
     }
 
     if req.method == "POST":
