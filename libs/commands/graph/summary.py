@@ -3,6 +3,7 @@ libs/commands/graph/summary.py
 """
 
 import logging
+import os
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -27,6 +28,16 @@ def point_plot(m: MessageParserProtocol) -> bool:
     # 初期化
     title_text = None
     xlabel_text = None
+
+    # 保存ファイル名
+    match pd.options.plotting.backend:
+        case "plotly":
+            save_file = textutil.save_file_path(".html")
+        case _:
+            save_file = textutil.save_file_path(".png")
+
+    if os.path.exists(save_file):
+        os.remove(save_file)
 
     # データ収集
     game_info: GameInfoDict = aggregate.game_info()
@@ -91,11 +102,9 @@ def point_plot(m: MessageParserProtocol) -> bool:
 
     match pd.options.plotting.backend:
         case "plotly":
-            save_file = textutil.save_file_path(".html")
             fig = _graph_generation_plotly(pivot, **args)
             fig.write_html(save_file)
         case _:
-            save_file = textutil.save_file_path(".png")
             fig = _graph_generation(pivot, **args)
             plt.savefig(save_file, bbox_inches="tight")
 
@@ -394,6 +403,17 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
             showlegend=False,
         )
     else:
+        # 凡例用ラベル生成
+        work_df = pd.DataFrame()
+        if kwargs.get("kind") == "point":
+            work_df["rank"] = df.sum().rank(ascending=False, method="dense")
+            work_df["total"] = df.sum()
+            work_df["label"] = work_df.apply(lambda x: f"{x["rank"]:3.0f}位：{x.name} ({x["total"]:+.1f} pt)", axis=1)
+        else:
+            work_df["rank"] = df.tail(1).T.rank(ascending=True, method="dense")
+            work_df["label"] = work_df.apply(lambda x: f"{x["rank"]:3.0f}位：{x.name}", axis=1)
+        df.columns = work_df["label"].to_list()
+
         fig = px.line(df)
         fig.update_layout(
             xaxis={
