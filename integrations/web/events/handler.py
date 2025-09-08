@@ -60,7 +60,7 @@ def main():
 
                 message += functions.to_styled_html(v, padding)
             else:
-                message += v.replace("\n", "<br>")
+                message += f"<p>{v.replace("\n", "<br>")}</p>"
 
         cookie_data.update(body=message)
         page = functions.set_cookie("summary.html", request, cookie_data)
@@ -111,7 +111,7 @@ def main():
             if isinstance(v, pd.DataFrame):
                 message += functions.to_styled_html(v, padding)
             elif isinstance(v, str):
-                message += v.replace("\n", "<br>")
+                message += f"<p>{v.replace("\n", "<br>")}</p>"
 
         cookie_data.update(body=message)
         page = functions.set_cookie("ranking.html", request, cookie_data)
@@ -144,7 +144,7 @@ def main():
                         v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
                 message += functions.to_styled_html(v, padding)
             else:
-                message += v.replace("\n", "<br>")
+                message += f"<p>{v.replace("\n", "<br>")}</p>"
 
         cookie_data.update(body=message, players=players)
         page = functions.set_cookie("detail.html", request, cookie_data)
