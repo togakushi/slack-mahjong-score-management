@@ -406,9 +406,9 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
         # 凡例用ラベル生成
         work_df = pd.DataFrame()
         if kwargs.get("kind") == "point":
-            work_df["rank"] = df.sum().rank(ascending=False, method="dense")
-            work_df["total"] = df.sum()
-            work_df["label"] = work_df.apply(lambda x: f"{x["rank"]:3.0f}位：{x.name} ({x["total"]:+.1f} pt)", axis=1)
+            work_df["last"] = df.tail(1).T
+            work_df["rank"] = work_df["last"].rank(ascending=False, method="dense")
+            work_df["label"] = work_df.apply(lambda x: f"{x["rank"]:3.0f}位：{x.name} ({x["last"]:+.1f} pt)", axis=1)
         else:
             work_df["rank"] = df.tail(1).T.rank(ascending=True, method="dense")
             work_df["label"] = work_df.apply(lambda x: f"{x["rank"]:3.0f}位：{x.name}", axis=1)
