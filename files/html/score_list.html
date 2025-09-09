@@ -12,11 +12,11 @@
     <div class="form-item">
       {{ table|safe }}
     </div>
-    <div>
+    <p>
       <button type="submit" name="action" value="modify">追加 / 編集</button>
       <button type="submit" name="action" value="delete">削除</button>
       <button type="reset" name="action" value="reset">リセット</button>
-    </div>
+    </p>
   </form>
   <script>
     function handleSubmit(event) {
@@ -34,7 +34,7 @@
   {% endblock %}
 
   {% include "form_items/result.html" %}
-  <br><br><hr>
+  <hr>
   {% include "menu_bar.html" %}
 </body>
 </html>
