@@ -1,7 +1,7 @@
 [project]
 name = "slack-mahjong-score-management"
 version = "0.2.0"
-description = "Mahjong score management for Slack"
+description = "Mahjong score management tool"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -16,6 +16,7 @@ dependencies = [
     "tqdm",
     "plotly",
     "flask",
+    "flask_httpauth",
 ]
 
 [dependency-groups]
