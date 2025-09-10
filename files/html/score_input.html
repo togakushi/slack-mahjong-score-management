@@ -134,7 +134,7 @@
     scores.forEach(sc => {
       total += evaluateExpression(sc.value);
     });
-    let diff = 1000 - total;
+    let diff = parseInt("{{ origin_point * 4 }}") - total;
     document.getElementById("scoreCheck").textContent = `供託：${diff}`;
   }
 
