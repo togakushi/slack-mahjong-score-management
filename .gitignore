@@ -15,6 +15,7 @@ uv.lock
 .*/
 work/
 *.ini
+*.pem
 *.json
 *.db
 *.txt
