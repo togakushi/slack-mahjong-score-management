@@ -6,6 +6,7 @@ import os
 
 import pandas as pd
 from flask import Flask, render_template, request
+from flask_httpauth import HTTPBasicAuth
 
 import libs.event_dispatcher
 import libs.global_value as g
@@ -21,11 +22,25 @@ from libs.utils import dbutil, formatter
 def main():
     """メイン処理"""
 
+    conf = functions.load_config()
+    app = Flask(__name__, static_folder="../../../files/html", template_folder="../../../files/html")
+    auth = HTTPBasicAuth()
+
     m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
     m.data.status = "message_append"
-    app = Flask(__name__, static_folder="../../../files/html", template_folder="../../../files/html")
     padding = "0.25em 1.5em"
     players = lookup.internal.get_member()
+
+    @auth.verify_password
+    def verify_password(username, password):
+        if username == conf.username and password == conf.password:
+            return True
+        return False
+
+    @app.before_request
+    def require_auth():
+        if conf.require_auth:
+            return auth.login_required(lambda: None)()
 
     @app.route("/")
     def index():
@@ -226,6 +241,8 @@ def main():
         if request.method == "POST":
             data.update(request.form.to_dict())
             data.update(mode="update")
+            data.update(origin_point=g.cfg.mahjong.origin_point)
+
             if "ts" in data:
                 match request.form.get("action"):
                     case "modify":
@@ -268,4 +285,9 @@ def main():
         data.update(table=score_table())
         return render_template("score_list.html", **data)
 
-    app.run(host=g.args.host, port=g.args.port)
+    if conf.use_ssl:
+        if os.path.exists(conf.certificate) and os.path.exists(conf.private_key):
+            app.run(host=conf.host, port=conf.port, ssl_context=(conf.certificate, conf.private_key))
+        raise FileNotFoundError("certificate or private key not found")
+    else:
+        app.run(host=conf.host, port=conf.port)

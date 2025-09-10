@@ -182,6 +182,7 @@ def get_totalization(data: dict) -> dict:
     """
 
     ret: dict = {}
+    # df = pd.DataFrame.from_dict(data, orient="index")
 
     ret["通算ポイント"] = f"{data["通算ポイント"]:+.1f}pt".replace("-", "▲")
     ret["平均ポイント"] = f"{data["平均ポイント"]:+.1f}pt".replace("-", "▲")
