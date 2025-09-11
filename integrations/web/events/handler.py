@@ -3,9 +3,10 @@ integrations/web/events/handler.py
 """
 
 import os
+from dataclasses import asdict
 
 import pandas as pd
-from flask import Flask, render_template, request
+from flask import Flask, abort, render_template, request
 from flask_httpauth import HTTPBasicAuth
 
 import libs.event_dispatcher
@@ -45,10 +46,13 @@ def main():
     @app.route("/")
     def index():
         m.post.message = {}
-        return app.send_static_file("index.html")
+        return render_template("index.html", **asdict(conf))
 
     @app.route("/summary", methods=["GET", "POST"])
     def summary(padding=padding):
+        if not conf.view_summary:
+            abort(403)
+
         m.post.message = {}
         cookie_data = functions.get_cookie(request)
         text = " ".join(cookie_data.values())
@@ -77,13 +81,16 @@ def main():
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message)
+        cookie_data.update(body=message, **asdict(conf))
         page = functions.set_cookie("summary.html", request, cookie_data)
 
         return page
 
     @app.route("/graph", methods=["GET", "POST"])
     def graph():
+        if not conf.view_graph:
+            abort(403)
+
         m.post.message = {}
         cookie_data = functions.get_cookie(request)
         text = " ".join(cookie_data.values())
@@ -100,13 +107,16 @@ def main():
             else:
                 message += f"<p>{headline.replace("\n", "<br>")}</p>"
 
-        cookie_data.update(body=message)
+        cookie_data.update(body=message, **asdict(conf))
         page = functions.set_cookie("graph.html", request, cookie_data)
 
         return page
 
     @app.route("/ranking", methods=["GET", "POST"])
     def ranking():
+        if not conf.view_ranking:
+            abort(403)
+
         m.post.message = {}
         cookie_data = functions.get_cookie(request)
         text = " ".join(cookie_data.values())
@@ -128,13 +138,16 @@ def main():
             elif isinstance(v, str):
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message)
+        cookie_data.update(body=message, **asdict(conf))
         page = functions.set_cookie("ranking.html", request, cookie_data)
 
         return page
 
     @app.route("/detail", methods=["GET", "POST"])
     def detail(padding=padding):
+        if not conf.view_summary:
+            abort(403)
+
         m.post.message = {}
         cookie_data = functions.get_cookie(request)
         text = " ".join(cookie_data.values())
@@ -161,14 +174,17 @@ def main():
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, players=players)
+        cookie_data.update(body=message, players=players, **asdict(conf))
         page = functions.set_cookie("detail.html", request, cookie_data)
 
         return page
 
     @app.route("/management", methods=["GET", "POST"])
     def management():
-        data: dict = {}
+        if not conf.management_member:
+            abort(403)
+
+        data: dict = asdict(conf)
 
         if request.method == "POST":
             match request.form.get("action"):
@@ -208,6 +224,9 @@ def main():
 
     @app.route("/score", methods=["GET", "POST"])
     def score():
+        if not conf.management_score:
+            abort(403)
+
         def score_table() -> str:
             df = formatter.df_rename(pd.read_sql(
                 sql="""
@@ -235,7 +254,7 @@ def main():
 
             return functions.to_styled_html(df, padding)
 
-        data: dict = {}
+        data: dict = asdict(conf)
         data.update(players=players)
 
         if request.method == "POST":

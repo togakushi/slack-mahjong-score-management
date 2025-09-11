@@ -3,12 +3,14 @@
 <body>
 <h1>メニュー</h1>
 <ul>
-    <li><a href="summary">成績サマリ</a>
-    <li><a href="graph">グラフ</a>
-    <li><a href="ranking">ランキング</a>
-    <li><a href="detail">個人成績</a>
-    <li><a href="score">スコア管理</a>
-    <li><a href="management">メンバー管理</a>
+    {% if view_summary %}<li><a href="summary">成績サマリ</a>{% endif %}
+    {% if view_graph %}<li><a href="graph">グラフ</a>{% endif %}
+    {% if view_ranking %}<li><a href="ranking">ランキング</a>{% endif %}
+    {% if view_summary %}<li><a href="detail">個人成績</a>{% endif %}
+</ul>
+<ul>
+    {% if management_score %}<li><a href="score">スコア管理</a>{% endif %}
+    {% if management_member %}<li><a href="management">メンバー管理</a>{% endif %}
 </ul>
 </body>
 </html>

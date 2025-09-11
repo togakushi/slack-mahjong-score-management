@@ -27,6 +27,12 @@ class Config:
     certificate: str = field(default="")
     private_key: str = field(default="")
 
+    view_summary: bool = field(default=True)
+    view_graph: bool = field(default=True)
+    view_ranking: bool = field(default=True)
+    management_member: bool = field(default=False)
+    management_score: bool = field(default=False)
+
 
 def load_config() -> Config:
     """設定ファイル読み込み"""
