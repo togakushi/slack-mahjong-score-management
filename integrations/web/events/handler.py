@@ -42,6 +42,7 @@ def main():
     def require_auth():
         if conf.require_auth:
             return auth.login_required(lambda: None)()
+        return None
 
     @app.route("/")
     def index():
@@ -308,5 +309,4 @@ def main():
         if os.path.exists(conf.certificate) and os.path.exists(conf.private_key):
             app.run(host=conf.host, port=conf.port, ssl_context=(conf.certificate, conf.private_key))
         raise FileNotFoundError("certificate or private key not found")
-    else:
-        app.run(host=conf.host, port=conf.port)
+    app.run(host=conf.host, port=conf.port)
