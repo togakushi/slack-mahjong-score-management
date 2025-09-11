@@ -16,8 +16,8 @@ import libs.global_value as g
 @dataclass
 class Config:
     """設定値"""
-    host: str = field(default=g.args.host)
-    port: int = field(default=g.args.port)
+    host: str = field(default="")
+    port: int = field(default="")
 
     require_auth: bool = field(default=False)
     username: str = field(default="")
@@ -53,6 +53,12 @@ def load_config() -> Config:
                 else:
                     raise TypeError(f"Unsupported type: {f.type}")
                 setattr(cfg, f.name, value)
+
+    if not cfg.host:
+        cfg.host = g.args.host
+
+    if not cfg.port:
+        cfg.port = g.args.port
 
     if not all([cfg.username, cfg.password]):
         cfg.require_auth = False
