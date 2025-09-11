@@ -179,8 +179,8 @@ def main():
 
         return page
 
-    @app.route("/management", methods=["GET", "POST"])
-    def management():
+    @app.route("/member", methods=["GET", "POST"])
+    def mgt_member():
         if not conf.management_member:
             abort(403)
 
@@ -223,7 +223,7 @@ def main():
         return render_template("registry.html", **data)
 
     @app.route("/score", methods=["GET", "POST"])
-    def score():
+    def mgt_score():
         if not conf.management_score:
             abort(403)
 
