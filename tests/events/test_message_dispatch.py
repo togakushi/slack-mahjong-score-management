@@ -29,7 +29,7 @@ def test_help(config, keyword, monkeypatch):
         patch("libs.functions.compose.msg_help.event_message") as mock_help_event_message,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_help_event_message.assert_called_once()
@@ -50,7 +50,7 @@ def test_results(config, keyword, monkeypatch):
         patch("libs.commands.dispatcher.main") as mock_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_results.assert_called_once()
@@ -71,7 +71,7 @@ def test_graph(config, keyword, monkeypatch):
         patch("libs.commands.dispatcher.main") as mock_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_graph.assert_called_once()
@@ -92,7 +92,7 @@ def test_ranking(config, keyword, monkeypatch):
         patch("libs.commands.dispatcher.main") as mock_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_ranking.assert_called_once()
@@ -113,7 +113,7 @@ def test_report(config, keyword, monkeypatch):
         patch("libs.commands.dispatcher.main") as mock_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_report.assert_called_once()

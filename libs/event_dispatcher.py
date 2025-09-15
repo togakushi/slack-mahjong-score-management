@@ -4,20 +4,25 @@ libs/event_dispatcher.py
 
 import logging
 import re
+from typing import TYPE_CHECKING, TypeVar
 
 import libs.commands.dispatcher
 import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
-from integrations.slack import comparison
 from libs.data import lookup, modify
 from libs.functions import compose, message
 from libs.registry import member, team
 from libs.utils import formatter
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
 
-def dispatch_by_keyword(m: MessageParserProtocol):
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
+
+def dispatch_by_keyword(m: MessageParserProtocol[AppConfig]):
     """メイン処理"""
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -64,11 +69,6 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             libs.commands.dispatcher.main(m)
 
         # データベース関連コマンド
-        case x if re.match(rf"^{g.cfg.cw.check}$", x) or (m.is_command and x in g.cfg.alias.check):
-            comparison.main(m)
-        case x if re.match(rf"^Reminder: {g.cfg.cw.check}$", str(m.data.text)):  # Reminderによる突合
-            logging.notice("Reminder: %s", g.cfg.cw.check)  # type: ignore
-            comparison.main(m)
         case x if m.is_command and x in g.cfg.alias.download:
             m.post.file_list = [{"成績記録DB": g.cfg.db.database_file}]
 
@@ -85,9 +85,6 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             m.post.ts = m.data.event_ts
 
         # メンバー管理系コマンド
-        case x if m.is_command and x in g.cfg.alias.member:
-            m.post.message = lookup.textdata.get_members_list()
-            m.post.codeblock = True
         case x if m.is_command and x in g.cfg.alias.add:
             m.post.message = member.append(m.argument)
             m.post.key_header = False
@@ -108,25 +105,32 @@ def dispatch_by_keyword(m: MessageParserProtocol):
         case x if m.is_command and x in g.cfg.alias.team_remove:
             m.post.message = team.remove(m.argument)
             m.post.key_header = False
-        case x if m.is_command and x in g.cfg.alias.team_list:
-            m.post.codeblock = True
-            m.post.key_header = False
-            m.post.message = lookup.textdata.get_team_list()
         case x if m.is_command and x in g.cfg.alias.team_clear:
             m.post.message = team.clear()
             m.post.key_header = False
 
         # その他
         case _ as x:
-            if m.is_command:
-                m.post.message = compose.msg_help.slash_command(g.cfg.setting.slash_command)
+            # 個別コマンド
+            for sp in g.special_commands:
+                if m.is_command:
+                    if sp.replace(g.slash_command_name, "").strip() == x:
+                        g.special_commands[sp](m)
+                        break
+                else:
+                    if sp == x:
+                        g.special_commands[sp](m)
+                        break
             else:
-                other_words(x, m)
+                if m.is_command:
+                    m.post.message = g.slash_commands["help"](g.slash_command_name)
+                else:
+                    other_words(x, m)
 
     api_adapter.post(m)
 
 
-def other_words(word: str, m: MessageParserProtocol):
+def other_words(word: str, m: MessageParserProtocol[AppConfig]):
     """コマンド以外のワードの処理
 
     Args:
@@ -134,12 +138,12 @@ def other_words(word: str, m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    if re.match(rf"^{g.cfg.cw.remarks_word}$", word) and m.in_thread:  # 追加メモ
+    if re.match(rf"^{g.cfg.setting.remarks_word}$", word) and m.in_thread:  # 追加メモ
         if lookup.db.exsist_record(m.data.thread_ts).has_valid_data():
             modify.check_remarks(m)
     else:
         # スコア取り出し
-        detection = GameResult(**m.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
+        detection = GameResult(**m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
         if detection:  # 結果報告フォーマットに一致したポストの処理
             # 名前ブレ修正
             g.params.update(unregistered_replace=False)  # ゲスト無効
@@ -160,7 +164,7 @@ def other_words(word: str, m: MessageParserProtocol):
                 message_deleted(m)
 
 
-def message_append(detection: GameResult, m: MessageParserProtocol):
+def message_append(detection: GameResult, m: MessageParserProtocol[AppConfig]):
     """メッセージの追加処理
 
     Args:
@@ -179,7 +183,7 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
-def message_changed(detection: GameResult, m: MessageParserProtocol):
+def message_changed(detection: GameResult, m: MessageParserProtocol[AppConfig]):
     """メッセージの変更処理
 
     Args:
@@ -209,7 +213,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
-def message_deleted(m: MessageParserProtocol):
+def message_deleted(m: MessageParserProtocol[AppConfig]):
     """メッセージの削除処理
 
     Args:
@@ -218,7 +222,7 @@ def message_deleted(m: MessageParserProtocol):
 
     api_adapter = factory.select_adapter(g.selected_service)
 
-    if re.match(rf"^{g.cfg.cw.remarks_word}", m.keyword):  # 追加メモ
+    if re.match(rf"^{g.cfg.setting.remarks_word}", m.keyword):  # 追加メモ
         delete_list = modify.remarks_delete(m)
     else:
         delete_list = modify.db_delete(m)

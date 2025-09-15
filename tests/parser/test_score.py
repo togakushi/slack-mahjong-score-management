@@ -21,13 +21,13 @@ def test_score_report(input_str, result_dict, get_point):
     """得点入力"""
     configuration.set_loglevel()
     g.cfg = AppConfig("tests/testdata/minimal.ini")
-    m = MessageParser(g.cfg.setting.reaction_ok, g.cfg.setting.reaction_ng)
+    m = MessageParser("ok", "ng")
     m.data.text = input_str
     m.data.event_ts = "1234567890.123456"
 
     result = GameResult(
         rule_version="test",
-        **m.get_score(g.cfg.search.keyword),
+        **m.get_score(g.cfg.setting.keyword),
     )
     result.calc()
     chk_dict: dict = {}

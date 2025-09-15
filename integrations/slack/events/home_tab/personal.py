@@ -103,7 +103,7 @@ def register_personal_handlers(app):
         logging.trace(body)  # type: ignore
 
         api_adapter = factory.select_adapter(g.selected_service)
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
 
         m.parser(body)
         add_argument, app_msg, update_flag = ui_parts.set_command_option(body)

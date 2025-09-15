@@ -2,13 +2,20 @@
 integrations/standard_io/functions.py
 """
 
+from typing import TYPE_CHECKING, TypeVar
+
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.protocols import MessageParserProtocol
 from libs.functions import message
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
 
-def score_verification(detection: GameResult, m: MessageParserProtocol):
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
+
+def score_verification(detection: GameResult, m: MessageParserProtocol[AppConfig]):
     """素点合計のチェック
 
     Args:

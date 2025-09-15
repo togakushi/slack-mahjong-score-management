@@ -4,7 +4,7 @@ libs/api/slack/comparison.py
 
 import copy
 import logging
-from typing import TypedDict, cast
+from typing import TYPE_CHECKING, TypedDict, TypeVar, cast
 
 import libs.global_value as g
 from cls.score import GameResult, Score
@@ -17,6 +17,11 @@ from libs.data import modify
 from libs.data.lookup import db
 from libs.functions import search
 from libs.utils import dictutil, formatter
+
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
+
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
 
 DBSearchDict = dict[str, GameResult]
 
@@ -39,7 +44,7 @@ class ComparisonDict(TypedDict, total=False):
     """保留"""
 
 
-def main(m: MessageParserProtocol) -> None:
+def main(m: MessageParserProtocol[AppConfig]) -> None:
     """データ突合の実施、その結果をslackにpostする"""
 
     if m.data.status == "message_changed":  # 編集イベントは無視
@@ -72,7 +77,7 @@ def main(m: MessageParserProtocol) -> None:
     m.post.ts = m.data.event_ts
 
 
-def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
+def data_comparison(m: MessageParserProtocol[AppConfig]) -> tuple[dict, ComparisonDict]:
     """データ突合処理
 
     Args:
@@ -103,7 +108,7 @@ def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
     # 比較データ
     if g.args.debug:
         for s_val in set(slack_score):
-            result = GameResult(**s_val.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
+            result = GameResult(**s_val.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
             logging.info("slack data: %s", result)
         for _, d_val in db_score.items():
             logging.info("db data: %s", d_val)
@@ -128,7 +133,7 @@ def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
     return (count, cast(ComparisonDict, msg))
 
 
-def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProtocol], db_data: DBSearchDict) -> tuple[dict, ComparisonDict]:
+def check_omission(m: MessageParserProtocol[AppConfig], slack_data: list[MessageParserProtocol], db_data: DBSearchDict) -> tuple[dict, ComparisonDict]:
     """スコア取りこぼしチェック
 
     Args:
@@ -156,7 +161,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
             continue
 
         # "score"が取得できていない場合は処理をスキップ
-        slack_score = GameResult(**slack_m.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
+        slack_score = GameResult(**slack_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
         if not slack_score:
             continue
 
@@ -238,7 +243,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
     return (count, msg)
 
 
-def check_remarks(m: MessageParserProtocol, slack_data: list[MessageParserProtocol], db_data: list) -> tuple[dict, ComparisonDict]:
+def check_remarks(m: MessageParserProtocol[AppConfig], slack_data: list[MessageParserProtocol], db_data: list) -> tuple[dict, ComparisonDict]:
     """メモの取りこぼしチェック
 
     Args:
@@ -320,7 +325,7 @@ def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, Co
             continue
 
         # "score"が取得できていない場合は処理をスキップ
-        slack_score = GameResult(**val.get_score(g.cfg.search.keyword), **g.cfg.mahjong.to_dict())
+        slack_score = GameResult(**val.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
         if not slack_score:
             continue
 

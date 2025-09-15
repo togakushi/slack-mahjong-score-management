@@ -29,7 +29,7 @@ def test_help(config, keyword, monkeypatch):
         patch("libs.functions.compose.msg_help.slash_command") as mock_help_slash_command,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_help_slash_command.assert_called_once()
@@ -50,7 +50,7 @@ def test_results(config, keyword, monkeypatch):
         patch("libs.commands.dispatcher.main") as mock_slash_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_results.assert_called_once()
@@ -71,7 +71,7 @@ def test_graph(config, keyword, monkeypatch):
         patch("libs.commands.dispatcher.main") as mock_slash_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_graph.assert_called_once()
@@ -92,7 +92,7 @@ def test_ranking(config, keyword, monkeypatch):
         patch("libs.commands.dispatcher.main") as mock_slash_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_ranking.assert_called_once()
@@ -113,7 +113,7 @@ def test_report(config, keyword, monkeypatch):
         patch("libs.commands.dispatcher.main") as mock_slash_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_report.assert_called_once()
@@ -134,7 +134,7 @@ def test_check(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.comparison.main") as mock_slash_check,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_check.assert_called_once()
@@ -152,7 +152,7 @@ def test_download(config, keyword, monkeypatch):
     configuration.setup()
 
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-    m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+    m = factory.select_parser(g.selected_service)
     m.parser(param_data.FAKE_BODY)
     libs.event_dispatcher.dispatch_by_keyword(m)
 
@@ -172,7 +172,7 @@ def test_member_list(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.lookup.textdata.get_members_list", return_value={}) as mock_slash_member_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_list.assert_called_once()
@@ -193,7 +193,7 @@ def test_member_add(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.member.append", return_value=None) as mock_slash_member_add,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_add.assert_called_once()
@@ -214,7 +214,7 @@ def test_member_del(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.member.remove", return_value=None) as mock_slash_member_del,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_del.assert_called_once()
@@ -235,7 +235,7 @@ def test_team_create(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.team.create", return_value=None) as mock_slash_team_create,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_create.assert_called_once()
@@ -256,7 +256,7 @@ def test_team_del(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.team.delete", return_value=None) as mock_slash_team_del,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_del.assert_called_once()
@@ -277,7 +277,7 @@ def test_team_add(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.team.append", return_value=None) as mock_slash_team_add,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_add.assert_called_once()
@@ -298,7 +298,7 @@ def test_team_remove(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.team.remove", return_value=None) as mock_slash_team_remove,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_remove.assert_called_once()
@@ -319,7 +319,7 @@ def test_team_list(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.lookup.textdata.get_team_list", return_value="") as mock_slash_team_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_list.assert_called_once()
@@ -340,7 +340,7 @@ def test_team_clear(config, keyword, monkeypatch):
         patch("libs.event_dispatcher.team.clear", return_value="") as mock_slash_team_clear,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+        m = factory.select_parser(g.selected_service)
         m.parser(param_data.FAKE_BODY)
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_clear.assert_called_once()

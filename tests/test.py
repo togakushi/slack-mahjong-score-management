@@ -60,7 +60,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         ], width=120)
 
     # ---------------------------------------------------------------------------------------------
-    m = factory.select_parser("standard_io", **g.cfg.setting.to_dict())
+    m = factory.select_parser("standard_io")
     target_loop: list = []
 
     if flag.get("target_loop"):

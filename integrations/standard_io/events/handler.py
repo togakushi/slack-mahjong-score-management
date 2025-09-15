@@ -10,7 +10,7 @@ from integrations import factory
 def main():
     """メイン処理"""
 
-    m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+    m = factory.select_parser(g.selected_service)
     m.parser({"event": {"text": g.args.text}})
 
     # キーワード処理

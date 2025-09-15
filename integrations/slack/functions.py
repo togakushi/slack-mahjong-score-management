@@ -3,17 +3,19 @@ integrations/slack/functions.py
 """
 
 import logging
+from configparser import ConfigParser
 from typing import cast
 
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
+from integrations import factory
 from integrations.protocols import MessageParserProtocol
-from integrations.slack import adapter, parser
+from integrations.slack import adapter, config, parser
 from libs.functions import message
 
 
-def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
+def score_verification(detection: GameResult, m: MessageParserProtocol[config.AppConfig]) -> None:
     """素点合計をチェックしリアクションを付ける
 
     Args:
@@ -22,7 +24,12 @@ def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
     """
 
     api_adapter = adapter.SlackAPI()
-    reactions = api_adapter.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
+    reactions = api_adapter.reactions.status(
+        ch=m.data.channel_id,
+        ts=m.data.event_ts,
+        ok=m.conf.reaction_ok,
+        ng=m.conf.reaction_ng,
+    )
     status_flg: bool = True  # リアクション最終状態(True: OK, False: NG)
     m.post.message = {}
 
@@ -42,14 +49,14 @@ def score_verification(detection: GameResult, m: MessageParserProtocol) -> None:
     # リアクション処理
     if status_flg:  # NGを外してOKを付ける
         if not reactions.get("ok"):
-            api_adapter.reactions.append(icon=m.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
+            api_adapter.reactions.append(icon=m.conf.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
         if reactions.get("ng"):
-            api_adapter.reactions.remove(icon=m.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
+            api_adapter.reactions.remove(icon=m.conf.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
     else:  # OKを外してNGを付ける
         if reactions.get("ok"):
-            api_adapter.reactions.remove(icon=m.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
+            api_adapter.reactions.remove(icon=m.conf.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
         if not reactions.get("ng"):
-            api_adapter.reactions.append(icon=m.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
+            api_adapter.reactions.append(icon=m.conf.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
 
 
 def get_messages(word: str) -> list[MessageParserProtocol]:
@@ -62,9 +69,11 @@ def get_messages(word: str) -> list[MessageParserProtocol]:
         list[MessageParserProtocol]: 検索した結果
     """
 
+    conf = cast(config.AppConfig, factory.load_config(g.selected_service, cast(ConfigParser, getattr(g.cfg, "_parser"))))
+
     # 検索クエリ
-    after = ExtDt(days=-g.cfg.search.after).format("ymd", "-")
-    query = f"{word} in:{g.cfg.search.channel} after:{after}"
+    after = ExtDt(days=-conf.search_after).format("ymd", "-")
+    query = f"{word} in:{conf.search_channel} after:{after}"
     logging.info("query=%s", query)
 
     # データ取得
@@ -89,7 +98,7 @@ def get_messages(word: str) -> list[MessageParserProtocol]:
     data: list[MessageParserProtocol] = []
     for x in matches:
         if isinstance(x, dict):
-            m = parser.MessageParser(g.cfg.setting.reaction_ok, g.cfg.setting.reaction_ng)
+            m = parser.MessageParser(conf.reaction_ok, conf.reaction_ng)
             m.parser(x)
             data.append(cast(MessageParserProtocol, m))
 
@@ -136,12 +145,13 @@ def pickup_score() -> list[MessageParserProtocol]:
         list[MessageParserProtocol]: 検索した結果
     """
 
+    conf = cast(config.AppConfig, factory.load_config(g.selected_service, cast(ConfigParser, getattr(g.cfg, "_parser"))))
     score_matches: list[MessageParserProtocol] = []
 
     # ゲーム結果の抽出
-    for match in get_messages(g.cfg.search.keyword):
-        if match.get_score(g.cfg.search.keyword):
-            if match.data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
+    for match in get_messages(g.cfg.setting.keyword):
+        if match.get_score(g.cfg.setting.keyword):
+            if match.data.user_id in conf.ignore_userid:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s", match.data.user_id)
                 continue
 
@@ -160,15 +170,16 @@ def pickup_remarks() -> list[MessageParserProtocol]:
         list[MessageParserProtocol]: 検索した結果
     """
 
+    # conf = cast(config.AppConfig, factory.load_config(g.selected_service, cast(ConfigParser, getattr(g.cfg, "_parser"))))
     remarks_matches: list[MessageParserProtocol] = []
 
     # メモの抽出
-    for match in get_messages(g.cfg.cw.remarks_word):
+    for match in get_messages(g.cfg.setting.remarks_word):
         if match.data.user_id in g.cfg.setting.ignore_userid:  # 除外ユーザからのポストは破棄
             logging.info("skip ignore user: %s", match.data.user_id)
             continue
 
-        if (remark := match.get_remarks(g.cfg.cw.remarks_word)):
+        if (remark := match.get_remarks(g.cfg.setting.remarks_word)):
             match.data.remarks = remark
         else:  # 不一致は破棄
             continue
@@ -193,6 +204,7 @@ def get_reactions_list(msg: dict) -> tuple[list, list]:
         - reaction_ng: ngが付いているメッセージのタイムスタンプ
     """
 
+    conf = cast(config.AppConfig, factory.load_config(g.selected_service, cast(ConfigParser, getattr(g.cfg, "_parser"))))
     reaction_ok: list = []
     reaction_ng: list = []
 
@@ -200,9 +212,9 @@ def get_reactions_list(msg: dict) -> tuple[list, list]:
         for reactions in msg.get("reactions", {}):
             if isinstance(reactions, dict) and g.bot_id in reactions.get("users", []):
                 match reactions.get("name"):
-                    case g.cfg.setting.reaction_ok:
+                    case conf.reaction_ok:
                         reaction_ok.append(msg.get("ts"))
-                    case g.cfg.setting.reaction_ng:
+                    case conf.reaction_ng:
                         reaction_ng.append(msg.get("ts"))
 
     return (reaction_ok, reaction_ng)

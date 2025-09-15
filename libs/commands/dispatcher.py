@@ -2,13 +2,20 @@
 libs/commands/dispatcher.py
 """
 
+from typing import TYPE_CHECKING, TypeVar
+
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
 from libs.commands import graph, ranking, report, results
 from libs.utils import dictutil
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
 
-def main(m: MessageParserProtocol):
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
+
+def main(m: MessageParserProtocol[AppConfig]):
     """サブコマンドディスパッチャー
 
     Args:

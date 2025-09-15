@@ -3,70 +3,9 @@ integrations/web/functions.py
 """
 
 import re
-from configparser import ConfigParser
-from dataclasses import dataclass, field, fields
-from typing import cast
 
 import pandas as pd
 from flask import Request, Response, make_response, render_template
-
-import libs.global_value as g
-
-
-@dataclass
-class Config:
-    """設定値"""
-    host: str = field(default="")
-    port: int = field(default="")
-
-    require_auth: bool = field(default=False)
-    username: str = field(default="")
-    password: str = field(default="")
-
-    use_ssl: bool = field(default=False)
-    certificate: str = field(default="")
-    private_key: str = field(default="")
-
-    view_summary: bool = field(default=True)
-    view_graph: bool = field(default=True)
-    view_ranking: bool = field(default=True)
-    management_member: bool = field(default=False)
-    management_score: bool = field(default=False)
-
-
-def load_config() -> Config:
-    """設定ファイル読み込み"""
-
-    cfg = Config()
-    section = "web"
-    parser = cast(ConfigParser, getattr(g.cfg, "_parser"))
-
-    if parser.has_section(section):
-        for f in fields(Config):
-            if parser.has_option(section, f.name):
-                if f.type is int:
-                    value = parser.getint(section, f.name)
-                elif f.type is bool:
-                    value = parser.getboolean(section, f.name)
-                elif f.type is str:
-                    value = parser.get(section, f.name)
-                else:
-                    raise TypeError(f"Unsupported type: {f.type}")
-                setattr(cfg, f.name, value)
-
-    if not cfg.host:
-        cfg.host = g.args.host
-
-    if not cfg.port:
-        cfg.port = g.args.port
-
-    if not all([cfg.username, cfg.password]):
-        cfg.require_auth = False
-
-    if not all([cfg.private_key, cfg.certificate]):
-        cfg.use_ssl = False
-
-    return cfg
 
 
 def to_styled_html(df: pd.DataFrame, padding: str) -> str:

@@ -3,6 +3,7 @@ libs/commands/results/detail.py
 """
 
 import textwrap
+from typing import TYPE_CHECKING, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -14,8 +15,13 @@ from libs.data import aggregate, loader, lookup
 from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
 
-def aggregation(m: MessageParserProtocol) -> bool:
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
+
+def aggregation(m: MessageParserProtocol[AppConfig]) -> bool:
     """個人/チーム成績詳細を集計して返す
 
     Args:

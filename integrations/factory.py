@@ -2,42 +2,71 @@
 integrations/factory.py
 """
 
+from typing import overload, Literal
+
 import pandas as pd
 
-from integrations import slack, standard_io, web
+from integrations import protocols, slack, standard_io, web
 from integrations.base import interface as base
 
 
-def select_adapter(selected_service: str) -> base.APIInterface:
+@overload
+def select_adapter(selected_service: Literal["slack"]) -> slack.adapter.SlackAPI:
+    ...
+
+
+@overload
+def select_adapter(selected_service: Literal["web"]) -> web.adapter.WebResponse:
+    ...
+
+
+@overload
+def select_adapter(selected_service: Literal["standard_io"]) -> standard_io.adapter.StandardIO:
+    ...
+
+
+def select_adapter(selected_service: str) -> protocols.AdapterProtocol:
     """AIPインターフェース選択"""
 
     match selected_service:
         case "slack":
             return slack.adapter.SlackAPI()
-        case "standard_io":
-            return standard_io.adapter.StandardIO()
         case "web":
             return web.adapter.WebResponse()
+        case "standard_io":
+            return standard_io.adapter.StandardIO()
         case _:
             raise ValueError(f"Unknown service: {selected_service}")
 
 
-def select_parser(selected_service: str, **kwargs):
-    """メッセージパーサ選択"""
+@overload
+def select_parser(selected_service: Literal["slack"]) -> slack.parser.MessageParser:
+    ...
 
-    reaction_ok = str(kwargs.get("reaction_ok", "ok"))
-    reaction_ng = str(kwargs.get("reaction_ng", "ng"))
+
+@overload
+def select_parser(selected_service: Literal["web"]) -> web.parser.MessageParser:
+    ...
+
+
+@overload
+def select_parser(selected_service: Literal["standard_io"]) -> standard_io.parser.MessageParser:
+    ...
+
+
+def select_parser(selected_service: str) -> protocols.MessageParserProtocol[base.IntegrationsConfig]:
+    """メッセージパーサ選択"""
 
     match selected_service:
         case "slack":
             pd.options.plotting.backend = "matplotlib"
-            return slack.parser.MessageParser(reaction_ok, reaction_ng)
-        case "standard_io":
-            pd.options.plotting.backend = "matplotlib"
-            return standard_io.parser.MessageParser(reaction_ok, reaction_ng)
+            return slack.parser.MessageParser()
         case "web":
             pd.options.plotting.backend = "plotly"
-            return web.parser.MessageParser(reaction_ok, reaction_ng)
+            return web.parser.MessageParser()
+        case "standard_io":
+            pd.options.plotting.backend = "matplotlib"
+            return standard_io.parser.MessageParser()
         case _:
             raise ValueError("No match service name.")
 

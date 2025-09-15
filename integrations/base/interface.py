@@ -2,23 +2,47 @@
 
 import re
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
-
-from integrations.protocols import MsgData, PostData
+from configparser import ConfigParser
+from dataclasses import dataclass, fields
+from typing import TYPE_CHECKING, Any, Union
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
+@dataclass
+class IntegrationsConfig(ABC):
+    """設定値"""
+
+    def read_file(self, parser: ConfigParser, selected_service: str):
+        value: Union[int, bool, str, list]
+        if parser.has_section(selected_service):
+            for f in fields(self):
+                if parser.has_option(selected_service, f.name):
+                    if f.type is int:
+                        value = parser.getint(selected_service, f.name)
+                    elif f.type is bool:
+                        value = parser.getboolean(selected_service, f.name)
+                    elif f.type is str:
+                        value = parser.get(selected_service, f.name)
+                    elif f.type is list:
+                        value = [x.strip() for x in parser.get(selected_service, f.name).split(",")]
+                    else:
+                        raise TypeError(f"Unsupported type: {f.type}")
+                    setattr(self, f.name, value)
+
+
 class ReactionsInterface(ABC):
     """リアクション操作抽象インターフェース"""
     @abstractmethod
-    def status(self, ch=str, ts=str) -> dict[str, list]:
+    def status(self, ch=str, ts=str, ok=str, ng=str) -> dict[str, list]:
         """botが付けたリアクションの種類を返す
 
         Args:
             ch (str): チャンネルID
             ts (str): メッセージのタイムスタンプ
+            ok (str): OKリアクション文字
+            ng (str): NGリアクション文字
 
         Returns:
             dict[str,list]: リアクション
@@ -100,11 +124,6 @@ class APIInterface(ABC):
 
 class MessageParserDataMixin:
     """メッセージ解析共通処理"""
-    def __init__(self, reaction_ok: str, reaction_ng: str):
-        self.data = MsgData()
-        self.post = PostData()
-        self.reaction_ok = reaction_ok
-        self.reaction_ng = reaction_ng
 
     @property
     def in_thread(self) -> bool:
@@ -273,6 +292,7 @@ class MessageParserDataMixin:
 
 class MessageParserInterface(ABC):
     """メッセージ解析インターフェース"""
+
     @abstractmethod
     def parser(self, body: Any):
         """メッセージ解析

@@ -3,9 +3,15 @@ integrations/slack/events/home_tab/ui_parts.py
 """
 
 import logging
+from typing import TYPE_CHECKING, TypeVar
 
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
+
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
+
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
 
 
 def plain_text(msg: str) -> dict:
@@ -309,7 +315,7 @@ def set_command_option(body) -> tuple[list, list, dict]:
     return (argument, app_msg, update_flag)
 
 
-def update_view(m: MessageParserProtocol, msg: list):
+def update_view(m: MessageParserProtocol[AppConfig], msg: list):
     """viewを更新する
 
     Args:

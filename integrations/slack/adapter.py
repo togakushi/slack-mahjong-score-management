@@ -3,7 +3,7 @@ integrations/slack/message.py
 """
 
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, TypeVar, cast
 
 import pandas as pd
 from slack_sdk.errors import SlackApiError
@@ -15,15 +15,22 @@ from integrations.protocols import MessageParserProtocol
 from integrations.slack import api
 from libs.utils import converter, formatter
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
+
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
 
 class _ReactionsAPI(ReactionsInterface):
     """リアクション操作"""
-    def status(self, ch=str, ts=str) -> dict[str, list]:
+    def status(self, ch=str, ts=str, ok=str, ng=str) -> dict[str, list]:
         """botが付けたリアクションの種類を返す
 
         Args:
             ch (str): チャンネルID
             ts (str): メッセージのタイムスタンプ
+            ok (str): OKリアクション文字
+            ng (str): NGリアクション文字
 
         Returns:
             dict[str,list]: リアクション
@@ -42,9 +49,9 @@ class _ReactionsAPI(ReactionsInterface):
 
         if (reactions := cast(dict, res["message"]).get("reactions")):
             for reaction in cast(list[dict], reactions):
-                if g.cfg.setting.reaction_ok == reaction.get("name") and g.bot_id in reaction["users"]:
+                if ok == reaction.get("name") and g.bot_id in reaction["users"]:
                     icon["ok"].append(res["message"]["ts"])
-                if g.cfg.setting.reaction_ng == reaction.get("name") and g.bot_id in reaction["users"]:
+                if ng == reaction.get("name") and g.bot_id in reaction["users"]:
                     icon["ng"].append(res["message"]["ts"])
 
         logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.bot_id, icon)
@@ -114,7 +121,7 @@ class SlackAPI(APIInterface):
         self.lookup = _LookupAPI()
         self.reactions = _ReactionsAPI()
 
-    def post(self, m: MessageParserProtocol):
+    def post(self, m: MessageParserProtocol[AppConfig]):
         """メッセージをポストする
 
         Args:
@@ -224,7 +231,7 @@ class SlackAPI(APIInterface):
                 thread_ts=m.reply_ts,
             )
 
-    def get_conversations(self, m: MessageParserProtocol) -> dict:
+    def get_conversations(self, m: MessageParserProtocol[AppConfig]) -> dict:
         """スレッド情報の取得
 
         Args:

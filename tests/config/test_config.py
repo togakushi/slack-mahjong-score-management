@@ -34,7 +34,6 @@ def test_minimal_config(monkeypatch):
     assert "graph" in g.cfg.alias.graph
     assert "ranking" in g.cfg.alias.ranking
     assert "report" in g.cfg.alias.report
-    assert "check" in g.cfg.alias.check
     assert "download" in g.cfg.alias.download
     assert "member" in g.cfg.alias.member
     assert "add" in g.cfg.alias.add

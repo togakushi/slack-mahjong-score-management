@@ -4,6 +4,7 @@ libs/commands/graph/summary.py
 
 import logging
 import os
+from typing import TYPE_CHECKING, TypeVar
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -17,8 +18,13 @@ from libs.data import aggregate, loader
 from libs.functions import compose, configuration, message
 from libs.utils import formatter, textutil
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
 
-def point_plot(m: MessageParserProtocol) -> bool:
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
+
+def point_plot(m: MessageParserProtocol[AppConfig]) -> bool:
     """ポイント推移グラフを生成する
 
     Args:
@@ -112,7 +118,7 @@ def point_plot(m: MessageParserProtocol) -> bool:
     return True
 
 
-def rank_plot(m: MessageParserProtocol) -> bool:
+def rank_plot(m: MessageParserProtocol[AppConfig]) -> bool:
     """順位変動グラフを生成する
 
     Args:

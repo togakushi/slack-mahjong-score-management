@@ -3,6 +3,7 @@ libs/commands/graph/rating.py
 """
 
 import os
+from typing import TYPE_CHECKING, TypeVar
 
 import matplotlib.pyplot as plt
 
@@ -14,8 +15,13 @@ from libs.functions import compose, message
 from libs.functions.configuration import graph_setup
 from libs.utils import formatter
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
 
-def plot(m: MessageParserProtocol) -> bool:
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
+
+def plot(m: MessageParserProtocol[AppConfig]) -> bool:
     """レーティング推移グラフを生成する
 
     Args:

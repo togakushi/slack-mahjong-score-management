@@ -2,9 +2,16 @@
 integrations/standard_io/message.py
 """
 
+from typing import TYPE_CHECKING, TypeVar
+
 from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
 from integrations.protocols import MessageParserProtocol
+
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
+
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
 
 
 class _ReactionsDummy(ReactionsInterface):
@@ -32,8 +39,8 @@ class WebResponse(APIInterface):
         self.lookup = _LookupDummy()
         self.reactions = _ReactionsDummy()
 
-    def post(self, m: MessageParserProtocol):
+    def post(self, m: MessageParserProtocol[AppConfig]):
         _ = m
 
-    def get_conversations(self, m: MessageParserProtocol):
+    def get_conversations(self, m: MessageParserProtocol[AppConfig]):
         _ = m

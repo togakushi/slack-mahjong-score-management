@@ -69,6 +69,8 @@ def test_command_with_argument_str(input_args, expected_flags):
 )
 def test_command_unknown_str(input_args, expected_flags):
     """4. 不明なコマンド"""
+    configuration.setup()
+    configuration.read_memberslist()
     parser = CommandParser()
     result = parser.analysis_argument(input_args.split())
 
@@ -103,7 +105,7 @@ def test_search_range(keyword, search_range, monkeypatch):
     """検索範囲"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    m = factory.select_parser("standard_io", **g.cfg.setting.to_dict())
+    m = factory.select_parser("standard_io")
     m.parser({"text": f"dummy_command {keyword}"})
 
     ret_range = [v for k, v in dictutil.placeholder(g.cfg.results, m).items() if k in ["starttime", "endtime"]]

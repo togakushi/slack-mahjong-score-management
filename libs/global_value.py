@@ -1,6 +1,6 @@
 """モジュール間データ共有用"""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Literal
 
 if TYPE_CHECKING:
     from argparse import Namespace
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from cls.config import AppConfig
     from cls.types import TeamDataDict
 
-selected_service: str = "slack"
+selected_service: Literal["slack", "web", "standard_io"] = "slack"
 
 args: "Namespace" = None  # type: ignore
 """コマンドライン引数"""
@@ -20,6 +20,13 @@ app: "App"
 appclient: "WebClient"
 webclient: "WebClient"
 """slack object"""
+
+slash_command_name: str
+"""スラッシュコマンド名"""
+slash_commands: dict
+"""スラッシュコマンド用ディスパッチテーブル"""
+special_commands: dict[str, Callable[..., Any]]
+"""個別コマンド用ディスパッチテーブル"""
 
 # モジュール共通インスタンス
 cfg: "AppConfig"

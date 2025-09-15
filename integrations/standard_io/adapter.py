@@ -3,6 +3,7 @@ integrations/standard_io/adapter.py
 """
 
 import textwrap
+from typing import TYPE_CHECKING, TypeVar
 
 import pandas as pd
 
@@ -10,6 +11,11 @@ from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
 from integrations.protocols import MessageParserProtocol
 from libs.utils import formatter
+
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
+
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
 
 
 class _ReactionsDummy(ReactionsInterface):
@@ -56,7 +62,7 @@ class StandardIO(APIInterface):
                 ret += f"{line}\n"
         return ret.strip()
 
-    def post(self, m: MessageParserProtocol):
+    def post(self, m: MessageParserProtocol[AppConfig]):
         """メッセージ出力
 
         Args:
@@ -101,7 +107,7 @@ class StandardIO(APIInterface):
                     print(disp)
                 print("")
 
-    def get_conversations(self, m: MessageParserProtocol) -> dict:
+    def get_conversations(self, m: MessageParserProtocol[AppConfig]) -> dict:
         """ダミー
 
         Args:

@@ -7,7 +7,7 @@ from dataclasses import asdict
 
 import pandas as pd
 from flask import Flask, abort, render_template, request
-from flask_httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth  # type: ignore
 
 import libs.event_dispatcher
 import libs.global_value as g
@@ -23,35 +23,34 @@ from libs.utils import dbutil, formatter
 def main():
     """メイン処理"""
 
-    conf = functions.load_config()
     app = Flask(__name__, static_folder="../../../files/html", template_folder="../../../files/html")
     auth = HTTPBasicAuth()
 
-    m = factory.select_parser(g.selected_service, **g.cfg.setting.to_dict())
+    m = factory.select_parser(g.selected_service)
     m.data.status = "message_append"
     padding = "0.25em 1.5em"
     players = lookup.internal.get_member()
 
     @auth.verify_password
     def verify_password(username, password):
-        if username == conf.username and password == conf.password:
+        if username == m.conf.username and password == m.conf.password:
             return True
         return False
 
     @app.before_request
     def require_auth():
-        if conf.require_auth:
+        if m.conf.require_auth:
             return auth.login_required(lambda: None)()
         return None
 
     @app.route("/")
     def index():
         m.post.message = {}
-        return render_template("index.html", **asdict(conf))
+        return render_template("index.html", **asdict(m.conf))
 
     @app.route("/summary", methods=["GET", "POST"])
     def summary(padding=padding):
-        if not conf.view_summary:
+        if not m.conf.view_summary:
             abort(403)
 
         m.post.message = {}
@@ -82,14 +81,14 @@ def main():
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, **asdict(conf))
+        cookie_data.update(body=message, **asdict(m.conf))
         page = functions.set_cookie("summary.html", request, cookie_data)
 
         return page
 
     @app.route("/graph", methods=["GET", "POST"])
     def graph():
-        if not conf.view_graph:
+        if not m.conf.view_graph:
             abort(403)
 
         m.post.message = {}
@@ -108,14 +107,14 @@ def main():
             else:
                 message += f"<p>{headline.replace("\n", "<br>")}</p>"
 
-        cookie_data.update(body=message, **asdict(conf))
+        cookie_data.update(body=message, **asdict(m.conf))
         page = functions.set_cookie("graph.html", request, cookie_data)
 
         return page
 
     @app.route("/ranking", methods=["GET", "POST"])
     def ranking():
-        if not conf.view_ranking:
+        if not m.conf.view_ranking:
             abort(403)
 
         m.post.message = {}
@@ -139,14 +138,14 @@ def main():
             elif isinstance(v, str):
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, **asdict(conf))
+        cookie_data.update(body=message, **asdict(m.conf))
         page = functions.set_cookie("ranking.html", request, cookie_data)
 
         return page
 
     @app.route("/detail", methods=["GET", "POST"])
     def detail(padding=padding):
-        if not conf.view_summary:
+        if not m.conf.view_summary:
             abort(403)
 
         m.post.message = {}
@@ -175,17 +174,17 @@ def main():
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, players=players, **asdict(conf))
+        cookie_data.update(body=message, players=players, **asdict(m.conf))
         page = functions.set_cookie("detail.html", request, cookie_data)
 
         return page
 
     @app.route("/member", methods=["GET", "POST"])
     def mgt_member():
-        if not conf.management_member:
+        if not m.conf.management_member:
             abort(403)
 
-        data: dict = asdict(conf)
+        data: dict = asdict(m.conf)
 
         if request.method == "POST":
             match request.form.get("action"):
@@ -225,7 +224,7 @@ def main():
 
     @app.route("/score", methods=["GET", "POST"])
     def mgt_score():
-        if not conf.management_score:
+        if not m.conf.management_score:
             abort(403)
 
         def score_table() -> str:
@@ -255,7 +254,7 @@ def main():
 
             return functions.to_styled_html(df, padding)
 
-        data: dict = asdict(conf)
+        data: dict = asdict(m.conf)
         data.update(players=players)
 
         if request.method == "POST":
@@ -305,8 +304,8 @@ def main():
         data.update(table=score_table())
         return render_template("score_list.html", **data)
 
-    if conf.use_ssl:
-        if os.path.exists(conf.certificate) and os.path.exists(conf.private_key):
-            app.run(host=conf.host, port=conf.port, ssl_context=(conf.certificate, conf.private_key))
+    if m.conf.use_ssl:
+        if os.path.exists(m.conf.certificate) and os.path.exists(m.conf.private_key):
+            app.run(host=m.conf.host, port=m.conf.port, ssl_context=(m.conf.certificate, m.conf.private_key))
         raise FileNotFoundError("certificate or private key not found")
-    app.run(host=conf.host, port=conf.port)
+    app.run(host=m.conf.host, port=m.conf.port)

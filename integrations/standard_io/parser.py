@@ -7,12 +7,22 @@ from typing import cast
 
 from integrations.base.interface import (MessageParserDataMixin,
                                          MessageParserInterface)
+from integrations.protocols import MsgData, PostData
+from integrations.standard_io import config
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
     """メッセージ解析クラス"""
-    def __init__(self, reaction_ok: str, reaction_ng: str):
-        MessageParserDataMixin.__init__(self, reaction_ok, reaction_ng)
+
+    conf = config.AppConfig
+    data = MsgData
+    post = PostData
+
+    def __init__(self):
+        MessageParserDataMixin.__init__(self)
+        self.conf = config.AppConfig()
+        self.data = MsgData()
+        self.post = PostData()
         self._command_flg: bool = False
 
     def parser(self, body: dict):

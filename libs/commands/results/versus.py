@@ -3,6 +3,7 @@ libs/commands/results/versus.py
 """
 
 import textwrap
+from typing import TYPE_CHECKING, TypeVar
 
 import pandas as pd
 
@@ -12,8 +13,13 @@ from libs.data import loader
 from libs.functions import compose
 from libs.utils import converter, formatter
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
 
-def aggregation(m: MessageParserProtocol) -> bool:
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
+
+def aggregation(m: MessageParserProtocol[AppConfig]) -> bool:
     """直接対戦結果を集計して返す"""
 
     # 検索動作を合わせる

@@ -3,6 +3,7 @@ libs/commands/graph/personal.py
 """
 
 import os
+from typing import TYPE_CHECKING, TypeVar
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -15,8 +16,13 @@ from libs.data import loader
 from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
+if TYPE_CHECKING:
+    from integrations.base.interface import IntegrationsConfig
 
-def plot(m: MessageParserProtocol) -> bool:
+AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
+
+
+def plot(m: MessageParserProtocol[AppConfig]) -> bool:
     """個人成績のグラフを生成する
 
     Args:
@@ -116,7 +122,7 @@ def plot(m: MessageParserProtocol) -> bool:
     return True
 
 
-def statistics_plot(m: MessageParserProtocol) -> bool:
+def statistics_plot(m: MessageParserProtocol[AppConfig]) -> bool:
     """個人成績の統計グラフを生成する
 
     Args:

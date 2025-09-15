@@ -5,6 +5,6 @@
 - `integrations.standard_io.parser`: 具体クラス
 """
 
-from integrations.standard_io import adapter, parser
+from integrations.standard_io import adapter, config, parser
 
-__all__ = ["adapter", "parser"]
+__all__ = ["adapter", "config", "parser"]

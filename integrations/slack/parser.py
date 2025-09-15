@@ -3,20 +3,29 @@ integrations/slack/parser.py
 """
 
 import logging
+from configparser import ConfigParser
 from typing import cast
 
 import libs.global_value as g
 from integrations.base.interface import (MessageParserDataMixin,
                                          MessageParserInterface)
-from integrations.slack import adapter
+from integrations.protocols import MsgData, PostData
+from integrations.slack import adapter, config
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
     """メッセージ解析クラス"""
 
-    def __init__(self, reaction_ok: str, reaction_ng: str):
-        MessageParserDataMixin.__init__(self, reaction_ok, reaction_ng)
+    conf = config.AppConfig
+    data = MsgData
+    post = PostData
 
+    def __init__(self):
+        MessageParserDataMixin.__init__(self)
+        self.conf = config.AppConfig()
+        self.conf.read_file(cast(ConfigParser, getattr(g.cfg, "_parser")), g.selected_service)
+        self.data = MsgData()
+        self.post = PostData()
         self._command_flg: bool = False
 
     def parser(self, _body: dict):
@@ -25,7 +34,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         # 対象のevent抽出
         _event = cast(dict, _body.get("event", _body))
 
-        if _body.get("command") == g.cfg.setting.slash_command:  # スラッシュコマンド
+        if _body.get("command") == self.conf.slash_command:  # スラッシュコマンド
             if _body.get("channel_name") == "directmessage":
                 self._command_flg = True
                 self.data.channel_type = "im"

@@ -150,18 +150,18 @@ class MahjongSection(BaseSection):
 
 class SettingSection(BaseSection):
     """settingセクション初期値"""
-    slash_command: str = "/mahjong"
-    """スラッシュコマンド名"""
+
+    keyword: str = "終局"
+    """成績記録キーワード"""
+    remarks_word: str = "麻雀成績メモ"
+    """メモ記録用キーワード"""
+
     thread_report: bool = True
     """スレッド内にある得点報告を扱う"""
     time_adjust: int = 12
     """日付変更後、集計範囲に含める追加時間"""
     guest_mark: str = "※"
     """ゲスト無効時に未登録メンバーに付与する印"""
-    reaction_ok: str = "ok"
-    """DBに取り込んだ時に付けるリアクション"""
-    reaction_ng: str = "ng"
-    """DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション"""
     font_file: str = "ipaexg.ttf"
     """グラフ描写に使用するフォントファイル"""
     graph_style: str = "ggplot"
@@ -191,28 +191,10 @@ class SettingSection(BaseSection):
         logging.notice("fontfile: %s", self.font_file)  # type: ignore
 
 
-class SearchSection(BaseSection):
-    """searchセクション初期値"""
-    keyword: str = "終局"
-    """成績記録キーワード"""
-    channel: str | None = None
-    """テータ突合時に成績記録ワードを検索するチャンネル名"""
-    after: int = 7
-    """データ突合時対象にする日数"""
-    wait: int = 180
-    """指定秒数以内にポストされているデータは突合対象から除外する"""
-
-    def __init__(self, outer, section_name: str):
-        self._parser = cast(ConfigParser, outer._parser)
-        super().__init__(self, section_name)
-
-
 class DatabaseSection(BaseSection):
     """databaseセクション初期値"""
     database_file: str = "mahjong.db"
     """成績管理データベースファイル名"""
-    channel_limitations: list = []
-    """SQLを実行できるチャンネルリスト"""
     backup_dir: str | None = None
     """バックアップ先ディレクトリ"""
 
@@ -265,7 +247,6 @@ class AliasSection(BaseSection):
     graph: list = []
     ranking: list = []
     report: list = []
-    check: list = []
     download: list = []
     member: list = []
     add: list = []
@@ -304,7 +285,7 @@ class CommentSection(BaseSection):
 
 
 class CommandWord(BaseSection):
-    """チャンネル内呼び出しキーワード初期値"""
+    """呼び出しキーワード初期値"""
     help: str = "ヘルプ"
     results: str = "麻雀成績"
     graph: str = "麻雀グラフ"
@@ -312,8 +293,6 @@ class CommandWord(BaseSection):
     report: str = "麻雀成績レポート"
     member: str = "メンバー一覧"
     team: str = "チーム一覧"
-    remarks_word: str = "麻雀成績メモ"
-    check: str = "麻雀成績チェック"
 
     def __init__(self, outer):
         self._parser = cast(ConfigParser, outer._parser)
@@ -326,8 +305,6 @@ class CommandWord(BaseSection):
         self.report = self._parser.get("report", "commandword", fallback=CommandWord.report)
         self.member = self._parser.get("member", "commandword", fallback=CommandWord.member)
         self.team = self._parser.get("team", "commandword", fallback=CommandWord.team)
-        self.remarks_word = self._parser.get("setting", "remarks_word", fallback=CommandWord.remarks_word)
-        self.check = self._parser.get("database", "commandword", fallback=CommandWord.check)
 
 
 class DropItems(BaseSection):
@@ -455,13 +432,11 @@ class AppConfig:
             "ranking",
             "report",
             "database",
-            "search",
             "alias",
             "member",
             "team",
             "comment",
             "regulations",
-            "help",
         ]
         for x in option_sections:
             if x not in self._parser.sections():
@@ -475,7 +450,6 @@ class AppConfig:
         # 設定値取り込み
         self.mahjong = MahjongSection(self, "mahjong")
         self.setting = SettingSection(self, "setting")
-        self.search = SearchSection(self, "search")
         self.db = DatabaseSection(self, "database")
         self.member = MemberSection(self, "member")
         self.team = TeamSection(self, "team")
@@ -504,8 +478,8 @@ class AppConfig:
 
         words: list = []
 
-        words.append([self.setting.slash_command])
-        words.append([self.search.keyword])
+        words.append([self.setting.keyword])
+        words.append([self.setting.remarks_word])
 
         for x in self.cw.to_dict().values():
             words.append([x])

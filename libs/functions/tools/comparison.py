@@ -10,7 +10,7 @@ from slack_sdk import WebClient
 
 import libs.global_value as g
 from integrations import factory
-from integrations.slack import comparison
+from integrations.slack.events import comparison
 from libs.functions import configuration
 
 
@@ -28,7 +28,7 @@ def main():
             raise RuntimeError(e) from e
 
         api_adapter = factory.select_adapter(g.selected_service)
-        m = factory.select_parser("standard_io", **g.cfg.setting.to_dict())
+        m = factory.select_parser("standard_io")
         m.data.channel_id = api_adapter.lookup.get_channel_id()
 
         count, _ = comparison.data_comparison(m)
