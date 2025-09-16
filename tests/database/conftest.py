@@ -19,7 +19,7 @@ def database_connection():
     """共有インメモリDBと接続"""
     configuration.set_loglevel()
     g.cfg = AppConfig("tests/testdata/minimal.ini")
-    g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"
+    g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"
     conn = dbutil.get_connection()
     yield conn
     conn.close()

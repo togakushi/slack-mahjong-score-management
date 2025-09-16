@@ -26,7 +26,7 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     """スコア登録テスト"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
     configuration.setup()
-    g.cfg.db.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
+    g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.selected_service = "standard_io"
 
     m = factory.select_parser("standard_io")

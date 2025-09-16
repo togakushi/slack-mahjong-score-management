@@ -15,7 +15,7 @@ def get_connection() -> sqlite3.Connection:
     """
 
     conn = sqlite3.connect(
-        "file:" + g.cfg.db.database_file,
+        "file:" + g.cfg.setting.database_file,
         detect_types=sqlite3.PARSE_DECLTYPES,
         uri=True
     )

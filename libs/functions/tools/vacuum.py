@@ -14,7 +14,7 @@ from libs.utils import dbutil
 def main():
     """vacuum実行"""
     modify.db_backup()
-    before_size = os.path.getsize(g.cfg.db.database_file)
+    before_size = os.path.getsize(g.cfg.setting.database_file)
 
     with closing(dbutil.get_connection()) as cur:
         before_page = db_info(cur, "page_count")
@@ -23,7 +23,7 @@ def main():
         after_page = db_info(cur, "page_count")
         after_freelist = db_info(cur, "freelist_count")
 
-    after_size = os.path.getsize(g.cfg.db.database_file)
+    after_size = os.path.getsize(g.cfg.setting.database_file)
 
     logging.notice("file size: %s -> %s", before_size, after_size)  # type: ignore
     logging.notice("page_count: %s -> %s", before_page, after_page)  # type: ignore

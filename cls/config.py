@@ -151,6 +151,9 @@ class MahjongSection(BaseSection):
 class SettingSection(BaseSection):
     """settingセクション初期値"""
 
+    help: str = "麻雀成績ヘルプ"
+    """ヘルプ表示キーワード"""
+
     keyword: str = "終局"
     """成績記録キーワード"""
     remarks_word: str = "麻雀成績メモ"
@@ -160,6 +163,12 @@ class SettingSection(BaseSection):
     """日付変更後、集計範囲に含める追加時間"""
     guest_mark: str = "※"
     """ゲスト無効時に未登録メンバーに付与する印"""
+
+    database_file: str = "mahjong.db"
+    """成績管理データベースファイル名"""
+    backup_dir: str | None = None
+    """バックアップ先ディレクトリ"""
+
     font_file: str = "ipaexg.ttf"
     """グラフ描写に使用するフォントファイル"""
     graph_style: str = "ggplot"
@@ -184,24 +193,12 @@ class SettingSection(BaseSection):
             logging.critical("The specified font file cannot be found.")
             sys.exit(255)
 
-        logging.notice("fontfile: %s", self.font_file)  # type: ignore
-
-
-class DatabaseSection(BaseSection):
-    """databaseセクション初期値"""
-    database_file: str = "mahjong.db"
-    """成績管理データベースファイル名"""
-    backup_dir: str | None = None
-    """バックアップ先ディレクトリ"""
-
-    def __init__(self, outer, section_name: str):
-        self._parser = cast(ConfigParser, outer._parser)
-        super().__init__(self, section_name)
-
+        # データベース関連
         self.database_file = os.path.realpath(os.path.join(outer.config_dir, self.database_file))
         if self.backup_dir:
             self.backup_dir = os.path.realpath(os.path.join(outer.script_dir, self.backup_dir))
 
+        logging.notice("fontfile: %s", self.font_file)  # type: ignore
         logging.notice("database: %s", self.database_file)  # type: ignore
 
 
@@ -282,7 +279,6 @@ class CommentSection(BaseSection):
 
 class CommandWord(BaseSection):
     """呼び出しキーワード初期値"""
-    help: str = "ヘルプ"
     results: str = "麻雀成績"
     graph: str = "麻雀グラフ"
     ranking: str = "麻雀ランキング"
@@ -294,7 +290,6 @@ class CommandWord(BaseSection):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, "")
 
-        self.help = self._parser.get("help", "commandword", fallback=CommandWord.help)
         self.results = self._parser.get("results", "commandword", fallback=CommandWord.results)
         self.graph = self._parser.get("graph", "commandword", fallback=CommandWord.graph)
         self.ranking = self._parser.get("ranking", "commandword", fallback=CommandWord.ranking)
@@ -423,7 +418,6 @@ class AppConfig:
             "graph",
             "ranking",
             "report",
-            "database",
             "alias",
             "member",
             "team",
@@ -442,7 +436,6 @@ class AppConfig:
         # 設定値取り込み
         self.mahjong = MahjongSection(self, "mahjong")
         self.setting = SettingSection(self, "setting")
-        self.db = DatabaseSection(self, "database")
         self.member = MemberSection(self, "member")
         self.team = TeamSection(self, "team")
         self.alias = AliasSection(self, "alias")

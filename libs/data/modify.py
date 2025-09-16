@@ -119,17 +119,17 @@ def db_backup() -> str:
         str: 動作結果メッセージ
     """
 
-    if not g.cfg.db.backup_dir:  # バックアップ設定がされていない場合は何もしない
+    if not g.cfg.setting.backup_dir:  # バックアップ設定がされていない場合は何もしない
         return ""
 
-    fname = os.path.splitext(g.cfg.db.database_file)[0]
-    fext = os.path.splitext(g.cfg.db.database_file)[1]
+    fname = os.path.splitext(g.cfg.setting.database_file)[0]
+    fext = os.path.splitext(g.cfg.setting.database_file)[1]
     bktime = ExtDt().format("ext")
-    bkfname = os.path.join(g.cfg.db.backup_dir, os.path.basename(f"{fname}_{bktime}{fext}"))
+    bkfname = os.path.join(g.cfg.setting.backup_dir, os.path.basename(f"{fname}_{bktime}{fext}"))
 
-    if not os.path.isdir(g.cfg.db.backup_dir):  # バックアップディレクトリ作成
+    if not os.path.isdir(g.cfg.setting.backup_dir):  # バックアップディレクトリ作成
         try:
-            os.mkdir(g.cfg.db.backup_dir)
+            os.mkdir(g.cfg.setting.backup_dir)
         except OSError as e:
             logging.error(e, exc_info=True)
             logging.error("Database backup directory creation failed !!!")
@@ -137,7 +137,7 @@ def db_backup() -> str:
 
     # バックアップディレクトリにコピー
     try:
-        shutil.copyfile(g.cfg.db.database_file, bkfname)
+        shutil.copyfile(g.cfg.setting.database_file, bkfname)
         logging.notice("database backup: %s", bkfname)  # type: ignore
         return "\nデータベースをバックアップしました。"
     except OSError as e:
