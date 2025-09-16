@@ -3,7 +3,6 @@ libs/commands/report/matrix.py
 """
 
 import os
-from typing import TYPE_CHECKING, TypeVar
 
 import libs.global_value as g
 from cls.types import GameInfoDict
@@ -12,13 +11,8 @@ from libs.data import aggregate
 from libs.functions import message
 from libs.utils import formatter
 
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def plot(m: MessageParserProtocol[AppConfig]) -> bool:
+def plot(m: MessageParserProtocol) -> bool:
     """対局対戦マトリックスの表示
 
     Args:

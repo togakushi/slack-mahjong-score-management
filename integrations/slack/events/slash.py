@@ -2,15 +2,8 @@
 integrations/slack/events/slash.py
 """
 
-from typing import TYPE_CHECKING, TypeVar
-
 from integrations.protocols import MessageParserProtocol
 from libs.data import lookup
-
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
-
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
 
 
 def command_help(command: str) -> dict[str, str]:
@@ -48,6 +41,7 @@ def command_help(command: str) -> dict[str, str]:
     return {"ヘルプ": msg}
 
 
-def member_list(m: MessageParserProtocol[AppConfig]):
+def member_list(m: MessageParserProtocol):
+    """メンバーリスト取得"""
     m.post.message = lookup.textdata.get_members_list()
     m.post.codeblock = True

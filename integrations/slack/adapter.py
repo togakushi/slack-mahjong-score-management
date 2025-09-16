@@ -3,7 +3,7 @@ integrations/slack/message.py
 """
 
 import logging
-from typing import TYPE_CHECKING, TypeVar, cast
+from typing import cast
 
 import pandas as pd
 from slack_sdk.errors import SlackApiError
@@ -12,13 +12,8 @@ import libs.global_value as g
 from integrations.base.interface import (APIInterface, LookupInterface,
                                          ReactionsInterface)
 from integrations.protocols import MessageParserProtocol
-from integrations.slack import api
+from integrations.slack import api, config
 from libs.utils import converter, formatter
-
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
-
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
 
 
 class _ReactionsAPI(ReactionsInterface):
@@ -66,6 +61,7 @@ class _ReactionsAPI(ReactionsInterface):
 
 class _LookupAPI(LookupInterface):
     """情報取得"""
+
     def get_channel_id(self) -> str:
         """チャンネルIDを取得する
 
@@ -73,18 +69,19 @@ class _LookupAPI(LookupInterface):
             str: チャンネルID
         """
 
+        g.app_config = cast(config.AppConfig, g.app_config)
         channel_id = ""
 
         try:
             response = g.webclient.search_messages(
-                query=f"in:{g.cfg.search.channel}",
+                query=f"in:{g.app_config.search_channel}",
                 count=1,
             )
             messages: dict = response.get("messages", {})
             if messages.get("matches"):
                 channel = messages["matches"][0]["channel"]
-                if isinstance(g.cfg.search.channel, str):
-                    if channel["name"] in g.cfg.search.channel:
+                if isinstance(g.app_config.search_channel, str):
+                    if channel["name"] in g.app_config.search_channel:
                         channel_id = channel["id"]
                 else:
                     channel_id = channel["id"]
@@ -121,7 +118,7 @@ class SlackAPI(APIInterface):
         self.lookup = _LookupAPI()
         self.reactions = _ReactionsAPI()
 
-    def post(self, m: MessageParserProtocol[AppConfig]):
+    def post(self, m: MessageParserProtocol):
         """メッセージをポストする
 
         Args:
@@ -231,7 +228,7 @@ class SlackAPI(APIInterface):
                 thread_ts=m.reply_ts,
             )
 
-    def get_conversations(self, m: MessageParserProtocol[AppConfig]) -> dict:
+    def get_conversations(self, m: MessageParserProtocol) -> dict:
         """スレッド情報の取得
 
         Args:

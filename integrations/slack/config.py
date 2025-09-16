@@ -32,6 +32,7 @@ class AppConfig(IntegrationsConfig):
     """DBに取り込んだ時に付けるリアクション"""
     reaction_ng: str = field(default="ng")
     """DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション"""
+
     ignore_userid: list = field(default_factory=list)
     """投稿を無視するユーザのリスト(カンマ区切りで設定)"""
     channel_limitations: list = field(default_factory=list)

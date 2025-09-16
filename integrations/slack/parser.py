@@ -3,7 +3,6 @@ integrations/slack/parser.py
 """
 
 import logging
-from configparser import ConfigParser
 from typing import cast
 
 import libs.global_value as g
@@ -16,25 +15,23 @@ from integrations.slack import adapter, config
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
     """メッセージ解析クラス"""
 
-    conf = config.AppConfig
-    data = MsgData
-    post = PostData
+    data: MsgData
+    post: PostData
 
     def __init__(self):
         MessageParserDataMixin.__init__(self)
-        self.conf = config.AppConfig()
-        self.conf.read_file(cast(ConfigParser, getattr(g.cfg, "_parser")), g.selected_service)
         self.data = MsgData()
         self.post = PostData()
         self._command_flg: bool = False
 
     def parser(self, _body: dict):
+        g.app_config = cast(config.AppConfig, g.app_config)
         api_adapter = adapter.SlackAPI()
 
         # 対象のevent抽出
         _event = cast(dict, _body.get("event", _body))
 
-        if _body.get("command") == self.conf.slash_command:  # スラッシュコマンド
+        if _body.get("command") == g.app_config.slash_command:  # スラッシュコマンド
             if _body.get("channel_name") == "directmessage":
                 self._command_flg = True
                 self.data.channel_type = "im"
@@ -86,10 +83,12 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     @property
     def check_updatable(self) -> bool:
         """DB更新可能チャンネルのポストかチェックする"""
+
+        g.app_config = cast(config.AppConfig, g.app_config)
         ret: bool = True
 
-        if g.cfg.db.channel_limitations:
-            if self.data.channel_id in g.cfg.db.channel_limitations:
+        if g.app_config.channel_limitations:
+            if self.data.channel_id in g.app_config.channel_limitations:
                 ret = True
         else:  # リストが空なら全チャンネルが対象
             match self.data.channel_type:

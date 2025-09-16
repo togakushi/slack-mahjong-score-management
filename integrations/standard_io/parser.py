@@ -8,19 +8,16 @@ from typing import cast
 from integrations.base.interface import (MessageParserDataMixin,
                                          MessageParserInterface)
 from integrations.protocols import MsgData, PostData
-from integrations.standard_io import config
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
     """メッセージ解析クラス"""
 
-    conf = config.AppConfig
-    data = MsgData
-    post = PostData
+    data: MsgData
+    post: PostData
 
     def __init__(self):
         MessageParserDataMixin.__init__(self)
-        self.conf = config.AppConfig()
         self.data = MsgData()
         self.post = PostData()
         self._command_flg: bool = False

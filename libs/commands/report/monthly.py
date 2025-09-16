@@ -3,7 +3,6 @@ libs/commands/report/monthly.py
 """
 
 import os
-from typing import TYPE_CHECKING, TypeVar
 
 import matplotlib.pyplot as plt
 
@@ -12,13 +11,8 @@ from integrations.protocols import MessageParserProtocol
 from libs.data import loader
 from libs.functions import compose, configuration, message
 
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def plot(m: MessageParserProtocol[AppConfig]) -> bool:
+def plot(m: MessageParserProtocol) -> bool:
     """月別ゲーム統計表の生成
 
     Args:

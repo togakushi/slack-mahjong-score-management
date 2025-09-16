@@ -29,6 +29,8 @@ class AppConfig(IntegrationsConfig):
     management_score: bool = field(default=False)
 
     def initialization(self):
+        """初期化"""
+
         if not self.host:
             self.host = g.args.host
 

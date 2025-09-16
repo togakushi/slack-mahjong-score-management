@@ -4,7 +4,7 @@ tests/events/test_slash_dispatch.py
 
 import sys
 from unittest.mock import patch
-
+from typing import cast
 import pytest
 
 import libs.event_dispatcher
@@ -30,7 +30,7 @@ def test_help(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_help_slash_command.assert_called_once()
 
@@ -51,7 +51,7 @@ def test_results(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_results.assert_called_once()
 
@@ -72,7 +72,7 @@ def test_graph(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_graph.assert_called_once()
 
@@ -93,7 +93,7 @@ def test_ranking(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_ranking.assert_called_once()
 
@@ -114,7 +114,7 @@ def test_report(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_report.assert_called_once()
 
@@ -135,7 +135,7 @@ def test_check(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_check.assert_called_once()
 
@@ -153,7 +153,7 @@ def test_download(config, keyword, monkeypatch):
 
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
     m = factory.select_parser(g.selected_service)
-    m.parser(param_data.FAKE_BODY)
+    m.parser(cast(dict, param_data.FAKE_BODY))
     libs.event_dispatcher.dispatch_by_keyword(m)
 
 
@@ -173,7 +173,7 @@ def test_member_list(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_list.assert_called_once()
 
@@ -194,7 +194,7 @@ def test_member_add(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_add.assert_called_once()
 
@@ -215,7 +215,7 @@ def test_member_del(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_member_del.assert_called_once()
 
@@ -236,7 +236,7 @@ def test_team_create(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_create.assert_called_once()
 
@@ -257,7 +257,7 @@ def test_team_del(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_del.assert_called_once()
 
@@ -278,7 +278,7 @@ def test_team_add(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_add.assert_called_once()
 
@@ -299,7 +299,7 @@ def test_team_remove(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_remove.assert_called_once()
 
@@ -320,7 +320,7 @@ def test_team_list(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_list.assert_called_once()
 
@@ -341,6 +341,6 @@ def test_team_clear(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_slash_team_clear.assert_called_once()

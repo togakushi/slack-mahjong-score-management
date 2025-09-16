@@ -16,6 +16,7 @@ from matplotlib import use
 
 import libs.global_value as g
 from cls.config import AppConfig
+from integrations import factory
 from libs.data import lookup
 
 
@@ -185,7 +186,7 @@ def setup() -> None:
     if not hasattr(g.args, "testcase"):
         g.args.testcase = False
     else:
-        g.selected_service = "debug_out"
+        g.selected_service = "standard_io"
 
     if g.args.notime:
         fmt = "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
@@ -206,6 +207,7 @@ def setup() -> None:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
     g.cfg = AppConfig(g.args.config)
+    g.app_config = factory.load_config(g.selected_service)
 
     logging.notice(  # type: ignore
         "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",

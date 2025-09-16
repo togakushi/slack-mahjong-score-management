@@ -6,7 +6,7 @@ import logging
 import random
 import textwrap
 from configparser import ConfigParser
-from typing import TYPE_CHECKING, TypeVar, cast
+from typing import cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -14,13 +14,8 @@ from cls.types import GameInfoDict
 from integrations.protocols import MessageParserProtocol
 from libs.functions import compose
 
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def random_reply(m: MessageParserProtocol[AppConfig], message_type: str, update: bool = True) -> str:
+def random_reply(m: MessageParserProtocol, message_type: str, update: bool = True) -> str:
     """メッセージをランダムに返す
 
     Args:
@@ -76,7 +71,7 @@ def random_reply(m: MessageParserProtocol[AppConfig], message_type: str, update:
     return msg
 
 
-def header(game_info: GameInfoDict, m: MessageParserProtocol[AppConfig], add_text="", indent=1):
+def header(game_info: GameInfoDict, m: MessageParserProtocol, add_text="", indent=1):
     """見出し生成
 
     Args:

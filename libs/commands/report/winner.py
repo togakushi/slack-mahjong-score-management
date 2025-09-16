@@ -3,7 +3,6 @@ libs/commands/report/slackpost.py
 """
 
 import os
-from typing import TYPE_CHECKING, TypeVar
 
 import matplotlib.pyplot as plt
 
@@ -13,13 +12,8 @@ from libs.data import loader
 from libs.functions import compose, configuration, message
 from libs.utils import formatter
 
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def plot(m: MessageParserProtocol[AppConfig]) -> bool:
+def plot(m: MessageParserProtocol) -> bool:
     """成績上位者を一覧化
 
     Args:

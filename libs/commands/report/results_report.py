@@ -6,7 +6,6 @@ import logging
 import os
 from datetime import datetime
 from io import BytesIO
-from typing import TYPE_CHECKING, TypeVar
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -26,11 +25,6 @@ from integrations.protocols import MessageParserProtocol
 from libs.data import loader, lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
-
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
-
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
 
 
 def get_game_results() -> list:
@@ -340,7 +334,7 @@ def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
     return imgdata
 
 
-def gen_pdf(m: MessageParserProtocol[AppConfig]) -> bool:
+def gen_pdf(m: MessageParserProtocol) -> bool:
     """成績レポートを生成する
 
     Args:

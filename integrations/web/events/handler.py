@@ -4,6 +4,7 @@ integrations/web/events/handler.py
 
 import os
 from dataclasses import asdict
+from typing import cast
 
 import pandas as pd
 from flask import Flask, abort, render_template, request
@@ -14,7 +15,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDT
 from integrations import factory
-from integrations.web import functions
+from integrations.web import functions, config
 from libs.data import loader, lookup, modify
 from libs.registry import member, team
 from libs.utils import dbutil, formatter
@@ -23,6 +24,7 @@ from libs.utils import dbutil, formatter
 def main():
     """メイン処理"""
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     app = Flask(__name__, static_folder="../../../files/html", template_folder="../../../files/html")
     auth = HTTPBasicAuth()
 
@@ -33,24 +35,28 @@ def main():
 
     @auth.verify_password
     def verify_password(username, password):
-        if username == m.conf.username and password == m.conf.password:
+        g.app_config = cast(config.AppConfig, g.app_config)
+        if username == g.app_config.username and password == g.app_config.password:
             return True
         return False
 
     @app.before_request
     def require_auth():
-        if m.conf.require_auth:
+        g.app_config = cast(config.AppConfig, g.app_config)
+        if g.app_config.require_auth:
             return auth.login_required(lambda: None)()
         return None
 
     @app.route("/")
     def index():
+        g.app_config = cast(config.AppConfig, g.app_config)
         m.post.message = {}
-        return render_template("index.html", **asdict(m.conf))
+        return render_template("index.html", **asdict(g.app_config))
 
     @app.route("/summary", methods=["GET", "POST"])
     def summary(padding=padding):
-        if not m.conf.view_summary:
+        g.app_config = cast(config.AppConfig, g.app_config)
+        if not g.app_config.view_summary:
             abort(403)
 
         m.post.message = {}
@@ -81,14 +87,15 @@ def main():
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, **asdict(m.conf))
+        cookie_data.update(body=message, **asdict(g.app_config))
         page = functions.set_cookie("summary.html", request, cookie_data)
 
         return page
 
     @app.route("/graph", methods=["GET", "POST"])
     def graph():
-        if not m.conf.view_graph:
+        g.app_config = cast(config.AppConfig, g.app_config)
+        if not g.app_config.view_graph:
             abort(403)
 
         m.post.message = {}
@@ -107,14 +114,15 @@ def main():
             else:
                 message += f"<p>{headline.replace("\n", "<br>")}</p>"
 
-        cookie_data.update(body=message, **asdict(m.conf))
+        cookie_data.update(body=message, **asdict(g.app_config))
         page = functions.set_cookie("graph.html", request, cookie_data)
 
         return page
 
     @app.route("/ranking", methods=["GET", "POST"])
     def ranking():
-        if not m.conf.view_ranking:
+        g.app_config = cast(config.AppConfig, g.app_config)
+        if not g.app_config.view_ranking:
             abort(403)
 
         m.post.message = {}
@@ -138,14 +146,15 @@ def main():
             elif isinstance(v, str):
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, **asdict(m.conf))
+        cookie_data.update(body=message, **asdict(g.app_config))
         page = functions.set_cookie("ranking.html", request, cookie_data)
 
         return page
 
     @app.route("/detail", methods=["GET", "POST"])
     def detail(padding=padding):
-        if not m.conf.view_summary:
+        g.app_config = cast(config.AppConfig, g.app_config)
+        if not g.app_config.view_summary:
             abort(403)
 
         m.post.message = {}
@@ -174,17 +183,18 @@ def main():
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, players=players, **asdict(m.conf))
+        cookie_data.update(body=message, players=players, **asdict(g.app_config))
         page = functions.set_cookie("detail.html", request, cookie_data)
 
         return page
 
     @app.route("/member", methods=["GET", "POST"])
     def mgt_member():
-        if not m.conf.management_member:
+        g.app_config = cast(config.AppConfig, g.app_config)
+        if not g.app_config.management_member:
             abort(403)
 
-        data: dict = asdict(m.conf)
+        data: dict = asdict(g.app_config)
 
         if request.method == "POST":
             match request.form.get("action"):
@@ -224,7 +234,8 @@ def main():
 
     @app.route("/score", methods=["GET", "POST"])
     def mgt_score():
-        if not m.conf.management_score:
+        g.app_config = cast(config.AppConfig, g.app_config)
+        if not g.app_config.management_score:
             abort(403)
 
         def score_table() -> str:
@@ -254,7 +265,7 @@ def main():
 
             return functions.to_styled_html(df, padding)
 
-        data: dict = asdict(m.conf)
+        data: dict = asdict(g.app_config)
         data.update(players=players)
 
         if request.method == "POST":
@@ -270,7 +281,7 @@ def main():
                         data.update(next(iter(df.T.to_dict().values())))
                         return render_template("score_input.html", **data)
                     case "delete":
-                        m.data.event_ts = request.form.get("ts")
+                        m.data.event_ts = request.form.get("ts", "")
                         modify.db_delete(m)
                         data.update(table=score_table())
                         return render_template("score_list.html", **data)
@@ -304,8 +315,8 @@ def main():
         data.update(table=score_table())
         return render_template("score_list.html", **data)
 
-    if m.conf.use_ssl:
-        if os.path.exists(m.conf.certificate) and os.path.exists(m.conf.private_key):
-            app.run(host=m.conf.host, port=m.conf.port, ssl_context=(m.conf.certificate, m.conf.private_key))
+    if g.app_config.use_ssl:
+        if os.path.exists(g.app_config.certificate) and os.path.exists(g.app_config.private_key):
+            app.run(host=g.app_config.host, port=g.app_config.port, ssl_context=(g.app_config.certificate, g.app_config.private_key))
         raise FileNotFoundError("certificate or private key not found")
-    app.run(host=m.conf.host, port=m.conf.port)
+    app.run(host=g.app_config.host, port=g.app_config.port)

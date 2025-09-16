@@ -168,8 +168,6 @@ class SettingSection(BaseSection):
     """グラフスタイル"""
     work_dir: str = "work"
     """生成したファイルを保存するディレクトリ"""
-    ignore_userid: list = []
-    """投稿を無視するユーザのリスト(カンマ区切りで設定)"""
 
     def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)

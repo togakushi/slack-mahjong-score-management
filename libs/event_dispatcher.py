@@ -4,25 +4,20 @@ libs/event_dispatcher.py
 
 import logging
 import re
-from typing import TYPE_CHECKING, TypeVar
 
 import libs.commands.dispatcher
 import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
+from integrations.slack.config import AppConfig as slack_config
 from libs.data import lookup, modify
 from libs.functions import compose, message
 from libs.registry import member, team
 from libs.utils import formatter
 
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def dispatch_by_keyword(m: MessageParserProtocol[AppConfig]):
+def dispatch_by_keyword(m: MessageParserProtocol):
     """メイン処理"""
 
     api_adapter = factory.select_adapter(g.selected_service)
@@ -33,9 +28,10 @@ def dispatch_by_keyword(m: MessageParserProtocol[AppConfig]):
     )
 
     # 許可されていないユーザのポストは処理しない
-    if m.data.user_id in g.cfg.setting.ignore_userid:
-        logging.trace("event skip[ignore user]: %s", m.data.user_id)  # type: ignore
-        return
+    if isinstance(g.app_config, slack_config):
+        if m.data.user_id in g.app_config.ignore_userid:
+            logging.trace("event skip[ignore user]: %s", m.data.user_id)  # type: ignore
+            return
 
     # 投稿済みメッセージが削除された場合
     if m.data.status == "message_deleted":
@@ -130,7 +126,7 @@ def dispatch_by_keyword(m: MessageParserProtocol[AppConfig]):
     api_adapter.post(m)
 
 
-def other_words(word: str, m: MessageParserProtocol[AppConfig]):
+def other_words(word: str, m: MessageParserProtocol):
     """コマンド以外のワードの処理
 
     Args:
@@ -164,7 +160,7 @@ def other_words(word: str, m: MessageParserProtocol[AppConfig]):
                 message_deleted(m)
 
 
-def message_append(detection: GameResult, m: MessageParserProtocol[AppConfig]):
+def message_append(detection: GameResult, m: MessageParserProtocol):
     """メッセージの追加処理
 
     Args:
@@ -183,7 +179,7 @@ def message_append(detection: GameResult, m: MessageParserProtocol[AppConfig]):
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
-def message_changed(detection: GameResult, m: MessageParserProtocol[AppConfig]):
+def message_changed(detection: GameResult, m: MessageParserProtocol):
     """メッセージの変更処理
 
     Args:
@@ -213,7 +209,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol[AppConfig]):
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
 
-def message_deleted(m: MessageParserProtocol[AppConfig]):
+def message_deleted(m: MessageParserProtocol):
     """メッセージの削除処理
 
     Args:
@@ -228,5 +224,6 @@ def message_deleted(m: MessageParserProtocol[AppConfig]):
         delete_list = modify.db_delete(m)
 
     for ts in delete_list:
-        api_adapter.reactions.remove(icon=m.reaction_ok, ch=m.data.channel_id, ts=ts)
-        api_adapter.reactions.remove(icon=m.reaction_ng, ch=m.data.channel_id, ts=ts)
+        if isinstance(g.app_config, slack_config):
+            api_adapter.reactions.remove(icon=g.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
+            api_adapter.reactions.remove(icon=g.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)

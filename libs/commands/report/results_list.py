@@ -3,7 +3,7 @@ libs/commands/report/results_list.py
 """
 
 import os
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 
@@ -17,12 +17,8 @@ from libs.utils import formatter
 if TYPE_CHECKING:
     import pandas as pd
 
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def main(m: MessageParserProtocol[AppConfig]) -> bool:
+def main(m: MessageParserProtocol) -> bool:
     """成績一覧表を生成する
 
     Args:

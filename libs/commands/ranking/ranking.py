@@ -2,8 +2,6 @@
 libs/commands/results/ranking.py
 """
 
-from typing import TYPE_CHECKING, TypeVar
-
 import pandas as pd
 
 import libs.global_value as g
@@ -13,13 +11,8 @@ from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import formatter
 
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def aggregation(m: MessageParserProtocol[AppConfig]) -> bool:
+def aggregation(m: MessageParserProtocol) -> bool:
     """ランキングデータを生成
 
     Args:

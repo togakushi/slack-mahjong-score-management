@@ -1,6 +1,6 @@
 """モジュール間データ共有用"""
 
-from typing import TYPE_CHECKING, Any, Callable, Literal
+from typing import TYPE_CHECKING, Any, Callable, Literal, Union
 
 if TYPE_CHECKING:
     from argparse import Namespace
@@ -10,8 +10,12 @@ if TYPE_CHECKING:
 
     from cls.config import AppConfig
     from cls.types import TeamDataDict
+    from integrations.slack.config import AppConfig as slack_conf
+    from integrations.standard_io.config import AppConfig as stdio_conf
+    from integrations.web.config import AppConfig as web_conf
 
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
+app_config: Union["slack_conf", "web_conf", "stdio_conf"]
 
 args: "Namespace" = None  # type: ignore
 """コマンドライン引数"""

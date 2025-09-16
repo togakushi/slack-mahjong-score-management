@@ -29,6 +29,7 @@ def main():
 
         api_adapter = factory.select_adapter(g.selected_service)
         m = factory.select_parser("standard_io")
+        g.app_config = factory.load_config("slack")
         m.data.channel_id = api_adapter.lookup.get_channel_id()
 
         count, _ = comparison.data_comparison(m)

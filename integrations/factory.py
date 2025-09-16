@@ -2,12 +2,11 @@
 integrations/factory.py
 """
 
-from typing import overload, Literal
+from typing import Literal, Union, overload
 
 import pandas as pd
 
 from integrations import protocols, slack, standard_io, web
-from integrations.base import interface as base
 
 
 @overload
@@ -54,7 +53,7 @@ def select_parser(selected_service: Literal["standard_io"]) -> standard_io.parse
     ...
 
 
-def select_parser(selected_service: str) -> protocols.MessageParserProtocol[base.IntegrationsConfig]:
+def select_parser(selected_service: str) -> protocols.MessageParserProtocol:
     """メッセージパーサ選択"""
 
     match selected_service:
@@ -81,5 +80,29 @@ def select_function(selected_service: str):
         case "standard_io":
             import integrations.standard_io.functions as stdio_func  # pylint: disable=import-outside-toplevel
             return stdio_func
+        case _:
+            raise ValueError(f"Unknown service: {selected_service}")
+
+
+def load_config(selected_service: str):
+    """個別設定読み込み"""
+
+    conf: Union[
+        slack.config.AppConfig,
+        web.config.AppConfig,
+        standard_io.config.AppConfig,
+    ]
+
+    match selected_service:
+        case "slack":
+            conf = slack.config.AppConfig()
+            return conf
+        case "web":
+            conf = web.config.AppConfig()
+            conf.initialization()
+            return conf
+        case "standard_io":
+            conf = standard_io.config.AppConfig()
+            return conf
         case _:
             raise ValueError(f"Unknown service: {selected_service}")

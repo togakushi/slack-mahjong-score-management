@@ -4,8 +4,7 @@ integrations/protocols.py
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import (TYPE_CHECKING, Any, Literal, Protocol, TypeVar,
-                    runtime_checkable)
+from typing import TYPE_CHECKING, Any, Literal, Protocol, runtime_checkable
 
 import pandas as pd
 
@@ -83,19 +82,14 @@ class PostData:
     """素点合計値格納用"""
 
 
-AppConfig = TypeVar("AppConfig", bound="interface.IntegrationsConfig")
-
-
 @runtime_checkable
-class MessageParserProtocol(Protocol[AppConfig]):
+class MessageParserProtocol(Protocol):
     """メッセージ解析クラス"""
 
     data: MsgData
     """受け取ったメッセージデータ"""
     post: PostData
     """送信する内容"""
-    conf: AppConfig
-    """サービス別設定"""
 
     @property
     def in_thread(self) -> bool:
@@ -137,5 +131,7 @@ class MessageParserProtocol(Protocol[AppConfig]):
 
 @runtime_checkable
 class AdapterProtocol(Protocol):
+    """サービス別アダプタ"""
+
     lookup: "interface.LookupInterface"
     reactions: "interface.ReactionsInterface"

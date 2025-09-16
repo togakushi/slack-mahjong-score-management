@@ -2,7 +2,7 @@
 libs/commands/results/summary.py
 """
 
-from typing import TYPE_CHECKING, TypeVar, cast
+from typing import cast
 
 import libs.global_value as g
 from cls.types import GameInfoDict
@@ -11,13 +11,8 @@ from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import converter, formatter
 
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def aggregation(m: MessageParserProtocol[AppConfig]) -> bool:
+def aggregation(m: MessageParserProtocol) -> bool:
     """各プレイヤーの通算ポイントを表示
 
     Args:

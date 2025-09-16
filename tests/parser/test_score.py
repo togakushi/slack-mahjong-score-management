@@ -21,7 +21,7 @@ def test_score_report(input_str, result_dict, get_point):
     """得点入力"""
     configuration.set_loglevel()
     g.cfg = AppConfig("tests/testdata/minimal.ini")
-    m = MessageParser("ok", "ng")
+    m = MessageParser()
     m.data.text = input_str
     m.data.event_ts = "1234567890.123456"
 

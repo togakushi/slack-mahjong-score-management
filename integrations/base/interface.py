@@ -4,10 +4,9 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, fields
-from typing import TYPE_CHECKING, Any, Union
+from typing import Any, Union
 
-if TYPE_CHECKING:
-    from integrations.protocols import MessageParserProtocol
+from integrations.protocols import MessageParserProtocol, MsgData, PostData
 
 
 @dataclass
@@ -15,12 +14,24 @@ class IntegrationsConfig(ABC):
     """設定値"""
 
     def read_file(self, parser: ConfigParser, selected_service: str):
-        value: Union[int, bool, str, list]
+        """設定値取り込み
+
+        Args:
+            parser (ConfigParser): ConfigParserインスタンス
+            selected_service (str): セクション
+
+        Raises:
+            TypeError: 無効な型が指定されている場合
+        """
+
+        value: Union[int, float, bool, str, list]
         if parser.has_section(selected_service):
             for f in fields(self):
                 if parser.has_option(selected_service, f.name):
                     if f.type is int:
                         value = parser.getint(selected_service, f.name)
+                    elif f.type is float:
+                        value = parser.getfloat(selected_service, f.name)
                     elif f.type is bool:
                         value = parser.getboolean(selected_service, f.name)
                     elif f.type is str:
@@ -124,6 +135,9 @@ class APIInterface(ABC):
 
 class MessageParserDataMixin:
     """メッセージ解析共通処理"""
+
+    data: "MsgData"
+    post: "PostData"
 
     @property
     def in_thread(self) -> bool:

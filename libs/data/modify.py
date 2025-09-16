@@ -8,7 +8,7 @@ import re
 import shutil
 import sqlite3
 from contextlib import closing
-from typing import cast, TypeVar, TYPE_CHECKING
+from typing import cast
 
 import libs.global_value as g
 from cls.score import GameResult
@@ -16,17 +16,13 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
+from integrations.slack.config import AppConfig as slack_config
 from libs.data import lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
 
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
 
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
-
-
-def db_insert(detection: GameResult, m: MessageParserProtocol[AppConfig]) -> int:
+def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
     """スコアデータをDBに追加する
 
     Args:
@@ -60,7 +56,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol[AppConfig]) -> int
     return changes
 
 
-def db_update(detection: GameResult, m: MessageParserProtocol[AppConfig]) -> None:
+def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
     """スコアデータを変更する
 
     Args:
@@ -85,7 +81,7 @@ def db_update(detection: GameResult, m: MessageParserProtocol[AppConfig]) -> Non
         api_adapter.post(m)
 
 
-def db_delete(m: MessageParserProtocol[AppConfig]) -> list:
+def db_delete(m: MessageParserProtocol) -> list:
     """スコアデータを削除する
 
     Args:
@@ -150,7 +146,7 @@ def db_backup() -> str:
         return "\nデータベースのバックアップに失敗しました。"
 
 
-def remarks_append(m: MessageParserProtocol[AppConfig], remarks: list[RemarkDict]) -> None:
+def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
     """メモをDBに記録する
 
     Args:
@@ -174,16 +170,17 @@ def remarks_append(m: MessageParserProtocol[AppConfig], remarks: list[RemarkDict
                             ch = api_adapter.lookup.get_channel_id()
 
                         # リアクション処理
-                        reactions = api_adapter.reactions.status(ts=para["event_ts"], ch=ch, ok=m.conf.reaction_ok, ng=m.conf.reaction_ng)
-                        if not reactions.get("ok"):
-                            api_adapter.reactions.append(m.conf.reaction_ok, ts=para["event_ts"], ch=ch)
-                        if reactions.get("ng"):
-                            api_adapter.reactions.remove(m.conf.reaction_ng, ts=para["event_ts"], ch=ch)
+                        if isinstance(g.app_config, slack_config):
+                            reactions = api_adapter.reactions.status(ts=para["event_ts"], ch=ch, ok=g.app_config.reaction_ok, ng=g.app_config.reaction_ng)
+                            if not reactions.get("ok"):
+                                api_adapter.reactions.append(g.app_config.reaction_ok, ts=para["event_ts"], ch=ch)
+                            if reactions.get("ng"):
+                                api_adapter.reactions.remove(g.app_config.reaction_ng, ts=para["event_ts"], ch=ch)
 
             cur.commit()
 
 
-def remarks_delete(m: MessageParserProtocol[AppConfig]) -> list:
+def remarks_delete(m: MessageParserProtocol) -> list:
     """DBからメモを削除する
 
     Args:
@@ -205,7 +202,7 @@ def remarks_delete(m: MessageParserProtocol[AppConfig]) -> list:
     return delete_list
 
 
-def remarks_delete_compar(para: dict, m: MessageParserProtocol[AppConfig]) -> None:
+def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
     """DBからメモを削除する(突合)
 
     Args:
@@ -224,12 +221,14 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol[AppConfig]) -> No
     if not (ch := m.data.channel_id):
         ch = api_adapter.lookup.get_channel_id()
 
-    reactions = api_adapter.reactions.status(ch=ch, ts=para["event_ts"])
-    if reactions.get("ok") and left == 0:
-        api_adapter.reactions.remove(m.reaction_ok, ch=ch, ts=para["event_ts"])
+    # リアクション処理
+    if isinstance(g.app_config, slack_config):
+        reactions = api_adapter.reactions.status(ch=ch, ts=para["event_ts"])
+        if reactions.get("ok") and left == 0:
+            api_adapter.reactions.remove(g.app_config.reaction_ok, ch=ch, ts=para["event_ts"])
 
 
-def check_remarks(m: MessageParserProtocol[AppConfig]) -> None:
+def check_remarks(m: MessageParserProtocol) -> None:
     """メモの内容を拾ってDBに格納する
 
     Args:
@@ -263,7 +262,7 @@ def check_remarks(m: MessageParserProtocol[AppConfig]) -> None:
                 remarks_delete(m)
 
 
-def reprocessing_remarks(m: MessageParserProtocol[AppConfig]) -> None:
+def reprocessing_remarks(m: MessageParserProtocol) -> None:
     """スレッドの内容を再処理
 
     Args:

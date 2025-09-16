@@ -4,7 +4,7 @@ libs/api/slack/comparison.py
 
 import copy
 import logging
-from typing import TYPE_CHECKING, TypedDict, TypeVar, cast
+from typing import TypedDict, cast
 
 import libs.global_value as g
 from cls.score import GameResult, Score
@@ -12,16 +12,11 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
-from integrations.slack import functions
+from integrations.slack import config, functions
 from libs.data import modify
 from libs.data.lookup import db
 from libs.functions import search
 from libs.utils import dictutil, formatter
-
-if TYPE_CHECKING:
-    from integrations.base.interface import IntegrationsConfig
-
-AppConfig = TypeVar("AppConfig", bound="IntegrationsConfig")
 
 DBSearchDict = dict[str, GameResult]
 
@@ -44,8 +39,10 @@ class ComparisonDict(TypedDict, total=False):
     """保留"""
 
 
-def main(m: MessageParserProtocol[AppConfig]) -> None:
+def main(m: MessageParserProtocol) -> None:
     """データ突合の実施、その結果をslackにpostする"""
+
+    g.app_config = cast(config.AppConfig, g.app_config)
 
     if m.data.status == "message_changed":  # 編集イベントは無視
         return
@@ -55,7 +52,7 @@ def main(m: MessageParserProtocol[AppConfig]) -> None:
     logging.notice("count=%s", count)  # type: ignore
 
     # 突合結果
-    after = ExtDt(days=-g.cfg.search.after).format("ymd")
+    after = ExtDt(days=-g.app_config.search_after).format("ymd")
     before = ExtDt().format("ymd")
 
     message = f"*【データ突合】* ({after} - {before})\n"
@@ -77,7 +74,7 @@ def main(m: MessageParserProtocol[AppConfig]) -> None:
     m.post.ts = m.data.event_ts
 
 
-def data_comparison(m: MessageParserProtocol[AppConfig]) -> tuple[dict, ComparisonDict]:
+def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
     """データ突合処理
 
     Args:
@@ -89,17 +86,18 @@ def data_comparison(m: MessageParserProtocol[AppConfig]) -> tuple[dict, Comparis
         - ComparisonDict: slackに返すメッセージ
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     count: dict = {}
     msg: dict = {}
 
     # slackログからゲーム結果を取得
-    slack_score = functions.pickup_score()
-    slack_remarks = functions.pickup_remarks()
+    slack_score = functions.pickup_score(m)
+    slack_remarks = functions.pickup_remarks(m)
 
     if slack_score:
         first_ts = float(min(x.data.event_ts for x in slack_score))
     else:
-        first_ts = float(ExtDt(days=-g.cfg.search.after).format("ts"))
+        first_ts = float(ExtDt(days=-g.app_config.search_after).format("ts"))
 
     # データベースからゲーム結果を取得
     db_score = search.for_db_score(first_ts)
@@ -133,7 +131,7 @@ def data_comparison(m: MessageParserProtocol[AppConfig]) -> tuple[dict, Comparis
     return (count, cast(ComparisonDict, msg))
 
 
-def check_omission(m: MessageParserProtocol[AppConfig], slack_data: list[MessageParserProtocol], db_data: DBSearchDict) -> tuple[dict, ComparisonDict]:
+def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProtocol], db_data: DBSearchDict) -> tuple[dict, ComparisonDict]:
     """スコア取りこぼしチェック
 
     Args:
@@ -145,6 +143,7 @@ def check_omission(m: MessageParserProtocol[AppConfig], slack_data: list[Message
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     api_adapter = factory.select_adapter(g.selected_service)
 
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
@@ -181,9 +180,9 @@ def check_omission(m: MessageParserProtocol[AppConfig], slack_data: list[Message
 
                     # リアクションの削除
                     if slack_m.data.event_ts in slack_m.data.reaction_ok:
-                        api_adapter.reactions.remove(icon=slack_m.reaction_ok, ts=slack_m.data.event_ts, ch=slack_m.data.channel_id)
+                        api_adapter.reactions.remove(icon=g.app_config.reaction_ok, ts=slack_m.data.event_ts, ch=slack_m.data.channel_id)
                     if slack_m.data.event_ts in slack_m.data.reaction_ng:
-                        api_adapter.reactions.remove(icon=slack_m.reaction_ng, ts=slack_m.data.event_ts, ch=slack_m.data.channel_id)
+                        api_adapter.reactions.remove(icon=g.app_config.reaction_ng, ts=slack_m.data.event_ts, ch=slack_m.data.channel_id)
                     continue
 
             if slack_score.to_dict() == db_score.to_dict():  # スコア比較
@@ -237,13 +236,13 @@ def check_omission(m: MessageParserProtocol[AppConfig], slack_data: list[Message
         modify.db_delete(work_m)
 
         # メッセージが残っているならリアクションを外す
-        api_adapter.reactions.remove(icon=m.reaction_ok, ch=m.data.channel_id, ts=db_score.ts)
-        api_adapter.reactions.remove(icon=m.reaction_ng, ch=m.data.channel_id, ts=db_score.ts)
+        api_adapter.reactions.remove(icon=g.app_config.reaction_ok, ch=m.data.channel_id, ts=db_score.ts)
+        api_adapter.reactions.remove(icon=g.app_config.reaction_ng, ch=m.data.channel_id, ts=db_score.ts)
 
     return (count, msg)
 
 
-def check_remarks(m: MessageParserProtocol[AppConfig], slack_data: list[MessageParserProtocol], db_data: list) -> tuple[dict, ComparisonDict]:
+def check_remarks(m: MessageParserProtocol, slack_data: list[MessageParserProtocol], db_data: list) -> tuple[dict, ComparisonDict]:
     """メモの取りこぼしチェック
 
     Args:
@@ -255,6 +254,7 @@ def check_remarks(m: MessageParserProtocol[AppConfig], slack_data: list[MessageP
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     count: dict[str, int] = {"remark_mod": 0, "remark_del": 0}
     msg: ComparisonDict = {"remark_mod": "", "remark_del": "", "pending": []}
     work_m = copy.deepcopy(m)
@@ -312,6 +312,7 @@ def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, Co
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     api_adapter = factory.select_adapter(g.selected_service)
 
     count: dict[str, int] = {"invalid_score": 0}
@@ -340,14 +341,14 @@ def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, Co
             logging.notice("invalid score: %s deposit=%s", slack_score.ts, slack_score.deposit)  # type: ignore
             msg["invalid_score"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")} [供託：{slack_score.deposit}]{slack_score.to_text()}\n"
             if slack_score.ts in val.data.reaction_ok:
-                api_adapter.reactions.remove(val.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
+                api_adapter.reactions.remove(g.app_config.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
             if slack_score.ts not in val.data.reaction_ng:
-                api_adapter.reactions.append(val.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
+                api_adapter.reactions.append(g.app_config.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
         else:
             if slack_score.ts in val.data.reaction_ng:
-                api_adapter.reactions.remove(val.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
+                api_adapter.reactions.remove(g.app_config.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
             if slack_score.ts not in val.data.reaction_ok:
-                api_adapter.reactions.append(val.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
+                api_adapter.reactions.append(g.app_config.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
 
     return (count, msg)
 
@@ -365,12 +366,13 @@ def check_pending(event_ts: str, edited_ts: str = "undetermined") -> bool:
         - **False**: チェック開始
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     now_ts = float(ExtDt().format("ts"))
 
     if edited_ts == "undetermined":
-        check_ts = float(event_ts) + g.cfg.search.wait
+        check_ts = float(event_ts) + g.app_config.search_wait
     else:
-        check_ts = float(max(edited_ts)) + g.cfg.search.wait
+        check_ts = float(max(edited_ts)) + g.app_config.search_wait
 
     if check_ts > now_ts:
         return True

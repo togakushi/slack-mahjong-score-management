@@ -5,6 +5,7 @@ integrations/slack/events/handler.py
 import logging
 import os
 import sys
+from typing import cast
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -15,6 +16,7 @@ import libs.event_dispatcher
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
+from integrations.slack import config
 from integrations.slack.events import comparison, slash
 from integrations.slack.events.handler_registry import register, register_all
 from integrations.slack.events.home_tab import home
@@ -22,6 +24,20 @@ from integrations.slack.events.home_tab import home
 
 def main():
     """メイン処理"""
+
+    g.app_config = cast(config.AppConfig, g.app_config)
+
+    # スラッシュコマンド登録
+    g.slash_command_name = g.app_config.slash_command
+    g.slash_commands = {"help": slash.command_help}
+
+    # 個別コマンド登録
+    g.special_commands = {
+        g.app_config.comparison_word: comparison.main,
+        f"Reminder: {g.app_config.comparison_word}": comparison.main,
+        f"{g.app_config.slash_command} check": comparison.main,
+    }
+    g.special_commands.update({f"{g.app_config.slash_command} {x}": comparison.main for x in g.app_config.comparison_alias.split(",") if x})
 
     try:
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
@@ -32,25 +48,8 @@ def main():
         logging.error(err)
         sys.exit()
 
-    m = factory.select_parser(g.selected_service)
     g.app = app  # インスタンスグローバル化
     g.bot_id = app.client.auth_test()["user_id"]
-
-    # スラッシュコマンド登録
-    g.slash_command_name = m.conf.slash_command
-    g.slash_commands = {"help": slash.command_help}
-
-    # 個別コマンド登録
-    g.special_commands = {
-        m.conf.comparison_word: comparison.main,
-        f"Reminder: {m.conf.comparison_word}": comparison.main,
-        f"{m.conf.slash_command} check": comparison.main,
-    }
-    g.special_commands.update({f"{m.conf.slash_command} {x}": comparison.main for x in m.conf.comparison_alias.split(",") if x})
-
-    print("=" * 80)
-    print(g.special_commands)
-    print("=" * 80)
 
     handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
@@ -73,7 +72,7 @@ def register_event_handlers(app):
         m.parser(body)
         libs.event_dispatcher.dispatch_by_keyword(m)
 
-    @app.command(m.conf.slash_command)
+    @app.command(g.slash_command_name)
     def slash_command(ack, body):
         """スラッシュコマンド
 

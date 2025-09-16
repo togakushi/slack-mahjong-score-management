@@ -3,6 +3,7 @@ tests/events/test_message_dispatch.py
 """
 
 import sys
+from typing import cast
 from unittest.mock import patch
 
 import pytest
@@ -30,7 +31,7 @@ def test_help(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_help_event_message.assert_called_once()
 
@@ -51,7 +52,7 @@ def test_results(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_results.assert_called_once()
 
@@ -72,7 +73,7 @@ def test_graph(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_graph.assert_called_once()
 
@@ -93,7 +94,7 @@ def test_ranking(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_ranking.assert_called_once()
 
@@ -114,6 +115,6 @@ def test_report(config, keyword, monkeypatch):
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
-        m.parser(param_data.FAKE_BODY)
+        m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_report.assert_called_once()
