@@ -4,7 +4,6 @@ libs/event_dispatcher.py
 
 import logging
 import re
-from typing import cast
 
 import libs.commands.dispatcher
 import libs.global_value as g
