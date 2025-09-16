@@ -41,7 +41,7 @@ def dispatch_by_keyword(m: MessageParserProtocol):
 
     match m.keyword:
         # ヘルプ
-        case x if re.match(rf"^{g.cfg.cw.help}$", x):
+        case x if re.match(rf"^{g.cfg.setting.help}$", x):
             # ヘルプメッセージ
             m.post.message = compose.msg_help.event_message()
             m.post.ts = m.data.event_ts
