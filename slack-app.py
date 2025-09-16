@@ -21,17 +21,14 @@ if __name__ == "__main__":
     initialization.read_grade_table()
     configuration.read_memberslist()
 
-    match g.args.service:
+    match g.selected_service:
         case "slack":
-            g.selected_service = "slack"
             import integrations.slack.events.handler as slack
             slack.main()
-        case "standard_io" | "std":
-            g.selected_service = "standard_io"
+        case "standard_io":
             import integrations.standard_io.events.handler as standard_io
             standard_io.main()
-        case "web" | "flask":
-            g.selected_service = "web"
+        case "web":
             import integrations.web.events.handler as webapp
             webapp.main()
         case _:

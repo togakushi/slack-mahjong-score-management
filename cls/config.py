@@ -329,16 +329,12 @@ class BadgeDisplay(BaseSection):
         table_name: str = field(default=str())
         table: GradeTableDict = field(default_factory=lambda: cast(GradeTableDict, dict))
 
-    degree: bool = False
-    status: bool = False
     grade: "BadgeGradeSpec" = BadgeGradeSpec()
 
     def __init__(self, outer):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, "")
 
-        self.degree = self._parser.getboolean("degree", "display", fallback=False)
-        self.status = self._parser.getboolean("status", "display", fallback=False)
         self.grade.display = self._parser.getboolean("grade", "display", fallback=False)
         self.grade.table_name = self._parser.get("grade", "table_name", fallback="")
 

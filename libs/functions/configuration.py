@@ -7,7 +7,9 @@ import logging
 import os
 import shutil
 import sys
+from configparser import ConfigParser
 from functools import partial
+from typing import cast
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -183,6 +185,18 @@ def setup() -> None:
     set_loglevel()
 
     g.args = arg_parser()
+
+    # 連携サービス
+    match g.args.service:
+        case "slack":
+            g.selected_service = "slack"
+        case "standard_io" | "std":
+            g.selected_service = "standard_io"
+        case "web" | "flask":
+            g.selected_service = "web"
+        case _:
+            sys.exit()
+
     if not hasattr(g.args, "testcase"):
         g.args.testcase = False
     else:
@@ -207,7 +221,7 @@ def setup() -> None:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
     g.cfg = AppConfig(g.args.config)
-    g.app_config = factory.load_config(g.selected_service)
+    g.app_config = factory.load_config(str(g.selected_service), cast(ConfigParser, getattr(g.cfg, "_parser")))
 
     logging.notice(  # type: ignore
         "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",

@@ -2,6 +2,7 @@
 integrations/factory.py
 """
 
+from configparser import ConfigParser
 from typing import Literal, Union, overload
 
 import pandas as pd
@@ -84,8 +85,19 @@ def select_function(selected_service: str):
             raise ValueError(f"Unknown service: {selected_service}")
 
 
-def load_config(selected_service: str):
-    """個別設定読み込み"""
+def load_config(selected_service: str, parser: ConfigParser):
+    """個別設定読み込み
+
+    Args:
+        selected_service (str): サービス選択
+        parser (ConfigParser): 設定ファイル
+
+    Raises:
+        ValueError: 未定義サービス
+
+    Returns:
+        _type_: 設定値
+    """
 
     conf: Union[
         slack.config.AppConfig,
@@ -96,13 +108,16 @@ def load_config(selected_service: str):
     match selected_service:
         case "slack":
             conf = slack.config.AppConfig()
+            conf.read_file(parser=parser, selected_service="slack")
             return conf
         case "web":
             conf = web.config.AppConfig()
+            conf.read_file(parser=parser, selected_service="web")
             conf.initialization()
             return conf
         case "standard_io":
             conf = standard_io.config.AppConfig()
+            conf.read_file(parser=parser, selected_service="standard_io")
             return conf
         case _:
             raise ValueError(f"Unknown service: {selected_service}")
