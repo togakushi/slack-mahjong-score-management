@@ -17,6 +17,8 @@ from libs.utils import dictutil
 
 def build_versus_menu():
     """対戦結果メニュー生成"""
+
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["screen"] = "VersusMenu"
     g.app_config.tab_var["no"] = 0
     g.app_config.tab_var["view"] = {"type": "home", "blocks": []}

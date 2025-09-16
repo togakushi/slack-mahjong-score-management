@@ -13,6 +13,8 @@ from integrations.slack.events.home_tab import ui_parts
 
 def build_main_menu():
     """メインメニューを生成する"""
+
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["screen"] = "MainMenu"
     g.app_config.tab_var["no"] = 0
     g.app_config.tab_var["view"] = {"type": "home", "blocks": []}

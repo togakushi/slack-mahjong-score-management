@@ -29,6 +29,8 @@ def plain_text(msg: str) -> dict:
 
 def divider() -> None:
     """境界線を引く"""
+
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["view"]["blocks"].append({"type": "divider", })
     g.app_config.tab_var["no"] += 1
 
@@ -40,6 +42,7 @@ def header(text: str = "dummy") -> None:
         text (str, optional): ヘッダテキスト. Defaults to "dummy".
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["view"]["blocks"].append({"type": "header", "text": {}})
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["text"] = {"type": "plain_text", "text": text}
     g.app_config.tab_var["no"] += 1
@@ -54,6 +57,7 @@ def button(text: str, action_id: str, style: str | bool = False) -> None:
         style (str | bool, optional): 表示スタイル. Defaults to False.
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["view"]["blocks"].append({"type": "actions", "elements": [{}]})
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["elements"][0] = {"type": "button", "text": {}, "action_id": action_id}
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["elements"][0]["text"] = {"type": "plain_text", "text": text}
@@ -72,6 +76,7 @@ def radio_buttons(id_suffix: str, title: str, flag: dict) -> None:
         flag (dict, optional): 表示する選択項目
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["view"]["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["label"] = {"type": "plain_text", "text": title}
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["element"]["type"] = "radio_buttons"
@@ -100,6 +105,7 @@ def checkboxes(id_suffix: str, title: str, flag: dict | None = None, initial: li
     if flag is None:
         flag = {}
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["view"]["blocks"].append({"type": "input", "block_id": f"bid-{id_suffix}", "element": {}})
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["label"] = {"type": "plain_text", "text": title}
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["element"]["type"] = "checkboxes"
@@ -130,6 +136,7 @@ def user_select_pulldown(text: str = "dummy", add_list: list | None = None) -> N
         add_list (list | None, optional): プレイヤーリスト. Defaults to None.
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["view"]["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["element"]["type"] = "static_select"
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["element"]["action_id"] = "player"
@@ -159,6 +166,8 @@ def multi_select_pulldown(text: str = "dummy", add_list: list | None = None) -> 
         text (str, optional): 表示テキスト. Defaults to "dummy".
         add_list (list | None, optional): プレイヤーリスト. Defaults to None.
     """
+
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["view"]["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["element"]["type"] = "multi_static_select"
     g.app_config.tab_var["view"]["blocks"][g.app_config.tab_var["no"]]["element"]["action_id"] = "player"
@@ -188,6 +197,8 @@ def input_ranked(block_id: str | bool = False) -> None:
         block_id (str | bool, optional): block_id. Defaults to False.
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
+
     if block_id:
         g.app_config.tab_var["view"]["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
     else:
@@ -209,6 +220,8 @@ def modalperiod_selection() -> dict:
     Returns:
         dict: ブロック要素
     """
+
+    g.app_config = cast(config.AppConfig, g.app_config)
 
     view: dict = {"type": "modal", "callback_id": f"{g.app_config.tab_var["screen"]}_ModalPeriodSelection"}
     view["title"] = {"type": "plain_text", "text": "検索範囲指定"}
@@ -244,6 +257,8 @@ def set_command_option(body) -> tuple[list, list, dict]:
         - list: viewに表示するメッセージ
         - dict: 変更されるフラグ
     """
+
+    g.app_config = cast(config.AppConfig, g.app_config)
 
     update_flag: dict = {}
 

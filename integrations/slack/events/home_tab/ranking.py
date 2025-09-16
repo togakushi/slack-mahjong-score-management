@@ -17,6 +17,8 @@ from libs.utils import dictutil
 
 def build_ranking_menu():
     """ランキングメニュー生成"""
+
+    g.app_config = cast(config.AppConfig, g.app_config)
     g.app_config.tab_var["screen"] = "RankingMenu"
     g.app_config.tab_var["no"] = 0
     g.app_config.tab_var["view"] = {"type": "home", "blocks": []}
