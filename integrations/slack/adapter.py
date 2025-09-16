@@ -1,5 +1,5 @@
 """
-integrations/slack/message.py
+integrations/slack/adapter.py
 """
 
 import logging

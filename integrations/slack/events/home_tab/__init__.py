@@ -1,6 +1,5 @@
 """ホームタブ関連モジュール
 
-Exports:
 - `integrations.slack.events.home_tab.home`: 初期メニュー
 - `integrations.slack.events.home_tab.personal`: 個人成績
 - `integrations.slack.events.home_tab.ranking`: ランキング

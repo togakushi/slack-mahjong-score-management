@@ -1,5 +1,5 @@
 """
-integrations/slack/config.py
+integrations/standard_io/config.py
 """
 
 from dataclasses import dataclass

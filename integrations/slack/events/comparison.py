@@ -1,5 +1,5 @@
 """
-libs/api/slack/comparison.py
+integrations/slack/events/comparison.py
 """
 
 import copy
