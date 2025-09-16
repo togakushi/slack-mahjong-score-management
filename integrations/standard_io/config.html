@@ -34,15 +34,6 @@
             <li>
                     <a class="class" href="#AppConfig">AppConfig</a>
                             <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#AppConfig.__init__">AppConfig</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#AppConfig.reaction_ok">reaction_ok</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#AppConfig.reaction_ng">reaction_ng</a>
-                        </li>
                 </ul>
 
             </li>
@@ -73,7 +64,7 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">integrations/slack/config.py</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.base.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntegrationsConfig</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
@@ -81,11 +72,6 @@
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="nd">@dataclass</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AppConfig</span><span class="p">(</span><span class="n">IntegrationsConfig</span><span class="p">):</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;設定値&quot;&quot;&quot;</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;ok&quot;</span><span class="p">)</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに取り込んだ時に付けるリアクション&quot;&quot;&quot;</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;ng&quot;</span><span class="p">)</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -105,11 +91,6 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="AppConfig-11"><a href="#AppConfig-11"><span class="linenos">11</span></a><span class="nd">@dataclass</span>
 </span><span id="AppConfig-12"><a href="#AppConfig-12"><span class="linenos">12</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AppConfig</span><span class="p">(</span><span class="n">IntegrationsConfig</span><span class="p">):</span>
 </span><span id="AppConfig-13"><a href="#AppConfig-13"><span class="linenos">13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;設定値&quot;&quot;&quot;</span>
-</span><span id="AppConfig-14"><a href="#AppConfig-14"><span class="linenos">14</span></a>
-</span><span id="AppConfig-15"><a href="#AppConfig-15"><span class="linenos">15</span></a>    <span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;ok&quot;</span><span class="p">)</span>
-</span><span id="AppConfig-16"><a href="#AppConfig-16"><span class="linenos">16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに取り込んだ時に付けるリアクション&quot;&quot;&quot;</span>
-</span><span id="AppConfig-17"><a href="#AppConfig-17"><span class="linenos">17</span></a>    <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;ng&quot;</span><span class="p">)</span>
-</span><span id="AppConfig-18"><a href="#AppConfig-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -117,46 +98,6 @@
 </div>
 
 
-                            <div id="AppConfig.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">AppConfig</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ok&#39;</span>, </span><span class="param"><span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ng&#39;</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AppConfig.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="AppConfig.reaction_ok" class="classattr">
-                                <div class="attr variable">
-            <span class="name">reaction_ok</span><span class="annotation">: str</span>        =
-<span class="default_value">&#39;ok&#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AppConfig.reaction_ok"></a>
-    
-            <div class="docstring"><p>DBに取り込んだ時に付けるリアクション</p>
-</div>
-
-
-                            </div>
-                            <div id="AppConfig.reaction_ng" class="classattr">
-                                <div class="attr variable">
-            <span class="name">reaction_ng</span><span class="annotation">: str</span>        =
-<span class="default_value">&#39;ng&#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AppConfig.reaction_ng"></a>
-    
-            <div class="docstring"><p>DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション</p>
-</div>
-
-
-                            </div>
                 </section>
     </main>
 <script>

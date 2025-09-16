@@ -130,10 +130,11 @@
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに取り込んだ時に付けるリアクション&quot;&quot;&quot;</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;ng&quot;</span><span class="p">)</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション&quot;&quot;&quot;</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">ignore_userid</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;投稿を無視するユーザのリスト(カンマ区切りで設定)&quot;&quot;&quot;</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">channel_limitations</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SQLを実行できるチャンネルリスト&quot;&quot;&quot;</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="n">ignore_userid</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;投稿を無視するユーザのリスト(カンマ区切りで設定)&quot;&quot;&quot;</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">channel_limitations</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SQLを実行できるチャンネルリスト&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -175,10 +176,11 @@
 </span><span id="AppConfig-33"><a href="#AppConfig-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに取り込んだ時に付けるリアクション&quot;&quot;&quot;</span>
 </span><span id="AppConfig-34"><a href="#AppConfig-34"><span class="linenos">34</span></a>    <span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;ng&quot;</span><span class="p">)</span>
 </span><span id="AppConfig-35"><a href="#AppConfig-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに取り込んだが正確な値ではない可能性があるときに付けるリアクション&quot;&quot;&quot;</span>
-</span><span id="AppConfig-36"><a href="#AppConfig-36"><span class="linenos">36</span></a>    <span class="n">ignore_userid</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="AppConfig-37"><a href="#AppConfig-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;投稿を無視するユーザのリスト(カンマ区切りで設定)&quot;&quot;&quot;</span>
-</span><span id="AppConfig-38"><a href="#AppConfig-38"><span class="linenos">38</span></a>    <span class="n">channel_limitations</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="AppConfig-39"><a href="#AppConfig-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SQLを実行できるチャンネルリスト&quot;&quot;&quot;</span>
+</span><span id="AppConfig-36"><a href="#AppConfig-36"><span class="linenos">36</span></a>
+</span><span id="AppConfig-37"><a href="#AppConfig-37"><span class="linenos">37</span></a>    <span class="n">ignore_userid</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="AppConfig-38"><a href="#AppConfig-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;投稿を無視するユーザのリスト(カンマ区切りで設定)&quot;&quot;&quot;</span>
+</span><span id="AppConfig-39"><a href="#AppConfig-39"><span class="linenos">39</span></a>    <span class="n">channel_limitations</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="AppConfig-40"><a href="#AppConfig-40"><span class="linenos">40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SQLを実行できるチャンネルリスト&quot;&quot;&quot;</span>
 </span></pre></div>
 
 

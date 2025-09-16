@@ -115,30 +115,30 @@
 
     </div>
     <a class="headerlink" href="#APIInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface-100"><a href="#APIInterface-100"><span class="linenos">100</span></a><span class="k">class</span><span class="w"> </span><span class="nc">APIInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="APIInterface-101"><a href="#APIInterface-101"><span class="linenos">101</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;API抽象化インターフェース&quot;&quot;&quot;</span>
-</span><span id="APIInterface-102"><a href="#APIInterface-102"><span class="linenos">102</span></a>    <span class="n">lookup</span><span class="p">:</span> <span class="s2">&quot;LookupInterface&quot;</span>
-</span><span id="APIInterface-103"><a href="#APIInterface-103"><span class="linenos">103</span></a>    <span class="n">reactions</span><span class="p">:</span> <span class="s2">&quot;ReactionsInterface&quot;</span>
-</span><span id="APIInterface-104"><a href="#APIInterface-104"><span class="linenos">104</span></a>
-</span><span id="APIInterface-105"><a href="#APIInterface-105"><span class="linenos">105</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface-106"><a href="#APIInterface-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="APIInterface-107"><a href="#APIInterface-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
-</span><span id="APIInterface-108"><a href="#APIInterface-108"><span class="linenos">108</span></a>
-</span><span id="APIInterface-109"><a href="#APIInterface-109"><span class="linenos">109</span></a><span class="sd">        Args:</span>
-</span><span id="APIInterface-110"><a href="#APIInterface-110"><span class="linenos">110</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="APIInterface-111"><a href="#APIInterface-111"><span class="linenos">111</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface-112"><a href="#APIInterface-112"><span class="linenos">112</span></a>
-</span><span id="APIInterface-113"><a href="#APIInterface-113"><span class="linenos">113</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface-114"><a href="#APIInterface-114"><span class="linenos">114</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="APIInterface-115"><a href="#APIInterface-115"><span class="linenos">115</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
-</span><span id="APIInterface-116"><a href="#APIInterface-116"><span class="linenos">116</span></a>
-</span><span id="APIInterface-117"><a href="#APIInterface-117"><span class="linenos">117</span></a><span class="sd">        Args:</span>
-</span><span id="APIInterface-118"><a href="#APIInterface-118"><span class="linenos">118</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface-111"><a href="#APIInterface-111"><span class="linenos">111</span></a><span class="k">class</span><span class="w"> </span><span class="nc">APIInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="APIInterface-112"><a href="#APIInterface-112"><span class="linenos">112</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;API抽象化インターフェース&quot;&quot;&quot;</span>
+</span><span id="APIInterface-113"><a href="#APIInterface-113"><span class="linenos">113</span></a>    <span class="n">lookup</span><span class="p">:</span> <span class="s2">&quot;LookupInterface&quot;</span>
+</span><span id="APIInterface-114"><a href="#APIInterface-114"><span class="linenos">114</span></a>    <span class="n">reactions</span><span class="p">:</span> <span class="s2">&quot;ReactionsInterface&quot;</span>
+</span><span id="APIInterface-115"><a href="#APIInterface-115"><span class="linenos">115</span></a>
+</span><span id="APIInterface-116"><a href="#APIInterface-116"><span class="linenos">116</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-117"><a href="#APIInterface-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="APIInterface-118"><a href="#APIInterface-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
 </span><span id="APIInterface-119"><a href="#APIInterface-119"><span class="linenos">119</span></a>
-</span><span id="APIInterface-120"><a href="#APIInterface-120"><span class="linenos">120</span></a><span class="sd">        Returns:</span>
-</span><span id="APIInterface-121"><a href="#APIInterface-121"><span class="linenos">121</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface-120"><a href="#APIInterface-120"><span class="linenos">120</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-121"><a href="#APIInterface-121"><span class="linenos">121</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
 </span><span id="APIInterface-122"><a href="#APIInterface-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface-123"><a href="#APIInterface-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="APIInterface-123"><a href="#APIInterface-123"><span class="linenos">123</span></a>
+</span><span id="APIInterface-124"><a href="#APIInterface-124"><span class="linenos">124</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface-125"><a href="#APIInterface-125"><span class="linenos">125</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface-126"><a href="#APIInterface-126"><span class="linenos">126</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
+</span><span id="APIInterface-127"><a href="#APIInterface-127"><span class="linenos">127</span></a>
+</span><span id="APIInterface-128"><a href="#APIInterface-128"><span class="linenos">128</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface-129"><a href="#APIInterface-129"><span class="linenos">129</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="APIInterface-130"><a href="#APIInterface-130"><span class="linenos">130</span></a>
+</span><span id="APIInterface-131"><a href="#APIInterface-131"><span class="linenos">131</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface-132"><a href="#APIInterface-132"><span class="linenos">132</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface-133"><a href="#APIInterface-133"><span class="linenos">133</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface-134"><a href="#APIInterface-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -180,13 +180,13 @@
 
     </div>
     <a class="headerlink" href="#APIInterface.post"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post-105"><a href="#APIInterface.post-105"><span class="linenos">105</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface.post-106"><a href="#APIInterface.post-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="APIInterface.post-107"><a href="#APIInterface.post-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
-</span><span id="APIInterface.post-108"><a href="#APIInterface.post-108"><span class="linenos">108</span></a>
-</span><span id="APIInterface.post-109"><a href="#APIInterface.post-109"><span class="linenos">109</span></a><span class="sd">        Args:</span>
-</span><span id="APIInterface.post-110"><a href="#APIInterface.post-110"><span class="linenos">110</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="APIInterface.post-111"><a href="#APIInterface.post-111"><span class="linenos">111</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.post-116"><a href="#APIInterface.post-116"><span class="linenos">116</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.post-117"><a href="#APIInterface.post-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="APIInterface.post-118"><a href="#APIInterface.post-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
+</span><span id="APIInterface.post-119"><a href="#APIInterface.post-119"><span class="linenos">119</span></a>
+</span><span id="APIInterface.post-120"><a href="#APIInterface.post-120"><span class="linenos">120</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.post-121"><a href="#APIInterface.post-121"><span class="linenos">121</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="APIInterface.post-122"><a href="#APIInterface.post-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -213,17 +213,17 @@
 
     </div>
     <a class="headerlink" href="#APIInterface.get_conversations"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.get_conversations-113"><a href="#APIInterface.get_conversations-113"><span class="linenos">113</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="APIInterface.get_conversations-114"><a href="#APIInterface.get_conversations-114"><span class="linenos">114</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="APIInterface.get_conversations-115"><a href="#APIInterface.get_conversations-115"><span class="linenos">115</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
-</span><span id="APIInterface.get_conversations-116"><a href="#APIInterface.get_conversations-116"><span class="linenos">116</span></a>
-</span><span id="APIInterface.get_conversations-117"><a href="#APIInterface.get_conversations-117"><span class="linenos">117</span></a><span class="sd">        Args:</span>
-</span><span id="APIInterface.get_conversations-118"><a href="#APIInterface.get_conversations-118"><span class="linenos">118</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="APIInterface.get_conversations-119"><a href="#APIInterface.get_conversations-119"><span class="linenos">119</span></a>
-</span><span id="APIInterface.get_conversations-120"><a href="#APIInterface.get_conversations-120"><span class="linenos">120</span></a><span class="sd">        Returns:</span>
-</span><span id="APIInterface.get_conversations-121"><a href="#APIInterface.get_conversations-121"><span class="linenos">121</span></a><span class="sd">            dict: API response</span>
-</span><span id="APIInterface.get_conversations-122"><a href="#APIInterface.get_conversations-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="APIInterface.get_conversations-123"><a href="#APIInterface.get_conversations-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="APIInterface.get_conversations-124"><a href="#APIInterface.get_conversations-124"><span class="linenos">124</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="APIInterface.get_conversations-125"><a href="#APIInterface.get_conversations-125"><span class="linenos">125</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="APIInterface.get_conversations-126"><a href="#APIInterface.get_conversations-126"><span class="linenos">126</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド情報の取得</span>
+</span><span id="APIInterface.get_conversations-127"><a href="#APIInterface.get_conversations-127"><span class="linenos">127</span></a>
+</span><span id="APIInterface.get_conversations-128"><a href="#APIInterface.get_conversations-128"><span class="linenos">128</span></a><span class="sd">        Args:</span>
+</span><span id="APIInterface.get_conversations-129"><a href="#APIInterface.get_conversations-129"><span class="linenos">129</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="APIInterface.get_conversations-130"><a href="#APIInterface.get_conversations-130"><span class="linenos">130</span></a>
+</span><span id="APIInterface.get_conversations-131"><a href="#APIInterface.get_conversations-131"><span class="linenos">131</span></a><span class="sd">        Returns:</span>
+</span><span id="APIInterface.get_conversations-132"><a href="#APIInterface.get_conversations-132"><span class="linenos">132</span></a><span class="sd">            dict: API response</span>
+</span><span id="APIInterface.get_conversations-133"><a href="#APIInterface.get_conversations-133"><span class="linenos">133</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="APIInterface.get_conversations-134"><a href="#APIInterface.get_conversations-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span></pre></div>
 
 
@@ -256,38 +256,38 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface-294"><a href="#MessageParserInterface-294"><span class="linenos">294</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="MessageParserInterface-295"><a href="#MessageParserInterface-295"><span class="linenos">295</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-296"><a href="#MessageParserInterface-296"><span class="linenos">296</span></a>
-</span><span id="MessageParserInterface-297"><a href="#MessageParserInterface-297"><span class="linenos">297</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-298"><a href="#MessageParserInterface-298"><span class="linenos">298</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserInterface-299"><a href="#MessageParserInterface-299"><span class="linenos">299</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
-</span><span id="MessageParserInterface-300"><a href="#MessageParserInterface-300"><span class="linenos">300</span></a>
-</span><span id="MessageParserInterface-301"><a href="#MessageParserInterface-301"><span class="linenos">301</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserInterface-302"><a href="#MessageParserInterface-302"><span class="linenos">302</span></a><span class="sd">            body (Any): 解析データ</span>
-</span><span id="MessageParserInterface-303"><a href="#MessageParserInterface-303"><span class="linenos">303</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-304"><a href="#MessageParserInterface-304"><span class="linenos">304</span></a>
-</span><span id="MessageParserInterface-305"><a href="#MessageParserInterface-305"><span class="linenos">305</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-306"><a href="#MessageParserInterface-306"><span class="linenos">306</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-307"><a href="#MessageParserInterface-307"><span class="linenos">307</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-308"><a href="#MessageParserInterface-308"><span class="linenos">308</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか</span>
-</span><span id="MessageParserInterface-309"><a href="#MessageParserInterface-309"><span class="linenos">309</span></a>
-</span><span id="MessageParserInterface-310"><a href="#MessageParserInterface-310"><span class="linenos">310</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-311"><a href="#MessageParserInterface-311"><span class="linenos">311</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-312"><a href="#MessageParserInterface-312"><span class="linenos">312</span></a><span class="sd">            - **True** : コマンド</span>
-</span><span id="MessageParserInterface-313"><a href="#MessageParserInterface-313"><span class="linenos">313</span></a><span class="sd">            - **False** : 非コマンド</span>
-</span><span id="MessageParserInterface-314"><a href="#MessageParserInterface-314"><span class="linenos">314</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserInterface-315"><a href="#MessageParserInterface-315"><span class="linenos">315</span></a>
-</span><span id="MessageParserInterface-316"><a href="#MessageParserInterface-316"><span class="linenos">316</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface-317"><a href="#MessageParserInterface-317"><span class="linenos">317</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-318"><a href="#MessageParserInterface-318"><span class="linenos">318</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-319"><a href="#MessageParserInterface-319"><span class="linenos">319</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="MessageParserInterface-320"><a href="#MessageParserInterface-320"><span class="linenos">320</span></a>
-</span><span id="MessageParserInterface-321"><a href="#MessageParserInterface-321"><span class="linenos">321</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface-322"><a href="#MessageParserInterface-322"><span class="linenos">322</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-323"><a href="#MessageParserInterface-323"><span class="linenos">323</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface-324"><a href="#MessageParserInterface-324"><span class="linenos">324</span></a><span class="sd">            - **False** : 禁止</span>
-</span><span id="MessageParserInterface-325"><a href="#MessageParserInterface-325"><span class="linenos">325</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface-308"><a href="#MessageParserInterface-308"><span class="linenos">308</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="MessageParserInterface-309"><a href="#MessageParserInterface-309"><span class="linenos">309</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析インターフェース&quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-310"><a href="#MessageParserInterface-310"><span class="linenos">310</span></a>
+</span><span id="MessageParserInterface-311"><a href="#MessageParserInterface-311"><span class="linenos">311</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-312"><a href="#MessageParserInterface-312"><span class="linenos">312</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserInterface-313"><a href="#MessageParserInterface-313"><span class="linenos">313</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
+</span><span id="MessageParserInterface-314"><a href="#MessageParserInterface-314"><span class="linenos">314</span></a>
+</span><span id="MessageParserInterface-315"><a href="#MessageParserInterface-315"><span class="linenos">315</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserInterface-316"><a href="#MessageParserInterface-316"><span class="linenos">316</span></a><span class="sd">            body (Any): 解析データ</span>
+</span><span id="MessageParserInterface-317"><a href="#MessageParserInterface-317"><span class="linenos">317</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-318"><a href="#MessageParserInterface-318"><span class="linenos">318</span></a>
+</span><span id="MessageParserInterface-319"><a href="#MessageParserInterface-319"><span class="linenos">319</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-320"><a href="#MessageParserInterface-320"><span class="linenos">320</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-321"><a href="#MessageParserInterface-321"><span class="linenos">321</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-322"><a href="#MessageParserInterface-322"><span class="linenos">322</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか</span>
+</span><span id="MessageParserInterface-323"><a href="#MessageParserInterface-323"><span class="linenos">323</span></a>
+</span><span id="MessageParserInterface-324"><a href="#MessageParserInterface-324"><span class="linenos">324</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-325"><a href="#MessageParserInterface-325"><span class="linenos">325</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-326"><a href="#MessageParserInterface-326"><span class="linenos">326</span></a><span class="sd">            - **True** : コマンド</span>
+</span><span id="MessageParserInterface-327"><a href="#MessageParserInterface-327"><span class="linenos">327</span></a><span class="sd">            - **False** : 非コマンド</span>
+</span><span id="MessageParserInterface-328"><a href="#MessageParserInterface-328"><span class="linenos">328</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-329"><a href="#MessageParserInterface-329"><span class="linenos">329</span></a>
+</span><span id="MessageParserInterface-330"><a href="#MessageParserInterface-330"><span class="linenos">330</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-331"><a href="#MessageParserInterface-331"><span class="linenos">331</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-332"><a href="#MessageParserInterface-332"><span class="linenos">332</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-333"><a href="#MessageParserInterface-333"><span class="linenos">333</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface-334"><a href="#MessageParserInterface-334"><span class="linenos">334</span></a>
+</span><span id="MessageParserInterface-335"><a href="#MessageParserInterface-335"><span class="linenos">335</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-336"><a href="#MessageParserInterface-336"><span class="linenos">336</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-337"><a href="#MessageParserInterface-337"><span class="linenos">337</span></a><span class="sd">            - **True** : 許可</span>
+</span><span id="MessageParserInterface-338"><a href="#MessageParserInterface-338"><span class="linenos">338</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface-339"><a href="#MessageParserInterface-339"><span class="linenos">339</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -307,13 +307,13 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.parser"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.parser-297"><a href="#MessageParserInterface.parser-297"><span class="linenos">297</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.parser-298"><a href="#MessageParserInterface.parser-298"><span class="linenos">298</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserInterface.parser-299"><a href="#MessageParserInterface.parser-299"><span class="linenos">299</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
-</span><span id="MessageParserInterface.parser-300"><a href="#MessageParserInterface.parser-300"><span class="linenos">300</span></a>
-</span><span id="MessageParserInterface.parser-301"><a href="#MessageParserInterface.parser-301"><span class="linenos">301</span></a><span class="sd">        Args:</span>
-</span><span id="MessageParserInterface.parser-302"><a href="#MessageParserInterface.parser-302"><span class="linenos">302</span></a><span class="sd">            body (Any): 解析データ</span>
-</span><span id="MessageParserInterface.parser-303"><a href="#MessageParserInterface.parser-303"><span class="linenos">303</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.parser-311"><a href="#MessageParserInterface.parser-311"><span class="linenos">311</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.parser-312"><a href="#MessageParserInterface.parser-312"><span class="linenos">312</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserInterface.parser-313"><a href="#MessageParserInterface.parser-313"><span class="linenos">313</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析</span>
+</span><span id="MessageParserInterface.parser-314"><a href="#MessageParserInterface.parser-314"><span class="linenos">314</span></a>
+</span><span id="MessageParserInterface.parser-315"><a href="#MessageParserInterface.parser-315"><span class="linenos">315</span></a><span class="sd">        Args:</span>
+</span><span id="MessageParserInterface.parser-316"><a href="#MessageParserInterface.parser-316"><span class="linenos">316</span></a><span class="sd">            body (Any): 解析データ</span>
+</span><span id="MessageParserInterface.parser-317"><a href="#MessageParserInterface.parser-317"><span class="linenos">317</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -337,16 +337,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.is_command"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.is_command-305"><a href="#MessageParserInterface.is_command-305"><span class="linenos">305</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.is_command-306"><a href="#MessageParserInterface.is_command-306"><span class="linenos">306</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.is_command-307"><a href="#MessageParserInterface.is_command-307"><span class="linenos">307</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.is_command-308"><a href="#MessageParserInterface.is_command-308"><span class="linenos">308</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか</span>
-</span><span id="MessageParserInterface.is_command-309"><a href="#MessageParserInterface.is_command-309"><span class="linenos">309</span></a>
-</span><span id="MessageParserInterface.is_command-310"><a href="#MessageParserInterface.is_command-310"><span class="linenos">310</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.is_command-311"><a href="#MessageParserInterface.is_command-311"><span class="linenos">311</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.is_command-312"><a href="#MessageParserInterface.is_command-312"><span class="linenos">312</span></a><span class="sd">            - **True** : コマンド</span>
-</span><span id="MessageParserInterface.is_command-313"><a href="#MessageParserInterface.is_command-313"><span class="linenos">313</span></a><span class="sd">            - **False** : 非コマンド</span>
-</span><span id="MessageParserInterface.is_command-314"><a href="#MessageParserInterface.is_command-314"><span class="linenos">314</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.is_command-319"><a href="#MessageParserInterface.is_command-319"><span class="linenos">319</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.is_command-320"><a href="#MessageParserInterface.is_command-320"><span class="linenos">320</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.is_command-321"><a href="#MessageParserInterface.is_command-321"><span class="linenos">321</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.is_command-322"><a href="#MessageParserInterface.is_command-322"><span class="linenos">322</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドで実行されているか</span>
+</span><span id="MessageParserInterface.is_command-323"><a href="#MessageParserInterface.is_command-323"><span class="linenos">323</span></a>
+</span><span id="MessageParserInterface.is_command-324"><a href="#MessageParserInterface.is_command-324"><span class="linenos">324</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.is_command-325"><a href="#MessageParserInterface.is_command-325"><span class="linenos">325</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.is_command-326"><a href="#MessageParserInterface.is_command-326"><span class="linenos">326</span></a><span class="sd">            - **True** : コマンド</span>
+</span><span id="MessageParserInterface.is_command-327"><a href="#MessageParserInterface.is_command-327"><span class="linenos">327</span></a><span class="sd">            - **False** : 非コマンド</span>
+</span><span id="MessageParserInterface.is_command-328"><a href="#MessageParserInterface.is_command-328"><span class="linenos">328</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -375,16 +375,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-316"><a href="#MessageParserInterface.check_updatable-316"><span class="linenos">316</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.check_updatable-317"><a href="#MessageParserInterface.check_updatable-317"><span class="linenos">317</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.check_updatable-318"><a href="#MessageParserInterface.check_updatable-318"><span class="linenos">318</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.check_updatable-319"><a href="#MessageParserInterface.check_updatable-319"><span class="linenos">319</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="MessageParserInterface.check_updatable-320"><a href="#MessageParserInterface.check_updatable-320"><span class="linenos">320</span></a>
-</span><span id="MessageParserInterface.check_updatable-321"><a href="#MessageParserInterface.check_updatable-321"><span class="linenos">321</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.check_updatable-322"><a href="#MessageParserInterface.check_updatable-322"><span class="linenos">322</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.check_updatable-323"><a href="#MessageParserInterface.check_updatable-323"><span class="linenos">323</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface.check_updatable-324"><a href="#MessageParserInterface.check_updatable-324"><span class="linenos">324</span></a><span class="sd">            - **False** : 禁止</span>
-</span><span id="MessageParserInterface.check_updatable-325"><a href="#MessageParserInterface.check_updatable-325"><span class="linenos">325</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-330"><a href="#MessageParserInterface.check_updatable-330"><span class="linenos">330</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.check_updatable-331"><a href="#MessageParserInterface.check_updatable-331"><span class="linenos">331</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.check_updatable-332"><a href="#MessageParserInterface.check_updatable-332"><span class="linenos">332</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.check_updatable-333"><a href="#MessageParserInterface.check_updatable-333"><span class="linenos">333</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface.check_updatable-334"><a href="#MessageParserInterface.check_updatable-334"><span class="linenos">334</span></a>
+</span><span id="MessageParserInterface.check_updatable-335"><a href="#MessageParserInterface.check_updatable-335"><span class="linenos">335</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.check_updatable-336"><a href="#MessageParserInterface.check_updatable-336"><span class="linenos">336</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.check_updatable-337"><a href="#MessageParserInterface.check_updatable-337"><span class="linenos">337</span></a><span class="sd">            - **True** : 許可</span>
+</span><span id="MessageParserInterface.check_updatable-338"><a href="#MessageParserInterface.check_updatable-338"><span class="linenos">338</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface.check_updatable-339"><a href="#MessageParserInterface.check_updatable-339"><span class="linenos">339</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
