@@ -13,7 +13,6 @@ command_word_default: dict[str, tuple[Any, ...]] = {
     "graph": ("graph", CommandWord.graph),
     "ranking": ("ranking", CommandWord.ranking),
     "report": ("report", CommandWord.report),
-    "help": ("help", CommandWord.help),
 }
 
 # チャンネル内呼び出しキーワード設定
