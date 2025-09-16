@@ -3,17 +3,19 @@ integrations/slack/events/home_tab/home.py
 """
 
 import logging
+from typing import cast
 
 import libs.global_value as g
+from integrations.slack import config
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
 
 
 def build_main_menu():
     """メインメニューを生成する"""
-    g.app_var["screen"] = "MainMenu"
-    g.app_var["no"] = 0
-    g.app_var["view"] = {"type": "home", "blocks": []}
+    g.app_config.tab_var["screen"] = "MainMenu"
+    g.app_config.tab_var["no"] = 0
+    g.app_config.tab_var["view"] = {"type": "home", "blocks": []}
     ui_parts.button(text="成績サマリ", action_id="summary_menu")
     ui_parts.button(text="ランキング", action_id="ranking_menu")
     ui_parts.button(text="個人成績", action_id="personal_menu")
@@ -35,10 +37,12 @@ def register_home_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
+        g.app_config = cast(config.AppConfig, g.app_config)
+
         build_main_menu()
-        g.appclient.views_publish(
-            user_id=g.app_var["user_id"],
-            view=g.app_var["view"],
+        g.app_config.appclient.views_publish(
+            user_id=g.app_config.tab_var["user_id"],
+            view=g.app_config.tab_var["view"],
         )
 
     @app.action("modal-open-period")
@@ -52,7 +56,10 @@ def register_home_handlers(app):
         """
 
         ack()
-        g.appclient.views_open(
+
+        g.app_config = cast(config.AppConfig, g.app_config)
+
+        g.app_config.appclient.views_open(
             trigger_id=body["trigger_id"],
             view=ui_parts.modalperiod_selection(),
         )

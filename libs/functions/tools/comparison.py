@@ -14,6 +14,7 @@ import libs.global_value as g
 from integrations import factory
 from integrations.slack.events import comparison
 from libs.functions import configuration
+from integrations.slack import config
 
 
 def main():
@@ -21,17 +22,18 @@ def main():
 
     if g.args.compar:
         try:
-            g.app = App(token=os.environ["SLACK_BOT_TOKEN"])
-            g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-            g.appclient = g.app.client
-            g.bot_id = g.app.client.auth_test()["user_id"]
+            g.app_config = cast(config.AppConfig, factory.load_config("slack", cast(ConfigParser, getattr(g.cfg, "_parser"))))
+
+            app = App(token=os.environ["SLACK_BOT_TOKEN"])
+            g.app_config.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+            g.app_config.appclient = app.client
+            g.app_config.bot_id = app.client.auth_test()["user_id"]
             configuration.read_memberslist(False)
         except Exception as e:
             raise RuntimeError(e) from e
 
         api_adapter = factory.select_adapter(g.selected_service)
         m = factory.select_parser("standard_io")
-        g.app_config = factory.load_config("slack", cast(ConfigParser, getattr(g.cfg, "_parser")))
         m.data.channel_id = api_adapter.lookup.get_channel_id()
 
         count, _ = comparison.data_comparison(m)

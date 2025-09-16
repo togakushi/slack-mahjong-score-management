@@ -31,25 +31,27 @@ class _ReactionsAPI(ReactionsInterface):
             dict[str,list]: リアクション
         """
 
+        g.app_config = cast(config.AppConfig, g.app_config)
+
         icon: dict[str, list] = {
             "ok": [],
             "ng": [],
         }
 
         try:  # 削除済みメッセージはエラーになるので潰す
-            res = g.appclient.reactions_get(channel=ch, timestamp=ts)
+            res = g.app_config.appclient.reactions_get(channel=ch, timestamp=ts)
             logging.trace(res.validate())  # type: ignore
         except SlackApiError:
             return icon
 
         if (reactions := cast(dict, res["message"]).get("reactions")):
             for reaction in cast(list[dict], reactions):
-                if ok == reaction.get("name") and g.bot_id in reaction["users"]:
+                if ok == reaction.get("name") and g.app_config.bot_id in reaction["users"]:
                     icon["ok"].append(res["message"]["ts"])
-                if ng == reaction.get("name") and g.bot_id in reaction["users"]:
+                if ng == reaction.get("name") and g.app_config.bot_id in reaction["users"]:
                     icon["ng"].append(res["message"]["ts"])
 
-        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.bot_id, icon)
+        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.app_config.bot_id, icon)
         return icon
 
     def append(self, icon: str, ch: str, ts: str):
@@ -73,7 +75,7 @@ class _LookupAPI(LookupInterface):
         channel_id = ""
 
         try:
-            response = g.webclient.search_messages(
+            response = g.app_config.webclient.search_messages(
                 query=f"in:{g.app_config.search_channel}",
                 count=1,
             )
@@ -100,10 +102,12 @@ class _LookupAPI(LookupInterface):
             str: チャンネルID
         """
 
+        g.app_config = cast(config.AppConfig, g.app_config)
+
         channel_id = ""
 
         try:
-            response = g.appclient.conversations_open(users=[user_id])
+            response = g.app_config.appclient.conversations_open(users=[user_id])
             channel_id = response["channel"]["id"]
         except SlackApiError as e:
             logging.error(e)
@@ -238,8 +242,10 @@ class SlackAPI(APIInterface):
             dict: API response
         """
 
+        g.app_config = cast(config.AppConfig, g.app_config)
+
         try:
-            res = g.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
+            res = g.app_config.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
             logging.trace(res.validate())  # type: ignore
             return cast(dict, res)
         except SlackApiError as e:

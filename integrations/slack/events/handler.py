@@ -41,15 +41,14 @@ def main():
 
     try:
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
-        g.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-        g.appclient = app.client
+        g.app_config.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+        g.app_config.appclient = app.client
         register_all(app)  # イベント遅延登録
     except SlackApiError as err:
         logging.error(err)
         sys.exit()
 
-    g.app = app  # インスタンスグローバル化
-    g.bot_id = app.client.auth_test()["user_id"]
+    g.app_config.bot_id = app.client.auth_test()["user_id"]
 
     handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
@@ -95,26 +94,28 @@ def register_event_handlers(app):
             event (dict): イベント内容
         """
 
-        g.app_var = {
+        g.app_config = cast(config.AppConfig, g.app_config)
+
+        g.app_config.tab_var = {
             "view": {},
             "no": 0,
             "user_id": None,
             "view_id": None,
             "screen": None,
             "operation": None,
-            "sday": g.app_var.get("sday", ExtDt().format("ymd", "-")),
-            "eday": g.app_var.get("eday", ExtDt().format("ymd", "-")),
+            "sday": g.app_config.tab_var.get("sday", ExtDt().format("ymd", "-")),
+            "eday": g.app_config.tab_var.get("eday", ExtDt().format("ymd", "-")),
         }
 
-        g.app_var["user_id"] = event["user"]
+        g.app_config.tab_var["user_id"] = event["user"]
         if "view" in event:
-            g.app_var["view_id"] = event["view"]["id"]
+            g.app_config.tab_var["view_id"] = event["view"]["id"]
 
-        logging.trace(g.app_var)  # type: ignore
+        logging.trace(g.app_config.tab_var)  # type: ignore
 
         home.build_main_menu()
-        result = g.appclient.views_publish(
-            user_id=g.app_var["user_id"],
-            view=g.app_var["view"],
+        result = g.app_config.appclient.views_publish(
+            user_id=g.app_config.tab_var["user_id"],
+            view=g.app_config.tab_var["view"],
         )
         logging.trace(result)  # type: ignore

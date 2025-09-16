@@ -5,9 +5,6 @@ from typing import TYPE_CHECKING, Any, Callable, Literal, Union
 if TYPE_CHECKING:
     from argparse import Namespace
 
-    from slack_bolt.app.app import App
-    from slack_sdk.web.client import WebClient
-
     from cls.config import AppConfig
     from cls.types import TeamDataDict
     from integrations.slack.config import AppConfig as slack_conf
@@ -19,11 +16,6 @@ app_config: Union["slack_conf", "web_conf", "stdio_conf"]
 
 args: "Namespace" = None  # type: ignore
 """コマンドライン引数"""
-
-app: "App"
-appclient: "WebClient"
-webclient: "WebClient"
-"""slack object"""
 
 slash_command_name: str
 """スラッシュコマンド名"""
@@ -47,13 +39,9 @@ team_list: list["TeamDataDict"] = []
 - team: チーム名
 - member: 所属メンバーリスト
 """
-bot_id: str = ""
-"""ボットID"""
+
 params: dict = {}
 """プレースホルダ用パラメータ"""
-
-app_var: dict = {}
-"""ホームタブ用初期値"""
 
 sql: dict = {}
 """共通クエリ"""

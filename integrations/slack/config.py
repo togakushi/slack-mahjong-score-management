@@ -4,6 +4,8 @@ integrations/slack/config.py
 
 from dataclasses import dataclass, field
 
+from slack_sdk.web.client import WebClient
+
 from integrations.base.interface import IntegrationsConfig
 
 
@@ -46,6 +48,16 @@ class AppConfig(IntegrationsConfig):
     """プレイしたゲーム数に対して表示される称号"""
     badge_status: bool = field(default=False)
     """勝率に対して付く調子バッジ"""
+
+    # slack object
+    appclient: WebClient = field(default_factory=WebClient)
+    webclient: WebClient = field(default_factory=WebClient)
+
+    bot_id: str = field(default="")
+    """ボットID"""
+
+    tab_var: dict = field(default_factory=dict)
+    """ホームタブ用初期値"""
 
     def initialization(self):
         """初期化処理"""

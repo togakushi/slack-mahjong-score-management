@@ -9,6 +9,7 @@ from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
+from integrations.slack import config
 
 
 def call_chat_post_message(**kwargs) -> SlackResponse:
@@ -18,12 +19,14 @@ def call_chat_post_message(**kwargs) -> SlackResponse:
         SlackResponse: API response
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
+
     res = cast(SlackResponse, {})
     if kwargs["thread_ts"] == "0":
         kwargs.pop("thread_ts")
 
     try:
-        res = g.appclient.chat_postMessage(**kwargs)
+        res = g.app_config.appclient.chat_postMessage(**kwargs)
     except SlackApiError as err:
         logging.critical(err)
         logging.error("kwargs=%s", kwargs)
@@ -38,12 +41,14 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
         SlackResponse | Any: API response
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
     res = None
+
     if kwargs.get("thread_ts", "0") == "0":
         kwargs.pop("thread_ts")
 
     try:
-        res = g.appclient.files_upload_v2(**kwargs)
+        res = g.app_config.appclient.files_upload_v2(**kwargs)
     except SlackApiError as err:
         logging.critical(err)
         logging.error("kwargs=%s", kwargs)
@@ -60,12 +65,14 @@ def call_reactions_add(icon: str, ch: str, ts: str):
         ts (str): メッセージのタイムスタンプ
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
+
     if not all([icon, ch, ts]):
         logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
         return
 
     try:
-        res: SlackResponse = g.appclient.reactions_add(
+        res: SlackResponse = g.app_config.appclient.reactions_add(
             channel=str(ch),
             name=icon,
             timestamp=str(ts),
@@ -89,12 +96,14 @@ def call_reactions_remove(icon: str, ch: str, ts: str):
         ts (str): メッセージのタイムスタンプ
     """
 
+    g.app_config = cast(config.AppConfig, g.app_config)
+
     if not all([icon, ch, ts]):
         logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
         return
 
     try:
-        res = g.appclient.reactions_remove(
+        res = g.app_config.appclient.reactions_remove(
             channel=ch,
             name=icon,
             timestamp=ts,

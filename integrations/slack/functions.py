@@ -77,7 +77,7 @@ def get_messages(word: str, m: MessageParserProtocol) -> list[MessageParserProto
     logging.info("query=%s", query)
 
     # データ取得
-    response = g.webclient.search_messages(
+    response = g.app_config.webclient.search_messages(
         query=query,
         sort="timestamp",
         sort_dir="asc",
@@ -85,7 +85,7 @@ def get_messages(word: str, m: MessageParserProtocol) -> list[MessageParserProto
     )
     matches = response["messages"]["matches"]  # 1ページ目
     for p in range(2, response["messages"]["paging"]["pages"] + 1):
-        response = g.webclient.search_messages(
+        response = g.app_config.webclient.search_messages(
             query=query,
             sort="timestamp",
             sort_dir="asc",
@@ -120,7 +120,7 @@ def get_message_details(matches: list[MessageParserProtocol]) -> list[MessagePar
 
     # 詳細情報取得
     for key in matches:
-        conversations = g.app.client.conversations_replies(channel=key.data.channel_id, ts=key.data.event_ts)
+        conversations = g.app_config.appclient.conversations_replies(channel=key.data.channel_id, ts=key.data.event_ts)
         if (msg := conversations.get("messages")):
             res = cast(dict, msg[0])
         else:
@@ -212,7 +212,7 @@ def get_reactions_list(msg: dict) -> tuple[list, list]:
 
     if msg.get("reactions"):
         for reactions in msg.get("reactions", {}):
-            if isinstance(reactions, dict) and g.bot_id in reactions.get("users", []):
+            if isinstance(reactions, dict) and g.app_config.bot_id in reactions.get("users", []):
                 match reactions.get("name"):
                     case g.app_config.reaction_ok:
                         reaction_ok.append(msg.get("ts"))
