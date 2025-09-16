@@ -165,6 +165,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
             continue
 
         # 名前の正規化
+        g.params.update(unregistered_replace=False)
         for prefix in ("p1", "p2", "p3", "p4"):
             prefix_obj = cast(Score, getattr(slack_score, prefix))
             prefix_obj.name = formatter.name_replace(prefix_obj.name)
