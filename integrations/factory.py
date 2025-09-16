@@ -109,6 +109,7 @@ def load_config(selected_service: str, parser: ConfigParser):
         case "slack":
             conf = slack.config.AppConfig()
             conf.read_file(parser=parser, selected_service="slack")
+            conf.initialization()
             return conf
         case "web":
             conf = web.config.AppConfig()

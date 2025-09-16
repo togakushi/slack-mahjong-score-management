@@ -16,7 +16,7 @@ class AppConfig(IntegrationsConfig):
 
     comparison_word: str = field(default="成績チェック")
     """データ突合コマンド呼び出しキーワード"""
-    comparison_alias: str = field(default="")
+    comparison_alias: list = field(default_factory=list)
     """データ突合スラッシュコマンド別名(カンマ区切り)"""
 
     search_channel: str = field(default="")
@@ -46,3 +46,9 @@ class AppConfig(IntegrationsConfig):
     """プレイしたゲーム数に対して表示される称号"""
     badge_status: bool = field(default=False)
     """勝率に対して付く調子バッジ"""
+
+    def initialization(self):
+        """初期化"""
+
+        if "check" not in self.comparison_alias:
+            self.comparison_alias.append("check")
