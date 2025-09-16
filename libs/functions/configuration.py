@@ -63,6 +63,16 @@ def arg_parser() -> argparse.Namespace:
         "--profile",
         help=argparse.SUPPRESS,
     )
+    p.add_argument(
+        "--service",
+        choices=[
+            "slack",
+            "standard_io", "std",
+            "web", "flask",
+        ],
+        default="slack",
+        help="連携先サービス",
+    )
 
     logging_group = p.add_argument_group("logging options")
     logging_group.add_argument(
@@ -89,24 +99,12 @@ def arg_parser() -> argparse.Namespace:
 
     match os.path.basename(sys.argv[0]):
         case "slack-app.py":
-            p.add_argument(
-                "--service",
-                choices=[
-                    "slack",
-                    "standard_io", "std",
-                    "web", "flask",
-                ],
-                default="slack",
-                help="連携先サービス",
-            )
-
             service_stdio = p.add_argument_group("Only allowed when --service=standard_io")
             service_stdio.add_argument(
                 "--text",
                 type=str,
                 help="input text strings",
             )
-
             service_web = p.add_argument_group("Only allowed when --service=web")
             service_web.add_argument(
                 "--host",
@@ -120,7 +118,6 @@ def arg_parser() -> argparse.Namespace:
                 default=8000,
                 help="bind port(default: %(default)s)",
             )
-
         case "dbtools.py":  # dbtools専用オプション
             group = p.add_mutually_exclusive_group()
             group.add_argument(
@@ -170,7 +167,6 @@ def arg_parser() -> argparse.Namespace:
                 metavar="count",
                 help="テスト用サンプルデータ生成(count=生成回数, default: %(const)s)",
             )
-
         case "test.py":  # 動作テスト用オプション
             p.add_argument(
                 "-t", "--testcase",
