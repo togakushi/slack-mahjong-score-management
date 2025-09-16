@@ -171,7 +171,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
 
         if slack_score.ts in db_data:  # slack -> DB チェック
             db_score = db_data[slack_score.ts]
-            if not g.cfg.setting.thread_report:  # スレッド内報告が禁止されているパターン
+            if not g.app_config.thread_report:  # スレッド内報告が禁止されているパターン
                 if slack_m.in_thread:
                     count["delete"] += 1
                     logging.notice("delete (In-thread report): %s", slack_score.to_text("logging"))  # type: ignore
@@ -205,7 +205,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
             continue
 
         # 追加
-        if not g.cfg.setting.thread_report and slack_m.in_thread:
+        if not g.app_config.thread_report and slack_m.in_thread:
             logging.notice("skip (In-thread report): %s", slack_score.to_text("logging"))  # type: ignore
             continue
 
@@ -331,7 +331,7 @@ def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, Co
             continue
 
         # 判定条件外のデータはスキップ
-        if not g.cfg.setting.thread_report and val.in_thread:
+        if not g.app_config.thread_report and val.in_thread:
             continue
         if slack_score.rule_version != g.cfg.mahjong.rule_version:
             continue

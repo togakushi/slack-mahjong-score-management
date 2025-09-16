@@ -156,8 +156,6 @@ class SettingSection(BaseSection):
     remarks_word: str = "麻雀成績メモ"
     """メモ記録用キーワード"""
 
-    thread_report: bool = True
-    """スレッド内にある得点報告を扱う"""
     time_adjust: int = 12
     """日付変更後、集計範囲に含める追加時間"""
     guest_mark: str = "※"
