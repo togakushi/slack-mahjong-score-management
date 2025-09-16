@@ -195,6 +195,12 @@ class MessageParserDataMixin:
 
         return ret_ts
 
+    def reset(self) -> None:
+        """初期化"""
+
+        self.data.reset()
+        self.post.reset()
+
     def get_score(self, keyword: str) -> dict:
         """textからスコアを抽出する
 

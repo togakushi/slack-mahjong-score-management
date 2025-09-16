@@ -69,6 +69,7 @@ def register_event_handlers(app):
             body (dict): ポストされたデータ
         """
 
+        m.reset()
         m.parser(body)
         libs.event_dispatcher.dispatch_by_keyword(m)
 
@@ -82,6 +83,7 @@ def register_event_handlers(app):
         """
 
         ack()
+        m.reset()
         m.parser(body)
         libs.event_dispatcher.dispatch_by_keyword(m)
 

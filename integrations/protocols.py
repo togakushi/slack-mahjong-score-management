@@ -3,7 +3,7 @@ integrations/protocols.py
 """
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from typing import TYPE_CHECKING, Any, Literal, Protocol, runtime_checkable
 
 import pandas as pd
@@ -16,13 +16,14 @@ if TYPE_CHECKING:
 class MsgData:
     """ポストされたメッセージデータ"""
 
-    command_type = Literal["results", "graph", "ranking", "rating", "report"]
+    command_type: Literal["results", "graph", "ranking", "rating", "report", "unknown"] = field(default="unknown")
     """サブコマンド
     - *results*: 成績サマリ
     - *graph*: グラフ生成
     - *ranking*: ランキング
     - *rating*: レーティング
     - *report*: レポート
+    - *unknown*: 未定義
     """
     text: str = field(default=str())
     """本文"""
@@ -59,6 +60,12 @@ class MsgData:
     remarks: list = field(default_factory=list)
     """メモ格納用"""
 
+    def reset(self) -> None:
+        """初期化"""
+        default = type(self)()
+        for f in fields(self):
+            setattr(self, f.name, getattr(default, f.name))
+
 
 @dataclass
 class PostData:
@@ -80,6 +87,12 @@ class PostData:
     """指定タイムスタンプへの強制リプライ"""
     rpoint_sum: int = field(default=0)
     """素点合計値格納用"""
+
+    def reset(self) -> None:
+        """初期化"""
+        default = type(self)()
+        for f in fields(self):
+            setattr(self, f.name, getattr(default, f.name))
 
 
 @runtime_checkable
