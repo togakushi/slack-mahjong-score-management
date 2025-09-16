@@ -11,25 +11,42 @@ from integrations.base.interface import IntegrationsConfig
 @dataclass
 class AppConfig(IntegrationsConfig):
     """設定値"""
+
     host: str = field(default="")
+    """起動アドレス"""
     port: int = field(default=0)
+    """起動ポート"""
 
+    # 認証
     require_auth: bool = field(default=False)
+    """BASIC認証を利用するか"""
     username: str = field(default="")
+    """認証ユーザ名"""
     password: str = field(default="")
+    """認証パスワード"""
 
+    # 暗号
     use_ssl: bool = field(default=False)
+    """HTTPSを有効にするか"""
     certificate: str = field(default="")
+    """サーバー証明書パス"""
     private_key: str = field(default="")
+    """秘密鍵パス"""
 
+    # 表示オプション
     view_summary: bool = field(default=True)
+    """成績サマリ/個人成績の表示"""
     view_graph: bool = field(default=True)
+    """グラフの表示"""
     view_ranking: bool = field(default=True)
+    """ランキングの表示"""
     management_member: bool = field(default=False)
+    """メンバー/チーム編集メニューの表示"""
     management_score: bool = field(default=False)
+    """成績管理メニューの表示"""
 
     def initialization(self):
-        """初期化"""
+        """初期化処理"""
 
         if not self.host:
             self.host = g.args.host

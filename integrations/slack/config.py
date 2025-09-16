@@ -17,7 +17,7 @@ class AppConfig(IntegrationsConfig):
     comparison_word: str = field(default="成績チェック")
     """データ突合コマンド呼び出しキーワード"""
     comparison_alias: list = field(default_factory=list)
-    """データ突合スラッシュコマンド別名(カンマ区切り)"""
+    """データ突合スラッシュコマンド別名(カンマ区切りで設定)"""
 
     search_channel: str = field(default="")
     """テータ突合時に成績記録ワードを検索するチャンネル名"""
@@ -48,7 +48,7 @@ class AppConfig(IntegrationsConfig):
     """勝率に対して付く調子バッジ"""
 
     def initialization(self):
-        """初期化"""
+        """初期化処理"""
 
         if "check" not in self.comparison_alias:
             self.comparison_alias.append("check")
