@@ -37,7 +37,7 @@ def main():
         f"Reminder: {g.app_config.comparison_word}": comparison.main,
         f"{g.app_config.slash_command} check": comparison.main,
     }
-    g.special_commands.update({f"{g.app_config.slash_command} {x}": comparison.main for x in g.app_config.comparison_alias.split(",") if x})
+    g.special_commands.update({f"{g.app_config.slash_command} {x}": comparison.main for x in g.app_config.comparison_alias})
 
     try:
         app = App(token=os.environ["SLACK_BOT_TOKEN"])

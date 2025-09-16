@@ -168,17 +168,9 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    def _thread_check() -> bool:
-        if isinstance(g.app_config, slack_config):
-            if not m.in_thread or (m.in_thread == g.app_config.thread_report):
-                return True
-            return False
-        else:
-            return not m.in_thread
-
     f = factory.select_function(g.selected_service)
 
-    if _thread_check():
+    if _thread_check(m):
         modify.db_insert(detection, m)
         f.score_verification(detection, m)
     else:
@@ -200,7 +192,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
 
     if detection.to_dict() == record_data.to_dict():  # スコア比較
         return  # 変更箇所がなければ何もしない
-    if g.app_config.thread_report == m.in_thread:
+    if _thread_check(m):
         if record_data.has_valid_data():
             if record_data.rule_version == g.cfg.mahjong.rule_version:
                 modify.db_update(detection, m)
@@ -235,3 +227,14 @@ def message_deleted(m: MessageParserProtocol):
         if isinstance(g.app_config, slack_config):
             api_adapter.reactions.remove(icon=g.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
             api_adapter.reactions.remove(icon=g.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
+
+
+def _thread_check(m: MessageParserProtocol) -> bool:
+    """スレッド内判定関数"""
+
+    if isinstance(g.app_config, slack_config):
+        if not m.in_thread or (m.in_thread == g.app_config.thread_report):
+            return True
+        return False
+    else:
+        return not m.in_thread
