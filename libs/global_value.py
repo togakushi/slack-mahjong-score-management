@@ -14,12 +14,12 @@ if TYPE_CHECKING:
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
 app_config: Union["slack_conf", "web_conf", "stdio_conf"]
 
-args: "Namespace" = None  # type: ignore
+args: "Namespace"
 """コマンドライン引数"""
 
 slash_command_name: str
 """スラッシュコマンド名"""
-slash_commands: dict
+slash_commands: dict[str, Callable[..., Any]]
 """スラッシュコマンド用ディスパッチテーブル"""
 special_commands: dict[str, Callable[..., Any]]
 """個別コマンド用ディスパッチテーブル"""
