@@ -12,9 +12,9 @@ from slack_sdk import WebClient
 
 import libs.global_value as g
 from integrations import factory
+from integrations.slack import config
 from integrations.slack.events import comparison
 from libs.functions import configuration
-from integrations.slack import config
 
 
 def main():

@@ -236,5 +236,4 @@ def _thread_check(m: MessageParserProtocol) -> bool:
         if not m.in_thread or (m.in_thread == g.app_config.thread_report):
             return True
         return False
-    else:
-        return not m.in_thread
+    return not m.in_thread
