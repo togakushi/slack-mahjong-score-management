@@ -11,7 +11,7 @@ from integrations.base.interface import IntegrationsConfig
 
 @dataclass
 class AppConfig(IntegrationsConfig):
-    """設定値"""
+    """slack用個別設定値"""
 
     slash_command: str = field(default="/mahjong")
     """スラッシュコマンド名"""
@@ -26,10 +26,14 @@ class AppConfig(IntegrationsConfig):
     search_after: int = field(default=7)
     """データ突合時対象にする日数"""
     search_wait: int = field(default=180)
-    """指定秒数以内にポストされているデータは突合対象から除外する"""
+    """指定秒数以内にポストされているデータを突合対象から除外する"""
 
     thread_report: bool = field(default=True)
-    """スレッド内にある得点報告を扱う"""
+    """スレッド内にある得点報告の扱い
+
+    - **True**: スレッド内の点数報告も取り込む
+    - **False**: スレッド内の点数報告は無視する
+    """
 
     # リアクション文字列
     reaction_ok: str = field(default="ok")
@@ -41,17 +45,30 @@ class AppConfig(IntegrationsConfig):
     ignore_userid: list = field(default_factory=list)
     """投稿を無視するユーザのリスト(カンマ区切りで設定)"""
     channel_limitations: list = field(default_factory=list)
-    """SQLを実行できるチャンネルリスト"""
+    """SQLが実行できるチャンネルリスト(カンマ区切りで設定)
+
+    未定義はすべてのチャンネルでSQLが実行できる
+    """
 
     # 装飾オプション
     badge_degree: bool = field(default=False)
-    """プレイしたゲーム数に対して表示される称号"""
+    """プレイしたゲーム数に対して表示される称号
+
+    - **True**: 表示する
+    - **False**: 表示しない
+    """
     badge_status: bool = field(default=False)
-    """勝率に対して付く調子バッジ"""
+    """勝率に対して付く調子バッジ
+
+    - **True**: 表示する
+    - **False**: 表示しない
+    """
 
     # slack object
     appclient: WebClient = field(default_factory=WebClient)
+    """WebClient(botトークン使用)"""
     webclient: WebClient = field(default_factory=WebClient)
+    """WebClient(userトークン使用)"""
 
     bot_id: str = field(default="")
     """ボットID"""

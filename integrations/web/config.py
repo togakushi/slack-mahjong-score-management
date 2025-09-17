@@ -10,7 +10,7 @@ from integrations.base.interface import IntegrationsConfig
 
 @dataclass
 class AppConfig(IntegrationsConfig):
-    """設定値"""
+    """WebUI用個別設定値"""
 
     host: str = field(default="")
     """起動アドレス"""

@@ -9,4 +9,4 @@ from integrations.base.interface import IntegrationsConfig
 
 @dataclass
 class AppConfig(IntegrationsConfig):
-    """設定値"""
+    """標準出力用個別設定値"""
