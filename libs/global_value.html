@@ -103,12 +103,12 @@
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="n">selected_service</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;slack&quot;</span><span class="p">,</span> <span class="s2">&quot;web&quot;</span><span class="p">,</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="n">app_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;slack_conf&quot;</span><span class="p">,</span> <span class="s2">&quot;web_conf&quot;</span><span class="p">,</span> <span class="s2">&quot;stdio_conf&quot;</span><span class="p">]</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="n">args</span><span class="p">:</span> <span class="s2">&quot;Namespace&quot;</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="n">args</span><span class="p">:</span> <span class="s2">&quot;Namespace&quot;</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">&quot;&quot;&quot;コマンドライン引数&quot;&quot;&quot;</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="n">slash_command_name</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">&quot;&quot;&quot;スラッシュコマンド名&quot;&quot;&quot;</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="n">slash_commands</span><span class="p">:</span> <span class="nb">dict</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="n">slash_commands</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">&quot;&quot;&quot;スラッシュコマンド用ディスパッチテーブル&quot;&quot;&quot;</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="n">special_commands</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">&quot;&quot;&quot;個別コマンド用ディスパッチテーブル&quot;&quot;&quot;</span>
@@ -244,8 +244,7 @@
                 </section>
                 <section id="args">
                     <div class="attr variable">
-            <span class="name">args</span><span class="annotation">: argparse.Namespace</span>        =
-<span class="default_value">None</span>
+            <span class="name">args</span><span class="annotation">: argparse.Namespace</span>
 
         
     </div>
@@ -271,7 +270,7 @@
                 </section>
                 <section id="slash_commands">
                     <div class="attr variable">
-            <span class="name">slash_commands</span><span class="annotation">: dict</span>
+            <span class="name">slash_commands</span><span class="annotation">: dict[str, typing.Callable[..., typing.Any]]</span>
 
         
     </div>
