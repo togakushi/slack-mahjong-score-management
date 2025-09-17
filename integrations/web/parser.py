@@ -17,6 +17,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         MessageParserDataMixin.__init__(self)
         self.data = MsgData()
         self.post = PostData()
+        self.data.status = "message_append"
 
     def parser(self, body: dict):
         _ = body

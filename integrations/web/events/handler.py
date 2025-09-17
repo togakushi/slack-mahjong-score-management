@@ -29,7 +29,6 @@ def main():
     auth = HTTPBasicAuth()
 
     m = factory.select_parser(g.selected_service)
-    m.data.status = "message_append"
     padding = "0.25em 1.5em"
     players = lookup.internal.get_member()
 
