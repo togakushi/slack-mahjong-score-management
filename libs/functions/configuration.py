@@ -98,7 +98,7 @@ def arg_parser() -> argparse.Namespace:
     )
 
     match os.path.basename(sys.argv[0]):
-        case "slack-app.py":
+        case "app.py":
             service_stdio = p.add_argument_group("Only allowed when --service=standard_io")
             service_stdio.add_argument(
                 "--text",

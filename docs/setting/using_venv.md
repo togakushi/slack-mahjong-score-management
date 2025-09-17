@@ -25,7 +25,7 @@ $ source ./venvdir/bin/activate
 ```
 
 ## グラフ描写用の日本語フォント
-IPAexフォント（ipaexg.ttf）を `slack-app.py` と同じディレクトリに配置
+IPAexフォント（ipaexg.ttf）を `app.py` と同じディレクトリに配置
 
 * https://moji.or.jp/ipafont/ipafontdownload/
 
@@ -40,17 +40,17 @@ IPAexフォント（ipaexg.ttf）を `slack-app.py` と同じディレクトリ�
 
 ### 通常起動
 ```
-(venvdir) $ python3 slack-app.py
+(venvdir) $ python3 app.py
 ```
 もしくは、
 ```
-(venvdir) $ chmod u+x slack-app.py
-(venvdir) $ ./slack-app.py
+(venvdir) $ chmod u+x app.py
+(venvdir) $ ./app.py
 ```
 
 ### バックグラウンド起動
 ```
-(venvdir) $ nohup python3 ./slack-app.py > /dev/null 2>&1 &
+(venvdir) $ nohup python3 ./app.py > /dev/null 2>&1 &
 ```
 
 #### 停止

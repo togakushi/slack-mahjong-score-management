@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-# pylint: disable=invalid-name
 """
-slack-app.py - Slackに投稿された麻雀のスコアを記録し、集計して表示するツール
+app.py - Slackに投稿された麻雀のスコアを記録し、集計して表示するツール
 
 help:
 
-    $ ./slack-app.py --help
-    usage: slack-app.py [-h] ...
+    $ ./app.py --help
+    usage: app.py [-h] ...
 """
 
 import sys

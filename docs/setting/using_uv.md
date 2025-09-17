@@ -12,7 +12,7 @@ $ git clone https://github.com/togakushi/slack-mahjong-score-management.git
 ```
 
 ## グラフ描写用の日本語フォント
-IPAexフォント（ipaexg.ttf）を `slack-app.py` と同じディレクトリに配置
+IPAexフォント（ipaexg.ttf）を `app.py` と同じディレクトリに配置
 
 * https://moji.or.jp/ipafont/ipafontdownload/
 
@@ -27,7 +27,7 @@ $ export SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxx
 ## 起動
 ### 通常起動
 ```
-$ uv run slack-app.py
+$ uv run app.py
 ```
 
 自動で以下が行われる
@@ -38,7 +38,7 @@ $ uv run slack-app.py
 
 ### バックグラウンド起動
 ```
-(venvdir) $ nohup uv run slack-app.py > /dev/null 2>&1 &
+(venvdir) $ nohup uv run app.py > /dev/null 2>&1 &
 ```
 
 #### 停止

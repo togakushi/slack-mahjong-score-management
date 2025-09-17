@@ -28,7 +28,7 @@ Type=simple
 WorkingDirectory=/path/to/<app-dir>/
 EnvironmentFile=/path/to/<app-dir>/.env
 #ExecStartPre=git pull
-ExecStart=/path/to/<venv-dir>/bin/python3 /path/to/<app-dir>/slack-app.py --notime
+ExecStart=/path/to/<venv-dir>/bin/python3 /path/to/<app-dir>/app.py --notime
 #Restart=always
 
 [Install]
