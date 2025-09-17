@@ -169,7 +169,7 @@
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="p">)</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="k">match</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="k">case</span> <span class="s2">&quot;slack-app.py&quot;</span><span class="p">:</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="k">case</span> <span class="s2">&quot;app.py&quot;</span><span class="p">:</span>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>            <span class="n">service_stdio</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Only allowed when --service=standard_io&quot;</span><span class="p">)</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>            <span class="n">service_stdio</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>                <span class="s2">&quot;--text&quot;</span><span class="p">,</span>
@@ -461,7 +461,7 @@
 </span><span id="arg_parser-99"><a href="#arg_parser-99"><span class="linenos"> 99</span></a>    <span class="p">)</span>
 </span><span id="arg_parser-100"><a href="#arg_parser-100"><span class="linenos">100</span></a>
 </span><span id="arg_parser-101"><a href="#arg_parser-101"><span class="linenos">101</span></a>    <span class="k">match</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-</span><span id="arg_parser-102"><a href="#arg_parser-102"><span class="linenos">102</span></a>        <span class="k">case</span> <span class="s2">&quot;slack-app.py&quot;</span><span class="p">:</span>
+</span><span id="arg_parser-102"><a href="#arg_parser-102"><span class="linenos">102</span></a>        <span class="k">case</span> <span class="s2">&quot;app.py&quot;</span><span class="p">:</span>
 </span><span id="arg_parser-103"><a href="#arg_parser-103"><span class="linenos">103</span></a>            <span class="n">service_stdio</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Only allowed when --service=standard_io&quot;</span><span class="p">)</span>
 </span><span id="arg_parser-104"><a href="#arg_parser-104"><span class="linenos">104</span></a>            <span class="n">service_stdio</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
 </span><span id="arg_parser-105"><a href="#arg_parser-105"><span class="linenos">105</span></a>                <span class="s2">&quot;--text&quot;</span><span class="p">,</span>
