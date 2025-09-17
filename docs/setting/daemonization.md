@@ -16,7 +16,7 @@ SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
 
 ## systemd設定
 ### unitファイル作成
-`/etc/systemd/system/slack-app.service`を作成
+`/etc/systemd/system/python_app.service`を作成(名前は好みでよい)
 ```
 [Unit]
 Description=slack mahjong score management
@@ -47,22 +47,22 @@ $ sudo systemctl daemon-reload
 
 ### 自動起動有効化
 ```
-$ sudo systemctl enable slack-app.service
+$ sudo systemctl enable python_app.service
 ```
 
 ### 起動/停止
 ```
-$ systemctl start slack-app.service
+$ systemctl start python_app.service
 ```
 
 ```
-$ systemctl stop slack-app.service
+$ systemctl stop python_app.service
 ```
 
 ### ログ確認
 ```
-$ systemctl status slack-app.service -l --no-pager
+$ systemctl status python_app.service -l --no-pager
 ```
 ```
-$ journalctl -l -u slack-app.service --no-pager
+$ journalctl -l -u python_app.service --no-pager
 ```
