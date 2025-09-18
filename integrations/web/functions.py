@@ -115,6 +115,16 @@ def get_cookie(req: Request) -> dict:
         "collect": "",
     }
 
+    target_keys: list = [
+        "collect",
+        "display",
+        "guest",
+        "player",
+        "range",
+        "result",
+        "text",
+    ]
+
     if req.method == "POST":
         cookie_data = req.form.to_dict()
         if req.form.get("action") == "reset":
@@ -125,4 +135,4 @@ def get_cookie(req: Request) -> dict:
         cookie_data = initial_value
         cookie_data.update(req.cookies)
 
-    return cookie_data
+    return {k: v for k, v in cookie_data.items() if k in target_keys}
