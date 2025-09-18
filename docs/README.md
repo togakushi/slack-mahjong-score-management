@@ -16,6 +16,7 @@
 - [共通オプション](functions/argument_keyword.md)
 
 ## その他
+- [コマンドラインヘルプ](app_arguments.md)
 - [メンテナンスツール](dbtools.md)
 - [デーモン化](setting/daemonization.md)
 - [簡易ヘルプ](help.md)

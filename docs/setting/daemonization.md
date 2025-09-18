@@ -16,7 +16,7 @@ SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
 
 ## systemd設定
 ### unitファイル作成
-`/etc/systemd/system/python_app.service`を作成(名前は好みでよい)
+`/etc/systemd/system/python_app.service`を作成(ファイル名は好みでよい)
 ```
 [Unit]
 Description=slack mahjong score management
