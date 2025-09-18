@@ -4,6 +4,8 @@ body {
 }
 
 p, table.data_table {
+    font-size: large;
+    word-break: keep-all;
     margin: 0.1rem;
     padding: 0.5rem;
 }
