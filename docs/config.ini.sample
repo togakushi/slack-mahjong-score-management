@@ -18,38 +18,28 @@ regulations_type2 = ヤキトリ,チョンボ
 
 ### 設定 ###
 [setting]
-# スラッシュコマンド名(先頭のスラッシュも含める)
-slash_command = /mahjong
-guest_mark = ※
-# 素点合計チェックで付けるリアクション
-reaction_ok = ok
-reaction_ng = ng
+# 成績記録のキーワード
+keyword = 終局
 # ゲーム結果にメモを残す場合に使うキーワード
 remarks_word = 麻雀成績メモ
-# ゲーム結果詳細の件数閾値(超過時はフォーマット変換される)
-threshold = 20
-# 変換時のフォーマット(csv/txt/text)
-format = csv
+# 日付変更後、指定時間までを1日単位の集計に含める
+time_adjust = 12
+
+# ゲストに付ける記号
+guest_mark = ※
+
 # グラフスタイル(https://matplotlib.org/stable/gallery/style_sheets/style_sheets_reference.html)
 graph_style = dark_background
+# フォントファイル
+font_file = ipaexg.ttf
 
-### DATABASE関連オプション ###
-[database]
 # 成績管理データベースファイル
 database_file = mahjong.db
 # 自動バックアップ保存先(空欄時はバックアップしない)
 backup_dir =
-# INSERT/UPDATE/DELETEを発行できるチャンネルの制限(チャンネルIDで指定、カンマ区切り、空欄は制限なし)
-channel_limitations =
-# 突合処理呼び出しキーワード
-commandword = 麻雀成績チェック
 
-### 検索オプション ###
-[search]
-keyword = 終局
-channel = #麻雀部
-# 検索開始日(未指定時/日付フォーマットエラー時はNone -> 検索可能範囲のすべて)
-after = 2024-01-01
+# ヘルプ呼び出しキーワード
+help = 麻雀成績ヘルプ
 
 [comment]
 # 固定検索ワード(リーグ戦専用化)
@@ -62,9 +52,7 @@ results = 成績
 graph = グラフ
 ranking = ランキング
 report = レポート
-check = チェック
 download = dbget,ダウンロード
-
 member = userlist,メンバー,リスト
 add = 追加,入部届
 del = 削除,退部届
@@ -142,21 +130,45 @@ member_limit = 8
 
 
 ### 装飾オプション ###
-# display : 表示/非表示オプション
-# badge   : 表示文字列
-
 [degree] # プレイしたゲーム数に対して表示される称号
-display = True
 # 表示文字と段階（カンマ区切りで badge と counter の数は合わせること）
 badge = ,:hatching_chick:,:penguin:,:monkey_face:,:skull:
 counter = 0,30,60,120,240
 
 [status] # 勝率に対して付く調子バッジ
-display = True
 # 休み、絶不調、不調、普通、好調、絶好調の順に6段階
 badge = :status_oyasumi:,:status_zeffutyou:,:status_futyou:,:status_futuu:,:status_koutyou:,:status_zekkoutyou:
 # 刻み幅（50%を普通としてステータスが変動する幅）
 step = 5.0
+
+### slack用オプション ###
+[slack]
+# スラッシュコマンド名(先頭のスラッシュも含める)
+slash_command = /mahjong
+
+# 突合処理呼び出しキーワード
+comparison_word = 麻雀成績チェック
+comparison_alias = チェック
+
+# 突合処理
+search_channel = #麻雀部
+search_after = 7
+search_wait = 180
+
+# 素点合計チェックで付けるリアクション
+reaction_ok = ok
+reaction_ng = ng
+
+# スレッド内の成績報告を取り込むか
+thread_report = False
+# INSERT/UPDATE/DELETEを発行できるチャンネルの制限(チャンネルIDで指定、カンマ区切り、空欄は制限なし)
+channel_limitations =
+# ポストを無視するユーザID(カンマ区切り、空欄は制限なし)
+ignore_userid =
+
+# 装飾表示オプション
+badge_degree = True
+badge_status = True
 
 
 ### カスタムメッセージ ###
