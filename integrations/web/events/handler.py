@@ -25,7 +25,11 @@ def main():
     """メイン処理"""
 
     g.app_config = cast(config.AppConfig, g.app_config)
-    app = Flask(__name__, static_folder="../../../files/html", template_folder="../../../files/html")
+    app = Flask(
+        __name__,
+        static_folder=os.path.join(g.cfg.script_dir, "files/html/static"),
+        template_folder=os.path.join(g.cfg.script_dir, "files/html/template"),
+    )
     auth = HTTPBasicAuth()
 
     m = factory.select_parser(g.selected_service)
@@ -49,7 +53,7 @@ def main():
     @app.route("/")
     def index():
         g.app_config = cast(config.AppConfig, g.app_config)
-        m.post.message = {}
+        m.post.reset()
         return render_template("index.html", **asdict(g.app_config))
 
     @app.route("/summary", methods=["GET", "POST"])
@@ -58,7 +62,7 @@ def main():
         if not g.app_config.view_summary:
             abort(403)
 
-        m.post.message = {}
+        m.post.reset()
         cookie_data = functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.results} {text}"
@@ -104,14 +108,17 @@ def main():
         libs.event_dispatcher.dispatch_by_keyword(m)
 
         message = ""
-        _, headline = next(iter(m.post.headline.items()))
-        for file_list in m.post.file_list:
-            _, file_path = next(iter(file_list.items()))
-            if os.path.exists(file_path):
-                with open(file_path, encoding="utf-8") as f:
-                    message += f.read()
-            else:
-                message += f"<p>{headline.replace("\n", "<br>")}</p>"
+        try:
+            _, headline = next(iter(m.post.headline.items()))
+            for file_list in m.post.file_list:
+                _, file_path = next(iter(file_list.items()))
+                if os.path.exists(file_path):
+                    with open(file_path, encoding="utf-8") as f:
+                        message += f.read()
+                else:
+                    message += f"<p>{headline.replace("\n", "<br>")}</p>"
+        except StopIteration:
+            pass
 
         cookie_data.update(body=message, **asdict(g.app_config))
         page = functions.set_cookie("graph.html", request, cookie_data)
@@ -124,7 +131,7 @@ def main():
         if not g.app_config.view_ranking:
             abort(403)
 
-        m.post.message = {}
+        m.post.reset()
         cookie_data = functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.ranking} {text}"
@@ -156,7 +163,7 @@ def main():
         if not g.app_config.view_summary:
             abort(403)
 
-        m.post.message = {}
+        m.post.reset()
         cookie_data = functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.results} {text}"

@@ -2,11 +2,13 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="static/stylesheet.css">
 </head>
 <body>
   {% include "menu_bar.html" %}
   <hr>
-  <p>
+  <div class="option_menu">
     <form method="POST" action="">
       {% include "form_items/range.html" %}
       {% include "form_items/guest.html" %}
@@ -28,7 +30,7 @@
       {% include "form_items/options.html" %}
       {% include "form_items/submit.html" %}
     </form>
-  </p>
+  </div>
   {% block content %}
     {{ body|safe }}
   {% endblock %}
