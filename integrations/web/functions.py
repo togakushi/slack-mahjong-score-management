@@ -54,6 +54,7 @@ def to_styled_html(df: pd.DataFrame, padding: str) -> str:
             },
             na_rep="-----",
         )
+        .set_table_attributes('class="data_table"')
         .set_table_styles([
             {"selector": "th", "props": [("color", "#ffffff"), ("background-color", "#000000"), ("text-align", "center"), ("padding", padding)]},
             {"selector": "td", "props": [("text-align", "center"), ("padding", padding)]},
