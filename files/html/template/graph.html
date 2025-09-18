@@ -4,11 +4,9 @@
   {% include "ui_parts/meta.html" %}
 </head>
 <body>
-  {% include "ui_parts/menu_bar.html" %}
-  <hr>
+  <div class="header_menu">{% include "ui_parts/menu_bar.html" %}</div>
   <div class="option_menu">
     <form method="POST" action="">
-      <div class="form-item">
       {% include "form_items/range.html" %}
       {% include "form_items/guest.html" %}
       <div class="form-item">
@@ -31,7 +29,6 @@
   {% block content %}
     {{ body|safe }}
   {% endblock %}
-  <br><hr>
-  {% include "ui_parts/menu_bar.html" %}
+  <div class="footer_menu">{% include "ui_parts/menu_bar.html" %}</div>
 </body>
 </html>

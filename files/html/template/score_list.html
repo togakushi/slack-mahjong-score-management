@@ -4,8 +4,7 @@
   {% include "ui_parts/meta.html" %}
 </head>
 <body>
-  {% include "ui_parts/menu_bar.html" %}
-  <hr>
+  <div class="header_menu">{% include "ui_parts/menu_bar.html" %}</div>
   <h1>スコア管理</h1>
   {% block content %}
   <form method="POST" action="" onsubmit="return handleSubmit(event);">
@@ -34,7 +33,7 @@
   {% endblock %}
 
   {% include "form_items/result.html" %}
-  <hr>
-  {% include "ui_parts/menu_bar.html" %}
+
+  <div class="footer_menu">{% include "ui_parts/menu_bar.html" %}</div>
 </body>
 </html>

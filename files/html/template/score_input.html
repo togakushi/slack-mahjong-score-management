@@ -4,8 +4,7 @@
   {% include "ui_parts/meta.html" %}
 </head>
 <body>
-  {% include "ui_parts/menu_bar.html" %}
-  <hr>
+  <div class="header_menu">{% include "ui_parts/menu_bar.html" %}</div>
   {% block content %}
   <h1>{{ playtime }}</h1>
   <form id="player_select" method="POST" action="">
@@ -155,7 +154,7 @@
   </script>
   {% endblock %}
   <p><a href="score">一覧に戻る</a></p>
-  <hr>
-  {% include "ui_parts/menu_bar.html" %}
+
+  <div class="footer_menu">{% include "ui_parts/menu_bar.html" %}</div>
 </body>
 </html>
