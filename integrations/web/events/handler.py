@@ -44,6 +44,7 @@ def main():
 
     @user_assets_bp.before_request
     def restrict_static():
+        g.app_config = cast(config.AppConfig, g.app_config)
         if not os.path.basename(request.path) == g.app_config.custom_css:
             abort(403)
 
