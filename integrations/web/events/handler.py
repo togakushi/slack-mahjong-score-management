@@ -7,7 +7,7 @@ from dataclasses import asdict
 from typing import cast
 
 import pandas as pd
-from flask import Flask, abort, render_template, request
+from flask import Blueprint, Flask, abort, render_template, request
 from flask_httpauth import HTTPBasicAuth  # type: ignore
 
 import libs.event_dispatcher
@@ -15,7 +15,7 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDT
 from integrations import factory
-from integrations.web import functions, config
+from integrations.web import config, functions
 from libs.data import loader, lookup, modify
 from libs.registry import member, team
 from libs.utils import dbutil, formatter
@@ -30,11 +30,22 @@ def main():
         static_folder=os.path.join(g.cfg.script_dir, "files/html/static"),
         template_folder=os.path.join(g.cfg.script_dir, "files/html/template"),
     )
+    user_assets_bp = Blueprint(
+        "user_assets",
+        __name__,
+        static_folder=os.path.dirname(os.path.join(g.cfg.config_dir, g.app_config.custom_css)),
+        static_url_path="/user_static"
+    )
     auth = HTTPBasicAuth()
 
     m = factory.select_parser(g.selected_service)
     padding = "0.25em 1.5em"
     players = lookup.internal.get_member()
+
+    @user_assets_bp.before_request
+    def restrict_static():
+        if not os.path.basename(request.path) == g.app_config.custom_css:
+            abort(403)
 
     @auth.verify_password
     def verify_password(username, password):
@@ -320,6 +331,8 @@ def main():
 
         data.update(table=score_table())
         return render_template("score_list.html", **data)
+
+    app.register_blueprint(user_assets_bp)
 
     if g.app_config.use_ssl:
         if os.path.exists(g.app_config.certificate) and os.path.exists(g.app_config.private_key):

@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="static/stylesheet.css">
+  {% include "ui_parts/meta.html" %}
 </head>
 <body>
-  {% include "menu_bar.html" %}
+  {% include "ui_parts/menu_bar.html" %}
   <hr>
   <div class="option_menu">
     <form method="POST" action="">
@@ -25,6 +23,6 @@
     {{ body|safe }}
   {% endblock %}
   <br><hr>
-  {% include "menu_bar.html" %}
+  {% include "ui_parts/menu_bar.html" %}
 </body>
 </html>

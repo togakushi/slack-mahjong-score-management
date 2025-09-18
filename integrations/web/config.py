@@ -2,6 +2,7 @@
 integrations/web/config.py
 """
 
+import os
 from dataclasses import dataclass, field
 
 import libs.global_value as g
@@ -13,9 +14,9 @@ class AppConfig(IntegrationsConfig):
     """WebUI用個別設定値"""
 
     host: str = field(default="")
-    """起動アドレス"""
+    """起動アドレス(未指定はコマンドライン引数デフォルト値)"""
     port: int = field(default=0)
-    """起動ポート"""
+    """起動ポート(未指定はコマンドライン引数デフォルト値)"""
 
     # 認証
     require_auth: bool = field(default=False)
@@ -44,6 +45,8 @@ class AppConfig(IntegrationsConfig):
     """メンバー/チーム編集メニューの表示"""
     management_score: bool = field(default=False)
     """成績管理メニューの表示"""
+    custom_css: str = field(default="")
+    """ユーザー指定CSSファイル"""
 
     def initialization(self):
         """初期化処理"""
@@ -59,3 +62,6 @@ class AppConfig(IntegrationsConfig):
 
         if not all([self.private_key, self.certificate]):
             self.use_ssl = False
+
+        if not os.path.isfile(os.path.join(g.cfg.config_dir, self.custom_css)):
+            self.custom_css = ""

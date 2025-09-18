@@ -22,6 +22,7 @@ work/
 *.csv
 *.ttf
 *.png
+*.css
 html/
 
 !requirements.txt
