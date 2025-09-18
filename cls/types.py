@@ -3,10 +3,20 @@ cls/types.py
 """
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Callable, TypedDict
+from typing import TYPE_CHECKING, Callable, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime
+    from integrations.slack.config import AppConfig as slack_config
+    from integrations.web.config import AppConfig as web_config
+    from integrations.standard_io.config import AppConfig as std_config
+
+
+AppConfigType: TypeAlias = Union[
+    "slack_config",
+    "web_config",
+    "std_config",
+]
 
 
 class GameInfoDict(TypedDict):

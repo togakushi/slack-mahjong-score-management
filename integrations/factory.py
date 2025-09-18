@@ -3,10 +3,11 @@ integrations/factory.py
 """
 
 from configparser import ConfigParser
-from typing import Literal, Union, overload
+from typing import Literal, overload
 
 import pandas as pd
 
+from cls.types import AppConfigType
 from integrations import protocols, slack, standard_io, web
 
 
@@ -85,7 +86,7 @@ def select_function(selected_service: str):
             raise ValueError(f"Unknown service: {selected_service}")
 
 
-def load_config(selected_service: str, parser: ConfigParser):
+def load_config(selected_service: str, parser: ConfigParser) -> AppConfigType:
     """個別設定読み込み
 
     Args:
@@ -96,14 +97,10 @@ def load_config(selected_service: str, parser: ConfigParser):
         ValueError: 未定義サービス
 
     Returns:
-        _type_: 設定値
+        AppConfigType: 設定値
     """
 
-    conf: Union[
-        slack.config.AppConfig,
-        web.config.AppConfig,
-        standard_io.config.AppConfig,
-    ]
+    conf: AppConfigType
 
     match selected_service:
         case "slack":
