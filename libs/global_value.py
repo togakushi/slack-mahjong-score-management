@@ -19,9 +19,9 @@ args: "Namespace"
 
 slash_command_name: str
 """スラッシュコマンド名"""
-slash_commands: dict[str, Callable[..., Any]]
+slash_commands: dict[str, Callable[..., Any]] = {}
 """スラッシュコマンド用ディスパッチテーブル"""
-special_commands: dict[str, Callable[..., Any]]
+special_commands: dict[str, Callable[..., Any]] = {}
 """個別コマンド用ディスパッチテーブル"""
 
 # モジュール共通インスタンス
