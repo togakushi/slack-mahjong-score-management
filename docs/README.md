@@ -3,6 +3,7 @@
 - [セットアップ方法](setting/setup.md)
 - [要求権限一覧](setting/api_list.md)
 - [設定ファイル内容説明](setting/customize.md)
+  - [個別設定](setting/integrations.md)
 
 ## 機能
 - [スコア記録](functions/score_record.md)
@@ -16,10 +17,18 @@
 - [共通オプション](functions/argument_keyword.md)
 
 ## その他
-- [コマンドラインヘルプ](app_arguments.md)
+- [コマンドラインオプション](app_arguments.md)
 - [メンテナンスツール](dbtools.md)
 - [デーモン化](setting/daemonization.md)
 - [簡易ヘルプ](help.md)
 - [トラブルシューティング](troubleshooting.md)
 - [用語集](glossary.md)
-- [サンプルSQL](datedase/sample_sql.md)
+
+## 開発資料
+- [アーキテクチャ](development/architecture.md)
+- [アルゴリズム](development/algorithm.md)
+- [テスト](development/test.md)
+
+### データベース関連
+- [スキーマ](development/datedase/schema.md)
+- [サンプルSQL](development/datedase/sample_sql.md)
