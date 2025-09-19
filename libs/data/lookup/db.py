@@ -197,7 +197,7 @@ def exsist_record(ts: str) -> GameResult:
 
     result = GameResult()
     with closing(dbutil.get_connection()) as conn:
-        row = conn.execute(g.sql["SELECT_GAME_RESULTS"], {"ts": ts}).fetchone()
+        row = conn.execute(dbutil.query("SELECT_GAME_RESULTS"), {"ts": ts}).fetchone()
 
     if row:
         result.calc(**dict(row))
@@ -244,7 +244,7 @@ def get_results_list(name: str, rule_version: str = "") -> pd.DataFrame:
     """
 
     ret_data = pd.read_sql(
-        sql=g.sql["SELECT_ALL_RESULTS"],
+        sql=dbutil.query("SELECT_ALL_RESULTS"),
         con=dbutil.get_connection(),
         params={
             "rule_version": rule_version if rule_version else g.cfg.mahjong.rule_version,

@@ -39,7 +39,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
     if m.check_updatable:
         with closing(dbutil.get_connection()) as cur:
             try:
-                cur.execute(g.sql["RESULT_INSERT"], {
+                cur.execute(dbutil.query("RESULT_INSERT"), {
                     "playtime": ExtDt(float(detection.ts)).format("sql"),
                     "rpoint_sum": detection.rpoint_sum(),
                     **detection.to_dict(),
@@ -69,7 +69,7 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
     detection.calc()
     if m.check_updatable:
         with closing(dbutil.get_connection()) as cur:
-            cur.execute(g.sql["RESULT_UPDATE"], {
+            cur.execute(dbutil.query("RESULT_UPDATE"), {
                 "playtime": ExtDt(float(detection.ts)).format("sql"),
                 "rpoint_sum": detection.rpoint_sum(),
                 **detection.to_dict(),
@@ -95,14 +95,14 @@ def db_delete(m: MessageParserProtocol) -> list:
     if m.check_updatable:
         with closing(dbutil.get_connection()) as cur:
             # ゲーム結果の削除
-            cur.execute(g.sql["RESULT_DELETE"], (m.data.event_ts,))
+            cur.execute(dbutil.query("RESULT_DELETE"), (m.data.event_ts,))
             if (delete_result := cur.execute("select changes();").fetchone()[0]):
                 delete_list.append(m.data.event_ts)
                 logging.notice("result: ts=%s, count=%s", m.data.event_ts, delete_result)  # type: ignore
 
             # メモの削除
             if (remark_list := cur.execute("select event_ts from remarks where thread_ts=?", (m.data.event_ts,)).fetchall()):
-                cur.execute(g.sql["REMARKS_DELETE_ALL"], (m.data.event_ts,))
+                cur.execute(dbutil.query("REMARKS_DELETE_ALL"), (m.data.event_ts,))
                 if (delete_remark := cur.execute("select changes();").fetchone()[0]):
                     delete_list.extend([x.get("event_ts") for x in list(map(dict, remark_list))])
                     logging.notice("remark: ts=%s, count=%s", m.data.event_ts, delete_remark)  # type: ignore
@@ -163,7 +163,7 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
                 row = cur.execute("select * from result where ts=:thread_ts", para).fetchone()
                 if row:
                     if para["name"] in [v for k, v in dict(row).items() if str(k).endswith("_name")]:
-                        cur.execute(g.sql["REMARKS_INSERT"], para)
+                        cur.execute(dbutil.query("REMARKS_INSERT"), para)
                         logging.notice("insert: %s, user=%s", para, m.data.user_id)  # type: ignore
 
                         if not (ch := m.data.channel_id):
@@ -193,7 +193,7 @@ def remarks_delete(m: MessageParserProtocol) -> list:
     delete_list: list = []
     if m.check_updatable:
         with closing(dbutil.get_connection()) as cur:
-            cur.execute(g.sql["REMARKS_DELETE_ONE"], (m.data.event_ts,))
+            cur.execute(dbutil.query("REMARKS_DELETE_ONE"), (m.data.event_ts,))
             cur.commit()
             if (count := cur.execute("select changes();").fetchone()[0]):
                 delete_list.append(m.data.event_ts)
@@ -213,7 +213,7 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
     api_adapter = factory.select_adapter(g.selected_service)
 
     with closing(dbutil.get_connection()) as cur:
-        cur.execute(g.sql["REMARKS_DELETE_COMPAR"], para)
+        cur.execute(dbutil.query("REMARKS_DELETE_COMPAR"), para)
         cur.commit()
 
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]

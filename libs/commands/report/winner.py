@@ -26,7 +26,7 @@ def plot(m: MessageParserProtocol) -> bool:
     """
 
     # --- データ取得
-    results_df = loader.read_data("report/winner.sql")
+    results_df = loader.read_data("REPORT_WINNER")
     if len(results_df) == 0:
         m.post.headline = {"成績上位": message.random_reply(m, "no_hits", False)}
         return False

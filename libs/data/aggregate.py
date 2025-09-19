@@ -22,7 +22,7 @@ def game_info() -> GameInfoDict:
     """
 
     # データ収集
-    df = loader.read_data("game.info.sql")
+    df = loader.read_data("GAME_INFO")
     ret: GameInfoDict = {
         "game_count": int(df["count"].to_string(index=False)),
         "first_game": ExtDt(),
@@ -65,7 +65,7 @@ def game_summary(filter_items: list | None = None, drop_items: list | None = Non
     """
 
     # データ収集
-    df = loader.read_data("summary/total.sql")
+    df = loader.read_data("SUMMARY_TOTAL")
 
     if isinstance(filter_items, list):
         df = df.filter(items=filter_items)
@@ -85,7 +85,7 @@ def game_results() -> pd.DataFrame:
     """
 
     # データ収集
-    df = loader.read_data("summary/results.sql")
+    df = loader.read_data("SUMMARY_RESULTS")
 
     # Nullが返ってきたときにobject型になるので型変換
     df = df.astype({
@@ -110,7 +110,7 @@ def ranking_record() -> pd.DataFrame:
     """
 
     # データ収集
-    gamedata = loader.read_data("ranking/record_count.sql")
+    gamedata = loader.read_data("RANKING_RECORD_COUNT")
     player_list = gamedata["name"].unique().tolist()
 
     # 連続順位カウント
@@ -173,7 +173,7 @@ def calculation_rating() -> pd.DataFrame:
     """
 
     # データ収集
-    df_results = loader.read_data("ranking/ratings.sql").set_index("playtime")
+    df_results = loader.read_data("RANKING_RATINGS").set_index("playtime")
     df_ratings = pd.DataFrame(index=["initial_rating"] + df_results.index.to_list())  # 記録用
     last_ratings: dict = {}  # 最終値格納用
 
@@ -248,7 +248,7 @@ def matrix_table() -> pd.DataFrame:
     """
 
     # データ収集
-    df = loader.read_data("report/matrix_table.sql").set_index("playtime")
+    df = loader.read_data("REPORT_MATRIX_TABLE").set_index("playtime")
 
     # 結果に含まれるプレイヤーのリスト
     plist = sorted(list(set(

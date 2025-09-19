@@ -35,7 +35,7 @@ def main(m: MessageParserProtocol) -> bool:
 
     # --- データ取得
     game_info: GameInfoDict = aggregate.game_info()
-    df = loader.read_data("report/results_list.sql").reset_index(drop=True)
+    df = loader.read_data("REPORT_RESULTS_LIST").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
         m.post.headline = {"成績一覧": message.random_reply(m, "no_hits", False)}

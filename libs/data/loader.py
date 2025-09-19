@@ -5,7 +5,6 @@ lib/data/loader.py
 import logging
 import re
 from datetime import datetime
-from importlib.resources import files
 
 import pandas as pd
 
@@ -13,28 +12,11 @@ import libs.global_value as g
 from libs.utils import dbutil
 
 
-def load_query(filepath: str) -> str:
-    """外部ファイルからクエリを読み込む
-
-    Args:
-        filepath (str): 読み込むSQLファイルパス
-
-    Returns:
-        str: SQL
-    """
-
-    query_path = str(files("files.queries").joinpath(filepath))
-    with open(query_path, "r", encoding="utf-8") as queryfile:
-        sql = queryfile.read().strip()
-
-    return sql
-
-
-def read_data(filepath: str) -> pd.DataFrame:
+def read_data(keyword: str) -> pd.DataFrame:
     """データベースからデータを取得する
 
     Args:
-        filepath (str): SQLファイルパス
+        keyword (str): SQL選択キーワード
 
     Returns:
         pd.DataFrame: 集計結果
@@ -47,7 +29,7 @@ def read_data(filepath: str) -> pd.DataFrame:
     if "rule_version" not in g.params:
         g.params.update(rule_version=g.cfg.mahjong.rule_version)
 
-    sql = query_modification(load_query(filepath))
+    sql = query_modification(dbutil.query(keyword))
     df = pd.read_sql(
         sql=sql,
         con=dbutil.get_connection(),

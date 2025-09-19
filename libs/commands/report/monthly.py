@@ -25,7 +25,7 @@ def plot(m: MessageParserProtocol) -> bool:
     """
 
     # --- データ収集
-    df = loader.read_data("report/monthly.sql")
+    df = loader.read_data("REPORT_MONTHLY")
     results = df.transpose().to_dict()
 
     if len(results) == 0:

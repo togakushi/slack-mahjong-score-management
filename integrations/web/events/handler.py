@@ -236,13 +236,13 @@ def main():
                     ret = team.clear()
                     data.update(result_msg=next(iter(ret.values())))
 
-        member_df = loader.read_data("member.info.sql")
+        member_df = loader.read_data("MEMBER_INFO")
         if member_df.empty:
             data.update(member_table="<p>登録済みメンバーはいません。</p>")
         else:
             data.update(member_table=functions.to_styled_html(member_df, padding))
 
-        team_df = loader.read_data("team.info.sql")
+        team_df = loader.read_data("TEAM_INFO")
         if team_df.empty:
             data.update(team_table="<p>登録済みチームはありません。</p>")
         else:

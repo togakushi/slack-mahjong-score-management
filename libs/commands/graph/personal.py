@@ -25,7 +25,7 @@ def plot(m: MessageParserProtocol) -> bool:
 
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = loader.read_data("summary/gamedata.sql")
+    df = loader.read_data("SUMMARY_GAMEDATA")
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
 
     if df.empty:
@@ -125,7 +125,7 @@ def statistics_plot(m: MessageParserProtocol) -> bool:
 
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
-    df = loader.read_data("summary/details.sql")
+    df = loader.read_data("SUMMARY_DETAILS")
 
     if df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}

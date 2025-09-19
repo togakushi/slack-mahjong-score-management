@@ -11,19 +11,18 @@ from typing import cast
 
 import libs.global_value as g
 from cls.types import GradeTableDict
-from libs.data import loader
 from libs.utils import dbutil
 
 
 def initialization_resultdb() -> None:
     """DB初期化"""
     resultdb = dbutil.get_connection()
-    resultdb.execute(loader.load_query("table/member.sql"))  # メンバー登録テーブル
-    resultdb.execute(loader.load_query("table/alias.sql"))  # 別名定義テーブル
-    resultdb.execute(loader.load_query("table/team.sql"))  # チーム定義テーブル
-    resultdb.execute(loader.load_query("table/result.sql"))  # データ取り込みテーブル
-    resultdb.execute(loader.load_query("table/remarks.sql"))  # メモ格納テーブル
-    resultdb.execute(loader.load_query("table/words.sql"))  # レギュレーションワード登録テーブル
+    resultdb.execute(dbutil.query("CREATE_TABLE_MEMBER"))  # メンバー登録テーブル
+    resultdb.execute(dbutil.query("CREATE_TABLE_ALIAS"))  # 別名定義テーブル
+    resultdb.execute(dbutil.query("CREATE_TABLE_TEAM"))  # チーム定義テーブル
+    resultdb.execute(dbutil.query("CREATE_TABLE_RESULT"))  # データ取り込みテーブル
+    resultdb.execute(dbutil.query("CREATE_TABLE_REMARKS"))  # メモ格納テーブル
+    resultdb.execute(dbutil.query("CREATE_TABLE_WORDS"))  # レギュレーションワード登録テーブル
 
     # wordsテーブル情報読み込み(regulations)
     if cast(ConfigParser, getattr(g.cfg, "_parser")).has_section("regulations"):
@@ -68,10 +67,10 @@ def initialization_resultdb() -> None:
         drop view if exists regulations;
         """
     )
-    resultdb.executescript(loader.load_query("view/individual_results.sql"))
-    resultdb.executescript(loader.load_query("view/game_results.sql"))
-    resultdb.executescript(loader.load_query("view/game_info.sql"))
-    resultdb.executescript(loader.load_query("view/regulations.sql").format(undefined_word=g.cfg.undefined_word))
+    resultdb.executescript(dbutil.query("CREATE_VIEW_INDIVIDUAL_RESULTS"))
+    resultdb.executescript(dbutil.query("CREATE_VIEW_GAME_RESULTS"))
+    resultdb.executescript(dbutil.query("CREATE_VIEW_GAME_INFO"))
+    resultdb.executescript(dbutil.query("CREATE_VIEW_REGULATIONS").format(undefined_word=g.cfg.undefined_word))
 
     # ゲスト設定チェック
     ret = resultdb.execute("select * from member where id=0;")

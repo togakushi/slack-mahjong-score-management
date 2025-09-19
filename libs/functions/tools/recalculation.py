@@ -20,7 +20,7 @@ def main():
 
         for row in rows:
             result = GameResult(**dict(row), **g.cfg.mahjong.to_dict())  # 現行ルールで上書き
-            cur.execute(g.sql["RESULT_UPDATE"], result.to_dict())
+            cur.execute(dbutil.query("RESULT_UPDATE"), result.to_dict())
             count += 1
 
         cur.commit()

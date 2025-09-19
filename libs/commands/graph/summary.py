@@ -214,7 +214,7 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
 
     target_data = pd.DataFrame()
     if g.params.get("individual"):  # 個人集計
-        df = loader.read_data("summary/gamedata.sql")
+        df = loader.read_data("SUMMARY_GAMEDATA")
         if df.empty:
             return (target_data, df)
 
@@ -230,7 +230,7 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
     else:  # チーム集計
-        df = loader.read_data("summary/gamedata.sql")
+        df = loader.read_data("SUMMARY_GAMEDATA")
         if df.empty:
             return (target_data, df)
 

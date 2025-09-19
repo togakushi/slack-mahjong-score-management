@@ -90,7 +90,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     msg.update(get_record(data))  # ベスト/ワーストレコード
 
     # レギュレーション
-    remarks_df = loader.read_data("remarks.info.sql")
+    remarks_df = loader.read_data("REMARKS_INFO")
     count_df = remarks_df.groupby("matter").agg(count=("matter", "count"), total=("ex_point", "sum"), type=("type", "max"))
     count_df["matter"] = count_df.index
 
@@ -269,7 +269,7 @@ def get_results_simple(mapping_dict: dict) -> pd.DataFrame:
 
     target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
 
-    df = loader.read_data("summary/details.sql").fillna(value="")
+    df = loader.read_data("SUMMARY_DETAILS").fillna(value="")
     if g.params.get("anonymous"):
         mapping_dict.update(formatter.anonymous_mapping(df["name"].unique().tolist(), len(mapping_dict)))
         df["name"] = df["name"].replace(mapping_dict)
@@ -300,7 +300,7 @@ def get_results_details(mapping_dict: dict) -> pd.DataFrame:
 
     target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
 
-    df = loader.read_data("summary/details2.sql").fillna(value="")
+    df = loader.read_data("SUMMARY_DETAILS2").fillna(value="")
     if g.params.get("anonymous"):
         name_list: list = []
         name_list.extend(df["p1_name"].unique().tolist())
@@ -334,7 +334,7 @@ def get_versus_matrix(mapping_dict: dict) -> str:
     """
 
     ret: str = ""
-    df = loader.read_data("summary/versus_matrix.sql")
+    df = loader.read_data("SUMMARY_VERSUS_MATRIX")
 
     if g.params.get("anonymous"):
         mapping_dict.update(formatter.anonymous_mapping(df["vs_name"].unique().tolist(), len(mapping_dict)))

@@ -34,7 +34,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
         m.post.headline = {"レーティング": message.random_reply(m, "no_hits", False)}
         return False
 
-    df_results = loader.read_data("ranking/results.sql").set_index("name")
+    df_results = loader.read_data("RANKING_RESULTS").set_index("name")
     df_ratings = aggregate.calculation_rating()
 
     # 最終的なレーティング

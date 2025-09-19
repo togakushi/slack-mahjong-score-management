@@ -22,8 +22,8 @@ def aggregation(m: MessageParserProtocol) -> bool:
     # --- データ収集
     game_info: GameInfoDict = aggregate.game_info()
     df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
-    df_game = loader.read_data("summary/details.sql")
-    df_remarks = loader.read_data("remarks.info.sql")
+    df_game = loader.read_data("SUMMARY_DETAILS")
+    df_remarks = loader.read_data("REMARKS_INFO")
 
     # インデックスの振りなおし
     df_summary.reset_index(inplace=True, drop=True)

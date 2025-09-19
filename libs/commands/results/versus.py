@@ -20,8 +20,8 @@ def aggregation(m: MessageParserProtocol) -> bool:
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ収集
-    df_vs = loader.read_data("summary/versus_matrix.sql")
-    df_game = loader.read_data("summary/details.sql").fillna(value="")
+    df_vs = loader.read_data("SUMMARY_VERSUS_MATRIX")
+    df_game = loader.read_data("SUMMARY_DETAILS").fillna(value="")
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
 
     my_name = formatter.name_replace(g.params["player_name"], add_mark=True)

@@ -31,7 +31,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
         m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         return False
 
-    result_df = loader.read_data("ranking/aggregate.sql")
+    result_df = loader.read_data("RANKING_AGGREGATE")
     if result_df.empty:
         m.post.headline = {title: message.random_reply(m, "no_target", False)}
         return False

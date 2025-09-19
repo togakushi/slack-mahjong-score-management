@@ -39,7 +39,7 @@ def get_game_results() -> list:
 
     resultdb = dbutil.get_connection()
     rows = resultdb.execute(
-        loader.query_modification(loader.load_query("report/personal_data.sql")),
+        loader.query_modification(dbutil.query("REPORT_PERSONAL_DATA")),
         g.params,
     )
 
@@ -99,7 +99,7 @@ def get_count_results(game_count: int) -> list:
     g.params.update(interval=game_count)
     resultdb = dbutil.get_connection()
     rows = resultdb.execute(
-        loader.query_modification(loader.load_query("report/count_data.sql")),
+        loader.query_modification(dbutil.query("REPORT_COUNT_DATA")),
         g.params,
     )
 
@@ -161,7 +161,7 @@ def get_count_moving(game_count: int) -> list:
     resultdb = dbutil.get_connection()
     g.params.update(interval=game_count)
     rows = resultdb.execute(
-        loader.query_modification(loader.load_query("report/count_moving.sql")),
+        loader.query_modification(dbutil.query("REPORT_COUNT_MOVING")),
         g.params,
     )
 
