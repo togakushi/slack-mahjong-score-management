@@ -98,3 +98,20 @@ def query(keyword: str) -> str:
             return str(queryfile.read()).strip()
     else:
         raise ValueError(f"Unknown keyword: {keyword}")
+
+
+def table_info(conn: sqlite3.Connection, table_name: str) -> dict:
+    """テーブルのスキーマを取得して辞書で返す
+
+    Args:
+        conn (sqlite3.Connection): オブジェクト
+        table_name (str): テーブル名
+
+    Returns:
+        dict: スキーマ
+    """
+
+    rows = conn.execute(f"pragma table_info('{table_name}');")
+    schema = {row["name"]: dict(row) for row in rows.fetchall()}
+
+    return schema

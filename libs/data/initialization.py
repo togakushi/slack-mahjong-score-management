@@ -15,14 +15,37 @@ from libs.utils import dbutil
 
 
 def initialization_resultdb() -> None:
-    """DB初期化"""
+    """DB初期化 & マイグレーション"""
+
     resultdb = dbutil.connection(g.cfg.setting.database_file)
-    resultdb.execute(dbutil.query("CREATE_TABLE_MEMBER"))  # メンバー登録テーブル
-    resultdb.execute(dbutil.query("CREATE_TABLE_ALIAS"))  # 別名定義テーブル
-    resultdb.execute(dbutil.query("CREATE_TABLE_TEAM"))  # チーム定義テーブル
-    resultdb.execute(dbutil.query("CREATE_TABLE_RESULT"))  # データ取り込みテーブル
-    resultdb.execute(dbutil.query("CREATE_TABLE_REMARKS"))  # メモ格納テーブル
-    resultdb.execute(dbutil.query("CREATE_TABLE_WORDS"))  # レギュレーションワード登録テーブル
+    memdb = dbutil.connection(":memory:")
+
+    table_list = {
+        "member": "CREATE_TABLE_MEMBER",  # メンバー登録テーブル
+        "alias": "CREATE_TABLE_ALIAS",  # 別名定義テーブル
+        "team": "CREATE_TABLE_TEAM",  # チーム定義テーブル
+        "result": "CREATE_TABLE_RESULT",  # データ取り込みテーブル
+        "remarks": "CREATE_TABLE_REMARKS",  # メモ格納テーブル
+        "words": "CREATE_TABLE_WORDS",  # レギュレーションワード登録テーブル
+    }
+    for table_name, keyword in table_list.items():
+        # テーブル作成
+        resultdb.execute(dbutil.query(keyword))
+        memdb.execute(dbutil.query(keyword))
+
+        # スキーマ比較
+        actual_cols = dbutil.table_info(resultdb, table_name)
+        expected_cols = dbutil.table_info(memdb, table_name)
+        for col_name, col_data in expected_cols.items():
+            if col_name not in actual_cols:
+                if col_data["notnull"] and col_data["dflt_value"] is None:  # NOT NULL かつ DEFAULT 未指定だと追加できないので回避
+                    logging.warning("migration skip: table=%s, column=%s, reason='NOT NULL' and 'DEFAULT' unspecified", table_name, col_name)
+                    continue
+                col_type = col_data["type"]
+                notnull = "NOT NULL" if col_data["notnull"] else ""
+                dflt = f"DEFAULT {col_data["dflt_value"]}" if col_data["dflt_value"] is not None else ""
+                resultdb.execute(f"alter table {table_name} add column {col_name} {col_type} {notnull} {dflt};")
+                logging.notice("migration: table=%s, column=%s", table_name, col_name)  # type: ignore
 
     # wordsテーブル情報読み込み(regulations)
     if cast(ConfigParser, getattr(g.cfg, "_parser")).has_section("regulations"):
@@ -80,6 +103,7 @@ def initialization_resultdb() -> None:
 
     resultdb.commit()
     resultdb.close()
+    memdb.close()
 
 
 def read_grade_table() -> None:
