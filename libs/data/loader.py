@@ -32,7 +32,7 @@ def read_data(keyword: str) -> pd.DataFrame:
     sql = query_modification(dbutil.query(keyword))
     df = pd.read_sql(
         sql=sql,
-        con=dbutil.get_connection(),
+        con=dbutil.connection(g.cfg.setting.database_file),
         params=g.params,
     )
 

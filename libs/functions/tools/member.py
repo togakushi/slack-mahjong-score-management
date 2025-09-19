@@ -23,7 +23,7 @@ def export_data():
                 case _:
                     sql = f"select * from {table};"
 
-            df = pd.read_sql(sql, dbutil.get_connection())
+            df = pd.read_sql(sql, dbutil.connection(g.cfg.setting.database_file))
             # 整数値を維持
             if "team_id" in df.columns:
                 df["team_id"] = df["team_id"].astype("Int64")
@@ -36,7 +36,7 @@ def import_data():
     """メンバー情報インポート"""
     if g.args.import_data:
         modify.db_backup()
-        conn = dbutil.get_connection()
+        conn = dbutil.connection(g.cfg.setting.database_file)
         for table in ("member", "alias", "team"):
             csvfile = f"{g.args.import_data}_{table}.csv"
             conn.execute(f"delete from {table};")

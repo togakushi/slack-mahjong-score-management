@@ -14,7 +14,7 @@ from libs.utils import dbutil
 def main():
     """ポイント再計算"""
     modify.db_backup()
-    with closing(dbutil.get_connection()) as cur:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         rows = cur.execute("select * from result where rule_version=?;", (g.cfg.mahjong.rule_version,))
         count = 0
 

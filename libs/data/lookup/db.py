@@ -24,7 +24,7 @@ def get_member_id(name: str | None = None) -> dict:
         dict: メンバー名とIDのペア
     """
 
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute("select name, id from member;")
         id_list = dict(rows.fetchall())
 
@@ -59,7 +59,7 @@ def member_info(name: str) -> dict:
             --[team] and team = ?
     """)
 
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute(sql, (g.cfg.mahjong.rule_version, name))
         ret = dict(rows.fetchone())
 
@@ -74,7 +74,7 @@ def get_guest() -> str:
     """
 
     guest_name: str = ""
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute("select name from member where id=0")
         guest_name = str(rows.fetchone()[0])
 
@@ -88,7 +88,7 @@ def get_member_list() -> dict[str, str]:
         dict[str, str]: 別名, 表示名
     """
 
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute("select name, member from alias")
         member_list = dict(rows.fetchall())
 
@@ -103,7 +103,7 @@ def get_team_list() -> list[TeamDataDict]:
     """
 
     ret: list[TeamDataDict] = []
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute(
             """
                 select
@@ -136,7 +136,7 @@ def rule_version_range() -> dict:
     """
 
     rule: dict = {}
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         ret = conn.execute(
             """
             select
@@ -169,7 +169,7 @@ def regulation_list(word_type: int = 0) -> list:
         list: 取得結果
     """
 
-    with closing(dbutil.get_connection()) as cur:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         ret = cur.execute(
             """
             select
@@ -196,7 +196,7 @@ def exsist_record(ts: str) -> GameResult:
     """
 
     result = GameResult()
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         row = conn.execute(dbutil.query("SELECT_GAME_RESULTS"), {"ts": ts}).fetchone()
 
     if row:
@@ -214,7 +214,7 @@ def first_record() -> datetime:
 
     ret = datetime.now()
     try:
-        with closing(dbutil.get_connection()) as conn:
+        with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
             table_count = conn.execute(
                 "select count() from sqlite_master where type='view' and name='game_results';",
             ).fetchall()[0][0]
@@ -245,7 +245,7 @@ def get_results_list(name: str, rule_version: str = "") -> pd.DataFrame:
 
     ret_data = pd.read_sql(
         sql=dbutil.query("SELECT_ALL_RESULTS"),
-        con=dbutil.get_connection(),
+        con=dbutil.connection(g.cfg.setting.database_file),
         params={
             "rule_version": rule_version if rule_version else g.cfg.mahjong.rule_version,
             "player_name": name,

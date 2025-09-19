@@ -23,7 +23,7 @@ def main():
         for name, alias in rename_conf["rename"].items():
             name_table.setdefault(name, [x.strip() for x in alias.split(",")])
 
-        db = dbutil.get_connection()
+        db = dbutil.connection(g.cfg.setting.database_file)
         for name, alias_list in name_table.items():
             count = 0
             chk, msg = validator.check_namepattern(name, "member")
@@ -52,7 +52,7 @@ def main():
         db.commit()
         db.close()
     else:
-        db = dbutil.get_connection()
+        db = dbutil.connection(g.cfg.setting.database_file)
         for alias, name in g.member_list.items():
             check_list: list = [
                 textutil.str_conv(name, "k2h"),

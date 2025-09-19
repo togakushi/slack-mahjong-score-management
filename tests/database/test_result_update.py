@@ -42,7 +42,7 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     assert score_data.has_valid_data()
     modify.db_insert(score_data, m)
 
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         cur = conn.execute("select * from result where ts=?;", (m.data.event_ts,))
         db_data = dict(cur.fetchone())
         assert db_data is not None

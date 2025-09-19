@@ -24,7 +24,7 @@ def for_db_score(first_ts: float | bool = False) -> DBSearchDict:
         return {}
 
     data: DBSearchDict = {}
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         curs = conn.cursor()
         rows = curs.execute("select * from result where ts >= ?", (str(first_ts),))
         for row in rows.fetchall():
@@ -51,7 +51,7 @@ def for_db_remarks(first_ts: float | bool = False) -> list:
 
     # データベースからデータ取得
     data: list = []
-    with closing(dbutil.get_connection()) as cur:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         # 記録済みメモ内容
         rows = cur.execute("select * from remarks where thread_ts>=?", (str(first_ts),))
         for row in rows.fetchall():

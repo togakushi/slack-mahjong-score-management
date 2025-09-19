@@ -39,7 +39,7 @@ def main(season_times: int = 1):
     now = datetime.now().timestamp() - ((len(matchup) + 7) * 86400 * season_times)
     dt = now
 
-    with closing(dbutil.get_connection()) as cur:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         cur.execute("delete from result;")
         for season in range(1, season_times + 1):
             random.shuffle(matchup)
@@ -92,6 +92,6 @@ def main(season_times: int = 1):
 
         cur.commit()
 
-    with closing(dbutil.get_connection()) as cur:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         rows = cur.execute("select name, round(sum(point), 1) as point from team_results group by name order by point desc;")
         logging.notice(dict(rows.fetchall()))  # type: ignore

@@ -5,18 +5,19 @@ libs/utils/dbutil.py
 import sqlite3
 from importlib.resources import files
 
-import libs.global_value as g
 
-
-def get_connection() -> sqlite3.Connection:
+def connection(database_path: str) -> sqlite3.Connection:
     """DB接続共通処理
+
+    Args:
+        database_path (str): path
 
     Returns:
         sqlite3.Connection: オブジェクト
     """
 
     conn = sqlite3.connect(
-        "file:" + g.cfg.setting.database_file,
+        database=f"file:{database_path}",
         detect_types=sqlite3.PARSE_DECLTYPES,
         uri=True
     )

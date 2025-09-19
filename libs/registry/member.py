@@ -22,7 +22,7 @@ def append(argument: list) -> dict:
         dict: 処理結果
     """
 
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
 
     ret: bool = False
     dbupdate_flg: bool = False
@@ -110,7 +110,7 @@ def remove(argument: list) -> dict:
         dict: slackにpostする内容(処理結果)
     """
 
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # メンバー削除

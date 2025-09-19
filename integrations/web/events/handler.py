@@ -274,7 +274,7 @@ def main():
                 limit 0, 10
                 ;
                 """,
-                con=dbutil.get_connection()
+                con=dbutil.connection(g.cfg.setting.database_file)
             ))
 
             if not isinstance(df.columns, pd.MultiIndex):
@@ -295,7 +295,7 @@ def main():
                 match request.form.get("action"):
                     case "modify":
                         sql = "select * from result where ts = :ts;"
-                        df = pd.read_sql(sql=sql, con=dbutil.get_connection(), params=data)
+                        df = pd.read_sql(sql=sql, con=dbutil.connection(g.cfg.setting.database_file), params=data)
                         data.update(next(iter(df.T.to_dict().values())))
                         return render_template("score_input.html", **data)
                     case "delete":

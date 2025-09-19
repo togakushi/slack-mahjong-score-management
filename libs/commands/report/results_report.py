@@ -37,7 +37,7 @@ def get_game_results() -> list:
     g.params.update(starttime=g.params["starttime"].format("sql"))
     g.params.update(endtime=g.params["endtime"].format("sql"))
 
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
     rows = resultdb.execute(
         loader.query_modification(dbutil.query("REPORT_PERSONAL_DATA")),
         g.params,
@@ -97,7 +97,7 @@ def get_count_results(game_count: int) -> list:
     """
 
     g.params.update(interval=game_count)
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
     rows = resultdb.execute(
         loader.query_modification(dbutil.query("REPORT_COUNT_DATA")),
         g.params,
@@ -158,7 +158,7 @@ def get_count_moving(game_count: int) -> list:
         list: 集計結果のリスト
     """
 
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
     g.params.update(interval=game_count)
     rows = resultdb.execute(
         loader.query_modification(dbutil.query("REPORT_COUNT_MOVING")),

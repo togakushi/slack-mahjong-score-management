@@ -14,7 +14,7 @@ from tests.database import param_data
 
 def test_guest_name():
     """ゲスト登録チェック"""
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         cur = conn.execute("select name from member where id = 0;")
         row = dict(cur.fetchone())
 
@@ -33,7 +33,7 @@ def test_member_add(user_name, ret_meg, registered):
     print(ret)
     assert ret_meg in next(iter(ret.values()))
 
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         cur = conn.execute("select name from member;")
         rows = cur.fetchall()
         assert rows is not None
@@ -54,7 +54,7 @@ def test_team_create(team_name, ret_meg, registered):
     ret = team.create(str(team_name).split())
     assert ret_meg in next(iter(ret.values()))
 
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         cur = conn.execute("select name from team;")
         rows = cur.fetchall()
         assert rows is not None

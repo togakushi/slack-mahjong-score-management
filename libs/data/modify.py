@@ -37,7 +37,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
 
     changes: int = 0
     if m.check_updatable:
-        with closing(dbutil.get_connection()) as cur:
+        with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             try:
                 cur.execute(dbutil.query("RESULT_INSERT"), {
                     "playtime": ExtDt(float(detection.ts)).format("sql"),
@@ -68,7 +68,7 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
 
     detection.calc()
     if m.check_updatable:
-        with closing(dbutil.get_connection()) as cur:
+        with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             cur.execute(dbutil.query("RESULT_UPDATE"), {
                 "playtime": ExtDt(float(detection.ts)).format("sql"),
                 "rpoint_sum": detection.rpoint_sum(),
@@ -93,7 +93,7 @@ def db_delete(m: MessageParserProtocol) -> list:
 
     delete_list: list = []
     if m.check_updatable:
-        with closing(dbutil.get_connection()) as cur:
+        with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             # ゲーム結果の削除
             cur.execute(dbutil.query("RESULT_DELETE"), (m.data.event_ts,))
             if (delete_result := cur.execute("select changes();").fetchone()[0]):
@@ -157,7 +157,7 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
     api_adapter = factory.select_adapter(g.selected_service)
 
     if m.check_updatable:
-        with closing(dbutil.get_connection()) as cur:
+        with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             for para in remarks:
                 # 親スレッドの情報
                 row = cur.execute("select * from result where ts=:thread_ts", para).fetchone()
@@ -192,7 +192,7 @@ def remarks_delete(m: MessageParserProtocol) -> list:
 
     delete_list: list = []
     if m.check_updatable:
-        with closing(dbutil.get_connection()) as cur:
+        with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             cur.execute(dbutil.query("REMARKS_DELETE_ONE"), (m.data.event_ts,))
             cur.commit()
             if (count := cur.execute("select changes();").fetchone()[0]):
@@ -212,7 +212,7 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
 
     api_adapter = factory.select_adapter(g.selected_service)
 
-    with closing(dbutil.get_connection()) as cur:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         cur.execute(dbutil.query("REMARKS_DELETE_COMPAR"), para)
         cur.commit()
 

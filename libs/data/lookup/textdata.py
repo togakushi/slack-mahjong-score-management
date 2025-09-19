@@ -37,7 +37,7 @@ def get_team_list() -> dict:
         dict: チームリスト
     """
 
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
     cur = resultdb.execute("""
         select
             team.name,

@@ -16,7 +16,7 @@ def main():
     modify.db_backup()
     before_size = os.path.getsize(g.cfg.setting.database_file)
 
-    with closing(dbutil.get_connection()) as cur:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         before_page = db_info(cur, "page_count")
         before_freelist = db_info(cur, "freelist_count")
         cur.execute("vacuum;")

@@ -16,7 +16,7 @@ from libs.utils import dbutil
 
 def initialization_resultdb() -> None:
     """DB初期化"""
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
     resultdb.execute(dbutil.query("CREATE_TABLE_MEMBER"))  # メンバー登録テーブル
     resultdb.execute(dbutil.query("CREATE_TABLE_ALIAS"))  # 別名定義テーブル
     resultdb.execute(dbutil.query("CREATE_TABLE_TEAM"))  # チーム定義テーブル

@@ -20,7 +20,7 @@ def database_connection():
     configuration.set_loglevel()
     g.cfg = AppConfig("tests/testdata/minimal.ini")
     g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"
-    conn = dbutil.get_connection()
+    conn = dbutil.connection(g.cfg.setting.database_file)
     yield conn
     conn.close()
 
@@ -30,7 +30,7 @@ def initialize_database(database_connection):  # pylint: disable=redefined-outer
     """DB初期化"""
     _ = database_connection  # pylint (W0613: Unused argument)
     initialization.initialization_resultdb()
-    with closing(dbutil.get_connection()) as conn:
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         pd.read_csv("tests/test_data/saki_member.csv").to_sql(
             name="member",
             con=conn,

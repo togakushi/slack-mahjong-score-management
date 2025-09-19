@@ -30,7 +30,7 @@ def create(argument: list) -> dict[str, str]:
         else:  # 登録処理
             ret, msg = validator.check_namepattern(team_name, "team")
             if ret:
-                resultdb = dbutil.get_connection()
+                resultdb = dbutil.connection(g.cfg.setting.database_file)
                 resultdb.execute(
                     "insert into team(name) values (?)",
                     (team_name,)
@@ -63,7 +63,7 @@ def delete(argument: list) -> dict[str, str]:
         else:
             msg = modify.db_backup()
             team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
-            resultdb = dbutil.get_connection()
+            resultdb = dbutil.connection(g.cfg.setting.database_file)
             resultdb.execute(
                 "delete from team where id = ?",
                 (team_id,)
@@ -125,7 +125,7 @@ def append(argument: list) -> dict[str, str]:
         #    registration_flg = False
 
         if registration_flg and team_id:  # 登録処理
-            resultdb = dbutil.get_connection()
+            resultdb = dbutil.connection(g.cfg.setting.database_file)
             resultdb.execute(
                 "update member set team_id = ? where name = ?",
                 (team_id, player_name)
@@ -153,7 +153,7 @@ def remove(argument: list) -> dict[str, str]:
 
     msg = "使い方が間違っています。"
 
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
 
     if len(argument) == 1:
         (msg,) = delete(argument).values()
@@ -177,7 +177,7 @@ def remove(argument: list) -> dict[str, str]:
             registration_flg = False
 
         if registration_flg and team_id:  # 登録処理
-            resultdb = dbutil.get_connection()
+            resultdb = dbutil.connection(g.cfg.setting.database_file)
             resultdb.execute(
                 "update member set team_id = null where name = ?",
                 (player_name,)
@@ -200,7 +200,7 @@ def clear() -> dict[str, str]:
 
     msg = modify.db_backup()
 
-    resultdb = dbutil.get_connection()
+    resultdb = dbutil.connection(g.cfg.setting.database_file)
     resultdb.execute("update member set team_id = null;")
     resultdb.execute("drop table team;")
     resultdb.execute("delete from sqlite_sequence where name = 'team';")
