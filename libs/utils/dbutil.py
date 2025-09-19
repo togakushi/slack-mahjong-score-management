@@ -78,7 +78,7 @@ def query(keyword: str) -> str:
 
         #
         "RESULT_INSERT": "general/result_insert.sql",
-        "RESULT_UPDATE": "general/result_insert.sql",
+        "RESULT_UPDATE": "general/result_update.sql",
         "RESULT_DELETE": "general/result_delete.sql",
 
         #
