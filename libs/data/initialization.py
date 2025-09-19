@@ -57,20 +57,13 @@ def initialization_resultdb() -> None:
                     logging.info("regulations table(type1): %s, %s", word, ex_point)
 
     # VIEW
-    resultdb.executescript(
-        """
-        drop view if exists game_info;
-        drop view if exists game_results;
-        drop view if exists individual_results;
-        drop view if exists team_results; -- 旧情報
-        drop view if exists grandslam; -- 旧情報
-        drop view if exists regulations;
-        """
-    )
-    resultdb.executescript(dbutil.query("CREATE_VIEW_INDIVIDUAL_RESULTS"))
-    resultdb.executescript(dbutil.query("CREATE_VIEW_GAME_RESULTS"))
-    resultdb.executescript(dbutil.query("CREATE_VIEW_GAME_INFO"))
-    resultdb.executescript(dbutil.query("CREATE_VIEW_REGULATIONS").format(undefined_word=g.cfg.undefined_word))
+    rows = resultdb.execute("select name from sqlite_master where type = 'view';")
+    for row in rows.fetchall():
+        resultdb.execute(f"drop view if exists '{row["name"]}';")
+    resultdb.execute(dbutil.query("CREATE_VIEW_INDIVIDUAL_RESULTS"))
+    resultdb.execute(dbutil.query("CREATE_VIEW_GAME_RESULTS"))
+    resultdb.execute(dbutil.query("CREATE_VIEW_GAME_INFO"))
+    resultdb.execute(dbutil.query("CREATE_VIEW_REGULATIONS").format(undefined_word=g.cfg.undefined_word))
 
     # ゲスト設定チェック
     ret = resultdb.execute("select * from member where id=0;")
