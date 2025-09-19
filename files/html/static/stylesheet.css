@@ -31,3 +31,7 @@ div.option_menu {
     margin-bottom: 2.0rem;
     padding-left: 0.5rem;
 }
+
+div.form_item {
+    padding-bottom: 0.5rem;
+}

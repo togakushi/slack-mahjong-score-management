@@ -9,13 +9,13 @@
     <form method="POST" action="">
       {% include "form_items/range.html" %}
       {% include "form_items/guest.html" %}
-      <div class="form-item">
+      <div class="form_item">
         <label>ゲーム結果：</label>
         <label><input type="radio" name="result" value="" {{ "checked" if result == "" else "" }}>非表示</label>
         <label><input type="radio" name="result" value="戦績" {{ "checked" if result == "戦績" else "" }}>簡易表示</label>
         <label><input type="radio" name="result" value="戦績 詳細" {{ "checked" if result == "戦績 詳細" else "" }}>詳細表示</label>
       </div>
-      <div class="form-item">
+      <div class="form_item">
         <label>プレイヤー：</label>
         <select name="player" required="required">
           <option value="">-- 選択して下さい --</option>

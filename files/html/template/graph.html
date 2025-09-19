@@ -9,12 +9,12 @@
     <form method="POST" action="">
       {% include "form_items/range.html" %}
       {% include "form_items/guest.html" %}
-      <div class="form-item">
+      <div class="form_item">
         <label>表示：</label>
         <label><input type="radio" name="display" value="" {{ "checked" if display == "" else "" }}>ポイント推移</label>
         <label><input type="radio" name="display" value="順位" {{ "checked" if display == "順位" else "" }}>順位推移</label>
       </div>
-      <div class="form-item">
+      <div class="form_item">
         <label>集約：</label>
         <label><input type="radio" name="collect" value="" {{ "checked" if collect == "" else "" }}>なし</label>
         <label><input type="radio" name="collect" value="日次" {{ "checked" if collect == "日次" else "" }}>日次</label>

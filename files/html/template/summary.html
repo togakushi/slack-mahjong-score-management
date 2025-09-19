@@ -9,7 +9,7 @@
     <form method="POST" action="">
       {% include "form_items/range.html" %}
       {% include "form_items/guest.html" %}
-      <div class="form-item">
+      <div class="form_item">
         <label>表示：</label>
         <label><input type="radio" name="display" value="" {{ "checked" if display == "" else "" }}>通常</label>
         <label><input type="radio" name="display" value="差分" {{ "checked" if display == "差分" else "" }}>差分</label>

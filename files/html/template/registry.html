@@ -9,7 +9,7 @@
   <h1>メンバー一覧</h1>
   {{ member_table|safe }}
   <form method="POST" action="">
-    <div class="form-item">
+    <div class="form_item">
       <input type="text" name="member" placeholder="メンバー名">
       <button type="submit" name="action" value="add_member">登録</button>
       <button type="submit" name="action" value="del_member">削除</button>
@@ -19,14 +19,14 @@
   <h1>チーム一覧</h1>
   {{ team_table|safe }}
   <form method="POST" action="">
-    <div class="form-item">
+    <div class="form_item">
       <input type="text" name="team" placeholder="チーム名">
       <button type="submit" name="action" value="add_team">登録</button>
       <button type="submit" name="action" value="del_team">削除</button>
     </div>
   </form>
   <form method="POST" action="" onsubmit="return confirm('すべてのチーム情報を削除します。');">
-    <div class="form-item">
+    <div class="form_item">
       <button type="submit" name="action" value="delete_all_team">全チーム削除</button>
     </div>
   </form>
