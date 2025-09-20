@@ -26,10 +26,11 @@ def test_help(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
 
+    param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+
     with (
-        patch("libs.functions.compose.msg_help.event_message") as mock_help_event_message,
+        patch("libs.event_dispatcher.dispatch_by_keyword") as mock_help_event_message,
     ):
-        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = factory.select_parser(g.selected_service)
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)

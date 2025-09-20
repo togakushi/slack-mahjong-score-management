@@ -42,6 +42,15 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
             self.data.status = "message_append"
             self.data.channel_id = body.get("channel_id", "")
 
+    def set_command_flag(self, flg: bool):
+        """スラッシュコマンドフラグを上書き
+
+        Args:
+            flg (bool): フラグ
+        """
+
+        self._command_flg = flg
+
     @property
     def is_command(self):
         """コマンドで実行されているか"""
