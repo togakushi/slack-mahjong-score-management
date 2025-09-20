@@ -3,15 +3,29 @@
 import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
-from dataclasses import dataclass, fields
-from typing import Any, Union
+from dataclasses import dataclass, field, fields
+from typing import Any, Callable, Union
 
 from integrations.protocols import MessageParserProtocol, MsgData, PostData
 
 
 @dataclass
 class IntegrationsConfig(ABC):
-    """設定値"""
+    """個別設定値"""
+
+    slash_command: str = field(default="")
+    """スラッシュコマンド名"""
+
+    # 表示オプション
+    badge_degree: bool = field(default=False)
+    badge_status: bool = field(default=False)
+    badge_grade: bool = field(default=False)
+
+    # コマンドディスパッチ
+    slash_commands: dict[str, Callable[..., Any]] = field(default_factory=dict)
+    """スラッシュコマンド用ディスパッチテーブル"""
+    special_commands: dict[str, Callable[..., Any]] = field(default_factory=dict)
+    """個別コマンド用ディスパッチテーブル"""
 
     def read_file(self, parser: ConfigParser, selected_service: str):
         """設定値取り込み
