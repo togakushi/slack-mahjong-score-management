@@ -17,6 +17,7 @@
 | search_wait         | 突合処理待ち時間(秒)                         | 数値                 | 180              | イベント発生時刻から待ち時間以上経過したデータのみが突合の対象 |
 | badge_degree        | ゲーム数に応じて表示される称号               | 真偽値               | False            | [degreeセクション](customize.md#degreeセクション)              |
 | badge_status        | 勝利によって表示される調子バッヂ             | 真偽値               | False            | [statusセクション](customize.md#statusセクション)              |
+| badge_grade         | 段位表示                                     | 真偽値               | False            | [gradeセクション](customize.md#gradeセクション)                |
 
 > [!TIP]
 > `ignore_userid`は、botが出力する内容が検索にヒットしてしまう状況でbotのIDを指定するような利用方法を想定している。

@@ -17,7 +17,6 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
 from integrations.slack import config
-from integrations.slack.events import comparison, slash
 from integrations.slack.events.handler_registry import register, register_all
 from integrations.slack.events.home_tab import home
 
@@ -26,18 +25,6 @@ def main():
     """メイン処理"""
 
     g.app_config = cast(config.AppConfig, g.app_config)
-
-    # スラッシュコマンド登録
-    g.slash_command_name = g.app_config.slash_command
-    g.slash_commands = {"help": slash.command_help}
-
-    # 個別コマンド登録
-    g.special_commands = {
-        g.app_config.comparison_word: comparison.main,
-        f"Reminder: {g.app_config.comparison_word}": comparison.main,
-        f"{g.app_config.slash_command} check": comparison.main,
-    }
-    g.special_commands.update({f"{g.app_config.slash_command} {x}": comparison.main for x in g.app_config.comparison_alias})
 
     try:
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
@@ -72,7 +59,7 @@ def register_event_handlers(app):
         m.parser(body)
         libs.event_dispatcher.dispatch_by_keyword(m)
 
-    @app.command(g.slash_command_name)
+    @app.command(g.app_config.slash_command)
     def slash_command(ack, body):
         """スラッシュコマンド
 

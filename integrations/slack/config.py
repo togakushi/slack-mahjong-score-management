@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from slack_sdk.web.client import WebClient
 
 from integrations.base.interface import IntegrationsConfig
+from integrations.slack.events import comparison, slash
 
 
 @dataclass
@@ -53,13 +54,16 @@ class AppConfig(IntegrationsConfig):
     # 装飾オプション
     badge_degree: bool = field(default=False)
     """プレイしたゲーム数に対して表示される称号
-
     - **True**: 表示する
     - **False**: 表示しない
     """
     badge_status: bool = field(default=False)
     """勝率に対して付く調子バッジ
-
+    - **True**: 表示する
+    - **False**: 表示しない
+    """
+    badge_grade: bool = field(default=False)
+    """段位表示
     - **True**: 表示する
     - **False**: 表示しない
     """
@@ -79,5 +83,16 @@ class AppConfig(IntegrationsConfig):
     def initialization(self):
         """初期化処理"""
 
-        if "check" not in self.comparison_alias:
-            self.comparison_alias.append("check")
+        # スラッシュコマンド登録
+        self.slash_commands.update({"help": slash.command_help})
+
+        self.comparison_alias.append("check")
+        self.slash_commands.update({"check": comparison.main})
+        for alias in self.comparison_alias:
+            self.slash_commands.update({alias: comparison.main})
+
+        # 個別コマンド登録
+        self.special_commands.update({
+            self.comparison_word: comparison.main,
+            f"Reminder: {self.comparison_word}": comparison.main,
+        })
