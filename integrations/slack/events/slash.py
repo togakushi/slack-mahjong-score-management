@@ -2,9 +2,6 @@
 integrations/slack/events/slash.py
 """
 
-from integrations.protocols import MessageParserProtocol
-from libs.data import lookup
-
 
 def command_help(command: str) -> dict[str, str]:
     """スラッシュコマンド用ヘルプ
@@ -39,9 +36,3 @@ def command_help(command: str) -> dict[str, str]:
     msg += "```"
 
     return {"ヘルプ": msg}
-
-
-def member_list(m: MessageParserProtocol):
-    """メンバーリスト取得"""
-    m.post.message = lookup.textdata.get_members_list()
-    m.post.codeblock = True
