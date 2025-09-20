@@ -10,7 +10,6 @@ import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
-from integrations.slack.config import AppConfig as slack_config
 from libs.data import lookup, modify
 from libs.functions import compose, message
 from libs.registry import member, team
@@ -28,7 +27,7 @@ def dispatch_by_keyword(m: MessageParserProtocol):
     )
 
     # 許可されていないユーザのポストは処理しない
-    if isinstance(g.app_config, slack_config):
+    if isinstance(g.app_config, factory.slack.config.AppConfig):
         if m.data.user_id in g.app_config.ignore_userid:
             logging.trace("event skip[ignore user]: %s", m.data.user_id)  # type: ignore
             return
@@ -107,21 +106,15 @@ def dispatch_by_keyword(m: MessageParserProtocol):
 
         # その他
         case _ as x:
-            # 個別コマンド
-            for sp in g.special_commands:
-                if m.is_command:
-                    if sp.replace(g.slash_command_name, "").strip() == x:
-                        g.special_commands[sp](m)
-                        break
+            if m.is_command:  # スラッシュコマンド
+                if x in g.app_config.slash_commands:
+                    g.app_config.slash_commands[x](m)
                 else:
-                    if sp == x:
-                        g.special_commands[sp](m)
-                        break
-            else:
-                if m.is_command:
-                    m.post.message = g.slash_commands["help"](g.slash_command_name)
-                else:
-                    other_words(x, m)
+                    m.post.message = g.app_config.slash_commands["help"](g.app_config.slash_command)
+            else:  # 個別コマンド
+                if x in g.app_config.special_commands:
+                    g.app_config.special_commands[x](m)
+            other_words(x, m)  # コマンドに一致しない場合
 
     api_adapter.post(m)
 
@@ -224,7 +217,7 @@ def message_deleted(m: MessageParserProtocol):
         delete_list = modify.db_delete(m)
 
     for ts in delete_list:
-        if isinstance(g.app_config, slack_config):
+        if isinstance(g.app_config, factory.slack.config.AppConfig):
             api_adapter.reactions.remove(icon=g.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
             api_adapter.reactions.remove(icon=g.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
 
@@ -232,7 +225,7 @@ def message_deleted(m: MessageParserProtocol):
 def _thread_check(m: MessageParserProtocol) -> bool:
     """スレッド内判定関数"""
 
-    if isinstance(g.app_config, slack_config):
+    if isinstance(g.app_config, factory.slack.config.AppConfig):
         if not m.in_thread or (m.in_thread == g.app_config.thread_report):
             return True
         return False

@@ -16,7 +16,6 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
-from integrations.slack.config import AppConfig as slack_config
 from libs.data import lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
@@ -170,7 +169,7 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
                             ch = api_adapter.lookup.get_channel_id()
 
                         # リアクション処理
-                        if isinstance(g.app_config, slack_config):
+                        if isinstance(g.app_config, factory.slack.config.AppConfig):
                             reactions = api_adapter.reactions.status(ts=para["event_ts"], ch=ch, ok=g.app_config.reaction_ok, ng=g.app_config.reaction_ng)
                             if not reactions.get("ok"):
                                 api_adapter.reactions.append(g.app_config.reaction_ok, ts=para["event_ts"], ch=ch)
@@ -222,7 +221,7 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
         ch = api_adapter.lookup.get_channel_id()
 
     # リアクション処理
-    if isinstance(g.app_config, slack_config):
+    if isinstance(g.app_config, factory.slack.config.AppConfig):
         reactions = api_adapter.reactions.status(ch=ch, ts=para["event_ts"])
         if reactions.get("ok") and left == 0:
             api_adapter.reactions.remove(g.app_config.reaction_ok, ch=ch, ts=para["event_ts"])

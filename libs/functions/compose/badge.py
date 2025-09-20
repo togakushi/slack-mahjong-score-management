@@ -7,7 +7,6 @@ from configparser import ConfigParser
 from typing import cast
 
 import libs.global_value as g
-from integrations.slack.config import AppConfig as slack_config
 from libs.data import aggregate, lookup
 
 
@@ -23,17 +22,16 @@ def degree(game_count: int = 0) -> str:
 
     badge: str = ""
 
-    if isinstance(g.app_config, slack_config):
-        if g.app_config.badge_degree:
-            if (degree_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("degree", "badge", fallback="")):
-                degree_badge = degree_list.split(",")
-            else:
-                return ""
-            if (counter_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("degree", "counter", fallback="")):
-                degree_counter = list(map(int, counter_list.split(",")))
-                for idx, val in enumerate(degree_counter):
-                    if game_count >= val:
-                        badge = degree_badge[idx]
+    if g.app_config.badge_degree:
+        if (degree_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("degree", "badge", fallback="")):
+            degree_badge = degree_list.split(",")
+        else:
+            return ""
+        if (counter_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("degree", "counter", fallback="")):
+            degree_counter = list(map(int, counter_list.split(",")))
+            for idx, val in enumerate(degree_counter):
+                if game_count >= val:
+                    badge = degree_badge[idx]
 
     return badge
 
@@ -51,28 +49,27 @@ def status(game_count: int = 0, win: int = 0) -> str:
 
     badge: str = ""
 
-    if isinstance(g.app_config, slack_config):
-        if g.app_config.badge_status:
-            if (status_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("status", "badge", fallback="")):
-                status_badge = status_list.split(",")
-            else:
+    if g.app_config.badge_status:
+        if (status_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("status", "badge", fallback="")):
+            status_badge = status_list.split(",")
+        else:
+            return badge
+
+        if (status_step := cast(ConfigParser, getattr(g.cfg, "_parser")).getfloat("status", "step", fallback="")):
+            if not isinstance(status_step, float):
                 return badge
+            if game_count == 0:
+                index = 0
+            else:
+                winper = win / game_count * 100
+                index = 3
+                for i in (1, 2, 3):
+                    if winper <= 50 - status_step * i:
+                        index = 4 - i
+                    if winper >= 50 + status_step * i:
+                        index = 2 + i
 
-            if (status_step := cast(ConfigParser, getattr(g.cfg, "_parser")).getfloat("status", "step", fallback="")):
-                if not isinstance(status_step, float):
-                    return badge
-                if game_count == 0:
-                    index = 0
-                else:
-                    winper = win / game_count * 100
-                    index = 3
-                    for i in (1, 2, 3):
-                        if winper <= 50 - status_step * i:
-                            index = 4 - i
-                        if winper >= 50 + status_step * i:
-                            index = 2 + i
-
-                badge = status_badge[index]
+            badge = status_badge[index]
 
     return badge
 
