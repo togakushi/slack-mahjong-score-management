@@ -139,7 +139,7 @@ def other_words(word: str, m: MessageParserProtocol):
             g.params.update(individual=True)  # チーム戦オフ
             for k, p in detection.to_dict().items():
                 if str(k).endswith("_name"):
-                    detection.set(**{k: formatter.name_replace(str(p), False)})
+                    detection.set(**{k: formatter.name_replace(str(p))})
                     continue
 
             match m.data.status:
