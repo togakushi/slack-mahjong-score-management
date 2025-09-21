@@ -7,15 +7,19 @@ from typing import TYPE_CHECKING, Callable, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime
-    from integrations.slack.config import AppConfig as slack_config
-    from integrations.web.config import AppConfig as web_config
-    from integrations.standard_io.config import AppConfig as std_config
+    from integrations import slack, standard_io, web
 
 
 AppConfigType: TypeAlias = Union[
-    "slack_config",
-    "web_config",
-    "std_config",
+    "slack.config.AppConfig",
+    "web.config.AppConfig",
+    "standard_io.config.AppConfig",
+]
+
+AdapterType: TypeAlias = Union[
+    "slack.adapter.AdapterInterface",
+    "web.adapter.AdapterInterface",
+    "standard_io.adapter.AdapterInterface",
 ]
 
 
