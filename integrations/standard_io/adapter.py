@@ -6,37 +6,33 @@ import textwrap
 
 import pandas as pd
 
-from integrations.base.interface import (APIInterface, LookupInterface,
-                                         ReactionsInterface)
-from integrations.protocols import MessageParserProtocol
+from integrations.base import interface
+from integrations.standard_io import functions
 from libs.utils import formatter
 
 
-class _ReactionsDummy(ReactionsInterface):
+class DummyReactionsInterface(interface.ReactionsInterface):
+    """ダミークラス"""
+
     def status(self, ch=str, ts=str, ok=str, ng=str) -> dict[str, list]:
+        """abstractmethod dummy"""
+
         _ = (ch, ts, ok, ng)
         return {"ok": [], "ng": []}
 
-    def append(self, icon, ch, ts) -> None:
+    def append(self, icon: str, ch: str, ts: str) -> None:
+        """abstractmethod dummy"""
+
         _ = (icon, ch, ts)
 
-    def remove(self, icon, ch, ts) -> None:
+    def remove(self, icon: str, ch: str, ts: str) -> None:
+        """abstractmethod dummy"""
+
         _ = (icon, ch, ts)
 
 
-class _LookupDummy(LookupInterface):
-    def get_channel_id(self):
-        pass
-
-    def get_dm_channel_id(self, user_id: str):
-        _ = user_id
-
-
-class StandardIO(APIInterface):
+class StandardIO(interface.APIInterface):
     """メッセージ標準出力クラス"""
-    def __init__(self):
-        self.lookup = _LookupDummy()
-        self.reactions = _ReactionsDummy()
 
     def _text_formatter(self, text: str) -> str:
         """テキスト整形
@@ -56,7 +52,7 @@ class StandardIO(APIInterface):
                 ret += f"{line}\n"
         return ret.strip()
 
-    def post(self, m: MessageParserProtocol):
+    def post(self, m: interface.MessageParserProtocol):
         """メッセージ出力
 
         Args:
@@ -101,15 +97,14 @@ class StandardIO(APIInterface):
                     print(disp)
                 print("")
 
-    def get_conversations(self, m: MessageParserProtocol) -> dict:
-        """ダミー
 
-        Args:
-            m (MessageParserProtocol): メッセージデータ
+class AdapterInterface:
+    """standard input/output interface"""
 
-        Returns:
-            dict: ダミー
-        """
+    interface_type = "standard_io"
+    plotting_backend = "matplotlib"
 
-        _ = m
-        return {}
+    def __init__(self):
+        self.api = StandardIO()
+        self.functions = functions.StandardIOFunctions()
+        self.reactions = DummyReactionsInterface()

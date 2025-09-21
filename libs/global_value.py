@@ -6,7 +6,8 @@ if TYPE_CHECKING:
     from argparse import Namespace
 
     from cls.config import AppConfig
-    from cls.types import AppConfigType, TeamDataDict
+    from cls.types import TeamDataDict
+    from integrations.factory import AppConfigType
 
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
 app_config: "AppConfigType"

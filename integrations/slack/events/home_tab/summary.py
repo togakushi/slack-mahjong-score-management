@@ -131,20 +131,20 @@ def register_summary_handlers(app):
             case "point":
                 m.data.command_type = "graph"
                 graph.summary.point_plot(m)
-                api_adapter.post(m)
+                api_adapter.api.post(m)
             case "rank":
                 m.data.command_type = "graph"
                 graph.summary.rank_plot(m)
-                api_adapter.post(m)
+                api_adapter.api.post(m)
             case "rating":
                 m.data.command_type = "rating"
                 g.params["command"] = "ranking"
                 ranking.rating.aggregation(m)
-                api_adapter.post(m)
+                api_adapter.api.post(m)
             case _:
                 m.data.command_type = "results"
                 results.summary.aggregation(m)
-                api_adapter.post(m)
+                api_adapter.api.post(m)
 
         ui_parts.update_view(m, app_msg)
 

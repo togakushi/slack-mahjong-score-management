@@ -19,7 +19,7 @@ from libs.utils import formatter
 def dispatch_by_keyword(m: MessageParserProtocol):
     """メイン処理"""
 
-    api_adapter = factory.select_adapter(g.selected_service)
+    adapter = factory.select_adapter(g.selected_service)
 
     logging.info(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, keyword=%s, user_id=%s,",
@@ -116,7 +116,7 @@ def dispatch_by_keyword(m: MessageParserProtocol):
                     g.app_config.special_commands[x](m)
             other_words(x, m)  # コマンドに一致しない場合
 
-    api_adapter.post(m)
+    adapter.api.post(m)
 
 
 def other_words(word: str, m: MessageParserProtocol):
@@ -161,11 +161,11 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    f = factory.select_function(g.selected_service)
+    adapter = factory.select_adapter(g.selected_service)
 
     if _thread_check(m):
         modify.db_insert(detection, m)
-        f.score_verification(detection, m)
+        adapter.functions.score_verification(detection, m)
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
@@ -180,7 +180,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    f = factory.select_function(g.selected_service)
+    adapter = factory.select_adapter(g.selected_service)
     record_data = lookup.db.exsist_record(m.data.event_ts)
 
     if detection.to_dict() == record_data.to_dict():  # スコア比較
@@ -189,12 +189,12 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
         if record_data.has_valid_data():
             if record_data.rule_version == g.cfg.mahjong.rule_version:
                 modify.db_update(detection, m)
-                f.score_verification(detection, m)
+                adapter.functions.score_verification(detection, m)
             else:
                 logging.notice("skip (rule_version not match). event_ts=%s", m.data.event_ts)  # type: ignore
         else:
             modify.db_insert(detection, m)
-            f.score_verification(detection, m)
+            adapter.functions.score_verification(detection, m)
             modify.reprocessing_remarks(m)
     else:
         m.post.thread = True

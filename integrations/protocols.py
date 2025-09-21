@@ -4,12 +4,9 @@ integrations/protocols.py
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field, fields
-from typing import TYPE_CHECKING, Any, Literal, Protocol, runtime_checkable
+from typing import Any, Literal, Protocol, runtime_checkable
 
 import pandas as pd
-
-if TYPE_CHECKING:
-    from integrations.base import interface
 
 
 @dataclass
@@ -140,11 +137,3 @@ class MessageParserProtocol(Protocol):
 
     def parser(self, body: Any):
         """メッセージ解析メソッド"""
-
-
-@runtime_checkable
-class AdapterProtocol(Protocol):
-    """サービス別アダプタ"""
-
-    lookup: "interface.LookupInterface"
-    reactions: "interface.ReactionsInterface"

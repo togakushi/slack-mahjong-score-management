@@ -4,9 +4,12 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, field, fields
-from typing import Any, Callable, Union
+from typing import TYPE_CHECKING, Any, Callable, Union
 
 from integrations.protocols import MessageParserProtocol, MsgData, PostData
+
+if TYPE_CHECKING:
+    from cls.score import GameResult
 
 
 @dataclass
@@ -57,8 +60,55 @@ class IntegrationsConfig(ABC):
                     setattr(self, f.name, value)
 
 
+class FunctionsInterface(ABC):
+    """個別関数定義クラス"""
+
+    @abstractmethod
+    def score_verification(self, detection: "GameResult", m: MessageParserProtocol) -> None:
+        """素点合計をチェックしリアクションを付ける
+
+        Args:
+            detection (GameResult): ゲーム結果
+            m (MessageParserProtocol): メッセージデータ
+        """
+
+    @abstractmethod
+    def get_channel_id(self) -> str:
+        """チャンネルIDを取得する
+
+        Returns:
+            str: チャンネルID
+        """
+        return ""
+
+    @abstractmethod
+    def get_dm_channel_id(self, user_id: str) -> str:
+        """DMのチャンネルIDを取得する
+
+        Args:
+            user_id (str): DMの相手
+
+        Returns:
+            str: チャンネルID
+        """
+        return ""
+
+    @abstractmethod
+    def get_conversations(self, m: "MessageParserProtocol") -> dict:
+        """スレッド情報の取得
+
+        Args:
+            m (MessageParserProtocol): メッセージデータ
+
+        Returns:
+            dict: API response
+        """
+        return {}
+
+
 class ReactionsInterface(ABC):
     """リアクション操作抽象インターフェース"""
+
     @abstractmethod
     def status(self, ch=str, ts=str, ok=str, ng=str) -> dict[str, list]:
         """botが付けたリアクションの種類を返す
@@ -97,34 +147,8 @@ class ReactionsInterface(ABC):
         """
 
 
-class LookupInterface(ABC):
-    """情報取得API操作抽象化ンターフェース"""
-    @abstractmethod
-    def get_channel_id(self) -> str:
-        """チャンネルIDを取得する
-
-        Returns:
-            str: チャンネルID
-        """
-        return ""
-
-    @abstractmethod
-    def get_dm_channel_id(self, user_id: str) -> str:
-        """DMのチャンネルIDを取得する
-
-        Args:
-            user_id (str): DMの相手
-
-        Returns:
-            str: チャンネルID
-        """
-        return ""
-
-
 class APIInterface(ABC):
     """API抽象化インターフェース"""
-    lookup: "LookupInterface"
-    reactions: "ReactionsInterface"
 
     @abstractmethod
     def post(self, m: "MessageParserProtocol"):
@@ -133,18 +157,6 @@ class APIInterface(ABC):
         Args:
             m (MessageParserProtocol): メッセージデータ
         """
-
-    @abstractmethod
-    def get_conversations(self, m: "MessageParserProtocol") -> dict:
-        """スレッド情報の取得
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: API response
-        """
-        return {}
 
 
 class MessageParserDataMixin:

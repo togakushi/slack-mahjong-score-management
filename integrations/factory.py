@@ -3,39 +3,57 @@ integrations/factory.py
 """
 
 from configparser import ConfigParser
-from typing import Literal, overload
+from typing import Literal, TypeAlias, Union, overload
 
 import pandas as pd
 
-from cls.types import AppConfigType
-from integrations import protocols, slack, standard_io, web
+from integrations import slack, standard_io, web
+
+
+AppConfigType: TypeAlias = Union[
+    "slack.config.AppConfig",
+    "web.config.AppConfig",
+    "standard_io.config.AppConfig",
+]
+
+AdapterType: TypeAlias = Union[
+    "slack.adapter.AdapterInterface",
+    "web.adapter.AdapterInterface",
+    "standard_io.adapter.AdapterInterface",
+]
+
+MessageType: TypeAlias = Union[
+    "slack.parser.MessageParser",
+    "web.parser.MessageParser",
+    "standard_io.parser.MessageParser",
+]
 
 
 @overload
-def select_adapter(selected_service: Literal["slack"]) -> slack.adapter.SlackAPI:
+def select_adapter(selected_service: Literal["slack"]) -> slack.adapter.AdapterInterface:
     ...
 
 
 @overload
-def select_adapter(selected_service: Literal["web"]) -> web.adapter.WebResponse:
+def select_adapter(selected_service: Literal["web"]) -> web.adapter.AdapterInterface:
     ...
 
 
 @overload
-def select_adapter(selected_service: Literal["standard_io"]) -> standard_io.adapter.StandardIO:
+def select_adapter(selected_service: Literal["standard_io"]) -> standard_io.adapter.AdapterInterface:
     ...
 
 
-def select_adapter(selected_service: str) -> protocols.AdapterProtocol:
-    """AIPインターフェース選択"""
+def select_adapter(selected_service: str) -> AdapterType:
+    """インターフェース選択"""
 
     match selected_service:
         case "slack":
-            return slack.adapter.SlackAPI()
+            return slack.adapter.AdapterInterface()
         case "web":
-            return web.adapter.WebResponse()
+            return web.adapter.AdapterInterface()
         case "standard_io":
-            return standard_io.adapter.StandardIO()
+            return standard_io.adapter.AdapterInterface()
         case _:
             raise ValueError(f"Unknown service: {selected_service}")
 
@@ -55,7 +73,7 @@ def select_parser(selected_service: Literal["standard_io"]) -> standard_io.parse
     ...
 
 
-def select_parser(selected_service: str) -> protocols.MessageParserProtocol:
+def select_parser(selected_service: str) -> MessageType:
     """メッセージパーサ選択"""
 
     match selected_service:
@@ -70,20 +88,6 @@ def select_parser(selected_service: str) -> protocols.MessageParserProtocol:
             return standard_io.parser.MessageParser()
         case _:
             raise ValueError("No match service name.")
-
-
-def select_function(selected_service: str):
-    """関数選択"""
-
-    match selected_service:
-        case "slack":
-            import integrations.slack.functions as slack_func  # pylint: disable=import-outside-toplevel
-            return slack_func
-        case "standard_io":
-            import integrations.standard_io.functions as stdio_func  # pylint: disable=import-outside-toplevel
-            return stdio_func
-        case _:
-            raise ValueError(f"Unknown service: {selected_service}")
 
 
 def load_config(selected_service: str, parser: ConfigParser) -> AppConfigType:

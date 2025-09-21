@@ -1,39 +1,47 @@
 """
-integrations/standard_io/message.py
+integrations/web/adapter.py
 """
 
-from integrations.base.interface import (APIInterface, LookupInterface,
-                                         ReactionsInterface)
-from integrations.protocols import MessageParserProtocol
+from integrations.base import interface
+from integrations.web import functions
 
 
-class _ReactionsDummy(ReactionsInterface):
-    def status(self, ch=str, ts=str, ok=str, ng=str):
+class DummyReactionsInterface(interface.ReactionsInterface):
+    """ダミークラス"""
+
+    def status(self, ch=str, ts=str, ok=str, ng=str) -> dict[str, list]:
+        """abstractmethod dummy"""
+
         _ = (ch, ts, ok, ng)
+        return {"ok": [], "ng": []}
 
-    def append(self, icon, ch, ts):
+    def append(self, icon: str, ch: str, ts: str) -> None:
+        """abstractmethod dummy"""
+
         _ = (icon, ch, ts)
 
-    def remove(self, icon, ch, ts):
+    def remove(self, icon: str, ch: str, ts: str) -> None:
+        """abstractmethod dummy"""
+
         _ = (icon, ch, ts)
 
 
-class _LookupDummy(LookupInterface):
-    def get_channel_id(self):
-        pass
+class DummyAPIInterface(interface.APIInterface):
+    """ダミークラス"""
 
-    def get_dm_channel_id(self, user_id: str):
-        _ = user_id
+    def post(self, m: interface.MessageParserProtocol):
+        """abstractmethod dummy"""
+
+        _ = m
 
 
-class WebResponse(APIInterface):
-    """メッセージ出力クラス"""
+class AdapterInterface:
+    """web interface"""
+
+    interface_type = "web"
+    plotting_backend = "plotly"
+
     def __init__(self):
-        self.lookup = _LookupDummy()
-        self.reactions = _ReactionsDummy()
-
-    def post(self, m: MessageParserProtocol):
-        _ = m
-
-    def get_conversations(self, m: MessageParserProtocol):
-        _ = m
+        self.functions = functions.WebFunctions()
+        self.reactions = DummyReactionsInterface()
+        self.api = DummyAPIInterface()

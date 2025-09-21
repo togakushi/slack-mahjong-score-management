@@ -26,7 +26,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     def parser(self, _body: dict):
         g.app_config = cast(config.AppConfig, g.app_config)
-        api_adapter = adapter.SlackAPI()
+        api_adapter = adapter.AdapterInterface()
 
         # 対象のevent抽出
         _event = cast(dict, _body.get("event", _body))
@@ -38,10 +38,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                 self.data.status = "message_append"
                 self.data.channel_id = _body.get("channel_id", "")
             else:
-                self.data.channel_id = api_adapter.lookup.get_dm_channel_id(_body.get("user_id", ""))
+                self.data.channel_id = api_adapter.functions.get_dm_channel_id(_body.get("user_id", ""))
         elif _body.get("container"):  # Homeタブ
             self.data.user_id = _body["user"].get("id")
-            self.data.channel_id = api_adapter.lookup.get_dm_channel_id(self.data.user_id)
+            self.data.channel_id = api_adapter.functions.get_dm_channel_id(self.data.user_id)
             self.data.channel_type = "channel"
             self.data.text = "dummy"
         elif _body.get("iid"):  # 検索結果

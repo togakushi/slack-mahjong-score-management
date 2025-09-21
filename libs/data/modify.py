@@ -32,8 +32,6 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
         int: _description_
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
-
     changes: int = 0
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
@@ -50,7 +48,6 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
         logging.notice("%s", detection.to_text("logging"))  # type: ignore
     else:
         message.random_reply(m, "restricted_channel")
-        api_adapter.post(m)
 
     return changes
 
@@ -62,8 +59,6 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
         detection (GameResult): スコアデータ
         m (MessageParserProtocol): メッセージデータ
     """
-
-    api_adapter = factory.select_adapter(g.selected_service)
 
     detection.calc()
     if m.check_updatable:
@@ -77,7 +72,6 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
         logging.notice("%s", detection.to_text("logging"))  # type: ignore
     else:
         message.random_reply(m, "restricted_channel")
-        api_adapter.post(m)
 
 
 def db_delete(m: MessageParserProtocol) -> list:
@@ -153,7 +147,7 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
         remarks (list[RemarkDict]): メモに残す内容
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
+    adapter = factory.select_adapter(g.selected_service)
 
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
@@ -166,15 +160,20 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
                         logging.notice("insert: %s, user=%s", para, m.data.user_id)  # type: ignore
 
                         if not (ch := m.data.channel_id):
-                            ch = api_adapter.lookup.get_channel_id()
+                            ch = adapter.functions.get_channel_id()
 
                         # リアクション処理
-                        if isinstance(g.app_config, factory.slack.config.AppConfig):
-                            reactions = api_adapter.reactions.status(ts=para["event_ts"], ch=ch, ok=g.app_config.reaction_ok, ng=g.app_config.reaction_ng)
+                        if isinstance(adapter, factory.slack.adapter.AdapterInterface):
+                            reactions = adapter.reactions.status(
+                                ts=para["event_ts"],
+                                ch=ch,
+                                ok=getattr(g.app_config, "reaction_ok", "ok"),
+                                ng=getattr(g.app_config, "reaction_ng", "ng"),
+                            )
                             if not reactions.get("ok"):
-                                api_adapter.reactions.append(g.app_config.reaction_ok, ts=para["event_ts"], ch=ch)
+                                adapter.reactions.append(getattr(g.app_config, "reaction_ok", "ok"), ts=para["event_ts"], ch=ch)
                             if reactions.get("ng"):
-                                api_adapter.reactions.remove(g.app_config.reaction_ng, ts=para["event_ts"], ch=ch)
+                                adapter.reactions.remove(getattr(g.app_config, "reaction_ng", "ng"), ts=para["event_ts"], ch=ch)
 
             cur.commit()
 
@@ -209,7 +208,7 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
         m (MessageParserProtocol): メッセージデータ
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
+    adapter = factory.select_adapter(g.selected_service)
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         cur.execute(dbutil.query("REMARKS_DELETE_COMPAR"), para)
@@ -218,13 +217,13 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]
 
     if not (ch := m.data.channel_id):
-        ch = api_adapter.lookup.get_channel_id()
+        ch = adapter.functions.get_channel_id()
 
     # リアクション処理
-    if isinstance(g.app_config, factory.slack.config.AppConfig):
-        reactions = api_adapter.reactions.status(ch=ch, ts=para["event_ts"])
+    if isinstance(adapter, factory.slack.adapter.AdapterInterface):
+        reactions = adapter.reactions.status(ch=ch, ts=para["event_ts"])
         if reactions.get("ok") and left == 0:
-            api_adapter.reactions.remove(g.app_config.reaction_ok, ch=ch, ts=para["event_ts"])
+            adapter.reactions.remove(getattr(g.app_config, "reaction_ok", "ok"), ch=ch, ts=para["event_ts"])
 
 
 def check_remarks(m: MessageParserProtocol) -> None:
@@ -268,9 +267,9 @@ def reprocessing_remarks(m: MessageParserProtocol) -> None:
         m (MessageParserProtocol): メッセージデータ
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
+    adapter = factory.select_adapter(g.selected_service)
 
-    res = api_adapter.get_conversations(m)
+    res = adapter.functions.get_conversations(m)
     msg = cast(dict, res.get("messages"))
 
     if msg:

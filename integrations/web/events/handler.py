@@ -15,7 +15,8 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDT
 from integrations import factory
-from integrations.web import config, functions
+from integrations.web import config
+from integrations.web import functions as func
 from libs.data import loader, lookup, modify
 from libs.registry import member, team
 from libs.utils import dbutil, formatter
@@ -38,7 +39,9 @@ def main():
     )
     auth = HTTPBasicAuth()
 
+    functions = func.WebFunctions()
     m = factory.select_parser(g.selected_service)
+
     padding = "0.25em 1.5em"
     players = lookup.internal.get_member()
 

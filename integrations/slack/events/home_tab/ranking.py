@@ -126,7 +126,7 @@ def register_ranking_handlers(app):
 
         m.data.command_type = "ranking"
         ranking.ranking.aggregation(m)
-        api_adapter.post(m)
+        api_adapter.api.post(m)
 
         ui_parts.update_view(m, app_msg)
 

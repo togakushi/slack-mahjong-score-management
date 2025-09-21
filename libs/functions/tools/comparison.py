@@ -32,9 +32,9 @@ def main():
         except Exception as e:
             raise RuntimeError(e) from e
 
-        api_adapter = factory.select_adapter(g.selected_service)
+        adapter = factory.select_adapter(g.selected_service)
         m = factory.select_parser("standard_io")
-        m.data.channel_id = api_adapter.lookup.get_channel_id()
+        m.data.channel_id = adapter.functions.get_channel_id()
 
         count, _ = comparison.data_comparison(m)
         logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))  # type: ignore
