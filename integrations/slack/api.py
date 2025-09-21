@@ -18,20 +18,20 @@ from libs.utils import converter, formatter
 
 class ReactionsAPI(ReactionsInterface):
     """リアクション操作"""
-    def status(self, ch=str, ts=str, ok=str, ng=str) -> dict[str, list]:
+    def status(self, ch=str, ts=str) -> dict[str, list]:
         """botが付けたリアクションの種類を返す
 
         Args:
             ch (str): チャンネルID
             ts (str): メッセージのタイムスタンプ
-            ok (str): OKリアクション文字
-            ng (str): NGリアクション文字
 
         Returns:
             dict[str,list]: リアクション
         """
 
         g.app_config = cast(config.AppConfig, g.app_config)
+        ok = getattr(g.app_config, "reaction_ok", "ok")
+        ng = getattr(g.app_config, "reaction_ng", "ng")
 
         icon: dict[str, list] = {
             "ok": [],

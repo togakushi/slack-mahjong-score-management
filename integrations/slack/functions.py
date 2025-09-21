@@ -21,7 +21,7 @@ class SlackFunctions(FunctionsInterface):
 
     def __init__(self):
         self.app_config = cast(slack.config.AppConfig, g.app_config)
-        self.api = slack.adapter.AdapterInterface()
+        self.reactions = slack.api.ReactionsAPI()
 
     def get_messages(self, word: str, m: MessageParserProtocol) -> list[MessageParserProtocol]:
         """slackログからメッセージを検索して返す
@@ -247,12 +247,7 @@ class SlackFunctions(FunctionsInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        reactions = self.api.reactions.status(
-            ch=m.data.channel_id,
-            ts=m.data.event_ts,
-            ok=self.app_config.reaction_ok,
-            ng=self.app_config.reaction_ng,
-        )
+        reactions = self.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
         status_flg: bool = True  # リアクション最終状態(True: OK, False: NG)
         m.post.message = {}
 
@@ -272,11 +267,11 @@ class SlackFunctions(FunctionsInterface):
         # リアクション処理
         if status_flg:  # NGを外してOKを付ける
             if not reactions.get("ok"):
-                self.api.reactions.append(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
+                self.reactions.append(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
             if reactions.get("ng"):
-                self.api.reactions.remove(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
+                self.reactions.remove(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
         else:  # OKを外してNGを付ける
             if reactions.get("ok"):
-                self.api.reactions.remove(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
+                self.reactions.remove(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
             if not reactions.get("ng"):
-                self.api.reactions.append(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
+                self.reactions.append(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)

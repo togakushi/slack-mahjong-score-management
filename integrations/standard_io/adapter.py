@@ -14,10 +14,10 @@ from libs.utils import formatter
 class DummyReactionsInterface(interface.ReactionsInterface):
     """ダミークラス"""
 
-    def status(self, ch=str, ts=str, ok=str, ng=str) -> dict[str, list]:
+    def status(self, ch=str, ts=str) -> dict[str, list]:
         """abstractmethod dummy"""
 
-        _ = (ch, ts, ok, ng)
+        _ = (ch, ts)
         return {"ok": [], "ng": []}
 
     def append(self, icon: str, ch: str, ts: str) -> None:
