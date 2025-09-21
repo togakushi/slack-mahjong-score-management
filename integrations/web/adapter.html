@@ -65,13 +65,13 @@
                                 <a class="variable" href="#AdapterInterface.plotting_backend">plotting_backend</a>
                         </li>
                         <li>
+                                <a class="variable" href="#AdapterInterface.api">api</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#AdapterInterface.functions">functions</a>
                         </li>
                         <li>
                                 <a class="variable" href="#AdapterInterface.reactions">reactions</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#AdapterInterface.api">api</a>
                         </li>
                 </ul>
 
@@ -143,9 +143,9 @@
 </span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">plotting_backend</span> <span class="o">=</span> <span class="s2">&quot;plotly&quot;</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
 </span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">WebFunctions</span><span class="p">()</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span> <span class="o">=</span> <span class="n">DummyReactionsInterface</span><span class="p">()</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">DummyAPIInterface</span><span class="p">()</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">DummyAPIInterface</span><span class="p">()</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">WebFunctions</span><span class="p">()</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span> <span class="o">=</span> <span class="n">DummyReactionsInterface</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -324,9 +324,9 @@
 </span><span id="AdapterInterface-43"><a href="#AdapterInterface-43"><span class="linenos">43</span></a>    <span class="n">plotting_backend</span> <span class="o">=</span> <span class="s2">&quot;plotly&quot;</span>
 </span><span id="AdapterInterface-44"><a href="#AdapterInterface-44"><span class="linenos">44</span></a>
 </span><span id="AdapterInterface-45"><a href="#AdapterInterface-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="AdapterInterface-46"><a href="#AdapterInterface-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">WebFunctions</span><span class="p">()</span>
-</span><span id="AdapterInterface-47"><a href="#AdapterInterface-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span> <span class="o">=</span> <span class="n">DummyReactionsInterface</span><span class="p">()</span>
-</span><span id="AdapterInterface-48"><a href="#AdapterInterface-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">DummyAPIInterface</span><span class="p">()</span>
+</span><span id="AdapterInterface-46"><a href="#AdapterInterface-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">DummyAPIInterface</span><span class="p">()</span>
+</span><span id="AdapterInterface-47"><a href="#AdapterInterface-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">WebFunctions</span><span class="p">()</span>
+</span><span id="AdapterInterface-48"><a href="#AdapterInterface-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span> <span class="o">=</span> <span class="n">DummyReactionsInterface</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -358,6 +358,17 @@
     
 
                             </div>
+                            <div id="AdapterInterface.api" class="classattr">
+                                <div class="attr variable">
+            <span class="name">api</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AdapterInterface.api"></a>
+    
+    
+
+                            </div>
                             <div id="AdapterInterface.functions" class="classattr">
                                 <div class="attr variable">
             <span class="name">functions</span>
@@ -376,17 +387,6 @@
         
     </div>
     <a class="headerlink" href="#AdapterInterface.reactions"></a>
-    
-    
-
-                            </div>
-                            <div id="AdapterInterface.api" class="classattr">
-                                <div class="attr variable">
-            <span class="name">api</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AdapterInterface.api"></a>
     
     
 
