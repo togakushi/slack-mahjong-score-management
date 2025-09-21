@@ -10,9 +10,8 @@ import libs.global_value as g
 from cls.score import GameResult, Score
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
-from integrations import factory
 from integrations.protocols import MessageParserProtocol
-from integrations.slack import config, functions
+from integrations.slack import adapter, config, functions
 from libs.data import modify
 from libs.data.lookup import db
 from libs.functions import search
@@ -144,7 +143,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
     """
 
     g.app_config = cast(config.AppConfig, g.app_config)
-    api_adapter = factory.select_adapter(g.selected_service)
+    api_adapter = adapter.SlackAPI()
 
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
     msg: ComparisonDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
@@ -314,7 +313,7 @@ def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, Co
     """
 
     g.app_config = cast(config.AppConfig, g.app_config)
-    api_adapter = factory.select_adapter(g.selected_service)
+    api_adapter = adapter.SlackAPI()
 
     count: dict[str, int] = {"invalid_score": 0}
     msg: ComparisonDict = {"invalid_score": "", "pending": []}
