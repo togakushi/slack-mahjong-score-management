@@ -148,6 +148,7 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
     """
 
     adapter = factory.select_adapter(g.selected_service)
+    append_list: list = []
 
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
@@ -157,25 +158,20 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
                 if row:
                     if para["name"] in [v for k, v in dict(row).items() if str(k).endswith("_name")]:
                         cur.execute(dbutil.query("REMARKS_INSERT"), para)
+                        append_list.append(para["event_ts"])
                         logging.notice("insert: %s, user=%s", para, m.data.user_id)  # type: ignore
-
-                        if not (ch := m.data.channel_id):
-                            ch = adapter.functions.get_channel_id()
-
-                        # リアクション処理
-                        if isinstance(adapter, factory.slack.adapter.AdapterInterface):
-                            reactions = adapter.reactions.status(
-                                ts=para["event_ts"],
-                                ch=ch,
-                                ok=getattr(g.app_config, "reaction_ok", "ok"),
-                                ng=getattr(g.app_config, "reaction_ng", "ng"),
-                            )
-                            if not reactions.get("ok"):
-                                adapter.reactions.append(getattr(g.app_config, "reaction_ok", "ok"), ts=para["event_ts"], ch=ch)
-                            if reactions.get("ng"):
-                                adapter.reactions.remove(getattr(g.app_config, "reaction_ng", "ng"), ts=para["event_ts"], ch=ch)
-
             cur.commit()
+
+        # リアクション処理
+        if isinstance(adapter, factory.slack.adapter.AdapterInterface):
+            if not (ch := m.data.channel_id):
+                ch = adapter.functions.get_channel_id()
+            for ts in append_list:
+                reactions = adapter.reactions.status(ts=ts, ch=ch)
+                if not reactions.get("ok"):
+                    adapter.reactions.append(getattr(g.app_config, "reaction_ok", "ok"), ts=ts, ch=ch)
+                if reactions.get("ng"):
+                    adapter.reactions.remove(getattr(g.app_config, "reaction_ng", "ng"), ts=ts, ch=ch)
 
 
 def remarks_delete(m: MessageParserProtocol) -> list:
@@ -188,7 +184,9 @@ def remarks_delete(m: MessageParserProtocol) -> list:
         list: 削除したタイムスタンプ
     """
 
+    adapter = factory.select_adapter(g.selected_service)
     delete_list: list = []
+
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             cur.execute(dbutil.query("REMARKS_DELETE_ONE"), (m.data.event_ts,))
@@ -196,6 +194,17 @@ def remarks_delete(m: MessageParserProtocol) -> list:
             if (count := cur.execute("select changes();").fetchone()[0]):
                 delete_list.append(m.data.event_ts)
                 logging.notice("ts=%s, user=%s, count=%s", m.data.event_ts, m.data.user_id, count)  # type: ignore
+
+    # リアクション処理
+    if isinstance(adapter, factory.slack.adapter.AdapterInterface):
+        if not (ch := m.data.channel_id):
+            ch = adapter.functions.get_channel_id()
+        for ts in delete_list:
+            reactions = adapter.reactions.status(ts=ts, ch=ch)
+            if reactions.get("ok"):
+                adapter.reactions.remove(getattr(g.app_config, "reaction_ok", "ok"), ts=ts, ch=ch)
+            if reactions.get("ng"):
+                adapter.reactions.remove(getattr(g.app_config, "reaction_ng", "ng"), ts=ts, ch=ch)
 
     return delete_list
 
@@ -216,14 +225,15 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
 
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]
 
-    if not (ch := m.data.channel_id):
-        ch = adapter.functions.get_channel_id()
-
     # リアクション処理
     if isinstance(adapter, factory.slack.adapter.AdapterInterface):
+        if not (ch := m.data.channel_id):
+            ch = adapter.functions.get_channel_id()
         reactions = adapter.reactions.status(ch=ch, ts=para["event_ts"])
         if reactions.get("ok") and left == 0:
-            adapter.reactions.remove(getattr(g.app_config, "reaction_ok", "ok"), ch=ch, ts=para["event_ts"])
+            adapter.reactions.remove(getattr(g.app_config, "reaction_ok", "ok"), ts=para["event_ts"], ch=ch)
+        if reactions.get("ng"):
+            adapter.reactions.remove(getattr(g.app_config, "reaction_ng", "ng"), ts=para["event_ts"], ch=ch)
 
 
 def check_remarks(m: MessageParserProtocol) -> None:
@@ -236,15 +246,12 @@ def check_remarks(m: MessageParserProtocol) -> None:
 
     game_result = lookup.db.exsist_record(m.data.thread_ts)
     if game_result.has_valid_data():  # ゲーム結果のスレッドになっているか
-        g.cfg.results.initialization()
-        g.cfg.results.unregistered_replace = False  # ゲスト無効
-
         remarks: list[RemarkDict] = []
         for name, matter in zip(m.argument[0::2], m.argument[1::2]):
             remark: RemarkDict = {
                 "thread_ts": m.data.thread_ts,
                 "event_ts": m.data.event_ts,
-                "name": formatter.name_replace(name),
+                "name": formatter.name_replace(name, not_replace=True),
                 "matter": matter,
             }
             if remark["name"] in game_result.to_list() and remark not in remarks:
@@ -254,6 +261,7 @@ def check_remarks(m: MessageParserProtocol) -> None:
             case "message_append":
                 remarks_append(m, remarks)
             case "message_changed":
+                print(">>", remarks)
                 remarks_delete(m)
                 remarks_append(m, remarks)
             case "message_deleted":
