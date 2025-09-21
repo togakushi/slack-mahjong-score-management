@@ -42,6 +42,6 @@ class AdapterInterface:
     plotting_backend = "plotly"
 
     def __init__(self):
+        self.api = DummyAPIInterface()
         self.functions = functions.WebFunctions()
         self.reactions = DummyReactionsInterface()
-        self.api = DummyAPIInterface()
