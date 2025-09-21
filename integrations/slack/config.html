@@ -77,6 +77,9 @@
                                 <a class="variable" href="#AppConfig.badge_status">badge_status</a>
                         </li>
                         <li>
+                                <a class="variable" href="#AppConfig.badge_grade">badge_grade</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#AppConfig.appclient">appclient</a>
                         </li>
                         <li>
@@ -87,9 +90,6 @@
                         </li>
                         <li>
                                 <a class="variable" href="#AppConfig.tab_var">tab_var</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#AppConfig.initialization">initialization</a>
                         </li>
                 </ul>
 
@@ -172,34 +172,31 @@
 </span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="c1"># 装飾オプション</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">badge_degree</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;プレイしたゲーム数に対して表示される称号</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">    - **False**: 表示しない</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="n">badge_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;勝率に対して付く調子バッジ</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">    - **False**: 表示しない</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="c1"># slack object</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="n">appclient</span><span class="p">:</span> <span class="n">WebClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WebClient</span><span class="p">)</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;WebClient(botトークン使用)&quot;&quot;&quot;</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="n">webclient</span><span class="p">:</span> <span class="n">WebClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WebClient</span><span class="p">)</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;WebClient(userトークン使用)&quot;&quot;&quot;</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="n">bot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ボットID&quot;&quot;&quot;</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">    - **True**: 表示する</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="n">badge_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;勝率に対して付く調子バッジ</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">    - **True**: 表示する</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="n">badge_grade</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位表示</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">    - **True**: 表示する</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="c1"># slack object</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="n">appclient</span><span class="p">:</span> <span class="n">WebClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WebClient</span><span class="p">)</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;WebClient(botトークン使用)&quot;&quot;&quot;</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="n">webclient</span><span class="p">:</span> <span class="n">WebClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WebClient</span><span class="p">)</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;WebClient(userトークン使用)&quot;&quot;&quot;</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="n">tab_var</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ホームタブ用初期値&quot;&quot;&quot;</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="n">bot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ボットID&quot;&quot;&quot;</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;初期化処理&quot;&quot;&quot;</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="k">if</span> <span class="s2">&quot;check&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comparison_alias</span><span class="p">:</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">comparison_alias</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;check&quot;</span><span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="n">tab_var</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ホームタブ用初期値&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -260,34 +257,31 @@
 </span><span id="AppConfig-54"><a href="#AppConfig-54"><span class="linenos">54</span></a>    <span class="c1"># 装飾オプション</span>
 </span><span id="AppConfig-55"><a href="#AppConfig-55"><span class="linenos">55</span></a>    <span class="n">badge_degree</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="AppConfig-56"><a href="#AppConfig-56"><span class="linenos">56</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;プレイしたゲーム数に対して表示される称号</span>
-</span><span id="AppConfig-57"><a href="#AppConfig-57"><span class="linenos">57</span></a>
-</span><span id="AppConfig-58"><a href="#AppConfig-58"><span class="linenos">58</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="AppConfig-59"><a href="#AppConfig-59"><span class="linenos">59</span></a><span class="sd">    - **False**: 表示しない</span>
-</span><span id="AppConfig-60"><a href="#AppConfig-60"><span class="linenos">60</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="AppConfig-61"><a href="#AppConfig-61"><span class="linenos">61</span></a>    <span class="n">badge_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="AppConfig-62"><a href="#AppConfig-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;勝率に対して付く調子バッジ</span>
-</span><span id="AppConfig-63"><a href="#AppConfig-63"><span class="linenos">63</span></a>
-</span><span id="AppConfig-64"><a href="#AppConfig-64"><span class="linenos">64</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="AppConfig-65"><a href="#AppConfig-65"><span class="linenos">65</span></a><span class="sd">    - **False**: 表示しない</span>
-</span><span id="AppConfig-66"><a href="#AppConfig-66"><span class="linenos">66</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="AppConfig-67"><a href="#AppConfig-67"><span class="linenos">67</span></a>
-</span><span id="AppConfig-68"><a href="#AppConfig-68"><span class="linenos">68</span></a>    <span class="c1"># slack object</span>
-</span><span id="AppConfig-69"><a href="#AppConfig-69"><span class="linenos">69</span></a>    <span class="n">appclient</span><span class="p">:</span> <span class="n">WebClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WebClient</span><span class="p">)</span>
-</span><span id="AppConfig-70"><a href="#AppConfig-70"><span class="linenos">70</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;WebClient(botトークン使用)&quot;&quot;&quot;</span>
-</span><span id="AppConfig-71"><a href="#AppConfig-71"><span class="linenos">71</span></a>    <span class="n">webclient</span><span class="p">:</span> <span class="n">WebClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WebClient</span><span class="p">)</span>
-</span><span id="AppConfig-72"><a href="#AppConfig-72"><span class="linenos">72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;WebClient(userトークン使用)&quot;&quot;&quot;</span>
-</span><span id="AppConfig-73"><a href="#AppConfig-73"><span class="linenos">73</span></a>
-</span><span id="AppConfig-74"><a href="#AppConfig-74"><span class="linenos">74</span></a>    <span class="n">bot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="AppConfig-75"><a href="#AppConfig-75"><span class="linenos">75</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ボットID&quot;&quot;&quot;</span>
+</span><span id="AppConfig-57"><a href="#AppConfig-57"><span class="linenos">57</span></a><span class="sd">    - **True**: 表示する</span>
+</span><span id="AppConfig-58"><a href="#AppConfig-58"><span class="linenos">58</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="AppConfig-59"><a href="#AppConfig-59"><span class="linenos">59</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="AppConfig-60"><a href="#AppConfig-60"><span class="linenos">60</span></a>    <span class="n">badge_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="AppConfig-61"><a href="#AppConfig-61"><span class="linenos">61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;勝率に対して付く調子バッジ</span>
+</span><span id="AppConfig-62"><a href="#AppConfig-62"><span class="linenos">62</span></a><span class="sd">    - **True**: 表示する</span>
+</span><span id="AppConfig-63"><a href="#AppConfig-63"><span class="linenos">63</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="AppConfig-64"><a href="#AppConfig-64"><span class="linenos">64</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="AppConfig-65"><a href="#AppConfig-65"><span class="linenos">65</span></a>    <span class="n">badge_grade</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="AppConfig-66"><a href="#AppConfig-66"><span class="linenos">66</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位表示</span>
+</span><span id="AppConfig-67"><a href="#AppConfig-67"><span class="linenos">67</span></a><span class="sd">    - **True**: 表示する</span>
+</span><span id="AppConfig-68"><a href="#AppConfig-68"><span class="linenos">68</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="AppConfig-69"><a href="#AppConfig-69"><span class="linenos">69</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="AppConfig-70"><a href="#AppConfig-70"><span class="linenos">70</span></a>
+</span><span id="AppConfig-71"><a href="#AppConfig-71"><span class="linenos">71</span></a>    <span class="c1"># slack object</span>
+</span><span id="AppConfig-72"><a href="#AppConfig-72"><span class="linenos">72</span></a>    <span class="n">appclient</span><span class="p">:</span> <span class="n">WebClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WebClient</span><span class="p">)</span>
+</span><span id="AppConfig-73"><a href="#AppConfig-73"><span class="linenos">73</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;WebClient(botトークン使用)&quot;&quot;&quot;</span>
+</span><span id="AppConfig-74"><a href="#AppConfig-74"><span class="linenos">74</span></a>    <span class="n">webclient</span><span class="p">:</span> <span class="n">WebClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WebClient</span><span class="p">)</span>
+</span><span id="AppConfig-75"><a href="#AppConfig-75"><span class="linenos">75</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;WebClient(userトークン使用)&quot;&quot;&quot;</span>
 </span><span id="AppConfig-76"><a href="#AppConfig-76"><span class="linenos">76</span></a>
-</span><span id="AppConfig-77"><a href="#AppConfig-77"><span class="linenos">77</span></a>    <span class="n">tab_var</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="AppConfig-78"><a href="#AppConfig-78"><span class="linenos">78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ホームタブ用初期値&quot;&quot;&quot;</span>
+</span><span id="AppConfig-77"><a href="#AppConfig-77"><span class="linenos">77</span></a>    <span class="n">bot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="AppConfig-78"><a href="#AppConfig-78"><span class="linenos">78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ボットID&quot;&quot;&quot;</span>
 </span><span id="AppConfig-79"><a href="#AppConfig-79"><span class="linenos">79</span></a>
-</span><span id="AppConfig-80"><a href="#AppConfig-80"><span class="linenos">80</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="AppConfig-81"><a href="#AppConfig-81"><span class="linenos">81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;初期化処理&quot;&quot;&quot;</span>
-</span><span id="AppConfig-82"><a href="#AppConfig-82"><span class="linenos">82</span></a>
-</span><span id="AppConfig-83"><a href="#AppConfig-83"><span class="linenos">83</span></a>        <span class="k">if</span> <span class="s2">&quot;check&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comparison_alias</span><span class="p">:</span>
-</span><span id="AppConfig-84"><a href="#AppConfig-84"><span class="linenos">84</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">comparison_alias</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;check&quot;</span><span class="p">)</span>
+</span><span id="AppConfig-80"><a href="#AppConfig-80"><span class="linenos">80</span></a>    <span class="n">tab_var</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="AppConfig-81"><a href="#AppConfig-81"><span class="linenos">81</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ホームタブ用初期値&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -298,7 +292,7 @@
                             <div id="AppConfig.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">AppConfig</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">slash_command</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;/mahjong&#39;</span>,</span><span class="param">	<span class="n">comparison_word</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;成績チェック&#39;</span>,</span><span class="param">	<span class="n">comparison_alias</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">search_channel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">search_after</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7</span>,</span><span class="param">	<span class="n">search_wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">180</span>,</span><span class="param">	<span class="n">thread_report</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ok&#39;</span>,</span><span class="param">	<span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ng&#39;</span>,</span><span class="param">	<span class="n">ignore_userid</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">channel_limitations</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">badge_degree</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">badge_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">appclient</span><span class="p">:</span> <span class="n">slack_sdk</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">WebClient</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">webclient</span><span class="p">:</span> <span class="n">slack_sdk</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">WebClient</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">bot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">tab_var</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span></span>)</span>
+        <span class="name">AppConfig</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">slash_command</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;/mahjong&#39;</span>,</span><span class="param">	<span class="n">badge_degree</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">badge_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">badge_grade</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">slash_commands</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">special_commands</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">comparison_word</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;成績チェック&#39;</span>,</span><span class="param">	<span class="n">comparison_alias</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">search_channel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">search_after</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7</span>,</span><span class="param">	<span class="n">search_wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">180</span>,</span><span class="param">	<span class="n">thread_report</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">reaction_ok</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ok&#39;</span>,</span><span class="param">	<span class="n">reaction_ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ng&#39;</span>,</span><span class="param">	<span class="n">ignore_userid</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">channel_limitations</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">appclient</span><span class="p">:</span> <span class="n">slack_sdk</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">WebClient</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">webclient</span><span class="p">:</span> <span class="n">slack_sdk</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">WebClient</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">bot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">tab_var</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span></span>)</span>
 
         
     </div>
@@ -503,6 +497,25 @@
 
 
                             </div>
+                            <div id="AppConfig.badge_grade" class="classattr">
+                                <div class="attr variable">
+            <span class="name">badge_grade</span><span class="annotation">: bool</span>        =
+<span class="default_value">False</span>
+
+        
+    </div>
+    <a class="headerlink" href="#AppConfig.badge_grade"></a>
+    
+            <div class="docstring"><p>段位表示</p>
+
+<ul>
+<li><strong>True</strong>: 表示する</li>
+<li><strong>False</strong>: 表示しない</li>
+</ul>
+</div>
+
+
+                            </div>
                             <div id="AppConfig.appclient" class="classattr">
                                 <div class="attr variable">
             <span class="name">appclient</span><span class="annotation">: slack_sdk.web.client.WebClient</span>
@@ -552,30 +565,6 @@
     <a class="headerlink" href="#AppConfig.tab_var"></a>
     
             <div class="docstring"><p>ホームタブ用初期値</p>
-</div>
-
-
-                            </div>
-                            <div id="AppConfig.initialization" class="classattr">
-                                        <input id="AppConfig.initialization-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">initialization</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-                <label class="view-source-button" for="AppConfig.initialization-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#AppConfig.initialization"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AppConfig.initialization-80"><a href="#AppConfig.initialization-80"><span class="linenos">80</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="AppConfig.initialization-81"><a href="#AppConfig.initialization-81"><span class="linenos">81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;初期化処理&quot;&quot;&quot;</span>
-</span><span id="AppConfig.initialization-82"><a href="#AppConfig.initialization-82"><span class="linenos">82</span></a>
-</span><span id="AppConfig.initialization-83"><a href="#AppConfig.initialization-83"><span class="linenos">83</span></a>        <span class="k">if</span> <span class="s2">&quot;check&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">comparison_alias</span><span class="p">:</span>
-</span><span id="AppConfig.initialization-84"><a href="#AppConfig.initialization-84"><span class="linenos">84</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">comparison_alias</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;check&quot;</span><span class="p">)</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>初期化処理</p>
 </div>
 
 
