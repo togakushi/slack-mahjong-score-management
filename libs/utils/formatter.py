@@ -110,12 +110,13 @@ def column_alignment(df: pd.DataFrame, header: bool = False, index: bool = False
     return fmt
 
 
-def name_replace(pname: str, add_mark: bool = False) -> str:
+def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) -> str:
     """表記ブレ修正(正規化)
 
     Args:
         pname (str): 対象プレイヤー名
         add_mark (bool, optional): ゲストマークを付与する. Defaults to False.
+        not_replace (bool, optional): ゲスト置換なし(強制) Defaults to False.
 
     Returns:
         str: 表記ブレ修正後のプレイヤー名
@@ -148,7 +149,7 @@ def name_replace(pname: str, add_mark: bool = False) -> str:
         return ret_name
 
     # メンバーリストに見つからない場合
-    if g.params.get("unregistered_replace", True):
+    if g.params.get("unregistered_replace", True) and not not_replace:
         pname = g.cfg.member.guest_name
     if pname != g.cfg.member.guest_name and add_mark:
         pname = f"{pname}({g.cfg.setting.guest_mark})"
