@@ -60,7 +60,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     df["rank_dev"] = (df["rank_avg"] - df["rank_avg"].mean()) / df["rank_avg"].std(ddof=0) * -10 + 50
 
     # 段位
-    if g.cfg.badge.grade.display:
+    if g.app_config.badge_grade:
         for idx in df.index:
             name = str(df.at[idx, "name"]).replace(f"({g.cfg.setting.guest_mark})", "")
             df.at[idx, "grade"] = compose.badge.grade(name, False)

@@ -187,7 +187,7 @@ def get_totalization(data: dict) -> dict:
     ret["通算ポイント"] = f"{data["通算ポイント"]:+.1f}pt".replace("-", "▲")
     ret["平均ポイント"] = f"{data["平均ポイント"]:+.1f}pt".replace("-", "▲")
     ret["平均順位"] = f"{data["平均順位"]:1.2f}"
-    if g.params.get("individual") and g.cfg.badge.grade.display:
+    if g.params.get("individual") and g.app_config.badge_grade:
         ret["段位"] = compose.badge.grade(g.params["player_name"])
     ret["_blank2"] = True
     ret["1位"] = f"{data["1位"]:2} 回 ({data["1位率"]:6.2f}%)"

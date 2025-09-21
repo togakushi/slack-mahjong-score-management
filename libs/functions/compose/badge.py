@@ -85,7 +85,7 @@ def grade(name: str, detail: bool = True) -> str:
         str: 称号
     """
 
-    if not g.cfg.badge.grade.display:
+    if not g.app_config.badge_grade:
         return ""
 
     # 初期値
