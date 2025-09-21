@@ -114,6 +114,9 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             else:  # 個別コマンド
                 if x in g.app_config.special_commands:
                     g.app_config.special_commands[x](m)
+                if x == "Reminder:" and m.data.text in g.app_config.special_commands:
+                    g.app_config.special_commands[m.data.text](m)
+
             other_words(x, m)  # コマンドに一致しない場合
 
     adapter.api.post(m)
