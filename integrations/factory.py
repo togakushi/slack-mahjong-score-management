@@ -106,7 +106,21 @@ def load_config(selected_service: str, parser: ConfigParser) -> AppConfigType:
         case "slack":
             conf = slack.config.AppConfig()
             conf.read_file(parser=parser, selected_service="slack")
-            conf.initialization()
+
+            # スラッシュコマンド登録
+            conf.slash_commands.update({"help": slack.events.slash.command_help})
+
+            conf.comparison_alias.append("check")
+            conf.slash_commands.update({"check": slack.events.comparison.main})
+            for alias in conf.comparison_alias:
+                conf.slash_commands.update({alias: slack.events.comparison.main})
+
+            # 個別コマンド登録
+            conf.special_commands.update({
+                conf.comparison_word: slack.events.comparison.main,
+                f"Reminder: {conf.comparison_word}": slack.events.comparison.main,
+            })
+
             return conf
         case "web":
             conf = web.config.AppConfig()

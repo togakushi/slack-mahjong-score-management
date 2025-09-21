@@ -7,7 +7,6 @@ from dataclasses import dataclass, field
 from slack_sdk.web.client import WebClient
 
 from integrations.base.interface import IntegrationsConfig
-from integrations.slack.events import comparison, slash
 
 
 @dataclass
@@ -79,20 +78,3 @@ class AppConfig(IntegrationsConfig):
 
     tab_var: dict = field(default_factory=dict)
     """ホームタブ用初期値"""
-
-    def initialization(self):
-        """初期化処理"""
-
-        # スラッシュコマンド登録
-        self.slash_commands.update({"help": slash.command_help})
-
-        self.comparison_alias.append("check")
-        self.slash_commands.update({"check": comparison.main})
-        for alias in self.comparison_alias:
-            self.slash_commands.update({alias: comparison.main})
-
-        # 個別コマンド登録
-        self.special_commands.update({
-            self.comparison_word: comparison.main,
-            f"Reminder: {self.comparison_word}": comparison.main,
-        })
