@@ -7,6 +7,6 @@
 - `integrations.standard_io.config`: 個別設定
 """
 
-from integrations.standard_io import adapter, config, parser
+from integrations.standard_io import adapter, config, functions, parser
 
-__all__ = ["adapter", "config", "parser"]
+__all__ = ["adapter", "config", "functions", "parser"]

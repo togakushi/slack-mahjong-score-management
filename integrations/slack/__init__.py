@@ -9,6 +9,6 @@ slack連携
 - `integrations.slack.functions`: 専用関数群
 """
 
-from integrations.slack import adapter, api, config, events, parser
+from integrations.slack import adapter, api, config, events, functions, parser
 
-__all__ = ["adapter", "api", "config", "events", "parser"]
+__all__ = ["adapter", "api", "config", "events", "functions", "parser"]
