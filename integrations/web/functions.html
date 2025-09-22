@@ -44,9 +44,6 @@
                                 <a class="function" href="#WebFunctions.get_cookie">get_cookie</a>
                         </li>
                         <li>
-                                <a class="function" href="#WebFunctions.score_verification">score_verification</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#WebFunctions.get_channel_id">get_channel_id</a>
                         </li>
                         <li>
@@ -54,6 +51,9 @@
                         </li>
                         <li>
                                 <a class="function" href="#WebFunctions.get_conversations">get_conversations</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#WebFunctions.post_processing">post_processing</a>
                         </li>
                 </ul>
 
@@ -228,24 +228,24 @@
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cookie_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">target_keys</span><span class="p">}</span>
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">score_verification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detection</span><span class="p">:</span> <span class="s2">&quot;GameResult&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">detection</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dm_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">user_id</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dm_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
 </span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">user_id</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
 </span></pre></div>
 
 
@@ -391,24 +391,24 @@
 </span><span id="WebFunctions-146"><a href="#WebFunctions-146"><span class="linenos">146</span></a>
 </span><span id="WebFunctions-147"><a href="#WebFunctions-147"><span class="linenos">147</span></a>        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cookie_data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">target_keys</span><span class="p">}</span>
 </span><span id="WebFunctions-148"><a href="#WebFunctions-148"><span class="linenos">148</span></a>
-</span><span id="WebFunctions-149"><a href="#WebFunctions-149"><span class="linenos">149</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">score_verification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detection</span><span class="p">:</span> <span class="s2">&quot;GameResult&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="WebFunctions-149"><a href="#WebFunctions-149"><span class="linenos">149</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="WebFunctions-150"><a href="#WebFunctions-150"><span class="linenos">150</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
 </span><span id="WebFunctions-151"><a href="#WebFunctions-151"><span class="linenos">151</span></a>
-</span><span id="WebFunctions-152"><a href="#WebFunctions-152"><span class="linenos">152</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">detection</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
-</span><span id="WebFunctions-153"><a href="#WebFunctions-153"><span class="linenos">153</span></a>
-</span><span id="WebFunctions-154"><a href="#WebFunctions-154"><span class="linenos">154</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="WebFunctions-155"><a href="#WebFunctions-155"><span class="linenos">155</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="WebFunctions-152"><a href="#WebFunctions-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dm_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="WebFunctions-153"><a href="#WebFunctions-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="WebFunctions-154"><a href="#WebFunctions-154"><span class="linenos">154</span></a>
+</span><span id="WebFunctions-155"><a href="#WebFunctions-155"><span class="linenos">155</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">user_id</span>
 </span><span id="WebFunctions-156"><a href="#WebFunctions-156"><span class="linenos">156</span></a>
-</span><span id="WebFunctions-157"><a href="#WebFunctions-157"><span class="linenos">157</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dm_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="WebFunctions-157"><a href="#WebFunctions-157"><span class="linenos">157</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 </span><span id="WebFunctions-158"><a href="#WebFunctions-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
 </span><span id="WebFunctions-159"><a href="#WebFunctions-159"><span class="linenos">159</span></a>
-</span><span id="WebFunctions-160"><a href="#WebFunctions-160"><span class="linenos">160</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">user_id</span>
-</span><span id="WebFunctions-161"><a href="#WebFunctions-161"><span class="linenos">161</span></a>
-</span><span id="WebFunctions-162"><a href="#WebFunctions-162"><span class="linenos">162</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="WebFunctions-163"><a href="#WebFunctions-163"><span class="linenos">163</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
-</span><span id="WebFunctions-164"><a href="#WebFunctions-164"><span class="linenos">164</span></a>
-</span><span id="WebFunctions-165"><a href="#WebFunctions-165"><span class="linenos">165</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
-</span><span id="WebFunctions-166"><a href="#WebFunctions-166"><span class="linenos">166</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="WebFunctions-160"><a href="#WebFunctions-160"><span class="linenos">160</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
+</span><span id="WebFunctions-161"><a href="#WebFunctions-161"><span class="linenos">161</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span><span id="WebFunctions-162"><a href="#WebFunctions-162"><span class="linenos">162</span></a>
+</span><span id="WebFunctions-163"><a href="#WebFunctions-163"><span class="linenos">163</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="WebFunctions-164"><a href="#WebFunctions-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="WebFunctions-165"><a href="#WebFunctions-165"><span class="linenos">165</span></a>
+</span><span id="WebFunctions-166"><a href="#WebFunctions-166"><span class="linenos">166</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
 </span></pre></div>
 
 
@@ -636,29 +636,6 @@
 
 
                             </div>
-                            <div id="WebFunctions.score_verification" class="classattr">
-                                        <input id="WebFunctions.score_verification-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">score_verification</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">detection</span><span class="p">:</span> <span class="bp"><a href="../../cls/score.html#GameResult">cls.score.GameResult</a></span>,</span><span class="param">	<span class="n">m</span><span class="p">:</span> <span class="n"><a href="../protocols.html#MessageParserProtocol">integrations.protocols.MessageParserProtocol</a></span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
-
-                <label class="view-source-button" for="WebFunctions.score_verification-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#WebFunctions.score_verification"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="WebFunctions.score_verification-149"><a href="#WebFunctions.score_verification-149"><span class="linenos">149</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">score_verification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detection</span><span class="p">:</span> <span class="s2">&quot;GameResult&quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="WebFunctions.score_verification-150"><a href="#WebFunctions.score_verification-150"><span class="linenos">150</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
-</span><span id="WebFunctions.score_verification-151"><a href="#WebFunctions.score_verification-151"><span class="linenos">151</span></a>
-</span><span id="WebFunctions.score_verification-152"><a href="#WebFunctions.score_verification-152"><span class="linenos">152</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">detection</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>abstractmethod dummy</p>
-</div>
-
-
-                            </div>
                             <div id="WebFunctions.get_channel_id" class="classattr">
                                         <input id="WebFunctions.get_channel_id-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -670,8 +647,8 @@
 
     </div>
     <a class="headerlink" href="#WebFunctions.get_channel_id"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="WebFunctions.get_channel_id-154"><a href="#WebFunctions.get_channel_id-154"><span class="linenos">154</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="WebFunctions.get_channel_id-155"><a href="#WebFunctions.get_channel_id-155"><span class="linenos">155</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebFunctions.get_channel_id-149"><a href="#WebFunctions.get_channel_id-149"><span class="linenos">149</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="WebFunctions.get_channel_id-150"><a href="#WebFunctions.get_channel_id-150"><span class="linenos">150</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -691,10 +668,10 @@
 
     </div>
     <a class="headerlink" href="#WebFunctions.get_dm_channel_id"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="WebFunctions.get_dm_channel_id-157"><a href="#WebFunctions.get_dm_channel_id-157"><span class="linenos">157</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dm_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="WebFunctions.get_dm_channel_id-158"><a href="#WebFunctions.get_dm_channel_id-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
-</span><span id="WebFunctions.get_dm_channel_id-159"><a href="#WebFunctions.get_dm_channel_id-159"><span class="linenos">159</span></a>
-</span><span id="WebFunctions.get_dm_channel_id-160"><a href="#WebFunctions.get_dm_channel_id-160"><span class="linenos">160</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">user_id</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebFunctions.get_dm_channel_id-152"><a href="#WebFunctions.get_dm_channel_id-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dm_channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="WebFunctions.get_dm_channel_id-153"><a href="#WebFunctions.get_dm_channel_id-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="WebFunctions.get_dm_channel_id-154"><a href="#WebFunctions.get_dm_channel_id-154"><span class="linenos">154</span></a>
+</span><span id="WebFunctions.get_dm_channel_id-155"><a href="#WebFunctions.get_dm_channel_id-155"><span class="linenos">155</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">user_id</span>
 </span></pre></div>
 
 
@@ -714,11 +691,34 @@
 
     </div>
     <a class="headerlink" href="#WebFunctions.get_conversations"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="WebFunctions.get_conversations-162"><a href="#WebFunctions.get_conversations-162"><span class="linenos">162</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="WebFunctions.get_conversations-163"><a href="#WebFunctions.get_conversations-163"><span class="linenos">163</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
-</span><span id="WebFunctions.get_conversations-164"><a href="#WebFunctions.get_conversations-164"><span class="linenos">164</span></a>
-</span><span id="WebFunctions.get_conversations-165"><a href="#WebFunctions.get_conversations-165"><span class="linenos">165</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
-</span><span id="WebFunctions.get_conversations-166"><a href="#WebFunctions.get_conversations-166"><span class="linenos">166</span></a>        <span class="k">return</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebFunctions.get_conversations-157"><a href="#WebFunctions.get_conversations-157"><span class="linenos">157</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_conversations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="WebFunctions.get_conversations-158"><a href="#WebFunctions.get_conversations-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="WebFunctions.get_conversations-159"><a href="#WebFunctions.get_conversations-159"><span class="linenos">159</span></a>
+</span><span id="WebFunctions.get_conversations-160"><a href="#WebFunctions.get_conversations-160"><span class="linenos">160</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
+</span><span id="WebFunctions.get_conversations-161"><a href="#WebFunctions.get_conversations-161"><span class="linenos">161</span></a>        <span class="k">return</span> <span class="p">{}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>abstractmethod dummy</p>
+</div>
+
+
+                            </div>
+                            <div id="WebFunctions.post_processing" class="classattr">
+                                        <input id="WebFunctions.post_processing-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">post_processing</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">m</span><span class="p">:</span> <span class="n"><a href="../protocols.html#MessageParserProtocol">integrations.protocols.MessageParserProtocol</a></span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="WebFunctions.post_processing-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WebFunctions.post_processing"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebFunctions.post_processing-163"><a href="#WebFunctions.post_processing-163"><span class="linenos">163</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="WebFunctions.post_processing-164"><a href="#WebFunctions.post_processing-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;abstractmethod dummy&quot;&quot;&quot;</span>
+</span><span id="WebFunctions.post_processing-165"><a href="#WebFunctions.post_processing-165"><span class="linenos">165</span></a>
+</span><span id="WebFunctions.post_processing-166"><a href="#WebFunctions.post_processing-166"><span class="linenos">166</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">m</span>
 </span></pre></div>
 
 
