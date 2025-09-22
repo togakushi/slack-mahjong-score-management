@@ -366,3 +366,14 @@ class MessageParserInterface(ABC):
             - **True** : 許可
             - **False** : 禁止
         """
+
+    @property
+    @abstractmethod
+    def ignore_user(self) -> bool:
+        """ignore_useridに存在するユーザか
+
+        Returns:
+            bool: 真偽値
+            - **True** : 存在する(操作禁止ユーザ)
+            - **False** : 存在しない
+        """

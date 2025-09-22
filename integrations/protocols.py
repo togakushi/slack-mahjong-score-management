@@ -129,6 +129,10 @@ class MessageParserProtocol(Protocol):
     def check_updatable(self) -> bool:
         """DB更新可能チャンネルか判定"""
 
+    @property
+    def ignore_user(self) -> bool:
+        """コマンドを拒否するユーザか判定"""
+
     def get_score(self, keyword: str) -> dict:
         """本文からスコアデータを取り出す"""
 

@@ -29,3 +29,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     @property
     def check_updatable(self) -> bool:
         return True
+
+    @property
+    def ignore_user(self) -> bool:
+        return False

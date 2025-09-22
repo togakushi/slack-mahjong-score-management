@@ -26,11 +26,10 @@ def dispatch_by_keyword(m: MessageParserProtocol):
         m.data.status, m.data.event_ts, m.data.thread_ts, m.in_thread, m.keyword, m.data.user_id,
     )
 
-    # 許可されていないユーザのポストは処理しない
-    if isinstance(g.app_config, factory.slack.config.AppConfig):
-        if m.data.user_id in g.app_config.ignore_userid:
-            logging.trace("event skip[ignore user]: %s", m.data.user_id)  # type: ignore
-            return
+    # 許可されていないユーザのコマンドは処理しない
+    if m.ignore_user:
+        logging.info("event skip[ignore user]: %s", m.data.user_id)
+        return
 
     # 投稿済みメッセージが削除された場合
     if m.data.status == "message_deleted":

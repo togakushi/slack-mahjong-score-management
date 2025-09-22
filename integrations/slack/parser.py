@@ -20,18 +20,18 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     def __init__(self):
         MessageParserDataMixin.__init__(self)
+        self.app_config = cast(config.AppConfig, g.app_config)
         self.data = MsgData()
         self.post = PostData()
         self._command_flg: bool = False
 
     def parser(self, _body: dict):
-        g.app_config = cast(config.AppConfig, g.app_config)
         api_adapter = adapter.AdapterInterface()
 
         # 対象のevent抽出
         _event = cast(dict, _body.get("event", _body))
 
-        if _body.get("command") == g.app_config.slash_command:  # スラッシュコマンド
+        if _body.get("command") == self.app_config.slash_command:  # スラッシュコマンド
             if _body.get("channel_name") == "directmessage":
                 self._command_flg = True
                 self.data.channel_type = "im"
@@ -84,11 +84,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     def check_updatable(self) -> bool:
         """DB更新可能チャンネルのポストかチェックする"""
 
-        g.app_config = cast(config.AppConfig, g.app_config)
         ret: bool = True
 
-        if g.app_config.channel_limitations:
-            if self.data.channel_id in g.app_config.channel_limitations:
+        if self.app_config.channel_limitations:
+            if self.data.channel_id in self.app_config.channel_limitations:
                 ret = True
         else:  # リストが空なら全チャンネルが対象
             match self.data.channel_type:
@@ -102,3 +101,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                     ret = True
 
         return ret
+
+    @property
+    def ignore_user(self) -> bool:
+        return self.data.user_id in self.app_config.ignore_userid
