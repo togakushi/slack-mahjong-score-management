@@ -261,7 +261,6 @@ def check_remarks(m: MessageParserProtocol) -> None:
             case "message_append":
                 remarks_append(m, remarks)
             case "message_changed":
-                print(">>", remarks)
                 remarks_delete(m)
                 remarks_append(m, remarks)
             case "message_deleted":
