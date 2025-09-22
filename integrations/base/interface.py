@@ -353,7 +353,7 @@ class MessageParserInterface(ABC):
         Returns:
             bool: 真偽値
             - **True** : コマンド
-            - **False** : 非コマンド
+            - **False** : 非コマンド(キーワード呼び出し)
         """
 
     @property
