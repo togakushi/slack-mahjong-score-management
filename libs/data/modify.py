@@ -284,7 +284,7 @@ def _score_check(detection: GameResult, m: MessageParserProtocol):
     # 素点合計チェック
     if detection.deposit:
         m.status.reaction = False
-        m.post.rpoint_sum = detection.rpoint_sum()
+        m.status.rpoint_sum = detection.rpoint_sum()
         m.post.ts = m.data.event_ts
         m.post.message.update({"0": message.random_reply(m, "invalid_score", False)})
 

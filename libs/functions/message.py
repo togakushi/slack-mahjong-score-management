@@ -30,7 +30,7 @@ def random_reply(m: MessageParserProtocol, message_type: str, update: bool = Tru
     """
 
     correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
-    rpoint_diff = abs(correct_score - m.post.rpoint_sum)
+    rpoint_diff = abs(correct_score - m.status.rpoint_sum)
 
     default_message_type = {
         "invalid_argument": "使い方が間違っています。",
@@ -59,7 +59,7 @@ def random_reply(m: MessageParserProtocol, message_type: str, update: bool = Tru
             start=ExtDt(g.params.get("starttime", ExtDt())).format("ymd"),
             end=ExtDt(g.params.get("onday", ExtDt())).format("ymd"),
             rpoint_diff=rpoint_diff * 100,
-            rpoint_sum=m.post.rpoint_sum * 100,
+            rpoint_sum=m.status.rpoint_sum * 100,
         ))
     except KeyError as e:
         logging.error("[unknown keywords] %s: %s", e, msg)

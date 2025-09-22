@@ -89,8 +89,6 @@ class PostData(DataMixin):
     file_list: list[dict[str, str]] = field(default_factory=list)
     ts: str = field(default="undetermined")
     """指定タイムスタンプへの強制リプライ"""
-    rpoint_sum: int = field(default=0)
-    """素点合計値格納用"""
 
 
 @dataclass
@@ -110,6 +108,8 @@ class StatusData(DataMixin):
     """
     target_ts: list = field(default_factory=list)
     """同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)"""
+    rpoint_sum: int = field(default=0)
+    """素点合計値格納用"""
     message: str = field(default="")
     """個別メッセージ"""
 
