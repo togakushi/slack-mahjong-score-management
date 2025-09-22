@@ -145,11 +145,6 @@ class WebFunctions(FunctionsInterface):
 
         return {k: v for k, v in cookie_data.items() if k in target_keys}
 
-    def score_verification(self, detection: "GameResult", m: "MessageParserProtocol") -> None:
-        """abstractmethod dummy"""
-
-        _ = (detection, m)
-
     def get_channel_id(self):
         """abstractmethod dummy"""
 
@@ -163,3 +158,8 @@ class WebFunctions(FunctionsInterface):
 
         _ = m
         return {}
+
+    def post_processing(self, m: "MessageParserProtocol"):
+        """abstractmethod dummy"""
+
+        _ = m

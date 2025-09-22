@@ -3,27 +3,7 @@ integrations/web/adapter.py
 """
 
 from integrations.base import interface
-from integrations.web import functions
-
-
-class DummyReactionsInterface(interface.ReactionsInterface):
-    """ダミークラス"""
-
-    def status(self, ch=str, ts=str) -> dict[str, list]:
-        """abstractmethod dummy"""
-
-        _ = (ch, ts)
-        return {"ok": [], "ng": []}
-
-    def append(self, icon: str, ch: str, ts: str) -> None:
-        """abstractmethod dummy"""
-
-        _ = (icon, ch, ts)
-
-    def remove(self, icon: str, ch: str, ts: str) -> None:
-        """abstractmethod dummy"""
-
-        _ = (icon, ch, ts)
+from integrations import web
 
 
 class DummyAPIInterface(interface.APIInterface):
@@ -43,5 +23,4 @@ class AdapterInterface:
 
     def __init__(self):
         self.api = DummyAPIInterface()
-        self.functions = functions.WebFunctions()
-        self.reactions = DummyReactionsInterface()
+        self.functions = web.functions.WebFunctions()

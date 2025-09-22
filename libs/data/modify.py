@@ -46,6 +46,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
             except sqlite3.IntegrityError as err:
                 logging.error(err)
         logging.notice("%s", detection.to_text("logging"))  # type: ignore
+        _score_check(detection, m)
     else:
         message.random_reply(m, "restricted_channel")
 
@@ -70,39 +71,34 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
             })
             cur.commit()
         logging.notice("%s", detection.to_text("logging"))  # type: ignore
+        _score_check(detection, m)
     else:
         message.random_reply(m, "restricted_channel")
 
 
-def db_delete(m: MessageParserProtocol) -> list:
+def db_delete(m: MessageParserProtocol):
     """スコアデータを削除する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        list: 削除したタイムスタンプ
     """
 
-    delete_list: list = []
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             # ゲーム結果の削除
             cur.execute(dbutil.query("RESULT_DELETE"), (m.data.event_ts,))
             if (delete_result := cur.execute("select changes();").fetchone()[0]):
-                delete_list.append(m.data.event_ts)
+                m.status.target_ts.append(m.data.event_ts)
                 logging.notice("result: ts=%s, count=%s", m.data.event_ts, delete_result)  # type: ignore
-
             # メモの削除
             if (remark_list := cur.execute("select event_ts from remarks where thread_ts=?", (m.data.event_ts,)).fetchall()):
                 cur.execute(dbutil.query("REMARKS_DELETE_ALL"), (m.data.event_ts,))
                 if (delete_remark := cur.execute("select changes();").fetchone()[0]):
-                    delete_list.extend([x.get("event_ts") for x in list(map(dict, remark_list))])
+                    m.status.target_ts.extend([x.get("event_ts") for x in list(map(dict, remark_list))])
                     logging.notice("remark: ts=%s, count=%s", m.data.event_ts, delete_remark)  # type: ignore
-
             cur.commit()
 
-    return delete_list
+        m.status.action = "delete"
 
 
 def db_backup() -> str:
@@ -148,7 +144,6 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
     """
 
     adapter = factory.select_adapter(g.selected_service)
-    append_list: list = []
 
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
@@ -158,55 +153,37 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
                 if row:
                     if para["name"] in [v for k, v in dict(row).items() if str(k).endswith("_name")]:
                         cur.execute(dbutil.query("REMARKS_INSERT"), para)
-                        append_list.append(para["event_ts"])
+                        m.status.target_ts.append(para["event_ts"])
+                        m.status.target_ts.append(para["event_ts"])
                         logging.notice("insert: %s, user=%s", para, m.data.user_id)  # type: ignore
             cur.commit()
 
-        # リアクション処理
-        if isinstance(adapter, factory.slack.adapter.AdapterInterface):
-            if not (ch := m.data.channel_id):
-                ch = adapter.functions.get_channel_id()
-            for ts in append_list:
-                reactions = adapter.reactions.status(ts=ts, ch=ch)
-                if not reactions.get("ok"):
-                    adapter.reactions.append(getattr(g.app_config, "reaction_ok", "ok"), ts=ts, ch=ch)
-                if reactions.get("ng"):
-                    adapter.reactions.remove(getattr(g.app_config, "reaction_ng", "ng"), ts=ts, ch=ch)
+        # 後処理
+        m.status.action = "change"
+        m.status.reaction = True  # 対象外はINSERTしないようにガード済
+        adapter.functions.post_processing(m)
 
 
-def remarks_delete(m: MessageParserProtocol) -> list:
+def remarks_delete(m: MessageParserProtocol):
     """DBからメモを削除する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        list: 削除したタイムスタンプ
     """
 
     adapter = factory.select_adapter(g.selected_service)
-    delete_list: list = []
 
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             cur.execute(dbutil.query("REMARKS_DELETE_ONE"), (m.data.event_ts,))
             cur.commit()
             if (count := cur.execute("select changes();").fetchone()[0]):
-                delete_list.append(m.data.event_ts)
+                m.status.target_ts.append(m.data.event_ts)
                 logging.notice("ts=%s, user=%s, count=%s", m.data.event_ts, m.data.user_id, count)  # type: ignore
 
-    # リアクション処理
-    if isinstance(adapter, factory.slack.adapter.AdapterInterface):
-        if not (ch := m.data.channel_id):
-            ch = adapter.functions.get_channel_id()
-        for ts in delete_list:
-            reactions = adapter.reactions.status(ts=ts, ch=ch)
-            if reactions.get("ok"):
-                adapter.reactions.remove(getattr(g.app_config, "reaction_ok", "ok"), ts=ts, ch=ch)
-            if reactions.get("ng"):
-                adapter.reactions.remove(getattr(g.app_config, "reaction_ng", "ng"), ts=ts, ch=ch)
-
-    return delete_list
+        # 後処理
+        m.status.action = "delete"
+        adapter.functions.post_processing(m)
 
 
 def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
@@ -225,15 +202,12 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
 
         left = cur.execute("select count() from remarks where event_ts=:event_ts;", para).fetchone()[0]
 
-    # リアクション処理
-    if isinstance(adapter, factory.slack.adapter.AdapterInterface):
-        if not (ch := m.data.channel_id):
-            ch = adapter.functions.get_channel_id()
-        reactions = adapter.reactions.status(ch=ch, ts=para["event_ts"])
-        if reactions.get("ok") and left == 0:
-            adapter.reactions.remove(getattr(g.app_config, "reaction_ok", "ok"), ts=para["event_ts"], ch=ch)
-        if reactions.get("ng"):
-            adapter.reactions.remove(getattr(g.app_config, "reaction_ng", "ng"), ts=para["event_ts"], ch=ch)
+    # 後処理
+    m.status.action = "delete"
+    m.status.target_ts.append(para["event_ts"])
+    if left > 0:  # メモデータが残っているなら
+        m.status.action = "change"
+    adapter.functions.post_processing(m)
 
 
 def check_remarks(m: MessageParserProtocol) -> None:
@@ -290,3 +264,32 @@ def reprocessing_remarks(m: MessageParserProtocol) -> None:
                 logging.info("(%s/%s) thread_ts=%s, event_ts=%s, %s", x, reply_count, m.data.thread_ts, m.data.event_ts, m.data.text)
                 if re.match(rf"^{g.cfg.setting.remarks_word}", m.keyword):
                     check_remarks(m)
+
+
+def _score_check(detection: GameResult, m: MessageParserProtocol):
+    """スコアデータ格納状態を記録する
+
+    Args:
+        detection (GameResult): スコアデータ
+        m (MessageParserProtocol): メッセージデータ
+    """
+
+    # 結果
+    m.status.action = "change"
+    m.status.target_ts.append(m.data.event_ts)
+    m.status.reaction = True
+    m.status.message = detection.to_text("detail")
+    m.post.message = {}
+
+    # 素点合計チェック
+    if detection.deposit:
+        m.status.reaction = False
+        m.post.rpoint_sum = detection.rpoint_sum()
+        m.post.ts = m.data.event_ts
+        m.post.message.update({"0": message.random_reply(m, "invalid_score", False)})
+
+    # プレイヤー名重複チェック
+    if len(set(detection.to_list())) != 4:
+        m.status.reaction = False
+        m.post.ts = m.data.event_ts
+        m.post.message.update({"1": message.random_reply(m, "same_player", False)})

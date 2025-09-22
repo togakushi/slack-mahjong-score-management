@@ -10,55 +10,10 @@ from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
-from integrations.base.interface import APIInterface, ReactionsInterface
+from integrations.base.interface import APIInterface
 from integrations.protocols import MessageParserProtocol
 from integrations.slack import config
 from libs.utils import converter, formatter
-
-
-class ReactionsAPI(ReactionsInterface):
-    """リアクション操作"""
-    def status(self, ch=str, ts=str) -> dict[str, list]:
-        """botが付けたリアクションの種類を返す
-
-        Args:
-            ch (str): チャンネルID
-            ts (str): メッセージのタイムスタンプ
-
-        Returns:
-            dict[str,list]: リアクション
-        """
-
-        g.app_config = cast(config.AppConfig, g.app_config)
-        ok = getattr(g.app_config, "reaction_ok", "ok")
-        ng = getattr(g.app_config, "reaction_ng", "ng")
-
-        icon: dict[str, list] = {
-            "ok": [],
-            "ng": [],
-        }
-
-        try:  # 削除済みメッセージはエラーになるので潰す
-            res = g.app_config.appclient.reactions_get(channel=ch, timestamp=ts)
-            logging.trace(res.validate())  # type: ignore
-        except SlackApiError:
-            return icon
-
-        if (reactions := cast(dict, res["message"]).get("reactions")):
-            for reaction in cast(list[dict], reactions):
-                if ok == reaction.get("name") and g.app_config.bot_id in reaction["users"]:
-                    icon["ok"].append(res["message"]["ts"])
-                if ng == reaction.get("name") and g.app_config.bot_id in reaction["users"]:
-                    icon["ng"].append(res["message"]["ts"])
-
-        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.app_config.bot_id, icon)
-        return icon
-
-    def append(self, icon: str, ch: str, ts: str):
-        call_reactions_add(icon=icon, ch=ch, ts=ts)
-
-    def remove(self, icon: str, ch: str, ts: str):
-        call_reactions_remove(icon=icon, ch=ch, ts=ts)
 
 
 class SlackAPI(APIInterface):
@@ -193,6 +148,48 @@ class SlackAPI(APIInterface):
         except SlackApiError as e:
             logging.error(e)
             return {}
+
+    def reaction_status(self, ch=str, ts=str) -> dict[str, list]:
+        """botが付けたリアクションの種類を返す
+
+        Args:
+            ch (str): チャンネルID
+            ts (str): メッセージのタイムスタンプ
+
+        Returns:
+            dict[str,list]: リアクション
+        """
+
+        g.app_config = cast(config.AppConfig, g.app_config)
+        ok = getattr(g.app_config, "reaction_ok", "ok")
+        ng = getattr(g.app_config, "reaction_ng", "ng")
+
+        icon: dict[str, list] = {
+            "ok": [],
+            "ng": [],
+        }
+
+        try:  # 削除済みメッセージはエラーになるので潰す
+            res = g.app_config.appclient.reactions_get(channel=ch, timestamp=ts)
+            logging.trace(res.validate())  # type: ignore
+        except SlackApiError:
+            return icon
+
+        if (reactions := cast(dict, res["message"]).get("reactions")):
+            for reaction in cast(list[dict], reactions):
+                if ok == reaction.get("name") and g.app_config.bot_id in reaction["users"]:
+                    icon["ok"].append(res["message"]["ts"])
+                if ng == reaction.get("name") and g.app_config.bot_id in reaction["users"]:
+                    icon["ng"].append(res["message"]["ts"])
+
+        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.app_config.bot_id, icon)
+        return icon
+
+    def reaction_append(self, icon: str, ch: str, ts: str):
+        call_reactions_add(icon=icon, ch=ch, ts=ts)
+
+    def reaction_remove(self, icon: str, ch: str, ts: str):
+        call_reactions_remove(icon=icon, ch=ch, ts=ts)
 
 
 def call_chat_post_message(**kwargs) -> SlackResponse:

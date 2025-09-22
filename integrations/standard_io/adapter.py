@@ -11,26 +11,6 @@ from integrations.standard_io import functions
 from libs.utils import formatter
 
 
-class DummyReactionsInterface(interface.ReactionsInterface):
-    """ダミークラス"""
-
-    def status(self, ch=str, ts=str) -> dict[str, list]:
-        """abstractmethod dummy"""
-
-        _ = (ch, ts)
-        return {"ok": [], "ng": []}
-
-    def append(self, icon: str, ch: str, ts: str) -> None:
-        """abstractmethod dummy"""
-
-        _ = (icon, ch, ts)
-
-    def remove(self, icon: str, ch: str, ts: str) -> None:
-        """abstractmethod dummy"""
-
-        _ = (icon, ch, ts)
-
-
 class StandardIO(interface.APIInterface):
     """メッセージ標準出力クラス"""
 
@@ -47,6 +27,7 @@ class StandardIO(interface.APIInterface):
         ret: str = ""
         for line in text.splitlines():
             line = line.replace("```", "")
+            line = line.replace("<@>", "")
             line = textwrap.dedent(line)
             if line:
                 ret += f"{line}\n"
@@ -107,4 +88,3 @@ class AdapterInterface:
     def __init__(self):
         self.api = StandardIO()
         self.functions = functions.StandardIOFunctions()
-        self.reactions = DummyReactionsInterface()

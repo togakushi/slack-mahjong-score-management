@@ -3,14 +3,27 @@ integrations/protocols.py
 """
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field, fields, is_dataclass
 from typing import Any, Literal, Protocol, runtime_checkable
 
 import pandas as pd
 
 
+class DataMixin:
+    """共通処理"""
+
+    def reset(self) -> None:
+        """初期化"""
+        if not is_dataclass(self):
+            raise TypeError(f"{self.__class__.__name__} must be a dataclass")
+
+        default = type(self)()
+        for f in fields(self):
+            setattr(self, f.name, getattr(default, f.name))
+
+
 @dataclass
-class MsgData:
+class MsgData(DataMixin):
     """ポストされたメッセージデータ"""
 
     command_type: Literal["results", "graph", "ranking", "rating", "report", "unknown"] = field(default="unknown")
@@ -57,15 +70,9 @@ class MsgData:
     remarks: list = field(default_factory=list)
     """メモ格納用"""
 
-    def reset(self) -> None:
-        """初期化"""
-        default = type(self)()
-        for f in fields(self):
-            setattr(self, f.name, getattr(default, f.name))
-
 
 @dataclass
-class PostData:
+class PostData(DataMixin):
     """ポストするデータ"""
     headline: dict[str, str] = field(default_factory=dict)
     """ヘッダ文"""
@@ -85,11 +92,26 @@ class PostData:
     rpoint_sum: int = field(default=0)
     """素点合計値格納用"""
 
-    def reset(self) -> None:
-        """初期化"""
-        default = type(self)()
-        for f in fields(self):
-            setattr(self, f.name, getattr(default, f.name))
+
+@dataclass
+class StatusData(DataMixin):
+    """処理した結果"""
+
+    reaction: bool = field(default=False)
+    """最終ステータス状態
+    - *True*: 矛盾なくデータを取り込んだ(OK)
+    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)
+    """
+    action: Literal["change", "delete", "nothing"] = field(default="nothing")
+    """DBに対する操作
+    - *change*: insert/updateが実行された
+    - *delete*: deleteが実行された
+    - *nothing*: 何もしてない
+    """
+    target_ts: list = field(default_factory=list)
+    """同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)"""
+    message: str = field(default="")
+    """個別メッセージ"""
 
 
 @runtime_checkable
@@ -100,6 +122,8 @@ class MessageParserProtocol(Protocol):
     """受け取ったメッセージデータ"""
     post: PostData
     """送信する内容"""
+    status: StatusData
+    """処理した結果"""
 
     @property
     def in_thread(self) -> bool:

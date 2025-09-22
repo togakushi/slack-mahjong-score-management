@@ -4,12 +4,10 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, field, fields
-from typing import TYPE_CHECKING, Any, Callable, Union
+from typing import Any, Callable, Union
 
-from integrations.protocols import MessageParserProtocol, MsgData, PostData
-
-if TYPE_CHECKING:
-    from cls.score import GameResult
+from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
+                                    StatusData)
 
 
 @dataclass
@@ -64,11 +62,10 @@ class FunctionsInterface(ABC):
     """個別関数定義クラス"""
 
     @abstractmethod
-    def score_verification(self, detection: "GameResult", m: MessageParserProtocol) -> None:
-        """素点合計をチェックしリアクションを付ける
+    def post_processing(self, m: "MessageParserProtocol"):
+        """後処理
 
         Args:
-            detection (GameResult): ゲーム結果
             m (MessageParserProtocol): メッセージデータ
         """
 
@@ -106,45 +103,6 @@ class FunctionsInterface(ABC):
         return {}
 
 
-class ReactionsInterface(ABC):
-    """リアクション操作抽象インターフェース"""
-
-    @abstractmethod
-    def status(self, ch=str, ts=str) -> dict[str, list]:
-        """botが付けたリアクションの種類を返す
-
-        Args:
-            ch (str): チャンネルID
-            ts (str): メッセージのタイムスタンプ
-
-        Returns:
-            dict[str,list]: リアクション
-            - **str**: 種類
-            - **list**: タイムスタンプ
-        """
-        return {"ok": [], "ng": []}
-
-    @abstractmethod
-    def append(self, icon: str, ch: str, ts: str) -> None:
-        """リアクションを付ける
-
-        Args:
-            icon (str): リアクションの種類
-            ch (str): チャンネルID
-            ts (str): タイムスタンプ
-        """
-
-    @abstractmethod
-    def remove(self, icon: str, ch: str, ts: str) -> None:
-        """リアクションを外す
-
-        Args:
-            icon (str): リアクションの種類
-            ch (str): チャンネルID
-            ts (str): タイムスタンプ
-        """
-
-
 class APIInterface(ABC):
     """API抽象化インターフェース"""
 
@@ -162,6 +120,7 @@ class MessageParserDataMixin:
 
     data: "MsgData"
     post: "PostData"
+    status: "StatusData"
 
     @property
     def in_thread(self) -> bool:
@@ -224,6 +183,7 @@ class MessageParserDataMixin:
 
         self.data.reset()
         self.post.reset()
+        self.status.reset()
 
     def get_score(self, keyword: str) -> dict:
         """textからスコアを抽出する

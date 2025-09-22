@@ -8,7 +8,7 @@ from typing import cast
 import libs.global_value as g
 from integrations.base.interface import (MessageParserDataMixin,
                                          MessageParserInterface)
-from integrations.protocols import MsgData, PostData
+from integrations.protocols import MsgData, PostData, StatusData
 from integrations.slack import adapter, config
 
 
@@ -17,12 +17,14 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     data: MsgData
     post: PostData
+    status: StatusData
 
     def __init__(self):
         MessageParserDataMixin.__init__(self)
         self.app_config = cast(config.AppConfig, g.app_config)
         self.data = MsgData()
         self.post = PostData()
+        self.status = StatusData()
         self._command_flg: bool = False
 
     def parser(self, _body: dict):

@@ -167,11 +167,12 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
 
     if _thread_check(m):
         modify.db_insert(detection, m)
-        adapter.functions.score_verification(detection, m)
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
+
+    adapter.functions.post_processing(m)
 
 
 def message_changed(detection: GameResult, m: MessageParserProtocol):
@@ -191,17 +192,17 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
         if record_data.has_valid_data():
             if record_data.rule_version == g.cfg.mahjong.rule_version:
                 modify.db_update(detection, m)
-                adapter.functions.score_verification(detection, m)
             else:
                 logging.notice("skip (rule_version not match). event_ts=%s", m.data.event_ts)  # type: ignore
         else:
             modify.db_insert(detection, m)
-            adapter.functions.score_verification(detection, m)
             modify.reprocessing_remarks(m)
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
+
+    adapter.functions.post_processing(m)
 
 
 def message_deleted(m: MessageParserProtocol):
@@ -211,17 +212,14 @@ def message_deleted(m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    api_adapter = factory.select_adapter(g.selected_service)
+    adapter = factory.select_adapter(g.selected_service)
 
     if re.match(rf"^{g.cfg.setting.remarks_word}", m.keyword):  # 追加メモ
-        delete_list = modify.remarks_delete(m)
+        modify.remarks_delete(m)
     else:
-        delete_list = modify.db_delete(m)
+        modify.db_delete(m)
 
-    for ts in delete_list:
-        if isinstance(g.app_config, factory.slack.config.AppConfig):
-            api_adapter.reactions.remove(icon=g.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
-            api_adapter.reactions.remove(icon=g.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
+    adapter.functions.post_processing(m)
 
 
 def _thread_check(m: MessageParserProtocol) -> bool:

@@ -8,12 +8,10 @@ from typing import cast
 from slack_sdk.errors import SlackApiError
 
 import libs.global_value as g
-from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import slack
 from integrations.base.interface import FunctionsInterface
 from integrations.protocols import MessageParserProtocol
-from libs.functions import message
 
 
 class SlackFunctions(FunctionsInterface):
@@ -21,7 +19,7 @@ class SlackFunctions(FunctionsInterface):
 
     def __init__(self):
         self.app_config = cast(slack.config.AppConfig, g.app_config)
-        self.reactions = slack.api.ReactionsAPI()
+        self.api = slack.api.SlackAPI()
 
     def get_messages(self, word: str, m: MessageParserProtocol) -> list[MessageParserProtocol]:
         """slackログからメッセージを検索して返す
@@ -239,39 +237,33 @@ class SlackFunctions(FunctionsInterface):
             return self.get_message_details(remarks_matches)
         return remarks_matches
 
-    def score_verification(self, detection: GameResult, m: MessageParserProtocol) -> None:
-        """素点合計をチェックしリアクションを付ける
+    def post_processing(self, m: MessageParserProtocol):
+        """後処理
 
         Args:
-            detection (GameResult): ゲーム結果
             m (MessageParserProtocol): メッセージデータ
         """
 
-        reactions = self.reactions.status(ch=m.data.channel_id, ts=m.data.event_ts)
-        status_flg: bool = True  # リアクション最終状態(True: OK, False: NG)
-        m.post.message = {}
-
-        # 素点合計チェック
-        if detection.deposit:
-            status_flg = False
-            m.post.rpoint_sum = detection.rpoint_sum()
-            m.post.ts = m.data.event_ts
-            m.post.message.update({"0": message.random_reply(m, "invalid_score", False)})
-
-        # プレイヤー名重複チェック
-        if len(set(detection.to_list())) != 4:
-            status_flg = False
-            m.post.ts = m.data.event_ts
-            m.post.message.update({"1": message.random_reply(m, "same_player", False)})
-
         # リアクション処理
-        if status_flg:  # NGを外してOKを付ける
-            if not reactions.get("ok"):
-                self.reactions.append(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
-            if reactions.get("ng"):
-                self.reactions.remove(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
-        else:  # OKを外してNGを付ける
-            if reactions.get("ok"):
-                self.reactions.remove(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=m.data.event_ts)
-            if not reactions.get("ng"):
-                self.reactions.append(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=m.data.event_ts)
+        match m.status.action:
+            case "nothing":
+                return
+            case "change":
+                for ts in m.status.target_ts:
+                    reaction_data = self.api.reaction_status(ch=m.data.channel_id, ts=ts)
+                    if m.status.reaction:  # NGを外してOKを付ける
+                        if not reaction_data.get("ok"):
+                            self.api.reaction_append(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
+                        if reaction_data.get("ng"):
+                            self.api.reaction_remove(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
+                    else:  # OKを外してNGを付ける
+                        if reaction_data.get("ok"):
+                            self.api.reaction_remove(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
+                        if not reaction_data.get("ng"):
+                            self.api.reaction_append(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
+                m.status.reset()
+            case "delete":
+                for ts in m.status.target_ts:
+                    self.api.reaction_remove(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
+                    self.api.reaction_remove(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
+                m.status.reset()

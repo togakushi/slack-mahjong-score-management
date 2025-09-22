@@ -14,9 +14,7 @@ import libs.event_dispatcher
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDT
-from integrations import factory
-from integrations.web import config
-from integrations.web import functions as func
+from integrations import factory, web
 from libs.data import loader, lookup, modify
 from libs.registry import member, team
 from libs.utils import dbutil, formatter
@@ -25,7 +23,7 @@ from libs.utils import dbutil, formatter
 def main():
     """メイン処理"""
 
-    g.app_config = cast(config.AppConfig, g.app_config)
+    g.app_config = cast(web.config.AppConfig, g.app_config)
     app = Flask(
         __name__,
         static_folder=os.path.join(g.cfg.script_dir, "files/html/static"),
@@ -39,46 +37,46 @@ def main():
     )
     auth = HTTPBasicAuth()
 
-    functions = func.WebFunctions()
-    m = factory.select_parser(g.selected_service)
+    adapter = factory.select_adapter("web")
+    m = factory.select_parser("web")
 
     padding = "0.25em 1.5em"
     players = lookup.internal.get_member()
 
     @user_assets_bp.before_request
     def restrict_static():
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if not os.path.basename(request.path) == g.app_config.custom_css:
             abort(403)
 
     @auth.verify_password
     def verify_password(username, password):
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if username == g.app_config.username and password == g.app_config.password:
             return True
         return False
 
     @app.before_request
     def require_auth():
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if g.app_config.require_auth:
             return auth.login_required(lambda: None)()
         return None
 
     @app.route("/")
     def index():
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         m.post.reset()
         return render_template("index.html", **asdict(g.app_config))
 
     @app.route("/summary", methods=["GET", "POST"])
     def summary(padding=padding):
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if not g.app_config.view_summary:
             abort(403)
 
         m.post.reset()
-        cookie_data = functions.get_cookie(request)
+        cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.results} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
@@ -101,23 +99,23 @@ def main():
                         new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
                         v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
 
-                message += functions.to_styled_html(v, padding)
+                message += adapter.functions.to_styled_html(v, padding)
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
         cookie_data.update(body=message, **asdict(g.app_config))
-        page = functions.set_cookie("summary.html", request, cookie_data)
+        page = adapter.functions.set_cookie("summary.html", request, cookie_data)
 
         return page
 
     @app.route("/graph", methods=["GET", "POST"])
     def graph():
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if not g.app_config.view_graph:
             abort(403)
 
         m.post.message = {}
-        cookie_data = functions.get_cookie(request)
+        cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.graph} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
@@ -136,18 +134,18 @@ def main():
             pass
 
         cookie_data.update(body=message, **asdict(g.app_config))
-        page = functions.set_cookie("graph.html", request, cookie_data)
+        page = adapter.functions.set_cookie("graph.html", request, cookie_data)
 
         return page
 
     @app.route("/ranking", methods=["GET", "POST"])
     def ranking():
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if not g.app_config.view_ranking:
             abort(403)
 
         m.post.reset()
-        cookie_data = functions.get_cookie(request)
+        cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.ranking} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
@@ -163,23 +161,23 @@ def main():
                 message += f"<h2>{k}</h2>\n"
 
             if isinstance(v, pd.DataFrame):
-                message += functions.to_styled_html(v, padding)
+                message += adapter.functions.to_styled_html(v, padding)
             elif isinstance(v, str):
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
         cookie_data.update(body=message, **asdict(g.app_config))
-        page = functions.set_cookie("ranking.html", request, cookie_data)
+        page = adapter.functions.set_cookie("ranking.html", request, cookie_data)
 
         return page
 
     @app.route("/detail", methods=["GET", "POST"])
     def detail(padding=padding):
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if not g.app_config.view_summary:
             abort(403)
 
         m.post.reset()
-        cookie_data = functions.get_cookie(request)
+        cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.cw.results} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
@@ -200,18 +198,18 @@ def main():
                     if not isinstance(v.columns, pd.MultiIndex):
                         new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
                         v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
-                message += functions.to_styled_html(v, padding)
+                message += adapter.functions.to_styled_html(v, padding)
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
         cookie_data.update(body=message, players=players, **asdict(g.app_config))
-        page = functions.set_cookie("detail.html", request, cookie_data)
+        page = adapter.functions.set_cookie("detail.html", request, cookie_data)
 
         return page
 
     @app.route("/member", methods=["GET", "POST"])
     def mgt_member():
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if not g.app_config.management_member:
             abort(403)
 
@@ -243,19 +241,19 @@ def main():
         if member_df.empty:
             data.update(member_table="<p>登録済みメンバーはいません。</p>")
         else:
-            data.update(member_table=functions.to_styled_html(member_df, padding))
+            data.update(member_table=adapter.functions.to_styled_html(member_df, padding))
 
         team_df = loader.read_data("TEAM_INFO")
         if team_df.empty:
             data.update(team_table="<p>登録済みチームはありません。</p>")
         else:
-            data.update(team_table=functions.to_styled_html(team_df, padding))
+            data.update(team_table=adapter.functions.to_styled_html(team_df, padding))
 
         return render_template("registry.html", **data)
 
     @app.route("/score", methods=["GET", "POST"])
     def mgt_score():
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.app_config = cast(web.config.AppConfig, g.app_config)
         if not g.app_config.management_score:
             abort(403)
 
@@ -284,7 +282,7 @@ def main():
                 new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in df.columns]
                 df.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
 
-            return functions.to_styled_html(df, padding)
+            return adapter.functions.to_styled_html(df, padding)
 
         data: dict = asdict(g.app_config)
         data.update(players=players)

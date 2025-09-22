@@ -178,12 +178,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
                     logging.notice("delete (In-thread report): %s", slack_score.to_text("logging"))  # type: ignore
                     msg["delete"] += f"\t{ExtDt(float(slack_m.data.event_ts)).format("ymdhms")} {slack_score.to_text()}\n"
                     modify.db_delete(slack_m)
-
-                    # リアクションの削除
-                    if slack_m.data.event_ts in slack_m.data.reaction_ok:
-                        adapter.reactions.remove(icon=g.app_config.reaction_ok, ts=slack_m.data.event_ts, ch=slack_m.data.channel_id)
-                    if slack_m.data.event_ts in slack_m.data.reaction_ng:
-                        adapter.reactions.remove(icon=g.app_config.reaction_ng, ts=slack_m.data.event_ts, ch=slack_m.data.channel_id)
+                    adapter.functions.post_processing(slack_m)
                     continue
 
             if slack_score.to_dict() == db_score.to_dict():  # スコア比較
@@ -200,7 +195,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
                 msg["mismatch"] += f"\t\t修正前：{db_score.to_text()}\n"
                 msg["mismatch"] += f"\t\t修正後：{slack_score.to_text()}\n"
                 modify.db_update(slack_score, slack_m)
-                adapter.functions.score_verification(slack_score, slack_m)
+                adapter.functions.post_processing(slack_m)
             else:
                 logging.info("score check skip: %s", db_score.to_text("logging"))
             continue
@@ -214,7 +209,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
         logging.notice("missing: %s", slack_score.to_text("logging"))  # type: ignore
         msg["missing"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")} {slack_score.to_text()}\n"
         modify.db_insert(slack_score, slack_m)
-        adapter.functions.score_verification(slack_score, slack_m)
+        adapter.functions.post_processing(slack_m)
 
     for _, db_score in db_data.items():  # DB -> slack チェック
         # 保留チェック
@@ -235,10 +230,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
         logging.notice("delete (Only database): %s", db_score.to_text("logging"))  # type: ignore
         msg["delete"] += f"\t{ExtDt(float(db_score.ts)).format("ymdhms")} {db_score.to_text()}\n"
         modify.db_delete(work_m)
-
-        # メッセージが残っているならリアクションを外す
-        adapter.reactions.remove(icon=g.app_config.reaction_ok, ch=m.data.channel_id, ts=db_score.ts)
-        adapter.reactions.remove(icon=g.app_config.reaction_ng, ch=m.data.channel_id, ts=db_score.ts)
+        adapter.functions.post_processing(work_m)
 
     return (count, msg)
 
@@ -342,14 +334,14 @@ def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, Co
             logging.notice("invalid score: %s deposit=%s", slack_score.ts, slack_score.deposit)  # type: ignore
             msg["invalid_score"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")} [供託：{slack_score.deposit}]{slack_score.to_text()}\n"
             if slack_score.ts in val.data.reaction_ok:
-                adapter.reactions.remove(g.app_config.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
+                adapter.api.reaction_remove(g.app_config.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
             if slack_score.ts not in val.data.reaction_ng:
-                adapter.reactions.append(g.app_config.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
+                adapter.api.reaction_append(g.app_config.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
         else:
             if slack_score.ts in val.data.reaction_ng:
-                adapter.reactions.remove(g.app_config.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
+                adapter.api.reaction_remove(g.app_config.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
             if slack_score.ts not in val.data.reaction_ok:
-                adapter.reactions.append(g.app_config.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
+                adapter.api.reaction_append(g.app_config.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
 
     return (count, msg)
 
