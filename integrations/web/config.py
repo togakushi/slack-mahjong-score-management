@@ -4,6 +4,7 @@ integrations/web/config.py
 
 import os
 from dataclasses import dataclass, field
+from typing import Literal
 
 import libs.global_value as g
 from integrations.base.interface import IntegrationsConfig
@@ -48,7 +49,7 @@ class AppConfig(IntegrationsConfig):
     custom_css: str = field(default="")
     """ユーザー指定CSSファイル"""
 
-    plotting_backend: str = field(default="plotly")
+    plotting_backend: Literal["matplotlib", "plotly"] = field(default="plotly")
 
     def initialization(self):
         """初期化処理"""
