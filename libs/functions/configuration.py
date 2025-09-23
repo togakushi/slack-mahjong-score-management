@@ -218,19 +218,25 @@ def setup() -> None:
 
     g.cfg = AppConfig(g.args.config)
     g.app_config = factory.load_config(str(g.selected_service), cast(ConfigParser, getattr(g.cfg, "_parser")))
-
-    logging.notice(  # type: ignore
-        "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
-        g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.setting.time_adjust
-    )
+    os.path.realpath
 
     # 作業用ディレクトリ作成
     try:
         if os.path.isdir(g.cfg.setting.work_dir):
             shutil.rmtree(g.cfg.setting.work_dir)
         os.mkdir(g.cfg.setting.work_dir)
-    except Exception as e:
-        raise RuntimeError(e) from e
+    except Exception as err:
+        raise RuntimeError(err) from err
+
+    # 設定内容のロギング
+    logging.notice("conf: %s", os.path.join(g.cfg.config_dir, g.args.config))  # type: ignore
+    logging.notice("font: %s", g.cfg.setting.font_file)  # type: ignore
+    logging.notice("database: %s", g.cfg.setting.database_file)  # type: ignore
+    logging.notice("graph_library: %s", g.app_config.plotting_backend)  # type: ignore
+    logging.notice(  # type: ignore
+        "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
+        g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.setting.time_adjust
+    )
 
 
 def read_memberslist(log=True):

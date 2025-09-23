@@ -198,9 +198,6 @@ class SettingSection(BaseSection):
         if self.backup_dir:
             self.backup_dir = os.path.realpath(os.path.join(outer.script_dir, self.backup_dir))
 
-        logging.notice("fontfile: %s", self.font_file)  # type: ignore
-        logging.notice("database: %s", self.database_file)  # type: ignore
-
 
 class MemberSection(BaseSection):
     "memberセクション初期値"""
@@ -400,9 +397,8 @@ class AppConfig:
         try:
             self._parser = ConfigParser()
             self._parser.read(path, encoding="utf-8")
-            logging.notice("configfile: %s", path)  # type: ignore
-        except Exception as e:
-            raise RuntimeError(e) from e
+        except Exception as err:
+            raise RuntimeError(err) from err
 
         # 必須セクションチェック
         for x in ("mahjong", "setting"):
@@ -429,7 +425,6 @@ class AppConfig:
         # set base directory
         self.script_dir = os.path.realpath(str(Path(__file__).resolve().parents[1]))
         self.config_dir = os.path.dirname(os.path.realpath(str(path)))
-        logging.info("script_dir=%s, config_dir=%s", self.script_dir, self.config_dir)
 
         # 設定値取り込み
         self.mahjong = MahjongSection(self, "mahjong")
