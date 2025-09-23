@@ -7,7 +7,7 @@ import pytest
 import libs.global_value as g
 from cls.config import AppConfig
 from cls.score import GameResult
-from integrations.standard_io.parser import MessageParser
+from integrations import factory
 from libs.functions import configuration
 from tests.parser import param_data
 
@@ -21,7 +21,8 @@ def test_score_report(input_str, result_dict, get_point):
     """得点入力"""
     configuration.set_loglevel()
     g.cfg = AppConfig("tests/testdata/minimal.ini")
-    m = MessageParser()
+    adapter = factory.select_adapter("standard_io")
+    m = adapter.parser()
     m.data.text = input_str
     m.data.event_ts = "1234567890.123456"
 
