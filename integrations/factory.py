@@ -5,8 +5,6 @@ integrations/factory.py
 from configparser import ConfigParser
 from typing import Literal, TypeAlias, Union, overload
 
-import pandas as pd
-
 from integrations import slack, standard_io, web
 
 
@@ -78,13 +76,10 @@ def select_parser(selected_service: str) -> MessageType:
 
     match selected_service:
         case "slack":
-            pd.options.plotting.backend = "matplotlib"
             return slack.parser.MessageParser()
         case "web":
-            pd.options.plotting.backend = "plotly"
             return web.parser.MessageParser()
         case "standard_io":
-            pd.options.plotting.backend = "matplotlib"
             return standard_io.parser.MessageParser()
         case _:
             raise ValueError("No match service name.")

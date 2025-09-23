@@ -83,7 +83,6 @@ class AdapterInterface:
     """standard input/output interface"""
 
     interface_type = "standard_io"
-    plotting_backend = "matplotlib"
 
     def __init__(self):
         self.api = StandardIO()

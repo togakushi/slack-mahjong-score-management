@@ -9,7 +9,6 @@ class AdapterInterface:
     """slack interface"""
 
     interface_type = "slack"
-    plotting_backend = "matplotlib"
 
     def __init__(self):
         self.api = slack.api.SlackAPI()

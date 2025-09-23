@@ -4,7 +4,7 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, field, fields
-from typing import Any, Callable, Union
+from typing import Any, Callable, Literal, Union
 
 from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
                                     StatusData)
@@ -21,6 +21,9 @@ class IntegrationsConfig(ABC):
     badge_degree: bool = field(default=False)
     badge_status: bool = field(default=False)
     badge_grade: bool = field(default=False)
+
+    plotting_backend: Literal["matplotlib", "plotly"] = field(default="matplotlib")
+    """グラフ描写ライブラリ"""
 
     # コマンドディスパッチ
     slash_commands: dict[str, Callable[..., Any]] = field(default_factory=dict)

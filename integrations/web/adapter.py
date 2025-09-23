@@ -19,7 +19,6 @@ class AdapterInterface:
     """web interface"""
 
     interface_type = "web"
-    plotting_backend = "plotly"
 
     def __init__(self):
         self.api = DummyAPIInterface()

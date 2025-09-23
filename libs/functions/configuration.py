@@ -253,7 +253,8 @@ def read_memberslist(log=True):
 def graph_setup() -> None:
     """グラフ設定初期化"""
 
-    match pd.options.plotting.backend:
+    pd.options.plotting.backend = g.app_config.plotting_backend
+    match g.app_config.plotting_backend:
         case "plotly":
             return
 

@@ -48,6 +48,8 @@ class AppConfig(IntegrationsConfig):
     custom_css: str = field(default="")
     """ユーザー指定CSSファイル"""
 
+    plotting_backend: str = field(default="plotly")
+
     def initialization(self):
         """初期化処理"""
 
