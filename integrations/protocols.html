@@ -115,9 +115,6 @@
                         <li>
                                 <a class="variable" href="#PostData.ts">ts</a>
                         </li>
-                        <li>
-                                <a class="variable" href="#PostData.rpoint_sum">rpoint_sum</a>
-                        </li>
                 </ul>
 
             </li>
@@ -135,6 +132,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#StatusData.target_ts">target_ts</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#StatusData.rpoint_sum">rpoint_sum</a>
                         </li>
                         <li>
                                 <a class="variable" href="#StatusData.message">message</a>
@@ -304,27 +304,27 @@
 </span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">file_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;undetermined&quot;</span><span class="p">)</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;指定タイムスタンプへの強制リプライ&quot;&quot;&quot;</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点合計値格納用&quot;&quot;&quot;</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="nd">@dataclass</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StatusData</span><span class="p">(</span><span class="n">DataMixin</span><span class="p">):</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;処理した結果&quot;&quot;&quot;</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;最終ステータス状態</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    - *True*: 矛盾なくデータを取り込んだ(OK)</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;nothing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;nothing&quot;</span><span class="p">)</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに対する操作</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">    - *change*: insert/updateが実行された</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    - *delete*: deleteが実行された</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">    - *nothing*: 何もしてない</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)&quot;&quot;&quot;</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="nd">@dataclass</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StatusData</span><span class="p">(</span><span class="n">DataMixin</span><span class="p">):</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;処理した結果&quot;&quot;&quot;</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;最終ステータス状態</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    - *True*: 矛盾なくデータを取り込んだ(OK)</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;nothing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;nothing&quot;</span><span class="p">)</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに対する操作</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    - *change*: insert/updateが実行された</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    - *delete*: deleteが実行された</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">    - *nothing*: 何もしてない</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)&quot;&quot;&quot;</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点合計値格納用&quot;&quot;&quot;</span>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;個別メッセージ&quot;&quot;&quot;</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
@@ -749,8 +749,6 @@
 </span><span id="PostData-90"><a href="#PostData-90"><span class="linenos">90</span></a>    <span class="n">file_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="PostData-91"><a href="#PostData-91"><span class="linenos">91</span></a>    <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;undetermined&quot;</span><span class="p">)</span>
 </span><span id="PostData-92"><a href="#PostData-92"><span class="linenos">92</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;指定タイムスタンプへの強制リプライ&quot;&quot;&quot;</span>
-</span><span id="PostData-93"><a href="#PostData-93"><span class="linenos">93</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="PostData-94"><a href="#PostData-94"><span class="linenos">94</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点合計値格納用&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -761,7 +759,7 @@
                             <div id="PostData.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">PostData</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">headline</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">message</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">key_header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">thread</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">file_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;undetermined&#39;</span>,</span><span class="param">	<span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span></span>)</span>
+        <span class="name">PostData</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">headline</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">message</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">key_header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">thread</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">file_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">ts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;undetermined&#39;</span></span>)</span>
 
         
     </div>
@@ -877,20 +875,6 @@
 
 
                             </div>
-                            <div id="PostData.rpoint_sum" class="classattr">
-                                <div class="attr variable">
-            <span class="name">rpoint_sum</span><span class="annotation">: int</span>        =
-<span class="default_value">0</span>
-
-        
-    </div>
-    <a class="headerlink" href="#PostData.rpoint_sum"></a>
-    
-            <div class="docstring"><p>素点合計値格納用</p>
-</div>
-
-
-                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -913,23 +897,25 @@
 
     </div>
     <a class="headerlink" href="#StatusData"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StatusData-97"><a href="#StatusData-97"><span class="linenos"> 97</span></a><span class="nd">@dataclass</span>
-</span><span id="StatusData-98"><a href="#StatusData-98"><span class="linenos"> 98</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StatusData</span><span class="p">(</span><span class="n">DataMixin</span><span class="p">):</span>
-</span><span id="StatusData-99"><a href="#StatusData-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;処理した結果&quot;&quot;&quot;</span>
-</span><span id="StatusData-100"><a href="#StatusData-100"><span class="linenos">100</span></a>
-</span><span id="StatusData-101"><a href="#StatusData-101"><span class="linenos">101</span></a>    <span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="StatusData-102"><a href="#StatusData-102"><span class="linenos">102</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;最終ステータス状態</span>
-</span><span id="StatusData-103"><a href="#StatusData-103"><span class="linenos">103</span></a><span class="sd">    - *True*: 矛盾なくデータを取り込んだ(OK)</span>
-</span><span id="StatusData-104"><a href="#StatusData-104"><span class="linenos">104</span></a><span class="sd">    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)</span>
-</span><span id="StatusData-105"><a href="#StatusData-105"><span class="linenos">105</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StatusData-106"><a href="#StatusData-106"><span class="linenos">106</span></a>    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;nothing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;nothing&quot;</span><span class="p">)</span>
-</span><span id="StatusData-107"><a href="#StatusData-107"><span class="linenos">107</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに対する操作</span>
-</span><span id="StatusData-108"><a href="#StatusData-108"><span class="linenos">108</span></a><span class="sd">    - *change*: insert/updateが実行された</span>
-</span><span id="StatusData-109"><a href="#StatusData-109"><span class="linenos">109</span></a><span class="sd">    - *delete*: deleteが実行された</span>
-</span><span id="StatusData-110"><a href="#StatusData-110"><span class="linenos">110</span></a><span class="sd">    - *nothing*: 何もしてない</span>
-</span><span id="StatusData-111"><a href="#StatusData-111"><span class="linenos">111</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StatusData-112"><a href="#StatusData-112"><span class="linenos">112</span></a>    <span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="StatusData-113"><a href="#StatusData-113"><span class="linenos">113</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StatusData-95"><a href="#StatusData-95"><span class="linenos"> 95</span></a><span class="nd">@dataclass</span>
+</span><span id="StatusData-96"><a href="#StatusData-96"><span class="linenos"> 96</span></a><span class="k">class</span><span class="w"> </span><span class="nc">StatusData</span><span class="p">(</span><span class="n">DataMixin</span><span class="p">):</span>
+</span><span id="StatusData-97"><a href="#StatusData-97"><span class="linenos"> 97</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;処理した結果&quot;&quot;&quot;</span>
+</span><span id="StatusData-98"><a href="#StatusData-98"><span class="linenos"> 98</span></a>
+</span><span id="StatusData-99"><a href="#StatusData-99"><span class="linenos"> 99</span></a>    <span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="StatusData-100"><a href="#StatusData-100"><span class="linenos">100</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;最終ステータス状態</span>
+</span><span id="StatusData-101"><a href="#StatusData-101"><span class="linenos">101</span></a><span class="sd">    - *True*: 矛盾なくデータを取り込んだ(OK)</span>
+</span><span id="StatusData-102"><a href="#StatusData-102"><span class="linenos">102</span></a><span class="sd">    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)</span>
+</span><span id="StatusData-103"><a href="#StatusData-103"><span class="linenos">103</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StatusData-104"><a href="#StatusData-104"><span class="linenos">104</span></a>    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;nothing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;nothing&quot;</span><span class="p">)</span>
+</span><span id="StatusData-105"><a href="#StatusData-105"><span class="linenos">105</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに対する操作</span>
+</span><span id="StatusData-106"><a href="#StatusData-106"><span class="linenos">106</span></a><span class="sd">    - *change*: insert/updateが実行された</span>
+</span><span id="StatusData-107"><a href="#StatusData-107"><span class="linenos">107</span></a><span class="sd">    - *delete*: deleteが実行された</span>
+</span><span id="StatusData-108"><a href="#StatusData-108"><span class="linenos">108</span></a><span class="sd">    - *nothing*: 何もしてない</span>
+</span><span id="StatusData-109"><a href="#StatusData-109"><span class="linenos">109</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StatusData-110"><a href="#StatusData-110"><span class="linenos">110</span></a>    <span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="StatusData-111"><a href="#StatusData-111"><span class="linenos">111</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)&quot;&quot;&quot;</span>
+</span><span id="StatusData-112"><a href="#StatusData-112"><span class="linenos">112</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="StatusData-113"><a href="#StatusData-113"><span class="linenos">113</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点合計値格納用&quot;&quot;&quot;</span>
 </span><span id="StatusData-114"><a href="#StatusData-114"><span class="linenos">114</span></a>    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 </span><span id="StatusData-115"><a href="#StatusData-115"><span class="linenos">115</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;個別メッセージ&quot;&quot;&quot;</span>
 </span></pre></div>
@@ -942,7 +928,7 @@
                             <div id="StatusData.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">StatusData</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="s1">&#39;nothing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;nothing&#39;</span>,</span><span class="param">	<span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></span>)</span>
+        <span class="name">StatusData</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="s1">&#39;nothing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;nothing&#39;</span>,</span><span class="param">	<span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></span>)</span>
 
         
     </div>
@@ -999,6 +985,20 @@
     <a class="headerlink" href="#StatusData.target_ts"></a>
     
             <div class="docstring"><p>同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)</p>
+</div>
+
+
+                            </div>
+                            <div id="StatusData.rpoint_sum" class="classattr">
+                                <div class="attr variable">
+            <span class="name">rpoint_sum</span><span class="annotation">: int</span>        =
+<span class="default_value">0</span>
+
+        
+    </div>
+    <a class="headerlink" href="#StatusData.rpoint_sum"></a>
+    
+            <div class="docstring"><p>素点合計値格納用</p>
 </div>
 
 

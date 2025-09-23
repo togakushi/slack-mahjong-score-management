@@ -47,9 +47,6 @@
                                 <a class="variable" href="#AdapterInterface.interface_type">interface_type</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AdapterInterface.plotting_backend">plotting_backend</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#AdapterInterface.api">api</a>
                         </li>
                         <li>
@@ -166,11 +163,10 @@
 </span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;standard input/output interface&quot;&quot;&quot;</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>
 </span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>    <span class="n">interface_type</span> <span class="o">=</span> <span class="s2">&quot;standard_io&quot;</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>    <span class="n">plotting_backend</span> <span class="o">=</span> <span class="s2">&quot;matplotlib&quot;</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">StandardIO</span><span class="p">()</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">StandardIOFunctions</span><span class="p">()</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">StandardIO</span><span class="p">()</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">StandardIOFunctions</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -344,11 +340,10 @@
 </span><span id="AdapterInterface-84"><a href="#AdapterInterface-84"><span class="linenos">84</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;standard input/output interface&quot;&quot;&quot;</span>
 </span><span id="AdapterInterface-85"><a href="#AdapterInterface-85"><span class="linenos">85</span></a>
 </span><span id="AdapterInterface-86"><a href="#AdapterInterface-86"><span class="linenos">86</span></a>    <span class="n">interface_type</span> <span class="o">=</span> <span class="s2">&quot;standard_io&quot;</span>
-</span><span id="AdapterInterface-87"><a href="#AdapterInterface-87"><span class="linenos">87</span></a>    <span class="n">plotting_backend</span> <span class="o">=</span> <span class="s2">&quot;matplotlib&quot;</span>
-</span><span id="AdapterInterface-88"><a href="#AdapterInterface-88"><span class="linenos">88</span></a>
-</span><span id="AdapterInterface-89"><a href="#AdapterInterface-89"><span class="linenos">89</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="AdapterInterface-90"><a href="#AdapterInterface-90"><span class="linenos">90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">StandardIO</span><span class="p">()</span>
-</span><span id="AdapterInterface-91"><a href="#AdapterInterface-91"><span class="linenos">91</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">StandardIOFunctions</span><span class="p">()</span>
+</span><span id="AdapterInterface-87"><a href="#AdapterInterface-87"><span class="linenos">87</span></a>
+</span><span id="AdapterInterface-88"><a href="#AdapterInterface-88"><span class="linenos">88</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="AdapterInterface-89"><a href="#AdapterInterface-89"><span class="linenos">89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">StandardIO</span><span class="p">()</span>
+</span><span id="AdapterInterface-90"><a href="#AdapterInterface-90"><span class="linenos">90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">functions</span><span class="o">.</span><span class="n">StandardIOFunctions</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -364,18 +359,6 @@
         
     </div>
     <a class="headerlink" href="#AdapterInterface.interface_type"></a>
-    
-    
-
-                            </div>
-                            <div id="AdapterInterface.plotting_backend" class="classattr">
-                                <div class="attr variable">
-            <span class="name">plotting_backend</span>        =
-<span class="default_value">&#39;matplotlib&#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AdapterInterface.plotting_backend"></a>
     
     
 
