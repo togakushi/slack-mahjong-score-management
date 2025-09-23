@@ -32,9 +32,10 @@ def main():
         except Exception as e:
             raise RuntimeError(e) from e
 
-        adapter = factory.select_adapter(g.selected_service)
-        m = factory.select_parser("standard_io")
-        m.data.channel_id = adapter.functions.get_channel_id()
+        adapter_slack = factory.select_adapter("slack")
+        adapter_std = factory.select_adapter("slack")
+        m = adapter_std.parser()
+        m.data.channel_id = adapter_slack.functions.get_channel_id()
 
         count, _ = comparison.data_comparison(m)
         logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))  # type: ignore

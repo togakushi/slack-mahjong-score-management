@@ -25,7 +25,9 @@ def test_command_check(input_args, player_name, player_list, competition_list, m
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
     configuration.read_memberslist()
-    m = factory.select_parser("standard_io")
+
+    adapter = factory.select_adapter("standard_io")
+    m = adapter.parser()
 
     param = dictutil.placeholder(g.cfg.results, m)
 
@@ -46,7 +48,9 @@ def test_player_check(input_args, player_name, player_list, competition_list, mo
     configuration.setup()
     configuration.read_memberslist()
 
-    m = factory.select_parser("standard_io")
+    adapter = factory.select_adapter("standard_io")
+    m = adapter.parser()
+
     m.parser({"text": f"{g.cfg.setting.keyword} {input_args}"})
     param = dictutil.placeholder(g.cfg.results, m)
 
@@ -67,7 +71,9 @@ def test_team_check(input_args, player_name, player_list, competition_list, monk
     configuration.setup()
     configuration.read_memberslist()
 
-    m = factory.select_parser("standard_io")
+    adapter = factory.select_adapter("standard_io")
+    m = adapter.parser()
+
     m.parser({"event": {"text": f"{g.cfg.setting.keyword} {input_args}"}})
     param = dictutil.placeholder(g.cfg.results, m)
 
@@ -88,7 +94,9 @@ def test_guest_check(input_args, player_name, replace_name, monkeypatch):
     configuration.setup()
     configuration.read_memberslist()
 
-    m = factory.select_parser("standard_io")
+    adapter = factory.select_adapter("standard_io")
+    m = adapter.parser()
+
     m.parser({"text": f"{g.cfg.setting.keyword} {input_args}"})
     g.params = dictutil.placeholder(g.cfg.results, m)
     check_name = formatter.name_replace(str(g.params.get("player_name")))

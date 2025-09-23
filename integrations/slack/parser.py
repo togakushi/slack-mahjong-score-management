@@ -6,10 +6,10 @@ import logging
 from typing import cast
 
 import libs.global_value as g
+from integrations import slack
 from integrations.base.interface import (MessageParserDataMixin,
                                          MessageParserInterface)
 from integrations.protocols import MsgData, PostData, StatusData
-from integrations.slack import adapter, config
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
@@ -21,14 +21,14 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     def __init__(self):
         MessageParserDataMixin.__init__(self)
-        self.app_config = cast(config.AppConfig, g.app_config)
+        self.app_config = cast(slack.config.AppConfig, g.app_config)
         self.data = MsgData()
         self.post = PostData()
         self.status = StatusData()
         self._command_flg: bool = False
 
     def parser(self, _body: dict):
-        api_adapter = adapter.AdapterInterface()
+        adapter = slack.adapter.AdapterInterface()
 
         # 対象のevent抽出
         _event = cast(dict, _body.get("event", _body))
@@ -40,10 +40,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                 self.data.status = "message_append"
                 self.data.channel_id = _body.get("channel_id", "")
             else:
-                self.data.channel_id = api_adapter.functions.get_dm_channel_id(_body.get("user_id", ""))
+                self.data.channel_id = adapter.functions.get_dm_channel_id(_body.get("user_id", ""))
         elif _body.get("container"):  # Homeタブ
             self.data.user_id = _body["user"].get("id")
-            self.data.channel_id = api_adapter.functions.get_dm_channel_id(self.data.user_id)
+            self.data.channel_id = adapter.functions.get_dm_channel_id(self.data.user_id)
             self.data.channel_type = "channel"
             self.data.text = "dummy"
         elif _body.get("iid"):  # 検索結果

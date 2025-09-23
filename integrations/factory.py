@@ -20,12 +20,6 @@ AdapterType: TypeAlias = Union[
     "standard_io.adapter.AdapterInterface",
 ]
 
-MessageType: TypeAlias = Union[
-    "slack.parser.MessageParser",
-    "web.parser.MessageParser",
-    "standard_io.parser.MessageParser",
-]
-
 
 @overload
 def select_adapter(selected_service: Literal["slack"]) -> slack.adapter.AdapterInterface:
@@ -54,35 +48,6 @@ def select_adapter(selected_service: str) -> AdapterType:
             return standard_io.adapter.AdapterInterface()
         case _:
             raise ValueError(f"Unknown service: {selected_service}")
-
-
-@overload
-def select_parser(selected_service: Literal["slack"]) -> slack.parser.MessageParser:
-    ...
-
-
-@overload
-def select_parser(selected_service: Literal["web"]) -> web.parser.MessageParser:
-    ...
-
-
-@overload
-def select_parser(selected_service: Literal["standard_io"]) -> standard_io.parser.MessageParser:
-    ...
-
-
-def select_parser(selected_service: str) -> MessageType:
-    """メッセージパーサ選択"""
-
-    match selected_service:
-        case "slack":
-            return slack.parser.MessageParser()
-        case "web":
-            return web.parser.MessageParser()
-        case "standard_io":
-            return standard_io.parser.MessageParser()
-        case _:
-            raise ValueError("No match service name.")
 
 
 def load_config(selected_service: str, parser: ConfigParser) -> AppConfigType:

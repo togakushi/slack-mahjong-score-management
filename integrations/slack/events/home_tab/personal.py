@@ -110,8 +110,8 @@ def register_personal_handlers(app):
 
         g.app_config = cast(config.AppConfig, g.app_config)
 
-        api_adapter = factory.select_adapter(g.selected_service)
-        m = factory.select_parser(g.selected_service)
+        adapter = factory.select_adapter("slack")
+        m = adapter.parser()
 
         m.parser(body)
         add_argument, app_msg, update_flag = ui_parts.set_command_option(body)
@@ -135,7 +135,7 @@ def register_personal_handlers(app):
 
         m.data.command_type = "results"
         results.detail.aggregation(m)
-        api_adapter.api.post(m)
+        adapter.api.post(m)
 
         ui_parts.update_view(m, app_msg)
 

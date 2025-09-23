@@ -29,7 +29,8 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.selected_service = "standard_io"
 
-    m = factory.select_parser("standard_io")
+    adapter = factory.select_adapter("standard_io")
+    m = adapter.parser()
     m.data.text = game_result
     m.data.event_ts = ExtDt().format("ts")
 

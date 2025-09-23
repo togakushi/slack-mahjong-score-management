@@ -13,3 +13,4 @@ class AdapterInterface:
     def __init__(self):
         self.api = slack.api.SlackAPI()
         self.functions = slack.functions.SlackFunctions()
+        self.parser = slack.parser.MessageParser

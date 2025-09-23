@@ -38,7 +38,7 @@ def main():
     auth = HTTPBasicAuth()
 
     adapter = factory.select_adapter("web")
-    m = factory.select_parser("web")
+    m = adapter.parser()
 
     padding = "0.25em 1.5em"
     players = lookup.internal.get_member()

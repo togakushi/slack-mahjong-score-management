@@ -6,8 +6,8 @@ import textwrap
 
 import pandas as pd
 
+from integrations import standard_io
 from integrations.base import interface
-from integrations.standard_io import functions
 from libs.utils import formatter
 
 
@@ -86,4 +86,5 @@ class AdapterInterface:
 
     def __init__(self):
         self.api = StandardIO()
-        self.functions = functions.StandardIOFunctions()
+        self.functions = standard_io.functions.StandardIOFunctions()
+        self.parser = standard_io.parser.MessageParser

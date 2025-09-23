@@ -25,13 +25,14 @@ def test_help(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
+    adapter = factory.select_adapter("standard_io")
 
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
 
     with (
         patch("libs.event_dispatcher.dispatch_by_keyword") as mock_help_event_message,
     ):
-        m = factory.select_parser(g.selected_service)
+        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_help_event_message.assert_called_once()
@@ -47,12 +48,13 @@ def test_results(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
+    adapter = factory.select_adapter("standard_io")
 
     with (
         patch("libs.commands.dispatcher.main") as mock_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service)
+        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_results.assert_called_once()
@@ -68,12 +70,13 @@ def test_graph(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
+    adapter = factory.select_adapter("standard_io")
 
     with (
         patch("libs.commands.dispatcher.main") as mock_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service)
+        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_graph.assert_called_once()
@@ -89,12 +92,13 @@ def test_ranking(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
+    adapter = factory.select_adapter("standard_io")
 
     with (
         patch("libs.commands.dispatcher.main") as mock_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service)
+        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_ranking.assert_called_once()
@@ -110,12 +114,13 @@ def test_report(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
+    adapter = factory.select_adapter("standard_io")
 
     with (
         patch("libs.commands.dispatcher.main") as mock_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = factory.select_parser(g.selected_service)
+        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.event_dispatcher.dispatch_by_keyword(m)
         mock_report.assert_called_once()

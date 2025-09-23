@@ -45,7 +45,8 @@ def main():
 def register_event_handlers(app):
     """イベントAPI"""
 
-    m = factory.select_parser(g.selected_service)
+    adapter = factory.select_adapter("slack")
+    m = adapter.parser()
 
     @app.event("message")
     def handle_message_events(body):

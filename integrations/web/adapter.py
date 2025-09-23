@@ -23,3 +23,4 @@ class AdapterInterface:
     def __init__(self):
         self.api = DummyAPIInterface()
         self.functions = web.functions.WebFunctions()
+        self.parser = web.parser.MessageParser
