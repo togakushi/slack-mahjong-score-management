@@ -105,7 +105,7 @@ def test_search_range(keyword, search_range, monkeypatch):
     """検索範囲"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     m = adapter.parser()
     m.parser({"text": f"dummy_command {keyword}"})

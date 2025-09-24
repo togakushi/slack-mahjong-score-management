@@ -19,8 +19,6 @@ from libs.utils import formatter
 def dispatch_by_keyword(m: MessageParserProtocol):
     """メイン処理"""
 
-    adapter = factory.select_adapter(g.selected_service)
-
     logging.info(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, keyword=%s, user_id=%s,",
         m.data.status, m.data.event_ts, m.data.thread_ts, m.in_thread, m.keyword, m.data.user_id,
@@ -106,19 +104,19 @@ def dispatch_by_keyword(m: MessageParserProtocol):
         # その他
         case _ as x:
             if m.is_command:  # スラッシュコマンド
-                if x in g.app_config.slash_commands:
-                    g.app_config.slash_commands[x](m)
+                if x in g.adapter.conf.slash_commands:
+                    g.adapter.conf.slash_commands[x](m)
                 else:
-                    m.post.message = g.app_config.slash_commands["help"](g.app_config.slash_command)
+                    m.post.message = g.adapter.conf.slash_commands["help"](g.adapter.conf.slash_command)
             else:  # 個別コマンド
-                if x in g.app_config.special_commands:
-                    g.app_config.special_commands[x](m)
-                if x == "Reminder:" and m.data.text in g.app_config.special_commands:
-                    g.app_config.special_commands[m.data.text](m)
+                if x in g.adapter.conf.special_commands:
+                    g.adapter.conf.special_commands[x](m)
+                if x == "Reminder:" and m.data.text in g.adapter.conf.special_commands:
+                    g.adapter.conf.special_commands[m.data.text](m)
 
             other_words(x, m)  # コマンドに一致しない場合
 
-    adapter.api.post(m)
+    g.adapter.api.post(m)
 
 
 def other_words(word: str, m: MessageParserProtocol):
@@ -163,8 +161,6 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    adapter = factory.select_adapter(g.selected_service)
-
     if _thread_check(m):
         modify.db_insert(detection, m)
     else:
@@ -172,7 +168,7 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
         message.random_reply(m, "inside_thread")
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
-    adapter.functions.post_processing(m)
+    g.adapter.functions.post_processing(m)
 
 
 def message_changed(detection: GameResult, m: MessageParserProtocol):
@@ -183,7 +179,6 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    adapter = factory.select_adapter(g.selected_service)
     record_data = lookup.db.exsist_record(m.data.event_ts)
 
     if detection.to_dict() == record_data.to_dict():  # スコア比較
@@ -202,7 +197,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
         message.random_reply(m, "inside_thread")
         logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
 
-    adapter.functions.post_processing(m)
+    g.adapter.functions.post_processing(m)
 
 
 def message_deleted(m: MessageParserProtocol):
@@ -212,21 +207,19 @@ def message_deleted(m: MessageParserProtocol):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    adapter = factory.select_adapter(g.selected_service)
-
     if re.match(rf"^{g.cfg.setting.remarks_word}", m.keyword):  # 追加メモ
         modify.remarks_delete(m)
     else:
         modify.db_delete(m)
 
-    adapter.functions.post_processing(m)
+    g.adapter.functions.post_processing(m)
 
 
 def _thread_check(m: MessageParserProtocol) -> bool:
     """スレッド内判定関数"""
 
-    if isinstance(g.app_config, factory.slack.config.AppConfig):
-        if not m.in_thread or (m.in_thread == g.app_config.thread_report):
+    if isinstance(g.adapter.conf, factory.slack.config.AppConfig):
+        if not m.in_thread or (m.in_thread == g.adapter.conf.thread_report):
             return True
         return False
     return not m.in_thread

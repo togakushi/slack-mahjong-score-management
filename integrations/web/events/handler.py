@@ -4,7 +4,6 @@ integrations/web/events/handler.py
 
 import os
 from dataclasses import asdict
-from typing import cast
 
 import pandas as pd
 from flask import Blueprint, Flask, abort, render_template, request
@@ -14,16 +13,15 @@ import libs.event_dispatcher
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDT
-from integrations import factory, web
+from integrations.web.adapter import AdapterInterface
 from libs.data import loader, lookup, modify
 from libs.registry import member, team
 from libs.utils import dbutil, formatter
 
 
-def main():
+def main(adapter: AdapterInterface):
     """メイン処理"""
 
-    g.app_config = cast(web.config.AppConfig, g.app_config)
     app = Flask(
         __name__,
         static_folder=os.path.join(g.cfg.script_dir, "files/html/static"),
@@ -32,12 +30,11 @@ def main():
     user_assets_bp = Blueprint(
         "user_assets",
         __name__,
-        static_folder=os.path.dirname(os.path.join(g.cfg.config_dir, g.app_config.custom_css)),
+        static_folder=os.path.dirname(os.path.join(g.cfg.config_dir, adapter.conf.custom_css)),
         static_url_path="/user_static"
     )
     auth = HTTPBasicAuth()
 
-    adapter = factory.select_adapter("web")
     m = adapter.parser()
 
     padding = "0.25em 1.5em"
@@ -45,34 +42,29 @@ def main():
 
     @user_assets_bp.before_request
     def restrict_static():
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if not os.path.basename(request.path) == g.app_config.custom_css:
+        if not os.path.basename(request.path) == adapter.conf.custom_css:
             abort(403)
 
     @auth.verify_password
     def verify_password(username, password):
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if username == g.app_config.username and password == g.app_config.password:
+        if username == adapter.conf.username and password == adapter.conf.password:
             return True
         return False
 
     @app.before_request
     def require_auth():
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if g.app_config.require_auth:
+        if adapter.conf.require_auth:
             return auth.login_required(lambda: None)()
         return None
 
     @app.route("/")
     def index():
-        g.app_config = cast(web.config.AppConfig, g.app_config)
         m.post.reset()
-        return render_template("index.html", **asdict(g.app_config))
+        return render_template("index.html", **asdict(adapter.conf))
 
     @app.route("/summary", methods=["GET", "POST"])
     def summary(padding=padding):
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if not g.app_config.view_summary:
+        if not adapter.conf.view_summary:
             abort(403)
 
         m.post.reset()
@@ -103,15 +95,14 @@ def main():
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, **asdict(g.app_config))
+        cookie_data.update(body=message, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("summary.html", request, cookie_data)
 
         return page
 
     @app.route("/graph", methods=["GET", "POST"])
     def graph():
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if not g.app_config.view_graph:
+        if not adapter.conf.view_graph:
             abort(403)
 
         m.post.message = {}
@@ -133,15 +124,14 @@ def main():
         except StopIteration:
             pass
 
-        cookie_data.update(body=message, **asdict(g.app_config))
+        cookie_data.update(body=message, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("graph.html", request, cookie_data)
 
         return page
 
     @app.route("/ranking", methods=["GET", "POST"])
     def ranking():
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if not g.app_config.view_ranking:
+        if not adapter.conf.view_ranking:
             abort(403)
 
         m.post.reset()
@@ -165,15 +155,14 @@ def main():
             elif isinstance(v, str):
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, **asdict(g.app_config))
+        cookie_data.update(body=message, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("ranking.html", request, cookie_data)
 
         return page
 
     @app.route("/detail", methods=["GET", "POST"])
     def detail(padding=padding):
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if not g.app_config.view_summary:
+        if not adapter.conf.view_summary:
             abort(403)
 
         m.post.reset()
@@ -202,18 +191,17 @@ def main():
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
-        cookie_data.update(body=message, players=players, **asdict(g.app_config))
+        cookie_data.update(body=message, players=players, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("detail.html", request, cookie_data)
 
         return page
 
     @app.route("/member", methods=["GET", "POST"])
     def mgt_member():
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if not g.app_config.management_member:
+        if not adapter.conf.management_member:
             abort(403)
 
-        data: dict = asdict(g.app_config)
+        data: dict = asdict(adapter.conf)
 
         if request.method == "POST":
             match request.form.get("action"):
@@ -253,8 +241,7 @@ def main():
 
     @app.route("/score", methods=["GET", "POST"])
     def mgt_score():
-        g.app_config = cast(web.config.AppConfig, g.app_config)
-        if not g.app_config.management_score:
+        if not adapter.conf.management_score:
             abort(403)
 
         def score_table() -> str:
@@ -284,7 +271,7 @@ def main():
 
             return adapter.functions.to_styled_html(df, padding)
 
-        data: dict = asdict(g.app_config)
+        data: dict = asdict(adapter.conf)
         data.update(players=players)
 
         if request.method == "POST":
@@ -336,8 +323,8 @@ def main():
 
     app.register_blueprint(user_assets_bp)
 
-    if g.app_config.use_ssl:
-        if os.path.exists(g.app_config.certificate) and os.path.exists(g.app_config.private_key):
-            app.run(host=g.app_config.host, port=g.app_config.port, ssl_context=(g.app_config.certificate, g.app_config.private_key))
+    if adapter.conf.use_ssl:
+        if os.path.exists(adapter.conf.certificate) and os.path.exists(adapter.conf.private_key):
+            app.run(host=adapter.conf.host, port=adapter.conf.port, ssl_context=(adapter.conf.certificate, adapter.conf.private_key))
         raise FileNotFoundError("certificate or private key not found")
-    app.run(host=g.app_config.host, port=g.app_config.port)
+    app.run(host=adapter.conf.host, port=adapter.conf.port)

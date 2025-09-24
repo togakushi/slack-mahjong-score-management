@@ -12,12 +12,16 @@ from slack_sdk.web import SlackResponse
 import libs.global_value as g
 from integrations.base.interface import APIInterface
 from integrations.protocols import MessageParserProtocol
-from integrations.slack import config
+from integrations.slack.adapter import AdapterInterface
 from libs.utils import converter, formatter
 
 
 class SlackAPI(APIInterface):
     """Slack API操作クラス"""
+
+    def __init__(self, adapter: AdapterInterface):
+        super().__init__()
+        self.adapter = adapter
 
     def post(self, m: MessageParserProtocol):
         """メッセージをポストする
@@ -139,10 +143,8 @@ class SlackAPI(APIInterface):
             dict: API response
         """
 
-        g.app_config = cast(config.AppConfig, g.app_config)
-
         try:
-            res = g.app_config.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
+            res = self.adapter.conf.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
             logging.trace(res.validate())  # type: ignore
             return cast(dict, res)
         except SlackApiError as e:
@@ -160,9 +162,8 @@ class SlackAPI(APIInterface):
             dict[str,list]: リアクション
         """
 
-        g.app_config = cast(config.AppConfig, g.app_config)
-        ok = getattr(g.app_config, "reaction_ok", "ok")
-        ng = getattr(g.app_config, "reaction_ng", "ng")
+        ok = getattr(self.adapter.conf, "reaction_ok", "ok")
+        ng = getattr(self.adapter.conf, "reaction_ng", "ng")
 
         icon: dict[str, list] = {
             "ok": [],
@@ -170,25 +171,41 @@ class SlackAPI(APIInterface):
         }
 
         try:  # 削除済みメッセージはエラーになるので潰す
-            res = g.app_config.appclient.reactions_get(channel=ch, timestamp=ts)
+            res = self.adapter.conf.appclient.reactions_get(channel=ch, timestamp=ts)
             logging.trace(res.validate())  # type: ignore
         except SlackApiError:
             return icon
 
         if (reactions := cast(dict, res["message"]).get("reactions")):
             for reaction in cast(list[dict], reactions):
-                if ok == reaction.get("name") and g.app_config.bot_id in reaction["users"]:
+                if ok == reaction.get("name") and self.adapter.conf.bot_id in reaction["users"]:
                     icon["ok"].append(res["message"]["ts"])
-                if ng == reaction.get("name") and g.app_config.bot_id in reaction["users"]:
+                if ng == reaction.get("name") and self.adapter.conf.bot_id in reaction["users"]:
                     icon["ng"].append(res["message"]["ts"])
 
-        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, g.app_config.bot_id, icon)
+        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, self.adapter.conf.bot_id, icon)
         return icon
 
     def reaction_append(self, icon: str, ch: str, ts: str):
+        """リアクション追加
+
+        Args:
+            icon (str): リアクション文字
+            ch (str): チャンネルID
+            ts (str): メッセージのタイムスタンプ
+        """
+
         call_reactions_add(icon=icon, ch=ch, ts=ts)
 
     def reaction_remove(self, icon: str, ch: str, ts: str):
+        """リアクション削除
+
+        Args:
+            icon (str): リアクション文字
+            ch (str): チャンネルID
+            ts (str): メッセージのタイムスタンプ
+        """
+
         call_reactions_remove(icon=icon, ch=ch, ts=ts)
 
 
@@ -199,14 +216,14 @@ def call_chat_post_message(**kwargs) -> SlackResponse:
         SlackResponse: API response
     """
 
-    g.app_config = cast(config.AppConfig, g.app_config)
+    g.adapter = cast(AdapterInterface, g.adapter)
 
     res = cast(SlackResponse, {})
     if kwargs["thread_ts"] == "0":
         kwargs.pop("thread_ts")
 
     try:
-        res = g.app_config.appclient.chat_postMessage(**kwargs)
+        res = g.adapter.conf.appclient.chat_postMessage(**kwargs)
     except SlackApiError as err:
         logging.critical(err)
         logging.error("kwargs=%s", kwargs)
@@ -221,14 +238,14 @@ def call_files_upload(**kwargs) -> SlackResponse | Any:
         SlackResponse | Any: API response
     """
 
-    g.app_config = cast(config.AppConfig, g.app_config)
-    res = None
+    g.adapter = cast(AdapterInterface, g.adapter)
 
+    res = None
     if kwargs.get("thread_ts", "0") == "0":
         kwargs.pop("thread_ts")
 
     try:
-        res = g.app_config.appclient.files_upload_v2(**kwargs)
+        res = g.adapter.conf.appclient.files_upload_v2(**kwargs)
     except SlackApiError as err:
         logging.critical(err)
         logging.error("kwargs=%s", kwargs)
@@ -245,14 +262,14 @@ def call_reactions_add(icon: str, ch: str, ts: str):
         ts (str): メッセージのタイムスタンプ
     """
 
-    g.app_config = cast(config.AppConfig, g.app_config)
+    g.adapter = cast(AdapterInterface, g.adapter)
 
     if not all([icon, ch, ts]):
         logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
         return
 
     try:
-        res: SlackResponse = g.app_config.appclient.reactions_add(
+        res: SlackResponse = g.adapter.conf.appclient.reactions_add(
             channel=str(ch),
             name=icon,
             timestamp=str(ts),
@@ -276,14 +293,14 @@ def call_reactions_remove(icon: str, ch: str, ts: str):
         ts (str): メッセージのタイムスタンプ
     """
 
-    g.app_config = cast(config.AppConfig, g.app_config)
+    g.adapter = cast(AdapterInterface, g.adapter)
 
     if not all([icon, ch, ts]):
         logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
         return
 
     try:
-        res = g.app_config.appclient.reactions_remove(
+        res = g.adapter.conf.appclient.reactions_remove(
             channel=ch,
             name=icon,
             timestamp=ts,

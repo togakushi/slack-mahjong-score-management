@@ -18,12 +18,12 @@ from libs.utils import dictutil
 def build_summary_menu():
     """サマリメニュー生成"""
 
-    g.app_config = cast(config.AppConfig, g.app_config)
-    g.app_config.tab_var["screen"] = "SummaryMenu"
-    g.app_config.tab_var["no"] = 0
-    g.app_config.tab_var["view"] = {"type": "home", "blocks": []}
-    g.app_config.tab_var.setdefault("sday", ExtDt().format("ymd", "-"))
-    g.app_config.tab_var.setdefault("eday", ExtDt().format("ymd", "-"))
+    g.adapter.conf = cast(config.AppConfig, g.adapter.conf)
+    g.adapter.conf.tab_var["screen"] = "SummaryMenu"
+    g.adapter.conf.tab_var["no"] = 0
+    g.adapter.conf.tab_var["view"] = {"type": "home", "blocks": []}
+    g.adapter.conf.tab_var.setdefault("sday", ExtDt().format("ymd", "-"))
+    g.adapter.conf.tab_var.setdefault("eday", ExtDt().format("ymd", "-"))
     ui_parts.header("【成績サマリ】")
 
     # 検索範囲設定
@@ -36,7 +36,7 @@ def build_summary_menu():
             "今月": f"今月：{date_dict["今月"]["start"]} ～ {date_dict["今月"]["end"]}",
             "先月": f"先月：{date_dict["先月"]["start"]} ～ {date_dict["先月"]["end"]}",
             "全部": f"全部：{date_dict["全部"]["start"]} ～ {date_dict["全部"]["end"]}",
-            "指定": f"範囲指定：{g.app_config.tab_var["sday"]} ～ {g.app_config.tab_var["eday"]}",
+            "指定": f"範囲指定：{g.adapter.conf.tab_var["sday"]} ～ {g.adapter.conf.tab_var["eday"]}",
         },
     )
     ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
@@ -83,16 +83,16 @@ def register_summary_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.adapter.conf = cast(config.AppConfig, g.adapter.conf)
 
-        g.app_config.tab_var["user_id"] = body["user"]["id"]
-        g.app_config.tab_var["view_id"] = body["view"]["id"]
-        logging.info("[summary_menu] %s", g.app_config.tab_var)
+        g.adapter.conf.tab_var["user_id"] = body["user"]["id"]
+        g.adapter.conf.tab_var["view_id"] = body["view"]["id"]
+        logging.info("[summary_menu] %s", g.adapter.conf.tab_var)
 
         build_summary_menu()
-        g.app_config.appclient.views_publish(
-            user_id=g.app_config.tab_var["user_id"],
-            view=g.app_config.tab_var["view"],
+        g.adapter.conf.appclient.views_publish(
+            user_id=g.adapter.conf.tab_var["user_id"],
+            view=g.adapter.conf.tab_var["view"],
         )
 
     @app.action("summary_aggregation")
@@ -108,9 +108,9 @@ def register_summary_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.adapter.conf = cast(config.AppConfig, g.adapter.conf)
 
-        adapter = factory.select_adapter("slack")
+        adapter = cast(factory.slack.adapter.AdapterInterface, g.adapter)
         m = adapter.parser()
 
         m.parser(body)
@@ -119,15 +119,15 @@ def register_summary_handlers(app):
         g.params = dictutil.placeholder(g.cfg.results, m)
         g.params.update(update_flag)
 
-        g.app_config.appclient.views_update(
-            view_id=g.app_config.tab_var["view_id"],
+        g.adapter.conf.appclient.views_update(
+            view_id=g.adapter.conf.tab_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
         )
 
         app_msg.pop()
         app_msg.append("集計完了")
 
-        match g.app_config.tab_var.get("operation"):
+        match g.adapter.conf.tab_var.get("operation"):
             case "point":
                 m.data.command_type = "graph"
                 graph.summary.point_plot(m)
@@ -160,17 +160,17 @@ def register_summary_handlers(app):
 
         ack()
 
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.adapter.conf = cast(config.AppConfig, g.adapter.conf)
 
         for i in view["state"]["values"].keys():
             if "aid-sday" in view["state"]["values"][i]:
-                g.app_config.tab_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
+                g.adapter.conf.tab_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
             if "aid-eday" in view["state"]["values"][i]:
-                g.app_config.tab_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
+                g.adapter.conf.tab_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
-        logging.info("[global var] %s", g.app_config.tab_var)
+        logging.info("[global var] %s", g.adapter.conf.tab_var)
 
-        g.app_config.appclient.views_update(
-            view_id=g.app_config.tab_var["view_id"],
+        g.adapter.conf.appclient.views_update(
+            view_id=g.adapter.conf.tab_var["view_id"],
             view=build_summary_menu(),
         )

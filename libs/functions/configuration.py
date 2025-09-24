@@ -7,9 +7,7 @@ import logging
 import os
 import shutil
 import sys
-from configparser import ConfigParser
 from functools import partial
-from typing import cast
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -176,8 +174,9 @@ def arg_parser() -> argparse.Namespace:
     return p.parse_args()
 
 
-def setup() -> None:
+def setup():
     """設定ファイル読み込み"""
+
     set_loglevel()
 
     g.args = arg_parser()
@@ -217,7 +216,7 @@ def setup() -> None:
             logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
 
     g.cfg = AppConfig(g.args.config)
-    g.app_config = factory.load_config(str(g.selected_service), cast(ConfigParser, getattr(g.cfg, "_parser")))
+    g.adapter = factory.select_adapter(g.selected_service, g.cfg)
 
     # 作業用ディレクトリ作成
     try:
@@ -231,7 +230,7 @@ def setup() -> None:
     logging.notice("conf: %s", os.path.join(g.cfg.config_dir, g.args.config))  # type: ignore
     logging.notice("font: %s", g.cfg.setting.font_file)  # type: ignore
     logging.notice("database: %s", g.cfg.setting.database_file)  # type: ignore
-    logging.notice("graph_library: %s", g.app_config.plotting_backend)  # type: ignore
+    logging.notice("graph_library: %s", g.adapter.conf.plotting_backend)  # type: ignore
     logging.notice(  # type: ignore
         "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
         g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.setting.time_adjust
@@ -258,8 +257,8 @@ def read_memberslist(log=True):
 def graph_setup() -> None:
     """グラフ設定初期化"""
 
-    pd.options.plotting.backend = g.app_config.plotting_backend
-    match g.app_config.plotting_backend:
+    pd.options.plotting.backend = g.adapter.conf.plotting_backend
+    match g.adapter.conf.plotting_backend:
         case "plotly":
             return
 

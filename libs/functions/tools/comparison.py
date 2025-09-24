@@ -4,7 +4,6 @@ libs/functions/tools/comparison.py
 
 import logging
 import os
-from configparser import ConfigParser
 from typing import cast
 
 from slack_bolt import App
@@ -12,7 +11,7 @@ from slack_sdk import WebClient
 
 import libs.global_value as g
 from integrations import factory
-from integrations.slack import config
+from integrations.slack.adapter import AdapterInterface
 from integrations.slack.events import comparison
 from libs.functions import configuration
 
@@ -22,18 +21,17 @@ def main():
 
     if g.args.compar:
         try:
-            g.app_config = cast(config.AppConfig, factory.load_config("slack", cast(ConfigParser, getattr(g.cfg, "_parser"))))
-
+            g.adapter = cast(AdapterInterface, g.adapter)
             app = App(token=os.environ["SLACK_BOT_TOKEN"])
-            g.app_config.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-            g.app_config.appclient = app.client
-            g.app_config.bot_id = app.client.auth_test()["user_id"]
+            g.adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+            g.adapter.conf.appclient = app.client
+            g.adapter.conf.bot_id = app.client.auth_test()["user_id"]
             configuration.read_memberslist(False)
         except Exception as e:
             raise RuntimeError(e) from e
 
-        adapter_slack = factory.select_adapter("slack")
-        adapter_std = factory.select_adapter("slack")
+        adapter_slack = factory.select_adapter("slack", g.cfg)
+        adapter_std = factory.select_adapter("standard_io", g.cfg)
         m = adapter_std.parser()
         m.data.channel_id = adapter_slack.functions.get_channel_id()
 

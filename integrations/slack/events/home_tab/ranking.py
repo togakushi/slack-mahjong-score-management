@@ -18,12 +18,12 @@ from libs.utils import dictutil
 def build_ranking_menu():
     """ランキングメニュー生成"""
 
-    g.app_config = cast(config.AppConfig, g.app_config)
-    g.app_config.tab_var["screen"] = "RankingMenu"
-    g.app_config.tab_var["no"] = 0
-    g.app_config.tab_var["view"] = {"type": "home", "blocks": []}
-    g.app_config.tab_var.setdefault("sday", ExtDt().format("ymd", "-"))
-    g.app_config.tab_var.setdefault("eday", ExtDt().format("ymd", "-"))
+    g.adapter.conf = cast(config.AppConfig, g.adapter.conf)
+    g.adapter.conf.tab_var["screen"] = "RankingMenu"
+    g.adapter.conf.tab_var["no"] = 0
+    g.adapter.conf.tab_var["view"] = {"type": "home", "blocks": []}
+    g.adapter.conf.tab_var.setdefault("sday", ExtDt().format("ymd", "-"))
+    g.adapter.conf.tab_var.setdefault("eday", ExtDt().format("ymd", "-"))
     ui_parts.header("【ランキング】")
 
     # 検索範囲設定
@@ -36,7 +36,7 @@ def build_ranking_menu():
             "今月": f"今月：{date_dict["今月"]["start"]} ～ {date_dict["今月"]["end"]}",
             "先月": f"先月：{date_dict["先月"]["start"]} ～ {date_dict["先月"]["end"]}",
             "全部": f"全部：{date_dict["全部"]["start"]} ～ {date_dict["全部"]["end"]}",
-            "指定": f"範囲指定：{g.app_config.tab_var["sday"]} ～ {g.app_config.tab_var["eday"]}",
+            "指定": f"範囲指定：{g.adapter.conf.tab_var["sday"]} ～ {g.adapter.conf.tab_var["eday"]}",
         }
     )
     ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
@@ -74,16 +74,16 @@ def register_ranking_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.adapter.conf = cast(config.AppConfig, g.adapter.conf)
 
-        g.app_config.tab_var["user_id"] = body["user"]["id"]
-        g.app_config.tab_var["view_id"] = body["view"]["id"]
-        logging.info("[ranking_menu] %s", g.app_config.tab_var)
+        g.adapter.conf.tab_var["user_id"] = body["user"]["id"]
+        g.adapter.conf.tab_var["view_id"] = body["view"]["id"]
+        logging.info("[ranking_menu] %s", g.adapter.conf.tab_var)
 
         build_ranking_menu()
-        g.app_config.appclient.views_publish(
-            user_id=g.app_config.tab_var["user_id"],
-            view=g.app_config.tab_var["view"],
+        g.adapter.conf.appclient.views_publish(
+            user_id=g.adapter.conf.tab_var["user_id"],
+            view=g.adapter.conf.tab_var["view"],
         )
 
     @app.action("ranking_aggregation")
@@ -98,9 +98,8 @@ def register_ranking_handlers(app):
         ack()
         logging.trace(body)  # type: ignore
 
-        g.app_config = cast(config.AppConfig, g.app_config)
-
-        adapter = factory.select_adapter("slack")
+        g.adapter.conf = cast(config.AppConfig, g.adapter.conf)
+        adapter = cast(factory.slack.adapter.AdapterInterface, g.adapter)
         m = adapter.parser()
 
         m.parser(body)
@@ -109,8 +108,8 @@ def register_ranking_handlers(app):
         g.params = dictutil.placeholder(g.cfg.ranking, m)
         g.params.update(update_flag)
 
-        g.app_config.appclient.views_update(
-            view_id=g.app_config.tab_var["view_id"],
+        g.adapter.conf.appclient.views_update(
+            view_id=g.adapter.conf.tab_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"),
         )
 
@@ -141,15 +140,15 @@ def register_ranking_handlers(app):
 
         ack()
 
-        g.app_config = cast(config.AppConfig, g.app_config)
+        g.adapter.conf = cast(config.AppConfig, g.adapter.conf)
 
         for i in view["state"]["values"].keys():
             if "aid-sday" in view["state"]["values"][i]:
-                g.app_config.tab_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
+                g.adapter.conf.tab_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
             if "aid-eday" in view["state"]["values"][i]:
-                g.app_config.tab_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
+                g.adapter.conf.tab_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
-        g.app_config.appclient.views_update(
-            view_id=g.app_config.tab_var["view_id"],
+        g.adapter.conf.appclient.views_update(
+            view_id=g.adapter.conf.tab_var["view_id"],
             view=build_ranking_menu(),
         )

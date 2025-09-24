@@ -25,7 +25,7 @@ def test_help(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
 
@@ -48,7 +48,7 @@ def test_results(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         patch("libs.commands.dispatcher.main") as mock_results,
@@ -70,7 +70,7 @@ def test_graph(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         patch("libs.commands.dispatcher.main") as mock_graph,
@@ -92,7 +92,7 @@ def test_ranking(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         patch("libs.commands.dispatcher.main") as mock_ranking,
@@ -114,7 +114,7 @@ def test_report(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         patch("libs.commands.dispatcher.main") as mock_report,

@@ -3,6 +3,7 @@ integrations/standard_io/adapter.py
 """
 
 import textwrap
+from configparser import ConfigParser
 
 import pandas as pd
 
@@ -84,7 +85,8 @@ class AdapterInterface:
 
     interface_type = "standard_io"
 
-    def __init__(self):
+    def __init__(self, parser: ConfigParser):
+        self.conf = standard_io.config.AppConfig(_parser=parser)
         self.api = StandardIO()
         self.functions = standard_io.functions.StandardIOFunctions()
         self.parser = standard_io.parser.MessageParser

@@ -14,7 +14,6 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
-from integrations import factory
 from integrations.protocols import MessageParserProtocol
 from libs.data import lookup
 from libs.functions import message
@@ -143,8 +142,6 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
         remarks (list[RemarkDict]): メモに残す内容
     """
 
-    adapter = factory.select_adapter(g.selected_service)
-
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             for para in remarks:
@@ -161,7 +158,7 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
         # 後処理
         m.status.action = "change"
         m.status.reaction = True  # 対象外はINSERTしないようにガード済
-        adapter.functions.post_processing(m)
+        g.adapter.functions.post_processing(m)
 
 
 def remarks_delete(m: MessageParserProtocol):
@@ -170,8 +167,6 @@ def remarks_delete(m: MessageParserProtocol):
     Args:
         m (MessageParserProtocol): メッセージデータ
     """
-
-    adapter = factory.select_adapter(g.selected_service)
 
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
@@ -183,7 +178,7 @@ def remarks_delete(m: MessageParserProtocol):
 
         # 後処理
         m.status.action = "delete"
-        adapter.functions.post_processing(m)
+        g.adapter.functions.post_processing(m)
 
 
 def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
@@ -193,8 +188,6 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
         para (dict): パラメータ
         m (MessageParserProtocol): メッセージデータ
     """
-
-    adapter = factory.select_adapter(g.selected_service)
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         cur.execute(dbutil.query("REMARKS_DELETE_COMPAR"), para)
@@ -207,7 +200,7 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
     m.status.target_ts.append(para["event_ts"])
     if left > 0:  # メモデータが残っているなら
         m.status.action = "change"
-    adapter.functions.post_processing(m)
+    g.adapter.functions.post_processing(m)
 
 
 def check_remarks(m: MessageParserProtocol) -> None:
@@ -248,9 +241,7 @@ def reprocessing_remarks(m: MessageParserProtocol) -> None:
         m (MessageParserProtocol): メッセージデータ
     """
 
-    adapter = factory.select_adapter(g.selected_service)
-
-    res = adapter.functions.get_conversations(m)
+    res = g.adapter.functions.get_conversations(m)
     msg = cast(dict, res.get("messages"))
 
     if msg:

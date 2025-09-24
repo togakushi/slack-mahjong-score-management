@@ -26,7 +26,7 @@ def test_command_check(input_args, player_name, player_list, competition_list, m
     configuration.setup()
     configuration.read_memberslist()
 
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
 
     param = dictutil.placeholder(g.cfg.results, m)
@@ -48,7 +48,7 @@ def test_player_check(input_args, player_name, player_list, competition_list, mo
     configuration.setup()
     configuration.read_memberslist()
 
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
 
     m.parser({"text": f"{g.cfg.setting.keyword} {input_args}"})
@@ -71,7 +71,7 @@ def test_team_check(input_args, player_name, player_list, competition_list, monk
     configuration.setup()
     configuration.read_memberslist()
 
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
 
     m.parser({"event": {"text": f"{g.cfg.setting.keyword} {input_args}"}})
@@ -94,7 +94,7 @@ def test_guest_check(input_args, player_name, replace_name, monkeypatch):
     configuration.setup()
     configuration.read_memberslist()
 
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
 
     m.parser({"text": f"{g.cfg.setting.keyword} {input_args}"})

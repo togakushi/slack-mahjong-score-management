@@ -21,7 +21,7 @@ def test_score_report(input_str, result_dict, get_point):
     """得点入力"""
     configuration.set_loglevel()
     g.cfg = AppConfig("tests/testdata/minimal.ini")
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.data.text = input_str
     m.data.event_ts = "1234567890.123456"

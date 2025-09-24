@@ -9,8 +9,10 @@ help:
 """
 
 import sys
+from typing import cast
 
 import libs.global_value as g
+from integrations import factory
 from libs.data import initialization
 from libs.functions import configuration
 
@@ -23,12 +25,12 @@ if __name__ == "__main__":
     match g.selected_service:
         case "slack":
             import integrations.slack.events.handler as slack
-            slack.main()
+            slack.main(cast(factory.slack.adapter.AdapterInterface, g.adapter))
         case "standard_io":
             import integrations.standard_io.events.handler as standard_io
-            standard_io.main()
+            standard_io.main(cast(factory.standard_io.adapter.AdapterInterface, g.adapter))
         case "web":
             import integrations.web.events.handler as webapp
-            webapp.main()
+            webapp.main(cast(factory.web.adapter.AdapterInterface, g.adapter))
         case _:
             sys.exit()

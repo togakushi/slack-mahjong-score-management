@@ -22,7 +22,7 @@ def degree(game_count: int = 0) -> str:
 
     badge: str = ""
 
-    if g.app_config.badge_degree:
+    if g.adapter.conf.badge_degree:
         if (degree_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("degree", "badge", fallback="")):
             degree_badge = degree_list.split(",")
         else:
@@ -49,7 +49,7 @@ def status(game_count: int = 0, win: int = 0) -> str:
 
     badge: str = ""
 
-    if g.app_config.badge_status:
+    if g.adapter.conf.badge_status:
         if (status_list := cast(ConfigParser, getattr(g.cfg, "_parser")).get("status", "badge", fallback="")):
             status_badge = status_list.split(",")
         else:
@@ -85,7 +85,7 @@ def grade(name: str, detail: bool = True) -> str:
         str: 称号
     """
 
-    if not g.app_config.badge_grade:
+    if not g.adapter.conf.badge_grade:
         return ""
 
     # 初期値

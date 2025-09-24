@@ -15,27 +15,25 @@ from slack_sdk.errors import SlackApiError
 import libs.event_dispatcher
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations import factory
-from integrations.slack import config
+from integrations.slack.adapter import AdapterInterface
 from integrations.slack.events.handler_registry import register, register_all
 from integrations.slack.events.home_tab import home
 
 
-def main():
+def main(adapter: AdapterInterface):
     """メイン処理"""
-
-    g.app_config = cast(config.AppConfig, g.app_config)
 
     try:
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
-        g.app_config.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-        g.app_config.appclient = app.client
+        adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+        adapter.conf.appclient = app.client
         register_all(app)  # イベント遅延登録
     except SlackApiError as err:
         logging.error(err)
         sys.exit()
 
-    g.app_config.bot_id = app.client.auth_test()["user_id"]
+    adapter.conf.bot_id = app.client.auth_test()["user_id"]
+    g.adapter = adapter
 
     handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
@@ -45,7 +43,7 @@ def main():
 def register_event_handlers(app):
     """イベントAPI"""
 
-    adapter = factory.select_adapter("slack")
+    adapter = cast(AdapterInterface, g.adapter)
     m = adapter.parser()
 
     @app.event("message")
@@ -60,7 +58,7 @@ def register_event_handlers(app):
         m.parser(body)
         libs.event_dispatcher.dispatch_by_keyword(m)
 
-    @app.command(g.app_config.slash_command)
+    @app.command(adapter.conf.slash_command)
     def slash_command(ack, body):
         """スラッシュコマンド
 
@@ -82,28 +80,26 @@ def register_event_handlers(app):
             event (dict): イベント内容
         """
 
-        g.app_config = cast(config.AppConfig, g.app_config)
-
-        g.app_config.tab_var = {
+        adapter.conf.tab_var = {
             "view": {},
             "no": 0,
             "user_id": None,
             "view_id": None,
             "screen": None,
             "operation": None,
-            "sday": g.app_config.tab_var.get("sday", ExtDt().format("ymd", "-")),
-            "eday": g.app_config.tab_var.get("eday", ExtDt().format("ymd", "-")),
+            "sday": adapter.conf.tab_var.get("sday", ExtDt().format("ymd", "-")),
+            "eday": adapter.conf.tab_var.get("eday", ExtDt().format("ymd", "-")),
         }
 
-        g.app_config.tab_var["user_id"] = event["user"]
+        adapter.conf.tab_var["user_id"] = event["user"]
         if "view" in event:
-            g.app_config.tab_var["view_id"] = event["view"]["id"]
+            adapter.conf.tab_var["view_id"] = event["view"]["id"]
 
-        logging.trace(g.app_config.tab_var)  # type: ignore
+        logging.trace(adapter.conf.tab_var)  # type: ignore
 
         home.build_main_menu()
-        result = g.app_config.appclient.views_publish(
-            user_id=g.app_config.tab_var["user_id"],
-            view=g.app_config.tab_var["view"],
+        result = adapter.conf.appclient.views_publish(
+            user_id=adapter.conf.tab_var["user_id"],
+            view=adapter.conf.tab_var["view"],
         )
         logging.trace(result)  # type: ignore

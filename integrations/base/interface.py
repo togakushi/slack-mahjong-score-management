@@ -45,6 +45,8 @@ class IntegrationsConfig(ABC):
         value: Union[int, float, bool, str, list]
         if parser.has_section(selected_service):
             for f in fields(self):
+                if f.name.startswith("_"):
+                    continue
                 if parser.has_option(selected_service, f.name):
                     if f.type is int:
                         value = parser.getint(selected_service, f.name)
@@ -71,27 +73,6 @@ class FunctionsInterface(ABC):
         Args:
             m (MessageParserProtocol): メッセージデータ
         """
-
-    @abstractmethod
-    def get_channel_id(self) -> str:
-        """チャンネルIDを取得する
-
-        Returns:
-            str: チャンネルID
-        """
-        return ""
-
-    @abstractmethod
-    def get_dm_channel_id(self, user_id: str) -> str:
-        """DMのチャンネルIDを取得する
-
-        Args:
-            user_id (str): DMの相手
-
-        Returns:
-            str: チャンネルID
-        """
-        return ""
 
     @abstractmethod
     def get_conversations(self, m: "MessageParserProtocol") -> dict:

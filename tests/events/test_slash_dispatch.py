@@ -3,8 +3,9 @@ tests/events/test_slash_dispatch.py
 """
 
 import sys
-from unittest.mock import patch
 from typing import cast
+from unittest.mock import patch
+
 import pytest
 
 import libs.event_dispatcher
@@ -24,7 +25,7 @@ def test_help(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         # patch("integrations.slack.events.slash.command_help") as mock_help_slash_command,
@@ -47,7 +48,7 @@ def test_results(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_results,
@@ -69,7 +70,7 @@ def test_graph(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_graph,
@@ -91,7 +92,7 @@ def test_ranking(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_ranking,
@@ -113,7 +114,7 @@ def test_report(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
         patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_report,
@@ -135,7 +136,7 @@ def test_check(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -158,7 +159,7 @@ def test_download(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
 
     m = adapter.parser()
     m.set_command_flag(True)
@@ -179,7 +180,7 @@ def test_member_list(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -203,7 +204,7 @@ def test_member_add(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
 
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -226,7 +227,7 @@ def test_member_del(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -249,7 +250,7 @@ def test_team_create(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -272,7 +273,7 @@ def test_team_del(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -295,7 +296,7 @@ def test_team_add(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -318,7 +319,7 @@ def test_team_remove(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -341,7 +342,7 @@ def test_team_list(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 
@@ -364,7 +365,7 @@ def test_team_clear(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     g.selected_service = "standard_io"
     configuration.setup()
-    adapter = factory.select_adapter("standard_io")
+    adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.set_command_flag(True)
 

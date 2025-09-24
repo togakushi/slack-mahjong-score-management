@@ -7,10 +7,10 @@ if TYPE_CHECKING:
 
     from cls.config import AppConfig
     from cls.types import TeamDataDict
-    from integrations.factory import AppConfigType
+    from integrations.factory import AdapterType
 
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
-app_config: "AppConfigType"
+adapter: "AdapterType"
 
 args: "Namespace"
 """コマンドライン引数"""

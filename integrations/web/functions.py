@@ -11,7 +11,6 @@ from flask import Request, Response, make_response, render_template
 from integrations.base.interface import FunctionsInterface
 
 if TYPE_CHECKING:
-    from cls.score import GameResult
     from integrations.base.interface import MessageParserProtocol
 
 
@@ -144,14 +143,6 @@ class WebFunctions(FunctionsInterface):
             cookie_data.update(req.cookies)
 
         return {k: v for k, v in cookie_data.items() if k in target_keys}
-
-    def get_channel_id(self):
-        """abstractmethod dummy"""
-
-    def get_dm_channel_id(self, user_id: str):
-        """abstractmethod dummy"""
-
-        _ = user_id
 
     def get_conversations(self, m: "MessageParserProtocol") -> dict:
         """abstractmethod dummy"""

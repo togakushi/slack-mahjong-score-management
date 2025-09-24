@@ -6,10 +6,10 @@ import logging
 from typing import cast
 
 import libs.global_value as g
-from integrations import slack
 from integrations.base.interface import (MessageParserDataMixin,
                                          MessageParserInterface)
 from integrations.protocols import MsgData, PostData, StatusData
+from integrations.slack.adapter import AdapterInterface
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
@@ -21,29 +21,27 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     def __init__(self):
         MessageParserDataMixin.__init__(self)
-        self.app_config = cast(slack.config.AppConfig, g.app_config)
         self.data = MsgData()
         self.post = PostData()
         self.status = StatusData()
         self._command_flg: bool = False
 
     def parser(self, _body: dict):
-        adapter = slack.adapter.AdapterInterface()
-
+        g.adapter = cast(AdapterInterface, g.adapter)
         # 対象のevent抽出
         _event = cast(dict, _body.get("event", _body))
 
-        if _body.get("command") == self.app_config.slash_command:  # スラッシュコマンド
+        if _body.get("command") == g.adapter.conf.slash_command:  # スラッシュコマンド
             if _body.get("channel_name") == "directmessage":
                 self._command_flg = True
                 self.data.channel_type = "im"
                 self.data.status = "message_append"
                 self.data.channel_id = _body.get("channel_id", "")
             else:
-                self.data.channel_id = adapter.functions.get_dm_channel_id(_body.get("user_id", ""))
+                self.data.channel_id = g.adapter.functions.get_dm_channel_id(_body.get("user_id", ""))
         elif _body.get("container"):  # Homeタブ
             self.data.user_id = _body["user"].get("id")
-            self.data.channel_id = adapter.functions.get_dm_channel_id(self.data.user_id)
+            self.data.channel_id = g.adapter.functions.get_dm_channel_id(self.data.user_id)
             self.data.channel_type = "channel"
             self.data.text = "dummy"
         elif _body.get("iid"):  # 検索結果
@@ -86,10 +84,11 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     def check_updatable(self) -> bool:
         """DB更新可能チャンネルのポストかチェックする"""
 
+        g.adapter = cast(AdapterInterface, g.adapter)
         ret: bool = True
 
-        if self.app_config.channel_limitations:
-            if self.data.channel_id in self.app_config.channel_limitations:
+        if g.adapter.conf.channel_limitations:
+            if self.data.channel_id in g.adapter.conf.channel_limitations:
                 ret = True
         else:  # リストが空なら全チャンネルが対象
             match self.data.channel_type:
@@ -106,4 +105,5 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     @property
     def ignore_user(self) -> bool:
-        return self.data.user_id in self.app_config.ignore_userid
+        g.adapter = cast(AdapterInterface, g.adapter)
+        return self.data.user_id in g.adapter.conf.ignore_userid

@@ -9,19 +9,19 @@ from slack_sdk.errors import SlackApiError
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations import slack
 from integrations.base.interface import FunctionsInterface
 from integrations.protocols import MessageParserProtocol
+from integrations.slack.adapter import AdapterInterface
 
 
 class SlackFunctions(FunctionsInterface):
     """slack専用関数"""
 
-    def __init__(self):
-        self.app_config = cast(slack.config.AppConfig, g.app_config)
-        self.api = slack.api.SlackAPI()
+    def __init__(self, adapter: AdapterInterface):
+        super().__init__()
+        self.adapter = adapter
 
-    def get_messages(self, word: str, m: MessageParserProtocol) -> list[MessageParserProtocol]:
+    def get_messages(self, word: str) -> list[MessageParserProtocol]:
         """slackログからメッセージを検索して返す
 
         Args:
@@ -32,12 +32,12 @@ class SlackFunctions(FunctionsInterface):
         """
 
         # 検索クエリ
-        after = ExtDt(days=-self.app_config.search_after).format("ymd", "-")
-        query = f"{word} in:{self.app_config.search_channel} after:{after}"
+        after = ExtDt(days=-self.adapter.conf.search_after).format("ymd", "-")
+        query = f"{word} in:{self.adapter.conf.search_channel} after:{after}"
         logging.info("query=%s", query)
 
         # データ取得
-        response = self.app_config.webclient.search_messages(
+        response = self.adapter.conf.webclient.search_messages(
             query=query,
             sort="timestamp",
             sort_dir="asc",
@@ -45,7 +45,7 @@ class SlackFunctions(FunctionsInterface):
         )
         matches = response["messages"]["matches"]  # 1ページ目
         for p in range(2, response["messages"]["paging"]["pages"] + 1):
-            response = self.app_config.webclient.search_messages(
+            response = self.adapter.conf.webclient.search_messages(
                 query=query,
                 sort="timestamp",
                 sort_dir="asc",
@@ -58,9 +58,9 @@ class SlackFunctions(FunctionsInterface):
         data: list[MessageParserProtocol] = []
         for x in matches:
             if isinstance(x, dict):
-                m = slack.parser.MessageParser()
-                m.parser(x)
-                data.append(m)
+                work_m = self.adapter.parser()
+                work_m.parser(x)
+                data.append(work_m)
 
         return data
 
@@ -78,7 +78,7 @@ class SlackFunctions(FunctionsInterface):
 
         # 詳細情報取得
         for key in matches:
-            conversations = self.app_config.appclient.conversations_replies(channel=key.data.channel_id, ts=key.data.event_ts)
+            conversations = self.adapter.conf.appclient.conversations_replies(channel=key.data.channel_id, ts=key.data.event_ts)
             if (msg := conversations.get("messages")):
                 res = cast(dict, msg[0])
             else:
@@ -107,7 +107,7 @@ class SlackFunctions(FunctionsInterface):
         """
 
         try:
-            res = self.app_config.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
+            res = self.adapter.conf.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
             logging.trace(res.validate())  # type: ignore
             return cast(dict, res)
         except SlackApiError as err:
@@ -131,11 +131,11 @@ class SlackFunctions(FunctionsInterface):
 
         if msg.get("reactions"):
             for reactions in msg.get("reactions", {}):
-                if isinstance(reactions, dict) and self.app_config.bot_id in reactions.get("users", []):
+                if isinstance(reactions, dict) and self.adapter.conf.bot_id in reactions.get("users", []):
                     match reactions.get("name"):
-                        case self.app_config.reaction_ok:
+                        case self.adapter.conf.reaction_ok:
                             reaction_ok.append(msg.get("ts"))
-                        case self.app_config.reaction_ng:
+                        case self.adapter.conf.reaction_ng:
                             reaction_ng.append(msg.get("ts"))
 
         return (reaction_ok, reaction_ng)
@@ -150,15 +150,15 @@ class SlackFunctions(FunctionsInterface):
         channel_id = ""
 
         try:
-            response = self.app_config.webclient.search_messages(
-                query=f"in:{self.app_config.search_channel}",
+            response = self.adapter.conf.webclient.search_messages(
+                query=f"in:{self.adapter.conf.search_channel}",
                 count=1,
             )
             messages: dict = response.get("messages", {})
             if messages.get("matches"):
                 channel = messages["matches"][0]["channel"]
-                if isinstance(self.app_config.search_channel, str):
-                    if channel["name"] in self.app_config.search_channel:
+                if isinstance(self.adapter.conf.search_channel, str):
+                    if channel["name"] in self.adapter.conf.search_channel:
                         channel_id = channel["id"]
                 else:
                     channel_id = channel["id"]
@@ -180,14 +180,14 @@ class SlackFunctions(FunctionsInterface):
         channel_id = ""
 
         try:
-            response = self.app_config.appclient.conversations_open(users=[user_id])
+            response = self.adapter.conf.appclient.conversations_open(users=[user_id])
             channel_id = response["channel"]["id"]
         except SlackApiError as e:
             logging.error(e)
 
         return channel_id
 
-    def pickup_score(self, m: MessageParserProtocol) -> list[MessageParserProtocol]:
+    def pickup_score(self) -> list[MessageParserProtocol]:
         """過去ログからスコア記録を検索して返す
 
         Returns:
@@ -197,9 +197,9 @@ class SlackFunctions(FunctionsInterface):
         score_matches: list[MessageParserProtocol] = []
 
         # ゲーム結果の抽出
-        for match in self.get_messages(g.cfg.setting.keyword, m):
+        for match in self.get_messages(g.cfg.setting.keyword):
             if match.get_score(g.cfg.setting.keyword):
-                if match.data.user_id in self.app_config.ignore_userid:  # 除外ユーザからのポストは破棄
+                if match.data.user_id in self.adapter.conf.ignore_userid:  # 除外ユーザからのポストは破棄
                     logging.info("skip ignore user: %s", match.data.user_id)
                     continue
 
@@ -210,7 +210,7 @@ class SlackFunctions(FunctionsInterface):
             return self.get_message_details(score_matches)
         return score_matches
 
-    def pickup_remarks(self, m: MessageParserProtocol) -> list[MessageParserProtocol]:
+    def pickup_remarks(self) -> list[MessageParserProtocol]:
         """slackログからメモを検索して返す
 
         Returns:
@@ -220,8 +220,8 @@ class SlackFunctions(FunctionsInterface):
         remarks_matches: list[MessageParserProtocol] = []
 
         # メモの抽出
-        for match in self.get_messages(g.cfg.setting.remarks_word, m):
-            if match.data.user_id in self.app_config.ignore_userid:  # 除外ユーザからのポストは破棄
+        for match in self.get_messages(g.cfg.setting.remarks_word):
+            if match.data.user_id in self.adapter.conf.ignore_userid:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s", match.data.user_id)
                 continue
 
@@ -250,20 +250,20 @@ class SlackFunctions(FunctionsInterface):
                 return
             case "change":
                 for ts in m.status.target_ts:
-                    reaction_data = self.api.reaction_status(ch=m.data.channel_id, ts=ts)
+                    reaction_data = self.adapter.api.reaction_status(ch=m.data.channel_id, ts=ts)
                     if m.status.reaction:  # NGを外してOKを付ける
                         if not reaction_data.get("ok"):
-                            self.api.reaction_append(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
+                            self.adapter.api.reaction_append(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
                         if reaction_data.get("ng"):
-                            self.api.reaction_remove(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
+                            self.adapter.api.reaction_remove(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
                     else:  # OKを外してNGを付ける
                         if reaction_data.get("ok"):
-                            self.api.reaction_remove(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
+                            self.adapter.api.reaction_remove(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
                         if not reaction_data.get("ng"):
-                            self.api.reaction_append(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
+                            self.adapter.api.reaction_append(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
                 m.status.reset()
             case "delete":
                 for ts in m.status.target_ts:
-                    self.api.reaction_remove(icon=self.app_config.reaction_ok, ch=m.data.channel_id, ts=ts)
-                    self.api.reaction_remove(icon=self.app_config.reaction_ng, ch=m.data.channel_id, ts=ts)
+                    self.adapter.api.reaction_remove(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
+                    self.adapter.api.reaction_remove(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
                 m.status.reset()
