@@ -35,7 +35,7 @@
                     <a class="variable" href="#selected_service">selected_service</a>
             </li>
             <li>
-                    <a class="variable" href="#app_config">app_config</a>
+                    <a class="variable" href="#adapter">adapter</a>
             </li>
             <li>
                     <a class="variable" href="#args">args</a>
@@ -84,10 +84,10 @@
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">cls.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppConfig</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">cls.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TeamDataDict</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppConfigType</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdapterType</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">selected_service</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;slack&quot;</span><span class="p">,</span> <span class="s2">&quot;web&quot;</span><span class="p">,</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="n">app_config</span><span class="p">:</span> <span class="s2">&quot;AppConfigType&quot;</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="n">adapter</span><span class="p">:</span> <span class="s2">&quot;AdapterType&quot;</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="n">args</span><span class="p">:</span> <span class="s2">&quot;Namespace&quot;</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">&quot;&quot;&quot;コマンドライン引数&quot;&quot;&quot;</span>
@@ -126,13 +126,13 @@
     
 
                 </section>
-                <section id="app_config">
+                <section id="adapter">
                     <div class="attr variable">
-            <span class="name">app_config</span><span class="annotation">: &#39;AppConfigType&#39;</span>
+            <span class="name">adapter</span><span class="annotation">: &#39;AdapterType&#39;</span>
 
         
     </div>
-    <a class="headerlink" href="#app_config"></a>
+    <a class="headerlink" href="#adapter"></a>
     
     
 
