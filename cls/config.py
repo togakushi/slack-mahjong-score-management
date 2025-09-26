@@ -447,18 +447,21 @@ class AppConfig:
             list: リスト化されたキーワード
         """
 
-        words: list = []
-
-        words.append([self.setting.keyword])
-        words.append([self.setting.remarks_word])
+        words: list = [
+            [self.setting.keyword],
+            [self.setting.remarks_word],
+            self.results.commandword,
+            self.graph.commandword,
+            self.ranking.commandword,
+            self.report.commandword,
+        ]
 
         for k, v in self.alias.to_dict().items():
             if isinstance(v, list):
                 words.append([k])
                 words.append(v)
 
-        words = list(set(chain.from_iterable(words)))
-        words = ["del" if x == "delete" else x for x in words]
-        words = [x for x in words if x != ""]
+        words = list(set(chain.from_iterable(words)))  # 重複排除/平滑化
+        words = [x for x in words if x != ""]  # 空文字削除
 
         return words
