@@ -14,7 +14,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
 from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
-from libs.functions import compose, configuration, message
+from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
 
@@ -262,8 +262,6 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         kwargs (dict): グラフ生成パラメータ
 
     """
-
-    configuration.graph_setup()
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
         kwargs["kind"] = "barh"

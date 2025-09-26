@@ -9,15 +9,11 @@ import shutil
 import sys
 from functools import partial
 
-import matplotlib.font_manager as fm
-import matplotlib.pyplot as plt
-import pandas as pd
-from matplotlib import use
-
 import libs.global_value as g
 from cls.config import AppConfig
 from integrations import factory
 from libs.data import lookup
+from libs.event_dispatcher import register
 
 
 def set_loglevel():
@@ -217,6 +213,10 @@ def setup():
 
     g.cfg = AppConfig(g.args.config)
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
+    register()
+
+    from pprint import pprint
+    pprint([g.keyword_dispatcher, g.command_dispatcher])
 
     # 作業用ディレクトリ作成
     try:
@@ -252,38 +252,3 @@ def read_memberslist(log=True):
         logging.notice(f"guest_name: {g.cfg.member.guest_name}")  # type: ignore
         logging.notice(f"member_list: {sorted(set(g.member_list.values()))}")  # type: ignore
         logging.notice(f"team_list: {[x["team"] for x in g.team_list]}")  # type: ignore
-
-
-def graph_setup() -> None:
-    """グラフ設定初期化"""
-
-    pd.options.plotting.backend = g.adapter.conf.plotting_backend
-    match g.adapter.conf.plotting_backend:
-        case "plotly":
-            return
-
-    plt.close()
-    use(backend="agg")
-    mlogger = logging.getLogger("matplotlib")
-    mlogger.setLevel(logging.WARNING)
-
-    # スタイルの適応
-    if (style := g.cfg.setting.graph_style) not in plt.style.available:
-        style = "ggplot"
-    plt.style.use(style)
-
-    # フォント再設定
-    for x in ("family", "serif", "sans-serif", "cursive", "fantasy", "monospace"):
-        if f"font.{x}" in plt.rcParams:
-            plt.rcParams[f"font.{x}"] = ""
-
-    fm.fontManager.addfont(g.cfg.setting.font_file)
-    font_prop = fm.FontProperties(fname=g.cfg.setting.font_file)
-    plt.rcParams["font.family"] = font_prop.get_name()
-
-    # グリッド線
-    if not plt.rcParams["axes.grid"]:
-        plt.rcParams["axes.grid"] = True
-        plt.rcParams["grid.alpha"] = 0.3
-        plt.rcParams["grid.linestyle"] = "--"
-    plt.rcParams["axes.axisbelow"] = True

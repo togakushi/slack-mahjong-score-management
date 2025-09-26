@@ -3,6 +3,7 @@ tests/test_parser.py
 """
 
 import sys
+from typing import cast
 
 import pytest
 
@@ -84,7 +85,8 @@ def test_command_word_default(parameter, default_word, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
     configuration.setup()
 
-    assert getattr(g.cfg.cw, parameter, "") == default_word
+    conf = cast(SubCommand, getattr(g.cfg, parameter, ""))
+    assert conf.commandword == [default_word]
 
 
 @pytest.mark.parametrize(
@@ -97,4 +99,5 @@ def test_command_word_override(parameter, word, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/commandword.ini"])
     configuration.setup()
 
-    assert getattr(g.cfg.cw, parameter, "") == word
+    conf = cast(SubCommand, getattr(g.cfg, parameter, ""))
+    assert conf.commandword == [word]

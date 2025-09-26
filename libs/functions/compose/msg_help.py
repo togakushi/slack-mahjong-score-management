@@ -25,23 +25,23 @@ def event_message() -> dict[str, str]:
         \t`呼び出しキーワード [検索範囲] [対象メンバー] [オプション]`
 
         \t*成績サマリ*
-        \t\t呼び出しキーワード：{g.cfg.cw.results}
+        \t\t呼び出しキーワード：{g.cfg.results.commandword}
         \t\t検索範囲デフォルト：{g.cfg.results.aggregation_range}
         \t*成績グラフ*
-        \t\t呼び出しキーワード：{g.cfg.cw.graph}
+        \t\t呼び出しキーワード：{g.cfg.graph.commandword}
         \t\t検索範囲デフォルト：{g.cfg.graph.aggregation_range}
         \t*ランキング*
-        \t\t呼び出しキーワード：{g.cfg.cw.ranking}
+        \t\t呼び出しキーワード：{g.cfg.ranking.commandword}
         \t\t検索範囲デフォルト：{g.cfg.ranking.aggregation_range}
         \t\t規定打数デフォルト：全体ゲーム数 × {g.cfg.ranking.stipulated_rate} ＋ 1
         \t\t出力制限デフォルト：上位 {g.cfg.ranking.ranked} 名
         \t*レポート*
-        \t\t呼び出しキーワード：{g.cfg.cw.report}
+        \t\t呼び出しキーワード：{g.cfg.report.commandword}
         \t\t検索範囲デフォルト：{g.cfg.report.aggregation_range}
         \t*メンバー一覧*
-        \t\t呼び出しキーワード：{g.cfg.cw.member}
+        \t\t呼び出しキーワード：{g.cfg.member.commandword}
         \t*チーム一覧*
-        \t\t呼び出しキーワード：{g.cfg.cw.team}
+        \t\t呼び出しキーワード：{g.cfg.team.commandword}
     """)
 
     # 検索範囲

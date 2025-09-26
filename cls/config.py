@@ -214,6 +214,9 @@ class MemberSection(BaseSection):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
 
+        # 呼び出しキーワード取り込み
+        self.commandword = [x.strip() for x in self._parser.get("member", "commandword", fallback="メンバー一覧").split(",")]
+
 
 class TeamSection(BaseSection):
     """teamセクション初期値"""
@@ -229,6 +232,9 @@ class TeamSection(BaseSection):
     def __init__(self, outer, section_name: str):
         self._parser = cast(ConfigParser, outer._parser)
         super().__init__(self, section_name)
+
+        # 呼び出しキーワード取り込み
+        self.commandword = [x.strip() for x in self._parser.get("team", "commandword", fallback="チーム一覧").split(",")]
 
 
 class AliasSection(BaseSection):
@@ -274,27 +280,6 @@ class CommentSection(BaseSection):
         super().__init__(self, section_name)
 
 
-class CommandWord(BaseSection):
-    """呼び出しキーワード初期値"""
-    results: str = "麻雀成績"
-    graph: str = "麻雀グラフ"
-    ranking: str = "麻雀ランキング"
-    report: str = "麻雀成績レポート"
-    member: str = "メンバー一覧"
-    team: str = "チーム一覧"
-
-    def __init__(self, outer):
-        self._parser = cast(ConfigParser, outer._parser)
-        super().__init__(self, "")
-
-        self.results = self._parser.get("results", "commandword", fallback=CommandWord.results)
-        self.graph = self._parser.get("graph", "commandword", fallback=CommandWord.graph)
-        self.ranking = self._parser.get("ranking", "commandword", fallback=CommandWord.ranking)
-        self.report = self._parser.get("report", "commandword", fallback=CommandWord.report)
-        self.member = self._parser.get("member", "commandword", fallback=CommandWord.member)
-        self.team = self._parser.get("team", "commandword", fallback=CommandWord.team)
-
-
 class DropItems(BaseSection):
     """非表示項目リスト"""
     results: list = []
@@ -329,7 +314,13 @@ class BadgeDisplay(BaseSection):
 
 class SubCommand(BaseSection):
     """サブコマンド共通クラス"""
+
+    # 各種パラメータ
     section: str = ""
+
+    commandword: list = []
+    """呼び出しキーワード"""
+
     aggregation_range: str = "当日"
     """検索範囲未指定時に使用される範囲"""
     individual: bool = True
@@ -372,10 +363,13 @@ class SubCommand(BaseSection):
     filename: str = ""
     interval: int = 80
 
-    def __init__(self, outer, section_name: str):
+    def __init__(self, outer, section_name: str, default: str):
         self._parser = cast(ConfigParser, outer._parser)
         self.section = section_name
         super().__init__(self, section_name)
+
+        # 呼び出しキーワード取り込み
+        self.commandword = [x.strip() for x in self._parser.get(section_name, "commandword", fallback=default).split(",")]
 
     def stipulated_calculation(self, game_count: int) -> int:
         """規定打数をゲーム数から計算
@@ -433,15 +427,14 @@ class AppConfig:
         self.team = TeamSection(self, "team")
         self.alias = AliasSection(self, "alias")
         self.comment = CommentSection(self, "comment")
-        self.cw = CommandWord(self)  # チャンネル内呼び出しキーワード
         self.dropitems = DropItems(self)  # 非表示項目
         self.badge = BadgeDisplay(self)  # バッジ表示
 
-        # サブコマンドデフォルト
-        self.results = SubCommand(self, "results")
-        self.graph = SubCommand(self, "graph")
-        self.ranking = SubCommand(self, "ranking")
-        self.report = SubCommand(self, "report")
+        # サブコマンド
+        self.results = SubCommand(self, "results", "麻雀成績")
+        self.graph = SubCommand(self, "graph", "麻雀グラフ")
+        self.ranking = SubCommand(self, "ranking", "麻雀ランキング")
+        self.report = SubCommand(self, "report", "麻雀成績レポート")
 
         # 共通設定値
         self.undefined_word: int = 0
@@ -458,9 +451,6 @@ class AppConfig:
 
         words.append([self.setting.keyword])
         words.append([self.setting.remarks_word])
-
-        for x in self.cw.to_dict().values():
-            words.append([x])
 
         for k, v in self.alias.to_dict().items():
             if isinstance(v, list):

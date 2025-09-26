@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 
 from slack_sdk.web.client import WebClient
 
+import libs.global_value as g
 from integrations.base.interface import IntegrationsConfig
 from integrations.slack import events
 
@@ -91,19 +92,13 @@ class AppConfig(IntegrationsConfig):
         self.read_file(parser=self._parser, selected_service="slack")
 
         # スラッシュコマンド登録
-        self.slash_commands: dict = {}
-        self.slash_commands.update({"help": events.slash.command_help})
-
-        self.comparison_alias.append("check")
-        self.slash_commands.update({"check": events.comparison.main})
+        g.command_dispatcher.update({"help": events.slash.command_help})
+        g.command_dispatcher.update({"check": events.comparison.main})
         for alias in self.comparison_alias:
-            self.slash_commands.update({alias: events.comparison.main})
+            g.command_dispatcher.update({alias: events.comparison.main})
 
         # 個別コマンド登録
-        self.special_commands: dict = {}
-        self.special_commands.update({
+        g.keyword_dispatcher.update({
             self.comparison_word: events.comparison.main,
             f"Reminder: {self.comparison_word}": events.comparison.main,
         })
-
-        print(vars(self))

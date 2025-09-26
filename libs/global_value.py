@@ -12,6 +12,9 @@ if TYPE_CHECKING:
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
 adapter: "AdapterType"
 
+keyword_dispatcher: dict = {}
+command_dispatcher: dict = {}
+
 args: "Namespace"
 """コマンドライン引数"""
 

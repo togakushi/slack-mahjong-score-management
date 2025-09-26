@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
+from libs.commands.graph.entry import graph_setup
 from libs.data import loader
-from libs.functions import compose, configuration, message
+from libs.functions import compose, message
 from libs.utils import formatter
 
 
@@ -55,7 +56,7 @@ def plot(m: MessageParserProtocol) -> bool:
                 )
 
     # --- グラフ設定
-    configuration.graph_setup()
+    graph_setup()
     plt.rcParams["font.size"] = 6
     report_file_path = os.path.join(
         g.cfg.setting.work_dir,

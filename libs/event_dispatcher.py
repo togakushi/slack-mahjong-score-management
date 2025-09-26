@@ -4,9 +4,14 @@ libs/event_dispatcher.py
 
 import logging
 import re
+from typing import cast
 
-import libs.commands.dispatcher
+import libs.commands.graph.entry
+import libs.commands.ranking.entry
+import libs.commands.report.entry
+import libs.commands.results.entry
 import libs.global_value as g
+from cls.config import SubCommand
 from cls.score import GameResult
 from integrations import factory
 from integrations.protocols import MessageParserProtocol
@@ -14,6 +19,93 @@ from libs.data import lookup, modify
 from libs.functions import compose, message
 from libs.registry import member, team
 from libs.utils import formatter
+
+
+def register():
+    """コマンドディスパッチテーブル登録"""
+
+    def dispatch_help(m: MessageParserProtocol):
+        # ヘルプメッセージ
+        m.post.message = compose.msg_help.event_message()
+        m.post.ts = m.data.event_ts
+        m.post.key_header = False
+        # メンバーリスト
+        m.post.message = lookup.textdata.get_members_list()
+        m.post.codeblock = True
+        m.post.key_header = True
+
+    def dispatch_download(m: MessageParserProtocol):
+        m.post.file_list = [{"成績記録DB": g.cfg.setting.database_file}]
+
+    def dispatch_members_list(m: MessageParserProtocol):
+        m.post.message = lookup.textdata.get_members_list()
+        m.post.codeblock = True
+        m.post.key_header = True
+        m.post.ts = m.data.event_ts
+
+    def dispatch_team_list(m: MessageParserProtocol):
+        m.post.message = lookup.textdata.get_team_list()
+        m.post.codeblock = True
+        m.post.key_header = True
+        m.post.ts = m.data.event_ts
+
+    def dispatch_member_append(m: MessageParserProtocol):
+        m.post.message = member.append(m.argument)
+        m.post.key_header = False
+
+    def dispatch_member_remove(m: MessageParserProtocol):
+        m.post.message = member.remove(m.argument)
+        m.post.key_header = False
+
+    def dispatch_team_create(m: MessageParserProtocol):
+        m.post.message = team.create(m.argument)
+        m.post.key_header = False
+
+    def dispatch_team_delete(m: MessageParserProtocol):
+        m.post.message = team.delete(m.argument)
+        m.post.key_header = False
+
+    def dispatch_team_append(m: MessageParserProtocol):
+        m.post.message = team.append(m.argument)
+        m.post.key_header = False
+
+    def dispatch_team_remove(m: MessageParserProtocol):
+        m.post.message = team.remove(m.argument)
+        m.post.key_header = False
+
+    def dispatch_team_clear(m: MessageParserProtocol):
+        m.post.message = team.clear()
+        m.post.key_header = False
+
+    dispatch_table: dict = {
+        "results": libs.commands.results.entry.main,
+        "graph": libs.commands.graph.entry.main,
+        "ranking": libs.commands.ranking.entry.main,
+        "report": libs.commands.report.entry.main,
+        "member": dispatch_members_list,
+        "team_list": dispatch_team_list,
+        "download": dispatch_download,
+        "add": dispatch_member_append,
+        "delete": dispatch_member_remove,
+        "team_create": dispatch_team_create,
+        "team_del": dispatch_team_delete,
+        "team_add": dispatch_team_append,
+        "team_remove": dispatch_team_remove,
+        "team_clear": dispatch_team_clear,
+    }
+
+    # ヘルプ
+    g.keyword_dispatcher.update({g.cfg.setting.help: dispatch_help})
+
+    for command, ep in dispatch_table.items():
+        # 呼び出しキーワード登録
+        if hasattr(g.cfg, command):
+            sub_command = cast(SubCommand, getattr(g.cfg, command))
+            for alias in sub_command.commandword:
+                g.keyword_dispatcher.update({alias: ep})
+        # スラッシュコマンド登録
+        for alias in cast(list, getattr(g.cfg.alias, command)):
+            g.command_dispatcher.update({alias: ep})
 
 
 def dispatch_by_keyword(m: MessageParserProtocol):
@@ -35,85 +127,18 @@ def dispatch_by_keyword(m: MessageParserProtocol):
         return
 
     match m.keyword:
-        # ヘルプ
-        case x if re.match(rf"^{g.cfg.setting.help}$", x):
-            # ヘルプメッセージ
-            m.post.message = compose.msg_help.event_message()
-            m.post.ts = m.data.event_ts
-            m.post.key_header = False
-            # メンバーリスト
-            m.post.message = lookup.textdata.get_members_list()
-            m.post.codeblock = True
-            m.post.key_header = True
-
-        # 成績管理系コマンド
-        case x if re.match(rf"^{g.cfg.cw.results}$", x) or (m.is_command and x in g.cfg.alias.results):
-            m.data.command_type = "results"
-            libs.commands.dispatcher.main(m)
-        case x if re.match(rf"^{g.cfg.cw.graph}$", x) or (m.is_command and x in g.cfg.alias.graph):
-            m.data.command_type = "graph"
-            libs.commands.dispatcher.main(m)
-        case x if re.match(rf"^{g.cfg.cw.ranking}$", x) or (m.is_command and x in g.cfg.alias.ranking):
-            m.data.command_type = "ranking"
-            libs.commands.dispatcher.main(m)
-        case x if re.match(rf"^{g.cfg.cw.report}$", x) or (m.is_command and x in g.cfg.alias.report):
-            m.data.command_type = "report"
-            libs.commands.dispatcher.main(m)
-
-        # データベース関連コマンド
-        case x if m.is_command and x in g.cfg.alias.download:
-            m.post.file_list = [{"成績記録DB": g.cfg.setting.database_file}]
-
-        # メンバーリスト/チームリスト
-        case x if re.match(rf"^{g.cfg.cw.member}$", x) or (m.is_command and x in g.cfg.alias.member):
-            m.post.message = lookup.textdata.get_members_list()
-            m.post.codeblock = True
-            m.post.key_header = True
-            m.post.ts = m.data.event_ts
-        case x if re.match(rf"^{g.cfg.cw.team}$", x) or (m.is_command and x in g.cfg.alias.team_list):
-            m.post.message = lookup.textdata.get_team_list()
-            m.post.codeblock = True
-            m.post.key_header = True
-            m.post.ts = m.data.event_ts
-
-        # メンバー管理系コマンド
-        case x if m.is_command and x in g.cfg.alias.add:
-            m.post.message = member.append(m.argument)
-            m.post.key_header = False
-        case x if m.is_command and x in g.cfg.alias.delete:
-            m.post.message = member.remove(m.argument)
-            m.post.key_header = False
-
-        # チーム管理系コマンド
-        case x if m.is_command and x in g.cfg.alias.team_create:
-            m.post.message = team.create(m.argument)
-            m.post.key_header = False
-        case x if m.is_command and x in g.cfg.alias.team_del:
-            m.post.message = team.delete(m.argument)
-            m.post.key_header = False
-        case x if m.is_command and x in g.cfg.alias.team_add:
-            m.post.message = team.append(m.argument)
-            m.post.key_header = False
-        case x if m.is_command and x in g.cfg.alias.team_remove:
-            m.post.message = team.remove(m.argument)
-            m.post.key_header = False
-        case x if m.is_command and x in g.cfg.alias.team_clear:
-            m.post.message = team.clear()
-            m.post.key_header = False
-
+        # 呼び出しキーワード
+        case x if x in g.keyword_dispatcher and not m.is_command:
+            g.keyword_dispatcher[x](m)
+        # スラッシュコマンド
+        case x if x in g.command_dispatcher and m.is_command:
+            g.command_dispatcher[x](m)
+        # リマインダ
+        case "Reminder:":
+            if m.data.text in g.keyword_dispatcher:
+                g.keyword_dispatcher[m.data.text](m)
         # その他
         case _ as x:
-            if m.is_command:  # スラッシュコマンド
-                if x in g.adapter.conf.slash_commands:
-                    g.adapter.conf.slash_commands[x](m)
-                else:
-                    m.post.message = g.adapter.conf.slash_commands["help"](g.adapter.conf.slash_command)
-            else:  # 個別コマンド
-                if x in g.adapter.conf.special_commands:
-                    g.adapter.conf.special_commands[x](m)
-                if x == "Reminder:" and m.data.text in g.adapter.conf.special_commands:
-                    g.adapter.conf.special_commands[m.data.text](m)
-
             other_words(x, m)  # コマンドに一致しない場合
 
     g.adapter.api.post(m)

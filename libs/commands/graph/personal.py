@@ -12,7 +12,7 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.protocols import MessageParserProtocol
 from libs.data import loader
-from libs.functions import compose, configuration, message
+from libs.functions import compose, message
 from libs.utils import formatter
 
 
@@ -47,7 +47,6 @@ def plot(m: MessageParserProtocol) -> bool:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
-    configuration.graph_setup()
     fig = plt.figure(figsize=(12, 8))
 
     if g.params.get("target_count", 0) == 0:
@@ -232,7 +231,6 @@ def statistics_plot(m: MessageParserProtocol) -> bool:
     rank_table["平均順位"] = count_df.apply(lambda row: f"{row["平均順位"]:.2f}", axis=1)
 
     # グラフ設定
-    configuration.graph_setup()
     fig = plt.figure(figsize=(20, 10))
     fig.suptitle(title_text, size=20, weight="bold")
     gs = gridspec.GridSpec(figure=fig, nrows=3, ncols=2)

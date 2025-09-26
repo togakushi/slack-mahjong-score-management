@@ -70,7 +70,7 @@ def main(adapter: AdapterInterface):
         m.post.reset()
         cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
-        m.data.text = f"{g.cfg.cw.results} {text}"
+        m.data.text = f"{g.cfg.results.commandword[0]} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
 
         message = ""
@@ -108,7 +108,7 @@ def main(adapter: AdapterInterface):
         m.post.message = {}
         cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
-        m.data.text = f"{g.cfg.cw.graph} {text}"
+        m.data.text = f"{g.cfg.graph.commandword[0]} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
 
         message = ""
@@ -137,7 +137,7 @@ def main(adapter: AdapterInterface):
         m.post.reset()
         cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
-        m.data.text = f"{g.cfg.cw.ranking} {text}"
+        m.data.text = f"{g.cfg.ranking.commandword[0]} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
 
         message = ""
@@ -168,7 +168,7 @@ def main(adapter: AdapterInterface):
         m.post.reset()
         cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
-        m.data.text = f"{g.cfg.cw.results} {text}"
+        m.data.text = f"{g.cfg.results.commandword[0]} {text}"
         libs.event_dispatcher.dispatch_by_keyword(m)
 
         message = ""
