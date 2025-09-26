@@ -215,9 +215,6 @@ def setup():
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
     register()
 
-    from pprint import pprint
-    pprint([g.keyword_dispatcher, g.command_dispatcher])
-
     # 作業用ディレクトリ作成
     try:
         if os.path.isdir(g.cfg.setting.work_dir):
