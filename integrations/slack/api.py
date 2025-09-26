@@ -98,7 +98,6 @@ class SlackAPI(APIInterface):
                     post_msg.append(f"{header}{msg.rstrip()}\n")
 
             if isinstance(msg, pd.DataFrame):
-
                 match m.data.command_type:
                     case "results":
                         match title:
