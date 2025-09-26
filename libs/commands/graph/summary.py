@@ -4,6 +4,7 @@ libs/commands/graph/summary.py
 
 import logging
 import os
+from typing import cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -94,7 +95,6 @@ def point_plot(m: MessageParserProtocol) -> bool:
         "title_text": title_text,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
-        "legend": "name",
         "xlabel_text": xlabel_text,
         "ylabel_text": "通算ポイント",
         "horizontal": True,
@@ -179,7 +179,6 @@ def rank_plot(m: MessageParserProtocol) -> bool:
         "title_text": title_text,
         "total_game_count": game_info["game_count"],
         "target_data": target_data,
-        "legend": "name",
         "xlabel_text": xlabel_text,
         "ylabel_text": "順位 (通算ポイント順)",
         "horizontal": False,
@@ -242,14 +241,17 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
         target_data = target_data.sort_values("last_point", ascending=False)
 
     # 順位付け
-    target_data["position"] = (
-        target_data["last_point"].rank(ascending=False).astype(int)
-    )
+    target_data["position"] = target_data["last_point"].rank(ascending=False).astype(int)
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
         df["name"] = df["name"].replace(mapping_dict)
         target_data["name"] = target_data["name"].replace(mapping_dict)
+
+    # 凡例用文字列生成
+    target_data["legend"] = target_data.apply(
+        lambda x: f"{x["position"]}位： {x["name"]} ({x["last_point"]:+.1f}pt / {x["game_count"]:.0f}G)".replace("-", "▲"), axis=1
+    )
 
     return (target_data.sort_values("position"), df)
 
@@ -263,24 +265,20 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
     """
 
+    target_data = cast(pd.DataFrame, kwargs["target_data"])
+
     if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
         kwargs["kind"] = "barh"
-        lab: list = []
+        lab: list = target_data["legend"].to_list()
         color: list = []
-        for _, v in kwargs["target_data"].iterrows():
-            lab.append("{:2d}位：{} ({}pt / {}G)".format(  # pylint: disable=consider-using-f-string
-                v["position"],
-                v[kwargs["legend"]],
-                "{:+.1f}".format(v["last_point"]).replace("-", "▲"),  # pylint: disable=consider-using-f-string
-                v["game_count"],
-            ))
+        for _, v in target_data.iterrows():
             if v["last_point"] > 0:
                 color.append("deepskyblue")
             else:
                 color.append("orangered")
 
         tmpdf = pd.DataFrame(
-            {"point": kwargs["target_data"]["last_point"].to_list()[::-1]},
+            {"point": target_data["last_point"].to_list()[::-1]},
             index=lab[::-1],
         )
 
@@ -309,16 +307,8 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         ).get_figure()
 
         # 凡例
-        legend_text = []
-        for _, v in kwargs["target_data"].iterrows():
-            legend_text.append("{:2d}位：{} ({}pt / {}G)".format(  # pylint: disable=consider-using-f-string
-                v["position"], v[kwargs["legend"]],
-                "{:+.1f}".format(v["last_point"]).replace("-", "▲"),  # pylint: disable=consider-using-f-string
-                v["game_count"],
-            ))
-
         plt.legend(
-            legend_text,
+            target_data["legend"].to_list(),
             bbox_to_anchor=(1, 1),
             loc="upper left",
             borderaxespad=0.5,
@@ -347,7 +337,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         case "point":
             plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
         case "rank":
-            lab = list(range(len(kwargs["target_data"]) + 1))
+            lab = list(range(len(target_data) + 1))
             if len(lab) > 10:
                 plt.yticks(lab[1::2], lab[1::2])
             else:
@@ -371,12 +361,13 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
 
     """
 
+    target_data = cast(pd.DataFrame, kwargs["target_data"])
+
     if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
         df_t = df.T
         df_t.columns = ["point"]
         df_t["rank"] = df_t["point"].rank(ascending=False, method="dense").astype("int")
         df_t["positive"] = df_t["point"] > 0
-        df_t["label"] = df_t.apply(lambda x: f"{x["rank"]:3d}位：{x.name} ({x["point"]:+.1f} pt)", axis=1)
 
         fig = px.bar(
             df_t,
@@ -384,7 +375,7 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
             color="positive",
             color_discrete_map={True: "blue", False: "red"},
             x=df_t["point"],
-            y=df_t["label"],
+            y=target_data["legend"],
         )
         fig.update_traces(
             hovertemplate="%{y}<extra></extra>"
@@ -402,15 +393,7 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
         )
     else:
         # 凡例用ラベル生成
-        work_df = pd.DataFrame()
-        if kwargs.get("kind") == "point":
-            work_df["last"] = df.tail(1).T
-            work_df["rank"] = work_df["last"].rank(ascending=False, method="dense")
-            work_df["label"] = work_df.apply(lambda x: f"{x["rank"]:3.0f}位：{x.name} ({x["last"]:+.1f} pt)", axis=1)
-        else:
-            work_df["rank"] = df.tail(1).T.rank(ascending=True, method="dense")
-            work_df["label"] = work_df.apply(lambda x: f"{x["rank"]:3.0f}位：{x.name}", axis=1)
-        df.columns = work_df["label"].to_list()
+        df.columns = target_data["legend"].to_list()
 
         fig = px.line(df)
         fig.update_layout(
