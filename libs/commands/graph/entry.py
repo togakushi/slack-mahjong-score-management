@@ -21,7 +21,6 @@ def main(m: MessageParserProtocol):
 
     m.data.command_type = "graph"
     g.params = dictutil.placeholder(g.cfg.graph, m)
-    graph_setup()
 
     if len(g.params["player_list"]) == 1:  # 対象がひとり
         if g.params.get("statistics"):

@@ -14,6 +14,7 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
 from integrations.protocols import MessageParserProtocol
+from libs.commands.graph.entry import graph_setup
 from libs.data import aggregate, loader
 from libs.functions import compose, message
 from libs.utils import formatter, textutil
@@ -265,6 +266,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
     """
 
+    graph_setup()
     target_data = cast(pd.DataFrame, kwargs["target_data"])
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
