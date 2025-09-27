@@ -2,7 +2,10 @@
 integrations/slack/events/handler_registry.py
 """
 
+import logging
 from typing import Callable
+
+from integrations.slack.adapter import AdapterInterface
 
 _registry: list[Callable] = []
 
@@ -12,7 +15,8 @@ def register(fn: Callable):
     _registry.append(fn)
 
 
-def register_all(app):
+def register_all(app, adapter: AdapterInterface):
     """すべての登録関数を呼び出す"""
     for fn in _registry:
-        fn(app)
+        logging.trace("Calling: %s", fn.__name__)  # type: ignore
+        fn(app, adapter)

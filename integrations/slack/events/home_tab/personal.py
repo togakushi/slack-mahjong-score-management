@@ -3,49 +3,53 @@ integrations/slack/events/home_tab/personal.py
 """
 
 import logging
-from typing import cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack import adapter
+from integrations.slack.adapter import AdapterInterface
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
 from libs.commands import results
 from libs.utils import dictutil
 
 
-def build_personal_menu():
-    """個人成績メニュー作成"""
+def build_personal_menu(adapter: AdapterInterface):
+    """個人成績メニュー作成
 
-    g.adapter = cast(adapter.AdapterInterface, g.adapter)
-    g.adapter.conf.tab_var["screen"] = "PersonalMenu"
-    g.adapter.conf.tab_var["no"] = 0
-    g.adapter.conf.tab_var["view"] = {"type": "home", "blocks": []}
-    g.adapter.conf.tab_var.setdefault("sday", ExtDt().format("ymd", "-"))
-    g.adapter.conf.tab_var.setdefault("eday", ExtDt().format("ymd", "-"))
-    ui_parts.header(text="【個人成績】")
+    Args:
+        adapter (AdapterInterface): インターフェースアダプタ
+    """
+
+    adapter.conf.tab_var["screen"] = "PersonalMenu"
+    adapter.conf.tab_var["no"] = 0
+    adapter.conf.tab_var["view"] = {"type": "home", "blocks": []}
+    adapter.conf.tab_var.setdefault("sday", ExtDt().format("ymd", "-"))
+    adapter.conf.tab_var.setdefault("eday", ExtDt().format("ymd", "-"))
+    ui_parts.header(adapter, text="【個人成績】")
 
     # プレイヤー選択リスト
-    ui_parts.user_select_pulldown(text="対象プレイヤー")
+    ui_parts.user_select_pulldown(adapter, text="対象プレイヤー")
 
     # 検索範囲設定
     date_dict = {x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
-    ui_parts.divider()
+    ui_parts.divider(adapter)
     ui_parts.radio_buttons(
+        adapter=adapter,
         id_suffix="search_range",
         title="検索範囲",
         flag={
             "今月": f"今月：{date_dict["今月"]["start"]} ～ {date_dict["今月"]["end"]}",
             "先月": f"先月：{date_dict["先月"]["start"]} ～ {date_dict["先月"]["end"]}",
             "全部": f"全部：{date_dict["全部"]["start"]} ～ {date_dict["全部"]["end"]}",
-            "指定": f"範囲指定：{g.adapter.conf.tab_var["sday"]} ～ {g.adapter.conf.tab_var["eday"]}",
+            "指定": f"範囲指定：{adapter.conf.tab_var["sday"]} ～ {adapter.conf.tab_var["eday"]}",
         }
     )
-    ui_parts.button(text="検索範囲設定", action_id="modal-open-period")
+    ui_parts.button(adapter, text="検索範囲設定", action_id="modal-open-period")
 
     # オプション
-    ui_parts.divider()
+    ui_parts.divider(adapter)
     ui_parts.checkboxes(
+        adapter=adapter,
         id_suffix="search_option",
         title="検索オプション",
         flag={
@@ -54,6 +58,7 @@ def build_personal_menu():
         initial=["unregistered_replace"],
     )
     ui_parts.checkboxes(
+        adapter=adapter,
         id_suffix="display_option",
         title="表示オプション",
         flag={
@@ -63,14 +68,15 @@ def build_personal_menu():
         },
     )
 
-    ui_parts.divider()
-    ui_parts.button(text="集計", action_id="personal_aggregation", style="primary")
-    ui_parts.button(text="戻る", action_id="actionId-back", style="danger")
+    ui_parts.divider(adapter)
+    ui_parts.button(adapter, text="集計", action_id="personal_aggregation", style="primary")
+    ui_parts.button(adapter, text="戻る", action_id="actionId-back", style="danger")
 
 
 @register
-def register_personal_handlers(app):
+def register_personal_handlers(app, adapter: AdapterInterface):
     """個人成績メニュー"""
+
     @app.action("personal_menu")
     def handle_menu_action(ack, body):
         """メニュー項目生成
@@ -82,16 +88,15 @@ def register_personal_handlers(app):
 
         ack()
         logging.trace(body)  # type: ignore
-        g.adapter = cast(adapter.AdapterInterface, g.adapter)
 
-        g.adapter.conf.tab_var["user_id"] = body["user"]["id"]
-        g.adapter.conf.tab_var["view_id"] = body["view"]["id"]
-        logging.info("[personal_menu] %s", g.adapter.conf.tab_var)
+        adapter.conf.tab_var["user_id"] = body["user"]["id"]
+        adapter.conf.tab_var["view_id"] = body["view"]["id"]
+        logging.info("[personal_menu] %s", adapter.conf.tab_var)
 
-        build_personal_menu()
-        g.adapter.conf.appclient.views_publish(
-            user_id=g.adapter.conf.tab_var["user_id"],
-            view=g.adapter.conf.tab_var["view"],
+        build_personal_menu(adapter)
+        adapter.conf.appclient.views_publish(
+            user_id=adapter.conf.tab_var["user_id"],
+            view=adapter.conf.tab_var["view"],
         )
 
     @app.action("personal_aggregation")
@@ -105,11 +110,10 @@ def register_personal_handlers(app):
 
         ack()
         logging.trace(body)  # type: ignore
-        g.adapter = cast(adapter.AdapterInterface, g.adapter)
-        m = g.adapter.parser()
+        m = adapter.parser()
 
         m.parser(body)
-        add_argument, app_msg, update_flag = ui_parts.set_command_option(body)
+        add_argument, app_msg, update_flag = ui_parts.set_command_option(adapter, body)
         m.data.text = f"dummy {" ".join(add_argument)}"
         g.params = dictutil.placeholder(g.cfg.results, m)
         g.params.update(update_flag)
@@ -120,8 +124,8 @@ def register_personal_handlers(app):
             if user_select is None:
                 return
 
-        g.adapter.conf.appclient.views_update(
-            view_id=g.adapter.conf.tab_var["view_id"],
+        adapter.conf.appclient.views_update(
+            view_id=adapter.conf.tab_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}")
         )
 
@@ -130,9 +134,9 @@ def register_personal_handlers(app):
 
         m.data.command_type = "results"
         results.detail.aggregation(m)
-        g.adapter.api.post(m)
+        adapter.api.post(m)
 
-        ui_parts.update_view(m, app_msg)
+        ui_parts.update_view(adapter, m, app_msg)
 
     @app.view("PersonalMenu_ModalPeriodSelection")
     def handle_view_submission(ack, view):
@@ -144,17 +148,16 @@ def register_personal_handlers(app):
         """
 
         ack()
-        g.adapter = cast(adapter.AdapterInterface, g.adapter)
 
         for i in view["state"]["values"].keys():
             if "aid-sday" in view["state"]["values"][i]:
-                g.adapter.conf.tab_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
+                adapter.conf.tab_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
             if "aid-eday" in view["state"]["values"][i]:
-                g.adapter.conf.tab_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
+                adapter.conf.tab_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
-        logging.info("[global var] %s", g.adapter.conf.tab_var)
+        logging.info("[global var] %s", adapter.conf.tab_var)
 
-        g.adapter.conf.appclient.views_update(
-            view_id=g.adapter.conf.tab_var["view_id"],
-            view=build_personal_menu(),
+        adapter.conf.appclient.views_update(
+            view_id=adapter.conf.tab_var["view_id"],
+            view=build_personal_menu(adapter),
         )

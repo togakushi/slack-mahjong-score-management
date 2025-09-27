@@ -5,7 +5,6 @@ integrations/slack/events/handler.py
 import logging
 import os
 import sys
-from typing import cast
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -13,7 +12,6 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 import libs.dispatcher
-import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.slack.adapter import AdapterInterface
 from integrations.slack.events.handler_registry import register, register_all
@@ -27,23 +25,21 @@ def main(adapter: AdapterInterface):
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
         adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
         adapter.conf.appclient = app.client
-        register_all(app)  # イベント遅延登録
     except SlackApiError as err:
         logging.error(err)
         sys.exit()
 
     adapter.conf.bot_id = app.client.auth_test()["user_id"]
-    g.adapter = adapter
+    register_all(app, adapter)  # イベント遅延登録
 
     handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
 
 
 @register
-def register_event_handlers(app):
+def register_event_handlers(app, adapter: AdapterInterface):
     """イベントAPI"""
 
-    adapter = cast(AdapterInterface, g.adapter)
     m = adapter.parser()
 
     @app.event("message")
@@ -97,7 +93,7 @@ def register_event_handlers(app):
 
         logging.trace(adapter.conf.tab_var)  # type: ignore
 
-        home.build_main_menu()
+        home.build_main_menu(adapter)
         result = adapter.conf.appclient.views_publish(
             user_id=adapter.conf.tab_var["user_id"],
             view=adapter.conf.tab_var["view"],
