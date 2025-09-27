@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import pytest
 
-import libs.event_dispatcher
+import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
 from libs.functions import configuration
@@ -29,12 +29,12 @@ def test_help(config, keyword, monkeypatch):
 
     with (
         # patch("integrations.slack.events.slash.command_help") as mock_help_slash_command,
-        patch("libs.event_dispatcher.dispatch_by_keyword") as mock_help_slash_command,
+        patch("libs.dispatcher.by_keyword") as mock_help_slash_command,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_help_slash_command.assert_called_once()
 
 
@@ -51,12 +51,12 @@ def test_results(config, keyword, monkeypatch):
     adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
-        patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_results,
+        patch("libs.dispatcher.by_keyword") as mock_slash_results,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_results.assert_called_once()
 
 
@@ -73,12 +73,12 @@ def test_graph(config, keyword, monkeypatch):
     adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
-        patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_graph,
+        patch("libs.dispatcher.by_keyword") as mock_slash_graph,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_graph.assert_called_once()
 
 
@@ -95,12 +95,12 @@ def test_ranking(config, keyword, monkeypatch):
     adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
-        patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_ranking,
+        patch("libs.dispatcher.by_keyword") as mock_slash_ranking,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_ranking.assert_called_once()
 
 
@@ -117,12 +117,12 @@ def test_report(config, keyword, monkeypatch):
     adapter = factory.select_adapter("standard_io", g.cfg)
 
     with (
-        patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_report,
+        patch("libs.dispatcher.by_keyword") as mock_slash_report,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_report.assert_called_once()
 
 
@@ -141,11 +141,11 @@ def test_check(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.dispatch_by_keyword") as mock_slash_check,
+        patch("libs.dispatcher.by_keyword") as mock_slash_check,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_check.assert_called_once()
 
 
@@ -166,7 +166,7 @@ def test_download(config, keyword, monkeypatch):
 
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
     m.parser(cast(dict, param_data.FAKE_BODY))
-    libs.event_dispatcher.dispatch_by_keyword(m)
+    libs.dispatcher.by_keyword(m)
     assert m.post.file_list[0].get("成績記録DB")
 
 
@@ -185,11 +185,11 @@ def test_member_list(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.lookup.textdata.get_members_list") as mock_slash_member_list,
+        patch("libs.dispatcher.lookup.textdata.get_members_list") as mock_slash_member_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_member_list.assert_called_once()
 
 
@@ -209,11 +209,11 @@ def test_member_add(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.member.append") as mock_slash_member_add,
+        patch("libs.dispatcher.member.append") as mock_slash_member_add,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_member_add.assert_called_once()
 
 
@@ -232,11 +232,11 @@ def test_member_del(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.member.remove") as mock_slash_member_del,
+        patch("libs.dispatcher.member.remove") as mock_slash_member_del,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_member_del.assert_called_once()
 
 
@@ -255,11 +255,11 @@ def test_team_create(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.team.create") as mock_slash_team_create,
+        patch("libs.dispatcher.team.create") as mock_slash_team_create,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_team_create.assert_called_once()
 
 
@@ -278,11 +278,11 @@ def test_team_del(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.team.delete") as mock_slash_team_del,
+        patch("libs.dispatcher.team.delete") as mock_slash_team_del,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_team_del.assert_called_once()
 
 
@@ -301,11 +301,11 @@ def test_team_add(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.team.append") as mock_slash_team_add,
+        patch("libs.dispatcher.team.append") as mock_slash_team_add,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_team_add.assert_called_once()
 
 
@@ -324,11 +324,11 @@ def test_team_remove(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.team.remove") as mock_slash_team_remove,
+        patch("libs.dispatcher.team.remove") as mock_slash_team_remove,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_team_remove.assert_called_once()
 
 
@@ -347,11 +347,11 @@ def test_team_list(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.lookup.textdata.get_team_list") as mock_slash_team_list,
+        patch("libs.dispatcher.lookup.textdata.get_team_list") as mock_slash_team_list,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_team_list.assert_called_once()
 
 
@@ -370,9 +370,9 @@ def test_team_clear(config, keyword, monkeypatch):
     m.set_command_flag(True)
 
     with (
-        patch("libs.event_dispatcher.team.clear") as mock_slash_team_clear,
+        patch("libs.dispatcher.team.clear") as mock_slash_team_clear,
     ):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_slash_team_clear.assert_called_once()

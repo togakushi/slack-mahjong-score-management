@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import pytest
 
-import libs.event_dispatcher
+import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
 from libs.functions import configuration
@@ -30,11 +30,11 @@ def test_help(config, keyword, monkeypatch):
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
 
     with (
-        patch("libs.event_dispatcher.dispatch_by_keyword") as mock_help_event_message,
+        patch("libs.dispatcher.by_keyword") as mock_help_event_message,
     ):
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_help_event_message.assert_called_once()
 
 
@@ -56,7 +56,7 @@ def test_results(config, keyword, monkeypatch):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_results.assert_called_once()
 
 
@@ -78,7 +78,7 @@ def test_graph(config, keyword, monkeypatch):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_graph.assert_called_once()
 
 
@@ -100,7 +100,7 @@ def test_ranking(config, keyword, monkeypatch):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_ranking.assert_called_once()
 
 
@@ -122,5 +122,5 @@ def test_report(config, keyword, monkeypatch):
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
         mock_report.assert_called_once()

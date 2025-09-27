@@ -13,7 +13,7 @@ import libs.global_value as g
 from cls.config import AppConfig
 from integrations import factory
 from libs.data import lookup
-from libs.event_dispatcher import register
+from libs.dispatcher import register
 
 
 def set_loglevel():

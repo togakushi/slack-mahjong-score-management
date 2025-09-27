@@ -108,7 +108,7 @@ def register():
             g.command_dispatcher.update({alias: ep})
 
 
-def dispatch_by_keyword(m: MessageParserProtocol):
+def by_keyword(m: MessageParserProtocol):
     """メイン処理"""
 
     logging.info(

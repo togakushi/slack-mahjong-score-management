@@ -9,7 +9,7 @@ import pandas as pd
 from flask import Blueprint, Flask, abort, render_template, request
 from flask_httpauth import HTTPBasicAuth  # type: ignore
 
-import libs.event_dispatcher
+import libs.dispatcher
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDT
@@ -71,7 +71,7 @@ def main(adapter: AdapterInterface):
         cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.results.commandword[0]} {text}"
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
 
         message = ""
         title, headline = next(iter(m.post.headline.items()))
@@ -109,7 +109,7 @@ def main(adapter: AdapterInterface):
         cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.graph.commandword[0]} {text}"
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
 
         message = ""
         try:
@@ -138,7 +138,7 @@ def main(adapter: AdapterInterface):
         cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.ranking.commandword[0]} {text}"
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
 
         message = ""
         title, headline = next(iter(m.post.headline.items()))
@@ -169,7 +169,7 @@ def main(adapter: AdapterInterface):
         cookie_data = adapter.functions.get_cookie(request)
         text = " ".join(cookie_data.values())
         m.data.text = f"{g.cfg.results.commandword[0]} {text}"
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
 
         message = ""
         title, headline = next(iter(m.post.headline.items()))

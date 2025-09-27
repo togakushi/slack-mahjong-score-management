@@ -12,7 +12,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-import libs.event_dispatcher
+import libs.dispatcher
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.slack.adapter import AdapterInterface
@@ -56,7 +56,7 @@ def register_event_handlers(app):
 
         m.reset()
         m.parser(body)
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
 
     @app.command(adapter.conf.slash_command)
     def slash_command(ack, body):
@@ -70,7 +70,7 @@ def register_event_handlers(app):
         ack()
         m.reset()
         m.parser(body)
-        libs.event_dispatcher.dispatch_by_keyword(m)
+        libs.dispatcher.by_keyword(m)
 
     @app.event("app_home_opened")
     def handle_home_events(event):
