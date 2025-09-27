@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import libs.global_value as g
 from cls.types import GameInfoDict
 from integrations.protocols import MessageParserProtocol
+from libs.commands.graph.entry import graph_setup
 from libs.data import aggregate
 from libs.functions import compose, message
 from libs.utils import formatter
@@ -47,6 +48,7 @@ def plot(m: MessageParserProtocol) -> bool:
         df_sorted = df_sorted.rename(columns=mapping_dict)
 
     # --- グラフ生成
+    graph_setup()
     save_file = os.path.join(
         g.cfg.setting.work_dir,
         f"{g.params["filename"]}.png" if g.params.get("filename") else "rating.png",
