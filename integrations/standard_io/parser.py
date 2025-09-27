@@ -58,6 +58,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         return self._command_flg
 
     @property
+    def is_bot(self) -> bool:
+        return False
+
+    @property
     def check_updatable(self) -> bool:
         return True
 

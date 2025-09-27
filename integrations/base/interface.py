@@ -302,6 +302,17 @@ class MessageParserInterface(ABC):
 
     @property
     @abstractmethod
+    def is_bot(self) -> bool:
+        """botのポストか
+
+        Returns:
+            bool: 真偽値
+            - **True** : botのポスト
+            - **False** : ユーザのポスト
+        """
+
+    @property
+    @abstractmethod
     def check_updatable(self) -> bool:
         """DB操作の許可チェック
 

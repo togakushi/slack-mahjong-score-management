@@ -138,6 +138,14 @@ class MessageParserProtocol(Protocol):
         """
 
     @property
+    def is_bot(self) -> bool:
+        """botによる操作か
+
+        - **True**: botが操作
+        - **False**: ユーザが操作
+        """
+
+    @property
     def keyword(self) -> str:
         """コマンドとして認識している文字列を返す"""
 

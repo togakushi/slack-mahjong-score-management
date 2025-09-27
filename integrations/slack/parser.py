@@ -76,9 +76,15 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data.thread_ts = _event.get("thread_ts", "0")
 
     @property
-    def is_command(self):
+    def is_command(self) -> bool:
         """コマンドで実行されているか"""
         return self._command_flg
+
+    @property
+    def is_bot(self) -> bool:
+        if self.data.user_id == "USLACKBOT":
+            return True
+        return False
 
     @property
     def check_updatable(self) -> bool:

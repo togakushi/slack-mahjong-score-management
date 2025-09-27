@@ -135,7 +135,7 @@ def dispatch_by_keyword(m: MessageParserProtocol):
             g.command_dispatcher[x](m)
         # リマインダ
         case "Reminder:":
-            if m.data.text in g.keyword_dispatcher:
+            if m.data.text in g.keyword_dispatcher and m.is_bot:
                 g.keyword_dispatcher[m.data.text](m)
         # その他
         case _ as x:
