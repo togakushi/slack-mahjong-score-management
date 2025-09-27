@@ -1,6 +1,6 @@
 """モジュール間データ共有用"""
 
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Callable, Literal
 
 if TYPE_CHECKING:
     from argparse import Namespace
@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
 adapter: "AdapterType"
 
-keyword_dispatcher: dict = {}
-command_dispatcher: dict = {}
+keyword_dispatcher: dict[str, Callable[..., Any]] = {}
+command_dispatcher: dict[str, Callable[..., Any]] = {}
 
 args: "Namespace"
 """コマンドライン引数"""
