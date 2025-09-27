@@ -9,6 +9,12 @@ from libs.utils import dictutil
 
 
 def main(m: MessageParserProtocol):
+    """ランキング生成処理エントリーポイント
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
+
     if m.data.status != "message_append":
         return
 

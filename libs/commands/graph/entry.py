@@ -16,6 +16,12 @@ from libs.utils import dictutil
 
 
 def main(m: MessageParserProtocol):
+    """グラフ生成処理エントリーポイント
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
+
     if m.data.status != "message_append":
         return
 
