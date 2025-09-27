@@ -33,6 +33,7 @@ def divider(adapter: AdapterInterface) -> None:
         adapter (AdapterInterface): アダプタインターフェース
     """
 
+    adapter.conf.tab_var["view"]["blocks"].append({"type": "divider", })
     adapter.conf.tab_var["no"] += 1
 
 
