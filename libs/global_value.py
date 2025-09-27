@@ -9,11 +9,16 @@ if TYPE_CHECKING:
     from cls.types import TeamDataDict
     from integrations.factory import AdapterType
 
+
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
+"""選択サービス"""
 adapter: "AdapterType"
+"""インターフェースアダプタ"""
 
 keyword_dispatcher: dict[str, Callable[..., Any]] = {}
+"""キーワード呼び出しディスパッチャー"""
 command_dispatcher: dict[str, Callable[..., Any]] = {}
+"""スラッシュコマンドディスパッチャー"""
 
 args: "Namespace"
 """コマンドライン引数"""
