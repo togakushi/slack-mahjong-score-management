@@ -9,7 +9,7 @@ from libs.utils import dictutil
 
 
 def main(m: MessageParserProtocol):
-    """成績サマリ生成処理エントリーポイント
+    """成績集計処理エントリーポイント
 
     Args:
         m (MessageParserProtocol): メッセージデータ
