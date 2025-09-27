@@ -50,6 +50,9 @@
                                 <a class="variable" href="#MessageParserInterface.is_command">is_command</a>
                         </li>
                         <li>
+                                <a class="variable" href="#MessageParserInterface.is_bot">is_bot</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#MessageParserInterface.check_updatable">check_updatable</a>
                         </li>
                         <li>
@@ -195,25 +198,36 @@
 </span><span id="MessageParserInterface-303"><a href="#MessageParserInterface-303"><span class="linenos">303</span></a>
 </span><span id="MessageParserInterface-304"><a href="#MessageParserInterface-304"><span class="linenos">304</span></a>    <span class="nd">@property</span>
 </span><span id="MessageParserInterface-305"><a href="#MessageParserInterface-305"><span class="linenos">305</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-306"><a href="#MessageParserInterface-306"><span class="linenos">306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-307"><a href="#MessageParserInterface-307"><span class="linenos">307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface-306"><a href="#MessageParserInterface-306"><span class="linenos">306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-307"><a href="#MessageParserInterface-307"><span class="linenos">307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botのポストか</span>
 </span><span id="MessageParserInterface-308"><a href="#MessageParserInterface-308"><span class="linenos">308</span></a>
 </span><span id="MessageParserInterface-309"><a href="#MessageParserInterface-309"><span class="linenos">309</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface-310"><a href="#MessageParserInterface-310"><span class="linenos">310</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-311"><a href="#MessageParserInterface-311"><span class="linenos">311</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface-312"><a href="#MessageParserInterface-312"><span class="linenos">312</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface-311"><a href="#MessageParserInterface-311"><span class="linenos">311</span></a><span class="sd">            - **True** : botのポスト</span>
+</span><span id="MessageParserInterface-312"><a href="#MessageParserInterface-312"><span class="linenos">312</span></a><span class="sd">            - **False** : ユーザのポスト</span>
 </span><span id="MessageParserInterface-313"><a href="#MessageParserInterface-313"><span class="linenos">313</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="MessageParserInterface-314"><a href="#MessageParserInterface-314"><span class="linenos">314</span></a>
 </span><span id="MessageParserInterface-315"><a href="#MessageParserInterface-315"><span class="linenos">315</span></a>    <span class="nd">@property</span>
 </span><span id="MessageParserInterface-316"><a href="#MessageParserInterface-316"><span class="linenos">316</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface-317"><a href="#MessageParserInterface-317"><span class="linenos">317</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface-318"><a href="#MessageParserInterface-318"><span class="linenos">318</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザか</span>
+</span><span id="MessageParserInterface-317"><a href="#MessageParserInterface-317"><span class="linenos">317</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-318"><a href="#MessageParserInterface-318"><span class="linenos">318</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
 </span><span id="MessageParserInterface-319"><a href="#MessageParserInterface-319"><span class="linenos">319</span></a>
 </span><span id="MessageParserInterface-320"><a href="#MessageParserInterface-320"><span class="linenos">320</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface-321"><a href="#MessageParserInterface-321"><span class="linenos">321</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-322"><a href="#MessageParserInterface-322"><span class="linenos">322</span></a><span class="sd">            - **True** : 存在する(操作禁止ユーザ)</span>
-</span><span id="MessageParserInterface-323"><a href="#MessageParserInterface-323"><span class="linenos">323</span></a><span class="sd">            - **False** : 存在しない</span>
+</span><span id="MessageParserInterface-322"><a href="#MessageParserInterface-322"><span class="linenos">322</span></a><span class="sd">            - **True** : 許可</span>
+</span><span id="MessageParserInterface-323"><a href="#MessageParserInterface-323"><span class="linenos">323</span></a><span class="sd">            - **False** : 禁止</span>
 </span><span id="MessageParserInterface-324"><a href="#MessageParserInterface-324"><span class="linenos">324</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserInterface-325"><a href="#MessageParserInterface-325"><span class="linenos">325</span></a>
+</span><span id="MessageParserInterface-326"><a href="#MessageParserInterface-326"><span class="linenos">326</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface-327"><a href="#MessageParserInterface-327"><span class="linenos">327</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface-328"><a href="#MessageParserInterface-328"><span class="linenos">328</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface-329"><a href="#MessageParserInterface-329"><span class="linenos">329</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザか</span>
+</span><span id="MessageParserInterface-330"><a href="#MessageParserInterface-330"><span class="linenos">330</span></a>
+</span><span id="MessageParserInterface-331"><a href="#MessageParserInterface-331"><span class="linenos">331</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface-332"><a href="#MessageParserInterface-332"><span class="linenos">332</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface-333"><a href="#MessageParserInterface-333"><span class="linenos">333</span></a><span class="sd">            - **True** : 存在する(操作禁止ユーザ)</span>
+</span><span id="MessageParserInterface-334"><a href="#MessageParserInterface-334"><span class="linenos">334</span></a><span class="sd">            - **False** : 存在しない</span>
+</span><span id="MessageParserInterface-335"><a href="#MessageParserInterface-335"><span class="linenos">335</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -292,6 +306,44 @@
 
 
                             </div>
+                            <div id="MessageParserInterface.is_bot" class="classattr">
+                                        <input id="MessageParserInterface.is_bot-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">is_bot</span><span class="annotation">: bool</span>
+
+                <label class="view-source-button" for="MessageParserInterface.is_bot-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MessageParserInterface.is_bot"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.is_bot-304"><a href="#MessageParserInterface.is_bot-304"><span class="linenos">304</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.is_bot-305"><a href="#MessageParserInterface.is_bot-305"><span class="linenos">305</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.is_bot-306"><a href="#MessageParserInterface.is_bot-306"><span class="linenos">306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.is_bot-307"><a href="#MessageParserInterface.is_bot-307"><span class="linenos">307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botのポストか</span>
+</span><span id="MessageParserInterface.is_bot-308"><a href="#MessageParserInterface.is_bot-308"><span class="linenos">308</span></a>
+</span><span id="MessageParserInterface.is_bot-309"><a href="#MessageParserInterface.is_bot-309"><span class="linenos">309</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.is_bot-310"><a href="#MessageParserInterface.is_bot-310"><span class="linenos">310</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.is_bot-311"><a href="#MessageParserInterface.is_bot-311"><span class="linenos">311</span></a><span class="sd">            - **True** : botのポスト</span>
+</span><span id="MessageParserInterface.is_bot-312"><a href="#MessageParserInterface.is_bot-312"><span class="linenos">312</span></a><span class="sd">            - **False** : ユーザのポスト</span>
+</span><span id="MessageParserInterface.is_bot-313"><a href="#MessageParserInterface.is_bot-313"><span class="linenos">313</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>botのポストか</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>bool: 真偽値</p>
+  
+  <ul>
+  <li><strong>True</strong> : botのポスト</li>
+  <li><strong>False</strong> : ユーザのポスト</li>
+  </ul>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="MessageParserInterface.check_updatable" class="classattr">
                                         <input id="MessageParserInterface.check_updatable-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr variable">
@@ -301,16 +353,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-304"><a href="#MessageParserInterface.check_updatable-304"><span class="linenos">304</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.check_updatable-305"><a href="#MessageParserInterface.check_updatable-305"><span class="linenos">305</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.check_updatable-306"><a href="#MessageParserInterface.check_updatable-306"><span class="linenos">306</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.check_updatable-307"><a href="#MessageParserInterface.check_updatable-307"><span class="linenos">307</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
-</span><span id="MessageParserInterface.check_updatable-308"><a href="#MessageParserInterface.check_updatable-308"><span class="linenos">308</span></a>
-</span><span id="MessageParserInterface.check_updatable-309"><a href="#MessageParserInterface.check_updatable-309"><span class="linenos">309</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.check_updatable-310"><a href="#MessageParserInterface.check_updatable-310"><span class="linenos">310</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.check_updatable-311"><a href="#MessageParserInterface.check_updatable-311"><span class="linenos">311</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface.check_updatable-312"><a href="#MessageParserInterface.check_updatable-312"><span class="linenos">312</span></a><span class="sd">            - **False** : 禁止</span>
-</span><span id="MessageParserInterface.check_updatable-313"><a href="#MessageParserInterface.check_updatable-313"><span class="linenos">313</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.check_updatable-315"><a href="#MessageParserInterface.check_updatable-315"><span class="linenos">315</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.check_updatable-316"><a href="#MessageParserInterface.check_updatable-316"><span class="linenos">316</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.check_updatable-317"><a href="#MessageParserInterface.check_updatable-317"><span class="linenos">317</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.check_updatable-318"><a href="#MessageParserInterface.check_updatable-318"><span class="linenos">318</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB操作の許可チェック</span>
+</span><span id="MessageParserInterface.check_updatable-319"><a href="#MessageParserInterface.check_updatable-319"><span class="linenos">319</span></a>
+</span><span id="MessageParserInterface.check_updatable-320"><a href="#MessageParserInterface.check_updatable-320"><span class="linenos">320</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.check_updatable-321"><a href="#MessageParserInterface.check_updatable-321"><span class="linenos">321</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.check_updatable-322"><a href="#MessageParserInterface.check_updatable-322"><span class="linenos">322</span></a><span class="sd">            - **True** : 許可</span>
+</span><span id="MessageParserInterface.check_updatable-323"><a href="#MessageParserInterface.check_updatable-323"><span class="linenos">323</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface.check_updatable-324"><a href="#MessageParserInterface.check_updatable-324"><span class="linenos">324</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -339,16 +391,16 @@
 
     </div>
     <a class="headerlink" href="#MessageParserInterface.ignore_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.ignore_user-315"><a href="#MessageParserInterface.ignore_user-315"><span class="linenos">315</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserInterface.ignore_user-316"><a href="#MessageParserInterface.ignore_user-316"><span class="linenos">316</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="MessageParserInterface.ignore_user-317"><a href="#MessageParserInterface.ignore_user-317"><span class="linenos">317</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserInterface.ignore_user-318"><a href="#MessageParserInterface.ignore_user-318"><span class="linenos">318</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザか</span>
-</span><span id="MessageParserInterface.ignore_user-319"><a href="#MessageParserInterface.ignore_user-319"><span class="linenos">319</span></a>
-</span><span id="MessageParserInterface.ignore_user-320"><a href="#MessageParserInterface.ignore_user-320"><span class="linenos">320</span></a><span class="sd">        Returns:</span>
-</span><span id="MessageParserInterface.ignore_user-321"><a href="#MessageParserInterface.ignore_user-321"><span class="linenos">321</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.ignore_user-322"><a href="#MessageParserInterface.ignore_user-322"><span class="linenos">322</span></a><span class="sd">            - **True** : 存在する(操作禁止ユーザ)</span>
-</span><span id="MessageParserInterface.ignore_user-323"><a href="#MessageParserInterface.ignore_user-323"><span class="linenos">323</span></a><span class="sd">            - **False** : 存在しない</span>
-</span><span id="MessageParserInterface.ignore_user-324"><a href="#MessageParserInterface.ignore_user-324"><span class="linenos">324</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserInterface.ignore_user-326"><a href="#MessageParserInterface.ignore_user-326"><span class="linenos">326</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserInterface.ignore_user-327"><a href="#MessageParserInterface.ignore_user-327"><span class="linenos">327</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="MessageParserInterface.ignore_user-328"><a href="#MessageParserInterface.ignore_user-328"><span class="linenos">328</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserInterface.ignore_user-329"><a href="#MessageParserInterface.ignore_user-329"><span class="linenos">329</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ignore_useridに存在するユーザか</span>
+</span><span id="MessageParserInterface.ignore_user-330"><a href="#MessageParserInterface.ignore_user-330"><span class="linenos">330</span></a>
+</span><span id="MessageParserInterface.ignore_user-331"><a href="#MessageParserInterface.ignore_user-331"><span class="linenos">331</span></a><span class="sd">        Returns:</span>
+</span><span id="MessageParserInterface.ignore_user-332"><a href="#MessageParserInterface.ignore_user-332"><span class="linenos">332</span></a><span class="sd">            bool: 真偽値</span>
+</span><span id="MessageParserInterface.ignore_user-333"><a href="#MessageParserInterface.ignore_user-333"><span class="linenos">333</span></a><span class="sd">            - **True** : 存在する(操作禁止ユーザ)</span>
+</span><span id="MessageParserInterface.ignore_user-334"><a href="#MessageParserInterface.ignore_user-334"><span class="linenos">334</span></a><span class="sd">            - **False** : 存在しない</span>
+</span><span id="MessageParserInterface.ignore_user-335"><a href="#MessageParserInterface.ignore_user-335"><span class="linenos">335</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
