@@ -4,7 +4,7 @@ libs/commands/results/entry.py
 
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
-from libs.commands.results import detail, summary, versus
+from libs.commands import results
 from libs.utils import dictutil
 
 
@@ -29,8 +29,8 @@ def main(m: MessageParserProtocol):
             versus_mode = False
     # ---
     if len(g.params["player_list"]) == 1 and not versus_mode:  # 個人/チーム成績詳細
-        detail.aggregation(m)
+        results.detail.aggregation(m)
     elif versus_mode:  # 直接対戦
-        versus.aggregation(m)
+        results.versus.aggregation(m)
     else:  # 成績サマリ
-        summary.aggregation(m)
+        results.summary.aggregation(m)

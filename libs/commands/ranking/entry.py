@@ -4,7 +4,7 @@ libs/commands/ranking/entry.py
 
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
-from libs.commands.ranking import ranking, rating
+from libs.commands import ranking
 from libs.utils import dictutil
 
 
@@ -22,7 +22,7 @@ def main(m: MessageParserProtocol):
 
     if g.params.get("rating"):  # レーティング
         m.data.command_type = "rating"
-        rating.aggregation(m)
+        ranking.rating.aggregation(m)
     else:  # ランキング
         m.data.command_type = "ranking"
-        ranking.aggregation(m)
+        ranking.ranking.aggregation(m)

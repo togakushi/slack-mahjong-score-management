@@ -11,7 +11,7 @@ from matplotlib import use
 
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
-from libs.commands.graph import personal, rating, summary
+from libs.commands import graph
 from libs.utils import dictutil
 
 
@@ -30,17 +30,17 @@ def main(m: MessageParserProtocol):
 
     if len(g.params["player_list"]) == 1:  # 対象がひとり
         if g.params.get("statistics"):
-            personal.statistics_plot(m)
+            graph.personal.statistics_plot(m)
         else:
-            personal.plot(m)
+            graph.personal.plot(m)
     else:  # 対象が複数
         if g.params.get("rating"):  # レーティング
-            rating.plot(m)
+            graph.rating.plot(m)
         else:
             if g.params.get("order"):
-                summary.rank_plot(m)
+                graph.summary.rank_plot(m)
             else:
-                summary.point_plot(m)
+                graph.summary.point_plot(m)
 
 
 def graph_setup() -> None:
