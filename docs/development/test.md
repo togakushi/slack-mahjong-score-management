@@ -7,7 +7,7 @@
 ## サンプルメンバーインポート
 
 ```shell
-$ ./dbtools.py --import ./tests/test_data/saki
+$ uv run dbtools.py --import ./tests/test_data/saki
 ```
 
 - 1チーム5人編成
@@ -16,7 +16,7 @@ $ ./dbtools.py --import ./tests/test_data/saki
 ## データ生成
 
 ```shell
-$ ./dbtools.py --gen-test-data
+$ uv run dbtools.py --gen-test-data
 ```
 
 - 16チーム総当たり戦

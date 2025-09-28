@@ -5,7 +5,7 @@
 
 ## 使い方
 ```Shell
-$ ./dbtools.py オプション
+$ uv run ./dbtools.py オプション
 ```
 
 動作させる固有オプションを1つ指定する。
@@ -13,17 +13,16 @@ $ ./dbtools.py オプション
 
 ### ヘルプ
 ```Shell
-$ ./dbtools.py -h
-usage: dbtools.py [-h] [--debug] [--verbose] [--moderate] [--notime] [-c CONFIG] [--compar | --unification [UNIFICATION] | --recalculation | --export [PREFIX] | --import [PREFIX] | --vacuum]
+$ uv run dbtools.py -h
+usage: dbtools.py [-h] [-c CONFIG] [--service {slack,standard_io,std,web,flask}] [--debug] [--verbose] [--moderate] [--notime] [--compar | --unification [UNIFICATION] |
+                  --recalculation | --export [PREFIX] | --import [PREFIX] | --vacuum | --gen-test-data [count]]
 
 options:
   -h, --help            show this help message and exit
-  --debug               デバッグ情報表示
-  --verbose             詳細デバッグ情報表示
-  --moderate            ログレベルがエラー以下のもを非表示
-  --notime              ログフォーマットから日時を削除
   -c CONFIG, --config CONFIG
                         設定ファイル(default: config.ini)
+  --service {slack,standard_io,std,web,flask}
+                        連携先サービス
   --compar              データ突合
   --unification [UNIFICATION]
                         ファイルの内容に従って記録済みのメンバー名を修正する(default: rename.ini)
@@ -33,12 +32,19 @@ options:
   --vacuum              database vacuum
   --gen-test-data [count]
                         テスト用サンプルデータ生成(count=生成回数, default: 1)
+
+logging options:
+  --debug               デバッグ情報表示
+  --verbose, --trace    詳細デバッグ情報表示
+  --moderate            ログレベルがエラー以下のもを非表示
+  --notime              ログフォーマットから日時を削除
   ```
 
 ## 固有オプション説明
 
 ### --compar
 突合処理を実行する。
+`--service`で指定されている連携先と接続する。
 
 ### --unification [rename.ini]
 記録済みデータのゲストプレイヤーの名前を書き換える。
@@ -100,6 +106,6 @@ PREFIXから始まるファイル名のCSVファイルからメンバー情報�
 データベースを最適化する。
 
 ### --gen-test-data [count]
-動作確認用のテストデータを生成する。
+動作確認用のテストデータを生成する（[参照](development/test.md)）。
 
 5人編成16チーム前提。総当たり戦。1countあたり455戦。

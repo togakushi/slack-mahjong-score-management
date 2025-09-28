@@ -35,7 +35,7 @@ flowchart TB
         r1 --> a4(team) --> db2[(team)] & db1;
         r1 --> a3(member) --> db1[(member)] & db3[(alias)];
         r1 --> a5(alias) --> db3;
-        db1 & db2 & db3  --> mp3[["MessageParser(post)"]] --> pp3["post_processing()"];
+        db1 & db2 & db3  --> mp3[["MessageParser(post)"]];
     end
 
     subgraph f4[Others]
