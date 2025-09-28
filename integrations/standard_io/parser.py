@@ -22,7 +22,6 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data = MsgData()
         self.post = PostData()
         self.status = StatusData()
-        self._command_flg: bool = False
 
     def parser(self, body: dict):
         self.data.status = "message_append"
@@ -39,9 +38,8 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
             self.data.text = ""
 
         if body.get("channel_name") == "directmessage":  # スラッシュコマンド扱い
-            self._command_flg = True
+            self.status.command_flg = True
             self.data.channel_type = "im"
-            self.data.status = "message_append"
             self.data.channel_id = body.get("channel_id", "")
 
     def set_command_flag(self, flg: bool):
@@ -51,11 +49,11 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
             flg (bool): フラグ
         """
 
-        self._command_flg = flg
+        self.status.command_flg = flg
 
     @property
     def is_command(self):
-        return self._command_flg
+        return self.status.command_flg
 
     @property
     def is_bot(self) -> bool:

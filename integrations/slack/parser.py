@@ -24,7 +24,6 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data = MsgData()
         self.post = PostData()
         self.status = StatusData()
-        self._command_flg: bool = False
 
     def parser(self, _body: dict):
         g.adapter = cast(AdapterInterface, g.adapter)
@@ -32,8 +31,9 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         _event = cast(dict, _body.get("event", _body))
 
         if _body.get("command") == g.adapter.conf.slash_command:  # スラッシュコマンド
+            self.status.command_flg = True
+            self.status.command_name = g.adapter.conf.slash_command
             if _body.get("channel_name") == "directmessage":
-                self._command_flg = True
                 self.data.channel_type = "im"
                 self.data.status = "message_append"
                 self.data.channel_id = _body.get("channel_id", "")
@@ -78,7 +78,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     @property
     def is_command(self) -> bool:
         """コマンドで実行されているか"""
-        return self._command_flg
+        return self.status.command_flg
 
     @property
     def is_bot(self) -> bool:
@@ -88,8 +88,6 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     @property
     def check_updatable(self) -> bool:
-        """DB更新可能チャンネルのポストかチェックする"""
-
         g.adapter = cast(AdapterInterface, g.adapter)
         ret: bool = True
 

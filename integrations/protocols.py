@@ -95,6 +95,14 @@ class PostData(DataMixin):
 class StatusData(DataMixin):
     """処理した結果"""
 
+    command_flg: bool = field(default=False)
+    """コマンドとして実行されたか
+    - *True*: コマンド実行
+    - *False*: キーワード呼び出し
+    """
+    command_name: str = field(default="")
+    """実行したコマンド名"""
+
     reaction: bool = field(default=False)
     """最終ステータス状態
     - *True*: 矛盾なくデータを取り込んだ(OK)
