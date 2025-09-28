@@ -227,7 +227,7 @@ def setup():
     logging.notice("conf: %s", os.path.join(g.cfg.config_dir, g.args.config))  # type: ignore
     logging.notice("font: %s", g.cfg.setting.font_file)  # type: ignore
     logging.notice("database: %s", g.cfg.setting.database_file)  # type: ignore
-    logging.notice("graph_library: %s", g.adapter.conf.plotting_backend)  # type: ignore
+    logging.notice("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)  # type: ignore
     logging.notice(  # type: ignore
         "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
         g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.setting.time_adjust
