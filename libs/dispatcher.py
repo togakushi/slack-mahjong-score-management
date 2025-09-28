@@ -22,7 +22,7 @@ from libs.utils import formatter
 
 
 def register():
-    """コマンドディスパッチテーブル登録"""
+    """ディスパッチテーブル登録"""
 
     def dispatch_help(m: MessageParserProtocol):
         # ヘルプメッセージ
@@ -121,25 +121,25 @@ def by_keyword(m: MessageParserProtocol):
         logging.info("event skip[ignore user]: %s", m.data.user_id)
         return
 
-    # 投稿済みメッセージが削除された場合
+    # メッセージが削除された場合
     if m.data.status == "message_deleted":
         message_deleted(m)
         return
 
     match m.keyword:
-        # 呼び出しキーワード
-        case x if x in g.keyword_dispatcher and not m.is_command:
-            g.keyword_dispatcher[x](m)
-        # スラッシュコマンド
-        case x if x in g.command_dispatcher and m.is_command:
-            g.command_dispatcher[x](m)
-        # リマインダ
+        # キーワード実行
+        case word if word in g.keyword_dispatcher and not m.is_command:
+            g.keyword_dispatcher[word](m)
+        # コマンド実行
+        case word if word in g.command_dispatcher and m.is_command:
+            g.command_dispatcher[word](m)
+        # リマインダ実行
         case "Reminder:":
             if m.data.text in g.keyword_dispatcher and m.is_bot:
                 g.keyword_dispatcher[m.data.text](m)
-        # その他
-        case _ as x:
-            other_words(x, m)  # コマンドに一致しない場合
+        # その他(ディスパッチテーブルにない場合)
+        case _ as word:
+            other_words(word, m)
 
     g.adapter.api.post(m)
 

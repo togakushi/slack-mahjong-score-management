@@ -25,13 +25,12 @@ def main(adapter: AdapterInterface):
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
         adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
         adapter.conf.appclient = app.client
+        adapter.conf.bot_id = app.client.auth_test()["user_id"]
     except SlackApiError as err:
         logging.error(err)
         sys.exit()
 
-    adapter.conf.bot_id = app.client.auth_test()["user_id"]
     register_all(app, adapter)  # イベント遅延登録
-
     handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
 
