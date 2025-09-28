@@ -1,5 +1,5 @@
 """
-tests/test_parser.py
+tests/config/test_config.py
 """
 
 import sys
@@ -76,28 +76,27 @@ def test_subcommand_default(input_args, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "parameter, default_word",
-    list(param_data.command_word_default.values()),
-    ids=list(param_data.command_word_default.keys()),
+    "parameter, config, word",
+    list(param_data.keyword_test.values()),
+    ids=list(param_data.keyword_test.keys()),
 )
-def test_command_word_default(parameter, default_word, monkeypatch):
-    """チャンネル内呼び出しキーワードデフォルト値チェック"""
-    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
+def test_read_keyword(parameter, config, word, monkeypatch):
+    """呼び出しキーワード取り込みチェック"""
+    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
 
     conf = cast(SubCommand, getattr(g.cfg, parameter, ""))
-    assert conf.commandword == [default_word]
+    assert word in conf.commandword
 
 
 @pytest.mark.parametrize(
-    "parameter, word",
-    list(param_data.command_word_override.values()),
-    ids=list(param_data.command_word_override.keys()),
+    "config, word",
+    list(param_data.help_word.values()),
+    ids=list(param_data.help_word.keys()),
 )
-def test_command_word_override(parameter, word, monkeypatch):
-    """チャンネル内呼び出しキーワード設定値チェック"""
-    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/commandword.ini"])
+def test_read_help(config, word, monkeypatch):
+    """ヘルプキーワード取り込みチェック"""
+    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
 
-    conf = cast(SubCommand, getattr(g.cfg, parameter, ""))
-    assert conf.commandword == [word]
+    assert g.cfg.setting.help == word
