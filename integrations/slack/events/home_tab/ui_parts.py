@@ -335,11 +335,14 @@ def update_view(adapter: AdapterInterface, m: MessageParserProtocol, msg: list):
         msg (list): 表示テキスト
     """
 
-    if isinstance(m.post.headline, dict):
-        k, v = next(iter(m.post.headline.items()))
-        text = f"\n【{k}】\n{v}"
+    if m.post.headline:
+        if isinstance(m.post.headline, dict):
+            k, v = next(iter(m.post.headline.items()))
+            text = f"\n【{k}】\n{v}"
+        else:
+            text = m.post.headline
     else:
-        text = m.post.headline
+        text = ""
 
     adapter.conf.appclient.views_update(
         view_id=adapter.conf.tab_var["view_id"],
