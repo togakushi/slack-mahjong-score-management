@@ -3,7 +3,6 @@ tests/events/test_message_dispatch.py
 """
 
 import sys
-from typing import cast
 from unittest.mock import patch
 
 import pytest
