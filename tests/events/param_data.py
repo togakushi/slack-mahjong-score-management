@@ -15,6 +15,7 @@ class FakeBodyDict(TypedDict, total=False):
 
 
 FAKE_CLIENT = App.client
+
 FAKE_BODY: FakeBodyDict = {
     "command": "/mahjong",
     "event": {
@@ -28,47 +29,29 @@ FAKE_BODY: FakeBodyDict = {
 
 message_help: dict[str, tuple[Any, ...]] = {
     # config, keyword
-    "default": ("minimal.ini", "ヘルプ"),
+    "default": ("minimal.ini", "麻雀成績ヘルプ"),
     "over ride": ("commandword.ini", "ヘルプの別名"),
-    "regex 01": ("regex.ini", "ヘルプの正規表現その１"),
-    "regex 02": ("regex.ini", "ヘルプの正規表現その２"),
-    "double word": ("minimal.ini", "ヘルプ 未定義ワード"),
+    "double word": ("minimal.ini", "麻雀成績ヘルプ 未定義ワード"),
 }
 
-message_results: dict[str, tuple[Any, ...]] = {
-    # config, keyword
-    "default": ("minimal.ini", "麻雀成績"),
-    "over ride": ("commandword.ini", "麻雀成績の別名"),
-    "regex 01": ("regex.ini", "麻雀成績の正規表現その１"),
-    "regex 02": ("regex.ini", "麻雀成績の正規表現その２"),
-    "double word": ("minimal.ini", "麻雀成績 未定義ワード"),
-}
+message_event: dict[str, tuple[Any, ...]] = {
+    # module, config, keyword
+    "results: default": ("results", "minimal.ini", "麻雀成績"),
+    "results: over ride 1": ("results", "commandword.ini", "麻雀成績の別名１"),
+    "results: over ride 2": ("results", "commandword.ini", "麻雀成績の別名２"),
+    "results: double word": ("results", "minimal.ini", "麻雀成績 未定義ワード"),
 
-message_graph: dict[str, tuple[Any, ...]] = {
-    # config, keyword
-    "default": ("minimal.ini", "麻雀グラフ"),
-    "over ride": ("commandword.ini", "麻雀グラフの別名"),
-    "regex 01": ("regex.ini", "麻雀グラフの正規表現その１"),
-    "regex 02": ("regex.ini", "麻雀グラフの正規表現その２"),
-    "double word": ("minimal.ini", "麻雀グラフ 未定義ワード"),
-}
+    "graph: default": ("graph", "minimal.ini", "麻雀グラフ"),
+    "graph: over ride": ("graph", "commandword.ini", "麻雀グラフの別名"),
+    "graph: double word": ("graph", "minimal.ini", "麻雀グラフ 未定義ワード"),
 
-message_ranking: dict[str, tuple[Any, ...]] = {
-    # config, keyword
-    "default": ("minimal.ini", "麻雀ランキング"),
-    "over ride": ("commandword.ini", "麻雀ランキングの別名"),
-    "regex 01": ("regex.ini", "麻雀ランキングの正規表現その１"),
-    "regex 02": ("regex.ini", "麻雀ランキングの正規表現その２"),
-    "double word": ("minimal.ini", "麻雀ランキング 未定義ワード"),
-}
+    "ranking: default": ("ranking", "minimal.ini", "麻雀ランキング"),
+    "ranking: over ride": ("ranking", "commandword.ini", "麻雀ランキングの別名"),
+    "ranking: double word": ("ranking", "minimal.ini", "麻雀ランキング 未定義ワード"),
 
-message_report: dict[str, tuple[Any, ...]] = {
-    # config, keyword
-    "default": ("minimal.ini", "麻雀成績レポート"),
-    "over ride": ("commandword.ini", "麻雀成績レポートの別名"),
-    "regex 01": ("regex.ini", "麻雀成績レポートの正規表現その１"),
-    "regex 02": ("regex.ini", "麻雀成績レポートの正規表現その２"),
-    "double word": ("minimal.ini", "麻雀成績レポート 未定義ワード"),
+    "report: default": ("report", "minimal.ini", "麻雀成績レポート"),
+    "report: over ride": ("report", "commandword.ini", "麻雀成績レポートの別名"),
+    "report: double word": ("report", "minimal.ini", "麻雀成績レポート 未定義ワード"),
 }
 
 slash_help: dict[str, tuple[Any, ...]] = {

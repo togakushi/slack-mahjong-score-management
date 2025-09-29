@@ -20,107 +20,44 @@ from tests.events import param_data
     list(param_data.message_help.values()),
     ids=list(param_data.message_help.keys()),
 )
-def test_help(config, keyword, monkeypatch):
-    """メッセージイベントテスト(help)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    g.selected_service = "standard_io"
-    configuration.setup()
-    adapter = factory.select_adapter("standard_io", g.cfg)
-
-    param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+def test_help_event(config, keyword, monkeypatch):
+    """キーワード呼び出しテスト(help)"""
+    monkeypatch.setattr(sys, "argv", ["progname", "--service=std", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.dispatcher.by_keyword") as mock_help_event_message,
+        patch("libs.functions.configuration.compose.msg_help.event_message") as mock_help_event,
     ):
+        configuration.setup()
+        adapter = factory.select_adapter("standard_io", g.cfg)
+
         m = adapter.parser()
-        m.parser(cast(dict, param_data.FAKE_BODY))
+        m.data.text = keyword
+        m.data.status = "message_append"
+        m.set_command_flag(False)
+
         libs.dispatcher.by_keyword(m)
-        mock_help_event_message.assert_called_once()
+        mock_help_event.assert_called_once()
 
 
 @pytest.mark.parametrize(
-    "config, keyword",
-    list(param_data.message_results.values()),
-    ids=list(param_data.message_results.keys()),
+    "module, config, keyword",
+    list(param_data.message_event.values()),
+    ids=list(param_data.message_event.keys()),
 )
-def test_results(config, keyword, monkeypatch):
-    """メッセージイベントテスト(results)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    g.selected_service = "standard_io"
-    configuration.setup()
-    adapter = factory.select_adapter("standard_io", g.cfg)
+def test_keyword_event(module, config, keyword, monkeypatch):
+    """キーワード呼び出しテスト(サブコマンド)"""
+    monkeypatch.setattr(sys, "argv", ["progname", "--service=std", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.commands.dispatcher.main") as mock_results,
+        patch(f"libs.functions.configuration.libs.commands.{module}.entry.main") as mock_keyword_event,
     ):
-        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+        configuration.setup()
+        adapter = factory.select_adapter("standard_io", g.cfg)
+
         m = adapter.parser()
-        m.parser(cast(dict, param_data.FAKE_BODY))
+        m.data.status = "message_append"
+        m.set_command_flag(False)
+        m.data.text = keyword
+
         libs.dispatcher.by_keyword(m)
-        mock_results.assert_called_once()
-
-
-@pytest.mark.parametrize(
-    "config, keyword",
-    list(param_data.message_graph.values()),
-    ids=list(param_data.message_graph.keys()),
-)
-def test_graph(config, keyword, monkeypatch):
-    """メッセージイベントテスト(graph)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    g.selected_service = "standard_io"
-    configuration.setup()
-    adapter = factory.select_adapter("standard_io", g.cfg)
-
-    with (
-        patch("libs.commands.dispatcher.main") as mock_graph,
-    ):
-        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = adapter.parser()
-        m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.dispatcher.by_keyword(m)
-        mock_graph.assert_called_once()
-
-
-@pytest.mark.parametrize(
-    "config, keyword",
-    list(param_data.message_ranking.values()),
-    ids=list(param_data.message_ranking.keys()),
-)
-def test_ranking(config, keyword, monkeypatch):
-    """メッセージイベントテスト(ranking)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    g.selected_service = "standard_io"
-    configuration.setup()
-    adapter = factory.select_adapter("standard_io", g.cfg)
-
-    with (
-        patch("libs.commands.dispatcher.main") as mock_ranking,
-    ):
-        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = adapter.parser()
-        m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.dispatcher.by_keyword(m)
-        mock_ranking.assert_called_once()
-
-
-@pytest.mark.parametrize(
-    "config, keyword",
-    list(param_data.message_report.values()),
-    ids=list(param_data.message_report.keys()),
-)
-def test_report(config, keyword, monkeypatch):
-    """メッセージイベントテスト(report)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    g.selected_service = "standard_io"
-    configuration.setup()
-    adapter = factory.select_adapter("standard_io", g.cfg)
-
-    with (
-        patch("libs.commands.dispatcher.main") as mock_report,
-    ):
-        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = adapter.parser()
-        m.parser(cast(dict, param_data.FAKE_BODY))
-        libs.dispatcher.by_keyword(m)
-        mock_report.assert_called_once()
+        mock_keyword_event.assert_called_once()
