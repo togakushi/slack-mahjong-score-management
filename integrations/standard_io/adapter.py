@@ -86,7 +86,7 @@ class AdapterInterface:
     interface_type = "standard_io"
 
     def __init__(self, parser: ConfigParser):
-        self.conf = standard_io.config.AppConfig(_parser=parser)
+        self.conf = standard_io.config.AppConfig(config_file=parser)
         self.api = AdapterAPI()
         self.functions = standard_io.functions.StandardIOFunctions()
         self.parser = standard_io.parser.MessageParser

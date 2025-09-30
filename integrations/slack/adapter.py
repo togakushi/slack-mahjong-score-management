@@ -13,7 +13,7 @@ class AdapterInterface:
     interface_type = "slack"
 
     def __init__(self, parser: ConfigParser):
-        self.conf = slack.config.AppConfig(_parser=parser)
-        self.api = slack.api.AdapterAPI(self)
-        self.functions = slack.functions.SlackFunctions(self)
+        self.conf = slack.config.AppConfig(config_file=parser)
+        self.api = slack.api.AdapterAPI(self.conf)
+        self.functions = slack.functions.SlackFunctions(self.conf)
         self.parser = slack.parser.MessageParser

@@ -12,7 +12,7 @@ class AppConfig(IntegrationsConfig):
     """標準出力用個別設定値"""
 
     def __post_init__(self):
-        if self._parser is None:
+        if self.config_file is None:
             raise TypeError("Configuration file not specified.")
 
-        self.read_file(parser=self._parser, selected_service="standard_io")
+        self.read_file("standard_io")

@@ -23,7 +23,7 @@ class AdapterInterface:
     interface_type = "web"
 
     def __init__(self, parser: ConfigParser):
-        self.conf = web.config.AppConfig(_parser=parser)
+        self.conf = web.config.AppConfig(config_file=parser)
         self.api = AdapterAPI()
         self.functions = web.functions.WebFunctions()
         self.parser = web.parser.MessageParser

@@ -65,10 +65,10 @@ class AppConfig(IntegrationsConfig):
     """ホームタブ用初期値"""
 
     def __post_init__(self):
-        if self._parser is None:
+        if self.config_file is None:
             raise TypeError("Configuration file not specified.")
 
-        self.read_file(parser=self._parser, selected_service="slack")
+        self.read_file("slack")
 
         # スラッシュコマンド登録
         g.command_dispatcher.update({"help": events.slash.command_help})

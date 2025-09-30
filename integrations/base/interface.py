@@ -14,7 +14,7 @@ from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
 class IntegrationsConfig(ABC):
     """個別設定値"""
 
-    _parser: ConfigParser | None = field(default=None)
+    config_file: ConfigParser | None = field(default=None)
     """設定ファイル"""
 
     # 共通設定
@@ -40,11 +40,10 @@ class IntegrationsConfig(ABC):
     plotting_backend: Literal["matplotlib", "plotly"] = field(default="matplotlib")
     """グラフ描写ライブラリ"""
 
-    def read_file(self, parser: ConfigParser, selected_service: str):
+    def read_file(self, selected_service: str):
         """設定値取り込み
 
         Args:
-            parser (ConfigParser): ConfigParserインスタンス
             selected_service (str): セクション
 
         Raises:
@@ -52,21 +51,21 @@ class IntegrationsConfig(ABC):
         """
 
         value: Union[int, float, bool, str, list]
-        if parser.has_section(selected_service):
+        if self.config_file.has_section(selected_service):
             for f in fields(self):
                 if f.name.startswith("_"):
                     continue
-                if parser.has_option(selected_service, f.name):
+                if self.config_file.has_option(selected_service, f.name):
                     if f.type is int:
-                        value = parser.getint(selected_service, f.name)
+                        value = self.config_file.getint(selected_service, f.name)
                     elif f.type is float:
-                        value = parser.getfloat(selected_service, f.name)
+                        value = self.config_file.getfloat(selected_service, f.name)
                     elif f.type is bool:
-                        value = parser.getboolean(selected_service, f.name)
+                        value = self.config_file.getboolean(selected_service, f.name)
                     elif f.type is str:
-                        value = parser.get(selected_service, f.name)
+                        value = self.config_file.get(selected_service, f.name)
                     elif f.type is list:
-                        value = [x.strip() for x in parser.get(selected_service, f.name).split(",")]
+                        value = [x.strip() for x in self.config_file.get(selected_service, f.name).split(",")]
                     else:
                         raise TypeError(f"Unsupported type: {f.type}")
                     setattr(self, f.name, value)

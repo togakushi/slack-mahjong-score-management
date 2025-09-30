@@ -11,16 +11,16 @@ from slack_sdk.web import SlackResponse
 
 from integrations.base.interface import APIInterface
 from integrations.protocols import MessageParserProtocol
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.config import AppConfig
 from libs.utils import converter, formatter
 
 
 class AdapterAPI(APIInterface):
     """インターフェースAPI操作クラス"""
 
-    def __init__(self, adapter: AdapterInterface):
+    def __init__(self, conf: AppConfig):
         super().__init__()
-        self.adapter = adapter
+        self.conf = conf
 
     def post(self, m: MessageParserProtocol):
         """メッセージをポストする
@@ -143,7 +143,7 @@ class AdapterAPI(APIInterface):
             kwargs.pop("thread_ts")
 
         try:
-            res = self.adapter.conf.appclient.chat_postMessage(**kwargs)
+            res = self.conf.appclient.chat_postMessage(**kwargs)
         except SlackApiError as err:
             logging.critical(err)
             logging.error("kwargs=%s", kwargs)
@@ -162,7 +162,7 @@ class AdapterAPI(APIInterface):
             kwargs.pop("thread_ts")
 
         try:
-            res = self.adapter.conf.appclient.files_upload_v2(**kwargs)
+            res = self.conf.appclient.files_upload_v2(**kwargs)
         except SlackApiError as err:
             logging.critical(err)
             logging.error("kwargs=%s", kwargs)
