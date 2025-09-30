@@ -12,7 +12,7 @@ from integrations.base import interface
 from libs.utils import formatter
 
 
-class StandardIO(interface.APIInterface):
+class AdapterAPI(interface.APIInterface):
     """メッセージ標準出力クラス"""
 
     def _text_formatter(self, text: str) -> str:
@@ -87,6 +87,6 @@ class AdapterInterface:
 
     def __init__(self, parser: ConfigParser):
         self.conf = standard_io.config.AppConfig(_parser=parser)
-        self.api = StandardIO()
+        self.api = AdapterAPI()
         self.functions = standard_io.functions.StandardIOFunctions()
         self.parser = standard_io.parser.MessageParser

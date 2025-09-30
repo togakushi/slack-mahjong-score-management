@@ -6,6 +6,7 @@ import logging
 from typing import cast
 
 from slack_sdk.errors import SlackApiError
+from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -187,6 +188,99 @@ class SlackFunctions(FunctionsInterface):
 
         return channel_id
 
+    def reaction_status(self, ch=str, ts=str) -> dict[str, list]:
+        """botが付けたリアクションの種類を返す
+
+        Args:
+            ch (str): チャンネルID
+            ts (str): メッセージのタイムスタンプ
+
+        Returns:
+            dict[str,list]: リアクション
+        """
+
+        ok = getattr(self.adapter.conf, "reaction_ok", "ok")
+        ng = getattr(self.adapter.conf, "reaction_ng", "ng")
+
+        icon: dict[str, list] = {
+            "ok": [],
+            "ng": [],
+        }
+
+        try:  # 削除済みメッセージはエラーになるので潰す
+            res = self.adapter.conf.appclient.reactions_get(channel=ch, timestamp=ts)
+            logging.trace(res.validate())  # type: ignore
+        except SlackApiError:
+            return icon
+
+        if (reactions := cast(dict, res["message"]).get("reactions")):
+            for reaction in cast(list[dict], reactions):
+                if ok == reaction.get("name") and self.adapter.conf.bot_id in reaction["users"]:
+                    icon["ok"].append(res["message"]["ts"])
+                if ng == reaction.get("name") and self.adapter.conf.bot_id in reaction["users"]:
+                    icon["ng"].append(res["message"]["ts"])
+
+        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, self.adapter.conf.bot_id, icon)
+        return icon
+
+    def reaction_append(self, icon: str, ch: str, ts: str):
+        """リアクション追加
+
+        Args:
+            icon (str): リアクション文字
+            ch (str): チャンネルID
+            ts (str): メッセージのタイムスタンプ
+        """
+
+        if not all([icon, ch, ts]):
+            logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
+            return
+
+        try:
+            res: SlackResponse = self.adapter.conf.appclient.reactions_add(
+                channel=str(ch),
+                name=icon,
+                timestamp=str(ts),
+            )
+            logging.info("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
+        except SlackApiError as err:
+            match cast(dict, err.response).get("error"):
+                case "already_reacted":
+                    pass
+                case _:
+                    logging.critical(err)
+                    logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
+
+    def reaction_remove(self, icon: str, ch: str, ts: str):
+        """リアクション削除
+
+        Args:
+            icon (str): リアクション文字
+            ch (str): チャンネルID
+            ts (str): メッセージのタイムスタンプ
+        """
+
+        if not all([icon, ch, ts]):
+            logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
+            return
+
+        try:
+            res = self.adapter.conf.appclient.reactions_remove(
+                channel=ch,
+                name=icon,
+                timestamp=ts,
+            )
+            logging.info("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
+        except SlackApiError as err:
+            match cast(dict, err.response).get("error"):
+                case "no_reaction":
+                    pass
+                case "message_not_found":
+                    pass
+                case _:
+                    logging.critical(err)
+                    logging.critical("ch=%s, ts=%s, icon=%s", ch, ts, icon)
+
     def pickup_score(self) -> list[MessageParserProtocol]:
         """過去ログからスコア記録を検索して返す
 
@@ -250,20 +344,20 @@ class SlackFunctions(FunctionsInterface):
                 return
             case "change":
                 for ts in m.status.target_ts:
-                    reaction_data = self.adapter.api.reaction_status(ch=m.data.channel_id, ts=ts)
+                    reaction_data = self.reaction_status(ch=m.data.channel_id, ts=ts)
                     if m.status.reaction:  # NGを外してOKを付ける
                         if not reaction_data.get("ok"):
-                            self.adapter.api.reaction_append(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
+                            self.reaction_append(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
                         if reaction_data.get("ng"):
-                            self.adapter.api.reaction_remove(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
+                            self.reaction_remove(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
                     else:  # OKを外してNGを付ける
                         if reaction_data.get("ok"):
-                            self.adapter.api.reaction_remove(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
+                            self.reaction_remove(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
                         if not reaction_data.get("ng"):
-                            self.adapter.api.reaction_append(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
+                            self.reaction_append(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
                 m.status.reset()
             case "delete":
                 for ts in m.status.target_ts:
-                    self.adapter.api.reaction_remove(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
-                    self.adapter.api.reaction_remove(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
+                    self.reaction_remove(icon=self.adapter.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
+                    self.reaction_remove(icon=self.adapter.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
                 m.status.reset()

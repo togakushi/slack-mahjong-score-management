@@ -8,7 +8,7 @@ from integrations import web
 from integrations.base import interface
 
 
-class DummyAPI(interface.APIInterface):
+class AdapterAPI(interface.APIInterface):
     """ダミークラス"""
 
     def post(self, m: interface.MessageParserProtocol):
@@ -24,6 +24,6 @@ class AdapterInterface:
 
     def __init__(self, parser: ConfigParser):
         self.conf = web.config.AppConfig(_parser=parser)
-        self.api = DummyAPI()
+        self.api = AdapterAPI()
         self.functions = web.functions.WebFunctions()
         self.parser = web.parser.MessageParser

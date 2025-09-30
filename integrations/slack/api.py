@@ -15,8 +15,8 @@ from integrations.slack.adapter import AdapterInterface
 from libs.utils import converter, formatter
 
 
-class SlackAPI(APIInterface):
-    """Slack API操作クラス"""
+class AdapterAPI(APIInterface):
+    """インターフェースAPI操作クラス"""
 
     def __init__(self, adapter: AdapterInterface):
         super().__init__()
@@ -130,99 +130,6 @@ class SlackAPI(APIInterface):
                 text=msg,
                 thread_ts=m.reply_ts,
             )
-
-    def reaction_status(self, ch=str, ts=str) -> dict[str, list]:
-        """botが付けたリアクションの種類を返す
-
-        Args:
-            ch (str): チャンネルID
-            ts (str): メッセージのタイムスタンプ
-
-        Returns:
-            dict[str,list]: リアクション
-        """
-
-        ok = getattr(self.adapter.conf, "reaction_ok", "ok")
-        ng = getattr(self.adapter.conf, "reaction_ng", "ng")
-
-        icon: dict[str, list] = {
-            "ok": [],
-            "ng": [],
-        }
-
-        try:  # 削除済みメッセージはエラーになるので潰す
-            res = self.adapter.conf.appclient.reactions_get(channel=ch, timestamp=ts)
-            logging.trace(res.validate())  # type: ignore
-        except SlackApiError:
-            return icon
-
-        if (reactions := cast(dict, res["message"]).get("reactions")):
-            for reaction in cast(list[dict], reactions):
-                if ok == reaction.get("name") and self.adapter.conf.bot_id in reaction["users"]:
-                    icon["ok"].append(res["message"]["ts"])
-                if ng == reaction.get("name") and self.adapter.conf.bot_id in reaction["users"]:
-                    icon["ng"].append(res["message"]["ts"])
-
-        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, self.adapter.conf.bot_id, icon)
-        return icon
-
-    def reaction_append(self, icon: str, ch: str, ts: str):
-        """リアクション追加
-
-        Args:
-            icon (str): リアクション文字
-            ch (str): チャンネルID
-            ts (str): メッセージのタイムスタンプ
-        """
-
-        if not all([icon, ch, ts]):
-            logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
-            return
-
-        try:
-            res: SlackResponse = self.adapter.conf.appclient.reactions_add(
-                channel=str(ch),
-                name=icon,
-                timestamp=str(ts),
-            )
-            logging.info("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
-        except SlackApiError as err:
-            match cast(dict, err.response).get("error"):
-                case "already_reacted":
-                    pass
-                case _:
-                    logging.critical(err)
-                    logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
-
-    def reaction_remove(self, icon: str, ch: str, ts: str):
-        """リアクション削除
-
-        Args:
-            icon (str): リアクション文字
-            ch (str): チャンネルID
-            ts (str): メッセージのタイムスタンプ
-        """
-
-        if not all([icon, ch, ts]):
-            logging.warning("deficiency: ts=%s, ch=%s, icon=%s", ts, ch, icon)
-            return
-
-        try:
-            res = self.adapter.conf.appclient.reactions_remove(
-                channel=ch,
-                name=icon,
-                timestamp=ts,
-            )
-            logging.info("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
-        except SlackApiError as err:
-            match cast(dict, err.response).get("error"):
-                case "no_reaction":
-                    pass
-                case "message_not_found":
-                    pass
-                case _:
-                    logging.critical(err)
-                    logging.critical("ch=%s, ts=%s, icon=%s", ch, ts, icon)
 
     def _call_chat_post_message(self, **kwargs) -> SlackResponse:
         """slackにメッセージをポストする

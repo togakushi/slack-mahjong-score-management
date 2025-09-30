@@ -331,14 +331,14 @@ def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, Co
             logging.notice("invalid score: %s deposit=%s", slack_score.ts, slack_score.deposit)  # type: ignore
             msg["invalid_score"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")} [供託：{slack_score.deposit}]{slack_score.to_text()}\n"
             if slack_score.ts in val.data.reaction_ok:
-                g.adapter.api.reaction_remove(g.adapter.conf.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
+                g.adapter.functions.reaction_remove(g.adapter.conf.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
             if slack_score.ts not in val.data.reaction_ng:
-                g.adapter.api.reaction_append(g.adapter.conf.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
+                g.adapter.functions.reaction_append(g.adapter.conf.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
         else:
             if slack_score.ts in val.data.reaction_ng:
-                g.adapter.api.reaction_remove(g.adapter.conf.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
+                g.adapter.functions.reaction_remove(g.adapter.conf.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
             if slack_score.ts not in val.data.reaction_ok:
-                g.adapter.api.reaction_append(g.adapter.conf.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
+                g.adapter.functions.reaction_append(g.adapter.conf.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
 
     return (count, msg)
 
