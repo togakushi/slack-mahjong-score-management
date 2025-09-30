@@ -70,6 +70,7 @@ def main(m: MessageParserProtocol) -> None:
 
     m.post.message = {"データ突合": message}
     m.post.key_header = False
+    m.post.thread = True
     m.post.ts = m.data.event_ts
 
 
