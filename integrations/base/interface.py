@@ -4,7 +4,7 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, field, fields
-from typing import Any, Callable, Literal, Union
+from typing import Any, Literal, Union
 
 from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
                                     StatusData)
@@ -14,22 +14,28 @@ from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
 class IntegrationsConfig(ABC):
     """個別設定値"""
 
+    # 共通設定
     slash_command: str = field(default="")
     """スラッシュコマンド名"""
 
-    # 表示オプション
     badge_degree: bool = field(default=False)
+    """プレイしたゲーム数に対して表示される称号
+    - **True**: 表示する
+    - **False**: 表示しない
+    """
     badge_status: bool = field(default=False)
+    """勝率に対して付く調子バッジ
+    - **True**: 表示する
+    - **False**: 表示しない
+    """
     badge_grade: bool = field(default=False)
+    """段位表示
+    - **True**: 表示する
+    - **False**: 表示しない
+    """
 
     plotting_backend: Literal["matplotlib", "plotly"] = field(default="matplotlib")
     """グラフ描写ライブラリ"""
-
-    # コマンドディスパッチ
-    slash_commands: dict[str, Callable[..., Any]] = field(default_factory=dict)
-    """スラッシュコマンド用ディスパッチテーブル"""
-    special_commands: dict[str, Callable[..., Any]] = field(default_factory=dict)
-    """個別コマンド用ディスパッチテーブル"""
 
     def read_file(self, parser: ConfigParser, selected_service: str):
         """設定値取り込み

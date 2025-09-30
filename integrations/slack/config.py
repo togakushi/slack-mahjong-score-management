@@ -56,23 +56,6 @@ class AppConfig(IntegrationsConfig):
     未定義はすべてのチャンネルでSQLが実行できる
     """
 
-    # 装飾オプション
-    badge_degree: bool = field(default=False)
-    """プレイしたゲーム数に対して表示される称号
-    - **True**: 表示する
-    - **False**: 表示しない
-    """
-    badge_status: bool = field(default=False)
-    """勝率に対して付く調子バッジ
-    - **True**: 表示する
-    - **False**: 表示しない
-    """
-    badge_grade: bool = field(default=False)
-    """段位表示
-    - **True**: 表示する
-    - **False**: 表示しない
-    """
-
     # slack object
     appclient: WebClient = field(default_factory=WebClient)
     """WebClient(botトークン使用)"""
