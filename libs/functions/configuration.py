@@ -47,7 +47,7 @@ def arg_parser() -> argparse.Namespace:
     """コマンドライン解析
 
     Returns:
-        argparse.ArgumentParser: オブジェクト
+        argparse.Namespace: オブジェクト
     """
 
     p = argparse.ArgumentParser(
