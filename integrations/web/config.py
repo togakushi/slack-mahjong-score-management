@@ -52,9 +52,6 @@ class AppConfig(IntegrationsConfig):
     plotting_backend: Literal["matplotlib", "plotly"] = field(default="plotly")
 
     def __post_init__(self):
-        if self.config_file is None:
-            raise TypeError("Configuration file not specified.")
-
         self.read_file("web")
 
         if not self.host:

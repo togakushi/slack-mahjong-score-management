@@ -50,6 +50,9 @@ class IntegrationsConfig(ABC):
             TypeError: 無効な型が指定されている場合
         """
 
+        if self.config_file is None:
+            raise TypeError("Configuration file not specified.")
+
         value: Union[int, float, bool, str, list]
         if self.config_file.has_section(selected_service):
             for f in fields(self):

@@ -65,9 +65,6 @@ class AppConfig(IntegrationsConfig):
     """ホームタブ用初期値"""
 
     def __post_init__(self):
-        if self.config_file is None:
-            raise TypeError("Configuration file not specified.")
-
         self.read_file("slack")
 
         # スラッシュコマンド登録
