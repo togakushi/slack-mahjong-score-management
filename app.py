@@ -19,7 +19,6 @@ from libs.functions import configuration
 if __name__ == "__main__":
     configuration.setup()
     initialization.initialization_resultdb()
-    initialization.read_grade_table()
     configuration.read_memberslist()
 
     match g.selected_service:

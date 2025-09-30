@@ -104,6 +104,7 @@ def initialization_resultdb() -> None:
     resultdb.commit()
     resultdb.close()
     memdb.close()
+    read_grade_table()
 
 
 def read_grade_table() -> None:
