@@ -32,25 +32,25 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#AdapterInterface">AdapterInterface</a>
+                    <a class="class" href="#ServiceAdapter">ServiceAdapter</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#AdapterInterface.__init__">AdapterInterface</a>
+                                <a class="function" href="#ServiceAdapter.__init__">ServiceAdapter</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AdapterInterface.interface_type">interface_type</a>
+                                <a class="variable" href="#ServiceAdapter.interface_type">interface_type</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AdapterInterface.conf">conf</a>
+                                <a class="variable" href="#ServiceAdapter.conf">conf</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AdapterInterface.api">api</a>
+                                <a class="variable" href="#ServiceAdapter.api">api</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AdapterInterface.functions">functions</a>
+                                <a class="variable" href="#ServiceAdapter.functions">functions</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AdapterInterface.parser">parser</a>
+                                <a class="variable" href="#ServiceAdapter.parser">parser</a>
                         </li>
                 </ul>
 
@@ -85,43 +85,44 @@
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigParser</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations</span><span class="w"> </span><span class="kn">import</span> <span class="n">slack</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.base.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdapterInterface</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AdapterInterface</span><span class="p">:</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;slack interface&quot;&quot;&quot;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="n">interface_type</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ConfigParser</span><span class="p">):</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">AppConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">SlackFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">MessageParser</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ServiceAdapter</span><span class="p">(</span><span class="n">AdapterInterface</span><span class="p">):</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;slack interface&quot;&quot;&quot;</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="n">interface_type</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ConfigParser</span><span class="p">):</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">AppConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">SlackFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">MessageParser</span>
 </span></pre></div>
 
 
             </section>
-                <section id="AdapterInterface">
-                            <input id="AdapterInterface-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="ServiceAdapter">
+                            <input id="ServiceAdapter-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">AdapterInterface</span>:
+    <span class="name">ServiceAdapter</span><wbr>(<span class="base"><a href="../base/interface.html#AdapterInterface">integrations.base.interface.AdapterInterface</a></span>):
 
-                <label class="view-source-button" for="AdapterInterface-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ServiceAdapter-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#AdapterInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterInterface-11"><a href="#AdapterInterface-11"><span class="linenos">11</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AdapterInterface</span><span class="p">:</span>
-</span><span id="AdapterInterface-12"><a href="#AdapterInterface-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;slack interface&quot;&quot;&quot;</span>
-</span><span id="AdapterInterface-13"><a href="#AdapterInterface-13"><span class="linenos">13</span></a>
-</span><span id="AdapterInterface-14"><a href="#AdapterInterface-14"><span class="linenos">14</span></a>    <span class="n">interface_type</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span>
-</span><span id="AdapterInterface-15"><a href="#AdapterInterface-15"><span class="linenos">15</span></a>
-</span><span id="AdapterInterface-16"><a href="#AdapterInterface-16"><span class="linenos">16</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ConfigParser</span><span class="p">):</span>
-</span><span id="AdapterInterface-17"><a href="#AdapterInterface-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">AppConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
-</span><span id="AdapterInterface-18"><a href="#AdapterInterface-18"><span class="linenos">18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="AdapterInterface-19"><a href="#AdapterInterface-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">SlackFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="AdapterInterface-20"><a href="#AdapterInterface-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">MessageParser</span>
+    <a class="headerlink" href="#ServiceAdapter"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ServiceAdapter-12"><a href="#ServiceAdapter-12"><span class="linenos">12</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ServiceAdapter</span><span class="p">(</span><span class="n">AdapterInterface</span><span class="p">):</span>
+</span><span id="ServiceAdapter-13"><a href="#ServiceAdapter-13"><span class="linenos">13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;slack interface&quot;&quot;&quot;</span>
+</span><span id="ServiceAdapter-14"><a href="#ServiceAdapter-14"><span class="linenos">14</span></a>
+</span><span id="ServiceAdapter-15"><a href="#ServiceAdapter-15"><span class="linenos">15</span></a>    <span class="n">interface_type</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span>
+</span><span id="ServiceAdapter-16"><a href="#ServiceAdapter-16"><span class="linenos">16</span></a>
+</span><span id="ServiceAdapter-17"><a href="#ServiceAdapter-17"><span class="linenos">17</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ConfigParser</span><span class="p">):</span>
+</span><span id="ServiceAdapter-18"><a href="#ServiceAdapter-18"><span class="linenos">18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">AppConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
+</span><span id="ServiceAdapter-19"><a href="#ServiceAdapter-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="ServiceAdapter-20"><a href="#ServiceAdapter-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">SlackFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="ServiceAdapter-21"><a href="#ServiceAdapter-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">MessageParser</span>
 </span></pre></div>
 
 
@@ -129,79 +130,81 @@
 </div>
 
 
-                            <div id="AdapterInterface.__init__" class="classattr">
-                                        <input id="AdapterInterface.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="ServiceAdapter.__init__" class="classattr">
+                                        <input id="ServiceAdapter.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">AdapterInterface</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">parser</span><span class="p">:</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span></span>)</span>
+        <span class="name">ServiceAdapter</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">parser</span><span class="p">:</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span></span>)</span>
 
-                <label class="view-source-button" for="AdapterInterface.__init__-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="ServiceAdapter.__init__-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#AdapterInterface.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterInterface.__init__-16"><a href="#AdapterInterface.__init__-16"><span class="linenos">16</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ConfigParser</span><span class="p">):</span>
-</span><span id="AdapterInterface.__init__-17"><a href="#AdapterInterface.__init__-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">AppConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
-</span><span id="AdapterInterface.__init__-18"><a href="#AdapterInterface.__init__-18"><span class="linenos">18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="AdapterInterface.__init__-19"><a href="#AdapterInterface.__init__-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">SlackFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="AdapterInterface.__init__-20"><a href="#AdapterInterface.__init__-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">MessageParser</span>
+    <a class="headerlink" href="#ServiceAdapter.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ServiceAdapter.__init__-17"><a href="#ServiceAdapter.__init__-17"><span class="linenos">17</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ConfigParser</span><span class="p">):</span>
+</span><span id="ServiceAdapter.__init__-18"><a href="#ServiceAdapter.__init__-18"><span class="linenos">18</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">AppConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
+</span><span id="ServiceAdapter.__init__-19"><a href="#ServiceAdapter.__init__-19"><span class="linenos">19</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="ServiceAdapter.__init__-20"><a href="#ServiceAdapter.__init__-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">SlackFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="ServiceAdapter.__init__-21"><a href="#ServiceAdapter.__init__-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">slack</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">MessageParser</span>
 </span></pre></div>
 
 
     
 
                             </div>
-                            <div id="AdapterInterface.interface_type" class="classattr">
+                            <div id="ServiceAdapter.interface_type" class="classattr">
                                 <div class="attr variable">
             <span class="name">interface_type</span>        =
 <span class="default_value">&#39;slack&#39;</span>
 
         
     </div>
-    <a class="headerlink" href="#AdapterInterface.interface_type"></a>
+    <a class="headerlink" href="#ServiceAdapter.interface_type"></a>
     
-    
+            <div class="docstring"><p>サービス識別子</p>
+</div>
+
 
                             </div>
-                            <div id="AdapterInterface.conf" class="classattr">
+                            <div id="ServiceAdapter.conf" class="classattr">
                                 <div class="attr variable">
             <span class="name">conf</span>
 
         
     </div>
-    <a class="headerlink" href="#AdapterInterface.conf"></a>
+    <a class="headerlink" href="#ServiceAdapter.conf"></a>
     
     
 
                             </div>
-                            <div id="AdapterInterface.api" class="classattr">
+                            <div id="ServiceAdapter.api" class="classattr">
                                 <div class="attr variable">
             <span class="name">api</span>
 
         
     </div>
-    <a class="headerlink" href="#AdapterInterface.api"></a>
+    <a class="headerlink" href="#ServiceAdapter.api"></a>
     
     
 
                             </div>
-                            <div id="AdapterInterface.functions" class="classattr">
+                            <div id="ServiceAdapter.functions" class="classattr">
                                 <div class="attr variable">
             <span class="name">functions</span>
 
         
     </div>
-    <a class="headerlink" href="#AdapterInterface.functions"></a>
+    <a class="headerlink" href="#ServiceAdapter.functions"></a>
     
     
 
                             </div>
-                            <div id="AdapterInterface.parser" class="classattr">
+                            <div id="ServiceAdapter.parser" class="classattr">
                                 <div class="attr variable">
             <span class="name">parser</span>
 
         
     </div>
-    <a class="headerlink" href="#AdapterInterface.parser"></a>
+    <a class="headerlink" href="#ServiceAdapter.parser"></a>
     
     
 
