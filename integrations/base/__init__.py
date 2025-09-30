@@ -1,5 +1,5 @@
 """
 抽象基底クラス
 
-- `integrations.base.interface`: インターフェース定義
+- `integrations.base.interface`: 抽象基底クラス
 """
