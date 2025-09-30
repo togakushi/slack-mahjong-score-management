@@ -13,7 +13,7 @@ from libs.utils import formatter
 
 
 class AdapterAPI(interface.APIInterface):
-    """メッセージ標準出力クラス"""
+    """インターフェースAPI操作クラス"""
 
     def _text_formatter(self, text: str) -> str:
         """テキスト整形
