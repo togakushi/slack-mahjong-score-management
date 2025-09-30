@@ -2,7 +2,6 @@
 integrations/slack/config.py
 """
 
-from configparser import ConfigParser
 from dataclasses import dataclass, field
 
 from slack_sdk.web.client import WebClient
@@ -15,9 +14,6 @@ from integrations.slack import events
 @dataclass
 class AppConfig(IntegrationsConfig):
     """slack用個別設定値"""
-
-    _parser: ConfigParser | None = field(default=None)
-    """設定ファイル"""
 
     slash_command: str = field(default="/mahjong")
     """スラッシュコマンド名"""
@@ -70,7 +66,7 @@ class AppConfig(IntegrationsConfig):
 
     def __post_init__(self):
         if self._parser is None:
-            raise TypeError("")
+            raise TypeError("Configuration file not specified.")
 
         self.read_file(parser=self._parser, selected_service="slack")
 

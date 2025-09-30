@@ -5,7 +5,6 @@ integrations/web/config.py
 import os
 from dataclasses import dataclass, field
 from typing import Literal
-from configparser import ConfigParser
 
 import libs.global_value as g
 from integrations.base.interface import IntegrationsConfig
@@ -14,9 +13,6 @@ from integrations.base.interface import IntegrationsConfig
 @dataclass
 class AppConfig(IntegrationsConfig):
     """WebUI用個別設定値"""
-
-    _parser: ConfigParser | None = field(default=None)
-    """設定ファイル"""
 
     host: str = field(default="")
     """起動アドレス(未指定はコマンドライン引数デフォルト値)"""
@@ -57,7 +53,7 @@ class AppConfig(IntegrationsConfig):
 
     def __post_init__(self):
         if self._parser is None:
-            raise TypeError("")
+            raise TypeError("Configuration file not specified.")
 
         self.read_file(parser=self._parser, selected_service="web")
 

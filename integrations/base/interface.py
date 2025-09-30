@@ -14,6 +14,9 @@ from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
 class IntegrationsConfig(ABC):
     """個別設定値"""
 
+    _parser: ConfigParser | None = field(default=None)
+    """設定ファイル"""
+
     # 共通設定
     slash_command: str = field(default="")
     """スラッシュコマンド名"""

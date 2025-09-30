@@ -2,8 +2,7 @@
 integrations/standard_io/config.py
 """
 
-from configparser import ConfigParser
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from integrations.base.interface import IntegrationsConfig
 
@@ -12,11 +11,8 @@ from integrations.base.interface import IntegrationsConfig
 class AppConfig(IntegrationsConfig):
     """標準出力用個別設定値"""
 
-    _parser: ConfigParser | None = field(default=None)
-    """設定ファイル"""
-
     def __post_init__(self):
         if self._parser is None:
-            raise TypeError("")
+            raise TypeError("Configuration file not specified.")
 
         self.read_file(parser=self._parser, selected_service="standard_io")
