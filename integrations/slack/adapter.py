@@ -5,9 +5,10 @@ integrations/slack/adapter.py
 from configparser import ConfigParser
 
 from integrations import slack
+from integrations.base.interface import AdapterInterface
 
 
-class ServiceAdapter:
+class ServiceAdapter(AdapterInterface):
     """slack interface"""
 
     interface_type = "slack"

@@ -80,7 +80,7 @@ class AdapterAPI(interface.APIInterface):
                 print("")
 
 
-class ServiceAdapter:
+class ServiceAdapter(interface.AdapterInterface):
     """standard input/output interface"""
 
     interface_type = "standard_io"

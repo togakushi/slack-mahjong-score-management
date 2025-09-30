@@ -1,4 +1,6 @@
-"""抽象化基底クラス"""
+"""
+integrations/base/interface.py
+"""
 
 import re
 from abc import ABC, abstractmethod
@@ -8,6 +10,13 @@ from typing import Any, Literal, Union
 
 from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
                                     StatusData)
+
+
+class AdapterInterface(ABC):
+    """アダプタインターフェース"""
+
+    interface_type: str
+    """サービス識別子"""
 
 
 @dataclass
@@ -75,7 +84,7 @@ class IntegrationsConfig(ABC):
 
 
 class FunctionsInterface(ABC):
-    """個別関数定義クラス"""
+    """個別関数インターフェース"""
 
     @abstractmethod
     def post_processing(self, m: "MessageParserProtocol"):
@@ -99,7 +108,7 @@ class FunctionsInterface(ABC):
 
 
 class APIInterface(ABC):
-    """API抽象化インターフェース"""
+    """アダプタAPIインターフェース"""
 
     @abstractmethod
     def post(self, m: "MessageParserProtocol"):

@@ -17,7 +17,7 @@ class AdapterAPI(interface.APIInterface):
         _ = m
 
 
-class ServiceAdapter:
+class ServiceAdapter(interface.AdapterInterface):
     """web interface"""
 
     interface_type = "web"
