@@ -131,24 +131,6 @@ class SlackAPI(APIInterface):
                 thread_ts=m.reply_ts,
             )
 
-    def get_conversations(self, m: MessageParserProtocol) -> dict:
-        """スレッド情報の取得
-
-        Args:
-            m (MessageParserProtocol): メッセージデータ
-
-        Returns:
-            dict: API response
-        """
-
-        try:
-            res = self.adapter.conf.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
-            logging.trace(res.validate())  # type: ignore
-            return cast(dict, res)
-        except SlackApiError as e:
-            logging.error(e)
-            return {}
-
     def reaction_status(self, ch=str, ts=str) -> dict[str, list]:
         """botが付けたリアクションの種類を返す
 
