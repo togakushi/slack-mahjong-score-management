@@ -6,14 +6,14 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
 from libs.commands import results
 from libs.utils import dictutil
 
 
-def build_versus_menu(adapter: AdapterInterface):
+def build_versus_menu(adapter: ServiceAdapter):
     """対戦結果メニュー生成"""
 
     adapter.conf.tab_var["screen"] = "VersusMenu"
@@ -71,7 +71,7 @@ def build_versus_menu(adapter: AdapterInterface):
 
 
 @register
-def register_versus_handlers(app, adapter: AdapterInterface):
+def register_versus_handlers(app, adapter: ServiceAdapter):
     """直接対戦メニュー"""
 
     @app.action("versus_menu")

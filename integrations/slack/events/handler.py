@@ -13,12 +13,12 @@ from slack_sdk.errors import SlackApiError
 
 import libs.dispatcher
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register, register_all
 from integrations.slack.events.home_tab import home
 
 
-def main(adapter: AdapterInterface):
+def main(adapter: ServiceAdapter):
     """メイン処理"""
 
     try:
@@ -36,7 +36,7 @@ def main(adapter: AdapterInterface):
 
 
 @register
-def register_event_handlers(app, adapter: AdapterInterface):
+def register_event_handlers(app, adapter: ServiceAdapter):
     """イベントAPI"""
 
     m = adapter.parser()

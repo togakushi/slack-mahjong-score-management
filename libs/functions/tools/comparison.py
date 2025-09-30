@@ -11,7 +11,7 @@ from slack_sdk import WebClient
 
 import libs.global_value as g
 from integrations import factory
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events import comparison
 from libs.functions import configuration
 
@@ -21,7 +21,7 @@ def main():
 
     if g.args.compar:
         try:
-            g.adapter = cast(AdapterInterface, g.adapter)
+            g.adapter = cast(ServiceAdapter, g.adapter)
             app = App(token=os.environ["SLACK_BOT_TOKEN"])
             g.adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
             g.adapter.conf.appclient = app.client

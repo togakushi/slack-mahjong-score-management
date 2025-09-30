@@ -9,24 +9,24 @@ from cls.config import AppConfig
 from integrations import slack, standard_io, web
 
 AdapterType: TypeAlias = Union[
-    "slack.adapter.AdapterInterface",
-    "web.adapter.AdapterInterface",
-    "standard_io.adapter.AdapterInterface",
+    "slack.adapter.ServiceAdapter",
+    "web.adapter.ServiceAdapter",
+    "standard_io.adapter.ServiceAdapter",
 ]
 
 
 @overload
-def select_adapter(selected_service: Literal["slack"], conf: AppConfig) -> slack.adapter.AdapterInterface:
+def select_adapter(selected_service: Literal["slack"], conf: AppConfig) -> slack.adapter.ServiceAdapter:
     ...
 
 
 @overload
-def select_adapter(selected_service: Literal["web"], conf: AppConfig) -> web.adapter.AdapterInterface:
+def select_adapter(selected_service: Literal["web"], conf: AppConfig) -> web.adapter.ServiceAdapter:
     ...
 
 
 @overload
-def select_adapter(selected_service: Literal["standard_io"], conf: AppConfig) -> standard_io.adapter.AdapterInterface:
+def select_adapter(selected_service: Literal["standard_io"], conf: AppConfig) -> standard_io.adapter.ServiceAdapter:
     ...
 
 
@@ -48,10 +48,10 @@ def select_adapter(selected_service: str, conf: AppConfig) -> AdapterType:
 
     match selected_service:
         case "slack":
-            return slack.adapter.AdapterInterface(parser)
+            return slack.adapter.ServiceAdapter(parser)
         case "web":
-            return web.adapter.AdapterInterface(parser)
+            return web.adapter.ServiceAdapter(parser)
         case "standard_io":
-            return standard_io.adapter.AdapterInterface(parser)
+            return standard_io.adapter.ServiceAdapter(parser)
         case _:
             raise ValueError(f"Unknown service: {selected_service}")

@@ -6,7 +6,7 @@ import logging
 
 import libs.global_value as g
 from integrations.protocols import MessageParserProtocol
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.adapter import ServiceAdapter
 
 
 def plain_text(msg: str) -> dict:
@@ -26,22 +26,22 @@ def plain_text(msg: str) -> dict:
     return view
 
 
-def divider(adapter: AdapterInterface) -> None:
+def divider(adapter: ServiceAdapter) -> None:
     """境界線を引く
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
     """
 
     adapter.conf.tab_var["view"]["blocks"].append({"type": "divider", })
     adapter.conf.tab_var["no"] += 1
 
 
-def header(adapter: AdapterInterface, text: str = "dummy") -> None:
+def header(adapter: ServiceAdapter, text: str = "dummy") -> None:
     """ヘッダ生成
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
         text (str, optional): ヘッダテキスト. Defaults to "dummy".
     """
 
@@ -50,11 +50,11 @@ def header(adapter: AdapterInterface, text: str = "dummy") -> None:
     adapter.conf.tab_var["no"] += 1
 
 
-def button(adapter: AdapterInterface, text: str, action_id: str, style: str | bool = False) -> None:
+def button(adapter: ServiceAdapter, text: str, action_id: str, style: str | bool = False) -> None:
     """ボタン配置
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
         text (str, optional): 表示テキスト
         action_id (str): action_id
         style (str | bool, optional): 表示スタイル. Defaults to False.
@@ -69,11 +69,11 @@ def button(adapter: AdapterInterface, text: str, action_id: str, style: str | bo
     adapter.conf.tab_var["no"] += 1
 
 
-def radio_buttons(adapter: AdapterInterface, id_suffix: str, title: str, flag: dict) -> None:
+def radio_buttons(adapter: ServiceAdapter, id_suffix: str, title: str, flag: dict) -> None:
     """オプション選択メニュー
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
         id_suffix (str): block_id, action_id
         title (str): 表示タイトル
         flag (dict, optional): 表示する選択項目
@@ -94,11 +94,11 @@ def radio_buttons(adapter: AdapterInterface, id_suffix: str, title: str, flag: d
     adapter.conf.tab_var["no"] += 1
 
 
-def checkboxes(adapter: AdapterInterface, id_suffix: str, title: str, flag: dict | None = None, initial: list | None = None) -> None:
+def checkboxes(adapter: ServiceAdapter, id_suffix: str, title: str, flag: dict | None = None, initial: list | None = None) -> None:
     """チェックボックス選択メニュー
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
         id_suffix (str): block_id, action_id
         title (str): 表示タイトル
         flag (dict, optional): 表示する選択項目
@@ -130,11 +130,11 @@ def checkboxes(adapter: AdapterInterface, id_suffix: str, title: str, flag: dict
     adapter.conf.tab_var["no"] += 1
 
 
-def user_select_pulldown(adapter: AdapterInterface, text: str = "dummy", add_list: list | None = None) -> None:
+def user_select_pulldown(adapter: ServiceAdapter, text: str = "dummy", add_list: list | None = None) -> None:
     """プレイヤー選択プルダウンメニュー
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
         text (str, optional): 表示テキスト. Defaults to "dummy".
         add_list (list | None, optional): プレイヤーリスト. Defaults to None.
     """
@@ -161,11 +161,11 @@ def user_select_pulldown(adapter: AdapterInterface, text: str = "dummy", add_lis
     adapter.conf.tab_var["no"] += 1
 
 
-def multi_select_pulldown(adapter: AdapterInterface, text: str = "dummy", add_list: list | None = None) -> None:
+def multi_select_pulldown(adapter: ServiceAdapter, text: str = "dummy", add_list: list | None = None) -> None:
     """複数プレイヤー選択プルダウンメニュー
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
         text (str, optional): 表示テキスト. Defaults to "dummy".
         add_list (list | None, optional): プレイヤーリスト. Defaults to None.
     """
@@ -192,11 +192,11 @@ def multi_select_pulldown(adapter: AdapterInterface, text: str = "dummy", add_li
     adapter.conf.tab_var["no"] += 1
 
 
-def input_ranked(adapter: AdapterInterface, block_id: str | bool = False) -> None:
+def input_ranked(adapter: ServiceAdapter, block_id: str | bool = False) -> None:
     """ランキング上限入力テキストボックス
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
         block_id (str | bool, optional): block_id. Defaults to False.
     """
 
@@ -215,11 +215,11 @@ def input_ranked(adapter: AdapterInterface, block_id: str | bool = False) -> Non
     adapter.conf.tab_var["no"] += 1
 
 
-def modalperiod_selection(adapter: AdapterInterface) -> dict:
+def modalperiod_selection(adapter: ServiceAdapter) -> dict:
     """日付選択
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
 
     Returns:
         dict: ブロック要素
@@ -247,11 +247,11 @@ def modalperiod_selection(adapter: AdapterInterface) -> dict:
     return view
 
 
-def set_command_option(adapter: AdapterInterface, body: dict) -> tuple[list, list, dict]:
+def set_command_option(adapter: ServiceAdapter, body: dict) -> tuple[list, list, dict]:
     """選択オプションの内容のフラグをセット
 
     Args:
-        adapter (AdapterInterface): アダプタインターフェース
+        adapter (ServiceAdapter): アダプタインターフェース
         body (dict): イベント内容
 
     Returns:
@@ -327,7 +327,7 @@ def set_command_option(adapter: AdapterInterface, body: dict) -> tuple[list, lis
     return (argument, app_msg, update_flag)
 
 
-def update_view(adapter: AdapterInterface, m: MessageParserProtocol, msg: list):
+def update_view(adapter: ServiceAdapter, m: MessageParserProtocol, msg: list):
     """viewを更新する
 
     Args:

@@ -6,18 +6,18 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
 from libs.commands import ranking
 from libs.utils import dictutil
 
 
-def build_ranking_menu(adapter: AdapterInterface):
+def build_ranking_menu(adapter: ServiceAdapter):
     """ランキングメニュー生成
 
     Args:
-        adapter (AdapterInterface): インターフェースアダプタ
+        adapter (ServiceAdapter): インターフェースアダプタ
     """
 
     adapter.conf.tab_var["screen"] = "RankingMenu"
@@ -63,7 +63,7 @@ def build_ranking_menu(adapter: AdapterInterface):
 
 
 @register
-def register_ranking_handlers(app, adapter: AdapterInterface):
+def register_ranking_handlers(app, adapter: ServiceAdapter):
     """ランキングメニュー"""
 
     @app.action("ranking_menu")

@@ -9,7 +9,7 @@ import libs.global_value as g
 from integrations.base.interface import (MessageParserDataMixin,
                                          MessageParserInterface)
 from integrations.protocols import MsgData, PostData, StatusData
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.adapter import ServiceAdapter
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
@@ -26,7 +26,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.status = StatusData()
 
     def parser(self, _body: dict):
-        g.adapter = cast(AdapterInterface, g.adapter)
+        g.adapter = cast(ServiceAdapter, g.adapter)
         # 対象のevent抽出
         _event = cast(dict, _body.get("event", _body))
 
@@ -88,7 +88,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     @property
     def check_updatable(self) -> bool:
-        g.adapter = cast(AdapterInterface, g.adapter)
+        g.adapter = cast(ServiceAdapter, g.adapter)
         ret: bool = True
 
         if g.adapter.conf.channel_limitations:
@@ -109,5 +109,5 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     @property
     def ignore_user(self) -> bool:
-        g.adapter = cast(AdapterInterface, g.adapter)
+        g.adapter = cast(ServiceAdapter, g.adapter)
         return self.data.user_id in g.adapter.conf.ignore_userid

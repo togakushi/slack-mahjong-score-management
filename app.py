@@ -24,12 +24,12 @@ if __name__ == "__main__":
     match g.selected_service:
         case "slack":
             import integrations.slack.events.handler as slack
-            slack.main(cast(factory.slack.adapter.AdapterInterface, g.adapter))
+            slack.main(cast(factory.slack.adapter.ServiceAdapter, g.adapter))
         case "standard_io":
             import integrations.standard_io.events.handler as standard_io
-            standard_io.main(cast(factory.standard_io.adapter.AdapterInterface, g.adapter))
+            standard_io.main(cast(factory.standard_io.adapter.ServiceAdapter, g.adapter))
         case "web":
             import integrations.web.events.handler as webapp
-            webapp.main(cast(factory.web.adapter.AdapterInterface, g.adapter))
+            webapp.main(cast(factory.web.adapter.ServiceAdapter, g.adapter))
         case _:
             sys.exit()

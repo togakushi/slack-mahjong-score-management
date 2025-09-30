@@ -4,16 +4,16 @@ integrations/slack/events/home_tab/home.py
 
 import logging
 
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
 
 
-def build_main_menu(adapter: AdapterInterface):
+def build_main_menu(adapter: ServiceAdapter):
     """メインメニューを生成する
 
     Args:
-        adapter (AdapterInterface): インターフェースアダプタ
+        adapter (ServiceAdapter): インターフェースアダプタ
     """
 
     adapter.conf.tab_var["screen"] = "MainMenu"
@@ -26,7 +26,7 @@ def build_main_menu(adapter: AdapterInterface):
 
 
 @register
-def register_home_handlers(app, adapter: AdapterInterface):
+def register_home_handlers(app, adapter: ServiceAdapter):
     """ホームタブ操作イベント"""
 
     @app.action("actionId-back")

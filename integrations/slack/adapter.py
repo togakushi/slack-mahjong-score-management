@@ -7,7 +7,7 @@ from configparser import ConfigParser
 from integrations import slack
 
 
-class AdapterInterface:
+class ServiceAdapter:
     """slack interface"""
 
     interface_type = "slack"

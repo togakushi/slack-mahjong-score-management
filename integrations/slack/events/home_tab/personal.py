@@ -6,18 +6,18 @@ import logging
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack.adapter import AdapterInterface
+from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
 from libs.commands import results
 from libs.utils import dictutil
 
 
-def build_personal_menu(adapter: AdapterInterface):
+def build_personal_menu(adapter: ServiceAdapter):
     """個人成績メニュー作成
 
     Args:
-        adapter (AdapterInterface): インターフェースアダプタ
+        adapter (ServiceAdapter): インターフェースアダプタ
     """
 
     adapter.conf.tab_var["screen"] = "PersonalMenu"
@@ -74,7 +74,7 @@ def build_personal_menu(adapter: AdapterInterface):
 
 
 @register
-def register_personal_handlers(app, adapter: AdapterInterface):
+def register_personal_handlers(app, adapter: ServiceAdapter):
     """個人成績メニュー"""
 
     @app.action("personal_menu")
