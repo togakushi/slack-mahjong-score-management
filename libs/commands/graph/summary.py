@@ -4,23 +4,36 @@ libs/commands/graph/summary.py
 
 import logging
 import os
-from typing import cast
+from typing import TYPE_CHECKING, Literal, TypedDict, cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.express as px  # type: ignore
 
 import libs.global_value as g
-from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from integrations.protocols import MessageParserProtocol
 from libs.commands.graph.entry import graph_setup
 from libs.data import aggregate, loader
 from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
-def point_plot(m: MessageParserProtocol) -> bool:
+
+class GraphParams(TypedDict, total=False):
+    """グラフ生成パラメータ"""
+    graph_type: Literal["point", "rank", "point_hbar"]
+    title_text: str = ""
+    xlabel_text: str = ""
+    ylabel_text: str = ""
+    total_game_count: int
+    target_data: pd.DataFrame
+    pivot: pd.DataFrame
+    horizontal: bool  # 横棒切替許可フラグ
+
+
+def point_plot(m: "MessageParserProtocol") -> bool:
     """ポイント推移グラフを生成する
 
     Args:
@@ -28,8 +41,7 @@ def point_plot(m: MessageParserProtocol) -> bool:
     """
 
     # 初期化
-    title_text = None
-    xlabel_text = None
+    graph_params = GraphParams()
 
     # 保存ファイル名
     match pd.options.plotting.backend:
@@ -49,38 +61,10 @@ def point_plot(m: MessageParserProtocol) -> bool:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         return False
 
-    # グラフタイトル/X軸ラベル
-    pivot_index = "playtime"
-    if g.params.get("target_count"):
-        title_text = f"ポイント推移 (直近 {g.params["target_count"]} ゲーム)"
-        xlabel_text = f"集計日（総ゲーム数：{game_info["game_count"]} ゲーム）"
+    if g.params.get("search_word"):
+        pivot_index = "comment"
     else:
-        match g.params["collection"]:
-            case "daily":
-                xlabel_text = f"集計日（総ゲーム数：{game_info["game_count"]} ゲーム）"
-                title_text = compose.text_item.date_range("ymd_o", "通算ポイント", "ポイント推移")
-            case "monthly":
-                xlabel_text = f"集計月（総ゲーム数：{game_info["game_count"]} ゲーム）"
-                title_text = compose.text_item.date_range("jym_o", "通算ポイント", "ポイント推移")
-            case "yearly":
-                xlabel_text = f"集計年（総ゲーム数：{game_info["game_count"]} ゲーム）"
-                title_text = compose.text_item.date_range("jy_o", "通算ポイント", "ポイント推移")
-            case "all":
-                xlabel_text = f"総ゲーム数：{game_info["game_count"]} ゲーム"
-                title_text = compose.text_item.date_range("ymdhm", "通算ポイント", "ポイント推移")
-            case _:
-                if g.params.get("search_word"):
-                    pivot_index = "comment"
-                    xlabel_text = f"（総ゲーム数：{game_info["game_count"]} ゲーム）"
-                    if game_info["first_comment"] == game_info["last_comment"]:
-                        title_text = f"通算ポイント ({game_info["first_comment"]})"
-                    else:
-                        title_text = f"ポイント推移 ({game_info["first_comment"]} - {game_info["last_comment"]})"
-                else:
-                    xlabel_text = f"ゲーム終了日時（{game_info["game_count"]} ゲーム）"
-                    title_text = compose.text_item.date_range("ymdhm", "通算ポイント", "ポイント推移")
-                    if ExtDt(g.params["starttime"]).format("ymd") == ExtDt(g.params["onday"]).format("ymd") and game_info["game_count"] == 1:
-                        title_text = f"獲得ポイント ({ExtDt(g.params["starttime"]).format("ymd")})"
+        pivot_index = "playtime"
 
     # 集計
     pivot = pd.pivot_table(
@@ -91,29 +75,27 @@ def point_plot(m: MessageParserProtocol) -> bool:
     )
 
     # グラフ生成
-    args = {
-        "kind": "point",
-        "title_text": title_text,
-        "total_game_count": game_info["game_count"],
-        "target_data": target_data,
-        "xlabel_text": xlabel_text,
-        "ylabel_text": "通算ポイント",
-        "horizontal": True,
-    }
+    graph_params.update(
+        graph_type="point",
+        total_game_count=game_info["game_count"],
+        target_data=target_data,
+        pivot=pivot,
+        horizontal=True,
+    )
 
-    match pd.options.plotting.backend:
+    match g.adapter.conf.plotting_backend:
         case "plotly":
-            fig = _graph_generation_plotly(pivot, **args)
+            fig = _graph_generation_plotly(graph_params)
             fig.write_html(save_file)
         case _:
-            fig = _graph_generation(pivot, **args)
+            fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"ポイント推移": save_file}]
     return True
 
 
-def rank_plot(m: MessageParserProtocol) -> bool:
+def rank_plot(m: "MessageParserProtocol") -> bool:
     """順位変動グラフを生成する
 
     Args:
@@ -121,8 +103,7 @@ def rank_plot(m: MessageParserProtocol) -> bool:
     """
 
     # 初期化
-    title_text = None
-    xlabel_text = None
+    graph_params = GraphParams()
 
     # データ収集
     game_info: GameInfoDict = aggregate.game_info()
@@ -132,38 +113,10 @@ def rank_plot(m: MessageParserProtocol) -> bool:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         return False
 
-    # グラフタイトル/X軸ラベル
-    pivot_index = "playtime"
-    if g.params.get("target_count"):
-        title_text = f"順位変動 (直近 {g.params["target_count"]} ゲーム)"
-        xlabel_text = f"集計日（総ゲーム数：{game_info["game_count"]} ゲーム）"
+    if g.params.get("search_word"):
+        pivot_index = "comment"
     else:
-        match g.params["collection"]:
-            case "daily":
-                xlabel_text = f"集計日（総ゲーム数：{game_info["game_count"]} ゲーム）"
-                title_text = compose.text_item.date_range("ymd_o", "順位", "順位変動")
-            case "monthly":
-                xlabel_text = f"集計月（総ゲーム数：{game_info["game_count"]} ゲーム）"
-                title_text = compose.text_item.date_range("jym", "順位", "順位変動")
-            case "yearly":
-                xlabel_text = f"集計年（総ゲーム数：{game_info["game_count"]} ゲーム）"
-                title_text = compose.text_item.date_range("jy", "順位", "順位変動")
-            case "all":
-                xlabel_text = f"総ゲーム数：{game_info["game_count"]} ゲーム"
-                title_text = compose.text_item.date_range("ymdhm", "順位", "順位変動")
-            case _:
-                if g.params.get("search_word"):
-                    pivot_index = "comment"
-                    xlabel_text = f"（総ゲーム数：{game_info["game_count"]} ゲーム）"
-                    if game_info["first_comment"] == game_info["last_comment"]:
-                        title_text = f"順位 ({game_info["first_comment"]})"
-                    else:
-                        title_text = f"順位変動 ({game_info["first_comment"]} - {game_info["last_comment"]})"
-                else:
-                    xlabel_text = f"ゲーム終了日時（{game_info["game_count"]} ゲーム）"
-                    title_text = compose.text_item.date_range("ymdhm", "順位", "順位変動")
-                    if ExtDt(g.params["starttime"]).format("ymd") == ExtDt(g.params["onday"]).format("ymd") and game_info["game_count"] == 1:
-                        title_text = f"順位 ({ExtDt(g.params["starttime"]).format("ymd")})"
+        pivot_index = "playtime"
 
     # 集計
     pivot = pd.pivot_table(
@@ -175,25 +128,23 @@ def rank_plot(m: MessageParserProtocol) -> bool:
     pivot = pivot.rank(method="dense", ascending=False, axis=1)
 
     # グラフ生成
-    args = {
-        "kind": "rank",
-        "title_text": title_text,
-        "total_game_count": game_info["game_count"],
-        "target_data": target_data,
-        "xlabel_text": xlabel_text,
-        "ylabel_text": "順位 (通算ポイント順)",
-        "horizontal": False,
-    }
+    graph_params.update(
+        graph_type="rank",
+        total_game_count=game_info["game_count"],
+        target_data=target_data,
+        pivot=pivot,
+        horizontal=False,
+    )
 
-    match pd.options.plotting.backend:
+    match g.adapter.conf.plotting_backend:
         case "plotly":
             save_file = textutil.save_file_path(".html")
-            fig = _graph_generation_plotly(pivot, **args)
+            fig = _graph_generation_plotly(graph_params)
             fig.update_layout(yaxis={"autorange": "reversed"})
             fig.write_html(save_file, full_html=False)
         case _:
             save_file = textutil.save_file_path(".png")
-            fig = _graph_generation(pivot, **args)
+            fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"順位変動": save_file}]
@@ -257,20 +208,20 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
     return (target_data.sort_values("position"), df)
 
 
-def _graph_generation(df: pd.DataFrame, **kwargs):
+def _graph_generation(graph_params: GraphParams):
     """グラフ生成共通処理
 
     Args:
-        df (pd.DataFrame): グラフ描写データ
-        kwargs (dict): グラフ生成パラメータ
+        args (GraphParams): グラフ生成パラメータ
 
     """
 
     graph_setup()
-    target_data = cast(pd.DataFrame, kwargs["target_data"])
+    target_data = graph_params["target_data"]
+    df = graph_params["pivot"]
 
-    if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
-        kwargs["kind"] = "barh"
+    if (all(df.count() == 1) or g.params["collection"] == "all") and graph_params["horizontal"]:
+        graph_params["graph_type"] = "point_hbar"
         lab: list = target_data["legend"].to_list()
         color: list = []
         for _, v in target_data.iterrows():
@@ -278,6 +229,8 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
                 color.append("deepskyblue")
             else:
                 color.append("orangered")
+
+        args = _graph_title(graph_params)
 
         tmpdf = pd.DataFrame(
             {"point": target_data["last_point"].to_list()[::-1]},
@@ -287,7 +240,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         fig = tmpdf.plot.barh(
             figsize=(8, 2 + tmpdf.count().iloc[0] / 5),
             y="point",
-            xlabel=f"総ゲーム数：{kwargs["total_game_count"]} ゲーム",
+            xlabel=args["xlabel_text"],
             color=color[::-1],
         ).get_figure()
 
@@ -301,10 +254,12 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
 
         logging.info("plot data:\n%s", tmpdf)
     else:
+        args = _graph_title(args)
+
         fig = df.plot(
             figsize=(8, 6),
-            xlabel=kwargs["xlabel_text"],
-            ylabel=kwargs["ylabel_text"],
+            xlabel=args["xlabel_text"],
+            ylabel=args["ylabel_text"],
             marker="." if len(df) < 50 else None,
         ).get_figure()
 
@@ -314,7 +269,7 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
             bbox_to_anchor=(1, 1),
             loc="upper left",
             borderaxespad=0.5,
-            ncol=int(len(kwargs["target_data"]) / 25 + 1),
+            ncol=int(len(target_data) / 25 + 1),
         )
 
         # X軸修正
@@ -333,8 +288,8 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
         logging.info("plot data:\n%s", df)
 
     #
-    match kwargs["kind"]:
-        case "barh":
+    match args["graph_type"]:
+        case "point_hbar":
             plt.axvline(x=0, linewidth=0.5, ls="dashed", color="grey")
         case "point":
             plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
@@ -347,25 +302,29 @@ def _graph_generation(df: pd.DataFrame, **kwargs):
             plt.gca().invert_yaxis()
 
     plt.title(
-        kwargs["title_text"],
+        args["title_text"],
         fontsize=16,
     )
+
+    _graph_title(args)
 
     return fig
 
 
-def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
+def _graph_generation_plotly(graph_params: GraphParams):
     """グラフ生成共通処理
 
     Args:
-        df (pd.DataFrame): グラフ描写データ
-        kwargs (dict): グラフ生成パラメータ
+        args (GraphParams): グラフ生成パラメータ
 
     """
 
-    target_data = cast(pd.DataFrame, kwargs["target_data"])
+    target_data = cast(pd.DataFrame, graph_params["target_data"])
+    df = graph_params["pivot"]
 
-    if (all(df.count() == 1) or g.params["collection"] == "all") and kwargs["horizontal"]:
+    if (all(df.count() == 1) or g.params["collection"] == "all") and graph_params["horizontal"]:
+        graph_params["graph_type"] = "point_hbar"
+        graph_params = _graph_title(graph_params)
         df_t = df.T
         df_t.columns = ["point"]
         df_t["rank"] = df_t["point"].rank(ascending=False, method="dense").astype("int")
@@ -384,7 +343,7 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
         )
         fig.update_layout(
             xaxis={
-                "title": {"text": f"獲得ポイント (総ゲーム数：{kwargs["total_game_count"]} ゲーム)"}
+                "title": {"text": graph_params["xlabel_text"]}
             },
             yaxis={
                 "autorange": "reversed",
@@ -394,16 +353,17 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
             showlegend=False,
         )
     else:
+        graph_params = _graph_title(graph_params)
         # 凡例用ラベル生成
         df.columns = target_data["legend"].to_list()
 
         fig = px.line(df)
         fig.update_layout(
             xaxis={
-                "title": {"text": kwargs["xlabel_text"]}
+                "title": {"text": graph_params["xlabel_text"]}
             },
             yaxis={
-                "title": {"text": kwargs["ylabel_text"]}
+                "title": {"text": graph_params["ylabel_text"]}
             },
             legend={"title": "プレイヤー名"}
         )
@@ -412,10 +372,64 @@ def _graph_generation_plotly(df: pd.DataFrame, **kwargs):
         width=1280,
         height=800,
         title={
-            "text": kwargs["title_text"],
+            "text": graph_params["title_text"],
             "x": 0.5,
             "font": {"size": 32},
         }
     )
 
     return fig
+
+
+def _graph_title(graph_params: GraphParams) -> GraphParams:
+    """グラフタイトル生成
+
+    Args:
+        args (GraphParams): グラフ生成パラメータ
+
+    Returns:
+        GraphParams: グラフ生成パラメータ(更新)
+    """
+
+    if g.params.get("target_count"):
+        graph_params.update(xlabel_text=f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+        match graph_params.get("graph_type"):
+            case "point":
+                graph_params.update(title_text=f"ポイント推移 (直近 {g.params["target_count"]} ゲーム)")
+            case "rank":
+                graph_params.update(title_text=f"順位変動 (直近 {g.params["target_count"]} ゲーム)")
+            case "point_hbar":
+                graph_params.update(title_text=f"通算ポイント (直近 {g.params["target_count"]} ゲーム)")
+    else:
+        match g.params.get("collection"):
+            case "daily":
+                date_range_tbl = "ymd_o"
+                graph_params.update(xlabel_text=f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+            case "monthly":
+                date_range_tbl = "jym_o"
+                graph_params.update(xlabel_text=f"集計月（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+            case "yearly":
+                date_range_tbl = "jy_o"
+                graph_params.update(xlabel_text=f"集計年（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+            case "all":
+                date_range_tbl = "ymdhm"
+                graph_params.update(xlabel_text=f"総ゲーム数：{graph_params["total_game_count"]} ゲーム")
+            case _:
+                date_range_tbl = "ymdhm"
+                if g.params.get("search_word"):
+                    graph_params.update(xlabel_text=f"（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+                else:
+                    graph_params.update(xlabel_text=f"ゲーム終了日時（{graph_params["total_game_count"]} ゲーム）")
+
+    match graph_params.get("graph_type", "point"):
+        case "point":
+            graph_params.update(ylabel_text="通算ポイント")
+            graph_params.update(title_text=compose.text_item.date_range(date_range_tbl, "通算ポイント", "ポイント推移"))
+        case "rank":
+            graph_params.update(ylabel_text="順位 (通算ポイント順)")
+            graph_params.update(title_text=compose.text_item.date_range(date_range_tbl, "順位", "順位変動"))
+        case "point_hbar":
+            graph_params.update(ylabel_text="通算ポイント")
+            graph_params.update(title_text=compose.text_item.date_range(date_range_tbl, "通算ポイント", "通算ポイント"))
+
+    return graph_params
