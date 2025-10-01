@@ -294,7 +294,7 @@ class SlackFunctions(FunctionsInterface):
         # ゲーム結果の抽出
         for match in self.get_messages(g.cfg.setting.keyword):
             if match.get_score(g.cfg.setting.keyword):
-                if match.data.user_id in self.conf.ignore_userid:  # 除外ユーザからのポストは破棄
+                if match.ignore_user:  # 除外ユーザからのポストは破棄
                     logging.info("skip ignore user: %s", match.data.user_id)
                     continue
 
@@ -316,7 +316,7 @@ class SlackFunctions(FunctionsInterface):
 
         # メモの抽出
         for match in self.get_messages(g.cfg.setting.remarks_word):
-            if match.data.user_id in self.conf.ignore_userid:  # 除外ユーザからのポストは破棄
+            if match.ignore_user:  # 除外ユーザからのポストは破棄
                 logging.info("skip ignore user: %s", match.data.user_id)
                 continue
 
