@@ -11,7 +11,6 @@ from cls.score import GameResult, Score
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
 from integrations.protocols import MessageParserProtocol
-from integrations.slack.adapter import ServiceAdapter
 from libs.data import modify
 from libs.data.lookup import db
 from libs.functions import search
@@ -41,10 +40,14 @@ class ComparisonDict(TypedDict, total=False):
 def main(m: MessageParserProtocol) -> None:
     """データ突合の実施、その結果をslackにpostする"""
 
-    g.adapter = cast(ServiceAdapter, g.adapter)
+    g.adapter = cast(g.slack_adapter, g.adapter)
 
     if m.data.status == "message_changed":  # 編集イベントは無視
         return
+
+    # 応答先
+    m.post.thread = True
+    m.post.ts = m.data.event_ts
 
     # データ突合
     count, msg = data_comparison(m)
@@ -70,8 +73,6 @@ def main(m: MessageParserProtocol) -> None:
 
     m.post.message = {"データ突合": message}
     m.post.key_header = False
-    m.post.thread = True
-    m.post.ts = m.data.event_ts
 
 
 def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
@@ -86,7 +87,7 @@ def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
         - ComparisonDict: slackに返すメッセージ
     """
 
-    g.adapter = cast(ServiceAdapter, g.adapter)
+    g.adapter = cast(g.slack_adapter, g.adapter)
     count: dict = {}
     msg: dict = {}
 
@@ -143,7 +144,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    g.adapter = cast(ServiceAdapter, g.adapter)
+    g.adapter = cast(g.slack_adapter, g.adapter)
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
     msg: ComparisonDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
 
@@ -245,7 +246,7 @@ def check_remarks(m: MessageParserProtocol, slack_data: list[MessageParserProtoc
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    g.adapter = cast(ServiceAdapter, g.adapter)
+    g.adapter = cast(g.slack_adapter, g.adapter)
 
     count: dict[str, int] = {"remark_mod": 0, "remark_del": 0}
     msg: ComparisonDict = {"remark_mod": "", "remark_del": "", "pending": []}
@@ -304,7 +305,7 @@ def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, Co
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    g.adapter = cast(ServiceAdapter, g.adapter)
+    g.adapter = cast(g.slack_adapter, g.adapter)
 
     count: dict[str, int] = {"invalid_score": 0}
     msg: ComparisonDict = {"invalid_score": "", "pending": []}
@@ -357,7 +358,7 @@ def check_pending(event_ts: str, edited_ts: str = "undetermined") -> bool:
         - **False**: チェック開始
     """
 
-    g.adapter = cast(ServiceAdapter, g.adapter)
+    g.adapter = cast(g.slack_adapter, g.adapter)
 
     now_ts = float(ExtDt().format("ts"))
 
