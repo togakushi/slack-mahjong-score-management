@@ -11,14 +11,14 @@ from slack_sdk.web import SlackResponse
 
 from integrations.base.interface import APIInterface
 from integrations.protocols import MessageParserProtocol
-from integrations.slack.config import AppConfig
+from integrations.slack.config import SvcConfig
 from libs.utils import converter, formatter
 
 
 class AdapterAPI(APIInterface):
     """インターフェースAPI操作クラス"""
 
-    def __init__(self, conf: AppConfig):
+    def __init__(self, conf: SvcConfig):
         super().__init__()
         self.conf = conf
 

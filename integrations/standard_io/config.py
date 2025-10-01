@@ -8,7 +8,7 @@ from integrations.base.interface import IntegrationsConfig
 
 
 @dataclass
-class AppConfig(IntegrationsConfig):
+class SvcConfig(IntegrationsConfig):
     """標準出力用個別設定値"""
 
     def __post_init__(self):

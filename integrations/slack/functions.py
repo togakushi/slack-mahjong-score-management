@@ -12,14 +12,14 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
 from integrations.protocols import MessageParserProtocol
-from integrations.slack.config import AppConfig
+from integrations.slack.config import SvcConfig
 from integrations.slack.parser import MessageParser
 
 
 class SlackFunctions(FunctionsInterface):
     """slack専用関数"""
 
-    def __init__(self, conf: AppConfig):
+    def __init__(self, conf: SvcConfig):
         super().__init__()
         self.conf = conf
 

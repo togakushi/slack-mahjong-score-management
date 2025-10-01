@@ -12,7 +12,7 @@ from integrations.slack.events import comparison, slash
 
 
 @dataclass
-class AppConfig(IntegrationsConfig):
+class SvcConfig(IntegrationsConfig):
     """slack用個別設定値"""
 
     slash_command: str = field(default="/mahjong")

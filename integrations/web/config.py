@@ -11,7 +11,7 @@ from integrations.base.interface import IntegrationsConfig
 
 
 @dataclass
-class AppConfig(IntegrationsConfig):
+class SvcConfig(IntegrationsConfig):
     """WebUI用個別設定値"""
 
     host: str = field(default="")
