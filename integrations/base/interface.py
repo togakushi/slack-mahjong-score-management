@@ -6,17 +6,32 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, field, fields
-from typing import Any, Literal, Union
+from typing import Any, Generic, Literal, TypeVar, Union, Type
 
 from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
                                     StatusData)
 
 
-class AdapterInterface(ABC):
+ConfigType = TypeVar("ConfigType", bound="IntegrationsConfig")
+APIType = TypeVar("APIType", bound="APIInterface")
+FunctionsType = TypeVar("FunctionsType", bound="FunctionsInterface")
+ParserType = TypeVar("ParserType", bound="MessageParserInterface")
+
+
+class AdapterInterface(ABC, Generic[ConfigType, APIType, FunctionsType, ParserType]):
     """アダプタインターフェース"""
 
     interface_type: str
     """サービス識別子"""
+
+    conf: ConfigType
+    """個別設定データクラス"""
+    api: APIType
+    """インターフェース操作APIインスタンス"""
+    functions: FunctionsType
+    """サービス専用関数インスタンス"""
+    parser: Type[ParserType]
+    """メッセージパーサクラス"""
 
 
 @dataclass
@@ -112,7 +127,7 @@ class APIInterface(ABC):
 
     @abstractmethod
     def post(self, m: "MessageParserProtocol"):
-        """メッセージをポストする
+        """メッセージを出力する
 
         Args:
             m (MessageParserProtocol): メッセージデータ

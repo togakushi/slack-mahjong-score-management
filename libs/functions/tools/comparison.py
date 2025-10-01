@@ -11,7 +11,6 @@ from slack_sdk import WebClient
 
 import libs.global_value as g
 from integrations import factory
-from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events import comparison
 from libs.functions import configuration
 
@@ -21,14 +20,14 @@ def main():
 
     if g.args.compar:
         try:
-            g.adapter = cast(ServiceAdapter, g.adapter)
+            g.adapter = cast(g.slack_adapter, g.adapter)
             app = App(token=os.environ["SLACK_BOT_TOKEN"])
             g.adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
             g.adapter.conf.appclient = app.client
             g.adapter.conf.bot_id = app.client.auth_test()["user_id"]
             configuration.read_memberslist(False)
-        except Exception as e:
-            raise RuntimeError(e) from e
+        except Exception as err:
+            raise RuntimeError(err) from err
 
         adapter_slack = factory.select_adapter("slack", g.cfg)
         adapter_std = factory.select_adapter("standard_io", g.cfg)

@@ -13,13 +13,12 @@ import libs.dispatcher
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDT
-from integrations.web.adapter import ServiceAdapter
 from libs.data import loader, lookup, modify
 from libs.registry import member, team
 from libs.utils import dbutil, formatter
 
 
-def main(adapter: ServiceAdapter):
+def main(adapter: g.web_adapter):
     """メイン処理"""
 
     app = Flask(

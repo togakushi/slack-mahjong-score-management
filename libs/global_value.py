@@ -1,18 +1,19 @@
 """モジュール間データ共有用"""
 
-from typing import TYPE_CHECKING, Any, Callable, Literal
+from typing import TYPE_CHECKING, Any, Callable, Literal, Union
+from integrations.slack.adapter import ServiceAdapter as slack_adapter
+from integrations.standard_io.adapter import ServiceAdapter as std_adapter
+from integrations.web.adapter import ServiceAdapter as web_adapter
 
 if TYPE_CHECKING:
     from argparse import Namespace
 
     from cls.config import AppConfig
     from cls.types import TeamDataDict
-    from integrations.factory import AdapterType
-
 
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
 """選択サービス"""
-adapter: "AdapterType"
+adapter: Union[slack_adapter, web_adapter, std_adapter]
 """インターフェースアダプタ"""
 
 keyword_dispatcher: dict[str, Callable[..., Any]] = {}

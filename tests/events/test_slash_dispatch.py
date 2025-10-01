@@ -11,6 +11,7 @@ import pytest
 import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
+from integrations.standard_io.parser import MessageParser
 from libs.functions import configuration
 from tests.events import param_data
 
@@ -137,7 +138,7 @@ def test_check(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -161,7 +162,7 @@ def test_download(config, keyword, monkeypatch):
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
 
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -181,7 +182,7 @@ def test_member_list(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -205,7 +206,7 @@ def test_member_add(config, keyword, monkeypatch):
     configuration.setup()
 
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -228,7 +229,7 @@ def test_member_del(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -251,7 +252,7 @@ def test_team_create(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -274,7 +275,7 @@ def test_team_del(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -297,7 +298,7 @@ def test_team_add(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -320,7 +321,7 @@ def test_team_remove(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -343,7 +344,7 @@ def test_team_list(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (
@@ -366,7 +367,7 @@ def test_team_clear(config, keyword, monkeypatch):
     g.selected_service = "standard_io"
     configuration.setup()
     adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    m = cast(MessageParser, adapter.parser())
     m.set_command_flag(True)
 
     with (

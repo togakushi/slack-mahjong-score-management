@@ -4,17 +4,20 @@ integrations/slack/adapter.py
 
 from configparser import ConfigParser
 
-from integrations import slack
 from integrations.base.interface import AdapterInterface
+from integrations.slack.api import AdapterAPI
+from integrations.slack.config import AppConfig
+from integrations.slack.functions import SlackFunctions
+from integrations.slack.parser import MessageParser
 
 
-class ServiceAdapter(AdapterInterface):
+class ServiceAdapter(AdapterInterface[AppConfig, AdapterAPI, SlackFunctions, MessageParser]):
     """slack interface"""
 
     interface_type = "slack"
 
     def __init__(self, parser: ConfigParser):
-        self.conf = slack.config.AppConfig(config_file=parser)
-        self.api = slack.api.AdapterAPI(self.conf)
-        self.functions = slack.functions.SlackFunctions(self.conf)
-        self.parser = slack.parser.MessageParser
+        self.conf = AppConfig(config_file=parser)
+        self.api = AdapterAPI(self.conf)
+        self.functions = SlackFunctions(self.conf)
+        self.parser = MessageParser

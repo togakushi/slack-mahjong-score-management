@@ -4,26 +4,20 @@ integrations/web/adapter.py
 
 from configparser import ConfigParser
 
-from integrations import web
 from integrations.base import interface
+from integrations.web.api import AdapterAPI
+from integrations.web.config import AppConfig
+from integrations.web.functions import WebFunctions
+from integrations.web.parser import MessageParser
 
 
-class AdapterAPI(interface.APIInterface):
-    """ダミークラス"""
-
-    def post(self, m: interface.MessageParserProtocol):
-        """abstractmethod dummy"""
-
-        _ = m
-
-
-class ServiceAdapter(interface.AdapterInterface):
+class ServiceAdapter(interface.AdapterInterface[AppConfig, AdapterAPI, WebFunctions, MessageParser]):
     """web interface"""
 
     interface_type = "web"
 
     def __init__(self, parser: ConfigParser):
-        self.conf = web.config.AppConfig(config_file=parser)
+        self.conf = AppConfig(config_file=parser)
         self.api = AdapterAPI()
-        self.functions = web.functions.WebFunctions()
-        self.parser = web.parser.MessageParser
+        self.functions = WebFunctions()
+        self.parser = MessageParser

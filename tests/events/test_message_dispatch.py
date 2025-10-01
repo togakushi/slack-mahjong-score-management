@@ -3,6 +3,7 @@ tests/events/test_message_dispatch.py
 """
 
 import sys
+from typing import cast
 from unittest.mock import patch
 
 import pytest
@@ -10,6 +11,7 @@ import pytest
 import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
+from integrations.standard_io.parser import MessageParser
 from libs.functions import configuration
 from tests.events import param_data
 
@@ -29,7 +31,7 @@ def test_help_event(config, keyword, monkeypatch):
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
 
-        m = adapter.parser()
+        m = cast(MessageParser, adapter.parser())
         m.data.text = keyword
         m.data.status = "message_append"
         m.set_command_flag(False)
@@ -53,7 +55,7 @@ def test_keyword_event(module, config, keyword, monkeypatch):
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
 
-        m = adapter.parser()
+        m = cast(MessageParser, adapter.parser())
         m.data.status = "message_append"
         m.set_command_flag(False)
         m.data.text = keyword

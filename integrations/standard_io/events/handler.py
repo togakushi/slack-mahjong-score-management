@@ -4,10 +4,9 @@ integrations/standard_io/events/handler.py
 
 import libs.dispatcher
 import libs.global_value as g
-from integrations.standard_io.adapter import ServiceAdapter
 
 
-def main(adapter: ServiceAdapter):
+def main(adapter: g.std_adapter):
     """メイン処理"""
 
     m = adapter.parser()
