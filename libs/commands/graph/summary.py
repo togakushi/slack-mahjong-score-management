@@ -24,9 +24,9 @@ if TYPE_CHECKING:
 class GraphParams(TypedDict, total=False):
     """グラフ生成パラメータ"""
     graph_type: Literal["point", "rank", "point_hbar"]
-    title_text: str = ""
-    xlabel_text: str = ""
-    ylabel_text: str = ""
+    title_text: str
+    xlabel_text: str
+    ylabel_text: str
     total_game_count: int
     target_data: pd.DataFrame
     pivot: pd.DataFrame
@@ -75,13 +75,13 @@ def point_plot(m: "MessageParserProtocol") -> bool:
     )
 
     # グラフ生成
-    graph_params.update(
-        graph_type="point",
-        total_game_count=game_info["game_count"],
-        target_data=target_data,
-        pivot=pivot,
-        horizontal=True,
-    )
+    graph_params.update({
+        "graph_type": "point",
+        "total_game_count": game_info["game_count"],
+        "target_data": target_data,
+        "pivot": pivot,
+        "horizontal": True,
+    })
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
@@ -128,13 +128,13 @@ def rank_plot(m: "MessageParserProtocol") -> bool:
     pivot = pivot.rank(method="dense", ascending=False, axis=1)
 
     # グラフ生成
-    graph_params.update(
-        graph_type="rank",
-        total_game_count=game_info["game_count"],
-        target_data=target_data,
-        pivot=pivot,
-        horizontal=False,
-    )
+    graph_params.update({
+        "graph_type": "rank",
+        "total_game_count": game_info["game_count"],
+        "target_data": target_data,
+        "pivot": pivot,
+        "horizontal": False,
+    })
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
@@ -213,7 +213,6 @@ def _graph_generation(graph_params: GraphParams):
 
     Args:
         args (GraphParams): グラフ生成パラメータ
-
     """
 
     graph_setup()
@@ -230,8 +229,7 @@ def _graph_generation(graph_params: GraphParams):
             else:
                 color.append("orangered")
 
-        args = _graph_title(graph_params)
-
+        _graph_title(graph_params)
         tmpdf = pd.DataFrame(
             {"point": target_data["last_point"].to_list()[::-1]},
             index=lab[::-1],
@@ -240,7 +238,7 @@ def _graph_generation(graph_params: GraphParams):
         fig = tmpdf.plot.barh(
             figsize=(8, 2 + tmpdf.count().iloc[0] / 5),
             y="point",
-            xlabel=args["xlabel_text"],
+            xlabel=graph_params["xlabel_text"],
             color=color[::-1],
         ).get_figure()
 
@@ -254,12 +252,11 @@ def _graph_generation(graph_params: GraphParams):
 
         logging.info("plot data:\n%s", tmpdf)
     else:
-        args = _graph_title(args)
-
+        _graph_title(graph_params)
         fig = df.plot(
             figsize=(8, 6),
-            xlabel=args["xlabel_text"],
-            ylabel=args["ylabel_text"],
+            xlabel=graph_params["xlabel_text"],
+            ylabel=graph_params["ylabel_text"],
             marker="." if len(df) < 50 else None,
         ).get_figure()
 
@@ -288,7 +285,7 @@ def _graph_generation(graph_params: GraphParams):
         logging.info("plot data:\n%s", df)
 
     #
-    match args["graph_type"]:
+    match graph_params["graph_type"]:
         case "point_hbar":
             plt.axvline(x=0, linewidth=0.5, ls="dashed", color="grey")
         case "point":
@@ -302,11 +299,9 @@ def _graph_generation(graph_params: GraphParams):
             plt.gca().invert_yaxis()
 
     plt.title(
-        args["title_text"],
+        graph_params["title_text"],
         fontsize=16,
     )
-
-    _graph_title(args)
 
     return fig
 
@@ -316,7 +311,6 @@ def _graph_generation_plotly(graph_params: GraphParams):
 
     Args:
         args (GraphParams): グラフ生成パラメータ
-
     """
 
     target_data = cast(pd.DataFrame, graph_params["target_data"])
@@ -324,7 +318,7 @@ def _graph_generation_plotly(graph_params: GraphParams):
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and graph_params["horizontal"]:
         graph_params["graph_type"] = "point_hbar"
-        graph_params = _graph_title(graph_params)
+        _graph_title(graph_params)
         df_t = df.T
         df_t.columns = ["point"]
         df_t["rank"] = df_t["point"].rank(ascending=False, method="dense").astype("int")
@@ -353,7 +347,7 @@ def _graph_generation_plotly(graph_params: GraphParams):
             showlegend=False,
         )
     else:
-        graph_params = _graph_title(graph_params)
+        _graph_title(graph_params)
         # 凡例用ラベル生成
         df.columns = target_data["legend"].to_list()
 
@@ -381,55 +375,56 @@ def _graph_generation_plotly(graph_params: GraphParams):
     return fig
 
 
-def _graph_title(graph_params: GraphParams) -> GraphParams:
+def _graph_title(graph_params: GraphParams):
     """グラフタイトル生成
 
     Args:
         args (GraphParams): グラフ生成パラメータ
-
-    Returns:
-        GraphParams: グラフ生成パラメータ(更新)
     """
 
     if g.params.get("target_count"):
-        graph_params.update(xlabel_text=f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+        graph_params.update({"xlabel_text": f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
         match graph_params.get("graph_type"):
             case "point":
-                graph_params.update(title_text=f"ポイント推移 (直近 {g.params["target_count"]} ゲーム)")
+                graph_params.update({"title_text": f"ポイント推移 (直近 {g.params["target_count"]} ゲーム)"})
             case "rank":
-                graph_params.update(title_text=f"順位変動 (直近 {g.params["target_count"]} ゲーム)")
+                graph_params.update({"title_text": f"順位変動 (直近 {g.params["target_count"]} ゲーム)"})
             case "point_hbar":
-                graph_params.update(title_text=f"通算ポイント (直近 {g.params["target_count"]} ゲーム)")
+                graph_params.update({"title_text": f"通算ポイント (直近 {g.params["target_count"]} ゲーム)"})
     else:
         match g.params.get("collection"):
             case "daily":
                 date_range_tbl = "ymd_o"
-                graph_params.update(xlabel_text=f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+                graph_params.update({"xlabel_text": f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
             case "monthly":
                 date_range_tbl = "jym_o"
-                graph_params.update(xlabel_text=f"集計月（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+                graph_params.update({"xlabel_text": f"集計月（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
             case "yearly":
                 date_range_tbl = "jy_o"
-                graph_params.update(xlabel_text=f"集計年（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+                graph_params.update({"xlabel_text": f"集計年（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
             case "all":
                 date_range_tbl = "ymdhm"
-                graph_params.update(xlabel_text=f"総ゲーム数：{graph_params["total_game_count"]} ゲーム")
+                graph_params.update({"xlabel_text": f"総ゲーム数：{graph_params["total_game_count"]} ゲーム"})
             case _:
                 date_range_tbl = "ymdhm"
                 if g.params.get("search_word"):
-                    graph_params.update(xlabel_text=f"（総ゲーム数：{graph_params["total_game_count"]} ゲーム）")
+                    graph_params.update({"xlabel_text": f"（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
                 else:
-                    graph_params.update(xlabel_text=f"ゲーム終了日時（{graph_params["total_game_count"]} ゲーム）")
+                    graph_params.update({"xlabel_text": f"ゲーム終了日時（{graph_params["total_game_count"]} ゲーム）"})
 
     match graph_params.get("graph_type", "point"):
         case "point":
-            graph_params.update(ylabel_text="通算ポイント")
-            graph_params.update(title_text=compose.text_item.date_range(date_range_tbl, "通算ポイント", "ポイント推移"))
+            graph_params.update({
+                "ylabel_text": "通算ポイント",
+                "title_text": compose.text_item.date_range(date_range_tbl, "通算ポイント", "ポイント推移"),
+            })
         case "rank":
-            graph_params.update(ylabel_text="順位 (通算ポイント順)")
-            graph_params.update(title_text=compose.text_item.date_range(date_range_tbl, "順位", "順位変動"))
+            graph_params.update({
+                "ylabel_text": "順位 (通算ポイント順)",
+                "title_text": compose.text_item.date_range(date_range_tbl, "順位", "順位変動"),
+            })
         case "point_hbar":
-            graph_params.update(ylabel_text="通算ポイント")
-            graph_params.update(title_text=compose.text_item.date_range(date_range_tbl, "通算ポイント", "通算ポイント"))
-
-    return graph_params
+            graph_params.update({
+                "ylabel_text": "通算ポイント",
+                "title_text": compose.text_item.date_range(date_range_tbl, "通算ポイント", "通算ポイント"),
+            })
