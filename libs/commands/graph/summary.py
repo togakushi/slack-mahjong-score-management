@@ -283,18 +283,18 @@ def _graph_generation(graph_params: GraphParams):
 
         logging.info("plot data:\n%s", df)
 
-    #
+    # メモリ調整
     match graph_params["graph_type"]:
         case "point_hbar":
             plt.axvline(x=0, linewidth=0.5, ls="dashed", color="grey")
         case "point":
             plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
         case "rank":
-            lab = [str(x) for x in range(len(target_data) + 1)]
+            lab = range(len(target_data) + 1)
             if len(lab) > 10:
-                plt.yticks(lab[1::2], lab[1::2])
+                plt.yticks(list(map(int, lab))[1::2], list(map(str, lab))[1::2])
             else:
-                plt.yticks(lab[1:], lab[1:])
+                plt.yticks(list(map(int, lab))[1:], list(map(str, lab))[1:])
             plt.gca().invert_yaxis()
 
     plt.title(
