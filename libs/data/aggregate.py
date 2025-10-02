@@ -53,7 +53,10 @@ def game_info() -> GameInfoDict:
     return ret
 
 
-def game_summary(filter_items: list | None = None, drop_items: list | None = None) -> "pd.DataFrame":
+def game_summary(
+    filter_items: list | None = None,
+    drop_items: list | None = None
+) -> pd.DataFrame:
     """ゲーム結果をサマライズする
 
     Args:
@@ -212,7 +215,11 @@ def calculation_rating() -> pd.DataFrame:
     return df_ratings
 
 
-def grade_promotion_check(grade_level: int, point: int, rank: int) -> tuple[int, int]:
+def grade_promotion_check(
+    grade_level: int,
+    point: int,
+    rank: int
+) -> tuple[int, int]:
     """昇段チェック
 
     Args:
