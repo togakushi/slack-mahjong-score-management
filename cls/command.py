@@ -238,7 +238,7 @@ class CommandParser:
                     continue
                 break
             else:
-                unknown.append(formatter.name_replace(keyword))
+                unknown.append(formatter.name_replace(keyword, add_mark=False, not_replace=True))
 
         return ParsedCommand(flags=ret, arguments=args, unknown=unknown, search_range=search_range)
 
