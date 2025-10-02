@@ -8,12 +8,13 @@ import random
 import re
 from pprint import pprint
 
+from libs import configuration
 import libs.global_value as g
 from cls.command import CommandParser
 from integrations import factory
 from libs.commands import graph, ranking, report, results
 from libs.data import initialization
-from libs.functions import compose, configuration
+from libs.functions import compose
 from libs.utils import dictutil
 
 

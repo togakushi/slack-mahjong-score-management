@@ -12,7 +12,7 @@ import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
 from integrations.standard_io.parser import MessageParser
-from libs.functions import configuration
+from libs import configuration
 from tests.events import param_data
 
 
@@ -26,7 +26,7 @@ def test_help_event(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", "--service=std", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.compose.msg_help.event_message") as mock_help_event,
+        patch("libs.configuration.compose.msg_help.event_message") as mock_help_event,
     ):
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
@@ -50,7 +50,7 @@ def test_keyword_event(module, config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", "--service=std", f"--config=tests/testdata/{config}"])
 
     with (
-        patch(f"libs.functions.configuration.libs.commands.{module}.entry.main") as mock_keyword_event,
+        patch(f"libs.configuration.libs.commands.{module}.entry.main") as mock_keyword_event,
     ):
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)

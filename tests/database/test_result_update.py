@@ -12,7 +12,7 @@ from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
 from libs.data import modify
-from libs.functions import configuration
+from libs import configuration
 from libs.utils import dbutil
 from tests.database import param_data
 

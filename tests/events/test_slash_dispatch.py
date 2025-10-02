@@ -12,7 +12,7 @@ import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
 from integrations.standard_io.parser import MessageParser
-from libs.functions import configuration
+from libs import configuration
 from tests.events import param_data
 
 
@@ -50,7 +50,7 @@ def test_results(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.libs.commands.results.entry.main") as mock_slash_results,
+        patch("libs.configuration.libs.commands.results.entry.main") as mock_slash_results,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -73,7 +73,7 @@ def test_graph(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.libs.commands.graph.entry.main") as mock_slash_graph,
+        patch("libs.configuration.libs.commands.graph.entry.main") as mock_slash_graph,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -96,7 +96,7 @@ def test_ranking(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.libs.commands.ranking.entry.main") as mock_slash_ranking,
+        patch("libs.configuration.libs.commands.ranking.entry.main") as mock_slash_ranking,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -119,7 +119,7 @@ def test_report(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.libs.commands.report.entry.main") as mock_slash_report,
+        patch("libs.configuration.libs.commands.report.entry.main") as mock_slash_report,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -187,7 +187,7 @@ def test_member_list(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.lookup.textdata.get_members_list") as mock_slash_member_list,
+        patch("libs.configuration.lookup.textdata.get_members_list") as mock_slash_member_list,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -211,7 +211,7 @@ def test_member_add(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.member.append") as mock_slash_member_add,
+        patch("libs.configuration.member.append") as mock_slash_member_add,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -236,7 +236,7 @@ def test_member_del(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.member.remove") as mock_slash_member_del,
+        patch("libs.configuration.member.remove") as mock_slash_member_del,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -260,7 +260,7 @@ def test_team_create(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.team.create") as mock_slash_team_create,
+        patch("libs.configuration.team.create") as mock_slash_team_create,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -284,7 +284,7 @@ def test_team_del(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.team.delete") as mock_slash_team_del,
+        patch("libs.configuration.team.delete") as mock_slash_team_del,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -308,7 +308,7 @@ def test_team_add(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.team.append") as mock_slash_team_add,
+        patch("libs.configuration.team.append") as mock_slash_team_add,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -332,7 +332,7 @@ def test_team_remove(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.team.remove") as mock_slash_team_remove,
+        patch("libs.configuration.team.remove") as mock_slash_team_remove,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -356,7 +356,7 @@ def test_team_list(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.lookup.textdata.get_team_list") as mock_slash_team_list,
+        patch("libs.configuration.lookup.textdata.get_team_list") as mock_slash_team_list,
     ):
         g.selected_service = "standard_io"
         configuration.setup()
@@ -380,7 +380,7 @@ def test_team_clear(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.functions.configuration.team.clear") as mock_slash_team_clear,
+        patch("libs.configuration.team.clear") as mock_slash_team_clear,
     ):
         g.selected_service = "standard_io"
         configuration.setup()

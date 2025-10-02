@@ -9,7 +9,7 @@ import pytest
 import libs.global_value as g
 from cls.command import CommandParser
 from integrations import factory
-from libs.functions import configuration
+from libs import configuration
 from libs.utils import dictutil
 from tests.parser import param_data
 

@@ -14,7 +14,7 @@ from tqdm import tqdm
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.functions import configuration
+from libs import configuration
 from libs.functions.tools import score_simulator
 from libs.utils import dbutil
 

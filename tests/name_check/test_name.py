@@ -6,7 +6,7 @@ import sys
 
 import pytest
 
-from libs.functions import configuration
+from libs import configuration
 from libs.utils import validator
 from tests.name_check import param_data
 

@@ -8,7 +8,7 @@ import pytest
 
 import libs.global_value as g
 from cls.config import SubCommand
-from libs.functions import configuration
+from libs import configuration
 
 
 def test_empty_config(monkeypatch):

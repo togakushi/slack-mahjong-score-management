@@ -10,7 +10,7 @@ import pytest
 import libs.global_value as g
 from cls.config import AppConfig
 from libs.data import initialization
-from libs.functions import configuration
+from libs import configuration
 from libs.utils import dbutil
 
 

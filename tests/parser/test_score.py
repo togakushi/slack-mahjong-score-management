@@ -8,7 +8,7 @@ import libs.global_value as g
 from cls.config import AppConfig
 from cls.score import GameResult
 from integrations import factory
-from libs.functions import configuration
+from libs import configuration
 from tests.parser import param_data
 
 

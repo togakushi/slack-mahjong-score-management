@@ -13,7 +13,7 @@ from typing import cast
 
 import libs.global_value as g
 from libs.data import initialization
-from libs.functions import configuration
+from libs import configuration
 
 if __name__ == "__main__":
     configuration.setup()
