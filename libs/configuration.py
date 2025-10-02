@@ -120,24 +120,25 @@ def arg_parser() -> argparse.Namespace:
                 help="bind port(default: %(default)s)",
             )
         case "dbtools.py":  # dbtools専用オプション
-            group = p.add_mutually_exclusive_group()
-            group.add_argument(
+            required = p.add_argument_group("Required options(amutually exclusive)")
+            exclusive = required.add_mutually_exclusive_group()
+            exclusive.add_argument(
                 "--compar",
                 action="store_true",
                 help="データ突合",
             )
-            group.add_argument(
+            exclusive.add_argument(
                 "--unification",
                 nargs="?",
                 const="rename.ini",
                 help="ファイルの内容に従って記録済みのメンバー名を修正する(default: %(const)s)",
             )
-            group.add_argument(
+            exclusive.add_argument(
                 "--recalculation",
                 action="store_true",
                 help="ポイント再計算",
             )
-            group.add_argument(
+            exclusive.add_argument(
                 "--export",
                 dest="export_data",
                 nargs="?",
@@ -145,7 +146,7 @@ def arg_parser() -> argparse.Namespace:
                 metavar="PREFIX",
                 help="メンバー設定情報をエクスポート(default prefix: %(const)s)",
             )
-            group.add_argument(
+            exclusive.add_argument(
                 "--import",
                 nargs="?",
                 dest="import_data",
@@ -153,12 +154,12 @@ def arg_parser() -> argparse.Namespace:
                 metavar="PREFIX",
                 help="メンバー設定情報をインポート(default prefix: %(const)s)",
             )
-            group.add_argument(
+            exclusive.add_argument(
                 "--vacuum",
                 action="store_true",
                 help="database vacuum",
             )
-            group.add_argument(
+            exclusive.add_argument(
                 "--gen-test-data",
                 type=int,
                 dest="gen_test_data",
