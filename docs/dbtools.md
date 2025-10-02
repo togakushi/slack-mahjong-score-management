@@ -12,7 +12,7 @@ $ uv run ./dbtools.py オプション
 `config.ini` で定義されいるデータベースファイルが対象となる。
 
 ### ヘルプ
-```Shell
+```shell
 $ uv run dbtools.py -h
 usage: dbtools.py [-h] [-c CONFIG] [--service {slack,standard_io,std,web,flask}] [--debug] [--verbose] [--moderate] [--notime] [--compar | --unification [UNIFICATION] |
                   --recalculation | --export [PREFIX] | --import [PREFIX] | --vacuum | --gen-test-data [count]]
@@ -23,6 +23,14 @@ options:
                         設定ファイル(default: config.ini)
   --service {slack,standard_io,std,web,flask}
                         連携先サービス
+
+logging options:
+  --debug               デバッグ情報表示
+  --verbose, --trace    詳細デバッグ情報表示
+  --moderate            ログレベルがエラー以下のもを非表示
+  --notime              ログフォーマットから日時を削除
+
+Required options(amutually exclusive):
   --compar              データ突合
   --unification [UNIFICATION]
                         ファイルの内容に従って記録済みのメンバー名を修正する(default: rename.ini)
@@ -32,12 +40,6 @@ options:
   --vacuum              database vacuum
   --gen-test-data [count]
                         テスト用サンプルデータ生成(count=生成回数, default: 1)
-
-logging options:
-  --debug               デバッグ情報表示
-  --verbose, --trace    詳細デバッグ情報表示
-  --moderate            ログレベルがエラー以下のもを非表示
-  --notime              ログフォーマットから日時を削除
   ```
 
 ## 固有オプション説明
