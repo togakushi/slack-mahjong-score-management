@@ -96,10 +96,11 @@ def test_guest_check(input_args, player_name, replace_name, monkeypatch):
 
     adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
-
     m.parser({"text": f"{g.cfg.setting.keyword} {input_args}"})
     g.params = dictutil.placeholder(g.cfg.results, m)
-    check_name = formatter.name_replace(str(g.params.get("player_name")))
 
-    assert str(g.params.get("player_name")) == player_name
-    assert check_name == replace_name
+    parsed_name = str(g.params.get("player_name"))
+    check_name = formatter.name_replace(parsed_name)
+
+    assert parsed_name == player_name
+    assert replace_name == check_name

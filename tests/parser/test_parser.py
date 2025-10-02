@@ -67,11 +67,14 @@ def test_command_with_argument_str(input_args, expected_flags):
     list(param_data.flag_test_case_04.values()),
     ids=list(param_data.flag_test_case_04.keys()),
 )
-def test_command_unknown_str(input_args, expected_flags):
+def test_command_unknown_str(input_args, expected_flags, monkeypatch):
     """4. 不明なコマンド"""
+    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
+
     configuration.setup()
     configuration.read_memberslist()
     parser = CommandParser()
+    g.params["unregistered_replace"] = False
     result = parser.analysis_argument(input_args.split())
 
     print(f"\n  --> in: {input_args.split()} out: {result}")
