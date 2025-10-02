@@ -1,5 +1,5 @@
 """
-libs/commands/results/ranking.py
+libs/commands/ranking/ranking.py
 """
 
 import pandas as pd

@@ -1,5 +1,5 @@
 """
-libs/commands/report/slackpost.py
+libs/commands/report/winner.py
 """
 
 import os
