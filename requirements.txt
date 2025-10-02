@@ -7,3 +7,4 @@ tabulate[widechars] # type: ignore
 tqdm
 plotly
 flask
+flask_httpauth
