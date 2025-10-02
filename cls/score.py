@@ -150,7 +150,10 @@ class GameResult:
 
         return ret_dict
 
-    def to_text(self, kind: Literal["simple", "detail", "logging"] = "simple") -> str:
+    def to_text(
+        self,
+        kind: Literal["simple", "detail", "logging"] = "simple"
+    ) -> str:
         """データをテキストで返す
 
         Args:
@@ -185,7 +188,10 @@ class GameResult:
 
         return ret_text
 
-    def to_list(self, kind: Literal["name", "str", "rpoint", "point", "rank"] = "name") -> list[str | int | float]:
+    def to_list(
+        self,
+        kind: Literal["name", "str", "rpoint", "point", "rank"] = "name"
+    ) -> list[str | int | float]:
         """指定データをリストで返す
 
         Args:
