@@ -221,7 +221,6 @@ def _graph_generation(graph_params: GraphParams):
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and graph_params["horizontal"]:
         graph_params["graph_type"] = "point_hbar"
-        lab: list = target_data["legend"].to_list()
         color: list = []
         for _, v in target_data.iterrows():
             if v["last_point"] > 0:
@@ -232,7 +231,7 @@ def _graph_generation(graph_params: GraphParams):
         _graph_title(graph_params)
         tmpdf = pd.DataFrame(
             {"point": target_data["last_point"].to_list()[::-1]},
-            index=lab[::-1],
+            index=target_data["legend"].to_list()[::-1],
         )
 
         fig = tmpdf.plot.barh(
