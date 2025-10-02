@@ -56,7 +56,7 @@
 
 <ul>
 <li><code><a href="slack/events.html">integrations.slack.events</a></code>: イベント処理</li>
-<li><code><a href="slack/adapter.html">integrations.slack.adapter</a></code>: 操作具体クラス</li>
+<li><code><a href="slack/adapter.html">integrations.slack.adapter</a></code>: サービスアダプタ定義</li>
 <li><code><a href="slack/api.html">integrations.slack.api</a></code>: インターフェースAPI</li>
 <li><code><a href="slack/config.html">integrations.slack.config</a></code>: 個別設定</li>
 <li><code><a href="slack/parser.html">integrations.slack.parser</a></code>: メッセージ解析クラス</li>
@@ -72,16 +72,12 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">slack連携</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">- `integrations.slack.events`: イベント処理</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">- `integrations.slack.adapter`: 操作具体クラス</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">- `integrations.slack.adapter`: サービスアダプタ定義</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">- `integrations.slack.api`: インターフェースAPI</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">- `integrations.slack.config`: 個別設定</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">- `integrations.slack.parser`: メッセージ解析クラス</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">- `integrations.slack.functions`: 専用関数群</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.slack</span><span class="w"> </span><span class="kn">import</span> <span class="n">adapter</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">functions</span><span class="p">,</span> <span class="n">parser</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;adapter&quot;</span><span class="p">,</span> <span class="s2">&quot;api&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">,</span> <span class="s2">&quot;functions&quot;</span><span class="p">,</span> <span class="s2">&quot;parser&quot;</span><span class="p">]</span>
 </span></pre></div>
 
 
