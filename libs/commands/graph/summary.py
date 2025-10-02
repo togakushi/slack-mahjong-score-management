@@ -290,7 +290,7 @@ def _graph_generation(graph_params: GraphParams):
         case "point":
             plt.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
         case "rank":
-            lab = list(range(len(target_data) + 1))
+            lab = [str(x) for x in range(len(target_data) + 1)]
             if len(lab) > 10:
                 plt.yticks(lab[1::2], lab[1::2])
             else:
