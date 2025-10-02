@@ -1,5 +1,5 @@
 """
-lib/data/lookup/internal.py
+libs/data/lookup/internal.py
 """
 
 import libs.global_value as g

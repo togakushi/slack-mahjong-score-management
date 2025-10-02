@@ -1,5 +1,5 @@
 """
-tests/test_parser.py
+tests/name_check/test_name.py
 """
 
 import sys

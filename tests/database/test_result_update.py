@@ -1,5 +1,5 @@
 """
-tests/database/test_registration.py
+tests/database/test_result_update.py
 """
 
 import sys

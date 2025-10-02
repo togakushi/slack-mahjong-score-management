@@ -1,5 +1,5 @@
 """
-cls/config2.py
+cls/config.py
 """
 
 import logging

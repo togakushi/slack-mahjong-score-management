@@ -1,5 +1,7 @@
 """
 tests/database/conftest.py
+
+テスト共通前処理
 """
 
 from contextlib import closing

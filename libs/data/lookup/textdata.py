@@ -1,5 +1,5 @@
 """
-lib/data/lookup/textdata.py
+libs/data/lookup/textdata.py
 """
 
 import libs.global_value as g
