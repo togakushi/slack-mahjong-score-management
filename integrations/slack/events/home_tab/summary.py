@@ -58,7 +58,7 @@ def build_summary_menu(adapter: ServiceAdapter):
             "normal": "通算ポイント",
             "score_comparisons": "通算ポイント比較",
             "point": "ポイント推移グラフ",
-            "rank": "順位推移グラフ",
+            "rank": "順位変動グラフ",
             "rating": "レーティング",
         },
     )

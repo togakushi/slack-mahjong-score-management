@@ -45,7 +45,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
             ], width=120)
 
     def graph_rank(m):
-        """順位推移グラフ"""
+        """順位変動グラフ"""
         pprint([
             "exec: graph.summary.rank_plot()",
             graph.summary.point_plot(m),
