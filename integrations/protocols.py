@@ -123,7 +123,7 @@ class StatusData(DataMixin):
     """実行したコマンド名"""
 
     reaction: bool = field(default=False)
-    """最終ステータス状態
+    """データステータス状態
     - *True*: 矛盾なくデータを取り込んだ(OK)
     - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)
     """
