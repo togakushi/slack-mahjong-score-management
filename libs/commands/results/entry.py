@@ -2,10 +2,14 @@
 libs/commands/results/entry.py
 """
 
+from typing import TYPE_CHECKING
+
 import libs.global_value as g
-from integrations.protocols import MessageParserProtocol
 from libs.commands import results
 from libs.utils import dictutil
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def main(m: MessageParserProtocol):

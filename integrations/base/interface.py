@@ -101,7 +101,7 @@ class FunctionsInterface(ABC):
     """個別関数インターフェース"""
 
     @abstractmethod
-    def post_processing(self, m: "MessageParserProtocol"):
+    def post_processing(self, m: MessageParserProtocol):
         """後処理
 
         Args:
@@ -109,7 +109,7 @@ class FunctionsInterface(ABC):
         """
 
     @abstractmethod
-    def get_conversations(self, m: "MessageParserProtocol") -> dict:
+    def get_conversations(self, m: MessageParserProtocol) -> dict:
         """スレッド情報の取得
 
         Args:
@@ -125,7 +125,7 @@ class APIInterface(ABC):
     """アダプタAPIインターフェース"""
 
     @abstractmethod
-    def post(self, m: "MessageParserProtocol"):
+    def post(self, m: MessageParserProtocol):
         """メッセージを出力する
 
         Args:

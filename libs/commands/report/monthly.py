@@ -3,14 +3,17 @@ libs/commands/report/monthly.py
 """
 
 import os
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from integrations.protocols import MessageParserProtocol
 from libs.commands.graph.entry import graph_setup
 from libs.data import loader
 from libs.functions import compose, message
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def plot(m: MessageParserProtocol) -> bool:

@@ -3,6 +3,7 @@ libs/commands/graph/entry.py
 """
 
 import logging
+from typing import TYPE_CHECKING
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -10,9 +11,11 @@ import pandas as pd
 from matplotlib import use
 
 import libs.global_value as g
-from integrations.protocols import MessageParserProtocol
 from libs.commands import graph
 from libs.utils import dictutil
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def main(m: MessageParserProtocol):

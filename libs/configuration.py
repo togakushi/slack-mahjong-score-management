@@ -8,7 +8,7 @@ import os
 import shutil
 import sys
 from functools import partial
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import libs.commands.graph.entry
 import libs.commands.ranking.entry
@@ -17,10 +17,12 @@ import libs.commands.results.entry
 import libs.global_value as g
 from cls.config import AppConfig, SubCommand
 from integrations import factory
-from integrations.protocols import MessageParserProtocol
 from libs.data import lookup
 from libs.functions import compose
 from libs.registry import member, team
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def set_loglevel():

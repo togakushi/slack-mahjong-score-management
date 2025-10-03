@@ -2,10 +2,14 @@
 libs/commands/ranking/entry.py
 """
 
+from typing import TYPE_CHECKING
+
 import libs.global_value as g
-from integrations.protocols import MessageParserProtocol
 from libs.commands import ranking
 from libs.utils import dictutil
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def main(m: MessageParserProtocol):

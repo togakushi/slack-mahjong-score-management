@@ -3,14 +3,17 @@ libs/commands/results/versus.py
 """
 
 import textwrap
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
 import libs.global_value as g
-from integrations.protocols import MessageParserProtocol
 from libs.data import loader
 from libs.functions import compose
 from libs.utils import converter, formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def aggregation(m: MessageParserProtocol) -> bool:

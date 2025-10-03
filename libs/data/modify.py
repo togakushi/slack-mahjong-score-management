@@ -8,16 +8,18 @@ import re
 import shutil
 import sqlite3
 from contextlib import closing
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
-from integrations.protocols import MessageParserProtocol
 from libs.data import lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:

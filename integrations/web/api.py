@@ -2,7 +2,10 @@
 integrations/web/api.py
 """
 
-from integrations.base.interface import APIInterface, MessageParserProtocol
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from integrations.base.interface import APIInterface, MessageParserProtocol
 
 
 class AdapterAPI(APIInterface):

@@ -144,13 +144,13 @@ class WebFunctions(FunctionsInterface):
 
         return {k: v for k, v in cookie_data.items() if k in target_keys}
 
-    def get_conversations(self, m: "MessageParserProtocol") -> dict:
+    def get_conversations(self, m: MessageParserProtocol) -> dict:
         """abstractmethod dummy"""
 
         _ = m
         return {}
 
-    def post_processing(self, m: "MessageParserProtocol"):
+    def post_processing(self, m: MessageParserProtocol):
         """abstractmethod dummy"""
 
         _ = m

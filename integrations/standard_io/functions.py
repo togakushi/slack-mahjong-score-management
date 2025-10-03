@@ -2,9 +2,13 @@
 integrations/standard_io/functions.py
 """
 
+from typing import TYPE_CHECKING
+
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
-from integrations.protocols import MessageParserProtocol
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 class StandardIOFunctions(FunctionsInterface):

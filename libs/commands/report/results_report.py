@@ -6,6 +6,7 @@ import logging
 import os
 from datetime import datetime
 from io import BytesIO
+from typing import TYPE_CHECKING
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -21,10 +22,12 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
                                 SimpleDocTemplate, Spacer, TableStyle)
 
 import libs.global_value as g
-from integrations.protocols import MessageParserProtocol
 from libs.data import loader, lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def get_game_results() -> list:

@@ -4,11 +4,15 @@ integrations/standard_io/api.py
 
 
 import textwrap
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from integrations.base.interface import APIInterface, MessageParserProtocol
+from integrations.base.interface import APIInterface
 from libs.utils import formatter
+
+if TYPE_CHECKING:
+    from integrations.base.interface import MessageParserProtocol
 
 
 class AdapterAPI(APIInterface):

@@ -2,14 +2,16 @@
 libs/commands/results/summary.py
 """
 
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
-from cls.types import GameInfoDict
-from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import message
 from libs.utils import converter, formatter
+
+if TYPE_CHECKING:
+    from cls.types import GameInfoDict
+    from integrations.protocols import MessageParserProtocol
 
 
 def aggregation(m: MessageParserProtocol) -> bool:

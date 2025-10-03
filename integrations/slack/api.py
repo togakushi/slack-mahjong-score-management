@@ -3,16 +3,18 @@ integrations/slack/api.py
 """
 
 import logging
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 from integrations.base.interface import APIInterface
-from integrations.protocols import MessageParserProtocol
 from integrations.slack.config import SvcConfig
 from libs.utils import converter, formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 class AdapterAPI(APIInterface):

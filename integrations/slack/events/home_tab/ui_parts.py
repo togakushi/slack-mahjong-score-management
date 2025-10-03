@@ -3,10 +3,13 @@ integrations/slack/events/home_tab/ui_parts.py
 """
 
 import logging
+from typing import TYPE_CHECKING
 
 import libs.global_value as g
-from integrations.protocols import MessageParserProtocol
 from integrations.slack.adapter import ServiceAdapter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def plain_text(msg: str) -> dict:

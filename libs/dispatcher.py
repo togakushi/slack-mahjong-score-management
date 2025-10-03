@@ -4,14 +4,17 @@ libs/dispatcher.py
 
 import logging
 import re
+from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from cls.score import GameResult
 from integrations import factory
-from integrations.protocols import MessageParserProtocol
 from libs.data import lookup, modify
 from libs.functions import message
 from libs.utils import formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def by_keyword(m: MessageParserProtocol):

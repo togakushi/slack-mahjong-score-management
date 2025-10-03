@@ -3,16 +3,19 @@ libs/commands/graph/rating.py
 """
 
 import os
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.protocols import MessageParserProtocol
 from libs.commands.graph.entry import graph_setup
 from libs.data import aggregate
 from libs.functions import compose, message
 from libs.utils import formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def plot(m: MessageParserProtocol) -> bool:

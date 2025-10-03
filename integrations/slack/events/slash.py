@@ -2,7 +2,10 @@
 integrations/slack/events/slash.py
 """
 
-from integrations.protocols import MessageParserProtocol
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def command_help(m: MessageParserProtocol):

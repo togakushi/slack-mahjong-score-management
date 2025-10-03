@@ -4,17 +4,19 @@ integrations/slack/events/comparison.py
 
 import copy
 import logging
-from typing import TypedDict, cast
+from typing import TYPE_CHECKING, TypedDict, cast
 
 import libs.global_value as g
 from cls.score import GameResult, Score
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
-from integrations.protocols import MessageParserProtocol
 from libs.data import modify
 from libs.data.lookup import db
 from libs.functions import search
 from libs.utils import dictutil, formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 DBSearchDict = dict[str, GameResult]
 
@@ -132,7 +134,11 @@ def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
     return (count, cast(ComparisonDict, msg))
 
 
-def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProtocol], db_data: DBSearchDict) -> tuple[dict, ComparisonDict]:
+def check_omission(
+    m: MessageParserProtocol,
+    slack_data: list[MessageParserProtocol],
+    db_data: DBSearchDict
+) -> tuple[dict, ComparisonDict]:
     """スコア取りこぼしチェック
 
     Args:
@@ -148,8 +154,7 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
     msg: ComparisonDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
 
-    for val in set(slack_data):
-        slack_m = cast(MessageParserProtocol, val)
+    for slack_m in set(slack_data):
         slack_m.data.channel_id = m.data.channel_id
 
         # 保留チェック
@@ -234,7 +239,11 @@ def check_omission(m: MessageParserProtocol, slack_data: list[MessageParserProto
     return (count, msg)
 
 
-def check_remarks(m: MessageParserProtocol, slack_data: list[MessageParserProtocol], db_data: list) -> tuple[dict, ComparisonDict]:
+def check_remarks(
+    m: MessageParserProtocol,
+    slack_data: list[MessageParserProtocol],
+    db_data: list
+) -> tuple[dict, ComparisonDict]:
     """メモの取りこぼしチェック
 
     Args:

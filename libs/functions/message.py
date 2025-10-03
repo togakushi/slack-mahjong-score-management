@@ -6,13 +6,15 @@ import logging
 import random
 import textwrap
 from configparser import ConfigParser
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import GameInfoDict
-from integrations.protocols import MessageParserProtocol
 from libs.functions import compose
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def random_reply(m: MessageParserProtocol, message_type: str, update: bool = True) -> str:

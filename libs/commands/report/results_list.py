@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.protocols import MessageParserProtocol
 from libs.commands.graph.entry import graph_setup
 from libs.data import aggregate, loader
 from libs.functions import compose, message
@@ -17,6 +16,8 @@ from libs.utils import formatter
 
 if TYPE_CHECKING:
     import pandas as pd
+
+    from integrations.protocols import MessageParserProtocol
 
 
 def main(m: MessageParserProtocol) -> bool:

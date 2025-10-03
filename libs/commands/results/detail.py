@@ -3,16 +3,19 @@ libs/commands/results/detail.py
 """
 
 import textwrap
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 
 import libs.global_value as g
-from cls.types import GameInfoDict
-from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader, lookup
 from libs.functions import compose, message
 from libs.utils import formatter, textutil
+
+if TYPE_CHECKING:
+    from cls.types import GameInfoDict
+    from integrations.protocols import MessageParserProtocol
 
 
 def aggregation(m: MessageParserProtocol) -> bool:

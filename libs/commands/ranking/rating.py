@@ -2,14 +2,18 @@
 libs/commands/ranking/rating.py
 """
 
+from typing import TYPE_CHECKING
+
 import pandas as pd
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate, loader
 from libs.functions import compose, message
 from libs.utils import converter, formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def aggregation(m: MessageParserProtocol) -> bool:

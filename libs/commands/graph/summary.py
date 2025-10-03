@@ -33,7 +33,7 @@ class GraphParams(TypedDict, total=False):
     horizontal: bool  # 横棒切替許可フラグ
 
 
-def point_plot(m: "MessageParserProtocol") -> bool:
+def point_plot(m: MessageParserProtocol) -> bool:
     """ポイント推移グラフを生成する
 
     Args:
@@ -95,7 +95,7 @@ def point_plot(m: "MessageParserProtocol") -> bool:
     return True
 
 
-def rank_plot(m: "MessageParserProtocol") -> bool:
+def rank_plot(m: MessageParserProtocol) -> bool:
     """順位変動グラフを生成する
 
     Args:

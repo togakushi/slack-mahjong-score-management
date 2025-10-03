@@ -3,13 +3,16 @@ libs/commands/report/matrix.py
 """
 
 import os
+from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from integrations.protocols import MessageParserProtocol
 from libs.data import aggregate
 from libs.functions import message
 from libs.utils import formatter
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def plot(m: MessageParserProtocol) -> bool:

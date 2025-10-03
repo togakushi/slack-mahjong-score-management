@@ -3,17 +3,20 @@ integrations/slack/functions.py
 """
 
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from slack_sdk.errors import SlackApiError
-from slack_sdk.web import SlackResponse
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
-from integrations.protocols import MessageParserProtocol
 from integrations.slack.config import SvcConfig
 from integrations.slack.parser import MessageParser
+
+if TYPE_CHECKING:
+    from slack_sdk.web import SlackResponse
+
+    from integrations.protocols import MessageParserProtocol
 
 
 class SlackFunctions(FunctionsInterface):
