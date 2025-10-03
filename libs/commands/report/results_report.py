@@ -337,7 +337,7 @@ def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
     return imgdata
 
 
-def gen_pdf(m: MessageParserProtocol) -> bool:
+def gen_pdf(m: "MessageParserProtocol") -> bool:
     """成績レポートを生成する
 
     Args:

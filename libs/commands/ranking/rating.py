@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: MessageParserProtocol) -> bool:
+def aggregation(m: "MessageParserProtocol") -> bool:
     """レーティングを集計して返す
 
     Args:
@@ -31,7 +31,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
 
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
-    game_info: GameInfoDict = aggregate.game_info()
+    game_info: "GameInfoDict" = aggregate.game_info()
     ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # pylint: disable=unused-variable  # noqa: F841
 
     if not game_info["game_count"]:  # 検索結果が0件のとき

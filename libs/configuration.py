@@ -264,7 +264,7 @@ def read_memberslist(log=True):
 def register():
     """ディスパッチテーブル登録"""
 
-    def dispatch_help(m: MessageParserProtocol):
+    def dispatch_help(m: "MessageParserProtocol"):
         # ヘルプメッセージ
         m.post.message = compose.msg_help.event_message()
         m.post.ts = m.data.event_ts
@@ -274,46 +274,46 @@ def register():
         m.post.codeblock = True
         m.post.key_header = True
 
-    def dispatch_download(m: MessageParserProtocol):
+    def dispatch_download(m: "MessageParserProtocol"):
         m.post.file_list = [{"成績記録DB": g.cfg.setting.database_file}]
 
-    def dispatch_members_list(m: MessageParserProtocol):
+    def dispatch_members_list(m: "MessageParserProtocol"):
         m.post.message = lookup.textdata.get_members_list()
         m.post.codeblock = True
         m.post.key_header = True
         m.post.ts = m.data.event_ts
 
-    def dispatch_team_list(m: MessageParserProtocol):
+    def dispatch_team_list(m: "MessageParserProtocol"):
         m.post.message = lookup.textdata.get_team_list()
         m.post.codeblock = True
         m.post.key_header = True
         m.post.ts = m.data.event_ts
 
-    def dispatch_member_append(m: MessageParserProtocol):
+    def dispatch_member_append(m: "MessageParserProtocol"):
         m.post.message = member.append(m.argument)
         m.post.key_header = False
 
-    def dispatch_member_remove(m: MessageParserProtocol):
+    def dispatch_member_remove(m: "MessageParserProtocol"):
         m.post.message = member.remove(m.argument)
         m.post.key_header = False
 
-    def dispatch_team_create(m: MessageParserProtocol):
+    def dispatch_team_create(m: "MessageParserProtocol"):
         m.post.message = team.create(m.argument)
         m.post.key_header = False
 
-    def dispatch_team_delete(m: MessageParserProtocol):
+    def dispatch_team_delete(m: "MessageParserProtocol"):
         m.post.message = team.delete(m.argument)
         m.post.key_header = False
 
-    def dispatch_team_append(m: MessageParserProtocol):
+    def dispatch_team_append(m: "MessageParserProtocol"):
         m.post.message = team.append(m.argument)
         m.post.key_header = False
 
-    def dispatch_team_remove(m: MessageParserProtocol):
+    def dispatch_team_remove(m: "MessageParserProtocol"):
         m.post.message = team.remove(m.argument)
         m.post.key_header = False
 
-    def dispatch_team_clear(m: MessageParserProtocol):
+    def dispatch_team_clear(m: "MessageParserProtocol"):
         m.post.message = team.clear()
         m.post.key_header = False
 

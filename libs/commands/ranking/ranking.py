@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: MessageParserProtocol) -> bool:
+def aggregation(m: "MessageParserProtocol") -> bool:
     """ランキングデータを生成
 
     Args:
@@ -30,7 +30,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
         title = "チームランキング"
 
     # データ取得
-    game_info: GameInfoDict = aggregate.game_info()
+    game_info: "GameInfoDict" = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
         m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         return False

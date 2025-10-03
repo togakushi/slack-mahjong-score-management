@@ -107,7 +107,7 @@ def search_range(kind: Literal["str", "list"] = "str", time_pattern=None) -> lis
             return f"{starttime} ～ {endtime}"
 
 
-def aggregation_range(game_info: GameInfoDict, kind: Literal["list", "str"] = "str") -> list | str:
+def aggregation_range(game_info: "GameInfoDict", kind: Literal["list", "str"] = "str") -> list | str:
     """集計範囲を返す（ヘッダ出力用）
 
     Args:

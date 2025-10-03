@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class StandardIOFunctions(FunctionsInterface):
     """標準入出力専用関数"""
 
-    def post_processing(self, m: MessageParserProtocol):
+    def post_processing(self, m: "MessageParserProtocol"):
         """後処理
 
         Args:
@@ -23,7 +23,7 @@ class StandardIOFunctions(FunctionsInterface):
 
         print(ExtDt(float(m.data.event_ts)), m.status.message)
 
-    def get_conversations(self, m: MessageParserProtocol) -> dict:
+    def get_conversations(self, m: "MessageParserProtocol") -> dict:
         """abstractmethod dummy"""
 
         _ = m

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: MessageParserProtocol) -> bool:
+def plot(m: "MessageParserProtocol") -> bool:
     """個人成績のグラフを生成する
 
     Args:
@@ -120,7 +120,7 @@ def plot(m: MessageParserProtocol) -> bool:
     return True
 
 
-def statistics_plot(m: MessageParserProtocol) -> bool:
+def statistics_plot(m: "MessageParserProtocol") -> bool:
     """個人成績の統計グラフを生成する
 
     Args:

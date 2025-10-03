@@ -39,7 +39,7 @@ class ComparisonDict(TypedDict, total=False):
     """保留"""
 
 
-def main(m: MessageParserProtocol) -> None:
+def main(m: "MessageParserProtocol") -> None:
     """データ突合の実施、その結果をslackにpostする"""
 
     g.adapter = cast(g.slack_adapter, g.adapter)
@@ -77,7 +77,7 @@ def main(m: MessageParserProtocol) -> None:
     m.post.key_header = False
 
 
-def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
+def data_comparison(m: "MessageParserProtocol") -> tuple[dict, ComparisonDict]:
     """データ突合処理
 
     Args:
@@ -135,15 +135,15 @@ def data_comparison(m: MessageParserProtocol) -> tuple[dict, ComparisonDict]:
 
 
 def check_omission(
-    m: MessageParserProtocol,
-    slack_data: list[MessageParserProtocol],
+    m: "MessageParserProtocol",
+    slack_data: list["MessageParserProtocol"],
     db_data: DBSearchDict
 ) -> tuple[dict, ComparisonDict]:
     """スコア取りこぼしチェック
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-        slack_data (list[MessageParserProtocol]): slack検索結果
+        slack_data (list["MessageParserProtocol"]): slack検索結果
         db_data (DBSearchDict): DB登録状況
 
     Returns:
@@ -240,15 +240,15 @@ def check_omission(
 
 
 def check_remarks(
-    m: MessageParserProtocol,
-    slack_data: list[MessageParserProtocol],
+    m: "MessageParserProtocol",
+    slack_data: list["MessageParserProtocol"],
     db_data: list
 ) -> tuple[dict, ComparisonDict]:
     """メモの取りこぼしチェック
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-        slack_data (list[MessageParserProtocol]): slack検索結果
+        slack_data (list["MessageParserProtocol"]): slack検索結果
         db_data (list): DB登録状況
 
     Returns:
@@ -304,11 +304,11 @@ def check_remarks(
     return (count, msg)
 
 
-def check_total_score(slack_data: list[MessageParserProtocol]) -> tuple[dict, ComparisonDict]:
+def check_total_score(slack_data: list["MessageParserProtocol"]) -> tuple[dict, ComparisonDict]:
     """素点合計の再チェック
 
     Args:
-        slack_data (list[MessageParserProtocol]): slack検索結果
+        slack_data (list["MessageParserProtocol"]): slack検索結果
 
     Returns:
         tuple[dict, ComparisonDict]: 修正内容(結果)

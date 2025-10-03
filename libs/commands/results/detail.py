@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: MessageParserProtocol) -> bool:
+def aggregation(m: "MessageParserProtocol") -> bool:
     """個人/チーム成績詳細を集計して返す
 
     Args:
@@ -34,7 +34,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
         g.params.update(individual=True)
 
     # --- データ収集
-    game_info: GameInfoDict = aggregate.game_info()
+    game_info: "GameInfoDict" = aggregate.game_info()
     msg_data: dict = {}
     mapping_dict: dict = {}
 
@@ -141,7 +141,7 @@ def aggregation(m: MessageParserProtocol) -> bool:
     return True
 
 
-def get_headline(data: dict, game_info: GameInfoDict, player_name: str) -> dict:
+def get_headline(data: dict, game_info: "GameInfoDict", player_name: str) -> dict:
     """ヘッダメッセージ生成
 
     Args:

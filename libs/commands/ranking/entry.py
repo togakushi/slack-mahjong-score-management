@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def main(m: MessageParserProtocol):
+def main(m: "MessageParserProtocol"):
     """ランキング生成処理エントリーポイント
 
     Args:

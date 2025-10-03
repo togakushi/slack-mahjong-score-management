@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def placeholder(subcom: "SubCommand", m: MessageParserProtocol) -> dict:
+def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
     """プレースホルダに使用する辞書を生成
 
     Args:

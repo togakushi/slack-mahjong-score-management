@@ -330,7 +330,7 @@ def set_command_option(adapter: ServiceAdapter, body: dict) -> tuple[list, list,
     return (argument, app_msg, update_flag)
 
 
-def update_view(adapter: ServiceAdapter, m: MessageParserProtocol, msg: list):
+def update_view(adapter: ServiceAdapter, m: "MessageParserProtocol", msg: list):
     """viewを更新する
 
     Args:

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def command_help(m: MessageParserProtocol):
+def command_help(m: "MessageParserProtocol"):
     """スラッシュコマンド用ヘルプ
 
     Args:

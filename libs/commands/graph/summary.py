@@ -33,7 +33,7 @@ class GraphParams(TypedDict, total=False):
     horizontal: bool  # 横棒切替許可フラグ
 
 
-def point_plot(m: MessageParserProtocol) -> bool:
+def point_plot(m: "MessageParserProtocol") -> bool:
     """ポイント推移グラフを生成する
 
     Args:
@@ -54,7 +54,7 @@ def point_plot(m: MessageParserProtocol) -> bool:
         os.remove(save_file)
 
     # データ収集
-    game_info: GameInfoDict = aggregate.game_info()
+    game_info: "GameInfoDict" = aggregate.game_info()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
@@ -95,7 +95,7 @@ def point_plot(m: MessageParserProtocol) -> bool:
     return True
 
 
-def rank_plot(m: MessageParserProtocol) -> bool:
+def rank_plot(m: "MessageParserProtocol") -> bool:
     """順位変動グラフを生成する
 
     Args:
@@ -106,7 +106,7 @@ def rank_plot(m: MessageParserProtocol) -> bool:
     graph_params = GraphParams()
 
     # データ収集
-    game_info: GameInfoDict = aggregate.game_info()
+    game_info: "GameInfoDict" = aggregate.game_info()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了

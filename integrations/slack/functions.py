@@ -26,14 +26,14 @@ class SlackFunctions(FunctionsInterface):
         super().__init__()
         self.conf = conf
 
-    def get_messages(self, word: str) -> list[MessageParserProtocol]:
+    def get_messages(self, word: str) -> list["MessageParserProtocol"]:
         """slackログからメッセージを検索して返す
 
         Args:
             word (str): 検索するワード
 
         Returns:
-            list[MessageParserProtocol]: 検索した結果
+            list["MessageParserProtocol"]: 検索した結果
         """
 
         # 検索クエリ
@@ -60,7 +60,7 @@ class SlackFunctions(FunctionsInterface):
             matches += response["messages"]["matches"]  # 2ページ目以降
 
         # 必要なデータだけ辞書に格納
-        data: list[MessageParserProtocol] = []
+        data: list["MessageParserProtocol"] = []
         for x in matches:
             if isinstance(x, dict):
                 work_m = MessageParser()
@@ -69,17 +69,17 @@ class SlackFunctions(FunctionsInterface):
 
         return data
 
-    def get_message_details(self, matches: list[MessageParserProtocol]) -> list[MessageParserProtocol]:
+    def get_message_details(self, matches: list["MessageParserProtocol"]) -> list["MessageParserProtocol"]:
         """メッセージ詳細情報取得
 
         Args:
-            matches (list[MessageParserProtocol]): 対象データ
+            matches (list["MessageParserProtocol"]): 対象データ
 
         Returns:
-            list[MessageParserProtocol]: 詳細情報追加データ
+            list["MessageParserProtocol"]: 詳細情報追加データ
         """
 
-        new_matches: list[MessageParserProtocol] = []
+        new_matches: list["MessageParserProtocol"] = []
 
         # 詳細情報取得
         for key in matches:
@@ -101,7 +101,7 @@ class SlackFunctions(FunctionsInterface):
 
         return new_matches
 
-    def get_conversations(self, m: MessageParserProtocol) -> dict:
+    def get_conversations(self, m: "MessageParserProtocol") -> dict:
         """スレッド情報の取得
 
         Args:
@@ -285,14 +285,14 @@ class SlackFunctions(FunctionsInterface):
                     logging.critical(err)
                     logging.critical("ch=%s, ts=%s, icon=%s", ch, ts, icon)
 
-    def pickup_score(self) -> list[MessageParserProtocol]:
+    def pickup_score(self) -> list["MessageParserProtocol"]:
         """過去ログからスコア記録を検索して返す
 
         Returns:
-            list[MessageParserProtocol]: 検索した結果
+            list["MessageParserProtocol"]: 検索した結果
         """
 
-        score_matches: list[MessageParserProtocol] = []
+        score_matches: list["MessageParserProtocol"] = []
 
         # ゲーム結果の抽出
         for match in self.get_messages(g.cfg.setting.keyword):
@@ -308,14 +308,14 @@ class SlackFunctions(FunctionsInterface):
             return self.get_message_details(score_matches)
         return score_matches
 
-    def pickup_remarks(self) -> list[MessageParserProtocol]:
+    def pickup_remarks(self) -> list["MessageParserProtocol"]:
         """slackログからメモを検索して返す
 
         Returns:
-            list[MessageParserProtocol]: 検索した結果
+            list["MessageParserProtocol"]: 検索した結果
         """
 
-        remarks_matches: list[MessageParserProtocol] = []
+        remarks_matches: list["MessageParserProtocol"] = []
 
         # メモの抽出
         for match in self.get_messages(g.cfg.setting.remarks_word):
@@ -335,7 +335,7 @@ class SlackFunctions(FunctionsInterface):
             return self.get_message_details(remarks_matches)
         return remarks_matches
 
-    def post_processing(self, m: MessageParserProtocol):
+    def post_processing(self, m: "MessageParserProtocol"):
         """後処理
 
         Args:

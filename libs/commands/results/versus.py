@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: MessageParserProtocol) -> bool:
+def aggregation(m: "MessageParserProtocol") -> bool:
     """直接対戦結果を集計して返す"""
 
     # 検索動作を合わせる

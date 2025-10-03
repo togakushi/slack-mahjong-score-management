@@ -24,7 +24,7 @@ class AdapterAPI(APIInterface):
         super().__init__()
         self.conf = conf
 
-    def post(self, m: MessageParserProtocol):
+    def post(self, m: "MessageParserProtocol"):
         """メッセージをポストする
 
         Args:

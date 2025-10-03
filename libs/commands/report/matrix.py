@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: MessageParserProtocol) -> bool:
+def plot(m: "MessageParserProtocol") -> bool:
     """対局対戦マトリックスの表示
 
     Args:
@@ -28,7 +28,7 @@ def plot(m: MessageParserProtocol) -> bool:
     """
 
     # データ集計
-    game_info: GameInfoDict = aggregate.game_info()
+    game_info: "GameInfoDict" = aggregate.game_info()
     df = aggregate.matrix_table()
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df.index.tolist())

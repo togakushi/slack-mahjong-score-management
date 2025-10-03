@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def random_reply(m: MessageParserProtocol, message_type: str, update: bool = True) -> str:
+def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = True) -> str:
     """メッセージをランダムに返す
 
     Args:
@@ -73,7 +73,7 @@ def random_reply(m: MessageParserProtocol, message_type: str, update: bool = Tru
     return msg
 
 
-def header(game_info: GameInfoDict, m: MessageParserProtocol, add_text="", indent=1):
+def header(game_info: "GameInfoDict", m: "MessageParserProtocol", add_text="", indent=1):
     """見出し生成
 
     Args:

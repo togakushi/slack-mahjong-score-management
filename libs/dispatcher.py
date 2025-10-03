@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def by_keyword(m: MessageParserProtocol):
+def by_keyword(m: "MessageParserProtocol"):
     """メイン処理"""
 
     logging.info(
@@ -53,7 +53,7 @@ def by_keyword(m: MessageParserProtocol):
     g.adapter.api.post(m)
 
 
-def other_words(word: str, m: MessageParserProtocol):
+def other_words(word: str, m: "MessageParserProtocol"):
     """コマンド以外のワードの処理
 
     Args:
@@ -87,7 +87,7 @@ def other_words(word: str, m: MessageParserProtocol):
                 message_deleted(m)
 
 
-def message_append(detection: GameResult, m: MessageParserProtocol):
+def message_append(detection: GameResult, m: "MessageParserProtocol"):
     """メッセージの追加処理
 
     Args:
@@ -105,7 +105,7 @@ def message_append(detection: GameResult, m: MessageParserProtocol):
     g.adapter.functions.post_processing(m)
 
 
-def message_changed(detection: GameResult, m: MessageParserProtocol):
+def message_changed(detection: GameResult, m: "MessageParserProtocol"):
     """メッセージの変更処理
 
     Args:
@@ -134,7 +134,7 @@ def message_changed(detection: GameResult, m: MessageParserProtocol):
     g.adapter.functions.post_processing(m)
 
 
-def message_deleted(m: MessageParserProtocol):
+def message_deleted(m: "MessageParserProtocol"):
     """メッセージの削除処理
 
     Args:
@@ -149,7 +149,7 @@ def message_deleted(m: MessageParserProtocol):
     g.adapter.functions.post_processing(m)
 
 
-def _thread_check(m: MessageParserProtocol) -> bool:
+def _thread_check(m: "MessageParserProtocol") -> bool:
     """スレッド内判定関数"""
 
     if isinstance(g.adapter, factory.slack_adapter):

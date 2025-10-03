@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: MessageParserProtocol) -> bool:
+def plot(m: "MessageParserProtocol") -> bool:
     """成績上位者を一覧化
 
     Args:

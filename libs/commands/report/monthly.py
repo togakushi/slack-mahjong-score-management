@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: MessageParserProtocol) -> bool:
+def plot(m: "MessageParserProtocol") -> bool:
     """月別ゲーム統計表の生成
 
     Args:

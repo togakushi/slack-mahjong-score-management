@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def main(m: MessageParserProtocol) -> bool:
+def main(m: "MessageParserProtocol") -> bool:
     """成績一覧表を生成する
 
     Args:
@@ -36,7 +36,7 @@ def main(m: MessageParserProtocol) -> bool:
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ取得
-    game_info: GameInfoDict = aggregate.game_info()
+    game_info: "GameInfoDict" = aggregate.game_info()
     df = loader.read_data("REPORT_RESULTS_LIST").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
@@ -77,7 +77,7 @@ def main(m: MessageParserProtocol) -> bool:
     return True
 
 
-def graph_generation(game_info: GameInfoDict, df: "pd.DataFrame", title) -> str:
+def graph_generation(game_info: "GameInfoDict", df: "pd.DataFrame", title) -> str:
     """グラフ生成処理
 
     Args:

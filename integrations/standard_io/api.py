@@ -37,7 +37,7 @@ class AdapterAPI(APIInterface):
                 ret += f"{line}\n"
         return ret.strip()
 
-    def post(self, m: MessageParserProtocol):
+    def post(self, m: "MessageParserProtocol"):
         """メッセージ出力
 
         Args:

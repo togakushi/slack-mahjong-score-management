@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
+def db_insert(detection: GameResult, m: "MessageParserProtocol") -> int:
     """スコアデータをDBに追加する
 
     Args:
@@ -54,7 +54,7 @@ def db_insert(detection: GameResult, m: MessageParserProtocol) -> int:
     return changes
 
 
-def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
+def db_update(detection: GameResult, m: "MessageParserProtocol") -> None:
     """スコアデータを変更する
 
     Args:
@@ -77,7 +77,7 @@ def db_update(detection: GameResult, m: MessageParserProtocol) -> None:
         message.random_reply(m, "restricted_channel")
 
 
-def db_delete(m: MessageParserProtocol):
+def db_delete(m: "MessageParserProtocol"):
     """スコアデータを削除する
 
     Args:
@@ -136,7 +136,7 @@ def db_backup() -> str:
         return "\nデータベースのバックアップに失敗しました。"
 
 
-def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
+def remarks_append(m: "MessageParserProtocol", remarks: list[RemarkDict]) -> None:
     """メモをDBに記録する
 
     Args:
@@ -163,7 +163,7 @@ def remarks_append(m: MessageParserProtocol, remarks: list[RemarkDict]) -> None:
         g.adapter.functions.post_processing(m)
 
 
-def remarks_delete(m: MessageParserProtocol):
+def remarks_delete(m: "MessageParserProtocol"):
     """DBからメモを削除する
 
     Args:
@@ -183,7 +183,7 @@ def remarks_delete(m: MessageParserProtocol):
         g.adapter.functions.post_processing(m)
 
 
-def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
+def remarks_delete_compar(para: dict, m: "MessageParserProtocol") -> None:
     """DBからメモを削除する(突合)
 
     Args:
@@ -205,7 +205,7 @@ def remarks_delete_compar(para: dict, m: MessageParserProtocol) -> None:
     g.adapter.functions.post_processing(m)
 
 
-def check_remarks(m: MessageParserProtocol) -> None:
+def check_remarks(m: "MessageParserProtocol") -> None:
     """メモの内容を拾ってDBに格納する
 
     Args:
@@ -236,7 +236,7 @@ def check_remarks(m: MessageParserProtocol) -> None:
                 remarks_delete(m)
 
 
-def reprocessing_remarks(m: MessageParserProtocol) -> None:
+def reprocessing_remarks(m: "MessageParserProtocol") -> None:
     """スレッドの内容を再処理
 
     Args:
@@ -259,7 +259,7 @@ def reprocessing_remarks(m: MessageParserProtocol) -> None:
                     check_remarks(m)
 
 
-def _score_check(detection: GameResult, m: MessageParserProtocol):
+def _score_check(detection: GameResult, m: "MessageParserProtocol"):
     """スコアデータ格納状態を記録する
 
     Args:
