@@ -4,7 +4,7 @@ integrations/protocols.py
 
 from collections.abc import Mapping
 from dataclasses import dataclass, field, fields, is_dataclass
-from typing import Any, Literal, Protocol, runtime_checkable
+from typing import Any, Literal, Protocol
 
 import pandas as pd
 
@@ -122,7 +122,6 @@ class StatusData(DataMixin):
     """個別メッセージ"""
 
 
-@runtime_checkable
 class MessageParserProtocol(Protocol):
     """メッセージ解析クラス"""
 
