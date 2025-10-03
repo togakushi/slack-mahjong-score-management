@@ -345,8 +345,8 @@ def gen_pdf(m: "MessageParserProtocol") -> bool:
 
     Returns:
         bool: 生成処理結果
-        - **True**: レポート生成
-        - **False**: 対象データなし
+        - *True*: レポート生成
+        - *False*: 対象データなし
     """
 
     if not g.params.get("player_name"):  # レポート対象の指定なし

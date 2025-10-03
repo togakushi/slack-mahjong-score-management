@@ -24,8 +24,8 @@ def plot(m: "MessageParserProtocol") -> bool:
 
     Returns:
         bool: 生成処理結果
-        - **True**: レポート生成
-        - **False**: 対象データなし
+        - *True*: レポート生成
+        - *False*: 対象データなし
     """
 
     # --- データ収集

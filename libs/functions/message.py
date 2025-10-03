@@ -24,8 +24,8 @@ def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = T
         m (MessageParserProtocol): メッセージデータ
         message_type (str): 応答メッセージの種類
         update (bool, optional): メッセージデータを更新する Defaults to True.
-            - **True**: 内容を`m.post.message`にセット + 返値
-            - **False**: 返値のみ
+            - *True*: 内容を`m.post.message`にセット + 返値
+            - *False*: 返値のみ
 
     Returns:
         str: 応答メッセージ(m.post.message)

@@ -33,8 +33,8 @@ class SvcConfig(IntegrationsConfig):
     thread_report: bool = field(default=True)
     """スレッド内にある得点報告の扱い
 
-    - **True**: スレッド内の点数報告も取り込む
-    - **False**: スレッド内の点数報告は無視する
+    - *True*: スレッド内の点数報告も取り込む
+    - *False*: スレッド内の点数報告は無視する
     """
 
     # リアクション文字列

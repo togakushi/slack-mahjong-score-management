@@ -363,8 +363,8 @@ def check_pending(event_ts: str, edited_ts: str = "undetermined") -> bool:
 
     Returns:
         bool: 真偽
-        - **True**: 保留中
-        - **False**: チェック開始
+        - *True*: 保留中
+        - *False*: チェック開始
     """
 
     g.adapter = cast(g.slack_adapter, g.adapter)

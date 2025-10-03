@@ -46,18 +46,18 @@ class IntegrationsConfig(ABC):
 
     badge_degree: bool = field(default=False)
     """プレイしたゲーム数に対して表示される称号
-    - **True**: 表示する
-    - **False**: 表示しない
+    - *True*: 表示する
+    - *False*: 表示しない
     """
     badge_status: bool = field(default=False)
     """勝率に対して付く調子バッジ
-    - **True**: 表示する
-    - **False**: 表示しない
+    - *True*: 表示する
+    - *False*: 表示しない
     """
     badge_grade: bool = field(default=False)
     """段位表示
-    - **True**: 表示する
-    - **False**: 表示しない
+    - *True*: 表示する
+    - *False*: 表示しない
     """
 
     plotting_backend: Literal["matplotlib", "plotly"] = field(default="matplotlib")
@@ -330,8 +330,8 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - **True** : コマンド
-            - **False** : 非コマンド(キーワード呼び出し)
+            - *True* : コマンド
+            - *False* : 非コマンド(キーワード呼び出し)
         """
 
     @property
@@ -341,8 +341,8 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - **True** : botのポスト
-            - **False** : ユーザのポスト
+            - *True* : botのポスト
+            - *False* : ユーザのポスト
         """
 
     @property
@@ -352,8 +352,8 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - **True** : 許可
-            - **False** : 禁止
+            - *True* : 許可
+            - *False* : 禁止
         """
 
     @property
@@ -363,6 +363,6 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - **True** : 存在する(操作禁止ユーザ)
-            - **False** : 存在しない
+            - *True* : 存在する(操作禁止ユーザ)
+            - *False* : 存在しない
         """

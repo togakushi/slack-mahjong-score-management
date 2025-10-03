@@ -74,6 +74,7 @@ class MsgData(DataMixin):
 @dataclass
 class PostData(DataMixin):
     """ポストするデータ"""
+
     headline: dict[str, str] = field(default_factory=dict)
     """ヘッダ文"""
     message: Mapping[str, str | pd.DataFrame] = field(default_factory=dict)
@@ -140,16 +141,16 @@ class MessageParserProtocol(Protocol):
     def is_command(self) -> bool:
         """コマンドとして実行されたか
 
-        - **True**: スラッシュコマンド
-        - **False**: チャンネル内呼び出しキーワード
+        - *True*: スラッシュコマンド
+        - *False*: チャンネル内呼び出しキーワード
         """
 
     @property
     def is_bot(self) -> bool:
         """botによる操作か
 
-        - **True**: botが操作
-        - **False**: ユーザが操作
+        - *True*: botが操作
+        - *False*: ユーザが操作
         """
 
     @property
