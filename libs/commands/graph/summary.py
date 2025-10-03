@@ -382,6 +382,7 @@ def _graph_title(graph_params: GraphParams):
     """
 
     if g.params.get("target_count"):
+        kind = "ymd_o"
         graph_params.update({"xlabel_text": f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
         match graph_params.get("graph_type"):
             case "point":
@@ -393,19 +394,19 @@ def _graph_title(graph_params: GraphParams):
     else:
         match g.params.get("collection"):
             case "daily":
-                date_range_tbl = "ymd_o"
+                kind = "ymd_o"
                 graph_params.update({"xlabel_text": f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
             case "monthly":
-                date_range_tbl = "jym_o"
+                kind = "jym_o"
                 graph_params.update({"xlabel_text": f"集計月（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
             case "yearly":
-                date_range_tbl = "jy_o"
+                kind = "jy_o"
                 graph_params.update({"xlabel_text": f"集計年（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
             case "all":
-                date_range_tbl = "ymdhm"
+                kind = "ymdhm"
                 graph_params.update({"xlabel_text": f"総ゲーム数：{graph_params["total_game_count"]} ゲーム"})
             case _:
-                date_range_tbl = "ymdhm"
+                kind = "ymdhm"
                 if g.params.get("search_word"):
                     graph_params.update({"xlabel_text": f"（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
                 else:
@@ -415,15 +416,15 @@ def _graph_title(graph_params: GraphParams):
         case "point":
             graph_params.update({
                 "ylabel_text": "通算ポイント",
-                "title_text": compose.text_item.date_range(date_range_tbl, "通算ポイント", "ポイント推移"),
+                "title_text": compose.text_item.date_range(kind, "通算ポイント", "ポイント推移"),
             })
         case "rank":
             graph_params.update({
                 "ylabel_text": "順位 (通算ポイント順)",
-                "title_text": compose.text_item.date_range(date_range_tbl, "順位", "順位変動"),
+                "title_text": compose.text_item.date_range(kind, "順位", "順位変動"),
             })
         case "point_hbar":
             graph_params.update({
                 "ylabel_text": "通算ポイント",
-                "title_text": compose.text_item.date_range(date_range_tbl, "通算ポイント", "通算ポイント"),
+                "title_text": compose.text_item.date_range(kind, "通算ポイント", "通算ポイント"),
             })

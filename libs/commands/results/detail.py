@@ -270,7 +270,7 @@ def get_results_simple(mapping_dict: dict) -> pd.DataFrame:
         pd.DataFrame: 戦績データ
     """
 
-    target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
+    target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)
 
     df = loader.read_data("SUMMARY_DETAILS").fillna(value="")
     if g.params.get("anonymous"):

@@ -11,25 +11,25 @@ from typing import Any, Generic, Literal, Type, TypeVar, Union
 from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
                                     StatusData)
 
-ConfigType = TypeVar("ConfigType", bound="IntegrationsConfig")
-APIType = TypeVar("APIType", bound="APIInterface")
-FunctionsType = TypeVar("FunctionsType", bound="FunctionsInterface")
-ParserType = TypeVar("ParserType", bound="MessageParserInterface")
+ConfigT = TypeVar("ConfigT", bound="IntegrationsConfig")
+ApiT = TypeVar("ApiT", bound="APIInterface")
+FunctionsT = TypeVar("FunctionsT", bound="FunctionsInterface")
+ParserT = TypeVar("ParserT", bound="MessageParserInterface")
 
 
-class AdapterInterface(ABC, Generic[ConfigType, APIType, FunctionsType, ParserType]):
+class AdapterInterface(ABC, Generic[ConfigT, ApiT, FunctionsT, ParserT]):
     """アダプタインターフェース"""
 
     interface_type: str
     """サービス識別子"""
 
-    conf: ConfigType
+    conf: ConfigT
     """個別設定データクラス"""
-    api: APIType
+    api: ApiT
     """インターフェース操作APIインスタンス"""
-    functions: FunctionsType
+    functions: FunctionsT
     """サービス専用関数インスタンス"""
-    parser: Type[ParserType]
+    parser: Type[ParserT]
     """メッセージパーサクラス"""
 
 
