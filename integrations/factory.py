@@ -13,17 +13,26 @@ from integrations.web.adapter import ServiceAdapter as web_adapter
 
 
 @overload
-def select_adapter(selected_service: Literal["slack"], conf: AppConfig) -> slack_adapter:
+def select_adapter(
+    selected_service: Literal["slack"],
+    conf: AppConfig
+) -> slack_adapter:
     ...
 
 
 @overload
-def select_adapter(selected_service: Literal["web"], conf: AppConfig) -> std_adapter:
+def select_adapter(
+    selected_service: Literal["web"],
+    conf: AppConfig
+) -> std_adapter:
     ...
 
 
 @overload
-def select_adapter(selected_service: Literal["standard_io"], conf: AppConfig) -> web_adapter:
+def select_adapter(
+    selected_service: Literal["standard_io"],
+    conf: AppConfig
+) -> web_adapter:
     ...
 
 
