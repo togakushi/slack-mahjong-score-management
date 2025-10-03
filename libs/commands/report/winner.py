@@ -16,23 +16,18 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: "MessageParserProtocol") -> bool:
+def plot(m: "MessageParserProtocol"):
     """成績上位者を一覧化
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        bool: 生成処理結果
-        - *True*: レポート生成
-        - *False*: 対象データなし
     """
 
     # --- データ取得
     results_df = loader.read_data("REPORT_WINNER")
     if len(results_df) == 0:
         m.post.headline = {"成績上位": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     # --- 匿名化
     if g.params.get("anonymous"):
@@ -132,4 +127,3 @@ def plot(m: "MessageParserProtocol") -> bool:
 
     fig.savefig(report_file_path)
     m.post.file_list = [{"成績上位者": report_file_path}]
-    return True

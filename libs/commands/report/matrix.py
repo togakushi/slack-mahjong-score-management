@@ -15,16 +15,11 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: "MessageParserProtocol") -> bool:
+def plot(m: "MessageParserProtocol"):
     """対局対戦マトリックスの表示
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        bool: 生成処理結果
-        - *True*: レポート生成
-        - *False*: 対象データなし
     """
 
     # データ集計
@@ -36,7 +31,7 @@ def plot(m: "MessageParserProtocol") -> bool:
 
     if df.empty:
         m.post.headline = {"対局対戦マトリックス": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     file_name = os.path.join(
         g.cfg.setting.work_dir,
@@ -52,4 +47,3 @@ def plot(m: "MessageParserProtocol") -> bool:
 
     m.post.headline = {"対局対戦マトリックス": message.header(game_info, m, "", 1)}
     m.post.file_list = [{"対局対戦マトリックス表": file_path}]
-    return True

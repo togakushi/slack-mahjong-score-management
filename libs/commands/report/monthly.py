@@ -16,16 +16,11 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: "MessageParserProtocol") -> bool:
+def plot(m: "MessageParserProtocol"):
     """月別ゲーム統計表の生成
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        bool: 生成処理結果
-        - *True*: レポート生成
-        - *False*: 対象データなし
     """
 
     # --- データ収集
@@ -34,7 +29,7 @@ def plot(m: "MessageParserProtocol") -> bool:
 
     if len(results) == 0:
         m.post.headline = {"月別ゲーム統計": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     # --- グラフフォント設定
     graphutil.setup()
@@ -104,4 +99,3 @@ def plot(m: "MessageParserProtocol") -> bool:
 
     fig.savefig(report_file_path)
     m.post.file_list = [{"月別ゲーム統計": report_file_path}]
-    return True

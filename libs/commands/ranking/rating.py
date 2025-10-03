@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: "MessageParserProtocol") -> bool:
+def aggregation(m: "MessageParserProtocol"):
     """レーティングを集計して返す
 
     Args:
@@ -36,7 +36,7 @@ def aggregation(m: "MessageParserProtocol") -> bool:
 
     if not game_info["game_count"]:  # 検索結果が0件のとき
         m.post.headline = {"レーティング": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     df_results = loader.read_data("RANKING_RESULTS").set_index("name")
     df_ratings = aggregate.calculation_rating()
@@ -76,7 +76,7 @@ def aggregation(m: "MessageParserProtocol") -> bool:
 
     if df.empty:
         m.post.headline = {"レーティング": message.random_reply(m, "no_target", False)}
-        return False
+        m.status.result = False
 
     df["rank"] = df["rate"].rank(ascending=False, method="dense").astype("int")
     df = formatter.df_rename(df.query("rank <= @ranked").filter(
@@ -101,4 +101,3 @@ def aggregation(m: "MessageParserProtocol") -> bool:
     m.post.file_list = [{"レーティング": save_file}]
     m.post.summarize = False
     m.post.codeblock = True
-    return True

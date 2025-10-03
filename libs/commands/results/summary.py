@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: "MessageParserProtocol") -> bool:
+def aggregation(m: "MessageParserProtocol"):
     """各プレイヤーの通算ポイントを表示
 
     Args:
@@ -54,7 +54,7 @@ def aggregation(m: "MessageParserProtocol") -> bool:
 
     if df_summary.empty:
         m.post.message = {}  # 破棄
-        return False
+        m.status.result = False
 
     # 集計結果
     msg: dict = {}
@@ -121,4 +121,3 @@ def aggregation(m: "MessageParserProtocol") -> bool:
     m.post.file_list = file_list
     m.post.summarize = True
     m.post.codeblock = True
-    return True

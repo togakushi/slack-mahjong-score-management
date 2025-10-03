@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: "MessageParserProtocol") -> bool:
+def aggregation(m: "MessageParserProtocol"):
     """個人/チーム成績詳細を集計して返す
 
     Args:
@@ -53,14 +53,14 @@ def aggregation(m: "MessageParserProtocol") -> bool:
             m.post.headline = {title: message_build(msg_data)}
         else:
             m.post.headline = {title: "登録されていないチームです。"}
-        return False
+        m.status.result = False
 
     result_df = aggregate.game_results()
     record_df = aggregate.ranking_record()
 
     if result_df.empty or record_df.empty:
         m.post.headline = {title: message.random_reply(m, "no_target", False)}
-        return False
+        m.status.result = False
 
     result_df = pd.merge(
         result_df, record_df,
@@ -138,7 +138,6 @@ def aggregation(m: "MessageParserProtocol") -> bool:
 
     m.post.headline = {title: message_build(msg_data)}
     m.post.message = msg
-    return True
 
 
 def get_headline(data: dict, game_info: "GameInfoDict", player_name: str) -> dict:

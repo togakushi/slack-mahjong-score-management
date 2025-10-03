@@ -337,21 +337,16 @@ def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
     return imgdata
 
 
-def gen_pdf(m: "MessageParserProtocol") -> bool:
+def gen_pdf(m: "MessageParserProtocol"):
     """成績レポートを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        bool: 生成処理結果
-        - *True*: レポート生成
-        - *False*: 対象データなし
     """
 
     if not g.params.get("player_name"):  # レポート対象の指定なし
         m.post.headline = {"成績レポート": message.random_reply(m, "no_target", False)}
-        return False
+        m.status.result = False
 
     # 対象メンバーの記録状況
     target_info = lookup.db.member_info(g.params["player_name"])
@@ -359,7 +354,7 @@ def gen_pdf(m: "MessageParserProtocol") -> bool:
 
     if not target_info["game_count"] > 0:  # 記録なし
         m.post.headline = {"成績レポート": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
@@ -408,7 +403,6 @@ def gen_pdf(m: "MessageParserProtocol") -> bool:
     logging.notice("report generation: %s", g.params["player_name"])  # type: ignore
 
     m.post.file_list = [{f"成績レポート({g.params["player_name"]})": str(pdf_path)}]
-    return True
 
 
 def cover_page(style: dict, target_info: dict) -> list:

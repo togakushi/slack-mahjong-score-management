@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: "MessageParserProtocol") -> bool:
+def plot(m: "MessageParserProtocol"):
     """個人成績のグラフを生成する
 
     Args:
@@ -33,7 +33,7 @@ def plot(m: "MessageParserProtocol") -> bool:
 
     if df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
@@ -116,10 +116,9 @@ def plot(m: "MessageParserProtocol") -> bool:
     plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{f"『{player}』の成績": save_file}]
-    return True
 
 
-def statistics_plot(m: "MessageParserProtocol") -> bool:
+def statistics_plot(m: "MessageParserProtocol"):
     """個人成績の統計グラフを生成する
 
     Args:
@@ -132,7 +131,7 @@ def statistics_plot(m: "MessageParserProtocol") -> bool:
 
     if df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     if g.params.get("individual"):  # 個人成績
         player = formatter.name_replace(g.params["player_name"], add_mark=True)
@@ -146,7 +145,7 @@ def statistics_plot(m: "MessageParserProtocol") -> bool:
 
     if player_df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     player_df["sum_point"] = player_df["point"].cumsum()
 
@@ -262,7 +261,6 @@ def statistics_plot(m: "MessageParserProtocol") -> bool:
 
     plt.savefig(save_file, bbox_inches="tight")
     m.post.file_list = [{"個人成績": save_file}]
-    return True
 
 
 def get_data(df: pd.Series, interval: int) -> pd.DataFrame:

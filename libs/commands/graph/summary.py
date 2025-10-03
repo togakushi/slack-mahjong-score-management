@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 class GraphParams(TypedDict, total=False):
     """グラフ生成パラメータ"""
+
     graph_type: Literal["point", "rank", "point_hbar"]
     title_text: str
     xlabel_text: str
@@ -32,7 +33,7 @@ class GraphParams(TypedDict, total=False):
     horizontal: bool  # 横棒切替許可フラグ
 
 
-def point_plot(m: "MessageParserProtocol") -> bool:
+def point_plot(m: "MessageParserProtocol"):
     """ポイント推移グラフを生成する
 
     Args:
@@ -58,7 +59,7 @@ def point_plot(m: "MessageParserProtocol") -> bool:
 
     if target_data.empty:  # 描写対象が0人の場合は終了
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     if g.params.get("search_word"):
         pivot_index = "comment"
@@ -91,10 +92,9 @@ def point_plot(m: "MessageParserProtocol") -> bool:
             plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"ポイント推移": save_file}]
-    return True
 
 
-def rank_plot(m: "MessageParserProtocol") -> bool:
+def rank_plot(m: "MessageParserProtocol"):
     """順位変動グラフを生成する
 
     Args:
@@ -110,7 +110,7 @@ def rank_plot(m: "MessageParserProtocol") -> bool:
 
     if target_data.empty:  # 描写対象が0人の場合は終了
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     if g.params.get("search_word"):
         pivot_index = "comment"
@@ -147,7 +147,6 @@ def rank_plot(m: "MessageParserProtocol") -> bool:
             plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"順位変動": save_file}]
-    return True
 
 
 def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:

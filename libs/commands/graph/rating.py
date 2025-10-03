@@ -17,12 +17,11 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def plot(m: "MessageParserProtocol") -> bool:
+def plot(m: "MessageParserProtocol"):
     """レーティング推移グラフを生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
     """
 
     # データ収集
@@ -31,7 +30,7 @@ def plot(m: "MessageParserProtocol") -> bool:
 
     if df_ratings.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     # 足切り
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
@@ -90,4 +89,3 @@ def plot(m: "MessageParserProtocol") -> bool:
     plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"レーティング推移": save_file}]
-    return True

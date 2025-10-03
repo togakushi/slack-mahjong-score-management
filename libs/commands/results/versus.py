@@ -16,8 +16,12 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: "MessageParserProtocol") -> bool:
-    """直接対戦結果を集計して返す"""
+def aggregation(m: "MessageParserProtocol"):
+    """直接対戦結果を集計して返す
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
 
     # 検索動作を合わせる
     g.params.update(guest_skip=g.params.get("guest_skip2"))
@@ -49,7 +53,7 @@ def aggregation(m: "MessageParserProtocol") -> bool:
 
     if len(df_vs) == 0:  # 検索結果なし
         m.post.headline = {"直接対戦": "対戦記録が見つかりません。"}
-        return False
+        m.status.result = False
     m.post.headline = {"直接対戦": tmpl_header(my_name, vs)}
 
     for vs_name in vs_list:
@@ -120,9 +124,8 @@ def aggregation(m: "MessageParserProtocol") -> bool:
     # 結果
     if len(game_result):
         m.post.message = game_result
-        return True
     m.post.message = {"": "対戦記録が見つかりません。"}
-    return False
+    m.status.result = False
 
 
 def tmpl_header(my_name: str, vs_name: str) -> str:

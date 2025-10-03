@@ -19,16 +19,11 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def main(m: "MessageParserProtocol") -> bool:
+def main(m: "MessageParserProtocol"):
     """成績一覧表を生成する
 
     Args:
         m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        bool: 生成処理結果
-        - *True*: レポート生成
-        - *False*: 対象データなし
     """
 
     # 検索動作を合わせる
@@ -40,7 +35,7 @@ def main(m: "MessageParserProtocol") -> bool:
     df.index = df.index + 1
     if df.empty:
         m.post.headline = {"成績一覧": message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df["name"].unique().tolist())
@@ -73,7 +68,6 @@ def main(m: "MessageParserProtocol") -> bool:
             file_path = graph_generation(game_info, df, title)
 
     m.post.file_list = [{"成績一覧": file_path}]
-    return True
 
 
 def graph_generation(game_info: "GameInfoDict", df: "pd.DataFrame", title) -> str:

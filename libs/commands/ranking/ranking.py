@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def aggregation(m: "MessageParserProtocol") -> bool:
+def aggregation(m: "MessageParserProtocol"):
     """ランキングデータを生成
 
     Args:
@@ -33,12 +33,12 @@ def aggregation(m: "MessageParserProtocol") -> bool:
     game_info: "GameInfoDict" = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
         m.post.headline = {title: message.random_reply(m, "no_hits", False)}
-        return False
+        m.status.result = False
 
     result_df = loader.read_data("RANKING_AGGREGATE")
     if result_df.empty:
         m.post.headline = {title: message.random_reply(m, "no_target", False)}
-        return False
+        m.status.result = False
 
     df = pd.merge(
         result_df, aggregate.ranking_record(),
@@ -161,4 +161,3 @@ def aggregation(m: "MessageParserProtocol") -> bool:
     m.post.message = data
     m.post.key_header = True
     m.post.codeblock = True
-    return True

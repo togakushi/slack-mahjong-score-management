@@ -137,6 +137,12 @@ class StatusData(DataMixin):
     """同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)"""
     rpoint_sum: int = field(default=0)
     """素点合計値格納用"""
+
+    result: bool = field(default=True)
+    """メッセージデータに対する処理結果
+    - *True*: 目的の処理が達成できた
+    - *False*: 何らかの原因で処理が達成できなかった
+    """
     message: str = field(default="")
     """個別メッセージ"""
 
