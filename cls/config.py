@@ -18,6 +18,7 @@ from cls.types import GradeTableDict
 
 class CommonMethodMixin:
     """共通メソッド"""
+
     _section: SectionProxy
 
     def get(self, key: str, fallback: Any = None) -> Any:
@@ -59,6 +60,7 @@ class CommonMethodMixin:
 
 class BaseSection(CommonMethodMixin):
     """共通処理"""
+
     def __init__(self, outer, section_name: str):
         parser = cast(ConfigParser, outer._parser)
         if section_name not in parser:
@@ -119,6 +121,7 @@ class BaseSection(CommonMethodMixin):
 
 class MahjongSection(BaseSection):
     """mahjongセクション初期値"""
+
     rule_version: str = str()
     """ルール判別識別子"""
     origin_point: int = 250
@@ -201,6 +204,7 @@ class SettingSection(BaseSection):
 
 class MemberSection(BaseSection):
     "memberセクション初期値"""
+
     registration_limit: int = 255
     """登録メンバー上限数"""
     character_limit: int = 8
@@ -220,6 +224,7 @@ class MemberSection(BaseSection):
 
 class TeamSection(BaseSection):
     """teamセクション初期値"""
+
     registration_limit: int = 255
     """登録チーム上限数"""
     character_limit: int = 16
@@ -239,6 +244,7 @@ class TeamSection(BaseSection):
 
 class AliasSection(BaseSection):
     """aliasセクション初期値"""
+
     results: list = []
     graph: list = []
     ranking: list = []
@@ -270,6 +276,7 @@ class AliasSection(BaseSection):
 
 class CommentSection(BaseSection):
     """commentセクション初期値"""
+
     group_length: int = 0
     """コメント検索時の集約文字数(固定指定)"""
     search_word: str = ""
@@ -282,6 +289,7 @@ class CommentSection(BaseSection):
 
 class DropItems(BaseSection):
     """非表示項目リスト"""
+
     results: list = []
     ranking: list = []
     report: list = []
@@ -297,9 +305,11 @@ class DropItems(BaseSection):
 
 class BadgeDisplay(BaseSection):
     """バッジ表示"""
+
     @dataclass
     class BadgeGradeSpec:
         """段位"""
+
         table_name: str = field(default=str())
         table: GradeTableDict = field(default_factory=lambda: cast(GradeTableDict, dict))
 
@@ -386,6 +396,7 @@ class SubCommand(BaseSection):
 
 class AppConfig:
     """コンフィグ解析クラス"""
+
     def __init__(self, path: str):
         path = os.path.realpath(path)
         try:

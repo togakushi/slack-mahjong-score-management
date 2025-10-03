@@ -17,7 +17,8 @@ CommandAction = Callable[[Union[str, tuple[str, ...]]], CommandResult]
 
 
 class CommandSpec(TypedDict, total=False):
-    """コマンドマッピング"""
+    """コマンドマッピングテーブル"""
+
     match: list[str]
     action: CommandAction
     type: Literal["int", "str", "sql", "filename"]
@@ -154,6 +155,7 @@ COMMANDS: CommandsDict = {
 @dataclass
 class ParsedCommand:
     """コマンド解析結果"""
+
     flags: dict[str, Any]
     arguments: list[str]
     unknown: list[str]

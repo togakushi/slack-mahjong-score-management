@@ -12,6 +12,7 @@ import pandas as pd
 @dataclass
 class Score:
     """プレイヤー成績"""
+
     name: str = field(default="")
     """プレイヤー名"""
     r_str: str = field(default="")
@@ -49,6 +50,7 @@ class Score:
 
 class GameResult:
     """スコアデータ"""
+
     def __init__(self, **kwargs):
         """ゲーム結果"""
         self.ts: str = ""
@@ -158,9 +160,9 @@ class GameResult:
 
         Args:
             kind (Literal, optional): 表示形式
-                - **simple**: 簡易情報 (Default)
-                - **detail**: 詳細情報
-                - **logging**: ロギング用
+                - *simple*: 簡易情報 (Default)
+                - *detail*: 詳細情報
+                - *logging*: ロギング用
 
         Returns:
             str: スコアデータ
@@ -196,11 +198,11 @@ class GameResult:
 
         Args:
             kind (Literal, optional): 取得内容
-                - **name**: プレイヤー名 (Default)
-                - **str**: 入力された素点情報
-                - **rpoint**: 素点
-                - **point**: ポイント
-                - **rank**: 順位
+                - *name*: プレイヤー名 (Default)
+                - *str*: 入力された素点情報
+                - *rpoint*: 素点
+                - *point*: ポイント
+                - *rank*: 順位
 
         Returns:
             list[str | int | float]: リスト
