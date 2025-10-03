@@ -5,8 +5,7 @@ libs/registry/team.py
 import logging
 
 import libs.global_value as g
-from libs.data import initialization, modify
-from libs import configuration
+from libs.data import initialization, lookup, modify
 from libs.utils import dbutil, formatter, textutil, validator
 
 
@@ -37,7 +36,7 @@ def create(argument: list) -> dict[str, str]:
                 )
                 resultdb.commit()
                 resultdb.close()
-                configuration.read_memberslist()
+                g.team_list = lookup.db.get_team_list()
                 msg = f"チーム「{team_name}」を登録しました。"
                 logging.notice("add new team: %s", team_name)  # type: ignore
 
@@ -74,7 +73,7 @@ def delete(argument: list) -> dict[str, str]:
             )
             resultdb.commit()
             resultdb.close()
-            configuration.read_memberslist()
+            g.team_list = lookup.db.get_team_list()
             msg += f"\nチーム「{team_name}」を削除しました。"
             logging.notice("team delete: %s", team_name)  # type: ignore
 
@@ -132,7 +131,7 @@ def append(argument: list) -> dict[str, str]:
             )
             resultdb.commit()
             resultdb.close()
-            configuration.read_memberslist()
+            g.team_list = lookup.db.get_team_list()
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
             logging.notice("team participation: %s -> %s", team_name, player_name)  # type: ignore
 
@@ -184,7 +183,7 @@ def remove(argument: list) -> dict[str, str]:
             )
             resultdb.commit()
             resultdb.close()
-            configuration.read_memberslist()
+            g.team_list = lookup.db.get_team_list()
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
             logging.notice("team breakaway: %s -> %s", team_name, player_name)  # type: ignore
 
@@ -208,6 +207,7 @@ def clear() -> dict[str, str]:
     resultdb.close()
 
     initialization.initialization_resultdb()
-    configuration.read_memberslist()
+    g.member_list = lookup.db.get_member_list()
+    g.team_list = lookup.db.get_team_list()
 
     return {"全チーム削除": msg}

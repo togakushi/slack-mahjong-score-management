@@ -4,6 +4,7 @@ integrations/web/events/handler.py
 
 import os
 from dataclasses import asdict
+from typing import TYPE_CHECKING
 
 import pandas as pd
 from flask import Blueprint, Flask, abort, render_template, request
@@ -17,8 +18,11 @@ from libs.data import loader, lookup, modify
 from libs.registry import member, team
 from libs.utils import dbutil, formatter
 
+if TYPE_CHECKING:
+    from integrations.web.adapter import ServiceAdapter
 
-def main(adapter: g.web_adapter):
+
+def main(adapter: "ServiceAdapter"):
     """メイン処理"""
 
     app = Flask(

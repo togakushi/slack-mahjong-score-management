@@ -5,8 +5,7 @@ libs/registry/member.py
 import logging
 
 import libs.global_value as g
-from libs.data import modify
-from libs import configuration
+from libs.data import lookup, modify
 from libs.utils import dbutil, textutil, validator
 
 
@@ -93,8 +92,8 @@ def append(argument: list) -> dict:
 
     resultdb.commit()
     resultdb.close()
-    configuration.read_memberslist()
 
+    g.member_list = lookup.db.get_member_list()
     return {"メンバー追加": msg}
 
 
@@ -138,6 +137,6 @@ def remove(argument: list) -> dict:
 
     resultdb.commit()
     resultdb.close()
-    configuration.read_memberslist()
 
+    g.member_list = lookup.db.get_member_list()
     return {"メンバー削除": msg}

@@ -5,6 +5,7 @@ integrations/slack/events/handler.py
 import logging
 import os
 import sys
+from typing import TYPE_CHECKING
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -13,12 +14,14 @@ from slack_sdk.errors import SlackApiError
 
 import libs.dispatcher
 from cls.timekit import ExtendedDatetime as ExtDt
-from integrations.slack.adapter import ServiceAdapter
 from integrations.slack.events.handler_registry import register, register_all
 from integrations.slack.events.home_tab import home
 
+if TYPE_CHECKING:
+    from integrations.slack.adapter import ServiceAdapter
 
-def main(adapter: ServiceAdapter):
+
+def main(adapter: "ServiceAdapter"):
     """メイン処理"""
 
     try:
@@ -36,7 +39,7 @@ def main(adapter: ServiceAdapter):
 
 
 @register
-def register_event_handlers(app, adapter: ServiceAdapter):
+def register_event_handlers(app, adapter: "ServiceAdapter"):
     """イベントAPI"""
 
     m = adapter.parser()

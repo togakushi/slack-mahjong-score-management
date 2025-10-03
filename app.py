@@ -12,8 +12,8 @@ import sys
 from typing import cast
 
 import libs.global_value as g
-from libs.data import initialization
 from libs import configuration
+from libs.data import initialization
 
 if __name__ == "__main__":
     configuration.setup()
@@ -23,12 +23,17 @@ if __name__ == "__main__":
     match g.selected_service:
         case "slack":
             import integrations.slack.events.handler as slack
-            slack.main(cast(g.slack_adapter, g.adapter))
+            from integrations.slack.adapter import \
+                ServiceAdapter as slack_adapter
+            slack.main(cast(slack_adapter, g.adapter))
         case "standard_io":
             import integrations.standard_io.events.handler as standard_io
-            standard_io.main(cast(g.std_adapter, g.adapter))
+            from integrations.standard_io.adapter import \
+                ServiceAdapter as std_adapter
+            standard_io.main(cast(std_adapter, g.adapter))
         case "web":
             import integrations.web.events.handler as webapp
-            webapp.main(cast(g.web_adapter, g.adapter))
+            from integrations.web.adapter import ServiceAdapter as web_adapter
+            webapp.main(cast(web_adapter, g.adapter))
         case _:
             sys.exit()
