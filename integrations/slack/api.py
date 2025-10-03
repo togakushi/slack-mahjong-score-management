@@ -10,17 +10,17 @@ from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
 from integrations.base.interface import APIInterface
-from integrations.slack.config import SvcConfig
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
+    from integrations.slack.config import SvcConfig
 
 
 class AdapterAPI(APIInterface):
     """インターフェースAPI操作クラス"""
 
-    def __init__(self, conf: SvcConfig):
+    def __init__(self, conf: "SvcConfig"):
         super().__init__()
         self.conf = conf
 
