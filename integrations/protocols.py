@@ -26,7 +26,14 @@ class DataMixin:
 class MsgData(DataMixin):
     """ポストされたメッセージデータ"""
 
-    command_type: Literal["results", "graph", "ranking", "rating", "report", "unknown"] = field(default="unknown")
+    command_type: Literal[
+        "results",
+        "graph",
+        "ranking",
+        "rating",
+        "report",
+        "unknown",
+    ] = field(default="unknown")
     """サブコマンド
     - *results*: 成績サマリ
     - *graph*: グラフ生成
@@ -48,7 +55,13 @@ class MsgData(DataMixin):
     """イベント編集タイムスタンプ"""
     channel_id: str = field(default=str())
     """チャンネルID"""
-    channel_type: Literal["channel", "group", "im", "search_messages", "undetermined"] = field(default="undetermined")
+    channel_type: Literal[
+        "channel",
+        "group",
+        "im",
+        "search_messages",
+        "undetermined",
+    ] = field(default="undetermined")
     """チャンネルタイプ
     - *channel*: 通常チャンネル
     - *group*: プライベートチャンネル
@@ -58,7 +71,12 @@ class MsgData(DataMixin):
     """
     user_id: str = field(default=str())
     """ユーザーID"""
-    status: Literal["message_append", "message_changed", "message_deleted", "undetermined"] = field(default="undetermined")
+    status: Literal[
+        "message_append",
+        "message_changed",
+        "message_deleted",
+        "undetermined",
+    ] = field(default="undetermined")
     """イベントステータス
     - *message_append*: 新規ポスト
     - *message_changed*: 編集
