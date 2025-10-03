@@ -9,10 +9,9 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from libs.commands.graph.entry import graph_setup
 from libs.data import aggregate, loader
 from libs.functions import compose, message
-from libs.utils import formatter
+from libs.utils import formatter, graphutil
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -104,7 +103,7 @@ def graph_generation(game_info: "GameInfoDict", df: "pd.DataFrame", title) -> st
     )
 
     # フォント/色彩設定
-    graph_setup()
+    graphutil.setup()
     plt.rcParams["font.size"] = 6
 
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):

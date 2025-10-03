@@ -12,10 +12,9 @@ import plotly.express as px  # type: ignore
 
 import libs.global_value as g
 from cls.types import GameInfoDict
-from libs.commands.graph.entry import graph_setup
 from libs.data import aggregate, loader
 from libs.functions import compose, message
-from libs.utils import formatter, textutil
+from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -215,7 +214,7 @@ def _graph_generation(graph_params: GraphParams):
         args (GraphParams): グラフ生成パラメータ
     """
 
-    graph_setup()
+    graphutil.setup()
     target_data = graph_params["target_data"]
     df = graph_params["pivot"]
 

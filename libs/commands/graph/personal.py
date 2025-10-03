@@ -11,10 +11,9 @@ from matplotlib import gridspec
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.commands.graph.entry import graph_setup
 from libs.data import loader
 from libs.functions import compose, message
-from libs.utils import formatter
+from libs.utils import formatter, graphutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -51,7 +50,7 @@ def plot(m: "MessageParserProtocol") -> bool:
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
     )
 
-    graph_setup()
+    graphutil.setup()
     fig = plt.figure(figsize=(12, 8))
 
     if g.params.get("target_count", 0) == 0:

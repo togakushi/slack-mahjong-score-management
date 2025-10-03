@@ -8,9 +8,9 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from libs.commands.graph.entry import graph_setup
 from libs.data import loader
 from libs.functions import compose, message
+from libs.utils import graphutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -37,7 +37,7 @@ def plot(m: "MessageParserProtocol") -> bool:
         return False
 
     # --- グラフフォント設定
-    graph_setup()
+    graphutil.setup()
     plt.rcParams["font.size"] = 6
 
     # 色彩設定
