@@ -91,7 +91,9 @@ def point_plot(m: "MessageParserProtocol"):
             fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
 
-    m.post.file_list = [{"ポイント推移": save_file}]
+    file_title = graph_params.get("title_text", "").split()[0]
+    m.post.file_list = [{file_title: save_file}]
+    m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
 
 
 def rank_plot(m: "MessageParserProtocol"):
@@ -146,7 +148,9 @@ def rank_plot(m: "MessageParserProtocol"):
             fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
 
-    m.post.file_list = [{"順位変動": save_file}]
+    file_title = graph_params.get("title_text", "").split()[0]
+    m.post.file_list = [{file_title: save_file}]
+    m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
 
 
 def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:

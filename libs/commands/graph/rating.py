@@ -89,3 +89,4 @@ def plot(m: "MessageParserProtocol"):
     plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{"レーティング推移": save_file}]
+    m.post.headline = {"レーティング推移グラフ": message.header(game_info, m)}

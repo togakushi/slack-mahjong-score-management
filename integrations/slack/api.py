@@ -66,14 +66,14 @@ class AdapterAPI(APIInterface):
         # ファイルアップロード
         upload_flg: bool = False
         for attache_file in m.post.file_list:
-            for title, file_path in attache_file.items():
+            for file_title, file_path in attache_file.items():
                 if file_path:
                     upload_flg = True
                     self._call_files_upload(
                         channel=m.data.channel_id,
-                        title=title,
+                        title=file_title,
                         file=file_path,
-                        initial_comment=textwrap.dedent(text),
+                        initial_comment=textwrap.dedent(f"{_header_text(title)}{text.rstrip()}"),
                         thread_ts=m.reply_ts,
                         request_file_info=False,
                     )
