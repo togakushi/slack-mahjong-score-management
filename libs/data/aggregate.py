@@ -297,7 +297,7 @@ def matrix_table() -> pd.DataFrame:
     # 規定打数以下を足切り
     if g.params["stipulated"]:
         for pname in list(l_data.keys()):
-            if sum(x is not None for x in l_data[pname]) <= g.params["stipulated"]:
+            if sum(x is not None for x in l_data[pname]) < g.params["stipulated"]:
                 l_data.pop(pname)
 
     rank_df = pd.DataFrame(
