@@ -81,17 +81,17 @@
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">slack_sdk.web</span><span class="w"> </span><span class="kn">import</span> <span class="n">SlackResponse</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.base.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIInterface</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">integrations.slack.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">SvcConfig</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">converter</span><span class="p">,</span> <span class="n">formatter</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageParserProtocol</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">converter</span><span class="p">,</span> <span class="n">formatter</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageParserProtocol</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.slack.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">SvcConfig</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AdapterAPI</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;インターフェースAPI操作クラス&quot;&quot;&quot;</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="n">SvcConfig</span><span class="p">):</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="s2">&quot;SvcConfig&quot;</span><span class="p">):</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
@@ -259,7 +259,7 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI-21"><a href="#AdapterAPI-21"><span class="linenos"> 21</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AdapterAPI</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
 </span><span id="AdapterAPI-22"><a href="#AdapterAPI-22"><span class="linenos"> 22</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;インターフェースAPI操作クラス&quot;&quot;&quot;</span>
 </span><span id="AdapterAPI-23"><a href="#AdapterAPI-23"><span class="linenos"> 23</span></a>
-</span><span id="AdapterAPI-24"><a href="#AdapterAPI-24"><span class="linenos"> 24</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="n">SvcConfig</span><span class="p">):</span>
+</span><span id="AdapterAPI-24"><a href="#AdapterAPI-24"><span class="linenos"> 24</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="s2">&quot;SvcConfig&quot;</span><span class="p">):</span>
 </span><span id="AdapterAPI-25"><a href="#AdapterAPI-25"><span class="linenos"> 25</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span id="AdapterAPI-26"><a href="#AdapterAPI-26"><span class="linenos"> 26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
 </span><span id="AdapterAPI-27"><a href="#AdapterAPI-27"><span class="linenos"> 27</span></a>
@@ -426,7 +426,7 @@
 
     </div>
     <a class="headerlink" href="#AdapterAPI.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI.__init__-24"><a href="#AdapterAPI.__init__-24"><span class="linenos">24</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="n">SvcConfig</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI.__init__-24"><a href="#AdapterAPI.__init__-24"><span class="linenos">24</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="s2">&quot;SvcConfig&quot;</span><span class="p">):</span>
 </span><span id="AdapterAPI.__init__-25"><a href="#AdapterAPI.__init__-25"><span class="linenos">25</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span id="AdapterAPI.__init__-26"><a href="#AdapterAPI.__init__-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
 </span></pre></div>

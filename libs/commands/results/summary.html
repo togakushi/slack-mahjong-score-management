@@ -73,7 +73,7 @@
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageParserProtocol</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="k">def</span><span class="w"> </span><span class="nf">aggregation</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="k">def</span><span class="w"> </span><span class="nf">aggregation</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;各プレイヤーの通算ポイントを表示</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    Args:</span>
@@ -113,7 +113,7 @@
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="k">if</span> <span class="n">df_summary</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>        <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># 破棄</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="n">m</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="c1"># 集計結果</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -180,7 +180,6 @@
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">file_list</span> <span class="o">=</span> <span class="n">file_list</span>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">summarize</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">codeblock</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -190,13 +189,13 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">aggregation</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">m</span><span class="p">:</span> <span class="n"><a href="../../../integrations/protocols.html#MessageParserProtocol">integrations.protocols.MessageParserProtocol</a></span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+        <span class="name">aggregation</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">m</span><span class="p">:</span> <span class="n"><a href="../../../integrations/protocols.html#MessageParserProtocol">integrations.protocols.MessageParserProtocol</a></span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="aggregation-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#aggregation"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="aggregation-18"><a href="#aggregation-18"><span class="linenos"> 18</span></a><span class="k">def</span><span class="w"> </span><span class="nf">aggregation</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="aggregation-18"><a href="#aggregation-18"><span class="linenos"> 18</span></a><span class="k">def</span><span class="w"> </span><span class="nf">aggregation</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
 </span><span id="aggregation-19"><a href="#aggregation-19"><span class="linenos"> 19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;各プレイヤーの通算ポイントを表示</span>
 </span><span id="aggregation-20"><a href="#aggregation-20"><span class="linenos"> 20</span></a>
 </span><span id="aggregation-21"><a href="#aggregation-21"><span class="linenos"> 21</span></a><span class="sd">    Args:</span>
@@ -236,7 +235,7 @@
 </span><span id="aggregation-55"><a href="#aggregation-55"><span class="linenos"> 55</span></a>
 </span><span id="aggregation-56"><a href="#aggregation-56"><span class="linenos"> 56</span></a>    <span class="k">if</span> <span class="n">df_summary</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
 </span><span id="aggregation-57"><a href="#aggregation-57"><span class="linenos"> 57</span></a>        <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># 破棄</span>
-</span><span id="aggregation-58"><a href="#aggregation-58"><span class="linenos"> 58</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="aggregation-58"><a href="#aggregation-58"><span class="linenos"> 58</span></a>        <span class="n">m</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="aggregation-59"><a href="#aggregation-59"><span class="linenos"> 59</span></a>
 </span><span id="aggregation-60"><a href="#aggregation-60"><span class="linenos"> 60</span></a>    <span class="c1"># 集計結果</span>
 </span><span id="aggregation-61"><a href="#aggregation-61"><span class="linenos"> 61</span></a>    <span class="n">msg</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -303,7 +302,6 @@
 </span><span id="aggregation-122"><a href="#aggregation-122"><span class="linenos">122</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">file_list</span> <span class="o">=</span> <span class="n">file_list</span>
 </span><span id="aggregation-123"><a href="#aggregation-123"><span class="linenos">123</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">summarize</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="aggregation-124"><a href="#aggregation-124"><span class="linenos">124</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">codeblock</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="aggregation-125"><a href="#aggregation-125"><span class="linenos">125</span></a>    <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 

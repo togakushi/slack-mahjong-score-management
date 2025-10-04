@@ -231,18 +231,18 @@
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">badge_degree</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;プレイしたゲーム数に対して表示される称号</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    - *True*: 表示する</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">    - *False*: 表示しない</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="n">badge_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;勝率に対して付く調子バッジ</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">    - *True*: 表示する</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">    - *False*: 表示しない</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">badge_grade</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位表示</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    - *True*: 表示する</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    - *False*: 表示しない</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">plotting_backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;matplotlib&quot;</span><span class="p">,</span> <span class="s2">&quot;plotly&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;matplotlib&quot;</span><span class="p">)</span>
@@ -515,8 +515,8 @@
 </span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>
 </span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a><span class="sd">        Returns:</span>
 </span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a><span class="sd">            - **True** : コマンド</span>
-</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a><span class="sd">            - **False** : 非コマンド(キーワード呼び出し)</span>
+</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a><span class="sd">            - *True* : コマンド</span>
+</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a><span class="sd">            - *False* : 非コマンド(キーワード呼び出し)</span>
 </span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a>
 </span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>    <span class="nd">@property</span>
@@ -526,8 +526,8 @@
 </span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a>
 </span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a><span class="sd">        Returns:</span>
 </span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a><span class="sd">            - **True** : botのポスト</span>
-</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a><span class="sd">            - **False** : ユーザのポスト</span>
+</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a><span class="sd">            - *True* : botのポスト</span>
+</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a><span class="sd">            - *False* : ユーザのポスト</span>
 </span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>
 </span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>    <span class="nd">@property</span>
@@ -537,8 +537,8 @@
 </span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>
 </span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a><span class="sd">        Returns:</span>
 </span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a><span class="sd">            - *True* : 許可</span>
+</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a><span class="sd">            - *False* : 禁止</span>
 </span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>
 </span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a>    <span class="nd">@property</span>
@@ -548,8 +548,8 @@
 </span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>
 </span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a><span class="sd">        Returns:</span>
 </span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="sd">            - **True** : 存在する(操作禁止ユーザ)</span>
-</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a><span class="sd">            - **False** : 存在しない</span>
+</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="sd">            - *True* : 存在する(操作禁止ユーザ)</span>
+</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a><span class="sd">            - *False* : 存在しない</span>
 </span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
@@ -678,18 +678,18 @@
 </span><span id="IntegrationsConfig-47"><a href="#IntegrationsConfig-47"><span class="linenos">47</span></a>
 </span><span id="IntegrationsConfig-48"><a href="#IntegrationsConfig-48"><span class="linenos">48</span></a>    <span class="n">badge_degree</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="IntegrationsConfig-49"><a href="#IntegrationsConfig-49"><span class="linenos">49</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;プレイしたゲーム数に対して表示される称号</span>
-</span><span id="IntegrationsConfig-50"><a href="#IntegrationsConfig-50"><span class="linenos">50</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="IntegrationsConfig-51"><a href="#IntegrationsConfig-51"><span class="linenos">51</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="IntegrationsConfig-50"><a href="#IntegrationsConfig-50"><span class="linenos">50</span></a><span class="sd">    - *True*: 表示する</span>
+</span><span id="IntegrationsConfig-51"><a href="#IntegrationsConfig-51"><span class="linenos">51</span></a><span class="sd">    - *False*: 表示しない</span>
 </span><span id="IntegrationsConfig-52"><a href="#IntegrationsConfig-52"><span class="linenos">52</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="IntegrationsConfig-53"><a href="#IntegrationsConfig-53"><span class="linenos">53</span></a>    <span class="n">badge_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="IntegrationsConfig-54"><a href="#IntegrationsConfig-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;勝率に対して付く調子バッジ</span>
-</span><span id="IntegrationsConfig-55"><a href="#IntegrationsConfig-55"><span class="linenos">55</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="IntegrationsConfig-56"><a href="#IntegrationsConfig-56"><span class="linenos">56</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="IntegrationsConfig-55"><a href="#IntegrationsConfig-55"><span class="linenos">55</span></a><span class="sd">    - *True*: 表示する</span>
+</span><span id="IntegrationsConfig-56"><a href="#IntegrationsConfig-56"><span class="linenos">56</span></a><span class="sd">    - *False*: 表示しない</span>
 </span><span id="IntegrationsConfig-57"><a href="#IntegrationsConfig-57"><span class="linenos">57</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="IntegrationsConfig-58"><a href="#IntegrationsConfig-58"><span class="linenos">58</span></a>    <span class="n">badge_grade</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span><span id="IntegrationsConfig-59"><a href="#IntegrationsConfig-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位表示</span>
-</span><span id="IntegrationsConfig-60"><a href="#IntegrationsConfig-60"><span class="linenos">60</span></a><span class="sd">    - **True**: 表示する</span>
-</span><span id="IntegrationsConfig-61"><a href="#IntegrationsConfig-61"><span class="linenos">61</span></a><span class="sd">    - **False**: 表示しない</span>
+</span><span id="IntegrationsConfig-60"><a href="#IntegrationsConfig-60"><span class="linenos">60</span></a><span class="sd">    - *True*: 表示する</span>
+</span><span id="IntegrationsConfig-61"><a href="#IntegrationsConfig-61"><span class="linenos">61</span></a><span class="sd">    - *False*: 表示しない</span>
 </span><span id="IntegrationsConfig-62"><a href="#IntegrationsConfig-62"><span class="linenos">62</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="IntegrationsConfig-63"><a href="#IntegrationsConfig-63"><span class="linenos">63</span></a>
 </span><span id="IntegrationsConfig-64"><a href="#IntegrationsConfig-64"><span class="linenos">64</span></a>    <span class="n">plotting_backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;matplotlib&quot;</span><span class="p">,</span> <span class="s2">&quot;plotly&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;matplotlib&quot;</span><span class="p">)</span>
@@ -786,8 +786,8 @@
             <div class="docstring"><p>プレイしたゲーム数に対して表示される称号</p>
 
 <ul>
-<li><strong>True</strong>: 表示する</li>
-<li><strong>False</strong>: 表示しない</li>
+<li><em>True</em>: 表示する</li>
+<li><em>False</em>: 表示しない</li>
 </ul>
 </div>
 
@@ -805,8 +805,8 @@
             <div class="docstring"><p>勝率に対して付く調子バッジ</p>
 
 <ul>
-<li><strong>True</strong>: 表示する</li>
-<li><strong>False</strong>: 表示しない</li>
+<li><em>True</em>: 表示する</li>
+<li><em>False</em>: 表示しない</li>
 </ul>
 </div>
 
@@ -824,8 +824,8 @@
             <div class="docstring"><p>段位表示</p>
 
 <ul>
-<li><strong>True</strong>: 表示する</li>
-<li><strong>False</strong>: 表示しない</li>
+<li><em>True</em>: 表示する</li>
+<li><em>False</em>: 表示しない</li>
 </ul>
 </div>
 
@@ -1677,8 +1677,8 @@
 </span><span id="MessageParserInterface-331"><a href="#MessageParserInterface-331"><span class="linenos">331</span></a>
 </span><span id="MessageParserInterface-332"><a href="#MessageParserInterface-332"><span class="linenos">332</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface-333"><a href="#MessageParserInterface-333"><span class="linenos">333</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-334"><a href="#MessageParserInterface-334"><span class="linenos">334</span></a><span class="sd">            - **True** : コマンド</span>
-</span><span id="MessageParserInterface-335"><a href="#MessageParserInterface-335"><span class="linenos">335</span></a><span class="sd">            - **False** : 非コマンド(キーワード呼び出し)</span>
+</span><span id="MessageParserInterface-334"><a href="#MessageParserInterface-334"><span class="linenos">334</span></a><span class="sd">            - *True* : コマンド</span>
+</span><span id="MessageParserInterface-335"><a href="#MessageParserInterface-335"><span class="linenos">335</span></a><span class="sd">            - *False* : 非コマンド(キーワード呼び出し)</span>
 </span><span id="MessageParserInterface-336"><a href="#MessageParserInterface-336"><span class="linenos">336</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="MessageParserInterface-337"><a href="#MessageParserInterface-337"><span class="linenos">337</span></a>
 </span><span id="MessageParserInterface-338"><a href="#MessageParserInterface-338"><span class="linenos">338</span></a>    <span class="nd">@property</span>
@@ -1688,8 +1688,8 @@
 </span><span id="MessageParserInterface-342"><a href="#MessageParserInterface-342"><span class="linenos">342</span></a>
 </span><span id="MessageParserInterface-343"><a href="#MessageParserInterface-343"><span class="linenos">343</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface-344"><a href="#MessageParserInterface-344"><span class="linenos">344</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-345"><a href="#MessageParserInterface-345"><span class="linenos">345</span></a><span class="sd">            - **True** : botのポスト</span>
-</span><span id="MessageParserInterface-346"><a href="#MessageParserInterface-346"><span class="linenos">346</span></a><span class="sd">            - **False** : ユーザのポスト</span>
+</span><span id="MessageParserInterface-345"><a href="#MessageParserInterface-345"><span class="linenos">345</span></a><span class="sd">            - *True* : botのポスト</span>
+</span><span id="MessageParserInterface-346"><a href="#MessageParserInterface-346"><span class="linenos">346</span></a><span class="sd">            - *False* : ユーザのポスト</span>
 </span><span id="MessageParserInterface-347"><a href="#MessageParserInterface-347"><span class="linenos">347</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="MessageParserInterface-348"><a href="#MessageParserInterface-348"><span class="linenos">348</span></a>
 </span><span id="MessageParserInterface-349"><a href="#MessageParserInterface-349"><span class="linenos">349</span></a>    <span class="nd">@property</span>
@@ -1699,8 +1699,8 @@
 </span><span id="MessageParserInterface-353"><a href="#MessageParserInterface-353"><span class="linenos">353</span></a>
 </span><span id="MessageParserInterface-354"><a href="#MessageParserInterface-354"><span class="linenos">354</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface-355"><a href="#MessageParserInterface-355"><span class="linenos">355</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-356"><a href="#MessageParserInterface-356"><span class="linenos">356</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface-357"><a href="#MessageParserInterface-357"><span class="linenos">357</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface-356"><a href="#MessageParserInterface-356"><span class="linenos">356</span></a><span class="sd">            - *True* : 許可</span>
+</span><span id="MessageParserInterface-357"><a href="#MessageParserInterface-357"><span class="linenos">357</span></a><span class="sd">            - *False* : 禁止</span>
 </span><span id="MessageParserInterface-358"><a href="#MessageParserInterface-358"><span class="linenos">358</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="MessageParserInterface-359"><a href="#MessageParserInterface-359"><span class="linenos">359</span></a>
 </span><span id="MessageParserInterface-360"><a href="#MessageParserInterface-360"><span class="linenos">360</span></a>    <span class="nd">@property</span>
@@ -1710,8 +1710,8 @@
 </span><span id="MessageParserInterface-364"><a href="#MessageParserInterface-364"><span class="linenos">364</span></a>
 </span><span id="MessageParserInterface-365"><a href="#MessageParserInterface-365"><span class="linenos">365</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface-366"><a href="#MessageParserInterface-366"><span class="linenos">366</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface-367"><a href="#MessageParserInterface-367"><span class="linenos">367</span></a><span class="sd">            - **True** : 存在する(操作禁止ユーザ)</span>
-</span><span id="MessageParserInterface-368"><a href="#MessageParserInterface-368"><span class="linenos">368</span></a><span class="sd">            - **False** : 存在しない</span>
+</span><span id="MessageParserInterface-367"><a href="#MessageParserInterface-367"><span class="linenos">367</span></a><span class="sd">            - *True* : 存在する(操作禁止ユーザ)</span>
+</span><span id="MessageParserInterface-368"><a href="#MessageParserInterface-368"><span class="linenos">368</span></a><span class="sd">            - *False* : 存在しない</span>
 </span><span id="MessageParserInterface-369"><a href="#MessageParserInterface-369"><span class="linenos">369</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
@@ -1769,8 +1769,8 @@
 </span><span id="MessageParserInterface.is_command-331"><a href="#MessageParserInterface.is_command-331"><span class="linenos">331</span></a>
 </span><span id="MessageParserInterface.is_command-332"><a href="#MessageParserInterface.is_command-332"><span class="linenos">332</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface.is_command-333"><a href="#MessageParserInterface.is_command-333"><span class="linenos">333</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.is_command-334"><a href="#MessageParserInterface.is_command-334"><span class="linenos">334</span></a><span class="sd">            - **True** : コマンド</span>
-</span><span id="MessageParserInterface.is_command-335"><a href="#MessageParserInterface.is_command-335"><span class="linenos">335</span></a><span class="sd">            - **False** : 非コマンド(キーワード呼び出し)</span>
+</span><span id="MessageParserInterface.is_command-334"><a href="#MessageParserInterface.is_command-334"><span class="linenos">334</span></a><span class="sd">            - *True* : コマンド</span>
+</span><span id="MessageParserInterface.is_command-335"><a href="#MessageParserInterface.is_command-335"><span class="linenos">335</span></a><span class="sd">            - *False* : 非コマンド(キーワード呼び出し)</span>
 </span><span id="MessageParserInterface.is_command-336"><a href="#MessageParserInterface.is_command-336"><span class="linenos">336</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
@@ -1783,8 +1783,8 @@
   <p>bool: 真偽値</p>
   
   <ul>
-  <li><strong>True</strong> : コマンド</li>
-  <li><strong>False</strong> : 非コマンド(キーワード呼び出し)</li>
+  <li><em>True</em> : コマンド</li>
+  <li><em>False</em> : 非コマンド(キーワード呼び出し)</li>
   </ul>
 </blockquote>
 </div>
@@ -1807,8 +1807,8 @@
 </span><span id="MessageParserInterface.is_bot-342"><a href="#MessageParserInterface.is_bot-342"><span class="linenos">342</span></a>
 </span><span id="MessageParserInterface.is_bot-343"><a href="#MessageParserInterface.is_bot-343"><span class="linenos">343</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface.is_bot-344"><a href="#MessageParserInterface.is_bot-344"><span class="linenos">344</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.is_bot-345"><a href="#MessageParserInterface.is_bot-345"><span class="linenos">345</span></a><span class="sd">            - **True** : botのポスト</span>
-</span><span id="MessageParserInterface.is_bot-346"><a href="#MessageParserInterface.is_bot-346"><span class="linenos">346</span></a><span class="sd">            - **False** : ユーザのポスト</span>
+</span><span id="MessageParserInterface.is_bot-345"><a href="#MessageParserInterface.is_bot-345"><span class="linenos">345</span></a><span class="sd">            - *True* : botのポスト</span>
+</span><span id="MessageParserInterface.is_bot-346"><a href="#MessageParserInterface.is_bot-346"><span class="linenos">346</span></a><span class="sd">            - *False* : ユーザのポスト</span>
 </span><span id="MessageParserInterface.is_bot-347"><a href="#MessageParserInterface.is_bot-347"><span class="linenos">347</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
@@ -1821,8 +1821,8 @@
   <p>bool: 真偽値</p>
   
   <ul>
-  <li><strong>True</strong> : botのポスト</li>
-  <li><strong>False</strong> : ユーザのポスト</li>
+  <li><em>True</em> : botのポスト</li>
+  <li><em>False</em> : ユーザのポスト</li>
   </ul>
 </blockquote>
 </div>
@@ -1845,8 +1845,8 @@
 </span><span id="MessageParserInterface.check_updatable-353"><a href="#MessageParserInterface.check_updatable-353"><span class="linenos">353</span></a>
 </span><span id="MessageParserInterface.check_updatable-354"><a href="#MessageParserInterface.check_updatable-354"><span class="linenos">354</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface.check_updatable-355"><a href="#MessageParserInterface.check_updatable-355"><span class="linenos">355</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.check_updatable-356"><a href="#MessageParserInterface.check_updatable-356"><span class="linenos">356</span></a><span class="sd">            - **True** : 許可</span>
-</span><span id="MessageParserInterface.check_updatable-357"><a href="#MessageParserInterface.check_updatable-357"><span class="linenos">357</span></a><span class="sd">            - **False** : 禁止</span>
+</span><span id="MessageParserInterface.check_updatable-356"><a href="#MessageParserInterface.check_updatable-356"><span class="linenos">356</span></a><span class="sd">            - *True* : 許可</span>
+</span><span id="MessageParserInterface.check_updatable-357"><a href="#MessageParserInterface.check_updatable-357"><span class="linenos">357</span></a><span class="sd">            - *False* : 禁止</span>
 </span><span id="MessageParserInterface.check_updatable-358"><a href="#MessageParserInterface.check_updatable-358"><span class="linenos">358</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
@@ -1859,8 +1859,8 @@
   <p>bool: 真偽値</p>
   
   <ul>
-  <li><strong>True</strong> : 許可</li>
-  <li><strong>False</strong> : 禁止</li>
+  <li><em>True</em> : 許可</li>
+  <li><em>False</em> : 禁止</li>
   </ul>
 </blockquote>
 </div>
@@ -1883,8 +1883,8 @@
 </span><span id="MessageParserInterface.ignore_user-364"><a href="#MessageParserInterface.ignore_user-364"><span class="linenos">364</span></a>
 </span><span id="MessageParserInterface.ignore_user-365"><a href="#MessageParserInterface.ignore_user-365"><span class="linenos">365</span></a><span class="sd">        Returns:</span>
 </span><span id="MessageParserInterface.ignore_user-366"><a href="#MessageParserInterface.ignore_user-366"><span class="linenos">366</span></a><span class="sd">            bool: 真偽値</span>
-</span><span id="MessageParserInterface.ignore_user-367"><a href="#MessageParserInterface.ignore_user-367"><span class="linenos">367</span></a><span class="sd">            - **True** : 存在する(操作禁止ユーザ)</span>
-</span><span id="MessageParserInterface.ignore_user-368"><a href="#MessageParserInterface.ignore_user-368"><span class="linenos">368</span></a><span class="sd">            - **False** : 存在しない</span>
+</span><span id="MessageParserInterface.ignore_user-367"><a href="#MessageParserInterface.ignore_user-367"><span class="linenos">367</span></a><span class="sd">            - *True* : 存在する(操作禁止ユーザ)</span>
+</span><span id="MessageParserInterface.ignore_user-368"><a href="#MessageParserInterface.ignore_user-368"><span class="linenos">368</span></a><span class="sd">            - *False* : 存在しない</span>
 </span><span id="MessageParserInterface.ignore_user-369"><a href="#MessageParserInterface.ignore_user-369"><span class="linenos">369</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
@@ -1897,8 +1897,8 @@
   <p>bool: 真偽値</p>
   
   <ul>
-  <li><strong>True</strong> : 存在する(操作禁止ユーザ)</li>
-  <li><strong>False</strong> : 存在しない</li>
+  <li><em>True</em> : 存在する(操作禁止ユーザ)</li>
+  <li><em>False</em> : 存在しない</li>
   </ul>
 </blockquote>
 </div>
