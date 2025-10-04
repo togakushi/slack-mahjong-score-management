@@ -9,11 +9,17 @@ help:
 """
 
 import sys
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from libs import configuration
 from libs.data import initialization
+
+if TYPE_CHECKING:
+    from integrations.slack.adapter import ServiceAdapter as slack_adapter
+    from integrations.standard_io.adapter import ServiceAdapter as std_adapter
+    from integrations.web.adapter import ServiceAdapter as web_adapter
+
 
 if __name__ == "__main__":
     configuration.setup()
@@ -23,17 +29,12 @@ if __name__ == "__main__":
     match g.selected_service:
         case "slack":
             import integrations.slack.events.handler as slack
-            from integrations.slack.adapter import \
-                ServiceAdapter as slack_adapter
-            slack.main(cast(slack_adapter, g.adapter))
+            slack.main(cast("slack_adapter", g.adapter))
         case "standard_io":
             import integrations.standard_io.events.handler as standard_io
-            from integrations.standard_io.adapter import \
-                ServiceAdapter as std_adapter
-            standard_io.main(cast(std_adapter, g.adapter))
+            standard_io.main(cast("std_adapter", g.adapter))
         case "web":
             import integrations.web.events.handler as webapp
-            from integrations.web.adapter import ServiceAdapter as web_adapter
-            webapp.main(cast(web_adapter, g.adapter))
+            webapp.main(cast("web_adapter", g.adapter))
         case _:
             sys.exit()

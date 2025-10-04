@@ -5,13 +5,15 @@ libs/data/initialization.py
 import json
 import logging
 import os
-from configparser import ConfigParser
 from importlib.resources import files
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from cls.types import GradeTableDict
 from libs.utils import dbutil
+
+if TYPE_CHECKING:
+    from configparser import ConfigParser
 
 
 def initialization_resultdb() -> None:
@@ -48,9 +50,9 @@ def initialization_resultdb() -> None:
                 logging.notice("migration: table=%s, column=%s", table_name, col_name)  # type: ignore
 
     # wordsテーブル情報読み込み(regulations)
-    if cast(ConfigParser, getattr(g.cfg, "_parser")).has_section("regulations"):
+    if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("regulations"):
         resultdb.execute("delete from words;")
-        for k, v in cast(ConfigParser, getattr(g.cfg, "_parser")).items("regulations"):
+        for k, v in cast("ConfigParser", getattr(g.cfg, "_parser")).items("regulations"):
             match k:
                 case "undefined":
                     g.cfg.undefined_word = int(v)

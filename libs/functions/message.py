@@ -5,7 +5,6 @@ libs/functions/message.py
 import logging
 import random
 import textwrap
-from configparser import ConfigParser
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
@@ -14,6 +13,8 @@ from cls.types import GameInfoDict
 from libs.functions import compose
 
 if TYPE_CHECKING:
+    from configparser import ConfigParser
+
     from integrations.protocols import MessageParserProtocol
 
 
@@ -46,9 +47,9 @@ def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = T
 
     msg = default_message_type.get(message_type, "invalid_argument")
 
-    if cast(ConfigParser, getattr(g.cfg, "_parser")).has_section("custom_message"):
+    if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("custom_message"):
         msg_list = []
-        for key, val in cast(ConfigParser, getattr(g.cfg, "_parser")).items("custom_message"):
+        for key, val in cast("ConfigParser", getattr(g.cfg, "_parser")).items("custom_message"):
             if key.startswith(message_type):
                 msg_list.append(val)
         if msg_list:

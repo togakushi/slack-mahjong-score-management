@@ -15,13 +15,14 @@ import libs.commands.ranking.entry
 import libs.commands.report.entry
 import libs.commands.results.entry
 import libs.global_value as g
-from cls.config import AppConfig, SubCommand
+from cls.config import AppConfig
 from integrations import factory
 from libs.data import lookup
 from libs.functions import compose
 from libs.registry import member, team
 
 if TYPE_CHECKING:
+    from cls.config import SubCommand
     from integrations.protocols import MessageParserProtocol
 
 
@@ -340,7 +341,7 @@ def register():
     for command, ep in dispatch_table.items():
         # 呼び出しキーワード登録
         if hasattr(g.cfg, command):
-            sub_command = cast(SubCommand, getattr(g.cfg, command))
+            sub_command = cast("SubCommand", getattr(g.cfg, command))
             for alias in sub_command.commandword:
                 g.keyword_dispatcher.update({alias: ep})
         # スラッシュコマンド登録

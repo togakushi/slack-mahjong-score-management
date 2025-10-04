@@ -3,14 +3,16 @@ tests/config/test_keyword.py
 """
 
 import sys
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import pytest
 
 import libs.global_value as g
-from cls.config import SubCommand
 from libs import configuration
 from tests.config import param_data
+
+if TYPE_CHECKING:
+    from cls.config import SubCommand
 
 
 @pytest.mark.parametrize(
@@ -23,7 +25,7 @@ def test_keyword(parameter, config, word, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
     configuration.setup()
 
-    conf = cast(SubCommand, getattr(g.cfg, parameter, ""))
+    conf = cast("SubCommand", getattr(g.cfg, parameter, ""))
     assert word in conf.commandword
 
 

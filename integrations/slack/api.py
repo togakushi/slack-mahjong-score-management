@@ -4,16 +4,17 @@ integrations/slack/api.py
 
 import logging
 import textwrap
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 from slack_sdk.errors import SlackApiError
-from slack_sdk.web import SlackResponse
 
 from integrations.base.interface import APIInterface
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
+    from slack_sdk.web import SlackResponse
+
     from integrations.protocols import MessageParserProtocol
     from integrations.slack.config import SvcConfig
 
@@ -140,14 +141,14 @@ class AdapterAPI(APIInterface):
                 thread_ts=m.reply_ts,
             )
 
-    def _call_chat_post_message(self, **kwargs) -> SlackResponse:
+    def _call_chat_post_message(self, **kwargs) -> "SlackResponse":
         """slackにメッセージをポストする
 
         Returns:
             SlackResponse: API response
         """
 
-        res = cast(SlackResponse, {})
+        res = cast("SlackResponse", {})
         if kwargs["thread_ts"] == "0":
             kwargs.pop("thread_ts")
 
@@ -159,14 +160,14 @@ class AdapterAPI(APIInterface):
 
         return res
 
-    def _call_files_upload(self, **kwargs) -> SlackResponse | Any:
+    def _call_files_upload(self, **kwargs) -> "SlackResponse":
         """slackにファイルをアップロードする
 
         Returns:
             SlackResponse | Any: API response
         """
 
-        res = None
+        res = cast("SlackResponse", {})
         if kwargs.get("thread_ts", "0") == "0":
             kwargs.pop("thread_ts")
 

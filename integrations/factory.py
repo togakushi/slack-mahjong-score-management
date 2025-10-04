@@ -2,14 +2,17 @@
 integrations/factory.py
 """
 
-from configparser import ConfigParser
-from typing import Literal, cast, overload
+from typing import TYPE_CHECKING, Literal, cast, overload
 
 from cls.config import AppConfig
-from integrations.base.interface import AdapterInterface
 from integrations.slack.adapter import ServiceAdapter as slack_adapter
 from integrations.standard_io.adapter import ServiceAdapter as std_adapter
 from integrations.web.adapter import ServiceAdapter as web_adapter
+
+if TYPE_CHECKING:
+    from configparser import ConfigParser
+
+    from integrations.base.interface import AdapterInterface
 
 
 @overload
@@ -36,7 +39,7 @@ def select_adapter(
     ...
 
 
-def select_adapter(selected_service: str, conf: AppConfig) -> AdapterInterface:
+def select_adapter(selected_service: str, conf: AppConfig) -> "AdapterInterface":
     """インターフェース選択
 
     Args:
@@ -50,7 +53,7 @@ def select_adapter(selected_service: str, conf: AppConfig) -> AdapterInterface:
         AdapterType: アダプタインターフェース
     """
 
-    parser = cast(ConfigParser, getattr(conf, "_parser"))
+    parser = cast("ConfigParser", getattr(conf, "_parser"))
 
     match selected_service:
         case "slack":
