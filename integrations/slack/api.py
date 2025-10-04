@@ -3,6 +3,7 @@ integrations/slack/api.py
 """
 
 import logging
+import textwrap
 from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
@@ -56,18 +57,11 @@ class AdapterAPI(APIInterface):
         if not m.in_thread:
             m.post.thread = False
 
-        # 見出し
+        # 見出し取得
+        text = ""
+        title = ""
         if m.post.headline:
             title, text = next(iter(m.post.headline.items()))
-            res = self._call_chat_post_message(
-                channel=m.data.channel_id,
-                text=f"{_header_text(title)}{text.rstrip()}",
-                thread_ts=m.reply_ts,
-            )
-            if res.status_code == 200:  # 見出しがある場合はスレッドにする
-                m.post.ts = res.get("ts", "undetermined")
-            else:
-                m.post.ts = "undetermined"
 
         # ファイルアップロード
         upload_flg: bool = False
@@ -79,13 +73,26 @@ class AdapterAPI(APIInterface):
                         channel=m.data.channel_id,
                         title=title,
                         file=file_path,
+                        initial_comment=textwrap.dedent(text),
                         thread_ts=m.reply_ts,
                         request_file_info=False,
                     )
         if upload_flg:
             return  # ファイルをポストしたら終了
 
-        # 本文
+        # 見出しポスト
+        if m.post.headline:
+            res = self._call_chat_post_message(
+                channel=m.data.channel_id,
+                text=f"{_header_text(title)}{text.rstrip()}",
+                thread_ts=m.reply_ts,
+            )
+            if res.status_code == 200:  # 見出しがある場合はスレッドにする
+                m.post.ts = res.get("ts", "undetermined")
+            else:
+                m.post.ts = "undetermined"
+
+        # 本文ポスト
         post_msg: list[str] = []
         for title, msg in m.post.message.items():
             header: str = str()
