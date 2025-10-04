@@ -17,6 +17,7 @@ from libs.utils import dictutil, formatter
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
+    from integrations.slack.adapter import ServiceAdapter
 
 DBSearchDict = dict[str, GameResult]
 
@@ -42,7 +43,7 @@ class ComparisonDict(TypedDict, total=False):
 def main(m: "MessageParserProtocol") -> None:
     """データ突合の実施、その結果をslackにpostする"""
 
-    g.adapter = cast(g.slack_adapter, g.adapter)
+    g.adapter = cast("ServiceAdapter", g.adapter)
 
     if m.data.status == "message_changed":  # 編集イベントは無視
         return
@@ -89,7 +90,7 @@ def data_comparison(m: "MessageParserProtocol") -> tuple[dict, ComparisonDict]:
         - ComparisonDict: slackに返すメッセージ
     """
 
-    g.adapter = cast(g.slack_adapter, g.adapter)
+    g.adapter = cast("ServiceAdapter", g.adapter)
     count: dict = {}
     msg: dict = {}
 
@@ -150,7 +151,7 @@ def check_omission(
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    g.adapter = cast(g.slack_adapter, g.adapter)
+    g.adapter = cast("ServiceAdapter", g.adapter)
     count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
     msg: ComparisonDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
 
@@ -255,7 +256,7 @@ def check_remarks(
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    g.adapter = cast(g.slack_adapter, g.adapter)
+    g.adapter = cast("ServiceAdapter", g.adapter)
 
     count: dict[str, int] = {"remark_mod": 0, "remark_del": 0}
     msg: ComparisonDict = {"remark_mod": "", "remark_del": "", "pending": []}
@@ -314,7 +315,7 @@ def check_total_score(slack_data: list["MessageParserProtocol"]) -> tuple[dict, 
         tuple[dict, ComparisonDict]: 修正内容(結果)
     """
 
-    g.adapter = cast(g.slack_adapter, g.adapter)
+    g.adapter = cast("ServiceAdapter", g.adapter)
 
     count: dict[str, int] = {"invalid_score": 0}
     msg: ComparisonDict = {"invalid_score": "", "pending": []}
@@ -367,7 +368,7 @@ def check_pending(event_ts: str, edited_ts: str = "undetermined") -> bool:
         - *False*: チェック開始
     """
 
-    g.adapter = cast(g.slack_adapter, g.adapter)
+    g.adapter = cast("ServiceAdapter", g.adapter)
 
     now_ts = float(ExtDt().format("ts"))
 
