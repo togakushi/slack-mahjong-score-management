@@ -42,6 +42,8 @@ class SvcConfig(IntegrationsConfig):
     """グラフの表示"""
     view_ranking: bool = field(default=True)
     """ランキングの表示"""
+    view_report: bool = field(default=True)
+    """レポートの表示"""
     management_member: bool = field(default=False)
     """メンバー/チーム編集メニューの表示"""
     management_score: bool = field(default=False)

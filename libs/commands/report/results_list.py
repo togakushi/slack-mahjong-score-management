@@ -68,6 +68,8 @@ def main(m: "MessageParserProtocol"):
             file_path = graph_generation(game_info, df, title)
 
     m.post.file_list = [{"成績一覧": file_path}]
+    m.post.headline = {title: message.header(game_info, m)}
+    m.post.message = {"": df_generation(df)}
 
 
 def graph_generation(game_info: "GameInfoDict", df: "pd.DataFrame", title) -> str:
@@ -81,6 +83,9 @@ def graph_generation(game_info: "GameInfoDict", df: "pd.DataFrame", title) -> st
     Returns:
         str: 生成ファイルパス
     """
+
+    if g.adapter.conf.plotting_backend == "plotly":
+        return ""
 
     df = formatter.df_rename(df.filter(
         items=[
@@ -237,3 +242,30 @@ def csv_generation(df: "pd.DataFrame") -> str:
     df.to_csv(report_file_path)
 
     return report_file_path
+
+
+def df_generation(df: "pd.DataFrame") -> "pd.DataFrame":
+    """テキストテーブル生成
+
+    Args:
+        df (pd.DataFrame): 描写データ
+
+    Returns:
+        pd.DataFrame: 整形データ
+    """
+
+    df = df.filter(
+        items=[
+            "player", "team",
+            "game", "point_sum", "point_avg",
+            "1st_count", "1st(%)",
+            "2nd_count", "2nd(%)",
+            "3rd_count", "3rd(%)",
+            "4th_count", "4th(%)",
+            "rank_avg",
+            "flying_count", "flying(%)",
+            "yakuman_count", "yakuman(%)",
+        ]
+    )
+
+    return formatter.df_rename(df)

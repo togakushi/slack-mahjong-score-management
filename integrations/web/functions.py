@@ -17,12 +17,13 @@ if TYPE_CHECKING:
 class WebFunctions(FunctionsInterface):
     """WebUI専用関数"""
 
-    def to_styled_html(self, df: pd.DataFrame, padding: str) -> str:
+    def to_styled_html(self, df: pd.DataFrame, padding: str, index: bool = False) -> str:
         """データフレームをHTML表に変換
 
         Args:
             df (pd.DataFrame): 変換元データ
             padding (str): パディング
+            index (bool): インデックスの表示
 
         Returns:
             str: HTML表
@@ -30,7 +31,6 @@ class WebFunctions(FunctionsInterface):
 
         styled = (
             df.style
-            .hide(axis="index")
             .format(
                 {
                     "通算": "{:+.1f} pt",
@@ -50,7 +50,11 @@ class WebFunctions(FunctionsInterface):
                     "平均収支": "{:+.1f}",
                     "平均素点": "{:.1f}",
                     "平均順位": "{:.2f}",
+                    # "平順": "{:.2f}",
                     "1位率": "{:.2%}",
+                    "2位率": "{:.2%}",
+                    "3位率": "{:.2%}",
+                    "4位率": "{:.2%}",
                     "連対率": "{:.2%}",
                     "ラス回避率": "{:.2%}",
                     "トビ率": "{:.2%}",
@@ -71,6 +75,8 @@ class WebFunctions(FunctionsInterface):
                 {"selector": "tr:nth-child(even)", "props": [("background-color", "#dfdfdfdf")]},
             ])
         )
+        if not index:
+            styled = styled.hide(axis="index")
 
         ret = styled.to_html()
         ret = re.sub(r" >-(\d+)</td>", r" >▲\1</td>", ret)  # 素点

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  {% include "ui_parts/meta.html" %}
+</head>
+<body>
+  <div class="header_menu">{% include "ui_parts/menu_bar.html" %}</div>
+  <div class="option_menu">
+    <form method="POST" action="">
+      {% include "form_items/range.html" %}
+      {% include "form_items/guest.html" %}
+      <div class="form_item">
+        <label>表示：</label>
+        <label><input type="radio" name="display" value="" {{ "checked" if display == "" else "" }}>個人成績一覧</label>
+        <label><input type="radio" name="display" value="対戦" {{ "checked" if display == "対戦" else "" }}>対局対戦マトリックス</label>
+        <label><input type="radio" name="display" value="統計" {{ "checked" if display == "統計" else "" }}>月別統計データ</label>
+      </div>
+      {% include "form_items/options.html" %}
+      {% include "form_items/submit.html" %}
+    </form>
+  </div>
+  {% block content %}
+    {{ body|safe }}
+  {% endblock %}
+  <div class="footer_menu">{% include "ui_parts/menu_bar.html" %}</div>
+</body>
+</html>

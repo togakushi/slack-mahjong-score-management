@@ -23,6 +23,7 @@ def plot(m: "MessageParserProtocol"):
     """
 
     # データ集計
+    title: str = "対局対戦マトリックス"
     game_info: "GameInfoDict" = aggregate.game_info()
     df = aggregate.matrix_table()
     if g.params.get("anonymous"):
@@ -30,7 +31,7 @@ def plot(m: "MessageParserProtocol"):
         df = df.rename(columns=mapping_dict, index=mapping_dict)
 
     if df.empty:
-        m.post.headline = {"対局対戦マトリックス": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         m.status.result = False
 
     file_name = os.path.join(
@@ -45,5 +46,7 @@ def plot(m: "MessageParserProtocol"):
         file_path = file_name + ".txt"
         df.to_markdown(file_path, tablefmt="outline")
 
-    m.post.headline = {"対局対戦マトリックス": message.header(game_info, m, "", 1)}
-    m.post.file_list = [{"対局対戦マトリックス表": file_path}]
+    m.post.headline = {title: message.header(game_info, m, "", 1)}
+    m.post.message = {"": df}
+    m.post.index = True
+    m.post.file_list = [{title: file_path}]

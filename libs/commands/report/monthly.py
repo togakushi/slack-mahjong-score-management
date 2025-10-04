@@ -24,14 +24,19 @@ def plot(m: "MessageParserProtocol"):
     """
 
     # --- データ収集
+    title: str = "月別ゲーム統計"
     df = loader.read_data("REPORT_MONTHLY")
+    m.post.message = {title: df}
     results = df.transpose().to_dict()
 
     if len(results) == 0:
-        m.post.headline = {"月別ゲーム統計": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         m.status.result = False
 
     # --- グラフフォント設定
+    if g.adapter.conf.plotting_backend == "plotly":
+        return
+
     graphutil.setup()
     plt.rcParams["font.size"] = 6
 
@@ -74,7 +79,7 @@ def plot(m: "MessageParserProtocol"):
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
 
-    plt.title("月別ゲーム統計", fontsize=12)
+    plt.title(title, fontsize=12)
     tb = plt.table(
         colLabels=column_labels,
         colColours=column_color,
@@ -98,4 +103,4 @@ def plot(m: "MessageParserProtocol"):
     )
 
     fig.savefig(report_file_path)
-    m.post.file_list = [{"月別ゲーム統計": report_file_path}]
+    m.post.file_list = [{title: report_file_path}]
