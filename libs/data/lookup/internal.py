@@ -2,7 +2,12 @@
 libs/data/lookup/internal.py
 """
 
+from typing import TYPE_CHECKING, Union, cast
+
 import libs.global_value as g
+
+if TYPE_CHECKING:
+    from configparser import ConfigParser
 
 
 def get_member() -> list:
@@ -63,3 +68,40 @@ def which_team(name: str) -> str | None:
                 team = x["team"]
 
     return team
+
+
+def get_config_value(
+    section: str,
+    name: str,
+    val_type: Union[int, float, bool, str, list, None] = None
+) -> Union[int, float, bool, str, list, None]:
+    """設定値取得
+
+    Args:
+        section (str): セクション名
+        name (str): 項目名
+        val_type (Union[int, float, bool, str, list], optional): 型. Defaults to None
+
+    Returns:
+        Union[int, float, bool, str, list, None]: 取得した値
+    """
+
+    value: Union[int, float, bool, str, list, None] = None
+    parser = cast("ConfigParser", getattr(g.cfg, "_parser"))
+
+    if parser.has_option(section, name):
+        match val_type:
+            case x if x is int:
+                value = parser.getint(section, name)
+            case x if x is float:
+                value = parser.getfloat(section, name)
+            case x if x is bool:
+                value = parser.getboolean(section, name)
+            case x if x is str:
+                value = parser.get(section, name)
+            case x if x is list:
+                value = [x.strip() for x in parser.get(section, name).split(",")]
+            case _:
+                value = parser.get(section, name)
+
+    return value
