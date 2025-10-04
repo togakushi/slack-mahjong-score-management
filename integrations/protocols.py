@@ -96,9 +96,19 @@ class PostData(DataMixin):
     headline: dict[str, str] = field(default_factory=dict)
     """ヘッダ文"""
     message: Mapping[str, str | pd.DataFrame] = field(default_factory=dict)
-    """本文"""
+    """本文
+    識別子(タイトルなど)をキーにした辞書型
+    """
+    index: bool = field(default=False)
+    """本文がDataFrameのときのIndex行の取り扱い
+    - *True*: Index行をデータの一部として扱う
+    - *False*: Index行を無視する
+    """
     summarize: bool = field(default=True)
-    """本文の集約"""
+    """本文が文字列型のとき後続の要素を集約する
+    - *True*: 可能な限り複数の要素をひとつにまとめる
+    - *False*: 要素単位でデータを処理する
+    """
     key_header: bool = field(default=True)
     """辞書のキーを見出しにする"""
     codeblock: bool = field(default=False)

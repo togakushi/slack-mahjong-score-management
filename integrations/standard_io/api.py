@@ -44,6 +44,12 @@ class AdapterAPI(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
+        # ファイル
+        for file_list in m.post.file_list:
+            title, file_path = next(iter(file_list.items()))
+            if file_path:
+                print(f"{title}: {file_path}")
+
         # 見出し
         if m.post.headline:
             title, text = next(iter(m.post.headline.items()))
@@ -53,16 +59,6 @@ class AdapterAPI(APIInterface):
                     print(f"【{title}】")
                 print(textwrap.dedent(text).rstrip())
                 print("=" * 80)
-
-        # ファイル
-        ret_flg: bool = False
-        for file_list in m.post.file_list:
-            title, file_path = next(iter(file_list.items()))
-            if file_path:
-                ret_flg = True
-                print(f"{title}: {file_path}")
-        if ret_flg:
-            return
 
         # 本文
         if m.post.message:
@@ -74,8 +70,8 @@ class AdapterAPI(APIInterface):
                     print(self._text_formatter(msg))
 
                 if isinstance(msg, pd.DataFrame):
-                    fmt = formatter.floatfmt_adjust(msg, index=False)
-                    disp = msg.to_markdown(index=False, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
+                    fmt = formatter.floatfmt_adjust(msg, index=m.post.index)
+                    disp = msg.to_markdown(index=m.post.index, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
                     match title:
                         case "座席データ":
                             disp = disp.replace("0.00", "-.--")
