@@ -109,7 +109,6 @@ def main(adapter: "ServiceAdapter"):
         m.data.text = f"{g.cfg.graph.commandword[0]} {text}"
         libs.dispatcher.by_keyword(m)
 
-        # message = ""
         message = adapter.functions.header_message(m)
 
         try:
