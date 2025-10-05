@@ -202,6 +202,28 @@ def main(adapter: "ServiceAdapter"):
                 message += f"<h2>{k}</h2>\n"
 
             if isinstance(v, pd.DataFrame):
+                if "個人成績一覧" in m.post.headline.keys():
+                    check_column = v.columns.to_list()
+                    multi = [
+                        ("", "名前"),
+                        ("", "ゲーム数"),
+                        ("ポイント", "通算") if {"通算", "平均"}.issubset(check_column) else None,
+                        ("ポイント", "平均") if {"通算", "平均"}.issubset(check_column) else None,
+                        ("1位", "獲得数") if {"1位数", "1位率"}.issubset(check_column) else None,
+                        ("1位", "獲得率") if {"1位数", "1位率"}.issubset(check_column) else None,
+                        ("2位", "獲得数") if {"2位数", "2位率"}.issubset(check_column) else None,
+                        ("2位", "獲得率") if {"2位数", "2位率"}.issubset(check_column) else None,
+                        ("3位", "獲得数") if {"3位数", "3位率"}.issubset(check_column) else None,
+                        ("3位", "獲得率") if {"3位数", "3位率"}.issubset(check_column) else None,
+                        ("4位", "獲得数") if {"4位数", "4位率"}.issubset(check_column) else None,
+                        ("4位", "獲得率") if {"4位数", "4位率"}.issubset(check_column) else None,
+                        ("平均順位", "") if {"平均順位", "平順"} & set(check_column) else None,
+                        ("トビ", "回数") if {"トビ数", "トビ率"}.issubset(check_column) else None,
+                        ("トビ", "率") if {"トビ数", "トビ率"}.issubset(check_column) else None,
+                        ("役満", "和了数") if {"役満和了数", "役満和了率"}.issubset(check_column) else None,
+                        ("役満", "和了率") if {"役満和了数", "役満和了率"}.issubset(check_column) else None,
+                    ]
+                    v.columns = pd.MultiIndex.from_tuples([x for x in multi if x is not None])
                 message += adapter.functions.to_styled_html(v, padding, m.post.index)
             elif isinstance(v, str):
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
