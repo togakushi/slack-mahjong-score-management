@@ -11,12 +11,24 @@ from itertools import chain
 from math import ceil
 from pathlib import Path
 from types import UnionType
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, TypeAlias, Union
+
+from cls.types import GradeTableDict
 
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
-    from cls.types import GradeTableDict
+SubClassType: TypeAlias = Union[
+    "MahjongSection",
+    "SettingSection",
+    "MemberSection",
+    "TeamSection",
+    "AliasSection",
+    "CommentSection",
+    "DropItems",
+    "BadgeDisplay",
+    "SubCommand",
+]
 
 
 class CommonMethodMixin:
@@ -38,7 +50,7 @@ class CommonMethodMixin:
 
     def getboolean(self, key: str, fallback: bool = False) -> bool:
         """真偽値の取得"""
-        return cast(bool, self._section.getboolean(key, fallback))
+        return self._section.getboolean(key, fallback)
 
     def getlist(self, key: str) -> list:
         """リストの取得"""
@@ -64,8 +76,8 @@ class CommonMethodMixin:
 class BaseSection(CommonMethodMixin):
     """共通処理"""
 
-    def __init__(self, outer, section_name: str):
-        parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: SubClassType, section_name: str):
+        parser = outer._parser
         if section_name not in parser:
             return
         self._section = parser[section_name]
@@ -146,8 +158,8 @@ class MahjongSection(BaseSection):
     regulations_type2: list = []
     """メモで役満として扱う単語リスト(カンマ区切り)"""
 
-    def __init__(self, outer, section_name):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig", section_name):
+        self._parser = outer._parser
         self.__dict__.update(super().default_load())
         super().__init__(self, section_name)
 
@@ -182,8 +194,8 @@ class SettingSection(BaseSection):
     work_dir: str = "work"
     """生成したファイルを保存するディレクトリ"""
 
-    def __init__(self, outer, section_name: str):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig", section_name: str):
+        self._parser = outer._parser
         super().__init__(self, section_name)
 
         self.work_dir = os.path.realpath(os.path.join(outer.script_dir, self.work_dir))
@@ -217,8 +229,8 @@ class MemberSection(BaseSection):
     guest_name: str = "ゲスト"
     """未登録メンバー名称"""
 
-    def __init__(self, outer, section_name: str):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig", section_name: str):
+        self._parser = outer._parser
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
@@ -237,8 +249,8 @@ class TeamSection(BaseSection):
     friendly_fire: bool = True
     """チームメイトが同卓しているゲームを集計対象に含めるか"""
 
-    def __init__(self, outer, section_name: str):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig", section_name: str):
+        self._parser = outer._parser
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
@@ -263,17 +275,16 @@ class AliasSection(BaseSection):
     team_list: list = []
     team_clear: list = []
 
-    def __init__(self, outer, section_name: str):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig", section_name: str):
+        self._parser = outer._parser
         super().__init__(self, section_name)
 
         # デフォルト値として自身と同じ名前のコマンドを登録する #
-        parser = cast(ConfigParser, outer._parser)
         for k in self.to_dict():
             x = getattr(self, k)
             if isinstance(x, list):
                 x.append(k)
-        list_data = [x.strip() for x in str(parser.get("alias", "del", fallback="")).split(",")] + ["del"]
+        list_data = [x.strip() for x in str(self._parser.get("alias", "del", fallback="")).split(",")] + ["del"]
         self.delete.extend(list_data)
 
 
@@ -285,8 +296,8 @@ class CommentSection(BaseSection):
     search_word: str = ""
     """コメント検索時の検索文字列(固定指定)"""
 
-    def __init__(self, outer, section_name: str):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig", section_name: str):
+        self._parser = outer._parser
         super().__init__(self, section_name)
 
 
@@ -297,8 +308,8 @@ class DropItems(BaseSection):
     ranking: list = []
     report: list = []
 
-    def __init__(self, outer):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig"):
+        self._parser = outer._parser
         super().__init__(self, "")
 
         self.results = [x.strip() for x in self._parser.get("results", "dropitems", fallback="").split(",")]
@@ -314,12 +325,12 @@ class BadgeDisplay(BaseSection):
         """段位"""
 
         table_name: str = field(default=str())
-        table: "GradeTableDict" = field(default_factory=lambda: cast("GradeTableDict", dict))
+        table: GradeTableDict = field(default_factory=GradeTableDict)
 
     grade: "BadgeGradeSpec" = BadgeGradeSpec()
 
-    def __init__(self, outer):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig"):
+        self._parser = outer._parser
         super().__init__(self, "")
 
         self.grade.table_name = self._parser.get("grade", "table_name", fallback="")
@@ -376,8 +387,8 @@ class SubCommand(BaseSection):
     filename: str = ""
     interval: int = 80
 
-    def __init__(self, outer, section_name: str, default: str):
-        self._parser = cast(ConfigParser, outer._parser)
+    def __init__(self, outer: "AppConfig", section_name: str, default: str):
+        self._parser = outer._parser
         self.section = section_name
         super().__init__(self, section_name)
 
