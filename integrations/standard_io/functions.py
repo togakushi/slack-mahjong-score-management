@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-class StandardIOFunctions(FunctionsInterface):
+class SvcFunctions(FunctionsInterface):
     """標準入出力専用関数"""
 
     def post_processing(self, m: "MessageParserProtocol"):

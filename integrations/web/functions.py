@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from integrations.base.interface import MessageParserProtocol
 
 
-class WebFunctions(FunctionsInterface):
+class SvcFunctions(FunctionsInterface):
     """WebUI専用関数"""
 
     def to_styled_html(self, df: pd.DataFrame, padding: str, index: bool = False) -> str:

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from integrations.slack.config import SvcConfig
 
 
-class SlackFunctions(FunctionsInterface):
+class SvcFunctions(FunctionsInterface):
     """slack専用関数"""
 
     def __init__(self, conf: "SvcConfig"):
