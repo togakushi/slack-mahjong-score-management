@@ -28,11 +28,11 @@ class Score:
         """有効なデータを持っているかチェック"""
         return self != Score()
 
-    def to_dict(self, prefix: str | None = None) -> dict:
+    def to_dict(self, prefix: Optional[str] = None) -> dict:
         """データを辞書で返す
 
         Args:
-            prefix (str | None, optional): キーに付与する接頭辞. Defaults to None.
+            prefix (Optional[str], optional): キーに付与する接頭辞. Defaults to None.
 
         Returns:
             dict: 返却する辞書

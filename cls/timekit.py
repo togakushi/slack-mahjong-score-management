@@ -34,7 +34,8 @@ Examples:
 
 from datetime import datetime
 from functools import total_ordering
-from typing import TYPE_CHECKING, List, Literal, TypeAlias, Union, cast
+from typing import (TYPE_CHECKING, List, Literal, Optional, TypeAlias, Union,
+                    cast)
 
 from dateutil.relativedelta import relativedelta
 
@@ -169,11 +170,11 @@ class ExtendedDatetime:
     FormatType: TypeAlias = FormatType
     DelimiterStyle: TypeAlias = DelimiterStyle
 
-    def __init__(self, value: AcceptedType | None = None, **relativedelta_kwargs):
+    def __init__(self, value: Optional[AcceptedType] = None, **relativedelta_kwargs):
         """ExtendedDatetimeの初期化
 
         Args:
-            value (AcceptedType | None, optional): 引数
+            value (Optional[AcceptedType], optional): 引数. Defaults to None.
                 - None: 現在時刻(`datetime.now()`)で初期化
             relativedelta_kwargs (dict): 初期化時にrelativedelta()に渡す引数
         """

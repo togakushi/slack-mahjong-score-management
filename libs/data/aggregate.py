@@ -3,18 +3,21 @@ libs/data/aggregate.py
 """
 
 import logging
+from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 import pandas as pd
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import GameInfoDict
 from libs.data import loader
 from libs.utils import formatter
 
+if TYPE_CHECKING:
+    from cls.types import GameInfoDict
 
-def game_info() -> GameInfoDict:
+
+def game_info() -> "GameInfoDict":
     """指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
 
     Returns:
@@ -23,7 +26,7 @@ def game_info() -> GameInfoDict:
 
     # データ収集
     df = loader.read_data("GAME_INFO")
-    ret: GameInfoDict = {
+    ret: "GameInfoDict" = {
         "game_count": int(df["count"].to_string(index=False)),
         "first_game": ExtDt(),
         "last_game": ExtDt(),
@@ -54,14 +57,14 @@ def game_info() -> GameInfoDict:
 
 
 def game_summary(
-    filter_items: list | None = None,
-    drop_items: list | None = None
+    filter_items: Optional[list] = None,
+    drop_items: Optional[list] = None,
 ) -> pd.DataFrame:
     """ゲーム結果をサマライズする
 
     Args:
-        filter_items (list | None, optional): 抽出するカラム. Defaults to None.
-        drop_items (list | None, optional): 除外するカラム. Defaults to None.
+        filter_items (Optional[list], optional): 抽出するカラム. Defaults to None.
+        drop_items (Optional[list], optional): 除外するカラム. Defaults to None.
 
     Returns:
         pd.DataFrame: 集計結果

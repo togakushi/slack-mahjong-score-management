@@ -3,7 +3,7 @@ cls/types.py
 """
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Callable, TypedDict
+from typing import TYPE_CHECKING, Callable, Optional, TypedDict
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime
@@ -18,9 +18,9 @@ class GameInfoDict(TypedDict):
     """記録されている最初のゲーム時間"""
     last_game: "ExtendedDatetime"
     """記録されている最後のゲーム時間"""
-    first_comment: str | None
+    first_comment: Optional[str]
     """記録されている最初のゲームコメント"""
-    last_comment: str | None
+    last_comment: Optional[str]
     """記録されている最後のゲームコメント"""
 
 

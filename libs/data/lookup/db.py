@@ -4,21 +4,24 @@ libs/data/lookup/db.py
 
 from contextlib import closing
 from datetime import datetime
+from typing import TYPE_CHECKING, Optional
 
 import pandas as pd
 
 import libs.global_value as g
 from cls.score import GameResult
-from cls.types import TeamDataDict
 from libs.data import loader
 from libs.utils import dbutil
 
+if TYPE_CHECKING:
+    from cls.types import TeamDataDict
 
-def get_member_id(name: str | None = None) -> dict:
+
+def get_member_id(name: Optional[str] = None) -> dict:
     """メンバーのIDを返す
 
     Args:
-        name (str | None, optional): 指定メンバーのみ. Defaults to None.
+        name (Optional[str], optional): 指定メンバーのみ. Defaults to None.
 
     Returns:
         dict: メンバー名とIDのペア
@@ -95,14 +98,14 @@ def get_member_list() -> dict[str, str]:
     return member_list
 
 
-def get_team_list() -> list[TeamDataDict]:
+def get_team_list() -> list["TeamDataDict"]:
     """チーム情報取得
 
     Returns:
-        list[TeamDataDict]: チーム情報
+        list["TeamDataDict"]: チーム情報
     """
 
-    ret: list[TeamDataDict] = []
+    ret: list["TeamDataDict"] = []
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute(
             """

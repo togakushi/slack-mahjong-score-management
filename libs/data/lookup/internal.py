@@ -73,7 +73,7 @@ def which_team(name: str) -> str | None:
 def get_config_value(
     section: str,
     name: str,
-    val_type: Union[int, float, bool, str, list, None] = None
+    val_type: Union[int, float, bool, str, list, None] = None,
 ) -> Union[int, float, bool, str, list, None]:
     """設定値取得
 

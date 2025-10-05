@@ -11,7 +11,7 @@ from itertools import chain
 from math import ceil
 from pathlib import Path
 from types import UnionType
-from typing import TYPE_CHECKING, Any, TypeAlias, Union
+from typing import TYPE_CHECKING, Any, Optional, TypeAlias, Union
 
 from cls.types import GradeTableDict
 
@@ -184,7 +184,7 @@ class SettingSection(BaseSection):
 
     database_file: str = "mahjong.db"
     """成績管理データベースファイル名"""
-    backup_dir: str | None = None
+    backup_dir: Optional[str] = None
     """バックアップ先ディレクトリ"""
 
     font_file: str = "ipaexg.ttf"

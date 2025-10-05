@@ -6,7 +6,8 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, field, fields
-from typing import TYPE_CHECKING, Any, Generic, Literal, Type, TypeVar, Union
+from typing import (TYPE_CHECKING, Any, Generic, Literal, Optional, Type,
+                    TypeVar, Union)
 
 from integrations.protocols import MsgData, PostData, StatusData
 
@@ -39,7 +40,7 @@ class AdapterInterface(ABC, Generic[ConfigT, ApiT, FunctionsT, ParserT]):
 class IntegrationsConfig(ABC):
     """個別設定値"""
 
-    config_file: ConfigParser | None = field(default=None)
+    config_file: Optional[ConfigParser] = field(default=None)
     """設定ファイル"""
 
     # 共通設定

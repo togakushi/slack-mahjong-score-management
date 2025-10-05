@@ -6,7 +6,7 @@ libs/utils/converter.py
 import os
 import re
 import textwrap
-from typing import cast
+from typing import Optional, cast
 
 import pandas as pd
 from tabulate import tabulate
@@ -15,14 +15,19 @@ import libs.global_value as g
 from libs.utils import formatter, textutil
 
 
-def save_output(df: pd.DataFrame, kind: str, filename: str, headline: str | None = None) -> str:
+def save_output(
+    df: pd.DataFrame,
+    kind: str,
+    filename: str,
+    headline: Optional[str] = None,
+) -> str:
     """指定されたフォーマットでdfを保存する
 
     Args:
         df (pd.DataFrame): 描写対象データ
         kind (str): フォーマット
         filename (str): 保存ファイル名
-        headline (str | None, optional): 集計情報（ヘッダコメント）. Defaults to None.
+        headline (Optional[str], optional): 集計情報（ヘッダコメント）. Defaults to None.
 
     Returns:
         str: 保存したファイルパス

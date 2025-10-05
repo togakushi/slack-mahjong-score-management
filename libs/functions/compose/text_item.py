@@ -2,7 +2,7 @@
 libs/functions/compose/text_item.py
 """
 
-from typing import Literal, cast
+from typing import Literal, Optional, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -107,7 +107,10 @@ def search_range(kind: Literal["str", "list"] = "str", time_pattern=None) -> lis
             return f"{starttime} ～ {endtime}"
 
 
-def aggregation_range(game_info: "GameInfoDict", kind: Literal["list", "str"] = "str") -> list | str:
+def aggregation_range(
+    game_info: "GameInfoDict",
+    kind: Literal["list", "str"] = "str",
+) -> list | str:
     """集計範囲を返す（ヘッダ出力用）
 
     Args:
@@ -136,14 +139,18 @@ def aggregation_range(game_info: "GameInfoDict", kind: Literal["list", "str"] = 
             return f"{first} ～ {last}"
 
 
-def date_range(kind: str, prefix_a: str | None = None, prefix_b: str | None = None) -> str:
+def date_range(
+    kind: str,
+    prefix_a: Optional[str] = None,
+    prefix_b: Optional[str] = None,
+) -> str:
     """日付範囲文字列
 
     Args:
         kind (str): ExtendedDatetimeのformatメソッドに渡す引数
             - *_o:  表示にondayを使用
-        prefix_a (str | None, optional): 単独で返った時の接頭辞. Defaults to None.
-        prefix_b (str | None, optional): 範囲で返った時の接頭辞. Defaults to None.
+        prefix_a (Optional[str], optional): 単独で返った時の接頭辞. Defaults to None.
+        prefix_b (Optional[str], optional): 範囲で返った時の接頭辞. Defaults to None.
 
     Returns:
         str: 生成文字列
