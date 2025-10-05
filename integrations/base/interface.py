@@ -6,10 +6,12 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, field, fields
-from typing import Any, Generic, Literal, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, Literal, Type, TypeVar, Union
 
-from integrations.protocols import (MessageParserProtocol, MsgData, PostData,
-                                    StatusData)
+from integrations.protocols import MsgData, PostData, StatusData
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 ConfigT = TypeVar("ConfigT", bound="IntegrationsConfig")
 ApiT = TypeVar("ApiT", bound="APIInterface")

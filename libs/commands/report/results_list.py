@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from cls.types import GameInfoDict
 from libs.data import aggregate, loader
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil
@@ -16,6 +15,7 @@ from libs.utils import formatter, graphutil
 if TYPE_CHECKING:
     import pandas as pd
 
+    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
 
 

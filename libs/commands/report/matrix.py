@@ -6,12 +6,12 @@ import os
 from typing import TYPE_CHECKING
 
 import libs.global_value as g
-from cls.types import GameInfoDict
 from libs.data import aggregate
 from libs.functions import message
 from libs.utils import formatter
 
 if TYPE_CHECKING:
+    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
 
 
