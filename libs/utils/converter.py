@@ -241,7 +241,7 @@ def df_to_remarks(df: pd.DataFrame) -> dict:
 
 
 def df_to_count(df: pd.DataFrame, title: str, indent: int = 0) -> dict:
-    """_summary_
+    """DataFrameからメモの回数表示を生成
 
     Args:
         df (pd.DataFrame): 対象データ

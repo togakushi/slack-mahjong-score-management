@@ -25,6 +25,7 @@ class SvcFunctions(FunctionsInterface):
     def __init__(self, conf: "SvcConfig"):
         super().__init__()
         self.conf = conf
+        """個別設定"""
 
     def get_messages(self, word: str) -> list["MessageParserProtocol"]:
         """slackログからメッセージを検索して返す

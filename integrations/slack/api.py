@@ -25,6 +25,7 @@ class AdapterAPI(APIInterface):
     def __init__(self, conf: "SvcConfig"):
         super().__init__()
         self.conf = conf
+        """個別設定"""
 
     def post(self, m: "MessageParserProtocol"):
         """メッセージをポストする

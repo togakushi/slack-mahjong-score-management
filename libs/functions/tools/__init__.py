@@ -6,7 +6,7 @@ Exports:
 - `libs.functions.tools.recalculation`: ポイント再計算
 - `libs.functions.tools.unification`: 未登録プレイヤーの名前を一括置換
 - `libs.functions.tools.vacuum`: バキューム実行
-- `libs.functions.tools.`
+- `libs.functions.tools.gen_test_data`: テスト用データ生成ツール
 """
 
 from libs.functions.tools import (comparison, gen_test_data, member,
