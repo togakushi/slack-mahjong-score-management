@@ -22,7 +22,7 @@ def main(m: "MessageParserProtocol"):
     if m.data.status != "message_append":
         return
 
-    m.data.command_type = "report"
+    m.status.command_type = "report"
     g.params = dictutil.placeholder(g.cfg.report, m)
 
     if len(g.params["player_list"]) == 1:  # 成績レポート

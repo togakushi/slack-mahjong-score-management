@@ -25,8 +25,8 @@ def main(m: "MessageParserProtocol"):
     g.params = dictutil.placeholder(g.cfg.ranking, m)
 
     if g.params.get("rating"):  # レーティング
-        m.data.command_type = "rating"
+        m.status.command_type = "rating"
         ranking.rating.aggregation(m)
     else:  # ランキング
-        m.data.command_type = "ranking"
+        m.status.command_type = "ranking"
         ranking.ranking.aggregation(m)

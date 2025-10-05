@@ -125,20 +125,20 @@ def register_summary_handlers(app, adapter: ServiceAdapter):
 
         match adapter.conf.tab_var.get("operation"):
             case "point":
-                m.data.command_type = "graph"
+                m.status.command_type = "graph"
                 graph.summary.point_plot(m)
                 adapter.api.post(m)
             case "rank":
-                m.data.command_type = "graph"
+                m.status.command_type = "graph"
                 graph.summary.rank_plot(m)
                 adapter.api.post(m)
             case "rating":
-                m.data.command_type = "rating"
+                m.status.command_type = "rating"
                 g.params["command"] = "ranking"
                 ranking.rating.aggregation(m)
                 adapter.api.post(m)
             case _:
-                m.data.command_type = "results"
+                m.status.command_type = "results"
                 results.summary.aggregation(m)
                 adapter.api.post(m)
 

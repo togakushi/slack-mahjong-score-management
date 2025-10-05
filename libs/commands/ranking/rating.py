@@ -23,7 +23,7 @@ def aggregation(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    m.data.command_type = "rating"  # 更新
+    m.status.command_type = "rating"  # 更新
 
     # 情報ヘッダ
     add_text: str = ""

@@ -26,22 +26,6 @@ class DataMixin:
 class MsgData(DataMixin):
     """ポストされたメッセージデータ"""
 
-    command_type: Literal[
-        "results",
-        "graph",
-        "ranking",
-        "rating",
-        "report",
-        "unknown",
-    ] = field(default="unknown")
-    """サブコマンド
-    - *results*: 成績サマリ
-    - *graph*: グラフ生成
-    - *ranking*: ランキング
-    - *rating*: レーティング
-    - *report*: レポート
-    - *unknown*: 未定義
-    """
     text: str = field(default=str())
     """本文"""
     event_ts: str = field(default="undetermined")
@@ -123,6 +107,23 @@ class PostData(DataMixin):
 @dataclass
 class StatusData(DataMixin):
     """処理した結果"""
+
+    command_type: Literal[
+        "results",
+        "graph",
+        "ranking",
+        "rating",
+        "report",
+        "unknown",
+    ] = field(default="unknown")
+    """実行(する/した)サブコマンド
+    - *results*: 成績サマリ
+    - *graph*: グラフ生成
+    - *ranking*: ランキング
+    - *rating*: レーティング
+    - *report*: レポート
+    - *unknown*: 未定義
+    """
 
     command_flg: bool = field(default=False)
     """コマンドとして実行されたか

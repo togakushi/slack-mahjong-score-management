@@ -22,7 +22,7 @@ def main(m: "MessageParserProtocol"):
     if m.data.status != "message_append":
         return
 
-    m.data.command_type = "results"
+    m.status.command_type = "results"
     g.params = dictutil.placeholder(g.cfg.results, m)
 
     # モード切り替え

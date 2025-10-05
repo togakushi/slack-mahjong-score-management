@@ -107,7 +107,7 @@ class AdapterAPI(APIInterface):
                     post_msg.append(f"{header}{msg.rstrip()}\n")
 
             if isinstance(msg, pd.DataFrame):
-                match m.data.command_type:
+                match m.status.command_type:
                     case "results":
                         match title:
                             case "通算ポイント" | "ポイント差分":

@@ -132,7 +132,7 @@ def register_personal_handlers(app, adapter: ServiceAdapter):
         app_msg.pop()
         app_msg.append("集計完了")
 
-        m.data.command_type = "results"
+        m.status.command_type = "results"
         results.detail.aggregation(m)
         adapter.api.post(m)
 

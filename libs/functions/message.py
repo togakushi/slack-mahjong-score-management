@@ -102,7 +102,7 @@ def header(game_info: "GameInfoDict", m: "MessageParserProtocol", add_text="", i
     if game_info["game_count"] == 0:
         msg += f"{random_reply(m, "no_hits")}"
     else:
-        match m.data.command_type:
+        match m.status.command_type:
             case "results":
                 if g.params.get("target_count"):  # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1

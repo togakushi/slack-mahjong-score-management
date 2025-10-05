@@ -22,7 +22,7 @@ def main(m: "MessageParserProtocol"):
     if m.data.status != "message_append":
         return
 
-    m.data.command_type = "graph"
+    m.status.command_type = "graph"
     g.params = dictutil.placeholder(g.cfg.graph, m)
 
     if len(g.params["player_list"]) == 1:  # 対象がひとり

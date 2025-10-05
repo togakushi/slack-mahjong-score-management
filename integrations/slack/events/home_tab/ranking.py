@@ -123,7 +123,7 @@ def register_ranking_handlers(app, adapter: ServiceAdapter):
         app_msg.pop()
         app_msg.append("集計完了")
 
-        m.data.command_type = "ranking"
+        m.status.command_type = "ranking"
         ranking.ranking.aggregation(m)
         adapter.api.post(m)
 
