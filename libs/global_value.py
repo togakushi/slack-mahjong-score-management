@@ -11,15 +11,16 @@ if TYPE_CHECKING:
     from integrations.standard_io.adapter import ServiceAdapter as std_adapter
     from integrations.web.adapter import ServiceAdapter as web_adapter
 
+# --- グローバル変数 ---
 selected_service: Literal["slack", "web", "standard_io"] = "slack"
-"""選択サービス"""
+"""連携先サービス"""
 adapter: Union["slack_adapter", "web_adapter", "std_adapter"]
 """インターフェースアダプタ"""
 
 keyword_dispatcher: dict[str, Callable[..., Any]] = {}
-"""キーワード呼び出しディスパッチャー"""
+"""キーワード呼び出しディスパッチテーブル"""
 command_dispatcher: dict[str, Callable[..., Any]] = {}
-"""スラッシュコマンドディスパッチャー"""
+"""スラッシュコマンドディスパッチテーブル"""
 
 args: "Namespace"
 """コマンドライン引数"""

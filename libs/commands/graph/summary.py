@@ -211,7 +211,7 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def _graph_generation(graph_params: GraphParams):
-    """グラフ生成共通処理
+    """グラフ生成共通処理(matplotlib用)
 
     Args:
         args (GraphParams): グラフ生成パラメータ
@@ -308,7 +308,7 @@ def _graph_generation(graph_params: GraphParams):
 
 
 def _graph_generation_plotly(graph_params: GraphParams):
-    """グラフ生成共通処理(plotly専用)
+    """グラフ生成共通処理(plotly用)
 
     Args:
         args (GraphParams): グラフ生成パラメータ
