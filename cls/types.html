@@ -158,7 +158,7 @@
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypedDict</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypedDict</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">cls.timekit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtendedDatetime</span>
@@ -173,9 +173,9 @@
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録されている最初のゲーム時間&quot;&quot;&quot;</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">last_game</span><span class="p">:</span> <span class="s2">&quot;ExtendedDatetime&quot;</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録されている最後のゲーム時間&quot;&quot;&quot;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">first_comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">first_comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録されている最初のゲームコメント&quot;&quot;&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">last_comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">last_comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録されている最後のゲームコメント&quot;&quot;&quot;</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
@@ -254,9 +254,9 @@
 </span><span id="GameInfoDict-19"><a href="#GameInfoDict-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録されている最初のゲーム時間&quot;&quot;&quot;</span>
 </span><span id="GameInfoDict-20"><a href="#GameInfoDict-20"><span class="linenos">20</span></a>    <span class="n">last_game</span><span class="p">:</span> <span class="s2">&quot;ExtendedDatetime&quot;</span>
 </span><span id="GameInfoDict-21"><a href="#GameInfoDict-21"><span class="linenos">21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録されている最後のゲーム時間&quot;&quot;&quot;</span>
-</span><span id="GameInfoDict-22"><a href="#GameInfoDict-22"><span class="linenos">22</span></a>    <span class="n">first_comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="GameInfoDict-22"><a href="#GameInfoDict-22"><span class="linenos">22</span></a>    <span class="n">first_comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="GameInfoDict-23"><a href="#GameInfoDict-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録されている最初のゲームコメント&quot;&quot;&quot;</span>
-</span><span id="GameInfoDict-24"><a href="#GameInfoDict-24"><span class="linenos">24</span></a>    <span class="n">last_comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="GameInfoDict-24"><a href="#GameInfoDict-24"><span class="linenos">24</span></a>    <span class="n">last_comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="GameInfoDict-25"><a href="#GameInfoDict-25"><span class="linenos">25</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録されている最後のゲームコメント&quot;&quot;&quot;</span>
 </span></pre></div>
 
@@ -306,7 +306,7 @@
                             </div>
                             <div id="GameInfoDict.first_comment" class="classattr">
                                 <div class="attr variable">
-            <span class="name">first_comment</span><span class="annotation">: str | None</span>
+            <span class="name">first_comment</span><span class="annotation">: Optional[str]</span>
 
         
     </div>
@@ -319,7 +319,7 @@
                             </div>
                             <div id="GameInfoDict.last_comment" class="classattr">
                                 <div class="attr variable">
-            <span class="name">last_comment</span><span class="annotation">: str | None</span>
+            <span class="name">last_comment</span><span class="annotation">: Optional[str]</span>
 
         
     </div>

@@ -180,11 +180,11 @@
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なデータを持っているかチェック&quot;&quot;&quot;</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>        <span class="k">return</span> <span class="bp">self</span> <span class="o">!=</span> <span class="n">Score</span><span class="p">()</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;データを辞書で返す</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">        Args:</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">            prefix (str | None, optional): キーに付与する接頭辞. Defaults to None.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">            prefix (Optional[str], optional): キーに付与する接頭辞. Defaults to None.</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">        Returns:</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">            dict: 返却する辞書</span>
@@ -548,11 +548,11 @@
 </span><span id="Score-29"><a href="#Score-29"><span class="linenos">29</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;有効なデータを持っているかチェック&quot;&quot;&quot;</span>
 </span><span id="Score-30"><a href="#Score-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="bp">self</span> <span class="o">!=</span> <span class="n">Score</span><span class="p">()</span>
 </span><span id="Score-31"><a href="#Score-31"><span class="linenos">31</span></a>
-</span><span id="Score-32"><a href="#Score-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="Score-32"><a href="#Score-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 </span><span id="Score-33"><a href="#Score-33"><span class="linenos">33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;データを辞書で返す</span>
 </span><span id="Score-34"><a href="#Score-34"><span class="linenos">34</span></a>
 </span><span id="Score-35"><a href="#Score-35"><span class="linenos">35</span></a><span class="sd">        Args:</span>
-</span><span id="Score-36"><a href="#Score-36"><span class="linenos">36</span></a><span class="sd">            prefix (str | None, optional): キーに付与する接頭辞. Defaults to None.</span>
+</span><span id="Score-36"><a href="#Score-36"><span class="linenos">36</span></a><span class="sd">            prefix (Optional[str], optional): キーに付与する接頭辞. Defaults to None.</span>
 </span><span id="Score-37"><a href="#Score-37"><span class="linenos">37</span></a>
 </span><span id="Score-38"><a href="#Score-38"><span class="linenos">38</span></a><span class="sd">        Returns:</span>
 </span><span id="Score-39"><a href="#Score-39"><span class="linenos">39</span></a><span class="sd">            dict: 返却する辞書</span>
@@ -682,17 +682,17 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">to_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+        <span class="name">to_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
 
                 <label class="view-source-button" for="Score.to_dict-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Score.to_dict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Score.to_dict-32"><a href="#Score.to_dict-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Score.to_dict-32"><a href="#Score.to_dict-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 </span><span id="Score.to_dict-33"><a href="#Score.to_dict-33"><span class="linenos">33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;データを辞書で返す</span>
 </span><span id="Score.to_dict-34"><a href="#Score.to_dict-34"><span class="linenos">34</span></a>
 </span><span id="Score.to_dict-35"><a href="#Score.to_dict-35"><span class="linenos">35</span></a><span class="sd">        Args:</span>
-</span><span id="Score.to_dict-36"><a href="#Score.to_dict-36"><span class="linenos">36</span></a><span class="sd">            prefix (str | None, optional): キーに付与する接頭辞. Defaults to None.</span>
+</span><span id="Score.to_dict-36"><a href="#Score.to_dict-36"><span class="linenos">36</span></a><span class="sd">            prefix (Optional[str], optional): キーに付与する接頭辞. Defaults to None.</span>
 </span><span id="Score.to_dict-37"><a href="#Score.to_dict-37"><span class="linenos">37</span></a>
 </span><span id="Score.to_dict-38"><a href="#Score.to_dict-38"><span class="linenos">38</span></a><span class="sd">        Returns:</span>
 </span><span id="Score.to_dict-39"><a href="#Score.to_dict-39"><span class="linenos">39</span></a><span class="sd">            dict: 返却する辞書</span>
@@ -714,7 +714,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>prefix (str | None, optional):</strong>  キーに付与する接頭辞. Defaults to None.</li>
+<li><strong>prefix (Optional[str], optional):</strong>  キーに付与する接頭辞. Defaults to None.</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
