@@ -432,27 +432,43 @@ class AppConfig:
 
         # set base directory
         self.script_dir = os.path.realpath(str(Path(__file__).resolve().parents[1]))
+        """スクリプトが保存されているディレクトリパス"""
         self.config_dir = os.path.dirname(os.path.realpath(str(path)))
+        """設定ファイルが保存されているディレクトリパス"""
 
         # 設定値取り込み
         self.mahjong = MahjongSection(self, "mahjong")
+        """mahjongセクション設定値"""
         self.setting = SettingSection(self, "setting")
+        """settingセクション設定値"""
         self.member = MemberSection(self, "member")
+        """memberセクション設定値"""
         self.team = TeamSection(self, "team")
+        """teamセクション設定値"""
         self.alias = AliasSection(self, "alias")
+        """aliasセクション設定値"""
         self.comment = CommentSection(self, "comment")
+        """commentセクション設定値"""
         self.dropitems = DropItems(self)  # 非表示項目
+        """非表示項目"""
         self.badge = BadgeDisplay(self)  # バッジ表示
+        """バッジ設定"""
 
         # サブコマンド
         self.results = SubCommand(self, "results", "麻雀成績")
+        """resultsセクション設定値"""
         self.graph = SubCommand(self, "graph", "麻雀グラフ")
+        """graphセクション設定値"""
         self.ranking = SubCommand(self, "ranking", "麻雀ランキング")
+        """rankingセクション設定値"""
         self.report = SubCommand(self, "report", "麻雀成績レポート")
+        """reportセクション設定値"""
 
         # 共通設定値
         self.undefined_word: int = 0
+        """レギュレーションワードテーブルに登録されていないワードの種別"""
         self.aggregate_unit: str = ""
+        """日付範囲デフォルト値"""
 
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
