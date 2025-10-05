@@ -328,18 +328,18 @@ class MessageParserInterface(ABC):
     @property
     @abstractmethod
     def is_command(self) -> bool:
-        """コマンドで実行されているか
+        """コマンドで実行されているかチェック
 
         Returns:
             bool: 真偽値
-            - *True* : コマンド
+            - *True* : コマンド実行
             - *False* : 非コマンド(キーワード呼び出し)
         """
 
     @property
     @abstractmethod
     def is_bot(self) -> bool:
-        """botのポストか
+        """botのポストかチェック
 
         Returns:
             bool: 真偽値
@@ -361,7 +361,7 @@ class MessageParserInterface(ABC):
     @property
     @abstractmethod
     def ignore_user(self) -> bool:
-        """ignore_useridに存在するユーザか
+        """ignore_useridに存在するユーザかチェック
 
         Returns:
             bool: 真偽値

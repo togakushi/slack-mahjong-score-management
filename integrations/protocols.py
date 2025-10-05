@@ -126,7 +126,7 @@ class StatusData(DataMixin):
     """
 
     command_flg: bool = field(default=False)
-    """コマンドとして実行されたか
+    """コマンドとして実行されたかチェック
     - *True*: コマンド実行
     - *False*: キーワード呼び出し
     """
@@ -174,7 +174,7 @@ class MessageParserProtocol(Protocol):
 
     @property
     def is_command(self) -> bool:
-        """コマンドとして実行されたか
+        """コマンドとして実行されたかチェック
 
         - *True*: スラッシュコマンド
         - *False*: チャンネル内呼び出しキーワード
@@ -182,7 +182,7 @@ class MessageParserProtocol(Protocol):
 
     @property
     def is_bot(self) -> bool:
-        """botによる操作か
+        """botによる操作かチェック
 
         - *True*: botが操作
         - *False*: ユーザが操作
