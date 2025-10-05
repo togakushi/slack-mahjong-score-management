@@ -85,6 +85,25 @@ class WebFunctions(FunctionsInterface):
 
         return ret
 
+    def header_message(self, m: "MessageParserProtocol") -> str:
+        """ヘッダ情報取得
+
+        Args:
+            m (MessageParserProtocol): メッセージデータ
+
+        Returns:
+            str: 取得文字列
+        """
+
+        message = ""
+        if m.post.headline:
+            title, headline = next(iter(m.post.headline.items()))
+            if not title.isnumeric() and title:
+                message = f"<h1>{title}</h1>\n"
+            message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
+
+        return message
+
     def set_cookie(self, html: str, req: Request, data: dict) -> Response:
         """cookie保存
 

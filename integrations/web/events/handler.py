@@ -76,12 +76,7 @@ def main(adapter: "ServiceAdapter"):
         m.data.text = f"{g.cfg.results.commandword[0]} {text}"
         libs.dispatcher.by_keyword(m)
 
-        message = ""
-        title, headline = next(iter(m.post.headline.items()))
-        if not title.isnumeric() and title:
-            message = f"<h1>{title}</h1>\n"
-        message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
-
+        message = adapter.functions.header_message(m)
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
                 message += f"<h2>{k}</h2>\n"
@@ -114,7 +109,9 @@ def main(adapter: "ServiceAdapter"):
         m.data.text = f"{g.cfg.graph.commandword[0]} {text}"
         libs.dispatcher.by_keyword(m)
 
-        message = ""
+        # message = ""
+        message = adapter.functions.header_message(m)
+
         try:
             _, headline = next(iter(m.post.headline.items()))
             for file_list in m.post.file_list:
@@ -143,12 +140,7 @@ def main(adapter: "ServiceAdapter"):
         m.data.text = f"{g.cfg.ranking.commandword[0]} {text}"
         libs.dispatcher.by_keyword(m)
 
-        message = ""
-        title, headline = next(iter(m.post.headline.items()))
-        if not title.isnumeric() and title:
-            message = f"<h1>{title}</h1>\n"
-        message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
-
+        message = adapter.functions.header_message(m)
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
                 message += f"<h2>{k}</h2>\n"
@@ -174,12 +166,7 @@ def main(adapter: "ServiceAdapter"):
         m.data.text = f"{g.cfg.results.commandword[0]} {text}"
         libs.dispatcher.by_keyword(m)
 
-        message = ""
-        title, headline = next(iter(m.post.headline.items()))
-        if not title.isnumeric() and title:
-            message = f"<h1>{title}</h1>\n"
-        message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
-
+        message = adapter.functions.header_message(m)
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
                 message += f"<h2>{k}</h2>\n"
@@ -210,13 +197,7 @@ def main(adapter: "ServiceAdapter"):
         m.data.text = f"{g.cfg.report.commandword[0]} {text}"
         libs.dispatcher.by_keyword(m)
 
-        message = ""
-        if m.post.headline:
-            title, headline = next(iter(m.post.headline.items()))
-            if not title.isnumeric() and title:
-                message = f"<h1>{title}</h1>\n"
-            message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
-
+        message = adapter.functions.header_message(m)
         for k, v in m.post.message.items():
             if not k.isnumeric() and k:
                 message += f"<h2>{k}</h2>\n"

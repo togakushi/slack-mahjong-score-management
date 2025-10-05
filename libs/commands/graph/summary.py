@@ -308,7 +308,7 @@ def _graph_generation(graph_params: GraphParams):
 
 
 def _graph_generation_plotly(graph_params: GraphParams):
-    """グラフ生成共通処理
+    """グラフ生成共通処理(plotly専用)
 
     Args:
         args (GraphParams): グラフ生成パラメータ
@@ -324,7 +324,6 @@ def _graph_generation_plotly(graph_params: GraphParams):
         df_t.columns = ["point"]
         df_t["rank"] = df_t["point"].rank(ascending=False, method="dense").astype("int")
         df_t["positive"] = df_t["point"] > 0
-
         fig = px.bar(
             df_t,
             orientation="h",
@@ -333,45 +332,50 @@ def _graph_generation_plotly(graph_params: GraphParams):
             x=df_t["point"],
             y=target_data["legend"],
         )
-        fig.update_traces(
-            hovertemplate="%{y}<extra></extra>"
-        )
-        fig.update_layout(
-            xaxis={
-                "title": {"text": graph_params["xlabel_text"]}
-            },
-            yaxis={
-                "autorange": "reversed",
-                "side": "right",
-                "title": None,
-            },
-            showlegend=False,
-        )
     else:
         _graph_title(graph_params)
-        # 凡例用ラベル生成
-        df.columns = target_data["legend"].to_list()
-
+        df.columns = target_data["legend"].to_list()  # 凡例用ラベル生成
         fig = px.line(df)
-        fig.update_layout(
-            xaxis={
-                "title": {"text": graph_params["xlabel_text"]}
-            },
-            yaxis={
-                "title": {"text": graph_params["ylabel_text"]}
-            },
-            legend={"title": "プレイヤー名"}
-        )
 
+    # グラフレイアウト調整
     fig.update_layout(
         width=1280,
         height=800,
         title={
             "text": graph_params["title_text"],
+            "font": {"size": 30},
             "x": 0.5,
-            "font": {"size": 32},
-        }
+        },
+        xaxis_title={
+            "text": graph_params["xlabel_text"],
+            "font": {"size": 18},
+        },
+        yaxis_title={
+            "text": graph_params["ylabel_text"],
+            "font": {"size": 18},
+        },
+        legend_title=None,
     )
+
+    # 軸/メモリ調整
+    match graph_params["graph_type"]:
+        case "point_hbar":
+            fig.update_traces(hovertemplate="%{y}<extra></extra>")
+            fig.update_layout(showlegend=False)
+            fig.update_yaxes(
+                autorange="reversed",
+                side="right",
+                title=None,
+            )
+        case "point":
+            pass
+        case "rank":
+            lab = range(len(target_data) + 1)
+            if len(lab) > 10:
+                fig.update_yaxes(tickvals=list(lab)[1::2])
+            else:
+                fig.update_yaxes(tickvals=list(lab)[1:])
+            fig.update_yaxes(zeroline=False)
 
     return fig
 
