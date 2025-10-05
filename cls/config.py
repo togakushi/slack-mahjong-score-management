@@ -5,21 +5,24 @@ cls/config.py
 import logging
 import os
 import sys
-from configparser import ConfigParser, SectionProxy
+from configparser import ConfigParser
 from dataclasses import dataclass, field
 from itertools import chain
 from math import ceil
 from pathlib import Path
 from types import UnionType
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
-from cls.types import GradeTableDict
+if TYPE_CHECKING:
+    from configparser import SectionProxy
+
+    from cls.types import GradeTableDict
 
 
 class CommonMethodMixin:
     """共通メソッド"""
 
-    _section: SectionProxy
+    _section: "SectionProxy"
 
     def get(self, key: str, fallback: Any = None) -> Any:
         """値の取得"""
@@ -311,7 +314,7 @@ class BadgeDisplay(BaseSection):
         """段位"""
 
         table_name: str = field(default=str())
-        table: GradeTableDict = field(default_factory=lambda: cast(GradeTableDict, dict))
+        table: "GradeTableDict" = field(default_factory=lambda: cast("GradeTableDict", dict))
 
     grade: "BadgeGradeSpec" = BadgeGradeSpec()
 

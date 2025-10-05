@@ -34,12 +34,15 @@ Examples:
 
 from datetime import datetime
 from functools import total_ordering
-from typing import List, Literal, TypeAlias, Union, cast
+from typing import TYPE_CHECKING, List, Literal, TypeAlias, Union, cast
 
 from dateutil.relativedelta import relativedelta
 
-from cls.types import DateRangeSpec
 from libs.data import lookup
+
+if TYPE_CHECKING:
+    from cls.types import DateRangeSpec
+
 
 FormatType: TypeAlias = Literal[
     "ts", "y", "ym", "ymd", "ymdhm", "ymdhms", "hm", "hms", "sql", "ext",
@@ -68,7 +71,7 @@ DelimiterStyle: TypeAlias = Literal[
 - **None**: 未指定
 """
 
-DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
+DATE_RANGE_MAP: dict[str, "DateRangeSpec"] = {
     "today": {
         "keyword": ["今日", "本日", "当日"],
         "range": lambda x: [
