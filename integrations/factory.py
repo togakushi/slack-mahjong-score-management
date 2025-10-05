@@ -4,7 +4,6 @@ integrations/factory.py
 
 from typing import TYPE_CHECKING, Literal, cast, overload
 
-from cls.config import AppConfig
 from integrations.slack.adapter import ServiceAdapter as slack_adapter
 from integrations.standard_io.adapter import ServiceAdapter as std_adapter
 from integrations.web.adapter import ServiceAdapter as web_adapter
@@ -12,13 +11,14 @@ from integrations.web.adapter import ServiceAdapter as web_adapter
 if TYPE_CHECKING:
     from configparser import ConfigParser
 
+    from cls.config import AppConfig
     from integrations.base.interface import AdapterInterface
 
 
 @overload
 def select_adapter(
     selected_service: Literal["slack"],
-    conf: AppConfig
+    conf: "AppConfig"
 ) -> slack_adapter:
     ...
 
@@ -26,7 +26,7 @@ def select_adapter(
 @overload
 def select_adapter(
     selected_service: Literal["web"],
-    conf: AppConfig
+    conf: "AppConfig"
 ) -> std_adapter:
     ...
 
@@ -34,12 +34,12 @@ def select_adapter(
 @overload
 def select_adapter(
     selected_service: Literal["standard_io"],
-    conf: AppConfig
+    conf: "AppConfig"
 ) -> web_adapter:
     ...
 
 
-def select_adapter(selected_service: str, conf: AppConfig) -> "AdapterInterface":
+def select_adapter(selected_service: str, conf: "AppConfig") -> "AdapterInterface":
     """インターフェース選択
 
     Args:
