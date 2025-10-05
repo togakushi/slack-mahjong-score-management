@@ -26,6 +26,11 @@ def plot(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
+    if g.adapter.conf.plotting_backend == "plotly":
+        m.post.reset()
+        m.post.headline = {"": message.random_reply(m, "not_implemented", False)}
+        return
+
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = loader.read_data("SUMMARY_GAMEDATA")

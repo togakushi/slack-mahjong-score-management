@@ -43,6 +43,8 @@ def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = T
         "restricted_channel": "<@{user_id}> この投稿はデータベースに反映されません。",
         "inside_thread": "<@{user_id}> スレッド内から成績登録はできません。",
         "same_player": "同名のプレイヤーがいます。",
+        "not_implemented": "未実装",
+        "access_denied": "アクセスが拒否されました。",
     }
 
     msg = default_message_type.get(message_type, "invalid_argument")

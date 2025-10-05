@@ -344,6 +344,11 @@ def gen_pdf(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
+    if g.adapter.conf.plotting_backend == "plotly":
+        m.post.reset()
+        m.post.headline = {"": message.random_reply(m, "not_implemented", False)}
+        return
+
     if not g.params.get("player_name"):  # レポート対象の指定なし
         m.post.headline = {"成績レポート": message.random_reply(m, "no_target", False)}
         m.status.result = False
