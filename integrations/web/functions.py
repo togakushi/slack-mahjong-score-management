@@ -6,11 +6,13 @@ import re
 from typing import TYPE_CHECKING
 
 import pandas as pd
-from flask import Request, Response, make_response, render_template
+from flask import make_response, render_template
 
 from integrations.base.interface import FunctionsInterface
 
 if TYPE_CHECKING:
+    from flask import Request, Response
+
     from integrations.base.interface import MessageParserProtocol
 
 
@@ -109,7 +111,7 @@ class SvcFunctions(FunctionsInterface):
 
         return message
 
-    def set_cookie(self, html: str, req: Request, data: dict) -> Response:
+    def set_cookie(self, html: str, req: "Request", data: dict) -> "Response":
         """cookie保存
 
         Args:
@@ -134,7 +136,7 @@ class SvcFunctions(FunctionsInterface):
 
         return page
 
-    def get_cookie(self, req: Request) -> dict:
+    def get_cookie(self, req: "Request") -> dict:
         """cookie取得
 
         Args:
