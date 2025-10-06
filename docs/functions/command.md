@@ -19,7 +19,6 @@
 /commandname team_remove <メンバー名>		        指定したメンバーを未所属にする
 /commandname team_list                          チーム名と所属メンバーを表示
 /commandname team_clear                         チームデータをすべて削除
-
 ```
 
 ## 成績管理
