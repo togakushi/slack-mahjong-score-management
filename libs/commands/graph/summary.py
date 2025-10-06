@@ -333,7 +333,7 @@ def _graph_generation_plotly(graph_params: GraphParams):
         )
     else:
         df.columns = target_data["legend"].to_list()  # 凡例用ラベル生成
-        fig = px.line(df)
+        fig = px.line(df, markers=True)
 
     # グラフレイアウト調整
     _graph_title(graph_params)
@@ -343,7 +343,7 @@ def _graph_generation_plotly(graph_params: GraphParams):
         title={
             "text": graph_params["title_text"],
             "font": {"size": 30},
-            "x": 0.5,
+            "x": 0.1,
         },
         xaxis_title={
             "text": graph_params["xlabel_text"],
@@ -356,7 +356,7 @@ def _graph_generation_plotly(graph_params: GraphParams):
         legend_title=None,
     )
 
-    # 軸/メモリ調整
+    # 軸/目盛調整
     match graph_params["graph_type"]:
         case "point_hbar":
             fig.update_traces(hovertemplate="%{y}<extra></extra>")
@@ -367,14 +367,27 @@ def _graph_generation_plotly(graph_params: GraphParams):
                 title=None,
             )
         case "point":
-            pass
+            # マーカー
+            if all(df.count() > 10):
+                fig.update_traces(mode="lines")
+            # ライン
+            if len(fig.data) > 20:
+                fig.update_traces(mode="lines", line={"width": 1})
         case "rank":
-            lab = range(len(target_data) + 1)
-            if len(lab) > 10:
-                fig.update_yaxes(tickvals=list(lab)[1::2])
-            else:
-                fig.update_yaxes(tickvals=list(lab)[1:])
-            fig.update_yaxes(zeroline=False)
+            # Y軸目盛
+            lab = list(range(len(target_data) + 1))
+            fig.update_yaxes(
+                zeroline=False,
+                tickvals=lab[1:] if len(lab) < 10 else lab[1::2],
+            )
+            # マーカー
+            if all(df.count() == 1):
+                fig.update_traces(marker={"size": 10})
+            elif all(df.count() > 10):
+                fig.update_traces(mode="lines")
+            # ライン
+            if len(fig.data) > 20:
+                fig.update_traces(mode="lines", line={"width": 1})
 
     return fig
 
