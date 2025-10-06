@@ -361,7 +361,13 @@ def main(adapter: "ServiceAdapter"):
     app.register_blueprint(user_assets_bp)
 
     if adapter.conf.use_ssl:
-        if os.path.exists(adapter.conf.certificate) and os.path.exists(adapter.conf.private_key):
-            app.run(host=adapter.conf.host, port=adapter.conf.port, ssl_context=(adapter.conf.certificate, adapter.conf.private_key))
-        raise FileNotFoundError("certificate or private key not found")
-    app.run(host=adapter.conf.host, port=adapter.conf.port)
+        if not os.path.exists(adapter.conf.certificate):
+            raise FileNotFoundError("certificate file not found")
+        if not os.path.exists(adapter.conf.private_key):
+            raise FileNotFoundError("private key file not found")
+        app.run(
+            host=adapter.conf.host, port=adapter.conf.port,
+            ssl_context=(adapter.conf.certificate, adapter.conf.private_key)
+        )
+    else:
+        app.run(host=adapter.conf.host, port=adapter.conf.port)
