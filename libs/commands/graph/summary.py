@@ -319,7 +319,6 @@ def _graph_generation_plotly(graph_params: GraphParams):
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and graph_params["horizontal"]:
         graph_params["graph_type"] = "point_hbar"
-        _graph_title(graph_params)
         df_t = df.T
         df_t.columns = ["point"]
         df_t["rank"] = df_t["point"].rank(ascending=False, method="dense").astype("int")
@@ -333,11 +332,11 @@ def _graph_generation_plotly(graph_params: GraphParams):
             y=target_data["legend"],
         )
     else:
-        _graph_title(graph_params)
         df.columns = target_data["legend"].to_list()  # 凡例用ラベル生成
         fig = px.line(df)
 
     # グラフレイアウト調整
+    _graph_title(graph_params)
     fig.update_layout(
         width=1280,
         height=800,
@@ -414,7 +413,7 @@ def _graph_title(graph_params: GraphParams):
             case _:
                 kind = "ymdhm"
                 if g.params.get("search_word"):
-                    graph_params.update({"xlabel_text": f"（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
+                    graph_params.update({"xlabel_text": f"総ゲーム数：{graph_params["total_game_count"]} ゲーム"})
                 else:
                     graph_params.update({"xlabel_text": f"ゲーム終了日時（{graph_params["total_game_count"]} ゲーム）"})
 
@@ -431,6 +430,7 @@ def _graph_title(graph_params: GraphParams):
             })
         case "point_hbar":
             graph_params.update({
-                "ylabel_text": "通算ポイント",
+                "ylabel_text": None,
+                "xlabel_text": f"通算ポイント（総ゲーム数：{graph_params["total_game_count"]} ゲーム）",
                 "title_text": compose.text_item.date_range(kind, "通算ポイント", "通算ポイント"),
             })
