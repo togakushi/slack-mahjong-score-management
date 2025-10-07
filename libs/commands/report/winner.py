@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from libs.data import loader
+from libs.data import aggregate, loader
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil
 
@@ -24,10 +24,12 @@ def plot(m: "MessageParserProtocol"):
     """
 
     # --- データ取得
+    game_info = aggregate.game_info()
     results_df = loader.read_data("REPORT_WINNER")
     if len(results_df) == 0:
         m.post.headline = {"成績上位": message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     # --- 匿名化
     if g.params.get("anonymous"):
@@ -52,7 +54,13 @@ def plot(m: "MessageParserProtocol"):
                     str("{:+}".format(v[f"point{x}"])).replace("-", "▲")  # pylint: disable=consider-using-f-string
                 )
 
+    m.post.headline = {"成績上位者": message.header(game_info, m)}
+    m.post.message = {"月別集計結果": results_df}
+
     # --- グラフ設定
+    if g.adapter.conf.plotting_backend == "plotly":
+        return
+
     graphutil.setup()
     plt.rcParams["font.size"] = 6
     report_file_path = os.path.join(

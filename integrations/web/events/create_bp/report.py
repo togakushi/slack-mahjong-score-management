@@ -59,6 +59,17 @@ def report_bp(adapter: "ServiceAdapter"):
                         ("役満", "和了率") if {"役満和了数", "役満和了率"}.issubset(check_column) else None,
                     ]
                     v.columns = pd.MultiIndex.from_tuples([x for x in multi if x is not None])
+                elif "成績上位者" in m.post.headline.keys():
+                    check_column = v.columns.to_list()
+                    multi = [
+                        ("", "集計月"),
+                        ("1位", "名前"), ("1位", "獲得ポイント"),
+                        ("2位", "名前"), ("2位", "獲得ポイント"),
+                        ("3位", "名前"), ("3位", "獲得ポイント"),
+                        ("4位", "名前"), ("4位", "獲得ポイント"),
+                        ("5位", "名前"), ("5位", "獲得ポイント"),
+                    ]
+                    v.columns = pd.MultiIndex.from_tuples([x for x in multi if x is not None])
                 message += adapter.functions.to_styled_html(v, padding, m.post.index)
             elif isinstance(v, str):
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
