@@ -13,7 +13,7 @@ from libs import configuration
 from libs.utils import dictutil
 from tests.parser import param_data
 
-TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini"]
+TEST_ARGS = ["app.py", "--config=tests/test_data/saki.ini"]
 
 
 @pytest.mark.parametrize(
@@ -69,10 +69,10 @@ def test_command_with_argument_str(input_args, expected_flags):
 )
 def test_command_unknown_str(input_args, expected_flags, monkeypatch):
     """4. 不明なコマンド"""
-    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
-
+    monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
     configuration.read_memberslist()
+
     parser = CommandParser()
     g.params["unregistered_replace"] = False
     result = parser.analysis_argument(input_args.split())
