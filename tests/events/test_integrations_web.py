@@ -13,7 +13,6 @@ import libs.global_value as g
 from integrations import factory
 from integrations.web.events import create_bp
 from libs import configuration
-from libs.data import initialization
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -29,8 +28,6 @@ def client():
     """Flask テストクライアント"""
     sys.argv = ["app.py", "--service=web", "--config=tests/testdata/minimal.ini"]
     configuration.setup()
-    g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"
-    initialization.initialization_resultdb()
     adapter = factory.select_adapter("web", g.cfg)
 
     app = Flask(
@@ -61,8 +58,17 @@ def client():
     [
         ("/", 200),
         ("/summary/", 200),
+        ("/graph/", 200),
+        ("/ranking/", 200),
+        ("/detail/", 200),
+        ("/report/", 200),
         ("/score/", 403),
+        ("/member/", 403),
         ("/unknown/", 404),
+        ("static/stylesheet.css", 200),
+        ("static/unknown.css", 404),
+        ("/user_static/user.css", 403),
+        ("/user_static/config.ini", 403),
     ],
 )
 def test_route_access(client, url, expected_status):
