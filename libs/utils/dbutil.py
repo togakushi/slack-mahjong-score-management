@@ -18,7 +18,7 @@ def connection(database_path: str) -> sqlite3.Connection:
 
     conn = sqlite3.connect(
         database=f"file:{database_path}",
-        detect_types=sqlite3.PARSE_DECLTYPES,
+        # detect_types=sqlite3.PARSE_DECLTYPES,
         uri=True
     )
     conn.row_factory = sqlite3.Row
