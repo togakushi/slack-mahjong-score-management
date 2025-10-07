@@ -38,7 +38,7 @@ def create(argument: list) -> dict[str, str]:
                 resultdb.close()
                 g.team_list = lookup.db.get_team_list()
                 msg = f"チーム「{team_name}」を登録しました。"
-                logging.notice("add new team: %s", team_name)  # type: ignore
+                logging.info("add new team: %s", team_name)
 
     return {"チーム作成": msg}
 
@@ -75,7 +75,7 @@ def delete(argument: list) -> dict[str, str]:
             resultdb.close()
             g.team_list = lookup.db.get_team_list()
             msg += f"\nチーム「{team_name}」を削除しました。"
-            logging.notice("team delete: %s", team_name)  # type: ignore
+            logging.info("team delete: %s", team_name)
 
     return {"チーム削除": msg}
 
@@ -133,7 +133,7 @@ def append(argument: list) -> dict[str, str]:
             resultdb.close()
             g.team_list = lookup.db.get_team_list()
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
-            logging.notice("team participation: %s -> %s", team_name, player_name)  # type: ignore
+            logging.info("team participation: %s -> %s", team_name, player_name)
 
     return {"チーム所属": msg}
 
@@ -185,7 +185,7 @@ def remove(argument: list) -> dict[str, str]:
             resultdb.close()
             g.team_list = lookup.db.get_team_list()
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
-            logging.notice("team breakaway: %s -> %s", team_name, player_name)  # type: ignore
+            logging.info("team breakaway: %s -> %s", team_name, player_name)
 
     return {"チーム除名": msg}
 

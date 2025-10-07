@@ -39,8 +39,8 @@ def read_data(keyword: str) -> pd.DataFrame:
     # デバッグ用
     pd.set_option("display.max_rows", None)
     pd.set_option("display.max_columns", None)
-    logging.trace("prm: %s", g.params)  # type: ignore
-    logging.trace("sql: %s", named_query(sql))  # type: ignore
+    logging.debug("prm: %s", g.params)
+    logging.debug("sql: %s", named_query(sql))
     logging.trace(df)  # type: ignore
 
     return df

@@ -38,4 +38,4 @@ def main():
         m.data.channel_id = adapter_slack.functions.get_channel_id()
 
         count, _ = comparison.data_comparison(m)
-        logging.notice(", ".join(f"{k}: {v}" for k, v in count.items()))  # type: ignore
+        logging.info(", ".join(f"{k}: {v}" for k, v in count.items()))

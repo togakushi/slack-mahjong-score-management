@@ -44,12 +44,12 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
 
     # always_argumentの処理
     pre_param = parser.analysis_argument(subcom.always_argument)
-    logging.info("%s", pre_param)
+    logging.debug("analysis_argument: %s", pre_param)
     ret_dict.update(pre_param.flags)
 
     # 引数の処理
     param = parser.analysis_argument(m.argument)
-    logging.info("%s", param)
+    logging.debug("argument: %s", param)
     ret_dict.update(param.flags)  # 上書き
 
     # 検索範囲取得

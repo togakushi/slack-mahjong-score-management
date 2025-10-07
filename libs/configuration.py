@@ -40,11 +40,6 @@ def set_loglevel():
     logging.trace = partial(logging.log, logging.TRACE)  # type: ignore
     logging.addLevelName(logging.TRACE, "TRACE")  # type: ignore
 
-    # NOTICE
-    logging.NOTICE = 25  # type: ignore
-    logging.notice = partial(logging.log, logging.NOTICE)  # type: ignore
-    logging.addLevelName(logging.NOTICE, "NOTICE")  # type: ignore
-
 
 def arg_parser() -> argparse.Namespace:
     """コマンドライン解析
@@ -204,10 +199,15 @@ def setup():
     else:
         g.selected_service = "standard_io"
 
+    # ログフォーマット
     if g.args.notime:
-        fmt = "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
+        fmt = ""
     else:
-        fmt = "[%(asctime)s][%(levelname)s][%(module)s:%(funcName)s] %(message)s"
+        fmt = "[%(asctime)s]"
+    if g.args.debug or g.args.verbose:
+        fmt += "[%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
+    else:
+        fmt += "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
 
     if g.args.debug:
         if g.args.verbose:
@@ -215,12 +215,13 @@ def setup():
             logging.basicConfig(level=logging.TRACE, format=fmt)  # type: ignore
         else:
             print("DEBUG MODE")
-            logging.basicConfig(level=logging.INFO, format=fmt)
+            logging.basicConfig(level=logging.DEBUG, format=fmt)
     else:
         if g.args.moderate:
             logging.basicConfig(level=logging.WARNING, format=fmt)
         else:
-            logging.basicConfig(level=logging.NOTICE, format=fmt)  # type: ignore
+            print("LOG LEVEL(INFO)")
+            logging.basicConfig(level=logging.INFO, format=fmt)
 
     g.cfg = AppConfig(g.args.config)
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
@@ -235,11 +236,11 @@ def setup():
         raise RuntimeError(err) from err
 
     # 設定内容のロギング
-    logging.notice("conf: %s", os.path.join(g.cfg.config_dir, g.args.config))  # type: ignore
-    logging.notice("font: %s", g.cfg.setting.font_file)  # type: ignore
-    logging.notice("database: %s", g.cfg.setting.database_file)  # type: ignore
-    logging.notice("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)  # type: ignore
-    logging.notice(  # type: ignore
+    logging.info("conf: %s", os.path.join(g.cfg.config_dir, g.args.config))
+    logging.info("font: %s", g.cfg.setting.font_file)
+    logging.info("database: %s", g.cfg.setting.database_file)
+    logging.info("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)
+    logging.info(
         "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
         g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.setting.time_adjust
     )
@@ -257,9 +258,9 @@ def read_memberslist(log=True):
     g.team_list = lookup.db.get_team_list()
 
     if log:
-        logging.notice(f"guest_name: {g.cfg.member.guest_name}")  # type: ignore
-        logging.notice(f"member_list: {sorted(set(g.member_list.values()))}")  # type: ignore
-        logging.notice(f"team_list: {[x["team"] for x in g.team_list]}")  # type: ignore
+        logging.info(f"guest_name: {g.cfg.member.guest_name}")
+        logging.info(f"member_list: {sorted(set(g.member_list.values()))}")
+        logging.info(f"team_list: {[x["team"] for x in g.team_list]}")
 
 
 def register():
@@ -347,3 +348,6 @@ def register():
         # スラッシュコマンド登録
         for alias in cast(list, getattr(g.cfg.alias, command)):
             g.command_dispatcher.update({alias: ep})
+
+    logging.debug("keyword_dispatcher:\n%s", "\n".join([f"\t{k}: {v}" for k, v in g.keyword_dispatcher.items()]))
+    logging.debug("command_dispatcher:\n%s", "\n".join([f"\t{k}: {v}" for k, v in g.command_dispatcher.items()]))

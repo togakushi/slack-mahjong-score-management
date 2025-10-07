@@ -45,7 +45,7 @@ def append(argument: list) -> dict:
                     (new_name, new_name)
                 )
                 msg = f"「{new_name}」を登録しました。"
-                logging.notice(f"add new member: {new_name}")  # type: ignore
+                logging.info(f"add new member: {new_name}")
 
     if len(argument) == 2:  # 別名登録
         new_name = textutil.str_conv(argument[0], "h2z")
@@ -65,7 +65,7 @@ def append(argument: list) -> dict:
             if ret:
                 resultdb.execute("insert into alias(name, member) values (?,?)", (nic_name, new_name))
                 msg = f"「{new_name}」に「{nic_name}」を追加しました。"
-                logging.notice(f"add alias: {new_name} -> {nic_name}")  # type: ignore
+                logging.info(f"add alias: {new_name} -> {nic_name}")
                 dbupdate_flg = True
 
         if dbupdate_flg:
@@ -118,7 +118,7 @@ def remove(argument: list) -> dict:
             resultdb.execute("delete from member where name=?", (new_name,))
             resultdb.execute("delete from alias where member=?", (new_name,))
             msg = f"「{new_name}」を削除しました。"
-            logging.notice(f"remove member: {new_name}")  # type: ignore
+            logging.info(f"remove member: {new_name}")
         else:
             msg = f"「{new_name}」は登録されていません。"
 
@@ -131,7 +131,7 @@ def remove(argument: list) -> dict:
                 (nic_name, new_name)
             )
             msg = f"「{new_name}」から「{nic_name}」を削除しました。"
-            logging.notice(f"alias remove: {new_name} -> {nic_name}")  # type: ignore
+            logging.info(f"alias remove: {new_name} -> {nic_name}")
         else:
             msg = f"「{new_name}」に「{nic_name}」は登録されていません。"
 

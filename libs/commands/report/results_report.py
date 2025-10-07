@@ -406,7 +406,7 @@ def gen_pdf(m: "MessageParserProtocol"):
     elements.extend(sectional_aggregate(style, target_info))  # 区間集計
 
     doc.build(elements)
-    logging.notice("report generation: %s", g.params["player_name"])  # type: ignore
+    logging.debug("report generation: %s", g.params["player_name"])
 
     m.post.file_list = [{f"成績レポート({g.params["player_name"]})": str(pdf_path)}]
 

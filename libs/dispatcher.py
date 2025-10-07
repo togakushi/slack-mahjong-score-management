@@ -20,14 +20,15 @@ if TYPE_CHECKING:
 def by_keyword(m: "MessageParserProtocol"):
     """メイン処理"""
 
-    logging.info(
+    logging.debug("keyword=%s, argument=%s", m.keyword, m.argument)
+    logging.debug(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, keyword=%s, user_id=%s,",
         m.data.status, m.data.event_ts, m.data.thread_ts, m.in_thread, m.keyword, m.data.user_id,
     )
 
     # 許可されていないユーザのコマンドは処理しない
     if m.ignore_user:
-        logging.info("event skip[ignore user]: %s", m.data.user_id)
+        logging.debug("event skip[ignore user]: %s", m.data.user_id)
         return
 
     # メッセージが削除された場合
@@ -100,7 +101,7 @@ def message_append(detection: GameResult, m: "MessageParserProtocol"):
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
-        logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
+        logging.debug("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)
 
     g.adapter.functions.post_processing(m)
 
@@ -122,14 +123,14 @@ def message_changed(detection: GameResult, m: "MessageParserProtocol"):
             if record_data.rule_version == g.cfg.mahjong.rule_version:
                 modify.db_update(detection, m)
             else:
-                logging.notice("skip (rule_version not match). event_ts=%s", m.data.event_ts)  # type: ignore
+                logging.debug("skip (rule_version not match). event_ts=%s", m.data.event_ts)
         else:
             modify.db_insert(detection, m)
             modify.reprocessing_remarks(m)
     else:
         m.post.thread = True
         message.random_reply(m, "inside_thread")
-        logging.notice("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)  # type: ignore
+        logging.debug("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)
 
     g.adapter.functions.post_processing(m)
 

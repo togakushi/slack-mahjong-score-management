@@ -24,10 +24,18 @@ if TYPE_CHECKING:
 def main(adapter: "ServiceAdapter"):
     """メイン処理"""
 
+    def log_filter():
+        """ログレベル変更"""
+        for name in logging.Logger.manager.loggerDict:
+            if name.startswith(("slack_", "slack")) or "socket_mode" in name:
+                logging.getLogger(name).setLevel(logging.WARNING)
+
     try:
+        log_filter()
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
         adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
         adapter.conf.appclient = app.client
+        log_filter()
         adapter.conf.bot_id = app.client.auth_test()["user_id"]
     except SlackApiError as err:
         logging.error(err)
@@ -35,6 +43,7 @@ def main(adapter: "ServiceAdapter"):
 
     register_all(app, adapter)  # イベント遅延登録
     handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
+
     handler.start()
 
 

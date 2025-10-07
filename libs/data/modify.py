@@ -46,7 +46,7 @@ def db_insert(detection: GameResult, m: "MessageParserProtocol") -> int:
                 cur.commit()
             except sqlite3.IntegrityError as err:
                 logging.error(err)
-        logging.notice("%s", detection.to_text("logging"))  # type: ignore
+        logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
         message.random_reply(m, "restricted_channel")
@@ -71,7 +71,7 @@ def db_update(detection: GameResult, m: "MessageParserProtocol") -> None:
                 **detection.to_dict(),
             })
             cur.commit()
-        logging.notice("%s", detection.to_text("logging"))  # type: ignore
+        logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
         message.random_reply(m, "restricted_channel")
@@ -90,13 +90,13 @@ def db_delete(m: "MessageParserProtocol"):
             cur.execute(dbutil.query("RESULT_DELETE"), (m.data.event_ts,))
             if (delete_result := cur.execute("select changes();").fetchone()[0]):
                 m.status.target_ts.append(m.data.event_ts)
-                logging.notice("result: ts=%s, count=%s", m.data.event_ts, delete_result)  # type: ignore
+                logging.info("result: ts=%s, count=%s", m.data.event_ts, delete_result)
             # メモの削除
             if (remark_list := cur.execute("select event_ts from remarks where thread_ts=?", (m.data.event_ts,)).fetchall()):
                 cur.execute(dbutil.query("REMARKS_DELETE_ALL"), (m.data.event_ts,))
                 if (delete_remark := cur.execute("select changes();").fetchone()[0]):
                     m.status.target_ts.extend([x.get("event_ts") for x in list(map(dict, remark_list))])
-                    logging.notice("remark: ts=%s, count=%s", m.data.event_ts, delete_remark)  # type: ignore
+                    logging.info("remark: ts=%s, count=%s", m.data.event_ts, delete_remark)
             cur.commit()
 
         m.status.action = "delete"
@@ -128,7 +128,7 @@ def db_backup() -> str:
     # バックアップディレクトリにコピー
     try:
         shutil.copyfile(g.cfg.setting.database_file, bkfname)
-        logging.notice("database backup: %s", bkfname)  # type: ignore
+        logging.info("database backup: %s", bkfname)
         return "\nデータベースをバックアップしました。"
     except OSError as e:
         logging.error(e, exc_info=True)
@@ -154,7 +154,7 @@ def remarks_append(m: "MessageParserProtocol", remarks: list[RemarkDict]) -> Non
                         cur.execute(dbutil.query("REMARKS_INSERT"), para)
                         m.status.target_ts.append(para["event_ts"])
                         m.status.target_ts.append(para["event_ts"])
-                        logging.notice("insert: %s, user=%s", para, m.data.user_id)  # type: ignore
+                        logging.info("insert: %s, user=%s", para, m.data.user_id)
             cur.commit()
 
         # 後処理
@@ -176,8 +176,7 @@ def remarks_delete(m: "MessageParserProtocol"):
             cur.commit()
             if (count := cur.execute("select changes();").fetchone()[0]):
                 m.status.target_ts.append(m.data.event_ts)
-                logging.notice("ts=%s, user=%s, count=%s", m.data.event_ts, m.data.user_id, count)  # type: ignore
-
+                logging.info("ts=%s, user=%s, count=%s", m.data.event_ts, m.data.user_id, count)
         # 後処理
         m.status.action = "delete"
         g.adapter.functions.post_processing(m)

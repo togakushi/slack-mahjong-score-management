@@ -45,7 +45,7 @@ def main():
                         logging.warning("remove: %s -> %s (%s)", name, alias, msg)
                         alias_list.remove(alias)
                         continue
-                logging.notice("rename: %s -> %s changed: %s", alias_list, name, count)  # type: ignore
+                logging.info("rename: %s -> %s changed: %s", alias_list, name, count)
             else:
                 logging.warning("skip: %s (%s)", name, msg)
                 continue
@@ -67,16 +67,16 @@ def main():
                 for row in rows:
                     match check:
                         case check if check == row["p1_name"]:
-                            logging.notice("ts=%s, p1_name(%s -> %s)", row["ts"], check, name)  # type: ignore
+                            logging.info("ts=%s, p1_name(%s -> %s)", row["ts"], check, name)
                             db.execute("update result set p1_name=? where p1_name=? and ts=?;", (name, check, row["ts"]))
                         case check if check == row["p2_name"]:
-                            logging.notice("ts=%s, p2_name(%s -> %s)", row["ts"], check, name)  # type: ignore
+                            logging.info("ts=%s, p2_name(%s -> %s)", row["ts"], check, name)
                             db.execute("update result set p2_name=? where p2_name=? and ts=?;", (name, check, row["ts"]))
                         case check if check == row["p3_name"]:
-                            logging.notice("ts=%s, p3_name(%s -> %s)", row["ts"], check, name)  # type: ignore
+                            logging.info("ts=%s, p3_name(%s -> %s)", row["ts"], check, name)
                             db.execute("update result set p3_name=? where p3_name=? and ts=?;", (name, check, row["ts"]))
                         case check if check == row["p4_name"]:
-                            logging.notice("ts=%s, p4_name(%s -> %s)", row["ts"], check, name)  # type: ignore
+                            logging.info("ts=%s, p4_name(%s -> %s)", row["ts"], check, name)
                             db.execute("update result set p4_name=? where p4_name=? and ts=?;", (name, check, row["ts"]))
 
         db.commit()

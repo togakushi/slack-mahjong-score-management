@@ -47,7 +47,7 @@ def initialization_resultdb() -> None:
                 notnull = "NOT NULL" if col_data["notnull"] else ""
                 dflt = f"DEFAULT {col_data["dflt_value"]}" if col_data["dflt_value"] is not None else ""
                 resultdb.execute(f"alter table {table_name} add column {col_name} {col_type} {notnull} {dflt};")
-                logging.notice("migration: table=%s, column=%s", table_name, col_name)  # type: ignore
+                logging.info("migration: table=%s, column=%s", table_name, col_name)
 
     # wordsテーブル情報読み込み(regulations)
     if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("regulations"):
@@ -63,7 +63,7 @@ def initialization_resultdb() -> None:
                             "insert into words(word, type, ex_point) values (?, 0, NULL);",
                             (word,)
                         )
-                    logging.info("regulations table(type0): %s", words_list)
+                    logging.debug("regulations table(type0): %s", words_list)
                 case "type2":
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
@@ -71,7 +71,7 @@ def initialization_resultdb() -> None:
                             "insert into words(word, type, ex_point) values (?, 2, NULL);",
                             (word,)
                         )
-                    logging.info("regulations table(type2): %s", words_list)
+                    logging.debug("regulations table(type2): %s", words_list)
                 case _:
                     word = k.strip()
                     ex_point = int(v)
@@ -79,7 +79,7 @@ def initialization_resultdb() -> None:
                         "insert into words(word, type, ex_point) values (?, 1, ?);",
                         (word, ex_point,)
                     )
-                    logging.info("regulations table(type1): %s, %s", word, ex_point)
+                    logging.debug("regulations table(type1): %s, %s", word, ex_point)
 
     # VIEW
     rows = resultdb.execute("select name from sqlite_master where type = 'view';")
@@ -95,11 +95,11 @@ def initialization_resultdb() -> None:
     data = ret.fetchall()
 
     if len(data) == 0:
-        logging.notice("ゲスト設定: %s", g.cfg.member.guest_name)  # type: ignore
+        logging.info("ゲスト設定: %s", g.cfg.member.guest_name)
         sql = "insert into member (id, name) values (0, ?);"
         resultdb.execute(sql, (g.cfg.member.guest_name,))
     elif data[0][1] != g.cfg.member.guest_name:
-        logging.notice("ゲスト修正: %s -> %s", data[0][1], g.cfg.member.guest_name)  # type: ignore
+        logging.info("ゲスト修正: %s -> %s", data[0][1], g.cfg.member.guest_name)
         sql = "update member set name=? where id=0;"
         resultdb.execute(sql, (g.cfg.member.guest_name,))
 

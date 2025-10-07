@@ -84,7 +84,6 @@ class BaseSection(CommonMethodMixin):
 
         self.initialization()
         self.section = section_name  # セクション名保持
-        logging.info("%s=%s", section_name, self)
 
     def __repr__(self) -> str:
         return str({k: v for k, v in vars(self).items() if not str(k).startswith("_")})

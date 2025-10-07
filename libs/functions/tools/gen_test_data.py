@@ -94,4 +94,4 @@ def main(season_times: int = 1):
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         rows = cur.execute("select name, round(sum(point), 1) as point from team_results group by name order by point desc;")
-        logging.notice(dict(rows.fetchall()))  # type: ignore
+        logging.info(dict(rows.fetchall()))

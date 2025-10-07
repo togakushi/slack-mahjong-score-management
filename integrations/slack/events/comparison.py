@@ -54,8 +54,7 @@ def main(m: "MessageParserProtocol") -> None:
 
     # データ突合
     count, msg = data_comparison(m)
-    logging.notice("count=%s", count)  # type: ignore
-
+    logging.debug("count=%s", count)
     # 突合結果
     after = ExtDt(days=-g.adapter.conf.search_after).format("ymd")
     before = ExtDt().format("ymd")
@@ -180,7 +179,7 @@ def check_omission(
             if not g.adapter.conf.thread_report:  # スレッド内報告が禁止されているパターン
                 if slack_m.in_thread:
                     count["delete"] += 1
-                    logging.notice("delete (In-thread report): %s", slack_score.to_text("logging"))  # type: ignore
+                    logging.debug("delete (In-thread report): %s", slack_score.to_text("logging"))
                     msg["delete"] += f"\t{ExtDt(float(slack_m.data.event_ts)).format("ymdhms")} {slack_score.to_text()}\n"
                     modify.db_delete(slack_m)
                     g.adapter.functions.post_processing(slack_m)
@@ -193,7 +192,7 @@ def check_omission(
             # 更新
             if db_data[slack_score.ts].rule_version == g.cfg.mahjong.rule_version:
                 count["mismatch"] += 1
-                logging.notice("mismatch: %s (%s)", slack_m.data.event_ts, ExtDt(float(slack_m.data.event_ts)).format("ymdhms"))  # type: ignore
+                logging.debug("mismatch: %s (%s)", slack_m.data.event_ts, ExtDt(float(slack_m.data.event_ts)).format("ymdhms"))
                 logging.info("  *  slack: %s", db_score.to_text("detail"))
                 logging.info("  *     db: %s", slack_score.to_text("detail"))
                 msg["mismatch"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")}\n"
@@ -207,11 +206,11 @@ def check_omission(
 
         # 追加
         if not g.adapter.conf.thread_report and slack_m.in_thread:
-            logging.notice("skip (In-thread report): %s", slack_score.to_text("logging"))  # type: ignore
+            logging.debug("skip (In-thread report): %s", slack_score.to_text("logging"))
             continue
 
         count["missing"] += 1
-        logging.notice("missing: %s", slack_score.to_text("logging"))  # type: ignore
+        logging.debug("missing: %s", slack_score.to_text("logging"))
         msg["missing"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")} {slack_score.to_text()}\n"
         modify.db_insert(slack_score, slack_m)
         g.adapter.functions.post_processing(slack_m)
@@ -232,7 +231,7 @@ def check_omission(
         work_m = copy.deepcopy(m)
         work_m.data.event_ts = db_score.ts
 
-        logging.notice("delete (Only database): %s", db_score.to_text("logging"))  # type: ignore
+        logging.debug("delete (Only database): %s", db_score.to_text("logging"))
         msg["delete"] += f"\t{ExtDt(float(db_score.ts)).format("ymdhms")} {db_score.to_text()}\n"
         modify.db_delete(work_m)
         g.adapter.functions.post_processing(work_m)
@@ -290,7 +289,7 @@ def check_remarks(
             count["remark_mod"] += 1
             modify.remarks_delete(work_m)
             modify.remarks_append(work_m, [remark])
-            logging.notice("modification(data mismatch): %s", remark)  # type: ignore
+            logging.debug("modification(data mismatch): %s", remark)
 
     # DB -> slack チェック
     for remark in db_data:
@@ -300,7 +299,7 @@ def check_remarks(
             m.data.event_ts = remark["thread_ts"]
             count["remark_del"] += 1
             modify.remarks_delete_compar(remark, m)
-            logging.notice("delete(missed deletion): %s", remark)  # type: ignore
+            logging.debug("delete(missed deletion): %s", remark)
 
     return (count, msg)
 
@@ -340,7 +339,7 @@ def check_total_score(slack_data: list["MessageParserProtocol"]) -> tuple[dict, 
 
         if slack_score.deposit != 0:  # 素点合計と配給原点が不一致
             count["invalid_score"] += 1
-            logging.notice("invalid score: %s deposit=%s", slack_score.ts, slack_score.deposit)  # type: ignore
+            logging.debug("invalid score: %s deposit=%s", slack_score.ts, slack_score.deposit)
             msg["invalid_score"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")} [供託：{slack_score.deposit}]{slack_score.to_text()}\n"
             if slack_score.ts in val.data.reaction_ok:
                 g.adapter.functions.reaction_remove(g.adapter.conf.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
