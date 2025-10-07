@@ -72,9 +72,10 @@
   </form>
   <div id="nameError" style="color:red; font-weight:bold;"></div>
   {% endblock %}
-  <script src="static/score_check.js" charset="utf-8"></script>
+  <script src="/static/score_check.js" charset="utf-8"></script>
 
-  <p><a href="score">スコア一覧に戻る</a></p>
+  <p><a href="/score">スコア一覧に戻る</a></p>
   <div class="footer_menu">{% include "ui_parts/menu_bar.html" %}</div>
+  <div id="app" data-origin-point="{{ origin_point }}"></div>
 </body>
 </html>

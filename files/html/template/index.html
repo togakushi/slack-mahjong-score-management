@@ -6,15 +6,15 @@
 <body>
 <h1 class="top_menu">メニュー</h1>
 <ul>
-    {% if view_summary %}<li><a href="summary">成績サマリ</a>{% endif %}
-    {% if view_graph %}<li><a href="graph">グラフ</a>{% endif %}
-    {% if view_ranking %}<li><a href="ranking">ランキング</a>{% endif %}
-    {% if view_summary %}<li><a href="detail">個人成績</a>{% endif %}
-    {% if view_report %}<li><a href="report">レポート</a>{% endif %}
+    {% if view_summary %}<li><a href="/summary">成績サマリ</a>{% endif %}
+    {% if view_graph %}<li><a href="/graph">グラフ</a>{% endif %}
+    {% if view_ranking %}<li><a href="/ranking">ランキング</a>{% endif %}
+    {% if view_summary %}<li><a href="/detail">個人成績</a>{% endif %}
+    {% if view_report %}<li><a href="/report">レポート</a>{% endif %}
 </ul>
 <ul>
-    {% if management_score %}<li><a href="score">スコア管理</a>{% endif %}
-    {% if management_member %}<li><a href="member">メンバー管理</a>{% endif %}
+    {% if management_score %}<li><a href="/score">スコア管理</a>{% endif %}
+    {% if management_member %}<li><a href="/member">メンバー管理</a>{% endif %}
 </ul>
 </body>
 </html>
