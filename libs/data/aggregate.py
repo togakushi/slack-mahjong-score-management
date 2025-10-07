@@ -52,7 +52,7 @@ def game_info() -> "GameInfoDict":
             case "report":
                 g.params["stipulated"] = g.cfg.report.stipulated_calculation(ret["game_count"])
 
-    logging.info("return: %s", ret)
+    logging.debug("return: %s", ret)
     return ret
 
 
