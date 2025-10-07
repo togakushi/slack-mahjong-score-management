@@ -352,6 +352,7 @@ def gen_pdf(m: "MessageParserProtocol"):
     if not g.params.get("player_name"):  # レポート対象の指定なし
         m.post.headline = {"成績レポート": message.random_reply(m, "no_target", False)}
         m.status.result = False
+        return
 
     # 対象メンバーの記録状況
     target_info = lookup.db.member_info(g.params["player_name"])

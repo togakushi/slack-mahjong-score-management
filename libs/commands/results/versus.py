@@ -54,8 +54,9 @@ def aggregation(m: "MessageParserProtocol"):
     if len(df_vs) == 0:  # 検索結果なし
         m.post.headline = {"直接対戦": "対戦記録が見つかりません。"}
         m.status.result = False
-    m.post.headline = {"直接対戦": tmpl_header(my_name, vs)}
+        return
 
+    m.post.headline = {"直接対戦": tmpl_header(my_name, vs)}
     for vs_name in vs_list:
         title = f"{my_name} vs {vs_name}"
         if vs_name in vs_list:

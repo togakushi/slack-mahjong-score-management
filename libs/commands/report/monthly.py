@@ -32,6 +32,7 @@ def plot(m: "MessageParserProtocol"):
     if len(results) == 0:
         m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     # --- グラフフォント設定
     if g.adapter.conf.plotting_backend == "plotly":

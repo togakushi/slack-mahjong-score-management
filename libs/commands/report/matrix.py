@@ -33,6 +33,7 @@ def plot(m: "MessageParserProtocol"):
     if df.empty:
         m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     file_name = os.path.join(
         g.cfg.setting.work_dir,

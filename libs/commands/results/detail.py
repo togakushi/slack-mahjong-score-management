@@ -61,6 +61,7 @@ def aggregation(m: "MessageParserProtocol"):
     if result_df.empty or record_df.empty:
         m.post.headline = {title: message.random_reply(m, "no_target", False)}
         m.status.result = False
+        return
 
     result_df = pd.merge(
         result_df, record_df,

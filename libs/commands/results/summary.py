@@ -55,6 +55,7 @@ def aggregation(m: "MessageParserProtocol"):
     if df_summary.empty:
         m.post.message = {}  # 破棄
         m.status.result = False
+        return
 
     # 集計結果
     msg: dict = {}
