@@ -24,10 +24,12 @@ def patch_by_keyword():
 
 
 @pytest.fixture
-def client():
+def client(request):
     """Flask テストクライアント"""
-    sys.argv = ["app.py", "--service=web", "--config=tests/testdata/minimal.ini"]
+    config_path = request.param
+    sys.argv = ["app.py", "--service=web", f"--config=tests/testdata/{config_path}"]
     configuration.setup()
+
     adapter = factory.select_adapter("web", g.cfg)
 
     app = Flask(
@@ -54,24 +56,38 @@ def client():
 
 
 @pytest.mark.parametrize(
-    "url,expected_status",
+    "client, url, expected_status",
     [
-        ("/", 200),
-        ("/summary/", 200),
-        ("/graph/", 200),
-        ("/ranking/", 200),
-        ("/detail/", 200),
-        ("/report/", 200),
-        ("/score/", 403),
-        ("/member/", 403),
-        ("/unknown/", 404),
-        ("static/stylesheet.css", 200),
-        ("static/unknown.css", 404),
-        ("/user_static/user.css", 403),
-        ("/user_static/config.ini", 403),
+        ("minimal.ini", "/", 200),
+        ("minimal.ini", "/summary/", 200),
+        ("minimal.ini", "/graph/", 200),
+        ("minimal.ini", "/ranking/", 200),
+        ("minimal.ini", "/detail/", 200),
+        ("minimal.ini", "/report/", 200),
+        ("minimal.ini", "/score/", 403),
+        ("minimal.ini", "/member/", 403),
+        ("minimal.ini", "/unknown/", 404),
+        ("minimal.ini", "/static/stylesheet.css", 200),
+        ("minimal.ini", "/static/unknown.css", 404),
+        ("minimal.ini", "/user_static/user.css", 403),
+        ("minimal.ini", "/user_static/config.ini", 403),
+        ("web_customize.ini", "/", 200),
+        ("web_customize.ini", "/summary/", 403),
+        ("web_customize.ini", "/graph/", 403),
+        ("web_customize.ini", "/ranking/", 403),
+        ("web_customize.ini", "/detail/", 403),
+        ("web_customize.ini", "/report/", 200),
+        ("web_customize.ini", "/member/", 200),
+        ("web_customize.ini", "/score/", 200),  # DeprecationWarning: The default timestamp converter is deprecated as of Python 3.12;
+        ("web_customize.ini", "/static/stylesheet.css", 200),
+        ("web_customize.ini", "/static/unknown.css", 404),
+        ("web_customize.ini", "/user_static/user.css", 200),
+        ("web_customize.ini", "/user_static/config.ini", 403),
     ],
+    indirect=["client"],
 )
 def test_route_access(client, url, expected_status):
     print("-->", url)
+
     response = client.get(url)
     assert response.status_code == expected_status
