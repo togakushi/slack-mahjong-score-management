@@ -83,7 +83,7 @@
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>        <span class="n">database</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;file:</span><span class="si">{</span><span class="n">database_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>        <span class="n">detect_types</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">PARSE_DECLTYPES</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>        <span class="c1"># detect_types=sqlite3.PARSE_DECLTYPES,</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>        <span class="n">uri</span><span class="o">=</span><span class="kc">True</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="p">)</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">conn</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
@@ -207,7 +207,7 @@
 </span><span id="connection-19"><a href="#connection-19"><span class="linenos">19</span></a>
 </span><span id="connection-20"><a href="#connection-20"><span class="linenos">20</span></a>    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
 </span><span id="connection-21"><a href="#connection-21"><span class="linenos">21</span></a>        <span class="n">database</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;file:</span><span class="si">{</span><span class="n">database_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="connection-22"><a href="#connection-22"><span class="linenos">22</span></a>        <span class="n">detect_types</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">PARSE_DECLTYPES</span><span class="p">,</span>
+</span><span id="connection-22"><a href="#connection-22"><span class="linenos">22</span></a>        <span class="c1"># detect_types=sqlite3.PARSE_DECLTYPES,</span>
 </span><span id="connection-23"><a href="#connection-23"><span class="linenos">23</span></a>        <span class="n">uri</span><span class="o">=</span><span class="kc">True</span>
 </span><span id="connection-24"><a href="#connection-24"><span class="linenos">24</span></a>    <span class="p">)</span>
 </span><span id="connection-25"><a href="#connection-25"><span class="linenos">25</span></a>    <span class="n">conn</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
