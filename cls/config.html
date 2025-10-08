@@ -502,7 +502,7 @@
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">ceil</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnionType</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">Union</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">Union</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">cls.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">GradeTableDict</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
@@ -968,34 +968,38 @@
 </span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a>        <span class="c1"># 共通設定値</span>
 </span><span id="L-478"><a href="#L-478"><span class="linenos">478</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_word</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="L-479"><a href="#L-479"><span class="linenos">479</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;レギュレーションワードテーブルに登録されていないワードの種別&quot;&quot;&quot;</span>
-</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;日付範囲デフォルト値&quot;&quot;&quot;</span>
-</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a>
-</span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">word_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;設定されている値、キーワードをリスト化する</span>
-</span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a>
-</span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a><span class="sd">        Returns:</span>
-</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a><span class="sd">            list: リスト化されたキーワード</span>
-</span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_unit</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">]</span>
+</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;レポート生成用日付範囲デフォルト値(レポート生成用)</span>
+</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a><span class="sd">        - *A*: 全期間</span>
+</span><span id="L-483"><a href="#L-483"><span class="linenos">483</span></a><span class="sd">        - *M*: 月別</span>
+</span><span id="L-484"><a href="#L-484"><span class="linenos">484</span></a><span class="sd">        - *Y*: 年別</span>
+</span><span id="L-485"><a href="#L-485"><span class="linenos">485</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-486"><a href="#L-486"><span class="linenos">486</span></a>
+</span><span id="L-487"><a href="#L-487"><span class="linenos">487</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">word_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="L-488"><a href="#L-488"><span class="linenos">488</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;設定されている値、キーワードをリスト化する</span>
 </span><span id="L-489"><a href="#L-489"><span class="linenos">489</span></a>
-</span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a>        <span class="n">words</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="L-491"><a href="#L-491"><span class="linenos">491</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">keyword</span><span class="p">],</span>
-</span><span id="L-492"><a href="#L-492"><span class="linenos">492</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">remarks_word</span><span class="p">],</span>
-</span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">ranking</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a>        <span class="p">]</span>
-</span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>
-</span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">k</span><span class="p">])</span>
-</span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a>
-</span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">words</span><span class="p">)))</span>  <span class="c1"># 重複排除/平滑化</span>
-</span><span id="L-505"><a href="#L-505"><span class="linenos">505</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>  <span class="c1"># 空文字削除</span>
-</span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a>
-</span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a>        <span class="k">return</span> <span class="n">words</span>
+</span><span id="L-490"><a href="#L-490"><span class="linenos">490</span></a><span class="sd">        Returns:</span>
+</span><span id="L-491"><a href="#L-491"><span class="linenos">491</span></a><span class="sd">            list: リスト化されたキーワード</span>
+</span><span id="L-492"><a href="#L-492"><span class="linenos">492</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-493"><a href="#L-493"><span class="linenos">493</span></a>
+</span><span id="L-494"><a href="#L-494"><span class="linenos">494</span></a>        <span class="n">words</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-495"><a href="#L-495"><span class="linenos">495</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">keyword</span><span class="p">],</span>
+</span><span id="L-496"><a href="#L-496"><span class="linenos">496</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">remarks_word</span><span class="p">],</span>
+</span><span id="L-497"><a href="#L-497"><span class="linenos">497</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="L-498"><a href="#L-498"><span class="linenos">498</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="L-499"><a href="#L-499"><span class="linenos">499</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">ranking</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="L-500"><a href="#L-500"><span class="linenos">500</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="L-501"><a href="#L-501"><span class="linenos">501</span></a>        <span class="p">]</span>
+</span><span id="L-502"><a href="#L-502"><span class="linenos">502</span></a>
+</span><span id="L-503"><a href="#L-503"><span class="linenos">503</span></a>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="L-504"><a href="#L-504"><span class="linenos">504</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="L-505"><a href="#L-505"><span class="linenos">505</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">k</span><span class="p">])</span>
+</span><span id="L-506"><a href="#L-506"><span class="linenos">506</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="L-507"><a href="#L-507"><span class="linenos">507</span></a>
+</span><span id="L-508"><a href="#L-508"><span class="linenos">508</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">words</span><span class="p">)))</span>  <span class="c1"># 重複排除/平滑化</span>
+</span><span id="L-509"><a href="#L-509"><span class="linenos">509</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>  <span class="c1"># 空文字削除</span>
+</span><span id="L-510"><a href="#L-510"><span class="linenos">510</span></a>
+</span><span id="L-511"><a href="#L-511"><span class="linenos">511</span></a>        <span class="k">return</span> <span class="n">words</span>
 </span></pre></div>
 
 
@@ -3507,34 +3511,38 @@
 </span><span id="AppConfig-478"><a href="#AppConfig-478"><span class="linenos">478</span></a>        <span class="c1"># 共通設定値</span>
 </span><span id="AppConfig-479"><a href="#AppConfig-479"><span class="linenos">479</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_word</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="AppConfig-480"><a href="#AppConfig-480"><span class="linenos">480</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;レギュレーションワードテーブルに登録されていないワードの種別&quot;&quot;&quot;</span>
-</span><span id="AppConfig-481"><a href="#AppConfig-481"><span class="linenos">481</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-</span><span id="AppConfig-482"><a href="#AppConfig-482"><span class="linenos">482</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;日付範囲デフォルト値&quot;&quot;&quot;</span>
-</span><span id="AppConfig-483"><a href="#AppConfig-483"><span class="linenos">483</span></a>
-</span><span id="AppConfig-484"><a href="#AppConfig-484"><span class="linenos">484</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">word_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="AppConfig-485"><a href="#AppConfig-485"><span class="linenos">485</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;設定されている値、キーワードをリスト化する</span>
-</span><span id="AppConfig-486"><a href="#AppConfig-486"><span class="linenos">486</span></a>
-</span><span id="AppConfig-487"><a href="#AppConfig-487"><span class="linenos">487</span></a><span class="sd">        Returns:</span>
-</span><span id="AppConfig-488"><a href="#AppConfig-488"><span class="linenos">488</span></a><span class="sd">            list: リスト化されたキーワード</span>
-</span><span id="AppConfig-489"><a href="#AppConfig-489"><span class="linenos">489</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AppConfig-481"><a href="#AppConfig-481"><span class="linenos">481</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_unit</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">]</span>
+</span><span id="AppConfig-482"><a href="#AppConfig-482"><span class="linenos">482</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;レポート生成用日付範囲デフォルト値(レポート生成用)</span>
+</span><span id="AppConfig-483"><a href="#AppConfig-483"><span class="linenos">483</span></a><span class="sd">        - *A*: 全期間</span>
+</span><span id="AppConfig-484"><a href="#AppConfig-484"><span class="linenos">484</span></a><span class="sd">        - *M*: 月別</span>
+</span><span id="AppConfig-485"><a href="#AppConfig-485"><span class="linenos">485</span></a><span class="sd">        - *Y*: 年別</span>
+</span><span id="AppConfig-486"><a href="#AppConfig-486"><span class="linenos">486</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AppConfig-487"><a href="#AppConfig-487"><span class="linenos">487</span></a>
+</span><span id="AppConfig-488"><a href="#AppConfig-488"><span class="linenos">488</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">word_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="AppConfig-489"><a href="#AppConfig-489"><span class="linenos">489</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;設定されている値、キーワードをリスト化する</span>
 </span><span id="AppConfig-490"><a href="#AppConfig-490"><span class="linenos">490</span></a>
-</span><span id="AppConfig-491"><a href="#AppConfig-491"><span class="linenos">491</span></a>        <span class="n">words</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="AppConfig-492"><a href="#AppConfig-492"><span class="linenos">492</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">keyword</span><span class="p">],</span>
-</span><span id="AppConfig-493"><a href="#AppConfig-493"><span class="linenos">493</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">remarks_word</span><span class="p">],</span>
-</span><span id="AppConfig-494"><a href="#AppConfig-494"><span class="linenos">494</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="AppConfig-495"><a href="#AppConfig-495"><span class="linenos">495</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="AppConfig-496"><a href="#AppConfig-496"><span class="linenos">496</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">ranking</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="AppConfig-497"><a href="#AppConfig-497"><span class="linenos">497</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="AppConfig-498"><a href="#AppConfig-498"><span class="linenos">498</span></a>        <span class="p">]</span>
-</span><span id="AppConfig-499"><a href="#AppConfig-499"><span class="linenos">499</span></a>
-</span><span id="AppConfig-500"><a href="#AppConfig-500"><span class="linenos">500</span></a>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="AppConfig-501"><a href="#AppConfig-501"><span class="linenos">501</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="AppConfig-502"><a href="#AppConfig-502"><span class="linenos">502</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">k</span><span class="p">])</span>
-</span><span id="AppConfig-503"><a href="#AppConfig-503"><span class="linenos">503</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span id="AppConfig-504"><a href="#AppConfig-504"><span class="linenos">504</span></a>
-</span><span id="AppConfig-505"><a href="#AppConfig-505"><span class="linenos">505</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">words</span><span class="p">)))</span>  <span class="c1"># 重複排除/平滑化</span>
-</span><span id="AppConfig-506"><a href="#AppConfig-506"><span class="linenos">506</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>  <span class="c1"># 空文字削除</span>
-</span><span id="AppConfig-507"><a href="#AppConfig-507"><span class="linenos">507</span></a>
-</span><span id="AppConfig-508"><a href="#AppConfig-508"><span class="linenos">508</span></a>        <span class="k">return</span> <span class="n">words</span>
+</span><span id="AppConfig-491"><a href="#AppConfig-491"><span class="linenos">491</span></a><span class="sd">        Returns:</span>
+</span><span id="AppConfig-492"><a href="#AppConfig-492"><span class="linenos">492</span></a><span class="sd">            list: リスト化されたキーワード</span>
+</span><span id="AppConfig-493"><a href="#AppConfig-493"><span class="linenos">493</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AppConfig-494"><a href="#AppConfig-494"><span class="linenos">494</span></a>
+</span><span id="AppConfig-495"><a href="#AppConfig-495"><span class="linenos">495</span></a>        <span class="n">words</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="AppConfig-496"><a href="#AppConfig-496"><span class="linenos">496</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">keyword</span><span class="p">],</span>
+</span><span id="AppConfig-497"><a href="#AppConfig-497"><span class="linenos">497</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">remarks_word</span><span class="p">],</span>
+</span><span id="AppConfig-498"><a href="#AppConfig-498"><span class="linenos">498</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="AppConfig-499"><a href="#AppConfig-499"><span class="linenos">499</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="AppConfig-500"><a href="#AppConfig-500"><span class="linenos">500</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">ranking</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="AppConfig-501"><a href="#AppConfig-501"><span class="linenos">501</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="AppConfig-502"><a href="#AppConfig-502"><span class="linenos">502</span></a>        <span class="p">]</span>
+</span><span id="AppConfig-503"><a href="#AppConfig-503"><span class="linenos">503</span></a>
+</span><span id="AppConfig-504"><a href="#AppConfig-504"><span class="linenos">504</span></a>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="AppConfig-505"><a href="#AppConfig-505"><span class="linenos">505</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="AppConfig-506"><a href="#AppConfig-506"><span class="linenos">506</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">k</span><span class="p">])</span>
+</span><span id="AppConfig-507"><a href="#AppConfig-507"><span class="linenos">507</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="AppConfig-508"><a href="#AppConfig-508"><span class="linenos">508</span></a>
+</span><span id="AppConfig-509"><a href="#AppConfig-509"><span class="linenos">509</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">words</span><span class="p">)))</span>  <span class="c1"># 重複排除/平滑化</span>
+</span><span id="AppConfig-510"><a href="#AppConfig-510"><span class="linenos">510</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>  <span class="c1"># 空文字削除</span>
+</span><span id="AppConfig-511"><a href="#AppConfig-511"><span class="linenos">511</span></a>
+</span><span id="AppConfig-512"><a href="#AppConfig-512"><span class="linenos">512</span></a>        <span class="k">return</span> <span class="n">words</span>
 </span></pre></div>
 
 
@@ -3619,8 +3627,12 @@
 </span><span id="AppConfig.__init__-478"><a href="#AppConfig.__init__-478"><span class="linenos">478</span></a>        <span class="c1"># 共通設定値</span>
 </span><span id="AppConfig.__init__-479"><a href="#AppConfig.__init__-479"><span class="linenos">479</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_word</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </span><span id="AppConfig.__init__-480"><a href="#AppConfig.__init__-480"><span class="linenos">480</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;レギュレーションワードテーブルに登録されていないワードの種別&quot;&quot;&quot;</span>
-</span><span id="AppConfig.__init__-481"><a href="#AppConfig.__init__-481"><span class="linenos">481</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-</span><span id="AppConfig.__init__-482"><a href="#AppConfig.__init__-482"><span class="linenos">482</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;日付範囲デフォルト値&quot;&quot;&quot;</span>
+</span><span id="AppConfig.__init__-481"><a href="#AppConfig.__init__-481"><span class="linenos">481</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">aggregate_unit</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">]</span>
+</span><span id="AppConfig.__init__-482"><a href="#AppConfig.__init__-482"><span class="linenos">482</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;レポート生成用日付範囲デフォルト値(レポート生成用)</span>
+</span><span id="AppConfig.__init__-483"><a href="#AppConfig.__init__-483"><span class="linenos">483</span></a><span class="sd">        - *A*: 全期間</span>
+</span><span id="AppConfig.__init__-484"><a href="#AppConfig.__init__-484"><span class="linenos">484</span></a><span class="sd">        - *M*: 月別</span>
+</span><span id="AppConfig.__init__-485"><a href="#AppConfig.__init__-485"><span class="linenos">485</span></a><span class="sd">        - *Y*: 年別</span>
+</span><span id="AppConfig.__init__-486"><a href="#AppConfig.__init__-486"><span class="linenos">486</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -3824,13 +3836,19 @@
                             </div>
                             <div id="AppConfig.aggregate_unit" class="classattr">
                                 <div class="attr variable">
-            <span class="name">aggregate_unit</span><span class="annotation">: str</span>
+            <span class="name">aggregate_unit</span><span class="annotation">: Literal[&#39;A&#39;, &#39;M&#39;, &#39;Y&#39;]</span>
 
         
     </div>
     <a class="headerlink" href="#AppConfig.aggregate_unit"></a>
     
-            <div class="docstring"><p>日付範囲デフォルト値</p>
+            <div class="docstring"><p>レポート生成用日付範囲デフォルト値(レポート生成用)</p>
+
+<ul>
+<li><em>A</em>: 全期間</li>
+<li><em>M</em>: 月別</li>
+<li><em>Y</em>: 年別</li>
+</ul>
 </div>
 
 
@@ -3846,31 +3864,31 @@
 
     </div>
     <a class="headerlink" href="#AppConfig.word_list"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AppConfig.word_list-484"><a href="#AppConfig.word_list-484"><span class="linenos">484</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">word_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="AppConfig.word_list-485"><a href="#AppConfig.word_list-485"><span class="linenos">485</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;設定されている値、キーワードをリスト化する</span>
-</span><span id="AppConfig.word_list-486"><a href="#AppConfig.word_list-486"><span class="linenos">486</span></a>
-</span><span id="AppConfig.word_list-487"><a href="#AppConfig.word_list-487"><span class="linenos">487</span></a><span class="sd">        Returns:</span>
-</span><span id="AppConfig.word_list-488"><a href="#AppConfig.word_list-488"><span class="linenos">488</span></a><span class="sd">            list: リスト化されたキーワード</span>
-</span><span id="AppConfig.word_list-489"><a href="#AppConfig.word_list-489"><span class="linenos">489</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AppConfig.word_list-488"><a href="#AppConfig.word_list-488"><span class="linenos">488</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">word_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="AppConfig.word_list-489"><a href="#AppConfig.word_list-489"><span class="linenos">489</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;設定されている値、キーワードをリスト化する</span>
 </span><span id="AppConfig.word_list-490"><a href="#AppConfig.word_list-490"><span class="linenos">490</span></a>
-</span><span id="AppConfig.word_list-491"><a href="#AppConfig.word_list-491"><span class="linenos">491</span></a>        <span class="n">words</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="AppConfig.word_list-492"><a href="#AppConfig.word_list-492"><span class="linenos">492</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">keyword</span><span class="p">],</span>
-</span><span id="AppConfig.word_list-493"><a href="#AppConfig.word_list-493"><span class="linenos">493</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">remarks_word</span><span class="p">],</span>
-</span><span id="AppConfig.word_list-494"><a href="#AppConfig.word_list-494"><span class="linenos">494</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="AppConfig.word_list-495"><a href="#AppConfig.word_list-495"><span class="linenos">495</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="AppConfig.word_list-496"><a href="#AppConfig.word_list-496"><span class="linenos">496</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">ranking</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="AppConfig.word_list-497"><a href="#AppConfig.word_list-497"><span class="linenos">497</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
-</span><span id="AppConfig.word_list-498"><a href="#AppConfig.word_list-498"><span class="linenos">498</span></a>        <span class="p">]</span>
-</span><span id="AppConfig.word_list-499"><a href="#AppConfig.word_list-499"><span class="linenos">499</span></a>
-</span><span id="AppConfig.word_list-500"><a href="#AppConfig.word_list-500"><span class="linenos">500</span></a>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="AppConfig.word_list-501"><a href="#AppConfig.word_list-501"><span class="linenos">501</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="AppConfig.word_list-502"><a href="#AppConfig.word_list-502"><span class="linenos">502</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">k</span><span class="p">])</span>
-</span><span id="AppConfig.word_list-503"><a href="#AppConfig.word_list-503"><span class="linenos">503</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span id="AppConfig.word_list-504"><a href="#AppConfig.word_list-504"><span class="linenos">504</span></a>
-</span><span id="AppConfig.word_list-505"><a href="#AppConfig.word_list-505"><span class="linenos">505</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">words</span><span class="p">)))</span>  <span class="c1"># 重複排除/平滑化</span>
-</span><span id="AppConfig.word_list-506"><a href="#AppConfig.word_list-506"><span class="linenos">506</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>  <span class="c1"># 空文字削除</span>
-</span><span id="AppConfig.word_list-507"><a href="#AppConfig.word_list-507"><span class="linenos">507</span></a>
-</span><span id="AppConfig.word_list-508"><a href="#AppConfig.word_list-508"><span class="linenos">508</span></a>        <span class="k">return</span> <span class="n">words</span>
+</span><span id="AppConfig.word_list-491"><a href="#AppConfig.word_list-491"><span class="linenos">491</span></a><span class="sd">        Returns:</span>
+</span><span id="AppConfig.word_list-492"><a href="#AppConfig.word_list-492"><span class="linenos">492</span></a><span class="sd">            list: リスト化されたキーワード</span>
+</span><span id="AppConfig.word_list-493"><a href="#AppConfig.word_list-493"><span class="linenos">493</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AppConfig.word_list-494"><a href="#AppConfig.word_list-494"><span class="linenos">494</span></a>
+</span><span id="AppConfig.word_list-495"><a href="#AppConfig.word_list-495"><span class="linenos">495</span></a>        <span class="n">words</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="AppConfig.word_list-496"><a href="#AppConfig.word_list-496"><span class="linenos">496</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">keyword</span><span class="p">],</span>
+</span><span id="AppConfig.word_list-497"><a href="#AppConfig.word_list-497"><span class="linenos">497</span></a>            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">remarks_word</span><span class="p">],</span>
+</span><span id="AppConfig.word_list-498"><a href="#AppConfig.word_list-498"><span class="linenos">498</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="AppConfig.word_list-499"><a href="#AppConfig.word_list-499"><span class="linenos">499</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="AppConfig.word_list-500"><a href="#AppConfig.word_list-500"><span class="linenos">500</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">ranking</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="AppConfig.word_list-501"><a href="#AppConfig.word_list-501"><span class="linenos">501</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">commandword</span><span class="p">,</span>
+</span><span id="AppConfig.word_list-502"><a href="#AppConfig.word_list-502"><span class="linenos">502</span></a>        <span class="p">]</span>
+</span><span id="AppConfig.word_list-503"><a href="#AppConfig.word_list-503"><span class="linenos">503</span></a>
+</span><span id="AppConfig.word_list-504"><a href="#AppConfig.word_list-504"><span class="linenos">504</span></a>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="AppConfig.word_list-505"><a href="#AppConfig.word_list-505"><span class="linenos">505</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="AppConfig.word_list-506"><a href="#AppConfig.word_list-506"><span class="linenos">506</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">k</span><span class="p">])</span>
+</span><span id="AppConfig.word_list-507"><a href="#AppConfig.word_list-507"><span class="linenos">507</span></a>                <span class="n">words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="AppConfig.word_list-508"><a href="#AppConfig.word_list-508"><span class="linenos">508</span></a>
+</span><span id="AppConfig.word_list-509"><a href="#AppConfig.word_list-509"><span class="linenos">509</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">words</span><span class="p">)))</span>  <span class="c1"># 重複排除/平滑化</span>
+</span><span id="AppConfig.word_list-510"><a href="#AppConfig.word_list-510"><span class="linenos">510</span></a>        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>  <span class="c1"># 空文字削除</span>
+</span><span id="AppConfig.word_list-511"><a href="#AppConfig.word_list-511"><span class="linenos">511</span></a>
+</span><span id="AppConfig.word_list-512"><a href="#AppConfig.word_list-512"><span class="linenos">512</span></a>        <span class="k">return</span> <span class="n">words</span>
 </span></pre></div>
 
 
