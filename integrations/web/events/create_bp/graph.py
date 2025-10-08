@@ -46,9 +46,9 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
                 _, file_path = next(iter(file_list.items()))
                 if os.path.exists(file_path):
                     with open(file_path, encoding="utf-8") as f:
-                        message += f.read()
+                        message += f"<p>\n{f.read()}\n</p>\n"
                 else:
-                    message += f"<p>{headline.replace("\n", "<br>")}</p>"
+                    message += f"<p>\n{headline.replace("\n", "<br>")}</p>\n"
         except StopIteration:
             pass
 

@@ -87,7 +87,7 @@ def point_plot(m: "MessageParserProtocol"):
     match g.adapter.conf.plotting_backend:
         case "plotly":
             fig = _graph_generation_plotly(graph_params)
-            fig.write_html(save_file)
+            fig.write_html(save_file, full_html=False)
         case _:
             fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
