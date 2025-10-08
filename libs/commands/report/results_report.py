@@ -6,7 +6,7 @@ import logging
 import os
 from datetime import datetime
 from io import BytesIO
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -563,7 +563,7 @@ def periodic_aggregation(style: dict) -> list:
 
     elements: list = []
 
-    pattern: list[tuple[str, str, str]] = [
+    pattern: list[tuple[str, str, Literal["A", "M", "Y"]]] = [
         # 表タイトル, グラフタイトル, フラグ
         ("月別集計", "順位分布（月別）", "M"),
         ("年別集計", "順位分布（年別）", "Y"),

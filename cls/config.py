@@ -11,7 +11,7 @@ from itertools import chain
 from math import ceil
 from pathlib import Path
 from types import UnionType
-from typing import TYPE_CHECKING, Any, Optional, TypeAlias, Union
+from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
 from cls.types import GradeTableDict
 
@@ -477,8 +477,12 @@ class AppConfig:
         # 共通設定値
         self.undefined_word: int = 0
         """レギュレーションワードテーブルに登録されていないワードの種別"""
-        self.aggregate_unit: str = ""
-        """日付範囲デフォルト値"""
+        self.aggregate_unit: Literal["A", "M", "Y"]
+        """レポート生成用日付範囲デフォルト値(レポート生成用)
+        - *A*: 全期間
+        - *M*: 月別
+        - *Y*: 年別
+        """
 
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
