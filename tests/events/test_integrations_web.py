@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 import pytest
 from flask import Flask
+from flask_httpauth import HTTPBasicAuth  # type: ignore
 
 import libs.global_value as g
 from integrations import factory
@@ -51,6 +52,20 @@ def client(request):
     app.register_blueprint(create_bp.score_bp(adapter))
     app.register_blueprint(create_bp.user_assets_bp(adapter))
 
+    auth = HTTPBasicAuth()
+
+    @auth.verify_password
+    def verify_password(username, password):
+        if username == adapter.conf.username and password == adapter.conf.password:
+            return True
+        return False
+
+    @app.before_request
+    def require_auth():
+        if adapter.conf.require_auth:
+            return auth.login_required(lambda: None)()
+        return None
+
     with app.test_client() as test_client:
         yield test_client
 
@@ -83,6 +98,18 @@ def client(request):
         ("web_customize.ini", "/static/unknown.css", 404),
         ("web_customize.ini", "/user_static/user.css", 200),
         ("web_customize.ini", "/user_static/config.ini", 403),
+        ("web_with_auth.ini", "/", 401),
+        ("web_with_auth.ini", "/summary/", 401),
+        ("web_with_auth.ini", "/graph/", 401),
+        ("web_with_auth.ini", "/ranking/", 401),
+        ("web_with_auth.ini", "/detail/", 401),
+        ("web_with_auth.ini", "/report/", 401),
+        ("web_with_auth.ini", "/member/", 401),
+        ("web_with_auth.ini", "/score/", 401),
+        ("web_with_auth.ini", "/static/stylesheet.css", 401),
+        ("web_with_auth.ini", "/static/unknown.css", 401),
+        ("web_with_auth.ini", "/user_static/user.css", 401),
+        ("web_with_auth.ini", "/user_static/config.ini", 401),
     ],
     indirect=["flask_client"],
 )
