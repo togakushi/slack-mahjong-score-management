@@ -34,11 +34,13 @@ def aggregation(m: "MessageParserProtocol"):
     if not game_info["game_count"]:  # 検索結果が0件のとき
         m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     result_df = loader.read_data("RANKING_AGGREGATE")
     if result_df.empty:
         m.post.headline = {title: message.random_reply(m, "no_target", False)}
         m.status.result = False
+        return
 
     df = pd.merge(
         result_df, aggregate.ranking_record(),

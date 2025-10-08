@@ -39,6 +39,7 @@ def plot(m: "MessageParserProtocol"):
     if df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
