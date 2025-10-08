@@ -12,7 +12,6 @@ from libs.functions import message
 from libs.utils import formatter
 
 if TYPE_CHECKING:
-    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
 
 
@@ -30,7 +29,7 @@ def aggregation(m: "MessageParserProtocol"):
         title = "チームランキング"
 
     # データ取得
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     if not game_info["game_count"]:  # 検索結果が0件のとき
         m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         m.status.result = False

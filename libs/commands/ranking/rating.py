@@ -12,7 +12,6 @@ from libs.functions import compose, message
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
-    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
 
 
@@ -31,12 +30,13 @@ def aggregation(m: "MessageParserProtocol"):
 
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # pylint: disable=unused-variable  # noqa: F841
 
     if not game_info["game_count"]:  # 検索結果が0件のとき
         m.post.headline = {"レーティング": message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     df_results = loader.read_data("RANKING_RESULTS").set_index("name")
     df_ratings = aggregate.calculation_rating()
@@ -77,6 +77,7 @@ def aggregation(m: "MessageParserProtocol"):
     if df.empty:
         m.post.headline = {"レーティング": message.random_reply(m, "no_target", False)}
         m.status.result = False
+        return
 
     df["rank"] = df["rate"].rank(ascending=False, method="dense").astype("int")
     df = formatter.df_rename(df.query("rank <= @ranked").filter(

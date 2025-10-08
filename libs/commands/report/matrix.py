@@ -11,7 +11,6 @@ from libs.functions import message
 from libs.utils import formatter
 
 if TYPE_CHECKING:
-    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
 
 
@@ -24,7 +23,7 @@ def plot(m: "MessageParserProtocol"):
 
     # データ集計
     title: str = "対局対戦マトリックス"
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     df = aggregate.matrix_table()
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df.index.tolist())
