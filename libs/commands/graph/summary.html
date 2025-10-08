@@ -96,7 +96,7 @@
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">cast</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">cast</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -117,8 +117,8 @@
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">graph_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;point&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;point_hbar&quot;</span><span class="p">]</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">title_text</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="n">xlabel_text</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">ylabel_text</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="n">xlabel_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">ylabel_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="n">total_game_count</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="n">target_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="n">pivot</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
@@ -349,8 +349,8 @@
 </span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>        <span class="n">_graph_title</span><span class="p">(</span><span class="n">graph_params</span><span class="p">)</span>
 </span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>        <span class="n">fig</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
 </span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>            <span class="n">xlabel</span><span class="o">=</span><span class="n">graph_params</span><span class="p">[</span><span class="s2">&quot;xlabel_text&quot;</span><span class="p">],</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>            <span class="n">ylabel</span><span class="o">=</span><span class="n">graph_params</span><span class="p">[</span><span class="s2">&quot;ylabel_text&quot;</span><span class="p">],</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>            <span class="n">xlabel</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">graph_params</span><span class="p">[</span><span class="s2">&quot;xlabel_text&quot;</span><span class="p">]),</span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>            <span class="n">ylabel</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">graph_params</span><span class="p">[</span><span class="s2">&quot;ylabel_text&quot;</span><span class="p">]),</span>
 </span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">50</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>        <span class="p">)</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span>
 </span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>
@@ -560,8 +560,8 @@
 </span><span id="GraphParams-26"><a href="#GraphParams-26"><span class="linenos">26</span></a>
 </span><span id="GraphParams-27"><a href="#GraphParams-27"><span class="linenos">27</span></a>    <span class="n">graph_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;point&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;point_hbar&quot;</span><span class="p">]</span>
 </span><span id="GraphParams-28"><a href="#GraphParams-28"><span class="linenos">28</span></a>    <span class="n">title_text</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GraphParams-29"><a href="#GraphParams-29"><span class="linenos">29</span></a>    <span class="n">xlabel_text</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GraphParams-30"><a href="#GraphParams-30"><span class="linenos">30</span></a>    <span class="n">ylabel_text</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GraphParams-29"><a href="#GraphParams-29"><span class="linenos">29</span></a>    <span class="n">xlabel_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="GraphParams-30"><a href="#GraphParams-30"><span class="linenos">30</span></a>    <span class="n">ylabel_text</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="GraphParams-31"><a href="#GraphParams-31"><span class="linenos">31</span></a>    <span class="n">total_game_count</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="GraphParams-32"><a href="#GraphParams-32"><span class="linenos">32</span></a>    <span class="n">target_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
 </span><span id="GraphParams-33"><a href="#GraphParams-33"><span class="linenos">33</span></a>    <span class="n">pivot</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
@@ -597,7 +597,7 @@
                             </div>
                             <div id="GraphParams.xlabel_text" class="classattr">
                                 <div class="attr variable">
-            <span class="name">xlabel_text</span><span class="annotation">: str</span>
+            <span class="name">xlabel_text</span><span class="annotation">: Optional[str]</span>
 
         
     </div>
@@ -608,7 +608,7 @@
                             </div>
                             <div id="GraphParams.ylabel_text" class="classattr">
                                 <div class="attr variable">
-            <span class="name">ylabel_text</span><span class="annotation">: str</span>
+            <span class="name">ylabel_text</span><span class="annotation">: Optional[str]</span>
 
         
     </div>
