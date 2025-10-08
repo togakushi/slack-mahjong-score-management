@@ -268,13 +268,9 @@ def register():
 
     def dispatch_help(m: "MessageParserProtocol"):
         # ヘルプメッセージ
-        cast(dict, m.post.message).update(compose.msg_help.event_message())
+        m.post.message = compose.msg_help.event_message()
         m.post.ts = m.data.event_ts
-        m.post.key_header = False
-        # メンバーリスト
-        cast(dict, m.post.message).update(lookup.textdata.get_members_list())
-        m.post.codeblock = True
-        m.post.key_header = True
+        m.post.codeblock = False
 
     def dispatch_download(m: "MessageParserProtocol"):
         m.post.file_list = [{"成績記録DB": g.cfg.setting.database_file}]
