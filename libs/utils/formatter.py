@@ -41,6 +41,8 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
                 fmt.append("+.1f")
             case "平均" | "平均ポイント" | "point_avg" | "平均収支" | "区間ポイント" | "区間平均":
                 fmt.append("+.1f")
+            case "1位(ポイント)" | "2位(ポイント)" | "3位(ポイント)" | "4位(ポイント)" | "5位(ポイント)":
+                fmt.append("+.1f")
             case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位" | "rank1" | "rank2" | "rank3" | "rank4":
                 fmt.append(".0f")
             case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)" | "1位率" | "2位率" | "3位率" | "4位率":
@@ -257,6 +259,13 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "p1_rank": "東家 順位", "p2_rank": "南家 順位", "p3_rank": "西家 順位", "p4_rank": "北家 順位",
         "p1_point": "東家 ポイント", "p2_point": "南家 ポイント", "p3_point": "西家 ポイント", "p4_point": "北家 ポイント",
         "p1_str": "東家 入力素点", "p2_str": "南家 入力素点", "p3_str": "西家 入力素点", "p4_str": "北家 入力素点",
+        # レポート - 上位成績
+        "collection": "集計月",
+        "name1": "1位(名前)", "point1": "1位(ポイント)",
+        "name2": "2位(名前)", "point2": "2位(ポイント)",
+        "name3": "3位(名前)", "point3": "3位(ポイント)",
+        "name4": "4位(名前)", "point4": "4位(ポイント)",
+        "name5": "5位(名前)", "point5": "5位(ポイント)",
     }
 
     for x in df.columns:

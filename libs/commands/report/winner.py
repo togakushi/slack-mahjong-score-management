@@ -55,7 +55,7 @@ def plot(m: "MessageParserProtocol"):
                 )
 
     m.post.headline = {"成績上位者": message.header(game_info, m)}
-    m.post.message = {"月別集計結果": results_df}
+    m.post.message = {"月別集計結果": formatter.df_rename(results_df)}
 
     # --- グラフ設定
     if g.adapter.conf.plotting_backend == "plotly":
