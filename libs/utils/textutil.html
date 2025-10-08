@@ -161,45 +161,51 @@
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="k">return</span> <span class="mi">0</span>
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_file_path</span><span class="p">(</span><span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_file_path</span><span class="p">(</span><span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;保存ファイルのフルパスを取得</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">    Args:</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">        extension (str): 拡張子(ドットを含める)</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    Returns:</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">        str: 保存ファイルパス</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="si">}{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;graph</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="p">)</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        delete (bool, optional): 生成済みファイルを削除. Defaults to False.</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    Returns:</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        str: 保存ファイルパス</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="si">}{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;graph</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="p">)</span>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="k">def</span><span class="w"> </span><span class="nf">split_line</span><span class="p">(</span><span class="n">last_line</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;step単位で分割する</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">delete</span><span class="p">:</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">    Args:</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        last_line (int): 最終位置</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        step (int): 分割単位</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">    Returns:</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        list[tuple[int, int]]: 分割単位のペア</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">step_count</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="k">return</span> <span class="n">file_path</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="k">def</span><span class="w"> </span><span class="nf">split_line</span><span class="p">(</span><span class="n">last_line</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;step単位で分割する</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">    Args:</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        last_line (int): 最終位置</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        step (int): 分割単位</span>
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_line</span> <span class="o">/</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="n">s_line</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">step</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="n">e_line</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">    Returns:</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        list[tuple[int, int]]: 分割単位のペア</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="k">if</span> <span class="n">last_line</span> <span class="o">-</span> <span class="n">e_line</span> <span class="o">&lt;</span> <span class="n">step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 最終ブロックがstep/2で収まるならまとめる</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">last_line</span><span class="p">))</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>            <span class="k">break</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">e_line</span><span class="p">))</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="k">return</span> <span class="n">step_count</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="n">step_count</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_line</span> <span class="o">/</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="n">s_line</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="n">e_line</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>        <span class="k">if</span> <span class="n">last_line</span> <span class="o">-</span> <span class="n">e_line</span> <span class="o">&lt;</span> <span class="n">step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 最終ブロックがstep/2で収まるならまとめる</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">last_line</span><span class="p">))</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>            <span class="k">break</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>        <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">e_line</span><span class="p">))</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="k">return</span> <span class="n">step_count</span>
 </span></pre></div>
 
 
@@ -382,26 +388,32 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">save_file_path</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">extension</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">save_file_path</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">extension</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">delete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="save_file_path-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#save_file_path"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="save_file_path-94"><a href="#save_file_path-94"><span class="linenos"> 94</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_file_path</span><span class="p">(</span><span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="save_file_path-94"><a href="#save_file_path-94"><span class="linenos"> 94</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_file_path</span><span class="p">(</span><span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="save_file_path-95"><a href="#save_file_path-95"><span class="linenos"> 95</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;保存ファイルのフルパスを取得</span>
 </span><span id="save_file_path-96"><a href="#save_file_path-96"><span class="linenos"> 96</span></a>
 </span><span id="save_file_path-97"><a href="#save_file_path-97"><span class="linenos"> 97</span></a><span class="sd">    Args:</span>
 </span><span id="save_file_path-98"><a href="#save_file_path-98"><span class="linenos"> 98</span></a><span class="sd">        extension (str): 拡張子(ドットを含める)</span>
-</span><span id="save_file_path-99"><a href="#save_file_path-99"><span class="linenos"> 99</span></a>
-</span><span id="save_file_path-100"><a href="#save_file_path-100"><span class="linenos">100</span></a><span class="sd">    Returns:</span>
-</span><span id="save_file_path-101"><a href="#save_file_path-101"><span class="linenos">101</span></a><span class="sd">        str: 保存ファイルパス</span>
-</span><span id="save_file_path-102"><a href="#save_file_path-102"><span class="linenos">102</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="save_file_path-103"><a href="#save_file_path-103"><span class="linenos">103</span></a>
-</span><span id="save_file_path-104"><a href="#save_file_path-104"><span class="linenos">104</span></a>    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-</span><span id="save_file_path-105"><a href="#save_file_path-105"><span class="linenos">105</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span>
-</span><span id="save_file_path-106"><a href="#save_file_path-106"><span class="linenos">106</span></a>        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="si">}{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;graph</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="save_file_path-107"><a href="#save_file_path-107"><span class="linenos">107</span></a>    <span class="p">)</span>
+</span><span id="save_file_path-99"><a href="#save_file_path-99"><span class="linenos"> 99</span></a><span class="sd">        delete (bool, optional): 生成済みファイルを削除. Defaults to False.</span>
+</span><span id="save_file_path-100"><a href="#save_file_path-100"><span class="linenos">100</span></a>
+</span><span id="save_file_path-101"><a href="#save_file_path-101"><span class="linenos">101</span></a><span class="sd">    Returns:</span>
+</span><span id="save_file_path-102"><a href="#save_file_path-102"><span class="linenos">102</span></a><span class="sd">        str: 保存ファイルパス</span>
+</span><span id="save_file_path-103"><a href="#save_file_path-103"><span class="linenos">103</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="save_file_path-104"><a href="#save_file_path-104"><span class="linenos">104</span></a>
+</span><span id="save_file_path-105"><a href="#save_file_path-105"><span class="linenos">105</span></a>    <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+</span><span id="save_file_path-106"><a href="#save_file_path-106"><span class="linenos">106</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span>
+</span><span id="save_file_path-107"><a href="#save_file_path-107"><span class="linenos">107</span></a>        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="si">}{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;graph</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="save_file_path-108"><a href="#save_file_path-108"><span class="linenos">108</span></a>    <span class="p">)</span>
+</span><span id="save_file_path-109"><a href="#save_file_path-109"><span class="linenos">109</span></a>
+</span><span id="save_file_path-110"><a href="#save_file_path-110"><span class="linenos">110</span></a>    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">delete</span><span class="p">:</span>
+</span><span id="save_file_path-111"><a href="#save_file_path-111"><span class="linenos">111</span></a>        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+</span><span id="save_file_path-112"><a href="#save_file_path-112"><span class="linenos">112</span></a>
+</span><span id="save_file_path-113"><a href="#save_file_path-113"><span class="linenos">113</span></a>    <span class="k">return</span> <span class="n">file_path</span>
 </span></pre></div>
 
 
@@ -411,6 +423,7 @@
 
 <ul>
 <li><strong>extension (str):</strong>  拡張子(ドットを含める)</li>
+<li><strong>delete (bool, optional):</strong>  生成済みファイルを削除. Defaults to False.</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -433,29 +446,29 @@
 
     </div>
     <a class="headerlink" href="#split_line"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="split_line-110"><a href="#split_line-110"><span class="linenos">110</span></a><span class="k">def</span><span class="w"> </span><span class="nf">split_line</span><span class="p">(</span><span class="n">last_line</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-</span><span id="split_line-111"><a href="#split_line-111"><span class="linenos">111</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;step単位で分割する</span>
-</span><span id="split_line-112"><a href="#split_line-112"><span class="linenos">112</span></a>
-</span><span id="split_line-113"><a href="#split_line-113"><span class="linenos">113</span></a><span class="sd">    Args:</span>
-</span><span id="split_line-114"><a href="#split_line-114"><span class="linenos">114</span></a><span class="sd">        last_line (int): 最終位置</span>
-</span><span id="split_line-115"><a href="#split_line-115"><span class="linenos">115</span></a><span class="sd">        step (int): 分割単位</span>
-</span><span id="split_line-116"><a href="#split_line-116"><span class="linenos">116</span></a>
-</span><span id="split_line-117"><a href="#split_line-117"><span class="linenos">117</span></a><span class="sd">    Returns:</span>
-</span><span id="split_line-118"><a href="#split_line-118"><span class="linenos">118</span></a><span class="sd">        list[tuple[int, int]]: 分割単位のペア</span>
-</span><span id="split_line-119"><a href="#split_line-119"><span class="linenos">119</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="split_line-120"><a href="#split_line-120"><span class="linenos">120</span></a>
-</span><span id="split_line-121"><a href="#split_line-121"><span class="linenos">121</span></a>    <span class="n">step_count</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="split_line-116"><a href="#split_line-116"><span class="linenos">116</span></a><span class="k">def</span><span class="w"> </span><span class="nf">split_line</span><span class="p">(</span><span class="n">last_line</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+</span><span id="split_line-117"><a href="#split_line-117"><span class="linenos">117</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;step単位で分割する</span>
+</span><span id="split_line-118"><a href="#split_line-118"><span class="linenos">118</span></a>
+</span><span id="split_line-119"><a href="#split_line-119"><span class="linenos">119</span></a><span class="sd">    Args:</span>
+</span><span id="split_line-120"><a href="#split_line-120"><span class="linenos">120</span></a><span class="sd">        last_line (int): 最終位置</span>
+</span><span id="split_line-121"><a href="#split_line-121"><span class="linenos">121</span></a><span class="sd">        step (int): 分割単位</span>
 </span><span id="split_line-122"><a href="#split_line-122"><span class="linenos">122</span></a>
-</span><span id="split_line-123"><a href="#split_line-123"><span class="linenos">123</span></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_line</span> <span class="o">/</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
-</span><span id="split_line-124"><a href="#split_line-124"><span class="linenos">124</span></a>        <span class="n">s_line</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">step</span>
-</span><span id="split_line-125"><a href="#split_line-125"><span class="linenos">125</span></a>        <span class="n">e_line</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="split_line-123"><a href="#split_line-123"><span class="linenos">123</span></a><span class="sd">    Returns:</span>
+</span><span id="split_line-124"><a href="#split_line-124"><span class="linenos">124</span></a><span class="sd">        list[tuple[int, int]]: 分割単位のペア</span>
+</span><span id="split_line-125"><a href="#split_line-125"><span class="linenos">125</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="split_line-126"><a href="#split_line-126"><span class="linenos">126</span></a>
-</span><span id="split_line-127"><a href="#split_line-127"><span class="linenos">127</span></a>        <span class="k">if</span> <span class="n">last_line</span> <span class="o">-</span> <span class="n">e_line</span> <span class="o">&lt;</span> <span class="n">step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 最終ブロックがstep/2で収まるならまとめる</span>
-</span><span id="split_line-128"><a href="#split_line-128"><span class="linenos">128</span></a>            <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">last_line</span><span class="p">))</span>
-</span><span id="split_line-129"><a href="#split_line-129"><span class="linenos">129</span></a>            <span class="k">break</span>
-</span><span id="split_line-130"><a href="#split_line-130"><span class="linenos">130</span></a>        <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">e_line</span><span class="p">))</span>
-</span><span id="split_line-131"><a href="#split_line-131"><span class="linenos">131</span></a>
-</span><span id="split_line-132"><a href="#split_line-132"><span class="linenos">132</span></a>    <span class="k">return</span> <span class="n">step_count</span>
+</span><span id="split_line-127"><a href="#split_line-127"><span class="linenos">127</span></a>    <span class="n">step_count</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="split_line-128"><a href="#split_line-128"><span class="linenos">128</span></a>
+</span><span id="split_line-129"><a href="#split_line-129"><span class="linenos">129</span></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_line</span> <span class="o">/</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+</span><span id="split_line-130"><a href="#split_line-130"><span class="linenos">130</span></a>        <span class="n">s_line</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="split_line-131"><a href="#split_line-131"><span class="linenos">131</span></a>        <span class="n">e_line</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+</span><span id="split_line-132"><a href="#split_line-132"><span class="linenos">132</span></a>
+</span><span id="split_line-133"><a href="#split_line-133"><span class="linenos">133</span></a>        <span class="k">if</span> <span class="n">last_line</span> <span class="o">-</span> <span class="n">e_line</span> <span class="o">&lt;</span> <span class="n">step</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 最終ブロックがstep/2で収まるならまとめる</span>
+</span><span id="split_line-134"><a href="#split_line-134"><span class="linenos">134</span></a>            <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">last_line</span><span class="p">))</span>
+</span><span id="split_line-135"><a href="#split_line-135"><span class="linenos">135</span></a>            <span class="k">break</span>
+</span><span id="split_line-136"><a href="#split_line-136"><span class="linenos">136</span></a>        <span class="n">step_count</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">s_line</span><span class="p">,</span> <span class="n">e_line</span><span class="p">))</span>
+</span><span id="split_line-137"><a href="#split_line-137"><span class="linenos">137</span></a>
+</span><span id="split_line-138"><a href="#split_line-138"><span class="linenos">138</span></a>    <span class="k">return</span> <span class="n">step_count</span>
 </span></pre></div>
 
 
