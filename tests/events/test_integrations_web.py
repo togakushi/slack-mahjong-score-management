@@ -23,7 +23,7 @@ def patch_by_keyword():
         yield mock_by_keyword
 
 
-@pytest.fixture
+@pytest.fixture(name="flask_client")
 def client(request):
     """Flask テストクライアント"""
     config_path = request.param
@@ -51,12 +51,12 @@ def client(request):
     app.register_blueprint(create_bp.score_bp(adapter))
     app.register_blueprint(create_bp.user_assets_bp(adapter))
 
-    with app.test_client() as client:
-        yield client
+    with app.test_client() as test_client:
+        yield test_client
 
 
 @pytest.mark.parametrize(
-    "client, url, expected_status",
+    "flask_client, url, expected_status",
     [
         ("minimal.ini", "/", 200),
         ("minimal.ini", "/summary/", 200),
@@ -78,16 +78,17 @@ def client(request):
         ("web_customize.ini", "/detail/", 403),
         ("web_customize.ini", "/report/", 200),
         ("web_customize.ini", "/member/", 200),
-        ("web_customize.ini", "/score/", 200),  # DeprecationWarning: The default timestamp converter is deprecated as of Python 3.12;
+        ("web_customize.ini", "/score/", 200),
         ("web_customize.ini", "/static/stylesheet.css", 200),
         ("web_customize.ini", "/static/unknown.css", 404),
         ("web_customize.ini", "/user_static/user.css", 200),
         ("web_customize.ini", "/user_static/config.ini", 403),
     ],
-    indirect=["client"],
+    indirect=["flask_client"],
 )
-def test_route_access(client, url, expected_status):
+def test_route_access(flask_client, url, expected_status):
+    """ルート選択テスト"""
     print("-->", url)
 
-    response = client.get(url)
+    response = flask_client.get(url)
     assert response.status_code == expected_status
