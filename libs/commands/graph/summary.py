@@ -4,7 +4,7 @@ libs/commands/graph/summary.py
 
 import logging
 import os
-from typing import TYPE_CHECKING, Literal, TypedDict, cast
+from typing import TYPE_CHECKING, Literal, Optional, TypedDict, cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -25,8 +25,8 @@ class GraphParams(TypedDict, total=False):
 
     graph_type: Literal["point", "rank", "point_hbar"]
     title_text: str
-    xlabel_text: str
-    ylabel_text: str
+    xlabel_text: Optional[str]
+    ylabel_text: Optional[str]
     total_game_count: int
     target_data: pd.DataFrame
     pivot: pd.DataFrame
@@ -257,8 +257,8 @@ def _graph_generation(graph_params: GraphParams):
         _graph_title(graph_params)
         fig = df.plot(
             figsize=(8, 6),
-            xlabel=graph_params["xlabel_text"],
-            ylabel=graph_params["ylabel_text"],
+            xlabel=str(graph_params["xlabel_text"]),
+            ylabel=str(graph_params["ylabel_text"]),
             marker="." if len(df) < 50 else None,
         ).get_figure()
 
