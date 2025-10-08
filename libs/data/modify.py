@@ -11,7 +11,6 @@ from contextlib import closing
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
-from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from cls.types import RemarkDict
 from libs.data import lookup
@@ -19,10 +18,11 @@ from libs.functions import message
 from libs.utils import dbutil, formatter
 
 if TYPE_CHECKING:
+    from cls.score import GameResult
     from integrations.protocols import MessageParserProtocol
 
 
-def db_insert(detection: GameResult, m: "MessageParserProtocol") -> int:
+def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
     """スコアデータをDBに追加する
 
     Args:
@@ -54,7 +54,7 @@ def db_insert(detection: GameResult, m: "MessageParserProtocol") -> int:
     return changes
 
 
-def db_update(detection: GameResult, m: "MessageParserProtocol") -> None:
+def db_update(detection: "GameResult", m: "MessageParserProtocol") -> None:
     """スコアデータを変更する
 
     Args:
@@ -258,7 +258,7 @@ def reprocessing_remarks(m: "MessageParserProtocol") -> None:
                     check_remarks(m)
 
 
-def _score_check(detection: GameResult, m: "MessageParserProtocol"):
+def _score_check(detection: "GameResult", m: "MessageParserProtocol"):
     """スコアデータ格納状態を記録する
 
     Args:

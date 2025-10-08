@@ -2,11 +2,13 @@
 libs/functions/compose/text_item.py
 """
 
-from typing import Literal, Optional, cast
+from typing import TYPE_CHECKING, Literal, Optional, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import GameInfoDict
+
+if TYPE_CHECKING:
+    from cls.types import GameInfoDict
 
 
 def remarks(headword=False) -> str | list:
