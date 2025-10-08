@@ -31,6 +31,7 @@ def plot(m: "MessageParserProtocol"):
     if df_ratings.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     # 足切り
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()

@@ -30,7 +30,7 @@ def main(m: "MessageParserProtocol"):
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ取得
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     df = loader.read_data("REPORT_RESULTS_LIST").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
