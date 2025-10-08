@@ -14,7 +14,16 @@ if TYPE_CHECKING:
     from integrations.web.adapter import ServiceAdapter
 
 
-def member_bp(adapter: "ServiceAdapter"):
+def member_bp(adapter: "ServiceAdapter") -> Blueprint:
+    """メンバー管理ページ用Blueprint
+
+    Args:
+        adapter (ServiceAdapter): web用アダプタ
+
+    Returns:
+        Blueprint: Blueprint
+    """
+
     bp = Blueprint("member", __name__, url_prefix="/member")
 
     @bp.route("/", methods=["GET", "POST"])

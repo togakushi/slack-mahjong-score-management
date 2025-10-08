@@ -13,7 +13,16 @@ if TYPE_CHECKING:
     from integrations.web.adapter import ServiceAdapter
 
 
-def user_assets_bp(adapter: "ServiceAdapter"):
+def user_assets_bp(adapter: "ServiceAdapter") -> Blueprint:
+    """ユーザー指定CSS用Blueprint
+
+    Args:
+        adapter (ServiceAdapter): web用アダプタ
+
+    Returns:
+        Blueprint: Blueprint
+    """
+
     bp = Blueprint(
         "user_assets",
         __name__,

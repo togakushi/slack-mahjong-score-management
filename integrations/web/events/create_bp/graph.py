@@ -15,7 +15,16 @@ if TYPE_CHECKING:
     from integrations.web.adapter import ServiceAdapter
 
 
-def graph_bp(adapter: "ServiceAdapter"):
+def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
+    """グラフ表示ページ用Blueprint
+
+    Args:
+        adapter (ServiceAdapter): web用アダプタ
+
+    Returns:
+        Blueprint: Blueprint
+    """
+
     bp = Blueprint("graph", __name__, url_prefix="/graph")
 
     @bp.route("/", methods=["GET", "POST"])

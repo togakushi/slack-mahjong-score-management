@@ -15,7 +15,16 @@ if TYPE_CHECKING:
     from integrations.web.adapter import ServiceAdapter
 
 
-def ranking_bp(adapter: "ServiceAdapter"):
+def ranking_bp(adapter: "ServiceAdapter") -> Blueprint:
+    """ランキングページ用Blueprint
+
+    Args:
+        adapter (ServiceAdapter): web用アダプタ
+
+    Returns:
+        Blueprint: Blueprint
+    """
+
     bp = Blueprint("ranking", __name__, url_prefix="/ranking")
 
     @bp.route("/", methods=["GET", "POST"])
