@@ -90,20 +90,26 @@ def count_padding(data):
     return 0
 
 
-def save_file_path(extension: str) -> str:
+def save_file_path(extension: str, delete: bool = False) -> str:
     """保存ファイルのフルパスを取得
 
     Args:
         extension (str): 拡張子(ドットを含める)
+        delete (bool, optional): 生成済みファイルを削除. Defaults to False.
 
     Returns:
         str: 保存ファイルパス
     """
 
-    return os.path.join(
+    file_path = os.path.join(
         g.cfg.setting.work_dir,
         f"{g.params["filename"]}{extension}" if g.params.get("filename") else f"graph{extension}",
     )
+
+    if os.path.exists(file_path) and delete:
+        os.remove(file_path)
+
+    return file_path
 
 
 def split_line(last_line: int, step: int) -> list[tuple[int, int]]:

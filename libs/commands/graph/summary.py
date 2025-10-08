@@ -3,7 +3,6 @@ libs/commands/graph/summary.py
 """
 
 import logging
-import os
 from typing import TYPE_CHECKING, Literal, Optional, TypedDict, cast
 
 import matplotlib.pyplot as plt
@@ -11,7 +10,6 @@ import pandas as pd
 import plotly.express as px  # type: ignore
 
 import libs.global_value as g
-from cls.types import GameInfoDict
 from libs.data import aggregate, loader
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil, textutil
@@ -43,18 +41,8 @@ def point_plot(m: "MessageParserProtocol"):
     # 初期化
     graph_params = GraphParams()
 
-    # 保存ファイル名
-    match pd.options.plotting.backend:
-        case "plotly":
-            save_file = textutil.save_file_path(".html")
-        case _:
-            save_file = textutil.save_file_path(".png")
-
-    if os.path.exists(save_file):
-        os.remove(save_file)
-
     # データ収集
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
@@ -86,9 +74,11 @@ def point_plot(m: "MessageParserProtocol"):
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
+            save_file = textutil.save_file_path(".html", True)
             fig = _graph_generation_plotly(graph_params)
             fig.write_html(save_file, full_html=False)
         case _:
+            save_file = textutil.save_file_path(".png", True)
             fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
 
@@ -108,7 +98,7 @@ def rank_plot(m: "MessageParserProtocol"):
     graph_params = GraphParams()
 
     # データ収集
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
@@ -140,12 +130,12 @@ def rank_plot(m: "MessageParserProtocol"):
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            save_file = textutil.save_file_path(".html")
+            save_file = textutil.save_file_path(".html", True)
             fig = _graph_generation_plotly(graph_params)
             fig.update_layout(yaxis={"autorange": "reversed"})
             fig.write_html(save_file, full_html=False)
         case _:
-            save_file = textutil.save_file_path(".png")
+            save_file = textutil.save_file_path(".png", True)
             fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
 
