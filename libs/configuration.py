@@ -258,9 +258,9 @@ def read_memberslist(log=True):
     g.team_list = lookup.db.get_team_list()
 
     if log:
-        logging.info(f"guest_name: {g.cfg.member.guest_name}")
-        logging.info(f"member_list: {sorted(set(g.member_list.values()))}")
-        logging.info(f"team_list: {[x["team"] for x in g.team_list]}")
+        logging.info("guest_name: %s", g.cfg.member.guest_name)
+        logging.info("member_list: %s", sorted(set(g.member_list.values())))
+        logging.info("team_list: %s", [x["team"] for x in g.team_list])
 
 
 def register():
