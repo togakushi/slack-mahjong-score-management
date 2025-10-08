@@ -27,7 +27,7 @@ def select_adapter(
 def select_adapter(
     selected_service: Literal["web"],
     conf: "AppConfig"
-) -> std_adapter:
+) -> web_adapter:
     ...
 
 
@@ -35,7 +35,7 @@ def select_adapter(
 def select_adapter(
     selected_service: Literal["standard_io"],
     conf: "AppConfig"
-) -> web_adapter:
+) -> std_adapter:
     ...
 
 
