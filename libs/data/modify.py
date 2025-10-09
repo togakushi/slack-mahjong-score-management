@@ -12,7 +12,6 @@ from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from cls.types import RemarkDict
 from libs.data import lookup
 from libs.functions import message
 from libs.utils import dbutil, formatter
@@ -20,6 +19,7 @@ from libs.utils import dbutil, formatter
 if TYPE_CHECKING:
     from cls.score import GameResult
     from integrations.protocols import MessageParserProtocol
+    from libs.types import RemarkDict
 
 
 def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
@@ -136,7 +136,7 @@ def db_backup() -> str:
         return "\nデータベースのバックアップに失敗しました。"
 
 
-def remarks_append(m: "MessageParserProtocol", remarks: list[RemarkDict]) -> None:
+def remarks_append(m: "MessageParserProtocol", remarks: list["RemarkDict"]) -> None:
     """メモをDBに記録する
 
     Args:
@@ -214,9 +214,9 @@ def check_remarks(m: "MessageParserProtocol") -> None:
 
     game_result = lookup.db.exsist_record(m.data.thread_ts)
     if game_result.has_valid_data():  # ゲーム結果のスレッドになっているか
-        remarks: list[RemarkDict] = []
+        remarks: list["RemarkDict"] = []
         for name, matter in zip(m.argument[0::2], m.argument[1::2]):
-            remark: RemarkDict = {
+            remark: "RemarkDict" = {
                 "thread_ts": m.data.thread_ts,
                 "event_ts": m.data.event_ts,
                 "name": formatter.name_replace(name, not_replace=True),

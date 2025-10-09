@@ -9,11 +9,12 @@ from importlib.resources import files
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
-from cls.types import GradeTableDict
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
     from configparser import ConfigParser
+
+    from libs.types import GradeTableDict
 
 
 def initialization_resultdb() -> None:
@@ -127,7 +128,7 @@ def read_grade_table() -> None:
 
     with open(tbl_file, encoding="utf-8") as f:
         try:
-            tbl_data: GradeTableDict = json.load(f)
+            tbl_data: "GradeTableDict" = json.load(f)
         except json.JSONDecodeError as err:
             logging.error(err)
             return

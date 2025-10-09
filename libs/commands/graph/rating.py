@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from cls.types import GameInfoDict
 from libs.data import aggregate
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil
@@ -25,7 +24,7 @@ def plot(m: "MessageParserProtocol"):
     """
 
     # データ収集
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     df_ratings = aggregate.calculation_rating()
 
     if df_ratings.empty:

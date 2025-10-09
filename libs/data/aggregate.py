@@ -14,7 +14,7 @@ from libs.data import loader
 from libs.utils import formatter
 
 if TYPE_CHECKING:
-    from cls.types import GameInfoDict
+    from libs.types import GameInfoDict
 
 
 def game_info() -> "GameInfoDict":

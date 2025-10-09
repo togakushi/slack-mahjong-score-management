@@ -14,8 +14,8 @@ from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
-    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
+    from libs.types import GameInfoDict
 
 
 def aggregation(m: "MessageParserProtocol"):
@@ -34,7 +34,7 @@ def aggregation(m: "MessageParserProtocol"):
         g.params.update(individual=True)
 
     # --- データ収集
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     msg_data: dict = {}
     mapping_dict: dict = {}
 

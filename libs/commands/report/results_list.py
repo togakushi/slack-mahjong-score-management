@@ -15,8 +15,8 @@ from libs.utils import formatter, graphutil
 if TYPE_CHECKING:
     import pandas as pd
 
-    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
+    from libs.types import GameInfoDict
 
 
 def main(m: "MessageParserProtocol"):

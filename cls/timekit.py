@@ -34,15 +34,19 @@ Examples:
 
 from datetime import datetime
 from functools import total_ordering
-from typing import (TYPE_CHECKING, List, Literal, Optional, TypeAlias, Union,
-                    cast)
+from typing import (Callable, List, Literal, Optional, TypeAlias, TypedDict,
+                    Union, cast)
 
 from dateutil.relativedelta import relativedelta
 
 from libs.data import lookup
 
-if TYPE_CHECKING:
-    from cls.types import DateRangeSpec
+
+class DateRangeSpec(TypedDict):
+    """日付範囲変換キーワード用辞書"""
+
+    keyword: list[str]
+    range: Callable[[datetime], list[datetime]]
 
 
 FormatType: TypeAlias = Literal[
@@ -72,7 +76,7 @@ DelimiterStyle: TypeAlias = Literal[
 - **None**: 未指定
 """
 
-DATE_RANGE_MAP: dict[str, "DateRangeSpec"] = {
+DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
     "today": {
         "keyword": ["今日", "本日", "当日"],
         "range": lambda x: [

@@ -2,8 +2,7 @@
 cls/types.py
 """
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Callable, Optional, TypedDict
+from typing import TYPE_CHECKING, Optional, TypedDict
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime
@@ -41,13 +40,6 @@ class RemarkDict(TypedDict):
     """メモ記録時間"""
     name: str
     matter: str
-
-
-class DateRangeSpec(TypedDict):
-    """日付範囲変換キーワード用辞書"""
-
-    keyword: list[str]
-    range: Callable[[datetime], list[datetime]]
 
 
 class RankTableDict(TypedDict):

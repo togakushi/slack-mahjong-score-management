@@ -10,7 +10,6 @@ from libs.functions import message
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
-    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
 
 
@@ -22,7 +21,7 @@ def aggregation(m: "MessageParserProtocol"):
     """
 
     # --- データ収集
-    game_info: "GameInfoDict" = aggregate.game_info()
+    game_info = aggregate.game_info()
     df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
     df_game = loader.read_data("SUMMARY_DETAILS")
     df_remarks = loader.read_data("REMARKS_INFO")

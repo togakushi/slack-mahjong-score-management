@@ -14,8 +14,8 @@ from libs.functions import compose
 if TYPE_CHECKING:
     from configparser import ConfigParser
 
-    from cls.types import GameInfoDict
     from integrations.protocols import MessageParserProtocol
+    from libs.types import GameInfoDict
 
 
 def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = True) -> str:

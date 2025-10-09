@@ -14,7 +14,7 @@ from libs.data import loader
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
-    from cls.types import TeamDataDict
+    from libs.types import TeamDataDict
 
 
 def get_member_id(name: Optional[str] = None) -> dict:

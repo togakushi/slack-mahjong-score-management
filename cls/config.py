@@ -13,7 +13,7 @@ from pathlib import Path
 from types import UnionType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
-from cls.types import GradeTableDict
+from libs.types import GradeTableDict
 
 if TYPE_CHECKING:
     from configparser import SectionProxy
