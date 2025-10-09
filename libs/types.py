@@ -2,25 +2,7 @@
 cls/types.py
 """
 
-from typing import TYPE_CHECKING, Optional, TypedDict
-
-if TYPE_CHECKING:
-    from cls.timekit import ExtendedDatetime
-
-
-class GameInfoDict(TypedDict):
-    """ゲーム集計情報格納辞書"""
-
-    game_count: int
-    """ゲーム数"""
-    first_game: "ExtendedDatetime"
-    """記録されている最初のゲーム時間"""
-    last_game: "ExtendedDatetime"
-    """記録されている最後のゲーム時間"""
-    first_comment: Optional[str]
-    """記録されている最初のゲームコメント"""
-    last_comment: Optional[str]
-    """記録されている最後のゲームコメント"""
+from typing import TypedDict
 
 
 class TeamDataDict(TypedDict):

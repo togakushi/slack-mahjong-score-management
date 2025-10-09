@@ -8,6 +8,7 @@ import pandas as pd
 
 import libs.global_value as g
 from libs.data import aggregate, loader
+from libs.datamodels import GameInfo
 from libs.functions import message
 from libs.utils import formatter
 
@@ -29,8 +30,8 @@ def aggregation(m: "MessageParserProtocol"):
         title = "チームランキング"
 
     # データ取得
-    game_info = aggregate.game_info()
-    if not game_info["game_count"]:  # 検索結果が0件のとき
+    game_info = GameInfo()
+    if not game_info.count:  # 検索結果が0件のとき
         m.post.headline = {title: message.random_reply(m, "no_hits", False)}
         m.status.result = False
         return
@@ -47,7 +48,7 @@ def aggregation(m: "MessageParserProtocol"):
         suffixes=["", "_x"]
     )
     df["rank"] = 0  # 順位表示用カラム
-    df["total_count"] = game_info["game_count"]  # 集計ゲーム数
+    df["total_count"] = game_info.count  # 集計ゲーム数
     df["participation_rate"] = df["game_count"] / df["total_count"]  # 参加率
     df["balance_avg"] = df["rpoint_avg"] - g.cfg.mahjong.origin_point * 100  # 平均収支
 

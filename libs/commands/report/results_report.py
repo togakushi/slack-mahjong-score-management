@@ -80,7 +80,7 @@ def get_game_results() -> list:
                 row["トビ"], f"{row["トビ率"]:.2f}%",
             ]
         )
-    logging.info("return record: %s", len(results))
+    logging.debug("return record: %s", len(results))
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
@@ -142,7 +142,7 @@ def get_count_results(game_count: int) -> list:
                 row["トビ"], f"{row["トビ率"]:.2f}%",
             ]
         )
-    logging.info("return record: %s", len(results))
+    logging.debug("return record: %s", len(results))
     resultdb.close()
 
     if len(results) == 1:  # ヘッダのみ
@@ -173,7 +173,7 @@ def get_count_moving(game_count: int) -> list:
     for row in rows.fetchall():
         results.append(dict(row))
 
-    logging.info("return record: %s", len(results))
+    logging.debug("return record: %s", len(results))
     resultdb.close()
 
     return results
@@ -356,7 +356,7 @@ def gen_pdf(m: "MessageParserProtocol"):
 
     # 対象メンバーの記録状況
     target_info = lookup.db.member_info(g.params["player_name"])
-    logging.info(target_info)
+    logging.debug(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし
         m.post.headline = {"成績レポート": message.random_reply(m, "no_hits", False)}

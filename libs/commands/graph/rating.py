@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 import libs.global_value as g
 from libs.data import aggregate
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil
 
@@ -24,7 +25,7 @@ def plot(m: "MessageParserProtocol"):
     """
 
     # データ収集
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     df_ratings = aggregate.calculation_rating()
 
     if df_ratings.empty:
@@ -66,7 +67,7 @@ def plot(m: "MessageParserProtocol"):
     # ---
     df_sorted.plot(
         figsize=(21, 7),
-        xlabel=f"集計日（総ゲーム数：{game_info["game_count"]}）",
+        xlabel=f"集計日（総ゲーム数：{game_info.count}）",
         ylabel="レート",
         marker="." if len(df_sorted) < 50 else None,
     )

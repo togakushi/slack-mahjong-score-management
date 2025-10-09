@@ -8,6 +8,7 @@ import pandas as pd
 
 import libs.global_value as g
 from libs.data import aggregate, loader
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.utils import converter, formatter
 
@@ -30,10 +31,10 @@ def aggregation(m: "MessageParserProtocol"):
 
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # pylint: disable=unused-variable  # noqa: F841
 
-    if not game_info["game_count"]:  # 検索結果が0件のとき
+    if not game_info.count:  # 検索結果が0件のとき
         m.post.headline = {"レーティング": message.random_reply(m, "no_hits", False)}
         m.status.result = False
         return

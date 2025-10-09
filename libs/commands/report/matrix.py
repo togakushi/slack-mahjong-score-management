@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from libs.data import aggregate
+from libs.datamodels import GameInfo
 from libs.functions import message
 from libs.utils import formatter
 
@@ -23,7 +24,7 @@ def plot(m: "MessageParserProtocol"):
 
     # データ集計
     title: str = "対局対戦マトリックス"
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     df = aggregate.matrix_table()
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df.index.tolist())

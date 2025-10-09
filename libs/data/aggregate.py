@@ -3,57 +3,14 @@ libs/data/aggregate.py
 """
 
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 
 import libs.global_value as g
-from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.utils import formatter
-
-if TYPE_CHECKING:
-    from libs.types import GameInfoDict
-
-
-def game_info() -> "GameInfoDict":
-    """指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得
-
-    Returns:
-        GameInfoDict: 取得したデータ
-    """
-
-    # データ収集
-    df = loader.read_data("GAME_INFO")
-    ret: "GameInfoDict" = {
-        "game_count": int(df["count"].to_string(index=False)),
-        "first_game": ExtDt(),
-        "last_game": ExtDt(),
-        "first_comment": None,
-        "last_comment": None,
-    }
-
-    if ret.get("game_count", 0) >= 1:
-        ret["first_game"] = ExtDt(df["first_game"].to_string(index=False))
-        ret["last_game"] = ExtDt(df["last_game"].to_string(index=False))
-        ret["first_comment"] = df["first_comment"].to_string(index=False)
-        ret["last_comment"] = df["last_comment"].to_string(index=False)
-
-    # 規定打数更新
-    if not g.params.get("stipulated", 0):
-        match g.params.get("command", ""):
-            case "results":
-                g.params["stipulated"] = g.cfg.results.stipulated_calculation(ret["game_count"])
-            case "graph":
-                g.params["stipulated"] = g.cfg.graph.stipulated_calculation(ret["game_count"])
-            case "ranking":
-                g.params["stipulated"] = g.cfg.ranking.stipulated_calculation(ret["game_count"])
-            case "report":
-                g.params["stipulated"] = g.cfg.report.stipulated_calculation(ret["game_count"])
-
-    logging.debug("return: %s", ret)
-    return ret
 
 
 def game_summary(

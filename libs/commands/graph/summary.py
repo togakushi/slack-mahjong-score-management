@@ -10,7 +10,8 @@ import pandas as pd
 import plotly.express as px  # type: ignore
 
 import libs.global_value as g
-from libs.data import aggregate, loader
+from libs.data import loader
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil, textutil
 
@@ -42,7 +43,7 @@ def point_plot(m: "MessageParserProtocol"):
     graph_params = GraphParams()
 
     # データ収集
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
@@ -66,7 +67,7 @@ def point_plot(m: "MessageParserProtocol"):
     # グラフ生成
     graph_params.update({
         "graph_type": "point",
-        "total_game_count": game_info["game_count"],
+        "total_game_count": game_info.count,
         "target_data": target_data,
         "pivot": pivot,
         "horizontal": True,
@@ -98,7 +99,7 @@ def rank_plot(m: "MessageParserProtocol"):
     graph_params = GraphParams()
 
     # データ収集
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
@@ -123,7 +124,7 @@ def rank_plot(m: "MessageParserProtocol"):
     # グラフ生成
     graph_params.update({
         "graph_type": "rank",
-        "total_game_count": game_info["game_count"],
+        "total_game_count": game_info.count,
         "target_data": target_data,
         "pivot": pivot,
         "horizontal": False,
@@ -243,7 +244,7 @@ def _graph_generation(graph_params: GraphParams):
         new_xlabs = [xlab.get_text().replace("−", "▲") for xlab in xlabs]
         plt.xticks(list(xlocs[1:-1]), new_xlabs[1:-1])
 
-        logging.info("plot data:\n%s", tmpdf)
+        logging.debug("plot data:\n%s", tmpdf)
     else:
         _graph_title(graph_params)
         fig = df.plot(
@@ -275,7 +276,7 @@ def _graph_generation(graph_params: GraphParams):
         new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
         plt.yticks(list(ylocs[1:-1]), new_ylabs[1:-1])
 
-        logging.info("plot data:\n%s", df)
+        logging.debug("plot data:\n%s", df)
 
     # メモリ調整
     match graph_params["graph_type"]:

@@ -10,12 +10,12 @@ import pandas as pd
 
 import libs.global_value as g
 from libs.data import aggregate, loader, lookup
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
-    from libs.types import GameInfoDict
 
 
 def aggregation(m: "MessageParserProtocol"):
@@ -34,7 +34,7 @@ def aggregation(m: "MessageParserProtocol"):
         g.params.update(individual=True)
 
     # --- データ収集
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     msg_data: dict = {}
     mapping_dict: dict = {}
 
@@ -44,7 +44,7 @@ def aggregation(m: "MessageParserProtocol"):
     else:
         title = "チーム成績詳細"
 
-    if game_info["game_count"] == 0:
+    if game_info.count == 0:
         if g.params.get("individual"):
             msg_data["検索範囲"] = f"{compose.text_item.search_range(time_pattern="time")}"
             msg_data["特記事項"] = "、".join(compose.text_item.remarks())
@@ -141,12 +141,12 @@ def aggregation(m: "MessageParserProtocol"):
     m.post.message = msg
 
 
-def get_headline(data: dict, game_info: "GameInfoDict", player_name: str) -> dict:
+def get_headline(data: dict, game_info: GameInfo, player_name: str) -> dict:
     """ヘッダメッセージ生成
 
     Args:
         data (dict): 生成内容が格納された辞書
-        game_info (GameInfoDict): ゲーム集計情報
+        game_info (GameInfo): ゲーム集計情報
         player_name (str): プレイヤー名
 
     Returns:

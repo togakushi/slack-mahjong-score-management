@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from libs.data import aggregate, loader
+from libs.data import loader
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil
 
@@ -24,7 +25,7 @@ def plot(m: "MessageParserProtocol"):
     """
 
     # --- データ取得
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     results_df = loader.read_data("REPORT_WINNER")
     if len(results_df) == 0:
         m.post.headline = {"成績上位": message.random_reply(m, "no_hits", False)}

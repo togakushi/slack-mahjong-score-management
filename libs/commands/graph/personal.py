@@ -138,6 +138,7 @@ def statistics_plot(m: "MessageParserProtocol"):
     if df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     if g.params.get("individual"):  # 個人成績
         player = formatter.name_replace(g.params["player_name"], add_mark=True)
@@ -152,6 +153,7 @@ def statistics_plot(m: "MessageParserProtocol"):
     if player_df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     player_df["sum_point"] = player_df["point"].cumsum()
 

@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from libs.data import aggregate, loader
+from libs.data import loader
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil
 
@@ -16,7 +17,6 @@ if TYPE_CHECKING:
     import pandas as pd
 
     from integrations.protocols import MessageParserProtocol
-    from libs.types import GameInfoDict
 
 
 def main(m: "MessageParserProtocol"):
@@ -30,7 +30,7 @@ def main(m: "MessageParserProtocol"):
     g.params.update(guest_skip=g.params.get("guest_skip2"))
 
     # --- データ取得
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     df = loader.read_data("REPORT_RESULTS_LIST").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
@@ -73,11 +73,11 @@ def main(m: "MessageParserProtocol"):
     m.post.message = {"": df_generation(df)}
 
 
-def graph_generation(game_info: "GameInfoDict", df: "pd.DataFrame", title) -> str:
+def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title) -> str:
     """グラフ生成処理
 
     Args:
-        game_info (GameInfoDict): ゲーム情報
+        game_info (GameInfo): ゲーム情報
         df (pd.DataFrame): 描写データ
         title (str): グラフタイトル
 
@@ -152,7 +152,7 @@ def graph_generation(game_info: "GameInfoDict", df: "pd.DataFrame", title) -> st
     remark_text = "".join(compose.text_item.remarks(True)) + compose.text_item.search_word(True)
     add_text = "[検索範囲：{}] [総ゲーム数：{}] {}".format(  # pylint: disable=consider-using-f-string
         compose.text_item.search_range(time_pattern="time"),
-        game_info["game_count"],
+        game_info.count,
         f"[{remark_text}]" if remark_text else "",
     )
 

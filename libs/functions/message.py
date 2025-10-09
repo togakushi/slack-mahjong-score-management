@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from configparser import ConfigParser
 
     from integrations.protocols import MessageParserProtocol
-    from libs.types import GameInfoDict
+    from libs.datamodels import GameInfo
 
 
 def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = True) -> str:
@@ -76,11 +76,11 @@ def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = T
     return msg
 
 
-def header(game_info: "GameInfoDict", m: "MessageParserProtocol", add_text="", indent=1):
+def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", indent=1):
     """見出し生成
 
     Args:
-        game_info (GameInfoDict): 集計範囲のゲーム情報
+        game_info (GameInfo): 集計範囲のゲーム情報
         m (MessageParserProtocol): メッセージデータ
         add_text (str, optional): 追加表示するテキスト. Defaults to "".
         indent (int, optional): 先頭のタブ数. Defaults to 1.
@@ -93,32 +93,32 @@ def header(game_info: "GameInfoDict", m: "MessageParserProtocol", add_text="", i
 
     # 集計範囲
     if g.params.get("search_word"):  # コメント検索の場合はコメントで表示
-        game_range1 = f"最初のゲーム：{game_info["first_comment"]}\n"
-        game_range1 += f"最後のゲーム：{game_info["last_comment"]}\n"
+        game_range1 = f"最初のゲーム：{game_info.first_comment}\n"
+        game_range1 += f"最後のゲーム：{game_info.last_comment}\n"
     else:
-        game_range1 = f"最初のゲーム：{game_info["first_game"].format("ymdhms")}\n"
-        game_range1 += f"最後のゲーム：{game_info["last_game"].format("ymdhms")}\n"
+        game_range1 = f"最初のゲーム：{game_info.first_game.format("ymdhms")}\n"
+        game_range1 += f"最後のゲーム：{game_info.last_game.format("ymdhms")}\n"
     game_range2 = f"集計範囲：{compose.text_item.aggregation_range(game_info)}\n"
 
     # ゲーム数
-    if game_info["game_count"] == 0:
+    if game_info.count == 0:
         msg += f"{random_reply(m, "no_hits")}"
     else:
         match m.status.command_type:
             case "results":
                 if g.params.get("target_count"):  # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1
-                    msg += f"総ゲーム数：{game_info["game_count"]} 回{add_text}\n"
+                    msg += f"総ゲーム数：{game_info.count} 回{add_text}\n"
                 else:
                     msg += f"検索範囲：{str(compose.text_item.search_range(time_pattern="time"))}\n"
                     msg += game_range1
-                    msg += f"ゲーム数：{game_info["game_count"]} 回{add_text}\n"
+                    msg += f"ゲーム数：{game_info.count} 回{add_text}\n"
             case "ranking" | "report":
                 msg += game_range2
-                msg += f"集計ゲーム数：{game_info["game_count"]}\n"
+                msg += f"集計ゲーム数：{game_info.count}\n"
             case _:
                 msg += game_range2
-                msg += f"総ゲーム数：{game_info["game_count"]} 回\n"
+                msg += f"総ゲーム数：{game_info.count} 回\n"
 
         if (remarks_text := compose.text_item.remarks(True)):
             msg += f"{remarks_text}\n"

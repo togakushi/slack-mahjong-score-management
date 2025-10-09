@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from libs.data import aggregate, loader
+from libs.datamodels import GameInfo
 from libs.functions import message
 from libs.utils import converter, formatter
 
@@ -21,7 +22,7 @@ def aggregation(m: "MessageParserProtocol"):
     """
 
     # --- データ収集
-    game_info = aggregate.game_info()
+    game_info = GameInfo()
     df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
     df_game = loader.read_data("SUMMARY_DETAILS")
     df_remarks = loader.read_data("REMARKS_INFO")

@@ -8,7 +8,7 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 
 if TYPE_CHECKING:
-    from libs.types import GameInfoDict
+    from libs.datamodels import GameInfo
 
 
 def remarks(headword=False) -> str | list:
@@ -110,13 +110,13 @@ def search_range(kind: Literal["str", "list"] = "str", time_pattern=None) -> lis
 
 
 def aggregation_range(
-    game_info: "GameInfoDict",
+    game_info: "GameInfo",
     kind: Literal["list", "str"] = "str",
 ) -> list | str:
     """集計範囲を返す（ヘッダ出力用）
 
     Args:
-        game_info (GameInfoDict): 集計範囲のゲーム情報
+        game_info (GameInfo): 集計範囲のゲーム情報
         kind (str): 表示させるフォーマットを選択. Defaults to str.
             - list: リストで受け取る
             - str: 文字列で受け取る
@@ -128,11 +128,11 @@ def aggregation_range(
     """
 
     if g.params.get("search_word"):  # コメント検索の場合はコメントで表示
-        first = game_info["first_comment"]
-        last = game_info["last_comment"]
+        first = game_info.first_comment
+        last = game_info.last_comment
     else:
-        first = game_info["first_game"].format("ymdhm")
-        last = game_info["last_game"].format("ymdhm")
+        first = game_info.first_game.format("ymdhm")
+        last = game_info.last_game.format("ymdhm")
 
     match kind:
         case "list":
