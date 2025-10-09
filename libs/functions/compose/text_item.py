@@ -127,6 +127,9 @@ def aggregation_range(
         - `kind` にstrが指定されている場合は文字列で返す
     """
 
+    assert isinstance(game_info.first_game, ExtDt)
+    assert isinstance(game_info.last_game, ExtDt)
+
     if g.params.get("search_word"):  # コメント検索の場合はコメントで表示
         first = game_info.first_comment
         last = game_info.last_comment

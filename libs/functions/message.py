@@ -90,6 +90,8 @@ def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", inden
     """
 
     msg = ""
+    assert isinstance(game_info.first_game, ExtDt)
+    assert isinstance(game_info.last_game, ExtDt)
 
     # 集計範囲
     if g.params.get("search_word"):  # コメント検索の場合はコメントで表示

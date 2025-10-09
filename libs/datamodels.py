@@ -16,9 +16,9 @@ class GameInfo:
 
     count: int = field(default=0)
     """ゲーム数"""
-    first_game: ExtDt = field(default_factory=ExtDt)
+    first_game: Optional[ExtDt] = field(default=None)
     """記録されている最初のゲーム時間"""
-    last_game: ExtDt = field(default_factory=ExtDt)
+    last_game: Optional[ExtDt] = field(default=None)
     """記録されている最後のゲーム時間"""
     first_comment: Optional[str] = field(default=None)
     """記録されている最初のゲームコメント"""
@@ -26,17 +26,17 @@ class GameInfo:
     """記録されている最後のゲームコメント"""
 
     def __post_init__(self):
-        self.get_data()
+        self.get()
 
-    def get_data(self):
+    def get(self):
         """指定条件を満たすゲーム数のカウント、最初と最後の時刻とコメントを取得"""
 
         # グローバルパラメータチェック
-        if "rule_version" not in g.params.keys():
+        if "rule_version" not in g.params:
             g.params.update(rule_version=g.cfg.mahjong.rule_version)
-        if "starttime" not in g.params.keys():
+        if "starttime" not in g.params:
             g.params.update(starttime=ExtDt().range("全部").start)
-        if "endtime" not in g.params.keys():
+        if "endtime" not in g.params:
             g.params.update(endtime=ExtDt().range("全部").end)
 
         # データ収集
@@ -69,9 +69,9 @@ class GameInfo:
         """情報削除"""
 
         self.count = 0
-        self.first_game = ExtDt
-        self.last_game = ExtDt
+        self.first_game = None
         self.first_comment = None
+        self.last_game = None
         self.last_comment = None
 
     def conditions(self) -> dict:
