@@ -1,4 +1,5 @@
-"""グラフ生成モジュール
+"""
+グラフ生成モジュール
 
 Exports:
 - `libs.commands.graph.personal`: 個人/チーム/統計グラフ生成

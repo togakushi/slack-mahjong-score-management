@@ -5,5 +5,4 @@
 - `cls.command`: コマンド引数解析
 - `cls.score`: スコア解析
 - `cls.timekit`: datetime拡張
-- `cls.types`: 型定義/インスタンス共通メソッド定義
 """
