@@ -69,14 +69,15 @@ def report_bp(adapter: "ServiceAdapter") -> Blueprint:
                     ]
                     v.columns = pd.MultiIndex.from_tuples([x for x in multi if x is not None])
                 elif "成績上位者" in m.post.headline.keys():
+                    name = "名前" if g.params.get("individual", True) else "チーム"
                     check_column = v.columns.to_list()
                     multi = [
                         ("", "集計月"),
-                        ("1位", "名前"), ("1位", "獲得ポイント"),
-                        ("2位", "名前"), ("2位", "獲得ポイント"),
-                        ("3位", "名前"), ("3位", "獲得ポイント"),
-                        ("4位", "名前"), ("4位", "獲得ポイント"),
-                        ("5位", "名前"), ("5位", "獲得ポイント"),
+                        ("1位", name), ("1位", "獲得ポイント"),
+                        ("2位", name), ("2位", "獲得ポイント"),
+                        ("3位", name), ("3位", "獲得ポイント"),
+                        ("4位", name), ("4位", "獲得ポイント"),
+                        ("5位", name), ("5位", "獲得ポイント"),
                     ]
                     v.columns = pd.MultiIndex.from_tuples([x for x in multi if x is not None])
                 message += adapter.functions.to_styled_html(v, padding, m.post.index)
