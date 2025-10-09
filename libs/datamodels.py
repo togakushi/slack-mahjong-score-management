@@ -16,9 +16,9 @@ class GameInfo:
 
     count: int = field(default=0)
     """ゲーム数"""
-    first_game: ExtDt = field(default=ExtDt())
+    first_game: ExtDt = field(default_factory=ExtDt)
     """記録されている最初のゲーム時間"""
-    last_game: ExtDt = field(default=ExtDt())
+    last_game: ExtDt = field(default_factory=ExtDt)
     """記録されている最後のゲーム時間"""
     first_comment: Optional[str] = field(default=None)
     """記録されている最初のゲームコメント"""
