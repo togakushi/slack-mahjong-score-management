@@ -23,7 +23,7 @@ from tests.events import param_data
 )
 def test_help(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(help)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         # patch("integrations.slack.events.slash.command_help") as mock_help_slash_command,
@@ -47,7 +47,7 @@ def test_help(config, keyword, monkeypatch):
 )
 def test_results(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(results)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.libs.commands.results.entry.main") as mock_slash_results,
@@ -70,7 +70,7 @@ def test_results(config, keyword, monkeypatch):
 )
 def test_graph(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(graph)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.libs.commands.graph.entry.main") as mock_slash_graph,
@@ -93,7 +93,7 @@ def test_graph(config, keyword, monkeypatch):
 )
 def test_ranking(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(ranking)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.libs.commands.ranking.entry.main") as mock_slash_ranking,
@@ -116,7 +116,7 @@ def test_ranking(config, keyword, monkeypatch):
 )
 def test_report(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(report)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.libs.commands.report.entry.main") as mock_slash_report,
@@ -139,7 +139,7 @@ def test_report(config, keyword, monkeypatch):
 )
 def test_check(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(check)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.dispatcher.by_keyword") as mock_slash_check,  # fixme
@@ -163,18 +163,21 @@ def test_check(config, keyword, monkeypatch):
 )
 def test_download(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(download)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    g.selected_service = "standard_io"
-    configuration.setup()
-    adapter = factory.select_adapter("standard_io", g.cfg)
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
-    m = cast(MessageParser, adapter.parser())
-    m.set_command_flag(True)
+    with (
+        patch("integrations.factory.std_adapter"),
+    ):
+        g.selected_service = "standard_io"
+        configuration.setup()
+        adapter = factory.select_adapter("standard_io", g.cfg)
 
-    param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-    m.parser(cast(dict, param_data.FAKE_BODY))
-    libs.dispatcher.by_keyword(m)
-    assert m.post.file_list[0].get("成績記録DB")
+        m = cast(MessageParser, adapter.parser())
+        m.set_command_flag(True)
+        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+        m.parser(cast(dict, param_data.FAKE_BODY))
+        libs.dispatcher.by_keyword(m)
+        assert m.post.file_list[0].get("成績記録DB")
 
 
 @pytest.mark.parametrize(
@@ -184,7 +187,7 @@ def test_download(config, keyword, monkeypatch):
 )
 def test_member_list(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(member)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.lookup.textdata.get_members_list") as mock_slash_member_list,
@@ -208,7 +211,7 @@ def test_member_list(config, keyword, monkeypatch):
 )
 def test_member_add(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(add)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.member.append") as mock_slash_member_add,
@@ -233,7 +236,7 @@ def test_member_add(config, keyword, monkeypatch):
 )
 def test_member_del(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(del)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.member.remove") as mock_slash_member_del,
@@ -257,7 +260,7 @@ def test_member_del(config, keyword, monkeypatch):
 )
 def test_team_create(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_create)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.team.create") as mock_slash_team_create,
@@ -281,7 +284,7 @@ def test_team_create(config, keyword, monkeypatch):
 )
 def test_team_del(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_del)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.team.delete") as mock_slash_team_del,
@@ -305,7 +308,7 @@ def test_team_del(config, keyword, monkeypatch):
 )
 def test_team_add(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_add)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.team.append") as mock_slash_team_add,
@@ -329,7 +332,7 @@ def test_team_add(config, keyword, monkeypatch):
 )
 def test_team_remove(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_remove)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.team.remove") as mock_slash_team_remove,
@@ -353,7 +356,7 @@ def test_team_remove(config, keyword, monkeypatch):
 )
 def test_team_list(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_list)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.lookup.textdata.get_team_list") as mock_slash_team_list,
@@ -377,7 +380,7 @@ def test_team_list(config, keyword, monkeypatch):
 )
 def test_team_clear(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(team_clear)"""
-    monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
+    monkeypatch.setattr(sys, "argv", ["app.py", f"--config=tests/testdata/{config}"])
 
     with (
         patch("libs.configuration.team.clear") as mock_slash_team_clear,
