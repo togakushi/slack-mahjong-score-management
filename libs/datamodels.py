@@ -64,3 +64,21 @@ class GameInfo:
                     g.params["stipulated"] = g.cfg.ranking.stipulated_calculation(self.count)
                 case "report":
                     g.params["stipulated"] = g.cfg.report.stipulated_calculation(self.count)
+
+    def clear(self):
+        """情報削除"""
+
+        self.count = 0
+        self.first_game = ExtDt
+        self.last_game = ExtDt
+        self.first_comment = None
+        self.last_comment = None
+
+    def conditions(self) -> dict:
+        """検索条件を返す"""
+
+        return {
+            "rule_version": g.params.get("rule_version"),
+            "starttime": g.params.get("starttime"),
+            "endtime": g.params.get("endtime"),
+        }
