@@ -150,7 +150,7 @@ def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file:
 
     # 軸/目盛調整
     if all(df.count() > 10):
-        fig.update_traces(mode="lines") # マーカー非表示
+        fig.update_traces(mode="lines")  # マーカー非表示
     if len(fig.data) > 20:
         fig.update_traces(mode="lines", line={"width": 1})  # ラインを細く
 
