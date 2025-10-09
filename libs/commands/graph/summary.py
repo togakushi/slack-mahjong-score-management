@@ -104,6 +104,7 @@ def rank_plot(m: "MessageParserProtocol"):
     if target_data.empty:  # 描写対象が0人の場合は終了
         m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
         m.status.result = False
+        return
 
     if g.params.get("search_word"):
         pivot_index = "comment"
