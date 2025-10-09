@@ -87,7 +87,10 @@ def grade(name: str, detail: bool = True) -> str:
         str: 称号
     """
 
-    if not g.adapter.conf.badge_grade:
+    if not g.cfg.badge.grade.table_name or not g.cfg.badge.grade.table:  # テーブル未定義
+        return ""
+
+    if not g.adapter.conf.badge_grade:  # 非表示
         return ""
 
     # 初期値
