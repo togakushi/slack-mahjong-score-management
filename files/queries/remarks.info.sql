@@ -23,6 +23,6 @@ where
     --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
     --[individual] --[player_name] and remarks.name in (<<player_list>>) -- 対象プレイヤー
     --[team] --[friendly_fire] and game_info.same_team = 0
-    --[team] --[player_name] and team.team in (<<player_list>>) -- 対象チーム
+    --[team] --[player_name] and team.name in (<<player_list>>) -- 対象チーム
     --[search_word] and game_info.comment like :search_word
 ;
