@@ -89,10 +89,10 @@
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">cls.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppConfig</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">cls.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TeamDataDict</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.slack.adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceAdapter</span> <span class="k">as</span> <span class="n">slack_adapter</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.standard_io.adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceAdapter</span> <span class="k">as</span> <span class="n">std_adapter</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.web.adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceAdapter</span> <span class="k">as</span> <span class="n">web_adapter</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.slack.adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceAdapter</span> <span class="k">as</span> <span class="n">slack_adapter</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.standard_io.adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceAdapter</span> <span class="k">as</span> <span class="n">std_adapter</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.web.adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceAdapter</span> <span class="k">as</span> <span class="n">web_adapter</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">libs.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">TeamDataDict</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="c1"># --- グローバル変数 ---</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="n">selected_service</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;slack&quot;</span><span class="p">,</span> <span class="s2">&quot;web&quot;</span><span class="p">,</span> <span class="s2">&quot;standard_io&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;slack&quot;</span>
@@ -231,7 +231,7 @@
                 </section>
                 <section id="team_list">
                     <div class="attr variable">
-            <span class="name">team_list</span><span class="annotation">: list[<a href="../cls/types.html#TeamDataDict">cls.types.TeamDataDict</a>]</span>        =
+            <span class="name">team_list</span><span class="annotation">: list[<a href="types.html#TeamDataDict">libs.types.TeamDataDict</a>]</span>        =
 <span class="default_value">[]</span>
 
         
