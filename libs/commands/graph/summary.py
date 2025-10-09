@@ -75,11 +75,11 @@ def point_plot(m: "MessageParserProtocol"):
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            save_file = textutil.save_file_path(".html", True)
+            save_file = textutil.save_file_path("graph", ".html", True)
             fig = _graph_generation_plotly(graph_params)
             fig.write_html(save_file, full_html=False)
         case _:
-            save_file = textutil.save_file_path(".png", True)
+            save_file = textutil.save_file_path("graph", ".png", True)
             fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
 
@@ -132,12 +132,12 @@ def rank_plot(m: "MessageParserProtocol"):
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            save_file = textutil.save_file_path(".html", True)
+            save_file = textutil.save_file_path("graph", ".html", True)
             fig = _graph_generation_plotly(graph_params)
             fig.update_layout(yaxis={"autorange": "reversed"})
             fig.write_html(save_file, full_html=False)
         case _:
-            save_file = textutil.save_file_path(".png", True)
+            save_file = textutil.save_file_path("graph", ".png", True)
             fig = _graph_generation(graph_params)
             plt.savefig(save_file, bbox_inches="tight")
 
