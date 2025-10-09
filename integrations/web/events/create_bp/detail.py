@@ -50,6 +50,13 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
                 if k == "戦績" and g.params.get("verbose"):
                     padding = "0.25em 0.75em"
                     if not isinstance(v.columns, pd.MultiIndex):
+                        if not g.params.get("individual", True):  # チーム戦
+                            v.rename(columns={
+                                "東家 名前": "東家 チーム",
+                                "南家 名前": "南家 チーム",
+                                "西家 名前": "西家 チーム",
+                                "北家 名前": "北家 チーム",
+                            }, inplace=True)
                         new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
                         v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
                 message += adapter.functions.to_styled_html(v, padding)

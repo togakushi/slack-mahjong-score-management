@@ -46,10 +46,10 @@ def report_bp(adapter: "ServiceAdapter") -> Blueprint:
                 message += f"<h2>{k}</h2>\n"
 
             if isinstance(v, pd.DataFrame):
-                if "個人成績一覧" in m.post.headline.keys():
+                if {"個人成績一覧", "チーム成績一覧"} & set(m.post.headline):
                     check_column = v.columns.to_list()
                     multi = [
-                        ("", "名前"),
+                        ("", "名前" if g.params.get("individual", True) else "チーム"),
                         ("", "ゲーム数"),
                         ("ポイント", "通算") if {"通算", "平均"}.issubset(check_column) else None,
                         ("ポイント", "平均") if {"通算", "平均"}.issubset(check_column) else None,
