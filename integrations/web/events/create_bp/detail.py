@@ -60,6 +60,7 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
                         new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
                         v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
                 message += adapter.functions.to_styled_html(v, padding)
+                message = message.replace(f">{g.params["player_name"]}<", f"><div class='player_name'>{g.params["player_name"]}</div><")
             else:
                 message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
 
