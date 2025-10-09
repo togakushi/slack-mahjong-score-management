@@ -2,18 +2,20 @@
 libs/commands/graph/rating.py
 """
 
-import os
 from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
+import plotly.express as px  # type: ignore
 
 import libs.global_value as g
 from libs.data import aggregate
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil
+from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
+    import pandas as pd
+
     from integrations.protocols import MessageParserProtocol
 
 
@@ -24,7 +26,7 @@ def plot(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    # データ収集
+    # --- データ収集
     game_info = GameInfo()
     df_ratings = aggregate.calculation_rating()
 
@@ -37,8 +39,7 @@ def plot(m: "MessageParserProtocol"):
     df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
 
     # 並び変え
-    sorted_columns = df_dropped.iloc[-1].sort_values(ascending=False).index
-    df_sorted = df_dropped[sorted_columns]
+    df_sorted = df_dropped[df_dropped.iloc[-1].sort_values(ascending=False).index]
 
     new_index = {}
     for x in df_sorted[1:].index:
@@ -50,26 +51,42 @@ def plot(m: "MessageParserProtocol"):
         df_sorted = df_sorted.rename(columns=mapping_dict)
 
     # --- グラフ生成
+    m.post.headline = {"レーティング推移グラフ": message.header(game_info, m)}
+    match g.adapter.conf.plotting_backend:
+        case "matplotlib":
+            save_file = textutil.save_file_path("rating", ".png", True)
+            _graph_generation(game_info, df_sorted, save_file)
+        case "plotly":
+            save_file = textutil.save_file_path("rating", ".html", True)
+            _graph_generation_plotly(game_info, df_sorted, save_file)
+
+    m.post.file_list = [{"レーティング推移": save_file}]
+
+
+def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", save_file: str):
+    """レーティング推移グラフ生成(matplotlib)
+
+    Args:
+        game_info (GameInfo): ゲーム情報
+        df (pd.DataFrame): 描写データ
+        save_file (str): 保存先ファイル名
+    """
+
     graphutil.setup()
-    save_file = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.png" if g.params.get("filename") else "rating.png",
-    )
 
     title_text = f"レーティング推移 ({compose.text_item.date_range("ymdhm")})"
-
     legend_text = []
     count = 1
-    for name, rate in df_sorted.iloc[-1].items():
+    for name, rate in df.iloc[-1].items():
         legend_text.append(f"{count:2d}位：{name} （{rate:.1f}）")
         count += 1
 
     # ---
-    df_sorted.plot(
+    df.plot(
         figsize=(21, 7),
-        xlabel=f"集計日（総ゲーム数：{game_info.count}）",
+        xlabel=f"集計日（総ゲーム数：{game_info.count} ゲーム）",
         ylabel="レート",
-        marker="." if len(df_sorted) < 50 else None,
+        marker="." if len(df) < 50 else None,
     )
     plt.title(title_text, fontsize=16)
     plt.legend(
@@ -77,11 +94,11 @@ def plot(m: "MessageParserProtocol"):
         bbox_to_anchor=(1, 1),
         loc="upper left",
         borderaxespad=0.5,
-        ncol=int(len(sorted_columns) / 25 + 1),
+        ncol=int(len(df.columns) / 25 + 1),
     )
     plt.xticks(
-        list(range(len(df_sorted)))[1::int(len(df_sorted) / 25) + 1],
-        list(df_sorted.index)[1::int(len(df_sorted) / 25) + 1],
+        list(range(len(df)))[1::int(len(df) / 25) + 1],
+        list(df.index)[1::int(len(df) / 25) + 1],
         rotation=45,
         ha="right",
     )
@@ -89,5 +106,46 @@ def plot(m: "MessageParserProtocol"):
 
     plt.savefig(save_file, bbox_inches="tight")
 
-    m.post.file_list = [{"レーティング推移": save_file}]
-    m.post.headline = {"レーティング推移グラフ": message.header(game_info, m)}
+
+def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file: str):
+    """レーティング推移グラフ生成(plotly)
+
+    Args:
+        game_info (GameInfo): ゲーム情報
+        df (pd.DataFrame): 描写データ
+        save_file (str): 保存先ファイル名
+    """
+
+    # 凡例用テキスト
+    legend_text = []
+    count = 1
+    for name, rate in df.iloc[-1].items():
+        legend_text.append(f"{count:2d}位：{name} （{rate:.1f}）")
+        count += 1
+
+    df.rename(index={"initial_rating": ""}, inplace=True)
+    df.columns = legend_text
+
+    fig = px.line(df, markers=True)
+
+    # グラフレイアウト調整
+    fig.update_layout(
+        width=1280,
+        height=800,
+        title={
+            "text": f"レーティング推移 ({compose.text_item.date_range("ymdhm")})",
+            "font": {"size": 30},
+            "x": 0.1,
+        },
+        xaxis_title={
+            "text": f"集計日（総ゲーム数：{game_info.count} ゲーム）",
+            "font": {"size": 18},
+        },
+        yaxis_title={
+            "text": "レート",
+            "font": {"size": 18},
+        },
+        legend_title=None,
+    )
+
+    fig.write_html(save_file, full_html=False)
