@@ -362,7 +362,7 @@ class SubCommand(BaseSection):
     """スコア比較"""
     statistics: bool = False
     """統計情報表示"""
-    stipulated: int = 1
+    stipulated: int = 0
     """規定打数指定"""
     stipulated_rate: float = 0.05
     """規定打数計算レート"""

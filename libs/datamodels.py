@@ -57,7 +57,7 @@ class GameInfo:
             self.last_game = ExtDt()
 
         # 規定打数更新
-        if not g.params.get("stipulated", 0):
+        if not g.params.get("stipulated", 0):  # 規定打数0はレートから計算
             match g.params.get("command", ""):
                 case "results":
                     g.params["stipulated"] = g.cfg.results.stipulated_calculation(self.count)

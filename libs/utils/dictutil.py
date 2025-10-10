@@ -58,6 +58,15 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
     if (mixed := ret_dict.get("mixed")):
         g.params.update(mixed=mixed)
 
+    # 規定打数設定
+    if ret_dict.get("mixed") and not ret_dict.get("stipulated"):  # 横断集計&規定数制限なし
+        ret_dict.update(stipulated=0)  # レート計算
+    elif not ret_dict.get("stipulated"):  # 通常集計&規定数制限なし
+        if subcom.section == "ranking":  # ランキングはレート計算
+            ret_dict.update(stipulated=0)
+        else:
+            ret_dict.update(stipulated=1)
+
     # 検索範囲取得
     departure_time = ExtDt(hours=-g.cfg.setting.time_adjust)
     if param.search_range:
