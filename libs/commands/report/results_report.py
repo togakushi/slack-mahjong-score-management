@@ -23,6 +23,7 @@ from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
 
 import libs.global_value as g
 from libs.data import loader, lookup
+from libs.datamodels import GameInfo
 from libs.functions import message
 from libs.utils import dbutil, formatter
 
@@ -355,7 +356,8 @@ def gen_pdf(m: "MessageParserProtocol"):
         return
 
     # 対象メンバーの記録状況
-    target_info = lookup.db.member_info(g.params["player_name"])
+    game_info = GameInfo()
+    target_info = lookup.db.member_info(game_info, g.params["player_name"])
     logging.debug(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし

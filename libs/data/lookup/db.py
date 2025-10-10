@@ -14,6 +14,7 @@ from libs.data import loader
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
+    from libs.datamodels import GameInfo
     from libs.types import TeamDataDict
 
 
@@ -36,10 +37,11 @@ def get_member_id(name: Optional[str] = None) -> dict:
     return id_list
 
 
-def member_info(name: str) -> dict:
+def member_info(game_info: "GameInfo", name: str) -> dict:
     """指定メンバーの記録情報を返す
 
     Args:
+        game_info (GameInfo): 集計範囲データ
         name (str): 対象メンバー
 
     Returns:
@@ -47,6 +49,14 @@ def member_info(name: str) -> dict:
     """
 
     ret: dict = {}
+
+    params: dict = {
+        "name": name,
+        "rule_version": g.params.get("rule_version", g.cfg.mahjong.rule_version),
+        "starttime": game_info.first_game.format("sql"),
+        "endtime": game_info.last_game.format("sql"),
+    }
+
     sql = loader.query_modification("""
         select
             count() as game_count,
@@ -57,13 +67,14 @@ def member_info(name: str) -> dict:
         from
             individual_results as results
         where
-            rule_version = ?
-            --[individual] and name = ?
-            --[team] and team = ?
+            rule_version = :rule_version
+            and results.playtime between :starttime and :endtime
+            --[individual] and name = :name
+            --[team] and team = :name
     """)
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
-        rows = conn.execute(sql, (g.cfg.mahjong.rule_version, name))
+        rows = conn.execute(sql, params)
         ret = dict(rows.fetchone())
 
     return ret
