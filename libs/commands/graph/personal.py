@@ -3,7 +3,7 @@ libs/commands/graph/personal.py
 """
 
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -12,8 +12,9 @@ from matplotlib import gridspec
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil
+from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -32,6 +33,7 @@ def plot(m: "MessageParserProtocol"):
         return
 
     # データ収集
+    game_info = GameInfo()
     g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = loader.read_data("SUMMARY_GAMEDATA")
     player = formatter.name_replace(g.params["player_name"], add_mark=True)
@@ -122,6 +124,7 @@ def plot(m: "MessageParserProtocol"):
     plt.savefig(save_file, bbox_inches="tight")
 
     m.post.file_list = [{f"『{player}』の成績": save_file}]
+    m.post.headline = {f"『{player}』の成績": message.header(game_info, m)}
 
 
 def statistics_plot(m: "MessageParserProtocol"):
@@ -131,12 +134,8 @@ def statistics_plot(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    if g.adapter.conf.plotting_backend == "plotly":
-        m.post.reset()
-        m.post.headline = {"": message.random_reply(m, "not_implemented", False)}
-        return
-
     # データ収集
+    game_info = GameInfo()
     g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = loader.read_data("SUMMARY_DETAILS")
 
@@ -161,13 +160,6 @@ def statistics_plot(m: "MessageParserProtocol"):
         return
 
     player_df["sum_point"] = player_df["point"].cumsum()
-
-    # --- グラフ生成
-    graphutil.setup()
-    save_file = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
-    )
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
@@ -204,17 +196,18 @@ def statistics_plot(m: "MessageParserProtocol"):
         }
     )
     stats_df = stats_df.apply(lambda col: col.map(lambda x: f"{int(x)}" if isinstance(x, int) else f"{x:.1f}"))
+    cast(dict, m.post.message).update({"素点分布": stats_df})
 
     count_stats = {
         "ゲーム数": rank_df.count().astype("int"),
         "1位": rank_df[rank_df == 1].count().astype("int"),
+        "1位(%)": ((rank_df[rank_df == 1].count()) / rank_df.count()),
         "2位": rank_df[rank_df == 2].count().astype("int"),
+        "2位(%)": ((rank_df[rank_df == 2].count()) / rank_df.count()),
         "3位": rank_df[rank_df == 3].count().astype("int"),
+        "3位(%)": ((rank_df[rank_df == 3].count()) / rank_df.count()),
         "4位": rank_df[rank_df == 4].count().astype("int"),
-        "1位(%)": ((rank_df[rank_df == 1].count()) / rank_df.count() * 100).round(2),
-        "2位(%)": ((rank_df[rank_df == 2].count()) / rank_df.count() * 100).round(2),
-        "3位(%)": ((rank_df[rank_df == 3].count()) / rank_df.count() * 100).round(2),
-        "4位(%)": ((rank_df[rank_df == 4].count()) / rank_df.count() * 100).round(2),
+        "4位(%)": ((rank_df[rank_df == 4].count()) / rank_df.count()),
         "平均順位": rank_df.mean().round(2),
         "区間ポイント": point_sum_df.sum().round(1),
         "区間平均": point_sum_df.mean().round(1),
@@ -226,13 +219,13 @@ def statistics_plot(m: "MessageParserProtocol"):
         {
             "ゲーム数": int(count_df["ゲーム数"].sum()),
             "1位": int(count_df["1位"].sum()),
+            "1位(%)": float(count_df["1位"].sum() / count_df["ゲーム数"].sum()),
             "2位": int(count_df["2位"].sum()),
+            "2位(%)": float(count_df["2位"].sum() / count_df["ゲーム数"].sum()),
             "3位": int(count_df["3位"].sum()),
+            "3位(%)": float(count_df["3位"].sum() / count_df["ゲーム数"].sum()),
             "4位": int(count_df["4位"].sum()),
-            "1位(%)": float(round((count_df["1位"].sum() / count_df["ゲーム数"].sum() * 100), 2)),
-            "2位(%)": float(round((count_df["2位"].sum() / count_df["ゲーム数"].sum() * 100), 2)),
-            "3位(%)": float(round((count_df["3位"].sum() / count_df["ゲーム数"].sum() * 100), 2)),
-            "4位(%)": float(round((count_df["4位"].sum() / count_df["ゲーム数"].sum() * 100), 2)),
+            "4位(%)": float(count_df["4位"].sum() / count_df["ゲーム数"].sum()),
             "平均順位": float(round(player_df["rank"].mean(), 2)),
             "区間ポイント": float(round(player_df["point"].sum(), 1)),
             "区間平均": float(round(player_df["point"].mean(), 1)),
@@ -241,39 +234,51 @@ def statistics_plot(m: "MessageParserProtocol"):
     # テーブル用データ
     rank_table = pd.DataFrame()
     rank_table["ゲーム数"] = count_df["ゲーム数"].astype("int")
-    rank_table["1位"] = count_df.apply(lambda row: f"{row["1位(%)"]:.2f}% ({row["1位"]:.0f})", axis=1)
-    rank_table["2位"] = count_df.apply(lambda row: f"{row["2位(%)"]:.2f}% ({row["2位"]:.0f})", axis=1)
-    rank_table["3位"] = count_df.apply(lambda row: f"{row["3位(%)"]:.2f}% ({row["3位"]:.0f})", axis=1)
-    rank_table["4位"] = count_df.apply(lambda row: f"{row["4位(%)"]:.2f}% ({row["4位"]:.0f})", axis=1)
+    rank_table["1位"] = count_df.apply(lambda row: f"{row["1位(%)"]:.2%} ({row["1位"]:.0f})", axis=1)
+    rank_table["2位"] = count_df.apply(lambda row: f"{row["2位(%)"]:.2%} ({row["2位"]:.0f})", axis=1)
+    rank_table["3位"] = count_df.apply(lambda row: f"{row["3位(%)"]:.2%} ({row["3位"]:.0f})", axis=1)
+    rank_table["4位"] = count_df.apply(lambda row: f"{row["4位(%)"]:.2%} ({row["4位"]:.0f})", axis=1)
     rank_table["平均順位"] = count_df.apply(lambda row: f"{row["平均順位"]:.2f}", axis=1)
+    cast(dict, m.post.message).update({"順位分布": count_df})
 
-    # グラフ設定
-    fig = plt.figure(figsize=(20, 10))
-    fig.suptitle(title_text, size=20, weight="bold")
-    gs = gridspec.GridSpec(figure=fig, nrows=3, ncols=2)
+    m.post.headline = {"成績統計": message.header(game_info, m)}
+    m.post.index = True
 
-    ax_point1 = fig.add_subplot(gs[0, 0])
-    ax_point2 = fig.add_subplot(gs[0, 1])
-    ax_rank1 = fig.add_subplot(gs[1, 0])
-    ax_rank2 = fig.add_subplot(gs[1, 1])
-    ax_rpoint1 = fig.add_subplot(gs[2, 0])
-    ax_rpoint2 = fig.add_subplot(gs[2, 1])
+    # --- グラフ生成
+    match g.adapter.conf.plotting_backend:
+        case "plotly":
+            return
+        case "matplotlib":
+            graphutil.setup()
+            save_file = textutil.save_file_path("graph", ".png", True)
 
-    plt.subplots_adjust(wspace=0.22, hspace=0.18)
+            fig = plt.figure(figsize=(20, 10))
+            fig.suptitle(title_text, size=20, weight="bold")
+            gs = gridspec.GridSpec(figure=fig, nrows=3, ncols=2)
 
-    # ポイントデータ
-    subplot_point(point_df, ax_point1)
-    subplot_table(count_df.filter(items=["ゲーム数", "区間ポイント", "区間平均", "通算ポイント"]), ax_point2)
+            ax_point1 = fig.add_subplot(gs[0, 0])
+            ax_point2 = fig.add_subplot(gs[0, 1])
+            ax_rank1 = fig.add_subplot(gs[1, 0])
+            ax_rank2 = fig.add_subplot(gs[1, 1])
+            ax_rpoint1 = fig.add_subplot(gs[2, 0])
+            ax_rpoint2 = fig.add_subplot(gs[2, 1])
 
-    # 順位データ
-    subplot_rank(count_df, ax_rank1, total_index)
-    subplot_table(rank_table, ax_rank2)
+            plt.subplots_adjust(wspace=0.22, hspace=0.18)
 
-    # 素点データ
-    subplot_box(rpoint_df, ax_rpoint1)
-    subplot_table(stats_df, ax_rpoint2)
+            # ポイントデータ
+            subplot_point(point_df, ax_point1)
+            subplot_table(count_df.filter(items=["ゲーム数", "区間ポイント", "区間平均", "通算ポイント"]), ax_point2)
 
-    plt.savefig(save_file, bbox_inches="tight")
+            # 順位データ
+            subplot_rank(count_df.copy(), ax_rank1, total_index)
+            subplot_table(rank_table, ax_rank2)
+
+            # 素点データ
+            subplot_box(rpoint_df, ax_rpoint1)
+            subplot_table(stats_df, ax_rpoint2)
+
+            plt.savefig(save_file, bbox_inches="tight")
+
     m.post.file_list = [{"個人成績": save_file}]
 
 
@@ -407,6 +412,11 @@ def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
         ax (plt.Axes): プロット先オブジェクト
         total_index (str): 合計値格納index
     """
+
+    df["1位(%)"] = df["1位(%)"] * 100
+    df["2位(%)"] = df["2位(%)"] * 100
+    df["3位(%)"] = df["3位(%)"] * 100
+    df["4位(%)"] = df["4位(%)"] * 100
 
     ax_rank_avg = ax.twinx()
     df.filter(items=["平均順位"]).drop(index=total_index).plot(

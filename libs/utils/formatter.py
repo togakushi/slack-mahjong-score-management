@@ -45,7 +45,7 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
                 fmt.append("+.1f")
             case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位" | "rank1" | "rank2" | "rank3" | "rank4":
                 fmt.append(".0f")
-            case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)" | "1位率" | "2位率" | "3位率" | "4位率":
+            case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)" | "1位率" | "2位率" | "3位率" | "4位率" | "1位(%)" | "2位(%)" | "3位(%)" | "4位(%)":
                 fmt.append(".2%")
             case "top2_rate" | "連対率" | "top3_rate" | "ラス回避率":
                 fmt.append(".2%")
