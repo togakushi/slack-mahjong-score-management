@@ -48,6 +48,7 @@ def plot(m: "MessageParserProtocol"):
     for x in df_sorted[1:].index:
         new_index[x] = str(x).replace("-", "/")
     df_sorted = df_sorted.rename(index=new_index)
+    df_sorted.ffill(inplace=True)
 
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df_sorted.columns.to_list())
