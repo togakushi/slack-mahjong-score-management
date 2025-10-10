@@ -1,6 +1,6 @@
 -- ranking.ratings
 select
-    game_results.playtime,
+    results.playtime,
     --[individual] --[unregistered_not_replace] case when p1_guest = 0 then p1_name else p1_name || '(<<guest_mark>>)' end as p1_name, -- ゲスト無効
     --[individual] --[unregistered_replace] case when p1_guest = 0 then p1_name else :guest_name end as p1_name, -- ゲスト有効
     --[team] p1_team as p1_name,
@@ -18,12 +18,12 @@ select
     --[team] p4_team as p4_name,
     p4_rpoint, p4_point, p4_rank
 from
-    game_results
+    game_results as results
 left join game_info on
-    game_info.playtime = game_results.playtime
+    game_info.playtime = results.playtime
 where
-    game_results.rule_version = :rule_version
-    and game_results.playtime between :starttime and :endtime
+    results.rule_version = :rule_version
+    and results.playtime between :starttime and :endtime
     --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
     --[search_word] and game_info.comment like :search_word
 ;

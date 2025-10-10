@@ -1,6 +1,6 @@
 -- report.matrix_table
 select
-    --[not_search_word] game_results.playtime,
+    --[not_search_word] results.playtime,
     --[search_word] game_info.comment as playtime,
     --[unregistered_replace] case when p1_guest = 0 then p1_name else :guest_name end as p1_name, -- ゲスト有効
     --[unregistered_not_replace] p1_name, -- ゲスト無効
@@ -19,12 +19,12 @@ select
     --[team] p4_team as p4_name,
     p4_rank
 from
-    game_results
+    game_results as results
 join game_info on
-    game_info.ts = game_results.ts
+    game_info.ts = results.ts
 where
-    game_results.rule_version = :rule_version
-    and game_results.playtime between :starttime and :endtime
+    results.rule_version = :rule_version
+    and results.playtime between :starttime and :endtime
     --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
     --[team] and game_info.same_team = 0
     --[team] and p1_team notnull and p2_team notnull and p3_team notnull and p4_team notnull
