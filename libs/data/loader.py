@@ -22,6 +22,10 @@ def read_data(keyword: str) -> pd.DataFrame:
         pd.DataFrame: 集計結果
     """
 
+    # デバッグ用
+    pd.set_option("display.max_rows", None)
+    pd.set_option("display.max_columns", None)
+
     if "starttime" in g.params:
         g.params.update(starttime=g.params["starttime"].format("sql"))
     if "endtime" in g.params:
@@ -30,17 +34,14 @@ def read_data(keyword: str) -> pd.DataFrame:
         g.params.update(rule_version=g.cfg.mahjong.rule_version)
 
     sql = query_modification(dbutil.query(keyword))
+    logging.debug("prm: %s", g.params)
+    logging.debug("sql: %s", named_query(sql))
+
     df = pd.read_sql(
         sql=sql,
         con=dbutil.connection(g.cfg.setting.database_file),
         params=g.params,
     )
-
-    # デバッグ用
-    pd.set_option("display.max_rows", None)
-    pd.set_option("display.max_columns", None)
-    logging.debug("prm: %s", g.params)
-    logging.debug("sql: %s", named_query(sql))
     logging.trace(df)  # type: ignore
 
     return df
