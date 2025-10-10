@@ -131,6 +131,11 @@ def statistics_plot(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
+    if g.adapter.conf.plotting_backend == "plotly":
+        m.post.reset()
+        m.post.headline = {"": message.random_reply(m, "not_implemented", False)}
+        return
+
     # データ収集
     g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = loader.read_data("SUMMARY_DETAILS")
@@ -158,6 +163,7 @@ def statistics_plot(m: "MessageParserProtocol"):
     player_df["sum_point"] = player_df["point"].cumsum()
 
     # --- グラフ生成
+    graphutil.setup()
     save_file = os.path.join(
         g.cfg.setting.work_dir,
         f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
