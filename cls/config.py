@@ -104,7 +104,11 @@ class BaseSection(CommonMethodMixin):
                         setattr(self, k, self._section.getboolean(k, fallback=self.get(k)))
                     case v_type if v_type is type([]):
                         v_list = [x.strip() for x in self._section.get(k, fallback=self.get(k)).split(",")]
-                        setattr(self, k, v_list)
+                        current_list = getattr(self, k)
+                        if isinstance(current_list, list) and current_list:  # 設定済みリストは追加
+                            current_list.extend(v_list)
+                        else:
+                            setattr(self, k, v_list)
                     case v_type if isinstance(v_type, UnionType):
                         if set(v_type.__args__) == {str, type(None)}:
                             setattr(self, k, self._section.get(k, fallback=self.get(k)))
@@ -259,14 +263,14 @@ class TeamSection(BaseSection):
 class AliasSection(BaseSection):
     """aliasセクション初期値"""
 
-    results: list = []
-    graph: list = []
-    ranking: list = []
-    report: list = []
-    download: list = []
-    member: list = []
+    results: list = ["成績"]
+    graph: list = ["グラフ"]
+    ranking: list = ["ランキング"]
+    report: list = ["レポート"]
+    download: list = ["ダウンロード"]
+    member: list = ["userlist", "member_list"]
     add: list = []
-    delete: list = []  # "del"はbuilt-inで使用
+    delete: list = ["del"]  # "del"はbuilt-inで使用
     team_create: list = []
     team_del: list = []
     team_add: list = []
@@ -280,10 +284,11 @@ class AliasSection(BaseSection):
 
         # デフォルト値として自身と同じ名前のコマンドを登録する #
         for k in self.to_dict():
-            x = getattr(self, k)
-            if isinstance(x, list):
-                x.append(k)
-        list_data = [x.strip() for x in str(self._parser.get("alias", "del", fallback="")).split(",")] + ["del"]
+            current_list = getattr(self, k)
+            if isinstance(current_list, list):
+                current_list.append(k)
+        # delのエイリアス取り込み(設定ファイルに`delete`と書かれていない)
+        list_data = [x.strip() for x in str(self._parser.get("alias", "del", fallback="")).split(",")]
         self.delete.extend(list_data)
 
 
