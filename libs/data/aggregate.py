@@ -172,6 +172,26 @@ def calculation_rating() -> pd.DataFrame:
             last_ratings[player] = new_rating
             df_ratings.loc[x.Index, player] = new_rating
 
+    # 間引き(集約オプション)
+    if (collection := g.params.get("collection")):
+        ratings = df_ratings[1:]
+        ratings.index = pd.to_datetime(ratings.index)  # DatetimeIndexに変換
+
+        match collection:
+            case "daily":
+                ratings = ratings.resample("D").last().ffill()
+            case "monthly":
+                ratings = ratings.resample("ME").last().ffill()
+            case "yearly":
+                ratings = ratings.resample("YE").last().ffill()
+            case "all":
+                ratings = df_ratings.ffill().tail(1)
+            case _:
+                return df_ratings
+
+        ratings.index = ratings.index.astype(str)
+        df_ratings = pd.concat([df_ratings.head(1), ratings])
+
     return df_ratings
 
 
