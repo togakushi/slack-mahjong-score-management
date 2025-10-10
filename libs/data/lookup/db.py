@@ -4,7 +4,7 @@ libs/data/lookup/db.py
 
 from contextlib import closing
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, cast
 
 import pandas as pd
 
@@ -14,6 +14,7 @@ from libs.data import loader
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
+    from cls.timekit import ExtendedDatetime
     from libs.datamodels import GameInfo
     from libs.types import TeamDataDict
 
@@ -53,8 +54,8 @@ def member_info(game_info: "GameInfo", name: str) -> dict:
     params: dict = {
         "name": name,
         "rule_version": g.params.get("rule_version", g.cfg.mahjong.rule_version),
-        "starttime": game_info.first_game.format("sql"),
-        "endtime": game_info.last_game.format("sql"),
+        "starttime": cast("ExtendedDatetime", game_info.first_game).format("sql"),
+        "endtime": cast("ExtendedDatetime", game_info.last_game).format("sql"),
     }
 
     sql = loader.query_modification("""
