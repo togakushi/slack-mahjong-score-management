@@ -15,15 +15,15 @@ class GameInfo:
     """ゲーム集計情報"""
 
     count: int = field(default=0)
-    """ゲーム数"""
+    """集計範囲のゲーム数"""
     first_game: Optional[ExtDt] = field(default=None)
-    """記録されている最初のゲーム時間"""
+    """集計範囲の最初のゲーム時間"""
     last_game: Optional[ExtDt] = field(default=None)
-    """記録されている最後のゲーム時間"""
+    """集計範囲の最後のゲーム時間"""
     first_comment: Optional[str] = field(default=None)
-    """記録されている最初のゲームコメント"""
+    """集計範囲の最初のゲームコメント"""
     last_comment: Optional[str] = field(default=None)
-    """記録されている最後のゲームコメント"""
+    """集計範囲の最後のゲームコメント"""
 
     def __post_init__(self):
         self.get()
