@@ -184,6 +184,7 @@ def _graph_title(game_info: GameInfo) -> tuple[str, str]:
             xlabel_text = f"総ゲーム数：{game_info.count} ゲーム"
         case _:
             kind = "ymdhm"
+            xlabel_text = f"ゲーム終了日時（総ゲーム数：{game_info.count} ゲーム）"
 
     title_text = f"レーティング推移 ({compose.text_item.date_range(kind)})"
 
