@@ -73,8 +73,7 @@ def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", save_file: str):
     """
 
     graphutil.setup()
-
-    title_text = f"レーティング推移 ({compose.text_item.date_range("ymdhm")})"
+    title_text, xlabel_text = _graph_title(game_info)
     legend_text = []
     count = 1
     for name, rate in df.iloc[-1].items():
@@ -84,9 +83,10 @@ def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", save_file: str):
     # ---
     df.plot(
         figsize=(21, 7),
-        xlabel=f"集計日（総ゲーム数：{game_info.count} ゲーム）",
+        xlabel=xlabel_text,
         ylabel="レート",
-        marker="." if len(df) < 50 else None,
+        marker="." if len(df) < 20 else None,
+        linewidth=2 if len(df) < 40 else 1,
     )
     plt.title(title_text, fontsize=16)
     plt.legend(
@@ -116,6 +116,8 @@ def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file:
         save_file (str): 保存先ファイル名
     """
 
+    # グラフタイトル/ラベル
+    title_text, xlabel_text = _graph_title(game_info)
     # 凡例用テキスト
     legend_text = []
     count = 1
@@ -133,12 +135,12 @@ def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file:
         width=1280,
         height=800,
         title={
-            "text": f"レーティング推移 ({compose.text_item.date_range("ymdhm")})",
+            "text": title_text,
             "font": {"size": 30},
             "x": 0.1,
         },
         xaxis_title={
-            "text": f"集計日（総ゲーム数：{game_info.count} ゲーム）",
+            "text": xlabel_text,
             "font": {"size": 18},
         },
         yaxis_title={
@@ -149,9 +151,40 @@ def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file:
     )
 
     # 軸/目盛調整
-    if all(df.count() > 10):
+    if all(df.count() > 20):
         fig.update_traces(mode="lines")  # マーカー非表示
-    if len(fig.data) > 20:
+    if len(fig.data) > 40:
         fig.update_traces(mode="lines", line={"width": 1})  # ラインを細く
 
     fig.write_html(save_file, full_html=False)
+
+
+def _graph_title(game_info: GameInfo) -> tuple[str, str]:
+    """グラフタイトル/ラベル生成
+
+    Args:
+        game_info (GameInfo): ゲームデータ
+
+    Returns:
+        tuple[str, str]: タイトル文字列
+    """
+
+    match g.params.get("collection"):
+        case "daily":
+            kind = "ymd_o"
+            xlabel_text = f"集計日（総ゲーム数：{game_info.count} ゲーム）"
+        case "monthly":
+            kind = "jym_o"
+            xlabel_text = f"集計月（総ゲーム数：{game_info.count} ゲーム）"
+        case "yearly":
+            kind = "jy_o"
+            xlabel_text = f"集計年（総ゲーム数：{game_info.count} ゲーム）"
+        case "all":
+            kind = "ymdhm"
+            xlabel_text = f"総ゲーム数：{game_info.count} ゲーム"
+        case _:
+            kind = "ymdhm"
+
+    title_text = f"レーティング推移 ({compose.text_item.date_range(kind)})"
+
+    return title_text, xlabel_text
