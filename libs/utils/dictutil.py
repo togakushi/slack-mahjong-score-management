@@ -112,7 +112,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
 
     # 規定打数設定
     if ret_dict.get("mixed") and not ret_dict.get("stipulated"):  # 横断集計&規定数制限なし
-        if len(target_player):
+        if target_player:
             ret_dict.update(stipulated=1)  # 個人成績
         else:
             ret_dict.update(stipulated=0)
