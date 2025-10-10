@@ -171,6 +171,9 @@ def get_headline(data: dict, game_info: GameInfo, player_name: str) -> dict:
     ret["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}"
     ret["_blank1"] = True
 
+    if g.params.get("mixed"):
+        ret.pop("検索範囲")
+
     return ret
 
 

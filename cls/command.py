@@ -138,6 +138,10 @@ COMMANDS: CommandsDict = {
         "match": [r"^(直近)(\d*)$"],
         "action": lambda w: {"target_count": w}
     },
+    "mixed": {
+        "match": [r"^(横断|mix|mixed)$"],
+        "action": lambda _: {"mixed": True},
+    },
     # --- 出力オプション
     "format": {
         "match": [r"^(csv|text|txt)$"],
