@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px  # type: ignore
 
 import libs.global_value as g
-from libs.data import aggregate
+from libs.data import aggregate, loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.utils import formatter, graphutil, textutil
@@ -36,7 +36,10 @@ def plot(m: "MessageParserProtocol"):
         return
 
     # 足切り
-    df_dropped = df_ratings.dropna(axis=1, thresh=g.params["stipulated"]).ffill()
+    df_count = loader.read_data("SUMMARY_GAMEDATA").filter(
+        items=["name", "count"]
+    ).set_index("name").query("count >= @g.params['stipulated']")
+    df_dropped = df_ratings.filter(items=df_count.index.to_list())
 
     # 並び変え
     df_sorted = df_dropped[df_dropped.iloc[-1].sort_values(ascending=False).index]
@@ -49,6 +52,11 @@ def plot(m: "MessageParserProtocol"):
     if g.params.get("anonymous"):
         mapping_dict = formatter.anonymous_mapping(df_sorted.columns.to_list())
         df_sorted = df_sorted.rename(columns=mapping_dict)
+
+    if df_sorted.empty:
+        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
+        m.status.result = False
+        return
 
     # --- グラフ生成
     m.post.headline = {"レーティング推移グラフ": message.header(game_info, m)}
