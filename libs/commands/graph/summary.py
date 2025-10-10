@@ -251,7 +251,8 @@ def _graph_generation(graph_params: GraphParams):
             figsize=(8, 6),
             xlabel=str(graph_params["xlabel_text"]),
             ylabel=str(graph_params["ylabel_text"]),
-            marker="." if len(df) < 50 else None,
+            marker="." if len(df) < 20 else None,
+            linewidth=2 if len(df) < 40 else 1,
         ).get_figure()
 
         # 凡例
@@ -361,10 +362,10 @@ def _graph_generation_plotly(graph_params: GraphParams):
             )
         case "point":
             # マーカー
-            if all(df.count() > 10):
+            if all(df.count() > 20):
                 fig.update_traces(mode="lines")
             # ライン
-            if len(fig.data) > 20:
+            if len(fig.data) > 40:
                 fig.update_traces(mode="lines", line={"width": 1})
         case "rank":
             # Y軸目盛
@@ -376,10 +377,10 @@ def _graph_generation_plotly(graph_params: GraphParams):
             # マーカー
             if all(df.count() == 1):
                 fig.update_traces(marker={"size": 10})
-            elif all(df.count() > 10):
+            elif all(df.count() > 20):
                 fig.update_traces(mode="lines")
             # ライン
-            if len(fig.data) > 20:
+            if len(fig.data) > 40:
                 fig.update_traces(mode="lines", line={"width": 1})
 
     return fig
