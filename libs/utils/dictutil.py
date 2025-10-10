@@ -52,10 +52,14 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
     logging.debug("argument: %s", param)
     ret_dict.update(param.flags)  # 上書き
 
+    # ルールバージョン先行評価
+    if (rule_version := ret_dict.get("rule_version")):
+        g.params.update(rule_version=rule_version)
+    if (mixed := ret_dict.get("mixed")):
+        g.params.update(mixed=mixed)
+
     # 検索範囲取得
     departure_time = ExtDt(hours=-g.cfg.setting.time_adjust)
-    if (rule_version := ret_dict.get("rule_version")):  # ルールバージョンのみ先行評価
-        g.params.update(rule_version=rule_version)
     if param.search_range:
         search_range = param.search_range
     elif pre_param.search_range:

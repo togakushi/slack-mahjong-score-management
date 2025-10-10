@@ -94,14 +94,9 @@ def query_modification(sql: str) -> str:
 
     # ルール横断集計
     if g.params.get("mixed"):
-        sql = sql.replace("game_results.rule_version = :rule_version", "1 = 1")
         sql = sql.replace("game_info.rule_version = :rule_version", "1 = 1")
         sql = sql.replace("results.rule_version = :rule_version", "1 = 1")
         sql = sql.replace("rule_version = :rule_version", "1 = 1")
-
-        sql = sql.replace("and game_results.playtime between :starttime and :endtime", "")
-        sql = sql.replace("and results.playtime between :starttime and :endtime", "")
-        sql = sql.replace("and playtime between :starttime and :endtime", "")
 
     # コメント検索
     if g.params.get("search_word") or g.params.get("group_length"):

@@ -223,10 +223,15 @@ def first_record() -> datetime:
             ).fetchall()[0][0]
 
             if table_count:
-                record = conn.execute(
-                    "select min(playtime) from game_results where rule_version=?;",
-                    (g.params.get("rule_version", g.cfg.mahjong.rule_version), )
-                ).fetchall()[0][0]
+                if g.params.get("mixed"):
+                    record = conn.execute(
+                        "select min(playtime) from game_results;"
+                    ).fetchall()[0][0]
+                else:
+                    record = conn.execute(
+                        "select min(playtime) from game_results where rule_version=?;",
+                        (g.params.get("rule_version", g.cfg.mahjong.rule_version), )
+                    ).fetchall()[0][0]
                 if record:
                     ret = datetime.fromisoformat(record)
     except AttributeError:

@@ -139,7 +139,7 @@ COMMANDS: CommandsDict = {
         "action": lambda w: {"target_count": w}
     },
     "mixed": {
-        "match": [r"^(横断|mix|mixed)$"],
+        "match": [r"^横断$", r"^mix$", r"^mixed$"],
         "action": lambda _: {"mixed": True},
     },
     # --- 出力オプション
