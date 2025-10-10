@@ -2,7 +2,6 @@
 libs/commands/report/monthly.py
 """
 
-import os
 from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
@@ -38,7 +37,7 @@ def plot(m: "MessageParserProtocol"):
     if g.adapter.conf.plotting_backend == "plotly":
         return
 
-    graphutil.setup()
+    report_file_path = graphutil.setup("report.png")
     plt.rcParams["font.size"] = 6
 
     # 色彩設定
@@ -66,11 +65,6 @@ def plot(m: "MessageParserProtocol"):
             cell_color.append([line_color1 for i in column_labels])
         else:
             cell_color.append([line_color2 for i in column_labels])
-
-    report_file_path = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.png" if g.params.get("filename") else "report.png",
-    )
 
     fig = plt.figure(
         figsize=(6, (len(results) * 0.2) + 0.8),

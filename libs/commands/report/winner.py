@@ -2,7 +2,6 @@
 libs/commands/report/winner.py
 """
 
-import os
 from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
@@ -62,12 +61,8 @@ def plot(m: "MessageParserProtocol"):
     if g.adapter.conf.plotting_backend == "plotly":
         return
 
-    graphutil.setup()
+    report_file_path = graphutil.setup("report.png")
     plt.rcParams["font.size"] = 6
-    report_file_path = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.png" if g.params.get("filename") else "report.png",
-    )
 
     # 色彩設定
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):

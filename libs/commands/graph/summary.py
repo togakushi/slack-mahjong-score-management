@@ -30,6 +30,7 @@ class GraphParams(TypedDict, total=False):
     target_data: pd.DataFrame
     pivot: pd.DataFrame
     horizontal: bool  # 横棒切替許可フラグ
+    save_file: str
 
 
 def point_plot(m: "MessageParserProtocol"):
@@ -51,12 +52,12 @@ def point_plot(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
+    # 集計
     if g.params.get("search_word"):
         pivot_index = "comment"
     else:
         pivot_index = "playtime"
 
-    # 集計
     pivot = pd.pivot_table(
         df, index=pivot_index, columns="name", values="point_sum"
     ).ffill()
@@ -75,13 +76,11 @@ def point_plot(m: "MessageParserProtocol"):
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            save_file = textutil.save_file_path("graph", ".html", True)
-            fig = _graph_generation_plotly(graph_params)
-            fig.write_html(save_file, full_html=False)
+            graph_params.update({"save_file": "graph.html"})
+            save_file = _graph_generation_plotly(graph_params)
         case _:
-            save_file = textutil.save_file_path("graph", ".png", True)
-            fig = _graph_generation(graph_params)
-            plt.savefig(save_file, bbox_inches="tight")
+            graph_params.update({"save_file": "graph.png"})
+            save_file = _graph_generation(graph_params)
 
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.file_list = [{file_title: save_file}]
@@ -132,14 +131,11 @@ def rank_plot(m: "MessageParserProtocol"):
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            save_file = textutil.save_file_path("graph", ".html", True)
-            fig = _graph_generation_plotly(graph_params)
-            fig.update_layout(yaxis={"autorange": "reversed"})
-            fig.write_html(save_file, full_html=False)
+            graph_params.update({"save_file": "graph.html"})
+            save_file = _graph_generation_plotly(graph_params)
         case _:
-            save_file = textutil.save_file_path("graph", ".png", True)
-            fig = _graph_generation(graph_params)
-            plt.savefig(save_file, bbox_inches="tight")
+            graph_params.update({"save_file": "graph.png"})
+            save_file = _graph_generation(graph_params)
 
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.file_list = [{file_title: save_file}]
@@ -203,14 +199,17 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
     return (target_data.sort_values("position"), df)
 
 
-def _graph_generation(graph_params: GraphParams):
+def _graph_generation(graph_params: GraphParams) -> str:
     """グラフ生成共通処理(matplotlib用)
 
     Args:
         args (GraphParams): グラフ生成パラメータ
+
+    Returns:
+        str: 保存先ファイル名
     """
 
-    graphutil.setup()
+    save_file = graphutil.setup(graph_params["save_file"])
     target_data = graph_params["target_data"]
     df = graph_params["pivot"]
 
@@ -229,7 +228,7 @@ def _graph_generation(graph_params: GraphParams):
             index=target_data["legend"].to_list()[::-1],
         )
 
-        fig = tmpdf.plot.barh(
+        tmpdf.plot.barh(
             figsize=(8, 2 + tmpdf.count().iloc[0] / 5),
             y="point",
             xlabel=graph_params["xlabel_text"],
@@ -247,7 +246,7 @@ def _graph_generation(graph_params: GraphParams):
         logging.debug("plot data:\n%s", tmpdf)
     else:
         _graph_title(graph_params)
-        fig = df.plot(
+        df.plot(
             figsize=(8, 6),
             xlabel=str(graph_params["xlabel_text"]),
             ylabel=str(graph_params["ylabel_text"]),
@@ -298,16 +297,21 @@ def _graph_generation(graph_params: GraphParams):
         fontsize=16,
     )
 
-    return fig
+    plt.savefig(save_file, bbox_inches="tight")
+    return save_file
 
 
-def _graph_generation_plotly(graph_params: GraphParams):
+def _graph_generation_plotly(graph_params: GraphParams) -> str:
     """グラフ生成共通処理(plotly用)
 
     Args:
         args (GraphParams): グラフ生成パラメータ
+
+    Returns:
+        str: 保存先ファイル名
     """
 
+    save_file = graphutil.setup(graph_params["save_file"])
     target_data = cast(pd.DataFrame, graph_params["target_data"])
     df = graph_params["pivot"]
 
@@ -371,6 +375,7 @@ def _graph_generation_plotly(graph_params: GraphParams):
             # Y軸目盛
             lab = list(range(len(target_data) + 1))
             fig.update_yaxes(
+                autorange="reversed",
                 zeroline=False,
                 tickvals=lab[1:] if len(lab) < 10 else lab[1::2],
             )
@@ -383,7 +388,8 @@ def _graph_generation_plotly(graph_params: GraphParams):
             if len(fig.data) > 40:
                 fig.update_traces(mode="lines", line={"width": 1})
 
-    return fig
+    fig.write_html(save_file, full_html=False)
+    return save_file
 
 
 def _graph_title(graph_params: GraphParams):

@@ -97,13 +97,8 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title) -> str:
         ]
     ))
 
-    report_file_path = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.png" if g.params.get("filename") else "report.png",
-    )
-
     # フォント/色彩設定
-    graphutil.setup()
+    report_file_path = graphutil.setup("report.png")
     plt.rcParams["font.size"] = 6
 
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):

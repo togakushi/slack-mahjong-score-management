@@ -2,7 +2,6 @@
 libs/commands/graph/personal.py
 """
 
-import os
 from typing import TYPE_CHECKING, cast
 
 import matplotlib.pyplot as plt
@@ -14,7 +13,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil, textutil
+from libs.utils import formatter, graphutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -53,12 +52,7 @@ def plot(m: "MessageParserProtocol"):
     rank_avg = f"{float(df["rank_avg"].iloc[-1]):.2f}"
 
     # --- グラフ生成
-    save_file = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.png" if g.params.get("filename") else "graph.png",
-    )
-
-    graphutil.setup()
+    save_file = graphutil.setup("graph.png")
     fig = plt.figure(figsize=(12, 8))
 
     if g.params.get("target_count", 0) == 0:
@@ -249,8 +243,7 @@ def statistics_plot(m: "MessageParserProtocol"):
         case "plotly":
             return
         case "matplotlib":
-            graphutil.setup()
-            save_file = textutil.save_file_path("graph", ".png", True)
+            save_file = graphutil.setup("graph.png")
 
             fig = plt.figure(figsize=(20, 10))
             fig.suptitle(title_text, size=20, weight="bold")

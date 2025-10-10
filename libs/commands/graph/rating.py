@@ -11,7 +11,7 @@ import libs.global_value as g
 from libs.data import aggregate, loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil, textutil
+from libs.utils import formatter, graphutil
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -63,25 +63,26 @@ def plot(m: "MessageParserProtocol"):
     m.post.headline = {"レーティング推移グラフ": message.header(game_info, m)}
     match g.adapter.conf.plotting_backend:
         case "matplotlib":
-            save_file = textutil.save_file_path("rating", ".png", True)
-            _graph_generation(game_info, df_sorted, save_file)
+            save_file = _graph_generation(game_info, df_sorted, "rating.png")
         case "plotly":
-            save_file = textutil.save_file_path("rating", ".html", True)
-            _graph_generation_plotly(game_info, df_sorted, save_file)
+            save_file = _graph_generation_plotly(game_info, df_sorted, "rating.html")
 
     m.post.file_list = [{"レーティング推移": save_file}]
 
 
-def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", save_file: str):
+def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", save_file: str) -> str:
     """レーティング推移グラフ生成(matplotlib)
 
     Args:
         game_info (GameInfo): ゲーム情報
         df (pd.DataFrame): 描写データ
-        save_file (str): 保存先ファイル名
+        save_file (str): 保存先デフォルトファイル名
+
+    Returns:
+        str: 保存先ファイル名
     """
 
-    graphutil.setup()
+    save_file = graphutil.setup(save_file)
     title_text, xlabel_text = _graph_title(game_info)
     legend_text = []
     count = 1
@@ -114,17 +115,22 @@ def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", save_file: str):
     plt.axhline(y=1500, linewidth=0.5, ls="dashed", color="grey")
 
     plt.savefig(save_file, bbox_inches="tight")
+    return save_file
 
 
-def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file: str):
+def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file: str) -> str:
     """レーティング推移グラフ生成(plotly)
 
     Args:
         game_info (GameInfo): ゲーム情報
         df (pd.DataFrame): 描写データ
-        save_file (str): 保存先ファイル名
+        save_file (str): 保存先デフォルトファイル名
+
+    Returns:
+        str: 保存先ファイル名
     """
 
+    save_file = graphutil.setup(save_file)
     # グラフタイトル/ラベル
     title_text, xlabel_text = _graph_title(game_info)
     # 凡例用テキスト
@@ -166,6 +172,7 @@ def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file:
         fig.update_traces(mode="lines", line={"width": 1})  # ラインを細く
 
     fig.write_html(save_file, full_html=False)
+    return save_file
 
 
 def _graph_title(game_info: GameInfo) -> tuple[str, str]:
