@@ -52,6 +52,9 @@ class GameInfo:
                 self.first_comment = str(first_comment)
             if (last_comment := df.at[0, "last_comment"]):
                 self.last_comment = str(last_comment)
+        else:
+            self.first_game = ExtDt()
+            self.last_game = ExtDt()
 
         # 規定打数更新
         if not g.params.get("stipulated", 0):
