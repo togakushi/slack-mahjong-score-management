@@ -13,7 +13,7 @@ import libs.global_value as g
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil, textutil
+from libs.utils import formatter, graphutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
