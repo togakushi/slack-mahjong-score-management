@@ -341,7 +341,9 @@ def _graph_generation_plotly(graph_params: GraphParams) -> str:
         title={
             "text": graph_params["title_text"],
             "font": {"size": 30},
-            "x": 0.1,
+            "xref": "paper",
+            "xanchor": "center",
+            "x": 0.5,
         },
         xaxis_title={
             "text": graph_params["xlabel_text"],

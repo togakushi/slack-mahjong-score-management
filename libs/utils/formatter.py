@@ -234,7 +234,6 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "rule_version": "ルール識別子",
         #
         "rpoint": "素点",
-        "point": "ポイント",
         "rpoint_avg": "平均素点",
         "balance_avg": "平均収支",
         "top2_rate": "連対率", "top2": "連対数",
@@ -276,6 +275,8 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
                 rename_dict[x] = "名前" if short else "プレイヤー名"
             case "team":
                 rename_dict[x] = "チーム" if short else "チーム名"
+            case "point":
+                rename_dict[x] = "ポイント" if short else "獲得ポイント"
             case "seat":
                 rename_dict[x] = "席" if short else "座席"
             case "count" | "game" | "game_count":
