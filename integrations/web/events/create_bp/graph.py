@@ -50,12 +50,12 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
                         message += f"<p>\n{f.read()}\n</p>\n"
 
         for k, v in m.post.message.items():
-            if isinstance(v, pd.DataFrame) and k == "素点分布":
+            if isinstance(v, pd.DataFrame) and k == "素点情報":
                 v["ゲーム数"] = v["ゲーム数"].astype("float")
                 v.rename(columns={"平均値(x)": "平均値", "中央値(|)": "中央値"}, inplace=True)
                 message += f"<h2>{k}</h2>\n"
                 message += adapter.functions.to_styled_html(v, padding, True)
-            if isinstance(v, pd.DataFrame) and k == "順位分布":
+            if isinstance(v, pd.DataFrame) and k == "順位/ポイント情報":
                 v["ゲーム数"] = v["ゲーム数"].astype("float")
                 multi = [
                     ("", "ゲーム数"),
