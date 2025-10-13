@@ -35,7 +35,7 @@ def main(m: "MessageParserProtocol"):
     df = loader.read_data("REPORT_RESULTS_LIST").reset_index(drop=True)
     df.index = df.index + 1
     if df.empty:
-        m.post.headline = {"成績一覧": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"成績一覧": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -70,9 +70,12 @@ def main(m: "MessageParserProtocol"):
         case _:
             file_path = graph_generation(game_info, df, title)
 
-    m.post.file_list = [{"成績一覧": file_path}]
     m.post.headline = {title: message.header(game_info, m)}
-    m.post.message = {"": df_generation(df)}
+    match g.adapter.interface_type:
+        case "slack":
+            m.set_data(title, file_path, True, True)
+        case "web":
+            m.set_data("", df_generation(df))
 
 
 def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> Union["Path", None]:

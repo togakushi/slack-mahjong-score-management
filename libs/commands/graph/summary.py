@@ -50,7 +50,7 @@ def point_plot(m: "MessageParserProtocol"):
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -86,8 +86,8 @@ def point_plot(m: "MessageParserProtocol"):
             save_file = _graph_generation(graph_params)
 
     file_title = graph_params.get("title_text", "").split()[0]
-    m.post.file_list = [{file_title: save_file}]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
+    m.set_data(file_title, save_file, True, True)
 
 
 def rank_plot(m: "MessageParserProtocol"):
@@ -105,7 +105,7 @@ def rank_plot(m: "MessageParserProtocol"):
     target_data, df = _data_collection()
 
     if target_data.empty:  # 描写対象が0人の場合は終了
-        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -141,8 +141,8 @@ def rank_plot(m: "MessageParserProtocol"):
             save_file = _graph_generation(graph_params)
 
     file_title = graph_params.get("title_text", "").split()[0]
-    m.post.file_list = [{file_title: save_file}]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
+    m.set_data(file_title, save_file, True, True)
 
 
 def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:

@@ -4,6 +4,7 @@ integrations/slack/api.py
 
 import logging
 import textwrap
+from pathlib import PosixPath
 from typing import TYPE_CHECKING, cast
 
 import pandas as pd
@@ -44,13 +45,13 @@ class AdapterAPI(APIInterface):
             text_data = iter(data.values())
             # 先頭ブロックの処理
             v = next(text_data)
-            if m.post.codeblock:
+            if disp:
                 ret_list.append(f"{header}```\n{v}\n```\n")
             else:
                 ret_list.append(f"{header}{v}\n")
             # 残りのブロック
             for v in text_data:
-                if m.post.codeblock:
+                if disp:
                     ret_list.append(f"```\n{v}\n```\n")
                 else:
                     ret_list.append(f"{v}\n")
@@ -59,78 +60,74 @@ class AdapterAPI(APIInterface):
         if not m.in_thread:
             m.post.thread = False
 
-        # 見出し取得
-        text = ""
-        title = ""
+        # 見出しポスト
+        header_title = ""
+        header_text = ""
         if m.post.headline:
-            title, text = next(iter(m.post.headline.items()))
+            header_title, header_text = next(iter(m.post.headline.items()))
+            if not all([v.get("hidden") for x in m.post.order for _, v in x.items()]):
+                res = self._call_chat_post_message(
+                    channel=m.data.channel_id,
+                    text=f"{_header_text(header_title)}{header_text.rstrip()}",
+                    thread_ts=m.reply_ts,
+                )
+                if res.status_code == 200:  # 見出しがある場合はスレッドにする
+                    m.post.ts = res.get("ts", "undetermined")
+                else:
+                    m.post.ts = "undetermined"
 
-        # ファイルアップロード
-        upload_flg: bool = False
-        for attache_file in m.post.file_list:
-            for file_title, file_path in attache_file.items():
-                if file_path:
-                    upload_flg = True
+        # 本文
+        post_msg: list[str] = []
+        for data in m.post.order:
+            for title, v in data.items():
+                msg = v.get("data")
+                disp = v.get("disp", False)
+
+                if isinstance(msg, PosixPath) and msg.exists():
+                    comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if disp else ""
                     self._call_files_upload(
                         channel=m.data.channel_id,
-                        title=file_title,
-                        file=file_path,
-                        initial_comment=textwrap.dedent(f"{_header_text(title)}{text.rstrip()}"),
+                        title=title,
+                        file=str(msg),
+                        initial_comment=comment,
                         thread_ts=m.reply_ts,
                         request_file_info=False,
                     )
-        if upload_flg:
-            return  # ファイルをポストしたら終了
 
-        # 見出しポスト
-        if m.post.headline:
-            res = self._call_chat_post_message(
-                channel=m.data.channel_id,
-                text=f"{_header_text(title)}{text.rstrip()}",
-                thread_ts=m.reply_ts,
-            )
-            if res.status_code == 200:  # 見出しがある場合はスレッドにする
-                m.post.ts = res.get("ts", "undetermined")
-            else:
-                m.post.ts = "undetermined"
+                if isinstance(msg, str):
+                    header = ""
+                    if m.post.key_header:
+                        header = _header_text(title)
 
-        # 本文ポスト
-        post_msg: list[str] = []
-        for title, msg in m.post.message.items():
-            header: str = str()
-            if m.post.key_header:
-                header = _header_text(title)
+                    if disp:
+                        post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n")
+                    else:
+                        post_msg.append(f"{header}{msg.rstrip()}\n")
 
-            if isinstance(msg, str):
-                if m.post.codeblock:
-                    post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n")
-                else:
-                    post_msg.append(f"{header}{msg.rstrip()}\n")
-
-            if isinstance(msg, pd.DataFrame):
-                match m.status.command_type:
-                    case "results":
-                        match title:
-                            case "通算ポイント" | "ポイント差分":
-                                post_msg.extend(_table_data(converter.df_to_dict(msg, step=40)))
-                            case "役満和了" | "卓外ポイント" | "その他":
-                                if "回数" in msg.columns:
-                                    post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
-                                else:
+                if isinstance(msg, pd.DataFrame):
+                    match m.status.command_type:
+                        case "results":
+                            match title:
+                                case "通算ポイント" | "ポイント差分":
+                                    post_msg.extend(_table_data(converter.df_to_dict(msg, step=40)))
+                                case "役満和了" | "卓外ポイント" | "その他":
+                                    if "回数" in msg.columns:
+                                        post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
+                                    else:
+                                        post_msg.extend(_table_data(converter.df_to_remarks(msg)))
+                                case "座席データ":
+                                    post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
+                                case "戦績":
+                                    if "東家 名前" in msg.columns:  # 縦持ちデータ
+                                        post_msg.extend(_table_data(converter.df_to_results_details(msg)))
+                                    else:
+                                        post_msg.extend(_table_data(converter.df_to_results_simple(msg)))
+                                case _:
                                     post_msg.extend(_table_data(converter.df_to_remarks(msg)))
-                            case "座席データ":
-                                post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
-                            case "戦績":
-                                if "東家 名前" in msg.columns:  # 縦持ちデータ
-                                    post_msg.extend(_table_data(converter.df_to_results_details(msg)))
-                                else:
-                                    post_msg.extend(_table_data(converter.df_to_results_simple(msg)))
-                            case _:
-                                post_msg.extend(_table_data(converter.df_to_remarks(msg)))
-                    case "rating":
-                        post_msg.extend(_table_data(converter.df_to_dict(msg, step=20)))
-                    case "ranking":
-                        post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
+                        case "rating":
+                            post_msg.extend(_table_data(converter.df_to_dict(msg, step=20)))
+                        case "ranking":
+                            post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
 
         if m.post.summarize:
             post_msg = formatter.group_strings(post_msg)

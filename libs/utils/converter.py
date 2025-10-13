@@ -21,6 +21,7 @@ def save_output(
     kind: str,
     filename: str,
     headline: Optional[str] = None,
+    suffix: Optional[str] = None,
 ) -> Union["Path", None]:
     """指定されたフォーマットでdfを保存する
 
@@ -29,6 +30,7 @@ def save_output(
         kind (str): フォーマット
         filename (str): 保存ファイル名
         headline (Optional[str], optional): 集計情報（ヘッダコメント）. Defaults to None.
+        suffix (Optional[str], optional): 保存ファイル名に追加する文字列. Defaults to None.
 
     Returns:
         Path: 保存したファイルパス
@@ -51,6 +53,9 @@ def save_output(
 
     # 保存
     save_file = textutil.save_file_path(filename, True)
+    if suffix and g.params.get("filename"):
+        save_file = save_file.with_name(f"{save_file.stem}_{suffix}{save_file.suffix}")
+
     with open(save_file, "w", encoding="utf-8") as writefile:
         if headline is not None:  # ヘッダ書き込み
             for line in headline.splitlines():

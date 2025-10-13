@@ -9,14 +9,14 @@ from libs.data import initialization, lookup, modify
 from libs.utils import dbutil, formatter, textutil, validator
 
 
-def create(argument: list) -> dict[str, str]:
+def create(argument: list) -> str:
     """チーム作成
 
     Args:
         argument (list): 作成するチーム名
 
     Returns:
-        dict[str, str]: 処理結果
+        str: 処理結果
     """
 
     ret = False
@@ -40,17 +40,17 @@ def create(argument: list) -> dict[str, str]:
                 msg = f"チーム「{team_name}」を登録しました。"
                 logging.info("add new team: %s", team_name)
 
-    return {"チーム作成": msg}
+    return msg
 
 
-def delete(argument: list) -> dict[str, str]:
+def delete(argument: list) -> str:
     """チーム削除
 
     Args:
         argument (list): 削除するチーム名
 
     Returns:
-        dict[str, str]: 処理結果
+        str: 処理結果
     """
 
     msg = "使い方が間違っています。"
@@ -77,10 +77,10 @@ def delete(argument: list) -> dict[str, str]:
             msg += f"\nチーム「{team_name}」を削除しました。"
             logging.info("team delete: %s", team_name)
 
-    return {"チーム削除": msg}
+    return msg
 
 
-def append(argument: list) -> dict[str, str]:
+def append(argument: list) -> str:
     """チーム所属
 
     Args:
@@ -89,13 +89,13 @@ def append(argument: list) -> dict[str, str]:
             - argument[1]: 所属するメンバー名
 
     Returns:
-        dict[str, str]: 処理結果
+        str: 処理結果
     """
 
     msg = "使い方が間違っています。"
 
     if len(argument) == 1:  # 新規作成
-        (msg,) = create(argument).values()
+        msg = create(argument)
 
     if len(argument) == 2:  # チーム所属
         g.params.update(unregistered_replace=False)
@@ -135,10 +135,10 @@ def append(argument: list) -> dict[str, str]:
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
             logging.info("team participation: %s -> %s", team_name, player_name)
 
-    return {"チーム所属": msg}
+    return msg
 
 
-def remove(argument: list) -> dict[str, str]:
+def remove(argument: list) -> str:
     """チームから除名
 
     Args:
@@ -147,7 +147,7 @@ def remove(argument: list) -> dict[str, str]:
             - argument[1]: チームから離脱するメンバー名
 
     Returns:
-        dict[str, str]: 処理結果
+        str: 処理結果
     """
 
     msg = "使い方が間違っています。"
@@ -155,7 +155,7 @@ def remove(argument: list) -> dict[str, str]:
     resultdb = dbutil.connection(g.cfg.setting.database_file)
 
     if len(argument) == 1:
-        (msg,) = delete(argument).values()
+        msg = delete(argument)
 
     if len(argument) == 2:  # チーム名指
         g.params.update(unregistered_replace=False)
@@ -187,14 +187,14 @@ def remove(argument: list) -> dict[str, str]:
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
             logging.info("team breakaway: %s -> %s", team_name, player_name)
 
-    return {"チーム除名": msg}
+    return msg
 
 
-def clear() -> dict[str, str]:
+def clear() -> str:
     """全チーム削除
 
     Returns:
-        dict[str, str]: slackにpostする内容
+        str: 処理結果
     """
 
     msg = modify.db_backup()
@@ -210,4 +210,4 @@ def clear() -> dict[str, str]:
     g.member_list = lookup.db.get_member_list()
     g.team_list = lookup.db.get_team_list()
 
-    return {"全チーム削除": msg}
+    return msg

@@ -33,7 +33,7 @@ def plot(m: "MessageParserProtocol"):
     df_ratings = aggregate.calculation_rating()
 
     if df_ratings.empty:
-        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -57,7 +57,7 @@ def plot(m: "MessageParserProtocol"):
         df_sorted = df_sorted.rename(columns=mapping_dict)
 
     if df_sorted.empty:
-        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -70,7 +70,7 @@ def plot(m: "MessageParserProtocol"):
         case "plotly":
             save_file = _graph_generation_plotly(game_info, df_sorted, "rating.html")
 
-    m.post.file_list = [{"レーティング推移": save_file}]
+    m.set_data("レーティング推移", save_file, True, True)
 
 
 def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", filename: str) -> "Path":

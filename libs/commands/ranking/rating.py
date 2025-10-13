@@ -35,7 +35,7 @@ def aggregation(m: "MessageParserProtocol"):
     ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # pylint: disable=unused-variable  # noqa: F841
 
     if not game_info.count:  # 検索結果が0件のとき
-        m.post.headline = {"レーティング": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"レーティング": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -76,7 +76,7 @@ def aggregation(m: "MessageParserProtocol"):
         df["name"] = df["name"].replace(mapping_dict)
 
     if df.empty:
-        m.post.headline = {"レーティング": message.random_reply(m, "no_target", False)}
+        m.post.headline = {"レーティング": message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
@@ -89,17 +89,14 @@ def aggregation(m: "MessageParserProtocol"):
 
     df = df.drop(columns=[x for x in g.cfg.dropitems.ranking if x in df.columns.to_list()])  # 非表示項目
 
-    prefix_rating = str(g.params.get("filename", "rating"))
+    m.post.headline = {"レーティング": message.header(game_info, m, add_text, 1)}
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            save_file = converter.save_output(df, "csv", f"{prefix_rating}.csv", headline)
+            if (save_file := converter.save_output(df, "csv", "rating.csv", headline)):
+                m.set_data("レーティング", save_file)
         case "text" | "txt":
-            save_file = converter.save_output(df, "txt", f"{prefix_rating}.txt", headline)
+            if (save_file := converter.save_output(df, "txt", "rating.txt", headline)):
+                m.set_data("レーティング", save_file)
         case _:
-            save_file = None
-
-    m.post.headline = {"レーティング": message.header(game_info, m, add_text, 1)}
-    m.post.message = {"0": df}
-    m.post.file_list = [{"レーティング": save_file}]
-    m.post.summarize = False
-    m.post.codeblock = True
+            m.set_data("レーティング", df, True)
+            m.post.summarize = False

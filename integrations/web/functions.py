@@ -108,6 +108,23 @@ class SvcFunctions(FunctionsInterface):
 
         return ret
 
+    def to_text_html(self, text: str) -> str:
+        """テキストをHTMLに変換
+
+        Args:
+            text (str): 変換元
+
+        Returns:
+            str: 返還後
+        """
+
+        ret: str = "<p>\n"
+        for line in text.splitlines():
+            ret += f"{line.strip()}<br>\n"
+        ret += "</p>\n"
+
+        return ret
+
     def header_message(self, m: "MessageParserProtocol") -> str:
         """ヘッダ情報取得
 

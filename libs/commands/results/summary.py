@@ -53,24 +53,23 @@ def aggregation(m: "MessageParserProtocol"):
     m.post.headline = {headline_title: header_text}
 
     if df_summary.empty:
-        m.post.message = {}  # 破棄
+        m.post.order.clear()  # 破棄
         m.status.result = False
         return
 
     # 集計結果
-    msg: dict = {}
-
+    m.post.summarize = True
     if g.params.get("score_comparisons"):  # 差分表示
         header_list = ["#", column_name, "通算", "順位差", "トップ差"]
         filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
-        msg["ポイント差分"] = df_summary.filter(items=header_list)
+        m.set_data("ポイント差分", df_summary.filter(items=header_list), True)
     else:  # 通常表示
         header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
         filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
         if g.cfg.mahjong.ignore_flying:  # トビカウントなし
             header_list.remove("トビ")
             filter_list.remove("トビ")
-        msg["通算ポイント"] = df_summary.filter(items=header_list)
+        m.set_data("通算ポイント", df_summary.filter(items=header_list), True)
 
     # メモ追加
     df_yakuman = formatter.df_rename(df_remarks.query("type == 0").drop(columns=["type", "ex_point"]), kind=0)
@@ -78,11 +77,11 @@ def aggregation(m: "MessageParserProtocol"):
     df_others = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type", "ex_point"]), kind=2)
 
     if not df_yakuman.empty:
-        msg["役満和了"] = df_yakuman
+        m.set_data("役満和了", df_yakuman)
     if not df_regulations.empty:
-        msg["卓外ポイント"] = df_regulations
+        m.set_data("卓外ポイント", df_regulations)
     if not df_others.empty:
-        msg["その他"] = df_others
+        m.set_data("その他", df_others)
 
     # --- ファイル出力
     match cast(str, g.params.get("format", "default")).lower():
@@ -91,34 +90,46 @@ def aggregation(m: "MessageParserProtocol"):
         case "text" | "txt":
             extension = "txt"
         case _:
-            extension = ""
+            return
 
-    file_list: list = []
-    if extension:
-        if not df_summary.empty:
-            headline = headline_title + header_text
-            df_summary = df_summary.filter(items=filter_list).fillna("*****")
-            prefix = f"{g.params["filename"]}" if g.params.get("filename") else "summary"
-            file_list.append({"集計結果": converter.save_output(df_summary, extension, f"{prefix}.{extension}", headline)})
-        if not df_yakuman.empty:
-            headline = "【役満和了】\n" + header_text
-            df_yakuman = formatter.df_rename(df_yakuman, kind=0)
-            prefix = f"{g.params["filename"]}_yakuman" if g.params.get("filename") else "yakuman"
-            file_list.append({"役満和了": converter.save_output(df_yakuman, extension, f"{prefix}.{extension}", headline)})
-        if not df_regulations.empty:
-            headline = "【卓外ポイント】\n" + header_text
-            df_regulations = formatter.df_rename(df_regulations, short=False, kind=1)
-            prefix = f"{g.params["filename"]}_regulations" if g.params.get("filename") else "regulations"
-            file_list.append({"卓外ポイント": converter.save_output(df_regulations, extension, f"{prefix}.{extension}", headline)})
-        if not df_others.empty:
-            headline = "【その他】\n" + header_text
-            df_others = formatter.df_rename(df_others, kind=2)
-            prefix = f"{g.params["filename"]}_others" if g.params.get("filename") else "others"
-            file_list.append({"その他": converter.save_output(df_others, extension, f"{prefix}.{extension}", headline)})
-    else:
-        file_list.append({"dummy": ""})
-
-    m.post.message = msg
-    m.post.file_list = file_list
-    m.post.summarize = True
-    m.post.codeblock = True
+    m.post.order.clear()  # テキストデータは破棄
+    if not df_summary.empty:
+        file_path = converter.save_output(
+            df_summary.filter(items=filter_list).fillna("*****"),
+            extension,
+            f"summary.{extension}",
+            (headline_title + header_text),
+            "summary",
+        )
+        if file_path:
+            m.set_data("集計結果", file_path)
+    if not df_yakuman.empty:
+        file_path = converter.save_output(
+            formatter.df_rename(df_yakuman, kind=0),
+            extension,
+            f"yakuman.{extension}",
+            "【役満和了】\n" + header_text,
+            "yakuman",
+        )
+        if file_path:
+            m.set_data("役満和了", file_path)
+    if not df_regulations.empty:
+        file_path = converter.save_output(
+            formatter.df_rename(df_regulations, short=False, kind=1),
+            extension,
+            f"regulations.{extension}",
+            "【卓外ポイント】\n" + header_text,
+            "regulations",
+        )
+        if file_path:
+            m.set_data("卓外ポイント", file_path)
+    if not df_others.empty:
+        file_path = converter.save_output(
+            formatter.df_rename(df_others, kind=2),
+            extension,
+            f"others.{extension}",
+            "【その他】\n" + header_text,
+            "others",
+        )
+        if file_path:
+            m.set_data("その他", file_path)

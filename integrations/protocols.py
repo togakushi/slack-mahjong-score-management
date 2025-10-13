@@ -2,14 +2,11 @@
 integrations/protocols.py
 """
 
-from collections.abc import Mapping
 from dataclasses import dataclass, field, fields, is_dataclass
-from typing import TYPE_CHECKING, Any, Literal, Protocol, Union
-
-import pandas as pd
+from typing import TYPE_CHECKING, Any, Literal, Protocol
 
 if TYPE_CHECKING:
-    from pathlib import Path
+    from libs.types import MessageType, MessageTypeDict
 
 
 class DataMixin:
@@ -82,14 +79,9 @@ class PostData(DataMixin):
 
     headline: dict[str, str] = field(default_factory=dict)
     """ヘッダ文"""
-    message: Mapping[str, Union[str, pd.DataFrame]] = field(default_factory=dict)
+    order: list[dict[str, "MessageTypeDict"]] = field(default_factory=list)
     """本文
     識別子(タイトルなど)をキーにした辞書型
-    """
-    index: bool = field(default=False)
-    """本文がDataFrameのときのIndex行の取り扱い
-    - *True*: Index行をデータの一部として扱う
-    - *False*: Index行を無視する
     """
     summarize: bool = field(default=True)
     """本文が文字列型のとき後続の要素を集約する
@@ -98,12 +90,8 @@ class PostData(DataMixin):
     """
     key_header: bool = field(default=True)
     """辞書のキーを見出しにする"""
-    codeblock: bool = field(default=False)
-    """本文をコードブロックにする"""
     thread: bool = field(default=True)
     """スレッドに返す"""
-    file_list: list[dict[str, Union["Path", str, None]]] = field(default_factory=list)
-    """ファイルを生成したときの保存パス"""
     ts: str = field(default="undetermined")
     """指定タイムスタンプへの強制リプライ"""
 
@@ -209,6 +197,9 @@ class MessageParserProtocol(Protocol):
     @property
     def ignore_user(self) -> bool:
         """コマンドを拒否するユーザか判定"""
+
+    def set_data(self, title: str, data: "MessageType", disp: bool = False, hidden: bool = False):
+        """メッセージデータをセット"""
 
     def get_score(self, keyword: str) -> dict:
         """本文からスコアデータを取り出す"""

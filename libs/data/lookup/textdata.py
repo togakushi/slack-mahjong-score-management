@@ -6,11 +6,11 @@ import libs.global_value as g
 from libs.utils import dbutil, textutil
 
 
-def get_members_list() -> dict:
+def get_members_list() -> str:
     """登録済みのメンバー一覧を取得する
 
     Returns:
-        dict: メンバーリスト
+        str: メンバーリスト
     """
 
     padding = textutil.count_padding(list(set(g.member_list.values())))
@@ -27,14 +27,14 @@ def get_members_list() -> dict:
             ", ".join(name_list),
         )
 
-    return {"登録済みメンバー": msg}
+    return msg
 
 
-def get_team_list() -> dict:
+def get_team_list() -> str:
     """チームの登録状況を取得する
 
     Returns:
-        dict: チームリスト
+        str: チームリスト
     """
 
     resultdb = dbutil.connection(g.cfg.setting.database_file)
@@ -64,4 +64,4 @@ def get_team_list() -> dict:
                 msg += f"\t{p}\n"
             msg += "\n"
 
-    return {"登録済みチーム": msg}
+    return msg

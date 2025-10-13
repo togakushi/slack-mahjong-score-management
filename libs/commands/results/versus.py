@@ -3,7 +3,7 @@ libs/commands/results/versus.py
 """
 
 import textwrap
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
@@ -13,8 +13,6 @@ from libs.functions import compose
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     from integrations.protocols import MessageParserProtocol
 
 
@@ -86,6 +84,14 @@ def aggregation(m: "MessageParserProtocol"):
                         count += 1
         else:  # 対戦記録なし
             game_result[title] = "\t対戦相手が見つかりません。\n\n"
+    # 結果
+    if len(game_result):
+        for k, v in game_result.items():
+            m.set_data(k, v)
+    else:
+        m.set_data("", "対戦記録が見つかりません。")
+        m.status.result = False
+        return
 
     # --- ファイル出力
     if len(df_data) != 0:
@@ -109,27 +115,15 @@ def aggregation(m: "MessageParserProtocol"):
         ]
     ).drop_duplicates()
 
-    file_list: list[dict[str, Union["Path", str, None]]]
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            file_list = [
-                {"対戦結果": converter.save_output(df_data, "csv", "result.csv")},
-                {"成績": converter.save_output(df_vs2, "csv", "versus.csv")},
-            ]
+            m.set_data("対戦結果", converter.save_output(df_data, "csv", "result.csv"))
+            m.set_data("成績", converter.save_output(df_vs2, "csv", "versus.csv"))
         case "text" | "txt":
-            file_list = [
-                {"対戦結果": converter.save_output(df_data, "txt", "result.txt")},
-                {"成績": converter.save_output(df_vs2, "txt", "versus.txt")},
-            ]
+            m.set_data("対戦結果", converter.save_output(df_data, "txt", "result.txt"))
+            m.set_data("成績", converter.save_output(df_vs2, "txt", "versus.txt"))
         case _:
-            file_list = [{"dummy": None}]
-    m.post.file_list = file_list
-
-    # 結果
-    if len(game_result):
-        m.post.message = game_result
-    m.post.message = {"": "対戦記録が見つかりません。"}
-    m.status.result = False
+            pass
 
 
 def tmpl_header(my_name: str, vs_name: str) -> str:

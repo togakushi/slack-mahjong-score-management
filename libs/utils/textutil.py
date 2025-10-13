@@ -104,7 +104,8 @@ def save_file_path(filename: str, delete: bool = False) -> "Path":
         Path: 保存ファイルパス
     """
 
-    file_name = f"{g.params["filename"]}" if g.params.get("filename") else f"{filename}"
+    _, file_ext = os.path.splitext(filename)
+    file_name = f"{g.params["filename"]}{file_ext}" if g.params.get("filename") else f"{filename}"
     file_path = g.cfg.setting.work_dir / file_name
 
     if file_path.exists() and delete:

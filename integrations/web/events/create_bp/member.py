@@ -39,22 +39,22 @@ def member_bp(adapter: "ServiceAdapter") -> Blueprint:
                 case "add_member":
                     if (name := request.form.get("member", "").strip()):
                         ret = member.append(name.split()[0:2])
-                        data.update(result_msg=next(iter(ret.values())))
+                        data.update(result_msg=ret)
                 case "del_member":
                     if (name := request.form.get("member", "").strip()):
                         ret = member.remove(name.split()[0:2])
-                        data.update(result_msg=next(iter(ret.values())))
+                        data.update(result_msg=ret)
                 case "add_team":
                     if (team_name := request.form.get("team", "").strip()):
                         ret = team.append(team_name.split()[0:2])
-                        data.update(result_msg=next(iter(ret.values())))
+                        data.update(result_msg=ret)
                 case "del_team":
                     if (team_name := request.form.get("team", "").strip()):
                         ret = team.remove(team_name.split()[0:2])
-                        data.update(result_msg=next(iter(ret.values())))
+                        data.update(result_msg=ret)
                 case "delete_all_team":
                     ret = team.clear()
-                    data.update(result_msg=next(iter(ret.values())))
+                    data.update(result_msg=ret)
 
         member_df = loader.read_data("MEMBER_INFO")
         if member_df.empty:

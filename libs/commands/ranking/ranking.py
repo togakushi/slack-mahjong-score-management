@@ -32,13 +32,13 @@ def aggregation(m: "MessageParserProtocol"):
     # データ取得
     game_info = GameInfo()
     if not game_info.count:  # 検索結果が0件のとき
-        m.post.headline = {title: message.random_reply(m, "no_hits", False)}
+        m.post.headline = {title: message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
     result_df = loader.read_data("RANKING_AGGREGATE")
     if result_df.empty:
-        m.post.headline = {title: message.random_reply(m, "no_target", False)}
+        m.post.headline = {title: message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
@@ -160,6 +160,7 @@ def aggregation(m: "MessageParserProtocol"):
                 data.pop(key)
 
     m.post.headline = {title: message.header(game_info, m, "", 1)}
-    m.post.message = data
     m.post.key_header = True
-    m.post.codeblock = True
+
+    for k, v in data.items():
+        m.set_data(k, v, True)

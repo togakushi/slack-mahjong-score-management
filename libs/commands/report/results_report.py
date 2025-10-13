@@ -347,11 +347,11 @@ def gen_pdf(m: "MessageParserProtocol"):
 
     if g.adapter.conf.plotting_backend == "plotly":
         m.post.reset()
-        m.post.headline = {"": message.random_reply(m, "not_implemented", False)}
+        m.post.headline = {"": message.random_reply(m, "not_implemented")}
         return
 
     if not g.params.get("player_name"):  # レポート対象の指定なし
-        m.post.headline = {"成績レポート": message.random_reply(m, "no_target", False)}
+        m.post.headline = {"成績レポート": message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
@@ -361,7 +361,7 @@ def gen_pdf(m: "MessageParserProtocol"):
     logging.debug(target_info)
 
     if not target_info["game_count"] > 0:  # 記録なし
-        m.post.headline = {"成績レポート": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"成績レポート": message.random_reply(m, "no_hits")}
         m.status.result = False
 
     # 書式設定
@@ -407,7 +407,7 @@ def gen_pdf(m: "MessageParserProtocol"):
     doc.build(elements)
     logging.debug("report generation: %s", g.params["player_name"])
 
-    m.post.file_list = [{f"成績レポート({g.params["player_name"]})": pdf_path}]
+    m.set_data(f"成績レポート({g.params["player_name"]})", pdf_path, True, True)
 
 
 def cover_page(style: dict, target_info: dict) -> list:

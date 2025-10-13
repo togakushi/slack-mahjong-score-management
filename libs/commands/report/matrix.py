@@ -30,7 +30,7 @@ def plot(m: "MessageParserProtocol"):
         df = df.rename(columns=mapping_dict, index=mapping_dict)
 
     if df.empty:
-        m.post.headline = {title: message.random_reply(m, "no_hits", False)}
+        m.post.headline = {title: message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -42,6 +42,8 @@ def plot(m: "MessageParserProtocol"):
         df.to_markdown(file_path, tablefmt="outline")
 
     m.post.headline = {title: message.header(game_info, m, "", 1)}
-    m.post.message = {"": df}
-    m.post.index = True
-    m.post.file_list = [{title: file_path}]
+    match g.adapter.interface_type:
+        case "slack":
+            m.set_data(title, file_path, True, True)
+        case "web":
+            m.set_data("", df, True)

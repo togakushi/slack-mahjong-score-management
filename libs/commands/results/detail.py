@@ -54,12 +54,13 @@ def aggregation(m: "MessageParserProtocol"):
         else:
             m.post.headline = {title: "登録されていないチームです。"}
         m.status.result = False
+        return
 
     result_df = aggregate.game_results()
     record_df = aggregate.ranking_record()
 
     if result_df.empty or record_df.empty:
-        m.post.headline = {title: message.random_reply(m, "no_target", False)}
+        m.post.headline = {title: message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
@@ -83,15 +84,16 @@ def aggregation(m: "MessageParserProtocol"):
     msg_data.update(get_totalization(data))
 
     msg: dict = {}
-    msg["座席データ"] = pd.DataFrame({
+    seat_data = pd.DataFrame({
         "席": ["東家", "南家", "西家", "北家"],
         "順位分布": [v for k, v in data.items() if str(k).endswith("-順位分布")],
         "平均順位": [v for k, v in data.items() if str(k).endswith("-平均順位")],
         "トビ": [v for k, v in data.items() if str(k).endswith("-トビ")],
         "役満和了": [v for k, v in data.items() if str(k).endswith("-役満和了")],
     })
-
-    msg.update(get_record(data))  # ベスト/ワーストレコード
+    m.set_data("座席データ", seat_data)
+    for k, v in get_record(data).items():  # ベスト/ワーストレコード
+        m.set_data(k, v)
 
     # レギュレーション
     remarks_df = loader.read_data("REMARKS_INFO")
@@ -100,27 +102,27 @@ def aggregation(m: "MessageParserProtocol"):
 
     work_df = count_df.query("type == 0").filter(items=["matter", "count"])
     if not work_df.empty:
-        msg["役満和了"] = work_df.rename(columns={"matter": "和了役", "count": "回数"})
+        m.set_data("役満和了", work_df.rename(columns={"matter": "和了役", "count": "回数"}))
 
     work_df = count_df.query("type == 1").filter(items=["matter", "count", "total"])
     if not work_df.empty:
-        msg["卓外ポイント"] = work_df.rename(columns={"matter": "内容", "count": "回数", "total": "ポイント合計"})
+        m.set_data("卓外ポイント", work_df.rename(columns={"matter": "内容", "count": "回数", "total": "ポイント合計"}))
 
     work_df = count_df.query("type == 2").filter(items=["matter", "count"])
     if not work_df.empty:
-        msg["その他"] = work_df.rename(columns={"matter": "内容", "count": "回数"})
+        m.set_data("その他", work_df.rename(columns={"matter": "内容", "count": "回数"}))
 
     # 戦績
     if g.params.get("game_results"):
         if g.params.get("verbose"):
-            msg["戦績"] = get_results_details(mapping_dict)
+            m.set_data("戦績", get_results_details(mapping_dict))
         else:
-            msg["戦績"] = get_results_simple(mapping_dict)
+            m.set_data("戦績", get_results_simple(mapping_dict))
 
     if g.params.get("versus_matrix"):
-        msg["対戦結果"] = get_versus_matrix(mapping_dict)
+        m.set_data("対戦結果", get_versus_matrix(mapping_dict))
 
-    # 非表示項目
+    # 非表示項目 / fixme
     if g.cfg.mahjong.ignore_flying:
         g.cfg.dropitems.results.append("トビ")
     if "トビ" in g.cfg.dropitems.results:
@@ -138,7 +140,6 @@ def aggregation(m: "MessageParserProtocol"):
             msg.pop(k)
 
     m.post.headline = {title: message_build(msg_data)}
-    m.post.message = msg
 
 
 def get_headline(data: dict, game_info: GameInfo, player_name: str) -> dict:
@@ -203,7 +204,7 @@ def get_totalization(data: dict) -> dict:
     return ret
 
 
-def get_record(data: dict) -> dict:
+def get_record(data: dict) -> dict[str, str]:
     """レコード情報メッセージ生成
 
     Args:

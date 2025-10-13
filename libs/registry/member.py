@@ -9,7 +9,7 @@ from libs.data import lookup, modify
 from libs.utils import dbutil, textutil, validator
 
 
-def append(argument: list) -> dict:
+def append(argument: list) -> str:
     """メンバー追加
 
     Args:
@@ -18,7 +18,7 @@ def append(argument: list) -> dict:
             - argument[1]: 登録する別名
 
     Returns:
-        dict: 処理結果
+        str: 処理結果
     """
 
     resultdb = dbutil.connection(g.cfg.setting.database_file)
@@ -94,10 +94,10 @@ def append(argument: list) -> dict:
     resultdb.close()
 
     g.member_list = lookup.db.get_member_list()
-    return {"メンバー追加": msg}
+    return msg
 
 
-def remove(argument: list) -> dict:
+def remove(argument: list) -> str:
     """メンバー削除
 
     Args:
@@ -106,7 +106,7 @@ def remove(argument: list) -> dict:
             - argument[1]: 削除する別名
 
     Returns:
-        dict: slackにpostする内容(処理結果)
+        str: 処理結果
     """
 
     resultdb = dbutil.connection(g.cfg.setting.database_file)
@@ -139,4 +139,4 @@ def remove(argument: list) -> dict:
     resultdb.close()
 
     g.member_list = lookup.db.get_member_list()
-    return {"メンバー削除": msg}
+    return msg

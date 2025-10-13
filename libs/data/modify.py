@@ -49,7 +49,7 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
         logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
-        message.random_reply(m, "restricted_channel")
+        m.set_data("0", message.random_reply(m, "restricted_channel"))
 
     return changes
 
@@ -74,7 +74,7 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> None:
         logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
-        message.random_reply(m, "restricted_channel")
+        m.set_data("0", message.random_reply(m, "restricted_channel"))
 
 
 def db_delete(m: "MessageParserProtocol"):
@@ -271,17 +271,17 @@ def _score_check(detection: "GameResult", m: "MessageParserProtocol"):
     m.status.target_ts.append(m.data.event_ts)
     m.status.reaction = True
     m.status.message = detection.to_text("detail")
-    m.post.message = {}
+    m.post.order.clear()
 
     # 素点合計チェック
     if detection.deposit:
         m.status.reaction = False
         m.status.rpoint_sum = detection.rpoint_sum()
+        m.set_data("0", message.random_reply(m, "invalid_score"))
         m.post.ts = m.data.event_ts
-        m.post.message.update({"0": message.random_reply(m, "invalid_score", False)})
 
     # プレイヤー名重複チェック
     if len(set(detection.to_list())) != 4:
         m.status.reaction = False
+        m.set_data("1", message.random_reply(m, "same_player"))
         m.post.ts = m.data.event_ts
-        m.post.message.update({"1": message.random_reply(m, "same_player", False)})

@@ -10,11 +10,11 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import lookup
 
 
-def event_message() -> dict[str, str]:
+def event_message() -> str:
     """チャンネル内呼び出しキーワード用ヘルプ
 
     Returns:
-        dict[str, str]: ヘルプメッセージ
+        str: ヘルプメッセージ
     """
 
     msg = textwrap.dedent(f"""\
@@ -85,4 +85,4 @@ def event_message() -> dict[str, str]:
 
     msg = re.sub(r"\n\n\n", "\n\n", msg, flags=re.MULTILINE)
 
-    return {"ヘルプ": msg.rstrip()}
+    return msg.rstrip()

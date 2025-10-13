@@ -4,6 +4,7 @@ integrations/standard_io/api.py
 
 
 import textwrap
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pandas as pd
@@ -44,12 +45,6 @@ class AdapterAPI(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        # ファイル
-        for file_list in m.post.file_list:
-            title, file_path = next(iter(file_list.items()))
-            if file_path:
-                print(f"{title}: {file_path}")
-
         # 見出し
         if m.post.headline:
             title, text = next(iter(m.post.headline.items()))
@@ -61,19 +56,21 @@ class AdapterAPI(APIInterface):
                 print("=" * 80)
 
         # 本文
-        if m.post.message:
-            for title, msg in m.post.message.items():
-                if not title.isnumeric() and title and m.post.key_header:
-                    print(f"【{title}】")
-
-                if isinstance(msg, str):
-                    print(self._text_formatter(msg))
-
-                if isinstance(msg, pd.DataFrame):
-                    fmt = formatter.floatfmt_adjust(msg, index=m.post.index)
-                    disp = msg.to_markdown(index=m.post.index, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
-                    match title:
-                        case "座席データ":
+        for data in m.post.order:
+            for title, msg in data.items():
+                match msg.get("data"):
+                    case x if isinstance(x, str):
+                        print(f"【{title}】")
+                        print(self._text_formatter(x))
+                    case x if isinstance(x, pd.DataFrame):
+                        print(f"【{title}】")
+                        fmt = formatter.floatfmt_adjust(x, index=msg.get("disp", False))
+                        disp = x.to_markdown(index=msg.get("disp", False), tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
+                        if title == "座席データ":
                             disp = disp.replace("0.00", "-.--")
-                    print(disp)
+                        print(disp)
+                    case x if isinstance(x, Path):
+                        print(f"{title}: {x.absolute()}")
+                    case _:
+                        pass
                 print("")

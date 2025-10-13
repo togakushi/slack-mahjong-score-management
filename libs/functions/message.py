@@ -18,18 +18,15 @@ if TYPE_CHECKING:
     from libs.datamodels import GameInfo
 
 
-def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = True) -> str:
+def random_reply(m: "MessageParserProtocol", message_type: str) -> str:
     """メッセージをランダムに返す
 
     Args:
         m (MessageParserProtocol): メッセージデータ
         message_type (str): 応答メッセージの種類
-        update (bool, optional): メッセージデータを更新する Defaults to True.
-            - *True*: 内容を`m.post.message`にセット + 返値
-            - *False*: 返値のみ
 
     Returns:
-        str: 応答メッセージ(m.post.message)
+        str: 応答メッセージ
     """
 
     correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
@@ -69,9 +66,6 @@ def random_reply(m: "MessageParserProtocol", message_type: str, update: bool = T
     except KeyError as e:
         logging.error("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", m.data.user_id)
-
-    if update:
-        m.post.message = {"0": msg}
 
     return msg
 

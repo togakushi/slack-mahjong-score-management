@@ -258,52 +258,48 @@ def register():
     """ディスパッチテーブル登録"""
 
     def dispatch_help(m: "MessageParserProtocol"):
-        # ヘルプメッセージ
-        m.post.message = compose.msg_help.event_message()
+        m.set_data("ヘルプ", compose.msg_help.event_message())
         m.post.ts = m.data.event_ts
-        m.post.codeblock = False
 
     def dispatch_download(m: "MessageParserProtocol"):
-        m.post.file_list = [{"成績記録DB": g.cfg.setting.database_file}]
+        m.set_data("成績記録DB", g.cfg.setting.database_file)
 
     def dispatch_members_list(m: "MessageParserProtocol"):
-        m.post.message = lookup.textdata.get_members_list()
-        m.post.codeblock = True
+        m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), True)
         m.post.key_header = True
         m.post.ts = m.data.event_ts
 
     def dispatch_team_list(m: "MessageParserProtocol"):
-        m.post.message = lookup.textdata.get_team_list()
-        m.post.codeblock = True
+        m.set_data("登録済みチーム", lookup.textdata.get_team_list(), True)
         m.post.key_header = True
         m.post.ts = m.data.event_ts
 
     def dispatch_member_append(m: "MessageParserProtocol"):
-        m.post.message = member.append(m.argument)
+        m.set_data("メンバー追加", member.append(m.argument))
         m.post.key_header = False
 
     def dispatch_member_remove(m: "MessageParserProtocol"):
-        m.post.message = member.remove(m.argument)
+        m.set_data("メンバー削除", member.remove(m.argument))
         m.post.key_header = False
 
     def dispatch_team_create(m: "MessageParserProtocol"):
-        m.post.message = team.create(m.argument)
+        m.set_data("チーム作成", team.create(m.argument))
         m.post.key_header = False
 
     def dispatch_team_delete(m: "MessageParserProtocol"):
-        m.post.message = team.delete(m.argument)
+        m.set_data("チーム削除", team.delete(m.argument))
         m.post.key_header = False
 
     def dispatch_team_append(m: "MessageParserProtocol"):
-        m.post.message = team.append(m.argument)
+        m.set_data("チーム所属", team.append(m.argument))
         m.post.key_header = False
 
     def dispatch_team_remove(m: "MessageParserProtocol"):
-        m.post.message = team.remove(m.argument)
+        m.set_data("チーム脱退", team.remove(m.argument))
         m.post.key_header = False
 
     def dispatch_team_clear(m: "MessageParserProtocol"):
-        m.post.message = team.clear()
+        m.set_data("全チーム削除", team.clear())
         m.post.key_header = False
 
     dispatch_table: dict = {

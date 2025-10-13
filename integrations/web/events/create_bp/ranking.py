@@ -41,14 +41,20 @@ def ranking_bp(adapter: "ServiceAdapter") -> Blueprint:
         libs.dispatcher.by_keyword(m)
 
         message = adapter.functions.header_message(m)
-        for k, v in m.post.message.items():
-            if not k.isnumeric() and k:
-                message += f"<h2>{k}</h2>\n"
 
-            if isinstance(v, pd.DataFrame):
-                message += adapter.functions.to_styled_html(v, padding)
-            elif isinstance(v, str):
-                message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
+        for data in m.post.order:
+            for k, v in data.items():
+                msg = v.get("data")
+                disp = v.get("disp", False)
+
+                if not k.isnumeric() and k:
+                    message += f"<h2>{k}</h2>\n"
+
+                if isinstance(msg, pd.DataFrame):
+                    message += adapter.functions.to_styled_html(msg, padding, disp)
+
+                if isinstance(msg, str):
+                    message += adapter.functions.to_text_html(msg)
 
         cookie_data.update(body=message, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("ranking.html", request, cookie_data)

@@ -41,28 +41,24 @@ def summary_bp(adapter: "ServiceAdapter") -> Blueprint:
         libs.dispatcher.by_keyword(m)
 
         message = adapter.functions.header_message(m)
-        for k, v in m.post.message.items():
-            if not k.isnumeric() and k:
-                message += f"<h2>{k}</h2>\n"
 
-            if isinstance(v, pd.DataFrame):
-                # 戦績(詳細)はマルチカラムで表示
-                if k == "戦績" and g.params.get("verbose"):
-                    padding = "0.25em 0.75em"
-                    if not isinstance(v.columns, pd.MultiIndex):
-                        if not g.params.get("individual", True):  # チーム戦
-                            v.rename(columns={
-                                "東家 名前": "東家 チーム",
-                                "南家 名前": "南家 チーム",
-                                "西家 名前": "西家 チーム",
-                                "北家 名前": "北家 チーム",
-                            }, inplace=True)
-                        new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in v.columns]
-                        v.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
+        for data in m.post.order:
+            for k, v in data.items():
+                msg = v.get("data")
+                disp = v.get("disp", False)
 
-                message += adapter.functions.to_styled_html(v, padding)
-            else:
-                message += f"<p>\n{v.replace("\n", "<br>\n")}</p>\n"
+                if not k.isnumeric() and k:
+                    message += f"<h2>{k}</h2>\n"
+
+                if isinstance(msg, pd.DataFrame):
+                    if k == "戦績" and g.params.get("verbose"):
+                        padding = "0.25em 0.75em"
+                        msg = _conv_verbose(msg)
+
+                    message += adapter.functions.to_styled_html(msg, padding, disp)
+
+                if isinstance(msg, str):
+                    message += adapter.functions.to_text_html(msg)
 
         cookie_data.update(body=message, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("summary.html", request, cookie_data)
@@ -70,3 +66,27 @@ def summary_bp(adapter: "ServiceAdapter") -> Blueprint:
         return page
 
     return bp
+
+
+def _conv_verbose(df: pd.DataFrame) -> pd.DataFrame:
+    """戦績(詳細)はマルチカラムで表示
+
+    Args:
+        df (pd.DataFrame): _description_
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+
+    if not isinstance(df.columns, pd.MultiIndex):
+        if not g.params.get("individual", True):  # チーム戦
+            df.rename(columns={
+                "東家 名前": "東家 チーム",
+                "南家 名前": "南家 チーム",
+                "西家 名前": "西家 チーム",
+                "北家 名前": "北家 チーム",
+            }, inplace=True)
+        new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in df.columns]
+        df.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
+
+    return df

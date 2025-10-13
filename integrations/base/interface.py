@@ -10,9 +10,11 @@ from typing import (TYPE_CHECKING, Any, Generic, Literal, Optional, Type,
                     TypeVar, Union)
 
 from integrations.protocols import MsgData, PostData, StatusData
+from libs.types import MessageTypeDict
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
+    from libs.types import MessageType
 
 ConfigT = TypeVar("ConfigT", bound="IntegrationsConfig")
 ApiT = TypeVar("ApiT", bound="APIInterface")
@@ -205,6 +207,27 @@ class MessageParserDataMixin:
         self.data.reset()
         self.post.reset()
         self.status.reset()
+
+    def set_data(self, title: str, data: "MessageType", disp: bool = False, hidden: bool = False):
+        """メッセージデータをセット
+
+        Args:
+            title (str): データ識別子
+            data (MessageType): 内容
+            disp (bool, optional): dataの型毎の表示フラグ. Defaults to False.
+                - str: codeblock化
+                - DataFrame: 表にIndexを含める
+                - Path: initial_commentにヘッダと同じ内容をセットする
+            hidden (bool, optional): ヘッダ文を表示しない. Defaults to False.
+                - リスト内すべてのhiddenがTrueのときのみ非表示になる
+        """
+
+        msg = MessageTypeDict(
+            data=data,
+            disp=disp,
+            hidden=hidden,
+        )
+        self.post.order.append({title: msg})
 
     def get_score(self, keyword: str) -> dict:
         """textからスコアを抽出する

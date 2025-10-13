@@ -43,37 +43,40 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
 
         message = adapter.functions.header_message(m)
 
-        for file_list in m.post.file_list:
-            for _, file_path in file_list.items():
-                if isinstance(file_path, PosixPath) and file_path.exists():
-                    message += f"<p>\n{file_path.read_text(encoding="utf-8")}\n</p>\n"
+        for data in m.post.order:
+            for k, v in data.items():
+                msg = v.get("data")
+                disp = v.get("disp", False)
 
-        for k, v in m.post.message.items():
-            if isinstance(v, pd.DataFrame) and k == "素点情報":
-                v["ゲーム数"] = v["ゲーム数"].astype("float")
-                v.rename(columns={"平均値(x)": "平均値", "中央値(|)": "中央値"}, inplace=True)
-                message += f"<h2>{k}</h2>\n"
-                message += adapter.functions.to_styled_html(v, padding, True)
-            if isinstance(v, pd.DataFrame) and k == "順位/ポイント情報":
-                v["ゲーム数"] = v["ゲーム数"].astype("float")
-                multi = [
-                    ("", "ゲーム数"),
-                    ("1位", "獲得数"),
-                    ("1位", "獲得率"),
-                    ("2位", "獲得数"),
-                    ("2位", "獲得率"),
-                    ("3位", "獲得数"),
-                    ("3位", "獲得率"),
-                    ("4位", "獲得数"),
-                    ("4位", "獲得率"),
-                    ("", "平均順位"),
-                    ("区間成績", "区間ポイント"),
-                    ("区間成績", "区間平均"),
-                    ("", "通算ポイント"),
-                ]
-                v.columns = pd.MultiIndex.from_tuples(multi)
-                message += f"<h2>{k}</h2>\n"
-                message += adapter.functions.to_styled_html(v, padding, True)
+                if isinstance(msg, PosixPath) and msg.exists():
+                    message += f"<p>\n{msg.read_text(encoding="utf-8")}\n</p>\n"
+
+                if isinstance(msg, pd.DataFrame) and k == "素点情報":
+                    msg["ゲーム数"] = msg["ゲーム数"].astype("float")
+                    msg.rename(columns={"平均値(x)": "平均値", "中央値(|)": "中央値"}, inplace=True)
+                    message += f"<h2>{k}</h2>\n"
+                    message += adapter.functions.to_styled_html(msg, padding, disp)
+
+                if isinstance(msg, pd.DataFrame) and k == "順位/ポイント情報":
+                    msg["ゲーム数"] = msg["ゲーム数"].astype("float")
+                    multi = [
+                        ("", "ゲーム数"),
+                        ("1位", "獲得数"),
+                        ("1位", "獲得率"),
+                        ("2位", "獲得数"),
+                        ("2位", "獲得率"),
+                        ("3位", "獲得数"),
+                        ("3位", "獲得率"),
+                        ("4位", "獲得数"),
+                        ("4位", "獲得率"),
+                        ("", "平均順位"),
+                        ("区間成績", "区間ポイント"),
+                        ("区間成績", "区間平均"),
+                        ("", "通算ポイント"),
+                    ]
+                    msg.columns = pd.MultiIndex.from_tuples(multi)
+                    message += f"<h2>{k}</h2>\n"
+                    message += adapter.functions.to_styled_html(msg, padding, disp)
 
         cookie_data.update(body=message, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("graph.html", request, cookie_data)

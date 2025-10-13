@@ -2,7 +2,7 @@
 libs/commands/graph/personal.py
 """
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -38,7 +38,7 @@ def plot(m: "MessageParserProtocol"):
     df.index = df.index + 1
 
     if df.empty:
-        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -53,8 +53,7 @@ def plot(m: "MessageParserProtocol"):
     rank_avg = f"{float(df["rank_avg"].iloc[-1]):.2f}"
 
     m.post.headline = {f"『{player}』の成績": message.header(game_info, m)}
-    m.post.message = {"0": formatter.df_rename(df.drop(columns=["count", "name"]), False)}
-    m.post.index = True
+    m.set_data("0", formatter.df_rename(df.drop(columns=["count", "name"]), False), True)
 
     # --- グラフ生成
     graphutil.setup()
@@ -127,7 +126,7 @@ def plot(m: "MessageParserProtocol"):
     fig.tight_layout()
     plt.savefig(save_file, bbox_inches="tight")
 
-    m.post.file_list = [{f"『{player}』の成績": save_file}]
+    m.set_data(f"『{player}』の成績", save_file, True, True)
 
 
 def statistics_plot(m: "MessageParserProtocol"):
@@ -143,7 +142,7 @@ def statistics_plot(m: "MessageParserProtocol"):
     df = loader.read_data("SUMMARY_DETAILS")
 
     if df.empty:
-        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -158,7 +157,7 @@ def statistics_plot(m: "MessageParserProtocol"):
     player_df = df.query("name == @player").reset_index(drop=True)
 
     if player_df.empty:
-        m.post.headline = {"0": message.random_reply(m, "no_hits", False)}
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
@@ -199,7 +198,6 @@ def statistics_plot(m: "MessageParserProtocol"):
         }
     )
     stats_df = stats_df.apply(lambda col: col.map(lambda x: f"{int(x)}" if isinstance(x, int) else f"{x:.1f}"))
-    cast(dict, m.post.message).update({"素点情報": stats_df})
 
     count_stats = {
         "ゲーム数": rank_df.count().astype("int"),
@@ -242,10 +240,8 @@ def statistics_plot(m: "MessageParserProtocol"):
     rank_table["3位"] = count_df.apply(lambda row: f"{row["3位(%)"]:.2%} ({row["3位"]:.0f})", axis=1)
     rank_table["4位"] = count_df.apply(lambda row: f"{row["4位(%)"]:.2%} ({row["4位"]:.0f})", axis=1)
     rank_table["平均順位"] = count_df.apply(lambda row: f"{row["平均順位"]:.2f}", axis=1)
-    cast(dict, m.post.message).update({"順位/ポイント情報": count_df})
 
     m.post.headline = {f"『{player}』の成績": message.header(game_info, m)}
-    m.post.index = True
 
     # --- グラフ生成
     graphutil.setup()
@@ -253,9 +249,11 @@ def statistics_plot(m: "MessageParserProtocol"):
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            m.post.file_list.append({"通算ポイント": plotly_line("通算ポイント推移", point_df)})
-            m.post.file_list.append({"順位分布": plotly_bar("順位分布", count_df.drop(index=["全区間"]))})
-            m.post.file_list.append({"素点分布": plotly_box("素点分布", rpoint_df)})
+            m.set_data("順位/ポイント情報", count_df, True)
+            m.set_data("通算ポイント", plotly_line("通算ポイント推移", point_df))
+            m.set_data("順位分布", plotly_bar("順位分布", count_df.drop(index=["全区間"])))
+            m.set_data("素点情報", stats_df, True)
+            m.set_data("素点分布", plotly_box("素点分布", rpoint_df))
             return
         case "matplotlib":
             fig = plt.figure(figsize=(20, 10))
@@ -285,7 +283,7 @@ def statistics_plot(m: "MessageParserProtocol"):
 
             plt.savefig(save_file, bbox_inches="tight")
 
-    m.post.file_list = [{"個人成績": save_file}]
+            m.set_data("個人成績", save_file, True, True)
 
 
 def get_data(df: pd.Series, interval: int) -> pd.DataFrame:

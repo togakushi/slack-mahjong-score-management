@@ -2,7 +2,12 @@
 cls/types.py
 """
 
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypeAlias, TypedDict, Union
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    import pandas as pd
 
 
 class TeamDataDict(TypedDict):
@@ -11,6 +16,34 @@ class TeamDataDict(TypedDict):
     id: int
     team: str
     member: list[str]
+
+
+MessageType: TypeAlias = Union[None, str, "Path", "pd.DataFrame", "pd.Series"]
+"""メッセージ型
+- *None*: 空データ(なにもしない)
+- *str*: 文字列型データ(そのまま表示)
+- *Path*: ファイルパス(アップロード処理)
+- *DataFrame*: 表データ
+"""
+
+
+class MessageTypeDict(TypedDict):
+    """メッセージ格納データ"""
+
+    data: MessageType
+    """内容"""
+    disp: bool
+    """表示形式変更フラグ
+    - *True*: dataの型によって表示形式を変える
+        - dataがstr型ならcodeblock化
+        - dataがDataFrame型なら表にIndexに含める
+    - *False*: 何もしない
+    """
+    hidden: bool
+    """ヘッダ文を非表示にする
+    - *True*: 非表示
+    - *False*: 表示
+    """
 
 
 class RemarkDict(TypedDict):

@@ -73,7 +73,7 @@ def main(m: "MessageParserProtocol") -> None:
         message += "\n*【素点合計不一致】*\n"
         message += msg["invalid_score"]
 
-    m.post.message = {"データ突合": message}
+    m.set_data("データ突合", message)
     m.post.key_header = False
 
 
