@@ -210,16 +210,15 @@ def setup():
 
     if g.args.debug:
         if g.args.verbose:
-            print("DEBUG MODE(verbose)")
+            logging.info("DEBUG MODE(verbose)")
             logging.basicConfig(level=logging.TRACE, format=fmt)  # type: ignore
         else:
-            print("DEBUG MODE")
+            logging.info("DEBUG MODE")
             logging.basicConfig(level=logging.DEBUG, format=fmt)
     else:
         if g.args.moderate:
             logging.basicConfig(level=logging.WARNING, format=fmt)
         else:
-            print("LOG LEVEL(INFO)")
             logging.basicConfig(level=logging.INFO, format=fmt)
 
     g.cfg = AppConfig(g.args.config)
