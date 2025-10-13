@@ -128,11 +128,11 @@ def aggregation(m: "MessageParserProtocol"):
     if g.params.get("versus_matrix"):
         m.set_data("対戦結果", get_versus_matrix(mapping_dict))
 
-    # 非表示項目
-    for data in list(m.post.order):
-        key = next(iter(data.keys()))
-        if key in g.cfg.dropitems.results:
-            m.post.order.remove(data)
+    # 非表示項目を除外
+    m.post.order = [
+        d for d in m.post.order
+        if next(iter(d.keys())) not in g.cfg.dropitems.results
+    ]
 
     m.post.headline = {title: message_build(msg_data)}
 
