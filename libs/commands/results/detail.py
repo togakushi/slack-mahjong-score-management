@@ -83,17 +83,23 @@ def aggregation(m: "MessageParserProtocol"):
     msg_data.update(get_headline(data, game_info, player_name))
     msg_data.update(get_totalization(data))
 
-    msg: dict = {}
-    seat_data = pd.DataFrame({
+    # 統計
+    seat_data = pd.DataFrame({  # 座席データ
         "席": ["東家", "南家", "西家", "北家"],
         "順位分布": [v for k, v in data.items() if str(k).endswith("-順位分布")],
         "平均順位": [v for k, v in data.items() if str(k).endswith("-平均順位")],
         "トビ": [v for k, v in data.items() if str(k).endswith("-トビ")],
         "役満和了": [v for k, v in data.items() if str(k).endswith("-役満和了")],
     })
-    m.set_data("座席データ", seat_data)
-    for k, v in get_record(data).items():  # ベスト/ワーストレコード
-        m.set_data(k, v)
+    if g.cfg.mahjong.ignore_flying:
+        seat_data.drop(columns=["トビ"], inplace=True)
+    if {"役満和了", "役満"} & set(g.cfg.dropitems.results):
+        seat_data.drop(columns=["役満和了"], inplace=True)
+
+    if g.params.get("statistics"):
+        m.set_data("座席データ", seat_data)
+        for k, v in get_record(data).items():  # ベスト/ワーストレコード
+            m.set_data(k, v)
 
     # レギュレーション
     remarks_df = loader.read_data("REMARKS_INFO")
@@ -101,7 +107,7 @@ def aggregation(m: "MessageParserProtocol"):
     count_df["matter"] = count_df.index
 
     work_df = count_df.query("type == 0").filter(items=["matter", "count"])
-    if not work_df.empty:
+    if not work_df.empty and "役満" not in g.cfg.dropitems.results:
         m.set_data("役満和了", work_df.rename(columns={"matter": "和了役", "count": "回数"}))
 
     work_df = count_df.query("type == 1").filter(items=["matter", "count", "total"])
@@ -122,22 +128,11 @@ def aggregation(m: "MessageParserProtocol"):
     if g.params.get("versus_matrix"):
         m.set_data("対戦結果", get_versus_matrix(mapping_dict))
 
-    # 非表示項目 / fixme
-    if g.cfg.mahjong.ignore_flying:
-        g.cfg.dropitems.results.append("トビ")
-    if "トビ" in g.cfg.dropitems.results:
-        msg["座席データ"].drop(columns=["トビ"], inplace=True)
-    if "役満" in g.cfg.dropitems.results:
-        msg["座席データ"].drop(columns=["役満和了"], inplace=True)
-        msg.pop("役満和了", None)
-
-    if not g.params.get("statistics"):  # 統計
-        for k in ("座席データ", "ベストレコード", "ワーストレコード"):
-            msg.pop(k, None)
-
-    for k in list(msg.keys()):
-        if k in g.cfg.dropitems.results:
-            msg.pop(k)
+    # 非表示項目
+    for data in list(m.post.order):
+        key = next(iter(data.keys()))
+        if key in g.cfg.dropitems.results:
+            m.post.order.remove(data)
 
     m.post.headline = {title: message_build(msg_data)}
 

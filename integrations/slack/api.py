@@ -96,7 +96,7 @@ class AdapterAPI(APIInterface):
 
                 if isinstance(msg, str):
                     header = ""
-                    if m.post.key_header:
+                    if m.post.key_header and (title != header_title):
                         header = _header_text(title)
 
                     if disp:
@@ -105,6 +105,10 @@ class AdapterAPI(APIInterface):
                         post_msg.append(f"{header}{msg.rstrip()}\n")
 
                 if isinstance(msg, pd.DataFrame):
+                    header = ""
+                    if m.post.key_header and (title != header_title):
+                        header = _header_text(title)
+
                     match m.status.command_type:
                         case "results":
                             match title:
