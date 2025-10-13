@@ -11,9 +11,11 @@ import libs.global_value as g
 from libs.data import aggregate, loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil
+from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     import pandas as pd
 
     from integrations.protocols import MessageParserProtocol
@@ -60,6 +62,7 @@ def plot(m: "MessageParserProtocol"):
         return
 
     # --- グラフ生成
+    graphutil.setup()
     m.post.headline = {"レーティング推移グラフ": message.header(game_info, m)}
     match g.adapter.conf.plotting_backend:
         case "matplotlib":
@@ -70,19 +73,19 @@ def plot(m: "MessageParserProtocol"):
     m.post.file_list = [{"レーティング推移": save_file}]
 
 
-def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", save_file: str) -> str:
+def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", filename: str) -> "Path":
     """レーティング推移グラフ生成(matplotlib)
 
     Args:
         game_info (GameInfo): ゲーム情報
         df (pd.DataFrame): 描写データ
-        save_file (str): 保存先デフォルトファイル名
+        filename (str): 保存先デフォルトファイル名
 
     Returns:
-        str: 保存先ファイル名
+        Path: 保存先ファイル名
     """
 
-    save_file = graphutil.setup(save_file)
+    save_file = textutil.save_file_path(filename)
     title_text, xlabel_text = _graph_title(game_info)
     legend_text = []
     count = 1
@@ -118,19 +121,19 @@ def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", save_file: str) -
     return save_file
 
 
-def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", save_file: str) -> str:
+def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", filename: str) -> "Path":
     """レーティング推移グラフ生成(plotly)
 
     Args:
         game_info (GameInfo): ゲーム情報
         df (pd.DataFrame): 描写データ
-        save_file (str): 保存先デフォルトファイル名
+        filename (str): 保存先デフォルトファイル名
 
     Returns:
-        str: 保存先ファイル名
+        Path: 保存先ファイル名
     """
 
-    save_file = graphutil.setup(save_file)
+    save_file = textutil.save_file_path(filename)
     # グラフタイトル/ラベル
     title_text, xlabel_text = _graph_title(game_info)
     # 凡例用テキスト

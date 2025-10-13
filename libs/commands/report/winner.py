@@ -10,7 +10,7 @@ import libs.global_value as g
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil
+from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -61,7 +61,8 @@ def plot(m: "MessageParserProtocol"):
     if g.adapter.conf.plotting_backend == "plotly":
         return
 
-    report_file_path = graphutil.setup("report.png")
+    graphutil.setup()
+    report_file_path = textutil.save_file_path("report.png")
     plt.rcParams["font.size"] = 6
 
     # 色彩設定

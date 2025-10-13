@@ -5,7 +5,6 @@ libs/configuration.py
 import argparse
 import logging
 import os
-import shutil
 import sys
 from functools import partial
 from typing import TYPE_CHECKING, cast
@@ -226,14 +225,6 @@ def setup():
     g.cfg = AppConfig(g.args.config)
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
     register()
-
-    # 作業用ディレクトリ作成
-    try:
-        if os.path.isdir(g.cfg.setting.work_dir):
-            shutil.rmtree(g.cfg.setting.work_dir)
-        os.mkdir(g.cfg.setting.work_dir)
-    except Exception as err:
-        raise RuntimeError(err) from err
 
     # 設定内容のロギング
     logging.info("conf: %s", os.path.join(g.cfg.config_dir, g.args.config))

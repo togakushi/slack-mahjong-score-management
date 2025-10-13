@@ -2,14 +2,13 @@
 libs/commands/report/matrix.py
 """
 
-import os
 from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from libs.data import aggregate
 from libs.datamodels import GameInfo
 from libs.functions import message
-from libs.utils import formatter
+from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -35,16 +34,11 @@ def plot(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
-    file_name = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}" if g.params.get("filename") else "matrix",
-    )
-
     if str(g.params.get("format", "default")).lower() == "csv":
-        file_path = file_name + ".csv"
+        file_path = textutil.save_file_path("matrix.csv", True)
         df.to_csv(file_path)
     else:
-        file_path = file_name + ".txt"
+        file_path = textutil.save_file_path("matrix.txt", True)
         df.to_markdown(file_path, tablefmt="outline")
 
     m.post.headline = {title: message.header(game_info, m, "", 1)}

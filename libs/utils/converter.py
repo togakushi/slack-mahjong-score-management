@@ -2,11 +2,9 @@
 libs/utils/converter.py
 """
 
-
-import os
 import re
 import textwrap
-from typing import Optional, cast
+from typing import TYPE_CHECKING, Optional, Union, cast
 
 import pandas as pd
 from tabulate import tabulate
@@ -14,13 +12,16 @@ from tabulate import tabulate
 import libs.global_value as g
 from libs.utils import formatter, textutil
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
 
 def save_output(
     df: pd.DataFrame,
     kind: str,
     filename: str,
     headline: Optional[str] = None,
-) -> str:
+) -> Union["Path", None]:
     """指定されたフォーマットでdfを保存する
 
     Args:
@@ -30,7 +31,8 @@ def save_output(
         headline (Optional[str], optional): 集計情報（ヘッダコメント）. Defaults to None.
 
     Returns:
-        str: 保存したファイルパス
+        Path: 保存したファイルパス
+        None: 未知のフォーマットが指定された場合
     """
 
     match kind.lower():
@@ -45,10 +47,10 @@ def save_output(
                 # headersalign=column_alignment(df, True),  # ToDo: python-tabulate >= 0.10.0
             )
         case _:
-            return ""
+            return None
 
     # 保存
-    save_file = os.path.join(g.cfg.setting.work_dir, filename)
+    save_file = textutil.save_file_path(filename, True)
     with open(save_file, "w", encoding="utf-8") as writefile:
         if headline is not None:  # ヘッダ書き込み
             for line in headline.splitlines():

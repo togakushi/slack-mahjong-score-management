@@ -16,9 +16,11 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil
+from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from integrations.protocols import MessageParserProtocol
 
 
@@ -55,12 +57,12 @@ def plot(m: "MessageParserProtocol"):
     m.post.index = True
 
     # --- グラフ生成
+    graphutil.setup()
     match g.adapter.conf.plotting_backend:
         case "plotly":
             return
-        case _:
-            save_file = graphutil.setup("graph.png")
 
+    save_file = textutil.save_file_path("graph.png")
     fig = plt.figure(figsize=(12, 8))
 
     if g.params.get("target_count", 0) == 0:
@@ -246,6 +248,9 @@ def statistics_plot(m: "MessageParserProtocol"):
     m.post.index = True
 
     # --- グラフ生成
+    graphutil.setup()
+    save_file = textutil.save_file_path("graph.png")
+
     match g.adapter.conf.plotting_backend:
         case "plotly":
             m.post.file_list.append({"通算ポイント": plotly_line("通算ポイント推移", point_df)})
@@ -253,8 +258,6 @@ def statistics_plot(m: "MessageParserProtocol"):
             m.post.file_list.append({"素点分布": plotly_box("素点分布", rpoint_df)})
             return
         case "matplotlib":
-            save_file = graphutil.setup("graph.png")
-
             fig = plt.figure(figsize=(20, 10))
             fig.suptitle(title_text, size=20, weight="bold")
             gs = gridspec.GridSpec(figure=fig, nrows=3, ncols=2)
@@ -458,7 +461,7 @@ def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
     )
 
 
-def plotly_line(title_text: str, df: pd.Series) -> str:
+def plotly_line(title_text: str, df: pd.Series) -> "Path":
     """通算ポイント推移グラフ生成(plotly用)
 
     Args:
@@ -466,10 +469,10 @@ def plotly_line(title_text: str, df: pd.Series) -> str:
         df (pd.DataFrame): プロットするデータ
 
     Returns:
-        str: 保存先ファイルパス
+        Path: 保存先ファイルパス
     """
 
-    save_file = graphutil.setup("point.html")
+    save_file = textutil.save_file_path("point.html")
 
     fig = go.Figure()
     fig.add_traces(
@@ -506,7 +509,7 @@ def plotly_line(title_text: str, df: pd.Series) -> str:
     return save_file
 
 
-def plotly_box(title_text: str, df: pd.DataFrame) -> str:
+def plotly_box(title_text: str, df: pd.DataFrame) -> "Path":
     """素点分布グラフ生成(plotly用)
 
     Args:
@@ -514,10 +517,10 @@ def plotly_box(title_text: str, df: pd.DataFrame) -> str:
         df (pd.DataFrame): プロットするデータ
 
     Returns:
-        str: 保存先ファイルパス
+        Path: 保存先ファイルパス
     """
 
-    save_file = graphutil.setup("rpoint.html")
+    save_file = textutil.save_file_path("rpoint.html")
     fig = px.box(df)
     fig.update_layout(
         title={
@@ -552,7 +555,7 @@ def plotly_box(title_text: str, df: pd.DataFrame) -> str:
     return save_file
 
 
-def plotly_bar(title_text: str, df: pd.DataFrame) -> str:
+def plotly_bar(title_text: str, df: pd.DataFrame) -> "Path":
     """順位分布グラフ生成(plotly用)
 
     Args:
@@ -560,10 +563,10 @@ def plotly_bar(title_text: str, df: pd.DataFrame) -> str:
         df (pd.Series): プロットするデータ
 
     Returns:
-        str: 保存先ファイルパス
+        Path: 保存先ファイルパス
     """
 
-    save_file = graphutil.setup("rank.html")
+    save_file = textutil.save_file_path("rank.html")
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     # 獲得率

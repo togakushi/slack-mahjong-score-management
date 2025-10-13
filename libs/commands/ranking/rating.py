@@ -96,7 +96,7 @@ def aggregation(m: "MessageParserProtocol"):
         case "text" | "txt":
             save_file = converter.save_output(df, "txt", f"{prefix_rating}.txt", headline)
         case _:
-            save_file = ""
+            save_file = None
 
     m.post.headline = {"レーティング": message.header(game_info, m, add_text, 1)}
     m.post.message = {"0": df}

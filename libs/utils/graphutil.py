@@ -3,7 +3,6 @@ libs/utils/graphutil.py
 """
 
 import logging
-import os
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -11,27 +10,15 @@ import pandas as pd
 from matplotlib import use
 
 import libs.global_value as g
-from libs.utils import textutil
 
 
-def setup(filename: str) -> str:
-    """グラフ設定初期化
-
-    Args:
-        filename (str): 出力先デフォルトファイル名
-
-    Returns:
-        str: 出力先ファイル名
-    """
-
-    # 出力先ファイル名
-    file_name, file_ext = os.path.splitext(filename)
-    save_file = textutil.save_file_path(file_name, file_ext, True)
+def setup():
+    """グラフ設定初期化"""
 
     pd.options.plotting.backend = g.adapter.conf.plotting_backend
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            return save_file
+            return
 
     plt.close()
     use(backend="agg")
@@ -58,5 +45,3 @@ def setup(filename: str) -> str:
         plt.rcParams["grid.alpha"] = 0.3
         plt.rcParams["grid.linestyle"] = "--"
     plt.rcParams["axes.axisbelow"] = True
-
-    return save_file

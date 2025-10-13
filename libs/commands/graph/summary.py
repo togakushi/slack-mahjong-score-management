@@ -13,9 +13,11 @@ import libs.global_value as g
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil
+from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from integrations.protocols import MessageParserProtocol
 
 
@@ -73,6 +75,7 @@ def point_plot(m: "MessageParserProtocol"):
         "pivot": pivot,
         "horizontal": True,
     })
+    graphutil.setup()
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
@@ -199,17 +202,17 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
     return (target_data.sort_values("position"), df)
 
 
-def _graph_generation(graph_params: GraphParams) -> str:
+def _graph_generation(graph_params: GraphParams) -> "Path":
     """グラフ生成共通処理(matplotlib用)
 
     Args:
         args (GraphParams): グラフ生成パラメータ
 
     Returns:
-        str: 保存先ファイル名
+        Path: 保存先ファイル名
     """
 
-    save_file = graphutil.setup(graph_params["save_file"])
+    save_file = textutil.save_file_path(graph_params["save_file"])
     target_data = graph_params["target_data"]
     df = graph_params["pivot"]
 
@@ -301,17 +304,17 @@ def _graph_generation(graph_params: GraphParams) -> str:
     return save_file
 
 
-def _graph_generation_plotly(graph_params: GraphParams) -> str:
+def _graph_generation_plotly(graph_params: GraphParams) -> "Path":
     """グラフ生成共通処理(plotly用)
 
     Args:
         args (GraphParams): グラフ生成パラメータ
 
     Returns:
-        str: 保存先ファイル名
+        Path: 保存先ファイル名
     """
 
-    save_file = graphutil.setup(graph_params["save_file"])
+    save_file = textutil.save_file_path(graph_params["save_file"])
     target_data = cast(pd.DataFrame, graph_params["target_data"])
     df = graph_params["pivot"]
 

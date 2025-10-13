@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import libs.global_value as g
 from libs.data import loader
 from libs.functions import compose, message
-from libs.utils import graphutil
+from libs.utils import graphutil, textutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -33,11 +33,14 @@ def plot(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
-    # --- グラフフォント設定
+    # --- グラフ設定
     if g.adapter.conf.plotting_backend == "plotly":
         return
 
-    report_file_path = graphutil.setup("report.png")
+    graphutil.setup()
+
+    # グラフフォント設定
+    report_file_path = textutil.save_file_path("report.png")
     plt.rcParams["font.size"] = 6
 
     # 色彩設定

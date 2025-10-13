@@ -2,8 +2,7 @@
 libs/commands/report/results_list.py
 """
 
-import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import matplotlib.pyplot as plt
 
@@ -11,9 +10,11 @@ import libs.global_value as g
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
-from libs.utils import formatter, graphutil
+from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     import pandas as pd
 
     from integrations.protocols import MessageParserProtocol
@@ -60,6 +61,7 @@ def main(m: "MessageParserProtocol"):
     if "役満和了" in g.cfg.dropitems.report:
         df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman(%)"])
 
+    file_path: Union["Path", None]
     match str(g.params.get("format", "default")).lower():
         case "text" | "txt":
             file_path = text_generation(df)
@@ -73,7 +75,7 @@ def main(m: "MessageParserProtocol"):
     m.post.message = {"": df_generation(df)}
 
 
-def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title) -> str:
+def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> Union["Path", None]:
     """グラフ生成処理
 
     Args:
@@ -82,11 +84,12 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title) -> str:
         title (str): グラフタイトル
 
     Returns:
-        str: 生成ファイルパス
+        Path: 生成ファイルパス
+        None: 未対応
     """
 
     if g.adapter.conf.plotting_backend == "plotly":
-        return ""
+        return None
 
     df = formatter.df_rename(df.filter(
         items=[
@@ -98,7 +101,8 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title) -> str:
     ))
 
     # フォント/色彩設定
-    report_file_path = graphutil.setup("report.png")
+    graphutil.setup()
+    report_file_path = textutil.save_file_path("report.png")
     plt.rcParams["font.size"] = 6
 
     match (plt.rcParams["text.color"], plt.rcParams["figure.facecolor"]):
@@ -162,20 +166,17 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title) -> str:
     return report_file_path
 
 
-def text_generation(df: "pd.DataFrame") -> str:
+def text_generation(df: "pd.DataFrame") -> "Path":
     """テキストテーブル生成
 
     Args:
         df (pd.DataFrame): 描写データ
 
     Returns:
-        str: 生成ファイルパス
+        Path: 生成ファイルパス
     """
 
-    report_file_path = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.txt" if g.params.get("filename") else "report.txt",
-    )
+    report_file_path = g.cfg.setting.work_dir / (f"{g.params["filename"]}.txt" if g.params.get("filename") else "report.txt")
 
     df = df.filter(
         items=[
@@ -197,20 +198,17 @@ def text_generation(df: "pd.DataFrame") -> str:
     return report_file_path
 
 
-def csv_generation(df: "pd.DataFrame") -> str:
+def csv_generation(df: "pd.DataFrame") -> "Path":
     """CSV生成
 
     Args:
         df (pd.DataFrame): 描写データ
 
     Returns:
-        str: 生成ファイルパス
+        Path: 生成ファイルパス
     """
 
-    report_file_path = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.csv" if g.params.get("filename") else "report.csv",
-    )
+    report_file_path = g.cfg.setting.work_dir / (f"{g.params["filename"]}.csv" if g.params.get("filename") else "report.csv")
 
     df = df.filter(
         items=[

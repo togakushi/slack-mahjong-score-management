@@ -366,14 +366,11 @@ def gen_pdf(m: "MessageParserProtocol"):
 
     # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
-    pdf_path = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}.pdf" if g.params.get("filename") else "results.pdf",
-    )
+    pdf_path = g.cfg.setting.work_dir / (f"{g.params["filename"]}.pdf" if g.params.get("filename") else "results.pdf")
     pdfmetrics.registerFont(TTFont("ReportFont", font_path))
 
     doc = SimpleDocTemplate(
-        pdf_path,
+        str(pdf_path),
         pagesize=landscape(A4),
         topMargin=10.0 * mm,
         bottomMargin=10.0 * mm,
@@ -410,7 +407,7 @@ def gen_pdf(m: "MessageParserProtocol"):
     doc.build(elements)
     logging.debug("report generation: %s", g.params["player_name"])
 
-    m.post.file_list = [{f"成績レポート({g.params["player_name"]})": str(pdf_path)}]
+    m.post.file_list = [{f"成績レポート({g.params["player_name"]})": pdf_path}]
 
 
 def cover_page(style: dict, target_info: dict) -> list:

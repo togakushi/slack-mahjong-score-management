@@ -3,7 +3,7 @@ libs/commands/results/versus.py
 """
 
 import textwrap
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import pandas as pd
 
@@ -13,6 +13,8 @@ from libs.functions import compose
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from integrations.protocols import MessageParserProtocol
 
 
@@ -107,6 +109,7 @@ def aggregation(m: "MessageParserProtocol"):
         ]
     ).drop_duplicates()
 
+    file_list: list[dict[str, Union["Path", str, None]]]
     match str(g.params.get("format", "default")).lower():
         case "csv":
             file_list = [
@@ -119,7 +122,7 @@ def aggregation(m: "MessageParserProtocol"):
                 {"成績": converter.save_output(df_vs2, "txt", "versus.txt")},
             ]
         case _:
-            file_list = [{"dummy": ""}]
+            file_list = [{"dummy": None}]
     m.post.file_list = file_list
 
     # 結果

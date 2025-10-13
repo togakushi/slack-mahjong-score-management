@@ -3,13 +3,13 @@ cls/config.py
 """
 
 import logging
-import os
+import shutil
 import sys
 from configparser import ConfigParser
 from dataclasses import dataclass, field
 from itertools import chain
 from math import ceil
-from pathlib import Path
+from pathlib import Path, PosixPath
 from types import UnionType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
@@ -112,8 +112,13 @@ class BaseSection(CommonMethodMixin):
                     case v_type if isinstance(v_type, UnionType):
                         if set(v_type.__args__) == {str, type(None)}:
                             setattr(self, k, self._section.get(k, fallback=self.get(k)))
+                    case v_type if v_type is PosixPath:
+                        setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
                     case v_type if v_type is type(None):
-                        setattr(self, k, self._section.get(k, fallback=self.get(k)))
+                        if k in ["backup_dir"]:  # ディレクトリを指定する設定はPathで格納
+                            setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
+                        else:
+                            setattr(self, k, self._section.get(k, fallback=self.get(k)))
                     case _:
                         setattr(self, k, self.__dict__.get(k))
 
@@ -185,39 +190,53 @@ class SettingSection(BaseSection):
     guest_mark: str = "※"
     """ゲスト無効時に未登録メンバーに付与する印"""
 
-    database_file: str = "mahjong.db"
+    database_file: Union[Path, str] = Path("mahjong.db")
     """成績管理データベースファイル名"""
-    backup_dir: Optional[str] = None
+    backup_dir: Optional[Path] = None
     """バックアップ先ディレクトリ"""
 
-    font_file: str = "ipaexg.ttf"
+    font_file: Path = Path("ipaexg.ttf")
     """グラフ描写に使用するフォントファイル"""
     graph_style: str = "ggplot"
     """グラフスタイル"""
-    work_dir: str = "work"
+    work_dir: Path = Path("work")
     """生成したファイルを保存するディレクトリ"""
 
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
         super().__init__(self, section_name)
 
-        self.work_dir = os.path.realpath(os.path.join(outer.script_dir, self.work_dir))
+        # 作業用ディレクトリ作成
+        if self.work_dir.is_dir():
+            shutil.rmtree(self.work_dir)
+        try:
+            self.work_dir.mkdir(exist_ok=True)
+        except FileExistsError as err:
+            sys.exit(str(err))
 
         # フォントファイルチェック
         for chk_dir in (outer.config_dir, outer.script_dir):
-            chk_path = str(os.path.realpath(os.path.join(chk_dir, self.font_file)))
-            if os.path.exists(chk_path):
-                self.font_file = chk_path
+            chk_file = chk_dir / str(self.font_file)
+            if chk_file.exists():
+                self.font_file = chk_file
                 break
-
-        if chk_path != self.font_file:
-            logging.critical("The specified font file cannot be found.")
-            sys.exit(255)
+        else:
+            if not self.font_file.exists():
+                logging.critical("The specified font file cannot be found.")
+                sys.exit(255)
 
         # データベース関連
-        self.database_file = os.path.realpath(os.path.join(outer.config_dir, self.database_file))
+        for chk_dir in (outer.config_dir, outer.script_dir):
+            chk_file = chk_dir / str(self.database_file)
+            if chk_file.exists():
+                self.database_file = chk_file
+                break
+
         if self.backup_dir:
-            self.backup_dir = os.path.realpath(os.path.join(outer.script_dir, self.backup_dir))
+            try:
+                self.backup_dir.mkdir(exist_ok=True)
+            except FileExistsError as err:
+                sys.exit(str(err))
 
 
 class MemberSection(BaseSection):
@@ -415,11 +434,11 @@ class SubCommand(BaseSection):
 class AppConfig:
     """コンフィグ解析クラス"""
 
-    def __init__(self, path: str):
-        path = os.path.realpath(path)
+    def __init__(self, config_file: str):
+        _config = Path(config_file)
         try:
             self._parser = ConfigParser()
-            self._parser.read(path, encoding="utf-8")
+            self._parser.read(_config, encoding="utf-8")
         except Exception as err:
             raise RuntimeError(err) from err
 
@@ -446,16 +465,16 @@ class AppConfig:
                 self._parser.add_section(x)
 
         # set base directory
-        self.script_dir = os.path.realpath(str(Path(__file__).resolve().parents[1]))
+        self.script_dir = Path(sys.argv[0]).absolute().parent
         """スクリプトが保存されているディレクトリパス"""
-        self.config_dir = os.path.dirname(os.path.realpath(str(path)))
+        self.config_dir = _config.absolute().parent
         """設定ファイルが保存されているディレクトリパス"""
 
         # 設定値取り込み
-        self.mahjong = MahjongSection(self, "mahjong")
-        """mahjongセクション設定値"""
         self.setting = SettingSection(self, "setting")
         """settingセクション設定値"""
+        self.mahjong = MahjongSection(self, "mahjong")
+        """mahjongセクション設定値"""
         self.member = MemberSection(self, "member")
         """memberセクション設定値"""
         self.team = TeamSection(self, "team")

@@ -4,13 +4,17 @@ libs/utils/dbutil.py
 
 import sqlite3
 from importlib.resources import files
+from typing import TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
-def connection(database_path: str) -> sqlite3.Connection:
+def connection(database_path: Union["Path", str]) -> sqlite3.Connection:
     """DB接続共通処理
 
     Args:
-        database_path (str): path
+        database_path (Union[Path, str]): データベースファイル
 
     Returns:
         sqlite3.Connection: オブジェクト

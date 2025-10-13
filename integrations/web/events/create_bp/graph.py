@@ -2,8 +2,8 @@
 integrations/web/events/graph.py
 """
 
-import os
 from dataclasses import asdict
+from pathlib import PosixPath
 from typing import TYPE_CHECKING
 
 import pandas as pd
@@ -45,9 +45,8 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
 
         for file_list in m.post.file_list:
             for _, file_path in file_list.items():
-                if os.path.exists(file_path):
-                    with open(file_path, encoding="utf-8") as f:
-                        message += f"<p>\n{f.read()}\n</p>\n"
+                if isinstance(file_path, PosixPath) and file_path.exists():
+                    message += f"<p>\n{file_path.read_text(encoding="utf-8")}\n</p>\n"
 
         for k, v in m.post.message.items():
             if isinstance(v, pd.DataFrame) and k == "素点情報":

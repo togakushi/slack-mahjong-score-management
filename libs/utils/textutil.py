@@ -4,9 +4,12 @@ libs/utils/textutil.py
 
 import os
 import unicodedata
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import libs.global_value as g
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def len_count(text: str) -> int:
@@ -90,24 +93,21 @@ def count_padding(data):
     return 0
 
 
-def save_file_path(filename: str, extension: str, delete: bool = False) -> str:
+def save_file_path(filename: str, delete: bool = False) -> "Path":
     """保存ファイルのフルパスを取得
 
     Args:
         filename (str): デフォルトファイル名
-        extension (str): 拡張子(ドットを含める)
         delete (bool, optional): 生成済みファイルを削除. Defaults to False.
 
     Returns:
-        str: 保存ファイルパス
+        Path: 保存ファイルパス
     """
 
-    file_path = os.path.join(
-        g.cfg.setting.work_dir,
-        f"{g.params["filename"]}{extension}" if g.params.get("filename") else f"{filename}{extension}",
-    )
+    file_name = f"{g.params["filename"]}" if g.params.get("filename") else f"{filename}"
+    file_path = g.cfg.setting.work_dir / file_name
 
-    if os.path.exists(file_path) and delete:
+    if file_path.exists() and delete:
         os.remove(file_path)
 
     return file_path
