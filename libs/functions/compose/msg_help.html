@@ -69,11 +69,11 @@
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">lookup</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="k">def</span><span class="w"> </span><span class="nf">event_message</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="k">def</span><span class="w"> </span><span class="nf">event_message</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チャンネル内呼び出しキーワード用ヘルプ</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">    Returns:</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">        dict[str, str]: ヘルプメッセージ</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">        str: ヘルプメッセージ</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">msg</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
@@ -144,7 +144,7 @@
 </span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>
 </span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>    <span class="n">msg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\n\n\n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;ヘルプ&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()}</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>    <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -154,17 +154,17 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">event_message</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>:</span></span>
+        <span class="name">event_message</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="event_message-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#event_message"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="event_message-14"><a href="#event_message-14"><span class="linenos">14</span></a><span class="k">def</span><span class="w"> </span><span class="nf">event_message</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="event_message-14"><a href="#event_message-14"><span class="linenos">14</span></a><span class="k">def</span><span class="w"> </span><span class="nf">event_message</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="event_message-15"><a href="#event_message-15"><span class="linenos">15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チャンネル内呼び出しキーワード用ヘルプ</span>
 </span><span id="event_message-16"><a href="#event_message-16"><span class="linenos">16</span></a>
 </span><span id="event_message-17"><a href="#event_message-17"><span class="linenos">17</span></a><span class="sd">    Returns:</span>
-</span><span id="event_message-18"><a href="#event_message-18"><span class="linenos">18</span></a><span class="sd">        dict[str, str]: ヘルプメッセージ</span>
+</span><span id="event_message-18"><a href="#event_message-18"><span class="linenos">18</span></a><span class="sd">        str: ヘルプメッセージ</span>
 </span><span id="event_message-19"><a href="#event_message-19"><span class="linenos">19</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="event_message-20"><a href="#event_message-20"><span class="linenos">20</span></a>
 </span><span id="event_message-21"><a href="#event_message-21"><span class="linenos">21</span></a>    <span class="n">msg</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
@@ -235,7 +235,7 @@
 </span><span id="event_message-86"><a href="#event_message-86"><span class="linenos">86</span></a>
 </span><span id="event_message-87"><a href="#event_message-87"><span class="linenos">87</span></a>    <span class="n">msg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\n\n\n&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
 </span><span id="event_message-88"><a href="#event_message-88"><span class="linenos">88</span></a>
-</span><span id="event_message-89"><a href="#event_message-89"><span class="linenos">89</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;ヘルプ&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()}</span>
+</span><span id="event_message-89"><a href="#event_message-89"><span class="linenos">89</span></a>    <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -244,7 +244,7 @@
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>dict[str, str]: ヘルプメッセージ</p>
+  <p>str: ヘルプメッセージ</p>
 </blockquote>
 </div>
 

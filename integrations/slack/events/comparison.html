@@ -177,7 +177,7 @@
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">*【素点合計不一致】*</span><span class="se">\n</span><span class="s2">&quot;</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="n">message</span> <span class="o">+=</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;invalid_score&quot;</span><span class="p">]</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;データ突合&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">}</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="s2">&quot;データ突合&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">key_header</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
 </span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
@@ -669,7 +669,7 @@
 </span><span id="main-74"><a href="#main-74"><span class="linenos">74</span></a>        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">*【素点合計不一致】*</span><span class="se">\n</span><span class="s2">&quot;</span>
 </span><span id="main-75"><a href="#main-75"><span class="linenos">75</span></a>        <span class="n">message</span> <span class="o">+=</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;invalid_score&quot;</span><span class="p">]</span>
 </span><span id="main-76"><a href="#main-76"><span class="linenos">76</span></a>
-</span><span id="main-77"><a href="#main-77"><span class="linenos">77</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;データ突合&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">}</span>
+</span><span id="main-77"><a href="#main-77"><span class="linenos">77</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="s2">&quot;データ突合&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 </span><span id="main-78"><a href="#main-78"><span class="linenos">78</span></a>    <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">key_header</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
