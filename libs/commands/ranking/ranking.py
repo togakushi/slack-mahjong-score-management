@@ -150,17 +150,18 @@ def aggregation(m: "MessageParserProtocol"):
     data["連続ラス回避"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 項目整理
-    for key in list(data.keys()):
-        if key in g.cfg.dropitems.ranking:  # 非表示項目
-            data.pop(key)
-            continue
+    dropitems = g.cfg.dropitems.ranking
+    if g.cfg.mahjong.ignore_flying:
+        dropitems.append("トビ率")
+    if {"役満", "役満和了"} & set(g.cfg.dropitems.ranking):
+        dropitems.append("役満和了率")
 
-        if key in data:  # 対象者がいなければ項目を削除
-            if data[key].empty:
-                data.pop(key)
+    for k, v in data.items():
+        if k in dropitems:  # 非表示項目
+            continue
+        if v.empty:  # 対象者なし
+            continue
+        m.set_data(k, v, True)
 
     m.post.headline = {title: message.header(game_info, m, "", 1)}
     m.post.key_header = True
-
-    for k, v in data.items():
-        m.set_data(k, v, True)
