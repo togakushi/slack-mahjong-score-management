@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 import libs.global_value as g
+from cls.score import GameInfo
 from libs.data import aggregate, loader
-from libs.datamodels import GameInfo
 from libs.functions import message
 from libs.types import StyleOptions
 from libs.utils import formatter
