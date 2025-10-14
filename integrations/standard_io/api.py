@@ -58,12 +58,13 @@ class AdapterAPI(APIInterface):
         # 本文
         for data in m.post.order:
             for title, msg in data.items():
+
                 match msg.get("data"):
                     case x if isinstance(x, str):
                         print(f"【{title}】")
                         print(self._text_formatter(x))
                     case x if isinstance(x, pd.DataFrame):
-                        show_index = msg.get("show_index", False)
+                        show_index = msg["options"].show_index
                         print(f"【{title}】")
                         fmt = formatter.floatfmt_adjust(x, index=show_index)
                         disp = x.to_markdown(index=show_index, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")

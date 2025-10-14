@@ -25,6 +25,7 @@ import libs.global_value as g
 from libs.data import loader, lookup
 from libs.datamodels import GameInfo
 from libs.functions import message
+from libs.types import StyleOptions
 from libs.utils import dbutil, formatter
 
 if TYPE_CHECKING:
@@ -407,7 +408,7 @@ def gen_pdf(m: "MessageParserProtocol"):
     doc.build(elements)
     logging.debug("report generation: %s", g.params["player_name"])
 
-    m.set_data(f"成績レポート({g.params["player_name"]})", pdf_path, use_comment=True, header_hidden=True)
+    m.set_data(f"成績レポート({g.params["player_name"]})", pdf_path, StyleOptions(use_comment=True, header_hidden=True))
 
 
 def cover_page(style: dict, target_info: dict) -> list:

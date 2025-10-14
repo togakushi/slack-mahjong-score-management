@@ -10,6 +10,7 @@ import libs.global_value as g
 from libs.data import aggregate, loader
 from libs.datamodels import GameInfo
 from libs.functions import message
+from libs.types import StyleOptions
 from libs.utils import formatter
 
 if TYPE_CHECKING:
@@ -161,7 +162,7 @@ def aggregation(m: "MessageParserProtocol"):
             continue
         if v.empty:  # 対象者なし
             continue
-        m.set_data(k, v, codeblock=True, show_index=False)
+        m.set_data(k, v, StyleOptions(codeblock=True, show_index=False))
 
     m.post.headline = {title: message.header(game_info, m, "", 1)}
     m.post.key_header = True

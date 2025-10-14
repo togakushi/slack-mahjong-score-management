@@ -51,14 +51,14 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
                     message += f"<p>\n{msg.read_text(encoding="utf-8")}\n</p>\n"
 
                 if isinstance(msg, pd.DataFrame) and k == "素点情報":
-                    disp = v.get("show_index", False)
+                    show_index = v["options"].show_index
                     msg["ゲーム数"] = msg["ゲーム数"].astype("float")
                     msg.rename(columns={"平均値(x)": "平均値", "中央値(|)": "中央値"}, inplace=True)
                     message += f"<h2>{k}</h2>\n"
-                    message += adapter.functions.to_styled_html(msg, padding, disp)
+                    message += adapter.functions.to_styled_html(msg, padding, show_index)
 
                 if isinstance(msg, pd.DataFrame) and k == "順位/ポイント情報":
-                    disp = v.get("show_index", False)
+                    show_index = v["options"].show_index
                     msg["ゲーム数"] = msg["ゲーム数"].astype("float")
                     multi = [
                         ("", "ゲーム数"),
@@ -77,7 +77,7 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
                     ]
                     msg.columns = pd.MultiIndex.from_tuples(multi)
                     message += f"<h2>{k}</h2>\n"
-                    message += adapter.functions.to_styled_html(msg, padding, disp)
+                    message += adapter.functions.to_styled_html(msg, padding, show_index)
 
         cookie_data.update(body=message, **asdict(adapter.conf))
         page = adapter.functions.set_cookie("graph.html", request, cookie_data)

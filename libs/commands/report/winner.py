@@ -10,6 +10,7 @@ import libs.global_value as g
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
+from libs.types import StyleOptions
 from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
@@ -134,6 +135,6 @@ def plot(m: "MessageParserProtocol"):
 
     match g.adapter.interface_type:
         case "slack":
-            m.set_data("成績上位者", report_file_path, use_comment=True, header_hidden=True)
+            m.set_data("成績上位者", report_file_path, StyleOptions(use_comment=True, header_hidden=True))
         case "web":
             m.set_data("月別集計結果", formatter.df_rename(results_df))

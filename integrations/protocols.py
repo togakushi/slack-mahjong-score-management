@@ -3,10 +3,10 @@ integrations/protocols.py
 """
 
 from dataclasses import dataclass, field, fields, is_dataclass
-from typing import TYPE_CHECKING, Any, Literal, Protocol
+from typing import TYPE_CHECKING, Any, Literal, Optional, Protocol
 
 if TYPE_CHECKING:
-    from libs.types import MessageType, MessageTypeDict
+    from libs.types import MessageType, MessageTypeDict, StyleOptions
 
 
 class DataMixin:
@@ -198,15 +198,7 @@ class MessageParserProtocol(Protocol):
     def ignore_user(self) -> bool:
         """コマンドを拒否するユーザか判定"""
 
-    def set_data(
-        self,
-        title: str,
-        data: "MessageType",
-        codeblock: bool = False,
-        show_index: bool = False,
-        use_comment: bool = False,
-        header_hidden: bool = False,
-    ):
+    def set_data(self, title: str, data: "MessageType", options: Optional["StyleOptions"] = None):
         """メッセージデータをセット"""
 
     def get_score(self, keyword: str) -> dict:

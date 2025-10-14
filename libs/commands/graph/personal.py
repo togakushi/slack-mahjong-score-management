@@ -16,6 +16,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
+from libs.types import StyleOptions
 from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
@@ -53,7 +54,7 @@ def plot(m: "MessageParserProtocol"):
     rank_avg = f"{float(df["rank_avg"].iloc[-1]):.2f}"
 
     m.post.headline = {f"『{player}』の成績": message.header(game_info, m)}
-    m.set_data("0", formatter.df_rename(df.drop(columns=["count", "name"]), False), show_index=True)
+    m.set_data("0", formatter.df_rename(df.drop(columns=["count", "name"]), False), StyleOptions(show_index=True))
 
     # --- グラフ生成
     graphutil.setup()
@@ -126,7 +127,7 @@ def plot(m: "MessageParserProtocol"):
     fig.tight_layout()
     plt.savefig(save_file, bbox_inches="tight")
 
-    m.set_data(f"『{player}』の成績", save_file, use_comment=True, header_hidden=True)
+    m.set_data(f"『{player}』の成績", save_file, StyleOptions(use_comment=True, header_hidden=True))
 
 
 def statistics_plot(m: "MessageParserProtocol"):
@@ -249,10 +250,10 @@ def statistics_plot(m: "MessageParserProtocol"):
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            m.set_data("順位/ポイント情報", count_df, show_index=True)
+            m.set_data("順位/ポイント情報", count_df, StyleOptions(show_index=True))
             m.set_data("通算ポイント", plotly_line("通算ポイント推移", point_df))
             m.set_data("順位分布", plotly_bar("順位分布", count_df.drop(index=["全区間"])))
-            m.set_data("素点情報", stats_df, show_index=True)
+            m.set_data("素点情報", stats_df, StyleOptions(show_index=True))
             m.set_data("素点分布", plotly_box("素点分布", rpoint_df))
             return
         case "matplotlib":
@@ -283,7 +284,7 @@ def statistics_plot(m: "MessageParserProtocol"):
 
             plt.savefig(save_file, bbox_inches="tight")
 
-            m.set_data("個人成績", save_file, use_comment=True, header_hidden=True)
+            m.set_data("個人成績", save_file, StyleOptions(use_comment=True, header_hidden=True))
 
 
 def get_data(df: pd.Series, interval: int) -> pd.DataFrame:

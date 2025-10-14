@@ -10,7 +10,7 @@ from typing import (TYPE_CHECKING, Any, Generic, Literal, Optional, Type,
                     TypeVar, Union)
 
 from integrations.protocols import MsgData, PostData, StatusData
-from libs.types import MessageTypeDict
+from libs.types import MessageTypeDict, StyleOptions
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -212,29 +212,22 @@ class MessageParserDataMixin:
         self,
         title: str,
         data: "MessageType",
-        codeblock: bool = False,
-        show_index: bool = False,
-        use_comment: bool = False,
-        header_hidden: bool = False,
+        options: Optional[StyleOptions] = None,
     ):
         """メッセージデータをセットshow_index
 
         Args:
             title (str): データ識別子
             data (MessageType): 内容
-            codeblock (bool, optional): codeblock化. Defaults to False.
-            show_index (bool, optional): Indexを含める. Defaults to False.
-            use_comment (bool, optional): initial_commentを使う. Defaults to False.
-            header_hidden (bool, optional): ヘッダを表示しない. Defaults to False.
-                - リスト内すべてのhiddenがTrueのときのみ非表示になる
+            options (StyleOptions, optional): 表示オプション. Defaults to None.
         """
+
+        if not options:
+            options = StyleOptions()
 
         msg = MessageTypeDict(
             data=data,
-            codeblock=codeblock,
-            show_index=show_index,
-            use_comment=use_comment,
-            header_hidden=header_hidden,
+            options=options,
         )
         self.post.order.append({title: msg})
 

@@ -50,7 +50,7 @@ def report_bp(adapter: "ServiceAdapter") -> Blueprint:
                     message += f"<h2>{k}</h2>\n"
 
                 if isinstance(msg, pd.DataFrame):
-                    disp = v.get("show_index", False)
+                    show_index = v["options"].show_index
                     if {"個人成績一覧", "チーム成績一覧"} & set(m.post.headline):
                         check_column = msg.columns.to_list()
                         multi = [
@@ -85,7 +85,7 @@ def report_bp(adapter: "ServiceAdapter") -> Blueprint:
                             ("5位", name), ("5位", "獲得ポイント"),
                         ]
                         msg.columns = pd.MultiIndex.from_tuples([x for x in multi if x is not None])
-                    message += adapter.functions.to_styled_html(msg, padding, disp)
+                    message += adapter.functions.to_styled_html(msg, padding, show_index)
 
                 if isinstance(msg, str):
                     message += adapter.functions.to_text_html(msg)

@@ -50,12 +50,12 @@ def summary_bp(adapter: "ServiceAdapter") -> Blueprint:
                     message += f"<h2>{k}</h2>\n"
 
                 if isinstance(msg, pd.DataFrame):
-                    disp = v.get("show_index", False)
+                    show_index = v["options"].show_index
                     if k == "戦績" and g.params.get("verbose"):
                         padding = "0.25em 0.75em"
                         msg = _conv_verbose(msg)
 
-                    message += adapter.functions.to_styled_html(msg, padding, disp)
+                    message += adapter.functions.to_styled_html(msg, padding, show_index)
 
                 if isinstance(msg, str):
                     message += adapter.functions.to_text_html(msg)

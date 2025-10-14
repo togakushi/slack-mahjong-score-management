@@ -10,6 +10,7 @@ import libs.global_value as g
 from libs.data import aggregate, loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
+from libs.types import StyleOptions
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
@@ -98,5 +99,5 @@ def aggregation(m: "MessageParserProtocol"):
             if (save_file := converter.save_output(df, "txt", "rating.txt", headline)):
                 m.set_data("レーティング", save_file)
         case _:
-            m.set_data("レーティング", df, codeblock=True)
+            m.set_data("レーティング", df, StyleOptions(codeblock=True))
             m.post.summarize = False

@@ -46,17 +46,16 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
         for data in m.post.order:
             for k, v in data.items():
                 msg = v.get("data")
-                disp = v.get("disp", False)
 
                 if not k.isnumeric() and k:
                     message += f"<h2>{k}</h2>\n"
 
                 if isinstance(msg, pd.DataFrame):
-                    disp = v.get("show_index", False)
+                    show_index = v["options"].show_index
                     if k == "戦績" and g.params.get("verbose"):
                         padding = "0.25em 0.75em"
                         msg = _conv_verbose(msg)
-                    message += adapter.functions.to_styled_html(msg, padding, disp)
+                    message += adapter.functions.to_styled_html(msg, padding, show_index)
                     message = message.replace(f">{g.params["player_name"]}<", f"><div class='player_name'>{g.params["player_name"]}</div><")
 
                 if isinstance(msg, str):

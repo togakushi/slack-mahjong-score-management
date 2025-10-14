@@ -19,6 +19,7 @@ from integrations import factory
 from libs.data import lookup
 from libs.functions import compose
 from libs.registry import member, team
+from libs.types import StyleOptions
 
 if TYPE_CHECKING:
     from cls.config import SubCommand
@@ -264,12 +265,12 @@ def register():
         m.set_data("成績記録DB", g.cfg.setting.database_file)
 
     def dispatch_members_list(m: "MessageParserProtocol"):
-        m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), codeblock=True)
+        m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), StyleOptions(codeblock=True))
         m.post.key_header = True
         m.post.ts = m.data.event_ts
 
     def dispatch_team_list(m: "MessageParserProtocol"):
-        m.set_data("登録済みチーム", lookup.textdata.get_team_list(), codeblock=True)
+        m.set_data("登録済みチーム", lookup.textdata.get_team_list(), StyleOptions(codeblock=True))
         m.post.key_header = True
         m.post.ts = m.data.event_ts
 

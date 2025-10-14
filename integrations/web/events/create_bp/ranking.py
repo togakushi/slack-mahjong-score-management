@@ -50,8 +50,8 @@ def ranking_bp(adapter: "ServiceAdapter") -> Blueprint:
                     message += f"<h2>{k}</h2>\n"
 
                 if isinstance(msg, pd.DataFrame):
-                    disp = v.get("show_index", False)
-                    message += adapter.functions.to_styled_html(msg, padding, disp)
+                    show_index = v["options"].show_index
+                    message += adapter.functions.to_styled_html(msg, padding, show_index)
 
                 if isinstance(msg, str):
                     message += adapter.functions.to_text_html(msg)

@@ -13,6 +13,7 @@ import libs.global_value as g
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
+from libs.types import StyleOptions
 from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
@@ -87,7 +88,7 @@ def point_plot(m: "MessageParserProtocol"):
 
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
-    m.set_data(file_title, save_file, use_comment=True, header_hidden=True)
+    m.set_data(file_title, save_file, StyleOptions(use_comment=True, header_hidden=True))
 
 
 def rank_plot(m: "MessageParserProtocol"):
@@ -142,7 +143,7 @@ def rank_plot(m: "MessageParserProtocol"):
 
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
-    m.set_data(file_title, save_file, use_comment=True, header_hidden=True)
+    m.set_data(file_title, save_file, StyleOptions(use_comment=True, header_hidden=True))
 
 
 def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:

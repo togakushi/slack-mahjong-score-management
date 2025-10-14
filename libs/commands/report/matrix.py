@@ -8,6 +8,7 @@ import libs.global_value as g
 from libs.data import aggregate
 from libs.datamodels import GameInfo
 from libs.functions import message
+from libs.types import StyleOptions
 from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
@@ -44,6 +45,6 @@ def plot(m: "MessageParserProtocol"):
     m.post.headline = {title: message.header(game_info, m, "", 1)}
     match g.adapter.interface_type:
         case "slack":
-            m.set_data(title, file_path, use_comment=True, header_hidden=True)
+            m.set_data(title, file_path, StyleOptions(use_comment=True, header_hidden=True))
         case "web":
-            m.set_data("", df, show_index=True)
+            m.set_data("", df, StyleOptions(show_index=True))

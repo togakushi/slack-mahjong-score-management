@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import libs.global_value as g
 from libs.data import loader
 from libs.functions import compose, message
+from libs.types import StyleOptions
 from libs.utils import graphutil, textutil
 
 if TYPE_CHECKING:
@@ -104,6 +105,6 @@ def plot(m: "MessageParserProtocol"):
 
     match g.adapter.interface_type:
         case "slack":
-            m.set_data(title, report_file_path, use_comment=True, header_hidden=True)
+            m.set_data(title, report_file_path, StyleOptions(use_comment=True, header_hidden=True))
         case "web":
             m.set_data(title, df)

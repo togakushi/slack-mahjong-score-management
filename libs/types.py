@@ -2,6 +2,7 @@
 cls/types.py
 """
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
@@ -27,31 +28,39 @@ MessageType: TypeAlias = Union[None, str, "Path", "pd.DataFrame", "pd.Series"]
 """
 
 
+@dataclass
+class StyleOptions:
+    """表示オプション"""
+
+    codeblock: bool = False
+    """dataがstr型ならcodeblock化
+    - *True*: codeblock化
+    - *False*: 何もしない
+    """
+    show_index: bool = False
+    """dataがDataFrame型なら表にIndexに含める
+    - *True*: Indexを含める
+    - *False*: Indexを含めない
+    """
+    use_comment: bool = False
+    """ファイルアップロード時のinitial_commentを有効にする
+    - *True*: initial_commentを使う
+    - *False*: initial_commentを使わない
+    """
+    header_hidden: bool = False
+    """ヘッダ文を非表示にする
+    - *True*: 非表示
+    - *False*: 表示
+    """
+
+
 class MessageTypeDict(TypedDict):
     """メッセージ格納データ"""
 
     data: MessageType
     """内容"""
-    codeblock: bool
-    """dataがstr型ならcodeblock化
-    - *True*: codeblock化
-    - *False*: 何もしない
-    """
-    show_index: bool
-    """dataがDataFrame型なら表にIndexに含める
-    - *True*: Indexを含める
-    - *False*: Indexを含めない
-    """
-    use_comment: bool
-    """ファイルアップロード時のinitial_commentを有効にする
-    - *True*: initial_commentを使う
-    - *False*: initial_commentを使わない
-    """
-    header_hidden: bool
-    """ヘッダ文を非表示にする
-    - *True*: 非表示
-    - *False*: 表示
-    """
+    options: StyleOptions
+    """表示オプション"""
 
 
 class RemarkDict(TypedDict):
