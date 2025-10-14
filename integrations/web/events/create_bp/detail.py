@@ -52,6 +52,7 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
                     message += f"<h2>{k}</h2>\n"
 
                 if isinstance(msg, pd.DataFrame):
+                    disp = v.get("show_index", False)
                     if k == "戦績" and g.params.get("verbose"):
                         padding = "0.25em 0.75em"
                         msg = _conv_verbose(msg)

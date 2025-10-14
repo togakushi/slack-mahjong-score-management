@@ -32,14 +32,22 @@ class MessageTypeDict(TypedDict):
 
     data: MessageType
     """内容"""
-    disp: bool
-    """表示形式変更フラグ
-    - *True*: dataの型によって表示形式を変える
-        - dataがstr型ならcodeblock化
-        - dataがDataFrame型なら表にIndexに含める
+    codeblock: bool
+    """dataがstr型ならcodeblock化
+    - *True*: codeblock化
     - *False*: 何もしない
     """
-    hidden: bool
+    show_index: bool
+    """dataがDataFrame型なら表にIndexに含める
+    - *True*: Indexを含める
+    - *False*: Indexを含めない
+    """
+    use_comment: bool
+    """ファイルアップロード時のinitial_commentを有効にする
+    - *True*: initial_commentを使う
+    - *False*: initial_commentを使わない
+    """
+    heder_hidden: bool
     """ヘッダ文を非表示にする
     - *True*: 非表示
     - *False*: 表示

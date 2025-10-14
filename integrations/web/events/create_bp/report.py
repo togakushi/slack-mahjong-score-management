@@ -45,12 +45,12 @@ def report_bp(adapter: "ServiceAdapter") -> Blueprint:
         for data in m.post.order:
             for k, v in data.items():
                 msg = v.get("data")
-                disp = v.get("disp", False)
 
                 if not k.isnumeric() and k:
                     message += f"<h2>{k}</h2>\n"
 
                 if isinstance(msg, pd.DataFrame):
+                    disp = v.get("show_index", False)
                     if {"個人成績一覧", "チーム成績一覧"} & set(m.post.headline):
                         check_column = msg.columns.to_list()
                         multi = [

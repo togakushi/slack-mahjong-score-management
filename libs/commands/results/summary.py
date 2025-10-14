@@ -62,14 +62,14 @@ def aggregation(m: "MessageParserProtocol"):
     if g.params.get("score_comparisons"):  # 差分表示
         header_list = ["#", column_name, "通算", "順位差", "トップ差"]
         filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
-        m.set_data("ポイント差分", df_summary.filter(items=header_list), True)
+        m.set_data("ポイント差分", df_summary.filter(items=header_list), codeblock=True)
     else:  # 通常表示
         header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
         filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
         if g.cfg.mahjong.ignore_flying:  # トビカウントなし
             header_list.remove("トビ")
             filter_list.remove("トビ")
-        m.set_data("通算ポイント", df_summary.filter(items=header_list), True)
+        m.set_data("通算ポイント", df_summary.filter(items=header_list), codeblock=True)
 
     # メモ追加
     df_yakuman = formatter.df_rename(df_remarks.query("type == 0").drop(columns=["type", "ex_point"]), kind=0)

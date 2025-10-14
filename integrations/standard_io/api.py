@@ -63,9 +63,10 @@ class AdapterAPI(APIInterface):
                         print(f"【{title}】")
                         print(self._text_formatter(x))
                     case x if isinstance(x, pd.DataFrame):
+                        show_index = msg.get("show_index", False)
                         print(f"【{title}】")
-                        fmt = formatter.floatfmt_adjust(x, index=msg.get("disp", False))
-                        disp = x.to_markdown(index=msg.get("disp", False), tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
+                        fmt = formatter.floatfmt_adjust(x, index=show_index)
+                        disp = x.to_markdown(index=show_index, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
                         if title == "座席データ":
                             disp = disp.replace("0.00", "-.--")
                         print(disp)

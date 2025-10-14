@@ -161,7 +161,7 @@ def aggregation(m: "MessageParserProtocol"):
             continue
         if v.empty:  # 対象者なし
             continue
-        m.set_data(k, v, True)
+        m.set_data(k, v, codeblock=True, show_index=False)
 
     m.post.headline = {title: message.header(game_info, m, "", 1)}
     m.post.key_header = True

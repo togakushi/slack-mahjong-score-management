@@ -208,24 +208,33 @@ class MessageParserDataMixin:
         self.post.reset()
         self.status.reset()
 
-    def set_data(self, title: str, data: "MessageType", disp: bool = False, hidden: bool = False):
-        """メッセージデータをセット
+    def set_data(
+        self,
+        title: str,
+        data: "MessageType",
+        codeblock: bool = False,
+        show_index: bool = False,
+        use_comment: bool = False,
+        heder_hidden: bool = False,
+    ):
+        """メッセージデータをセットshow_index
 
         Args:
             title (str): データ識別子
             data (MessageType): 内容
-            disp (bool, optional): dataの型毎の表示フラグ. Defaults to False.
-                - str: codeblock化
-                - DataFrame: 表にIndexを含める
-                - Path: initial_commentにヘッダと同じ内容をセットする
-            hidden (bool, optional): ヘッダ文を表示しない. Defaults to False.
+            codeblock (bool, optional): codeblock化. Defaults to False.
+            show_index (bool, optional): Indexを含める. Defaults to False.
+            use_comment (bool, optional): initial_commentを使う. Defaults to False.
+            heder_hidden (bool, optional): ヘッダを表示しない. Defaults to False.
                 - リスト内すべてのhiddenがTrueのときのみ非表示になる
         """
 
         msg = MessageTypeDict(
             data=data,
-            disp=disp,
-            hidden=hidden,
+            codeblock=codeblock,
+            show_index=show_index,
+            use_comment=use_comment,
+            heder_hidden=heder_hidden,
         )
         self.post.order.append({title: msg})
 

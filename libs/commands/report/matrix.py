@@ -44,6 +44,6 @@ def plot(m: "MessageParserProtocol"):
     m.post.headline = {title: message.header(game_info, m, "", 1)}
     match g.adapter.interface_type:
         case "slack":
-            m.set_data(title, file_path, True, True)
+            m.set_data(title, file_path, use_comment=True, heder_hidden=True)
         case "web":
-            m.set_data("", df, True)
+            m.set_data("", df, show_index=True)

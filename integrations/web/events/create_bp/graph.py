@@ -46,18 +46,19 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
         for data in m.post.order:
             for k, v in data.items():
                 msg = v.get("data")
-                disp = v.get("disp", False)
 
                 if isinstance(msg, PosixPath) and msg.exists():
                     message += f"<p>\n{msg.read_text(encoding="utf-8")}\n</p>\n"
 
                 if isinstance(msg, pd.DataFrame) and k == "素点情報":
+                    disp = v.get("show_index", False)
                     msg["ゲーム数"] = msg["ゲーム数"].astype("float")
                     msg.rename(columns={"平均値(x)": "平均値", "中央値(|)": "中央値"}, inplace=True)
                     message += f"<h2>{k}</h2>\n"
                     message += adapter.functions.to_styled_html(msg, padding, disp)
 
                 if isinstance(msg, pd.DataFrame) and k == "順位/ポイント情報":
+                    disp = v.get("show_index", False)
                     msg["ゲーム数"] = msg["ゲーム数"].astype("float")
                     multi = [
                         ("", "ゲーム数"),

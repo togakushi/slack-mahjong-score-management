@@ -45,13 +45,13 @@ class AdapterAPI(APIInterface):
             text_data = iter(data.values())
             # 先頭ブロックの処理
             v = next(text_data)
-            if disp:
+            if codeblock:
                 ret_list.append(f"{header}```\n{v}\n```\n")
             else:
                 ret_list.append(f"{header}{v}\n")
             # 残りのブロック
             for v in text_data:
-                if disp:
+                if codeblock:
                     ret_list.append(f"```\n{v}\n```\n")
                 else:
                     ret_list.append(f"{v}\n")
@@ -65,7 +65,7 @@ class AdapterAPI(APIInterface):
         header_text = ""
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
-            if not all([v.get("hidden") for x in m.post.order for _, v in x.items()]):
+            if not all([v.get("heder_hidden") for x in m.post.order for _, v in x.items()]):
                 res = self._call_chat_post_message(
                     channel=m.data.channel_id,
                     text=f"{_header_text(header_title)}{header_text.rstrip()}",
@@ -81,10 +81,11 @@ class AdapterAPI(APIInterface):
         for data in m.post.order:
             for title, v in data.items():
                 msg = v.get("data")
-                disp = v.get("disp", False)
+                codeblock = v.get("codeblock", False)
+                use_comment = v.get("use_comment", False)
 
                 if isinstance(msg, PosixPath) and msg.exists():
-                    comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if disp else ""
+                    comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if use_comment else ""
                     self._call_files_upload(
                         channel=m.data.channel_id,
                         title=title,
@@ -95,11 +96,12 @@ class AdapterAPI(APIInterface):
                     )
 
                 if isinstance(msg, str):
+
                     header = ""
                     if m.post.key_header and (title != header_title):
                         header = _header_text(title)
 
-                    if disp:
+                    if codeblock:
                         post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n")
                     else:
                         post_msg.append(f"{header}{msg.rstrip()}\n")

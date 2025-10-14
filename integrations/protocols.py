@@ -198,7 +198,15 @@ class MessageParserProtocol(Protocol):
     def ignore_user(self) -> bool:
         """コマンドを拒否するユーザか判定"""
 
-    def set_data(self, title: str, data: "MessageType", disp: bool = False, hidden: bool = False):
+    def set_data(
+        self,
+        title: str,
+        data: "MessageType",
+        codeblock: bool = False,
+        show_index: bool = False,
+        use_comment: bool = False,
+        heder_hidden: bool = False,
+    ):
         """メッセージデータをセット"""
 
     def get_score(self, keyword: str) -> dict:

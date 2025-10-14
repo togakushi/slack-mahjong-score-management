@@ -264,12 +264,12 @@ def register():
         m.set_data("成績記録DB", g.cfg.setting.database_file)
 
     def dispatch_members_list(m: "MessageParserProtocol"):
-        m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), True)
+        m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), codeblock=True)
         m.post.key_header = True
         m.post.ts = m.data.event_ts
 
     def dispatch_team_list(m: "MessageParserProtocol"):
-        m.set_data("登録済みチーム", lookup.textdata.get_team_list(), True)
+        m.set_data("登録済みチーム", lookup.textdata.get_team_list(), codeblock=True)
         m.post.key_header = True
         m.post.ts = m.data.event_ts
 

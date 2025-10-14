@@ -87,7 +87,7 @@ def point_plot(m: "MessageParserProtocol"):
 
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
-    m.set_data(file_title, save_file, True, True)
+    m.set_data(file_title, save_file, use_comment=True, heder_hidden=True)
 
 
 def rank_plot(m: "MessageParserProtocol"):
@@ -142,7 +142,7 @@ def rank_plot(m: "MessageParserProtocol"):
 
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
-    m.set_data(file_title, save_file, True, True)
+    m.set_data(file_title, save_file, use_comment=True, heder_hidden=True)
 
 
 def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
