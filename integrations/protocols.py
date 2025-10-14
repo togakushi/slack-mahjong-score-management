@@ -205,7 +205,7 @@ class MessageParserProtocol(Protocol):
         codeblock: bool = False,
         show_index: bool = False,
         use_comment: bool = False,
-        heder_hidden: bool = False,
+        header_hidden: bool = False,
     ):
         """メッセージデータをセット"""
 

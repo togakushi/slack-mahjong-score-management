@@ -47,7 +47,7 @@ class MessageTypeDict(TypedDict):
     - *True*: initial_commentを使う
     - *False*: initial_commentを使わない
     """
-    heder_hidden: bool
+    header_hidden: bool
     """ヘッダ文を非表示にする
     - *True*: 非表示
     - *False*: 表示

@@ -70,7 +70,7 @@ def plot(m: "MessageParserProtocol"):
         case "plotly":
             save_file = _graph_generation_plotly(game_info, df_sorted, "rating.html")
 
-    m.set_data("レーティング推移", save_file, use_comment=True, heder_hidden=True)
+    m.set_data("レーティング推移", save_file, use_comment=True, header_hidden=True)
 
 
 def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", filename: str) -> "Path":

@@ -65,7 +65,7 @@ class AdapterAPI(APIInterface):
         header_text = ""
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
-            if not all(v.get("heder_hidden") for x in m.post.order for _, v in x.items()):
+            if not all(v.get("header_hidden") for x in m.post.order for _, v in x.items()):
                 res = self._call_chat_post_message(
                     channel=m.data.channel_id,
                     text=f"{_header_text(header_title)}{header_text.rstrip()}",

@@ -215,7 +215,7 @@ class MessageParserDataMixin:
         codeblock: bool = False,
         show_index: bool = False,
         use_comment: bool = False,
-        heder_hidden: bool = False,
+        header_hidden: bool = False,
     ):
         """メッセージデータをセットshow_index
 
@@ -225,7 +225,7 @@ class MessageParserDataMixin:
             codeblock (bool, optional): codeblock化. Defaults to False.
             show_index (bool, optional): Indexを含める. Defaults to False.
             use_comment (bool, optional): initial_commentを使う. Defaults to False.
-            heder_hidden (bool, optional): ヘッダを表示しない. Defaults to False.
+            header_hidden (bool, optional): ヘッダを表示しない. Defaults to False.
                 - リスト内すべてのhiddenがTrueのときのみ非表示になる
         """
 
@@ -234,7 +234,7 @@ class MessageParserDataMixin:
             codeblock=codeblock,
             show_index=show_index,
             use_comment=use_comment,
-            heder_hidden=heder_hidden,
+            header_hidden=header_hidden,
         )
         self.post.order.append({title: msg})
 

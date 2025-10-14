@@ -104,6 +104,6 @@ def plot(m: "MessageParserProtocol"):
 
     match g.adapter.interface_type:
         case "slack":
-            m.set_data(title, report_file_path, use_comment=True, heder_hidden=True)
+            m.set_data(title, report_file_path, use_comment=True, header_hidden=True)
         case "web":
             m.set_data(title, df)
