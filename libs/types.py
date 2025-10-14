@@ -19,7 +19,7 @@ class TeamDataDict(TypedDict):
     member: list[str]
 
 
-MessageType: TypeAlias = Union[None, str, "Path", "pd.DataFrame", "pd.Series"]
+MessageType: TypeAlias = Union[None, str, "Path", "pd.DataFrame"]
 """メッセージ型
 - *None*: 空データ(なにもしない)
 - *str*: 文字列型データ(そのまま表示)
