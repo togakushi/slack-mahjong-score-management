@@ -33,12 +33,12 @@ class StyleOptions:
     """表示オプション"""
 
     codeblock: bool = False
-    """dataがstr型ならcodeblock化
+    """内容がstr型ならcodeblock化
     - *True*: codeblock化
     - *False*: 何もしない
     """
     show_index: bool = False
-    """dataがDataFrame型なら表にIndexに含める
+    """内容がDataFrame型なら表にIndexに含める
     - *True*: Indexを含める
     - *False*: Indexを含めない
     """
