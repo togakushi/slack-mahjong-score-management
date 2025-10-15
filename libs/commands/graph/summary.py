@@ -407,7 +407,7 @@ def _graph_title(graph_params: GraphParams):
 
     if g.params.get("target_count"):
         kind = "ymd_o"
-        graph_params.update({"xlabel_text": f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
+        graph_params.update({"xlabel_text": f"集計日（{graph_params["total_game_count"]} ゲーム）"})
         match graph_params.get("graph_type"):
             case "point":
                 graph_params.update({"title_text": f"ポイント推移 (直近 {g.params["target_count"]} ゲーム)"})
@@ -419,20 +419,20 @@ def _graph_title(graph_params: GraphParams):
         match g.params.get("collection"):
             case "daily":
                 kind = "ymd_o"
-                graph_params.update({"xlabel_text": f"集計日（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
+                graph_params.update({"xlabel_text": f"集計日（{graph_params["total_game_count"]} ゲーム）"})
             case "monthly":
                 kind = "jym_o"
-                graph_params.update({"xlabel_text": f"集計月（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
+                graph_params.update({"xlabel_text": f"集計月（{graph_params["total_game_count"]} ゲーム）"})
             case "yearly":
                 kind = "jy_o"
-                graph_params.update({"xlabel_text": f"集計年（総ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
+                graph_params.update({"xlabel_text": f"集計年（{graph_params["total_game_count"]} ゲーム）"})
             case "all":
                 kind = "ymdhm"
-                graph_params.update({"xlabel_text": f"総ゲーム数：{graph_params["total_game_count"]} ゲーム"})
+                graph_params.update({"xlabel_text": f"ゲーム数：{graph_params["total_game_count"]} ゲーム"})
             case _:
                 kind = "ymdhm"
                 if g.params.get("search_word"):
-                    graph_params.update({"xlabel_text": f"総ゲーム数：{graph_params["total_game_count"]} ゲーム"})
+                    graph_params.update({"xlabel_text": f"ゲーム数：{graph_params["total_game_count"]} ゲーム"})
                 else:
                     graph_params.update({"xlabel_text": f"ゲーム終了日時（{graph_params["total_game_count"]} ゲーム）"})
 
@@ -450,6 +450,9 @@ def _graph_title(graph_params: GraphParams):
         case "point_hbar":
             graph_params.update({
                 "ylabel_text": None,
-                "xlabel_text": f"通算ポイント（総ゲーム数：{graph_params["total_game_count"]} ゲーム）",
                 "title_text": compose.text_item.date_range(kind, "通算ポイント", "通算ポイント"),
             })
+            if graph_params["total_game_count"] == 1:
+                graph_params.update({"xlabel_text": "ポイント"})
+            else:
+                graph_params.update({"xlabel_text": f"ポイント（ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
