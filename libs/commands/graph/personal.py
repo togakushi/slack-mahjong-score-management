@@ -53,81 +53,82 @@ def plot(m: "MessageParserProtocol"):
     point_avg = f"{float(df["point_avg"].iloc[-1]):+.1f}".replace("-", "▲")
     rank_avg = f"{float(df["rank_avg"].iloc[-1]):.2f}"
 
-    m.post.headline = {f"『{player}』の成績": message.header(game_info, m)}
+    if g.params.get("target_count", 0) == 0:
+        title_text = f"『{player}』の成績 ({ExtDt(g.params["starttime"]).format("ymdhm")} - {ExtDt(g.params["endtime"]).format("ymdhm")})"
+    else:
+        title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
+
+    m.post.headline = {title_text: message.header(game_info, m)}
     m.set_data("0", formatter.df_rename(df.drop(columns=["count", "name"]), False), StyleOptions(show_index=True))
 
     # --- グラフ生成
     graphutil.setup()
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            return
+            m.set_data("通算ポイント", plotly_point("通算ポイント", df))
+            m.set_data("獲得順位", plotly_rank("獲得順位", df))
+        case "matplotlib":
+            save_file = textutil.save_file_path("graph.png")
+            fig = plt.figure(figsize=(12, 8))
 
-    save_file = textutil.save_file_path("graph.png")
-    fig = plt.figure(figsize=(12, 8))
+            grid = gridspec.GridSpec(nrows=2, ncols=1, height_ratios=[3, 1])
+            point_ax = fig.add_subplot(grid[0])
+            rank_ax = fig.add_subplot(grid[1], sharex=point_ax)
 
-    if g.params.get("target_count", 0) == 0:
-        title_text = f"『{player}』の成績 ({ExtDt(g.params["starttime"]).format("ymdhm")} - {ExtDt(g.params["endtime"]).format("ymdhm")})"
-    else:
-        title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
+            # ---
+            df.filter(items=["point_sum", "point_avg"]).plot.line(
+                ax=point_ax,
+                ylabel="ポイント(pt)",
+                marker="." if len(df) < 50 else None,
+            )
+            df.filter(items=["point"]).plot.bar(
+                ax=point_ax,
+                color="blue",
+            )
+            point_ax.legend(
+                [f"通算ポイント ({point_sum}pt)", f"平均ポイント ({point_avg}pt)", "獲得ポイント"],
+                bbox_to_anchor=(1, 1),
+                loc="upper left",
+                borderaxespad=0.5,
+            )
+            point_ax.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
 
-    grid = gridspec.GridSpec(nrows=2, ncols=1, height_ratios=[3, 1])
-    point_ax = fig.add_subplot(grid[0])
-    rank_ax = fig.add_subplot(grid[1], sharex=point_ax)
+            # Y軸修正
+            ylabs = point_ax.get_yticks()[1:-1]
+            point_ax.set_yticks(ylabs)
+            point_ax.set_yticklabels(
+                [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
+            )
 
-    # ---
-    df.filter(items=["point_sum", "point_avg"]).plot.line(
-        ax=point_ax,
-        ylabel="ポイント(pt)",
-        marker="." if len(df) < 50 else None,
-    )
-    df.filter(items=["point"]).plot.bar(
-        ax=point_ax,
-        color="blue",
-    )
-    point_ax.legend(
-        [f"通算ポイント ({point_sum}pt)", f"平均ポイント ({point_avg}pt)", "獲得ポイント"],
-        bbox_to_anchor=(1, 1),
-        loc="upper left",
-        borderaxespad=0.5,
-    )
-    point_ax.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
+            # ---
+            df.filter(items=["rank", "rank_avg"]).plot.line(
+                ax=rank_ax,
+                marker="." if len(df) < 50 else None,
+                yticks=[1, 2, 3, 4],
+                ylabel="順位",
+                xlabel=f"ゲーム終了日時（{len(df)} ゲーム）",
+            )
+            rank_ax.legend(
+                ["獲得順位", f"平均順位 ({rank_avg})"],
+                bbox_to_anchor=(1, 1),
+                loc="upper left",
+                borderaxespad=0.5,
+            )
 
-    # Y軸修正
-    ylabs = point_ax.get_yticks()[1:-1]
-    point_ax.set_yticks(ylabs)
-    point_ax.set_yticklabels(
-        [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
-    )
+            rank_ax.set_xticks(list(df.index)[::int(len(df) / 25) + 1])
+            rank_ax.set_xticklabels(
+                list(df["playtime"])[::int(len(df) / 25) + 1],
+                rotation=45,
+                ha="right"
+            )
+            rank_ax.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
+            rank_ax.invert_yaxis()
 
-    # ---
-    df.filter(items=["rank", "rank_avg"]).plot.line(
-        ax=rank_ax,
-        marker="." if len(df) < 50 else None,
-        yticks=[1, 2, 3, 4],
-        ylabel="順位",
-        xlabel=f"ゲーム終了日時（{len(df)} ゲーム）",
-    )
-    rank_ax.legend(
-        ["獲得順位", f"平均順位 ({rank_avg})"],
-        bbox_to_anchor=(1, 1),
-        loc="upper left",
-        borderaxespad=0.5,
-    )
+            fig.suptitle(title_text, fontsize=16)
+            fig.tight_layout()
+            plt.savefig(save_file, bbox_inches="tight")
 
-    rank_ax.set_xticks(list(df.index)[::int(len(df) / 25) + 1])
-    rank_ax.set_xticklabels(
-        list(df["playtime"])[::int(len(df) / 25) + 1],
-        rotation=45,
-        ha="right"
-    )
-    rank_ax.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
-    rank_ax.invert_yaxis()
-
-    fig.suptitle(title_text, fontsize=16)
-    fig.tight_layout()
-    plt.savefig(save_file, bbox_inches="tight")
-
-    m.set_data(f"『{player}』の成績", save_file, StyleOptions(use_comment=True, header_hidden=True))
+            m.set_data(f"『{player}』の成績", save_file, StyleOptions(use_comment=True, header_hidden=True))
 
 
 def statistics_plot(m: "MessageParserProtocol"):
@@ -246,8 +247,6 @@ def statistics_plot(m: "MessageParserProtocol"):
 
     # --- グラフ生成
     graphutil.setup()
-    save_file = textutil.save_file_path("graph.png")
-
     match g.adapter.conf.plotting_backend:
         case "plotly":
             m.set_data("順位/ポイント情報", count_df, StyleOptions(show_index=True))
@@ -255,7 +254,6 @@ def statistics_plot(m: "MessageParserProtocol"):
             m.set_data("順位分布", plotly_bar("順位分布", count_df.drop(index=["全区間"])))
             m.set_data("素点情報", stats_df, StyleOptions(show_index=True))
             m.set_data("素点分布", plotly_box("素点分布", rpoint_df))
-            return
         case "matplotlib":
             fig = plt.figure(figsize=(20, 10))
             fig.suptitle(title_text, size=20, weight="bold")
@@ -282,6 +280,7 @@ def statistics_plot(m: "MessageParserProtocol"):
             subplot_box(rpoint_df, ax_rpoint1)
             subplot_table(stats_df, ax_rpoint2)
 
+            save_file = textutil.save_file_path("graph.png")
             plt.savefig(save_file, bbox_inches="tight")
 
             m.set_data("個人成績", save_file, StyleOptions(use_comment=True, header_hidden=True))
@@ -458,6 +457,167 @@ def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
         loc="lower center",
         ncol=5,
     )
+
+
+def plotly_point(title_text: str, df: pd.DataFrame) -> "Path":
+    """_summary_
+
+    Args:
+        title_text (str): _description_
+        df (pd.DataFrame): _description_
+
+    Returns:
+        Path: _description_
+    """
+
+    save_file = textutil.save_file_path("point.html")
+
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+    fig.add_trace(
+        go.Scatter(
+            mode="lines+markers",
+            name="通算ポイント",
+            x=df["playtime"],
+            y=df["point_sum"],
+            zorder=2,
+        ),
+        secondary_y=False,
+    )
+    fig.add_trace(
+        go.Bar(
+            name="獲得ポイント",
+            x=df["playtime"],
+            y=df["point"],
+            marker_color=["darkgreen" if v >= 0 else "firebrick" for v in df["point"]],
+            zorder=1,
+        ),
+        secondary_y=True,
+    )
+
+    fig.update_layout(
+        barmode="overlay",
+        title={
+            "text": title_text,
+            "font": {"size": 30},
+            "xref": "paper",
+            "xanchor": "center",
+            "x": 0.5,
+        },
+        legend_title=None,
+        legend={
+            "xanchor": "right",
+            "yanchor": "top",
+            "x": 0.065,
+            "y": 0.95,
+        },
+    )
+
+    fig.update_yaxes(  # Y軸(左)
+        title={
+            "text": "ポイント(pt)",
+            "font": {"size": 18, "color": "white"},
+        },
+        secondary_y=False,
+    )
+    fig.update_yaxes(  # Y軸(右)
+        title=None,
+        matches="y",
+        zeroline=False,
+        showgrid=False,
+        tickvals=[],
+        secondary_y=True,
+    )
+
+    fig.write_html(save_file, full_html=False)
+    return save_file
+
+
+def plotly_rank(title_text: str, df: pd.DataFrame) -> "Path":
+    """_summary_
+
+    Args:
+        title_text (str): _description_
+        df (pd.DataFrame): _description_
+
+    Returns:
+        Path: _description_
+    """
+
+    save_file = textutil.save_file_path("rank.html")
+
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(
+        go.Scatter(
+            mode="lines+markers",
+            name="獲得順位",
+            x=df["playtime"],
+            y=df["rank"],
+        ),
+        secondary_y=False,
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            mode="lines+markers",
+            name="平均順位",
+            line={
+                "width": 5,
+            },
+            x=df["playtime"],
+            y=df["rank_avg"],
+        ),
+        secondary_y=True,
+    )
+
+    fig.update_layout(
+        title={
+            "text": title_text,
+            "font": {"size": 30},
+            "xref": "paper",
+            "xanchor": "center",
+            "x": 0.5,
+        },
+        legend_title=None,
+        legend={
+            "xanchor": "right",
+            "yanchor": "top",
+            "x": 0.05,
+            "y": 0.95,
+        },
+    )
+
+    fig.update_yaxes(  # Y軸(左)
+        title={
+            "text": "順位",
+            "font": {"size": 18, "color": "white"},
+        },
+        secondary_y=False,
+        range=[4.2, 0.8],
+        tickvals=[4, 3, 2, 1],
+        zeroline=False,
+    )
+
+    fig.update_yaxes(  # Y軸(右)
+        title=None,
+        secondary_y=True,
+        range=[4.2, 0.8],
+        zeroline=False,
+        showgrid=False,
+        tickvals=[],
+    )
+
+    fig.add_hline(
+        y=2.5,
+        line_dash="dot",
+        line_color="white",
+        line_width=2,
+        layer="below",
+        secondary_y=False,
+    )
+
+    fig.write_html(save_file, full_html=False)
+    return save_file
 
 
 def plotly_line(title_text: str, df: pd.Series) -> "Path":
