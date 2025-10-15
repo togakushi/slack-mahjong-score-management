@@ -177,7 +177,7 @@
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="n">member</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="n">MessageType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Path&quot;</span><span class="p">,</span> <span class="s2">&quot;pd.DataFrame&quot;</span><span class="p">,</span> <span class="s2">&quot;pd.Series&quot;</span><span class="p">]</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="n">MessageType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Path&quot;</span><span class="p">,</span> <span class="s2">&quot;pd.DataFrame&quot;</span><span class="p">]</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">&quot;&quot;&quot;メッセージ型</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">- *None*: 空データ(なにもしない)</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">- *str*: 文字列型データ(そのまま表示)</span>
@@ -191,12 +191,12 @@
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;dataがstr型ならcodeblock化</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容がstr型ならcodeblock化</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    - *True*: codeblock化</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    - *False*: 何もしない</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="n">show_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;dataがDataFrame型なら表にIndexに含める</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容がDataFrame型なら表にIndexに含める</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">    - *True*: Indexを含める</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    - *False*: Indexを含めない</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -322,7 +322,7 @@
                 <section id="MessageType">
                     <div class="attr variable">
             <span class="name">MessageType</span><span class="annotation">: TypeAlias</span>        =
-<span class="default_value">Union[NoneType, str, ForwardRef(&#39;Path&#39;), ForwardRef(&#39;pd.DataFrame&#39;), ForwardRef(&#39;pd.Series&#39;)]</span>
+<span class="default_value">Union[NoneType, str, ForwardRef(&#39;Path&#39;), ForwardRef(&#39;pd.DataFrame&#39;)]</span>
 
         
     </div>
@@ -357,12 +357,12 @@
 </span><span id="StyleOptions-34"><a href="#StyleOptions-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
 </span><span id="StyleOptions-35"><a href="#StyleOptions-35"><span class="linenos">35</span></a>
 </span><span id="StyleOptions-36"><a href="#StyleOptions-36"><span class="linenos">36</span></a>    <span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="StyleOptions-37"><a href="#StyleOptions-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;dataがstr型ならcodeblock化</span>
+</span><span id="StyleOptions-37"><a href="#StyleOptions-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容がstr型ならcodeblock化</span>
 </span><span id="StyleOptions-38"><a href="#StyleOptions-38"><span class="linenos">38</span></a><span class="sd">    - *True*: codeblock化</span>
 </span><span id="StyleOptions-39"><a href="#StyleOptions-39"><span class="linenos">39</span></a><span class="sd">    - *False*: 何もしない</span>
 </span><span id="StyleOptions-40"><a href="#StyleOptions-40"><span class="linenos">40</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="StyleOptions-41"><a href="#StyleOptions-41"><span class="linenos">41</span></a>    <span class="n">show_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="StyleOptions-42"><a href="#StyleOptions-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;dataがDataFrame型なら表にIndexに含める</span>
+</span><span id="StyleOptions-42"><a href="#StyleOptions-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容がDataFrame型なら表にIndexに含める</span>
 </span><span id="StyleOptions-43"><a href="#StyleOptions-43"><span class="linenos">43</span></a><span class="sd">    - *True*: Indexを含める</span>
 </span><span id="StyleOptions-44"><a href="#StyleOptions-44"><span class="linenos">44</span></a><span class="sd">    - *False*: Indexを含めない</span>
 </span><span id="StyleOptions-45"><a href="#StyleOptions-45"><span class="linenos">45</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -404,7 +404,7 @@
     </div>
     <a class="headerlink" href="#StyleOptions.codeblock"></a>
     
-            <div class="docstring"><p>dataがstr型ならcodeblock化</p>
+            <div class="docstring"><p>内容がstr型ならcodeblock化</p>
 
 <ul>
 <li><em>True</em>: codeblock化</li>
@@ -423,7 +423,7 @@
     </div>
     <a class="headerlink" href="#StyleOptions.show_index"></a>
     
-            <div class="docstring"><p>dataがDataFrame型なら表にIndexに含める</p>
+            <div class="docstring"><p>内容がDataFrame型なら表にIndexに含める</p>
 
 <ul>
 <li><em>True</em>: Indexを含める</li>
@@ -499,7 +499,7 @@
 
                             <div id="MessageTypeDict.data" class="classattr">
                                 <div class="attr variable">
-            <span class="name">data</span><span class="annotation">: Union[NoneType, str, pathlib.Path, pandas.core.frame.DataFrame, pandas.core.series.Series]</span>
+            <span class="name">data</span><span class="annotation">: Union[NoneType, str, pathlib.Path, pandas.core.frame.DataFrame]</span>
 
         
     </div>
