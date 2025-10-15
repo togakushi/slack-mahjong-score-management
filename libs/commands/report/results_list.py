@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Union
 import matplotlib.pyplot as plt
 
 import libs.global_value as g
-from cls.score import GameInfo
 from libs.data import loader
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.types import StyleOptions
 from libs.utils import formatter, graphutil, textutil

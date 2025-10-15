@@ -9,8 +9,8 @@ import numpy as np
 import pandas as pd
 
 import libs.global_value as g
-from cls.score import GameInfo
 from libs.data import aggregate, loader, lookup
+from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.utils import formatter, textutil
 

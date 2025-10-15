@@ -14,8 +14,8 @@ from libs.data import loader
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
-    from cls.score import GameInfo
     from cls.timekit import ExtendedDatetime
+    from libs.datamodels import GameInfo
     from libs.types import TeamDataDict
 
 

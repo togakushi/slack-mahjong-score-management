@@ -8,7 +8,7 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 
 if TYPE_CHECKING:
-    from cls.score import GameInfo
+    from libs.datamodels import GameInfo
 
 
 def remarks(headword=False) -> str | list:
