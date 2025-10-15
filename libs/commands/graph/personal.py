@@ -65,8 +65,8 @@ def plot(m: "MessageParserProtocol"):
     graphutil.setup()
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            m.set_data("通算ポイント", plotly_point("通算ポイント", df))
-            m.set_data("獲得順位", plotly_rank("獲得順位", df))
+            m.set_data("通算ポイント", plotly_point(df))
+            m.set_data("獲得順位", plotly_rank(df))
         case "matplotlib":
             save_file = textutil.save_file_path("graph.png")
             fig = plt.figure(figsize=(12, 8))
@@ -459,152 +459,113 @@ def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
     )
 
 
-def plotly_point(title_text: str, df: pd.DataFrame) -> "Path":
-    """_summary_
+def plotly_point(df: pd.DataFrame) -> "Path":
+    """獲得ポイントグラフ(plotly用)
 
     Args:
-        title_text (str): _description_
-        df (pd.DataFrame): _description_
+        df (pd.DataFrame): プロットするデータ
 
     Returns:
-        Path: _description_
+        Path: 保存先ファイルパス
     """
 
     save_file = textutil.save_file_path("point.html")
 
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
-
+    fig = go.Figure()
     fig.add_trace(
         go.Scatter(
-            mode="lines+markers",
             name="通算ポイント",
+            zorder=2,
+            mode="lines",
             x=df["playtime"],
             y=df["point_sum"],
-            zorder=2,
         ),
-        secondary_y=False,
     )
     fig.add_trace(
         go.Bar(
             name="獲得ポイント",
+            zorder=1,
             x=df["playtime"],
             y=df["point"],
             marker_color=["darkgreen" if v >= 0 else "firebrick" for v in df["point"]],
-            zorder=1,
         ),
-        secondary_y=True,
     )
 
     fig.update_layout(
         barmode="overlay",
         title={
-            "text": title_text,
+            "text": "通算ポイント",
             "font": {"size": 30},
             "xref": "paper",
             "xanchor": "center",
             "x": 0.5,
         },
         legend_title=None,
-        legend={
-            "xanchor": "right",
-            "yanchor": "top",
-            "x": 0.065,
-            "y": 0.95,
-        },
     )
 
-    fig.update_yaxes(  # Y軸(左)
+    fig.update_yaxes(
         title={
             "text": "ポイント(pt)",
             "font": {"size": 18, "color": "white"},
         },
-        secondary_y=False,
-    )
-    fig.update_yaxes(  # Y軸(右)
-        title=None,
-        matches="y",
-        zeroline=False,
-        showgrid=False,
-        tickvals=[],
-        secondary_y=True,
     )
 
     fig.write_html(save_file, full_html=False)
     return save_file
 
 
-def plotly_rank(title_text: str, df: pd.DataFrame) -> "Path":
-    """_summary_
+def plotly_rank(df: pd.DataFrame) -> "Path":
+    """獲得順位グラフ(plotly用)
 
     Args:
-        title_text (str): _description_
-        df (pd.DataFrame): _description_
+        df (pd.DataFrame): プロットするデータ
 
     Returns:
-        Path: _description_
+        Path: 保存先ファイルパス
     """
 
     save_file = textutil.save_file_path("rank.html")
 
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig = go.Figure()
     fig.add_trace(
         go.Scatter(
-            mode="lines+markers",
             name="獲得順位",
+            zorder=1,
+            mode="lines",
             x=df["playtime"],
             y=df["rank"],
         ),
-        secondary_y=False,
     )
-
     fig.add_trace(
         go.Scatter(
-            mode="lines+markers",
             name="平均順位",
-            line={
-                "width": 5,
-            },
+            zorder=2,
+            mode="lines",
             x=df["playtime"],
             y=df["rank_avg"],
+            line={"width": 5},
         ),
-        secondary_y=True,
     )
 
     fig.update_layout(
         title={
-            "text": title_text,
+            "text": "獲得順位",
             "font": {"size": 30},
             "xref": "paper",
             "xanchor": "center",
             "x": 0.5,
         },
         legend_title=None,
-        legend={
-            "xanchor": "right",
-            "yanchor": "top",
-            "x": 0.05,
-            "y": 0.95,
-        },
     )
 
-    fig.update_yaxes(  # Y軸(左)
+    fig.update_yaxes(
         title={
             "text": "順位",
             "font": {"size": 18, "color": "white"},
         },
-        secondary_y=False,
         range=[4.2, 0.8],
         tickvals=[4, 3, 2, 1],
         zeroline=False,
-    )
-
-    fig.update_yaxes(  # Y軸(右)
-        title=None,
-        secondary_y=True,
-        range=[4.2, 0.8],
-        zeroline=False,
-        showgrid=False,
-        tickvals=[],
     )
 
     fig.add_hline(
@@ -613,7 +574,6 @@ def plotly_rank(title_text: str, df: pd.DataFrame) -> "Path":
         line_color="white",
         line_width=2,
         layer="below",
-        secondary_y=False,
     )
 
     fig.write_html(save_file, full_html=False)
