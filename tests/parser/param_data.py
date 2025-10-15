@@ -16,9 +16,10 @@ flag_test_case_01: dict[str, tuple[Any, ...]] = {
     "individual": ("個人", {"individual": True}),
     "team": ("チーム", {"individual": False}),
     # --- 上書きチェック
-    "individual (over ride)": ("チーム 個人", {"individual": True}),
-    "team (over ride)": ("個人 チーム", {"individual": False}),
-    "mixed over ride": ("横断 ルールxxx", {"mixed": False, "rule_version": "xxx"}),
+    "over ride (team > individual)": ("チーム 個人", {"individual": True}),
+    "over ride (individual > team)": ("個人 チーム", {"individual": False}),
+    "over ride (rule_version > mixed)": ("ルールzzz mixed", {"mixed": True, "rule_version": "zzz"}),
+    "over ride (mixed > rule_version)": ("横断 ルールxxx", {"mixed": False, "rule_version": "xxx"}),
 }
 
 # 数値引数
@@ -47,8 +48,8 @@ flag_test_case_03: dict[str, tuple[Any, ...]] = {
     "filename (half)": ("filename:hoge", {"filename": "hoge"}),
     "filename (empty)": ("ファイル名", {}),
     "filename (invalid)": ("filename:***", {}),
-    "rule version (full)": ("ルール９９９", {"rule_version": "９９９"}),
-    "rule version (half)": ("ルール0", {"rule_version": "0"}),
+    "rule version (full)": ("ルール９９９", {"rule_version": "９９９", "mixed": False}),
+    "rule version (half)": ("ルール0", {"rule_version": "0", "mixed": False}),
     "comment (hira)": ("コメントひらがな", {"search_word": "%ひらがな%"}),
     "comment (kata)": ("こめんとかたかな", {"search_word": "%カタカナ%"}),
     "comment (num)": ("コメント数字９９９", {"search_word": "%数字９９９%"}),
@@ -130,6 +131,7 @@ command_test_case_01: dict[str, tuple[Any, ...]] = {
     "friendly fire": ("チーム同卓あり コンビあり 同士討ち チーム同卓なし コンビなし", "", {}, {}),
     "guest": ("ゲストあり ゲストなし ゲスト無効", "", {}, {}),
     "anonymous": ("匿名 anonymous", "", {}, {}),
+    "mixed": ("横断 mix mixed", "", {}, {}),
 }
 
 # 検索日付範囲
