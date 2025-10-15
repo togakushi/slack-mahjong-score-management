@@ -18,6 +18,7 @@ flag_test_case_01: dict[str, tuple[Any, ...]] = {
     # --- 上書きチェック
     "individual (over ride)": ("チーム 個人", {"individual": True}),
     "team (over ride)": ("個人 チーム", {"individual": False}),
+    "mixed over ride": ("横断 ルールxxx", {"mixed": False, "rule_version": "xxx"}),
 }
 
 # 数値引数

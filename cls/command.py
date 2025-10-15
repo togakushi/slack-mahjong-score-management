@@ -131,7 +131,7 @@ COMMANDS: CommandsDict = {
     },
     "rule_version": {
         "match": [r"^(ルール|rule)(.*)$"],
-        "action": lambda w: {"rule_version": w},
+        "action": lambda w: {"rule_version": w, "mixed": False},
         "type": "str",
     },
     "most_recent": {
@@ -258,7 +258,25 @@ class CommandParser:
         Returns:
             dict: 更新用辞書
         """
+
         ret: dict = {}
+
+        def with_arguments(tmp: dict):
+            key = next(iter(tmp.keys()))
+            val = str(tmp[key][1])
+            if "" != val:
+                match cmd.get("type"):
+                    case "str":
+                        ret.update({key: val})
+                    case "sql":
+                        ret.update({key: f"%{val}%"})
+                    case "filename":
+                        if re.search(r"^[\w\-\.]+$", val):
+                            ret.update({key: val})
+                    case "int":
+                        ret.update({key: int(val)})
+                    case _:
+                        ret.update({key: int(val) if val.isdigit() else val})
 
         match len(m.groups()):
             case 0:  # 完全一致: ^command$
@@ -268,20 +286,10 @@ class CommandParser:
             case 2:  # 引数あり: ^(command)(\d*)$
                 tmp = cmd["action"](m.groups())
                 if isinstance(tmp, dict):
-                    key = next(iter(tmp.keys()))
-                    val = str(tmp[key][1])
-                    if "" != val:
-                        match cmd.get("type"):
-                            case "str":
-                                ret.update({key: val})
-                            case "sql":
-                                ret.update({key: f"%{val}%"})
-                            case "filename":
-                                if re.search(r"^[\w\-\.]+$", val):
-                                    ret.update({key: val})
-                            case "int":
-                                ret.update({key: int(val)})
-                            case _:
-                                ret.update({key: int(val) if val.isdigit() else val})
+                    for k, v in tmp.items():
+                        if isinstance(v, tuple):  # 引数取り出し&セット
+                            with_arguments(tmp)
+                        if isinstance(v, bool):  # フラグ上書き
+                            ret.update({k: v})
 
         return ret
