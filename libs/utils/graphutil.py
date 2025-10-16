@@ -45,3 +45,57 @@ def setup():
         plt.rcParams["grid.alpha"] = 0.3
         plt.rcParams["grid.linestyle"] = "--"
     plt.rcParams["axes.axisbelow"] = True
+
+
+def gen_xlabel(game_count: int) -> str:
+    """X軸ラベル生成
+
+    Args:
+        game_count (int): ゲーム数
+
+    Returns:
+        str: X軸ラベル
+    """
+
+    if g.params.get("target_count"):
+        xlabel = f"直近 {game_count} ゲーム"
+    else:
+        xlabel = f"集計日（{game_count} ゲーム）"
+        match g.params.get("collection"):
+            case "daily":
+                xlabel = f"集計日（{game_count} ゲーム）"
+            case "monthly":
+                xlabel = f"集計月（{game_count} ゲーム）"
+            case "yearly":
+                xlabel = f"集計年（{game_count} ゲーム）"
+            case "all":
+                xlabel = f"ゲーム数：{game_count} ゲーム"
+            case _:
+                if g.params.get("search_word"):
+                    xlabel = f"ゲーム数：{game_count} ゲーム"
+                else:
+                    xlabel = f"ゲーム終了日時（{game_count} ゲーム）"
+
+    return xlabel
+
+
+def x_rotation(n: int) -> int:
+    """X軸目盛の傾き
+
+    Args:
+        n (int): X軸のデータ数
+
+    Returns:
+        int: 傾き
+    """
+
+    thresholds = [
+        (3, 0),
+        (15, 30),
+        (40, 45),
+        (float("inf"), -90),
+    ]
+
+    for limit, angle in thresholds:
+        if n <= limit:
+            return angle
