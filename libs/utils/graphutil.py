@@ -98,4 +98,6 @@ def x_rotation(n: int) -> int:
 
     for limit, angle in thresholds:
         if n <= limit:
-            return angle
+            break
+
+    return angle
