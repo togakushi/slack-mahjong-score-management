@@ -53,34 +53,33 @@ def plot(m: "MessageParserProtocol"):
     point_avg = f"{float(df["point_avg"].iloc[-1]):+.1f}".replace("-", "▲")
     rank_avg = f"{float(df["rank_avg"].iloc[-1]):.2f}"
 
+    title_text = f"『{player}』の成績"
     if g.params.get("target_count", 0) == 0:
-        title_text = f"『{player}』の成績 ({ExtDt(g.params["starttime"]).format("ymdhm")} - {ExtDt(g.params["endtime"]).format("ymdhm")})"
+        title_range = f"({ExtDt(g.params["starttime"]).format("ymdhm")} - {ExtDt(g.params["endtime"]).format("ymdhm")})"
     else:
-        title_text = f"『{player}』の成績 (直近 {len(df)} ゲーム)"
+        title_range = f"(直近 {len(df)} ゲーム)"
 
     m.post.headline = {title_text: message.header(game_info, m)}
-    m.set_data("0", formatter.df_rename(df.drop(columns=["count", "name"]), False), StyleOptions(show_index=True))
+    m.set_data("", formatter.df_rename(df.drop(columns=["count", "name"]), False), StyleOptions(show_index=True, header_hidden=True))
 
     # --- グラフ生成
     graphutil.setup()
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            m.set_data("通算ポイント", plotly_point(df))
-            m.set_data("獲得順位", plotly_rank(df))
+            m.set_data("通算ポイント", plotly_point(df, title_range))
+            m.set_data("獲得順位", plotly_rank(df, title_range))
         case "matplotlib":
             save_file = textutil.save_file_path("graph.png")
             fig = plt.figure(figsize=(12, 8))
+            fig.suptitle(f"{title_text} {title_range}", fontsize=16)
 
             grid = gridspec.GridSpec(nrows=2, ncols=1, height_ratios=[3, 1])
             point_ax = fig.add_subplot(grid[0])
             rank_ax = fig.add_subplot(grid[1], sharex=point_ax)
 
-            # ---
-            df.filter(items=["point_sum", "point_avg"]).plot.line(
-                ax=point_ax,
-                ylabel="ポイント(pt)",
-                marker="." if len(df) < 50 else None,
-            )
+            # ポイント推移
+            point_ax.plot(df["playtime"], df["point_sum"], marker="." if len(df) < 50 else None)
+            point_ax.plot(df["playtime"], df["point_avg"], marker="." if len(df) < 50 else None)
             df.filter(items=["point"]).plot.bar(
                 ax=point_ax,
                 color="blue",
@@ -93,21 +92,16 @@ def plot(m: "MessageParserProtocol"):
             )
             point_ax.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
 
-            # Y軸修正
             ylabs = point_ax.get_yticks()[1:-1]
             point_ax.set_yticks(ylabs)
             point_ax.set_yticklabels(
                 [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
             )
 
-            # ---
-            df.filter(items=["rank", "rank_avg"]).plot.line(
-                ax=rank_ax,
-                marker="." if len(df) < 50 else None,
-                yticks=[1, 2, 3, 4],
-                ylabel="順位",
-                xlabel=f"ゲーム終了日時（{len(df)} ゲーム）",
-            )
+            # 獲得順位
+            rank_ax.plot(df["playtime"], df["rank"], marker="." if len(df) < 50 else None)
+            rank_ax.plot(df["playtime"], df["rank_avg"], marker="." if len(df) < 50 else None)
+            rank_ax.set_xlabel(f"ゲーム終了日時（{len(df)} ゲーム）")
             rank_ax.legend(
                 ["獲得順位", f"平均順位 ({rank_avg})"],
                 bbox_to_anchor=(1, 1),
@@ -124,7 +118,6 @@ def plot(m: "MessageParserProtocol"):
             rank_ax.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
             rank_ax.invert_yaxis()
 
-            fig.suptitle(title_text, fontsize=16)
             fig.tight_layout()
             plt.savefig(save_file, bbox_inches="tight")
 
@@ -459,11 +452,12 @@ def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
     )
 
 
-def plotly_point(df: pd.DataFrame) -> "Path":
+def plotly_point(df: pd.DataFrame, title_range: str) -> "Path":
     """獲得ポイントグラフ(plotly用)
 
     Args:
         df (pd.DataFrame): プロットするデータ
+        title_range (str): 集計範囲(タイトル用)
 
     Returns:
         Path: 保存先ファイルパス
@@ -494,11 +488,15 @@ def plotly_point(df: pd.DataFrame) -> "Path":
     fig.update_layout(
         barmode="overlay",
         title={
-            "text": "通算ポイント",
+            "text": f"通算ポイント {title_range}",
             "font": {"size": 30},
             "xref": "paper",
             "xanchor": "center",
             "x": 0.5,
+        },
+        xaxis_title={
+            "text": f"ゲーム終了日時（{len(df)} ゲーム）",
+            "font": {"size": 18},
         },
         legend_title=None,
     )
@@ -514,11 +512,12 @@ def plotly_point(df: pd.DataFrame) -> "Path":
     return save_file
 
 
-def plotly_rank(df: pd.DataFrame) -> "Path":
+def plotly_rank(df: pd.DataFrame, title_range: str) -> "Path":
     """獲得順位グラフ(plotly用)
 
     Args:
         df (pd.DataFrame): プロットするデータ
+        title_range (str): 集計範囲(タイトル用)
 
     Returns:
         Path: 保存先ファイルパス
@@ -549,11 +548,15 @@ def plotly_rank(df: pd.DataFrame) -> "Path":
 
     fig.update_layout(
         title={
-            "text": "獲得順位",
+            "text": f"獲得順位 {title_range}",
             "font": {"size": 30},
             "xref": "paper",
             "xanchor": "center",
             "x": 0.5,
+        },
+        xaxis_title={
+            "text": f"ゲーム終了日時（{len(df)} ゲーム）",
+            "font": {"size": 18},
         },
         legend_title=None,
     )
