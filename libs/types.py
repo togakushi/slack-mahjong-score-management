@@ -52,6 +52,11 @@ class StyleOptions:
     - *True*: 非表示
     - *False*: 表示
     """
+    key_title: bool = True
+    """小見出しに辞書のキーを使う
+    - *True*: 表示
+    - *False*: 非表示
+    """
 
 
 class MessageTypeDict(TypedDict):

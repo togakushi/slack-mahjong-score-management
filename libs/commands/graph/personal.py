@@ -121,7 +121,10 @@ def plot(m: "MessageParserProtocol"):
             fig.tight_layout()
             plt.savefig(save_file, bbox_inches="tight")
 
-            m.set_data(f"『{player}』の成績", save_file, StyleOptions(use_comment=True, header_hidden=True))
+            m.set_data(
+                f"『{player}』の成績", save_file,
+                StyleOptions(use_comment=True, header_hidden=True, key_title=False)
+            )
 
 
 def statistics_plot(m: "MessageParserProtocol"):

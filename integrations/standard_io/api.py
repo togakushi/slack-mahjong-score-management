@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 from integrations.base.interface import APIInterface
+from libs.types import StyleOptions
 from libs.utils import formatter
 
 if TYPE_CHECKING:
@@ -58,14 +59,13 @@ class AdapterAPI(APIInterface):
         # 本文
         for data in m.post.order:
             for title, msg in data.items():
-
+                if msg.get("options", StyleOptions()).key_title and title:
+                    print(f"【{title}】")
                 match msg.get("data"):
                     case x if isinstance(x, str):
-                        print(f"【{title}】")
                         print(self._text_formatter(x))
                     case x if isinstance(x, pd.DataFrame):
                         show_index = msg["options"].show_index
-                        print(f"【{title}】")
                         fmt = formatter.floatfmt_adjust(x, index=show_index)
                         disp = x.to_markdown(index=show_index, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
                         if title == "座席データ":
