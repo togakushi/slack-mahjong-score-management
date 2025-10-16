@@ -104,17 +104,17 @@ def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", inden
             case "results":
                 if g.params.get("target_count"):  # 直近指定がない場合は検索範囲を付ける
                     msg += game_range1
-                    msg += f"集計対象ゲーム数：{game_info.count} {add_text}\n"
+                    msg += f"集計対象：{game_info.count} ゲーム {add_text}\n"
                 else:
                     msg += f"検索範囲：{str(compose.text_item.search_range(time_pattern="time"))}\n"
                     msg += game_range1
-                    msg += f"集計対象ゲーム数：{game_info.count} {add_text}\n"
+                    msg += f"集計対象：{game_info.count} ゲーム {add_text}\n"
             case "ranking" | "report":
                 msg += game_range2
-                msg += f"集計対象ゲーム数：{game_info.count}\n"
+                msg += f"集計対象：{game_info.count} ゲーム\n"
             case _:
                 msg += game_range2
-                msg += f"集計対象ゲーム数：{game_info.count}\n"
+                msg += f"集計対象：{game_info.count} ゲーム\n"
 
         if (remarks_text := compose.text_item.remarks(True)):
             msg += f"{remarks_text}\n"
