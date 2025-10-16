@@ -2,6 +2,7 @@
 libs/datamodels.py
 """
 
+import logging
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -24,6 +25,10 @@ class GameInfo:
     """集計範囲の最初のゲームコメント"""
     last_comment: Optional[str] = field(default=None)
     """集計範囲の最後のゲームコメント"""
+    unique_name: int = field(default=0)
+    """集計範囲のユニークプレイヤー数"""
+    unique_team: int = field(default=0)
+    """集計範囲のユニークチーム数"""
 
     def __post_init__(self):
         self.get()
@@ -42,6 +47,8 @@ class GameInfo:
         # データ収集
         df = loader.read_data("GAME_INFO")
         self.count = int(df["count"].to_string(index=False))
+        self.unique_name = int(df["unique_name"].to_string(index=False))
+        self.unique_team = int(df["unique_team"].to_string(index=False))
 
         if self.count >= 1:
             # プレイ時間
@@ -67,6 +74,8 @@ class GameInfo:
                     g.params["stipulated"] = g.cfg.ranking.stipulated_calculation(self.count)
                 case "report":
                     g.params["stipulated"] = g.cfg.report.stipulated_calculation(self.count)
+
+        logging.debug(self)
 
     def clear(self):
         """情報削除"""
