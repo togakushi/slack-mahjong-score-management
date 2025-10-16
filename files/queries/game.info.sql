@@ -9,8 +9,8 @@ select
 from (
     select
         count(distinct game_info.playtime) as game_count,
-        first_value(game_info.playtime) over(order by game_info.playtime asc) as first_game,
-        last_value(game_info.playtime) over(order by game_info.playtime asc) as last_game,
+        min(game_info.playtime) as first_game,
+        max(game_info.playtime) as last_game,
         first_value(game_info.comment) over(order by game_info.playtime asc) as first_comment,
         last_value(game_info.comment) over(order by game_info.playtime asc) as last_comment,
         count(distinct individual_results.name) as unique_name,
@@ -26,5 +26,5 @@ from (
         --[friendly_fire] and same_team = 0
         --[search_word] and game_info.comment like :search_word
     order by
-        game_info.playtime desc
+        game_info.playtime asc
 );
