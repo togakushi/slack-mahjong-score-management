@@ -211,11 +211,11 @@ def setup():
 
     if g.args.debug:
         if g.args.verbose:
-            logging.info("DEBUG MODE(verbose)")
             logging.basicConfig(level=logging.TRACE, format=fmt)  # type: ignore
+            logging.info("DEBUG MODE(verbose)")
         else:
-            logging.info("DEBUG MODE")
             logging.basicConfig(level=logging.DEBUG, format=fmt)
+            logging.info("DEBUG MODE")
     else:
         if g.args.moderate:
             logging.basicConfig(level=logging.WARNING, format=fmt)
