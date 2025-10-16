@@ -268,11 +268,12 @@ def _graph_generation(graph_params: GraphParams) -> "Path":
         )
 
         # X軸修正
+        rotation = graphutil.x_rotation(len(df))
         plt.xticks(
             list(range(len(df)))[::int(len(df) / 25) + 1],
             list(df.index)[::int(len(df) / 25) + 1],
-            rotation=45,
-            ha="right",
+            rotation=rotation,
+            ha="right" if rotation > 0 else "center",
         )
 
         # Y軸修正

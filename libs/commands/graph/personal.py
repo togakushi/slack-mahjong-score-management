@@ -36,7 +36,6 @@ def plot(m: "MessageParserProtocol"):
     game_info = GameInfo()
     g.params.update(guest_skip=g.params.get("guest_skip2"))
     df = loader.read_data("SUMMARY_GAMEDATA")
-    df.index = df.index + 1
 
     if df.empty:
         m.post.headline = {"0": message.random_reply(m, "no_hits")}
@@ -48,10 +47,11 @@ def plot(m: "MessageParserProtocol"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         player = next(iter(mapping_dict.values()))
 
-    # 最終値（凡例追加用）
+    # 最終値（凡例/ラベル追加用）
     point_sum = f"{float(df["point_sum"].iloc[-1]):+.1f}".replace("-", "▲")
     point_avg = f"{float(df["point_avg"].iloc[-1]):+.1f}".replace("-", "▲")
     rank_avg = f"{float(df["rank_avg"].iloc[-1]):.2f}"
+    total_game_count = int(df["count"].iloc[-1])
 
     title_text = f"『{player}』の成績"
     if g.params.get("target_count", 0) == 0:
@@ -60,14 +60,14 @@ def plot(m: "MessageParserProtocol"):
         title_range = f"(直近 {len(df)} ゲーム)"
 
     m.post.headline = {title_text: message.header(game_info, m)}
-    m.set_data("", formatter.df_rename(df.drop(columns=["count", "name"]), False), StyleOptions(show_index=True, header_hidden=True))
+    m.set_data("", formatter.df_rename(df.drop(columns=["count", "name"]), False), StyleOptions(header_hidden=True))
 
     # --- グラフ生成
     graphutil.setup()
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            m.set_data("通算ポイント", plotly_point(df, title_range))
-            m.set_data("獲得順位", plotly_rank(df, title_range))
+            m.set_data("通算ポイント", plotly_point(df, title_range, total_game_count))
+            m.set_data("獲得順位", plotly_rank(df, title_range, total_game_count))
         case "matplotlib":
             save_file = textutil.save_file_path("graph.png")
             fig = plt.figure(figsize=(12, 8))
@@ -101,7 +101,8 @@ def plot(m: "MessageParserProtocol"):
             # 獲得順位
             rank_ax.plot(df["playtime"], df["rank"], marker="." if len(df) < 50 else None)
             rank_ax.plot(df["playtime"], df["rank_avg"], marker="." if len(df) < 50 else None)
-            rank_ax.set_xlabel(f"ゲーム終了日時（{len(df)} ゲーム）")
+            rank_ax.set_xlabel(graphutil.gen_xlabel(total_game_count))
+            rank_ax.set_ylim(ymin=0.85, ymax=4.15)
             rank_ax.legend(
                 ["獲得順位", f"平均順位 ({rank_avg})"],
                 bbox_to_anchor=(1, 1),
@@ -109,11 +110,12 @@ def plot(m: "MessageParserProtocol"):
                 borderaxespad=0.5,
             )
 
+            rotation = graphutil.x_rotation(len(df))
             rank_ax.set_xticks(list(df.index)[::int(len(df) / 25) + 1])
             rank_ax.set_xticklabels(
                 list(df["playtime"])[::int(len(df) / 25) + 1],
-                rotation=45,
-                ha="right"
+                rotation=rotation,
+                ha="right" if rotation > 0 else "center",
             )
             rank_ax.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
             rank_ax.invert_yaxis()
@@ -455,12 +457,13 @@ def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
     )
 
 
-def plotly_point(df: pd.DataFrame, title_range: str) -> "Path":
+def plotly_point(df: pd.DataFrame, title_range: str, total_game_count: int) -> "Path":
     """獲得ポイントグラフ(plotly用)
 
     Args:
         df (pd.DataFrame): プロットするデータ
         title_range (str): 集計範囲(タイトル用)
+        total_game_count (int): ゲーム数
 
     Returns:
         Path: 保存先ファイルパス
@@ -498,7 +501,7 @@ def plotly_point(df: pd.DataFrame, title_range: str) -> "Path":
             "x": 0.5,
         },
         xaxis_title={
-            "text": f"ゲーム終了日時（{len(df)} ゲーム）",
+            "text": graphutil.gen_xlabel(total_game_count),
             "font": {"size": 18},
         },
         legend_title=None,
@@ -515,12 +518,13 @@ def plotly_point(df: pd.DataFrame, title_range: str) -> "Path":
     return save_file
 
 
-def plotly_rank(df: pd.DataFrame, title_range: str) -> "Path":
+def plotly_rank(df: pd.DataFrame, title_range: str, total_game_count: int) -> "Path":
     """獲得順位グラフ(plotly用)
 
     Args:
         df (pd.DataFrame): プロットするデータ
         title_range (str): 集計範囲(タイトル用)
+        total_game_count (int): ゲーム数
 
     Returns:
         Path: 保存先ファイルパス
@@ -558,7 +562,7 @@ def plotly_rank(df: pd.DataFrame, title_range: str) -> "Path":
             "x": 0.5,
         },
         xaxis_title={
-            "text": f"ゲーム終了日時（{len(df)} ゲーム）",
+            "text": graphutil.gen_xlabel(total_game_count),
             "font": {"size": 18},
         },
         legend_title=None,
