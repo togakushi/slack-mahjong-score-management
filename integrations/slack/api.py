@@ -83,6 +83,7 @@ class AdapterAPI(APIInterface):
                 msg = v.get("data")
                 codeblock = v["options"].codeblock
                 use_comment = v["options"].use_comment
+                key_title = v["options"].key_title
                 header = ""
 
                 if isinstance(msg, PosixPath) and msg.exists():
@@ -97,7 +98,7 @@ class AdapterAPI(APIInterface):
                     )
 
                 if isinstance(msg, str):
-                    if m.post.key_header and (title != header_title):
+                    if key_title and (title != header_title):
                         header = _header_text(title)
 
                     if codeblock:
@@ -106,7 +107,7 @@ class AdapterAPI(APIInterface):
                         post_msg.append(f"{header}{msg.rstrip()}\n")
 
                 if isinstance(msg, pd.DataFrame):
-                    if m.post.key_header and (title != header_title):
+                    if key_title and (title != header_title):
                         header = _header_text(title)
 
                     match m.status.command_type:

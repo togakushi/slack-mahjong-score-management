@@ -14,6 +14,7 @@ import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import lookup
 from libs.functions import message
+from libs.types import StyleOptions
 from libs.utils import dbutil, formatter
 
 if TYPE_CHECKING:
@@ -49,7 +50,7 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
         logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
-        m.set_data("0", message.random_reply(m, "restricted_channel"))
+        m.set_data("0", message.random_reply(m, "restricted_channel"), StyleOptions(key_title=False))
 
     return changes
 
@@ -74,7 +75,7 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> None:
         logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
-        m.set_data("0", message.random_reply(m, "restricted_channel"))
+        m.set_data("0", message.random_reply(m, "restricted_channel"), StyleOptions(key_title=False))
 
 
 def db_delete(m: "MessageParserProtocol"):
@@ -277,11 +278,11 @@ def _score_check(detection: "GameResult", m: "MessageParserProtocol"):
     if detection.deposit:
         m.status.reaction = False
         m.status.rpoint_sum = detection.rpoint_sum()
-        m.set_data("0", message.random_reply(m, "invalid_score"))
+        m.set_data("0", message.random_reply(m, "invalid_score"), StyleOptions(key_title=False))
         m.post.ts = m.data.event_ts
 
     # プレイヤー名重複チェック
     if len(set(detection.to_list())) != 4:
         m.status.reaction = False
-        m.set_data("1", message.random_reply(m, "same_player"))
+        m.set_data("1", message.random_reply(m, "same_player"), StyleOptions(key_title=False))
         m.post.ts = m.data.event_ts

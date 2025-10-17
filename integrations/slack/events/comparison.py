@@ -12,7 +12,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import modify
 from libs.data.lookup import db
 from libs.functions import search
-from libs.types import RemarkDict
+from libs.types import RemarkDict, StyleOptions
 from libs.utils import dictutil, formatter
 
 if TYPE_CHECKING:
@@ -73,8 +73,7 @@ def main(m: "MessageParserProtocol") -> None:
         message += "\n*【素点合計不一致】*\n"
         message += msg["invalid_score"]
 
-    m.set_data("データ突合", message)
-    m.post.key_header = False
+    m.set_data("データ突合", message, StyleOptions(key_title=False))
 
 
 def data_comparison(m: "MessageParserProtocol") -> tuple[dict, ComparisonDict]:

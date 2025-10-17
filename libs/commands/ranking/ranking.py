@@ -165,4 +165,3 @@ def aggregation(m: "MessageParserProtocol"):
         m.set_data(k, v, StyleOptions(codeblock=True, show_index=False))
 
     m.post.headline = {title: message.header(game_info, m, "", 1)}
-    m.post.key_header = True

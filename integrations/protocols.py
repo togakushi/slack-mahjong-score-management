@@ -88,8 +88,6 @@ class PostData(DataMixin):
     - *True*: 可能な限り複数の要素をひとつにまとめる
     - *False*: 要素単位でデータを処理する
     """
-    key_header: bool = field(default=True)
-    """辞書のキーを見出しにする"""
     thread: bool = field(default=True)
     """スレッドに返す"""
     ts: str = field(default="undetermined")
