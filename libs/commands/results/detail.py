@@ -129,8 +129,8 @@ def aggregation(m: "MessageParserProtocol"):
         m.set_data("対戦結果", get_versus_matrix(mapping_dict))
 
     # 非表示項目を除外
-    m.post.order = [
-        d for d in m.post.order
+    m.post.message = [
+        d for d in m.post.message
         if next(iter(d.keys())) not in g.cfg.dropitems.results
     ]
 

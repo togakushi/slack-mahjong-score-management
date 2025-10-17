@@ -33,12 +33,12 @@ class StyleOptions:
     """表示オプション"""
 
     codeblock: bool = False
-    """内容がstr型ならcodeblock化
+    """MessageTypeがstr型ならcodeblock化
     - *True*: codeblock化
     - *False*: 何もしない
     """
     show_index: bool = False
-    """内容がDataFrame型なら表にIndexに含める
+    """MessageTypeがDataFrame型なら表にIndexに含める
     - *True*: Indexを含める
     - *False*: Indexを含めない
     """
@@ -60,7 +60,7 @@ class StyleOptions:
 
 
 class MessageTypeDict(TypedDict):
-    """メッセージ格納データ"""
+    """メッセージ格納辞書"""
 
     data: MessageType
     """内容"""

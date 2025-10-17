@@ -57,7 +57,7 @@ class AdapterAPI(APIInterface):
                 print("=" * 80)
 
         # 本文
-        for data in m.post.order:
+        for data in m.post.message:
             for title, msg in data.items():
                 if msg.get("options", StyleOptions()).key_title and title:
                     print(f"【{title}】")

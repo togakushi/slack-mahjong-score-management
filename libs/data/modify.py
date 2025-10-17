@@ -272,7 +272,7 @@ def _score_check(detection: "GameResult", m: "MessageParserProtocol"):
     m.status.target_ts.append(m.data.event_ts)
     m.status.reaction = True
     m.status.message = detection.to_text("detail")
-    m.post.order.clear()
+    m.post.message.clear()
 
     # 素点合計チェック
     if detection.deposit:

@@ -54,7 +54,7 @@ def aggregation(m: "MessageParserProtocol"):
     m.post.headline = {headline_title: header_text}
 
     if df_summary.empty:
-        m.post.order.clear()  # 破棄
+        m.post.message.clear()  # 破棄
         m.status.result = False
         return
 
@@ -93,7 +93,7 @@ def aggregation(m: "MessageParserProtocol"):
         case _:
             return
 
-    m.post.order.clear()  # テキストデータは破棄
+    m.post.message.clear()  # テキストデータは破棄
     if not df_summary.empty:
         file_path = converter.save_output(
             df_summary.filter(items=filter_list).fillna("*****"),

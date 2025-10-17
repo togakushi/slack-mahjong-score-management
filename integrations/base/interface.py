@@ -229,7 +229,7 @@ class MessageParserDataMixin:
             data=data,
             options=options,
         )
-        self.post.order.append({title: msg})
+        self.post.message.append({title: msg})
 
     def get_score(self, keyword: str) -> dict:
         """textからスコアを抽出する

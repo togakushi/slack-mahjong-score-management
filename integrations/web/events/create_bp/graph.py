@@ -43,7 +43,7 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
 
         message = adapter.functions.header_message(m)
 
-        for data in m.post.order:
+        for data in m.post.message:
             for k, v in data.items():
                 msg = v.get("data")
 

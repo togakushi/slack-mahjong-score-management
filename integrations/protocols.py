@@ -79,7 +79,7 @@ class PostData(DataMixin):
 
     headline: dict[str, str] = field(default_factory=dict)
     """ヘッダ文"""
-    order: list[dict[str, "MessageTypeDict"]] = field(default_factory=list)
+    message: list[dict[str, "MessageTypeDict"]] = field(default_factory=list)
     """本文
     識別子(タイトルなど)をキーにした辞書型
     """
