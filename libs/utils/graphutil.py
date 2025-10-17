@@ -89,11 +89,14 @@ def xticks_parameter(days_list: list) -> dict:
         dict: パラメータ
     """
 
+    days_list = [str(x).replace("-", "/") for x in days_list]
+
     thresholds = [
         # データ数, 傾き, 位置
         (3, 0, "center"),
-        (15, -30, "left"),
+        (20, -30, "left"),
         (40, -45, "left"),
+        (80, -60, "left"),
         (float("inf"), -90, "center"),
     ]
 
