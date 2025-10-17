@@ -103,6 +103,7 @@ def plot(m: "MessageParserProtocol"):
             rank_ax.plot(df["playtime"], df["rank"], marker="." if len(df) < 50 else None)
             rank_ax.plot(df["playtime"], df["rank_avg"], marker="." if len(df) < 50 else None)
 
+            rank_ax.set_xlabel(graphutil.gen_xlabel(len(df)))
             rank_ax.set_xticks(**graphutil.xticks_parameter(df["playtime"].to_list()))
             rank_ax.set_ylim(ymin=0.85, ymax=4.15)
             rank_ax.invert_yaxis()
