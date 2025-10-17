@@ -13,7 +13,7 @@ class DataMixin:
     """共通処理"""
 
     def reset(self) -> None:
-        """初期化"""
+        """デフォルト値にリセット"""
         if not is_dataclass(self):
             raise TypeError(f"{self.__class__.__name__} must be a dataclass")
 
