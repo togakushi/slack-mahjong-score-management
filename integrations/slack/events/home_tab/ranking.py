@@ -80,7 +80,7 @@ def register_ranking_handlers(app, adapter: ServiceAdapter):
 
         adapter.conf.tab_var["user_id"] = body["user"]["id"]
         adapter.conf.tab_var["view_id"] = body["view"]["id"]
-        logging.info("[ranking_menu] %s", adapter.conf.tab_var)
+        logging.debug("[ranking_menu] %s", adapter.conf.tab_var)
 
         build_ranking_menu(adapter)
         adapter.conf.appclient.views_publish(
@@ -145,6 +145,8 @@ def register_ranking_handlers(app, adapter: ServiceAdapter):
                 adapter.conf.tab_var["sday"] = view["state"]["values"][i]["aid-sday"]["selected_date"]
             if "aid-eday" in view["state"]["values"][i]:
                 adapter.conf.tab_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
+
+        logging.debug("[global var] %s", adapter.conf.tab_var)
 
         adapter.conf.appclient.views_update(
             view_id=adapter.conf.tab_var["view_id"],

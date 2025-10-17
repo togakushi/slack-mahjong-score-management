@@ -91,7 +91,7 @@ def register_personal_handlers(app, adapter: ServiceAdapter):
 
         adapter.conf.tab_var["user_id"] = body["user"]["id"]
         adapter.conf.tab_var["view_id"] = body["view"]["id"]
-        logging.info("[personal_menu] %s", adapter.conf.tab_var)
+        logging.debug("[personal_menu] %s", adapter.conf.tab_var)
 
         build_personal_menu(adapter)
         adapter.conf.appclient.views_publish(
@@ -110,6 +110,7 @@ def register_personal_handlers(app, adapter: ServiceAdapter):
 
         ack()
         logging.trace(body)  # type: ignore
+
         m = adapter.parser()
 
         m.parser(body)
@@ -155,7 +156,7 @@ def register_personal_handlers(app, adapter: ServiceAdapter):
             if "aid-eday" in view["state"]["values"][i]:
                 adapter.conf.tab_var["eday"] = view["state"]["values"][i]["aid-eday"]["selected_date"]
 
-        logging.info("[global var] %s", adapter.conf.tab_var)
+        logging.debug("[global var] %s", adapter.conf.tab_var)
 
         adapter.conf.appclient.views_update(
             view_id=adapter.conf.tab_var["view_id"],
