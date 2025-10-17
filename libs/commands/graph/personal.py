@@ -60,7 +60,10 @@ def plot(m: "MessageParserProtocol"):
         title_range = f"(直近 {len(df)} ゲーム)"
 
     m.post.headline = {title_text: message.header(game_info, m)}
-    m.set_data("", formatter.df_rename(df.drop(columns=["count", "name"]), False), StyleOptions(header_hidden=True))
+    m.set_data(
+        "個人成績", formatter.df_rename(df.drop(columns=["count", "name"]), False),
+        StyleOptions(header_hidden=True, key_title=False)
+    )
 
     # --- グラフ生成
     graphutil.setup()
@@ -78,32 +81,32 @@ def plot(m: "MessageParserProtocol"):
             point_ax = fig.add_subplot(grid[0])
             rank_ax = fig.add_subplot(grid[1], sharex=point_ax)
 
-            # ポイント推移
+            # ポイント
             point_ax.plot(df["playtime"], df["point_sum"], marker="." if len(df) < 50 else None)
             point_ax.plot(df["playtime"], df["point_avg"], marker="." if len(df) < 50 else None)
-            df.filter(items=["point"]).plot.bar(
-                ax=point_ax,
-                color="blue",
-            )
+            point_ax.bar(df["playtime"], df["point"], color="blue")
+
+            point_ax.tick_params(axis="x", which="both", labelbottom=False, bottom=False)
+            ylabs = point_ax.get_yticks()[1:-1]
+            point_ax.set_yticks(ylabs, [str(int(ylab)).replace("-", "▲") for ylab in ylabs])
+
             point_ax.legend(
                 [f"通算ポイント ({point_sum}pt)", f"平均ポイント ({point_avg}pt)", "獲得ポイント"],
                 bbox_to_anchor=(1, 1),
                 loc="upper left",
                 borderaxespad=0.5,
             )
+
             point_ax.axhline(y=0, linewidth=0.5, ls="dashed", color="grey")
 
-            ylabs = point_ax.get_yticks()[1:-1]
-            point_ax.set_yticks(ylabs)
-            point_ax.set_yticklabels(
-                [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
-            )
-
-            # 獲得順位
+            # 順位
             rank_ax.plot(df["playtime"], df["rank"], marker="." if len(df) < 50 else None)
             rank_ax.plot(df["playtime"], df["rank_avg"], marker="." if len(df) < 50 else None)
-            rank_ax.set_xlabel(graphutil.gen_xlabel(total_game_count))
+
+            rank_ax.set_xticks(**graphutil.xticks_parameter(df["playtime"].to_list()))
             rank_ax.set_ylim(ymin=0.85, ymax=4.15)
+            rank_ax.invert_yaxis()
+
             rank_ax.legend(
                 ["獲得順位", f"平均順位 ({rank_avg})"],
                 bbox_to_anchor=(1, 1),
@@ -111,9 +114,7 @@ def plot(m: "MessageParserProtocol"):
                 borderaxespad=0.5,
             )
 
-            rank_ax.set_xticks(**graphutil.xticks_parameter(df["playtime"].to_list()))
             rank_ax.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
-            rank_ax.invert_yaxis()
 
             plt.savefig(save_file, bbox_inches="tight")
             m.set_data(
