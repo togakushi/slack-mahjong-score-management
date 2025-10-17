@@ -77,11 +77,11 @@ def aggregation(m: "MessageParserProtocol"):
     df_others = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type", "ex_point"]), kind=2)
 
     if not df_yakuman.empty:
-        m.set_data("役満和了", df_yakuman)
+        m.set_data("役満和了", df_yakuman, StyleOptions())
     if not df_regulations.empty:
-        m.set_data("卓外ポイント", df_regulations)
+        m.set_data("卓外ポイント", df_regulations, StyleOptions())
     if not df_others.empty:
-        m.set_data("その他", df_others)
+        m.set_data("その他", df_others, StyleOptions())
 
     # --- ファイル出力
     match cast(str, g.params.get("format", "default")).lower():
@@ -102,7 +102,7 @@ def aggregation(m: "MessageParserProtocol"):
             "summary",
         )
         if file_path:
-            m.set_data("集計結果", file_path)
+            m.set_data("集計結果", file_path, StyleOptions())
     if not df_yakuman.empty:
         file_path = converter.save_output(
             formatter.df_rename(df_yakuman, kind=0),
@@ -112,7 +112,7 @@ def aggregation(m: "MessageParserProtocol"):
             "yakuman",
         )
         if file_path:
-            m.set_data("役満和了", file_path)
+            m.set_data("役満和了", file_path, StyleOptions())
     if not df_regulations.empty:
         file_path = converter.save_output(
             formatter.df_rename(df_regulations, short=False, kind=1),
@@ -122,7 +122,7 @@ def aggregation(m: "MessageParserProtocol"):
             "regulations",
         )
         if file_path:
-            m.set_data("卓外ポイント", file_path)
+            m.set_data("卓外ポイント", file_path, StyleOptions())
     if not df_others.empty:
         file_path = converter.save_output(
             formatter.df_rename(df_others, kind=2),
@@ -132,4 +132,4 @@ def aggregation(m: "MessageParserProtocol"):
             "others",
         )
         if file_path:
-            m.set_data("その他", file_path)
+            m.set_data("その他", file_path, StyleOptions())

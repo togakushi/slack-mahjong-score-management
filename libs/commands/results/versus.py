@@ -10,6 +10,7 @@ import pandas as pd
 import libs.global_value as g
 from libs.data import loader
 from libs.functions import compose
+from libs.types import StyleOptions
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
@@ -87,9 +88,9 @@ def aggregation(m: "MessageParserProtocol"):
     # 結果
     if len(game_result):
         for k, v in game_result.items():
-            m.set_data(k, v)
+            m.set_data(k, v, StyleOptions())
     else:
-        m.set_data("", "対戦記録が見つかりません。")
+        m.set_data("", "対戦記録が見つかりません。", StyleOptions(key_title=False))
         m.status.result = False
         return
 
@@ -117,11 +118,11 @@ def aggregation(m: "MessageParserProtocol"):
 
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            m.set_data("対戦結果", converter.save_output(df_data, "csv", "result.csv"))
-            m.set_data("成績", converter.save_output(df_vs2, "csv", "versus.csv"))
+            m.set_data("対戦結果", converter.save_output(df_data, "csv", "result.csv"), StyleOptions())
+            m.set_data("成績", converter.save_output(df_vs2, "csv", "versus.csv"), StyleOptions())
         case "text" | "txt":
-            m.set_data("対戦結果", converter.save_output(df_data, "txt", "result.txt"))
-            m.set_data("成績", converter.save_output(df_vs2, "txt", "versus.txt"))
+            m.set_data("対戦結果", converter.save_output(df_data, "txt", "result.txt"), StyleOptions())
+            m.set_data("成績", converter.save_output(df_vs2, "txt", "versus.txt"), StyleOptions())
         case _:
             pass
 

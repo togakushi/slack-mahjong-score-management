@@ -3,7 +3,7 @@ integrations/protocols.py
 """
 
 from dataclasses import dataclass, field, fields, is_dataclass
-from typing import TYPE_CHECKING, Any, Literal, Optional, Protocol
+from typing import TYPE_CHECKING, Any, Literal, Protocol
 
 if TYPE_CHECKING:
     from libs.types import MessageType, MessageTypeDict, StyleOptions
@@ -191,7 +191,7 @@ class MessageParserProtocol(Protocol):
     def ignore_user(self) -> bool:
         """コマンドを拒否するユーザか判定"""
 
-    def set_data(self, title: str, data: "MessageType", options: Optional["StyleOptions"] = None):
+    def set_data(self, title: str, data: "MessageType", options: "StyleOptions"):
         """メッセージデータをセット"""
 
     def get_score(self, keyword: str) -> dict:

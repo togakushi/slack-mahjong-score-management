@@ -69,8 +69,8 @@ def plot(m: "MessageParserProtocol"):
     graphutil.setup()
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            m.set_data("通算ポイント", plotly_point(df, title_range, total_game_count))
-            m.set_data("獲得順位", plotly_rank(df, title_range, total_game_count))
+            m.set_data("通算ポイント", plotly_point(df, title_range, total_game_count), StyleOptions())
+            m.set_data("獲得順位", plotly_rank(df, title_range, total_game_count), StyleOptions())
         case "matplotlib":
             save_file = textutil.save_file_path("graph.png")
             fig = plt.figure(figsize=(12, 8))
@@ -243,10 +243,10 @@ def statistics_plot(m: "MessageParserProtocol"):
     match g.adapter.conf.plotting_backend:
         case "plotly":
             m.set_data("順位/ポイント情報", count_df, StyleOptions(show_index=True))
-            m.set_data("通算ポイント", plotly_line("通算ポイント推移", point_df))
-            m.set_data("順位分布", plotly_bar("順位分布", count_df.drop(index=["全区間"])))
+            m.set_data("通算ポイント", plotly_line("通算ポイント推移", point_df), StyleOptions())
+            m.set_data("順位分布", plotly_bar("順位分布", count_df.drop(index=["全区間"])), StyleOptions())
             m.set_data("素点情報", stats_df, StyleOptions(show_index=True))
-            m.set_data("素点分布", plotly_box("素点分布", rpoint_df))
+            m.set_data("素点分布", plotly_box("素点分布", rpoint_df), StyleOptions())
         case "matplotlib":
             fig = plt.figure(figsize=(20, 10))
             fig.suptitle(title_text, size=20, weight="bold")

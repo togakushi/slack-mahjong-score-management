@@ -94,9 +94,9 @@ def aggregation(m: "MessageParserProtocol"):
     match str(g.params.get("format", "default")).lower():
         case "csv":
             if (save_file := converter.save_output(df, "csv", "rating.csv", headline)):
-                m.set_data("レーティング", save_file)
+                m.set_data("レーティング", save_file, StyleOptions())
         case "text" | "txt":
             if (save_file := converter.save_output(df, "txt", "rating.txt", headline)):
-                m.set_data("レーティング", save_file)
+                m.set_data("レーティング", save_file, StyleOptions())
         case _:
             m.set_data("レーティング", df, StyleOptions(codeblock=True, summarize=False))

@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 from integrations.base.interface import APIInterface
+from libs.types import StyleOptions
 from libs.utils import formatter
 
 if TYPE_CHECKING:
@@ -57,7 +58,7 @@ class AdapterAPI(APIInterface):
         # 本文
         for data in m.post.message:
             for title, msg in data.items():
-                style = msg.get("options")
+                style = msg.get("options", StyleOptions())
 
                 if style.key_title and title:
                     print(f"【{title}】")

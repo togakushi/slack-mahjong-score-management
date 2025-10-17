@@ -12,6 +12,7 @@ import libs.global_value as g
 from libs.data import aggregate, loader, lookup
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
+from libs.types import StyleOptions
 from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
@@ -97,9 +98,9 @@ def aggregation(m: "MessageParserProtocol"):
         seat_data.drop(columns=["役満和了"], inplace=True)
 
     if g.params.get("statistics"):
-        m.set_data("座席データ", seat_data)
+        m.set_data("座席データ", seat_data, StyleOptions())
         for k, v in get_record(data).items():  # ベスト/ワーストレコード
-            m.set_data(k, v)
+            m.set_data(k, v, StyleOptions())
 
     # レギュレーション
     remarks_df = loader.read_data("REMARKS_INFO")
@@ -108,25 +109,25 @@ def aggregation(m: "MessageParserProtocol"):
 
     work_df = count_df.query("type == 0").filter(items=["matter", "count"])
     if not work_df.empty and "役満" not in g.cfg.dropitems.results:
-        m.set_data("役満和了", work_df.rename(columns={"matter": "和了役", "count": "回数"}))
+        m.set_data("役満和了", work_df.rename(columns={"matter": "和了役", "count": "回数"}), StyleOptions())
 
     work_df = count_df.query("type == 1").filter(items=["matter", "count", "total"])
     if not work_df.empty:
-        m.set_data("卓外ポイント", work_df.rename(columns={"matter": "内容", "count": "回数", "total": "ポイント合計"}))
+        m.set_data("卓外ポイント", work_df.rename(columns={"matter": "内容", "count": "回数", "total": "ポイント合計"}), StyleOptions())
 
     work_df = count_df.query("type == 2").filter(items=["matter", "count"])
     if not work_df.empty:
-        m.set_data("その他", work_df.rename(columns={"matter": "内容", "count": "回数"}))
+        m.set_data("その他", work_df.rename(columns={"matter": "内容", "count": "回数"}), StyleOptions())
 
     # 戦績
     if g.params.get("game_results"):
         if g.params.get("verbose"):
-            m.set_data("戦績", get_results_details(mapping_dict))
+            m.set_data("戦績", get_results_details(mapping_dict), StyleOptions())
         else:
-            m.set_data("戦績", get_results_simple(mapping_dict))
+            m.set_data("戦績", get_results_simple(mapping_dict), StyleOptions())
 
     if g.params.get("versus_matrix"):
-        m.set_data("対戦結果", get_versus_matrix(mapping_dict))
+        m.set_data("対戦結果", get_versus_matrix(mapping_dict), StyleOptions())
 
     # 非表示項目を除外
     m.post.message = [

@@ -11,6 +11,7 @@ import pandas as pd
 from slack_sdk.errors import SlackApiError
 
 from integrations.base.interface import APIInterface
+from libs.types import StyleOptions
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
@@ -75,7 +76,7 @@ class AdapterAPI(APIInterface):
         for data in m.post.message:
             for title, val in data.items():
                 msg = val.get("data")
-                style = val.get("options")
+                style = val.get("options", StyleOptions())
                 header = ""
 
                 if isinstance(msg, PosixPath) and msg.exists():

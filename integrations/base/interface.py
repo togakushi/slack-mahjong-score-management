@@ -212,18 +212,15 @@ class MessageParserDataMixin:
         self,
         title: str,
         data: "MessageType",
-        options: Optional[StyleOptions] = None,
+        options: StyleOptions,
     ):
         """メッセージデータをセットshow_index
 
         Args:
             title (str): データ識別子
             data (MessageType): 内容
-            options (StyleOptions, optional): 表示オプション. Defaults to None.
+            options (StyleOptions): 表示オプション
         """
-
-        if not options:
-            options = StyleOptions()
 
         msg = MessageTypeDict(
             data=data,

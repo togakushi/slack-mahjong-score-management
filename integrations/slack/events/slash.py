@@ -4,6 +4,8 @@ integrations/slack/events/slash.py
 
 from typing import TYPE_CHECKING
 
+from libs.types import StyleOptions
+
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
@@ -37,4 +39,4 @@ def command_help(m: "MessageParserProtocol"):
     msg += f"\n\t{m.status.command_name} team_clear                        チームデータをすべて削除"
     msg += "```"
 
-    m.set_data("ヘルプ", msg)
+    m.set_data("ヘルプ", msg, StyleOptions())

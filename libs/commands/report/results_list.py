@@ -76,7 +76,7 @@ def main(m: "MessageParserProtocol"):
         case "slack":
             m.set_data(title, file_path, StyleOptions(use_comment=True, header_hidden=True))
         case "web":
-            m.set_data("", df_generation(df))
+            m.set_data("", df_generation(df), StyleOptions())
 
 
 def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> Union["Path", None]:
