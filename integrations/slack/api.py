@@ -43,18 +43,12 @@ class AdapterAPI(APIInterface):
         def _table_data(data: dict) -> list:
             ret_list: list = []
             text_data = iter(data.values())
-            # 先頭ブロックの処理
+            # 先頭ブロックの処理(ヘッダ追加)
             v = next(text_data)
-            if codeblock:
-                ret_list.append(f"{header}```\n{v}\n```\n")
-            else:
-                ret_list.append(f"{header}{v}\n")
+            ret_list.append(f"{header}```\n{v}\n```\n" if style.codeblock else f"{header}{v}\n")
             # 残りのブロック
             for v in text_data:
-                if codeblock:
-                    ret_list.append(f"```\n{v}\n```\n")
-                else:
-                    ret_list.append(f"{v}\n")
+                ret_list.append(f"```\n{v}\n```\n" if style.codeblock else f"```\n{v}\n```\n")
             return ret_list
 
         if not m.in_thread:
@@ -79,15 +73,15 @@ class AdapterAPI(APIInterface):
         # 本文
         post_msg: list[str] = []
         for data in m.post.message:
-            for title, v in data.items():
-                msg = v.get("data")
-                codeblock = v["options"].codeblock
-                use_comment = v["options"].use_comment
-                key_title = v["options"].key_title
+            for title, val in data.items():
+                msg = val.get("data")
+                style = val.get("options")
                 header = ""
 
                 if isinstance(msg, PosixPath) and msg.exists():
-                    comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if use_comment else ""
+                    comment = textwrap.dedent(
+                        f"{_header_text(header_title)}{header_text.rstrip()}"
+                    ) if style.use_comment else ""
                     self._call_files_upload(
                         channel=m.data.channel_id,
                         title=title,
@@ -98,16 +92,14 @@ class AdapterAPI(APIInterface):
                     )
 
                 if isinstance(msg, str):
-                    if key_title and (title != header_title):
+                    if style.key_title and (title != header_title):
                         header = _header_text(title)
-
-                    if codeblock:
-                        post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n")
-                    else:
-                        post_msg.append(f"{header}{msg.rstrip()}\n")
+                    post_msg.append(
+                        f"{header}```\n{msg.rstrip()}\n```\n" if style.codeblock else f"{header}{msg.rstrip()}\n"
+                    )
 
                 if isinstance(msg, pd.DataFrame):
-                    if key_title and (title != header_title):
+                    if style.key_title and (title != header_title):
                         header = _header_text(title)
 
                     match m.status.command_type:
@@ -134,7 +126,7 @@ class AdapterAPI(APIInterface):
                         case "ranking":
                             post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
 
-        if m.post.summarize:
+        if style.summarize:
             post_msg = formatter.group_strings(post_msg)
 
         for msg in post_msg:

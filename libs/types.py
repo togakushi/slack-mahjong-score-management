@@ -57,6 +57,11 @@ class StyleOptions:
     - *True*: 表示
     - *False*: 非表示
     """
+    summarize: bool = True
+    """MessageTypeがstr型のとき後続の要素を集約する
+    - *True*: 可能な限り複数の要素をひとつにまとめる
+    - *False*: 要素単位でデータを処理する
+    """
 
 
 class MessageTypeDict(TypedDict):

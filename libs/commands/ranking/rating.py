@@ -99,5 +99,4 @@ def aggregation(m: "MessageParserProtocol"):
             if (save_file := converter.save_output(df, "txt", "rating.txt", headline)):
                 m.set_data("レーティング", save_file)
         case _:
-            m.set_data("レーティング", df, StyleOptions(codeblock=True))
-            m.post.summarize = False
+            m.set_data("レーティング", df, StyleOptions(codeblock=True, summarize=False))

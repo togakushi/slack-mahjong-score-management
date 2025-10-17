@@ -83,11 +83,6 @@ class PostData(DataMixin):
     """本文
     識別子(タイトルなど)をキーにした辞書型
     """
-    summarize: bool = field(default=True)
-    """本文が文字列型のとき後続の要素を集約する
-    - *True*: 可能な限り複数の要素をひとつにまとめる
-    - *False*: 要素単位でデータを処理する
-    """
     thread: bool = field(default=True)
     """スレッドに返す"""
     ts: str = field(default="undetermined")

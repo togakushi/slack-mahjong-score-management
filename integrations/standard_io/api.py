@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 from integrations.base.interface import APIInterface
-from libs.types import StyleOptions
 from libs.utils import formatter
 
 if TYPE_CHECKING:
@@ -32,7 +31,6 @@ class AdapterAPI(APIInterface):
 
         ret: str = ""
         for line in text.splitlines():
-            line = line.replace("```", "")
             line = line.replace("<@>", "")
             line = textwrap.dedent(line)
             if line:
@@ -59,15 +57,20 @@ class AdapterAPI(APIInterface):
         # 本文
         for data in m.post.message:
             for title, msg in data.items():
-                if msg.get("options", StyleOptions()).key_title and title:
+                style = msg.get("options")
+
+                if style.key_title and title:
                     print(f"【{title}】")
+
                 match msg.get("data"):
                     case x if isinstance(x, str):
                         print(self._text_formatter(x))
                     case x if isinstance(x, pd.DataFrame):
-                        show_index = msg["options"].show_index
-                        fmt = formatter.floatfmt_adjust(x, index=show_index)
-                        disp = x.to_markdown(index=show_index, tablefmt="simple_outline", floatfmt=fmt).replace(" nan ", "-----")
+                        disp = x.to_markdown(
+                            index=style.show_index,
+                            tablefmt="simple_outline",
+                            floatfmt=formatter.floatfmt_adjust(x, index=style.show_index),
+                        ).replace(" nan ", "-----")
                         if title == "座席データ":
                             disp = disp.replace("0.00", "-.--")
                         print(disp)
@@ -75,4 +78,5 @@ class AdapterAPI(APIInterface):
                         print(f"{title}: {x.absolute()}")
                     case _:
                         pass
+
                 print("")
