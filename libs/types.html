@@ -70,6 +70,9 @@
                         <li>
                                 <a class="variable" href="#StyleOptions.key_title">key_title</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#StyleOptions.summarize">summarize</a>
+                        </li>
                 </ul>
 
             </li>
@@ -194,12 +197,12 @@
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容がstr型ならcodeblock化</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;MessageTypeがstr型ならcodeblock化</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">    - *True*: codeblock化</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    - *False*: 何もしない</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="n">show_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容がDataFrame型なら表にIndexに含める</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;MessageTypeがDataFrame型なら表にIndexに含める</span>
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">    - *True*: Indexを含める</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    - *False*: Indexを含めない</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -218,53 +221,58 @@
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    - *True*: 表示</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">    - *False*: 非表示</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納データ&quot;&quot;&quot;</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;MessageTypeがstr型のとき後続の要素を集約する</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    - *True*: 可能な限り複数の要素をひとつにまとめる</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">    - *False*: 要素単位でデータを処理する</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">    - *False*: 降格しない</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    - *False*: 降格しない</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -365,12 +373,12 @@
 </span><span id="StyleOptions-34"><a href="#StyleOptions-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
 </span><span id="StyleOptions-35"><a href="#StyleOptions-35"><span class="linenos">35</span></a>
 </span><span id="StyleOptions-36"><a href="#StyleOptions-36"><span class="linenos">36</span></a>    <span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="StyleOptions-37"><a href="#StyleOptions-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容がstr型ならcodeblock化</span>
+</span><span id="StyleOptions-37"><a href="#StyleOptions-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;MessageTypeがstr型ならcodeblock化</span>
 </span><span id="StyleOptions-38"><a href="#StyleOptions-38"><span class="linenos">38</span></a><span class="sd">    - *True*: codeblock化</span>
 </span><span id="StyleOptions-39"><a href="#StyleOptions-39"><span class="linenos">39</span></a><span class="sd">    - *False*: 何もしない</span>
 </span><span id="StyleOptions-40"><a href="#StyleOptions-40"><span class="linenos">40</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="StyleOptions-41"><a href="#StyleOptions-41"><span class="linenos">41</span></a>    <span class="n">show_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="StyleOptions-42"><a href="#StyleOptions-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容がDataFrame型なら表にIndexに含める</span>
+</span><span id="StyleOptions-42"><a href="#StyleOptions-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;MessageTypeがDataFrame型なら表にIndexに含める</span>
 </span><span id="StyleOptions-43"><a href="#StyleOptions-43"><span class="linenos">43</span></a><span class="sd">    - *True*: Indexを含める</span>
 </span><span id="StyleOptions-44"><a href="#StyleOptions-44"><span class="linenos">44</span></a><span class="sd">    - *False*: Indexを含めない</span>
 </span><span id="StyleOptions-45"><a href="#StyleOptions-45"><span class="linenos">45</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -389,6 +397,11 @@
 </span><span id="StyleOptions-58"><a href="#StyleOptions-58"><span class="linenos">58</span></a><span class="sd">    - *True*: 表示</span>
 </span><span id="StyleOptions-59"><a href="#StyleOptions-59"><span class="linenos">59</span></a><span class="sd">    - *False*: 非表示</span>
 </span><span id="StyleOptions-60"><a href="#StyleOptions-60"><span class="linenos">60</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StyleOptions-61"><a href="#StyleOptions-61"><span class="linenos">61</span></a>    <span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="StyleOptions-62"><a href="#StyleOptions-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;MessageTypeがstr型のとき後続の要素を集約する</span>
+</span><span id="StyleOptions-63"><a href="#StyleOptions-63"><span class="linenos">63</span></a><span class="sd">    - *True*: 可能な限り複数の要素をひとつにまとめる</span>
+</span><span id="StyleOptions-64"><a href="#StyleOptions-64"><span class="linenos">64</span></a><span class="sd">    - *False*: 要素単位でデータを処理する</span>
+</span><span id="StyleOptions-65"><a href="#StyleOptions-65"><span class="linenos">65</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -399,7 +412,7 @@
                             <div id="StyleOptions.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">StyleOptions</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">show_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">use_comment</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">header_hidden</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">key_title</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span>)</span>
+        <span class="name">StyleOptions</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">show_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">use_comment</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">header_hidden</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">key_title</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">summarize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span>)</span>
 
         
     </div>
@@ -417,7 +430,7 @@
     </div>
     <a class="headerlink" href="#StyleOptions.codeblock"></a>
     
-            <div class="docstring"><p>内容がstr型ならcodeblock化</p>
+            <div class="docstring"><p>MessageTypeがstr型ならcodeblock化</p>
 
 <ul>
 <li><em>True</em>: codeblock化</li>
@@ -436,7 +449,7 @@
     </div>
     <a class="headerlink" href="#StyleOptions.show_index"></a>
     
-            <div class="docstring"><p>内容がDataFrame型なら表にIndexに含める</p>
+            <div class="docstring"><p>MessageTypeがDataFrame型なら表にIndexに含める</p>
 
 <ul>
 <li><em>True</em>: Indexを含める</li>
@@ -503,6 +516,25 @@
 
 
                             </div>
+                            <div id="StyleOptions.summarize" class="classattr">
+                                <div class="attr variable">
+            <span class="name">summarize</span><span class="annotation">: bool</span>        =
+<span class="default_value">True</span>
+
+        
+    </div>
+    <a class="headerlink" href="#StyleOptions.summarize"></a>
+    
+            <div class="docstring"><p>MessageTypeがstr型のとき後続の要素を集約する</p>
+
+<ul>
+<li><em>True</em>: 可能な限り複数の要素をひとつにまとめる</li>
+<li><em>False</em>: 要素単位でデータを処理する</li>
+</ul>
+</div>
+
+
+                            </div>
                 </section>
                 <section id="MessageTypeDict">
                             <input id="MessageTypeDict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -515,17 +547,17 @@
 
     </div>
     <a class="headerlink" href="#MessageTypeDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageTypeDict-63"><a href="#MessageTypeDict-63"><span class="linenos">63</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="MessageTypeDict-64"><a href="#MessageTypeDict-64"><span class="linenos">64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納データ&quot;&quot;&quot;</span>
-</span><span id="MessageTypeDict-65"><a href="#MessageTypeDict-65"><span class="linenos">65</span></a>
-</span><span id="MessageTypeDict-66"><a href="#MessageTypeDict-66"><span class="linenos">66</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
-</span><span id="MessageTypeDict-67"><a href="#MessageTypeDict-67"><span class="linenos">67</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
-</span><span id="MessageTypeDict-68"><a href="#MessageTypeDict-68"><span class="linenos">68</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
-</span><span id="MessageTypeDict-69"><a href="#MessageTypeDict-69"><span class="linenos">69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageTypeDict-68"><a href="#MessageTypeDict-68"><span class="linenos">68</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="MessageTypeDict-69"><a href="#MessageTypeDict-69"><span class="linenos">69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
+</span><span id="MessageTypeDict-70"><a href="#MessageTypeDict-70"><span class="linenos">70</span></a>
+</span><span id="MessageTypeDict-71"><a href="#MessageTypeDict-71"><span class="linenos">71</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
+</span><span id="MessageTypeDict-72"><a href="#MessageTypeDict-72"><span class="linenos">72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
+</span><span id="MessageTypeDict-73"><a href="#MessageTypeDict-73"><span class="linenos">73</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
+</span><span id="MessageTypeDict-74"><a href="#MessageTypeDict-74"><span class="linenos">74</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>メッセージ格納データ</p>
+            <div class="docstring"><p>メッセージ格納辞書</p>
 </div>
 
 
@@ -567,15 +599,15 @@
 
     </div>
     <a class="headerlink" href="#RemarkDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RemarkDict-72"><a href="#RemarkDict-72"><span class="linenos">72</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="RemarkDict-73"><a href="#RemarkDict-73"><span class="linenos">73</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-74"><a href="#RemarkDict-74"><span class="linenos">74</span></a>
-</span><span id="RemarkDict-75"><a href="#RemarkDict-75"><span class="linenos">75</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-76"><a href="#RemarkDict-76"><span class="linenos">76</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-77"><a href="#RemarkDict-77"><span class="linenos">77</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-78"><a href="#RemarkDict-78"><span class="linenos">78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-79"><a href="#RemarkDict-79"><span class="linenos">79</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-80"><a href="#RemarkDict-80"><span class="linenos">80</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RemarkDict-77"><a href="#RemarkDict-77"><span class="linenos">77</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="RemarkDict-78"><a href="#RemarkDict-78"><span class="linenos">78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-79"><a href="#RemarkDict-79"><span class="linenos">79</span></a>
+</span><span id="RemarkDict-80"><a href="#RemarkDict-80"><span class="linenos">80</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-81"><a href="#RemarkDict-81"><span class="linenos">81</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-82"><a href="#RemarkDict-82"><span class="linenos">82</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-83"><a href="#RemarkDict-83"><span class="linenos">83</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-84"><a href="#RemarkDict-84"><span class="linenos">84</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-85"><a href="#RemarkDict-85"><span class="linenos">85</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
 </span></pre></div>
 
 
@@ -643,20 +675,20 @@
 
     </div>
     <a class="headerlink" href="#RankTableDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RankTableDict-83"><a href="#RankTableDict-83"><span class="linenos">83</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="RankTableDict-84"><a href="#RankTableDict-84"><span class="linenos">84</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-85"><a href="#RankTableDict-85"><span class="linenos">85</span></a>
-</span><span id="RankTableDict-86"><a href="#RankTableDict-86"><span class="linenos">86</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RankTableDict-87"><a href="#RankTableDict-87"><span class="linenos">87</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-88"><a href="#RankTableDict-88"><span class="linenos">88</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="RankTableDict-89"><a href="#RankTableDict-89"><span class="linenos">89</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-90"><a href="#RankTableDict-90"><span class="linenos">90</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="RankTableDict-91"><a href="#RankTableDict-91"><span class="linenos">91</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-92"><a href="#RankTableDict-92"><span class="linenos">92</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="RankTableDict-93"><a href="#RankTableDict-93"><span class="linenos">93</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
-</span><span id="RankTableDict-94"><a href="#RankTableDict-94"><span class="linenos">94</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
-</span><span id="RankTableDict-95"><a href="#RankTableDict-95"><span class="linenos">95</span></a><span class="sd">    - *False*: 降格しない</span>
-</span><span id="RankTableDict-96"><a href="#RankTableDict-96"><span class="linenos">96</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RankTableDict-88"><a href="#RankTableDict-88"><span class="linenos"> 88</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="RankTableDict-89"><a href="#RankTableDict-89"><span class="linenos"> 89</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-90"><a href="#RankTableDict-90"><span class="linenos"> 90</span></a>
+</span><span id="RankTableDict-91"><a href="#RankTableDict-91"><span class="linenos"> 91</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RankTableDict-92"><a href="#RankTableDict-92"><span class="linenos"> 92</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-93"><a href="#RankTableDict-93"><span class="linenos"> 93</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RankTableDict-94"><a href="#RankTableDict-94"><span class="linenos"> 94</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-95"><a href="#RankTableDict-95"><span class="linenos"> 95</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RankTableDict-96"><a href="#RankTableDict-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-97"><a href="#RankTableDict-97"><span class="linenos"> 97</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="RankTableDict-98"><a href="#RankTableDict-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
+</span><span id="RankTableDict-99"><a href="#RankTableDict-99"><span class="linenos"> 99</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
+</span><span id="RankTableDict-100"><a href="#RankTableDict-100"><span class="linenos">100</span></a><span class="sd">    - *False*: 降格しない</span>
+</span><span id="RankTableDict-101"><a href="#RankTableDict-101"><span class="linenos">101</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -733,15 +765,15 @@
 
     </div>
     <a class="headerlink" href="#GradeTableDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GradeTableDict-99"><a href="#GradeTableDict-99"><span class="linenos"> 99</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="GradeTableDict-100"><a href="#GradeTableDict-100"><span class="linenos">100</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-101"><a href="#GradeTableDict-101"><span class="linenos">101</span></a>
-</span><span id="GradeTableDict-102"><a href="#GradeTableDict-102"><span class="linenos">102</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GradeTableDict-103"><a href="#GradeTableDict-103"><span class="linenos">103</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-104"><a href="#GradeTableDict-104"><span class="linenos">104</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GradeTableDict-105"><a href="#GradeTableDict-105"><span class="linenos">105</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-106"><a href="#GradeTableDict-106"><span class="linenos">106</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
-</span><span id="GradeTableDict-107"><a href="#GradeTableDict-107"><span class="linenos">107</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GradeTableDict-104"><a href="#GradeTableDict-104"><span class="linenos">104</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="GradeTableDict-105"><a href="#GradeTableDict-105"><span class="linenos">105</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-106"><a href="#GradeTableDict-106"><span class="linenos">106</span></a>
+</span><span id="GradeTableDict-107"><a href="#GradeTableDict-107"><span class="linenos">107</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GradeTableDict-108"><a href="#GradeTableDict-108"><span class="linenos">108</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-109"><a href="#GradeTableDict-109"><span class="linenos">109</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GradeTableDict-110"><a href="#GradeTableDict-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-111"><a href="#GradeTableDict-111"><span class="linenos">111</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
+</span><span id="GradeTableDict-112"><a href="#GradeTableDict-112"><span class="linenos">112</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
