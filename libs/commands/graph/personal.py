@@ -72,6 +72,7 @@ def plot(m: "MessageParserProtocol"):
             save_file = textutil.save_file_path("graph.png")
             fig = plt.figure(figsize=(12, 8))
             fig.suptitle(f"{title_text} {title_range}", fontsize=16)
+            fig.tight_layout()
 
             grid = gridspec.GridSpec(nrows=2, ncols=1, height_ratios=[3, 1])
             point_ax = fig.add_subplot(grid[0])
@@ -110,22 +111,14 @@ def plot(m: "MessageParserProtocol"):
                 borderaxespad=0.5,
             )
 
-            rotation = graphutil.x_rotation(len(df))
-            rank_ax.set_xticks(list(df.index)[::int(len(df) / 25) + 1])
-            rank_ax.set_xticklabels(
-                list(df["playtime"])[::int(len(df) / 25) + 1],
-                rotation=rotation,
-                ha="right" if rotation > 0 else "center",
-            )
+            rank_ax.set_xticks(**graphutil.xticks_parameter(df["playtime"].to_list()))
             rank_ax.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
             rank_ax.invert_yaxis()
 
-            fig.tight_layout()
             plt.savefig(save_file, bbox_inches="tight")
-
             m.set_data(
                 f"『{player}』の成績", save_file,
-                StyleOptions(use_comment=True, header_hidden=True, key_title=False)
+                StyleOptions(use_comment=True, header_hidden=True, key_title=False),
             )
 
 

@@ -79,25 +79,31 @@ def gen_xlabel(game_count: int) -> str:
     return xlabel
 
 
-def x_rotation(n: int) -> int:
-    """X軸目盛の傾き
+def xticks_parameter(days_list: list) -> dict:
+    """X軸(xticks)に渡すパラメータを生成
 
     Args:
-        n (int): X軸のデータ数
+        days_list (list): 日付リスト
 
     Returns:
-        int: 傾き
+        dict: パラメータ
     """
 
     thresholds = [
-        (3, 0),
-        (15, 30),
-        (40, 45),
-        (float("inf"), -90),
+        # データ数, 傾き, 位置
+        (3, 0, "center"),
+        (15, 30, "right"),
+        (40, 45, "right"),
+        (float("inf"), -90, "center"),
     ]
 
-    for limit, angle in thresholds:
-        if n <= limit:
+    for limit, rotation, position in thresholds:
+        if len(days_list) <= limit:
             break
 
-    return angle
+    return {
+        "ticks": list(range(len(days_list)))[::int(len(days_list) / 25) + 1],
+        "labels": days_list[::int(len(days_list) / 25) + 1],
+        "rotation": rotation,
+        "ha": position,
+    }

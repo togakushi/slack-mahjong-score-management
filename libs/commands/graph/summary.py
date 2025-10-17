@@ -43,9 +43,6 @@ def point_plot(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    # 初期化
-    graph_params = GraphParams()
-
     # データ収集
     game_info = GameInfo()
     target_data, df = _data_collection()
@@ -69,14 +66,14 @@ def point_plot(m: "MessageParserProtocol"):
     )
 
     # グラフ生成
-    graph_params.update({
-        "graph_type": "point",
-        "total_game_count": game_info.count,
-        "target_data": target_data,
-        "pivot": pivot,
-        "horizontal": True,
-    })
     graphutil.setup()
+    graph_params = GraphParams(
+        graph_type="point",
+        total_game_count=game_info.count,
+        target_data=target_data,
+        pivot=pivot,
+        horizontal=True,
+    )
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
@@ -88,7 +85,10 @@ def point_plot(m: "MessageParserProtocol"):
 
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
-    m.set_data(file_title, save_file, StyleOptions(use_comment=True, header_hidden=True))
+    m.set_data(
+        file_title, save_file,
+        StyleOptions(use_comment=True, header_hidden=True, key_title=False),
+    )
 
 
 def rank_plot(m: "MessageParserProtocol"):
@@ -97,9 +97,6 @@ def rank_plot(m: "MessageParserProtocol"):
     Args:
         m (MessageParserProtocol): メッセージデータ
     """
-
-    # 初期化
-    graph_params = GraphParams()
 
     # データ収集
     game_info = GameInfo()
@@ -125,13 +122,14 @@ def rank_plot(m: "MessageParserProtocol"):
     pivot = pivot.rank(method="dense", ascending=False, axis=1)
 
     # グラフ生成
-    graph_params.update({
-        "graph_type": "rank",
-        "total_game_count": game_info.count,
-        "target_data": target_data,
-        "pivot": pivot,
-        "horizontal": False,
-    })
+    graphutil.setup()
+    graph_params = GraphParams(
+        graph_type="rank",
+        total_game_count=game_info.count,
+        target_data=target_data,
+        pivot=pivot,
+        horizontal=False,
+    )
 
     match g.adapter.conf.plotting_backend:
         case "plotly":
@@ -143,7 +141,10 @@ def rank_plot(m: "MessageParserProtocol"):
 
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
-    m.set_data(file_title, save_file, StyleOptions(use_comment=True, header_hidden=True))
+    m.set_data(
+        file_title, save_file,
+        StyleOptions(use_comment=True, header_hidden=True, key_title=False),
+    )
 
 
 def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -268,19 +269,12 @@ def _graph_generation(graph_params: GraphParams) -> "Path":
         )
 
         # X軸修正
-        rotation = graphutil.x_rotation(len(df))
-        plt.xticks(
-            list(range(len(df)))[::int(len(df) / 25) + 1],
-            list(df.index)[::int(len(df) / 25) + 1],
-            rotation=rotation,
-            ha="right" if rotation > 0 else "center",
-        )
+        plt.xticks(**graphutil.xticks_parameter(df.index.to_list()))
 
         # Y軸修正
         ylocs, ylabs = plt.yticks()
         new_ylabs = [ylab.get_text().replace("−", "▲") for ylab in ylabs]
         plt.yticks(list(ylocs[1:-1]), new_ylabs[1:-1])
-
         logging.debug("plot data:\n%s", df)
 
     # メモリ調整

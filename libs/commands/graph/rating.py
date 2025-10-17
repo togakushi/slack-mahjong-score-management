@@ -71,7 +71,10 @@ def plot(m: "MessageParserProtocol"):
         case "plotly":
             save_file = _graph_generation_plotly(game_info, df_sorted, "rating.html")
 
-    m.set_data("レーティング推移", save_file, StyleOptions(use_comment=True, header_hidden=True))
+    m.set_data(
+        "レーティング推移", save_file,
+        StyleOptions(use_comment=True, header_hidden=True, key_title=False),
+    )
 
 
 def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", filename: str) -> "Path":
@@ -110,12 +113,8 @@ def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", filename: str) ->
         borderaxespad=0.5,
         ncol=int(len(df.columns) / 25 + 1),
     )
-    plt.xticks(
-        list(range(len(df)))[1::int(len(df) / 25) + 1],
-        list(df.index)[1::int(len(df) / 25) + 1],
-        rotation=45,
-        ha="right",
-    )
+
+    plt.xticks(**graphutil.xticks_parameter(df[1:].index.to_list()))
     plt.axhline(y=1500, linewidth=0.5, ls="dashed", color="grey")
 
     plt.savefig(save_file, bbox_inches="tight")
