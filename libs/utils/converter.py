@@ -177,33 +177,33 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
     # 表示内容
     match title:
         case "ゲーム参加率":
-            df["内容"] = df.apply(lambda x: f"<>{x["ゲーム参加率"]:>7.2%} ({x["ゲーム数"]:4d}G /{x["集計ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["ゲーム参加率"]:>7.2%} ({x["ゲーム数"]:4d}G /{x["集計ゲーム数"]:4d}G)", axis=1)
         case "通算ポイント":
-            df["内容"] = df.apply(lambda x: f"<>{x["通算ポイント"]:>+8.1f}pt ({x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["通算ポイント"]:>+8.1f}pt ({x["ゲーム数"]:4d}G)", axis=1)
         case "平均ポイント":
-            df["内容"] = df.apply(lambda x: f"<>{x["平均ポイント"]:>+8.1f}pt ( {x["通算ポイント"]:>+8.1f}pt /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["平均ポイント"]:>+8.1f}pt ( {x["通算ポイント"]:>+8.1f}pt /{x["ゲーム数"]:4d}G)", axis=1)
         case "平均収支":
-            df["内容"] = df.apply(lambda x: f"<>{x["平均収支"]:>6.0f}点 ({x["平均素点"]:>6.0f}点 /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["平均収支"]:>6.0f}点 ({x["平均素点"]:>6.0f}点 /{x["ゲーム数"]:4d}G)", axis=1)
         case "トップ率":
-            df["内容"] = df.apply(lambda x: f"<>{x["1位率"]:>7.2%} ({x["1位数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["1位率"]:>7.2%} ({x["1位数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
         case "連対率":
-            df["内容"] = df.apply(lambda x: f"<>{x["連対率"]:>7.2%} ({x["連対数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["連対率"]:>7.2%} ({x["連対数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
         case "ラス回避率":
-            df["内容"] = df.apply(lambda x: f"<>{x["ラス回避率"]:>7.2%} ({x["ラス回避数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["ラス回避率"]:>7.2%} ({x["ラス回避数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
         case "トビ率":
-            df["内容"] = df.apply(lambda x: f"<>{x["トビ率"]:>7.2%} ({x["トビ数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["トビ率"]:>7.2%} ({x["トビ数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
         case "平均順位":
-            df["内容"] = df.apply(lambda x: f"<>{x["平均順位"]:>4.2f} ({x["順位分布"]})", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["平均順位"]:>4.2f} ({x["順位分布"]})", axis=1)
         case "役満和了率":
-            df["内容"] = df.apply(lambda x: f"<>{x["役満和了率"]:>7.2%} ({x["役満和了数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["役満和了率"]:>7.2%} ({x["役満和了数"]:3d} /{x["ゲーム数"]:4d}G)", axis=1)
         case "最大素点":
-            df["内容"] = df.apply(lambda x: f"<>{x["最大素点"]:>6.0f}点 ({x["最大獲得ポイント"]:>+8.1f}pt)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["最大素点"]:>6.0f}点 ({x["最大獲得ポイント"]:>+8.1f}pt)", axis=1)
         case "連続トップ":
-            df["内容"] = df.apply(lambda x: f"<>{x["連続トップ"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["連続トップ"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
         case "連続連対":
-            df["内容"] = df.apply(lambda x: f"<>{x["連続連対"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["連続連対"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
         case "連続ラス回避":
-            df["内容"] = df.apply(lambda x: f"<>{x["連続ラス回避"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
+            df["内容"] = df.apply(lambda x: f"<> {x["連続ラス回避"]:>2d}連続 ({x["ゲーム数"]:4d}G)", axis=1)
         case _:
             return {}
 
@@ -216,7 +216,7 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
         for line in tbl.splitlines()[1:-1]:
             line = re.sub(r"^(\s*\d+)(.*)", r"\1：\2", line)
             line = line.replace(" -", "▲")
-            line = line.replace("<>", "")
+            line = line.replace("<> ", "")
             ret += f"{line}\n"
         ret_list.append(ret.rstrip())
 
