@@ -4,6 +4,7 @@ integrations/factory.py
 
 from typing import TYPE_CHECKING, Literal, cast, overload
 
+from integrations.discord.adapter import ServiceAdapter as discord_adapter
 from integrations.slack.adapter import ServiceAdapter as slack_adapter
 from integrations.standard_io.adapter import ServiceAdapter as std_adapter
 from integrations.web.adapter import ServiceAdapter as web_adapter
@@ -20,6 +21,14 @@ def select_adapter(
     selected_service: Literal["slack"],
     conf: "AppConfig"
 ) -> slack_adapter:
+    ...
+
+
+@overload
+def select_adapter(
+    selected_service: Literal["discord"],
+    conf: "AppConfig"
+) -> discord_adapter:
     ...
 
 
@@ -58,6 +67,8 @@ def select_adapter(selected_service: str, conf: "AppConfig") -> "AdapterInterfac
     match selected_service:
         case "slack":
             return slack_adapter(parser)
+        case "discord":
+            return discord_adapter(parser)
         case "web":
             return web_adapter(parser)
         case "standard_io":

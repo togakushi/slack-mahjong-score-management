@@ -66,6 +66,7 @@ def arg_parser() -> argparse.Namespace:
         "--service",
         choices=[
             "slack",
+            "discord",
             "standard_io", "std",
             "web", "flask",
         ],
@@ -187,6 +188,8 @@ def setup():
     match g.args.service:
         case "slack":
             g.selected_service = "slack"
+        case "discord":
+            g.selected_service = "discord"
         case "standard_io" | "std":
             g.selected_service = "standard_io"
         case "web" | "flask":

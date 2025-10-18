@@ -6,15 +6,16 @@ if TYPE_CHECKING:
     from argparse import Namespace
 
     from cls.config import AppConfig
+    from integrations.discord.adapter import ServiceAdapter as discord_adapter
     from integrations.slack.adapter import ServiceAdapter as slack_adapter
     from integrations.standard_io.adapter import ServiceAdapter as std_adapter
     from integrations.web.adapter import ServiceAdapter as web_adapter
     from libs.types import TeamDataDict
 
 # --- グローバル変数 ---
-selected_service: Literal["slack", "web", "standard_io"] = "slack"
+selected_service: Literal["slack", "discord", "web", "standard_io"] = "slack"
 """連携先サービス"""
-adapter: Union["slack_adapter", "web_adapter", "std_adapter"]
+adapter: Union["slack_adapter", "discord_adapter", "web_adapter", "std_adapter"]
 """インターフェースアダプタ"""
 
 keyword_dispatcher: dict[str, Callable[..., Any]] = {}
