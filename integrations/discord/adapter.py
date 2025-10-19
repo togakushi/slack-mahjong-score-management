@@ -2,6 +2,7 @@
 integrations/discord/adapter.py
 """
 
+import logging
 from typing import TYPE_CHECKING
 
 from integrations.base.interface import AdapterInterface
@@ -24,3 +25,5 @@ class ServiceAdapter(AdapterInterface[SvcConfig, AdapterAPI, SvcFunctions, Messa
         self.api = AdapterAPI(self.conf)
         self.functions = SvcFunctions(self.conf)
         self.parser = MessageParser
+
+        logging.debug(self.conf)
