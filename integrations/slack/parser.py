@@ -92,7 +92,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     @property
     def check_updatable(self) -> bool:
         g.adapter = cast("ServiceAdapter", g.adapter)
-        ret: bool = True
+        ret: bool = False
 
         if g.adapter.conf.channel_limitations:
             if self.data.channel_id in g.adapter.conf.channel_limitations:
