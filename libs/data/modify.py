@@ -50,7 +50,9 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
         logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
+        logging.warning("A post to a restricted channel was detected.")
         m.set_data("0", message.random_reply(m, "restricted_channel"), StyleOptions(key_title=False))
+        m.post.ts = m.data.event_ts
 
     return changes
 
@@ -75,7 +77,9 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> None:
         logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
+        logging.warning("A post to a restricted channel was detected.")
         m.set_data("0", message.random_reply(m, "restricted_channel"), StyleOptions(key_title=False))
+        m.post.ts = m.data.event_ts
 
 
 def db_delete(m: "MessageParserProtocol"):
@@ -99,8 +103,9 @@ def db_delete(m: "MessageParserProtocol"):
                     m.status.target_ts.extend([x.get("event_ts") for x in list(map(dict, remark_list))])
                     logging.info("remark: ts=%s, count=%s", m.data.event_ts, delete_remark)
             cur.commit()
-
         m.status.action = "delete"
+    else:
+        logging.warning("A post to a restricted channel was detected.")
 
 
 def db_backup() -> str:
@@ -254,7 +259,7 @@ def reprocessing_remarks(m: "MessageParserProtocol") -> None:
             m.data.text = str(cast(dict, msg[x]).get("text", ""))
             if m.data.text:
                 m.data.event_ts = str(cast(dict, msg[x]).get("ts"))
-                logging.info("(%s/%s) thread_ts=%s, event_ts=%s, %s", x, reply_count, m.data.thread_ts, m.data.event_ts, m.data.text)
+                logging.debug("(%s/%s) thread_ts=%s, event_ts=%s, %s", x, reply_count, m.data.thread_ts, m.data.event_ts, m.data.text)
                 if re.match(rf"^{g.cfg.setting.remarks_word}", m.keyword):
                     check_remarks(m)
 
