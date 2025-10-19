@@ -8,3 +8,4 @@ tqdm
 plotly
 flask
 flask_httpauth
+py-cord

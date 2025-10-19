@@ -16,6 +16,7 @@ from libs import configuration
 from libs.data import initialization
 
 if TYPE_CHECKING:
+    from integrations.discord.adapter import ServiceAdapter as discord_adapter
     from integrations.slack.adapter import ServiceAdapter as slack_adapter
     from integrations.standard_io.adapter import ServiceAdapter as std_adapter
     from integrations.web.adapter import ServiceAdapter as web_adapter
@@ -30,6 +31,9 @@ if __name__ == "__main__":
         case "slack":
             import integrations.slack.events.handler as slack
             slack.main(cast("slack_adapter", g.adapter))
+        case "discord":
+            import integrations.discord.events.handler as discord
+            discord.main(cast("discord_adapter", g.adapter))
         case "standard_io":
             import integrations.standard_io.events.handler as standard_io
             standard_io.main(cast("std_adapter", g.adapter))
