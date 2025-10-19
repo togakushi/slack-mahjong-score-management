@@ -7,11 +7,6 @@ import os
 import sys
 from typing import TYPE_CHECKING
 
-from slack_bolt import App
-from slack_bolt.adapter.socket_mode import SocketModeHandler
-from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
-
 import libs.dispatcher
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.slack.events.handler_registry import register, register_all
@@ -22,7 +17,22 @@ if TYPE_CHECKING:
 
 
 def main(adapter: "ServiceAdapter"):
-    """メイン処理"""
+    """メイン処理
+
+    Args:
+        adapter (ServiceAdapter): アダプタインターフェース
+
+    Raises:
+        ModuleNotFoundError: ライブラリ未インストール
+    """
+
+    try:
+        from slack_bolt import App
+        from slack_bolt.adapter.socket_mode import SocketModeHandler
+        from slack_sdk import WebClient
+        from slack_sdk.errors import SlackApiError
+    except ModuleNotFoundError as err:
+        raise ModuleNotFoundError(err.msg)
 
     def log_filter():
         """ログレベル変更"""

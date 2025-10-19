@@ -8,7 +8,7 @@ from pathlib import PosixPath
 from typing import TYPE_CHECKING, cast
 
 import pandas as pd
-from slack_sdk.errors import SlackApiError
+
 
 from integrations.base.interface import APIInterface
 from libs.types import StyleOptions
@@ -26,6 +26,13 @@ class AdapterAPI(APIInterface):
 
     def __init__(self, conf: "SvcConfig"):
         super().__init__()
+
+        try:
+            from slack_sdk.errors import SlackApiError
+            self.SlackApiError = SlackApiError
+        except ModuleNotFoundError as err:
+            raise ModuleNotFoundError(err.msg)
+
         self.conf = conf
         """個別設定"""
 
@@ -151,7 +158,7 @@ class AdapterAPI(APIInterface):
 
         try:
             res = self.conf.appclient.chat_postMessage(**kwargs)
-        except SlackApiError as err:
+        except self.SlackApiError as err:
             logging.critical(err)
             logging.error("kwargs=%s", kwargs)
 
@@ -170,7 +177,7 @@ class AdapterAPI(APIInterface):
 
         try:
             res = self.conf.appclient.files_upload_v2(**kwargs)
-        except SlackApiError as err:
+        except self.SlackApiError as err:
             logging.critical(err)
             logging.error("kwargs=%s", kwargs)
 

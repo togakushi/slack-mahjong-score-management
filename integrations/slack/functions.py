@@ -5,8 +5,6 @@ integrations/slack/functions.py
 import logging
 from typing import TYPE_CHECKING, cast
 
-from slack_sdk.errors import SlackApiError
-
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
@@ -24,6 +22,13 @@ class SvcFunctions(FunctionsInterface):
 
     def __init__(self, conf: "SvcConfig"):
         super().__init__()
+
+        try:
+            from slack_sdk.errors import SlackApiError
+            self.SlackApiError = SlackApiError
+        except ModuleNotFoundError as err:
+            raise ModuleNotFoundError(err.msg)
+
         self.conf = conf
         """個別設定"""
 
@@ -116,7 +121,7 @@ class SvcFunctions(FunctionsInterface):
             res = self.conf.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
             logging.trace(res.validate())  # type: ignore
             return cast(dict, res)
-        except SlackApiError as err:
+        except self.SlackApiError as err:
             logging.error(err)
             return {}
 
@@ -168,7 +173,7 @@ class SvcFunctions(FunctionsInterface):
                         channel_id = channel["id"]
                 else:
                     channel_id = channel["id"]
-        except SlackApiError as err:
+        except self.SlackApiError as err:
             logging.error(err)
 
         return channel_id
@@ -188,7 +193,7 @@ class SvcFunctions(FunctionsInterface):
         try:
             response = self.conf.appclient.conversations_open(users=[user_id])
             channel_id = response["channel"]["id"]
-        except SlackApiError as e:
+        except self.SlackApiError as e:
             logging.error(e)
 
         return channel_id
@@ -215,7 +220,7 @@ class SvcFunctions(FunctionsInterface):
         try:  # 削除済みメッセージはエラーになるので潰す
             res = self.conf.appclient.reactions_get(channel=ch, timestamp=ts)
             logging.trace(res.validate())  # type: ignore
-        except SlackApiError:
+        except self.SlackApiError:
             return icon
 
         if (reactions := cast(dict, res["message"]).get("reactions")):
@@ -248,7 +253,7 @@ class SvcFunctions(FunctionsInterface):
                 timestamp=str(ts),
             )
             logging.debug("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
-        except SlackApiError as err:
+        except self.SlackApiError as err:
             match cast(dict, err.response).get("error"):
                 case "already_reacted":
                     pass
@@ -276,7 +281,7 @@ class SvcFunctions(FunctionsInterface):
                 timestamp=ts,
             )
             logging.debug("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
-        except SlackApiError as err:
+        except self.SlackApiError as err:
             match cast(dict, err.response).get("error"):
                 case "no_reaction":
                     pass
