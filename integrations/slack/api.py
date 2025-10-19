@@ -73,6 +73,7 @@ class AdapterAPI(APIInterface):
 
         # 本文
         post_msg: list[str] = []
+        style = StyleOptions()
         for data in m.post.message:
             for title, val in data.items():
                 msg = val.get("data")
