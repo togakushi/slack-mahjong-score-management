@@ -225,7 +225,7 @@ class SvcFunctions(FunctionsInterface):
                 if ng == reaction.get("name") and self.conf.bot_id in reaction["users"]:
                     icon["ng"].append(res["message"]["ts"])
 
-        logging.info("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, self.conf.bot_id, icon)
+        logging.debug("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, self.conf.bot_id, icon)
         return icon
 
     def reaction_append(self, icon: str, ch: str, ts: str):
@@ -247,7 +247,7 @@ class SvcFunctions(FunctionsInterface):
                 name=icon,
                 timestamp=str(ts),
             )
-            logging.info("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
+            logging.debug("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
         except SlackApiError as err:
             match cast(dict, err.response).get("error"):
                 case "already_reacted":
@@ -275,7 +275,7 @@ class SvcFunctions(FunctionsInterface):
                 name=icon,
                 timestamp=ts,
             )
-            logging.info("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
+            logging.debug("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
         except SlackApiError as err:
             match cast(dict, err.response).get("error"):
                 case "no_reaction":
