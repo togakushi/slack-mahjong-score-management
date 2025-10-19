@@ -68,7 +68,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                     self.data.status = "message_append"
                 case _:
                     self.data.status = "message_append"
-                    logging.info("unknown subtype: %s", _body)
+                    logging.warning("unknown subtype: %s", _body)
 
         self.data.text = _event.get("text", self.data.text)
         self.data.channel_id = _event.get("channel", self.data.channel_id)
@@ -76,6 +76,8 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data.user_id = _event.get("user", self.data.user_id)
         self.data.event_ts = _event.get("ts", "0")
         self.data.thread_ts = _event.get("thread_ts", "0")
+
+        logging.debug(self.data)
 
     @property
     def is_command(self) -> bool:
