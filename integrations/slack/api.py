@@ -31,7 +31,7 @@ class AdapterAPI(APIInterface):
             from slack_sdk.errors import SlackApiError
             self.slack_api_error = SlackApiError
         except ModuleNotFoundError as err:
-            raise ModuleNotFoundError(err.msg)
+            raise ModuleNotFoundError(err.msg) from None
 
         self.conf = conf
         """個別設定"""
