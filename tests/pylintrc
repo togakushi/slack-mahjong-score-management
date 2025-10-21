@@ -1,6 +1,7 @@
 [MESSAGES CONTROL]
 disable =
     fixme,
+    import-outside-toplevel,
     line-too-long,
     duplicate-code,
     too-few-public-methods,
