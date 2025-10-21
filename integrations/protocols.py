@@ -139,8 +139,8 @@ class StatusData(DataMixin):
     - *True*: 目的の処理が達成できた
     - *False*: 何らかの原因で処理が達成できなかった
     """
-    message: str = field(default="")
-    """個別メッセージ"""
+    message: Any = field(default=None)
+    """汎用メッセージ"""
 
 
 class MessageParserProtocol(Protocol):

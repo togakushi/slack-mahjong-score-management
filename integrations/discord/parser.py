@@ -11,6 +11,7 @@ from integrations.protocols import MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
     from integrations.discord.adapter import ServiceAdapter
+    from discord import Message
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
@@ -26,9 +27,12 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.post = PostData()
         self.status = StatusData()
 
-    def parser(self, _body: dict):
+    def parser(self, message: "Message"):
         g.adapter = cast("ServiceAdapter", g.adapter)
-        _ = _body
+
+        self.status.message = message
+        self.data.status = "message_append"
+        self.data.text = message.content.strip()
 
     @property
     def is_command(self) -> bool:
