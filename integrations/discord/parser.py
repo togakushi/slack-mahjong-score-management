@@ -27,12 +27,12 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.post = PostData()
         self.status = StatusData()
 
-    def parser(self, message: "Message"):
+    def parser(self, body: "Message"):
         g.adapter = cast("ServiceAdapter", g.adapter)
 
-        self.status.message = message
+        self.status.message = body
         self.data.status = "message_append"
-        self.data.text = message.content.strip()
+        self.data.text = body.content.strip()
 
     @property
     def is_command(self) -> bool:
