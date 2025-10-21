@@ -27,7 +27,7 @@ class SvcFunctions(FunctionsInterface):
             from slack_sdk.errors import SlackApiError
             self.slack_api_error = SlackApiError
         except ModuleNotFoundError as err:
-            raise ModuleNotFoundError(err.msg)
+            raise ModuleNotFoundError(err.msg) from None
 
         self.conf = conf
         """個別設定"""
@@ -281,7 +281,7 @@ class SvcFunctions(FunctionsInterface):
                 timestamp=ts,
             )
             logging.debug("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
-        except self.Slack_api_error as err:
+        except self.slack_api_error as err:
             match cast(dict, err.response).get("error"):
                 case "no_reaction":
                     pass

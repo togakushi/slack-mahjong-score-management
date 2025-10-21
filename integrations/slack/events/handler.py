@@ -32,7 +32,7 @@ def main(adapter: "ServiceAdapter"):
         from slack_sdk import WebClient
         from slack_sdk.errors import SlackApiError
     except ModuleNotFoundError as err:
-        raise ModuleNotFoundError(err.msg)
+        raise ModuleNotFoundError(err.msg) from None
 
     def log_filter():
         """ログレベル変更"""
