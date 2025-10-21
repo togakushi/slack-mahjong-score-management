@@ -4,6 +4,7 @@ libs/utils/textutil.py
 
 import os
 import unicodedata
+from math import ceil, floor
 from typing import TYPE_CHECKING, Literal
 
 import libs.global_value as g
@@ -137,3 +138,49 @@ def split_line(last_line: int, step: int) -> list[tuple[int, int]]:
         step_count.append((s_line, e_line))
 
     return step_count
+
+
+def split_balanced(data: list, target_size: int, tolerance: float = 0.15) -> list:
+    """リストデータを指定個数で分割
+
+    Args:
+        data (list): 対象データ
+        target_size (int): 分割個数
+        tolerance (float, optional): 個数誤差. Defaults to 0.15.
+
+    Returns:
+        list: 分割したリスト
+    """
+
+    n = len(data)
+    if n == 0:
+        return []
+
+    min_size = int(target_size * (1 - tolerance))
+    max_size = int(target_size * (1 + tolerance))
+
+    # 最小ブロック数の候補を計算
+    min_blocks = ceil(n / max_size)
+    max_blocks = floor(n / min_size)
+
+    # 許容範囲内でブロック数を決める（なるべく少ない）
+    for num_blocks in range(min_blocks, max_blocks + 1):
+        size = n / num_blocks
+        if min_size <= size <= max_size:
+            break
+    else:
+        # 条件を満たすブロック数がない場合は単純均等割り
+        num_blocks = ceil(n / target_size)
+
+    # 実際の分割処理
+    base_size = n // num_blocks
+    remainder = n % num_blocks
+
+    result: list = []
+    start = 0
+    for i in range(num_blocks):
+        end = start + base_size + (1 if i < remainder else 0)
+        result.append(data[start:end])
+        start = end
+
+    return result
