@@ -25,7 +25,7 @@ class SvcFunctions(FunctionsInterface):
 
         try:
             from slack_sdk.errors import SlackApiError
-            self.SlackApiError = SlackApiError
+            self.slack_api_error = SlackApiError
         except ModuleNotFoundError as err:
             raise ModuleNotFoundError(err.msg)
 
@@ -121,7 +121,7 @@ class SvcFunctions(FunctionsInterface):
             res = self.conf.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
             logging.trace(res.validate())  # type: ignore
             return cast(dict, res)
-        except self.SlackApiError as err:
+        except self.slack_api_error as err:
             logging.error(err)
             return {}
 
@@ -173,7 +173,7 @@ class SvcFunctions(FunctionsInterface):
                         channel_id = channel["id"]
                 else:
                     channel_id = channel["id"]
-        except self.SlackApiError as err:
+        except self.slack_api_error as err:
             logging.error(err)
 
         return channel_id
@@ -193,7 +193,7 @@ class SvcFunctions(FunctionsInterface):
         try:
             response = self.conf.appclient.conversations_open(users=[user_id])
             channel_id = response["channel"]["id"]
-        except self.SlackApiError as e:
+        except self.slack_api_error as e:
             logging.error(e)
 
         return channel_id
@@ -220,7 +220,7 @@ class SvcFunctions(FunctionsInterface):
         try:  # 削除済みメッセージはエラーになるので潰す
             res = self.conf.appclient.reactions_get(channel=ch, timestamp=ts)
             logging.trace(res.validate())  # type: ignore
-        except self.SlackApiError:
+        except self.slack_api_error:
             return icon
 
         if (reactions := cast(dict, res["message"]).get("reactions")):
@@ -253,7 +253,7 @@ class SvcFunctions(FunctionsInterface):
                 timestamp=str(ts),
             )
             logging.debug("ts=%s, ch=%s, icon=%s, %s", ts, ch, icon, res.validate())
-        except self.SlackApiError as err:
+        except self.slack_api_error as err:
             match cast(dict, err.response).get("error"):
                 case "already_reacted":
                     pass
@@ -281,7 +281,7 @@ class SvcFunctions(FunctionsInterface):
                 timestamp=ts,
             )
             logging.debug("ch=%s, ts=%s, icon=%s, %s", ch, ts, icon, res.validate())
-        except self.SlackApiError as err:
+        except self.Slack_api_error as err:
             match cast(dict, err.response).get("error"):
                 case "no_reaction":
                     pass

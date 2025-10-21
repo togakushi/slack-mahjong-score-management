@@ -29,7 +29,7 @@ class AdapterAPI(APIInterface):
 
         try:
             from slack_sdk.errors import SlackApiError
-            self.SlackApiError = SlackApiError
+            self.slack_api_error = SlackApiError
         except ModuleNotFoundError as err:
             raise ModuleNotFoundError(err.msg)
 
@@ -158,7 +158,7 @@ class AdapterAPI(APIInterface):
 
         try:
             res = self.conf.appclient.chat_postMessage(**kwargs)
-        except self.SlackApiError as err:
+        except self.slack_api_error as err:
             logging.critical(err)
             logging.error("kwargs=%s", kwargs)
 
@@ -177,7 +177,7 @@ class AdapterAPI(APIInterface):
 
         try:
             res = self.conf.appclient.files_upload_v2(**kwargs)
-        except self.SlackApiError as err:
+        except self.slack_api_error as err:
             logging.critical(err)
             logging.error("kwargs=%s", kwargs)
 
