@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from itertools import chain
 from math import ceil
 from pathlib import Path, PosixPath
-from types import UnionType
+from types import NoneType, UnionType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
 from libs.types import GradeTableDict
@@ -94,27 +94,27 @@ class BaseSection(CommonMethodMixin):
         for k in self._section.keys():
             if k in self.__dict__:
                 match type(self.__dict__.get(k)):
-                    case v_type if v_type is type(str()):
+                    case v_type if v_type is str:
                         setattr(self, k, self._section.get(k, fallback=self.get(k)))
-                    case v_type if v_type is type(int()):
+                    case v_type if v_type is int:
                         setattr(self, k, self._section.getint(k, fallback=self.get(k)))
-                    case v_type if v_type is type(float()):
+                    case v_type if v_type is float:
                         setattr(self, k, self._section.getfloat(k, fallback=self.get(k)))
-                    case v_type if v_type is type(bool()):
+                    case v_type if v_type is bool:
                         setattr(self, k, self._section.getboolean(k, fallback=self.get(k)))
-                    case v_type if v_type is type([]):
+                    case v_type if v_type is list:
                         v_list = [x.strip() for x in self._section.get(k, fallback=self.get(k)).split(",")]
                         current_list = getattr(self, k)
                         if isinstance(current_list, list) and current_list:  # 設定済みリストは追加
                             current_list.extend(v_list)
                         else:
                             setattr(self, k, v_list)
-                    case v_type if isinstance(v_type, UnionType):
-                        if set(v_type.__args__) == {str, type(None)}:
+                    case v_type if v_type is UnionType:  # 文字列 or None
+                        if set(v_type.__args__) == {str, NoneType}:
                             setattr(self, k, self._section.get(k, fallback=self.get(k)))
                     case v_type if v_type is PosixPath:
                         setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
-                    case v_type if v_type is type(None):
+                    case v_type if v_type is NoneType:
                         if k in ["backup_dir"]:  # ディレクトリを指定する設定はPathで格納
                             setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
                         else:
