@@ -13,6 +13,7 @@ dependencies = [
     "reportlab",
     "pandas",
     "tabulate[widechars]",
+    "table2ascii",
     "tqdm",
     "plotly",
     "flask",
