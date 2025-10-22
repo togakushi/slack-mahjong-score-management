@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Optional, cast
 import pandas as pd
 
 import integrations.discord.events.audioop as _audioop
+from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import APIInterface
 from libs.types import StyleOptions
 from libs.utils import converter, formatter
@@ -140,7 +141,8 @@ class AdapterAPI(APIInterface):
             post_msg = formatter.group_strings(post_msg, limit=1800)
 
         if header_msg and m.post.thread:
-            thread = await header_msg.create_thread(name=header_title)
+            date_suffix = ExtDt(float(m.data.event_ts)).format("ymdhm", delimiter="slash")
+            thread = await header_msg.create_thread(name=f"{header_title} - {date_suffix}")
             for msg in post_msg:
                 await thread.send(msg)
         else:
