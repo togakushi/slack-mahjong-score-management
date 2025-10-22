@@ -357,8 +357,8 @@
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">    - *True*: 目的の処理が達成できた</span>
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">    - *False*: 何らかの原因で処理が達成できなかった</span>
 </span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;個別メッセージ&quot;&quot;&quot;</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;汎用メッセージ&quot;&quot;&quot;</span>
 </span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
 </span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
 </span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
@@ -910,8 +910,8 @@
 </span><span id="StatusData-140"><a href="#StatusData-140"><span class="linenos">140</span></a><span class="sd">    - *True*: 目的の処理が達成できた</span>
 </span><span id="StatusData-141"><a href="#StatusData-141"><span class="linenos">141</span></a><span class="sd">    - *False*: 何らかの原因で処理が達成できなかった</span>
 </span><span id="StatusData-142"><a href="#StatusData-142"><span class="linenos">142</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StatusData-143"><a href="#StatusData-143"><span class="linenos">143</span></a>    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="StatusData-144"><a href="#StatusData-144"><span class="linenos">144</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;個別メッセージ&quot;&quot;&quot;</span>
+</span><span id="StatusData-143"><a href="#StatusData-143"><span class="linenos">143</span></a>    <span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="StatusData-144"><a href="#StatusData-144"><span class="linenos">144</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;汎用メッセージ&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -922,7 +922,7 @@
                             <div id="StatusData.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">StatusData</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">command_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="s1">&#39;graph&#39;</span><span class="p">,</span> <span class="s1">&#39;ranking&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>,</span><span class="param">	<span class="n">command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="s1">&#39;nothing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;nothing&#39;</span>,</span><span class="param">	<span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></span>)</span>
+        <span class="name">StatusData</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">command_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="s1">&#39;graph&#39;</span><span class="p">,</span> <span class="s1">&#39;ranking&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>,</span><span class="param">	<span class="n">command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="s1">&#39;nothing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;nothing&#39;</span>,</span><span class="param">	<span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1074,14 +1074,14 @@
                             </div>
                             <div id="StatusData.message" class="classattr">
                                 <div class="attr variable">
-            <span class="name">message</span><span class="annotation">: str</span>        =
-<span class="default_value">&#39;&#39;</span>
+            <span class="name">message</span><span class="annotation">: Any</span>        =
+<span class="default_value">None</span>
 
         
     </div>
     <a class="headerlink" href="#StatusData.message"></a>
     
-            <div class="docstring"><p>個別メッセージ</p>
+            <div class="docstring"><p>汎用メッセージ</p>
 </div>
 
 
