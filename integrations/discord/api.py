@@ -6,7 +6,7 @@ import asyncio
 import sys
 import textwrap
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Optional, cast
 
 import pandas as pd
 
@@ -36,6 +36,15 @@ class AdapterAPI(APIInterface):
         """個別設定"""
 
     def post(self, m: "MessageParserProtocol"):
+        """メッセージをポストする（非同期処理ラッパー）
+
+        Args:
+            m (MessageParserProtocol): メッセージデータ
+        """
+
+        asyncio.create_task(self.post_async(m))
+
+    async def post_async(self, m: "MessageParserProtocol"):
         """メッセージをポストする
 
         Args:
@@ -58,7 +67,7 @@ class AdapterAPI(APIInterface):
                 ret_list.append(f"```\n{v}\n```\n" if style.codeblock else f"```\n{v}\n```\n")
             return ret_list
 
-        message = cast("Message", m.status.message)
+        discord_message = cast("Message", m.status.message)
 
         if not m.in_thread:
             m.post.thread = False
@@ -66,10 +75,13 @@ class AdapterAPI(APIInterface):
         # 見出しポスト
         header_title = ""
         header_text = ""
+        header_msg: Optional["Message"] = None
+
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
             if not all(v["options"].header_hidden for x in m.post.message for _, v in x.items()):
-                asyncio.create_task(message.reply(f"{_header_text(header_title)}{header_text.rstrip()}"))
+                header_msg = await discord_message.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
+                m.post.thread = True
 
         # 本文
         post_msg: list[str] = []
@@ -88,7 +100,7 @@ class AdapterAPI(APIInterface):
                         str(msg),
                         description=comment,
                     )
-                    asyncio.create_task(message.channel.send(file=file))
+                    asyncio.create_task(discord_message.channel.send(file=file))
 
                 if isinstance(msg, str):
                     if style.key_title and (title != header_title):
@@ -122,10 +134,15 @@ class AdapterAPI(APIInterface):
                         case "rating":
                             post_msg.extend(_table_data(converter.df_to_dict(msg, step=20)))
                         case "ranking":
-                            post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
+                            post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=30)))
 
         if style.summarize:
-            post_msg = formatter.group_strings(post_msg)
+            post_msg = formatter.group_strings(post_msg, limit=1800)
 
-        for msg in post_msg:
-            asyncio.create_task(message.reply(msg))
+        if header_msg and m.post.thread:
+            thread = await header_msg.create_thread(name=header_title)
+            for msg in post_msg:
+                await thread.send(msg)
+        else:
+            for msg in post_msg:
+                await discord_message.reply(msg)

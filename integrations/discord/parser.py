@@ -10,8 +10,9 @@ from integrations.base.interface import (MessageParserDataMixin,
 from integrations.protocols import MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
-    from integrations.discord.adapter import ServiceAdapter
     from discord import Message
+
+    from integrations.discord.adapter import ServiceAdapter
 
 
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
@@ -31,8 +32,11 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         g.adapter = cast("ServiceAdapter", g.adapter)
 
         self.status.message = body
-        self.data.status = "message_append"
         self.data.text = body.content.strip()
+        self.data.status = "message_append"
+        self.data.event_ts = str(body.created_at.timestamp())
+        self.data.thread_ts = "0"
+        self.data.channel_id = str(body.channel.id)
 
     @property
     def is_command(self) -> bool:

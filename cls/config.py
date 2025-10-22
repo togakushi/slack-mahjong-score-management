@@ -110,7 +110,7 @@ class BaseSection(CommonMethodMixin):
                         else:
                             setattr(self, k, v_list)
                     case v_type if v_type is UnionType:  # 文字列 or None
-                        if set(v_type.__args__) == {str, NoneType}:
+                        if set(v_type.__args__) == {str, type(None)}:
                             setattr(self, k, self._section.get(k, fallback=self.get(k)))
                     case v_type if v_type is PosixPath:
                         setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
