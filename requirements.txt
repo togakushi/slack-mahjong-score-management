@@ -4,6 +4,7 @@ matplotlib
 reportlab
 pandas
 tabulate[widechars] # type: ignore
+table2ascii
 tqdm
 plotly
 flask
