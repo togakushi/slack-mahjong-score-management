@@ -15,11 +15,25 @@ if TYPE_CHECKING:
 
 
 def main(adapter: "ServiceAdapter"):
-    """メイン処理"""
+    """メイン処理
 
-    sys.modules["audioop"] = _audioop
+    Args:
+        adapter (ServiceAdapter): アダプタインターフェース
 
-    import discord
+    Raises:
+        ModuleNotFoundError: ライブラリ未インストール
+    """
+
+    try:
+        sys.modules["audioop"] = _audioop
+        import discord
+    except ModuleNotFoundError as err:
+        raise ModuleNotFoundError(err.msg) from None
+
+    # ログレベル変更
+    for name in logging.Logger.manager.loggerDict:
+        if name.startswith(("discord_", "discord")):
+            logging.getLogger(name).setLevel(logging.WARNING)
 
     intents = discord.Intents.default()
     intents.message_content = True
