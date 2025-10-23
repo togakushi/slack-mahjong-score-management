@@ -52,6 +52,8 @@ class AdapterAPI(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
+        self.conf.response = cast("Message", self.conf.response)
+
         def _header_text(title: str) -> str:
             if not title.isnumeric() and title:  # 数値のキーはヘッダにしない
                 return f"**【{title}】**\n"
@@ -68,8 +70,6 @@ class AdapterAPI(APIInterface):
                 ret_list.append(f"```\n{v}\n```\n" if style.codeblock else f"```\n{v}\n```\n")
             return ret_list
 
-        discord_msg = cast("Message", m.status.message)
-
         if not m.in_thread:
             m.post.thread = False
 
@@ -81,7 +81,7 @@ class AdapterAPI(APIInterface):
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
             if not all(v["options"].header_hidden for x in m.post.message for _, v in x.items()):
-                header_msg = await discord_msg.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
+                header_msg = await self.conf.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
                 m.post.thread = True
 
         # 本文
@@ -101,7 +101,7 @@ class AdapterAPI(APIInterface):
                         str(msg),
                         description=comment,
                     )
-                    asyncio.create_task(discord_msg.channel.send(file=file))
+                    asyncio.create_task(self.conf.response.channel.send(file=file))
 
                 if isinstance(msg, str):
                     if style.key_title and (title != header_title):
@@ -150,4 +150,4 @@ class AdapterAPI(APIInterface):
                 await thread.send(msg)
         else:
             for msg in post_msg:
-                await discord_msg.reply(msg)
+                await self.conf.response.reply(msg)

@@ -31,9 +31,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     def parser(self, body: "Message"):
         g.adapter = cast("ServiceAdapter", g.adapter)
 
-        self.status.message = body
         self.data.text = body.content.strip()
-        self.data.status = "message_append"
         self.data.event_ts = str(body.created_at.timestamp())
         self.data.thread_ts = "0"
         self.data.channel_id = str(body.channel.id)
