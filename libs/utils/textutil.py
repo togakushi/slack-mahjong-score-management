@@ -145,12 +145,16 @@ def split_balanced(data: list, target_size: int, tolerance: float = 0.15) -> lis
 
     Args:
         data (list): 対象データ
-        target_size (int): 分割個数
+        target_size (int): 分割サイズ
         tolerance (float, optional): 個数誤差. Defaults to 0.15.
 
     Returns:
         list: 分割したリスト
     """
+
+    # 分割サイズに0が指定されている場合は何もしない
+    if not target_size:
+        return data
 
     n = len(data)
     if n == 0:
@@ -184,3 +188,51 @@ def split_balanced(data: list, target_size: int, tolerance: float = 0.15) -> lis
         start = end
 
     return result
+
+
+def split_text_blocks(text: str, limit: int = 2000) -> list[str]:
+    """指定文字数でテキストを行単位で分割してリストにする
+
+    Args:
+        text (str): 対象文字列
+        limit (int, optional): 分割文字数. Defaults to 2000.
+
+    Returns:
+        list[str]: 分割リスト
+    """
+
+    blocks = []
+    current_data = ""
+    buffer_data = ""
+    in_code = False
+    min_gap_after_code_start = 10
+    lines_count = 0
+
+    for _, line in enumerate(text.splitlines(keepends=True)):
+        stripped = line.strip()
+        buffer_data += line
+
+        # --- コードブロック開始／終了検出 ---
+        if stripped.startswith("```"):
+            in_code = not in_code
+            if not in_code:
+                current_data += buffer_data
+                buffer_data = ""
+            continue
+
+        lines_count += 1 if in_code else 0
+
+        # --- 文字数チェック ---
+        if len(current_data + buffer_data) > limit:
+            if lines_count > min_gap_after_code_start:
+                if in_code:
+                    blocks.append(current_data + buffer_data + "```\n")
+                    buffer_data = "```\n"
+                else:
+                    blocks.append(current_data + buffer_data)
+                    buffer_data = ""
+            else:
+                blocks.append(current_data)  # 先頭の改行は削除されてしまう
+            current_data = ""
+
+    return blocks
