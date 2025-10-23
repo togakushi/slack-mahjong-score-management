@@ -14,7 +14,7 @@ import integrations.discord.events.audioop as _audioop
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import APIInterface
 from libs.types import StyleOptions
-from libs.utils import converter, formatter
+from libs.utils import converter, formatter, textutil
 
 if TYPE_CHECKING:
     from discord import Message
@@ -135,10 +135,13 @@ class AdapterAPI(APIInterface):
                         case "rating":
                             post_msg.extend(_table_data(converter.df_to_dict(msg, step=20)))
                         case "ranking":
-                            post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=30)))
+                            post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=0)))
 
         if style.summarize:
-            post_msg = formatter.group_strings(post_msg, limit=1800)
+            if m.status.command_type == "ranking":
+                post_msg = textutil.split_text_blocks("".join(post_msg), 1900)
+            else:
+                post_msg = formatter.group_strings(post_msg, limit=1800)
 
         if header_msg and m.post.thread:
             date_suffix = ExtDt(float(m.data.event_ts)).format("ymdhm", delimiter="slash")

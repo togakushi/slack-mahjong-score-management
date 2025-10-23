@@ -311,8 +311,11 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
 
     # 整形/分割
     ret: dict = {}
-    data = textutil.split_balanced(body, step)
-    last_block = len(data)
+    if step:
+        data = textutil.split_balanced(body, step)
+        last_block = len(data)
+    else:
+        last_block = 1
 
     if last_block == 1:
         output = table2ascii(
