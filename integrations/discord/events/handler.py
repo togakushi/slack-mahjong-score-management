@@ -43,6 +43,7 @@ def main(adapter: "ServiceAdapter"):
     @bot.event
     async def on_ready():
         logging.info("login: %s", bot.user)
+        adapter.conf.bot_id = bot.user
 
     @bot.event
     async def on_message(message: discord.Message):
@@ -60,7 +61,7 @@ def main(adapter: "ServiceAdapter"):
     @bot.event
     async def on_raw_message_edit(payload: discord.RawMessageUpdateEvent):
         channel = bot.get_channel(payload.channel_id)
-        if channel is None:
+        if channel is None or not isinstance(channel, discord.TextChannel):
             return
 
         try:
