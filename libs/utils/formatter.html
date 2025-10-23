@@ -457,7 +457,11 @@
 </span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>    <span class="k">if</span> <span class="n">buffer</span><span class="p">:</span>
 </span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buffer</span><span class="p">))</span>
 </span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>
-</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>    <span class="k">return</span> <span class="n">result</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>    <span class="c1"># コードブロックの連結</span>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>    <span class="c1"># result = [str(x).replace(&quot;\n```\n\n```\n&quot;, &quot;\n&quot;) for x in result]</span>
+</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>
+</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a>    <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
@@ -1023,7 +1027,11 @@
 </span><span id="group_strings-381"><a href="#group_strings-381"><span class="linenos">381</span></a>    <span class="k">if</span> <span class="n">buffer</span><span class="p">:</span>
 </span><span id="group_strings-382"><a href="#group_strings-382"><span class="linenos">382</span></a>        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buffer</span><span class="p">))</span>
 </span><span id="group_strings-383"><a href="#group_strings-383"><span class="linenos">383</span></a>
-</span><span id="group_strings-384"><a href="#group_strings-384"><span class="linenos">384</span></a>    <span class="k">return</span> <span class="n">result</span>
+</span><span id="group_strings-384"><a href="#group_strings-384"><span class="linenos">384</span></a>    <span class="c1"># コードブロックの連結</span>
+</span><span id="group_strings-385"><a href="#group_strings-385"><span class="linenos">385</span></a>    <span class="c1"># result = [str(x).replace(&quot;\n```\n\n```\n&quot;, &quot;\n&quot;) for x in result]</span>
+</span><span id="group_strings-386"><a href="#group_strings-386"><span class="linenos">386</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+</span><span id="group_strings-387"><a href="#group_strings-387"><span class="linenos">387</span></a>
+</span><span id="group_strings-388"><a href="#group_strings-388"><span class="linenos">388</span></a>    <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
