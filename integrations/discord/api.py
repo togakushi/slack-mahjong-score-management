@@ -6,7 +6,7 @@ import asyncio
 import sys
 import textwrap
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, Optional
 
 import pandas as pd
 
@@ -16,25 +16,25 @@ from integrations.base.interface import APIInterface
 from libs.types import StyleOptions
 from libs.utils import converter, formatter, textutil
 
+sys.modules["audioop"] = _audioop
+
 if TYPE_CHECKING:
     from discord import Message
 
-    from integrations.discord.config import SvcConfig
     from integrations.protocols import MessageParserProtocol
 
 
 class AdapterAPI(APIInterface):
     """インターフェースAPI操作クラス"""
 
-    def __init__(self, conf: "SvcConfig"):
+    def __init__(self):
         super().__init__()
 
-        sys.modules["audioop"] = _audioop
         from discord import File as discord_file
         self.discord_file = discord_file
 
-        self.conf = conf
-        """個別設定"""
+        # discord object
+        self.response: "Message"
 
     def post(self, m: "MessageParserProtocol"):
         """メッセージをポストする（非同期処理ラッパー）
@@ -51,8 +51,6 @@ class AdapterAPI(APIInterface):
         Args:
             m (MessageParserProtocol): メッセージデータ
         """
-
-        self.conf.response = cast("Message", self.conf.response)
 
         def _header_text(title: str) -> str:
             if not title.isnumeric() and title:  # 数値のキーはヘッダにしない
@@ -81,7 +79,7 @@ class AdapterAPI(APIInterface):
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
             if not all(v["options"].header_hidden for x in m.post.message for _, v in x.items()):
-                header_msg = await self.conf.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
+                header_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
                 m.post.thread = True
 
         # 本文
@@ -101,7 +99,7 @@ class AdapterAPI(APIInterface):
                         str(msg),
                         description=comment,
                     )
-                    asyncio.create_task(self.conf.response.channel.send(file=file))
+                    asyncio.create_task(self.response.channel.send(file=file))
 
                 if isinstance(msg, str):
                     if style.key_title and (title != header_title):
@@ -150,4 +148,4 @@ class AdapterAPI(APIInterface):
                 await thread.send(msg)
         else:
             for msg in post_msg:
-                await self.conf.response.reply(msg)
+                await self.response.reply(msg)

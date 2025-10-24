@@ -50,7 +50,7 @@ def main(adapter: "ServiceAdapter"):
         if message.author.bot:
             return
 
-        adapter.conf.response = message
+        adapter.api.response = message
 
         m = adapter.parser()
         m.data.status = "message_append"
@@ -78,7 +78,7 @@ def main(adapter: "ServiceAdapter"):
         if msg.author.bot:
             return
 
-        adapter.conf.response = msg
+        adapter.api.response = msg
 
         m = adapter.parser()
         m.data.status = "message_changed"
@@ -91,7 +91,7 @@ def main(adapter: "ServiceAdapter"):
         if message.author.bot:
             return
 
-        adapter.conf.response = message
+        adapter.api.response = message
 
         m = adapter.parser()
         m.data.status = "message_deleted"
