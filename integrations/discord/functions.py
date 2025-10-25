@@ -41,7 +41,7 @@ class SvcFunctions(FunctionsInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        self.conf.bot_id = cast("ClientUser", self.conf.bot_id)
+        self.conf.bot_name = cast("ClientUser", self.conf.bot_name)
 
         EMOJI = {
             "ok": "\N{WHITE HEAVY CHECK MARK}",
@@ -54,12 +54,12 @@ class SvcFunctions(FunctionsInterface):
         for reaction in self.api.response.reactions:
             if str(reaction.emoji) == EMOJI["ok"]:
                 async for user in reaction.users():
-                    if user == self.conf.bot_id:
+                    if user == self.conf.bot_name:
                         has_ok = True
                         continue
             if str(reaction.emoji) == EMOJI["ng"]:
                 async for user in reaction.users():
-                    if user == self.conf.bot_id:
+                    if user == self.conf.bot_name:
                         has_ng = True
                         continue
 
@@ -70,19 +70,19 @@ class SvcFunctions(FunctionsInterface):
             case "change":
                 if m.status.reaction:  # NGを外してOKを付ける
                     if has_ng:
-                        await self.api.response.remove_reaction(EMOJI["ng"], self.conf.bot_id)
+                        await self.api.response.remove_reaction(EMOJI["ng"], self.conf.bot_name)
                     if not has_ok:
                         await self.api.response.add_reaction(EMOJI["ok"])
                 else:  # OKを外してNGを付ける
                     if has_ok:
-                        await self.api.response.remove_reaction(EMOJI["ok"], self.conf.bot_id)
+                        await self.api.response.remove_reaction(EMOJI["ok"], self.conf.bot_name)
                     if not has_ng:
                         await self.api.response.add_reaction(EMOJI["ng"])
             case "delete":
                 if has_ok:
-                    await self.api.response.remove_reaction(EMOJI["ok"], self.conf.bot_id)
+                    await self.api.response.remove_reaction(EMOJI["ok"], self.conf.bot_name)
                 if has_ng:
-                    await self.api.response.remove_reaction(EMOJI["ng"], self.conf.bot_id)
+                    await self.api.response.remove_reaction(EMOJI["ng"], self.conf.bot_name)
 
     def get_conversations(self, m: "MessageParserProtocol") -> dict:
         _ = m

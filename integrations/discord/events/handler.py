@@ -43,7 +43,7 @@ def main(adapter: "ServiceAdapter"):
     @bot.event
     async def on_ready():
         logging.info("login: %s", bot.user)
-        adapter.conf.bot_id = bot.user
+        adapter.conf.bot_name = bot.user
 
     @bot.event
     async def on_message(message: discord.Message):
