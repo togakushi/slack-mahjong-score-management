@@ -25,6 +25,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         _ = body
 
     @property
+    def in_thread(self) -> bool:
+        return False
+
+    @property
     def is_command(self) -> bool:
         return False
 

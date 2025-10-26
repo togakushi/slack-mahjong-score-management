@@ -52,6 +52,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.status.command_flg = flg
 
     @property
+    def in_thread(self) -> bool:
+        return False
+
+    @property
     def is_command(self):
         return self.status.command_flg
 

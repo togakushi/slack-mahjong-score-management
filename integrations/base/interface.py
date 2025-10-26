@@ -146,15 +146,6 @@ class MessageParserDataMixin:
     status: "StatusData"
 
     @property
-    def in_thread(self) -> bool:
-        """スレッド内のメッセージか判定"""
-        if self.data.thread_ts == "0":
-            return False
-        if self.data.event_ts == self.data.thread_ts:
-            return False
-        return True
-
-    @property
     def keyword(self) -> str:
         """コマンドとして認識している文字列を返す
 
@@ -346,6 +337,17 @@ class MessageParserInterface(ABC):
 
         Args:
             body (Any): 解析データ
+        """
+
+    @property
+    @abstractmethod
+    def in_thread(self) -> bool:
+        """元メッセージへのリプライとなっているか
+
+        Returns:
+            bool: 真偽値
+            - *True* : リプライの形（リプライ／スレッドなど）
+            - *False* : 通常メッセージ
         """
 
     @property
