@@ -122,10 +122,6 @@ class BaseSection(CommonMethodMixin):
                     case _:
                         setattr(self, k, self.__dict__.get(k))
 
-    def default_load(self) -> dict:
-        """クラス変数からデフォルト値の取り込み"""
-        return {k: v for k, v in self.__class__.__dict__.items() if not k.startswith("__") and not callable(v)}
-
     def to_dict(self) -> dict:
         """必要なパラメータを辞書型で返す
 
@@ -145,31 +141,45 @@ class BaseSection(CommonMethodMixin):
 class MahjongSection(BaseSection):
     """mahjongセクション初期値"""
 
-    rule_version: str = str()
+    rule_version: str
     """ルール判別識別子"""
-    origin_point: int = 250
+    origin_point: int
     """配給原点"""
-    return_point: int = 300
+    return_point: int
     """返し点"""
-    rank_point: list = [30, 10, -10, -30]
+    rank_point: list
     """順位点"""
-    ignore_flying: bool = False
+    ignore_flying: bool
     """トビカウント
     - True: なし
     - False: あり
     """
-    draw_split: bool = False
+    draw_split: bool
     """同点時の順位点
     - True: 山分けにする
     - False: 席順で決める
     """
-    regulations_type2: list = []
+    regulations_type2: list
     """メモで役満として扱う単語リスト(カンマ区切り)"""
 
     def __init__(self, outer: "AppConfig", section_name):
         self._parser = outer._parser
-        self.__dict__.update(super().default_load())
+
+        # 初期値セット
+        self.rule_version = ""
+        self.origin_point = 250
+        self.return_point = 300
+        self.rank_point = []
+        self.ignore_flying = False
+        self.draw_split = False
+        self.regulations_type2 = []
+
+        # 設定値取り込み
         super().__init__(self, section_name)
+
+        # 順位点更新
+        if not self.rank_point:
+            self.rank_point = [30, 10, -10, -30]
 
         self.rank_point = list(map(int, self.rank_point))  # 数値化
 
