@@ -126,6 +126,8 @@ class GameResult:
             self.origin_point = int(kwargs["origin_point"])
         if "return_point" in kwargs and isinstance(kwargs["return_point"], int):
             self.return_point = int(kwargs["return_point"])
+        if "rank_point" in kwargs and isinstance(kwargs["rank_point"], list):
+            self.rank_point = kwargs["rank_point"]
         if "draw_split" in kwargs and isinstance(kwargs["draw_split"], bool):
             self.draw_split = kwargs["draw_split"]
         if "comment" in kwargs:
