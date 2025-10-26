@@ -14,8 +14,21 @@ from libs.utils import dbutil
 def main():
     """ポイント再計算"""
     modify.db_backup()
+    logging.info("rank_point=%s, draw_split= %s", g.cfg.mahjong.rank_point, g.cfg.mahjong.draw_split)
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
-        rows = cur.execute("select * from result where rule_version=?;", (g.cfg.mahjong.rule_version,))
+        rows = cur.execute(
+            """
+            select
+                ts,
+                p1_name, p1_str,
+                p2_name, p2_str,
+                p3_name, p3_str,
+                p4_name, p4_str,
+                comment
+                from result where rule_version=?;
+            """,
+            (g.cfg.mahjong.rule_version,)
+        )
         count = 0
 
         for row in rows:
