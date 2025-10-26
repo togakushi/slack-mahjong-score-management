@@ -80,6 +80,15 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         logging.debug(self.data)
 
     @property
+    def in_thread(self) -> bool:
+        """スレッド内のメッセージか判定"""
+        if self.data.thread_ts == "0":
+            return False
+        if self.data.event_ts == self.data.thread_ts:
+            return False
+        return True
+
+    @property
     def is_command(self) -> bool:
         return self.status.command_flg
 

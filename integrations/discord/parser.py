@@ -4,6 +4,7 @@ integrations/discord/parser.py
 
 from typing import TYPE_CHECKING, cast
 
+from discord import Thread
 from discord.channel import TextChannel
 
 import libs.global_value as g
@@ -35,7 +36,21 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
         self.data.text = self.discord_msg.content.strip()
         self.data.event_ts = str(self.discord_msg.created_at.timestamp())
-        self.data.thread_ts = "0"
+
+        if self.discord_msg.reference:
+            self.data.thread_ts = str(self.discord_msg.reference.resolved.created_at.timestamp())
+        else:
+            self.data.thread_ts = "0"
+
+    @property
+    def in_thread(self) -> bool:
+        """リプライメッセージか判定
+        Note: slackに合わせてプロパティ名に`in_thread`を使う
+        """
+
+        if self.discord_msg.reference:
+            return True
+        return False
 
     @property
     def is_command(self) -> bool:
@@ -49,6 +64,11 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     def check_updatable(self) -> bool:
         g.adapter = cast("ServiceAdapter", g.adapter)
 
+        # スレッド内では常に禁止
+        if isinstance(self.discord_msg.channel, Thread):
+            return False
+
+        # 禁止リストが空の場合は全チャンネルで許可
         if not g.adapter.conf.channel_limitations:
             return True
 
