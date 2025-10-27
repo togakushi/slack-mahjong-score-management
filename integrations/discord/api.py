@@ -19,13 +19,15 @@ from libs.utils import converter, formatter, textutil
 sys.modules["audioop"] = _audioop
 
 if TYPE_CHECKING:
-    from discord import Message
+    from discord import Bot, Message
 
     from integrations.protocols import MessageParserProtocol
 
 
 class AdapterAPI(APIInterface):
     """インターフェースAPI操作クラス"""
+
+    bot: "Bot"
 
     def __init__(self):
         super().__init__()

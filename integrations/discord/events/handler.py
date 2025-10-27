@@ -39,6 +39,7 @@ def main(adapter: "ServiceAdapter"):
     intents.message_content = True
     intents.messages = True
     bot = discord.Bot(intents=intents)
+    adapter.api.bot = bot
 
     @bot.event
     async def on_ready():
@@ -60,12 +61,13 @@ def main(adapter: "ServiceAdapter"):
 
     @bot.event
     async def on_raw_message_edit(payload: discord.RawMessageUpdateEvent):
+
         channel = bot.get_channel(payload.channel_id)
         if channel is None or not isinstance(channel, discord.TextChannel):
             return
 
         try:
-            msg = await channel.fetch_message(payload.message_id)
+            message = await channel.fetch_message(payload.message_id)
         except discord.NotFound:
             return  # メッセージが既に削除されていた場合
         except discord.Forbidden:
@@ -73,16 +75,16 @@ def main(adapter: "ServiceAdapter"):
         except discord.HTTPException:
             return  # Discord API 側の一時的エラーなど
 
-        assert isinstance(msg, discord.Message)
+        assert isinstance(message, discord.Message)
 
-        if msg.author.bot:
+        if message.author.bot:
             return
 
-        adapter.api.response = msg
+        adapter.api.response = message
 
         m = adapter.parser()
         m.data.status = "message_changed"
-        m.parser(msg)
+        m.parser(message)
 
         libs.dispatcher.by_keyword(m)
 
