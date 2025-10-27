@@ -145,53 +145,6 @@ class MessageParserDataMixin:
     post: "PostData"
     status: "StatusData"
 
-    @property
-    def keyword(self) -> str:
-        """コマンドとして認識している文字列を返す
-
-        Returns:
-            str: コマンド名
-        """
-
-        if (ret := self.data.text.split()):
-            return ret[0]
-        return self.data.text
-
-    @property
-    def argument(self) -> list:
-        """コマンド引数として認識している文字列をリストで返す
-
-        Returns:
-            list: 引数リスト
-        """
-
-        if (ret := self.data.text.split()):
-            return ret[1:]
-        return ret
-
-    @property
-    def reply_ts(self) -> str:
-        """リプライ先のタイムスタンプを取得する
-
-        Returns:
-            str: タイムスタンプ
-        """
-
-        ret_ts: str = "0"
-
-        # tsが指定されていれば最優先
-        if self.post.ts != "undetermined":
-            return self.post.ts
-
-        # スレッドに返すか
-        if self.post.thread and self.in_thread:  # スレッド内
-            if self.data.thread_ts != "undetermined":
-                ret_ts = self.data.thread_ts
-        elif self.post.thread and not self.in_thread:  # スレッド外
-            ret_ts = self.data.event_ts
-
-        return ret_ts
-
     def reset(self) -> None:
         """初期化"""
 
@@ -331,6 +284,10 @@ class MessageParserDataMixin:
 class MessageParserInterface(ABC):
     """メッセージ解析インターフェース"""
 
+    data: "MsgData"
+    post: "PostData"
+    status: "StatusData"
+
     @abstractmethod
     def parser(self, body: Any):
         """メッセージ解析
@@ -393,3 +350,50 @@ class MessageParserInterface(ABC):
             - *True* : 存在する(操作禁止ユーザ)
             - *False* : 存在しない
         """
+
+    @property
+    def keyword(self) -> str:
+        """コマンドとして認識している文字列を返す
+
+        Returns:
+            str: コマンド名
+        """
+
+        if (ret := self.data.text.split()):
+            return ret[0]
+        return self.data.text
+
+    @property
+    def argument(self) -> list:
+        """コマンド引数として認識している文字列をリストで返す
+
+        Returns:
+            list: 引数リスト
+        """
+
+        if (ret := self.data.text.split()):
+            return ret[1:]
+        return ret
+
+    @property
+    def reply_ts(self) -> str:
+        """リプライ先のタイムスタンプを取得する
+
+        Returns:
+            str: タイムスタンプ
+        """
+
+        ret_ts: str = "0"
+
+        # tsが指定されていれば最優先
+        if self.post.ts != "undetermined":
+            return self.post.ts
+
+        # スレッドに返すか
+        if self.post.thread and self.in_thread:  # スレッド内
+            if self.data.thread_ts != "undetermined":
+                ret_ts = self.data.thread_ts
+        elif self.post.thread and not self.in_thread:  # スレッド外
+            ret_ts = self.data.event_ts
+
+        return ret_ts
