@@ -1,9 +1,9 @@
 """統合インターフェース定義
 
-
 Exports:
-- `integrations.base`: 基底クラス
+- `integrations.base`: 抽象基底クラス
 - `integrations.slack`: slackインターフェース
+- `integrations.discord`: discordインターフェース
 - `integrations.web`: webインターフェース
 - `integrations.standard_io`: 標準入出力インターフェース
 
