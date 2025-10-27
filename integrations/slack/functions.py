@@ -230,7 +230,7 @@ class SvcFunctions(FunctionsInterface):
                 if ng == reaction.get("name") and self.conf.bot_id in reaction["users"]:
                     icon["ng"].append(res["message"]["ts"])
 
-        logging.debug("ch=%s, ts=%s, user=%s, icon=%s", ch, ts, self.conf.bot_id, icon)
+        logging.debug("ch=%s, ts=%s, icon=%s", ch, ts, icon)
         return icon
 
     def reaction_append(self, icon: str, ch: str, ts: str):

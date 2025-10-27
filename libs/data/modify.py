@@ -162,7 +162,7 @@ def remarks_append(m: "MessageParserProtocol", remarks: list["RemarkDict"]) -> N
                         cur.execute(dbutil.query("REMARKS_INSERT"), para)
                         m.status.target_ts.append(para["event_ts"])
                         m.status.target_ts.append(para["event_ts"])
-                        logging.info("insert: %s, user=%s", para, m.data.user_id)
+                        logging.info("insert: %s", para)
             cur.commit()
             count = cur.execute("select changes();").fetchone()[0]
 
@@ -189,7 +189,7 @@ def remarks_delete(m: "MessageParserProtocol"):
             cur.commit()
             if (count := cur.execute("select changes();").fetchone()[0]):
                 m.status.target_ts.append(m.data.event_ts)
-                logging.info("ts=%s, user=%s, count=%s", m.data.event_ts, m.data.user_id, count)
+                logging.info("ts=%s, count=%s", m.data.event_ts, count)
         # 後処理
         m.status.action = "delete"
         g.adapter.functions.post_processing(m)
