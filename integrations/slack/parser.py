@@ -76,6 +76,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data.user_id = _event.get("user", self.data.user_id)
         self.data.event_ts = _event.get("ts", "0")
         self.data.thread_ts = _event.get("thread_ts", "0")
+        self.status.source = f"slack_{self.data.channel_id}"
 
         logging.debug(self.data)
 

@@ -35,6 +35,7 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
     """
 
     changes: int = 0
+
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             try:
@@ -42,6 +43,7 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
                     "playtime": ExtDt(float(detection.ts)).format("sql"),
                     "rpoint_sum": detection.rpoint_sum(),
                     **detection.to_dict(),
+                    "source": m.status.source,
                 })
                 changes = cur.total_changes
                 cur.commit()

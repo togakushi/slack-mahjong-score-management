@@ -101,6 +101,7 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
                             data.update(comment=None)
 
                         detection = GameResult(**data)
+                        m.status.source = "web"
                         if data.get("mode") == "insert":
                             modify.db_insert(detection, m)
                         else:

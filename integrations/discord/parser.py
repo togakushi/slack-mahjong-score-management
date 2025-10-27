@@ -31,6 +31,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     def parser(self, body: Message):
         self.discord_msg = body
+        self.status.source = f"discord_{self.discord_msg.channel.id}"
 
         self.data.text = self.discord_msg.content.strip()
         self.data.event_ts = str(self.discord_msg.created_at.timestamp())

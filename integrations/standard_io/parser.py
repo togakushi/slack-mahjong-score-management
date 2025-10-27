@@ -28,6 +28,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data.channel_id = "dummy"
         self.data.event_ts = str(datetime.now().timestamp())
         self.data.thread_ts = self.data.event_ts
+        self.status.source = "standard_io"
 
         if body.get("event"):
             body = cast(dict, body["event"])

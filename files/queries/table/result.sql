@@ -24,5 +24,6 @@ create table if not exists "result" (
     "deposit"       INTEGER,
     "rule_version"  TEXT,
     "comment"       TEXT,
+    "source"        TEXT,
     PRIMARY KEY("ts")
 );
