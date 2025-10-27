@@ -28,6 +28,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data = MsgData()
         self.post = PostData()
         self.status = StatusData()
+        self.discord_msg: Message
 
     def parser(self, body: Message):
         self.discord_msg = body

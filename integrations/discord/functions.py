@@ -4,6 +4,8 @@ integrations/discord/functions.py
 
 from typing import TYPE_CHECKING, cast
 
+from discord import Forbidden, NotFound
+
 from integrations.base.interface import FunctionsInterface
 
 if TYPE_CHECKING:
@@ -106,7 +108,9 @@ class SvcFunctions(FunctionsInterface):
         try:
             await message.channel.fetch_message(message.id)
             return False
-        except Exception:
+        except NotFound:
+            return True
+        except Forbidden:
             return True
 
     def get_conversations(self, m: "MessageParserProtocol") -> dict:
