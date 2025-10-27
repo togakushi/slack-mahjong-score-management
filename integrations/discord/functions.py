@@ -2,17 +2,16 @@
 integrations/discord/functions.py
 """
 
-import asyncio
 from typing import TYPE_CHECKING, cast
 
 from integrations.base.interface import FunctionsInterface
 
 if TYPE_CHECKING:
-    from discord import ClientUser
+    from discord import ClientUser, Message
 
     from integrations.base.interface import MessageParserProtocol
-    from integrations.discord.config import SvcConfig
     from integrations.discord.api import AdapterAPI
+    from integrations.discord.config import SvcConfig
 
 
 class SvcFunctions(FunctionsInterface):
@@ -32,7 +31,13 @@ class SvcFunctions(FunctionsInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        asyncio.create_task(self.update_reaction(m))
+        match m.status.action:
+            case "nothing":
+                return
+            case "change":
+                self.api.bot.loop.create_task(self.update_reaction(m))
+            case "delete":
+                self.api.bot.loop.create_task(self.delete_reaction())
 
     async def update_reaction(self, m: "MessageParserProtocol"):
         """後処理
@@ -40,6 +45,9 @@ class SvcFunctions(FunctionsInterface):
         Args:
             m (MessageParserProtocol): メッセージデータ
         """
+
+        if await self.is_deleted_message(self.api.response):
+            return
 
         self.conf.bot_name = cast("ClientUser", self.conf.bot_name)
 
@@ -54,35 +62,52 @@ class SvcFunctions(FunctionsInterface):
         for reaction in self.api.response.reactions:
             if str(reaction.emoji) == EMOJI["ok"]:
                 async for user in reaction.users():
-                    if user == self.conf.bot_name:
+                    if user == self.api.response.guild.me:
                         has_ok = True
                         continue
             if str(reaction.emoji) == EMOJI["ng"]:
                 async for user in reaction.users():
-                    if user == self.conf.bot_name:
+                    if user == self.api.response.guild.me:
                         has_ng = True
                         continue
 
         # リアクション処理
-        match m.status.action:
-            case "nothing":
-                return
-            case "change":
-                if m.status.reaction:  # NGを外してOKを付ける
-                    if has_ng:
-                        await self.api.response.remove_reaction(EMOJI["ng"], self.conf.bot_name)
-                    if not has_ok:
-                        await self.api.response.add_reaction(EMOJI["ok"])
-                else:  # OKを外してNGを付ける
-                    if has_ok:
-                        await self.api.response.remove_reaction(EMOJI["ok"], self.conf.bot_name)
-                    if not has_ng:
-                        await self.api.response.add_reaction(EMOJI["ng"])
-            case "delete":
-                if has_ok:
-                    await self.api.response.remove_reaction(EMOJI["ok"], self.conf.bot_name)
-                if has_ng:
-                    await self.api.response.remove_reaction(EMOJI["ng"], self.conf.bot_name)
+        if m.status.reaction:  # NGを外してOKを付ける
+            if has_ng:
+                await self.api.response.remove_reaction(EMOJI["ng"], self.conf.bot_name)
+            if not has_ok:
+                await self.api.response.add_reaction(EMOJI["ok"])
+        else:  # OKを外してNGを付ける
+            if has_ok:
+                await self.api.response.remove_reaction(EMOJI["ok"], self.conf.bot_name)
+            if not has_ng:
+                await self.api.response.add_reaction(EMOJI["ng"])
+
+    async def delete_reaction(self):
+        """botが付けたリアクションをすべて削除する"""
+
+        if await self.is_deleted_message(self.api.response):
+            return
+
+        for reaction in self.api.response.reactions:
+            async for user in reaction.users():
+                if user == self.api.response.guild.me:
+                    await reaction.remove(user)
+
+    async def is_deleted_message(self, message: "Message") -> bool:
+        """メッセージが削除済みか調べる
+
+        Args:
+            message (Message): discordオブジェクト
+
+        Returns:
+            bool: 真偽
+        """
+        try:
+            await message.channel.fetch_message(message.id)
+            return False
+        except Exception:
+            return True
 
     def get_conversations(self, m: "MessageParserProtocol") -> dict:
         _ = m

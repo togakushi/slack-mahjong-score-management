@@ -162,10 +162,15 @@ def remarks_append(m: "MessageParserProtocol", remarks: list["RemarkDict"]) -> N
                         m.status.target_ts.append(para["event_ts"])
                         logging.info("insert: %s, user=%s", para, m.data.user_id)
             cur.commit()
+            count = cur.execute("select changes();").fetchone()[0]
 
         # 後処理
-        m.status.action = "change"
-        m.status.reaction = True  # 対象外はINSERTしないようにガード済
+        if count:
+            m.status.action = "change"
+            m.status.reaction = True
+        else:
+            m.status.action = "nothing"
+
         g.adapter.functions.post_processing(m)
 
 
