@@ -4,7 +4,7 @@ integrations/discord/parser.py
 
 from typing import TYPE_CHECKING, cast
 
-from discord import Thread
+from discord import Message, Thread
 from discord.channel import TextChannel
 
 import libs.global_value as g
@@ -13,8 +13,6 @@ from integrations.base.interface import (MessageParserDataMixin,
 from integrations.protocols import MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
-    from discord import Message
-
     from integrations.discord.adapter import ServiceAdapter
 
 
@@ -31,16 +29,16 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.post = PostData()
         self.status = StatusData()
 
-    def parser(self, body: "Message"):
+    def parser(self, body: Message):
         self.discord_msg = body
 
         self.data.text = self.discord_msg.content.strip()
         self.data.event_ts = str(self.discord_msg.created_at.timestamp())
 
+        self.data.thread_ts = "0"
         if self.discord_msg.reference:
-            self.data.thread_ts = str(self.discord_msg.reference.resolved.created_at.timestamp())
-        else:
-            self.data.thread_ts = "0"
+            if isinstance(self.discord_msg.reference.resolved, Message):
+                self.data.thread_ts = str(self.discord_msg.reference.resolved.created_at.timestamp())
 
     @property
     def in_thread(self) -> bool:

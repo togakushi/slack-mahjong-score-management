@@ -62,12 +62,12 @@ class SvcFunctions(FunctionsInterface):
         for reaction in self.api.response.reactions:
             if str(reaction.emoji) == EMOJI["ok"]:
                 async for user in reaction.users():
-                    if user == self.api.response.guild.me:
+                    if user == self.conf.bot_name:
                         has_ok = True
                         continue
             if str(reaction.emoji) == EMOJI["ng"]:
                 async for user in reaction.users():
-                    if user == self.api.response.guild.me:
+                    if user == self.conf.bot_name:
                         has_ng = True
                         continue
 
@@ -91,7 +91,7 @@ class SvcFunctions(FunctionsInterface):
 
         for reaction in self.api.response.reactions:
             async for user in reaction.users():
-                if user == self.api.response.guild.me:
+                if user == self.conf.bot_name:
                     await reaction.remove(user)
 
     async def is_deleted_message(self, message: "Message") -> bool:
