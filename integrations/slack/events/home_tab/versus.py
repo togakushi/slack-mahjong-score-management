@@ -91,7 +91,7 @@ def register_versus_handlers(app, adapter: ServiceAdapter):
         logging.debug("[versus_menu] %s", adapter.conf.tab_var)
 
         build_versus_menu(adapter)
-        adapter.conf.appclient.views_publish(
+        adapter.api.appclient.views_publish(
             user_id=adapter.conf.tab_var["user_id"],
             view=adapter.conf.tab_var["view"],
         )
@@ -125,7 +125,7 @@ def register_versus_handlers(app, adapter: ServiceAdapter):
             if len(search_options["bid-multi_select"]["player"]["selected_options"]) == 0:
                 return
 
-        adapter.conf.appclient.views_update(
+        adapter.api.appclient.views_update(
             view_id=adapter.conf.tab_var["view_id"],
             view=ui_parts.plain_text(f"{chr(10).join(app_msg)}")
         )
@@ -159,7 +159,7 @@ def register_versus_handlers(app, adapter: ServiceAdapter):
 
         logging.debug("[global var] %s", adapter.conf.tab_var)
 
-        adapter.conf.appclient.views_update(
+        adapter.api.appclient.views_update(
             view_id=adapter.conf.tab_var["view_id"],
             view=build_versus_menu(adapter),
         )

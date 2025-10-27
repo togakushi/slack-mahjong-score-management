@@ -42,7 +42,7 @@ def register_home_handlers(app, adapter: ServiceAdapter):
         logging.trace(body)  # type: ignore
 
         build_main_menu(adapter)
-        adapter.conf.appclient.views_publish(
+        adapter.api.appclient.views_publish(
             user_id=adapter.conf.tab_var["user_id"],
             view=adapter.conf.tab_var["view"],
         )
@@ -59,7 +59,7 @@ def register_home_handlers(app, adapter: ServiceAdapter):
 
         ack()
 
-        adapter.conf.appclient.views_open(
+        adapter.api.appclient.views_open(
             trigger_id=body["trigger_id"],
             view=ui_parts.modalperiod_selection(adapter),
         )

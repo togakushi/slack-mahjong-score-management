@@ -361,7 +361,7 @@ def update_view(adapter: "ServiceAdapter", m: "MessageParserProtocol", msg: list
     else:
         text = ""
 
-    adapter.conf.appclient.views_update(
+    adapter.api.appclient.views_update(
         view_id=adapter.conf.tab_var["view_id"],
         view=plain_text(f"{chr(10).join(msg)}\n\n{text}".strip()),
     )

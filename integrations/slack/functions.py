@@ -14,13 +14,14 @@ if TYPE_CHECKING:
     from slack_sdk.web import SlackResponse
 
     from integrations.protocols import MessageParserProtocol
+    from integrations.slack.api import AdapterAPI
     from integrations.slack.config import SvcConfig
 
 
 class SvcFunctions(FunctionsInterface):
     """slack専用関数"""
 
-    def __init__(self, conf: "SvcConfig"):
+    def __init__(self, api: "AdapterAPI", conf: "SvcConfig"):
         super().__init__()
 
         try:
@@ -29,6 +30,7 @@ class SvcFunctions(FunctionsInterface):
         except ModuleNotFoundError as err:
             raise ModuleNotFoundError(err.msg) from None
 
+        self.api = api
         self.conf = conf
         """個別設定"""
 
@@ -48,7 +50,7 @@ class SvcFunctions(FunctionsInterface):
         logging.info("query=%s", query)
 
         # データ取得
-        response = self.conf.webclient.search_messages(
+        response = self.api.webclient.search_messages(
             query=query,
             sort="timestamp",
             sort_dir="asc",
@@ -56,7 +58,7 @@ class SvcFunctions(FunctionsInterface):
         )
         matches = response["messages"]["matches"]  # 1ページ目
         for p in range(2, response["messages"]["paging"]["pages"] + 1):
-            response = self.conf.webclient.search_messages(
+            response = self.api.webclient.search_messages(
                 query=query,
                 sort="timestamp",
                 sort_dir="asc",
@@ -89,7 +91,7 @@ class SvcFunctions(FunctionsInterface):
 
         # 詳細情報取得
         for key in matches:
-            conversations = self.conf.appclient.conversations_replies(channel=key.data.channel_id, ts=key.data.event_ts)
+            conversations = self.api.appclient.conversations_replies(channel=key.data.channel_id, ts=key.data.event_ts)
             if (msg := conversations.get("messages")):
                 res = cast(dict, msg[0])
             else:
@@ -118,7 +120,7 @@ class SvcFunctions(FunctionsInterface):
         """
 
         try:
-            res = self.conf.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
+            res = self.api.appclient.conversations_replies(channel=m.data.channel_id, ts=m.data.event_ts)
             logging.trace(res.validate())  # type: ignore
             return cast(dict, res)
         except self.slack_api_error as err:
@@ -161,7 +163,7 @@ class SvcFunctions(FunctionsInterface):
         channel_id = ""
 
         try:
-            response = self.conf.webclient.search_messages(
+            response = self.api.webclient.search_messages(
                 query=f"in:{self.conf.search_channel}",
                 count=1,
             )
@@ -191,7 +193,7 @@ class SvcFunctions(FunctionsInterface):
         channel_id = ""
 
         try:
-            response = self.conf.appclient.conversations_open(users=[user_id])
+            response = self.api.appclient.conversations_open(users=[user_id])
             channel_id = response["channel"]["id"]
         except self.slack_api_error as e:
             logging.error(e)
@@ -218,7 +220,7 @@ class SvcFunctions(FunctionsInterface):
         }
 
         try:  # 削除済みメッセージはエラーになるので潰す
-            res = self.conf.appclient.reactions_get(channel=ch, timestamp=ts)
+            res = self.api.appclient.reactions_get(channel=ch, timestamp=ts)
             logging.trace(res.validate())  # type: ignore
         except self.slack_api_error:
             return icon
@@ -247,7 +249,7 @@ class SvcFunctions(FunctionsInterface):
             return
 
         try:
-            res: SlackResponse = self.conf.appclient.reactions_add(
+            res: SlackResponse = self.api.appclient.reactions_add(
                 channel=str(ch),
                 name=icon,
                 timestamp=str(ts),
@@ -275,7 +277,7 @@ class SvcFunctions(FunctionsInterface):
             return
 
         try:
-            res = self.conf.appclient.reactions_remove(
+            res = self.api.appclient.reactions_remove(
                 channel=ch,
                 name=icon,
                 timestamp=ts,

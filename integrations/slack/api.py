@@ -9,22 +9,27 @@ from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 
-
 from integrations.base.interface import APIInterface
 from libs.types import StyleOptions
 from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
     from slack_sdk.web import SlackResponse
+    from slack_sdk.web.client import WebClient
 
     from integrations.protocols import MessageParserProtocol
-    from integrations.slack.config import SvcConfig
 
 
 class AdapterAPI(APIInterface):
     """インターフェースAPI操作クラス"""
 
-    def __init__(self, conf: "SvcConfig"):
+    # slack object
+    appclient: "WebClient"
+    """WebClient(botトークン使用)"""
+    webclient: "WebClient"
+    """WebClient(userトークン使用)"""
+
+    def __init__(self):
         super().__init__()
 
         try:
@@ -32,9 +37,6 @@ class AdapterAPI(APIInterface):
             self.slack_api_error = SlackApiError
         except ModuleNotFoundError as err:
             raise ModuleNotFoundError(err.msg) from None
-
-        self.conf = conf
-        """個別設定"""
 
     def post(self, m: "MessageParserProtocol"):
         """メッセージをポストする
@@ -157,7 +159,7 @@ class AdapterAPI(APIInterface):
             kwargs.pop("thread_ts")
 
         try:
-            res = self.conf.appclient.chat_postMessage(**kwargs)
+            res = self.appclient.chat_postMessage(**kwargs)
         except self.slack_api_error as err:
             logging.critical(err)
             logging.error("kwargs=%s", kwargs)
@@ -176,7 +178,7 @@ class AdapterAPI(APIInterface):
             kwargs.pop("thread_ts")
 
         try:
-            res = self.conf.appclient.files_upload_v2(**kwargs)
+            res = self.appclient.files_upload_v2(**kwargs)
         except self.slack_api_error as err:
             logging.critical(err)
             logging.error("kwargs=%s", kwargs)

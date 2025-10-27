@@ -25,8 +25,8 @@ def main():
         try:
             g.adapter = cast("ServiceAdapter", g.adapter)
             app = App(token=os.environ["SLACK_BOT_TOKEN"])
-            g.adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-            g.adapter.conf.appclient = app.client
+            g.adapter.api.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+            g.adapter.api.appclient = app.client
             g.adapter.conf.bot_id = app.client.auth_test()["user_id"]
             configuration.read_memberslist(False)
         except Exception as err:

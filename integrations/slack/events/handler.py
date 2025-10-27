@@ -43,8 +43,8 @@ def main(adapter: "ServiceAdapter"):
     try:
         log_filter()
         app = App(token=os.environ["SLACK_BOT_TOKEN"])
-        adapter.conf.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-        adapter.conf.appclient = app.client
+        adapter.api.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+        adapter.api.appclient = app.client
         log_filter()
         adapter.conf.bot_id = app.client.auth_test()["user_id"]
     except SlackApiError as err:
@@ -115,7 +115,7 @@ def register_event_handlers(app, adapter: "ServiceAdapter"):
         logging.trace(adapter.conf.tab_var)  # type: ignore
 
         home.build_main_menu(adapter)
-        result = adapter.conf.appclient.views_publish(
+        result = adapter.api.appclient.views_publish(
             user_id=adapter.conf.tab_var["user_id"],
             view=adapter.conf.tab_var["view"],
         )
