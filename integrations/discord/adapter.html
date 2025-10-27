@@ -102,8 +102,8 @@
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="s2">&quot;ConfigParser&quot;</span><span class="p">):</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">SvcConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">SvcFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">AdapterAPI</span><span class="p">()</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">SvcFunctions</span><span class="p">(</span><span class="n">api</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">MessageParser</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
@@ -129,8 +129,8 @@
 </span><span id="ServiceAdapter-23"><a href="#ServiceAdapter-23"><span class="linenos">23</span></a>
 </span><span id="ServiceAdapter-24"><a href="#ServiceAdapter-24"><span class="linenos">24</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="s2">&quot;ConfigParser&quot;</span><span class="p">):</span>
 </span><span id="ServiceAdapter-25"><a href="#ServiceAdapter-25"><span class="linenos">25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">SvcConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
-</span><span id="ServiceAdapter-26"><a href="#ServiceAdapter-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="ServiceAdapter-27"><a href="#ServiceAdapter-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">SvcFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="ServiceAdapter-26"><a href="#ServiceAdapter-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">AdapterAPI</span><span class="p">()</span>
+</span><span id="ServiceAdapter-27"><a href="#ServiceAdapter-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">SvcFunctions</span><span class="p">(</span><span class="n">api</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
 </span><span id="ServiceAdapter-28"><a href="#ServiceAdapter-28"><span class="linenos">28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">MessageParser</span>
 </span><span id="ServiceAdapter-29"><a href="#ServiceAdapter-29"><span class="linenos">29</span></a>
 </span><span id="ServiceAdapter-30"><a href="#ServiceAdapter-30"><span class="linenos">30</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
@@ -153,8 +153,8 @@
     <a class="headerlink" href="#ServiceAdapter.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="ServiceAdapter.__init__-24"><a href="#ServiceAdapter.__init__-24"><span class="linenos">24</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="s2">&quot;ConfigParser&quot;</span><span class="p">):</span>
 </span><span id="ServiceAdapter.__init__-25"><a href="#ServiceAdapter.__init__-25"><span class="linenos">25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">SvcConfig</span><span class="p">(</span><span class="n">config_file</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
-</span><span id="ServiceAdapter.__init__-26"><a href="#ServiceAdapter.__init__-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">AdapterAPI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
-</span><span id="ServiceAdapter.__init__-27"><a href="#ServiceAdapter.__init__-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">SvcFunctions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
+</span><span id="ServiceAdapter.__init__-26"><a href="#ServiceAdapter.__init__-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">AdapterAPI</span><span class="p">()</span>
+</span><span id="ServiceAdapter.__init__-27"><a href="#ServiceAdapter.__init__-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">functions</span> <span class="o">=</span> <span class="n">SvcFunctions</span><span class="p">(</span><span class="n">api</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
 </span><span id="ServiceAdapter.__init__-28"><a href="#ServiceAdapter.__init__-28"><span class="linenos">28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">MessageParser</span>
 </span><span id="ServiceAdapter.__init__-29"><a href="#ServiceAdapter.__init__-29"><span class="linenos">29</span></a>
 </span><span id="ServiceAdapter.__init__-30"><a href="#ServiceAdapter.__init__-30"><span class="linenos">30</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">)</span>
@@ -166,7 +166,7 @@
                             </div>
                             <div id="ServiceAdapter.interface_type" class="classattr">
                                 <div class="attr variable">
-            <span class="name">interface_type</span>        =
+            <span class="name">interface_type</span><span class="annotation">: str</span>        =
 <span class="default_value">&#39;discord&#39;</span>
 
         
@@ -180,7 +180,7 @@
                             </div>
                             <div id="ServiceAdapter.conf" class="classattr">
                                 <div class="attr variable">
-            <span class="name">conf</span>
+            <span class="name">conf</span><span class="annotation">: ~ConfigT</span>
 
         
     </div>
@@ -193,7 +193,7 @@
                             </div>
                             <div id="ServiceAdapter.api" class="classattr">
                                 <div class="attr variable">
-            <span class="name">api</span>
+            <span class="name">api</span><span class="annotation">: ~ApiT</span>
 
         
     </div>
@@ -206,7 +206,7 @@
                             </div>
                             <div id="ServiceAdapter.functions" class="classattr">
                                 <div class="attr variable">
-            <span class="name">functions</span>
+            <span class="name">functions</span><span class="annotation">: ~FunctionsT</span>
 
         
     </div>
@@ -219,7 +219,7 @@
                             </div>
                             <div id="ServiceAdapter.parser" class="classattr">
                                 <div class="attr variable">
-            <span class="name">parser</span>
+            <span class="name">parser</span><span class="annotation">: Type[~ParserT]</span>
 
         
     </div>

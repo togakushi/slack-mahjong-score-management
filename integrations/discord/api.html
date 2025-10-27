@@ -35,13 +35,13 @@
                     <a class="class" href="#AdapterAPI">AdapterAPI</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#AdapterAPI.__init__">AdapterAPI</a>
+                                <a class="variable" href="#AdapterAPI.bot">bot</a>
                         </li>
                         <li>
                                 <a class="variable" href="#AdapterAPI.discord_file">discord_file</a>
                         </li>
                         <li>
-                                <a class="variable" href="#AdapterAPI.conf">conf</a>
+                                <a class="variable" href="#AdapterAPI.response">response</a>
                         </li>
                         <li>
                                 <a class="function" href="#AdapterAPI.post">post</a>
@@ -83,7 +83,7 @@
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">PosixPath</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">cast</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
@@ -93,43 +93,43 @@
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StyleOptions</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">libs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">converter</span><span class="p">,</span> <span class="n">formatter</span><span class="p">,</span> <span class="n">textutil</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">discord</span><span class="w"> </span><span class="kn">import</span> <span class="n">Message</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.discord.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">SvcConfig</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageParserProtocol</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">&quot;audioop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_audioop</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">discord</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bot</span><span class="p">,</span> <span class="n">Message</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">integrations.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageParserProtocol</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AdapterAPI</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;インターフェースAPI操作クラス&quot;&quot;&quot;</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="s2">&quot;SvcConfig&quot;</span><span class="p">):</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AdapterAPI</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;インターフェースAPI操作クラス&quot;&quot;&quot;</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="n">bot</span><span class="p">:</span> <span class="s2">&quot;Bot&quot;</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">&quot;audioop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_audioop</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">discord</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span> <span class="k">as</span> <span class="n">discord_file</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">discord_file</span> <span class="o">=</span> <span class="n">discord_file</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;個別設定&quot;&quot;&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする（非同期処理ラッパー）</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">        Args:</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_async</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">discord</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span> <span class="k">as</span> <span class="n">discord_file</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">discord_file</span> <span class="o">=</span> <span class="n">discord_file</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>        <span class="c1"># discord object</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする（非同期処理ラッパー）</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">        Args:</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">post_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">        Args:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Message&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_async</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">post_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">        Args:</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">_header_text</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span> <span class="ow">and</span> <span class="n">title</span><span class="p">:</span>  <span class="c1"># 数値のキーはヘッダにしない</span>
@@ -158,7 +158,7 @@
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">headline</span><span class="p">:</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>            <span class="n">header_title</span><span class="p">,</span> <span class="n">header_text</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">headline</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header_hidden</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>                <span class="n">header_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_header_text</span><span class="p">(</span><span class="n">header_title</span><span class="p">)</span><span class="si">}{</span><span class="n">header_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>                <span class="n">header_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_header_text</span><span class="p">(</span><span class="n">header_title</span><span class="p">)</span><span class="si">}{</span><span class="n">header_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>                <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="c1"># 本文</span>
@@ -178,7 +178,7 @@
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>                        <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>                        <span class="n">description</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>                    <span class="p">)</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>                    <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">))</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>                    <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">))</span>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>                    <span class="k">if</span> <span class="n">style</span><span class="o">.</span><span class="n">key_title</span> <span class="ow">and</span> <span class="p">(</span><span class="n">title</span> <span class="o">!=</span> <span class="n">header_title</span><span class="p">):</span>
@@ -227,7 +227,7 @@
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>                <span class="k">await</span> <span class="n">thread</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">post_msg</span><span class="p">:</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -243,36 +243,35 @@
 
     </div>
     <a class="headerlink" href="#AdapterAPI"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI-27"><a href="#AdapterAPI-27"><span class="linenos"> 27</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AdapterAPI</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
-</span><span id="AdapterAPI-28"><a href="#AdapterAPI-28"><span class="linenos"> 28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;インターフェースAPI操作クラス&quot;&quot;&quot;</span>
-</span><span id="AdapterAPI-29"><a href="#AdapterAPI-29"><span class="linenos"> 29</span></a>
-</span><span id="AdapterAPI-30"><a href="#AdapterAPI-30"><span class="linenos"> 30</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="s2">&quot;SvcConfig&quot;</span><span class="p">):</span>
-</span><span id="AdapterAPI-31"><a href="#AdapterAPI-31"><span class="linenos"> 31</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI-28"><a href="#AdapterAPI-28"><span class="linenos"> 28</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AdapterAPI</span><span class="p">(</span><span class="n">APIInterface</span><span class="p">):</span>
+</span><span id="AdapterAPI-29"><a href="#AdapterAPI-29"><span class="linenos"> 29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;インターフェースAPI操作クラス&quot;&quot;&quot;</span>
+</span><span id="AdapterAPI-30"><a href="#AdapterAPI-30"><span class="linenos"> 30</span></a>
+</span><span id="AdapterAPI-31"><a href="#AdapterAPI-31"><span class="linenos"> 31</span></a>    <span class="n">bot</span><span class="p">:</span> <span class="s2">&quot;Bot&quot;</span>
 </span><span id="AdapterAPI-32"><a href="#AdapterAPI-32"><span class="linenos"> 32</span></a>
-</span><span id="AdapterAPI-33"><a href="#AdapterAPI-33"><span class="linenos"> 33</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">&quot;audioop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_audioop</span>
-</span><span id="AdapterAPI-34"><a href="#AdapterAPI-34"><span class="linenos"> 34</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">discord</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span> <span class="k">as</span> <span class="n">discord_file</span>
-</span><span id="AdapterAPI-35"><a href="#AdapterAPI-35"><span class="linenos"> 35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">discord_file</span> <span class="o">=</span> <span class="n">discord_file</span>
-</span><span id="AdapterAPI-36"><a href="#AdapterAPI-36"><span class="linenos"> 36</span></a>
-</span><span id="AdapterAPI-37"><a href="#AdapterAPI-37"><span class="linenos"> 37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
-</span><span id="AdapterAPI-38"><a href="#AdapterAPI-38"><span class="linenos"> 38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;個別設定&quot;&quot;&quot;</span>
-</span><span id="AdapterAPI-39"><a href="#AdapterAPI-39"><span class="linenos"> 39</span></a>
-</span><span id="AdapterAPI-40"><a href="#AdapterAPI-40"><span class="linenos"> 40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="AdapterAPI-41"><a href="#AdapterAPI-41"><span class="linenos"> 41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする（非同期処理ラッパー）</span>
-</span><span id="AdapterAPI-42"><a href="#AdapterAPI-42"><span class="linenos"> 42</span></a>
-</span><span id="AdapterAPI-43"><a href="#AdapterAPI-43"><span class="linenos"> 43</span></a><span class="sd">        Args:</span>
-</span><span id="AdapterAPI-44"><a href="#AdapterAPI-44"><span class="linenos"> 44</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="AdapterAPI-45"><a href="#AdapterAPI-45"><span class="linenos"> 45</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AdapterAPI-46"><a href="#AdapterAPI-46"><span class="linenos"> 46</span></a>
-</span><span id="AdapterAPI-47"><a href="#AdapterAPI-47"><span class="linenos"> 47</span></a>        <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_async</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+</span><span id="AdapterAPI-33"><a href="#AdapterAPI-33"><span class="linenos"> 33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="AdapterAPI-34"><a href="#AdapterAPI-34"><span class="linenos"> 34</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="AdapterAPI-35"><a href="#AdapterAPI-35"><span class="linenos"> 35</span></a>
+</span><span id="AdapterAPI-36"><a href="#AdapterAPI-36"><span class="linenos"> 36</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">discord</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span> <span class="k">as</span> <span class="n">discord_file</span>
+</span><span id="AdapterAPI-37"><a href="#AdapterAPI-37"><span class="linenos"> 37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">discord_file</span> <span class="o">=</span> <span class="n">discord_file</span>
+</span><span id="AdapterAPI-38"><a href="#AdapterAPI-38"><span class="linenos"> 38</span></a>
+</span><span id="AdapterAPI-39"><a href="#AdapterAPI-39"><span class="linenos"> 39</span></a>        <span class="c1"># discord object</span>
+</span><span id="AdapterAPI-40"><a href="#AdapterAPI-40"><span class="linenos"> 40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">:</span> <span class="s2">&quot;Message&quot;</span>
+</span><span id="AdapterAPI-41"><a href="#AdapterAPI-41"><span class="linenos"> 41</span></a>
+</span><span id="AdapterAPI-42"><a href="#AdapterAPI-42"><span class="linenos"> 42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="AdapterAPI-43"><a href="#AdapterAPI-43"><span class="linenos"> 43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする（非同期処理ラッパー）</span>
+</span><span id="AdapterAPI-44"><a href="#AdapterAPI-44"><span class="linenos"> 44</span></a>
+</span><span id="AdapterAPI-45"><a href="#AdapterAPI-45"><span class="linenos"> 45</span></a><span class="sd">        Args:</span>
+</span><span id="AdapterAPI-46"><a href="#AdapterAPI-46"><span class="linenos"> 46</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="AdapterAPI-47"><a href="#AdapterAPI-47"><span class="linenos"> 47</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="AdapterAPI-48"><a href="#AdapterAPI-48"><span class="linenos"> 48</span></a>
-</span><span id="AdapterAPI-49"><a href="#AdapterAPI-49"><span class="linenos"> 49</span></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">post_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="AdapterAPI-50"><a href="#AdapterAPI-50"><span class="linenos"> 50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
-</span><span id="AdapterAPI-51"><a href="#AdapterAPI-51"><span class="linenos"> 51</span></a>
-</span><span id="AdapterAPI-52"><a href="#AdapterAPI-52"><span class="linenos"> 52</span></a><span class="sd">        Args:</span>
-</span><span id="AdapterAPI-53"><a href="#AdapterAPI-53"><span class="linenos"> 53</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="AdapterAPI-54"><a href="#AdapterAPI-54"><span class="linenos"> 54</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AdapterAPI-55"><a href="#AdapterAPI-55"><span class="linenos"> 55</span></a>
-</span><span id="AdapterAPI-56"><a href="#AdapterAPI-56"><span class="linenos"> 56</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Message&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+</span><span id="AdapterAPI-49"><a href="#AdapterAPI-49"><span class="linenos"> 49</span></a>        <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_async</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+</span><span id="AdapterAPI-50"><a href="#AdapterAPI-50"><span class="linenos"> 50</span></a>
+</span><span id="AdapterAPI-51"><a href="#AdapterAPI-51"><span class="linenos"> 51</span></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">post_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="AdapterAPI-52"><a href="#AdapterAPI-52"><span class="linenos"> 52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
+</span><span id="AdapterAPI-53"><a href="#AdapterAPI-53"><span class="linenos"> 53</span></a>
+</span><span id="AdapterAPI-54"><a href="#AdapterAPI-54"><span class="linenos"> 54</span></a><span class="sd">        Args:</span>
+</span><span id="AdapterAPI-55"><a href="#AdapterAPI-55"><span class="linenos"> 55</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="AdapterAPI-56"><a href="#AdapterAPI-56"><span class="linenos"> 56</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="AdapterAPI-57"><a href="#AdapterAPI-57"><span class="linenos"> 57</span></a>
 </span><span id="AdapterAPI-58"><a href="#AdapterAPI-58"><span class="linenos"> 58</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">_header_text</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="AdapterAPI-59"><a href="#AdapterAPI-59"><span class="linenos"> 59</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span> <span class="ow">and</span> <span class="n">title</span><span class="p">:</span>  <span class="c1"># 数値のキーはヘッダにしない</span>
@@ -301,7 +300,7 @@
 </span><span id="AdapterAPI-82"><a href="#AdapterAPI-82"><span class="linenos"> 82</span></a>        <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">headline</span><span class="p">:</span>
 </span><span id="AdapterAPI-83"><a href="#AdapterAPI-83"><span class="linenos"> 83</span></a>            <span class="n">header_title</span><span class="p">,</span> <span class="n">header_text</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">headline</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 </span><span id="AdapterAPI-84"><a href="#AdapterAPI-84"><span class="linenos"> 84</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header_hidden</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-</span><span id="AdapterAPI-85"><a href="#AdapterAPI-85"><span class="linenos"> 85</span></a>                <span class="n">header_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_header_text</span><span class="p">(</span><span class="n">header_title</span><span class="p">)</span><span class="si">}{</span><span class="n">header_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="AdapterAPI-85"><a href="#AdapterAPI-85"><span class="linenos"> 85</span></a>                <span class="n">header_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_header_text</span><span class="p">(</span><span class="n">header_title</span><span class="p">)</span><span class="si">}{</span><span class="n">header_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="AdapterAPI-86"><a href="#AdapterAPI-86"><span class="linenos"> 86</span></a>                <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="AdapterAPI-87"><a href="#AdapterAPI-87"><span class="linenos"> 87</span></a>
 </span><span id="AdapterAPI-88"><a href="#AdapterAPI-88"><span class="linenos"> 88</span></a>        <span class="c1"># 本文</span>
@@ -321,7 +320,7 @@
 </span><span id="AdapterAPI-102"><a href="#AdapterAPI-102"><span class="linenos">102</span></a>                        <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span>
 </span><span id="AdapterAPI-103"><a href="#AdapterAPI-103"><span class="linenos">103</span></a>                        <span class="n">description</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span>
 </span><span id="AdapterAPI-104"><a href="#AdapterAPI-104"><span class="linenos">104</span></a>                    <span class="p">)</span>
-</span><span id="AdapterAPI-105"><a href="#AdapterAPI-105"><span class="linenos">105</span></a>                    <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">))</span>
+</span><span id="AdapterAPI-105"><a href="#AdapterAPI-105"><span class="linenos">105</span></a>                    <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">))</span>
 </span><span id="AdapterAPI-106"><a href="#AdapterAPI-106"><span class="linenos">106</span></a>
 </span><span id="AdapterAPI-107"><a href="#AdapterAPI-107"><span class="linenos">107</span></a>                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="AdapterAPI-108"><a href="#AdapterAPI-108"><span class="linenos">108</span></a>                    <span class="k">if</span> <span class="n">style</span><span class="o">.</span><span class="n">key_title</span> <span class="ow">and</span> <span class="p">(</span><span class="n">title</span> <span class="o">!=</span> <span class="n">header_title</span><span class="p">):</span>
@@ -370,7 +369,7 @@
 </span><span id="AdapterAPI-151"><a href="#AdapterAPI-151"><span class="linenos">151</span></a>                <span class="k">await</span> <span class="n">thread</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="AdapterAPI-152"><a href="#AdapterAPI-152"><span class="linenos">152</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="AdapterAPI-153"><a href="#AdapterAPI-153"><span class="linenos">153</span></a>            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">post_msg</span><span class="p">:</span>
-</span><span id="AdapterAPI-154"><a href="#AdapterAPI-154"><span class="linenos">154</span></a>                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="AdapterAPI-154"><a href="#AdapterAPI-154"><span class="linenos">154</span></a>                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -378,28 +377,14 @@
 </div>
 
 
-                            <div id="AdapterAPI.__init__" class="classattr">
-                                        <input id="AdapterAPI.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="name">AdapterAPI</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">conf</span><span class="p">:</span> <span class="n"><a href="config.html#SvcConfig">integrations.discord.config.SvcConfig</a></span></span>)</span>
+                            <div id="AdapterAPI.bot" class="classattr">
+                                <div class="attr variable">
+            <span class="name">bot</span><span class="annotation">: discord.bot.Bot</span>
 
-                <label class="view-source-button" for="AdapterAPI.__init__-view-source"><span>View Source</span></label>
-
+        
     </div>
-    <a class="headerlink" href="#AdapterAPI.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI.__init__-30"><a href="#AdapterAPI.__init__-30"><span class="linenos">30</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">:</span> <span class="s2">&quot;SvcConfig&quot;</span><span class="p">):</span>
-</span><span id="AdapterAPI.__init__-31"><a href="#AdapterAPI.__init__-31"><span class="linenos">31</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-</span><span id="AdapterAPI.__init__-32"><a href="#AdapterAPI.__init__-32"><span class="linenos">32</span></a>
-</span><span id="AdapterAPI.__init__-33"><a href="#AdapterAPI.__init__-33"><span class="linenos">33</span></a>        <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">&quot;audioop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_audioop</span>
-</span><span id="AdapterAPI.__init__-34"><a href="#AdapterAPI.__init__-34"><span class="linenos">34</span></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">discord</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span> <span class="k">as</span> <span class="n">discord_file</span>
-</span><span id="AdapterAPI.__init__-35"><a href="#AdapterAPI.__init__-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">discord_file</span> <span class="o">=</span> <span class="n">discord_file</span>
-</span><span id="AdapterAPI.__init__-36"><a href="#AdapterAPI.__init__-36"><span class="linenos">36</span></a>
-</span><span id="AdapterAPI.__init__-37"><a href="#AdapterAPI.__init__-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
-</span><span id="AdapterAPI.__init__-38"><a href="#AdapterAPI.__init__-38"><span class="linenos">38</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;個別設定&quot;&quot;&quot;</span>
-</span></pre></div>
-
-
+    <a class="headerlink" href="#AdapterAPI.bot"></a>
+    
     
 
                             </div>
@@ -414,17 +399,15 @@
     
 
                             </div>
-                            <div id="AdapterAPI.conf" class="classattr">
+                            <div id="AdapterAPI.response" class="classattr">
                                 <div class="attr variable">
-            <span class="name">conf</span>
+            <span class="name">response</span><span class="annotation">: discord.message.Message</span>
 
         
     </div>
-    <a class="headerlink" href="#AdapterAPI.conf"></a>
+    <a class="headerlink" href="#AdapterAPI.response"></a>
     
-            <div class="docstring"><p>個別設定</p>
-</div>
-
+    
 
                             </div>
                             <div id="AdapterAPI.post" class="classattr">
@@ -438,14 +421,14 @@
 
     </div>
     <a class="headerlink" href="#AdapterAPI.post"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI.post-40"><a href="#AdapterAPI.post-40"><span class="linenos">40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="AdapterAPI.post-41"><a href="#AdapterAPI.post-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする（非同期処理ラッパー）</span>
-</span><span id="AdapterAPI.post-42"><a href="#AdapterAPI.post-42"><span class="linenos">42</span></a>
-</span><span id="AdapterAPI.post-43"><a href="#AdapterAPI.post-43"><span class="linenos">43</span></a><span class="sd">        Args:</span>
-</span><span id="AdapterAPI.post-44"><a href="#AdapterAPI.post-44"><span class="linenos">44</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="AdapterAPI.post-45"><a href="#AdapterAPI.post-45"><span class="linenos">45</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AdapterAPI.post-46"><a href="#AdapterAPI.post-46"><span class="linenos">46</span></a>
-</span><span id="AdapterAPI.post-47"><a href="#AdapterAPI.post-47"><span class="linenos">47</span></a>        <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_async</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI.post-42"><a href="#AdapterAPI.post-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="AdapterAPI.post-43"><a href="#AdapterAPI.post-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする（非同期処理ラッパー）</span>
+</span><span id="AdapterAPI.post-44"><a href="#AdapterAPI.post-44"><span class="linenos">44</span></a>
+</span><span id="AdapterAPI.post-45"><a href="#AdapterAPI.post-45"><span class="linenos">45</span></a><span class="sd">        Args:</span>
+</span><span id="AdapterAPI.post-46"><a href="#AdapterAPI.post-46"><span class="linenos">46</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="AdapterAPI.post-47"><a href="#AdapterAPI.post-47"><span class="linenos">47</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AdapterAPI.post-48"><a href="#AdapterAPI.post-48"><span class="linenos">48</span></a>
+</span><span id="AdapterAPI.post-49"><a href="#AdapterAPI.post-49"><span class="linenos">49</span></a>        <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_async</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -471,14 +454,12 @@
 
     </div>
     <a class="headerlink" href="#AdapterAPI.post_async"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI.post_async-49"><a href="#AdapterAPI.post_async-49"><span class="linenos"> 49</span></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">post_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
-</span><span id="AdapterAPI.post_async-50"><a href="#AdapterAPI.post_async-50"><span class="linenos"> 50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
-</span><span id="AdapterAPI.post_async-51"><a href="#AdapterAPI.post_async-51"><span class="linenos"> 51</span></a>
-</span><span id="AdapterAPI.post_async-52"><a href="#AdapterAPI.post_async-52"><span class="linenos"> 52</span></a><span class="sd">        Args:</span>
-</span><span id="AdapterAPI.post_async-53"><a href="#AdapterAPI.post_async-53"><span class="linenos"> 53</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
-</span><span id="AdapterAPI.post_async-54"><a href="#AdapterAPI.post_async-54"><span class="linenos"> 54</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AdapterAPI.post_async-55"><a href="#AdapterAPI.post_async-55"><span class="linenos"> 55</span></a>
-</span><span id="AdapterAPI.post_async-56"><a href="#AdapterAPI.post_async-56"><span class="linenos"> 56</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;Message&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AdapterAPI.post_async-51"><a href="#AdapterAPI.post_async-51"><span class="linenos"> 51</span></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">post_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="s2">&quot;MessageParserProtocol&quot;</span><span class="p">):</span>
+</span><span id="AdapterAPI.post_async-52"><a href="#AdapterAPI.post_async-52"><span class="linenos"> 52</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージをポストする</span>
+</span><span id="AdapterAPI.post_async-53"><a href="#AdapterAPI.post_async-53"><span class="linenos"> 53</span></a>
+</span><span id="AdapterAPI.post_async-54"><a href="#AdapterAPI.post_async-54"><span class="linenos"> 54</span></a><span class="sd">        Args:</span>
+</span><span id="AdapterAPI.post_async-55"><a href="#AdapterAPI.post_async-55"><span class="linenos"> 55</span></a><span class="sd">            m (MessageParserProtocol): メッセージデータ</span>
+</span><span id="AdapterAPI.post_async-56"><a href="#AdapterAPI.post_async-56"><span class="linenos"> 56</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="AdapterAPI.post_async-57"><a href="#AdapterAPI.post_async-57"><span class="linenos"> 57</span></a>
 </span><span id="AdapterAPI.post_async-58"><a href="#AdapterAPI.post_async-58"><span class="linenos"> 58</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">_header_text</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="AdapterAPI.post_async-59"><a href="#AdapterAPI.post_async-59"><span class="linenos"> 59</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span> <span class="ow">and</span> <span class="n">title</span><span class="p">:</span>  <span class="c1"># 数値のキーはヘッダにしない</span>
@@ -507,7 +488,7 @@
 </span><span id="AdapterAPI.post_async-82"><a href="#AdapterAPI.post_async-82"><span class="linenos"> 82</span></a>        <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">headline</span><span class="p">:</span>
 </span><span id="AdapterAPI.post_async-83"><a href="#AdapterAPI.post_async-83"><span class="linenos"> 83</span></a>            <span class="n">header_title</span><span class="p">,</span> <span class="n">header_text</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">headline</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 </span><span id="AdapterAPI.post_async-84"><a href="#AdapterAPI.post_async-84"><span class="linenos"> 84</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">header_hidden</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">message</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-</span><span id="AdapterAPI.post_async-85"><a href="#AdapterAPI.post_async-85"><span class="linenos"> 85</span></a>                <span class="n">header_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_header_text</span><span class="p">(</span><span class="n">header_title</span><span class="p">)</span><span class="si">}{</span><span class="n">header_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="AdapterAPI.post_async-85"><a href="#AdapterAPI.post_async-85"><span class="linenos"> 85</span></a>                <span class="n">header_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_header_text</span><span class="p">(</span><span class="n">header_title</span><span class="p">)</span><span class="si">}{</span><span class="n">header_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="AdapterAPI.post_async-86"><a href="#AdapterAPI.post_async-86"><span class="linenos"> 86</span></a>                <span class="n">m</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="AdapterAPI.post_async-87"><a href="#AdapterAPI.post_async-87"><span class="linenos"> 87</span></a>
 </span><span id="AdapterAPI.post_async-88"><a href="#AdapterAPI.post_async-88"><span class="linenos"> 88</span></a>        <span class="c1"># 本文</span>
@@ -527,7 +508,7 @@
 </span><span id="AdapterAPI.post_async-102"><a href="#AdapterAPI.post_async-102"><span class="linenos">102</span></a>                        <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span>
 </span><span id="AdapterAPI.post_async-103"><a href="#AdapterAPI.post_async-103"><span class="linenos">103</span></a>                        <span class="n">description</span><span class="o">=</span><span class="n">comment</span><span class="p">,</span>
 </span><span id="AdapterAPI.post_async-104"><a href="#AdapterAPI.post_async-104"><span class="linenos">104</span></a>                    <span class="p">)</span>
-</span><span id="AdapterAPI.post_async-105"><a href="#AdapterAPI.post_async-105"><span class="linenos">105</span></a>                    <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">))</span>
+</span><span id="AdapterAPI.post_async-105"><a href="#AdapterAPI.post_async-105"><span class="linenos">105</span></a>                    <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">))</span>
 </span><span id="AdapterAPI.post_async-106"><a href="#AdapterAPI.post_async-106"><span class="linenos">106</span></a>
 </span><span id="AdapterAPI.post_async-107"><a href="#AdapterAPI.post_async-107"><span class="linenos">107</span></a>                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="AdapterAPI.post_async-108"><a href="#AdapterAPI.post_async-108"><span class="linenos">108</span></a>                    <span class="k">if</span> <span class="n">style</span><span class="o">.</span><span class="n">key_title</span> <span class="ow">and</span> <span class="p">(</span><span class="n">title</span> <span class="o">!=</span> <span class="n">header_title</span><span class="p">):</span>
@@ -576,7 +557,7 @@
 </span><span id="AdapterAPI.post_async-151"><a href="#AdapterAPI.post_async-151"><span class="linenos">151</span></a>                <span class="k">await</span> <span class="n">thread</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="AdapterAPI.post_async-152"><a href="#AdapterAPI.post_async-152"><span class="linenos">152</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="AdapterAPI.post_async-153"><a href="#AdapterAPI.post_async-153"><span class="linenos">153</span></a>            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">post_msg</span><span class="p">:</span>
-</span><span id="AdapterAPI.post_async-154"><a href="#AdapterAPI.post_async-154"><span class="linenos">154</span></a>                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="AdapterAPI.post_async-154"><a href="#AdapterAPI.post_async-154"><span class="linenos">154</span></a>                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span></pre></div>
 
 

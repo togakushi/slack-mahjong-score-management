@@ -47,6 +47,9 @@
                                 <a class="function" href="#MessageParser.parser">parser</a>
                         </li>
                         <li>
+                                <a class="variable" href="#MessageParser.in_thread">in_thread</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#MessageParser.is_command">is_command</a>
                         </li>
                         <li>
@@ -111,20 +114,24 @@
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">body</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="nd">@property</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="nd">@property</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="nd">@property</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="nd">@property</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="nd">@property</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -158,20 +165,24 @@
 </span><span id="MessageParser-26"><a href="#MessageParser-26"><span class="linenos">26</span></a>        <span class="n">_</span> <span class="o">=</span> <span class="n">body</span>
 </span><span id="MessageParser-27"><a href="#MessageParser-27"><span class="linenos">27</span></a>
 </span><span id="MessageParser-28"><a href="#MessageParser-28"><span class="linenos">28</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-29"><a href="#MessageParser-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-29"><a href="#MessageParser-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="MessageParser-30"><a href="#MessageParser-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="MessageParser-31"><a href="#MessageParser-31"><span class="linenos">31</span></a>
 </span><span id="MessageParser-32"><a href="#MessageParser-32"><span class="linenos">32</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-33"><a href="#MessageParser-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-33"><a href="#MessageParser-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="MessageParser-34"><a href="#MessageParser-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="MessageParser-35"><a href="#MessageParser-35"><span class="linenos">35</span></a>
 </span><span id="MessageParser-36"><a href="#MessageParser-36"><span class="linenos">36</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-37"><a href="#MessageParser-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-38"><a href="#MessageParser-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="MessageParser-37"><a href="#MessageParser-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-38"><a href="#MessageParser-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span><span id="MessageParser-39"><a href="#MessageParser-39"><span class="linenos">39</span></a>
 </span><span id="MessageParser-40"><a href="#MessageParser-40"><span class="linenos">40</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-41"><a href="#MessageParser-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-42"><a href="#MessageParser-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="MessageParser-41"><a href="#MessageParser-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-42"><a href="#MessageParser-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="MessageParser-43"><a href="#MessageParser-43"><span class="linenos">43</span></a>
+</span><span id="MessageParser-44"><a href="#MessageParser-44"><span class="linenos">44</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser-45"><a href="#MessageParser-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-46"><a href="#MessageParser-46"><span class="linenos">46</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -239,6 +250,37 @@
 
 
                             </div>
+                            <div id="MessageParser.in_thread" class="classattr">
+                                        <input id="MessageParser.in_thread-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">in_thread</span><span class="annotation">: bool</span>
+
+                <label class="view-source-button" for="MessageParser.in_thread-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MessageParser.in_thread"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.in_thread-28"><a href="#MessageParser.in_thread-28"><span class="linenos">28</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.in_thread-29"><a href="#MessageParser.in_thread-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.in_thread-30"><a href="#MessageParser.in_thread-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>元メッセージへのリプライとなっているか</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>bool: 真偽値</p>
+  
+  <ul>
+  <li><em>True</em> : リプライの形（リプライ／スレッドなど）</li>
+  <li><em>False</em> : 通常メッセージ</li>
+  </ul>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="MessageParser.is_command" class="classattr">
                                         <input id="MessageParser.is_command-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr variable">
@@ -248,9 +290,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.is_command"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_command-28"><a href="#MessageParser.is_command-28"><span class="linenos">28</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.is_command-29"><a href="#MessageParser.is_command-29"><span class="linenos">29</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.is_command-30"><a href="#MessageParser.is_command-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="kc">False</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_command-32"><a href="#MessageParser.is_command-32"><span class="linenos">32</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.is_command-33"><a href="#MessageParser.is_command-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.is_command-34"><a href="#MessageParser.is_command-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -279,9 +321,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.is_bot"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_bot-32"><a href="#MessageParser.is_bot-32"><span class="linenos">32</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.is_bot-33"><a href="#MessageParser.is_bot-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.is_bot-34"><a href="#MessageParser.is_bot-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="kc">False</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_bot-36"><a href="#MessageParser.is_bot-36"><span class="linenos">36</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.is_bot-37"><a href="#MessageParser.is_bot-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.is_bot-38"><a href="#MessageParser.is_bot-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -310,9 +352,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-36"><a href="#MessageParser.check_updatable-36"><span class="linenos">36</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.check_updatable-37"><a href="#MessageParser.check_updatable-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-38"><a href="#MessageParser.check_updatable-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-40"><a href="#MessageParser.check_updatable-40"><span class="linenos">40</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.check_updatable-41"><a href="#MessageParser.check_updatable-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-42"><a href="#MessageParser.check_updatable-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -341,9 +383,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.ignore_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.ignore_user-40"><a href="#MessageParser.ignore_user-40"><span class="linenos">40</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.ignore_user-41"><a href="#MessageParser.ignore_user-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.ignore_user-42"><a href="#MessageParser.ignore_user-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="kc">False</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.ignore_user-44"><a href="#MessageParser.ignore_user-44"><span class="linenos">44</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.ignore_user-45"><a href="#MessageParser.ignore_user-45"><span class="linenos">45</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.ignore_user-46"><a href="#MessageParser.ignore_user-46"><span class="linenos">46</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -367,14 +409,16 @@
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="../base/interface.html#MessageParserDataMixin">integrations.base.interface.MessageParserDataMixin</a></dt>
-                                <dd id="MessageParser.in_thread" class="variable"><a href="../base/interface.html#MessageParserDataMixin.in_thread">in_thread</a></dd>
-                <dd id="MessageParser.keyword" class="variable"><a href="../base/interface.html#MessageParserDataMixin.keyword">keyword</a></dd>
-                <dd id="MessageParser.argument" class="variable"><a href="../base/interface.html#MessageParserDataMixin.argument">argument</a></dd>
-                <dd id="MessageParser.reply_ts" class="variable"><a href="../base/interface.html#MessageParserDataMixin.reply_ts">reply_ts</a></dd>
-                <dd id="MessageParser.reset" class="function"><a href="../base/interface.html#MessageParserDataMixin.reset">reset</a></dd>
+                                <dd id="MessageParser.reset" class="function"><a href="../base/interface.html#MessageParserDataMixin.reset">reset</a></dd>
                 <dd id="MessageParser.set_data" class="function"><a href="../base/interface.html#MessageParserDataMixin.set_data">set_data</a></dd>
                 <dd id="MessageParser.get_score" class="function"><a href="../base/interface.html#MessageParserDataMixin.get_score">get_score</a></dd>
                 <dd id="MessageParser.get_remarks" class="function"><a href="../base/interface.html#MessageParserDataMixin.get_remarks">get_remarks</a></dd>
+
+            </div>
+            <div><dt><a href="../base/interface.html#MessageParserInterface">integrations.base.interface.MessageParserInterface</a></dt>
+                                <dd id="MessageParser.keyword" class="variable"><a href="../base/interface.html#MessageParserInterface.keyword">keyword</a></dd>
+                <dd id="MessageParser.argument" class="variable"><a href="../base/interface.html#MessageParserInterface.argument">argument</a></dd>
+                <dd id="MessageParser.reply_ts" class="variable"><a href="../base/interface.html#MessageParserInterface.reply_ts">reply_ts</a></dd>
 
             </div>
                                 </dl>
