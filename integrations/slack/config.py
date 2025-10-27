@@ -4,8 +4,6 @@ integrations/slack/config.py
 
 from dataclasses import dataclass, field
 
-from slack_sdk.web.client import WebClient
-
 import libs.global_value as g
 from integrations.base.interface import IntegrationsConfig
 from integrations.slack.events import comparison, slash
@@ -51,12 +49,6 @@ class SvcConfig(IntegrationsConfig):
 
     未定義はすべてのチャンネルでSQLが実行できる
     """
-
-    # slack object
-    appclient: WebClient = field(default_factory=WebClient)
-    """WebClient(botトークン使用)"""
-    webclient: WebClient = field(default_factory=WebClient)
-    """WebClient(userトークン使用)"""
 
     bot_id: str = field(default="")
     """ボットID"""
