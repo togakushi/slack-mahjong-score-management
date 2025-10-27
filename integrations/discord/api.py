@@ -106,8 +106,10 @@ class AdapterAPI(APIInterface):
                 if isinstance(msg, str):
                     if style.key_title and (title != header_title):
                         header = _header_text(title)
+
+                    message_text = msg.rstrip().replace("<@>", f"<@{self.response.author.id}>")
                     post_msg.append(
-                        f"{header}```\n{msg.rstrip()}\n```\n" if style.codeblock else f"{header}{msg.rstrip()}\n"
+                        f"{header}```\n{message_text}\n```\n" if style.codeblock else f"{header}{message_text}\n"
                     )
 
                 if isinstance(msg, pd.DataFrame):
