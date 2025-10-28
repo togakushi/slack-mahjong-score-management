@@ -4,7 +4,6 @@ integrations/slack/config.py
 
 from dataclasses import dataclass, field
 
-import libs.global_value as g
 from integrations.base.interface import IntegrationsConfig
 from integrations.slack.events import comparison, slash
 
@@ -60,13 +59,13 @@ class SvcConfig(IntegrationsConfig):
         self.read_file("slack")
 
         # スラッシュコマンド登録
-        g.command_dispatcher.update({"help": slash.command_help})
-        g.command_dispatcher.update({"check": comparison.main})
+        self._command_dispatcher.update({"help": slash.command_help})
+        self._command_dispatcher.update({"check": comparison.main})
         for alias in self.comparison_alias:
-            g.command_dispatcher.update({alias: comparison.main})
+            self._command_dispatcher.update({alias: comparison.main})
 
         # 個別コマンド登録
-        g.keyword_dispatcher.update({
+        self._keyword_dispatcher.update({
             self.comparison_word: comparison.main,
             f"Reminder: {self.comparison_word}": comparison.main,
         })

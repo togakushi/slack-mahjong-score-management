@@ -326,5 +326,9 @@ def register():
         for alias in cast(list, getattr(g.cfg.alias, command)):
             g.command_dispatcher.update({alias: ep})
 
+    # サービス別コマンド登録
+    g.command_dispatcher.update(g.adapter.conf.command_dispatcher)
+    g.keyword_dispatcher.update(g.adapter.conf.keyword_dispatcher)
+
     logging.debug("keyword_dispatcher:\n%s", "\n".join([f"\t{k}: {v}" for k, v in g.keyword_dispatcher.items()]))
     logging.debug("command_dispatcher:\n%s", "\n".join([f"\t{k}: {v}" for k, v in g.command_dispatcher.items()]))

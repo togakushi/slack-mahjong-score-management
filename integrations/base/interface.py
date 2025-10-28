@@ -42,6 +42,10 @@ class AdapterInterface(ABC, Generic[ConfigT, ApiT, FunctionsT, ParserT]):
 class IntegrationsConfig(ABC):
     """個別設定値"""
 
+    # ディスパッチテーブル用
+    _command_dispatcher: dict = field(default_factory=dict)
+    _keyword_dispatcher: dict = field(default_factory=dict)
+
     config_file: Optional[ConfigParser] = field(default=None)
     """設定ファイル"""
 
@@ -67,6 +71,26 @@ class IntegrationsConfig(ABC):
 
     plotting_backend: Literal["matplotlib", "plotly"] = field(default="matplotlib")
     """グラフ描写ライブラリ"""
+
+    @property
+    def command_dispatcher(self) -> dict:
+        """コマンドディスパッチテーブルを辞書で取得
+
+        Returns:
+            dict: コマンドディスパッチテーブル
+        """
+
+        return self._command_dispatcher
+
+    @property
+    def keyword_dispatcher(self) -> dict:
+        """キーワードディスパッチテーブルを辞書で取得
+
+        Returns:
+            dict: キーワードディスパッチテーブル
+        """
+
+        return self._keyword_dispatcher
 
     def read_file(self, selected_service: str):
         """設定値取り込み
