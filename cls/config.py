@@ -140,38 +140,30 @@ class BaseSection(CommonMethodMixin):
 class MahjongSection(BaseSection):
     """mahjongセクション初期値"""
 
-    rule_version: str
-    """ルール判別識別子"""
-    origin_point: int
-    """配給原点"""
-    return_point: int
-    """返し点"""
-    rank_point: list
-    """順位点"""
-    ignore_flying: bool
-    """トビカウント
-    - True: なし
-    - False: あり
-    """
-    draw_split: bool
-    """同点時の順位点
-    - True: 山分けにする
-    - False: 席順で決める
-    """
-    regulations_type2: list
-    """メモで役満として扱う単語リスト(カンマ区切り)"""
-
     def __init__(self, outer: "AppConfig", section_name):
         self._parser = outer._parser
 
         # 初期値セット
-        self.rule_version = ""
-        self.origin_point = 250
-        self.return_point = 300
-        self.rank_point = []
-        self.ignore_flying = False
-        self.draw_split = False
-        self.regulations_type2 = []
+        self.rule_version: str = ""
+        """ルール判別識別子"""
+        self.origin_point: int = 250
+        """配給原点"""
+        self.return_point: int = 300
+        """返し点"""
+        self.rank_point: list = []
+        """順位点"""
+        self.ignore_flying: bool = False
+        """トビカウント
+        - True: なし
+        - False: あり
+        """
+        self.draw_split: bool = False
+        """同点時の順位点
+        - True: 山分けにする
+        - False: 席順で決める
+        """
+        self.regulations_type2: list = []
+        """メモで役満として扱う単語リスト(カンマ区切り)"""
 
         # 設定値取り込み
         super().__init__(self, section_name)
@@ -186,45 +178,29 @@ class MahjongSection(BaseSection):
 class SettingSection(BaseSection):
     """settingセクション初期値"""
 
-    help: str
-    """ヘルプ表示キーワード"""
-
-    keyword: str
-    """成績記録キーワード"""
-    remarks_word: str
-    """メモ記録用キーワード"""
-
-    time_adjust: int
-    """日付変更後、集計範囲に含める追加時間"""
-    guest_mark: str
-    """ゲスト無効時に未登録メンバーに付与する印"""
-
-    database_file: Union[Path, str]
-    """成績管理データベースファイル名"""
-    backup_dir: Optional[Path]
-    """バックアップ先ディレクトリ"""
-
-    font_file: Path
-    """グラフ描写に使用するフォントファイル"""
-    graph_style: str
-    """グラフスタイル"""
-    work_dir: Path
-    """生成したファイルを保存するディレクトリ"""
-
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
         # 初期値セット
-        self.help = "麻雀成績ヘルプ"
-        self.keyword = "終局"
-        self.remarks_word = "麻雀成績メモ"
-        self.time_adjust = 12
-        self.guest_mark = "※"
-        self.database_file = Path("mahjong.db")
-        self.backup_dir = None
-        self.font_file = Path("ipaexg.ttf")
-        self.graph_style = "ggplot"
-        self.work_dir = Path("work")
+        self.help: str = "麻雀成績ヘルプ"
+        """ヘルプ表示キーワード"""
+        self.keyword: str = "終局"
+        """成績記録キーワード"""
+        self.remarks_word: str = "麻雀成績メモ"
+        """メモ記録用キーワード"""
+        self.time_adjust: int = 12
+        """日付変更後、集計範囲に含める追加時間"""
+        self.guest_mark: str = "※"
+        """ゲスト無効時に未登録メンバーに付与する印"""
+        self.database_file: Union[Path, str] = Path("mahjong.db")
+        """成績管理データベースファイル名"""
+        self.backup_dir: Optional[Path] = None
+        """バックアップ先ディレクトリ"""
+        self.font_file: Path = Path("ipaexg.ttf")
+        """グラフ描写に使用するフォントファイル"""
+        self.graph_style: str = "ggplot"
+        """グラフスタイル"""
+        self.work_dir: Path = Path("work")
 
         # 設定値取り込み
         super().__init__(self, section_name)
@@ -265,23 +241,18 @@ class SettingSection(BaseSection):
 class MemberSection(BaseSection):
     "memberセクション初期値"""
 
-    registration_limit: int
-    """登録メンバー上限数"""
-    character_limit: int
-    """名前に使用できる文字数"""
-    alias_limit: int
-    """別名登録上限数"""
-    guest_name: str
-    """未登録メンバー名称"""
-
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
         # 初期値セット
-        self.registration_limit = 255
-        self.character_limit = 8
-        self.alias_limit = 16
-        self.guest_name = "ゲスト"
+        self.registration_limit: int = 255
+        """登録メンバー上限数"""
+        self.character_limit: int = 8
+        """名前に使用できる文字数"""
+        self.alias_limit: int = 16
+        """別名登録上限数"""
+        self.guest_name: str = "ゲスト"
+        """未登録メンバー名称"""
 
         # 設定値取り込み
         super().__init__(self, section_name)
@@ -293,23 +264,18 @@ class MemberSection(BaseSection):
 class TeamSection(BaseSection):
     """teamセクション初期値"""
 
-    registration_limit: int
-    """登録チーム上限数"""
-    character_limit: int
-    """チーム名に使用できる文字数"""
-    member_limit: int
-    """チームに所属できるメンバー上限"""
-    friendly_fire: bool
-    """チームメイトが同卓しているゲームを集計対象に含めるか"""
-
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
         # 初期値セット
-        self.registration_limit = 255
-        self.character_limit = 16
-        self.member_limit = 16
-        self.friendly_fire = True
+        self.registration_limit: int = 255
+        """登録チーム上限数"""
+        self.character_limit: int = 16
+        """チーム名に使用できる文字数"""
+        self.member_limit: int = 16
+        """チームに所属できるメンバー上限"""
+        self.friendly_fire: bool = True
+        """チームメイトが同卓しているゲームを集計対象に含めるか"""
 
         # 設定値取り込み
         super().__init__(self, section_name)
@@ -321,39 +287,24 @@ class TeamSection(BaseSection):
 class AliasSection(BaseSection):
     """aliasセクション初期値"""
 
-    results: list
-    graph: list
-    ranking: list
-    report: list
-    download: list
-    member: list
-    add: list
-    delete: list  # "del"はbuilt-inで使用
-    team_create: list
-    team_del: list
-    team_add: list
-    team_remove: list
-    team_list: list
-    team_clear: list
-
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
         # 初期値セット
-        self.results = ["成績"]
-        self.graph = ["グラフ"]
-        self.ranking = ["ランキング"]
-        self.report = ["レポート"]
-        self.download = ["ダウンロード"]
-        self.member = ["userlist", "member_list"]
-        self.add = []
-        self.delete = ["del"]  # "del"はbuilt-inで使用
-        self.team_create = []
-        self.team_del = []
-        self.team_add = []
-        self.team_remove = []
-        self.team_list = []
-        self.team_clear = []
+        self.results: list = ["成績"]
+        self.graph: list = ["グラフ"]
+        self.ranking: list = ["ランキング"]
+        self.report: list = ["レポート"]
+        self.download: list = ["ダウンロード"]
+        self.member: list = ["userlist", "member_list"]
+        self.add: list = []
+        self.delete: list = ["del"]  # "del"はbuilt-inで使用
+        self.team_create: list = []
+        self.team_del: list = []
+        self.team_add: list = []
+        self.team_remove: list = []
+        self.team_list: list = []
+        self.team_clear: list = []
 
         # 設定値取り込み
         super().__init__(self, section_name)
@@ -371,17 +322,14 @@ class AliasSection(BaseSection):
 class CommentSection(BaseSection):
     """commentセクション初期値"""
 
-    group_length: int
-    """コメント検索時の集約文字数(固定指定)"""
-    search_word: str
-    """コメント検索時の検索文字列(固定指定)"""
-
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
         # 初期値セット
-        self.group_length = 0
-        self.search_word = ""
+        self.group_length: int = 0
+        """コメント検索時の集約文字数(固定指定)"""
+        self.search_word: str = ""
+        """コメント検索時の検索文字列(固定指定)"""
 
         # 設定値取り込み
         super().__init__(self, section_name)
@@ -390,17 +338,13 @@ class CommentSection(BaseSection):
 class DropItems(BaseSection):
     """非表示項目リスト"""
 
-    results: list
-    ranking: list
-    report: list
-
     def __init__(self, outer: "AppConfig"):
         self._parser = outer._parser
 
         # 初期値セット
-        self.results = []
-        self.ranking = []
-        self.report = []
+        self.results: list = []
+        self.ranking: list = []
+        self.report: list = []
 
         # 設定値取り込み
         super().__init__(self, "")
@@ -432,85 +376,55 @@ class BadgeDisplay(BaseSection):
 class SubCommand(BaseSection):
     """サブコマンド共通クラス"""
 
-    # 各種パラメータ
-    section: str
-
-    commandword: list
-    """呼び出しキーワード"""
-
-    aggregation_range: str
-    """検索範囲未指定時に使用される範囲"""
-    individual: bool
-    """個人/チーム集計切替フラグ
-    - True: 個人集計
-    - False: チーム集計
-    """
-    all_player: bool
-    daily: bool
-    fourfold: bool
-    game_results: bool
-    guest_skip: bool
-    guest_skip2: bool
-    ranked: int
-    score_comparisons: bool
-    """スコア比較"""
-    statistics: bool
-    """統計情報表示"""
-    stipulated: int
-    """規定打数指定"""
-    stipulated_rate: float
-    """規定打数計算レート"""
-    unregistered_replace: bool
-    """メンバー未登録プレイヤー名をゲストに置き換えるかフラグ
-    - True: 置き換える
-    - False: 置き換えない
-    """
-    anonymous: bool
-    """匿名化フラグ"""
-    verbose: bool
-    """詳細情報出力フラグ"""
-    versus_matrix: bool
-    """対戦マトリックス表示"""
-    collection: str
-    search_word: str
-    group_length: int
-    always_argument: list
-    """オプションとして常に付与される文字列"""
-    format: str
-    filename: str
-    interval: int
-
     def __init__(self, outer: "AppConfig", section_name: str, default: str):
         self._parser = outer._parser
         self.section = section_name
 
         # 初期値セット
-        self.section = ""
-        self.commandword = []
+        self.section: str = ""
+        self.commandword: list = []
+        """呼び出しキーワード"""
         self.aggregation_range: str = "当日"
-        self.individual = True
-        self.all_player = False
-        self.daily = True
-        self.fourfold = True
-        self.game_results = False
-        self.guest_skip = True
-        self.guest_skip2 = True
-        self.ranked = 3
-        self.score_comparisons = False
-        self.statistics = False
-        self.stipulated = 0
-        self.stipulated_rate = 0.05
-        self.unregistered_replace = True
-        self.anonymous = False
-        self.verbose = False
-        self.versus_matrix = False
-        self.collection = ""
-        self.search_word = ""
-        self.group_length = 0
-        self.always_argument = []
-        self.format = ""
-        self.filename = ""
-        self.interval = 80
+        """検索範囲未指定時に使用される範囲"""
+        self.individual: bool = True
+        """個人/チーム集計切替フラグ
+        - True: 個人集計
+        - False: チーム集計
+        """
+        self.all_player: bool = False
+        self.daily: bool = True
+        self.fourfold: bool = True
+        self.game_results: bool = False
+        self.guest_skip: bool = True
+        self.guest_skip2: bool = True
+        self.ranked: int = 3
+        self.score_comparisons: bool = False
+        """スコア比較"""
+        self.statistics: bool = False
+        """統計情報表示"""
+        self.stipulated: int = 0
+        """規定打数指定"""
+        self.stipulated_rate: float = 0.05
+        """規定打数計算レート"""
+        self.unregistered_replace: bool = True
+        """メンバー未登録プレイヤー名をゲストに置き換えるかフラグ
+        - True: 置き換える
+        - False: 置き換えない
+        """
+        self.anonymous: bool = False
+        """匿名化フラグ"""
+        self.verbose: bool = False
+        """詳細情報出力フラグ"""
+        self.versus_matrix: bool = False
+        """対戦マトリックス表示"""
+        self.collection: str = ""
+        self.search_word: str = ""
+        self.group_length: int = 0
+        self.always_argument: list = []
+        """オプションとして常に付与される文字列"""
+        self.format: str = ""
+        self.filename: str = ""
+        self.interval: int = 80
 
         # 設定値取り込み
         super().__init__(self, section_name)

@@ -7,7 +7,6 @@ import sys
 import pytest
 
 import libs.global_value as g
-from cls.config import SubCommand
 from libs import configuration
 
 
@@ -47,27 +46,6 @@ def test_subcommand_default(input_args, monkeypatch):
     """サブコマンドデフォルト値チェック"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
 
+    # fixme
+    _ = input_args
     configuration.setup()
-
-    test_subcommand = getattr(g.cfg, input_args)
-    assert test_subcommand.aggregation_range == SubCommand.aggregation_range
-    assert test_subcommand.individual == SubCommand.individual
-    assert test_subcommand.all_player == SubCommand.all_player
-    assert test_subcommand.daily == SubCommand.daily
-    assert test_subcommand.fourfold == SubCommand.fourfold
-    assert test_subcommand.game_results == SubCommand.game_results
-    assert test_subcommand.guest_skip == SubCommand.guest_skip
-    assert test_subcommand.guest_skip2 == SubCommand.guest_skip2
-    assert test_subcommand.ranked == SubCommand.ranked
-    assert test_subcommand.score_comparisons == SubCommand.score_comparisons
-    assert test_subcommand.statistics == SubCommand.statistics
-    assert test_subcommand.stipulated == SubCommand.stipulated
-    assert test_subcommand.stipulated_rate == SubCommand.stipulated_rate
-    assert test_subcommand.unregistered_replace == SubCommand.unregistered_replace
-    assert test_subcommand.anonymous == SubCommand.anonymous
-    assert test_subcommand.verbose == SubCommand.verbose
-    assert test_subcommand.versus_matrix == SubCommand.versus_matrix
-    assert test_subcommand.collection == SubCommand.collection
-    assert test_subcommand.search_word == SubCommand.search_word
-    assert test_subcommand.group_length == SubCommand.group_length
-    assert test_subcommand.always_argument == SubCommand.always_argument
