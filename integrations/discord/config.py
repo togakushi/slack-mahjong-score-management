@@ -29,3 +29,7 @@ class SvcConfig(IntegrationsConfig):
 
     def __post_init__(self):
         self.read_file("discord")
+
+        # 先頭にスラッシュが付いている場合は除去
+        if self.slash_command.startswith("/"):
+            self.slash_command = self.slash_command[1:]

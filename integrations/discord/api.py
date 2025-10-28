@@ -6,9 +6,10 @@ import asyncio
 import sys
 import textwrap
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Union, cast
 
 import pandas as pd
+from table2ascii import PresetStyle, table2ascii
 
 import integrations.discord.events.audioop as _audioop
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -19,7 +20,7 @@ from libs.utils import converter, formatter, textutil
 sys.modules["audioop"] = _audioop
 
 if TYPE_CHECKING:
-    from discord import Bot, Message
+    from discord import ApplicationContext, Bot, Message
 
     from integrations.protocols import MessageParserProtocol
 
@@ -36,7 +37,7 @@ class AdapterAPI(APIInterface):
         self.discord_file = discord_file
 
         # discord object
-        self.response: "Message"
+        self.response: Union["Message", "ApplicationContext"]
 
     def post(self, m: "MessageParserProtocol"):
         """メッセージをポストする（非同期処理ラッパー）
@@ -45,7 +46,10 @@ class AdapterAPI(APIInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
-        asyncio.create_task(self.post_async(m))
+        if m.status.command_flg:
+            asyncio.create_task(self.command_respond(m))
+        else:
+            asyncio.create_task(self.post_async(m))
 
     async def post_async(self, m: "MessageParserProtocol"):
         """メッセージをポストする
@@ -53,6 +57,8 @@ class AdapterAPI(APIInterface):
         Args:
             m (MessageParserProtocol): メッセージデータ
         """
+
+        self.response = cast("Message", self.response)
 
         def _header_text(title: str) -> str:
             if not title.isnumeric() and title:  # 数値のキーはヘッダにしない
@@ -153,3 +159,35 @@ class AdapterAPI(APIInterface):
         else:
             for msg in post_msg:
                 await self.response.reply(msg)
+
+    async def command_respond(self, m: "MessageParserProtocol"):
+        """スラッシュコマンド応答
+
+        Args:
+            m (MessageParserProtocol): メッセージデータ
+        """
+
+        self.response = cast("ApplicationContext", self.response)
+
+        style = StyleOptions()
+        for data in m.post.message:
+            for title, val in data.items():
+                msg = val.get("data")
+                style = val.get("options", StyleOptions())
+
+            if isinstance(msg, PosixPath) and msg.exists():
+                file = self.discord_file(str(msg))
+                await self.response.send(file=file)
+
+            if isinstance(msg, str):
+                if style.codeblock:
+                    msg = f"```\n{msg}\n```"
+                await self.response.respond(msg)
+
+            if isinstance(msg, pd.DataFrame):
+                output = table2ascii(
+                    header=msg.columns.to_list(),
+                    body=msg.to_dict(orient="split")["data"],
+                    style=PresetStyle.ascii_borderless,
+                )
+                await self.response.respond(f"```\n{output}\n```")

@@ -27,6 +27,7 @@ def main(adapter: "ServiceAdapter"):
     try:
         sys.modules["audioop"] = _audioop
         import discord
+        from discord.ext import commands
     except ModuleNotFoundError as err:
         raise ModuleNotFoundError(err.msg) from None
 
@@ -38,7 +39,7 @@ def main(adapter: "ServiceAdapter"):
     intents = discord.Intents.default()
     intents.message_content = True
     intents.messages = True
-    bot = discord.Bot(intents=intents)
+    bot = commands.Bot(intents=intents)
     adapter.api.bot = bot
 
     @bot.event
@@ -98,6 +99,18 @@ def main(adapter: "ServiceAdapter"):
         m = adapter.parser()
         m.data.status = "message_deleted"
         m.parser(message)
+
+        libs.dispatcher.by_keyword(m)
+
+    @bot.slash_command(name=adapter.conf.slash_command)
+    async def slash_command(ctx: discord.ApplicationContext, command: str):
+        adapter.api.response = ctx
+
+        m = adapter.parser()
+        m.status.command_flg = True
+        m.data.text = command
+        m.data.status = "message_append"
+        m.data.thread_ts = "0"
 
         libs.dispatcher.by_keyword(m)
 
