@@ -13,15 +13,11 @@ from integrations.protocols import MsgData, PostData, StatusData
 class MessageParser(MessageParserDataMixin, MessageParserInterface):
     """メッセージ解析クラス"""
 
-    data: MsgData
-    post: PostData
-    status: StatusData
-
     def __init__(self):
         MessageParserDataMixin.__init__(self)
-        self.data = MsgData()
-        self.post = PostData()
-        self.status = StatusData()
+        self.data: MsgData = MsgData()
+        self.post: PostData = PostData()
+        self.status: StatusData = StatusData()
 
     def parser(self, body: dict):
         self.data.status = "message_append"
