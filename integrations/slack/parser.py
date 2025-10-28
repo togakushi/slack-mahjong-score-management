@@ -86,10 +86,6 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         return True
 
     @property
-    def is_command(self) -> bool:
-        return self.status.command_flg
-
-    @property
     def is_bot(self) -> bool:
         if self.data.user_id == "USLACKBOT":
             return True

@@ -20,16 +20,13 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.post = PostData()
         self.status = StatusData()
         self.data.status = "message_append"
+        self.status.command_flg = False
 
     def parser(self, body: dict):
         _ = body
 
     @property
     def in_thread(self) -> bool:
-        return False
-
-    @property
-    def is_command(self) -> bool:
         return False
 
     @property

@@ -53,10 +53,6 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         return False
 
     @property
-    def is_command(self):
-        return self.status.command_flg
-
-    @property
     def is_bot(self) -> bool:
         return False
 

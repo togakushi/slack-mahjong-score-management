@@ -44,12 +44,11 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         Note: slackに合わせてプロパティ名に`in_thread`を使う
         """
 
+        if self.status.command_flg:
+            return False
+
         if self.discord_msg.reference:
             return True
-        return False
-
-    @property
-    def is_command(self) -> bool:
         return False
 
     @property
