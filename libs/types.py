@@ -84,6 +84,24 @@ class RemarkDict(TypedDict):
     matter: str
 
 
+class ComparisonDict(TypedDict, total=False):
+    """メモ突合用辞書"""
+    mismatch: str
+    """差分"""
+    missing: str
+    """追加"""
+    delete: str
+    """削除"""
+    remark_mod: str
+    """メモの修正(追加/削除)"""
+    remark_del: str
+    """削除"""
+    invalid_score: str
+    """素点合計不一致"""
+    pending: list[str]
+    """保留"""
+
+
 class RankTableDict(TypedDict):
     """昇段ポイント計算テーブル用辞書"""
 

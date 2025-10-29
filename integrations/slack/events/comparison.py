@@ -4,7 +4,7 @@ integrations/slack/events/comparison.py
 
 import copy
 import logging
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from cls.score import GameResult, Score
@@ -12,7 +12,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import modify
 from libs.data.lookup import db
 from libs.functions import search
-from libs.types import RemarkDict, StyleOptions
+from libs.types import ComparisonDict, RemarkDict, StyleOptions
 from libs.utils import dictutil, formatter
 
 if TYPE_CHECKING:
@@ -20,24 +20,6 @@ if TYPE_CHECKING:
     from integrations.slack.adapter import ServiceAdapter
 
 DBSearchDict = dict[str, GameResult]
-
-
-class ComparisonDict(TypedDict, total=False):
-    """メモ突合用辞書"""
-    mismatch: str
-    """差分"""
-    missing: str
-    """追加"""
-    delete: str
-    """削除"""
-    remark_mod: str
-    """メモの修正(追加/削除)"""
-    remark_del: str
-    """削除"""
-    invalid_score: str
-    """素点合計不一致"""
-    pending: list[str]
-    """保留"""
 
 
 def main(m: "MessageParserProtocol") -> None:
