@@ -117,7 +117,8 @@ class AdapterAPI(APIInterface):
                         case "results":
                             match title:
                                 case "通算ポイント" | "ポイント差分":
-                                    post_msg.extend(_table_data(converter.df_to_dict(msg, step=40)))
+                                    post_msg.extend(_table_data(converter.df_to_text_table(msg, step=40)))
+                                    # post_msg.extend(_table_data(converter.df_to_dict(msg, step=40)))
                                 case "役満和了" | "卓外ポイント" | "その他":
                                     if "回数" in msg.columns:
                                         post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
@@ -133,7 +134,8 @@ class AdapterAPI(APIInterface):
                                 case _:
                                     post_msg.extend(_table_data(converter.df_to_remarks(msg)))
                         case "rating":
-                            post_msg.extend(_table_data(converter.df_to_dict(msg, step=20)))
+                            post_msg.extend(_table_data(converter.df_to_text_table(msg, step=20)))
+                            # post_msg.extend(_table_data(converter.df_to_dict(msg, step=20)))
                         case "ranking":
                             post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
 

@@ -49,7 +49,7 @@ def aggregation(m: "MessageParserProtocol"):
         headline_title = "チーム成績サマリ"
         column_name = "チーム"
 
-    add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary["トビ"].sum()} 人"
+    add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary["飛"].sum()} 人"
     header_text = message.header(game_info, m, add_text, 1)
     m.post.headline = {headline_title: header_text}
 
@@ -64,11 +64,11 @@ def aggregation(m: "MessageParserProtocol"):
         filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
         m.set_data("ポイント差分", df_summary.filter(items=header_list), StyleOptions(codeblock=True, summarize=True))
     else:  # 通常表示
-        header_list = [column_name, "通算", "平均", "順位分布", "トビ"]
-        filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "トビ"]
+        header_list = [column_name, "通算", "平均", "順位分布", "平順", "飛"]
+        filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "飛"]
         if g.cfg.mahjong.ignore_flying:  # トビカウントなし
-            header_list.remove("トビ")
-            filter_list.remove("トビ")
+            header_list.remove("飛")
+            filter_list.remove("飛")
         m.set_data("通算ポイント", df_summary.filter(items=header_list), StyleOptions(codeblock=True, summarize=True))
 
     # メモ追加

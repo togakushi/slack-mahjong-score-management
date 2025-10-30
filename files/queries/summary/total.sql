@@ -83,12 +83,11 @@ select
     round(cast(rank3 as real) / count * 100, 2) as rank3_rate,
     round(cast(rank4 as real) / count * 100, 2) as rank4_rate,
     round(cast(flying as real) / count * 100, 2) as flying_rate,
-    printf("%d-%d-%d-%d (%.2f)",
+    printf("%d-%d-%d-%d",
         rank1,
         rank2,
         rank3,
-        rank4,
-        rank_avg
+        rank4
     ) as rank_distr1,
     printf("%d+%d+%d+%d=%d (%.2f)",
         rank1,

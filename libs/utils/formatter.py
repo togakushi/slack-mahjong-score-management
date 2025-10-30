@@ -316,7 +316,7 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
             case "4th_count":
                 rename_dict[x] = "4位数"
             case "flying" | "flying_mix":
-                rename_dict[x] = "トビ" if short else "トビ数"
+                rename_dict[x] = "飛" if short else "トビ"
             case "flying_count":
                 rename_dict[x] = "トビ数"
             case "flying_rate" | "flying(%)":

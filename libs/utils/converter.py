@@ -68,6 +68,75 @@ def save_output(
     return save_file
 
 
+def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> dict:
+    """DataFrameからテキストテーブルの生成
+
+    Args:
+        df (pd.DataFrame): 対象データ
+        step (int, optional): 分割行. Defaults to 40.
+        index (bool, optional): インデックスを含める. Defaults to False.
+
+    Returns:
+        dict: 生成テーブル
+    """
+
+    # ヘッダ/位置
+    header: list = []
+    alignments: list = []
+    if index:
+        df.reset_index(inplace=True, drop=True)
+        df.index += 1
+        header.append("")
+    for col in df.columns:
+        header.append(col)
+        match col:
+            case "名前" | "プレイヤー名":
+                alignments.append(Alignment.LEFT)
+            case _:
+                alignments.append(Alignment.RIGHT)
+
+    # 表データ
+    body: list = []
+    data: list = []
+    for row in df.to_dict(orient="records"):
+        data.clear()
+        for k, v in row.items():
+            match k:
+                case "通算" | "平均" | "平均素点":
+                    data.append(f"{v:+.1f}".replace("-", "▲"))
+                case "平順" | "平均順位":
+                    data.append(f"{v:.2f}")
+                case "レート":
+                    data.append(f"{v:.1f}")
+                case "順位偏差" | "得点偏差":
+                    data.append(f"{v:.0f}")
+                case _:
+                    data.append(str(v).replace("nan", "*****"))
+            if index:
+                data.insert(0, "")
+        body.append(data.copy())
+
+    # 表生成/分割
+    my_style = PresetStyle.plain
+    my_style.heading_row_sep = "-"
+    my_style.heading_row_right_tee = ""
+    my_style.heading_row_left_tee = ""
+
+    table_data: dict = {}
+    for idx, table_body in enumerate(textutil.split_balanced(body, step)):
+        output = table2ascii(
+            header=header,
+            body=table_body,
+            style=my_style,
+            cell_padding=0,
+            first_col_heading=index,
+            alignments=alignments,
+        )
+        table_data.update({f"{idx}": output})
+
+    return table_data
+
+
 def df_to_dict(df: pd.DataFrame, step: int = 40, index: bool = False) -> dict:
     """DataFrameからテキスト変換
 
