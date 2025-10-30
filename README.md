@@ -2,10 +2,13 @@
 
 ## 概要
 
-slackに投稿された麻雀のスコアを記録、集計するツール。
+麻雀のスコアを記録、集計するツール。
 四人打ち専用。
 
-- [セットアップ方法](docs/setting/setup.md)
+### セットアップ方法
+
+- [Slack](docs/setting/for_slack/README.md)
+- [Discord](docs/setting/for_discord/README.md)
 
 ## 主な機能
 

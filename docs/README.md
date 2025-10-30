@@ -3,6 +3,10 @@
 ### slack
 - [セットアップ方法](setting/for_slack/setup.md)
 - [要求権限一覧](setting/for_slack/permission.md)
+- [デーモン化](setting/for_slack/daemon.md)
+### discord
+- [セットアップ方法](setting/for_discord/setup.md)
+- [デーモン化](setting/for_discord/daemon.md)
 ### 共通項目
 - [設定ファイル内容説明](setting/customize.md)
   - [個別設定](setting/integrations.md)
@@ -21,7 +25,6 @@
 ## その他
 - [コマンドラインオプション](app_arguments.md)
 - [メンテナンスツール](dbtools.md)
-- [デーモン化](setting/daemonization.md)
 - [簡易ヘルプ](help.md)
 - [トラブルシューティング](troubleshooting.md)
 - [用語集](glossary.md)

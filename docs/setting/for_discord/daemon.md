@@ -7,19 +7,17 @@
 > * [uvを使った環境構築](using_uv.md)
 > * [venvを使った環境構築](using_venv.md)
 
-環境変数を記録したファイルを準備する(.env)
+環境変数を記録したファイルを準備する(`.env`など)
 ```
-SLACK_APP_TOKEN=xapp-x-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-SLACK_WEB_TOKEN=xoxp-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-SLACK_BOT_TOKEN=xoxb-xxxxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx
+DISCORD_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXX.XXXXXX.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 ## systemd設定
 ### unitファイル作成
-`/etc/systemd/system/python_app.service`を作成(ファイル名は好みでよい)
+`/etc/systemd/system/python_app_discord.service`を作成(ファイル名は好みでよい)
 ```
 [Unit]
-Description=slack mahjong score management
+Description=discord mahjong score management
 After=network.target
 
 [Service]
@@ -28,7 +26,7 @@ Type=simple
 WorkingDirectory=/path/to/<app-dir>/
 EnvironmentFile=/path/to/<app-dir>/.env
 #ExecStartPre=git pull
-ExecStart=/path/to/<venv-dir>/bin/python3 /path/to/<app-dir>/app.py --notime
+ExecStart=/path/to/<venv-dir>/bin/python3 /path/to/<app-dir>/app.py --notime --service=discord
 #Restart=always
 
 [Install]
@@ -47,22 +45,22 @@ $ sudo systemctl daemon-reload
 
 ### 自動起動有効化
 ```
-$ sudo systemctl enable python_app.service
+$ sudo systemctl enable python_app_discord.service
 ```
 
 ### 起動/停止
 ```
-$ systemctl start python_app.service
+$ systemctl start python_app_discord.service
 ```
 
 ```
-$ systemctl stop python_app.service
+$ systemctl stop python_app_discord.service
 ```
 
 ### ログ確認
 ```
-$ systemctl status python_app.service -l --no-pager
+$ systemctl status python_app_discord.service -l --no-pager
 ```
 ```
-$ journalctl -l -u python_app.service --no-pager
+$ journalctl -l -u python_app_discord.service --no-pager
 ```
