@@ -137,46 +137,6 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
     return table_data
 
 
-def df_to_dict(df: pd.DataFrame, step: int = 40, index: bool = False) -> dict:
-    """DataFrameからテキスト変換
-
-    Args:
-        df (pd.DataFrame): 対象データ
-        step (int, optional): 分割行. Defaults to 40.
-        index (bool, optional): インデックスを含める. Defaults to False.
-
-    Returns:
-        dict: 整形テキスト
-    """
-
-    msg: dict = {}
-    floatfmt = formatter.floatfmt_adjust(df, index)
-
-    # インデックスの振りなおし
-    df.reset_index(inplace=True, drop=True)
-    df.index += 1
-
-    def _to_text(tmp_df: pd.DataFrame) -> str:
-        ret = tmp_df.to_markdown(
-            index=index,
-            tablefmt="simple",
-            numalign="right",
-            floatfmt=floatfmt,
-        ).replace("   nan", "******")
-        ret = re.sub(r"  -([0-9]+)", r" ▲\1", ret)  # マイナスを記号に置換
-        return ret
-
-    if step:
-        for s_line, e_line in textutil.split_line(len(df), step):
-            t = _to_text(df[s_line:e_line])
-            msg[str(s_line)] = t
-    else:
-        t = _to_text(df)
-        msg["0"] = t
-
-    return msg
-
-
 def df_to_results_details(df: pd.DataFrame) -> dict:
     """戦績(詳細)データをテキスト変換
 
