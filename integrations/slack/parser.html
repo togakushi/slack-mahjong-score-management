@@ -50,9 +50,6 @@
                                 <a class="variable" href="#MessageParser.in_thread">in_thread</a>
                         </li>
                         <li>
-                                <a class="variable" href="#MessageParser.is_command">is_command</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#MessageParser.is_bot">is_bot</a>
                         </li>
                         <li>
@@ -175,40 +172,36 @@
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="nd">@property</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="nd">@property</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="s2">&quot;USLACKBOT&quot;</span><span class="p">:</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="k">return</span> <span class="kc">False</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="nd">@property</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="s2">&quot;USLACKBOT&quot;</span><span class="p">:</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="nd">@property</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="k">return</span> <span class="n">ret</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="nd">@property</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">ignore_userid</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="nd">@property</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">ignore_userid</span>
 </span></pre></div>
 
 
@@ -296,40 +289,36 @@
 </span><span id="MessageParser-87"><a href="#MessageParser-87"><span class="linenos"> 87</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span><span id="MessageParser-88"><a href="#MessageParser-88"><span class="linenos"> 88</span></a>
 </span><span id="MessageParser-89"><a href="#MessageParser-89"><span class="linenos"> 89</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-90"><a href="#MessageParser-90"><span class="linenos"> 90</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-91"><a href="#MessageParser-91"><span class="linenos"> 91</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
-</span><span id="MessageParser-92"><a href="#MessageParser-92"><span class="linenos"> 92</span></a>
-</span><span id="MessageParser-93"><a href="#MessageParser-93"><span class="linenos"> 93</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-94"><a href="#MessageParser-94"><span class="linenos"> 94</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-95"><a href="#MessageParser-95"><span class="linenos"> 95</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="s2">&quot;USLACKBOT&quot;</span><span class="p">:</span>
-</span><span id="MessageParser-96"><a href="#MessageParser-96"><span class="linenos"> 96</span></a>            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="MessageParser-97"><a href="#MessageParser-97"><span class="linenos"> 97</span></a>        <span class="k">return</span> <span class="kc">False</span>
-</span><span id="MessageParser-98"><a href="#MessageParser-98"><span class="linenos"> 98</span></a>
-</span><span id="MessageParser-99"><a href="#MessageParser-99"><span class="linenos"> 99</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-100"><a href="#MessageParser-100"><span class="linenos">100</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-101"><a href="#MessageParser-101"><span class="linenos">101</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
-</span><span id="MessageParser-102"><a href="#MessageParser-102"><span class="linenos">102</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="MessageParser-103"><a href="#MessageParser-103"><span class="linenos">103</span></a>
-</span><span id="MessageParser-104"><a href="#MessageParser-104"><span class="linenos">104</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="MessageParser-105"><a href="#MessageParser-105"><span class="linenos">105</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="MessageParser-106"><a href="#MessageParser-106"><span class="linenos">106</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-107"><a href="#MessageParser-107"><span class="linenos">107</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
-</span><span id="MessageParser-108"><a href="#MessageParser-108"><span class="linenos">108</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
-</span><span id="MessageParser-109"><a href="#MessageParser-109"><span class="linenos">109</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
-</span><span id="MessageParser-110"><a href="#MessageParser-110"><span class="linenos">110</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-111"><a href="#MessageParser-111"><span class="linenos">111</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+</span><span id="MessageParser-90"><a href="#MessageParser-90"><span class="linenos"> 90</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-91"><a href="#MessageParser-91"><span class="linenos"> 91</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="s2">&quot;USLACKBOT&quot;</span><span class="p">:</span>
+</span><span id="MessageParser-92"><a href="#MessageParser-92"><span class="linenos"> 92</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="MessageParser-93"><a href="#MessageParser-93"><span class="linenos"> 93</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="MessageParser-94"><a href="#MessageParser-94"><span class="linenos"> 94</span></a>
+</span><span id="MessageParser-95"><a href="#MessageParser-95"><span class="linenos"> 95</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser-96"><a href="#MessageParser-96"><span class="linenos"> 96</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-97"><a href="#MessageParser-97"><span class="linenos"> 97</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
+</span><span id="MessageParser-98"><a href="#MessageParser-98"><span class="linenos"> 98</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="MessageParser-99"><a href="#MessageParser-99"><span class="linenos"> 99</span></a>
+</span><span id="MessageParser-100"><a href="#MessageParser-100"><span class="linenos">100</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="MessageParser-101"><a href="#MessageParser-101"><span class="linenos">101</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="MessageParser-102"><a href="#MessageParser-102"><span class="linenos">102</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser-103"><a href="#MessageParser-103"><span class="linenos">103</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
+</span><span id="MessageParser-104"><a href="#MessageParser-104"><span class="linenos">104</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
+</span><span id="MessageParser-105"><a href="#MessageParser-105"><span class="linenos">105</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
+</span><span id="MessageParser-106"><a href="#MessageParser-106"><span class="linenos">106</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser-107"><a href="#MessageParser-107"><span class="linenos">107</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+</span><span id="MessageParser-108"><a href="#MessageParser-108"><span class="linenos">108</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser-109"><a href="#MessageParser-109"><span class="linenos">109</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
+</span><span id="MessageParser-110"><a href="#MessageParser-110"><span class="linenos">110</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="MessageParser-111"><a href="#MessageParser-111"><span class="linenos">111</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
 </span><span id="MessageParser-112"><a href="#MessageParser-112"><span class="linenos">112</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-113"><a href="#MessageParser-113"><span class="linenos">113</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
-</span><span id="MessageParser-114"><a href="#MessageParser-114"><span class="linenos">114</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="MessageParser-115"><a href="#MessageParser-115"><span class="linenos">115</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
-</span><span id="MessageParser-116"><a href="#MessageParser-116"><span class="linenos">116</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser-117"><a href="#MessageParser-117"><span class="linenos">117</span></a>
-</span><span id="MessageParser-118"><a href="#MessageParser-118"><span class="linenos">118</span></a>        <span class="k">return</span> <span class="n">ret</span>
-</span><span id="MessageParser-119"><a href="#MessageParser-119"><span class="linenos">119</span></a>
-</span><span id="MessageParser-120"><a href="#MessageParser-120"><span class="linenos">120</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser-121"><a href="#MessageParser-121"><span class="linenos">121</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser-122"><a href="#MessageParser-122"><span class="linenos">122</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
-</span><span id="MessageParser-123"><a href="#MessageParser-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">ignore_userid</span>
+</span><span id="MessageParser-113"><a href="#MessageParser-113"><span class="linenos">113</span></a>
+</span><span id="MessageParser-114"><a href="#MessageParser-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="MessageParser-115"><a href="#MessageParser-115"><span class="linenos">115</span></a>
+</span><span id="MessageParser-116"><a href="#MessageParser-116"><span class="linenos">116</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser-117"><a href="#MessageParser-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser-118"><a href="#MessageParser-118"><span class="linenos">118</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
+</span><span id="MessageParser-119"><a href="#MessageParser-119"><span class="linenos">119</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">ignore_userid</span>
 </span></pre></div>
 
 
@@ -472,37 +461,6 @@
 
 
                             </div>
-                            <div id="MessageParser.is_command" class="classattr">
-                                        <input id="MessageParser.is_command-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr variable">
-            <span class="name">is_command</span><span class="annotation">: bool</span>
-
-                <label class="view-source-button" for="MessageParser.is_command-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#MessageParser.is_command"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_command-89"><a href="#MessageParser.is_command-89"><span class="linenos">89</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.is_command-90"><a href="#MessageParser.is_command-90"><span class="linenos">90</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.is_command-91"><a href="#MessageParser.is_command-91"><span class="linenos">91</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">command_flg</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>コマンドで実行されているかチェック</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>bool: 真偽値</p>
-  
-  <ul>
-  <li><em>True</em> : コマンド実行</li>
-  <li><em>False</em> : 非コマンド(キーワード呼び出し)</li>
-  </ul>
-</blockquote>
-</div>
-
-
-                            </div>
                             <div id="MessageParser.is_bot" class="classattr">
                                         <input id="MessageParser.is_bot-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr variable">
@@ -512,11 +470,11 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.is_bot"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_bot-93"><a href="#MessageParser.is_bot-93"><span class="linenos">93</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.is_bot-94"><a href="#MessageParser.is_bot-94"><span class="linenos">94</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.is_bot-95"><a href="#MessageParser.is_bot-95"><span class="linenos">95</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="s2">&quot;USLACKBOT&quot;</span><span class="p">:</span>
-</span><span id="MessageParser.is_bot-96"><a href="#MessageParser.is_bot-96"><span class="linenos">96</span></a>            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="MessageParser.is_bot-97"><a href="#MessageParser.is_bot-97"><span class="linenos">97</span></a>        <span class="k">return</span> <span class="kc">False</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.is_bot-89"><a href="#MessageParser.is_bot-89"><span class="linenos">89</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.is_bot-90"><a href="#MessageParser.is_bot-90"><span class="linenos">90</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.is_bot-91"><a href="#MessageParser.is_bot-91"><span class="linenos">91</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="s2">&quot;USLACKBOT&quot;</span><span class="p">:</span>
+</span><span id="MessageParser.is_bot-92"><a href="#MessageParser.is_bot-92"><span class="linenos">92</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="MessageParser.is_bot-93"><a href="#MessageParser.is_bot-93"><span class="linenos">93</span></a>        <span class="k">return</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -545,26 +503,26 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-99"><a href="#MessageParser.check_updatable-99"><span class="linenos"> 99</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.check_updatable-100"><a href="#MessageParser.check_updatable-100"><span class="linenos">100</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-101"><a href="#MessageParser.check_updatable-101"><span class="linenos">101</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
-</span><span id="MessageParser.check_updatable-102"><a href="#MessageParser.check_updatable-102"><span class="linenos">102</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="MessageParser.check_updatable-103"><a href="#MessageParser.check_updatable-103"><span class="linenos">103</span></a>
-</span><span id="MessageParser.check_updatable-104"><a href="#MessageParser.check_updatable-104"><span class="linenos">104</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-105"><a href="#MessageParser.check_updatable-105"><span class="linenos">105</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-106"><a href="#MessageParser.check_updatable-106"><span class="linenos">106</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-107"><a href="#MessageParser.check_updatable-107"><span class="linenos">107</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
-</span><span id="MessageParser.check_updatable-108"><a href="#MessageParser.check_updatable-108"><span class="linenos">108</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-109"><a href="#MessageParser.check_updatable-109"><span class="linenos">109</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
-</span><span id="MessageParser.check_updatable-110"><a href="#MessageParser.check_updatable-110"><span class="linenos">110</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-111"><a href="#MessageParser.check_updatable-111"><span class="linenos">111</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.check_updatable-95"><a href="#MessageParser.check_updatable-95"><span class="linenos"> 95</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.check_updatable-96"><a href="#MessageParser.check_updatable-96"><span class="linenos"> 96</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-97"><a href="#MessageParser.check_updatable-97"><span class="linenos"> 97</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
+</span><span id="MessageParser.check_updatable-98"><a href="#MessageParser.check_updatable-98"><span class="linenos"> 98</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="MessageParser.check_updatable-99"><a href="#MessageParser.check_updatable-99"><span class="linenos"> 99</span></a>
+</span><span id="MessageParser.check_updatable-100"><a href="#MessageParser.check_updatable-100"><span class="linenos">100</span></a>        <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-101"><a href="#MessageParser.check_updatable-101"><span class="linenos">101</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">channel_limitations</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-102"><a href="#MessageParser.check_updatable-102"><span class="linenos">102</span></a>                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser.check_updatable-103"><a href="#MessageParser.check_updatable-103"><span class="linenos">103</span></a>        <span class="k">else</span><span class="p">:</span>  <span class="c1"># リストが空なら全チャンネルが対象</span>
+</span><span id="MessageParser.check_updatable-104"><a href="#MessageParser.check_updatable-104"><span class="linenos">104</span></a>            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">channel_type</span><span class="p">:</span>
+</span><span id="MessageParser.check_updatable-105"><a href="#MessageParser.check_updatable-105"><span class="linenos">105</span></a>                <span class="k">case</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span>  <span class="c1"># public channel</span>
+</span><span id="MessageParser.check_updatable-106"><a href="#MessageParser.check_updatable-106"><span class="linenos">106</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser.check_updatable-107"><a href="#MessageParser.check_updatable-107"><span class="linenos">107</span></a>                <span class="k">case</span> <span class="s2">&quot;group&quot;</span><span class="p">:</span>  <span class="c1"># private channel</span>
+</span><span id="MessageParser.check_updatable-108"><a href="#MessageParser.check_updatable-108"><span class="linenos">108</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="MessageParser.check_updatable-109"><a href="#MessageParser.check_updatable-109"><span class="linenos">109</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
+</span><span id="MessageParser.check_updatable-110"><a href="#MessageParser.check_updatable-110"><span class="linenos">110</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="MessageParser.check_updatable-111"><a href="#MessageParser.check_updatable-111"><span class="linenos">111</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
 </span><span id="MessageParser.check_updatable-112"><a href="#MessageParser.check_updatable-112"><span class="linenos">112</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-113"><a href="#MessageParser.check_updatable-113"><span class="linenos">113</span></a>                <span class="k">case</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>  <span class="c1"># direct message</span>
-</span><span id="MessageParser.check_updatable-114"><a href="#MessageParser.check_updatable-114"><span class="linenos">114</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="MessageParser.check_updatable-115"><a href="#MessageParser.check_updatable-115"><span class="linenos">115</span></a>                <span class="k">case</span> <span class="s2">&quot;search_messages&quot;</span><span class="p">:</span>
-</span><span id="MessageParser.check_updatable-116"><a href="#MessageParser.check_updatable-116"><span class="linenos">116</span></a>                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="MessageParser.check_updatable-117"><a href="#MessageParser.check_updatable-117"><span class="linenos">117</span></a>
-</span><span id="MessageParser.check_updatable-118"><a href="#MessageParser.check_updatable-118"><span class="linenos">118</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="MessageParser.check_updatable-113"><a href="#MessageParser.check_updatable-113"><span class="linenos">113</span></a>
+</span><span id="MessageParser.check_updatable-114"><a href="#MessageParser.check_updatable-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 
@@ -593,10 +551,10 @@
 
     </div>
     <a class="headerlink" href="#MessageParser.ignore_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.ignore_user-120"><a href="#MessageParser.ignore_user-120"><span class="linenos">120</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParser.ignore_user-121"><a href="#MessageParser.ignore_user-121"><span class="linenos">121</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParser.ignore_user-122"><a href="#MessageParser.ignore_user-122"><span class="linenos">122</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
-</span><span id="MessageParser.ignore_user-123"><a href="#MessageParser.ignore_user-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">ignore_userid</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParser.ignore_user-116"><a href="#MessageParser.ignore_user-116"><span class="linenos">116</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParser.ignore_user-117"><a href="#MessageParser.ignore_user-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParser.ignore_user-118"><a href="#MessageParser.ignore_user-118"><span class="linenos">118</span></a>        <span class="n">g</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;ServiceAdapter&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="p">)</span>
+</span><span id="MessageParser.ignore_user-119"><a href="#MessageParser.ignore_user-119"><span class="linenos">119</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">user_id</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">ignore_userid</span>
 </span></pre></div>
 
 
@@ -627,7 +585,8 @@
 
             </div>
             <div><dt><a href="../base/interface.html#MessageParserInterface">integrations.base.interface.MessageParserInterface</a></dt>
-                                <dd id="MessageParser.keyword" class="variable"><a href="../base/interface.html#MessageParserInterface.keyword">keyword</a></dd>
+                                <dd id="MessageParser.is_command" class="variable"><a href="../base/interface.html#MessageParserInterface.is_command">is_command</a></dd>
+                <dd id="MessageParser.keyword" class="variable"><a href="../base/interface.html#MessageParserInterface.keyword">keyword</a></dd>
                 <dd id="MessageParser.argument" class="variable"><a href="../base/interface.html#MessageParserInterface.argument">argument</a></dd>
                 <dd id="MessageParser.reply_ts" class="variable"><a href="../base/interface.html#MessageParserInterface.reply_ts">reply_ts</a></dd>
 
