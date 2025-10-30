@@ -48,10 +48,11 @@ class SvcFunctions(FunctionsInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
+        self.conf.bot_name = cast("ClientUser", self.conf.bot_name)
+        self.api.response = cast("Message", self.api.response)
+
         if await self.is_deleted_message(self.api.response):
             return
-
-        self.conf.bot_name = cast("ClientUser", self.conf.bot_name)
 
         EMOJI = {
             "ok": "\N{WHITE HEAVY CHECK MARK}",
@@ -87,6 +88,8 @@ class SvcFunctions(FunctionsInterface):
 
     async def delete_reaction(self):
         """botが付けたリアクションをすべて削除する"""
+
+        self.api.response = cast("Message", self.api.response)
 
         if await self.is_deleted_message(self.api.response):
             return
