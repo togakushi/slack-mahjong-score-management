@@ -1,8 +1,6 @@
 # 利用APIと要求権限
 
-## slackで利用する権限
-
-### Bot Token Scopes
+## Bot Token Scopes
 
 |      Scope       |  chat_postMessage  |  files_upload_v2   | reactions_add<br>reactions_remove |   reactions_get    | conversations_open | conversations_replies |    bot events    |     その他     |
 | ---------------- | :----------------: | :----------------: | :-------------------------------: | :----------------: | :----------------: | :-------------------: | :--------------: | :------------: |
@@ -17,7 +15,7 @@
 | reactions:write  |                    |                    |        :heavy_check_mark:         |                    |                    |                       |                  |                |
 | none             |                    |                    |                                   |                    |                    |                       | app_home_opened  |                |
 
-### OAuth Scope
+## OAuth Scope
 
 |    Scope    |  search_messages   |
 | ----------- | :----------------: |

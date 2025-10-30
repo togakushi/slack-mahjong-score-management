@@ -1,7 +1,9 @@
 # 目次
 ## セットアップ
-- [セットアップ方法](setting/setup.md)
-- [要求権限一覧](setting/api_list.md)
+### slack
+- [セットアップ方法](setting/for_slack/setup.md)
+- [要求権限一覧](setting/for_slack/permission.md)
+### 共通項目
 - [設定ファイル内容説明](setting/customize.md)
   - [個別設定](setting/integrations.md)
 
