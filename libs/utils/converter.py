@@ -2,7 +2,6 @@
 libs/utils/converter.py
 """
 
-import re
 import textwrap
 from typing import TYPE_CHECKING, Optional, Union, cast
 
