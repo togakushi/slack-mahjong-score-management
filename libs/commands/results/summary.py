@@ -24,7 +24,7 @@ def aggregation(m: "MessageParserProtocol"):
 
     # --- データ収集
     game_info = GameInfo()
-    df_summary = aggregate.game_summary(drop_items=["rank_distr2"])
+    df_summary = aggregate.game_summary(drop_items=["rank_distr1"])
     df_game = loader.read_data("SUMMARY_DETAILS")
     df_remarks = loader.read_data("REMARKS_INFO")
 
@@ -64,7 +64,7 @@ def aggregation(m: "MessageParserProtocol"):
         filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
         m.set_data("ポイント差分", df_summary.filter(items=header_list), StyleOptions(codeblock=True, summarize=True))
     else:  # 通常表示
-        header_list = [column_name, "通算", "平均", "順位分布", "平順", "飛"]
+        header_list = [column_name, "通算", "平均", "順位分布", "飛"]
         filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "飛"]
         if g.cfg.mahjong.ignore_flying:  # トビカウントなし
             header_list.remove("飛")

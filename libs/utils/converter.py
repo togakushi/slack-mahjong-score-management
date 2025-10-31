@@ -91,6 +91,8 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
         match col:
             case "名前" | "プレイヤー名":
                 alignments.append(Alignment.LEFT)
+            case "順位分布":
+                alignments.append(Alignment.LEFT)
             case _:
                 alignments.append(Alignment.RIGHT)
 
@@ -102,7 +104,7 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
         for k, v in row.items():
             match k:
                 case "通算" | "平均" | "平均素点":
-                    data.append(f"{v:+.1f}".replace("-", "▲"))
+                    data.append(f" {v:+.1f}".replace(" -", "▲"))
                 case "平順" | "平均順位":
                     data.append(f"{v:.2f}")
                 case "レート":
