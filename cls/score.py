@@ -77,11 +77,31 @@ class GameResult:
         """順位点"""
         self.draw_split: bool = False
         """同着時に順位点を山分けにするか"""
+        self.source: Optional[str] = None
+        """データ入力元識別子"""
 
         self.calc(**kwargs)
 
     def __bool__(self) -> bool:
         return all(self.to_list("name") + self.to_list("str"))
+
+    def __eq__(self, other):
+        if not isinstance(other, GameResult):
+            return NotImplemented
+
+        return all([
+            self.ts == other.ts,
+            self.p1.name == other.p1.name,
+            self.p1.rpoint == other.p1.rpoint,
+            self.p2.name == other.p2.name,
+            self.p2.rpoint == other.p2.rpoint,
+            self.p3.name == other.p3.name,
+            self.p3.rpoint == other.p3.rpoint,
+            self.p4.name == other.p4.name,
+            self.p4.rpoint == other.p4.rpoint,
+            self.comment == other.comment,
+            self.source == other.source
+        ])
 
     def has_valid_data(self) -> bool:
         """DB更新に必要なデータを持っているかチェック"""
@@ -132,6 +152,8 @@ class GameResult:
             self.draw_split = kwargs["draw_split"]
         if "comment" in kwargs:
             self.comment = kwargs["comment"]
+        if "source" in kwargs:
+            self.source = kwargs["source"]
 
     def to_dict(self) -> dict:
         """データを辞書で返す
@@ -188,7 +210,7 @@ class GameResult:
             case "logging":
                 ret_text += f"ts={self.ts}, deposit={self.deposit}, "
                 ret_text += f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
-                ret_text += f"comment={self.comment if self.comment else None}"
+                ret_text += f"comment={self.comment if self.comment else None}, source={self.source}"
 
         return ret_text
 
