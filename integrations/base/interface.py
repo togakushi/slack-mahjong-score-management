@@ -282,6 +282,7 @@ class MessageParserDataMixin:
             ret.update({k: str(msg[p])})
 
         ret.update(comment=comment)
+        ret.update(source=self.status.source)
         ret.update(ts=self.data.event_ts)
 
         return ret
