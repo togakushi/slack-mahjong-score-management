@@ -118,7 +118,7 @@ def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) 
     Args:
         pname (str): 対象プレイヤー名
         add_mark (bool, optional): ゲストマークを付与する. Defaults to False.
-        not_replace (bool, optional): ゲスト置換なし(強制) Defaults to False.
+        not_replace (bool, optional): ゲスト置換なし(強制/個人戦) Defaults to False.
 
     Returns:
         str: 表記ブレ修正後のプレイヤー名
@@ -128,7 +128,7 @@ def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) 
     check_team = lookup.internal.get_team()
 
     def _judge(check: str) -> str:
-        if g.params.get("individual", True):
+        if g.params.get("individual", True) or not_replace:
             if check in check_list:
                 return g.member_list.get(check, check)
         else:
