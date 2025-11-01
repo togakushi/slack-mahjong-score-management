@@ -4,7 +4,7 @@ cls/score.py
 
 import re
 from dataclasses import dataclass, field
-from typing import Literal, Optional, cast
+from typing import Any, Literal, Optional, cast
 
 import pandas as pd
 
@@ -88,7 +88,6 @@ class GameResult:
     def __eq__(self, other):
         if not isinstance(other, GameResult):
             return NotImplemented
-
         return all([
             self.ts == other.ts,
             self.p1.name == other.p1.name,
@@ -99,9 +98,15 @@ class GameResult:
             self.p3.rpoint == other.p3.rpoint,
             self.p4.name == other.p4.name,
             self.p4.rpoint == other.p4.rpoint,
+            self.rule_version == other.rule_version,
             self.comment == other.comment,
             self.source == other.source
         ])
+
+    def __lt__(self, other):
+        if not isinstance(other, GameResult):
+            return NotImplemented
+        return self.ts < other.ts
 
     def has_valid_data(self) -> bool:
         """DB更新に必要なデータを持っているかチェック"""
@@ -162,19 +167,17 @@ class GameResult:
             dict: スコアデータ
         """
 
-        ret_dict: dict = {}
-        ret_dict.update({
+        return {
             "ts": self.ts,
-            "comment": self.comment,
-            "rule_version": self.rule_version,
-            "deposit": self.deposit,
             **self.p1.to_dict("p1"),
             **self.p2.to_dict("p2"),
             **self.p3.to_dict("p3"),
             **self.p4.to_dict("p4"),
-        })
-
-        return ret_dict
+            "deposit": self.deposit,
+            "comment": self.comment,
+            "rule_version": self.rule_version,
+            "source": self.source,
+        }
 
     def to_text(
         self,
