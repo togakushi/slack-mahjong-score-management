@@ -4,7 +4,7 @@ cls/score.py
 
 import re
 from dataclasses import dataclass, field
-from typing import Any, Literal, Optional, cast
+from typing import Literal, Optional, cast
 
 import pandas as pd
 
