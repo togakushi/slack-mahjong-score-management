@@ -85,7 +85,7 @@ class RemarkDict(TypedDict):
 
 
 class ComparisonDict(TypedDict, total=False):
-    """メモ突合用辞書"""
+    """突合結果格納用辞書"""
     mismatch: str
     """差分"""
     missing: str
@@ -100,6 +100,15 @@ class ComparisonDict(TypedDict, total=False):
     """素点合計不一致"""
     pending: list[str]
     """保留"""
+
+
+class ComparisonResultDict(TypedDict, total=False):
+    """突合結果格納用辞書"""
+    mismatch: list
+    """差分"""
+    missing: list
+    """追加"""
+    delete: list
 
 
 class RankTableDict(TypedDict):

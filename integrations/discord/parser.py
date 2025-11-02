@@ -59,6 +59,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
     def check_updatable(self) -> bool:
         g.adapter = cast("ServiceAdapter", g.adapter)
 
+        # 突合処理中はチェック省略
+        if self.status.command_type == "comparison":
+            return True
+
         # スレッド内では常に禁止
         if isinstance(self.discord_msg.channel, Thread):
             return False

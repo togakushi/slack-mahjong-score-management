@@ -99,6 +99,7 @@ class StatusData(DataMixin):
         "ranking",
         "rating",
         "report",
+        "comparison",
         "unknown",
     ] = field(default="unknown")
     """実行(する/した)サブコマンド
@@ -107,6 +108,7 @@ class StatusData(DataMixin):
     - *ranking*: ランキング
     - *rating*: レーティング
     - *report*: レポート
+    - *comparison*: 突合処理
     - *unknown*: 未定義
     """
 
@@ -204,3 +206,6 @@ class MessageParserProtocol(Protocol):
 
     def parser(self, body: Any):
         """メッセージ解析メソッド"""
+
+    def reset(self):
+        """状態リセット"""

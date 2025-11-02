@@ -37,6 +37,28 @@ def for_db_score(first_ts: float | bool = False) -> DBSearchDict:
     return data
 
 
+def for_db_score2(first_ts: float) -> list[GameResult]:
+    """データベースからスコアを検索して返す
+
+    Args:
+        first_ts (float): 検索を開始する時刻
+
+    Returns:
+        list[GameResult]: 検索した結果
+    """
+
+    data: list = []
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
+        curs = conn.cursor()
+        rows = curs.execute(
+            "select * from result where ts >= ? and (source isnull or source like ?)",
+            (str(first_ts), f"{g.adapter.interface_type}_%"))
+        for row in rows.fetchall():
+            data.append(GameResult(**dict(row)))
+
+    return data
+
+
 def for_db_remarks(first_ts: float | bool = False) -> list:
     """データベースからメモを検索して返す
 
