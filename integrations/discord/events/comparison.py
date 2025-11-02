@@ -13,8 +13,9 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import modify
+from libs.datamodels import ComparisonResults
 from libs.functions import search
-from libs.types import ComparisonResultDict, StyleOptions
+from libs.types import StyleOptions
 from libs.utils import formatter
 
 if TYPE_CHECKING:
@@ -30,26 +31,17 @@ def main(m: "MessageParserProtocol"):
 
 async def _wrapper(m: "MessageParserProtocol"):
     g.adapter = cast("ServiceAdapter", g.adapter)
-    count: ComparisonResultDict = {
-        "mismatch": [],
-        "missing": [],
-        "delete": [],
-    }
+    count = ComparisonResults()
 
     await check_omission(count)
 
     message = ""
-    for k in count.keys():
-        match k:
-            case "mismatch":
-                message += f"＊ 不一致：{len(count[k])}件\n"
-                message += "".join(count[k])
-            case "missing":
-                message += f"＊ 取りこぼし：{len(count[k])}件\n"
-                message += "".join(count[k])
-            case "delete":
-                message += f"＊ 削除漏れ：{len(count[k])}件\n"
-                message += "".join(count[k])
+    message += f"＊ 不一致：{count.count_mismatch}件\n"
+    message += "".join(count.mismatch)
+    message += f"＊ 取りこぼし：{count.count_missing}件\n"
+    message += "".join(count.missing)
+    message += f"＊ 削除漏れ：{count.count_delete}件\n"
+    message += "".join(count.delete)
 
     #
     after = ExtDt(days=-g.adapter.conf.search_after).format("ymd")
@@ -60,7 +52,7 @@ async def _wrapper(m: "MessageParserProtocol"):
     g.adapter.api.post(m)
 
 
-async def check_omission(count: ComparisonResultDict):
+async def check_omission(count: ComparisonResults):
     g.adapter = cast("ServiceAdapter", g.adapter)
     discord_score: list[GameResult] = []
     keep_m: dict[str, "MessageParser"] = {}
@@ -110,7 +102,7 @@ async def check_omission(count: ComparisonResultDict):
         if score.ts in ts_list:
             target = db_score[ts_list.index(score.ts)]
             if score != target:  # 不一致(更新)
-                count["mismatch"].append(
+                count.mismatch.append(
                     f"{ExtDt(float(score.ts)).format("ymdhms")}\n\t修正前：{target.to_text("simple")}\n\t修正後：{score.to_text("simple")}\n"
                 )
                 logging.info("mismatch: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
@@ -119,7 +111,7 @@ async def check_omission(count: ComparisonResultDict):
                 modify.db_update(score, work_m)
                 g.adapter.functions.post_processing(work_m)
         else:  # 取りこぼし(追加)
-            count["missing"].append(f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text("simple")}\n")
+            count.missing.append(f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text("simple")}\n")
             logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
             logging.debug(score.to_text("logging"))
             modify.db_insert(score, work_m)
@@ -131,7 +123,7 @@ async def check_omission(count: ComparisonResultDict):
     work_m.status.command_type = "comparison"
     for score in db_score:
         if score.ts not in ts_list:  # 削除漏れ
-            count["delete"].append(f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text("simple")}\n")
+            count.delete.append(f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text("simple")}\n")
             work_m.data.event_ts = score.ts
             if score.source:
                 work_m.data.channel_id = score.source.replace("discord_", "")

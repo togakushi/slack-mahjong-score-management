@@ -102,15 +102,6 @@ class ComparisonDict(TypedDict, total=False):
     """保留"""
 
 
-class ComparisonResultDict(TypedDict, total=False):
-    """突合結果格納用辞書"""
-    mismatch: list
-    """差分"""
-    missing: list
-    """追加"""
-    delete: list
-
-
 class RankTableDict(TypedDict):
     """昇段ポイント計算テーブル用辞書"""
 

@@ -94,3 +94,26 @@ class GameInfo:
             "starttime": g.params.get("starttime"),
             "endtime": g.params.get("endtime"),
         }
+
+
+@dataclass
+class ComparisonResults:
+    """突合結果"""
+
+    mismatch: list = field(default_factory=list)
+    """差分"""
+    missing: list = field(default_factory=list)
+    """追加"""
+    delete: list = field(default_factory=list)
+
+    @property
+    def count_mismatch(self) -> int:
+        return len(self.mismatch)
+
+    @property
+    def count_missing(self) -> int:
+        return len(self.missing)
+
+    @property
+    def count_delete(self) -> int:
+        return len(self.delete)
