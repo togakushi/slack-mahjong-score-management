@@ -193,6 +193,9 @@
                         <li>
                                 <a class="function" href="#MessageParserProtocol.parser">parser</a>
                         </li>
+                        <li>
+                                <a class="function" href="#MessageParserProtocol.reset">reset</a>
+                        </li>
                 </ul>
 
             </li>
@@ -320,111 +323,116 @@
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="s2">&quot;ranking&quot;</span><span class="p">,</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="s2">&quot;rating&quot;</span><span class="p">,</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="s2">&quot;report&quot;</span><span class="p">,</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;実行(する/した)サブコマンド</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    - *results*: 成績サマリ</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    - *graph*: グラフ生成</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">    - *ranking*: ランキング</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    - *rating*: レーティング</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">    - *report*: レポート</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    - *unknown*: 未定義</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">    - *True*: コマンド実行</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">    - *False*: キーワード呼び出し</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;実行したコマンド名&quot;&quot;&quot;</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データステータス状態</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">    - *True*: 矛盾なくデータを取り込んだ(OK)</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;nothing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;nothing&quot;</span><span class="p">)</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに対する操作</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">    - *change*: insert/updateが実行された</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">    - *delete*: deleteが実行された</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">    - *nothing*: 何もしてない</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)&quot;&quot;&quot;</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点合計値格納用&quot;&quot;&quot;</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージデータに対する処理結果</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">    - *True*: 目的の処理が達成できた</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">    - *False*: 何らかの原因で処理が達成できなかった</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;汎用メッセージ&quot;&quot;&quot;</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;入力元識別子&quot;&quot;&quot;</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;受け取ったメッセージデータ&quot;&quot;&quot;</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;送信する内容&quot;&quot;&quot;</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="n">status</span><span class="p">:</span> <span class="n">StatusData</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;処理した結果&quot;&quot;&quot;</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="nd">@property</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド内のメッセージか判定&quot;&quot;&quot;</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="nd">@property</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">        - *True*: スラッシュコマンド</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">        - *False*: チャンネル内呼び出しキーワード</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="nd">@property</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botによる操作かチェック</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">        - *True*: botが操作</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">        - *False*: ユーザが操作</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="nd">@property</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す&quot;&quot;&quot;</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="nd">@property</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識しているオプションを文字列のリストで返す&quot;&quot;&quot;</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>    <span class="nd">@property</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプ&quot;&quot;&quot;</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>    <span class="nd">@property</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルか判定&quot;&quot;&quot;</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>    <span class="nd">@property</span>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドを拒否するユーザか判定&quot;&quot;&quot;</span>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;StyleOptions&quot;</span><span class="p">):</span>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット&quot;&quot;&quot;</span>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からスコアデータを取り出す&quot;&quot;&quot;</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からメモデータを取り出す&quot;&quot;&quot;</span>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析メソッド&quot;&quot;&quot;</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="s2">&quot;comparison&quot;</span><span class="p">,</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;実行(する/した)サブコマンド</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    - *results*: 成績サマリ</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">    - *graph*: グラフ生成</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    - *ranking*: ランキング</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">    - *rating*: レーティング</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    - *report*: レポート</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    - *comparison*: 突合処理</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">    - *unknown*: 未定義</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="n">command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">    - *True*: コマンド実行</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">    - *False*: キーワード呼び出し</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;実行したコマンド名&quot;&quot;&quot;</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データステータス状態</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">    - *True*: 矛盾なくデータを取り込んだ(OK)</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;nothing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;nothing&quot;</span><span class="p">)</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに対する操作</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">    - *change*: insert/updateが実行された</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">    - *delete*: deleteが実行された</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">    - *nothing*: 何もしてない</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)&quot;&quot;&quot;</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点合計値格納用&quot;&quot;&quot;</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>    <span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージデータに対する処理結果</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">    - *True*: 目的の処理が達成できた</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">    - *False*: 何らかの原因で処理が達成できなかった</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;汎用メッセージ&quot;&quot;&quot;</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;入力元識別子&quot;&quot;&quot;</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;受け取ったメッセージデータ&quot;&quot;&quot;</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;送信する内容&quot;&quot;&quot;</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="n">status</span><span class="p">:</span> <span class="n">StatusData</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;処理した結果&quot;&quot;&quot;</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="nd">@property</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド内のメッセージか判定&quot;&quot;&quot;</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="nd">@property</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        - *True*: スラッシュコマンド</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">        - *False*: チャンネル内呼び出しキーワード</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>    <span class="nd">@property</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botによる操作かチェック</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        - *True*: botが操作</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">        - *False*: ユーザが操作</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>    <span class="nd">@property</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す&quot;&quot;&quot;</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="nd">@property</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識しているオプションを文字列のリストで返す&quot;&quot;&quot;</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>    <span class="nd">@property</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプ&quot;&quot;&quot;</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="nd">@property</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルか判定&quot;&quot;&quot;</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>    <span class="nd">@property</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドを拒否するユーザか判定&quot;&quot;&quot;</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;StyleOptions&quot;</span><span class="p">):</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット&quot;&quot;&quot;</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からスコアデータを取り出す&quot;&quot;&quot;</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からメモデータを取り出す&quot;&quot;&quot;</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析メソッド&quot;&quot;&quot;</span>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;状態リセット&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -875,50 +883,52 @@
 </span><span id="StatusData-100"><a href="#StatusData-100"><span class="linenos">100</span></a>        <span class="s2">&quot;ranking&quot;</span><span class="p">,</span>
 </span><span id="StatusData-101"><a href="#StatusData-101"><span class="linenos">101</span></a>        <span class="s2">&quot;rating&quot;</span><span class="p">,</span>
 </span><span id="StatusData-102"><a href="#StatusData-102"><span class="linenos">102</span></a>        <span class="s2">&quot;report&quot;</span><span class="p">,</span>
-</span><span id="StatusData-103"><a href="#StatusData-103"><span class="linenos">103</span></a>        <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
-</span><span id="StatusData-104"><a href="#StatusData-104"><span class="linenos">104</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
-</span><span id="StatusData-105"><a href="#StatusData-105"><span class="linenos">105</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;実行(する/した)サブコマンド</span>
-</span><span id="StatusData-106"><a href="#StatusData-106"><span class="linenos">106</span></a><span class="sd">    - *results*: 成績サマリ</span>
-</span><span id="StatusData-107"><a href="#StatusData-107"><span class="linenos">107</span></a><span class="sd">    - *graph*: グラフ生成</span>
-</span><span id="StatusData-108"><a href="#StatusData-108"><span class="linenos">108</span></a><span class="sd">    - *ranking*: ランキング</span>
-</span><span id="StatusData-109"><a href="#StatusData-109"><span class="linenos">109</span></a><span class="sd">    - *rating*: レーティング</span>
-</span><span id="StatusData-110"><a href="#StatusData-110"><span class="linenos">110</span></a><span class="sd">    - *report*: レポート</span>
-</span><span id="StatusData-111"><a href="#StatusData-111"><span class="linenos">111</span></a><span class="sd">    - *unknown*: 未定義</span>
-</span><span id="StatusData-112"><a href="#StatusData-112"><span class="linenos">112</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StatusData-113"><a href="#StatusData-113"><span class="linenos">113</span></a>
-</span><span id="StatusData-114"><a href="#StatusData-114"><span class="linenos">114</span></a>    <span class="n">command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="StatusData-115"><a href="#StatusData-115"><span class="linenos">115</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
-</span><span id="StatusData-116"><a href="#StatusData-116"><span class="linenos">116</span></a><span class="sd">    - *True*: コマンド実行</span>
-</span><span id="StatusData-117"><a href="#StatusData-117"><span class="linenos">117</span></a><span class="sd">    - *False*: キーワード呼び出し</span>
-</span><span id="StatusData-118"><a href="#StatusData-118"><span class="linenos">118</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StatusData-119"><a href="#StatusData-119"><span class="linenos">119</span></a>    <span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="StatusData-120"><a href="#StatusData-120"><span class="linenos">120</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;実行したコマンド名&quot;&quot;&quot;</span>
-</span><span id="StatusData-121"><a href="#StatusData-121"><span class="linenos">121</span></a>
-</span><span id="StatusData-122"><a href="#StatusData-122"><span class="linenos">122</span></a>    <span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="StatusData-123"><a href="#StatusData-123"><span class="linenos">123</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データステータス状態</span>
-</span><span id="StatusData-124"><a href="#StatusData-124"><span class="linenos">124</span></a><span class="sd">    - *True*: 矛盾なくデータを取り込んだ(OK)</span>
-</span><span id="StatusData-125"><a href="#StatusData-125"><span class="linenos">125</span></a><span class="sd">    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)</span>
-</span><span id="StatusData-126"><a href="#StatusData-126"><span class="linenos">126</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StatusData-127"><a href="#StatusData-127"><span class="linenos">127</span></a>    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;nothing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;nothing&quot;</span><span class="p">)</span>
-</span><span id="StatusData-128"><a href="#StatusData-128"><span class="linenos">128</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに対する操作</span>
-</span><span id="StatusData-129"><a href="#StatusData-129"><span class="linenos">129</span></a><span class="sd">    - *change*: insert/updateが実行された</span>
-</span><span id="StatusData-130"><a href="#StatusData-130"><span class="linenos">130</span></a><span class="sd">    - *delete*: deleteが実行された</span>
-</span><span id="StatusData-131"><a href="#StatusData-131"><span class="linenos">131</span></a><span class="sd">    - *nothing*: 何もしてない</span>
-</span><span id="StatusData-132"><a href="#StatusData-132"><span class="linenos">132</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StatusData-133"><a href="#StatusData-133"><span class="linenos">133</span></a>    <span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="StatusData-134"><a href="#StatusData-134"><span class="linenos">134</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)&quot;&quot;&quot;</span>
-</span><span id="StatusData-135"><a href="#StatusData-135"><span class="linenos">135</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="StatusData-136"><a href="#StatusData-136"><span class="linenos">136</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点合計値格納用&quot;&quot;&quot;</span>
-</span><span id="StatusData-137"><a href="#StatusData-137"><span class="linenos">137</span></a>
-</span><span id="StatusData-138"><a href="#StatusData-138"><span class="linenos">138</span></a>    <span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="StatusData-139"><a href="#StatusData-139"><span class="linenos">139</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージデータに対する処理結果</span>
-</span><span id="StatusData-140"><a href="#StatusData-140"><span class="linenos">140</span></a><span class="sd">    - *True*: 目的の処理が達成できた</span>
-</span><span id="StatusData-141"><a href="#StatusData-141"><span class="linenos">141</span></a><span class="sd">    - *False*: 何らかの原因で処理が達成できなかった</span>
-</span><span id="StatusData-142"><a href="#StatusData-142"><span class="linenos">142</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StatusData-143"><a href="#StatusData-143"><span class="linenos">143</span></a>    <span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-</span><span id="StatusData-144"><a href="#StatusData-144"><span class="linenos">144</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;汎用メッセージ&quot;&quot;&quot;</span>
-</span><span id="StatusData-145"><a href="#StatusData-145"><span class="linenos">145</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span id="StatusData-146"><a href="#StatusData-146"><span class="linenos">146</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;入力元識別子&quot;&quot;&quot;</span>
+</span><span id="StatusData-103"><a href="#StatusData-103"><span class="linenos">103</span></a>        <span class="s2">&quot;comparison&quot;</span><span class="p">,</span>
+</span><span id="StatusData-104"><a href="#StatusData-104"><span class="linenos">104</span></a>        <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+</span><span id="StatusData-105"><a href="#StatusData-105"><span class="linenos">105</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+</span><span id="StatusData-106"><a href="#StatusData-106"><span class="linenos">106</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;実行(する/した)サブコマンド</span>
+</span><span id="StatusData-107"><a href="#StatusData-107"><span class="linenos">107</span></a><span class="sd">    - *results*: 成績サマリ</span>
+</span><span id="StatusData-108"><a href="#StatusData-108"><span class="linenos">108</span></a><span class="sd">    - *graph*: グラフ生成</span>
+</span><span id="StatusData-109"><a href="#StatusData-109"><span class="linenos">109</span></a><span class="sd">    - *ranking*: ランキング</span>
+</span><span id="StatusData-110"><a href="#StatusData-110"><span class="linenos">110</span></a><span class="sd">    - *rating*: レーティング</span>
+</span><span id="StatusData-111"><a href="#StatusData-111"><span class="linenos">111</span></a><span class="sd">    - *report*: レポート</span>
+</span><span id="StatusData-112"><a href="#StatusData-112"><span class="linenos">112</span></a><span class="sd">    - *comparison*: 突合処理</span>
+</span><span id="StatusData-113"><a href="#StatusData-113"><span class="linenos">113</span></a><span class="sd">    - *unknown*: 未定義</span>
+</span><span id="StatusData-114"><a href="#StatusData-114"><span class="linenos">114</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StatusData-115"><a href="#StatusData-115"><span class="linenos">115</span></a>
+</span><span id="StatusData-116"><a href="#StatusData-116"><span class="linenos">116</span></a>    <span class="n">command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="StatusData-117"><a href="#StatusData-117"><span class="linenos">117</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
+</span><span id="StatusData-118"><a href="#StatusData-118"><span class="linenos">118</span></a><span class="sd">    - *True*: コマンド実行</span>
+</span><span id="StatusData-119"><a href="#StatusData-119"><span class="linenos">119</span></a><span class="sd">    - *False*: キーワード呼び出し</span>
+</span><span id="StatusData-120"><a href="#StatusData-120"><span class="linenos">120</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StatusData-121"><a href="#StatusData-121"><span class="linenos">121</span></a>    <span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="StatusData-122"><a href="#StatusData-122"><span class="linenos">122</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;実行したコマンド名&quot;&quot;&quot;</span>
+</span><span id="StatusData-123"><a href="#StatusData-123"><span class="linenos">123</span></a>
+</span><span id="StatusData-124"><a href="#StatusData-124"><span class="linenos">124</span></a>    <span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="StatusData-125"><a href="#StatusData-125"><span class="linenos">125</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データステータス状態</span>
+</span><span id="StatusData-126"><a href="#StatusData-126"><span class="linenos">126</span></a><span class="sd">    - *True*: 矛盾なくデータを取り込んだ(OK)</span>
+</span><span id="StatusData-127"><a href="#StatusData-127"><span class="linenos">127</span></a><span class="sd">    - *False*: 矛盾があったがデータを取り込んだ or データを取り込めなかった(NG)</span>
+</span><span id="StatusData-128"><a href="#StatusData-128"><span class="linenos">128</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StatusData-129"><a href="#StatusData-129"><span class="linenos">129</span></a>    <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="s2">&quot;delete&quot;</span><span class="p">,</span> <span class="s2">&quot;nothing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;nothing&quot;</span><span class="p">)</span>
+</span><span id="StatusData-130"><a href="#StatusData-130"><span class="linenos">130</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;DBに対する操作</span>
+</span><span id="StatusData-131"><a href="#StatusData-131"><span class="linenos">131</span></a><span class="sd">    - *change*: insert/updateが実行された</span>
+</span><span id="StatusData-132"><a href="#StatusData-132"><span class="linenos">132</span></a><span class="sd">    - *delete*: deleteが実行された</span>
+</span><span id="StatusData-133"><a href="#StatusData-133"><span class="linenos">133</span></a><span class="sd">    - *nothing*: 何もしてない</span>
+</span><span id="StatusData-134"><a href="#StatusData-134"><span class="linenos">134</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StatusData-135"><a href="#StatusData-135"><span class="linenos">135</span></a>    <span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="StatusData-136"><a href="#StatusData-136"><span class="linenos">136</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;同じ処理をしたタイムスタンプリスト(1件だけの処理でもセットされる)&quot;&quot;&quot;</span>
+</span><span id="StatusData-137"><a href="#StatusData-137"><span class="linenos">137</span></a>    <span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="StatusData-138"><a href="#StatusData-138"><span class="linenos">138</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点合計値格納用&quot;&quot;&quot;</span>
+</span><span id="StatusData-139"><a href="#StatusData-139"><span class="linenos">139</span></a>
+</span><span id="StatusData-140"><a href="#StatusData-140"><span class="linenos">140</span></a>    <span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="StatusData-141"><a href="#StatusData-141"><span class="linenos">141</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージデータに対する処理結果</span>
+</span><span id="StatusData-142"><a href="#StatusData-142"><span class="linenos">142</span></a><span class="sd">    - *True*: 目的の処理が達成できた</span>
+</span><span id="StatusData-143"><a href="#StatusData-143"><span class="linenos">143</span></a><span class="sd">    - *False*: 何らかの原因で処理が達成できなかった</span>
+</span><span id="StatusData-144"><a href="#StatusData-144"><span class="linenos">144</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StatusData-145"><a href="#StatusData-145"><span class="linenos">145</span></a>    <span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="StatusData-146"><a href="#StatusData-146"><span class="linenos">146</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;汎用メッセージ&quot;&quot;&quot;</span>
+</span><span id="StatusData-147"><a href="#StatusData-147"><span class="linenos">147</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="StatusData-148"><a href="#StatusData-148"><span class="linenos">148</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;入力元識別子&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -929,7 +939,7 @@
                             <div id="StatusData.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">StatusData</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">command_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="s1">&#39;graph&#39;</span><span class="p">,</span> <span class="s1">&#39;ranking&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>,</span><span class="param">	<span class="n">command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="s1">&#39;nothing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;nothing&#39;</span>,</span><span class="param">	<span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></span>)</span>
+        <span class="name">StatusData</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">command_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="s1">&#39;graph&#39;</span><span class="p">,</span> <span class="s1">&#39;ranking&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="s1">&#39;comparison&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>,</span><span class="param">	<span class="n">command_flg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">reaction</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="s1">&#39;nothing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;nothing&#39;</span>,</span><span class="param">	<span class="n">target_ts</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">factory</span><span class="o">&gt;</span>,</span><span class="param">	<span class="n">rpoint_sum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">message</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></span>)</span>
 
         
     </div>
@@ -940,7 +950,7 @@
                             </div>
                             <div id="StatusData.command_type" class="classattr">
                                 <div class="attr variable">
-            <span class="name">command_type</span><span class="annotation">: Literal[&#39;results&#39;, &#39;graph&#39;, &#39;ranking&#39;, &#39;rating&#39;, &#39;report&#39;, &#39;unknown&#39;]</span>        =
+            <span class="name">command_type</span><span class="annotation">: Literal[&#39;results&#39;, &#39;graph&#39;, &#39;ranking&#39;, &#39;rating&#39;, &#39;report&#39;, &#39;comparison&#39;, &#39;unknown&#39;]</span>        =
 <span class="default_value">&#39;unknown&#39;</span>
 
         
@@ -955,6 +965,7 @@
 <li><em>ranking</em>: ランキング</li>
 <li><em>rating</em>: レーティング</li>
 <li><em>report</em>: レポート</li>
+<li><em>comparison</em>: 突合処理</li>
 <li><em>unknown</em>: 未定義</li>
 </ul>
 </div>
@@ -1128,65 +1139,68 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol-149"><a href="#MessageParserProtocol-149"><span class="linenos">149</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="MessageParserProtocol-150"><a href="#MessageParserProtocol-150"><span class="linenos">150</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-151"><a href="#MessageParserProtocol-151"><span class="linenos">151</span></a>
-</span><span id="MessageParserProtocol-152"><a href="#MessageParserProtocol-152"><span class="linenos">152</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
-</span><span id="MessageParserProtocol-153"><a href="#MessageParserProtocol-153"><span class="linenos">153</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;受け取ったメッセージデータ&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-154"><a href="#MessageParserProtocol-154"><span class="linenos">154</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
-</span><span id="MessageParserProtocol-155"><a href="#MessageParserProtocol-155"><span class="linenos">155</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;送信する内容&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-156"><a href="#MessageParserProtocol-156"><span class="linenos">156</span></a>    <span class="n">status</span><span class="p">:</span> <span class="n">StatusData</span>
-</span><span id="MessageParserProtocol-157"><a href="#MessageParserProtocol-157"><span class="linenos">157</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;処理した結果&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-158"><a href="#MessageParserProtocol-158"><span class="linenos">158</span></a>
-</span><span id="MessageParserProtocol-159"><a href="#MessageParserProtocol-159"><span class="linenos">159</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-160"><a href="#MessageParserProtocol-160"><span class="linenos">160</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-161"><a href="#MessageParserProtocol-161"><span class="linenos">161</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド内のメッセージか判定&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-162"><a href="#MessageParserProtocol-162"><span class="linenos">162</span></a>
-</span><span id="MessageParserProtocol-163"><a href="#MessageParserProtocol-163"><span class="linenos">163</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-164"><a href="#MessageParserProtocol-164"><span class="linenos">164</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-165"><a href="#MessageParserProtocol-165"><span class="linenos">165</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
-</span><span id="MessageParserProtocol-166"><a href="#MessageParserProtocol-166"><span class="linenos">166</span></a><span class="sd">        - *True*: スラッシュコマンド</span>
-</span><span id="MessageParserProtocol-167"><a href="#MessageParserProtocol-167"><span class="linenos">167</span></a><span class="sd">        - *False*: チャンネル内呼び出しキーワード</span>
-</span><span id="MessageParserProtocol-168"><a href="#MessageParserProtocol-168"><span class="linenos">168</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-169"><a href="#MessageParserProtocol-169"><span class="linenos">169</span></a>
-</span><span id="MessageParserProtocol-170"><a href="#MessageParserProtocol-170"><span class="linenos">170</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-171"><a href="#MessageParserProtocol-171"><span class="linenos">171</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-172"><a href="#MessageParserProtocol-172"><span class="linenos">172</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botによる操作かチェック</span>
-</span><span id="MessageParserProtocol-173"><a href="#MessageParserProtocol-173"><span class="linenos">173</span></a><span class="sd">        - *True*: botが操作</span>
-</span><span id="MessageParserProtocol-174"><a href="#MessageParserProtocol-174"><span class="linenos">174</span></a><span class="sd">        - *False*: ユーザが操作</span>
-</span><span id="MessageParserProtocol-175"><a href="#MessageParserProtocol-175"><span class="linenos">175</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-176"><a href="#MessageParserProtocol-176"><span class="linenos">176</span></a>
-</span><span id="MessageParserProtocol-177"><a href="#MessageParserProtocol-177"><span class="linenos">177</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-178"><a href="#MessageParserProtocol-178"><span class="linenos">178</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-179"><a href="#MessageParserProtocol-179"><span class="linenos">179</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-180"><a href="#MessageParserProtocol-180"><span class="linenos">180</span></a>
-</span><span id="MessageParserProtocol-181"><a href="#MessageParserProtocol-181"><span class="linenos">181</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-182"><a href="#MessageParserProtocol-182"><span class="linenos">182</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-183"><a href="#MessageParserProtocol-183"><span class="linenos">183</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識しているオプションを文字列のリストで返す&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-184"><a href="#MessageParserProtocol-184"><span class="linenos">184</span></a>
-</span><span id="MessageParserProtocol-185"><a href="#MessageParserProtocol-185"><span class="linenos">185</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-186"><a href="#MessageParserProtocol-186"><span class="linenos">186</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-187"><a href="#MessageParserProtocol-187"><span class="linenos">187</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプ&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-188"><a href="#MessageParserProtocol-188"><span class="linenos">188</span></a>
-</span><span id="MessageParserProtocol-189"><a href="#MessageParserProtocol-189"><span class="linenos">189</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-190"><a href="#MessageParserProtocol-190"><span class="linenos">190</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-191"><a href="#MessageParserProtocol-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルか判定&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-192"><a href="#MessageParserProtocol-192"><span class="linenos">192</span></a>
-</span><span id="MessageParserProtocol-193"><a href="#MessageParserProtocol-193"><span class="linenos">193</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol-194"><a href="#MessageParserProtocol-194"><span class="linenos">194</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-195"><a href="#MessageParserProtocol-195"><span class="linenos">195</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドを拒否するユーザか判定&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-196"><a href="#MessageParserProtocol-196"><span class="linenos">196</span></a>
-</span><span id="MessageParserProtocol-197"><a href="#MessageParserProtocol-197"><span class="linenos">197</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;StyleOptions&quot;</span><span class="p">):</span>
-</span><span id="MessageParserProtocol-198"><a href="#MessageParserProtocol-198"><span class="linenos">198</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-199"><a href="#MessageParserProtocol-199"><span class="linenos">199</span></a>
-</span><span id="MessageParserProtocol-200"><a href="#MessageParserProtocol-200"><span class="linenos">200</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-201"><a href="#MessageParserProtocol-201"><span class="linenos">201</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からスコアデータを取り出す&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-202"><a href="#MessageParserProtocol-202"><span class="linenos">202</span></a>
-</span><span id="MessageParserProtocol-203"><a href="#MessageParserProtocol-203"><span class="linenos">203</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserProtocol-204"><a href="#MessageParserProtocol-204"><span class="linenos">204</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からメモデータを取り出す&quot;&quot;&quot;</span>
-</span><span id="MessageParserProtocol-205"><a href="#MessageParserProtocol-205"><span class="linenos">205</span></a>
-</span><span id="MessageParserProtocol-206"><a href="#MessageParserProtocol-206"><span class="linenos">206</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserProtocol-207"><a href="#MessageParserProtocol-207"><span class="linenos">207</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析メソッド&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol-151"><a href="#MessageParserProtocol-151"><span class="linenos">151</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageParserProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="MessageParserProtocol-152"><a href="#MessageParserProtocol-152"><span class="linenos">152</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ解析クラス&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-153"><a href="#MessageParserProtocol-153"><span class="linenos">153</span></a>
+</span><span id="MessageParserProtocol-154"><a href="#MessageParserProtocol-154"><span class="linenos">154</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MsgData</span>
+</span><span id="MessageParserProtocol-155"><a href="#MessageParserProtocol-155"><span class="linenos">155</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;受け取ったメッセージデータ&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-156"><a href="#MessageParserProtocol-156"><span class="linenos">156</span></a>    <span class="n">post</span><span class="p">:</span> <span class="n">PostData</span>
+</span><span id="MessageParserProtocol-157"><a href="#MessageParserProtocol-157"><span class="linenos">157</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;送信する内容&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-158"><a href="#MessageParserProtocol-158"><span class="linenos">158</span></a>    <span class="n">status</span><span class="p">:</span> <span class="n">StatusData</span>
+</span><span id="MessageParserProtocol-159"><a href="#MessageParserProtocol-159"><span class="linenos">159</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;処理した結果&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-160"><a href="#MessageParserProtocol-160"><span class="linenos">160</span></a>
+</span><span id="MessageParserProtocol-161"><a href="#MessageParserProtocol-161"><span class="linenos">161</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-162"><a href="#MessageParserProtocol-162"><span class="linenos">162</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-163"><a href="#MessageParserProtocol-163"><span class="linenos">163</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド内のメッセージか判定&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-164"><a href="#MessageParserProtocol-164"><span class="linenos">164</span></a>
+</span><span id="MessageParserProtocol-165"><a href="#MessageParserProtocol-165"><span class="linenos">165</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-166"><a href="#MessageParserProtocol-166"><span class="linenos">166</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-167"><a href="#MessageParserProtocol-167"><span class="linenos">167</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
+</span><span id="MessageParserProtocol-168"><a href="#MessageParserProtocol-168"><span class="linenos">168</span></a><span class="sd">        - *True*: スラッシュコマンド</span>
+</span><span id="MessageParserProtocol-169"><a href="#MessageParserProtocol-169"><span class="linenos">169</span></a><span class="sd">        - *False*: チャンネル内呼び出しキーワード</span>
+</span><span id="MessageParserProtocol-170"><a href="#MessageParserProtocol-170"><span class="linenos">170</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-171"><a href="#MessageParserProtocol-171"><span class="linenos">171</span></a>
+</span><span id="MessageParserProtocol-172"><a href="#MessageParserProtocol-172"><span class="linenos">172</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-173"><a href="#MessageParserProtocol-173"><span class="linenos">173</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-174"><a href="#MessageParserProtocol-174"><span class="linenos">174</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botによる操作かチェック</span>
+</span><span id="MessageParserProtocol-175"><a href="#MessageParserProtocol-175"><span class="linenos">175</span></a><span class="sd">        - *True*: botが操作</span>
+</span><span id="MessageParserProtocol-176"><a href="#MessageParserProtocol-176"><span class="linenos">176</span></a><span class="sd">        - *False*: ユーザが操作</span>
+</span><span id="MessageParserProtocol-177"><a href="#MessageParserProtocol-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-178"><a href="#MessageParserProtocol-178"><span class="linenos">178</span></a>
+</span><span id="MessageParserProtocol-179"><a href="#MessageParserProtocol-179"><span class="linenos">179</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-180"><a href="#MessageParserProtocol-180"><span class="linenos">180</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-181"><a href="#MessageParserProtocol-181"><span class="linenos">181</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-182"><a href="#MessageParserProtocol-182"><span class="linenos">182</span></a>
+</span><span id="MessageParserProtocol-183"><a href="#MessageParserProtocol-183"><span class="linenos">183</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-184"><a href="#MessageParserProtocol-184"><span class="linenos">184</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-185"><a href="#MessageParserProtocol-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識しているオプションを文字列のリストで返す&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-186"><a href="#MessageParserProtocol-186"><span class="linenos">186</span></a>
+</span><span id="MessageParserProtocol-187"><a href="#MessageParserProtocol-187"><span class="linenos">187</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-188"><a href="#MessageParserProtocol-188"><span class="linenos">188</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-189"><a href="#MessageParserProtocol-189"><span class="linenos">189</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプ&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-190"><a href="#MessageParserProtocol-190"><span class="linenos">190</span></a>
+</span><span id="MessageParserProtocol-191"><a href="#MessageParserProtocol-191"><span class="linenos">191</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-192"><a href="#MessageParserProtocol-192"><span class="linenos">192</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-193"><a href="#MessageParserProtocol-193"><span class="linenos">193</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルか判定&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-194"><a href="#MessageParserProtocol-194"><span class="linenos">194</span></a>
+</span><span id="MessageParserProtocol-195"><a href="#MessageParserProtocol-195"><span class="linenos">195</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol-196"><a href="#MessageParserProtocol-196"><span class="linenos">196</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-197"><a href="#MessageParserProtocol-197"><span class="linenos">197</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドを拒否するユーザか判定&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-198"><a href="#MessageParserProtocol-198"><span class="linenos">198</span></a>
+</span><span id="MessageParserProtocol-199"><a href="#MessageParserProtocol-199"><span class="linenos">199</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;StyleOptions&quot;</span><span class="p">):</span>
+</span><span id="MessageParserProtocol-200"><a href="#MessageParserProtocol-200"><span class="linenos">200</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-201"><a href="#MessageParserProtocol-201"><span class="linenos">201</span></a>
+</span><span id="MessageParserProtocol-202"><a href="#MessageParserProtocol-202"><span class="linenos">202</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-203"><a href="#MessageParserProtocol-203"><span class="linenos">203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からスコアデータを取り出す&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-204"><a href="#MessageParserProtocol-204"><span class="linenos">204</span></a>
+</span><span id="MessageParserProtocol-205"><a href="#MessageParserProtocol-205"><span class="linenos">205</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserProtocol-206"><a href="#MessageParserProtocol-206"><span class="linenos">206</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からメモデータを取り出す&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-207"><a href="#MessageParserProtocol-207"><span class="linenos">207</span></a>
+</span><span id="MessageParserProtocol-208"><a href="#MessageParserProtocol-208"><span class="linenos">208</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserProtocol-209"><a href="#MessageParserProtocol-209"><span class="linenos">209</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析メソッド&quot;&quot;&quot;</span>
+</span><span id="MessageParserProtocol-210"><a href="#MessageParserProtocol-210"><span class="linenos">210</span></a>
+</span><span id="MessageParserProtocol-211"><a href="#MessageParserProtocol-211"><span class="linenos">211</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="MessageParserProtocol-212"><a href="#MessageParserProtocol-212"><span class="linenos">212</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;状態リセット&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1285,9 +1299,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.in_thread"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.in_thread-159"><a href="#MessageParserProtocol.in_thread-159"><span class="linenos">159</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.in_thread-160"><a href="#MessageParserProtocol.in_thread-160"><span class="linenos">160</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.in_thread-161"><a href="#MessageParserProtocol.in_thread-161"><span class="linenos">161</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド内のメッセージか判定&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.in_thread-161"><a href="#MessageParserProtocol.in_thread-161"><span class="linenos">161</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.in_thread-162"><a href="#MessageParserProtocol.in_thread-162"><span class="linenos">162</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.in_thread-163"><a href="#MessageParserProtocol.in_thread-163"><span class="linenos">163</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;スレッド内のメッセージか判定&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1305,12 +1319,12 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.is_command"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.is_command-163"><a href="#MessageParserProtocol.is_command-163"><span class="linenos">163</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.is_command-164"><a href="#MessageParserProtocol.is_command-164"><span class="linenos">164</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.is_command-165"><a href="#MessageParserProtocol.is_command-165"><span class="linenos">165</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
-</span><span id="MessageParserProtocol.is_command-166"><a href="#MessageParserProtocol.is_command-166"><span class="linenos">166</span></a><span class="sd">        - *True*: スラッシュコマンド</span>
-</span><span id="MessageParserProtocol.is_command-167"><a href="#MessageParserProtocol.is_command-167"><span class="linenos">167</span></a><span class="sd">        - *False*: チャンネル内呼び出しキーワード</span>
-</span><span id="MessageParserProtocol.is_command-168"><a href="#MessageParserProtocol.is_command-168"><span class="linenos">168</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.is_command-165"><a href="#MessageParserProtocol.is_command-165"><span class="linenos">165</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.is_command-166"><a href="#MessageParserProtocol.is_command-166"><span class="linenos">166</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.is_command-167"><a href="#MessageParserProtocol.is_command-167"><span class="linenos">167</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして実行されたかチェック</span>
+</span><span id="MessageParserProtocol.is_command-168"><a href="#MessageParserProtocol.is_command-168"><span class="linenos">168</span></a><span class="sd">        - *True*: スラッシュコマンド</span>
+</span><span id="MessageParserProtocol.is_command-169"><a href="#MessageParserProtocol.is_command-169"><span class="linenos">169</span></a><span class="sd">        - *False*: チャンネル内呼び出しキーワード</span>
+</span><span id="MessageParserProtocol.is_command-170"><a href="#MessageParserProtocol.is_command-170"><span class="linenos">170</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1333,12 +1347,12 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.is_bot"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.is_bot-170"><a href="#MessageParserProtocol.is_bot-170"><span class="linenos">170</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.is_bot-171"><a href="#MessageParserProtocol.is_bot-171"><span class="linenos">171</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.is_bot-172"><a href="#MessageParserProtocol.is_bot-172"><span class="linenos">172</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botによる操作かチェック</span>
-</span><span id="MessageParserProtocol.is_bot-173"><a href="#MessageParserProtocol.is_bot-173"><span class="linenos">173</span></a><span class="sd">        - *True*: botが操作</span>
-</span><span id="MessageParserProtocol.is_bot-174"><a href="#MessageParserProtocol.is_bot-174"><span class="linenos">174</span></a><span class="sd">        - *False*: ユーザが操作</span>
-</span><span id="MessageParserProtocol.is_bot-175"><a href="#MessageParserProtocol.is_bot-175"><span class="linenos">175</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.is_bot-172"><a href="#MessageParserProtocol.is_bot-172"><span class="linenos">172</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.is_bot-173"><a href="#MessageParserProtocol.is_bot-173"><span class="linenos">173</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.is_bot-174"><a href="#MessageParserProtocol.is_bot-174"><span class="linenos">174</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;botによる操作かチェック</span>
+</span><span id="MessageParserProtocol.is_bot-175"><a href="#MessageParserProtocol.is_bot-175"><span class="linenos">175</span></a><span class="sd">        - *True*: botが操作</span>
+</span><span id="MessageParserProtocol.is_bot-176"><a href="#MessageParserProtocol.is_bot-176"><span class="linenos">176</span></a><span class="sd">        - *False*: ユーザが操作</span>
+</span><span id="MessageParserProtocol.is_bot-177"><a href="#MessageParserProtocol.is_bot-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1361,9 +1375,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.keyword"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.keyword-177"><a href="#MessageParserProtocol.keyword-177"><span class="linenos">177</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.keyword-178"><a href="#MessageParserProtocol.keyword-178"><span class="linenos">178</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.keyword-179"><a href="#MessageParserProtocol.keyword-179"><span class="linenos">179</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.keyword-179"><a href="#MessageParserProtocol.keyword-179"><span class="linenos">179</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.keyword-180"><a href="#MessageParserProtocol.keyword-180"><span class="linenos">180</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.keyword-181"><a href="#MessageParserProtocol.keyword-181"><span class="linenos">181</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドとして認識している文字列を返す&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1381,9 +1395,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.argument"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.argument-181"><a href="#MessageParserProtocol.argument-181"><span class="linenos">181</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.argument-182"><a href="#MessageParserProtocol.argument-182"><span class="linenos">182</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.argument-183"><a href="#MessageParserProtocol.argument-183"><span class="linenos">183</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識しているオプションを文字列のリストで返す&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.argument-183"><a href="#MessageParserProtocol.argument-183"><span class="linenos">183</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.argument-184"><a href="#MessageParserProtocol.argument-184"><span class="linenos">184</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.argument-185"><a href="#MessageParserProtocol.argument-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンド引数として認識しているオプションを文字列のリストで返す&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1401,9 +1415,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.reply_ts"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.reply_ts-185"><a href="#MessageParserProtocol.reply_ts-185"><span class="linenos">185</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.reply_ts-186"><a href="#MessageParserProtocol.reply_ts-186"><span class="linenos">186</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.reply_ts-187"><a href="#MessageParserProtocol.reply_ts-187"><span class="linenos">187</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプ&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.reply_ts-187"><a href="#MessageParserProtocol.reply_ts-187"><span class="linenos">187</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.reply_ts-188"><a href="#MessageParserProtocol.reply_ts-188"><span class="linenos">188</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reply_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.reply_ts-189"><a href="#MessageParserProtocol.reply_ts-189"><span class="linenos">189</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;リプライ先のタイムスタンプ&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1421,9 +1435,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.check_updatable"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.check_updatable-189"><a href="#MessageParserProtocol.check_updatable-189"><span class="linenos">189</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.check_updatable-190"><a href="#MessageParserProtocol.check_updatable-190"><span class="linenos">190</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.check_updatable-191"><a href="#MessageParserProtocol.check_updatable-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルか判定&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.check_updatable-191"><a href="#MessageParserProtocol.check_updatable-191"><span class="linenos">191</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.check_updatable-192"><a href="#MessageParserProtocol.check_updatable-192"><span class="linenos">192</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_updatable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.check_updatable-193"><a href="#MessageParserProtocol.check_updatable-193"><span class="linenos">193</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;DB更新可能チャンネルか判定&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1441,9 +1455,9 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.ignore_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.ignore_user-193"><a href="#MessageParserProtocol.ignore_user-193"><span class="linenos">193</span></a>    <span class="nd">@property</span>
-</span><span id="MessageParserProtocol.ignore_user-194"><a href="#MessageParserProtocol.ignore_user-194"><span class="linenos">194</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.ignore_user-195"><a href="#MessageParserProtocol.ignore_user-195"><span class="linenos">195</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドを拒否するユーザか判定&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.ignore_user-195"><a href="#MessageParserProtocol.ignore_user-195"><span class="linenos">195</span></a>    <span class="nd">@property</span>
+</span><span id="MessageParserProtocol.ignore_user-196"><a href="#MessageParserProtocol.ignore_user-196"><span class="linenos">196</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ignore_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.ignore_user-197"><a href="#MessageParserProtocol.ignore_user-197"><span class="linenos">197</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;コマンドを拒否するユーザか判定&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1463,8 +1477,8 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.set_data"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.set_data-197"><a href="#MessageParserProtocol.set_data-197"><span class="linenos">197</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;StyleOptions&quot;</span><span class="p">):</span>
-</span><span id="MessageParserProtocol.set_data-198"><a href="#MessageParserProtocol.set_data-198"><span class="linenos">198</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.set_data-199"><a href="#MessageParserProtocol.set_data-199"><span class="linenos">199</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s2">&quot;MessageType&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;StyleOptions&quot;</span><span class="p">):</span>
+</span><span id="MessageParserProtocol.set_data-200"><a href="#MessageParserProtocol.set_data-200"><span class="linenos">200</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージデータをセット&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1484,8 +1498,8 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.get_score"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.get_score-200"><a href="#MessageParserProtocol.get_score-200"><span class="linenos">200</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.get_score-201"><a href="#MessageParserProtocol.get_score-201"><span class="linenos">201</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からスコアデータを取り出す&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.get_score-202"><a href="#MessageParserProtocol.get_score-202"><span class="linenos">202</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.get_score-203"><a href="#MessageParserProtocol.get_score-203"><span class="linenos">203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からスコアデータを取り出す&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1505,8 +1519,8 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.get_remarks"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.get_remarks-203"><a href="#MessageParserProtocol.get_remarks-203"><span class="linenos">203</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-</span><span id="MessageParserProtocol.get_remarks-204"><a href="#MessageParserProtocol.get_remarks-204"><span class="linenos">204</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からメモデータを取り出す&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.get_remarks-205"><a href="#MessageParserProtocol.get_remarks-205"><span class="linenos">205</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_remarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+</span><span id="MessageParserProtocol.get_remarks-206"><a href="#MessageParserProtocol.get_remarks-206"><span class="linenos">206</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;本文からメモデータを取り出す&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1526,12 +1540,33 @@
 
     </div>
     <a class="headerlink" href="#MessageParserProtocol.parser"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.parser-206"><a href="#MessageParserProtocol.parser-206"><span class="linenos">206</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-</span><span id="MessageParserProtocol.parser-207"><a href="#MessageParserProtocol.parser-207"><span class="linenos">207</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析メソッド&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.parser-208"><a href="#MessageParserProtocol.parser-208"><span class="linenos">208</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+</span><span id="MessageParserProtocol.parser-209"><a href="#MessageParserProtocol.parser-209"><span class="linenos">209</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;メッセージ解析メソッド&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>メッセージ解析メソッド</p>
+</div>
+
+
+                            </div>
+                            <div id="MessageParserProtocol.reset" class="classattr">
+                                        <input id="MessageParserProtocol.reset-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">reset</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="MessageParserProtocol.reset-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MessageParserProtocol.reset"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageParserProtocol.reset-211"><a href="#MessageParserProtocol.reset-211"><span class="linenos">211</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="MessageParserProtocol.reset-212"><a href="#MessageParserProtocol.reset-212"><span class="linenos">212</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;状態リセット&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>状態リセット</p>
 </div>
 
 
