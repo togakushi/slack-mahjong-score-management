@@ -202,7 +202,7 @@ class GameResult:
                 ret_text += f"[{self.p2.name} {self.p2.r_str}] "
                 ret_text += f"[{self.p3.name} {self.p3.r_str}] "
                 ret_text += f"[{self.p4.name} {self.p4.r_str}] "
-                ret_text += f"供託[{self.deposit}] [{self.comment if self.comment else None}]"
+                ret_text += f"[供託 {self.deposit}] [{self.comment if self.comment else None}]"
             case "detail":
                 ret_text += f"[{self.p1.rank}位 {self.p1.name} {self.p1.rpoint * 100}点 ({self.p1.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace("-", "▲")
