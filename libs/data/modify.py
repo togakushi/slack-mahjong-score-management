@@ -160,7 +160,6 @@ def remarks_append(m: "MessageParserProtocol", remarks: list["RemarkDict"]) -> N
                     if para["name"] in [v for k, v in dict(row).items() if str(k).endswith("_name")]:
                         cur.execute(dbutil.query("REMARKS_INSERT"), para)
                         m.status.target_ts.append(para["event_ts"])
-                        m.status.target_ts.append(para["event_ts"])
                         logging.info("insert: %s", para)
             cur.commit()
             count = cur.execute("select changes();").fetchone()[0]
@@ -194,7 +193,7 @@ def remarks_delete(m: "MessageParserProtocol"):
         g.adapter.functions.post_processing(m)
 
 
-def remarks_delete_compar(para: dict, m: "MessageParserProtocol") -> None:
+def remarks_delete_compar(para: "RemarkDict", m: "MessageParserProtocol") -> None:
     """DBからメモを削除する(突合)
 
     Args:
