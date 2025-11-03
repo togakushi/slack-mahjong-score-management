@@ -227,14 +227,14 @@ def check_omission(
 def check_remarks(
     m: "MessageParserProtocol",
     slack_data: list["MessageParserProtocol"],
-    db_data: list
+    db_data: list[RemarkDict],
 ) -> tuple[dict, ComparisonDict]:
     """メモの取りこぼしチェック
 
     Args:
         m (MessageParserProtocol): メッセージデータ
         slack_data (list["MessageParserProtocol"]): slack検索結果
-        db_data (list): DB登録状況
+        db_data (list[RemarkDict]): DB登録状況
 
     Returns:
         tuple[dict, ComparisonDict]: 修正内容(結果)

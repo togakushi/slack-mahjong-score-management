@@ -3,10 +3,14 @@ libs/functions/search.py
 """
 
 from contextlib import closing
+from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from cls.score import GameResult
 from libs.utils import dbutil
+
+if TYPE_CHECKING:
+    from libs.types import RemarkDict
 
 DBSearchDict = dict[str, GameResult]
 
@@ -59,21 +63,21 @@ def for_db_score2(first_ts: float) -> list[GameResult]:
     return data
 
 
-def for_db_remarks(first_ts: float | bool = False) -> list:
+def for_db_remarks(first_ts: float | bool = False) -> list["RemarkDict"]:
     """データベースからメモを検索して返す
 
     Args:
         first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.
 
     Returns:
-        list: 検索した結果
+        list[RemarkDict]: 検索した結果
     """
 
     if not first_ts:
         return []
 
     # データベースからデータ取得
-    data: list = []
+    data: list["RemarkDict"] = []
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         # 記録済みメモ内容
         rows = cur.execute("select * from remarks where thread_ts>=?", (str(first_ts),))
