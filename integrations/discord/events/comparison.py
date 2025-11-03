@@ -4,6 +4,7 @@ integrations/discord/events/comparison.py
 
 import asyncio
 import logging
+import re
 from typing import TYPE_CHECKING, cast
 
 from discord import Message
@@ -15,50 +16,58 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import modify
 from libs.datamodels import ComparisonResults
 from libs.functions import search
-from libs.types import StyleOptions
+from libs.types import RemarkDict, StyleOptions
 from libs.utils import formatter
 
 if TYPE_CHECKING:
     from integrations.discord.adapter import ServiceAdapter
-    from integrations.discord.parser import MessageParser
     from integrations.protocols import MessageParserProtocol
 
 
 def main(m: "MessageParserProtocol"):
+    """突合処理(非同期関数呼び出しラッパー)
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
 
     asyncio.create_task(_wrapper(m))
 
 
 async def _wrapper(m: "MessageParserProtocol"):
     g.adapter = cast("ServiceAdapter", g.adapter)
-    count = ComparisonResults()
+    results = ComparisonResults(search_after=-g.adapter.conf.search_after)
+    messages_list: list["MessageParserProtocol"] = []
 
-    await check_omission(count)
+    await search_messages(results, messages_list)
+    await check_omission(results, messages_list)
+    await check_remarks(results, messages_list)
+    await check_total_score(results, messages_list)
 
-    message = ""
-    message += f"＊ 不一致：{count.count_mismatch}件\n"
-    message += "".join(count.mismatch)
-    message += f"＊ 取りこぼし：{count.count_missing}件\n"
-    message += "".join(count.missing)
-    message += f"＊ 削除漏れ：{count.count_delete}件\n"
-    message += "".join(count.delete)
+    m.post.headline = {m.keyword: results.output("headline")}
+    m.set_data("不一致", results.output("mismatch"), StyleOptions(key_title=False))
+    m.set_data("取りこぼし", results.output("missing"), StyleOptions(key_title=False))
+    m.set_data("削除漏れ", results.output("delete"), StyleOptions(key_title=False))
+    m.set_data("メモ更新", results.output("remark_mod"), StyleOptions(key_title=False))
+    m.set_data("メモ削除", results.output("remark_del"), StyleOptions(key_title=False))
+    if results.invalid_score:
+        m.set_data("供託残り", results.output("invalid_score"), StyleOptions(key_title=False))
 
-    #
-    after = ExtDt(days=-g.adapter.conf.search_after).format("ymd")
-    before = ExtDt().format("ymd")
-    m.post.headline = {"データ突合": f"突合範囲：{after} - {before}"}
-    m.set_data("データ突合", message, StyleOptions(key_title=False))
     m.post.thread = True
+    m.status.action = "nothing"
     g.adapter.api.post(m)
 
 
-async def check_omission(count: ComparisonResults):
-    g.adapter = cast("ServiceAdapter", g.adapter)
-    discord_score: list[GameResult] = []
-    keep_m: dict[str, "MessageParser"] = {}
-    after = ExtDt(days=-g.adapter.conf.search_after)
+async def search_messages(results: ComparisonResults, messages_list: list["MessageParserProtocol"]):
+    """メッセージ全検索
 
-    # スコア探索
+    Args:
+        results (ComparisonResults): 結果格納データクラス
+        messages_list (list[MessageParserProtocol]): 検索結果
+    """
+
+    g.adapter = cast("ServiceAdapter", g.adapter)
+
     for ch in g.adapter.api.bot.get_all_channels():
         # アクセス権がないチャンネルはスキップ
         if not ch.permissions_for(ch.guild.me).read_messages:
@@ -69,11 +78,13 @@ async def check_omission(count: ComparisonResults):
             if not isinstance(channel, TextChannel):
                 continue
 
-            logging.debug("channel: %s, after: %s", ch.name, after.format("ymdhms"))
+            logging.debug("channel: %s, after: %s", ch.name, results.after.format("ymdhms"))
 
-            messages = await channel.history(after=after.dt, oldest_first=True).flatten()
+            messages = await channel.history(after=results.after.dt, oldest_first=True).flatten()
             for message in messages:
                 if not isinstance(message, Message):
+                    continue
+                if message.author.bot:
                     continue
 
                 work_m = g.adapter.parser()  # 検索結果格納用
@@ -81,52 +92,140 @@ async def check_omission(count: ComparisonResults):
                 if not work_m.check_updatable:  # DB更新不可チャンネルは対象外
                     logging.debug("skip limited channel.")
                     break
-                if message.author.bot:
-                    continue
 
-                if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
-                    for k, v in score.to_dict().items():  # 名前の正規化
-                        if str(k).endswith("_name"):
-                            score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
-                    discord_score.append(score)
-                    keep_m.update({work_m.data.event_ts: work_m})
-                    logging.debug(score.to_text("logging"))
+                messages_list.append(work_m)
 
-    db_score = search.for_db_score2(float(after.format("ts")))
-    # db_remarks = search.for_db_remarks(float(after.format("ts")))
 
-    # スコア突合: DISCORD -> DATABASE
+async def check_omission(results: ComparisonResults, messages_list: list["MessageParserProtocol"]):
+    """スコア突合
+
+    Args:
+        results (ComparisonResults): 結果格納データクラス
+        messages_list (list[MessageParserProtocol]): 検索結果
+    """
+
+    g.adapter = cast("ServiceAdapter", g.adapter)
+    discord_score: list[GameResult] = []
+    keep_m: dict[str, "MessageParserProtocol"] = {}
+
+    for work_m in messages_list:
+        if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+            for k, v in score.to_dict().items():  # 名前の正規化
+                if str(k).endswith("_name"):
+                    score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
+            discord_score.append(score)
+            keep_m.update({work_m.data.event_ts: work_m})
+            logging.debug(score.to_text("logging"))
+
+    db_score = search.for_db_score2(float(results.after.format("ts")))
+
+    # DISCORD -> DATABASE
     ts_list = [x.ts for x in db_score]
     for score in discord_score:
         work_m = keep_m[score.ts]
         if score.ts in ts_list:
             target = db_score[ts_list.index(score.ts)]
             if score != target:  # 不一致(更新)
-                count.mismatch.append(
-                    f"{ExtDt(float(score.ts)).format("ymdhms")}\n\t修正前：{target.to_text("simple")}\n\t修正後：{score.to_text("simple")}\n"
-                )
+                results.mismatch.append({"before": target, "after": score})
                 logging.info("mismatch: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
                 logging.debug("  * discord: %s", score.to_text("detail"))
                 logging.debug("  *      db: %s", target.to_text("detail"))
                 modify.db_update(score, work_m)
                 g.adapter.functions.post_processing(work_m)
         else:  # 取りこぼし(追加)
-            count.missing.append(f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text("simple")}\n")
+            results.missing.append(score)
             logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
             logging.debug(score.to_text("logging"))
             modify.db_insert(score, work_m)
             g.adapter.functions.post_processing(work_m)
 
-    # スコア突合: DATABASE -> DISCORD
+    # DATABASE -> DISCORD
     ts_list = [x.ts for x in discord_score]
     work_m = g.adapter.parser()
     work_m.status.command_type = "comparison"
     for score in db_score:
         if score.ts not in ts_list:  # 削除漏れ
-            count.delete.append(f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text("simple")}\n")
+            results.delete.append(score)
             work_m.data.event_ts = score.ts
             if score.source:
                 work_m.data.channel_id = score.source.replace("discord_", "")
             logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
             modify.db_delete(work_m)
             g.adapter.functions.post_processing(work_m)
+
+
+async def check_remarks(results: ComparisonResults, messages_list: list["MessageParserProtocol"]):
+    """メモ突合
+
+    Args:
+        results (ComparisonResults): 結果格納データクラス
+        messages_list (list[MessageParserProtocol]): 検索結果
+    """
+
+    g.adapter = cast("ServiceAdapter", g.adapter)
+    discord_remarks: list[RemarkDict] = []
+    score_list: dict[str, GameResult] = {}
+
+    for loop_m in messages_list:
+        if (score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+            for k, v in score.to_dict().items():  # 名前の正規化
+                if str(k).endswith("_name"):
+                    score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
+            score_list.update({loop_m.data.event_ts: score})
+
+        if re.match(rf"^{g.cfg.setting.remarks_word}$", loop_m.keyword):
+            for name, matter in zip(loop_m.argument[0::2], loop_m.argument[1::2]):
+                # 対象外のメモはスキップ
+                if not float(loop_m.data.thread_ts):
+                    continue  # リプライになっていない
+                if loop_m.data.thread_ts not in score_list:
+                    continue  # ゲーム結果に紐付かない
+                pname = formatter.name_replace(str(name), not_replace=True)
+                if pname not in score_list[loop_m.data.thread_ts].to_list("name"):
+                    continue  # ゲーム結果に名前がない
+
+                discord_remarks.append({
+                    "thread_ts": loop_m.data.thread_ts,
+                    "event_ts": loop_m.data.event_ts,
+                    "name": pname,
+                    "matter": matter,
+                })
+
+    db_remarks = search.for_db_remarks(float(results.after.format("ts")))
+
+    # DISCORD -> DATABASE
+    work_m = g.adapter.parser()
+    work_m.status.command_type = "comparison"
+
+    for remark in discord_remarks:
+        if remark in db_remarks:  # 変化なし
+            continue
+        results.remark_mod.append(remark)
+
+    for event_ts in {x["event_ts"] for x in results.remark_mod}:
+        work_m.data.event_ts = event_ts
+        modify.remarks_delete(work_m)
+    modify.remarks_append(work_m, results.remark_mod)
+
+    # DATABASE -> DISCORD
+    for remark in db_remarks:
+        if remark not in discord_remarks:  # Discordに記録なし
+            results.remark_del.append(remark)
+            modify.remarks_delete_compar(remark, work_m)
+
+
+async def check_total_score(results: ComparisonResults, messages_list: list["MessageParserProtocol"]):
+    """素点合計の再チェック
+
+    Args:
+        results (ComparisonResults): 結果格納データクラス
+        messages_list (list[MessageParserProtocol]): 検索結果
+    """
+
+    for work_m in messages_list:
+        if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+            for k, v in score.to_dict().items():  # 名前の正規化
+                if str(k).endswith("_name"):
+                    score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
+            if score.deposit:
+                results.invalid_score.append(score)

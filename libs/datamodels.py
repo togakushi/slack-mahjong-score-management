@@ -4,11 +4,15 @@ libs/datamodels.py
 
 import logging
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
+
+if TYPE_CHECKING:
+    from cls.score import GameResult
+    from libs.types import RemarkDict
 
 
 @dataclass
@@ -100,20 +104,76 @@ class GameInfo:
 class ComparisonResults:
     """突合結果"""
 
-    mismatch: list = field(default_factory=list)
-    """差分"""
-    missing: list = field(default_factory=list)
-    """追加"""
-    delete: list = field(default_factory=list)
+    search_after: int = field(default=-7)
+    """突合範囲(日数)"""
+
+    mismatch: list[dict[str, "GameResult"]] = field(default_factory=list)
+    """スコア差分"""
+    missing: list["GameResult"] = field(default_factory=list)
+    """スコア追加"""
+    delete: list["GameResult"] = field(default_factory=list)
+    """スコア削除"""
+    remark_mod: list["RemarkDict"] = field(default_factory=list)
+    """メモ変更"""
+    remark_del: list["RemarkDict"] = field(default_factory=list)
+    """メモ削除"""
+    invalid_score: list["GameResult"] = field(default_factory=list)
+    """素点合計不一致"""
+    pending: list["GameResult"] = field(default_factory=list)
+    """処理保留データ"""
 
     @property
-    def count_mismatch(self) -> int:
-        return len(self.mismatch)
+    def after(self) -> ExtDt:
+        """突合開始日時"""
+        return ExtDt(days=self.search_after)
 
     @property
-    def count_missing(self) -> int:
-        return len(self.missing)
+    def before(self) -> ExtDt:
+        """突合終了日時"""
+        return ExtDt()
 
-    @property
-    def count_delete(self) -> int:
-        return len(self.delete)
+    def output(
+        self,
+        kind: Literal["headline", "mismatch", "missing", "delete", "remark_mod", "remark_del", "invalid_score"]
+    ) -> str:
+        """出力メッセージ生成
+
+        Args:
+            kind (Literal[headline, mismatch, missing, delete, remark_mod, remark_del, invalid_score]): 種類
+
+        Returns:
+            str: 生成文字列
+        """
+
+        ret: str = ""
+        score: Union[dict, "GameResult"]
+        match kind:
+            case "headline":
+                ret = f"突合範囲：{self.after.format("ymdhms")} - {self.before.format("ymdhms")}"
+            case "mismatch":
+                ret += f"＊ 不一致：{len(self.mismatch)}件\n"
+                for score in self.mismatch:
+                    ret += f"{ExtDt(float(score["before"].ts)).format("ymdhms")}\n"
+                    ret += f"\t修正前：{score["before"].to_text()}\n"
+                    ret += f"\t修正後：{score["after"].to_text()}\n"
+            case "missing":
+                ret += f"＊ 取りこぼし：{len(self.missing)}件\n"
+                for score in self.missing:
+                    ret += f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text()}\n"
+            case "delete":
+                ret += f"＊ 削除漏れ：{len(self.delete)}件\n"
+                for score in self.delete:
+                    ret += f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text()}\n"
+            case "remark_mod":
+                ret += f"＊ メモ更新：{len(self.remark_mod)}件\n"
+                for remark in self.remark_mod:
+                    ret += f"{ExtDt(float(remark["thread_ts"])).format("ymdhms")} "
+                    ret += f"{remark["name"]} {remark["matter"]}\n"
+            case "remark_del":
+                ret += f"＊ メモ削除：{len(self.remark_del)}件\n"
+            case "invalid_score":
+                ret += f"＊ 素点合計不一致：{len(self.invalid_score)}件\n"
+                for score in self.invalid_score:
+                    ret += f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text()}\n"
+
+        return ret
