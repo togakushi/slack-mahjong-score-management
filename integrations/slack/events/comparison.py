@@ -23,7 +23,11 @@ DBSearchDict = dict[str, GameResult]
 
 
 def main(m: "MessageParserProtocol") -> None:
-    """データ突合の実施、その結果をslackにpostする"""
+    """突合処理
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
 
     g.adapter = cast("ServiceAdapter", g.adapter)
 
