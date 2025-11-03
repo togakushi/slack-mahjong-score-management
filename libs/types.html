@@ -134,21 +134,6 @@
 
             </li>
             <li>
-                    <a class="class" href="#ComparisonResultDict">ComparisonResultDict</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="variable" href="#ComparisonResultDict.mismatch">mismatch</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#ComparisonResultDict.missing">missing</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#ComparisonResultDict.delete">delete</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
                     <a class="class" href="#RankTableDict">RankTableDict</a>
                             <ul class="memberlist">
                         <li>
@@ -308,40 +293,31 @@
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;保留&quot;&quot;&quot;</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ComparisonResultDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;突合結果格納用辞書&quot;&quot;&quot;</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="n">mismatch</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;差分&quot;&quot;&quot;</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="n">missing</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;追加&quot;&quot;&quot;</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="n">delete</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">    - *False*: 降格しない</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">    - *False*: 降格しない</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -859,69 +835,6 @@
 
                             </div>
                 </section>
-                <section id="ComparisonResultDict">
-                            <input id="ComparisonResultDict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ComparisonResultDict</span><wbr>(<span class="base">typing.TypedDict</span>):
-
-                <label class="view-source-button" for="ComparisonResultDict-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#ComparisonResultDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ComparisonResultDict-106"><a href="#ComparisonResultDict-106"><span class="linenos">106</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ComparisonResultDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="ComparisonResultDict-107"><a href="#ComparisonResultDict-107"><span class="linenos">107</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;突合結果格納用辞書&quot;&quot;&quot;</span>
-</span><span id="ComparisonResultDict-108"><a href="#ComparisonResultDict-108"><span class="linenos">108</span></a>    <span class="n">mismatch</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="ComparisonResultDict-109"><a href="#ComparisonResultDict-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;差分&quot;&quot;&quot;</span>
-</span><span id="ComparisonResultDict-110"><a href="#ComparisonResultDict-110"><span class="linenos">110</span></a>    <span class="n">missing</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="ComparisonResultDict-111"><a href="#ComparisonResultDict-111"><span class="linenos">111</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;追加&quot;&quot;&quot;</span>
-</span><span id="ComparisonResultDict-112"><a href="#ComparisonResultDict-112"><span class="linenos">112</span></a>    <span class="n">delete</span><span class="p">:</span> <span class="nb">list</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>突合結果格納用辞書</p>
-</div>
-
-
-                            <div id="ComparisonResultDict.mismatch" class="classattr">
-                                <div class="attr variable">
-            <span class="name">mismatch</span><span class="annotation">: list</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ComparisonResultDict.mismatch"></a>
-    
-            <div class="docstring"><p>差分</p>
-</div>
-
-
-                            </div>
-                            <div id="ComparisonResultDict.missing" class="classattr">
-                                <div class="attr variable">
-            <span class="name">missing</span><span class="annotation">: list</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ComparisonResultDict.missing"></a>
-    
-            <div class="docstring"><p>追加</p>
-</div>
-
-
-                            </div>
-                            <div id="ComparisonResultDict.delete" class="classattr">
-                                <div class="attr variable">
-            <span class="name">delete</span><span class="annotation">: list</span>
-
-        
-    </div>
-    <a class="headerlink" href="#ComparisonResultDict.delete"></a>
-    
-    
-
-                            </div>
-                </section>
                 <section id="RankTableDict">
                             <input id="RankTableDict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
@@ -933,20 +846,20 @@
 
     </div>
     <a class="headerlink" href="#RankTableDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RankTableDict-115"><a href="#RankTableDict-115"><span class="linenos">115</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="RankTableDict-116"><a href="#RankTableDict-116"><span class="linenos">116</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-117"><a href="#RankTableDict-117"><span class="linenos">117</span></a>
-</span><span id="RankTableDict-118"><a href="#RankTableDict-118"><span class="linenos">118</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RankTableDict-119"><a href="#RankTableDict-119"><span class="linenos">119</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-120"><a href="#RankTableDict-120"><span class="linenos">120</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="RankTableDict-121"><a href="#RankTableDict-121"><span class="linenos">121</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-122"><a href="#RankTableDict-122"><span class="linenos">122</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="RankTableDict-123"><a href="#RankTableDict-123"><span class="linenos">123</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-124"><a href="#RankTableDict-124"><span class="linenos">124</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="RankTableDict-125"><a href="#RankTableDict-125"><span class="linenos">125</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
-</span><span id="RankTableDict-126"><a href="#RankTableDict-126"><span class="linenos">126</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
-</span><span id="RankTableDict-127"><a href="#RankTableDict-127"><span class="linenos">127</span></a><span class="sd">    - *False*: 降格しない</span>
-</span><span id="RankTableDict-128"><a href="#RankTableDict-128"><span class="linenos">128</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RankTableDict-106"><a href="#RankTableDict-106"><span class="linenos">106</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="RankTableDict-107"><a href="#RankTableDict-107"><span class="linenos">107</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-108"><a href="#RankTableDict-108"><span class="linenos">108</span></a>
+</span><span id="RankTableDict-109"><a href="#RankTableDict-109"><span class="linenos">109</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RankTableDict-110"><a href="#RankTableDict-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-111"><a href="#RankTableDict-111"><span class="linenos">111</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RankTableDict-112"><a href="#RankTableDict-112"><span class="linenos">112</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-113"><a href="#RankTableDict-113"><span class="linenos">113</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RankTableDict-114"><a href="#RankTableDict-114"><span class="linenos">114</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-115"><a href="#RankTableDict-115"><span class="linenos">115</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="RankTableDict-116"><a href="#RankTableDict-116"><span class="linenos">116</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
+</span><span id="RankTableDict-117"><a href="#RankTableDict-117"><span class="linenos">117</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
+</span><span id="RankTableDict-118"><a href="#RankTableDict-118"><span class="linenos">118</span></a><span class="sd">    - *False*: 降格しない</span>
+</span><span id="RankTableDict-119"><a href="#RankTableDict-119"><span class="linenos">119</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1023,15 +936,15 @@
 
     </div>
     <a class="headerlink" href="#GradeTableDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GradeTableDict-131"><a href="#GradeTableDict-131"><span class="linenos">131</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="GradeTableDict-132"><a href="#GradeTableDict-132"><span class="linenos">132</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-133"><a href="#GradeTableDict-133"><span class="linenos">133</span></a>
-</span><span id="GradeTableDict-134"><a href="#GradeTableDict-134"><span class="linenos">134</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GradeTableDict-135"><a href="#GradeTableDict-135"><span class="linenos">135</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-136"><a href="#GradeTableDict-136"><span class="linenos">136</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GradeTableDict-137"><a href="#GradeTableDict-137"><span class="linenos">137</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-138"><a href="#GradeTableDict-138"><span class="linenos">138</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
-</span><span id="GradeTableDict-139"><a href="#GradeTableDict-139"><span class="linenos">139</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GradeTableDict-122"><a href="#GradeTableDict-122"><span class="linenos">122</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="GradeTableDict-123"><a href="#GradeTableDict-123"><span class="linenos">123</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-124"><a href="#GradeTableDict-124"><span class="linenos">124</span></a>
+</span><span id="GradeTableDict-125"><a href="#GradeTableDict-125"><span class="linenos">125</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GradeTableDict-126"><a href="#GradeTableDict-126"><span class="linenos">126</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-127"><a href="#GradeTableDict-127"><span class="linenos">127</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GradeTableDict-128"><a href="#GradeTableDict-128"><span class="linenos">128</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-129"><a href="#GradeTableDict-129"><span class="linenos">129</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
+</span><span id="GradeTableDict-130"><a href="#GradeTableDict-130"><span class="linenos">130</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
