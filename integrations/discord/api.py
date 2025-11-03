@@ -171,7 +171,7 @@ class AdapterAPI(APIInterface):
 
         style = StyleOptions()
         for data in m.post.message:
-            for title, val in data.items():
+            for _, val in data.items():
                 msg = val.get("data")
                 style = val.get("options", StyleOptions())
 

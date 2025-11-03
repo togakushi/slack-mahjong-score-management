@@ -117,8 +117,7 @@ class SvcFunctions(FunctionsInterface):
                 if str(msg.created_at.timestamp()) == m.data.event_ts:
                     m.discord_msg = cast("Message", msg)
                     break
-                else:
-                    return  # 該当メッセージなし(削除済み)
+                return  # 該当メッセージなし(削除済み)
 
         for reaction in m.discord_msg.reactions:
             async for user in reaction.users():
