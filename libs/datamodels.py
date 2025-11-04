@@ -12,6 +12,7 @@ from libs.data import loader
 
 if TYPE_CHECKING:
     from cls.score import GameResult
+    from integrations.base.interface import MessageParserProtocol
     from libs.types import RemarkDict
 
 
@@ -106,6 +107,8 @@ class ComparisonResults:
 
     search_after: int = field(default=-7)
     """突合範囲(日数)"""
+    score_list: dict[str, "MessageParserProtocol"] = field(default_factory=dict)
+    """スコアリスト(一時保管用)"""
 
     mismatch: list[dict[str, "GameResult"]] = field(default_factory=list)
     """スコア差分"""
@@ -134,12 +137,12 @@ class ComparisonResults:
 
     def output(
         self,
-        kind: Literal["headline", "mismatch", "missing", "delete", "remark_mod", "remark_del", "invalid_score"]
+        kind: Literal["headline", "pending", "mismatch", "missing", "delete", "remark_mod", "remark_del", "invalid_score"]
     ) -> str:
         """出力メッセージ生成
 
         Args:
-            kind (Literal[headline, mismatch, missing, delete, remark_mod, remark_del, invalid_score]): 種類
+            kind (Literal[headline, pending, mismatch, missing, delete, remark_mod, remark_del, invalid_score]): 種類
 
         Returns:
             str: 生成文字列
@@ -150,6 +153,10 @@ class ComparisonResults:
         match kind:
             case "headline":
                 ret = f"突合範囲：{self.after.format("ymdhms")} - {self.before.format("ymdhms")}"
+            case "pending":
+                ret += f"＊ 保留：{len(self.pending)}件\n"
+                for score in self.pending:
+                    ret += f"{ExtDt(float(score.ts)).format("ymdhms")} {score.to_text()}\n"
             case "mismatch":
                 ret += f"＊ 不一致：{len(self.mismatch)}件\n"
                 for score in self.mismatch:

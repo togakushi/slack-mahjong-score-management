@@ -2,24 +2,21 @@
 integrations/slack/events/comparison.py
 """
 
-import copy
 import logging
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
-from cls.score import GameResult, Score
+from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import modify
-from libs.data.lookup import db
+from libs.datamodels import ComparisonResults
 from libs.functions import search
-from libs.types import ComparisonDict, RemarkDict, StyleOptions
-from libs.utils import dictutil, formatter
+from libs.types import RemarkDict, StyleOptions
+from libs.utils import formatter
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
     from integrations.slack.adapter import ServiceAdapter
-
-DBSearchDict = dict[str, GameResult]
 
 
 def main(m: "MessageParserProtocol") -> None:
@@ -30,310 +27,148 @@ def main(m: "MessageParserProtocol") -> None:
     """
 
     g.adapter = cast("ServiceAdapter", g.adapter)
+    results = ComparisonResults(search_after=-g.adapter.conf.search_after)
 
-    # 応答先
+    check_omission(results)
+    check_remarks(results)
+    check_total_score(results)
+
+    m.set_data("データ突合", results.output("headline"), StyleOptions(key_title=True))
+    if results.pending:
+        m.set_data("保留", results.output("pending"), StyleOptions(key_title=False))
+    m.set_data("不一致", results.output("mismatch"), StyleOptions(key_title=False))
+    m.set_data("取りこぼし", results.output("missing"), StyleOptions(key_title=False))
+    m.set_data("削除漏れ", results.output("delete"), StyleOptions(key_title=False))
+    m.set_data("メモ更新", results.output("remark_mod"), StyleOptions(key_title=False))
+    m.set_data("メモ削除", results.output("remark_del"), StyleOptions(key_title=False))
+    if results.invalid_score:
+        m.set_data("供託残り", results.output("invalid_score"), StyleOptions(key_title=False))
+
     m.post.thread = True
     m.post.ts = m.data.event_ts
-
-    # データ突合
-    count, msg = data_comparison(m)
-    logging.debug("count=%s", count)
-    # 突合結果
-    after = ExtDt(days=-g.adapter.conf.search_after).format("ymd")
-    before = ExtDt().format("ymd")
-
-    message = f"*【データ突合】* ({after} - {before})\n"
-    if count["pending"]:
-        message += f"＊ 保留：{count["pending"]}件\n"
-        for x in msg["pending"]:
-            message += f"\t\t{ExtDt(float(x)).format("ymdhms")}\n"
-    message += f"＊ 不一致：{count["mismatch"]}件\n{msg["mismatch"]}"
-    message += f"＊ 取りこぼし：{count["missing"]}件\n{msg["missing"]}"
-    message += f"＊ 削除漏れ：{count["delete"]}件\n{msg["delete"]}"
-    message += f"＊ メモ更新：{count["remark_mod"]}件\n{msg["remark_mod"]}"
-    message += f"＊ メモ削除：{count["remark_del"]}件\n{msg["remark_del"]}"
-    if count["invalid_score"] > 0:
-        message += "\n*【素点合計不一致】*\n"
-        message += msg["invalid_score"]
-
-    m.set_data("データ突合", message, StyleOptions(key_title=False))
+    m.status.action = "nothing"
 
 
-def data_comparison(m: "MessageParserProtocol") -> tuple[dict, ComparisonDict]:
-    """データ突合処理
-
-    Args:
-        m (MessageParserProtocol): メッセージデータ
-
-    Returns:
-        tuple[dict,ComparisonDict]:
-        - dict: 処理された更新/追加/削除の件数
-        - ComparisonDict: slackに返すメッセージ
-    """
-
+def check_omission(results: ComparisonResults):
     g.adapter = cast("ServiceAdapter", g.adapter)
-    count: dict = {}
-    msg: dict = {}
+    slack_score: list[GameResult] = []
 
-    # slackログからゲーム結果を取得
-    slack_score = g.adapter.functions.pickup_score()
-    slack_remarks = g.adapter.functions.pickup_remarks()
-
-    if slack_score:
-        first_ts = float(min(x.data.event_ts for x in slack_score))
-    else:
-        first_ts = float(ExtDt(days=-g.adapter.conf.search_after).format("ts"))
-
-    # データベースからゲーム結果を取得
-    db_score = search.for_db_score(first_ts)
-    db_remarks = search.for_db_remarks(first_ts)
-
-    # 比較データ
-    if g.args.debug:
-        for s_val in set(slack_score):
-            result = GameResult(**s_val.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
-            logging.info("slack data: %s", result)
-        for _, d_val in db_score.items():
-            logging.info("db data: %s", d_val)
-
-    # --- スコア突合
-    ret_count, ret_msg = check_omission(m, slack_score, db_score)
-    count = dictutil.merge_dicts(count, ret_count)
-    msg = dictutil.merge_dicts(msg, ret_msg)
-
-    # --- 素点合計の再チェック(修正可能なslack側のみチェック)
-    ret_count, ret_msg = check_total_score(slack_score)
-    count = dictutil.merge_dicts(count, ret_count)
-    msg = dictutil.merge_dicts(msg, ret_msg)
-
-    # --- メモ突合
-    ret_count, ret_msg = check_remarks(m, slack_remarks, db_remarks)
-    count = dictutil.merge_dicts(count, ret_count)
-    msg = dictutil.merge_dicts(msg, ret_msg)
-
-    count.update(pending=len(msg["pending"]))
-
-    return (count, cast(ComparisonDict, msg))
-
-
-def check_omission(
-    m: "MessageParserProtocol",
-    slack_data: list["MessageParserProtocol"],
-    db_data: DBSearchDict
-) -> tuple[dict, ComparisonDict]:
-    """スコア取りこぼしチェック
-
-    Args:
-        m (MessageParserProtocol): メッセージデータ
-        slack_data (list["MessageParserProtocol"]): slack検索結果
-        db_data (DBSearchDict): DB登録状況
-
-    Returns:
-        tuple[dict, ComparisonDict]: 修正内容(結果)
-    """
-
-    g.adapter = cast("ServiceAdapter", g.adapter)
-    count: dict[str, int] = {"mismatch": 0, "missing": 0, "delete": 0}
-    msg: ComparisonDict = {"mismatch": "", "missing": "", "delete": "", "pending": []}
-
-    for slack_m in set(slack_data):
-        slack_m.data.channel_id = m.data.channel_id
-
-        # 保留チェック
-        if check_pending(slack_m.data.event_ts, slack_m.data.edited_ts):
-            msg["pending"].append(str(slack_m.data.event_ts))
-            logging.info("pending(slack -> DB): %s", ExtDt(float(slack_m.data.event_ts)).format("ymdhms"))
-            continue
-
-        # "score"が取得できていない場合は処理をスキップ
-        slack_score = GameResult(**slack_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
-        if not slack_score:
-            continue
-
-        # 名前の正規化
-        g.params.update(unregistered_replace=False)
-        for prefix in ("p1", "p2", "p3", "p4"):
-            prefix_obj = cast(Score, getattr(slack_score, prefix))
-            prefix_obj.name = formatter.name_replace(prefix_obj.name)
-
-        if slack_score.ts in db_data:  # slack -> DB チェック
-            db_score = db_data[slack_score.ts]
-            if not g.adapter.conf.thread_report:  # スレッド内報告が禁止されているパターン
-                if slack_m.in_thread:
-                    count["delete"] += 1
-                    logging.debug("delete (In-thread report): %s", slack_score.to_text("logging"))
-                    msg["delete"] += f"\t{ExtDt(float(slack_m.data.event_ts)).format("ymdhms")} {slack_score.to_text()}\n"
-                    modify.db_delete(slack_m)
-                    g.adapter.functions.post_processing(slack_m)
-                    continue
-
-            if slack_score.to_dict() == db_score.to_dict():  # スコア比較
-                logging.info("score check pass: %s %s", ExtDt(float(slack_score.ts)).format("ymdhms"), db_score.to_text())
-                continue
-
-            # 更新
-            if db_data[slack_score.ts].rule_version == g.cfg.mahjong.rule_version:
-                count["mismatch"] += 1
-                logging.debug("mismatch: %s (%s)", slack_m.data.event_ts, ExtDt(float(slack_m.data.event_ts)).format("ymdhms"))
-                logging.info("  *  slack: %s", db_score.to_text("detail"))
-                logging.info("  *     db: %s", slack_score.to_text("detail"))
-                msg["mismatch"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")}\n"
-                msg["mismatch"] += f"\t\t修正前：{db_score.to_text()}\n"
-                msg["mismatch"] += f"\t\t修正後：{slack_score.to_text()}\n"
-                modify.db_update(slack_score, slack_m)
-                g.adapter.functions.post_processing(slack_m)
+    for work_m in set(g.adapter.functions.pickup_score()):
+        if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+            for k, v in score.to_dict().items():  # 名前の正規化
+                if str(k).endswith("_name"):
+                    score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
+            # 保留チェック
+            if check_pending(work_m.data.event_ts, work_m.data.edited_ts):
+                results.pending.append(score)
             else:
-                logging.info("score check skip: %s", db_score.to_text("logging"))
-            continue
+                slack_score.append(score)
+                results.score_list.update({work_m.data.event_ts: work_m})
 
-        # 追加
-        if not g.adapter.conf.thread_report and slack_m.in_thread:
-            logging.debug("skip (In-thread report): %s", slack_score.to_text("logging"))
-            continue
+    db_score = search.for_db_score(float(results.after.format("ts")))
 
-        count["missing"] += 1
-        logging.debug("missing: %s", slack_score.to_text("logging"))
-        msg["missing"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")} {slack_score.to_text()}\n"
-        modify.db_insert(slack_score, slack_m)
-        g.adapter.functions.post_processing(slack_m)
+    # SLACK -> DATABASE
+    ts_list = [x.ts for x in db_score]
+    for score in slack_score:
+        work_m = results.score_list[score.ts]
+        if score.ts in ts_list:
+            target = db_score[ts_list.index(score.ts)]
+            if score != target:  # 不一致(更新)
+                results.mismatch.append({"before": target, "after": score})
+                logging.info("mismatch: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+                logging.debug("  * slack: %s", score.to_text("detail"))
+                logging.debug("  *    db: %s", target.to_text("detail"))
+                modify.db_update(score, work_m)
+                g.adapter.functions.post_processing(work_m)
+        else:  # 取りこぼし(追加)
+            results.missing.append(score)
+            logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+            logging.debug(score.to_text("logging"))
+            modify.db_insert(score, work_m)
+            g.adapter.functions.post_processing(work_m)
 
-    for _, db_score in db_data.items():  # DB -> slack チェック
-        # 保留チェック
-        if check_pending(db_score.ts):
-            msg["pending"].append(db_score.ts)
-            logging.info("pending(DB -> slack): %s", ExtDt(float(db_score.ts)).format("ymdhms"))
-            continue
-
-        # 登録済みデータは処理をスキップ
-        if db_score.ts in [x.data.event_ts for x in slack_data]:
-            continue
-
-        # 削除
-        count["delete"] += 1
-        work_m = copy.deepcopy(m)
-        work_m.data.event_ts = db_score.ts
-
-        logging.debug("delete (Only database): %s", db_score.to_text("logging"))
-        msg["delete"] += f"\t{ExtDt(float(db_score.ts)).format("ymdhms")} {db_score.to_text()}\n"
-        modify.db_delete(work_m)
-        g.adapter.functions.post_processing(work_m)
-
-    return (count, msg)
+    # DATABASE -> SLACK
+    ts_list = [x.ts for x in slack_score]
+    work_m = g.adapter.parser()
+    work_m.status.command_type = "comparison"
+    for score in db_score:
+        if score.ts not in ts_list:  # 削除漏れ
+            results.delete.append(score)
+            work_m.data.event_ts = score.ts
+            if score.source:
+                work_m.data.channel_id = score.source.replace("slack_", "")
+            logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+            modify.db_delete(work_m)
+            g.adapter.functions.post_processing(work_m)
 
 
-def check_remarks(
-    m: "MessageParserProtocol",
-    slack_data: list["MessageParserProtocol"],
-    db_data: list[RemarkDict],
-) -> tuple[dict, ComparisonDict]:
-    """メモの取りこぼしチェック
+def check_remarks(results: ComparisonResults):
+    """メモ突合
 
     Args:
-        m (MessageParserProtocol): メッセージデータ
-        slack_data (list["MessageParserProtocol"]): slack検索結果
-        db_data (list[RemarkDict]): DB登録状況
-
-    Returns:
-        tuple[dict, ComparisonDict]: 修正内容(結果)
+        results (ComparisonResults): 結果格納データクラス
     """
 
     g.adapter = cast("ServiceAdapter", g.adapter)
-
-    count: dict[str, int] = {"remark_mod": 0, "remark_del": 0}
-    msg: ComparisonDict = {"remark_mod": "", "remark_del": "", "pending": []}
-    work_m = copy.deepcopy(m)
-
-    # 比較用リスト生成
     slack_remarks: list[RemarkDict] = []
-    for val in slack_data:
-        detection = db.exsist_record(val.data.thread_ts)
-        for (name, matter) in val.data.remarks:
-            pname = formatter.name_replace(name)
-            if pname in detection.to_list() and val.in_thread:
-                slack_remarks.append({
-                    "thread_ts": str(val.data.thread_ts),
-                    "event_ts": str(val.data.event_ts),
-                    "name": pname,
-                    "matter": matter,
-                })
+    score_list: dict[str, GameResult] = {}
 
-    # slack -> DB チェック
+    for loop_m in results.score_list.values():
+        if (score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+            for k, v in score.to_dict().items():  # 名前の正規化
+                if str(k).endswith("_name"):
+                    score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
+            score_list.update({loop_m.data.event_ts: score})
+
+    for loop_m in g.adapter.functions.pickup_remarks():
+        for name, matter in zip(loop_m.argument[0::2], loop_m.argument[1::2]):
+            # 対象外のメモはスキップ
+            if not float(loop_m.data.thread_ts):
+                continue  # リプライになっていない
+            if loop_m.data.thread_ts not in score_list:
+                continue  # ゲーム結果に紐付かない
+            pname = formatter.name_replace(str(name), not_replace=True)
+            if pname not in score_list[loop_m.data.thread_ts].to_list("name"):
+                continue  # ゲーム結果に名前がない
+
+            slack_remarks.append({
+                "thread_ts": loop_m.data.thread_ts,
+                "event_ts": loop_m.data.event_ts,
+                "name": pname,
+                "matter": matter,
+            })
+
+    db_remarks = search.for_db_remarks(float(results.after.format("ts")))
+
+    # SLACK -> DATABASE
+    work_m = g.adapter.parser()
+    work_m.status.command_type = "comparison"
+
     for remark in slack_remarks:
-        if check_pending(remark["event_ts"]):
-            msg["pending"].append(remark["event_ts"])
-            logging.info("pending(slack -> DB): %s", ExtDt(float(remark["event_ts"])).format("ymdhms"))
+        if remark in db_remarks:  # 変化なし
             continue
+        results.remark_mod.append(remark)
 
-        if remark in db_data:
-            logging.info("remark pass(slack -> DB): %s", remark)
-        else:
-            work_m.data.event_ts = remark["thread_ts"]
-            count["remark_mod"] += 1
-            modify.remarks_delete(work_m)
-            modify.remarks_append(work_m, [remark])
-            logging.debug("modification(data mismatch): %s", remark)
+    for event_ts in {x["event_ts"] for x in results.remark_mod}:
+        work_m.data.event_ts = event_ts
+        modify.remarks_delete(work_m)
+    modify.remarks_append(work_m, results.remark_mod)
 
-    # DB -> slack チェック
-    for remark in db_data:
-        if remark in slack_remarks:
-            logging.info("remark pass(DB -> slack): %s", remark)
-        else:
-            m.data.event_ts = remark["thread_ts"]
-            count["remark_del"] += 1
-            modify.remarks_delete_compar(remark, m)
-            logging.debug("delete(missed deletion): %s", remark)
-
-    return (count, msg)
+    # DATABASE -> SLACK
+    for remark in db_remarks:
+        if remark not in slack_remarks:  # slackに記録なし
+            results.remark_del.append(remark)
+            modify.remarks_delete_compar(remark, work_m)
 
 
-def check_total_score(slack_data: list["MessageParserProtocol"]) -> tuple[dict, ComparisonDict]:
-    """素点合計の再チェック
-
-    Args:
-        slack_data (list["MessageParserProtocol"]): slack検索結果
-
-    Returns:
-        tuple[dict, ComparisonDict]: 修正内容(結果)
-    """
-
-    g.adapter = cast("ServiceAdapter", g.adapter)
-
-    count: dict[str, int] = {"invalid_score": 0}
-    msg: ComparisonDict = {"invalid_score": "", "pending": []}
-
-    for val in set(slack_data):
-        # 保留チェック
-        if check_pending(val.data.event_ts, val.data.edited_ts):
-            msg["pending"].append(str(val.data.event_ts))
-            logging.info("pending(slack -> DB): %s", ExtDt(float(val.data.event_ts)).format("ymdhms"))
-            continue
-
-        # "score"が取得できていない場合は処理をスキップ
-        slack_score = GameResult(**val.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
-        if not slack_score:
-            continue
-
-        # 判定条件外のデータはスキップ
-        if not g.adapter.conf.thread_report and val.in_thread:
-            continue
-        if slack_score.rule_version != g.cfg.mahjong.rule_version:
-            continue
-
-        if slack_score.deposit != 0:  # 素点合計と配給原点が不一致
-            count["invalid_score"] += 1
-            logging.debug("invalid score: %s deposit=%s", slack_score.ts, slack_score.deposit)
-            msg["invalid_score"] += f"\t{ExtDt(float(slack_score.ts)).format("ymdhms")} [供託：{slack_score.deposit}]{slack_score.to_text()}\n"
-            if slack_score.ts in val.data.reaction_ok:
-                g.adapter.functions.reaction_remove(g.adapter.conf.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
-            if slack_score.ts not in val.data.reaction_ng:
-                g.adapter.functions.reaction_append(g.adapter.conf.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
-        else:
-            if slack_score.ts in val.data.reaction_ng:
-                g.adapter.functions.reaction_remove(g.adapter.conf.reaction_ng, ts=slack_score.ts, ch=val.data.channel_id)
-            if slack_score.ts not in val.data.reaction_ok:
-                g.adapter.functions.reaction_append(g.adapter.conf.reaction_ok, ts=slack_score.ts, ch=val.data.channel_id)
-
-    return (count, msg)
+def check_total_score(results: ComparisonResults):
+    for loop_m in results.score_list.values():
+        if (score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+            for k, v in score.to_dict().items():  # 名前の正規化
+                if str(k).endswith("_name"):
+                    score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
+            if score.deposit:
+                results.invalid_score.append(score)
 
 
 def check_pending(event_ts: str, edited_ts: str = "undetermined") -> bool:
