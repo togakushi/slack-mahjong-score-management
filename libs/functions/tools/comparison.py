@@ -15,6 +15,7 @@ from libs import configuration
 
 if TYPE_CHECKING:
     from integrations.slack.adapter import ServiceAdapter
+    from libs.datamodels import ComparisonResults
 
 
 def main():
@@ -39,4 +40,4 @@ def main():
         m.data.channel_id = adapter_slack.functions.get_channel_id()
 
         comparison.main(m)
-        print(m.status.message)
+        print(cast("ComparisonResults", m.status.message).output("summary"))
