@@ -106,7 +106,6 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
 
     g.adapter = cast("ServiceAdapter", g.adapter)
     discord_score: list[GameResult] = []
-    keep_m: dict[str, "MessageParserProtocol"] = {}
 
     for work_m in messages_list:
         if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
@@ -114,15 +113,15 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
             discord_score.append(score)
-            keep_m.update({work_m.data.event_ts: work_m})
+            results.score_list.update({work_m.data.event_ts: work_m})
             logging.debug(score.to_text("logging"))
 
-    db_score = search.for_db_score2(float(results.after.format("ts")))
+    db_score = search.for_db_score(float(results.after.format("ts")))
 
     # DISCORD -> DATABASE
     ts_list = [x.ts for x in db_score]
     for score in discord_score:
-        work_m = keep_m[score.ts]
+        work_m = results.score_list[score.ts]
         if score.ts in ts_list:
             target = db_score[ts_list.index(score.ts)]
             if score != target:  # 不一致(更新)
