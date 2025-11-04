@@ -96,6 +96,10 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         g.adapter = cast("ServiceAdapter", g.adapter)
         ret: bool = False
 
+        # 突合処理中はチェック省略
+        if self.status.command_type == "comparison":
+            return True
+
         if g.adapter.conf.channel_limitations:
             if self.data.channel_id in g.adapter.conf.channel_limitations:
                 ret = True
