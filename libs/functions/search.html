@@ -32,13 +32,7 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="variable" href="#DBSearchDict">DBSearchDict</a>
-            </li>
-            <li>
                     <a class="function" href="#for_db_score">for_db_score</a>
-            </li>
-            <li>
-                    <a class="function" href="#for_db_score2">for_db_score2</a>
             </li>
             <li>
                     <a class="function" href="#for_db_remarks">for_db_remarks</a>
@@ -80,186 +74,91 @@
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">libs.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemarkDict</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="n">DBSearchDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">GameResult</span><span class="p">]</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_score</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBSearchDict</span><span class="p">:</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからスコアを検索して返す</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    Args:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    Returns:</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        DBSearchDict: 検索した結果</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_ts</span><span class="p">:</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="p">{}</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">DBSearchDict</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="n">curs</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">curs</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select * from result where ts &gt;= ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),))</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>            <span class="n">ts</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ts&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">GameResult</span><span class="p">()</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>            <span class="n">result</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>  <span class="c1"># データ取り込みのみ（再計算しない）</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>            <span class="n">data</span><span class="p">[</span><span class="n">ts</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_score</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GameResult</span><span class="p">]:</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからスコアを検索して返す</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    Args:</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">        first_ts (float): 検索を開始する時刻</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">    Returns:</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        list[GameResult]: 検索した結果</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="n">curs</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">curs</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>            <span class="s2">&quot;select * from result where ts &gt;= ? and (source isnull or source like ?)&quot;</span><span class="p">,</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>            <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">interface_type</span><span class="si">}</span><span class="s2">_%&quot;</span><span class="p">))</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GameResult</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)))</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="k">return</span> <span class="n">data</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_remarks</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;RemarkDict&quot;</span><span class="p">]:</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからメモを検索して返す</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">return</span> <span class="n">data</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    Args:</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_score2</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GameResult</span><span class="p">]:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからスコアを検索して返す</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">    Args:</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">        first_ts (float): 検索を開始する時刻</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">    Returns:</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">        list[GameResult]: 検索した結果</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="n">curs</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">curs</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>            <span class="s2">&quot;select * from result where ts &gt;= ? and (source isnull or source like ?)&quot;</span><span class="p">,</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>            <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">interface_type</span><span class="si">}</span><span class="s2">_%&quot;</span><span class="p">))</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GameResult</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)))</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="k">return</span> <span class="n">data</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_remarks</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;RemarkDict&quot;</span><span class="p">]:</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからメモを検索して返す</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">    Args:</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">    Returns:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">        list[RemarkDict]: 検索した結果</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_ts</span><span class="p">:</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="k">return</span> <span class="p">[]</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="c1"># データベースからデータ取得</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;RemarkDict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="c1"># 記録済みメモ内容</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select * from remarks where thread_ts&gt;=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),))</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>                <span class="s2">&quot;thread_ts&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;thread_ts&quot;</span><span class="p">],</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>                <span class="s2">&quot;event_ts&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event_ts&quot;</span><span class="p">],</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>                <span class="s2">&quot;matter&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;matter&quot;</span><span class="p">],</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>            <span class="p">})</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>    <span class="k">return</span> <span class="n">data</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">    Returns:</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        list[RemarkDict]: 検索した結果</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_ts</span><span class="p">:</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="k">return</span> <span class="p">[]</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="c1"># データベースからデータ取得</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;RemarkDict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="c1"># 記録済みメモ内容</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select * from remarks where thread_ts&gt;=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),))</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>                <span class="s2">&quot;thread_ts&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;thread_ts&quot;</span><span class="p">],</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>                <span class="s2">&quot;event_ts&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event_ts&quot;</span><span class="p">],</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>                <span class="s2">&quot;matter&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;matter&quot;</span><span class="p">],</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>            <span class="p">})</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="k">return</span> <span class="n">data</span>
 </span></pre></div>
 
 
             </section>
-                <section id="DBSearchDict">
-                    <div class="attr variable">
-            <span class="name">DBSearchDict</span>        =
-<span class="default_value">dict[str, <a href="../../cls/score.html#GameResult">cls.score.GameResult</a>]</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DBSearchDict"></a>
-    
-    
-
-                </section>
                 <section id="for_db_score">
                             <input id="for_db_score-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">for_db_score</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="bp"><a href="../../cls/score.html#GameResult">cls.score.GameResult</a></span><span class="p">]</span>:</span></span>
+        <span class="name">for_db_score</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="bp"><a href="../../cls/score.html#GameResult">cls.score.GameResult</a></span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="for_db_score-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#for_db_score"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="for_db_score-19"><a href="#for_db_score-19"><span class="linenos">19</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_score</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBSearchDict</span><span class="p">:</span>
-</span><span id="for_db_score-20"><a href="#for_db_score-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからスコアを検索して返す</span>
-</span><span id="for_db_score-21"><a href="#for_db_score-21"><span class="linenos">21</span></a>
-</span><span id="for_db_score-22"><a href="#for_db_score-22"><span class="linenos">22</span></a><span class="sd">    Args:</span>
-</span><span id="for_db_score-23"><a href="#for_db_score-23"><span class="linenos">23</span></a><span class="sd">        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.</span>
-</span><span id="for_db_score-24"><a href="#for_db_score-24"><span class="linenos">24</span></a>
-</span><span id="for_db_score-25"><a href="#for_db_score-25"><span class="linenos">25</span></a><span class="sd">    Returns:</span>
-</span><span id="for_db_score-26"><a href="#for_db_score-26"><span class="linenos">26</span></a><span class="sd">        DBSearchDict: 検索した結果</span>
-</span><span id="for_db_score-27"><a href="#for_db_score-27"><span class="linenos">27</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="for_db_score-28"><a href="#for_db_score-28"><span class="linenos">28</span></a>
-</span><span id="for_db_score-29"><a href="#for_db_score-29"><span class="linenos">29</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_ts</span><span class="p">:</span>
-</span><span id="for_db_score-30"><a href="#for_db_score-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="p">{}</span>
-</span><span id="for_db_score-31"><a href="#for_db_score-31"><span class="linenos">31</span></a>
-</span><span id="for_db_score-32"><a href="#for_db_score-32"><span class="linenos">32</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">DBSearchDict</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="for_db_score-33"><a href="#for_db_score-33"><span class="linenos">33</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-</span><span id="for_db_score-34"><a href="#for_db_score-34"><span class="linenos">34</span></a>        <span class="n">curs</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-</span><span id="for_db_score-35"><a href="#for_db_score-35"><span class="linenos">35</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">curs</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select * from result where ts &gt;= ?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),))</span>
-</span><span id="for_db_score-36"><a href="#for_db_score-36"><span class="linenos">36</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-</span><span id="for_db_score-37"><a href="#for_db_score-37"><span class="linenos">37</span></a>            <span class="n">ts</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ts&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
-</span><span id="for_db_score-38"><a href="#for_db_score-38"><span class="linenos">38</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">GameResult</span><span class="p">()</span>
-</span><span id="for_db_score-39"><a href="#for_db_score-39"><span class="linenos">39</span></a>            <span class="n">result</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>  <span class="c1"># データ取り込みのみ（再計算しない）</span>
-</span><span id="for_db_score-40"><a href="#for_db_score-40"><span class="linenos">40</span></a>            <span class="n">data</span><span class="p">[</span><span class="n">ts</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
-</span><span id="for_db_score-41"><a href="#for_db_score-41"><span class="linenos">41</span></a>
-</span><span id="for_db_score-42"><a href="#for_db_score-42"><span class="linenos">42</span></a>    <span class="k">return</span> <span class="n">data</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>データベースからスコアを検索して返す</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>first_ts (Union[float, bool], optional):</strong>  検索を開始する時刻. Defaults to False.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>DBSearchDict: 検索した結果</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="for_db_score2">
-                            <input id="for_db_score2-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">for_db_score2</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="bp"><a href="../../cls/score.html#GameResult">cls.score.GameResult</a></span><span class="p">]</span>:</span></span>
-
-                <label class="view-source-button" for="for_db_score2-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#for_db_score2"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="for_db_score2-45"><a href="#for_db_score2-45"><span class="linenos">45</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_score2</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GameResult</span><span class="p">]:</span>
-</span><span id="for_db_score2-46"><a href="#for_db_score2-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからスコアを検索して返す</span>
-</span><span id="for_db_score2-47"><a href="#for_db_score2-47"><span class="linenos">47</span></a>
-</span><span id="for_db_score2-48"><a href="#for_db_score2-48"><span class="linenos">48</span></a><span class="sd">    Args:</span>
-</span><span id="for_db_score2-49"><a href="#for_db_score2-49"><span class="linenos">49</span></a><span class="sd">        first_ts (float): 検索を開始する時刻</span>
-</span><span id="for_db_score2-50"><a href="#for_db_score2-50"><span class="linenos">50</span></a>
-</span><span id="for_db_score2-51"><a href="#for_db_score2-51"><span class="linenos">51</span></a><span class="sd">    Returns:</span>
-</span><span id="for_db_score2-52"><a href="#for_db_score2-52"><span class="linenos">52</span></a><span class="sd">        list[GameResult]: 検索した結果</span>
-</span><span id="for_db_score2-53"><a href="#for_db_score2-53"><span class="linenos">53</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="for_db_score2-54"><a href="#for_db_score2-54"><span class="linenos">54</span></a>
-</span><span id="for_db_score2-55"><a href="#for_db_score2-55"><span class="linenos">55</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="for_db_score2-56"><a href="#for_db_score2-56"><span class="linenos">56</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-</span><span id="for_db_score2-57"><a href="#for_db_score2-57"><span class="linenos">57</span></a>        <span class="n">curs</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-</span><span id="for_db_score2-58"><a href="#for_db_score2-58"><span class="linenos">58</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">curs</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-</span><span id="for_db_score2-59"><a href="#for_db_score2-59"><span class="linenos">59</span></a>            <span class="s2">&quot;select * from result where ts &gt;= ? and (source isnull or source like ?)&quot;</span><span class="p">,</span>
-</span><span id="for_db_score2-60"><a href="#for_db_score2-60"><span class="linenos">60</span></a>            <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">interface_type</span><span class="si">}</span><span class="s2">_%&quot;</span><span class="p">))</span>
-</span><span id="for_db_score2-61"><a href="#for_db_score2-61"><span class="linenos">61</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-</span><span id="for_db_score2-62"><a href="#for_db_score2-62"><span class="linenos">62</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GameResult</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)))</span>
-</span><span id="for_db_score2-63"><a href="#for_db_score2-63"><span class="linenos">63</span></a>
-</span><span id="for_db_score2-64"><a href="#for_db_score2-64"><span class="linenos">64</span></a>    <span class="k">return</span> <span class="n">data</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="for_db_score-17"><a href="#for_db_score-17"><span class="linenos">17</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_score</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GameResult</span><span class="p">]:</span>
+</span><span id="for_db_score-18"><a href="#for_db_score-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからスコアを検索して返す</span>
+</span><span id="for_db_score-19"><a href="#for_db_score-19"><span class="linenos">19</span></a>
+</span><span id="for_db_score-20"><a href="#for_db_score-20"><span class="linenos">20</span></a><span class="sd">    Args:</span>
+</span><span id="for_db_score-21"><a href="#for_db_score-21"><span class="linenos">21</span></a><span class="sd">        first_ts (float): 検索を開始する時刻</span>
+</span><span id="for_db_score-22"><a href="#for_db_score-22"><span class="linenos">22</span></a>
+</span><span id="for_db_score-23"><a href="#for_db_score-23"><span class="linenos">23</span></a><span class="sd">    Returns:</span>
+</span><span id="for_db_score-24"><a href="#for_db_score-24"><span class="linenos">24</span></a><span class="sd">        list[GameResult]: 検索した結果</span>
+</span><span id="for_db_score-25"><a href="#for_db_score-25"><span class="linenos">25</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="for_db_score-26"><a href="#for_db_score-26"><span class="linenos">26</span></a>
+</span><span id="for_db_score-27"><a href="#for_db_score-27"><span class="linenos">27</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="for_db_score-28"><a href="#for_db_score-28"><span class="linenos">28</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+</span><span id="for_db_score-29"><a href="#for_db_score-29"><span class="linenos">29</span></a>        <span class="n">curs</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+</span><span id="for_db_score-30"><a href="#for_db_score-30"><span class="linenos">30</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">curs</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+</span><span id="for_db_score-31"><a href="#for_db_score-31"><span class="linenos">31</span></a>            <span class="s2">&quot;select * from result where ts &gt;= ? and (source isnull or source like ?)&quot;</span><span class="p">,</span>
+</span><span id="for_db_score-32"><a href="#for_db_score-32"><span class="linenos">32</span></a>            <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">interface_type</span><span class="si">}</span><span class="s2">_%&quot;</span><span class="p">))</span>
+</span><span id="for_db_score-33"><a href="#for_db_score-33"><span class="linenos">33</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+</span><span id="for_db_score-34"><a href="#for_db_score-34"><span class="linenos">34</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GameResult</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)))</span>
+</span><span id="for_db_score-35"><a href="#for_db_score-35"><span class="linenos">35</span></a>
+</span><span id="for_db_score-36"><a href="#for_db_score-36"><span class="linenos">36</span></a>    <span class="k">return</span> <span class="n">data</span>
 </span></pre></div>
 
 
@@ -291,33 +190,33 @@
 
     </div>
     <a class="headerlink" href="#for_db_remarks"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="for_db_remarks-67"><a href="#for_db_remarks-67"><span class="linenos">67</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_remarks</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;RemarkDict&quot;</span><span class="p">]:</span>
-</span><span id="for_db_remarks-68"><a href="#for_db_remarks-68"><span class="linenos">68</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからメモを検索して返す</span>
-</span><span id="for_db_remarks-69"><a href="#for_db_remarks-69"><span class="linenos">69</span></a>
-</span><span id="for_db_remarks-70"><a href="#for_db_remarks-70"><span class="linenos">70</span></a><span class="sd">    Args:</span>
-</span><span id="for_db_remarks-71"><a href="#for_db_remarks-71"><span class="linenos">71</span></a><span class="sd">        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.</span>
-</span><span id="for_db_remarks-72"><a href="#for_db_remarks-72"><span class="linenos">72</span></a>
-</span><span id="for_db_remarks-73"><a href="#for_db_remarks-73"><span class="linenos">73</span></a><span class="sd">    Returns:</span>
-</span><span id="for_db_remarks-74"><a href="#for_db_remarks-74"><span class="linenos">74</span></a><span class="sd">        list[RemarkDict]: 検索した結果</span>
-</span><span id="for_db_remarks-75"><a href="#for_db_remarks-75"><span class="linenos">75</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="for_db_remarks-76"><a href="#for_db_remarks-76"><span class="linenos">76</span></a>
-</span><span id="for_db_remarks-77"><a href="#for_db_remarks-77"><span class="linenos">77</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_ts</span><span class="p">:</span>
-</span><span id="for_db_remarks-78"><a href="#for_db_remarks-78"><span class="linenos">78</span></a>        <span class="k">return</span> <span class="p">[]</span>
-</span><span id="for_db_remarks-79"><a href="#for_db_remarks-79"><span class="linenos">79</span></a>
-</span><span id="for_db_remarks-80"><a href="#for_db_remarks-80"><span class="linenos">80</span></a>    <span class="c1"># データベースからデータ取得</span>
-</span><span id="for_db_remarks-81"><a href="#for_db_remarks-81"><span class="linenos">81</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;RemarkDict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="for_db_remarks-82"><a href="#for_db_remarks-82"><span class="linenos">82</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
-</span><span id="for_db_remarks-83"><a href="#for_db_remarks-83"><span class="linenos">83</span></a>        <span class="c1"># 記録済みメモ内容</span>
-</span><span id="for_db_remarks-84"><a href="#for_db_remarks-84"><span class="linenos">84</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select * from remarks where thread_ts&gt;=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),))</span>
-</span><span id="for_db_remarks-85"><a href="#for_db_remarks-85"><span class="linenos">85</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-</span><span id="for_db_remarks-86"><a href="#for_db_remarks-86"><span class="linenos">86</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-</span><span id="for_db_remarks-87"><a href="#for_db_remarks-87"><span class="linenos">87</span></a>                <span class="s2">&quot;thread_ts&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;thread_ts&quot;</span><span class="p">],</span>
-</span><span id="for_db_remarks-88"><a href="#for_db_remarks-88"><span class="linenos">88</span></a>                <span class="s2">&quot;event_ts&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event_ts&quot;</span><span class="p">],</span>
-</span><span id="for_db_remarks-89"><a href="#for_db_remarks-89"><span class="linenos">89</span></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
-</span><span id="for_db_remarks-90"><a href="#for_db_remarks-90"><span class="linenos">90</span></a>                <span class="s2">&quot;matter&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;matter&quot;</span><span class="p">],</span>
-</span><span id="for_db_remarks-91"><a href="#for_db_remarks-91"><span class="linenos">91</span></a>            <span class="p">})</span>
-</span><span id="for_db_remarks-92"><a href="#for_db_remarks-92"><span class="linenos">92</span></a>
-</span><span id="for_db_remarks-93"><a href="#for_db_remarks-93"><span class="linenos">93</span></a>    <span class="k">return</span> <span class="n">data</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="for_db_remarks-39"><a href="#for_db_remarks-39"><span class="linenos">39</span></a><span class="k">def</span><span class="w"> </span><span class="nf">for_db_remarks</span><span class="p">(</span><span class="n">first_ts</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;RemarkDict&quot;</span><span class="p">]:</span>
+</span><span id="for_db_remarks-40"><a href="#for_db_remarks-40"><span class="linenos">40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データベースからメモを検索して返す</span>
+</span><span id="for_db_remarks-41"><a href="#for_db_remarks-41"><span class="linenos">41</span></a>
+</span><span id="for_db_remarks-42"><a href="#for_db_remarks-42"><span class="linenos">42</span></a><span class="sd">    Args:</span>
+</span><span id="for_db_remarks-43"><a href="#for_db_remarks-43"><span class="linenos">43</span></a><span class="sd">        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.</span>
+</span><span id="for_db_remarks-44"><a href="#for_db_remarks-44"><span class="linenos">44</span></a>
+</span><span id="for_db_remarks-45"><a href="#for_db_remarks-45"><span class="linenos">45</span></a><span class="sd">    Returns:</span>
+</span><span id="for_db_remarks-46"><a href="#for_db_remarks-46"><span class="linenos">46</span></a><span class="sd">        list[RemarkDict]: 検索した結果</span>
+</span><span id="for_db_remarks-47"><a href="#for_db_remarks-47"><span class="linenos">47</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="for_db_remarks-48"><a href="#for_db_remarks-48"><span class="linenos">48</span></a>
+</span><span id="for_db_remarks-49"><a href="#for_db_remarks-49"><span class="linenos">49</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">first_ts</span><span class="p">:</span>
+</span><span id="for_db_remarks-50"><a href="#for_db_remarks-50"><span class="linenos">50</span></a>        <span class="k">return</span> <span class="p">[]</span>
+</span><span id="for_db_remarks-51"><a href="#for_db_remarks-51"><span class="linenos">51</span></a>
+</span><span id="for_db_remarks-52"><a href="#for_db_remarks-52"><span class="linenos">52</span></a>    <span class="c1"># データベースからデータ取得</span>
+</span><span id="for_db_remarks-53"><a href="#for_db_remarks-53"><span class="linenos">53</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;RemarkDict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="for_db_remarks-54"><a href="#for_db_remarks-54"><span class="linenos">54</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+</span><span id="for_db_remarks-55"><a href="#for_db_remarks-55"><span class="linenos">55</span></a>        <span class="c1"># 記録済みメモ内容</span>
+</span><span id="for_db_remarks-56"><a href="#for_db_remarks-56"><span class="linenos">56</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select * from remarks where thread_ts&gt;=?&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">first_ts</span><span class="p">),))</span>
+</span><span id="for_db_remarks-57"><a href="#for_db_remarks-57"><span class="linenos">57</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+</span><span id="for_db_remarks-58"><a href="#for_db_remarks-58"><span class="linenos">58</span></a>            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+</span><span id="for_db_remarks-59"><a href="#for_db_remarks-59"><span class="linenos">59</span></a>                <span class="s2">&quot;thread_ts&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;thread_ts&quot;</span><span class="p">],</span>
+</span><span id="for_db_remarks-60"><a href="#for_db_remarks-60"><span class="linenos">60</span></a>                <span class="s2">&quot;event_ts&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event_ts&quot;</span><span class="p">],</span>
+</span><span id="for_db_remarks-61"><a href="#for_db_remarks-61"><span class="linenos">61</span></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+</span><span id="for_db_remarks-62"><a href="#for_db_remarks-62"><span class="linenos">62</span></a>                <span class="s2">&quot;matter&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;matter&quot;</span><span class="p">],</span>
+</span><span id="for_db_remarks-63"><a href="#for_db_remarks-63"><span class="linenos">63</span></a>            <span class="p">})</span>
+</span><span id="for_db_remarks-64"><a href="#for_db_remarks-64"><span class="linenos">64</span></a>
+</span><span id="for_db_remarks-65"><a href="#for_db_remarks-65"><span class="linenos">65</span></a>    <span class="k">return</span> <span class="n">data</span>
 </span></pre></div>
 
 
