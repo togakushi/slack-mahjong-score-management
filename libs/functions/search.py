@@ -35,20 +35,16 @@ def for_db_score(first_ts: float) -> list[GameResult]:
     return data
 
 
-def for_db_remarks(first_ts: float | bool = False) -> list["RemarkDict"]:
+def for_db_remarks(first_ts: float) -> list["RemarkDict"]:
     """データベースからメモを検索して返す
 
     Args:
-        first_ts (Union[float, bool], optional): 検索を開始する時刻. Defaults to False.
+        first_ts (float): 検索を開始する時刻
 
     Returns:
         list[RemarkDict]: 検索した結果
     """
 
-    if not first_ts:
-        return []
-
-    # データベースからデータ取得
     data: list["RemarkDict"] = []
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         # 記録済みメモ内容
