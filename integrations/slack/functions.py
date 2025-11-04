@@ -8,12 +8,12 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
-from integrations.slack.parser import MessageParser
 
 if TYPE_CHECKING:
     from slack_sdk.web import SlackResponse
 
     from integrations.protocols import MessageParserProtocol
+    from integrations.slack.adapter import ServiceAdapter
     from integrations.slack.api import AdapterAPI
     from integrations.slack.config import SvcConfig
 
@@ -44,6 +44,8 @@ class SvcFunctions(FunctionsInterface):
             list["MessageParserProtocol"]: 検索した結果
         """
 
+        g.adapter = cast("ServiceAdapter", g.adapter)
+
         # 検索クエリ
         after = ExtDt(days=-self.conf.search_after).format("ymd", "-")
         query = f"{word} in:{self.conf.search_channel} after:{after}"
@@ -71,7 +73,7 @@ class SvcFunctions(FunctionsInterface):
         data: list["MessageParserProtocol"] = []
         for x in matches:
             if isinstance(x, dict):
-                work_m = MessageParser()
+                work_m = g.adapter.parser()
                 work_m.parser(x)
                 data.append(work_m)
 
