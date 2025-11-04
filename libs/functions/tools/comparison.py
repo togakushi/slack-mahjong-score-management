@@ -25,17 +25,19 @@ def main():
         try:
             g.adapter = cast("ServiceAdapter", g.adapter)
             app = App(token=os.environ["SLACK_BOT_TOKEN"])
-            g.adapter.api.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
-            g.adapter.api.appclient = app.client
-            g.adapter.conf.bot_id = app.client.auth_test()["user_id"]
             configuration.read_memberslist(False)
         except Exception as err:
             raise RuntimeError(err) from err
 
         adapter_slack = factory.select_adapter("slack", g.cfg)
+        adapter_slack.api.webclient = WebClient(token=os.environ["SLACK_WEB_TOKEN"])
+        adapter_slack.api.appclient = app.client
+        adapter_slack.conf.bot_id = app.client.auth_test()["user_id"]
+        g.adapter = adapter_slack
+
         adapter_std = factory.select_adapter("standard_io", g.cfg)
         m = adapter_std.parser()
         m.data.channel_id = adapter_slack.functions.get_channel_id()
 
-        count, _ = comparison.data_comparison(m)
-        logging.info(", ".join(f"{k}: {v}" for k, v in count.items()))
+        comparison.main(m)
+        print(m.status.message)

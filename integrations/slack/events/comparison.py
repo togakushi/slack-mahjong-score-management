@@ -47,6 +47,7 @@ def main(m: "MessageParserProtocol") -> None:
     m.post.thread = True
     m.post.ts = m.data.event_ts
     m.status.action = "nothing"
+    m.status.message = results
 
 
 def check_omission(results: ComparisonResults):
