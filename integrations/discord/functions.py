@@ -54,6 +54,8 @@ class SvcFunctions(FunctionsInterface):
         m = cast("MessageParser", m)
         self.conf.bot_name = cast("ClientUser", self.conf.bot_name)
 
+        if not getattr(m, "discord_msg"):
+            return
         if await self.is_deleted_message(m.discord_msg):
             return
 
