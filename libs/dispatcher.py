@@ -40,10 +40,12 @@ def by_keyword(m: "MessageParserProtocol"):
     match m.keyword:
         # キーワード実行
         case word if word in g.keyword_dispatcher and not m.is_command:
-            g.keyword_dispatcher[word](m)
+            if m.data.status == "message_append":
+                g.keyword_dispatcher[word](m)
         # コマンド実行
         case word if word in g.command_dispatcher and m.is_command:
-            g.command_dispatcher[word](m)
+            if m.data.status == "message_append":
+                g.command_dispatcher[word](m)
         # リマインダ実行
         case "Reminder:":
             if m.data.text in g.keyword_dispatcher and m.is_bot:

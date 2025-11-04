@@ -19,9 +19,6 @@ def main(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    if m.data.status != "message_append":
-        return
-
     m.status.command_type = "report"
     g.params = dictutil.placeholder(g.cfg.report, m)
 

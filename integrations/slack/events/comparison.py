@@ -31,9 +31,6 @@ def main(m: "MessageParserProtocol") -> None:
 
     g.adapter = cast("ServiceAdapter", g.adapter)
 
-    if m.data.status == "message_changed":  # 編集イベントは無視
-        return
-
     # 応答先
     m.post.thread = True
     m.post.ts = m.data.event_ts

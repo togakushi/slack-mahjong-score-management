@@ -19,9 +19,6 @@ def main(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    if m.data.status != "message_append":
-        return
-
     g.params = dictutil.placeholder(g.cfg.ranking, m)
 
     if g.params.get("rating"):  # レーティング
