@@ -16,6 +16,9 @@ if TYPE_CHECKING:
 class SvcConfig(IntegrationsConfig):
     """discord用個別設定値"""
 
+    slash_command: str = field(default="mahjong")
+    """スラッシュコマンド名"""
+
     # 突合
     comparison_word: str = field(default="成績チェック")
     """データ突合コマンド呼び出しキーワード"""

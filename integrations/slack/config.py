@@ -58,6 +58,10 @@ class SvcConfig(IntegrationsConfig):
     def __post_init__(self):
         self.read_file("slack")
 
+        # スラッシュコマンドはスラッシュ始まり
+        if not self.slash_command.startswith("/"):
+            self.slash_command = f"/{self.slash_command}"
+
         # スラッシュコマンド登録
         self._command_dispatcher.update({"help": slash.command_help})
         self._command_dispatcher.update({"check": comparison.main})
