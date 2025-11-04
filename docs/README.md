@@ -7,8 +7,8 @@
 ### discord
 - [セットアップ方法](setting/for_discord/setup.md)
 - [デーモン化](setting/for_discord/daemon.md)
-### 共通項目
-- [設定ファイル内容説明](setting/customize.md)
+### 設定ファイル内容説明
+- [共通設定](setting/customize.md)
   - [個別設定](setting/integrations.md)
 
 ## 機能
