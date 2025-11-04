@@ -73,13 +73,15 @@ class MessageTypeDict(TypedDict):
     """表示オプション"""
 
 
-class RemarkDict(TypedDict):
+class RemarkDict(TypedDict, total=False):
     """メモ格納用辞書"""
 
     thread_ts: str
     """ゲーム終了時間"""
     event_ts: str
     """メモ記録時間"""
+    channel_id: str
+    """チャンネルID"""
     name: str
     matter: str
 

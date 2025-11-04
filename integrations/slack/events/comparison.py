@@ -146,6 +146,7 @@ def check_remarks(results: ComparisonResults):
             slack_remarks.append({
                 "thread_ts": loop_m.data.thread_ts,
                 "event_ts": loop_m.data.event_ts,
+                "channel_id": loop_m.data.channel_id,
                 "name": pname,
                 "matter": matter,
             })
@@ -162,12 +163,14 @@ def check_remarks(results: ComparisonResults):
             continue  # 紐付くゲーム結果が保留中
         results.remark_mod.append(remark)
 
-    for event_ts in {x["event_ts"] for x in results.remark_mod}:
-        work_m.data.event_ts = event_ts
-        work_m.status.command_type = "comparison"
-        modify.remarks_delete(work_m)
-    work_m.status.command_type = "comparison"  # リセットがかかるので再セット
-    modify.remarks_append(work_m, results.remark_mod)
+    if results.remark_mod:
+        for remark in results.remark_mod:
+            work_m.data.event_ts = remark["event_ts"]
+            work_m.status.command_type = "comparison"
+            modify.remarks_delete(work_m)
+        work_m.status.command_type = "comparison"  # リセットがかかるので再セット
+        work_m.data.channel_id = remark["channel_id"]
+        modify.remarks_append(work_m, results.remark_mod)
 
     # DATABASE -> SLACK
     for remark in db_remarks:
