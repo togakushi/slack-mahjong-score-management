@@ -51,6 +51,12 @@ def main(m: "MessageParserProtocol") -> None:
 
 
 def check_omission(results: ComparisonResults):
+    """スコア突合
+
+    Args:
+        results (ComparisonResults): 結果格納データクラス
+    """
+
     g.adapter = cast("ServiceAdapter", g.adapter)
     slack_score: list[GameResult] = []
 
@@ -163,6 +169,12 @@ def check_remarks(results: ComparisonResults):
 
 
 def check_total_score(results: ComparisonResults):
+    """素点合計の再チェック
+
+    Args:
+        results (ComparisonResults): 結果格納データクラス
+    """
+
     for loop_m in results.score_list.values():
         if (score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
             for k, v in score.to_dict().items():  # 名前の正規化
