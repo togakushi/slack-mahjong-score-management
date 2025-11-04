@@ -137,12 +137,14 @@ class ComparisonResults:
 
     def output(
         self,
-        kind: Literal["headline", "pending", "mismatch", "missing", "delete", "remark_mod", "remark_del", "invalid_score"]
+        kind: Literal[
+            "summary", "headline", "pending", "mismatch", "missing", "delete", "remark_mod", "remark_del", "invalid_score"
+        ],
     ) -> str:
         """出力メッセージ生成
 
         Args:
-            kind (Literal[headline, pending, mismatch, missing, delete, remark_mod, remark_del, invalid_score]): 種類
+            kind (Literal[summary, headline, pending, mismatch, missing, delete, remark_mod, remark_del, invalid_score]): 種類
 
         Returns:
             str: 生成文字列
@@ -151,6 +153,14 @@ class ComparisonResults:
         ret: str = ""
         score: Union[dict, "GameResult"]
         match kind:
+            case "summary":
+                ret += f"pending:{len(self.pending)} "
+                ret += f"mismatch:{len(self.mismatch)} "
+                ret += f"missing:{len(self.missing)} "
+                ret += f"delete:{len(self.delete)} "
+                ret += f"remark_mod:{len(self.remark_mod)} "
+                ret += f"remark_del:{len(self.remark_del)} "
+                ret += f"invalid_score:{len(self.invalid_score)} "
             case "headline":
                 ret = f"突合範囲：{self.after.format("ymdhms")} - {self.before.format("ymdhms")}"
             case "pending":
