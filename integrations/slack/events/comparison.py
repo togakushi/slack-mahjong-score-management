@@ -11,12 +11,13 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import modify
 from libs.datamodels import ComparisonResults
 from libs.functions import search
-from libs.types import RemarkDict, StyleOptions
+from libs.types import StyleOptions
 from libs.utils import formatter
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
     from integrations.slack.adapter import ServiceAdapter
+    from libs.types import RemarkDict
 
 
 def main(m: "MessageParserProtocol") -> None:
@@ -59,6 +60,7 @@ def check_omission(results: ComparisonResults):
 
     g.adapter = cast("ServiceAdapter", g.adapter)
     slack_score: list[GameResult] = []
+    keep_channel_id: list = []
 
     for work_m in set(g.adapter.functions.pickup_score()):
         if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
@@ -66,11 +68,12 @@ def check_omission(results: ComparisonResults):
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
             # 保留チェック
-            if check_pending(work_m.data.event_ts, work_m.data.edited_ts):
+            if check_pending(work_m):
                 results.pending.append(score)
             else:
                 slack_score.append(score)
                 results.score_list.update({work_m.data.event_ts: work_m})
+                keep_channel_id.append(work_m.data.channel_id)
 
     db_score = search.for_db_score(float(results.after.format("ts")))
 
@@ -100,13 +103,14 @@ def check_omission(results: ComparisonResults):
     work_m.status.command_type = "comparison"
     for score in db_score:
         if score.ts not in ts_list:  # 削除漏れ
-            results.delete.append(score)
             work_m.data.event_ts = score.ts
             if score.source:
                 work_m.data.channel_id = score.source.replace("slack_", "")
-            logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
-            modify.db_delete(work_m)
-            g.adapter.functions.post_processing(work_m)
+            if work_m.data.channel_id in set(keep_channel_id):
+                results.delete.append(score)
+                logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
+                modify.db_delete(work_m)
+                g.adapter.functions.post_processing(work_m)
 
 
 def check_remarks(results: ComparisonResults):
@@ -117,7 +121,7 @@ def check_remarks(results: ComparisonResults):
     """
 
     g.adapter = cast("ServiceAdapter", g.adapter)
-    slack_remarks: list[RemarkDict] = []
+    slack_remarks: list["RemarkDict"] = []
     score_list: dict[str, GameResult] = {}
 
     for loop_m in results.score_list.values():
@@ -137,7 +141,8 @@ def check_remarks(results: ComparisonResults):
             pname = formatter.name_replace(str(name), not_replace=True)
             if pname not in score_list[loop_m.data.thread_ts].to_list("name"):
                 continue  # ゲーム結果に名前がない
-
+            if loop_m.data.thread_ts in [x.ts for x in results.pending]:
+                continue  # 紐付くゲーム結果が保留中
             slack_remarks.append({
                 "thread_ts": loop_m.data.thread_ts,
                 "event_ts": loop_m.data.event_ts,
@@ -149,16 +154,19 @@ def check_remarks(results: ComparisonResults):
 
     # SLACK -> DATABASE
     work_m = g.adapter.parser()
-    work_m.status.command_type = "comparison"
 
     for remark in slack_remarks:
-        if remark in db_remarks:  # 変化なし
-            continue
+        if remark in db_remarks:
+            continue  # 変化なし
+        if remark["thread_ts"] in [x.ts for x in results.pending]:
+            continue  # 紐付くゲーム結果が保留中
         results.remark_mod.append(remark)
 
     for event_ts in {x["event_ts"] for x in results.remark_mod}:
         work_m.data.event_ts = event_ts
+        work_m.status.command_type = "comparison"
         modify.remarks_delete(work_m)
+    work_m.status.command_type = "comparison"  # リセットがかかるので再セット
     modify.remarks_append(work_m, results.remark_mod)
 
     # DATABASE -> SLACK
@@ -184,12 +192,11 @@ def check_total_score(results: ComparisonResults):
                 results.invalid_score.append(score)
 
 
-def check_pending(event_ts: str, edited_ts: str = "undetermined") -> bool:
+def check_pending(m: "MessageParserProtocol") -> bool:
     """保留チェック
 
     Args:
-        event_ts (str): イベント発生タイムスタンプ
-        edited_ts (str, optional): イベント編集タイムスタンプ. Defaults to "undetermined".
+        m (MessageParserProtocol): メッセージデータ
 
     Returns:
         bool: 真偽
@@ -201,10 +208,10 @@ def check_pending(event_ts: str, edited_ts: str = "undetermined") -> bool:
 
     now_ts = float(ExtDt().format("ts"))
 
-    if edited_ts == "undetermined":
-        check_ts = float(event_ts) + g.adapter.conf.search_wait
+    if m.data.edited_ts == "undetermined":
+        check_ts = float(m.data.event_ts) + g.adapter.conf.search_wait
     else:
-        check_ts = float(max(edited_ts)) + g.adapter.conf.search_wait
+        check_ts = float(m.data.edited_ts) + g.adapter.conf.search_wait
 
     if check_ts > now_ts:
         return True
