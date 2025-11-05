@@ -176,7 +176,7 @@ def check_remarks(results: ComparisonResults):
     # DATABASE -> SLACK
     for remark in db_remarks:
         if remark not in slack_remarks:  # slackに記録なし
-            if remark["source"] in set([x.source for x in score_list.values()]):
+            if remark["source"] in {x.source for x in score_list.values()}:
                 results.remark_del.append(remark)
                 modify.remarks_delete_compar(remark, work_m)
 
