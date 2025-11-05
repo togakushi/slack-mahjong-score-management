@@ -4,8 +4,8 @@
 
 > [!NOTE]
 > 【前提条件】セットアップ手順を実施し、スクリプトが起動できるようにする。
-> * [uvを使った環境構築](using_uv.md)
-> * [venvを使った環境構築](using_venv.md)
+> * [uvを使った環境構築](../install/using_uv.md)
+> * [venvを使った環境構築](../install/using_venv.md)
 
 環境変数を記録したファイルを準備する(`.env`など)
 ```

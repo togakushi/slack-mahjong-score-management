@@ -11,6 +11,8 @@
 ### トークンの発行
 [Bot] > [Token] > [Reset Token]
 
+発行されたトークンは環境変数 `DISCORD_TOKEN` にセットして利用する。
+
 ### 認証
 [OAuth2] > [OAuth2 URL Generator] > [Scopes] の [bot] にチェックを入れる
 
