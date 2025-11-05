@@ -80,10 +80,9 @@ class RemarkDict(TypedDict, total=False):
     """ゲーム終了時間"""
     event_ts: str
     """メモ記録時間"""
-    channel_id: str
-    """チャンネルID"""
     name: str
     matter: str
+    source: str
 
 
 class RankTableDict(TypedDict):

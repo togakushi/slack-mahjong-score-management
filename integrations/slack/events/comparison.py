@@ -146,9 +146,9 @@ def check_remarks(results: ComparisonResults):
             slack_remarks.append({
                 "thread_ts": loop_m.data.thread_ts,
                 "event_ts": loop_m.data.event_ts,
-                "channel_id": loop_m.data.channel_id,
                 "name": pname,
                 "matter": matter,
+                "source": loop_m.status.source,
             })
 
     db_remarks = search.for_db_remarks(float(results.after.format("ts")))
@@ -167,16 +167,18 @@ def check_remarks(results: ComparisonResults):
         for remark in results.remark_mod:
             work_m.data.event_ts = remark["event_ts"]
             work_m.status.command_type = "comparison"
-            modify.remarks_delete(work_m)
+            work_m.data.channel_id = remark["source"].replace("slack_", "")
         work_m.status.command_type = "comparison"  # リセットがかかるので再セット
-        work_m.data.channel_id = remark["channel_id"]
+        work_m.data.channel_id = remark["source"].replace("slack_", "")
+        modify.remarks_delete(work_m)
         modify.remarks_append(work_m, results.remark_mod)
 
     # DATABASE -> SLACK
     for remark in db_remarks:
         if remark not in slack_remarks:  # slackに記録なし
-            results.remark_del.append(remark)
-            modify.remarks_delete_compar(remark, work_m)
+            if remark["source"] in set([x.source for x in score_list.values()]):
+                results.remark_del.append(remark)
+                modify.remarks_delete_compar(remark, work_m)
 
 
 def check_total_score(results: ComparisonResults):
