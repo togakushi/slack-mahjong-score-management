@@ -188,6 +188,7 @@ async def check_remarks(results: ComparisonResults, messages_list: list["Message
                     "event_ts": loop_m.data.event_ts,
                     "name": pname,
                     "matter": matter,
+                    "source": loop_m.status.source,
                 })
 
     db_remarks = search.for_db_remarks(float(results.after.format("ts")))
