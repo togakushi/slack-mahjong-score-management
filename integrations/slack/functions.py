@@ -47,7 +47,7 @@ class SvcFunctions(FunctionsInterface):
         g.adapter = cast("ServiceAdapter", g.adapter)
 
         # 検索クエリ
-        after = ExtDt(days=-self.conf.search_after).format("ymd", "-")
+        after = ExtDt(days=-self.conf.search_after, hours=g.cfg.setting.time_adjust).format("ymd", "-")
         query = f"{word} in:{self.conf.search_channel} after:{after}"
         logging.info("query=%s", query)
 

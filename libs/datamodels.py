@@ -128,7 +128,7 @@ class ComparisonResults:
     @property
     def after(self) -> ExtDt:
         """突合開始日時"""
-        return ExtDt(days=self.search_after)
+        return ExtDt(days=self.search_after, hours=g.cfg.setting.time_adjust)
 
     @property
     def before(self) -> ExtDt:

@@ -75,7 +75,12 @@ def check_omission(results: ComparisonResults):
                 results.score_list.update({work_m.data.event_ts: work_m})
                 keep_channel_id.append(work_m.data.channel_id)
 
-    db_score = search.for_db_score(float(results.after.format("ts")))
+    if slack_score:
+        first_ts = float(min(x.ts for x in slack_score))
+    else:
+        first_ts = float(results.after.format("ts"))
+
+    db_score = search.for_db_score(first_ts)
 
     # SLACK -> DATABASE
     ts_list = [x.ts for x in db_score]
