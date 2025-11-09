@@ -4,3 +4,6 @@
   {% if custom_css %}
   <link rel="stylesheet" href="/user_static/{{ custom_css }}">
   {% endif %}
+  {% if theme %}
+  <link rel="stylesheet" href="/static/theme_{{ theme }}.css">
+  {% endif %}

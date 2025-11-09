@@ -1,0 +1,86 @@
+body {
+    color: black;
+    background-color: white;
+}
+
+/* テーブルカラー */
+.data_table th { background-color: black !important; }
+.data_table tr:nth-child(odd) { background-color: #f5f5f5 !important; }
+.data_table tr:nth-child(even) { background-color: white !important; }
+
+div.menu_bar {
+    font-size: 1.2rem;
+}
+
+div.option_menu {
+    border: solid silver;
+    background-color: whitesmoke;
+    padding: 1% 1%;
+    padding-left: 2%;
+}
+
+div.player_name {
+    color: green;
+    font-weight: bold;
+}
+
+a {
+    display: inline-block;
+    color: black;
+    margin-inline-start: 1rem;
+    margin-inline-end: 1rem;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    border-left: solid 1.0rem black;
+    border-bottom: 1px solid black;
+    padding-bottom: 0.5rem;
+    padding-left: 1.0rem;
+}
+
+h1.top_menu {
+    border: none;
+    letter-spacing: 0.3rem;
+}
+
+h1.top_menu::before {
+    content: "\1F000\1F001\1F002\1F003";
+}
+
+h2 {
+    border-bottom: 1px solid #4a3220;
+    display: inline-block;
+}
+
+ul, ol {
+    padding: 0;
+    position: relative;
+    margin-right: 2.0rem;
+    margin-left: 2.0rem;
+    font-size: large;
+}
+
+ul li, ol li {
+    border-left: solid 1.0rem black;
+    background: #f7e8e8;
+    margin-bottom: 0.2rem;
+    line-height: 1.5;
+    padding: 0.5rem;
+    list-style-type: none !important;
+}
+
+/* グラフ全体の背景 */
+svg.main-svg {
+    background: none !important;
+}
+
+/* グラフ */
+.plotly .bg { fill: #fafafa !important; }
+.plotly .plot { fill: #ffffff !important; }
+.plotly .gtitle, .plotly .xtick text, .plotly .ytick text, .plotly .xtitle, .plotly .ytitle, .plotly .legend text { fill: black !important; }
+.plotly .xgrid, .plotly .ygrid { stroke: #cccccc !important; }
+.plotly .xzeroline, .plotly .yzeroline { stroke: #666666 !important; }

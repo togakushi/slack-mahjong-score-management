@@ -1,0 +1,88 @@
+body {
+    color: #d0d8ff;
+    background-color: #0a1128;
+}
+
+/* テーブルカラー */
+th { color: #d0d8ff !important; }
+.data_table th { background-color: #152042 !important; }
+.data_table tr:nth-child(odd) { background-color: #0d1733 !important; }
+.data_table tr:nth-child(even) { background-color: #101c3f !important; }
+
+div.menu_bar {
+    font-size: 1.2rem;
+}
+
+div.option_menu {
+    border: solid #304070;
+    background-color: #101c3f;
+    padding: 1% 1%;
+    padding-left: 2%;
+}
+
+div.player_name {
+    color: #ec930c;
+    font-weight: bold;
+}
+
+a {
+    display: inline-block;
+    color: #d0d8ff;
+    text-decoration: none;
+    margin-inline-start: 1rem;
+    margin-inline-end: 1rem;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    border-left: solid 1.0rem #d0d8ff;
+    border-bottom: 1px solid #d0d8ff;
+    padding-bottom: 0.5rem;
+    padding-left: 1.0rem;
+}
+
+h1.top_menu {
+    border: none;
+    letter-spacing: 0.3rem;
+}
+
+h1.top_menu::before {
+    content: "\1F000\1F001\1F002\1F003";
+}
+
+h2 {
+    border-bottom: 1px solid #d0d8ff;
+    display: inline-block;
+}
+
+ul, ol {
+    padding: 0;
+    position: relative;
+    margin-right: 2.0rem;
+    margin-left: 2.0rem;
+    font-size: large;
+}
+
+ul li, ol li {
+    border-left: solid 1.0rem #0077cc;
+    background: #0f2b4a;
+    margin-bottom: 0.2rem;
+    line-height: 1.5;
+    padding: 0.5rem;
+    list-style-type: none !important;
+}
+
+/* グラフ全体の背景 */
+svg.main-svg {
+    background: none !important;
+}
+
+/* グラフ */
+.plotly .bg { fill: #0e1530 !important; }
+.plotly .plot { fill: #18264a !important; }
+.plotly .gtitle, .plotly .xtick text, .plotly .ytick text, .plotly .xtitle, .plotly .ytitle, .plotly .legend text { fill: #d0d8ff !important; }
+.plotly .xgrid, .plotly .ygrid { stroke: #334466 !important; }
+.plotly .xzeroline, .plotly .yzeroline { stroke: #000d33 !important; }

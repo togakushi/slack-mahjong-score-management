@@ -48,6 +48,8 @@ class SvcConfig(IntegrationsConfig):
     """メンバー/チーム編集メニューの表示"""
     management_score: bool = field(default=False)
     """成績管理メニューの表示"""
+    theme: str = field(default="")
+    """テーマ指定"""
     custom_css: str = field(default="")
     """ユーザー指定CSSファイル"""
 
@@ -70,3 +72,8 @@ class SvcConfig(IntegrationsConfig):
 
         if not os.path.isfile(os.path.join(g.cfg.config_dir, self.custom_css)):
             self.custom_css = ""
+
+        if self.theme:
+            theme_file = f"files/html/static/theme_{self.theme}.css"
+            if not all([os.path.exists(theme_file), os.path.isfile(theme_file)]):
+                self.theme = ""

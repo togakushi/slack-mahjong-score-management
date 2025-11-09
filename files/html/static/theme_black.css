@@ -1,0 +1,110 @@
+body {
+    color: white;
+    background-color: black;
+}
+
+/* テーブルカラー */
+.data_table th { background-color: #505050 !important; }
+.data_table tr:nth-child(odd) { background-color: #303030 !important; }
+.data_table tr:nth-child(even) { background-color: #202020 !important; }
+
+div.menu_bar {
+    font-size: 1.2rem;
+}
+
+div.option_menu {
+    border: solid grey;
+    background-color: #202020;
+    padding: 1% 1%;
+    padding-left: 2%;
+}
+
+div.player_name {
+    color: yellowgreen;
+    font-weight: bold;
+}
+
+a {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    margin-inline-start: 1rem;
+    margin-inline-end: 1rem;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    border-left: solid 1.0rem white;
+    border-bottom: 1px solid white  ;
+    padding-bottom: 0.5rem;
+    padding-left: 1.0rem;
+}
+
+h1.top_menu {
+    border: none;
+    letter-spacing: 0.3rem;
+}
+
+h1.top_menu::before {
+    content: "\1F000\1F001\1F002\1F003";
+}
+
+h2 {
+    border-bottom: 1px solid white;
+    display: inline-block;
+}
+
+ul, ol {
+    padding: 0;
+    position: relative;
+    margin-right: 2.0rem;
+    margin-left: 2.0rem;
+    font-size: large;
+}
+
+ul li, ol li {
+    border-left: solid 1.0rem darkred;
+    background: darkslategrey;
+    margin-bottom: 0.2rem;
+    line-height: 1.5;
+    padding: 0.5rem;
+    list-style-type: none !important;
+}
+
+/* グラフ全体の背景 */
+svg.main-svg {
+    background: none !important;
+}
+
+/* グラフタイトル */
+.plotly .gtitle {
+    fill: white !important;
+}
+
+.plotly .bg {
+    fill: #222222 !important;   /* 背景色 */
+}
+
+/* プロット領域（軸の内側）の背景 */
+.plotly .plot {
+    fill: #333333 !important;
+}
+
+/* 軸ラベル・目盛り文字 */
+.plotly .xtick text, .plotly .ytick text, .plotly .xtitle, .plotly .ytitle {
+    fill: white !important;
+}
+
+.plotly .legend text {  /* 凡例の文字 */
+    fill: white !important;
+}
+
+.plotly .xgrid, .plotly .ygrid {  /* グリッド線の色 */
+    stroke: #555555 !important;
+}
+.plotly .xzeroline, .plotly .yzeroline {  /* ゼロ線の色 */
+    stroke: black !important;
+}
