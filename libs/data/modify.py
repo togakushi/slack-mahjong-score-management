@@ -234,6 +234,7 @@ def check_remarks(m: "MessageParserProtocol") -> None:
                 "event_ts": m.data.event_ts,
                 "name": formatter.name_replace(name, not_replace=True),
                 "matter": matter,
+                "source": m.status.source,
             }
             if remark["name"] in game_result.to_list() and remark not in remarks:
                 remarks.append(remark)
