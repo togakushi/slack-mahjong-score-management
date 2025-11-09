@@ -328,8 +328,8 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - *True* : リプライの形（リプライ／スレッドなど）
-            - *False* : 通常メッセージ
+            - *True*: リプライの形（リプライ／スレッドなど）
+            - *False*: 通常メッセージ
         """
 
     @property
@@ -339,8 +339,8 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - *True* : botのポスト
-            - *False* : ユーザのポスト
+            - *True*: botのポスト
+            - *False*: ユーザのポスト
         """
 
     @property
@@ -350,8 +350,8 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - *True* : 許可
-            - *False* : 禁止
+            - *True*: 許可
+            - *False*: 禁止
         """
 
     @property
@@ -361,8 +361,8 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - *True* : 存在する(操作禁止ユーザ)
-            - *False* : 存在しない
+            - *True*: 存在する(操作禁止ユーザ)
+            - *False*: 存在しない
         """
 
     @property
@@ -371,8 +371,8 @@ class MessageParserInterface(ABC):
 
         Returns:
             bool: 真偽値
-            - *True* : コマンド実行
-            - *False* : 非コマンド(キーワード呼び出し)
+            - *True*: コマンド実行
+            - *False*: 非コマンド(キーワード呼び出し)
         """
 
         return self.status.command_flg
