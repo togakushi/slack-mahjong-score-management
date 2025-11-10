@@ -54,7 +54,7 @@ def aggregation(m: "MessageParserProtocol"):
     m.post.headline = {headline_title: header_text}
 
     if df_summary.empty:
-        m.post.message.clear()  # 破棄
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 

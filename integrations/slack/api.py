@@ -61,6 +61,17 @@ class AdapterAPI(APIInterface):
                 ret_list.append(f"```\n{v}\n```\n" if style.codeblock else f"```\n{v}\n```\n")
             return ret_list
 
+        def _post_header():
+            res = self._call_chat_post_message(
+                channel=m.data.channel_id,
+                text=f"{_header_text(header_title)}{header_text.rstrip()}",
+                thread_ts=m.reply_ts,
+            )
+            if res.status_code == 200:  # 見出しがある場合はスレッドにする
+                m.post.ts = res.get("ts", "undetermined")
+            else:
+                m.post.ts = "undetermined"
+
         if not m.in_thread:
             m.post.thread = False
 
@@ -69,16 +80,10 @@ class AdapterAPI(APIInterface):
         header_text = ""
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
-            if not all(v["options"].header_hidden for x in m.post.message for _, v in x.items()):
-                res = self._call_chat_post_message(
-                    channel=m.data.channel_id,
-                    text=f"{_header_text(header_title)}{header_text.rstrip()}",
-                    thread_ts=m.reply_ts,
-                )
-                if res.status_code == 200:  # 見出しがある場合はスレッドにする
-                    m.post.ts = res.get("ts", "undetermined")
-                else:
-                    m.post.ts = "undetermined"
+            if not m.post.message:  # メッセージなし
+                _post_header()
+            elif not all(v["options"].header_hidden for x in m.post.message for v in x.values()):
+                _post_header()
 
         # 本文
         post_msg: list[str] = []

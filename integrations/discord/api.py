@@ -86,7 +86,10 @@ class AdapterAPI(APIInterface):
 
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
-            if not all(v["options"].header_hidden for x in m.post.message for _, v in x.items()):
+            if not m.post.message:
+                header_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
+                m.post.thread = True
+            elif not all(v["options"].header_hidden for x in m.post.message for _, v in x.items()):
                 header_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
                 m.post.thread = True
 
