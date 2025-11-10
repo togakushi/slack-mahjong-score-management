@@ -63,7 +63,7 @@ def arg_parser() -> argparse.Namespace:
         help=argparse.SUPPRESS,
     )
     p.add_argument(
-        "--service",
+        "-s", "--service",
         choices=[
             "slack",
             "discord",
