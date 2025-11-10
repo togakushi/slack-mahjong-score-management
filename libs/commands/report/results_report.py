@@ -188,8 +188,8 @@ def graphing_mean_rank(df: pd.DataFrame, title: str, whole: bool = False) -> Byt
         df (pd.DataFrame): 描写データ
         title (str): グラフタイトル
         whole (bool, optional): 集計種別. Defaults to False.
-            - True: 全体集計
-            - False: 指定範囲集計
+            - *True*: 全体集計
+            - *False*: 指定範囲集計
 
     Returns:
         BytesIO: 画像データ
@@ -240,8 +240,8 @@ def graphing_total_points(df: pd.DataFrame, title: str, whole: bool = False) -> 
         df (pd.DataFrame): 描写データ
         title (str): グラフタイトル
         whole (bool, optional): 集計種別. Defaults to False.
-            - True: 全体集計 / 移動平均付き
-            - False: 指定範囲集計
+            - *True*: 全体集計 / 移動平均付き
+            - *False*: 指定範囲集計
     Returns:
         BytesIO: 画像データ
     """

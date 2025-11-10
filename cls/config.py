@@ -154,13 +154,13 @@ class MahjongSection(BaseSection):
         """順位点"""
         self.ignore_flying: bool = False
         """トビカウント
-        - True: なし
-        - False: あり
+        - *True*: なし
+        - *False*: あり
         """
         self.draw_split: bool = False
         """同点時の順位点
-        - True: 山分けにする
-        - False: 席順で決める
+        - *True*: 山分けにする
+        - *False*: 席順で決める
         """
         self.regulations_type2: list = []
         """メモで役満として扱う単語リスト(カンマ区切り)"""
@@ -388,8 +388,8 @@ class SubCommand(BaseSection):
         """検索範囲未指定時に使用される範囲"""
         self.individual: bool = True
         """個人/チーム集計切替フラグ
-        - True: 個人集計
-        - False: チーム集計
+        - *True*: 個人集計
+        - *False*: チーム集計
         """
         self.all_player: bool = False
         self.daily: bool = True
@@ -408,8 +408,8 @@ class SubCommand(BaseSection):
         """規定打数計算レート"""
         self.unregistered_replace: bool = True
         """メンバー未登録プレイヤー名をゲストに置き換えるかフラグ
-        - True: 置き換える
-        - False: 置き換えない
+        - *True*: 置き換える
+        - *False*: 置き換えない
         """
         self.anonymous: bool = False
         """匿名化フラグ"""
