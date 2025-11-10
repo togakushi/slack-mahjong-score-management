@@ -32,6 +32,7 @@ select
     round((avg(rpoint) - :return_point) * 100, 1) as '平均収支2',
     count(rank <= 2 or null) as '連対',
     round(cast(count(rank <= 2 or null) as real) / count() * 100, 2) as '連対率',
+    round(cast(count(rank >= 3 or null) as real) / count() * 100, 2) as '逆連対率',
     count(rank <= 3 or null) as 'ラス回避',
     round(cast(count(rank <= 3 or null) as real) / count() * 100, 2) as 'ラス回避率',
     -- 座席順位分布

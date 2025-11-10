@@ -97,10 +97,18 @@ def aggregation(m: "MessageParserProtocol"):
     if {"役満和了", "役満"} & set(g.cfg.dropitems.results):
         seat_data.drop(columns=["役満和了"], inplace=True)
 
+    other_data = textwrap.dedent(f"""\
+        平均収支：{float(result_df.loc[0, "平均収支"]):+.1f}点
+        連対率：{float(result_df.loc[0, "連対率"]):.2f}%
+        逆連対率：{float(result_df.loc[0, "逆連対率"]):.2f}%
+        ラス回避率：{float(result_df.loc[0, "ラス回避率"]):.2f}%
+        """).replace("-", "▲")
+
     if g.params.get("statistics"):
         m.set_data("座席データ", seat_data, StyleOptions())
         for k, v in get_record(data).items():  # ベスト/ワーストレコード
             m.set_data(k, v, StyleOptions())
+        m.set_data("その他", textwrap.indent(other_data.strip(), "\t"), StyleOptions())
 
     # レギュレーション
     remarks_df = loader.read_data("REMARKS_INFO")
