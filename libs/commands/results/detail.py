@@ -3,7 +3,7 @@ libs/commands/results/detail.py
 """
 
 import textwrap
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
 import pandas as pd
@@ -98,13 +98,13 @@ def aggregation(m: "MessageParserProtocol"):
         seat_data.drop(columns=["役満和了"], inplace=True)
 
     balance_data = textwrap.dedent(f"""\
-        全体：{float(result_df.loc[0, "平均収支"]):+.1f}点
-        連対時：{float(result_df.loc[0, "連対収支"]):+.1f}点
-        逆連対時：{float(result_df.loc[0, "逆連対収支"]):+.1f}点
-        1着終了時：{float(result_df.loc[0, "1位収支"]):+.1f}点
-        2着終了時：{float(result_df.loc[0, "2位収支"]):+.1f}点
-        3着終了時：{float(result_df.loc[0, "3位収支"]):+.1f}点
-        4着終了時：{float(result_df.loc[0, "4位収支"]):+.1f}点
+        全体：{cast(float, result_df.at[0, "平均収支"]):+.1f}点
+        連対時：{cast(float, result_df.at[0, "連対収支"]):+.1f}点
+        逆連対時：{cast(float, result_df.at[0, "逆連対収支"]):+.1f}点
+        1着終了時：{cast(float, result_df.at[0, "1位収支"]):+.1f}点
+        2着終了時：{cast(float, result_df.at[0, "2位収支"]):+.1f}点
+        3着終了時：{cast(float, result_df.at[0, "3位収支"]):+.1f}点
+        4着終了時：{cast(float, result_df.at[0, "4位収支"]):+.1f}点
         """).replace("-", "▲")
 
     if g.params.get("statistics"):
