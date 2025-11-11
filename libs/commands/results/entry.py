@@ -22,21 +22,13 @@ def main(m: "MessageParserProtocol"):
     m.status.command_type = "results"
     g.params = dictutil.placeholder(g.cfg.results, m)
 
-    # モード切り替え
-    versus_mode = False
-    if g.params.get("versus_matrix"):
-        versus_mode = True
-        if not g.params["competition_list"]:  # 対戦相手リストが空ならOFF
-            versus_mode = False
-
-    # ---
-    if versus_mode and g.params["player_list"]:
+    if g.params.get("versus_matrix", False) and g.params["competition_list"]:
         results.versus.aggregation(m)  # 直接対戦
     elif g.params.get("score_comparisons", False):
-        results.summary.aggregation(m)  # 成績サマリ
+        results.summary.aggregation(m)  # 成績サマリ(差分モード)
     elif g.params["competition_list"]:
         results.detail.comparison(m)  # 成績詳細(比較)
     elif g.params["player_list"]:
         results.detail.aggregation(m)  # 成績詳細(単独)
     else:
-        results.summary.aggregation(m)  # 成績サマリ
+        results.summary.aggregation(m)  # 成績サマリ(通常モード)

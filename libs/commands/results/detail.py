@@ -196,13 +196,35 @@ def comparison(m: "MessageParserProtocol"):
             "rpoint_max", "point_max", "rpoint_min", "point_min",
         ])
 
+    df["平均順位"] = [f"{cast(float, x):.2f}" for x in df["平均順位"]]
+    df["通算ポイント"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["通算ポイント"]]
+    df["平均ポイント"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["平均ポイント"]]
+    df["平均収支"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["平均収支"]]
+    df["連対収支"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["連対収支"]]
+    df["逆連対収支"] = [f"{cast(float, x):.1f}点".replace("-", "▲") for x in df["逆連対収支"]]
+    df["rank1_balance"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["rank1_balance"]]
+    df["rank2_balance"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["rank2_balance"]]
+    df["rank3_balance"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["rank3_balance"]]
+    df["rank4_balance"] = [f"{cast(float, x):+.1f}点".replace("-", "▲") for x in df["rank4_balance"]]
+    df["max_top"] = [f"{cast(float, x):.0f}連続" for x in df["max_top"]]
+    df["max_top2"] = [f"{cast(float, x):.0f}連続" for x in df["max_top2"]]
+    df["max_top3"] = [f"{cast(float, x):.0f}連続" for x in df["max_top3"]]
+    df["max_low"] = [f"{cast(float, x):.0f}連続" for x in df["max_low"]]
+    df["max_low2"] = [f"{cast(float, x):.0f}連続" for x in df["max_low2"]]
+    df["max_low4"] = [f"{cast(float, x):.0f}連続" for x in df["max_low4"]]
+    df["rpoint_max"] = [f"{cast(float, x * 100):.0f}点".replace("-", "▲") for x in df["rpoint_max"]]
+    df["rpoint_min"] = [f"{cast(float, x * 100):.0f}点".replace("-", "▲") for x in df["rpoint_min"]]
+    df["point_max"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["point_max"]]
+    df["point_min"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["point_min"]]
+
     m.set_data(
         title,
-        formatter.df_rename(df, False),
+        formatter.df_rename(df, False).T,
         StyleOptions(
             show_index=True,
             codeblock=True,
             key_title=False,
+            summarize=True,
         ))
     m.post.thread = True
 
