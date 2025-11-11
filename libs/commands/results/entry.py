@@ -26,12 +26,16 @@ def main(m: "MessageParserProtocol"):
     versus_mode = False
     if g.params.get("versus_matrix"):
         versus_mode = True
-        if len(g.params["competition_list"]) == 0:  # 対戦相手リストが空ならOFF
+        if not g.params["competition_list"]:  # 対戦相手リストが空ならOFF
             versus_mode = False
+
     # ---
-    if len(g.params["player_list"]) == 1 and not versus_mode:  # 個人/チーム成績詳細
-        results.detail.aggregation(m)
-    elif versus_mode:  # 直接対戦
-        results.versus.aggregation(m)
-    else:  # 成績サマリ
-        results.summary.aggregation(m)
+    if not g.params.get("score_comparisons", False) and not versus_mode:
+        if g.params["competition_list"]:
+            results.detail.comparison(m)  # 成績詳細(比較)
+        else:
+            results.detail.aggregation(m)  # 成績詳細(単独)
+    elif versus_mode:
+        results.versus.aggregation(m)  # 直接対戦
+    else:
+        results.summary.aggregation(m)  # 成績サマリ

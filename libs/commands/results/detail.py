@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 def aggregation(m: "MessageParserProtocol"):
-    """個人/チーム成績詳細を集計して返す
+    """成績詳細を集計
 
     Args:
         m (MessageParserProtocol): メッセージデータ
@@ -149,6 +149,64 @@ def aggregation(m: "MessageParserProtocol"):
     m.post.headline = {title: message_build(msg_data)}
 
 
+def comparison(m: "MessageParserProtocol"):
+    """成績詳細を比較
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+    """
+
+    # 検索動作を合わせる
+    g.params.update(guest_skip=g.params.get("guest_skip2"))
+
+    if g.params["player_name"] in lookup.internal.get_team():
+        g.params.update(individual=False)
+    elif g.params["player_name"] in g.member_list:
+        g.params.update(individual=True)
+
+    # --- データ収集
+    game_info = GameInfo()
+    # msg_data: dict = {}
+    # mapping_dict: dict = {}
+
+    # タイトル
+    title = "成績詳細比較"
+
+    if game_info:
+        m.post.headline = {title: message.header(game_info, m, "", 1)}
+    else:
+        m.post.headline = {"0": message.random_reply(m, "no_hits")}
+        m.status.result = False
+        return
+
+    result_df = aggregate.game_results()
+    result_df.index = result_df["name"]
+    record_df = aggregate.ranking_record()
+    merged = pd.concat([result_df.drop("name", axis=1), record_df.drop("name", axis=1)], axis=1)
+
+    df = merged.filter(
+        items=[
+            "count", "war_record",
+            "平均順位", "通算ポイント", "平均ポイント",
+            "top2_rate-count", "top3_rate-count",
+            "rank1_rate-count", "rank2_rate-count", "rank3_rate-count", "rank4_rate-count",
+            "flying_rate-count", "yakuman_rate-count",
+            "平均収支", "連対収支", "逆連対収支", "rank1_balance", "rank2_balance", "rank3_balance", "rank4_balance",
+            "max_top", "max_top2", "max_top3", "max_low", "max_low2", "max_low4",
+            "rpoint_max", "point_max", "rpoint_min", "point_min",
+        ])
+
+    m.set_data(
+        title,
+        formatter.df_rename(df, False),
+        StyleOptions(
+            show_index=True,
+            codeblock=True,
+            key_title=False,
+        ))
+    m.post.thread = True
+
+
 def get_headline(data: dict, game_info: GameInfo, player_name: str) -> dict:
     """ヘッダメッセージ生成
 
@@ -171,12 +229,12 @@ def get_headline(data: dict, game_info: GameInfo, player_name: str) -> dict:
         ret["チーム名"] = f"{g.params["player_name"]} {compose.badge.degree(data["ゲーム数"])}"
         ret["登録メンバー"] = "、".join(lookup.internal.get_teammates(g.params["player_name"]))
 
-    badge_status = compose.badge.status(data["ゲーム数"], data["win"])
+    badge_status = compose.badge.status(data["ゲーム数"], data["勝"])
     ret["検索範囲"] = compose.text_item.search_range(time_pattern="time")
     ret["集計範囲"] = str(compose.text_item.aggregation_range(game_info))
     ret["特記事項"] = "、".join(compose.text_item.remarks())
     ret["検索ワード"] = compose.text_item.search_word()
-    ret["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["win"]} 勝 {data["lose"]} 敗 {data["draw"]} 分) {badge_status}"
+    ret["対戦数"] = f"{data["ゲーム数"]} 戦 ({data["勝"]} 勝 {data["負"]} 敗 {data["分"]} 分) {badge_status}"
     ret["_blank1"] = True
 
     return ret

@@ -14,6 +14,7 @@ from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
     from pathlib import Path
+    from libs.types import StyleOptions
 
 
 def save_output(
@@ -135,6 +136,64 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
         )
         table_data.update({f"{idx}": output})
 
+    return table_data
+
+
+def df_to_text_table2(df: pd.DataFrame, style: "StyleOptions", step: int = 40) -> dict:
+    """DataFrameからテキストテーブルの生成(縦横変換)
+
+    Args:
+        df (pd.DataFrame): 対象データ
+        style (StyleOptions): 表示フラグ
+        step (int, optional): 分割行. Defaults to 40.
+
+    Returns:
+        dict: 生成テーブル
+    """
+
+    df = df.T
+    # 表データ
+    header: list = df.columns.to_list()
+    body: list = []
+
+    if style.show_index:
+        header.insert(0, "")
+
+    data: list = []
+    for idx, item in df.iterrows():
+        data.clear()
+        data.append(idx)
+        match idx:
+            case "通算ポイント" | "平均ポイント" | "最大獲得ポイント" | "最小獲得ポイント":
+                data.extend([f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in item.to_list()])
+            case "平均収支" | "連対収支" | "逆連対収支" | "1位収支" | "2位収支" | "3位収支" | "4位収支":
+                data.extend([f"{cast(float, x):+.1f}点".replace("-", "▲") for x in item.to_list()])
+            case "最大素点" | "最小素点":
+                data.extend([f"{cast(float, x * 100):+.0f}点".replace("-", "▲") for x in item.to_list()])
+            case "連続トップ" | "連続連対" | "連続ラス回避" | "連続トップなし" | "連続逆連対" | "連続ラス":
+                data.extend([f"{x}連続" for x in item.to_list()])
+            case _:
+                data.extend(item.to_list())
+        body.append(data.copy())
+
+    # 表生成/分割
+    my_style = PresetStyle.plain
+    my_style.heading_row_sep = "-"
+    my_style.heading_row_right_tee = ""
+    my_style.heading_row_left_tee = ""
+    my_style.heading_col_sep = "： "
+
+    table_data: dict = {}
+    output = table2ascii(
+        header=header,
+        body=body,
+        style=my_style,
+        cell_padding=0,
+        alignments=[Alignment.RIGHT] * len(header),
+        first_col_heading=style.show_index,
+    )
+
+    table_data.update({"1": output})
     return table_data
 
 
