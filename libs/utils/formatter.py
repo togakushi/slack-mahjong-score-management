@@ -35,7 +35,7 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
         match x:
             case "ゲーム数" | "game_count":
                 fmt.append(".0f")
-            case "win" | "lose" | "draw" | "top2" | "top3" | "gs_count":
+            case "win" | "lose" | "draw" | "top2" | "top3" | "yakuman_count":
                 fmt.append(".0f")
             case "通算" | "通算ポイント" | "point_sum":
                 fmt.append("+.1f")
@@ -45,15 +45,15 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
                 fmt.append("+.1f")
             case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位" | "rank1" | "rank2" | "rank3" | "rank4":
                 fmt.append(".0f")
-            case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)" | "1位率" | "2位率" | "3位率" | "4位率" | "1位(%)" | "2位(%)" | "3位(%)" | "4位(%)":
+            case "rank1_rate" | "rank2_rate" | "rank3_rate" | "rank4_rate" | "1位率" | "2位率" | "3位率" | "4位率" | "1位(%)" | "2位(%)" | "3位(%)" | "4位(%)":
                 fmt.append(".2%")
             case "top2_rate" | "連対率" | "top3_rate" | "ラス回避率":
                 fmt.append(".2%")
-            case"yakuman(%)" | "gs_rate" | "役満和了率":
+            case "yakuman_rate" | "yakuman_rate" | "役満和了率":
                 fmt.append(".2%")
             case "トビ" | "flying":
                 fmt.append(".0f")
-            case "トビ率" | "flying(%)" | "yakuman(%)":
+            case "flying_rate" | "トビ率":
                 fmt.append(".2%")
             case "平均順位" | "平順" | "rank_avg":
                 fmt.append(".2f")
@@ -236,10 +236,22 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "rpoint": "素点",
         "rpoint_avg": "平均素点",
         "balance_avg": "平均収支",
-        "top2_rate": "連対率", "top2": "連対数",
-        "top3_rate": "ラス回避率", "top3": "ラス回避数",
         "point_dev": "得点偏差", "rank_dev": "順位偏差",
         "grade": "段位",
+        #
+        "rank1_rate-count": "1位率(回数)", "rank1_rate": "1位率",
+        "rank2_rate-count": "2位率(回数)", "rank2_rate": "2位率",
+        "rank3_rate-count": "3位率(回数)", "rank3_rate": "3位率",
+        "rank4_rate-count": "4位率(回数)", "rank4_rate": "4位率",
+        "top2_rate-count": "連対率(回数)", "top2_rate": "連対率", "top2": "連対数",
+        "top3_rate-count": "ラス回避率(回数)", "top3_rate": "ラス回避率", "top3": "ラス回避数",
+        "flying_rate-count": "トビ率(回数)", "flying_rate": "トビ率", "flying_count": "トビ数",
+        "yakuman_rate-count": "役満和了率(回数)",
+        # 収支
+        "rank1_balance": "1位収支",
+        "rank2_balance": "2位収支",
+        "rank3_balance": "3位収支",
+        "rank4_balance": "4位収支",
         # レコード
         "max_top": "連続トップ", "max_top2": "連続連対", "max_top3": "連続ラス回避",
         "max_low": "連続トップなし", "max_low2": "連続逆連対", "max_low4": "連続ラス",
@@ -291,36 +303,16 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
                 rename_dict[x] = "順位分布"
             case "rank_avg":
                 rename_dict[x] = "平順" if short else "平均順位"
-            case "1st" | "rank1" | "1st_mix":
+            case "1st" | "rank1" | "1st_count" | "1st_mix":
                 rename_dict[x] = "1位数"
-            case "2nd" | "rank2" | "2nd_mix":
+            case "2nd" | "rank2" | "2nd_count" | "2nd_mix":
                 rename_dict[x] = "2位数"
-            case "3rd" | "rank3" | "3rd_mix":
+            case "3rd" | "rank3" | "3rd_count" | "3rd_mix":
                 rename_dict[x] = "3位数"
-            case "4th" | "rank4" | "4th_mix":
-                rename_dict[x] = "4位数"
-            case "1st(%)" | "rank1_rate":
-                rename_dict[x] = "1位率"
-            case "2nd(%)" | "rank2_rate":
-                rename_dict[x] = "2位率"
-            case "3rd(%)" | "rank3_rate":
-                rename_dict[x] = "3位率"
-            case "4th(%)" | "rank4_rate":
-                rename_dict[x] = "4位率"
-            case "1st_count":
-                rename_dict[x] = "1位数"
-            case "2nd_count":
-                rename_dict[x] = "2位数"
-            case "3rd_count":
-                rename_dict[x] = "3位数"
-            case "4th_count":
+            case "4th" | "rank4" | "4th_count" | "4th_mix":
                 rename_dict[x] = "4位数"
             case "flying" | "flying_mix":
                 rename_dict[x] = "飛" if short else "トビ"
-            case "flying_count":
-                rename_dict[x] = "トビ数"
-            case "flying_rate" | "flying(%)":
-                rename_dict[x] = "トビ率"
             case "pt_diff":
                 rename_dict[x] = "差分"
             case "diff_from_above":
@@ -329,10 +321,16 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
                 rename_dict[x] = "トップ差"
             case "yakuman_mix" | "grandslam":
                 rename_dict[x] = "役満和了"
-            case "yakuman_count" | "gs_count":
+            case "yakuman_count":
                 rename_dict[x] = "役満和了数"
-            case "yakuman(%)" | "gs_rate":
+            case "yakuman_rate":
                 rename_dict[x] = "役満和了率"
+            case "win":
+                rename_dict[x] = "勝" if short else "勝ち"
+            case "lose":
+                rename_dict[x] = "負" if short else "負け"
+            case "draw":
+                rename_dict[x] = "分" if short else "引き分け"
             case "matter":
                 match kind:
                     case 0:

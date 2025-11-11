@@ -7,7 +7,7 @@ with target_data as (
         point,
         rpoint,
         rank,
-        count as gs_count
+        count as yakuman_count
     from
         individual_results as results
     join game_info on
@@ -38,41 +38,41 @@ select
     replace(printf("%+.1f pt", round(avg(point), 1)), "-", "▲") as "avg_mix",
     round(avg(point), 1) as "point_avg",
     count(rank = 1 or null) as "1st_count",
-    cast(count(rank = 1 or null) as real) / count() as "1st(%)",
+    cast(count(rank = 1 or null) as real) / count() as "rank1_rate",
     printf("%3d (%6.2f%%)",
         count(rank = 1 or null),
         round(cast(count(rank = 1 or null) as real) / count() * 100, 2)
     ) as "1st_mix",
     count(rank = 2 or null) as "2nd_count",
-    cast(count(rank = 2 or null) as real) / count() as "2nd(%)",
+    cast(count(rank = 2 or null) as real) / count() as "rank2_rate",
     printf("%3d (%6.2f%%)",
         count(rank = 2 or null),
         round(cast(count(rank = 2 or null) as real) / count() * 100, 2)
     ) as "2nd_mix",
     count(rank = 3 or null) as "3rd_count",
-    cast(count(rank = 3 or null) as real) / count() as "3rd(%)",
+    cast(count(rank = 3 or null) as real) / count() as "rank3_rate",
     printf("%3d (%6.2f%%)",
         count(rank = 3 or null),
         round(cast(count(rank = 3 or null) as real) / count() * 100, 2)
     ) as "3rd_mix",
     count(rank = 4 or null) as "4th_count",
-    cast(count(rank = 4 or null) as real) / count() as "4th(%)",
+    cast(count(rank = 4 or null) as real) / count() as "rank4_rate",
     printf("%3d (%6.2f%%)",
         count(rank = 4 or null),
         round(cast(count(rank = 4 or null) AS real) / count() * 100, 2)
     ) as "4th_mix",
     printf("%.2f", avg(rank)) as "rank_avg",
     count(rpoint < 0 or null) as "flying_count",
-    cast(count(rpoint < 0 or null) as real) / count() as "flying(%)",
+    cast(count(rpoint < 0 or null) as real) / count() as 'flying_rate',
     printf("%3d (%6.2f%%)",
         count(rpoint < 0 or null),
         round(cast(count(rpoint < 0 or null) as real) / count() * 100, 2)
     ) as "flying_mix",
-    ifnull(sum(gs_count), 0) as "yakuman_count",
-    cast(ifnull(sum(gs_count), 0) as real) / count() as "yakuman(%)",
+    ifnull(sum(yakuman_count), 0) as "yakuman_count",
+    cast(ifnull(sum(yakuman_count), 0) as real) / count() as 'yakuman_rate',
     printf("%3d (%6.2f%%)",
-        ifnull(sum(gs_count), 0),
-        round(cast(ifnull(sum(gs_count), 0) as real) / count() * 100, 2)
+        ifnull(sum(yakuman_count), 0),
+        round(cast(ifnull(sum(yakuman_count), 0) as real) / count() * 100, 2)
     ) as "yakuman_mix"
 from
     target_data

@@ -54,13 +54,13 @@ def main(m: "MessageParserProtocol"):
 
     # 非表示項目
     if g.cfg.mahjong.ignore_flying:
-        df = df.drop(columns=["flying_mix", "flying_count", "flying(%)"])
+        df = df.drop(columns=["flying_mix", "flying_count", "flying_rate"])
     if "トビ" in g.cfg.dropitems.report:
-        df = df.drop(columns=["flying_mix", "flying_count", "flying(%)"])
+        df = df.drop(columns=["flying_mix", "flying_count", "flying_rate"])
     if "役満" in g.cfg.dropitems.report:
-        df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman(%)"])
+        df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_rate"])
     if "役満和了" in g.cfg.dropitems.report:
-        df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman(%)"])
+        df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_rate"])
 
     file_path: Union["Path", None]
     match str(g.params.get("format", "default")).lower():
@@ -186,13 +186,13 @@ def text_generation(df: "pd.DataFrame") -> "Path":
         items=[
             "player", "team",
             "game", "point_sum", "point_avg",
-            "1st_count", "1st(%)",
-            "2nd_count", "2nd(%)",
-            "3rd_count", "3rd(%)",
-            "4th_count", "4th(%)",
+            "1st_count", "rank1_rate",
+            "2nd_count", "rank2_rate",
+            "3rd_count", "rank3_rate",
+            "4th_count", "rank4_rate",
             "rank_avg",
-            "flying_count", "flying(%)",
-            "yakuman_count", "yakuman(%)",
+            "flying_count", "flying_rate",
+            "yakuman_count", "yakuman_rate",
         ]
     )
     fmt = formatter.floatfmt_adjust(df, index=True)
@@ -218,13 +218,13 @@ def csv_generation(df: "pd.DataFrame") -> "Path":
         items=[
             "player", "team",
             "game", "point_sum", "point_avg",
-            "1st_count", "1st(%)",
-            "2nd_count", "2nd(%)",
-            "3rd_count", "3rd(%)",
-            "4th_count", "4th(%)",
+            "1st_count", "rank1_rate",
+            "2nd_count", "rank2_rate",
+            "3rd_count", "rank3_rate",
+            "4th_count", "rank4_rate",
             "rank_avg",
-            "flying_count", "flying(%)",
-            "yakuman_count", "yakuman(%)",
+            "flying_count", "flying_rate",
+            "yakuman_count", "yakuman_rate",
         ]
     )
 
@@ -232,7 +232,7 @@ def csv_generation(df: "pd.DataFrame") -> "Path":
         match x:
             case "point_sum" | "point_avg":
                 df[x] = df[x].round(1)
-            case "1st(%)" | "2nd(%)" | "3rd(%)" | "4th(%)" | "flying(%)" | "yakuman(%)":
+            case "rank1_rate" | "rank2_rate" | "rank3_rate" | "rank4_rate" | "flying_rate" | "yakuman_rate":
                 df[x] = df[x].round(2)
             case "rank_avg":
                 df[x] = df[x].astype(float).round(2)
@@ -256,13 +256,13 @@ def df_generation(df: "pd.DataFrame") -> "pd.DataFrame":
         items=[
             "player", "team",
             "game", "point_sum", "point_avg",
-            "1st_count", "1st(%)",
-            "2nd_count", "2nd(%)",
-            "3rd_count", "3rd(%)",
-            "4th_count", "4th(%)",
+            "1st_count", "rank1_rate",
+            "2nd_count", "rank2_rate",
+            "3rd_count", "rank3_rate",
+            "4th_count", "rank4_rate",
             "rank_avg",
-            "flying_count", "flying(%)",
-            "yakuman_count", "yakuman(%)",
+            "flying_count", "flying_rate",
+            "yakuman_count", "yakuman_rate",
         ]
     )
 

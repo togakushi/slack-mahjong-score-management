@@ -7,7 +7,7 @@ with target_data as (
         point,
         rpoint,
         rank,
-        count as gs_count
+        count as yakuman_count
     from
         individual_results as results
     join game_info on
@@ -64,8 +64,8 @@ select
     count(rank >= 3 or null) as low2,
     round(cast(count(rank >= 3 or null) as real) / count(), 4) as low2_rate,
 
-    ifnull(sum(gs_count), 0) as gs_count,
-    round(cast(ifnull(sum(gs_count), 0) as real) / count(), 4) as gs_rate,
+    ifnull(sum(yakuman_count), 0) as yakuman_count,
+    round(cast(ifnull(sum(yakuman_count), 0) as real) / count(), 4) as yakuman_rate,
 
     sum(point) as point_sum,
     round(avg(point), 1) as point_avg,

@@ -117,10 +117,10 @@ def aggregation(m: "MessageParserProtocol"):
     data["平均順位"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 役満和了率
-    work_df = df.query("gs_count > 0")
-    filter_item = ["rank", "name", "gs_rate", "gs_count", "game_count"]
-    work_df = work_df.filter(items=filter_item).sort_values(by=["gs_rate", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["gs_rate"].rank(ascending=False, method="dense").astype("int")
+    work_df = df.query("yakuman_count > 0")
+    filter_item = ["rank", "name", "yakuman_rate", "yakuman_count", "game_count"]
+    work_df = work_df.filter(items=filter_item).sort_values(by=["yakuman_rate", "game_count"], ascending=[False, False])
+    work_df["rank"] = work_df["yakuman_rate"].rank(ascending=False, method="dense").astype("int")
     data["役満和了率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 最大素点
