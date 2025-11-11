@@ -30,12 +30,13 @@ def main(m: "MessageParserProtocol"):
             versus_mode = False
 
     # ---
-    if not g.params.get("score_comparisons", False) and not versus_mode:
-        if g.params["competition_list"]:
-            results.detail.comparison(m)  # 成績詳細(比較)
-        else:
-            results.detail.aggregation(m)  # 成績詳細(単独)
-    elif versus_mode:
+    if versus_mode and g.params["player_list"]:
         results.versus.aggregation(m)  # 直接対戦
+    elif g.params.get("score_comparisons", False):
+        results.summary.aggregation(m)  # 成績サマリ
+    elif g.params["competition_list"]:
+        results.detail.comparison(m)  # 成績詳細(比較)
+    elif g.params["player_list"]:
+        results.detail.aggregation(m)  # 成績詳細(単独)
     else:
         results.summary.aggregation(m)  # 成績サマリ
