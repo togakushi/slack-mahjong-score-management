@@ -25,7 +25,7 @@ def main(m: "MessageParserProtocol"):
     if g.params.get("versus_matrix", False) and g.params["competition_list"]:
         results.versus.aggregation(m)  # 直接対戦
     elif g.params.get("score_comparisons", False):
-        results.summary.aggregation(m)  # 成績サマリ(差分モード)
+        results.summary.difference(m)  # 成績サマリ(差分モード)
     elif g.params["competition_list"]:
         results.detail.comparison(m)  # 成績詳細(比較)
     elif g.params["player_list"]:
