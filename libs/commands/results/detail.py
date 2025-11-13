@@ -13,7 +13,7 @@ from libs.data import aggregate, loader, lookup
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.types import StyleOptions
-from libs.utils import formatter, textutil
+from libs.utils import converter, formatter, textutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -229,9 +229,18 @@ def comparison(m: "MessageParserProtocol"):
     if {"役満", "役満和了", "役満和了率"} in g.cfg.dropitems.results:
         df = df.drop(columns=["役満和了率(回)"])
 
+    # 出力形式
+    match cast(str, g.params.get("format", "default")).lower():
+        case "csv":
+            data = converter.save_output(df.T, "csv", f"{title}.csv", True)
+        case "text" | "txt":
+            data = converter.save_output(df.T, "txt", f"{title}.txt", True)
+        case _:
+            data = df.T
+
     m.set_data(
         title,
-        df.T,
+        data,
         StyleOptions(
             show_index=True,
             codeblock=True,

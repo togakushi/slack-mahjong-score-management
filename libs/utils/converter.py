@@ -21,6 +21,7 @@ def save_output(
     df: pd.DataFrame,
     kind: str,
     filename: str,
+    index: bool = False,
     headline: Optional[str] = None,
     suffix: Optional[str] = None,
 ) -> Union["Path", None]:
@@ -30,6 +31,7 @@ def save_output(
         df (pd.DataFrame): 描写対象データ
         kind (str): フォーマット
         filename (str): 保存ファイル名
+        index (bool): インデックスを含める. Defaults to False.
         headline (Optional[str], optional): 集計情報（ヘッダコメント）. Defaults to None.
         suffix (Optional[str], optional): 保存ファイル名に追加する文字列. Defaults to None.
 
@@ -40,13 +42,13 @@ def save_output(
 
     match kind.lower():
         case "csv":
-            data = df.to_csv(index=False)
+            data = df.to_csv(index=index)
         case "text" | "txt":
             data = df.to_markdown(
-                index=False,
+                index=index,
                 tablefmt="outline",
-                floatfmt=formatter.floatfmt_adjust(df),
-                colalign=formatter.column_alignment(df, False),
+                floatfmt=formatter.floatfmt_adjust(df, index=index),
+                colalign=formatter.column_alignment(df, index=index),
                 # headersalign=column_alignment(df, True),  # ToDo: python-tabulate >= 0.10.0
             )
         case _:

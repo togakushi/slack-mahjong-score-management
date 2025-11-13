@@ -95,31 +95,31 @@ def aggregation(m: "MessageParserProtocol"):
     m.post.message.clear()  # テキストデータは破棄
     if not df_summary.empty:
         file_path = converter.save_output(
-            df_summary.filter(items=filter_list).fillna("*****"),
-            extension,
-            f"summary.{extension}",
-            (headline_title + header_text),
-            "summary",
+            df=df_summary.filter(items=filter_list).fillna("*****"),
+            kind=extension,
+            filename=f"summary.{extension}",
+            headline=(headline_title + header_text),
+            suffix="summary",
         )
         if file_path:
             m.set_data("集計結果", file_path, StyleOptions())
     if not df_yakuman.empty:
         file_path = converter.save_output(
-            formatter.df_rename(df_yakuman, kind=0),
-            extension,
-            f"yakuman.{extension}",
-            "【役満和了】\n" + header_text,
-            "yakuman",
+            df=formatter.df_rename(df_yakuman, kind=0),
+            kind=extension,
+            filename=f"yakuman.{extension}",
+            headline="【役満和了】\n" + header_text,
+            suffix="yakuman",
         )
         if file_path:
             m.set_data("役満和了", file_path, StyleOptions())
     if not df_regulations.empty:
         file_path = converter.save_output(
-            formatter.df_rename(df_regulations, short=False, kind=1),
-            extension,
-            f"regulations.{extension}",
-            "【卓外ポイント】\n" + header_text,
-            "regulations",
+            df=formatter.df_rename(df_regulations, short=False, kind=1),
+            kind=extension,
+            filename=f"regulations.{extension}",
+            headline="【卓外ポイント】\n" + header_text,
+            suffix="regulations",
         )
         if file_path:
             m.set_data("卓外ポイント", file_path, StyleOptions())
