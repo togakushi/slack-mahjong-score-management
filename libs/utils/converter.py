@@ -139,30 +139,17 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
     return table_data
 
 
-def df_to_text_table2(df: pd.DataFrame, style: "StyleOptions") -> dict:
+def df_to_text_table2(df: pd.DataFrame, style: "StyleOptions", limit: int = 2000) -> dict:
     """DataFrameからテキストテーブルの生成(縦横変換)
 
     Args:
         df (pd.DataFrame): 対象データ
         style (StyleOptions): 表示フラグ
+        limit (int, optional): 分割文字数. Defaults to 2000.
 
     Returns:
         dict: 生成テーブル
     """
-
-    # 表データ
-    header: list = df.columns.to_list()
-    body: list = []
-
-    if style.show_index:
-        header.insert(0, "")
-
-    data: list = []
-    for idx, item in df.iterrows():
-        data.clear()
-        data.append(idx)
-        data.extend(item.to_list())
-        body.append(data.copy())
 
     # 表生成/分割
     my_style = PresetStyle.plain
@@ -171,16 +158,48 @@ def df_to_text_table2(df: pd.DataFrame, style: "StyleOptions") -> dict:
     my_style.heading_row_left_tee = ""
     my_style.heading_col_sep = "： "
 
-    output = table2ascii(
-        header=header,
-        body=body,
-        style=my_style,
-        cell_padding=0,
-        alignments=[Alignment.RIGHT] * len(header),
-        first_col_heading=style.show_index,
-    )
+    table_data: dict = {}
+    start_block: int = 0
 
-    return {"0": output}
+    safe_output: str = ""
+
+    for cur_block in range(len(df.columns)):
+        chk_df = df.iloc[:, start_block:cur_block]
+
+        # ヘッダ
+        header: list = chk_df.columns.to_list()
+        if style.show_index:
+            header.insert(0, "")
+
+        # ボディ
+        body: list = []
+        data: list = []
+        for idx, item in chk_df.iterrows():
+            data.clear()
+            data.append(idx)
+            data.extend(item.to_list())
+            body.append(data.copy())
+
+        output = table2ascii(
+            header=header,
+            body=body,
+            style=my_style,
+            cell_padding=0,
+            alignments=[Alignment.RIGHT] * len(header),
+            first_col_heading=style.show_index,
+        )
+
+        # 文字数チェック
+        if len(output) < limit:
+            safe_output = output
+        else:
+            table_data.update({f"{cur_block}": safe_output})
+            start_block = cur_block - 1
+    # 最終ブロック
+    if cur_block != len(df.columns):
+        table_data.update({f"{cur_block}": output})
+
+    return table_data
 
 
 def df_to_results_details(df: pd.DataFrame) -> dict:
