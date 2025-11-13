@@ -164,14 +164,11 @@ def comparison(m: "MessageParserProtocol"):
     elif g.params["player_name"] in g.member_list:
         g.params.update(individual=True)
 
-    # --- データ収集
+    # データ収集
     game_info = GameInfo()
-    # msg_data: dict = {}
-    # mapping_dict: dict = {}
 
     # タイトル
     title = "成績詳細比較"
-
     if game_info:
         m.post.headline = {title: message.header(game_info, m, "", 1)}
     else:
@@ -202,6 +199,7 @@ def comparison(m: "MessageParserProtocol"):
             "rpoint_max", "point_max", "rpoint_min", "point_min",
         ])
 
+    # 有効桁数調整/単位追加
     df["平均順位"] = [f"{cast(float, x):.2f}" for x in df["平均順位"]]
     df["通算ポイント"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["通算ポイント"]]
     df["平均ポイント"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["平均ポイント"]]
@@ -222,10 +220,18 @@ def comparison(m: "MessageParserProtocol"):
     df["rpoint_min"] = [f"{cast(float, x * 100):.0f}点".replace("-", "▲") for x in df["rpoint_min"]]
     df["point_max"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["point_max"]]
     df["point_min"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["point_min"]]
+    df = formatter.df_rename(df, False)
+
+    # 非表示項目
+    df = df.drop(columns=[x for x in g.cfg.dropitems.results if x in df.columns.to_list()])
+    if g.cfg.mahjong.ignore_flying or {"トビ", "トビ率"} in g.cfg.dropitems.results:
+        df = df.drop(columns=["トビ率(回)"])
+    if {"役満", "役満和了", "役満和了率"} in g.cfg.dropitems.results:
+        df = df.drop(columns=["役満和了率(回)"])
 
     m.set_data(
         title,
-        formatter.df_rename(df, False).T,
+        df.T,
         StyleOptions(
             show_index=True,
             codeblock=True,
