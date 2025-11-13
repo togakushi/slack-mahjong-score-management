@@ -110,6 +110,15 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
         for k, v in cast(dict, ret_dict["competition_list"]).items():
             ret_dict[k] = v
 
+    # 出力タイプ
+    if (format_type := ret_dict.get("format", "default")):
+        if format_type == "text":
+            ret_dict.update({"format": "txt"})
+        else:
+            ret_dict.update({"format": format_type})
+    else:
+        ret_dict.update({"format": "default"})
+
     # 規定打数設定
     if ret_dict.get("mixed") and not ret_dict.get("stipulated"):  # 横断集計&規定数制限なし
         if target_player:

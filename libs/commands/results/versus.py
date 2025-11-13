@@ -3,7 +3,7 @@ libs/commands/results/versus.py
 """
 
 import textwrap
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 
@@ -103,7 +103,7 @@ def aggregation(m: "MessageParserProtocol"):
         short=False
     )
 
-    namelist = list(g.params["competition_list"].values())  # pylint: disable=unused-variable  # noqa: F841
+    namelist = list(cast(dict, g.params["competition_list"]).values())  # pylint: disable=unused-variable  # noqa: F841
     df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: str(x).strip())
     df_vs["my_rpoint_avg"] = (df_vs["my_rpoint_avg"] * 100).astype("int")
     df_vs["vs_rpoint_avg"] = (df_vs["vs_rpoint_avg"] * 100).astype("int")
@@ -118,11 +118,11 @@ def aggregation(m: "MessageParserProtocol"):
 
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            m.set_data("対戦結果", converter.save_output(df_data, "csv", "result.csv"), StyleOptions())
-            m.set_data("成績", converter.save_output(df_vs2, "csv", "versus.csv"), StyleOptions())
+            m.set_data("対戦結果", converter.save_output(df_data, StyleOptions(format_type="csv", base_name="result")))
+            m.set_data("成績", converter.save_output(df_vs2, StyleOptions(format_type="csv", base_name="versus")))
         case "text" | "txt":
-            m.set_data("対戦結果", converter.save_output(df_data, "txt", "result.txt"), StyleOptions())
-            m.set_data("成績", converter.save_output(df_vs2, "txt", "versus.txt"), StyleOptions())
+            m.set_data("対戦結果", converter.save_output(df_data, StyleOptions(format_type="txt", base_name="result")))
+            m.set_data("成績", converter.save_output(df_vs2, StyleOptions(format_type="txt", base_name="versus")))
         case _:
             pass
 

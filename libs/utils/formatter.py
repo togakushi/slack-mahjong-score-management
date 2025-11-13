@@ -229,6 +229,8 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "rate": "レート",
         "participation_rate": "ゲーム参加率",
         "total_count": "集計ゲーム数",
+        "matter_count": "回数",
+        "ex_total": "ポイント合計",
         "deposit": "供託",
         "comment": "コメント",
         "rule_version": "ルール識別子",

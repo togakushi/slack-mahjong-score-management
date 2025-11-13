@@ -115,20 +115,24 @@ def aggregation(m: "MessageParserProtocol"):
 
     # レギュレーション
     remarks_df = loader.read_data("REMARKS_INFO")
-    count_df = remarks_df.groupby("matter").agg(count=("matter", "count"), total=("ex_point", "sum"), type=("type", "max"))
+    count_df = remarks_df.groupby("matter").agg(
+        matter_count=("matter", "count"),
+        ex_total=("ex_point", "sum"),
+        type=("type", "max")
+    )
     count_df["matter"] = count_df.index
 
-    work_df = count_df.query("type == 0").filter(items=["matter", "count"])
-    if not work_df.empty and "役満" not in g.cfg.dropitems.results:
-        m.set_data("役満和了", work_df.rename(columns={"matter": "和了役", "count": "回数"}), StyleOptions())
+    work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
+    if not set(g.cfg.dropitems.results) & {"役満", "役満和了", "役満和了率"}:
+        m.set_data("役満和了", formatter.df_rename(work_df, kind=0), StyleOptions())
 
-    work_df = count_df.query("type == 1").filter(items=["matter", "count", "total"])
-    if not work_df.empty:
-        m.set_data("卓外ポイント", work_df.rename(columns={"matter": "内容", "count": "回数", "total": "ポイント合計"}), StyleOptions())
+    work_df = count_df.query("type == 1").filter(items=["matter", "matter_count", "ex_total"])
+    if not set(g.cfg.dropitems.results) & {"卓外", "卓外ポイント"}:
+        m.set_data("卓外ポイント", formatter.df_rename(work_df, kind=1), StyleOptions())
 
-    work_df = count_df.query("type == 2").filter(items=["matter", "count"])
-    if not work_df.empty:
-        m.set_data("その他", work_df.rename(columns={"matter": "内容", "count": "回数"}), StyleOptions())
+    work_df = count_df.query("type == 2").filter(items=["matter", "matter_count"])
+    if not set(g.cfg.dropitems.results) & {"その他", "メモ"}:
+        m.set_data("その他", formatter.df_rename(work_df, kind=2), StyleOptions())
 
     # 戦績
     if g.params.get("game_results"):
@@ -224,29 +228,30 @@ def comparison(m: "MessageParserProtocol"):
 
     # 非表示項目
     df = df.drop(columns=[x for x in g.cfg.dropitems.results if x in df.columns.to_list()])
-    if g.cfg.mahjong.ignore_flying or {"トビ", "トビ率"} in g.cfg.dropitems.results:
+    if g.cfg.mahjong.ignore_flying or (set(g.cfg.dropitems.results) & {"トビ", "トビ率"}):
         df = df.drop(columns=["トビ率(回)"])
     if {"役満", "役満和了", "役満和了率"} in g.cfg.dropitems.results:
         df = df.drop(columns=["役満和了率(回)"])
 
-    # 出力形式
+    # 出力
+    options: StyleOptions = StyleOptions(
+        base_name=title,
+        show_index=True,
+        codeblock=True,
+    )
+
     match cast(str, g.params.get("format", "default")).lower():
         case "csv":
-            data = converter.save_output(df.T, "csv", f"{title}.csv", True)
+            options.format_type = "csv"
+            data = converter.save_output(df.T, options, m.post.headline)
         case "text" | "txt":
-            data = converter.save_output(df.T, "txt", f"{title}.txt", True)
+            options.format_type = "txt"
+            data = converter.save_output(df.T, options, m.post.headline)
         case _:
+            options.key_title = False
             data = df.T
 
-    m.set_data(
-        title,
-        data,
-        StyleOptions(
-            show_index=True,
-            codeblock=True,
-            key_title=False,
-            summarize=True,
-        ))
+    m.set_data(title, data, options)
     m.post.thread = True
 
 

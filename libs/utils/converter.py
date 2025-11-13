@@ -19,53 +19,52 @@ if TYPE_CHECKING:
 
 def save_output(
     df: pd.DataFrame,
-    kind: str,
-    filename: str,
-    index: bool = False,
-    headline: Optional[str] = None,
+    options: "StyleOptions",
+    headline: Optional[Union[str, dict]] = None,
     suffix: Optional[str] = None,
 ) -> Union["Path", None]:
     """指定されたフォーマットでdfを保存する
 
     Args:
-        df (pd.DataFrame): 描写対象データ
-        kind (str): フォーマット
-        filename (str): 保存ファイル名
-        index (bool): インデックスを含める. Defaults to False.
-        headline (Optional[str], optional): 集計情報（ヘッダコメント）. Defaults to None.
+        df (pd.DataFrame): 保存対象データ
+        options (StyleOptions): 詳細オプション
+        headline (Optional[Union[str, dict], optional): 集計情報（ヘッダコメント）. Defaults to None.
         suffix (Optional[str], optional): 保存ファイル名に追加する文字列. Defaults to None.
 
     Returns:
         Path: 保存したファイルパス
-        None: 未知のフォーマットが指定された場合
+        None: ファイル出力なし
     """
 
-    match kind.lower():
+    match options.format_type:
+        case "default":
+            return None
         case "csv":
-            data = df.to_csv(index=index)
-        case "text" | "txt":
+            data = df.to_csv(index=options.show_index)
+        case "txt":
             data = df.to_markdown(
-                index=index,
+                index=options.show_index,
                 tablefmt="outline",
-                floatfmt=formatter.floatfmt_adjust(df, index=index),
-                colalign=formatter.column_alignment(df, index=index),
+                floatfmt=formatter.floatfmt_adjust(df, index=options.show_index),
+                colalign=formatter.column_alignment(df, index=options.show_index),
                 # headersalign=column_alignment(df, True),  # ToDo: python-tabulate >= 0.10.0
             )
-        case _:
-            return None
 
     # 保存
-    save_file = textutil.save_file_path(filename, True)
+    save_file = textutil.save_file_path(options.filename, True)
     if suffix and g.params.get("filename"):
         save_file = save_file.with_name(f"{save_file.stem}_{suffix}{save_file.suffix}")
 
     with open(save_file, "w", encoding="utf-8") as writefile:
         if headline is not None:  # ヘッダ書き込み
+            if isinstance(headline, dict):
+                title, headline = next(iter(headline.items()))
+                if options.key_title:
+                    writefile.writelines(f"# 【{title}】\n")
             for line in headline.splitlines():
                 writefile.writelines(f"# {line}\n")
             writefile.writelines("\n")
-
-        writefile.writelines(data)
+        writefile.writelines(data)  # 本文書き込み
 
     return save_file
 

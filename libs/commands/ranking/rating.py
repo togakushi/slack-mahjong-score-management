@@ -27,8 +27,8 @@ def aggregation(m: "MessageParserProtocol"):
     m.status.command_type = "rating"  # 更新
 
     # 情報ヘッダ
+    title: str = "レーティング"
     add_text: str = ""
-    headline: str = ""
 
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
@@ -77,7 +77,7 @@ def aggregation(m: "MessageParserProtocol"):
         df["name"] = df["name"].replace(mapping_dict)
 
     if df.empty:
-        m.post.headline = {"レーティング": message.random_reply(m, "no_target")}
+        m.post.headline = {title: message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
@@ -90,13 +90,18 @@ def aggregation(m: "MessageParserProtocol"):
 
     df = df.drop(columns=[x for x in g.cfg.dropitems.ranking if x in df.columns.to_list()])  # 非表示項目
 
-    m.post.headline = {"レーティング": message.header(game_info, m, add_text, 1)}
+    m.post.headline = {title: message.header(game_info, m, add_text, 1)}
+    options: StyleOptions = StyleOptions(base_name="rating", summarize=False)
+
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            if (save_file := converter.save_output(df, "csv", "rating.csv", headline)):
-                m.set_data("レーティング", save_file, StyleOptions())
+            options.format_type = "csv"
+            data = converter.save_output(df, options, m.post.headline)
         case "text" | "txt":
-            if (save_file := converter.save_output(df, "txt", "rating.txt", headline)):
-                m.set_data("レーティング", save_file, StyleOptions())
+            options.format_type = "txt"
+            data = converter.save_output(df, options, m.post.headline)
         case _:
-            m.set_data("レーティング", df, StyleOptions(codeblock=True, summarize=False))
+            options.key_title = False
+            data = df
+
+    m.set_data(title, data, options)

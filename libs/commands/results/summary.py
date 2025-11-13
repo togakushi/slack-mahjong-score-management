@@ -2,6 +2,7 @@
 libs/commands/results/summary.py
 """
 
+from copy import copy
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
@@ -40,7 +41,6 @@ def aggregation(m: "MessageParserProtocol"):
 
     df_summary = formatter.df_rename(df_summary)
 
-    # --- 表示
     # 情報ヘッダ
     if g.params.get("individual"):  # 個人集計
         headline_title = "成績サマリ"
@@ -58,76 +58,59 @@ def aggregation(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
-    # 集計結果
+    # 表示
+    options: StyleOptions = StyleOptions(
+        format_type=cast(str, g.params.get("format", "default")).lower(),
+        codeblock=False,
+    )
+
+    # 通算ポイント
     header_list = [column_name, "通算", "平均", "順位分布", "飛"]
     filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "飛"]
-    if g.cfg.mahjong.ignore_flying:  # トビカウントなし
+    if g.cfg.mahjong.ignore_flying or (set(g.cfg.dropitems.results) & {"トビ", "トビ率"}):  # トビカウントなし
         header_list.remove("飛")
         filter_list.remove("飛")
-    m.set_data("通算ポイント", df_summary.filter(items=header_list), StyleOptions(codeblock=True, summarize=True))
 
-    # メモ追加
-    df_yakuman = formatter.df_rename(df_remarks.query("type == 0").drop(columns=["type", "ex_point"]), kind=0)
-    df_regulations = formatter.df_rename(df_remarks.query("type == 1").drop(columns=["type"]), kind=1)
-    df_others = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type", "ex_point"]), kind=2)
+    if options.format_type == "default":
+        options.codeblock = True
+        data = df_summary.filter(items=header_list)
+    else:
+        options.base_name = "summary"
+        df_summary = df_summary.filter(items=filter_list).fillna("*****")
+        data = converter.save_output(df_summary, options, f"【{headline_title}】\n{header_text}", "summary")
+    m.set_data("通算ポイント", data, copy(options))
 
-    if not df_yakuman.empty:
-        m.set_data("役満和了", df_yakuman, StyleOptions())
-    if not df_regulations.empty:
-        m.set_data("卓外ポイント", df_regulations, StyleOptions())
-    if not df_others.empty:
-        m.set_data("その他", df_others, StyleOptions())
+    # メモ(役満和了)
+    if not set(g.cfg.dropitems.results) & {"役満", "役満和了", "役満和了率"}:
+        df_yakuman = formatter.df_rename(df_remarks.query("type == 0").drop(columns=["type", "ex_point"]), kind=0)
+        if options.format_type == "default":
+            options.codeblock = False
+            data = df_yakuman
+        else:
+            options.base_name = "yakuman"
+            data = converter.save_output(df_yakuman, options, f"【役満和了】\n{header_text}", "yakuman")
+        m.set_data("役満和了", data, copy(options))
 
-    # --- ファイル出力
-    match cast(str, g.params.get("format", "default")).lower():
-        case "csv":
-            extension = "csv"
-        case "text" | "txt":
-            extension = "txt"
-        case _:
-            return
+    # メモ(卓外ポイント)
+    if not set(g.cfg.dropitems.results) & {"卓外", "卓外ポイント"}:
+        df_regulations = formatter.df_rename(df_remarks.query("type == 1").drop(columns=["type"]), kind=1)
+        if options.format_type == "default":
+            options.codeblock = False
+            data = df_regulations
+        else:
+            options.base_name = "regulations"
+            data = converter.save_output(df_regulations, options, f"【卓外ポイント】\n{header_text}", "regulations")
+        m.set_data("卓外ポイント", data, copy(options))
 
-    m.post.message.clear()  # テキストデータは破棄
-    if not df_summary.empty:
-        file_path = converter.save_output(
-            df=df_summary.filter(items=filter_list).fillna("*****"),
-            kind=extension,
-            filename=f"summary.{extension}",
-            headline=f"【{headline_title}】\n{header_text}",
-            suffix="summary",
-        )
-        if file_path:
-            m.set_data("集計結果", file_path, StyleOptions())
-    if not df_yakuman.empty:
-        file_path = converter.save_output(
-            df=formatter.df_rename(df_yakuman, kind=0),
-            kind=extension,
-            filename=f"yakuman.{extension}",
-            headline=f"【役満和了】\n{header_text}",
-            suffix="yakuman",
-        )
-        if file_path:
-            m.set_data("役満和了", file_path, StyleOptions())
-    if not df_regulations.empty:
-        file_path = converter.save_output(
-            df=formatter.df_rename(df_regulations, short=False, kind=1),
-            kind=extension,
-            filename=f"regulations.{extension}",
-            headline=f"【卓外ポイント】\n{header_text}",
-            suffix="regulations",
-        )
-        if file_path:
-            m.set_data("卓外ポイント", file_path, StyleOptions())
-    if not df_others.empty:
-        file_path = converter.save_output(
-            df=formatter.df_rename(df_others, kind=2),
-            kind=extension,
-            filename=f"others.{extension}",
-            headline=f"【その他】\n{header_text}",
-            suffix="others",
-        )
-        if file_path:
-            m.set_data("その他", file_path, StyleOptions())
+    # メモ(その他)
+    if not set(g.cfg.dropitems.results) & {"その他", "メモ"}:
+        df_others = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type", "ex_point"]), kind=2)
+        if options.format_type == "default":
+            data = df_others
+        else:
+            options.base_name = "others"
+            data = converter.save_output(df_others, options, f"【その他】\n{header_text}", "others")
+        m.set_data("その他", data, copy(options))
 
 
 def difference(m: "MessageParserProtocol"):
@@ -176,19 +159,15 @@ def difference(m: "MessageParserProtocol"):
     match cast(str, g.params.get("format", "default")).lower():
         case "csv":
             data = converter.save_output(
-                df=df_summary.filter(items=filter_list).fillna("*****"),
-                kind="csv",
-                filename="summary.csv",
-                headline=(headline_title + header_text),
-                suffix="summary",
+                df_summary.filter(items=filter_list).fillna("*****"),
+                StyleOptions(format_type="csv", base_name="summary"),
+                f"【{headline_title}】\n{header_text}",
             )
         case "text" | "txt":
             data = converter.save_output(
-                df=df_summary.filter(items=filter_list).fillna("*****"),
-                kind="txt",
-                filename="summary.txt",
-                headline=(headline_title + header_text),
-                suffix="summary",
+                df_summary.filter(items=filter_list).fillna("*****"),
+                StyleOptions(format_type="txt", base_name="summary"),
+                f"【{headline_title}】\n{header_text}",
             )
         case _:
             data = df_summary.filter(items=header_list)

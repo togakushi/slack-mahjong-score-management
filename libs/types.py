@@ -3,7 +3,7 @@ cls/types.py
 """
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypeAlias, TypedDict, Union
+from typing import TYPE_CHECKING, Literal, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -31,6 +31,12 @@ MessageType: TypeAlias = Union[None, str, "Path", "pd.DataFrame"]
 @dataclass
 class StyleOptions:
     """表示オプション"""
+
+    format_type: Literal["default", "csv", "txt"] = "default"
+    """出力フォーマット"""
+
+    base_name: str = ""
+    """ファイル出力時のファイル名"""
 
     codeblock: bool = False
     """MessageTypeがstr型ならcodeblock化
@@ -62,6 +68,13 @@ class StyleOptions:
     - *True*: 可能な限り複数の要素をひとつにまとめる
     - *False*: 要素単位でデータを処理する
     """
+
+    @property
+    def filename(self) -> str:
+        """出力ファイル名"""
+        if self.format_type == "default":
+            return ""
+        return f"{self.base_name}.{self.format_type}"
 
 
 class MessageTypeDict(TypedDict):
