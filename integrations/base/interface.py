@@ -6,12 +6,13 @@ import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
 from dataclasses import dataclass, field, fields
+from types import NoneType
 from typing import (TYPE_CHECKING, Any, Generic, Literal, Optional, Type,
                     TypeVar, Union)
 
 from integrations.protocols import MsgData, PostData, StatusData
 from libs.types import MessageTypeDict, StyleOptions
-
+import pandas as pd
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
     from libs.types import MessageType
@@ -182,13 +183,17 @@ class MessageParserDataMixin:
         data: "MessageType",
         options: StyleOptions,
     ):
-        """メッセージデータをセットshow_index
+        """メッセージデータをセット
 
         Args:
             title (str): データ識別子
             data (MessageType): 内容
             options (StyleOptions): 表示オプション
         """
+
+        # 空データは登録しない
+        if isinstance(data, NoneType) or (isinstance(data, pd.DataFrame) and data.empty):
+            return
 
         msg = MessageTypeDict(
             data=data,
