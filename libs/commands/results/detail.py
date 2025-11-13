@@ -180,10 +180,16 @@ def comparison(m: "MessageParserProtocol"):
         return
 
     result_df = aggregate.game_results()
-    result_df.index = result_df["name"]
     record_df = aggregate.ranking_record()
-    merged = pd.concat([result_df.drop("name", axis=1), record_df.drop("name", axis=1)], axis=1)
 
+    if g.params.get("anonymous"):
+        mapping_dict = formatter.anonymous_mapping(result_df["name"].unique().tolist())
+        result_df["name"] = result_df["name"].replace(mapping_dict)
+        record_df["name"] = record_df["name"].replace(mapping_dict)
+        record_df.index = record_df["name"]
+
+    result_df.index = result_df["name"]
+    merged = pd.concat([result_df.drop("name", axis=1), record_df.drop("name", axis=1)], axis=1)
     df = merged.filter(
         items=[
             "count", "war_record",
