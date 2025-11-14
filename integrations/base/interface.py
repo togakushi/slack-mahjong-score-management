@@ -10,9 +10,11 @@ from types import NoneType
 from typing import (TYPE_CHECKING, Any, Generic, Literal, Optional, Type,
                     TypeVar, Union)
 
+import pandas as pd
+
 from integrations.protocols import MsgData, PostData, StatusData
 from libs.types import MessageTypeDict, StyleOptions
-import pandas as pd
+
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
     from libs.types import MessageType
