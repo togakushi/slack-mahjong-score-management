@@ -2,7 +2,7 @@
 libs/commands/graph/personal.py
 """
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -12,7 +12,6 @@ from matplotlib import gridspec
 from plotly.subplots import make_subplots  # type: ignore
 
 import libs.global_value as g
-from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
@@ -22,6 +21,7 @@ from libs.utils import formatter, graphutil, textutil
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from cls.timekit import ExtendedDatetime as ExtDt
     from integrations.protocols import MessageParserProtocol
 
 
@@ -34,7 +34,7 @@ def plot(m: "MessageParserProtocol"):
 
     # データ収集
     game_info = GameInfo()
-    g.params.update(guest_skip=g.params.get("guest_skip2"))
+    g.params.update({"guest_skip": g.params["guest_skip2"]})
     df = loader.read_data("SUMMARY_GAMEDATA")
 
     if df.empty:
@@ -55,7 +55,7 @@ def plot(m: "MessageParserProtocol"):
 
     title_text = f"『{player}』の成績"
     if g.params.get("target_count", 0) == 0:
-        title_range = f"({ExtDt(g.params["starttime"]).format("ymdhm")} - {ExtDt(g.params["endtime"]).format("ymdhm")})"
+        title_range = f"({cast("ExtDt", g.params["starttime"]).format("ymdhm")} - {cast("ExtDt", g.params["endtime"]).format("ymdhm")}"
     else:
         title_range = f"(直近 {len(df)} ゲーム)"
 
@@ -133,7 +133,7 @@ def statistics_plot(m: "MessageParserProtocol"):
 
     # データ収集
     game_info = GameInfo()
-    g.params.update(guest_skip=g.params.get("guest_skip2"))
+    g.params.update({"guest_skip": g.params["guest_skip2"]})
     df = loader.read_data("SUMMARY_DETAILS")
 
     if df.empty:

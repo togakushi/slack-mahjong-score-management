@@ -15,6 +15,7 @@ from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
+    from libs.types import MessageType
 
 
 def aggregation(m: "MessageParserProtocol"):
@@ -93,6 +94,7 @@ def aggregation(m: "MessageParserProtocol"):
     m.post.headline = {title: message.header(game_info, m, add_text, 1)}
     options: StyleOptions = StyleOptions(base_name="rating", summarize=False)
 
+    data: "MessageType"
     match str(g.params.get("format", "default")).lower():
         case "csv":
             options.format_type = "csv"

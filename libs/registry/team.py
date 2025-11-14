@@ -98,7 +98,7 @@ def append(argument: list) -> str:
         msg = create(argument)
 
     if len(argument) == 2:  # チーム所属
-        g.params.update(unregistered_replace=False)
+        g.params.update({"unregistered_replace": False})
 
         team_name = textutil.str_conv(argument[0], "h2z")
         player_name = formatter.name_replace(argument[1])
@@ -158,7 +158,7 @@ def remove(argument: list) -> str:
         msg = delete(argument)
 
     if len(argument) == 2:  # チーム名指
-        g.params.update(unregistered_replace=False)
+        g.params.update({"unregistered_replace": False})
         team_name = textutil.str_conv(argument[0], "h2z")
         player_name = formatter.name_replace(argument[1])
 

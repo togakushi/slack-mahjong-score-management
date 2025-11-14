@@ -157,7 +157,7 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
     """
 
     # データ収集
-    g.params.update(fourfold=True)  # 直近Nは4倍する(縦持ちなので4人分)
+    g.params.update({"fourfold": True})  # 直近Nは4倍する(縦持ちなので4人分)
 
     target_data = pd.DataFrame()
     if g.params.get("individual"):  # 個人集計

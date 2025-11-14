@@ -3,7 +3,7 @@ libs/commands/results/summary.py
 """
 
 from copy import copy
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from libs.data import aggregate, loader
@@ -14,6 +14,7 @@ from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
+    from libs.types import MessageType
 
 
 def aggregation(m: "MessageParserProtocol"):
@@ -24,6 +25,7 @@ def aggregation(m: "MessageParserProtocol"):
     """
 
     # --- データ収集
+    data: "MessageType"
     game_info = GameInfo()
     df_summary = aggregate.game_summary(drop_items=["rank_distr1"])
     df_game = loader.read_data("SUMMARY_DETAILS")
@@ -59,10 +61,7 @@ def aggregation(m: "MessageParserProtocol"):
         return
 
     # 表示
-    options: StyleOptions = StyleOptions(
-        format_type=cast(str, g.params.get("format", "default")).lower(),
-        codeblock=False,
-    )
+    options: StyleOptions = StyleOptions(format_type=g.params["format"], codeblock=False)
 
     # 通算ポイント
     header_list = [column_name, "通算", "平均", "順位分布", "飛"]
@@ -121,6 +120,7 @@ def difference(m: "MessageParserProtocol"):
     """
 
     # データ収集
+    data: "MessageType"
     game_info = GameInfo()
     df_summary = aggregate.game_summary(drop_items=["rank_distr1"])
     df_game = loader.read_data("SUMMARY_DETAILS")
@@ -156,7 +156,7 @@ def difference(m: "MessageParserProtocol"):
     # 集計結果
     header_list = ["#", column_name, "通算", "順位差", "トップ差"]
     filter_list = [column_name, "ゲーム数", "通算", "順位差", "トップ差"]
-    match cast(str, g.params.get("format", "default")).lower():
+    match g.params.get("format", "default").lower():
         case "csv":
             data = converter.save_output(
                 df_summary.filter(items=filter_list).fillna("*****"),

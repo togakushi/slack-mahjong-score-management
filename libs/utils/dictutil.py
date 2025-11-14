@@ -14,9 +14,10 @@ from libs.utils import formatter
 if TYPE_CHECKING:
     from cls.config import SubCommand
     from integrations.protocols import MessageParserProtocol
+    from libs.types import PlaceholderDict
 
 
-def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
+def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "PlaceholderDict":
     """プレースホルダに使用する辞書を生成
 
     Args:
@@ -24,39 +25,39 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
         m (MessageParserProtocol): メッセージデータ
 
     Returns:
-        dict: プレースホルダ用辞書
+        PlaceholderDict: プレースホルダ用辞書
     """
 
     parser = CommandParser()
-    ret_dict: dict = {}
+    ret_dict: "PlaceholderDict" = {}
 
     # 初期化
-    g.params.clear()
+    g.params = {}
 
     # 設定周りのパラメータの取り込み
-    ret_dict.update(command=subcom.section)
-    ret_dict.update(g.cfg.mahjong.to_dict())
-    ret_dict.update(guest_name=g.cfg.member.guest_name)
-    ret_dict.update(undefined_word=g.cfg.undefined_word)
+    ret_dict.update({"command": subcom.section})
+    ret_dict.update({**g.cfg.mahjong.to_dict()})
+    ret_dict.update({"guest_name": g.cfg.member.guest_name})
+    ret_dict.update({"undefined_word": g.cfg.undefined_word})
 
     # デフォルト値の取り込み
-    ret_dict.update(subcom.to_dict())
+    ret_dict.update({**subcom.to_dict()})
 
     # always_argumentの処理
     pre_param = parser.analysis_argument(subcom.always_argument)
     logging.debug("analysis_argument: %s", pre_param)
-    ret_dict.update(pre_param.flags)
+    ret_dict.update({**(cast(dict, pre_param.flags))})
 
     # 引数の処理
     param = parser.analysis_argument(m.argument)
     logging.debug("argument: %s", param)
-    ret_dict.update(param.flags)  # 上書き
+    ret_dict.update({**(cast(dict, param.flags))})  # 上書き
 
     # ルールバージョン先行評価
     if (rule_version := ret_dict.get("rule_version")):
-        g.params.update(rule_version=rule_version)
+        g.params.update({"rule_version": rule_version})
     if (mixed := ret_dict.get("mixed")):
-        g.params.update(mixed=mixed)
+        g.params.update({"mixed": mixed})
 
     # 検索範囲取得
     departure_time = ExtDt(hours=-g.cfg.setting.time_adjust)
@@ -67,9 +68,9 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
     else:
         search_range = departure_time.range(subcom.aggregation_range)
 
-    ret_dict.update(starttime=(departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).start)
-    ret_dict.update(endtime=(departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).end)
-    ret_dict.update(onday=departure_time.range(search_range).end)
+    ret_dict.update({"starttime": (departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).start})
+    ret_dict.update({"endtime": (departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).end})
+    ret_dict.update({"onday": departure_time.range(search_range).end})
 
     # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
     player_name: str = str()
@@ -97,18 +98,10 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
         if name != player_name:
             competition_list[f"competition_{idx}"] = name
 
-    ret_dict.update(player_name=player_name)
-    ret_dict.update(target_player=target_player)
-    ret_dict.update(player_list=player_list)
-    ret_dict.update(competition_list=competition_list)
-
-    # プレイヤーリスト/対戦相手リスト
-    if ret_dict["player_list"]:
-        for k, v in cast(dict, ret_dict["player_list"]).items():
-            ret_dict[k] = v
-    if ret_dict["competition_list"]:
-        for k, v in cast(dict, ret_dict["competition_list"]).items():
-            ret_dict[k] = v
+    ret_dict.update({"player_name": player_name})
+    ret_dict.update({"target_player": target_player})
+    ret_dict.update({"player_list": player_list})
+    ret_dict.update({"competition_list": competition_list})
 
     # 出力タイプ
     if (format_type := ret_dict.get("format", "default")):
@@ -122,22 +115,21 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> dict:
     # 規定打数設定
     if ret_dict.get("mixed") and not ret_dict.get("stipulated"):  # 横断集計&規定数制限なし
         if target_player:
-            ret_dict.update(stipulated=1)  # 個人成績
+            ret_dict.update({"stipulated": 1})  # 個人成績
         else:
-            ret_dict.update(stipulated=0)
+            ret_dict.update({"stipulated": 0})
     elif not ret_dict.get("stipulated"):  # 通常集計&規定数制限なし
         if subcom.section == "ranking":  # ランキングはレート計算
-            ret_dict.update(stipulated=0)
+            ret_dict.update({"stipulated": 0})
         else:
-            ret_dict.update(stipulated=1)
+            ret_dict.update({"stipulated": 1})
 
     return ret_dict
 
 
 def _collect_member(target_list: list) -> list:
     ret_list: list = []
-    save_flg = g.params.get("individual")
-    g.params.update(individual=True)
+    g.params.update({"individual": True})
     for name in list(dict.fromkeys(target_list)):
         if name in lookup.internal.get_team():
             teammates = lookup.internal.get_teammates(name)
@@ -146,9 +138,8 @@ def _collect_member(target_list: list) -> list:
         if g.params.get("unregistered_replace", True):
             ret_list.append(name)
         else:
-            ret_list.append(formatter.name_replace(name))
+            ret_list.append(formatter.name_replace(name, not_replace=True))
 
-    g.params.update(individual=save_flg)
     return list(dict.fromkeys(ret_list))
 
 

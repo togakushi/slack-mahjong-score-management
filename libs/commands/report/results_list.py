@@ -2,7 +2,7 @@
 libs/commands/report/results_list.py
 """
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 
@@ -14,11 +14,10 @@ from libs.types import StyleOptions
 from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     import pandas as pd
 
     from integrations.protocols import MessageParserProtocol
+    from libs.types import MessageType
 
 
 def main(m: "MessageParserProtocol"):
@@ -29,7 +28,7 @@ def main(m: "MessageParserProtocol"):
     """
 
     # 検索動作を合わせる
-    g.params.update(guest_skip=g.params.get("guest_skip2"))
+    g.params.update({"guest_skip": g.params["guest_skip2"]})
 
     # --- データ取得
     game_info = GameInfo()
@@ -62,7 +61,7 @@ def main(m: "MessageParserProtocol"):
     if "役満和了" in g.cfg.dropitems.report:
         df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_rate"])
 
-    file_path: Union["Path", None]
+    file_path: "MessageType"
     match str(g.params.get("format", "default")).lower():
         case "text" | "txt":
             file_path = text_generation(df)
@@ -79,7 +78,7 @@ def main(m: "MessageParserProtocol"):
             m.set_data("", df_generation(df), StyleOptions())
 
 
-def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> Union["Path", None]:
+def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "MessageType":
     """グラフ生成処理
 
     Args:
@@ -88,8 +87,7 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> Uni
         title (str): グラフタイトル
 
     Returns:
-        Path: 生成ファイルパス
-        None: 未対応
+        MessageType: 生成ファイルパス
     """
 
     if g.adapter.conf.plotting_backend == "plotly":
@@ -170,14 +168,14 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> Uni
     return report_file_path
 
 
-def text_generation(df: "pd.DataFrame") -> "Path":
+def text_generation(df: "pd.DataFrame") -> "MessageType":
     """テキストテーブル生成
 
     Args:
         df (pd.DataFrame): 描写データ
 
     Returns:
-        Path: 生成ファイルパス
+        MessageType: 生成ファイルパス
     """
 
     report_file_path = g.cfg.setting.work_dir / (f"{g.params["filename"]}.txt" if g.params.get("filename") else "report.txt")
@@ -202,14 +200,14 @@ def text_generation(df: "pd.DataFrame") -> "Path":
     return report_file_path
 
 
-def csv_generation(df: "pd.DataFrame") -> "Path":
+def csv_generation(df: "pd.DataFrame") -> "MessageType":
     """CSV生成
 
     Args:
         df (pd.DataFrame): 描写データ
 
     Returns:
-        Path: 生成ファイルパス
+        MessageType: 生成ファイルパス
     """
 
     report_file_path = g.cfg.setting.work_dir / (f"{g.params["filename"]}.csv" if g.params.get("filename") else "report.csv")
@@ -242,14 +240,14 @@ def csv_generation(df: "pd.DataFrame") -> "Path":
     return report_file_path
 
 
-def df_generation(df: "pd.DataFrame") -> "pd.DataFrame":
+def df_generation(df: "pd.DataFrame") -> "MessageType":
     """テキストテーブル生成
 
     Args:
         df (pd.DataFrame): 描写データ
 
     Returns:
-        pd.DataFrame: 整形データ
+        MessageType: 整形データ
     """
 
     df = df.filter(

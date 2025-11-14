@@ -17,6 +17,7 @@ from libs.utils import converter, formatter, textutil
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
+    from libs.types import MessageType
 
 
 def aggregation(m: "MessageParserProtocol"):
@@ -27,12 +28,12 @@ def aggregation(m: "MessageParserProtocol"):
     """
 
     # 検索動作を合わせる
-    g.params.update(guest_skip=g.params.get("guest_skip2"))
+    g.params.update({"guest_skip": g.params["guest_skip2"]})
 
     if g.params["player_name"] in lookup.internal.get_team():
-        g.params.update(individual=False)
+        g.params.update({"individual": False})
     elif g.params["player_name"] in g.member_list:
-        g.params.update(individual=True)
+        g.params.update({"individual": True})
 
     # --- データ収集
     game_info = GameInfo()
@@ -161,14 +162,15 @@ def comparison(m: "MessageParserProtocol"):
     """
 
     # 検索動作を合わせる
-    g.params.update(guest_skip=g.params.get("guest_skip2"))
+    g.params.update({"guest_skip": g.params["guest_skip2"]})
 
     if g.params["player_name"] in lookup.internal.get_team():
-        g.params.update(individual=False)
+        g.params.update({"individual": False})
     elif g.params["player_name"] in g.member_list:
-        g.params.update(individual=True)
+        g.params.update({"individual": True})
 
     # データ収集
+    data: "MessageType"
     game_info = GameInfo()
 
     # タイトル

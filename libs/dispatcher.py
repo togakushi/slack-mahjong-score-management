@@ -73,8 +73,8 @@ def other_words(word: str, m: "MessageParserProtocol"):
         detection = GameResult(**m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
         if detection:  # 結果報告フォーマットに一致したポストの処理
             # 名前ブレ修正
-            g.params.update(unregistered_replace=False)  # ゲスト無効
-            g.params.update(individual=True)  # チーム戦オフ
+            g.params.update({"unregistered_replace": False})  # ゲスト無効
+            g.params.update({"individual": True})  # チーム戦オフ
             for k, p in detection.to_dict().items():
                 if str(k).endswith("_name"):
                     detection.set(**{k: formatter.name_replace(str(p))})

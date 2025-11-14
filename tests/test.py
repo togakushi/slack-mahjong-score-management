@@ -118,20 +118,20 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.params = dictutil.placeholder(g.cfg.graph, m)
                 if g.params.get("filename"):
                     save_filename = g.params["filename"]
-                    g.params.update(filename=f"{save_filename}_point")
+                    g.params.update({"filename": f"{save_filename}_point"})
                     graph_point(m)
-                    g.params.update(filename=f"{save_filename}_rank")
+                    g.params.update({"filename": f"{save_filename}_rank"})
                     graph_rank(m)
                     if g.params.get("statistics"):
-                        g.params.update(filename=f"{save_filename}")
+                        g.params.update({"filename": f"{save_filename}"})
                         graph_statistics(m)
                 else:
-                    g.params.update(filename=f"point_{sec}_{pattern}")
+                    g.params.update({"filename": f"point_{sec}_{pattern}"})
                     graph_point(m)
-                    g.params.update(filename=f"rank_{sec}_{pattern}")
+                    g.params.update({"filename": f"rank_{sec}_{pattern}"})
                     graph_rank(m)
                     if g.params.get("statistics"):
-                        g.params.update(filename=f"statistics_{sec}_{pattern}")
+                        g.params.update({"filename": f"statistics_{sec}_{pattern}"})
                         graph_statistics(m)
 
             case "graph_point":

@@ -6,7 +6,7 @@ import logging
 import os
 from datetime import datetime
 from io import BytesIO
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, cast
 
 import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
@@ -29,6 +29,7 @@ from libs.types import StyleOptions
 from libs.utils import dbutil, formatter
 
 if TYPE_CHECKING:
+    from cls.timekit import ExtendedDatetime as ExtDt
     from integrations.protocols import MessageParserProtocol
 
 
@@ -39,8 +40,10 @@ def get_game_results() -> list:
         list: 集計結果のリスト
     """
 
-    g.params.update(starttime=g.params["starttime"].format("sql"))
-    g.params.update(endtime=g.params["endtime"].format("sql"))
+    if "starttime" in g.params:
+        g.params.update({"starttime": cast("ExtDt", g.params["starttime"]).format("sql")})
+    if "endtime" in g.params:
+        g.params.update({"endtime": cast("ExtDt", g.params["endtime"]).format("sql")})
 
     resultdb = dbutil.connection(g.cfg.setting.database_file)
     rows = resultdb.execute(
@@ -101,7 +104,7 @@ def get_count_results(game_count: int) -> list:
         list: 集計結果のリスト
     """
 
-    g.params.update(interval=game_count)
+    g.params.update({"interval": game_count})
     resultdb = dbutil.connection(g.cfg.setting.database_file)
     rows = resultdb.execute(
         loader.query_modification(dbutil.query("REPORT_COUNT_DATA")),
@@ -164,7 +167,7 @@ def get_count_moving(game_count: int) -> list:
     """
 
     resultdb = dbutil.connection(g.cfg.setting.database_file)
-    g.params.update(interval=game_count)
+    g.params.update({"interval": game_count})
     rows = resultdb.execute(
         loader.query_modification(dbutil.query("REPORT_COUNT_MOVING")),
         g.params,

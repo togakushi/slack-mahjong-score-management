@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
     import pandas as pd
 
+    from cls.timekit import ExtendedDatetime
+
 
 class TeamDataDict(TypedDict):
     """チーム情報格納辞書"""
@@ -75,6 +77,51 @@ class StyleOptions:
         if self.format_type == "default":
             return ""
         return f"{self.base_name}.{self.format_type}"
+
+
+class PlaceholderDict(TypedDict, total=False):
+    """プレースホルダ用パラメータ"""
+
+    command: str
+    player_name: str
+    guest_name: str
+    target_player: list[str]
+    player_list: dict[str, str]
+    competition_list: dict[str, str]
+    all_player: bool
+
+    format: Literal["default", "csv", "txt"]
+    filename: str
+    ranked: int
+    stipulated: int
+    interval: int
+    group_length: int
+    target_count: int
+
+    individual: bool
+    anonymous: bool
+    unregistered_replace: bool
+    guest_skip: bool
+    guest_skip2: bool
+    friendly_fire: bool
+    score_comparisons: bool
+    order: bool
+    fourfold: bool
+    game_results: bool
+    versus_matrix: bool
+    statistics: bool
+    rating: bool
+    verbose: bool
+
+    collection: Literal["daily", "monthly", "yearly", "all"]
+    undefined_word: int
+
+    rule_version: str
+    mixed: bool
+
+    starttime: Union[str, "ExtendedDatetime", None]
+    endtime: Union[str, "ExtendedDatetime", None]
+    onday: Union[str, "ExtendedDatetime", None]
 
 
 class MessageTypeDict(TypedDict):

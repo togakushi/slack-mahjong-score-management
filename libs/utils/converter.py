@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 def save_output(
     df: pd.DataFrame,
     options: "StyleOptions",
-    headline: Optional[Union[str, dict]] = None,
+    headline: Optional[Union[str, dict[str, str]]] = None,
     suffix: Optional[str] = None,
 ) -> Union["Path", None]:
     """指定されたフォーマットでdfを保存する

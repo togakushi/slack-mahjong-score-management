@@ -10,7 +10,7 @@ from flask import Blueprint, abort, current_app, render_template, request
 
 import libs.global_value as g
 from cls.score import GameResult
-from cls.timekit import ExtendedDatetime as ExtDT
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import modify
 from libs.utils import dbutil, formatter
 
@@ -87,7 +87,7 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
                         data.update(table=score_table())
                         return render_template("score_list.html", **data)
                     case "update":
-                        g.params.update(unregistered_replace=False)
+                        g.params.update({"unregistered_replace": False})
                         data.update(request.form.to_dict(), players=players)
                         if (p1_name := request.form.get("p1_other")):
                             data.update(p1_name=formatter.name_replace(p1_name))
@@ -110,7 +110,7 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
                         data.update(table=score_table())
                         return render_template("score_list.html", **data)
             elif request.form.get("action") == "modify":  # 新規登録
-                playtime = ExtDT()
+                playtime = ExtDt()
                 data.update(mode="insert", playtime=playtime.format(fmt="sql"), ts=playtime.format(fmt="ts"))
                 return render_template("score_input.html", **data)
 

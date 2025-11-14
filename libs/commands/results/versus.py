@@ -15,6 +15,7 @@ from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
+    from libs.types import MessageType
 
 
 def aggregation(m: "MessageParserProtocol"):
@@ -25,9 +26,10 @@ def aggregation(m: "MessageParserProtocol"):
     """
 
     # 検索動作を合わせる
-    g.params.update(guest_skip=g.params.get("guest_skip2"))
+    g.params.update({"guest_skip": g.params["guest_skip2"]})
 
     # --- データ収集
+    data: "MessageType"
     df_vs = loader.read_data("SUMMARY_VERSUS_MATRIX")
     df_game = loader.read_data("SUMMARY_DETAILS").fillna(value="")
     df_data = pd.DataFrame(columns=df_game.columns)  # ファイル出力用
@@ -118,11 +120,11 @@ def aggregation(m: "MessageParserProtocol"):
 
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            m.set_data("対戦結果", converter.save_output(df_data, StyleOptions(format_type="csv", base_name="result")))
-            m.set_data("成績", converter.save_output(df_vs2, StyleOptions(format_type="csv", base_name="versus")))
+            m.set_data("対戦結果", converter.save_output(df_data, StyleOptions(format_type="csv", base_name="result")), StyleOptions())
+            m.set_data("成績", converter.save_output(df_vs2, StyleOptions(format_type="csv", base_name="versus")), StyleOptions())
         case "text" | "txt":
-            m.set_data("対戦結果", converter.save_output(df_data, StyleOptions(format_type="txt", base_name="result")))
-            m.set_data("成績", converter.save_output(df_vs2, StyleOptions(format_type="txt", base_name="versus")))
+            m.set_data("対戦結果", converter.save_output(df_data, StyleOptions(format_type="txt", base_name="result")), StyleOptions())
+            m.set_data("成績", converter.save_output(df_vs2, StyleOptions(format_type="txt", base_name="versus")), StyleOptions())
         case _:
             pass
 

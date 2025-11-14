@@ -5,11 +5,15 @@ libs/data/loader.py
 import logging
 import re
 from datetime import datetime
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 
 import libs.global_value as g
 from libs.utils import dbutil
+
+if TYPE_CHECKING:
+    from cls.timekit import ExtendedDatetime as ExtDt
 
 
 def read_data(keyword: str) -> pd.DataFrame:
@@ -27,20 +31,30 @@ def read_data(keyword: str) -> pd.DataFrame:
     pd.set_option("display.max_columns", None)
 
     if "starttime" in g.params:
-        g.params.update(starttime=g.params["starttime"].format("sql"))
+        g.params.update({"starttime": cast("ExtDt", g.params["starttime"]).format("sql")})
     if "endtime" in g.params:
-        g.params.update(endtime=g.params["endtime"].format("sql"))
+        g.params.update({"endtime": cast("ExtDt", g.params["endtime"]).format("sql")})
+
     if "rule_version" not in g.params:
-        g.params.update(rule_version=g.cfg.mahjong.rule_version)
+        g.params.update({"rule_version": g.cfg.mahjong.rule_version})
 
     sql = query_modification(dbutil.query(keyword))
     logging.debug("prm: %s", g.params)
     logging.debug("sql: %s", named_query(sql))
 
+    # プレイヤーリスト/対戦相手リスト
+    player_list: dict = {}
+    if "player_list" in g.params:
+        for k, v in g.params["player_list"].items():
+            player_list[k] = v
+    if "competition_list" in g.params:
+        for k, v in g.params["competition_list"].items():
+            player_list[k] = v
+
     df = pd.read_sql(
         sql=sql,
         con=dbutil.connection(g.cfg.setting.database_file),
-        params=g.params,
+        params={**cast(dict, g.params), **player_list},
     )
     logging.trace(df)  # type: ignore
 
@@ -69,8 +83,8 @@ def query_modification(sql: str) -> str:
         else:
             sql = sql.replace("--[unregistered_not_replace] ", "")
     else:  # チーム集計
-        g.params.update(unregistered_replace=False)
-        g.params.update(guest_skip=True)
+        g.params.update({"unregistered_replace": False})
+        g.params.update({"guest_skip": True})
         sql = sql.replace("--[team] ", "")
         if not g.params.get("friendly_fire"):
             sql = sql.replace("--[friendly_fire] ", "")
@@ -186,8 +200,9 @@ def named_query(query: str) -> str:
         str: バインド済みSQL
     """
 
-    for k, v in g.params.items():
+    params: dict = cast(dict, g.params.copy())
+    for k, v in params.items():
         if isinstance(v, datetime):
-            g.params[k] = v.strftime("%Y-%m-%d %H:%M:%S")
+            params[k] = v.strftime("%Y-%m-%d %H:%M:%S")
 
-    return re.sub(r":(\w+)", lambda m: repr(g.params.get(m.group(1), m.group(0))), query)
+    return re.sub(r":(\w+)", lambda m: repr(params.get(m.group(1), m.group(0))), query)

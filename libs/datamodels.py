@@ -43,11 +43,11 @@ class GameInfo:
 
         # グローバルパラメータチェック
         if "rule_version" not in g.params:
-            g.params.update(rule_version=g.cfg.mahjong.rule_version)
+            g.params.update({"rule_version": g.cfg.mahjong.rule_version})
         if "starttime" not in g.params:
-            g.params.update(starttime=ExtDt().range("全部").start)
+            g.params.update({"starttime": ExtDt().range("全部").start})
         if "endtime" not in g.params:
-            g.params.update(endtime=ExtDt().range("全部").end)
+            g.params.update({"endtime": ExtDt().range("全部").end})
 
         # データ収集
         df = loader.read_data("GAME_INFO")
