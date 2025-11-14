@@ -163,7 +163,7 @@ class ParsedCommand:
     flags: dict[str, Any]
     arguments: list[str]
     unknown: list[str]
-    search_range: list["ExtDt"]
+    search_range: list[ExtDt]
 
 
 class CommandParser:
