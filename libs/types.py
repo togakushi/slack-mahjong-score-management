@@ -3,7 +3,8 @@ cls/types.py
 """
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, TypeAlias, TypedDict, Union
+from typing import (TYPE_CHECKING, Literal, Optional, TypeAlias, TypedDict,
+                    Union)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -83,45 +84,106 @@ class PlaceholderDict(TypedDict, total=False):
     """プレースホルダ用パラメータ"""
 
     command: str
+    """コマンド名"""
+
+    # プレイヤー関連
     player_name: str
+    """集計対象プレイヤー"""
     guest_name: str
+    """ゲストの名前"""
     target_player: list[str]
+    """比較対象プレイヤーリスト"""
     player_list: dict[str, str]
+    """集計対象プレイヤーリスト"""
     competition_list: dict[str, str]
+    """比較対象プレイヤーリスト"""
     all_player: bool
-
-    format: Literal["default", "csv", "txt"]
-    filename: str
-    ranked: int
-    stipulated: int
-    interval: int
-    group_length: int
-    target_count: int
-
-    individual: bool
+    """集計範囲内の登録済みプレイヤーを対象にする"""
     anonymous: bool
+    """プレイヤー名の匿名化"""
     unregistered_replace: bool
+    """未登録プレイヤー名置換フラグ
+    - *True*: 置換する
+    - *False*: 置換しない
+    """
+
+    # 集計関連
+    individual: bool
+    """個人集計フラグ
+    - *True*: 個人戦集計
+    - *False*: チーム戦集計
+    """
     guest_skip: bool
+    """ゲストを集計対象に含めるか
+    - *True*: 集計結果にゲストを含める
+    - *False*: 集計結果からゲストを除外する
+    """
     guest_skip2: bool
     friendly_fire: bool
-    score_comparisons: bool
-    order: bool
-    fourfold: bool
-    game_results: bool
-    versus_matrix: bool
-    statistics: bool
-    rating: bool
-    verbose: bool
-
+    """チーム戦集計時のチーム同卓ゲームの扱い
+    - *True*: チーム同卓ゲームを集計(同じチームのポイントは合算される)
+    - *False*: チーム同卓ゲームを集計対象外にする
+    """
     collection: Literal["daily", "monthly", "yearly", "all"]
-    undefined_word: int
+    """集約範囲"""
 
-    rule_version: str
-    mixed: bool
+    ranked: int
+    """ランキングに含める順位"""
+    stipulated: int
+    """集計規定ゲーム数"""
+    interval: int
+    """区間集計範囲"""
+    target_count: int
+    """直近ゲーム数指定"""
 
+    # 検索関連
     starttime: Union[str, "ExtendedDatetime", None]
+    """集計開始日時"""
     endtime: Union[str, "ExtendedDatetime", None]
+    """集計終了日時"""
     onday: Union[str, "ExtendedDatetime", None]
+    rule_version: str
+    """集計対象ルール識別子を指定"""
+    mixed: bool
+    """ルール識別子の扱い
+    - *True*: ルール識別子を考慮しない
+    - *False*: ルール識別子を区別する
+    """
+    group_length: int
+    """コメント検索時に指定文字数でグループ化する"""
+
+    # 出力関連
+    format: Literal["default", "csv", "txt"]
+    """出力フォーマット指定"""
+    filename: str
+    """出力ファイル名"""
+
+    # 表示モード切替フラグ
+    score_comparisons: bool
+    """スコア比較モード"""
+    game_results: bool
+    """"""
+    order: bool
+    """順位表示モード"""
+    versus_matrix: bool
+    """対戦結果表示モード"""
+    statistics: bool
+    """統計表示モード"""
+    rating: bool
+    """レーティング表示モード"""
+    verbose: bool
+    """詳細表示モード"""
+    fourfold: bool
+    """内部フラグ(縦持ちデータで集計)"""
+
+    # その他
+    undefined_word: Optional[Literal[0, 1, 2, 3]]
+    """未登録ワードの扱い
+    - *None*: 未定義(regulationsセクションの設定に従う)
+    - *0*: 役満扱い
+    - *1*: 卓外ポイント(個人清算)
+    - *2*: 卓外ポイント(チーム清算)
+    """
 
 
 class MessageTypeDict(TypedDict):
