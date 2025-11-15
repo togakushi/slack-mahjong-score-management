@@ -20,7 +20,7 @@ INIファイル内の設定を変更することで、動作変更が可能。
 
 ### regulationsセクション
 
-定義されているキーが [`words` テーブル](../datedase/schema.md#typeの種別)の`word`として事前登録される。</br>
+定義されているキーが [`words` テーブル](../development/datedase/schema.md#typeの種別)の`word`として事前登録される。</br>
 アプリケーション起動時にテーブルの内容は毎回再定義される。
 
 |          キー          |                  内容                  |                型                | 省略時 |                      備考                      |
