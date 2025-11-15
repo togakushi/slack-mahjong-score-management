@@ -51,22 +51,22 @@ class GameInfo:
 
         # データ収集
         df = loader.read_data("GAME_INFO")
-        self.count = int(df["count"].to_string(index=False))
-        self.unique_name = int(df["unique_name"].to_string(index=False))
-        self.unique_team = int(df["unique_team"].to_string(index=False))
-
-        if self.count >= 1:
-            # プレイ時間
-            self.first_game = ExtDt(str(df.at[0, "first_game"]))
-            self.last_game = ExtDt(str(df.at[0, "last_game"]))
-            # コメント
-            if (first_comment := df.at[0, "first_comment"]):
-                self.first_comment = str(first_comment)
-            if (last_comment := df.at[0, "last_comment"]):
-                self.last_comment = str(last_comment)
-        else:
+        if df.empty:
+            self.count = 0
             self.first_game = ExtDt()
             self.last_game = ExtDt()
+            self.first_comment = ""
+            self.last_comment = ""
+            self.unique_name = 0
+            self.unique_team = 0
+        else:
+            self.count = int(df["count"].to_string(index=False))
+            self.first_game = ExtDt(df["first_game"].to_string(index=False))
+            self.last_game = ExtDt(df["last_game"].to_string(index=False))
+            self.first_comment = str(df["first_comment"].to_string(index=False))
+            self.last_comment = str(df["last_comment"].to_string(index=False))
+            self.unique_name = int(df["unique_name"].to_string(index=False))
+            self.unique_team = int(df["unique_team"].to_string(index=False))
 
         # 規定打数更新
         if not g.params.get("stipulated", 0):  # 規定打数0はレートから計算

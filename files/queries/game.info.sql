@@ -2,7 +2,8 @@
 with game_data as (
     select
         game_info.playtime as playtime,
-        game_info.comment as comment,
+        --[group_length] substr(game_info.comment, 1, :group_length) as comment,
+        --[not_group_length] game_info.comment as comment,
         individual_results.name as name,
         individual_results.team as team
     from
@@ -21,9 +22,7 @@ with game_data as (
 select
     game_count as count,
     first_game, last_game,
-    --[group_length] substr(first_comment, 1, :group_length) as first_comment,
-    --[group_length] substr(last_comment, 1, :group_length) as last_comment,
-    --[not_group_length] first_comment, last_comment,
+    first_comment, last_comment,
     unique_name, unique_team
 from (
 	select
