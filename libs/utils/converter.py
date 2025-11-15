@@ -345,7 +345,7 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
                     f"{x.順位}:",
                     x.プレイヤー名,
                     f"{x.トビ率:>7.2%}",
-                    f"({x.トビ数:3d} / {x.ゲーム数:4d}G)",
+                    f"({x.トビ:3d} / {x.ゲーム数:4d}G)",
                 ])
         case "平均順位":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
