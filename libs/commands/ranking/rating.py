@@ -92,10 +92,10 @@ def aggregation(m: "MessageParserProtocol"):
     df = df.drop(columns=[x for x in g.cfg.dropitems.ranking if x in df.columns.to_list()])  # 非表示項目
 
     m.post.headline = {title: message.header(game_info, m, add_text, 1)}
-    options: StyleOptions = StyleOptions(base_name="rating", summarize=False)
+    options: StyleOptions = StyleOptions(base_name="rating", summarize=False, codeblock=True)
 
     data: "MessageType"
-    match str(g.params.get("format", "default")).lower():
+    match g.params.get("format", "default"):
         case "csv":
             options.format_type = "csv"
             data = converter.save_output(df, options, m.post.headline)
