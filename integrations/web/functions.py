@@ -5,12 +5,12 @@ integrations/web/functions.py
 import re
 from typing import TYPE_CHECKING
 
-import pandas as pd
 from flask import make_response, render_template
 
 from integrations.base.interface import FunctionsInterface
 
 if TYPE_CHECKING:
+    import pandas as pd
     from flask import Request, Response
 
     from integrations.base.interface import MessageParserProtocol
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class SvcFunctions(FunctionsInterface):
     """WebUI専用関数"""
 
-    def to_styled_html(self, df: pd.DataFrame, padding: str, index: bool = False) -> str:
+    def to_styled_html(self, df: "pd.DataFrame", padding: str, index: bool = False) -> str:
         """データフレームをHTML表に変換
 
         Args:
@@ -35,20 +35,22 @@ class SvcFunctions(FunctionsInterface):
             df.style
             .format(
                 {
-                    "通算": "{:+.1f} pt",
-                    "ポイント": "{:+.1f} pt",
-                    ("東家", "ポイント"): "{:+.1f} pt",
-                    ("南家", "ポイント"): "{:+.1f} pt",
-                    ("西家", "ポイント"): "{:+.1f} pt",
-                    ("北家", "ポイント"): "{:+.1f} pt",
-                    "平均": "{:+.1f} pt",
-                    "順位差": "{:.1f} pt",
-                    "トップ差": "{:.1f} pt",
-                    "ポイント合計": "{:.1f} pt",
+                    "通算": "{:+.1f}pt",
+                    "ポイント": "{:+.1f}pt",
+                    "獲得ポイント": "{:+.1f}pt",
+                    ("東家", "ポイント"): "{:+.1f}pt",
+                    ("南家", "ポイント"): "{:+.1f}pt",
+                    ("西家", "ポイント"): "{:+.1f}pt",
+                    ("北家", "ポイント"): "{:+.1f}pt",
+                    "順位": "{:.0f}位",
+                    "平均": "{:+.1f}pt",
+                    "順位差": "{:.1f}pt",
+                    "トップ差": "{:.1f}pt",
+                    "ポイント合計": "{:.1f}pt",
                     "ゲーム参加率": "{:.2%}",
-                    "通算ポイント": "{:+.1f} pt",
-                    "平均ポイント": "{:+.1f} pt",
-                    "最大獲得ポイント": "{:.1f} pt",
+                    "通算ポイント": "{:+.1f}pt",
+                    "平均ポイント": "{:+.1f}pt",
+                    "最大獲得ポイント": "{:.1f}pt",
                     "平均収支": "{:+.1f}",
                     "平均素点": "{:.1f}",
                     "平均順位": "{:.2f}",
@@ -63,19 +65,19 @@ class SvcFunctions(FunctionsInterface):
                     "経過日数": "{:.0f} 日",
                     "プレイ回数": "{:.0f} ゲーム",
                     # レポート
-                    ("ポイント", "通算"): "{:+.1f} pt",
-                    ("ポイント", "平均"): "{:+.1f} pt",
+                    ("ポイント", "通算"): "{:+.1f}pt",
+                    ("ポイント", "平均"): "{:+.1f}pt",
                     ("1位", "獲得率"): "{:.2%}",
                     ("2位", "獲得率"): "{:.2%}",
                     ("3位", "獲得率"): "{:.2%}",
                     ("4位", "獲得率"): "{:.2%}",
                     ("トビ", "率"): "{:.2%}",
                     ("役満", "和了率"): "{:.2%}",
-                    ("1位", "獲得ポイント"): "{:+.1f} pt",
-                    ("2位", "獲得ポイント"): "{:+.1f} pt",
-                    ("3位", "獲得ポイント"): "{:+.1f} pt",
-                    ("4位", "獲得ポイント"): "{:+.1f} pt",
-                    ("5位", "獲得ポイント"): "{:+.1f} pt",
+                    ("1位", "獲得ポイント"): "{:+.1f}pt",
+                    ("2位", "獲得ポイント"): "{:+.1f}pt",
+                    ("3位", "獲得ポイント"): "{:+.1f}pt",
+                    ("4位", "獲得ポイント"): "{:+.1f}pt",
+                    ("5位", "獲得ポイント"): "{:+.1f}pt",
                     # 成績統計
                     "ゲーム数": "{:.0f}",
                     ("", "ゲーム数"): "{:.0f}",
@@ -84,9 +86,9 @@ class SvcFunctions(FunctionsInterface):
                     ("3位", "獲得数"): "{:.0f}",
                     ("4位", "獲得数"): "{:.0f}",
                     ("", "平均順位"): "{:.2f}",
-                    ("区間成績", "区間ポイント"): "{:+.1f} pt",
-                    ("区間成績", "区間平均"): "{:+.1f} pt",
-                    ("", "通算ポイント"): "{:+.1f} pt",
+                    ("区間成績", "区間ポイント"): "{:+.1f}pt",
+                    ("区間成績", "区間平均"): "{:+.1f}pt",
+                    ("", "通算ポイント"): "{:+.1f}pt",
                 },
                 na_rep="-----",
             )
@@ -104,7 +106,6 @@ class SvcFunctions(FunctionsInterface):
         ret = styled.to_html()
         ret = re.sub(r" >-(\d+)</td>", r" >▲\1</td>", ret)  # 素点
         ret = re.sub(r" >-(\d+\.\d)(点?)</td>", r" >▲\1\2</td>", ret)  # 素点(小数点付き)
-        ret = re.sub(r" >-(\d+\.\d) pt</td>", r" >▲\1 pt</td>", ret)  # ポイント
         ret = re.sub(r" >-(\d+\.\d)pt</td>", r" >▲\1pt</td>", ret)  # ポイント
 
         return ret
