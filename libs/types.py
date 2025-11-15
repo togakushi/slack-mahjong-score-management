@@ -3,8 +3,7 @@ cls/types.py
 """
 
 from dataclasses import dataclass
-from typing import (TYPE_CHECKING, Literal, Optional, TypeAlias, TypedDict,
-                    Union)
+from typing import TYPE_CHECKING, Literal, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -177,12 +176,12 @@ class PlaceholderDict(TypedDict, total=False):
     """内部フラグ(縦持ちデータで集計)"""
 
     # その他
-    undefined_word: Optional[Literal[0, 1, 2, 3]]
+    undefined_word: int
     """未登録ワードの扱い
-    - *None*: 未定義(regulationsセクションの設定に従う)
     - *0*: 役満扱い
     - *1*: 卓外ポイント(個人清算)
-    - *2*: 卓外ポイント(チーム清算)
+    - *2*: カウントのみ
+    - *3*: 卓外ポイント(チーム清算)
     """
 
 
