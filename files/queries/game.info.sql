@@ -25,18 +25,19 @@ select
     first_comment, last_comment,
     unique_name, unique_team
 from (
-	select
-		dense_rank() over(order by playtime, name, team) as game_count,
-		first_value(playtime) over(order by playtime asc) as first_game,
-		last_value(playtime) over(order by playtime desc) as last_game,
-		first_value(comment) over(order by playtime asc) as first_comment,
-		last_value(comment) over(order by playtime desc) as last_comment,
-		(select count(distinct name) from game_data) as unique_name,
-		(select count(distinct team) from game_data) as unique_team
-	from
-		game_data
+    select
+        dense_rank() over(order by playtime, name, team) as no,
+        (select count(distinct playtime) from game_data) as game_count,
+        first_value(playtime) over(order by playtime asc) as first_game,
+        last_value(playtime) over(order by playtime desc) as last_game,
+        first_value(comment) over(order by playtime asc) as first_comment,
+        last_value(comment) over(order by playtime desc) as last_comment,
+        (select count(distinct name) from game_data) as unique_name,
+        (select count(distinct team) from game_data) as unique_team
+    from
+        game_data
 )
 order by
-	game_count desc
+    no desc
 limit 1
 ;
