@@ -93,7 +93,7 @@ def _graph_generation(game_info: GameInfo, df: "pd.DataFrame", filename: str) ->
     title_text, xlabel_text = _graph_title(game_info)
     legend_text = []
     count = 1
-    for name, rate in df.iloc[-1].items():
+    for name, rate in df.iloc[-1].sort_values(ascending=False).items():
         legend_text.append(f"{count:2d}位：{name} （{rate:.1f}）")
         count += 1
 
@@ -139,7 +139,7 @@ def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", filename: 
     # 凡例用テキスト
     legend_text = []
     count = 1
-    for name, rate in df.iloc[-1].items():
+    for name, rate in df.iloc[-1].sort_values(ascending=False).items():
         legend_text.append(f"{count:2d}位：{name} （{rate:.1f}）")
         count += 1
 
@@ -166,6 +166,10 @@ def _graph_generation_plotly(game_info: GameInfo, df: "pd.DataFrame", filename: 
             "font": {"size": 18},
         },
         legend_title=None,
+        legend={
+            "itemclick": "toggleothers",
+            "itemdoubleclick": "toggle",
+        },
     )
 
     # 軸/目盛調整
