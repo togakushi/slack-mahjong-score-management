@@ -10,8 +10,8 @@ select * from (
         p1_rpoint as rpoint,
         p1_rank as rank,
         p1_point + ifnull(ex_point, 0) as point,
-        case when type == 0 then word else null end as grandslam,
-        case when type == 1 then word else null end as regulation,
+        case when type = 0 then word else null end as grandslam,
+        case when type = 1 then word else null end as regulation,
         ifnull(ex_point, 0) as ex_point,
         p1_name not in (select name from member where id != 0) as guest,
         date(playtime, '-12 hours') as collection_daily,
@@ -27,8 +27,9 @@ select * from (
             team.id = member.team_id
     left join regulations
         on
-            regulations.thread_ts == result.ts
-            and regulations.name == result.p1_name
+            regulations.type in (0, 1, 3)
+            and regulations.thread_ts = result.ts
+            and regulations.name = result.p1_name
     -- 南家
     union all select
         datetime(playtime),
@@ -39,8 +40,8 @@ select * from (
         p2_rpoint,
         p2_rank,
         p2_point + ifnull(ex_point, 0),
-        case when type == 0 then word else null end,
-        case when type == 1 then word else null end,
+        case when type = 0 then word else null end,
+        case when type = 1 then word else null end,
         ifnull(ex_point, 0),
         p2_name not in (select name from member where id != 0),
         date(playtime, '-12 hours'),
@@ -56,8 +57,9 @@ select * from (
             team.id = member.team_id
     left join regulations
         on
-            regulations.thread_ts == result.ts
-            and regulations.name == result.p2_name
+            regulations.type in (0, 1, 3)
+            and regulations.thread_ts = result.ts
+            and regulations.name = result.p2_name
     -- 西家
     union all select
         datetime(playtime),
@@ -68,8 +70,8 @@ select * from (
         p3_rpoint,
         p3_rank,
         p3_point + ifnull(ex_point, 0),
-        case when type == 0 then word else null end,
-        case when type == 1 then word else null end,
+        case when type = 0 then word else null end,
+        case when type = 1 then word else null end,
         ifnull(ex_point, 0),
         p3_name not in (select name from member where id != 0),
         date(playtime, '-12 hours'),
@@ -85,8 +87,9 @@ select * from (
             team.id = member.team_id
     left join regulations
         on
-            regulations.thread_ts == result.ts
-            and regulations.name == result.p3_name
+            regulations.type in (0, 1, 3)
+            and regulations.thread_ts = result.ts
+            and regulations.name = result.p3_name
     -- 北家
     union all select
         datetime(playtime),
@@ -97,8 +100,8 @@ select * from (
         p4_rpoint,
         p4_rank,
         p4_point + ifnull(ex_point, 0),
-        case when type == 0 then word else null end,
-        case when type == 1 then word else null end,
+        case when type = 0 then word else null end,
+        case when type = 1 then word else null end,
         ifnull(ex_point, 0),
         p4_name not in (select name from member where id != 0),
         date(playtime, '-12 hours'),
@@ -114,8 +117,9 @@ select * from (
             team.id = member.team_id
     left join regulations
         on
-            regulations.thread_ts == result.ts
-            and regulations.name == result.p4_name
+            regulations.type in (0, 1, 3)
+            and regulations.thread_ts = result.ts
+            and regulations.name = result.p4_name
 )
 order by ts, seat
 ;
