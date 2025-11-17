@@ -353,6 +353,10 @@ def _graph_generation_plotly(graph_params: GraphParams) -> "Path":
             "font": {"size": 18},
         },
         legend_title=None,
+        legend={
+            "itemclick": "toggleothers",
+            "itemdoubleclick": "toggle",
+        },
     )
 
     # 軸/目盛調整

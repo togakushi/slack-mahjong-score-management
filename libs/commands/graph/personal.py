@@ -500,6 +500,10 @@ def plotly_point(df: pd.DataFrame, title_range: str, total_game_count: int) -> "
             "font": {"size": 18},
         },
         legend_title=None,
+        legend={
+            "itemclick": "toggleothers",
+            "itemdoubleclick": "toggle",
+        },
     )
 
     fig.update_yaxes(
@@ -561,6 +565,10 @@ def plotly_rank(df: pd.DataFrame, title_range: str, total_game_count: int) -> "P
             "font": {"size": 18},
         },
         legend_title=None,
+        legend={
+            "itemclick": "toggleothers",
+            "itemdoubleclick": "toggle",
+        },
     )
 
     fig.update_yaxes(
