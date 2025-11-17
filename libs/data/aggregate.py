@@ -50,12 +50,6 @@ def game_results() -> pd.DataFrame:
     # データ収集
     df = loader.read_data("SUMMARY_RESULTS")
 
-    # Nullが返ってきたときにobject型になるので型変換
-    df = df.astype({
-        "東家-平均順位": "float", "南家-平均順位": "float", "西家-平均順位": "float", "北家-平均順位": "float",
-        "東家-役満和了": "Int64", "南家-役満和了": "Int64", "西家-役満和了": "Int64", "北家-役満和了": "Int64",
-    }).fillna(0)
-
     # インデックスの振り直し
     df = df.reset_index(drop=True)
     df.index = df.index + 1
