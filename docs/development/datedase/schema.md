@@ -98,7 +98,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 
  `remarks` に記録された単語の種別。祝儀や卓外ペナルティなど、ポイントに影響がある単語を登録。
 
- 単語の定義は設定ファイル内の[regulationsセクション](../setting/customize.md#regulationsセクション)で行う。
+ 単語の定義は設定ファイル内の[regulationsセクション](../../setting/customize.md#regulationsセクション)で行う。
 
 ### 内容
 
