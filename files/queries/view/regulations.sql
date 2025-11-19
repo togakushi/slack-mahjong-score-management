@@ -12,11 +12,11 @@ create view if not exists regulations as
     from
         remarks
     left join member on
-        member.name == remarks.name
+        member.name = remarks.name
     left join team on
-        member.team_id == team.id
+        member.team_id = team.id
     left join words on
-        words.word == remarks.matter
+        words.word = remarks.matter
     group by
         remarks.thread_ts, remarks.name, words.type
 ;
