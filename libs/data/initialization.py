@@ -83,12 +83,12 @@ def initialization_resultdb() -> None:
                     logging.debug("regulations table(type2): %s, %s", word, ex_point)
 
     if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("regulations"):
-        for word, ex_point in cast("ConfigParser", getattr(g.cfg, "_parser")).items("regulations_them"):
+        for k, v in cast("ConfigParser", getattr(g.cfg, "_parser")).items("regulations_them"):
             resultdb.execute(
                 "insert into words(word, type, ex_point) values (?, 3, ?);",
-                (word.strip(), int(ex_point),)
+                (k.strip(), int(v),)
             )
-            logging.debug("regulations table(type3): %s, %s", word, ex_point)
+            logging.debug("regulations table(type3): %s, %s", k.strip(), int(v))
 
     # VIEW
     rows = resultdb.execute("select name from sqlite_master where type = 'view';")
