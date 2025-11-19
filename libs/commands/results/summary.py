@@ -90,9 +90,9 @@ def aggregation(m: "MessageParserProtocol"):
             data = converter.save_output(df_yakuman, options, f"【役満和了】\n{header_text}", "yakuman")
         m.set_data("役満和了", data, copy(options))
 
-    # メモ(卓外ポイント)
+    # メモ(卓外ポイント/個人戦)
     if not set(g.cfg.dropitems.results) & {"卓外", "卓外ポイント"}:
-        df_regulations = formatter.df_rename(df_remarks.query("type == 1").drop(columns=["type"]), kind=1)
+        df_regulations = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type"]), kind=1)
         if options.format_type == "default":
             options.codeblock = False
             data = df_regulations
@@ -103,7 +103,7 @@ def aggregation(m: "MessageParserProtocol"):
 
     # メモ(その他)
     if not set(g.cfg.dropitems.results) & {"その他", "メモ"}:
-        df_others = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type", "ex_point"]), kind=2)
+        df_others = formatter.df_rename(df_remarks.query("type == 1").drop(columns=["type", "ex_point"]), kind=2)
         if options.format_type == "default":
             data = df_others
         else:

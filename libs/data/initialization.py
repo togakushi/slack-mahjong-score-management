@@ -50,14 +50,14 @@ def initialization_resultdb() -> None:
                 resultdb.execute(f"alter table {table_name} add column {col_name} {col_type} {notnull} {dflt};")
                 logging.info("migration: table=%s, column=%s", table_name, col_name)
 
-    # wordsテーブル情報読み込み(regulations)
+    # regulationsテーブル情報読み込み
     if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("regulations"):
         resultdb.execute("delete from words;")
         for k, v in cast("ConfigParser", getattr(g.cfg, "_parser")).items("regulations"):
             match k:
                 case "undefined":
                     g.cfg.undefined_word = int(v)
-                case "type0" | "yakuman":
+                case "yakuman_list":
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
                         resultdb.execute(
@@ -65,22 +65,30 @@ def initialization_resultdb() -> None:
                             (word,)
                         )
                     logging.debug("regulations table(type0): %s", words_list)
-                case "type2":
+                case "word_list":
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
                         resultdb.execute(
-                            "insert into words(word, type, ex_point) values (?, 2, NULL);",
+                            "insert into words(word, type, ex_point) values (?, 1, NULL);",
                             (word,)
                         )
-                    logging.debug("regulations table(type2): %s", words_list)
+                    logging.debug("regulations table(type1): %s", words_list)
                 case _:
                     word = k.strip()
                     ex_point = int(v)
                     resultdb.execute(
-                        "insert into words(word, type, ex_point) values (?, 1, ?);",
+                        "insert into words(word, type, ex_point) values (?, 2, ?);",
                         (word, ex_point,)
                     )
-                    logging.debug("regulations table(type1): %s, %s", word, ex_point)
+                    logging.debug("regulations table(type2): %s, %s", word, ex_point)
+
+    if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("regulations"):
+        for word, ex_point in cast("ConfigParser", getattr(g.cfg, "_parser")).items("regulations_them"):
+            resultdb.execute(
+                "insert into words(word, type, ex_point) values (?, 3, ?);",
+                (word.strip(), int(ex_point),)
+            )
+            logging.debug("regulations table(type3): %s, %s", word, ex_point)
 
     # VIEW
     rows = resultdb.execute("select name from sqlite_master where type = 'view';")

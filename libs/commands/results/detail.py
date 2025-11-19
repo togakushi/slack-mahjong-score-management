@@ -127,11 +127,11 @@ def aggregation(m: "MessageParserProtocol"):
     if not set(g.cfg.dropitems.results) & {"役満", "役満和了", "役満和了率"}:
         m.set_data("役満和了", formatter.df_rename(work_df, kind=0), StyleOptions())
 
-    work_df = count_df.query("type == 1").filter(items=["matter", "matter_count", "ex_total"])
+    work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
     if not set(g.cfg.dropitems.results) & {"卓外", "卓外ポイント"}:
         m.set_data("卓外ポイント", formatter.df_rename(work_df, kind=1), StyleOptions())
 
-    work_df = count_df.query("type == 2").filter(items=["matter", "matter_count"])
+    work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
     if not set(g.cfg.dropitems.results) & {"その他", "メモ"}:
         m.set_data("その他", formatter.df_rename(work_df, kind=2), StyleOptions())
 

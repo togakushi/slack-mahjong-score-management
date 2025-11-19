@@ -473,6 +473,7 @@ class AppConfig:
             "team",
             "comment",
             "regulations",
+            "regulations_them",
         ]
         for x in option_sections:
             if x not in self._parser.sections():
