@@ -1,9 +1,9 @@
 create view if not exists individual_results as
 with
-	yakuman_table as (select * from regulations where type = 0),
-	memo_table as (select * from regulations where type = 1),
-	regulation_table as (select * from regulations where type = 2),
-	them_regulation_table as (select * from regulations where type = 3)
+    yakuman_table as (select * from regulations where type = 0),
+    memo_table as (select * from regulations where type = 1),
+    regulation_table as (select * from regulations where type = 2),
+    them_regulation_table as (select * from regulations where type = 3)
 select * from (
     -- 東家
     select
