@@ -11,7 +11,7 @@ from flask import Blueprint, abort, current_app, render_template, request
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data import modify
+from libs.data import lookup, modify
 from libs.utils import dbutil, formatter
 
 if TYPE_CHECKING:
@@ -36,7 +36,7 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
             abort(403)
 
         padding = current_app.config["padding"]
-        players = current_app.config["players"]
+        players = lookup.internal.get_member()
         m = adapter.parser()
 
         def score_table() -> str:

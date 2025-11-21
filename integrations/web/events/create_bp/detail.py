@@ -6,10 +6,11 @@ from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 import pandas as pd
-from flask import Blueprint, abort, request, current_app
+from flask import Blueprint, abort, current_app, request
 
 import libs.dispatcher
 import libs.global_value as g
+from libs.data import lookup
 
 if TYPE_CHECKING:
     from integrations.web.adapter import ServiceAdapter
@@ -33,7 +34,7 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
             abort(403)
 
         padding = current_app.config["padding"]
-        players = current_app.config["players"]
+        players = lookup.internal.get_member()
 
         m = adapter.parser()
         cookie_data = adapter.functions.get_cookie(request)
