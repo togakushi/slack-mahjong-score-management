@@ -31,7 +31,7 @@ def plot(m: "MessageParserProtocol"):
         df = df.rename(columns=mapping_dict, index=mapping_dict)
 
     if df.empty:
-        m.post.headline = {title: message.random_reply(m, "no_hits")}
+        m.post.headline = {title: message.random_reply(m, "no_target")}
         m.status.result = False
         return
 
