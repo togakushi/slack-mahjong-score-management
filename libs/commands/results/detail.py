@@ -205,6 +205,11 @@ def comparison(m: "MessageParserProtocol"):
             "rpoint_max", "point_max", "rpoint_min", "point_min",
         ])
 
+    if df.empty:
+        m.post.headline = {"0": message.random_reply(m, "no_target")}
+        m.status.result = False
+        return
+
     # 有効桁数調整/単位追加
     df["平均順位"] = [f"{cast(float, x):.2f}" for x in df["平均順位"]]
     df["通算ポイント"] = [f"{cast(float, x):+.1f}pt".replace("-", "▲") for x in df["通算ポイント"]]
