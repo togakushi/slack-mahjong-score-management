@@ -93,9 +93,9 @@ def aggregation(m: "MessageParserProtocol"):
         "トビ": [v for k, v in data.items() if str(k).endswith("-トビ")],
         "役満和了": [v for k, v in data.items() if str(k).endswith("-役満和了")],
     })
-    if g.cfg.mahjong.ignore_flying:
+    if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.results & g.cfg.dropitems.flying:
         seat_data.drop(columns=["トビ"], inplace=True)
-    if {"役満和了", "役満"} & set(g.cfg.dropitems.results):
+    if g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         seat_data.drop(columns=["役満和了"], inplace=True)
 
     balance_data = textwrap.dedent(f"""\
@@ -124,15 +124,15 @@ def aggregation(m: "MessageParserProtocol"):
     count_df["matter"] = count_df.index
 
     work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
-    if not set(g.cfg.dropitems.results) & {"役満", "役満和了", "役満和了率"}:
+    if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         m.set_data("役満和了", formatter.df_rename(work_df, kind=0), StyleOptions())
 
     work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
-    if not set(g.cfg.dropitems.results) & {"卓外", "卓外ポイント"}:
+    if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
         m.set_data("卓外ポイント", formatter.df_rename(work_df, kind=1), StyleOptions())
 
     work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
-    if not set(g.cfg.dropitems.results) & {"その他", "メモ"}:
+    if not g.cfg.dropitems.results & g.cfg.dropitems.other:
         m.set_data("その他", formatter.df_rename(work_df, kind=2), StyleOptions())
 
     # 戦績
@@ -235,9 +235,9 @@ def comparison(m: "MessageParserProtocol"):
 
     # 非表示項目
     df = df.drop(columns=[x for x in g.cfg.dropitems.results if x in df.columns.to_list()])
-    if g.cfg.mahjong.ignore_flying or (set(g.cfg.dropitems.results) & {"トビ", "トビ率"}):
+    if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.results & g.cfg.dropitems.flying:
         df = df.drop(columns=["トビ率(回)"])
-    if {"役満", "役満和了", "役満和了率"} in g.cfg.dropitems.results:
+    if g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         df = df.drop(columns=["役満和了率(回)"])
 
     # 出力

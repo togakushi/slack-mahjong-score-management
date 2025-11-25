@@ -151,14 +151,13 @@ def aggregation(m: "MessageParserProtocol"):
     data["連続ラス回避"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 項目整理
-    dropitems = g.cfg.dropitems.ranking
-    if g.cfg.mahjong.ignore_flying:
-        dropitems.append("トビ率")
-    if {"役満", "役満和了"} & set(g.cfg.dropitems.ranking):
-        dropitems.append("役満和了率")
+    if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.ranking & g.cfg.dropitems.flying:
+        data.pop("トビ率")
+    if g.cfg.dropitems.ranking & g.cfg.dropitems.yakuman:
+        data.pop("役満和了率")
 
     for k, v in data.items():
-        if k in dropitems:  # 非表示項目
+        if k in g.cfg.dropitems.ranking:  # 非表示項目
             continue
         if v.empty:  # 対象者なし
             continue

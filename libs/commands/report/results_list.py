@@ -52,13 +52,9 @@ def main(m: "MessageParserProtocol"):
         df = df.rename(columns={"name": "team"})
 
     # 非表示項目
-    if g.cfg.mahjong.ignore_flying:
+    if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.report & g.cfg.dropitems.flying:
         df = df.drop(columns=["flying_mix", "flying_count", "flying_rate"])
-    if "トビ" in g.cfg.dropitems.report:
-        df = df.drop(columns=["flying_mix", "flying_count", "flying_rate"])
-    if "役満" in g.cfg.dropitems.report:
-        df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_rate"])
-    if "役満和了" in g.cfg.dropitems.report:
+    if g.cfg.dropitems.report & g.cfg.dropitems.yakuman:
         df = df.drop(columns=["yakuman_mix", "yakuman_count", "yakuman_rate"])
 
     file_path: "MessageType"

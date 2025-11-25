@@ -338,20 +338,28 @@ class CommentSection(BaseSection):
 class DropItems(BaseSection):
     """非表示項目リスト"""
 
+    results: set
+    ranking: set
+    report: set
+    flying: set
+    yakuman: set
+    regulation: set
+    other: set
+
     def __init__(self, outer: "AppConfig"):
         self._parser = outer._parser
 
-        # 初期値セット
-        self.results: list = []
-        self.ranking: list = []
-        self.report: list = []
-
         # 設定値取り込み
         super().__init__(self, "")
+        self.results = {x.strip() for x in self._parser.get("results", "dropitems", fallback="").split(",")}
+        self.ranking = {x.strip() for x in self._parser.get("ranking", "dropitems", fallback="").split(",")}
+        self.report = {x.strip() for x in self._parser.get("report", "dropitems", fallback="").split(",")}
 
-        self.results = [x.strip() for x in self._parser.get("results", "dropitems", fallback="").split(",")]
-        self.ranking = [x.strip() for x in self._parser.get("ranking", "dropitems", fallback="").split(",")]
-        self.report = [x.strip() for x in self._parser.get("report", "dropitems", fallback="").split(",")]
+        # 固定ワード
+        self.flying = {"トビ", "トビ率"}
+        self.yakuman = {"役満", "役満和了", "役満和了率"}
+        self.regulation = {"卓外", "卓外清算", "卓外ポイント"}
+        self.other = {"その他", "メモ"}
 
 
 class BadgeDisplay(BaseSection):

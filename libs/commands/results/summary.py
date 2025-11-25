@@ -66,7 +66,7 @@ def aggregation(m: "MessageParserProtocol"):
     # 通算ポイント
     header_list = [column_name, "通算", "平均", "順位分布", "飛"]
     filter_list = [column_name, "ゲーム数", "通算", "平均", "差分", "1位", "2位", "3位", "4位", "平順", "飛"]
-    if g.cfg.mahjong.ignore_flying or (set(g.cfg.dropitems.results) & {"トビ", "トビ率"}):  # トビカウントなし
+    if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.results & g.cfg.dropitems.flying:  # トビカウントなし
         header_list.remove("飛")
         filter_list.remove("飛")
 
@@ -80,7 +80,7 @@ def aggregation(m: "MessageParserProtocol"):
     m.set_data("通算ポイント", data, copy(options))
 
     # メモ(役満和了)
-    if not set(g.cfg.dropitems.results) & {"役満", "役満和了", "役満和了率"}:
+    if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         df_yakuman = formatter.df_rename(df_remarks.query("type == 0").drop(columns=["type", "ex_point"]), kind=0)
         if options.format_type == "default":
             options.codeblock = False
@@ -91,7 +91,7 @@ def aggregation(m: "MessageParserProtocol"):
         m.set_data("役満和了", data, copy(options))
 
     # メモ(卓外ポイント/個人戦)
-    if not set(g.cfg.dropitems.results) & {"卓外", "卓外ポイント"}:
+    if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
         df_regulations = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type"]), kind=1)
         if options.format_type == "default":
             options.codeblock = False
@@ -102,7 +102,7 @@ def aggregation(m: "MessageParserProtocol"):
         m.set_data("卓外ポイント", data, copy(options))
 
     # メモ(その他)
-    if not set(g.cfg.dropitems.results) & {"その他", "メモ"}:
+    if not g.cfg.dropitems.results & g.cfg.dropitems.other:
         df_others = formatter.df_rename(df_remarks.query("type == 1").drop(columns=["type", "ex_point"]), kind=2)
         if options.format_type == "default":
             data = df_others
