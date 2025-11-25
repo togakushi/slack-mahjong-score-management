@@ -123,16 +123,19 @@ def aggregation(m: "MessageParserProtocol"):
     )
     count_df["matter"] = count_df.index
 
-    work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
+        work_df = count_df.query("type == 0").filter(items=["matter", "matter_count"])
         m.set_data("役満和了", formatter.df_rename(work_df, kind=0), StyleOptions())
 
-    work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
     if not g.cfg.dropitems.results & g.cfg.dropitems.regulation:
-        m.set_data("卓外ポイント", formatter.df_rename(work_df, kind=1), StyleOptions())
+        if g.params.get("individual"):
+            work_df = count_df.query("type == 2").filter(items=["matter", "matter_count", "ex_total"])
+        else:
+            work_df = count_df.query("type == 2 or type == 3").filter(items=["matter", "matter_count", "ex_total"])
+        m.set_data("卓外清算", formatter.df_rename(work_df, kind=1), StyleOptions())
 
-    work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
     if not g.cfg.dropitems.results & g.cfg.dropitems.other:
+        work_df = count_df.query("type == 1").filter(items=["matter", "matter_count"])
         m.set_data("その他", formatter.df_rename(work_df, kind=2), StyleOptions())
 
     # 戦績

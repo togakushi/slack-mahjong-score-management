@@ -26,9 +26,14 @@ from (
         --[team] team as name,
         --[not_collection] rank,
         --[collection] round(avg(rank), 2) as rank,
-        --[not_collection] --[not_group_by] point,
-        --[not_collection] --[group_by] round(sum(point), 1) as point,
-        --[collection] round(sum(point), 1) as point,
+        -- 個人戦ポイント
+        --[individual] --[not_collection] --[not_group_by] point,
+        --[individual] --[not_collection] --[group_by] round(sum(point), 1) as point,
+        --[individual] --[collection] round(sum(point), 1) as point,
+        -- チーム戦ポイント
+        --[team] --[not_collection] --[not_group_by] team_point as point,
+        --[team] --[not_collection] --[group_by] round(sum(team_point), 1) as point,
+        --[team] --[collection] round(sum(team_point), 1) as point,
         game_info.guest_count,
         --[not_group_length] game_info.comment
         --[group_length] substr(game_info.comment, 1, :group_length) as comment

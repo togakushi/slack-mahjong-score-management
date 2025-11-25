@@ -5,7 +5,8 @@ with target_data as (
         --[individual] --[unregistered_replace] case when results.guest = 0 then results.name else :guest_name end as name, -- ゲスト有効
         --[individual] --[unregistered_not_replace] case when results.guest = 0 then results.name else results.name || '(<<guest_mark>>)' end as name, -- ゲスト無効
         --[team] results.team as name,
-        point
+        --[individual] point
+        --[team] team_point as point
     from
         individual_results as results
     join game_info on

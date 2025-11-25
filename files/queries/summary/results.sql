@@ -146,7 +146,8 @@ from (
         --[team] results.team as name,
         rpoint,
         rank,
-        point,
+        --[individual] point,
+        --[team] team_point as point,
         seat,
         grandslam,
         ifnull(count, 0) as yakuman_count

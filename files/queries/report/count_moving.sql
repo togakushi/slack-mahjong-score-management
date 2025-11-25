@@ -14,7 +14,11 @@ from (
     from (
         select
             row_number() over (order by playtime) as total_count,
-            playtime, rank, point, rpoint
+            playtime,
+            rank,
+            --[individual] point,
+            --[team] team_point as point,
+            rpoint
         from
             individual_results as results
         where

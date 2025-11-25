@@ -8,7 +8,8 @@ with point_table as (
         --[team] team as name,
         --[team] 0 as guest,
         rpoint,
-        point,
+        --[individual] point,
+        --[team] team_point as point,
         ex_point,
         rank
     from

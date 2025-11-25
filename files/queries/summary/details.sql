@@ -10,10 +10,13 @@ select
     seat,
     rpoint,
     rank,
-    point,
+    --[individual] point,
+    --[team] team_point as point,
     grandslam,
-    regulation,
-    ex_point,
+    --[individual] regulation,
+    --[team] them_regulation as regulation,
+    --[individual] ex_point,
+    --[team] them_ex_point as ex_point,
     game_info.guest_count,
     game_info.same_team
 from
