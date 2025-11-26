@@ -108,6 +108,8 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
     discord_score: list[GameResult] = []
 
     for work_m in messages_list:
+        if work_m.keyword != g.cfg.setting.keyword:
+            continue
         if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
