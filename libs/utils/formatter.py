@@ -270,7 +270,8 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "vs_rpoint_avg": "平均素点(相手)", "vs_rank_avg": "平均順位(相手)", "vs_rank_distr": "順位分布(相手)",
         #
         "p1_name": "東家 名前", "p2_name": "南家 名前", "p3_name": "西家 名前", "p4_name": "北家 名前",
-        "p1_grandslam": "東家 メモ", "p2_grandslam": "南家 メモ", "p3_grandslam": "西家 メモ", "p4_grandslam": "北家 メモ",
+        "p1_yakuman": "東家 メモ", "p2_yakuman": "南家 メモ", "p3_yakuman": "西家 メモ", "p4_yakuman": "北家 メモ",
+        "p1_remarks": "東家 メモ", "p2_remarks": "南家 メモ", "p3_remarks": "西家 メモ", "p4_remarks": "北家 メモ",
         "p1_rpoint": "東家 素点", "p2_rpoint": "南家 素点", "p3_rpoint": "西家 素点", "p4_rpoint": "北家 素点",
         "p1_rank": "東家 順位", "p2_rank": "南家 順位", "p3_rank": "西家 順位", "p4_rank": "北家 順位",
         "p1_point": "東家 ポイント", "p2_point": "南家 ポイント", "p3_point": "西家 ポイント", "p4_point": "北家 ポイント",
@@ -282,6 +283,8 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "name3": "3位(名前)", "point3": "3位(ポイント)",
         "name4": "4位(名前)", "point4": "4位(ポイント)",
         "name5": "5位(名前)", "point5": "5位(ポイント)",
+        # メモ
+        "regulation": "メモ",
     }
 
     for x in df.columns:
@@ -324,7 +327,7 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
                 rename_dict[x] = "順位差"
             case "diff_from_top":
                 rename_dict[x] = "トップ差"
-            case "yakuman_mix" | "grandslam":
+            case "yakuman_mix" | "yakuman":
                 rename_dict[x] = "役満和了"
             case "yakuman_count":
                 rename_dict[x] = "役満和了数"

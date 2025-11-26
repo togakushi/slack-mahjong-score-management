@@ -220,7 +220,7 @@ def df_to_results_details(df: pd.DataFrame) -> dict:
             "南家：": [v for k, v in cast(dict, x).items() if str(k).startswith("南家")],
             "西家：": [v for k, v in cast(dict, x).items() if str(k).startswith("西家")],
             "北家：": [v for k, v in cast(dict, x).items() if str(k).startswith("北家")],
-        }, index=["name", "rpoint", "rank", "point", "grandslam"]).T
+        }, index=["name", "rpoint", "rank", "point", "regulation"]).T
 
         work_df["rpoint"] = work_df.apply(lambda v: f"<>{v["rpoint"]:8d}点".replace("-", "▲"), axis=1)
         work_df["point"] = work_df.apply(lambda v: f"(<>{v["point"]:7.1f}pt)".replace("-", "▲"), axis=1)
@@ -252,7 +252,7 @@ def df_to_results_simple(df: pd.DataFrame) -> dict:
             vs_guest = f"({g.cfg.setting.guest_mark}) "
 
         ret = f"\t{vs_guest}{str(x["日時"]).replace("-", "/")}  "
-        ret += f"{x["座席"]}\t{x["順位"]}位\t{x["素点"]:8d}点\t({x["獲得ポイント"]:7.1f}pt)\t{x["役満和了"]}".replace("-", "▲")
+        ret += f"{x["座席"]}\t{x["順位"]}位\t{x["素点"]:8d}点\t{x["獲得ポイント"]:7.1f}pt\t{x["メモ"]}".replace("-", "▲")
         data_list.append(ret)
 
     return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, 2500))}
@@ -480,7 +480,7 @@ def df_to_count(df: pd.DataFrame, title: str, indent: int = 0) -> dict:
     match title:
         case "役満和了":
             df["表示"] = df.apply(lambda x: f"{x["和了役"]}： {x["回数"]} 回", axis=1)
-        case "卓外ポイント":
+        case "卓外清算":
             df["表示"] = df.apply(lambda x: f"{x["内容"]}： {x["回数"]} 回 ({x["ポイント合計"]:.1f}pt)".replace("-", "▲"), axis=1)
         case "その他":
             df["表示"] = df.apply(lambda x: f"{x["内容"]}： {x["回数"]} 回", axis=1)

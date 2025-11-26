@@ -169,7 +169,7 @@ def query_modification(sql: str) -> str:
                 "(row_number() over (order by total_count desc) - 1) / :interval"
             )
     if g.params.get("kind") is not None:
-        if g.params.get("kind") == "grandslam":
+        if g.params.get("kind") == "yakuman":
             if g.cfg.undefined_word == 0:
                 sql = sql.replace("<<where_string>>", "and (words.type is null or words.type = 0)")
             else:

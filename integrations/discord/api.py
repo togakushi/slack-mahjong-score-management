@@ -129,7 +129,7 @@ class AdapterAPI(APIInterface):
                             match title:
                                 case "通算ポイント" | "ポイント差分":
                                     post_msg.extend(_table_data(converter.df_to_text_table(msg, step=40)))
-                                case "役満和了" | "卓外ポイント" | "その他":
+                                case "役満和了" | "卓外清算" | "その他":
                                     if "回数" in msg.columns:
                                         post_msg.extend(_table_data(converter.df_to_count(msg, title, 1)))
                                     else:

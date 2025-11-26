@@ -138,7 +138,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | p1_rpoint        | result.p1_rpoint     | 東家素点(計算後)                           |
 | p1_rank          | result.p1_rank       | 東家順位                                   |
 | p1_point         | result.p1_point      | 東家が獲得したポイント(卓外ポイントを含む) |
-| p1_grandslam     | regulations.word     | 役満和了メモ                               |
+| p1_yakuman     | regulations.word     | 役満和了メモ                               |
 | p1_regulation1   | regulations.word     | `type=1`のレギュレーション                 |
 | p1_regulation2   | regulations.word     | `type=2`のレギュレーション                 |
 | p1_type          | regulations.type     | レギュレーションの種別                     |
@@ -149,7 +149,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | p2_rpoint        | result.p2_rpoint     | 南家素点(計算後)                           |
 | p2_rank          | result.p2_rank       | 南家順位                                   |
 | p2_point         | result.p2_point      | 南家が獲得したポイント(卓外ポイントを含む) |
-| p2_grandslam     | regulations.word     | 役満和了メモ                               |
+| p2_yakuman     | regulations.word     | 役満和了メモ                               |
 | p2_regulation1   | regulations.word     | `type=1`のレギュレーション                 |
 | p2_regulation2   | regulations.word     | `type=2`のレギュレーション                 |
 | p2_type          | regulations.type     | レギュレーションの種別                     |
@@ -160,7 +160,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | p3_rpoint        | result.p3_rpoint     | 西家素点(計算後)                           |
 | p3_rank          | result.p3_rank       | 西家順位                                   |
 | p3_point         | result.p3_point      | 西家が獲得したポイント(卓外ポイントを含む) |
-| p3_grandslam     | regulations.word     | 役満和了メモ                               |
+| p3_yakuman     | regulations.word     | 役満和了メモ                               |
 | p3_regulation1   | regulations.word     | `type=1`のレギュレーション                 |
 | p3_regulation2   | regulations.word     | `type=2`のレギュレーション                 |
 | p3_type          | regulations.type     | レギュレーションの種別                     |
@@ -171,7 +171,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | p4_rpoint        | result.p4_rpoint     | 北家素点(計算後)                           |
 | p4_rank          | result.p4_rank       | 北家順位                                   |
 | p4_point         | result.p4_point      | 北家が獲得したポイント(卓外ポイントを含む) |
-| p4_grandslam     | regulations.word     | 役満和了メモ                               |
+| p4_yakuman     | regulations.word     | 役満和了メモ                               |
 | p4_regulation1   | regulations.word     | `type=1`のレギュレーション                 |
 | p4_regulation2   | regulations.word     | `type=2`のレギュレーション                 |
 | p4_type          | regulations.type     | レギュレーションの種別                     |
@@ -200,7 +200,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | rpoint           | result.p?_rpoint     | 素点(数式評価後)                      |
 | rank             | result.p?_rank       | 順位                                  |
 | point            | result.p?_point      | 獲得ポイント(卓外ポイント込み)        |
-| grandslam        | regulations.word     | 和了した役満(`regulations`から取得)   |
+| yakuman        | regulations.word     | 和了した役満(`regulations`から取得)   |
 | regulation       | regulations.word     | 役満以外のメモ(`regulations`から取得) |
 | ex_point         | regulations.ex_point | 卓外ポイント                          |
 | guest            |                      | ゲストフラグ(`1`=ゲスト)              |

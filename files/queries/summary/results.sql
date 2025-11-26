@@ -149,18 +149,18 @@ from (
         --[individual] point,
         --[team] team_point as point,
         seat,
-        grandslam,
+        yakuman,
         ifnull(count, 0) as yakuman_count
     from
         individual_results as results
     join game_info on
         game_info.ts = results.ts
-    left join regulations as grandslam
+    left join regulations as yakuman
         on
-            grandslam.type = 0
-            and grandslam.thread_ts = results.ts
-            --[individual] and grandslam.name = results.name
-            --[team] and grandslam.name = results.team
+            yakuman.type = 0
+            and yakuman.thread_ts = results.ts
+            --[individual] and yakuman.name = results.name
+            --[team] and yakuman.name = results.team
     where
         results.rule_version = :rule_version
         and results.playtime between :starttime and :endtime

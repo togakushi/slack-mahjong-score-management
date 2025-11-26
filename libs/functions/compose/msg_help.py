@@ -62,17 +62,25 @@ def event_message() -> str:
         \t登録キーワード：{g.cfg.setting.remarks_word}
     """)
 
-    words = lookup.db.regulation_list(1)
+    words = lookup.db.regulation_list(2)
     if words:
-        msg += "\n\t*卓外ポイントワード(個人清算)*\n"
+        msg += "\n\t*卓外清算ワード(個人)*\n"
+        for word, ex_point in words:
+            msg += "\t\t{}：{}pt\n".format(  # pylint: disable=consider-using-f-string
+                word,
+                str(f"{ex_point:.1f}").replace("-", "▲"),
+            )
+    words = lookup.db.regulation_list(3)
+    if words:
+        msg += "\n\t*卓外清算ワード(チーム)*\n"
         for word, ex_point in words:
             msg += "\t\t{}：{}pt\n".format(  # pylint: disable=consider-using-f-string
                 word,
                 str(f"{ex_point:.1f}").replace("-", "▲"),
             )
 
-    words = [word for word, _ in lookup.db.regulation_list(2)]
-    if g.cfg.undefined_word == 2:
+    words = [word for word, _ in lookup.db.regulation_list(1)]
+    if g.cfg.undefined_word == 1:
         words += ["未登録ワードのすべてを個別にカウント"]
     if words:
         msg += f"\n\t*個別カウントワード*\n\t\t{'、'.join(words)}\n"

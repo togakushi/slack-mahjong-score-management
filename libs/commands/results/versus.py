@@ -101,7 +101,7 @@ def aggregation(m: "MessageParserProtocol"):
         df_data["座席"] = df_data["seat"].apply(lambda x: ["東家", "南家", "西家", "北家"][x - 1])
         df_data["rpoint"] = df_data["rpoint"] * 100
     df_data = formatter.df_rename(
-        df_data.filter(items=["playtime", "座席", "name", "rank", "rpoint", "point", "grandslam"]).drop_duplicates(),
+        df_data.filter(items=["playtime", "座席", "name", "rank", "rpoint", "point", "yakuman"]).drop_duplicates(),
         short=False
     )
 

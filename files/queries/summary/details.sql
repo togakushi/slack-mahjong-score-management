@@ -12,7 +12,7 @@ select
     rank,
     --[individual] point,
     --[team] team_point as point,
-    grandslam,
+    yakuman,
     --[individual] regulation,
     --[team] them_regulation as regulation,
     --[individual] ex_point,
@@ -22,8 +22,7 @@ select
 from
     individual_results as results
 join game_info
-    on
-        game_info.ts = results.ts
+    on game_info.ts = results.ts
 where
     results.rule_version = :rule_version
     and results.playtime between :starttime and :endtime

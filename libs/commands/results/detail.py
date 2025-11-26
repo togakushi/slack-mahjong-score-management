@@ -410,7 +410,7 @@ def get_results_simple(mapping_dict: dict) -> pd.DataFrame:
         df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
     else:
         df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
-    df_data = formatter.df_rename(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "grandslam", "備考"]), short=False)
+    df_data = formatter.df_rename(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "regulation", "備考"]), short=False)
 
     return df_data
 

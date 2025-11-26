@@ -1,9 +1,65 @@
 create view if not exists individual_results as
 with
-    yakuman_table as (select * from regulations where type = 0),
-    memo_table as (select * from regulations where type = 1),
-    regulation_table as (select * from regulations where type = 2),
-    them_regulation_table as (select * from regulations where type = 3)
+    yakuman_table as (
+        select
+            thread_ts, name, group_concat(word) as word
+        from
+            regulations
+        where
+            type = 0
+        group by
+            thread_ts, name
+    ),
+    memo_table as (
+        select
+            thread_ts, name, group_concat(word) as word
+        from
+            regulations
+        where
+            type = 1
+        group by
+            thread_ts, name
+    ),
+    regulation_table as (
+        select
+            thread_ts, name, sum(ex_point) as ex_point, group_concat(word) as word
+        from
+            regulations
+        where
+            type = 2
+        group by
+            thread_ts, name
+    ),
+    them_regulation_table as (
+        select
+            thread_ts, name, sum(ex_point) as ex_point, group_concat(word) as word
+        from
+            regulations
+        where
+            type in (2, 3)
+        group by
+            thread_ts, name
+    ),
+    remarks_table as (
+        select
+            thread_ts, name, group_concat(word) as word
+        from
+            regulations
+        where
+            type in (0, 1, 2)
+        group by
+            thread_ts, name
+    ),
+    them_remarks_table as (
+        select
+            thread_ts, name, group_concat(word) as word
+        from
+            regulations
+        where
+            type in (0, 1, 2, 3)
+        group by
+            thread_ts, name
+    )
 select * from (
     -- 東家
     select
@@ -17,7 +73,7 @@ select * from (
         p1_rank as rank,
         p1_point as original_point,
         -- メモ
-        yakuman_table.word as grandslam,
+        yakuman_table.word as yakuman,
         memo_table.word as memo,
         -- 個人戦レギュレーション
         regulation_table.word as regulation,
@@ -26,7 +82,7 @@ select * from (
         -- チーム戦レギュレーション
         them_regulation_table.word as them_regulation,
         them_regulation_table.ex_point as them_ex_point,
-        p1_point + ifnull(regulation_table.ex_point, 0) + ifnull(them_regulation_table.ex_point, 0) as team_point,
+        p1_point + ifnull(them_regulation_table.ex_point, 0) as team_point,
         --
         date(playtime, '-12 hours') as collection_daily,
         rule_version,
@@ -70,7 +126,7 @@ select * from (
         -- チーム戦レギュレーション
         them_regulation_table.word,
         them_regulation_table.ex_point,
-        p2_point + ifnull(regulation_table.ex_point, 0) + ifnull(them_regulation_table.ex_point, 0),
+        p2_point + ifnull(them_regulation_table.ex_point, 0),
         --
         date(playtime, '-12 hours'),
         rule_version,
@@ -114,7 +170,7 @@ select * from (
         -- チーム戦レギュレーション
         them_regulation_table.word,
         them_regulation_table.ex_point,
-        p3_point + ifnull(regulation_table.ex_point, 0) + ifnull(them_regulation_table.ex_point, 0),
+        p3_point + ifnull(them_regulation_table.ex_point, 0),
         --
         date(playtime, '-12 hours'),
         rule_version,
@@ -158,7 +214,7 @@ select * from (
         -- チーム戦レギュレーション
         them_regulation_table.word,
         them_regulation_table.ex_point,
-        p4_point + ifnull(regulation_table.ex_point, 0) + ifnull(them_regulation_table.ex_point, 0),
+        p4_point + ifnull(them_regulation_table.ex_point, 0),
         --
         date(playtime, '-12 hours'),
         rule_version,
