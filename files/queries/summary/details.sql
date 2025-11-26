@@ -17,6 +17,8 @@ select
     --[team] them_regulation as regulation,
     --[individual] ex_point,
     --[team] them_ex_point as ex_point,
+    --[individual] remarks,
+    --[team] them_remarks as remarks,
     game_info.guest_count,
     game_info.same_team
 from

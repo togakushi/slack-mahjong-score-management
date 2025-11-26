@@ -284,7 +284,8 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "name4": "4位(名前)", "point4": "4位(ポイント)",
         "name5": "5位(名前)", "point5": "5位(ポイント)",
         # メモ
-        "regulation": "メモ",
+        "regulation": "卓外清算",
+        "remarks": "メモ",
     }
 
     for x in df.columns:
