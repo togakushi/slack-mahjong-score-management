@@ -91,7 +91,7 @@ def df_to_text_table(df: pd.DataFrame, step: int = 40, index: bool = False) -> d
     for col in df.columns:
         header.append(col)
         match col:
-            case "名前" | "プレイヤー名":
+            case "名前" | "プレイヤー名" | "チーム" | "チーム名":
                 alignments.append(Alignment.LEFT)
             case "順位分布":
                 alignments.append(Alignment.LEFT)
@@ -447,20 +447,20 @@ def df_to_remarks(df: pd.DataFrame) -> dict:
         dict: 整形テキスト
     """
 
+    key_name = "名前" if g.params.get("individual") else "チーム"
     for col in df.columns:
         match col:
             case "日時":
                 df["日時"] = df["日時"].map(lambda x: str(x).replace("-", "/"))
-            case "卓外":
-                df["卓外"] = df["卓外"].map(lambda x: f"{x}pt".replace("-", "▲"))
+            case "ポイント":
+                df["ポイント"] = df["ポイント"].map(lambda x: f"{x}pt".replace("-", "▲"))
 
-    if "卓外" in df.columns:
-        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["内容"]} {x["卓外"]} ({x["名前"]})", axis=1)
+    if "ポイント" in df.columns:
+        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["ポイント"]} {x["内容"]} （{x[key_name]}）", axis=1)
     elif "和了役" in df.columns:
-        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["和了役"]} ({x["名前"]})", axis=1)
+        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["和了役"]} （{x[key_name]}）", axis=1)
     else:
-        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["内容"]} ({x["名前"]})", axis=1)
-
+        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["内容"]} （{x[key_name]}）", axis=1)
     tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
 
     return {"0": "\n".join(tbl)}
