@@ -49,7 +49,7 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
                     p2_name, p2_str,
                     p3_name, p3_str,
                     p4_name, p4_str,
-                    comment
+                    comment, source
                 from
                     result
                 order by
@@ -101,7 +101,9 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
                             data.update(comment=None)
 
                         detection = GameResult(**data)
+                        detection.source = "web"
                         m.status.source = "web"
+
                         if data.get("mode") == "insert":
                             modify.db_insert(detection, m)
                         else:

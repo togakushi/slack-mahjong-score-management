@@ -235,6 +235,7 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "ex_total": "ポイント合計",
         "deposit": "供託",
         "comment": "コメント",
+        "source": "入力元",
         "rule_version": "ルール識別子",
         "war_record": "戦績(勝-敗-分)",
         #
