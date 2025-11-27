@@ -63,7 +63,7 @@ def check_omission(results: ComparisonResults):
     keep_channel_id: list = []
 
     for work_m in set(g.adapter.functions.pickup_score()):
-        if work_m.keyword != g.cfg.setting.keyword:
+        if work_m.keyword in g.keyword_dispatcher:  # コマンドキーワードはスキップ
             continue
         if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
             for k, v in score.to_dict().items():  # 名前の正規化
