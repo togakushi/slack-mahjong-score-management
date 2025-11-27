@@ -338,28 +338,27 @@ class CommentSection(BaseSection):
 class DropItems(BaseSection):
     """非表示項目リスト"""
 
-    results: set
-    ranking: set
-    report: set
-    flying: set
-    yakuman: set
-    regulation: set
-    other: set
-
     def __init__(self, outer: "AppConfig"):
         self._parser = outer._parser
 
         # 設定値取り込み
         super().__init__(self, "")
-        self.results = {x.strip() for x in self._parser.get("results", "dropitems", fallback="").split(",")}
-        self.ranking = {x.strip() for x in self._parser.get("ranking", "dropitems", fallback="").split(",")}
-        self.report = {x.strip() for x in self._parser.get("report", "dropitems", fallback="").split(",")}
+        self.results: set = {x.strip() for x in self._parser.get("results", "dropitems", fallback="").split(",")}
+        """成績サマリ非表示項目"""
+        self.ranking: set = {x.strip() for x in self._parser.get("ranking", "dropitems", fallback="").split(",")}
+        """ランキング/レーティング非表示項目"""
+        self.report: set = {x.strip() for x in self._parser.get("report", "dropitems", fallback="").split(",")}
+        """レポート非表示項目"""
 
         # 固定ワード
         self.flying = {"トビ", "トビ率"}
+        """トビ関連データ非表示指定ワード"""
         self.yakuman = {"役満", "役満和了", "役満和了率"}
+        """役満和了関連データ非表示指定ワード"""
         self.regulation = {"卓外", "卓外清算", "卓外ポイント"}
+        """卓外清算関連データ非表示指定ワード"""
         self.other = {"その他", "メモ"}
+        """メモ関連データ非表示指定ワード"""
 
 
 class BadgeDisplay(BaseSection):

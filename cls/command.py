@@ -161,9 +161,13 @@ class ParsedCommand:
     """コマンド解析結果"""
 
     flags: dict[str, Any]
+    """真偽値、引数を持つオプションを格納"""
     arguments: list[str]
+    """単独オプションを格納"""
     unknown: list[str]
+    """オプションと認識されない文字列を格納（プレイヤー名候補）"""
     search_range: list[ExtDt]
+    """検索範囲の日時を格納"""
 
 
 class CommandParser:

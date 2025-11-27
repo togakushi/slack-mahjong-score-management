@@ -52,7 +52,8 @@ class GameResult:
     """スコアデータ"""
 
     def __init__(self, **kwargs):
-        """ゲーム結果"""
+
+        # ゲーム結果
         self.ts: str = ""
         """タイムスタンプ"""
         self.p1: Score = Score()
@@ -67,6 +68,8 @@ class GameResult:
         """ゲームコメント"""
         self.deposit: int = 0
         """供託"""
+
+        # 付属情報
         self.rule_version: str = ""
         """ルールバージョン"""
         self.origin_point: int = 250
