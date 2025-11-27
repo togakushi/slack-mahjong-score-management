@@ -13,25 +13,25 @@
 
 |   カラム名   |    制約     |    型     |              内容              |
 | ------------ | ----------- | --------- | ------------------------------ |
-| ts           | PRIMARY KEY | TEXT      | slackにポストされた時間        |
+| ts           | PRIMARY KEY | TEXT      | ゲーム結果が記録された時間     |
 | playtime     | UNIQUE      | TIMESTAMP | タイムスタンプ(tsを変換)       |
 | p1_name      | NOT NULL    | TEXT      | 東家プレイヤー名               |
-| p1_str       | NOT NULL    | TEXT      | slackに入力された東家の素点    |
+| p1_str       | NOT NULL    | TEXT      | 入力された東家の素点           |
 | p1_rpoint    |             | INTEGER   | 東家素点(計算後)               |
 | p1_rank      |             | INTEGER   | 東家順位                       |
 | p1_point     |             | INTEGER   | 東家が獲得したポイント         |
 | p2_name      | NOT NULL    | TEXT      | 南家プレイヤー名               |
-| p2_str       | NOT NULL    | TEXT      | slackに入力された南家の素点    |
+| p2_str       | NOT NULL    | TEXT      | 入力された南家の素点           |
 | p2_rpoint    |             | INTEGER   | 南家素点(計算後)               |
 | p2_rank      |             | INTEGER   | 南家順位                       |
 | p2_point     |             | INTEGER   | 南家が獲得したポイント         |
 | p3_name      | NOT NULL    | TEXT      | 西家プレイヤー名               |
-| p3_str       | NOT NULL    | TEXT      | slackに入力された西家の素点    |
+| p3_str       | NOT NULL    | TEXT      | 入力された西家の素点           |
 | p3_rpoint    |             | INTEGER   | 西家素点(計算後)               |
 | p3_rank      |             | INTEGER   | 西家順位                       |
 | p3_point     |             | INTEGER   | 西家が獲得したポイント         |
 | p4_name      | NOT NULL    | TEXT      | 北家プレイヤー名               |
-| p4_str       | NOT NULL    | TEXT      | slackに入力された北家の素点    |
+| p4_str       | NOT NULL    | TEXT      | 入力された北家の素点           |
 | p4_rpoint    |             | INTEGER   | 北家素点(計算後)               |
 | p4_rank      |             | INTEGER   | 北家順位                       |
 | p4_point     |             | INTEGER   | 北家が獲得したポイント         |
@@ -88,12 +88,12 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 
 ### 内容
 
-| カラム名  |   制約   |  型  |               内容                |
-| --------- | -------- | ---- | --------------------------------- |
-| thread_ts | NOT NULL | TEXT | 成績結果がslackにポストされた時間 |
-| event_ts  | NOT NULL | TEXT | メモがslackにポストされた時間     |
-| name      | NOT NULL | TEXT | メモ内容(誰が)                    |
-| matter    | NOT NULL | TEXT | メモ内容(何をした)                |
+| カラム名  |   制約   |  型  |            内容            |
+| --------- | -------- | ---- | -------------------------- |
+| thread_ts | NOT NULL | TEXT | ゲーム結果が記録された時間 |
+| event_ts  | NOT NULL | TEXT | メモが記録された時間       |
+| name      | NOT NULL | TEXT | メモ内容(誰が)             |
+| matter    | NOT NULL | TEXT | メモ内容(何をした)         |
 
 ## words
 
@@ -132,7 +132,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 |     カラム名     |        参照元        |                       内容                       |
 | ---------------- | -------------------- | ------------------------------------------------ |
 | playtime         |                      | タイムスタンプ(tsを変換)                         |
-| ts               | result.ts            | slackにポストされた時間                          |
+| ts               | result.ts            | ゲーム結果が記録された時間                       |
 | p1_name          | result.p1_name       | 東家プレイヤー名                                 |
 | p1_team          | team.name            | 東家所属チーム名                                 |
 | p1_guest         |                      | 東家ゲストフラグ(`1`=ゲスト)                     |
@@ -214,7 +214,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 |     カラム名     |        参照元        |                      内容                      |
 | ---------------- | -------------------- | ---------------------------------------------- |
 | playtime         |                      | タイムスタンプ(tsを変換)                       |
-| ts               | result.ts            | slackにポストされた時間                        |
+| ts               | result.ts            | ゲーム結果が記録された時間                     |
 | seat             |                      | 席(`1`=東、`2`=南、`3`=西、`4`=北)             |
 | name             | result.p?_name       | プレイヤー名                                   |
 | team             |                      | チーム名                                       |
@@ -243,7 +243,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 |   カラム名   |       参照元        |                      内容                      |
 | ------------ | ------------------- | ---------------------------------------------- |
 | playtime     |                     | タイムスタンプ(tsを変換)                       |
-| ts           | result.ts           | slackにポストされた時間                        |
+| ts           | result.ts           | ゲーム結果が記録された時間                     |
 | guest_count  |                     | ゲーム内のゲストの人数                         |
 | same_team    |                     | ゲーム内に同じチームのメンバーが存在すれば `1` |
 | rule_version | result.rule_version | ルールバージョンを示す文字列                   |
