@@ -211,10 +211,9 @@ class SvcFunctions(FunctionsInterface):
 
         Returns:
             dict[str,list]: リアクション
+            - str: "oK" or "ng"
+            - list: タイムスタンプ
         """
-
-        ok = getattr(self.conf, "reaction_ok", "ok")
-        ng = getattr(self.conf, "reaction_ng", "ng")
 
         icon: dict[str, list] = {
             "ok": [],
@@ -229,9 +228,9 @@ class SvcFunctions(FunctionsInterface):
 
         if (reactions := cast(dict, res["message"]).get("reactions")):
             for reaction in cast(list[dict], reactions):
-                if ok == reaction.get("name") and self.conf.bot_id in reaction["users"]:
+                if reaction.get("name") == self.conf.reaction_ok and self.conf.bot_id in reaction["users"]:
                     icon["ok"].append(res["message"]["ts"])
-                if ng == reaction.get("name") and self.conf.bot_id in reaction["users"]:
+                if reaction.get("name") == self.conf.reaction_ng and self.conf.bot_id in reaction["users"]:
                     icon["ng"].append(res["message"]["ts"])
 
         logging.debug("ch=%s, ts=%s, icon=%s", ch, ts, icon)
