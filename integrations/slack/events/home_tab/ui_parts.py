@@ -283,7 +283,7 @@ def set_command_option(adapter: "ServiceAdapter", body: dict) -> tuple[list, lis
     # 検索設定
     argument: list = []
     search_options = body["view"]["state"]["values"]
-    logging.info("search options: %s", search_options)
+    logging.debug("search options: %s", search_options)
 
     app_msg: list = []
     adapter.conf.tab_var.update(operation=None)
