@@ -13,6 +13,8 @@ from integrations.slack.events.handler_registry import register, register_all
 from integrations.slack.events.home_tab import home
 
 if TYPE_CHECKING:
+    from slack_bolt import App
+
     from integrations.slack.adapter import ServiceAdapter
 
 
@@ -58,7 +60,7 @@ def main(adapter: "ServiceAdapter"):
 
 
 @register
-def register_event_handlers(app, adapter: "ServiceAdapter"):
+def register_event_handlers(app: "App", adapter: "ServiceAdapter"):
     """イベントAPI"""
 
     m = adapter.parser()
