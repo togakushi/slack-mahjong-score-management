@@ -59,12 +59,14 @@ class MsgData(DataMixin):
         "message_append",
         "message_changed",
         "message_deleted",
+        "do_nothing",
         "undetermined",
     ] = field(default="undetermined")
     """イベントステータス
     - *message_append*: 新規ポストイベント
     - *message_changed*: 編集イベント
     - *message_deleted*: 削除イベント
+    - *do_nothing*: 何もしなくてよいイベント
     - *undetermined*: 未定義状態
     """
     reaction_ok: list = field(default_factory=list)

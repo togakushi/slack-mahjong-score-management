@@ -27,6 +27,10 @@ def by_keyword(m: "MessageParserProtocol"):
         m.data.status, m.data.event_ts, m.data.thread_ts, m.in_thread, m.keyword, m.data.user_id,
     )
 
+    # 変更がないイベントは処理をスキップ
+    if m.data.status == "do_nothing":
+        return
+
     # 許可されていないユーザのコマンドは処理しない
     if m.ignore_user:
         logging.debug("event skip[ignore user]: %s", m.data.user_id)

@@ -25,8 +25,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
 
     def parser(self, _body: dict):
         g.adapter = cast("ServiceAdapter", g.adapter)
-        # 対象のevent抽出
-        _event = cast(dict, _body.get("event", _body))
+        _event = cast(dict, _body.get("event", _body))  # 対象のevent抽出
 
         if _body.get("command") == g.adapter.conf.slash_command:  # スラッシュコマンド
             self.status.command_flg = True
@@ -34,17 +33,17 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
             if _body.get("channel_name") == "directmessage":
                 self.data.channel_type = "im"
                 self.data.status = "message_append"
-                self.data.channel_id = _body.get("channel_id", "")
+                self.data.channel_id = str(_body.get("channel_id", ""))
             else:
                 self.data.channel_id = g.adapter.functions.get_dm_channel_id(_body.get("user_id", ""))
         elif _body.get("container"):  # Homeタブ
-            self.data.user_id = _body["user"].get("id")
+            self.data.user_id = str(cast(dict, _body["user"]).get("id", ""))
             self.data.channel_id = g.adapter.functions.get_dm_channel_id(self.data.user_id)
             self.data.channel_type = "channel"
             self.data.text = "dummy"
         elif _body.get("iid"):  # 検索結果
-            if (channel_id := str(cast(dict, _event["channel"]).get("id", ""))):
-                self.data.channel_id = channel_id
+            if (_channel_id := str(cast(dict, _event["channel"]).get("id", ""))):
+                self.data.channel_id = _channel_id
                 _event.pop("channel")
             self.data.channel_type = "search_messages"
             self.data.status = "message_append"
@@ -53,8 +52,15 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                 case "message_changed":
                     self.data.status = "message_changed"
                     _event.update(cast(dict, _event["message"]))
-                    if (previous_message := cast(dict, _event.get("previous_message", {}))):
-                        _event.update(thread_ts=previous_message.get("thread_ts", "0"))
+                    if cast(dict, _event["message"]).get("subtype") == "tombstone":  # スレッド元の削除
+                        self.data.status = "message_deleted"
+                    elif (_edited := cast(dict, _event["message"]).get("edited")):
+                        self.data.edited_ts = str(cast(dict, _edited).get("ts", "undetermined"))
+                    if (_previous_message := cast(dict, _event.get("previous_message", {}))):
+                        if _previous_message.get("thread_ts"):
+                            _event.update(thread_ts=_previous_message.get("thread_ts", "0"))
+                        if cast(dict, _event["message"]).get("text") == _previous_message.get("text"):
+                            self.data.status = "do_nothing"
                 case "message_deleted":
                     self.data.status = "message_deleted"
                     _event.update(cast(dict, _event["previous_message"]))
