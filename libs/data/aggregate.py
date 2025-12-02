@@ -2,7 +2,6 @@
 libs/data/aggregate.py
 """
 
-import logging
 from typing import Optional
 
 import numpy as np
@@ -36,10 +35,6 @@ def game_summary(
     if isinstance(drop_items, list):
         df = df.drop(columns=drop_items)
 
-    if g.args.verbose > 1:
-        print("=" * 80)
-        print(df.to_string())
-
     return df
 
 
@@ -56,10 +51,6 @@ def game_results() -> pd.DataFrame:
     # インデックスの振り直し
     df = df.reset_index(drop=True)
     df.index = df.index + 1
-
-    if g.args.verbose > 1:
-        print("=" * 80)
-        print(df.to_string())
 
     return df
 
@@ -123,10 +114,6 @@ def ranking_record() -> pd.DataFrame:
         record_df = record_df.join(gamedata.filter(items=["name", "point_min"]).groupby("name").min())
         record_df = record_df.join(gamedata.filter(items=["name", "rpoint_max"]).groupby("name").max())
         record_df = record_df.join(gamedata.filter(items=["name", "rpoint_min"]).groupby("name").min())
-
-    if g.args.verbose > 1:
-        print("=" * 80)
-        print(record_df.to_string())
 
     return record_df
 
