@@ -71,6 +71,8 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> int:
     """
 
     detection.calc()
+    changes: int = int(0)
+
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             cur.execute(dbutil.query("RESULT_UPDATE"), {
