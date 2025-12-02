@@ -2,7 +2,6 @@
 libs/data/loader.py
 """
 
-import logging
 import re
 from datetime import datetime
 from typing import TYPE_CHECKING, cast
@@ -26,10 +25,6 @@ def read_data(keyword: str) -> pd.DataFrame:
         pd.DataFrame: 集計結果
     """
 
-    # デバッグ用
-    pd.set_option("display.max_rows", None)
-    pd.set_option("display.max_columns", None)
-
     if "starttime" in g.params:
         g.params.update({"starttime": cast("ExtDt", g.params["starttime"]).format("sql")})
     if "endtime" in g.params:
@@ -39,8 +34,9 @@ def read_data(keyword: str) -> pd.DataFrame:
         g.params.update({"rule_version": g.cfg.mahjong.rule_version})
 
     sql = query_modification(dbutil.query(keyword))
-    logging.debug("prm: %s", g.params)
-    logging.debug("sql: %s", named_query(sql))
+    if g.args.verbose > 0:
+        print(f">>> {g.params=}")
+        print(f">>> SQL: {keyword}\n{named_query(sql)}")
 
     # プレイヤーリスト/対戦相手リスト
     player_list: dict = {}
@@ -56,7 +52,10 @@ def read_data(keyword: str) -> pd.DataFrame:
         con=dbutil.connection(g.cfg.setting.database_file),
         params={**cast(dict, g.params), **player_list},
     )
-    logging.trace(df)  # type: ignore
+
+    if g.args.verbose > 1:
+        print("=" * 80)
+        print(df.to_string())
 
     return df
 

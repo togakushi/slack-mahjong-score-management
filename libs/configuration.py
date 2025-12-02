@@ -76,15 +76,16 @@ def arg_parser() -> argparse.Namespace:
 
     logging_group = p.add_argument_group("logging options")
     logging_group.add_argument(
-        "--debug",
-        action="store_true",
-        help="デバッグ情報表示",
+        "-d", "--debug",
+        action="count",
+        default=0,
+        help="デバッグレベル(-d, -dd)",
     )
     logging_group.add_argument(
-        "--verbose", "--trace",
-        dest="verbose",
-        action="store_true",
-        help="詳細デバッグ情報表示",
+        "-v", "--verbose",
+        action="count",
+        default=0,
+        help="動作ログ出力レベル(-v, -vv)",
     )
     logging_group.add_argument(
         "--moderate",
@@ -207,23 +208,23 @@ def setup():
         fmt = ""
     else:
         fmt = "[%(asctime)s]"
-    if g.args.debug or g.args.verbose:
-        fmt += "[%(levelname)s][%(name)s:%(module)s:%(funcName)s] %(message)s"
-    else:
-        fmt += "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
 
-    if g.args.debug:
-        if g.args.verbose:
-            logging.basicConfig(level=logging.TRACE, format=fmt)  # type: ignore
-            logging.info("DEBUG MODE(verbose)")
-        else:
+    # デバッグレベル
+    match g.args.debug:
+        case 1:
+            fmt += "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
             logging.basicConfig(level=logging.DEBUG, format=fmt)
             logging.info("DEBUG MODE")
-    else:
-        if g.args.moderate:
-            logging.basicConfig(level=logging.WARNING, format=fmt)
-        else:
-            logging.basicConfig(level=logging.INFO, format=fmt)
+        case 2:
+            fmt += "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
+            logging.basicConfig(level=logging.TRACE, format=fmt)  # type: ignore
+            logging.info("DEBUG MODE(verbose)")
+        case _:
+            fmt += "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
+            if g.args.moderate:
+                logging.basicConfig(level=logging.WARNING, format=fmt)
+            else:
+                logging.basicConfig(level=logging.INFO, format=fmt)
 
     g.cfg = AppConfig(g.args.config)
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
