@@ -25,8 +25,8 @@ options:
                         連携先サービス
 
 logging options:
-  --debug               デバッグ情報表示
-  --verbose, --trace    詳細デバッグ情報表示
+  -d, --debug           デバッグレベル(-d, -dd)
+  -v, --verbose         動作ログ出力レベル(-v, -vv)
   --moderate            ログレベルがエラー以下のもを非表示
   --notime              ログフォーマットから日時を削除
 
