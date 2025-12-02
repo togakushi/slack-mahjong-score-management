@@ -132,13 +132,11 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
                 logging.debug("  * discord: %s", score.to_text("detail"))
                 logging.debug("  *      db: %s", target.to_text("detail"))
                 modify.db_update(score, work_m)
-                g.adapter.functions.post_processing(work_m)
         else:  # 取りこぼし(追加)
             results.missing.append(score)
             logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
             logging.debug(score.to_text("logging"))
             modify.db_insert(score, work_m)
-            g.adapter.functions.post_processing(work_m)
 
     # DATABASE -> DISCORD
     ts_list = [x.ts for x in discord_score]
@@ -152,7 +150,6 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
                 work_m.data.channel_id = score.source.replace("discord_", "")
             logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
             modify.db_delete(work_m)
-            g.adapter.functions.post_processing(work_m)
 
 
 async def check_remarks(results: ComparisonResults, messages_list: list["MessageParserProtocol"]):

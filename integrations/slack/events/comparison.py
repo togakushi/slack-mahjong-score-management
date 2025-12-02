@@ -96,13 +96,11 @@ def check_omission(results: ComparisonResults):
                 logging.debug("  * slack: %s", score.to_text("detail"))
                 logging.debug("  *    db: %s", target.to_text("detail"))
                 modify.db_update(score, work_m)
-                g.adapter.functions.post_processing(work_m)
         else:  # 取りこぼし(追加)
             results.missing.append(score)
             logging.info("missing: %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
             logging.debug(score.to_text("logging"))
             modify.db_insert(score, work_m)
-            g.adapter.functions.post_processing(work_m)
 
     # DATABASE -> SLACK
     ts_list = [x.ts for x in slack_score]
@@ -117,7 +115,6 @@ def check_omission(results: ComparisonResults):
                 results.delete.append(score)
                 logging.info("delete (Only database): %s (%s)", score.ts, ExtDt(float(score.ts)).format("ymdhms"))
                 modify.db_delete(work_m)
-                g.adapter.functions.post_processing(work_m)
 
 
 def check_remarks(results: ComparisonResults):

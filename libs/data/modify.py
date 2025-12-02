@@ -31,7 +31,7 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
         m (MessageParserProtocol): メッセージデータ
 
     Returns:
-        int: _description_
+        int: DB更新レコード数
     """
 
     changes: int = 0
@@ -55,15 +55,19 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
         m.set_data("0", message.random_reply(m, "restricted_channel"), StyleOptions(key_title=False))
         m.post.ts = m.data.event_ts
 
+    g.adapter.functions.post_processing(m)
     return changes
 
 
-def db_update(detection: "GameResult", m: "MessageParserProtocol") -> None:
+def db_update(detection: "GameResult", m: "MessageParserProtocol") -> int:
     """スコアデータを変更する
 
     Args:
         detection (GameResult): スコアデータ
         m (MessageParserProtocol): メッセージデータ
+
+    Returns:
+        int: DB更新レコード数
     """
 
     detection.calc()
@@ -74,6 +78,7 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> None:
                 "rpoint_sum": detection.rpoint_sum(),
                 **detection.to_dict(),
             })
+            changes = cur.total_changes
             cur.commit()
         logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
@@ -81,6 +86,9 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> None:
         logging.warning("A post to a restricted channel was detected.")
         m.set_data("0", message.random_reply(m, "restricted_channel"), StyleOptions(key_title=False))
         m.post.ts = m.data.event_ts
+
+    g.adapter.functions.post_processing(m)
+    return changes
 
 
 def db_delete(m: "MessageParserProtocol"):
@@ -105,6 +113,7 @@ def db_delete(m: "MessageParserProtocol"):
                     logging.info("remark: ts=%s, count=%s", m.data.event_ts, delete_remark)
             cur.commit()
         m.status.action = "delete"
+        g.adapter.functions.post_processing(m)
     else:
         logging.warning("A post to a restricted channel was detected.")
 
@@ -160,7 +169,8 @@ def remarks_append(m: "MessageParserProtocol", remarks: list["RemarkDict"]) -> N
                     if para["name"] in [v for k, v in dict(row).items() if str(k).endswith("_name")]:
                         cur.execute(dbutil.query("REMARKS_INSERT"), para)
                         m.status.target_ts.append(para["event_ts"])
-                        m.data.channel_id = para["source"].replace(f"{g.adapter.interface_type}_", "")
+                        if not m.data.channel_id:
+                            m.data.channel_id = para["source"].replace(f"{g.adapter.interface_type}_", "")
                         logging.info("insert: %s", para)
             cur.commit()
             count = cur.execute("select changes();").fetchone()[0]

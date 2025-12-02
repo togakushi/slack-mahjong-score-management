@@ -110,8 +110,6 @@ def message_append(detection: GameResult, m: "MessageParserProtocol"):
         m.set_data("0", message.random_reply(m, "inside_thread"), StyleOptions(key_title=False))
         logging.debug("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)
 
-    g.adapter.functions.post_processing(m)
-
 
 def message_changed(detection: GameResult, m: "MessageParserProtocol"):
     """メッセージの変更処理
@@ -139,8 +137,6 @@ def message_changed(detection: GameResult, m: "MessageParserProtocol"):
         m.set_data("0", message.random_reply(m, "inside_thread"), StyleOptions(key_title=False))
         logging.debug("skip (inside thread). event_ts=%s, thread_ts=%s", m.data.event_ts, m.data.thread_ts)
 
-    g.adapter.functions.post_processing(m)
-
 
 def message_deleted(m: "MessageParserProtocol"):
     """メッセージの削除処理
@@ -153,8 +149,6 @@ def message_deleted(m: "MessageParserProtocol"):
         modify.remarks_delete(m)
     else:
         modify.db_delete(m)
-
-    g.adapter.functions.post_processing(m)
 
 
 def _thread_check(m: "MessageParserProtocol") -> bool:
