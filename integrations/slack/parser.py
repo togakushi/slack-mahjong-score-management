@@ -49,6 +49,9 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
             self.data.status = "message_append"
         else:
             match _event.get("subtype"):
+                case subtype if str(subtype).endswith(("_topic", "_purpose", "_name")):
+                    self.data.status = "do_nothing"
+                    return
                 case "message_changed":
                     self.data.status = "message_changed"
                     _event.update(cast(dict, _event["message"]))
@@ -64,7 +67,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                 case "message_deleted":
                     self.data.status = "message_deleted"
                     _event.update(cast(dict, _event["previous_message"]))
-                case "file_share":
+                case "file_share" | "thread_broadcast":
                     self.data.status = "message_append"
                 case None:
                     self.data.status = "message_append"
