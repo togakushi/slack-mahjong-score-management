@@ -18,7 +18,7 @@ flowchart TB
         sc2(graph) --> cp2[[CommandParser]] --> p2(aggregation);
         sc3(ranking) --> cp3[[CommandParser]] --> p3(aggregation);
         sc4(report) --> cp4[[CommandParser]] --> p4(aggregation);
-        p1 & p2 & p3 & p4 --> mp1[["MessageParser(post)<br>MessageParser(status)"]] --> pp1["post_processing()"];
+        p1 & p2 & p3 & p4 --> mp1[["MessageParser(post)<br>MessageParser(status)"]];
     end
 
     subgraph f2[Results record]
@@ -26,7 +26,7 @@ flowchart TB
         r2([record]);
         r2 --> a1(score) --> results[(results)];
         r2 --> a2(remark) --> remarks[(remarks)];
-        results & remarks --> mp2[["MessageParser(post)<br>MessageParser(status)"]] --> pp2["post_processing()"];
+        results & remarks --> pp2["post_processing()"] --> mp2[["MessageParser(post)<br>MessageParser(status)"]];
     end
 
     subgraph f3[Member management]

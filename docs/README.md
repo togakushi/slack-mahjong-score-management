@@ -12,17 +12,20 @@
   - [個別設定](setting/integrations.md)
 
 ## 機能
+### 成績入力
 - [スコア記録](functions/score_record.md)
   - [メモ機能](functions/remarks.md)
-- [メンバー管理](functions/member_management.md)
+### 成績出力
 - [サマリ出力](functions/summary.md)
 - [グラフ生成](functions/graph.md)
 - [ランキング出力](functions/ranking.md)
 - [レポート出力](functions/report.md)
-- [スラッシュコマンド](functions/command.md)
 - [共通オプション](functions/argument_keyword.md)
+### メンバー管理
+- [メンバー登録/削除](functions/member_management.md)
 
 ## その他
+- [スラッシュコマンド](functions/command.md)
 - [コマンドラインオプション](app_arguments.md)
 - [メンテナンスツール](dbtools.md)
 - [簡易ヘルプ](help.md)
