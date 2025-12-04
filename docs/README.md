@@ -23,6 +23,7 @@
 - [共通オプション](functions/argument_keyword.md)
 ### メンバー管理
 - [メンバー登録/削除](functions/member_management.md)
+- [チーム登録/削除](functions/team_management.md)
 
 ## その他
 - [スラッシュコマンド](functions/command.md)

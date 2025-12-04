@@ -9,7 +9,8 @@
 
 ### 入力
 - [スコア記録](score_record.md)
-  - [メモ](remarks.md)
+- [メモ登録](remarks.md)
 
 ## メンバー管理
 - [メンバー登録/削除](member_management.md)
+- [チーム登録/削除](team_management.md)
