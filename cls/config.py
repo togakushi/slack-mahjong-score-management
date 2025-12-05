@@ -258,7 +258,9 @@ class MemberSection(BaseSection):
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [x.strip() for x in self._parser.get("member", "commandword", fallback="メンバー一覧").split(",")]
+        self.commandword = [
+            x.strip() for x in self._parser.get("member", "commandword", fallback="メンバー一覧").split(",")
+        ]
 
 
 class TeamSection(BaseSection):
@@ -281,7 +283,9 @@ class TeamSection(BaseSection):
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [x.strip() for x in self._parser.get("team", "commandword", fallback="チーム一覧").split(",")]
+        self.commandword = [
+            x.strip() for x in self._parser.get("team", "commandword", fallback="チーム一覧").split(",")
+        ]
 
 
 class AliasSection(BaseSection):
@@ -437,7 +441,9 @@ class SubCommand(BaseSection):
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [x.strip() for x in self._parser.get(section_name, "commandword", fallback=default).split(",")]
+        self.commandword = [
+            x.strip() for x in self._parser.get(section_name, "commandword", fallback=default).split(",")
+        ]
 
     def stipulated_calculation(self, game_count: int) -> int:
         """規定打数をゲーム数から計算

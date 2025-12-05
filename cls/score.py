@@ -52,7 +52,6 @@ class GameResult:
     """スコアデータ"""
 
     def __init__(self, **kwargs):
-
         # ゲーム結果
         self.ts: str = ""
         """タイムスタンプ"""
@@ -91,20 +90,22 @@ class GameResult:
     def __eq__(self, other):
         if not isinstance(other, GameResult):
             return NotImplemented
-        return all([
-            self.ts == other.ts,
-            self.p1.name == other.p1.name,
-            self.p1.rpoint == other.p1.rpoint,
-            self.p2.name == other.p2.name,
-            self.p2.rpoint == other.p2.rpoint,
-            self.p3.name == other.p3.name,
-            self.p3.rpoint == other.p3.rpoint,
-            self.p4.name == other.p4.name,
-            self.p4.rpoint == other.p4.rpoint,
-            self.rule_version == other.rule_version,
-            self.comment == other.comment,
-            self.source == other.source
-        ])
+        return all(
+            [
+                self.ts == other.ts,
+                self.p1.name == other.p1.name,
+                self.p1.rpoint == other.p1.rpoint,
+                self.p2.name == other.p2.name,
+                self.p2.rpoint == other.p2.rpoint,
+                self.p3.name == other.p3.name,
+                self.p3.rpoint == other.p3.rpoint,
+                self.p4.name == other.p4.name,
+                self.p4.rpoint == other.p4.rpoint,
+                self.rule_version == other.rule_version,
+                self.comment == other.comment,
+                self.source == other.source,
+            ]
+        )
 
     def __lt__(self, other):
         if not isinstance(other, GameResult):
@@ -113,14 +114,17 @@ class GameResult:
 
     def has_valid_data(self) -> bool:
         """DB更新に必要なデータを持っているかチェック"""
-        return all([
-            self.ts, isinstance(self.ts, str),
-            self.p1.has_valid_data(),
-            self.p2.has_valid_data(),
-            self.p3.has_valid_data(),
-            self.p4.has_valid_data(),
-            all(self.to_list("rank")),
-        ])
+        return all(
+            [
+                self.ts,
+                isinstance(self.ts, str),
+                self.p1.has_valid_data(),
+                self.p2.has_valid_data(),
+                self.p3.has_valid_data(),
+                self.p4.has_valid_data(),
+                all(self.to_list("rank")),
+            ]
+        )
 
     def set(self, **kwargs) -> None:
         """テータ取り込み"""
@@ -182,10 +186,7 @@ class GameResult:
             "source": self.source,
         }
 
-    def to_text(
-        self,
-        kind: Literal["simple", "detail", "logging"] = "simple"
-    ) -> str:
+    def to_text(self, kind: Literal["simple", "detail", "logging"] = "simple") -> str:
         """データをテキストで返す
 
         Args:
@@ -207,23 +208,30 @@ class GameResult:
                 ret_text += f"[{self.p4.name} {self.p4.r_str}] "
                 ret_text += f"[供託 {self.deposit}] [{self.comment if self.comment else None}]"
             case "detail":
-                ret_text += f"[{self.p1.rank}位 {self.p1.name} {self.p1.rpoint * 100}点 ({self.p1.point}pt)] ".replace("-", "▲")
-                ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace("-", "▲")
-                ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace("-", "▲")
-                ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.p1.rank}位 {self.p1.name} {self.p1.rpoint * 100}点 ({self.p1.point}pt)] ".replace(
+                    "-", "▲"
+                )
+                ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace(
+                    "-", "▲"
+                )
+                ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace(
+                    "-", "▲"
+                )
+                ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace(
+                    "-", "▲"
+                )
                 ret_text += f"[供託 {self.deposit * 100}点] "
                 ret_text += f"[{self.comment if self.comment else None}]"
             case "logging":
                 ret_text += f"ts={self.ts}, deposit={self.deposit}, "
-                ret_text += f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
+                ret_text += (
+                    f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
+                )
                 ret_text += f"comment={self.comment if self.comment else None}, source={self.source}"
 
         return ret_text
 
-    def to_list(
-        self,
-        kind: Literal["name", "str", "rpoint", "point", "rank"] = "name"
-    ) -> list[str | int | float]:
+    def to_list(self, kind: Literal["name", "str", "rpoint", "point", "rank"] = "name") -> list[str | int | float]:
         """指定データをリストで返す
 
         Args:
@@ -272,7 +280,9 @@ class GameResult:
         if kwargs:
             self.set(**kwargs)
 
-        if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]):
+        if all(
+            [self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]
+        ):
             self.set(**self._calculation_point())
 
     def _calculation_point(self) -> dict:
@@ -323,22 +333,17 @@ class GameResult:
 
         # 計算用データフレーム
         score_df = pd.DataFrame(
-            {"rpoint": [normalized_expression(str(x)) for x in self.to_list("str")]},
-            index=["p1", "p2", "p3", "p4"]
+            {"rpoint": [normalized_expression(str(x)) for x in self.to_list("str")]}, index=["p1", "p2", "p3", "p4"]
         )
 
         work_rank_point = self.rank_point.copy()  # ウマ
         work_rank_point[0] += int((self.return_point - self.origin_point) / 10 * 4)  # オカ
 
         if self.draw_split:  # 山分け
-            score_df["rank"] = score_df["rpoint"].rank(
-                ascending=False, method="min"
-            ).astype("int")
+            score_df["rank"] = score_df["rpoint"].rank(ascending=False, method="min").astype("int")
 
             # 順位点リストの更新
-            rank_sequence = "".join(
-                score_df["rank"].sort_values().to_string(index=False).split()
-            )
+            rank_sequence = "".join(score_df["rank"].sort_values().to_string(index=False).split())
             match rank_sequence:
                 case "1111":
                     work_rank_point = point_split(work_rank_point)
@@ -375,15 +380,19 @@ class GameResult:
                     pass
 
         else:  # 席順
-            score_df["rank"] = score_df["rpoint"].rank(
-                ascending=False, method="first"
-            ).astype("int")
+            score_df["rank"] = score_df["rpoint"].rank(ascending=False, method="first").astype("int")
 
         # 獲得ポイントの計算 (素点-配給原点)/10+順位点
-        score_df["position"] = score_df["rpoint"].rank(  # 加算する順位点リストの位置
-            ascending=False, method="first"
-        ).astype("int")
-        score_df["point"] = (score_df["rpoint"] - self.return_point) / 10 + score_df["position"].apply(lambda p: work_rank_point[p - 1])
+        score_df["position"] = (
+            score_df["rpoint"]
+            .rank(  # 加算する順位点リストの位置
+                ascending=False, method="first"
+            )
+            .astype("int")
+        )
+        score_df["point"] = (score_df["rpoint"] - self.return_point) / 10 + score_df["position"].apply(
+            lambda p: work_rank_point[p - 1]
+        )
         score_df["point"] = score_df["point"].apply(lambda p: float(f"{p:.1f}"))  # 桁ブレ修正
 
         # 返却値用辞書

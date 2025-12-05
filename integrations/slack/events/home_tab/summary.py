@@ -24,17 +24,19 @@ def build_summary_menu(adapter: ServiceAdapter):
     ui_parts.header(adapter, text="【成績サマリ】")
 
     # 検索範囲設定
-    date_dict = {x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
+    date_dict = {
+        x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]
+    }
     ui_parts.divider(adapter)
     ui_parts.radio_buttons(
         adapter=adapter,
         id_suffix="search_range",
         title="検索範囲",
         flag={
-            "今月": f"今月：{date_dict["今月"]["start"]} ～ {date_dict["今月"]["end"]}",
-            "先月": f"先月：{date_dict["先月"]["start"]} ～ {date_dict["先月"]["end"]}",
-            "全部": f"全部：{date_dict["全部"]["start"]} ～ {date_dict["全部"]["end"]}",
-            "指定": f"範囲指定：{adapter.conf.tab_var["sday"]} ～ {adapter.conf.tab_var["eday"]}",
+            "今月": f"今月：{date_dict['今月']['start']} ～ {date_dict['今月']['end']}",
+            "先月": f"先月：{date_dict['先月']['start']} ～ {date_dict['先月']['end']}",
+            "全部": f"全部：{date_dict['全部']['start']} ～ {date_dict['全部']['end']}",
+            "指定": f"範囲指定：{adapter.conf.tab_var['sday']} ～ {adapter.conf.tab_var['eday']}",
         },
     )
     ui_parts.button(adapter, text="検索範囲設定", action_id="modal-open-period")
@@ -111,7 +113,7 @@ def register_summary_handlers(app, adapter: ServiceAdapter):
 
         m.parser(body)
         add_argument, app_msg, update_flag = ui_parts.set_command_option(adapter, body)
-        m.data.text = f"dummy {" ".join(add_argument)}"  # 引数の位置を調整
+        m.data.text = f"dummy {' '.join(add_argument)}"  # 引数の位置を調整
         g.params = dictutil.placeholder(g.cfg.results, m)
         g.params.update({**update_flag})
 
