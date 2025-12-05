@@ -6,7 +6,7 @@ from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 import pandas as pd
-from flask import Blueprint, abort, request, current_app
+from flask import Blueprint, abort, current_app, request
 
 import libs.dispatcher
 import libs.global_value as g

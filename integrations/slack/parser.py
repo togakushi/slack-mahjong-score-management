@@ -6,8 +6,7 @@ import logging
 from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
-from integrations.base.interface import (MessageParserDataMixin,
-                                         MessageParserInterface)
+from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
 from integrations.protocols import MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
@@ -42,7 +41,7 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
             self.data.channel_type = "channel"
             self.data.text = "dummy"
         elif _body.get("iid"):  # 検索結果
-            if (_channel_id := str(cast(dict, _event["channel"]).get("id", ""))):
+            if _channel_id := str(cast(dict, _event["channel"]).get("id", "")):
                 self.data.channel_id = _channel_id
                 _event.pop("channel")
             self.data.channel_type = "search_messages"
@@ -57,9 +56,9 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                     _event.update(cast(dict, _event["message"]))
                     if cast(dict, _event["message"]).get("subtype") == "tombstone":  # スレッド元の削除
                         self.data.status = "message_deleted"
-                    elif (_edited := cast(dict, _event["message"]).get("edited")):
+                    elif _edited := cast(dict, _event["message"]).get("edited"):
                         self.data.edited_ts = str(cast(dict, _edited).get("ts", "undetermined"))
-                    if (_previous_message := cast(dict, _event.get("previous_message", {}))):
+                    if _previous_message := cast(dict, _event.get("previous_message", {})):
                         if _previous_message.get("thread_ts"):
                             _event.update(thread_ts=_previous_message.get("thread_ts", "0"))
                         if cast(dict, _event["message"]).get("text") == _previous_message.get("text"):

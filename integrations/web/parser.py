@@ -2,8 +2,7 @@
 integrations/web/parser.py
 """
 
-from integrations.base.interface import (MessageParserDataMixin,
-                                         MessageParserInterface)
+from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
 from integrations.protocols import MsgData, PostData, StatusData
 
 

@@ -8,7 +8,6 @@
 - `integrations.slack.events.home_tab.versus`: 直接対戦
 """
 
-from integrations.slack.events.home_tab import (home, personal, ranking,
-                                                summary, ui_parts, versus)
+from integrations.slack.events.home_tab import home, personal, ranking, summary, ui_parts, versus
 
 __all__ = ["home", "personal", "ranking", "summary", "ui_parts", "versus"]

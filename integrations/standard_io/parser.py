@@ -5,8 +5,7 @@ integrations/standard_io/parser.py
 from datetime import datetime
 from typing import cast
 
-from integrations.base.interface import (MessageParserDataMixin,
-                                         MessageParserInterface)
+from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
 from integrations.protocols import MsgData, PostData, StatusData
 
 

@@ -6,7 +6,7 @@ from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 import pandas as pd
-from flask import Blueprint, abort, request, current_app
+from flask import Blueprint, abort, current_app, request
 
 import libs.dispatcher
 import libs.global_value as g
@@ -78,11 +78,16 @@ def report_bp(adapter: "ServiceAdapter") -> Blueprint:
                         check_column = msg.columns.to_list()
                         multi = [
                             ("", "集計月"),
-                            ("1位", name), ("1位", "獲得ポイント"),
-                            ("2位", name), ("2位", "獲得ポイント"),
-                            ("3位", name), ("3位", "獲得ポイント"),
-                            ("4位", name), ("4位", "獲得ポイント"),
-                            ("5位", name), ("5位", "獲得ポイント"),
+                            ("1位", name),
+                            ("1位", "獲得ポイント"),
+                            ("2位", name),
+                            ("2位", "獲得ポイント"),
+                            ("3位", name),
+                            ("3位", "獲得ポイント"),
+                            ("4位", name),
+                            ("4位", "獲得ポイント"),
+                            ("5位", name),
+                            ("5位", "獲得ポイント"),
                         ]
                         msg.columns = pd.MultiIndex.from_tuples([x for x in multi if x is not None])
                     message += adapter.functions.to_styled_html(msg, padding, show_index)

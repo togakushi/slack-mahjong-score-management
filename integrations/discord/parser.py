@@ -8,8 +8,7 @@ from discord import Message, Thread
 from discord.channel import TextChannel
 
 import libs.global_value as g
-from integrations.base.interface import (MessageParserDataMixin,
-                                         MessageParserInterface)
+from integrations.base.interface import MessageParserDataMixin, MessageParserInterface
 from integrations.protocols import MsgData, PostData, StatusData
 
 if TYPE_CHECKING:
