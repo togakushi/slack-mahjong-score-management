@@ -26,39 +26,52 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
         test_case (str): テストケース
         sec (str): 定義セクション
         pattern (str): 実行パターン
+        argument (str): コマンドライン引数
     """
 
     def graph_point(m):
         """ポイント推移グラフ"""
         if len(g.params["player_list"]) == 1:
-            pprint([
-                "exec: graph.personal.plot()",
-                graph.personal.plot(m),
-                f"{g.params=}" if flag.get("dump") else "g.params={...}",
-            ], width=120)
+            pprint(
+                [
+                    "exec: graph.personal.plot()",
+                    graph.personal.plot(m),
+                    f"{g.params=}" if flag.get("dump") else "g.params={...}",
+                ],
+                width=120,
+            )
         else:
             graph.summary.point_plot(m)
-            pprint([
-                "exec: graph.summary.point_plot()",
-                graph.summary.point_plot(m),
-                f"{g.params=}" if flag.get("dump") else "g.params={...}",
-            ], width=120)
+            pprint(
+                [
+                    "exec: graph.summary.point_plot()",
+                    graph.summary.point_plot(m),
+                    f"{g.params=}" if flag.get("dump") else "g.params={...}",
+                ],
+                width=120,
+            )
 
     def graph_rank(m):
         """順位変動グラフ"""
-        pprint([
-            "exec: graph.summary.rank_plot()",
-            graph.summary.point_plot(m),
-            f"{g.params=}" if flag.get("dump") else "g.params={...}",
-        ], width=120)
+        pprint(
+            [
+                "exec: graph.summary.rank_plot()",
+                graph.summary.point_plot(m),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ],
+            width=120,
+        )
 
     def graph_statistics(m):
         """統計グラフ"""
-        pprint([
-            "exec: graph.personal.statistics_plot()",
-            graph.personal.statistics_plot(m),
-            f"{g.params=}" if flag.get("dump") else "g.params={...}",
-        ], width=120)
+        pprint(
+            [
+                "exec: graph.personal.statistics_plot()",
+                graph.personal.statistics_plot(m),
+                f"{g.params=}" if flag.get("dump") else "g.params={...}",
+            ],
+            width=120,
+        )
 
     # ---------------------------------------------------------------------------------------------
     adapter = factory.select_adapter("standard_io", g.cfg)
@@ -107,11 +120,14 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
             case "summary":
                 g.cfg.results.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.results, m)
-                pprint([
-                    "exec: results.summary.aggregate()",
-                    results.summary.aggregation(m),
-                    f"{g.params=}" if flag.get("dump") else "g.params={...}",
-                ], width=120)
+                pprint(
+                    [
+                        "exec: results.summary.aggregate()",
+                        results.summary.aggregation(m),
+                        f"{g.params=}" if flag.get("dump") else "g.params={...}",
+                    ],
+                    width=120,
+                )
 
             case "graph":
                 g.cfg.graph.always_argument = add_argument
@@ -153,38 +169,50 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 g.cfg.ranking.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.ranking, m)
 
-                pprint([
-                    "exec: ranking.ranking.aggregation()",
-                    ranking.ranking.aggregation(m),
-                    f"{g.params=}" if flag.get("dump") else "g.params={...}",
-                ], width=120)
+                pprint(
+                    [
+                        "exec: ranking.ranking.aggregation()",
+                        ranking.ranking.aggregation(m),
+                        f"{g.params=}" if flag.get("dump") else "g.params={...}",
+                    ],
+                    width=120,
+                )
 
             case "report":
                 g.cfg.report.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.report, m)
-                pprint([
-                    "exec: report.results_list.main()",
-                    report.results_list.main(m),
-                    f"{g.params=}" if flag.get("dump") else "g.params={...}",
-                ], width=120)
+                pprint(
+                    [
+                        "exec: report.results_list.main()",
+                        report.results_list.main(m),
+                        f"{g.params=}" if flag.get("dump") else "g.params={...}",
+                    ],
+                    width=120,
+                )
 
             case "pdf":
                 g.cfg.report.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.report, m)
-                pprint([
-                    "exec: report.slackpost.results_report.gen_pdf()",
-                    report.results_report.gen_pdf(m),
-                    f"{g.params=}" if flag.get("dump") else "g.params={...}",
-                ], width=120)
+                pprint(
+                    [
+                        "exec: report.slackpost.results_report.gen_pdf()",
+                        report.results_report.gen_pdf(m),
+                        f"{g.params=}" if flag.get("dump") else "g.params={...}",
+                    ],
+                    width=120,
+                )
 
             case "rating":
                 g.cfg.results.always_argument = add_argument
                 g.params = dictutil.placeholder(g.cfg.results, m)
-                pprint([
-                    "exec: graph.rating.plot()",
-                    graph.rating.plot(m),
-                    f"{g.params=}" if flag.get("dump") else "g.params={...}",
-                ], width=120)
+                pprint(
+                    [
+                        "exec: graph.rating.plot()",
+                        graph.rating.plot(m),
+                        f"{g.params=}" if flag.get("dump") else "g.params={...}",
+                    ],
+                    width=120,
+                )
 
 
 def main():

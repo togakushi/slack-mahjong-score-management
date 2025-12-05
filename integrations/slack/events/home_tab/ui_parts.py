@@ -374,6 +374,7 @@ def update_view(adapter: "ServiceAdapter", m: "MessageParserProtocol", msg: list
     """viewを更新する
 
     Args:
+        adapter (ServiceAdapter): アダプター
         m (MessageParserProtocol): メッセージデータ
         msg (list): 表示テキスト
     """

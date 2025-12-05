@@ -45,7 +45,9 @@ def floatfmt_adjust(df: pd.DataFrame, index: bool = False) -> list:
                 fmt.append("+.1f")
             case "1st" | "2nd" | "3rd" | "4th" | "1位" | "2位" | "3位" | "4位" | "rank1" | "rank2" | "rank3" | "rank4":
                 fmt.append(".0f")
-            case "rank1_rate" | "rank2_rate" | "rank3_rate" | "rank4_rate" | "1位率" | "2位率" | "3位率" | "4位率" | "1位(%)" | "2位(%)" | "3位(%)" | "4位(%)":
+            case "rank1_rate" | "rank2_rate" | "rank3_rate" | "rank4_rate" | "1位率" | "2位率" | "3位率" | "4位率":
+                fmt.append(".2%")
+            case "1位(%)" | "2位(%)" | "3位(%)" | "4位(%)":
                 fmt.append(".2%")
             case "top2_rate" | "連対率" | "top3_rate" | "ラス回避率":
                 fmt.append(".2%")
@@ -138,18 +140,18 @@ def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) 
                 return check
         return ""
 
-    if (ret_name := _judge(textutil.str_conv(pname, "h2z"))):  # 半角数字 -> 全角数字
+    if ret_name := _judge(textutil.str_conv(pname, "h2z")):  # 半角数字 -> 全角数字
         return ret_name
 
     pname = honor_remove(pname)  # 敬称削除
 
-    if (ret_name := _judge(pname)):
+    if ret_name := _judge(pname):
         return ret_name
 
-    if (ret_name := _judge(textutil.str_conv(pname, "k2h"))):  # カタカナ -> ひらがな
+    if ret_name := _judge(textutil.str_conv(pname, "k2h")):  # カタカナ -> ひらがな
         return ret_name
 
-    if (ret_name := _judge(textutil.str_conv(pname, "h2k"))):  # ひらがな -> カタカナ
+    if ret_name := _judge(textutil.str_conv(pname, "h2k")):  # ひらがな -> カタカナ
         return ret_name
 
     # メンバーリストに見つからない場合
@@ -172,9 +174,9 @@ def honor_remove(name: str) -> str:
     """
 
     honor = r"(くん|さん|ちゃん|クン|サン|チャン|君)$"
-    if re.match(fr".*{honor}", name):
-        if not re.match(fr".*(っ|ッ|ー){honor}", name):
-            name = re.sub(fr"{honor}", "", name)
+    if re.match(rf".*{honor}", name):
+        if not re.match(rf".*(っ|ッ|ー){honor}", name):
+            name = re.sub(rf"{honor}", "", name)
 
     return name
 
@@ -242,16 +244,27 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "rpoint": "素点",
         "rpoint_avg": "平均素点",
         "balance_avg": "平均収支",
-        "point_dev": "得点偏差", "rank_dev": "順位偏差",
+        "point_dev": "得点偏差",
+        "rank_dev": "順位偏差",
         "grade": "段位",
         #
-        "rank1_rate-count": "1位率(回)", "rank1_rate": "1位率",
-        "rank2_rate-count": "2位率(回)", "rank2_rate": "2位率",
-        "rank3_rate-count": "3位率(回)", "rank3_rate": "3位率",
-        "rank4_rate-count": "4位率(回)", "rank4_rate": "4位率",
-        "top2_rate-count": "連対率(回)", "top2_rate": "連対率", "top2": "連対数",
-        "top3_rate-count": "ラス回避率(回)", "top3_rate": "ラス回避率", "top3": "ラス回避数",
-        "flying_rate-count": "トビ率(回)", "flying_rate": "トビ率", "flying_count": "トビ数",
+        "rank1_rate-count": "1位率(回)",
+        "rank1_rate": "1位率",
+        "rank2_rate-count": "2位率(回)",
+        "rank2_rate": "2位率",
+        "rank3_rate-count": "3位率(回)",
+        "rank3_rate": "3位率",
+        "rank4_rate-count": "4位率(回)",
+        "rank4_rate": "4位率",
+        "top2_rate-count": "連対率(回)",
+        "top2_rate": "連対率",
+        "top2": "連対数",
+        "top3_rate-count": "ラス回避率(回)",
+        "top3_rate": "ラス回避率",
+        "top3": "ラス回避数",
+        "flying_rate-count": "トビ率(回)",
+        "flying_rate": "トビ率",
+        "flying_count": "トビ数",
         "yakuman_rate-count": "役満和了率(回)",
         # 収支
         "rank1_balance": "1位収支",
@@ -259,31 +272,70 @@ def df_rename(df: pd.DataFrame, short=True, kind=0) -> pd.DataFrame:
         "rank3_balance": "3位収支",
         "rank4_balance": "4位収支",
         # レコード
-        "max_top": "連続トップ", "max_top2": "連続連対", "max_top3": "連続ラス回避",
-        "max_low": "連続トップなし", "max_low2": "連続逆連対", "max_low4": "連続ラス",
-        "point_max": "最大獲得ポイント", "point_min": "最小獲得ポイント",
-        "rpoint_max": "最大素点", "rpoint_min": "最小素点",
+        "max_top": "連続トップ",
+        "max_top2": "連続連対",
+        "max_top3": "連続ラス回避",
+        "max_low": "連続トップなし",
+        "max_low2": "連続逆連対",
+        "max_low4": "連続ラス",
+        "point_max": "最大獲得ポイント",
+        "point_min": "最小獲得ポイント",
+        "rpoint_max": "最大素点",
+        "rpoint_min": "最小素点",
         # 直接対決
-        "results": "対戦結果", "win%": "勝率",
-        "my_point_sum": "獲得ポイント(自分)", "my_point_avg": "平均ポイント(自分)",
-        "vs_point_sum": "獲得ポイント(相手)", "vs_point_avg": "平均ポイント(相手)",
-        "my_rpoint_avg": "平均素点(自分)", "my_rank_avg": "平均順位(自分)", "my_rank_distr": "順位分布(自分)",
-        "vs_rpoint_avg": "平均素点(相手)", "vs_rank_avg": "平均順位(相手)", "vs_rank_distr": "順位分布(相手)",
+        "results": "対戦結果",
+        "win%": "勝率",
+        "my_point_sum": "獲得ポイント(自分)",
+        "my_point_avg": "平均ポイント(自分)",
+        "vs_point_sum": "獲得ポイント(相手)",
+        "vs_point_avg": "平均ポイント(相手)",
+        "my_rpoint_avg": "平均素点(自分)",
+        "my_rank_avg": "平均順位(自分)",
+        "my_rank_distr": "順位分布(自分)",
+        "vs_rpoint_avg": "平均素点(相手)",
+        "vs_rank_avg": "平均順位(相手)",
+        "vs_rank_distr": "順位分布(相手)",
         #
-        "p1_name": "東家 名前", "p2_name": "南家 名前", "p3_name": "西家 名前", "p4_name": "北家 名前",
-        "p1_yakuman": "東家 メモ", "p2_yakuman": "南家 メモ", "p3_yakuman": "西家 メモ", "p4_yakuman": "北家 メモ",
-        "p1_remarks": "東家 メモ", "p2_remarks": "南家 メモ", "p3_remarks": "西家 メモ", "p4_remarks": "北家 メモ",
-        "p1_rpoint": "東家 素点", "p2_rpoint": "南家 素点", "p3_rpoint": "西家 素点", "p4_rpoint": "北家 素点",
-        "p1_rank": "東家 順位", "p2_rank": "南家 順位", "p3_rank": "西家 順位", "p4_rank": "北家 順位",
-        "p1_point": "東家 ポイント", "p2_point": "南家 ポイント", "p3_point": "西家 ポイント", "p4_point": "北家 ポイント",
-        "p1_str": "東家 入力素点", "p2_str": "南家 入力素点", "p3_str": "西家 入力素点", "p4_str": "北家 入力素点",
+        "p1_name": "東家 名前",
+        "p2_name": "南家 名前",
+        "p3_name": "西家 名前",
+        "p4_name": "北家 名前",
+        "p1_yakuman": "東家 メモ",
+        "p2_yakuman": "南家 メモ",
+        "p3_yakuman": "西家 メモ",
+        "p4_yakuman": "北家 メモ",
+        "p1_remarks": "東家 メモ",
+        "p2_remarks": "南家 メモ",
+        "p3_remarks": "西家 メモ",
+        "p4_remarks": "北家 メモ",
+        "p1_rpoint": "東家 素点",
+        "p2_rpoint": "南家 素点",
+        "p3_rpoint": "西家 素点",
+        "p4_rpoint": "北家 素点",
+        "p1_rank": "東家 順位",
+        "p2_rank": "南家 順位",
+        "p3_rank": "西家 順位",
+        "p4_rank": "北家 順位",
+        "p1_point": "東家 ポイント",
+        "p2_point": "南家 ポイント",
+        "p3_point": "西家 ポイント",
+        "p4_point": "北家 ポイント",
+        "p1_str": "東家 入力素点",
+        "p2_str": "南家 入力素点",
+        "p3_str": "西家 入力素点",
+        "p4_str": "北家 入力素点",
         # レポート - 上位成績
         "collection": "集計月",
-        "name1": "1位(名前)", "point1": "1位(ポイント)",
-        "name2": "2位(名前)", "point2": "2位(ポイント)",
-        "name3": "3位(名前)", "point3": "3位(ポイント)",
-        "name4": "4位(名前)", "point4": "4位(ポイント)",
-        "name5": "5位(名前)", "point5": "5位(ポイント)",
+        "name1": "1位(名前)",
+        "point1": "1位(ポイント)",
+        "name2": "2位(名前)",
+        "point2": "2位(ポイント)",
+        "name3": "3位(名前)",
+        "point3": "3位(ポイント)",
+        "name4": "4位(名前)",
+        "point4": "4位(ポイント)",
+        "name5": "5位(名前)",
+        "point5": "5位(ポイント)",
         # メモ
         "regulation": "卓外清算",
         "remarks": "メモ",

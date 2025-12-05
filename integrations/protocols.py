@@ -166,15 +166,21 @@ class MessageParserProtocol(Protocol):
     @property
     def is_command(self) -> bool:
         """コマンドとして実行されたかチェック
-        - *True*: スラッシュコマンド
-        - *False*: チャンネル内呼び出しキーワード
+
+        Returns:
+            bool: 真偽値
+            - *True*: スラッシュコマンド
+            - *False*: チャンネル内呼び出しキーワード
         """
 
     @property
     def is_bot(self) -> bool:
         """botによる操作かチェック
-        - *True*: botが操作
-        - *False*: ユーザが操作
+
+        Returns:
+            bool: 真偽値
+            - *True*: botが操作
+            - *False*: ユーザが操作
         """
 
     @property
