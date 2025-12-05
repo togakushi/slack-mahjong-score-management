@@ -206,7 +206,7 @@ def tmpl_vs_table(data: dict) -> str:
                     f"""\
                     順位分布(自分)：{data["my_1st"]}-{data["my_2nd"]}-{data["my_3rd"]}-{data["my_4th"]} ({data["my_rank_avg"]:1.2f})
                     順位分布(相手)：{data["vs_1st"]}-{data["vs_2nd"]}-{data["vs_3rd"]}-{data["vs_4th"]} ({data["vs_rank_avg"]:1.2f})
-                    """
+                    """  # noqa: E501
                 ),
             ]
         ),

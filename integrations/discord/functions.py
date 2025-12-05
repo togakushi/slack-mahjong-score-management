@@ -59,7 +59,7 @@ class SvcFunctions(FunctionsInterface):
         if await self.is_deleted_message(m.discord_msg):
             return
 
-        EMOJI = {
+        emoji = {
             "ok": "\N{WHITE HEAVY CHECK MARK}",
             "ng": "\N{CROSS MARK}",
         }
@@ -68,12 +68,12 @@ class SvcFunctions(FunctionsInterface):
         has_ok = False
         has_ng = False
         for reaction in m.discord_msg.reactions:
-            if str(reaction.emoji) == EMOJI["ok"]:
+            if str(reaction.emoji) == emoji["ok"]:
                 async for user in reaction.users():
                     if user == self.conf.bot_name:
                         has_ok = True
                         continue
-            if str(reaction.emoji) == EMOJI["ng"]:
+            if str(reaction.emoji) == emoji["ng"]:
                 async for user in reaction.users():
                     if user == self.conf.bot_name:
                         has_ng = True
@@ -82,14 +82,14 @@ class SvcFunctions(FunctionsInterface):
         # リアクション処理
         if m.status.reaction:  # NGを外してOKを付ける
             if has_ng:
-                await m.discord_msg.remove_reaction(EMOJI["ng"], self.conf.bot_name)
+                await m.discord_msg.remove_reaction(emoji["ng"], self.conf.bot_name)
             if not has_ok:
-                await m.discord_msg.add_reaction(EMOJI["ok"])
+                await m.discord_msg.add_reaction(emoji["ok"])
         else:  # OKを外してNGを付ける
             if has_ok:
-                await m.discord_msg.remove_reaction(EMOJI["ok"], self.conf.bot_name)
+                await m.discord_msg.remove_reaction(emoji["ok"], self.conf.bot_name)
             if not has_ng:
-                await m.discord_msg.add_reaction(EMOJI["ng"])
+                await m.discord_msg.add_reaction(emoji["ng"])
 
     async def delete_reaction(self, m: "MessageParserProtocol"):
         """botが付けたリアクションをすべて削除する

@@ -474,7 +474,7 @@ def get_results_details(mapping_dict: dict) -> pd.DataFrame:
         target_player = mapping_dict.get(target_player, target_player)
 
     df_data = df.query(
-        "p1_name == @target_player or p2_name == @target_player or p3_name == @target_player or p4_name == @target_player"
+        "p1_name == @target_player or p2_name == @target_player or p3_name == @target_player or p4_name == @target_player"  # noqa: E501
     )
 
     pd.options.mode.copy_on_write = True

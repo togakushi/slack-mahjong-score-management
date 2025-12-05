@@ -31,7 +31,7 @@ Required options(amutually exclusive):
   --vacuum              database vacuum
   --gen-test-data [count]
                         テスト用サンプルデータ生成(count=生成回数, default: 1)
-"""
+"""  # noqa: E501
 
 import libs.global_value as g
 from libs import configuration

@@ -55,7 +55,7 @@ def plot(m: "MessageParserProtocol"):
 
     title_text = f"『{player}』の成績"
     if g.params.get("target_count", 0) == 0:
-        title_range = f"({cast('ExtDt', g.params['starttime']).format('ymdhm')} - {cast('ExtDt', g.params['endtime']).format('ymdhm')}"
+        title_range = f"({cast('ExtDt', g.params['starttime']).format('ymdhm')} - {cast('ExtDt', g.params['endtime']).format('ymdhm')}"  # noqa: E501
     else:
         title_range = f"(直近 {len(df)} ゲーム)"
 

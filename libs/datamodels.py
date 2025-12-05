@@ -156,7 +156,7 @@ class ComparisonResults:
 
         Returns:
             str: 生成文字列
-        """
+        """  # noqa: E501
 
         ret: str = ""
         score: Union[dict, "GameResult"]
