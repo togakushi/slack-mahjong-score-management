@@ -239,7 +239,7 @@ class SettingSection(BaseSection):
 
 
 class MemberSection(BaseSection):
-    "memberセクション初期値"""
+    """memberセクション初期値"""
 
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
