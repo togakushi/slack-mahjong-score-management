@@ -15,7 +15,7 @@ def test_empty_config(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/empty.ini"])
     with pytest.raises(SystemExit) as e:
         configuration.setup()
-    assert e.type == SystemExit
+    assert e.type is SystemExit
     assert e.value.code == 255
 
 
