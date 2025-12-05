@@ -102,7 +102,7 @@ def aggregation(m: "MessageParserProtocol"):
         df_data["rpoint"] = df_data["rpoint"] * 100
     df_data = formatter.df_rename(
         df_data.filter(items=["playtime", "座席", "name", "rank", "rpoint", "point", "yakuman"]).drop_duplicates(),
-        short=False
+        short=False,
     )
 
     namelist = list(cast(dict, g.params["competition_list"]).values())  # pylint: disable=unused-variable  # noqa: F841
@@ -110,21 +110,51 @@ def aggregation(m: "MessageParserProtocol"):
     df_vs["my_rpoint_avg"] = (df_vs["my_rpoint_avg"] * 100).astype("int")
     df_vs["vs_rpoint_avg"] = (df_vs["vs_rpoint_avg"] * 100).astype("int")
     df_vs = formatter.df_rename(df_vs)
-    df_vs2 = df_vs.query("vs_name == @namelist").filter(
-        items=[
-            "対戦相手", "対戦結果", "勝率",
-            "獲得ポイント(自分)", "平均ポイント(自分)", "平均素点(自分)", "順位分布(自分)", "平均順位(自分)",
-            "獲得ポイント(相手)", "平均ポイント(相手)", "平均素点(相手)", "順位分布(相手)", "平均順位(相手)",
-        ]
-    ).drop_duplicates()
+    df_vs2 = (
+        df_vs.query("vs_name == @namelist")
+        .filter(
+            items=[
+                "対戦相手",
+                "対戦結果",
+                "勝率",
+                "獲得ポイント(自分)",
+                "平均ポイント(自分)",
+                "平均素点(自分)",
+                "順位分布(自分)",
+                "平均順位(自分)",
+                "獲得ポイント(相手)",
+                "平均ポイント(相手)",
+                "平均素点(相手)",
+                "順位分布(相手)",
+                "平均順位(相手)",
+            ]
+        )
+        .drop_duplicates()
+    )
 
     match str(g.params.get("format", "default")).lower():
         case "csv":
-            m.set_data("対戦結果", converter.save_output(df_data, StyleOptions(format_type="csv", base_name="result")), StyleOptions())
-            m.set_data("成績", converter.save_output(df_vs2, StyleOptions(format_type="csv", base_name="versus")), StyleOptions())
+            m.set_data(
+                "対戦結果",
+                converter.save_output(df_data, StyleOptions(format_type="csv", base_name="result")),
+                StyleOptions(),
+            )
+            m.set_data(
+                "成績",
+                converter.save_output(df_vs2, StyleOptions(format_type="csv", base_name="versus")),
+                StyleOptions(),
+            )
         case "text" | "txt":
-            m.set_data("対戦結果", converter.save_output(df_data, StyleOptions(format_type="txt", base_name="result")), StyleOptions())
-            m.set_data("成績", converter.save_output(df_vs2, StyleOptions(format_type="txt", base_name="versus")), StyleOptions())
+            m.set_data(
+                "対戦結果",
+                converter.save_output(df_data, StyleOptions(format_type="txt", base_name="result")),
+                StyleOptions(),
+            )
+            m.set_data(
+                "成績",
+                converter.save_output(df_vs2, StyleOptions(format_type="txt", base_name="versus")),
+                StyleOptions(),
+            )
         case _:
             pass
 
@@ -162,23 +192,25 @@ def tmpl_vs_table(data: dict) -> str:
     """
 
     ret = textwrap.indent(
-        "".join([
-            textwrap.dedent(
-                f"""\
-                対戦数：{data["game"]} 戦 {data["win"]} 勝 {data["lose"]} 敗 ({data["win%"]:.2f}%)
-                平均素点差：{(data["my_rpoint_avg"] - data["vs_rpoint_avg"]) * 100:+.0f} 点
-                獲得ポイント合計(自分)：{data["my_point_sum"]:+.1f}pt
-                獲得ポイント合計(相手)：{data["vs_point_sum"]:+.1f}pt
-                """.replace("-", "▲")
-            ),
-            textwrap.dedent(
-                f"""\
-                順位分布(自分)：{data["my_1st"]}-{data["my_2nd"]}-{data["my_3rd"]}-{data["my_4th"]} ({data["my_rank_avg"]:1.2f})
-                順位分布(相手)：{data["vs_1st"]}-{data["vs_2nd"]}-{data["vs_3rd"]}-{data["vs_4th"]} ({data["vs_rank_avg"]:1.2f})
-                """
-            )
-        ]),
-        "\t"
+        "".join(
+            [
+                textwrap.dedent(
+                    f"""\
+                    対戦数：{data["game"]} 戦 {data["win"]} 勝 {data["lose"]} 敗 ({data["win%"]:.2f}%)
+                    平均素点差：{(data["my_rpoint_avg"] - data["vs_rpoint_avg"]) * 100:+.0f} 点
+                    獲得ポイント合計(自分)：{data["my_point_sum"]:+.1f}pt
+                    獲得ポイント合計(相手)：{data["vs_point_sum"]:+.1f}pt
+                    """.replace("-", "▲")
+                ),
+                textwrap.dedent(
+                    f"""\
+                    順位分布(自分)：{data["my_1st"]}-{data["my_2nd"]}-{data["my_3rd"]}-{data["my_4th"]} ({data["my_rank_avg"]:1.2f})
+                    順位分布(相手)：{data["vs_1st"]}-{data["vs_2nd"]}-{data["vs_3rd"]}-{data["vs_4th"]} ({data["vs_rank_avg"]:1.2f})
+                    """
+                ),
+            ]
+        ),
+        "\t",
     )
 
     return ret.rstrip() + "\n"

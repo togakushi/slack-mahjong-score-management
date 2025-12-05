@@ -36,14 +36,8 @@ def append(argument: list) -> str:
         else:  # 登録処理
             ret, msg = validator.check_namepattern(new_name, "member")
             if ret:
-                resultdb.execute(
-                    "insert into member(name) values (?)",
-                    (new_name,)
-                )
-                resultdb.execute(
-                    "insert into alias(name, member) values (?,?)",
-                    (new_name, new_name)
-                )
+                resultdb.execute("insert into member(name) values (?)", (new_name,))
+                resultdb.execute("insert into alias(name, member) values (?,?)", (new_name, new_name))
                 msg = f"「{new_name}」を登録しました。"
                 logging.info("add new member: %s", new_name)
 
@@ -86,8 +80,12 @@ def append(argument: list) -> str:
                 msg += modify.db_backup()
                 for tbl, col in [("result", f"p{x}_name") for x in range(1, 5)] + [("remarks", "name")]:
                     resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, nic_name))
-                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, textutil.str_conv(nic_name, "k2h")))
-                    resultdb.execute(f"update {tbl} set {col}=? where {col}=?", (new_name, textutil.str_conv(nic_name, "h2k")))
+                    resultdb.execute(
+                        f"update {tbl} set {col}=? where {col}=?", (new_name, textutil.str_conv(nic_name, "k2h"))
+                    )
+                    resultdb.execute(
+                        f"update {tbl} set {col}=? where {col}=?", (new_name, textutil.str_conv(nic_name, "h2k"))
+                    )
                 msg += "\nデータベースを更新しました。"
 
     resultdb.commit()
@@ -126,10 +124,7 @@ def remove(argument: list) -> str:
         new_name = textutil.str_conv(argument[0], "h2z")
         nic_name = textutil.str_conv(argument[1], "h2z")
         if nic_name in g.member_list:
-            resultdb.execute(
-                "delete from alias where name=? and member=?",
-                (nic_name, new_name)
-            )
+            resultdb.execute("delete from alias where name=? and member=?", (nic_name, new_name))
             msg = f"「{new_name}」から「{nic_name}」を削除しました。"
             logging.info("alias remove: %s -> %s", new_name, nic_name)
         else:

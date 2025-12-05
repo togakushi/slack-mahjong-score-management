@@ -51,7 +51,7 @@ def aggregation(m: "MessageParserProtocol"):
         headline_title = "チーム成績サマリ"
         column_name = "チーム"
 
-    add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary["飛"].sum()} 人"
+    add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary['飛'].sum()} 人"
     header_text = message.header(game_info, m, add_text, 1)
     m.post.headline = {headline_title: header_text}
 
@@ -95,7 +95,9 @@ def aggregation(m: "MessageParserProtocol"):
         if g.params.get("individual"):  # 個人集計
             df_regulations = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type"]), kind=1)
         else:  # チーム集計
-            df_regulations = formatter.df_rename(df_remarks.query("type == 2 or type == 3").drop(columns=["type"]), kind=1)
+            df_regulations = formatter.df_rename(
+                df_remarks.query("type == 2 or type == 3").drop(columns=["type"]), kind=1
+            )
         if options.format_type == "default":
             options.codeblock = False
             data = df_regulations
@@ -147,7 +149,7 @@ def difference(m: "MessageParserProtocol"):
         headline_title = "チーム成績サマリ"
         column_name = "チーム"
 
-    add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary["飛"].sum()} 人"
+    add_text = "" if g.cfg.mahjong.ignore_flying else f" / トバされた人（延べ）：{df_summary['飛'].sum()} 人"
     header_text = message.header(game_info, m, add_text, 1)
     m.post.headline = {headline_title: header_text}
 

@@ -28,13 +28,17 @@ flag_test_case_02: dict[str, tuple[Any, ...]] = {
     "ranked 5 (kan)": ("上位5", {"ranked": 5}),
     "ranked 10 (alp)": ("top10", {"ranked": 10}),
     "ranked NaN": ("top", {}),
-
     "stipulated 0": ("規定数0", {"stipulated": 0}),
     "stipulated 10": ("規定打数10", {"stipulated": 10}),
-
     "target_count 0": ("直近0", {"target_count": 0}),
     "target_count 10": ("直近10", {"target_count": 10}),
-    "stipulated & ranked": ("上位3 規定数20", {"stipulated": 20, "ranked": 3, }),
+    "stipulated & ranked": (
+        "上位3 規定数20",
+        {
+            "stipulated": 20,
+            "ranked": 3,
+        },
+    ),
     "over ride": ("top10 top20 top30", {"ranked": 30}),
     "interval 25": ("区切25", {"interval": 25}),
 }
@@ -75,20 +79,45 @@ flag_test_case_05: dict[str, tuple[Any, ...]] = {
 name_test_case_01: dict[str, tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
     # --- 序列の維持
-    "keep order 01": ("名前あ 名前い 名前う", "名前あ", {"player_0": "名前あ", "player_1": "名前い", "player_2": "名前う"}, {"competition_1": "名前い", "competition_2": "名前う"}),
-    "keep order 02": ("名前い 名前う 名前あ", "名前い", {"player_0": "名前い", "player_1": "名前う", "player_2": "名前あ"}, {"competition_1": "名前う", "competition_2": "名前あ"}),
-    "keep order 03": ("名前う 名前あ 名前い", "名前う", {"player_0": "名前う", "player_1": "名前あ", "player_2": "名前い"}, {"competition_1": "名前あ", "competition_2": "名前い"}),
+    "keep order 01": (
+        "名前あ 名前い 名前う",
+        "名前あ",
+        {"player_0": "名前あ", "player_1": "名前い", "player_2": "名前う"},
+        {"competition_1": "名前い", "competition_2": "名前う"},
+    ),
+    "keep order 02": (
+        "名前い 名前う 名前あ",
+        "名前い",
+        {"player_0": "名前い", "player_1": "名前う", "player_2": "名前あ"},
+        {"competition_1": "名前う", "competition_2": "名前あ"},
+    ),
+    "keep order 03": (
+        "名前う 名前あ 名前い",
+        "名前う",
+        {"player_0": "名前う", "player_1": "名前あ", "player_2": "名前い"},
+        {"competition_1": "名前あ", "competition_2": "名前い"},
+    ),
     # --- 重複パターン
-    "duplication 01": ("名前あ 名前あ 名前い", "名前あ", {"player_0": "名前あ", "player_1": "名前い"}, {"competition_1": "名前い"}),
-    "duplication 02": ("名前う 名前あ 名前う", "名前う", {"player_0": "名前う", "player_1": "名前あ"}, {"competition_1": "名前あ"}),
+    "duplication 01": (
+        "名前あ 名前あ 名前い",
+        "名前あ",
+        {"player_0": "名前あ", "player_1": "名前い"},
+        {"competition_1": "名前い"},
+    ),
+    "duplication 02": (
+        "名前う 名前あ 名前う",
+        "名前う",
+        {"player_0": "名前う", "player_1": "名前あ"},
+        {"competition_1": "名前あ"},
+    ),
 }
 
 # チーム名テスト
 team_saki_test_case: dict[str, tuple[Any, ...]] = {
     # input_args, player_name, player_list, competition_list
-    "case 01": ("チーム 清澄高校", "清澄高校", {'player_0': "清澄高校"}, {}),
-    "case 02": ("チーム 清澄高校 宮永咲", "清澄高校", {'player_0': "清澄高校"}, {}),
-    "case 03": ("チーム 宮永咲 清澄高校", "清澄高校", {'player_0': "清澄高校"}, {}),
+    "case 01": ("チーム 清澄高校", "清澄高校", {"player_0": "清澄高校"}, {}),
+    "case 02": ("チーム 清澄高校 宮永咲", "清澄高校", {"player_0": "清澄高校"}, {}),
+    "case 03": ("チーム 宮永咲 清澄高校", "清澄高校", {"player_0": "清澄高校"}, {}),
 }
 
 # ゲストテスト
@@ -103,7 +132,6 @@ guest_test_case: dict[str, tuple[Any, ...]] = {
     "case team 1-01": ("チーム ゲストあり 清澄高校", "清澄高校", "清澄高校"),
     "case team 1-02": ("チーム ゲストあり 清澄高校 宮永咲", "清澄高校", "清澄高校"),
     "case team 1-03": ("チーム ゲストあり 宮永咲 清澄高校", "清澄高校", "清澄高校"),
-
 }
 
 # フラグ更新コマンドテスト
@@ -143,7 +171,10 @@ search_range: dict[str, tuple[Any, ...]] = {
     "yesterday": ("昨日", (ExtDt(hours=-12).range("昨日") + {"hours": 12}).period),
     "single word": ("今月", ExtDt(hours=-12).range("今月") + {"hours": 12}),
     "double words": ("今月 先月", (ExtDt(hours=-12).range("今月 先月") + {"hours": 12}).period),
-    "triple words": ("20250301 20250301 20250101", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt("2025-03-02 11:59:59.999999")]),
+    "triple words": (
+        "20250301 20250301 20250101",
+        [ExtDt("2025-01-01 12:00:00.000000"), ExtDt("2025-03-02 11:59:59.999999")],
+    ),
     "mix words": ("20250101 今月", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt().range("今月")[1] + {"hours": 12}]),
     "inclusive": ("今月 先月 今年", ExtDt(hours=-12).range("今年") + {"hours": 12}),
     "duplication": ("今月 先月 今月", (ExtDt(hours=-12).range("今月 先月") + {"hours": 12}).period),
@@ -154,29 +185,73 @@ score_pattern: dict[str, tuple[Any, ...]] = {
     # input_str, result_dict, get_point
     "pattern 01": (
         "終局ひと250いぬ250さる250とり250",
-        {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": None},
+        {
+            "p1_name": "ひと",
+            "p1_str": "250",
+            "p2_name": "いぬ",
+            "p2_str": "250",
+            "p3_name": "さる",
+            "p3_str": "250",
+            "p4_name": "とり",
+            "p4_str": "250",
+            "comment": None,
+        },
         {"p1_point": 45.0, "p2_point": 5.0, "p3_point": -15.0, "p4_point": -35.0},
     ),
     "pattern 02": (
         "ひと250いぬ250さる250とり250終局",
-        {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": None},
+        {
+            "p1_name": "ひと",
+            "p1_str": "250",
+            "p2_name": "いぬ",
+            "p2_str": "250",
+            "p3_name": "さる",
+            "p3_str": "250",
+            "p4_name": "とり",
+            "p4_str": "250",
+            "comment": None,
+        },
         {"p1_point": 45.0, "p2_point": 5.0, "p3_point": -15.0, "p4_point": -35.0},
     ),
     "pattern 03": (
         "終局(先頭のコメント)ひと250いぬ250さる250とり250",
-        {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": "先頭のコメント"},
+        {
+            "p1_name": "ひと",
+            "p1_str": "250",
+            "p2_name": "いぬ",
+            "p2_str": "250",
+            "p3_name": "さる",
+            "p3_str": "250",
+            "p4_name": "とり",
+            "p4_str": "250",
+            "comment": "先頭のコメント",
+        },
         {"p1_point": 45.0, "p2_point": 5.0, "p3_point": -15.0, "p4_point": -35.0},
     ),
     "pattern 04": (
         "ひと250いぬ250さる250とり250終局(末尾のコメント)",
-        {"p1_name": "ひと", "p1_str": "250", "p2_name": "いぬ", "p2_str": "250", "p3_name": "さる", "p3_str": "250", "p4_name": "とり", "p4_str": "250", "comment": "末尾のコメント"},
+        {
+            "p1_name": "ひと",
+            "p1_str": "250",
+            "p2_name": "いぬ",
+            "p2_str": "250",
+            "p3_name": "さる",
+            "p3_str": "250",
+            "p4_name": "とり",
+            "p4_str": "250",
+            "comment": "末尾のコメント",
+        },
         {"p1_point": 45.0, "p2_point": 5.0, "p3_point": -15.0, "p4_point": -35.0},
     ),
     "invalid pattern 01": (
-        "終局ひと250いぬ250さる250", {}, {},
+        "終局ひと250いぬ250さる250",
+        {},
+        {},
     ),
     "invalid pattern 02": (
-        "終局ひと250いぬ250さる250とり250おに250", {}, {},
+        "終局ひと250いぬ250さる250とり250おに250",
+        {},
+        {},
     ),
 }
 

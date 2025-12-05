@@ -29,7 +29,12 @@ HAN_POINTS: dict[int, dict[str, Union[int, tuple[int, ...]]]] = {
     12: {"ron_child": 24000, "ron_parent": 36000, "tsumo_child": (6000, 12000), "tsumo_parent": (12000,)},
     13: {"ron_child": 32000, "ron_parent": 48000, "tsumo_child": (8000, 16000), "tsumo_parent": (16000,)},
     14: {"ron_child": 32000, "ron_parent": 48000, "tsumo_child": (8000, 16000), "tsumo_parent": (16000,)},
-    15: {"ron_child": 64000, "ron_parent": 96000, "tsumo_child": (16000, 32000), "tsumo_parent": (32000,)},  # ダブル役満扱い
+    15: {  # ダブル役満扱い
+        "ron_child": 64000,
+        "ron_parent": 96000,
+        "tsumo_child": (16000, 32000),
+        "tsumo_parent": (32000,),
+    },
 }
 
 
@@ -52,10 +57,13 @@ def determine_point(is_parent: bool, is_tsumo: bool) -> int | tuple:
         rank += 1
 
     key = (
-        "tsumo_parent" if is_parent and is_tsumo else
-        "tsumo_child" if not is_parent and is_tsumo else
-        "ron_parent" if is_parent else
-        "ron_child"
+        "tsumo_parent"
+        if is_parent and is_tsumo
+        else "tsumo_child"
+        if not is_parent and is_tsumo
+        else "ron_parent"
+        if is_parent
+        else "ron_child"
     )
 
     return HAN_POINTS[rank][key]
@@ -79,11 +87,8 @@ def determine_winner(k: int) -> tuple[list[int], list[int]]:
 
 
 def should_renchan(
-        winners: list,
-        parent: int,
-        tenpai: list,
-        total_rounds: int,
-        renchan_count: int) -> tuple[int, int, int]:
+    winners: list, parent: int, tenpai: list, total_rounds: int, renchan_count: int
+) -> tuple[int, int, int]:
     """連チャンの判定を行う
 
     Args:
@@ -105,7 +110,7 @@ def should_renchan(
     if winners:
         flg = parent in winners  # 和了時: 親が和了していれば連チャン
     elif tenpai:
-        flg = tenpai[parent]     # 流局時: 親がテンパイしていれば連チャン
+        flg = tenpai[parent]  # 流局時: 親がテンパイしていれば連チャン
 
     if flg:
         renchan_count += 1
@@ -137,8 +142,8 @@ def simulate_game():
                 is_parent = winner == parent
                 point = determine_point(is_parent, False)
                 assert isinstance(point, int), "point should be a int"
-                scores[winner] += (point + 300 * renchan_count)
-                scores[discarder] -= (point + 300 * renchan_count)
+                scores[winner] += point + 300 * renchan_count
+                scores[discarder] -= point + 300 * renchan_count
 
             total_rounds, renchan_count, parent = should_renchan(winners, parent, [], total_rounds, renchan_count)
 
@@ -152,14 +157,14 @@ def simulate_game():
                 assert isinstance(point_data, tuple), "point_data should be a tuple"
                 for i in losers:
                     pay = point_data[1] if i == parent else point_data[0]
-                    scores[i] -= (pay + 100 * renchan_count)
-                    scores[winner] += (pay + 100 * renchan_count)
+                    scores[i] -= pay + 100 * renchan_count
+                    scores[winner] += pay + 100 * renchan_count
             else:  # 被ツモによる点数移動
                 discarder = random.choice(losers)  # 放銃役
                 pay = determine_point(is_parent, False)
                 assert isinstance(pay, int), "pay should be a int"
-                scores[discarder] -= (pay + 300 * renchan_count)
-                scores[winner] += (pay + 300 * renchan_count)
+                scores[discarder] -= pay + 300 * renchan_count
+                scores[winner] += pay + 300 * renchan_count
 
             total_rounds, renchan_count, parent = should_renchan(winners, parent, [], total_rounds, renchan_count)
 
