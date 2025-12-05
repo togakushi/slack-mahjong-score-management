@@ -55,14 +55,16 @@ def random_reply(m: "MessageParserProtocol", message_type: str) -> str:
             msg = random.choice(msg_list)
 
     try:
-        msg = str(msg.format(
-            user_id=m.data.user_id,
-            keyword=g.cfg.setting.keyword,
-            start=ExtDt(g.params.get("starttime", ExtDt())).format("ymd"),
-            end=ExtDt(g.params.get("onday", ExtDt())).format("ymd"),
-            rpoint_diff=rpoint_diff * 100,
-            rpoint_sum=m.status.rpoint_sum * 100,
-        ))
+        msg = str(
+            msg.format(
+                user_id=m.data.user_id,
+                keyword=g.cfg.setting.keyword,
+                start=ExtDt(g.params.get("starttime", ExtDt())).format("ymd"),
+                end=ExtDt(g.params.get("onday", ExtDt())).format("ymd"),
+                rpoint_diff=rpoint_diff * 100,
+                rpoint_sum=m.status.rpoint_sum * 100,
+            )
+        )
     except KeyError as e:
         logging.error("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", m.data.user_id)
@@ -92,13 +94,13 @@ def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", inden
         game_range1 = f"最初のゲーム：{game_info.first_comment}\n"
         game_range1 += f"最後のゲーム：{game_info.last_comment}\n"
     else:
-        game_range1 = f"最初のゲーム：{game_info.first_game.format("ymdhms")}\n"
-        game_range1 += f"最後のゲーム：{game_info.last_game.format("ymdhms")}\n"
+        game_range1 = f"最初のゲーム：{game_info.first_game.format('ymdhms')}\n"
+        game_range1 += f"最後のゲーム：{game_info.last_game.format('ymdhms')}\n"
     game_range2 = f"集計範囲：{compose.text_item.aggregation_range(game_info)}\n"
 
     # ゲーム数
     if game_info.count == 0:
-        msg += f"{random_reply(m, "no_hits")}"
+        msg += f"{random_reply(m, 'no_hits')}"
     else:
         match m.status.command_type:
             case "results":
@@ -106,7 +108,7 @@ def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", inden
                     msg += game_range1
                     msg += f"集計対象：{game_info.count} ゲーム {add_text}\n"
                 else:
-                    msg += f"検索範囲：{str(compose.text_item.search_range(time_pattern="time"))}\n"
+                    msg += f"検索範囲：{str(compose.text_item.search_range(time_pattern='time'))}\n"
                     msg += game_range1
                     msg += f"集計対象：{game_info.count} ゲーム {add_text}\n"
             case "ranking" | "report":
@@ -116,9 +118,9 @@ def header(game_info: "GameInfo", m: "MessageParserProtocol", add_text="", inden
                 msg += game_range2
                 msg += f"集計対象：{game_info.count} ゲーム\n"
 
-        if (remarks_text := compose.text_item.remarks(True)):
+        if remarks_text := compose.text_item.remarks(True):
             msg += f"{remarks_text}\n"
-        if (word_text := compose.text_item.search_word(True)):
+        if word_text := compose.text_item.search_word(True):
             msg += f"{word_text}\n"
 
     return textwrap.indent(msg, "\t" * indent)

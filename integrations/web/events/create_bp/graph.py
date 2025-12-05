@@ -48,7 +48,7 @@ def graph_bp(adapter: "ServiceAdapter") -> Blueprint:
                 msg = v.get("data")
 
                 if isinstance(msg, PosixPath) and msg.exists():
-                    message += f"<p>\n{msg.read_text(encoding="utf-8")}\n</p>\n"
+                    message += f"<p>\n{msg.read_text(encoding='utf-8')}\n</p>\n"
 
                 if isinstance(msg, pd.DataFrame) and k == "素点情報":
                     show_index = v["options"].show_index

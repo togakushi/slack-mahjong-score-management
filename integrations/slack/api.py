@@ -34,6 +34,7 @@ class AdapterAPI(APIInterface):
 
         try:
             from slack_sdk.errors import SlackApiError
+
             self.slack_api_error = SlackApiError
         except ModuleNotFoundError as err:
             raise ModuleNotFoundError(err.msg) from None
@@ -95,9 +96,11 @@ class AdapterAPI(APIInterface):
                 header = ""
 
                 if isinstance(msg, PosixPath) and msg.exists():
-                    comment = textwrap.dedent(
-                        f"{_header_text(header_title)}{header_text.rstrip()}"
-                    ) if style.use_comment else ""
+                    comment = (
+                        textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}")
+                        if style.use_comment
+                        else ""
+                    )
                     self._call_files_upload(
                         channel=m.data.channel_id,
                         title=title,

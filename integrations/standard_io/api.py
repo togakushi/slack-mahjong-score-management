@@ -2,7 +2,6 @@
 integrations/standard_io/api.py
 """
 
-
 import textwrap
 from pathlib import Path
 from typing import TYPE_CHECKING

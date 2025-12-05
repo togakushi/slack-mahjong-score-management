@@ -27,7 +27,7 @@ def user_assets_bp(adapter: "ServiceAdapter") -> Blueprint:
         "user_assets",
         __name__,
         static_folder=os.path.dirname(os.path.join(g.cfg.config_dir, adapter.conf.custom_css)),
-        static_url_path="/user_static"
+        static_url_path="/user_static",
     )
 
     @bp.before_request

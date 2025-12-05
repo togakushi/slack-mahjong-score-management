@@ -14,7 +14,7 @@ def get_members_list() -> str:
     """
 
     padding = textutil.count_padding(list(set(g.member_list.values())))
-    msg = f"# 表示名{" " * (padding - 8)}：登録されている名前 #\n"
+    msg = f"# 表示名{' ' * (padding - 8)}：登録されている名前 #\n"
 
     for pname in set(g.member_list.values()):
         name_list = []

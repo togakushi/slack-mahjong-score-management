@@ -34,6 +34,7 @@ class AdapterAPI(APIInterface):
         super().__init__()
 
         from discord import File as discord_file
+
         self.discord_file = discord_file
 
         # discord object
@@ -103,9 +104,11 @@ class AdapterAPI(APIInterface):
                 header = ""
 
                 if isinstance(msg, PosixPath) and msg.exists():
-                    comment = textwrap.dedent(
-                        f"{_header_text(header_title)}{header_text.rstrip()}"
-                    ) if style.use_comment else ""
+                    comment = (
+                        textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}")
+                        if style.use_comment
+                        else ""
+                    )
                     file = self.discord_file(
                         str(msg),
                         description=comment,

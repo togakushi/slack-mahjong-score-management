@@ -65,7 +65,7 @@ def check_omission(results: ComparisonResults):
     for work_m in set(g.adapter.functions.pickup_score()):
         if work_m.keyword in g.keyword_dispatcher:  # コマンドキーワードはスキップ
             continue
-        if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+        if score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
@@ -129,7 +129,7 @@ def check_remarks(results: ComparisonResults):
     score_list: dict[str, GameResult] = {}
 
     for loop_m in results.score_list.values():
-        if (score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+        if score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
@@ -147,13 +147,15 @@ def check_remarks(results: ComparisonResults):
                 continue  # ゲーム結果に名前がない
             if loop_m.data.thread_ts in [x.ts for x in results.pending]:
                 continue  # 紐付くゲーム結果が保留中
-            slack_remarks.append({
-                "thread_ts": loop_m.data.thread_ts,
-                "event_ts": loop_m.data.event_ts,
-                "name": pname,
-                "matter": matter,
-                "source": loop_m.status.source,
-            })
+            slack_remarks.append(
+                {
+                    "thread_ts": loop_m.data.thread_ts,
+                    "event_ts": loop_m.data.event_ts,
+                    "name": pname,
+                    "matter": matter,
+                    "source": loop_m.status.source,
+                }
+            )
 
     db_remarks = search.for_db_remarks(float(results.after.format("ts")))
 
@@ -193,7 +195,7 @@ def check_total_score(results: ComparisonResults):
     """
 
     for loop_m in results.score_list.values():
-        if (score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+        if score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})

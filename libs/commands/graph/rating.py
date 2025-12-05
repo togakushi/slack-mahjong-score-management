@@ -39,9 +39,12 @@ def plot(m: "MessageParserProtocol"):
         return
 
     # 足切り
-    df_count = loader.read_data("SUMMARY_GAMEDATA").filter(
-        items=["name", "count"]
-    ).set_index("name").query("count >= @g.params['stipulated']")
+    df_count = (
+        loader.read_data("SUMMARY_GAMEDATA")
+        .filter(items=["name", "count"])
+        .set_index("name")
+        .query("count >= @g.params['stipulated']")
+    )
     df_dropped = df_ratings.filter(items=df_count.index.to_list())
 
     # 並び変え
@@ -72,7 +75,8 @@ def plot(m: "MessageParserProtocol"):
             save_file = _graph_generation_plotly(game_info, df_sorted, "rating.html")
 
     m.set_data(
-        "レーティング推移", save_file,
+        "レーティング推移",
+        save_file,
         StyleOptions(use_comment=True, header_hidden=True, key_title=False),
     )
 

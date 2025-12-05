@@ -110,7 +110,7 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
     for work_m in messages_list:
         if work_m.keyword in g.keyword_dispatcher:  # コマンドキーワードはスキップ
             continue
-        if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+        if score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
@@ -165,7 +165,7 @@ async def check_remarks(results: ComparisonResults, messages_list: list["Message
     score_list: dict[str, GameResult] = {}
 
     for loop_m in messages_list:
-        if (score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+        if score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
@@ -182,13 +182,15 @@ async def check_remarks(results: ComparisonResults, messages_list: list["Message
                 if pname not in score_list[loop_m.data.thread_ts].to_list("name"):
                     continue  # ゲーム結果に名前がない
 
-                discord_remarks.append({
-                    "thread_ts": loop_m.data.thread_ts,
-                    "event_ts": loop_m.data.event_ts,
-                    "name": pname,
-                    "matter": matter,
-                    "source": loop_m.status.source,
-                })
+                discord_remarks.append(
+                    {
+                        "thread_ts": loop_m.data.thread_ts,
+                        "event_ts": loop_m.data.event_ts,
+                        "name": pname,
+                        "matter": matter,
+                        "source": loop_m.status.source,
+                    }
+                )
 
     db_remarks = search.for_db_remarks(float(results.after.format("ts")))
 
@@ -222,7 +224,7 @@ async def check_total_score(results: ComparisonResults, messages_list: list["Mes
     """
 
     for work_m in messages_list:
-        if (score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())):
+        if score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})

@@ -70,11 +70,7 @@ def plot(m: "MessageParserProtocol"):
                 else:
                     cell_color.append([line_color2 for i in column_labels])
 
-            fig = plt.figure(
-                figsize=(6, (len(results) * 0.2) + 0.8),
-                dpi=200,
-                tight_layout=True
-            )
+            fig = plt.figure(figsize=(6, (len(results) * 0.2) + 0.8), dpi=200, tight_layout=True)
             ax_dummy = fig.add_subplot(111)
             ax_dummy.axis("off")
 
@@ -95,7 +91,8 @@ def plot(m: "MessageParserProtocol"):
 
             # 追加テキスト
             fig.text(
-                0.01, 0.02,  # 表示位置(左下0,0 右下0,1)
+                0.01,
+                0.02,  # 表示位置(左下0,0 右下0,1)
                 f"[検索範囲：{compose.text_item.search_range()}] [特記：すべてのゲーム結果を含む]",
                 transform=fig.transFigure,
                 fontsize=6,

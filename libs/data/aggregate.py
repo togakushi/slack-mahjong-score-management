@@ -87,19 +87,15 @@ def ranking_record() -> pd.DataFrame:
             "c_low2": [0 for _ in player_list],
             "c_low4": [0 for _ in player_list],
         },
-        index=player_list
+        index=player_list,
     )
 
     for key, val in rank_mask.items():
         for pname in player_list:
             tmp_df = pd.DataFrame()
-            tmp_df["flg"] = gamedata.query(
-                "name == @pname"
-            )["順位"].replace(val)
+            tmp_df["flg"] = gamedata.query("name == @pname")["順位"].replace(val)
 
-            tmp_df[key] = tmp_df["flg"].groupby(
-                (tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()
-            ).cumcount() + 1
+            tmp_df[key] = tmp_df["flg"].groupby((tmp_df["flg"] != tmp_df["flg"].shift()).cumsum()).cumcount() + 1
             tmp_df.loc[tmp_df["flg"] == 0, key] = 0
             max_key = key.replace("c_", "max_")
             record_df.at[pname, max_key] = int(tmp_df[[key]].max().values[0])
@@ -143,7 +139,12 @@ def calculation_rating() -> pd.DataFrame:
                 df_ratings = df_ratings.copy()
 
         # 天鳳計算式 (https://tenhou.net/man/#RATING)
-        rank_list = (x.p1_rank, x.p2_rank, x.p3_rank, x.p4_rank,)
+        rank_list = (
+            x.p1_rank,
+            x.p2_rank,
+            x.p3_rank,
+            x.p4_rank,
+        )
         rating_list = [last_ratings[player] for player in player_list]
         rating_avg = 1500.0 if np.mean(rating_list) < 1500.0 else np.mean(rating_list)
 
@@ -163,7 +164,7 @@ def calculation_rating() -> pd.DataFrame:
             df_ratings.loc[x.Index, player] = new_rating
 
     # 間引き(集約オプション)
-    if (collection := g.params.get("collection")):
+    if collection := g.params.get("collection"):
         ratings = df_ratings[1:]
         ratings.index = pd.to_datetime(ratings.index)  # DatetimeIndexに変換
 
@@ -185,11 +186,7 @@ def calculation_rating() -> pd.DataFrame:
     return df_ratings
 
 
-def grade_promotion_check(
-    grade_level: int,
-    point: int,
-    rank: int
-) -> tuple[int, int]:
+def grade_promotion_check(grade_level: int, point: int, rank: int) -> tuple[int, int]:
     """昇段チェック
 
     Args:
@@ -228,9 +225,9 @@ def matrix_table() -> pd.DataFrame:
     df = loader.read_data("REPORT_MATRIX_TABLE").set_index("playtime")
 
     # 結果に含まれるプレイヤーのリスト
-    plist = sorted(list(set(
-        df["p1_name"].tolist() + df["p2_name"].tolist() + df["p3_name"].tolist() + df["p4_name"].tolist()
-    )))
+    plist = sorted(
+        list(set(df["p1_name"].tolist() + df["p2_name"].tolist() + df["p3_name"].tolist() + df["p4_name"].tolist()))
+    )
 
     # 順位テーブルの作成
     l_data: dict = {}
@@ -270,25 +267,15 @@ def matrix_table() -> pd.DataFrame:
             if sum(x is not None for x in l_data[pname]) < g.params["stipulated"]:
                 l_data.pop(pname)
 
-    rank_df = pd.DataFrame(
-        l_data.values(),
-        columns=list(df.index),
-        index=list(l_data.keys())
-    )
+    rank_df = pd.DataFrame(l_data.values(), columns=list(df.index), index=list(l_data.keys()))
 
     # 対象リストが0件になった場合は空のデータフレームを返す
     if rank_df.empty:
         return rank_df
 
     # 対局対戦マトリックス表の作成
-    mtx_df = pd.DataFrame(
-        index=list(l_data.keys()),
-        columns=list(l_data.keys()) + ["total"]
-    )
-    sorting_df = pd.DataFrame(
-        index=list(l_data.keys()),
-        columns=["win_per", "count"]
-    )
+    mtx_df = pd.DataFrame(index=list(l_data.keys()), columns=list(l_data.keys()) + ["total"])
+    sorting_df = pd.DataFrame(index=list(l_data.keys()), columns=["win_per", "count"])
 
     for idx1 in range(len(rank_df)):
         p1 = rank_df.iloc[idx1]
@@ -322,9 +309,6 @@ def matrix_table() -> pd.DataFrame:
     sorting_df["win_per"] = pd.to_numeric(sorting_df["win_per"], errors="coerce")
     sorting_df["count"] = pd.to_numeric(sorting_df["count"], errors="coerce")
     sorting_df = sorting_df.sort_values(by=["win_per", "count"], ascending=[False, False])
-    mtx_df = mtx_df.reindex(
-        index=list(sorting_df.index),
-        columns=list(sorting_df.index) + ["total"]
-    )
+    mtx_df = mtx_df.reindex(index=list(sorting_df.index), columns=list(sorting_df.index) + ["total"])
 
     return mtx_df

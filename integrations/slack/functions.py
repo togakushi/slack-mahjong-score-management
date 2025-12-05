@@ -26,6 +26,7 @@ class SvcFunctions(FunctionsInterface):
 
         try:
             from slack_sdk.errors import SlackApiError
+
             self.slack_api_error = SlackApiError
         except ModuleNotFoundError as err:
             raise ModuleNotFoundError(err.msg) from None
@@ -52,20 +53,11 @@ class SvcFunctions(FunctionsInterface):
         logging.info("query=%s", query)
 
         # データ取得
-        response = self.api.webclient.search_messages(
-            query=query,
-            sort="timestamp",
-            sort_dir="asc",
-            count=100
-        )
+        response = self.api.webclient.search_messages(query=query, sort="timestamp", sort_dir="asc", count=100)
         matches = response["messages"]["matches"]  # 1ページ目
         for p in range(2, response["messages"]["paging"]["pages"] + 1):
             response = self.api.webclient.search_messages(
-                query=query,
-                sort="timestamp",
-                sort_dir="asc",
-                count=100,
-                page=p
+                query=query, sort="timestamp", sort_dir="asc", count=100, page=p
             )
             matches += response["messages"]["matches"]  # 2ページ目以降
 
@@ -94,7 +86,7 @@ class SvcFunctions(FunctionsInterface):
         # 詳細情報取得
         for key in matches:
             conversations = self.api.appclient.conversations_replies(channel=key.data.channel_id, ts=key.data.event_ts)
-            if (msg := conversations.get("messages")):
+            if msg := conversations.get("messages"):
                 res = cast(dict, msg[0])
             else:
                 continue
@@ -226,7 +218,7 @@ class SvcFunctions(FunctionsInterface):
         except self.slack_api_error:
             return icon
 
-        if (reactions := cast(dict, res["message"]).get("reactions")):
+        if reactions := cast(dict, res["message"]).get("reactions"):
             for reaction in cast(list[dict], reactions):
                 if reaction.get("name") == self.conf.reaction_ok and self.conf.bot_id in reaction["users"]:
                     icon["ok"].append(res["message"]["ts"])
@@ -332,7 +324,7 @@ class SvcFunctions(FunctionsInterface):
                 logging.info("skip ignore user: %s", match.data.user_id)
                 continue
 
-            if (remark := match.get_remarks(g.cfg.setting.remarks_word)):
+            if remark := match.get_remarks(g.cfg.setting.remarks_word):
                 match.data.remarks = remark
             else:  # 不一致は破棄
                 continue

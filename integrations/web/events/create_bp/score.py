@@ -40,8 +40,9 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
         m = adapter.parser()
 
         def score_table() -> str:
-            df = formatter.df_rename(pd.read_sql(
-                sql="""
+            df = formatter.df_rename(
+                pd.read_sql(
+                    sql="""
                 select
                     '<input type="radio" name="ts" value="' || ts || '">' as '#',
                     playtime,
@@ -57,8 +58,9 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
                 limit 0, 10
                 ;
                 """,
-                con=dbutil.connection(g.cfg.setting.database_file)
-            ))
+                    con=dbutil.connection(g.cfg.setting.database_file),
+                )
+            )
 
             if not isinstance(df.columns, pd.MultiIndex):
                 new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in df.columns]
@@ -89,13 +91,13 @@ def score_bp(adapter: "ServiceAdapter") -> Blueprint:
                     case "update":
                         g.params.update({"unregistered_replace": False})
                         data.update(request.form.to_dict(), players=players)
-                        if (p1_name := request.form.get("p1_other")):
+                        if p1_name := request.form.get("p1_other"):
                             data.update(p1_name=formatter.name_replace(p1_name))
-                        if (p2_name := request.form.get("p2_other")):
+                        if p2_name := request.form.get("p2_other"):
                             data.update(p2_name=formatter.name_replace(p2_name))
-                        if (p3_name := request.form.get("p3_other")):
+                        if p3_name := request.form.get("p3_other"):
                             data.update(p3_name=formatter.name_replace(p3_name))
-                        if (p4_name := request.form.get("p4_other")):
+                        if p4_name := request.form.get("p4_other"):
                             data.update(p4_name=formatter.name_replace(p4_name))
                         if not request.form.get("comment"):
                             data.update(comment=None)

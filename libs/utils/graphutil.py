@@ -105,8 +105,8 @@ def xticks_parameter(days_list: list) -> dict:
             break
 
     return {
-        "ticks": list(range(len(days_list)))[::int(len(days_list) / 25) + 1],
-        "labels": days_list[::int(len(days_list) / 25) + 1],
+        "ticks": list(range(len(days_list)))[:: int(len(days_list) / 25) + 1],
+        "labels": days_list[:: int(len(days_list) / 25) + 1],
         "rotation": rotation,
         "ha": position,
     }

@@ -27,7 +27,7 @@ def main():
                 comment
                 from result where rule_version=?;
             """,
-            (g.cfg.mahjong.rule_version,)
+            (g.cfg.mahjong.rule_version,),
         )
         count = 0
 

@@ -18,7 +18,7 @@ TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini"]
 @pytest.mark.parametrize(
     "input_args, player_name, player_list, competition_list",
     list(param_data.command_test_case_01.values()),
-    ids=list(param_data.command_test_case_01.keys())
+    ids=list(param_data.command_test_case_01.keys()),
 )
 def test_command_check(input_args, player_name, player_list, competition_list, monkeypatch):
     """コマンド認識状態チェック"""
@@ -40,7 +40,7 @@ def test_command_check(input_args, player_name, player_list, competition_list, m
 @pytest.mark.parametrize(
     "input_args, player_name, player_list, competition_list",
     list(param_data.name_test_case_01.values()),
-    ids=list(param_data.name_test_case_01.keys())
+    ids=list(param_data.name_test_case_01.keys()),
 )
 def test_player_check(input_args, player_name, player_list, competition_list, monkeypatch):
     """プレイヤー名"""
@@ -63,7 +63,7 @@ def test_player_check(input_args, player_name, player_list, competition_list, mo
 @pytest.mark.parametrize(
     "input_args, player_name, player_list, competition_list",
     list(param_data.team_saki_test_case.values()),
-    ids=list(param_data.team_saki_test_case.keys())
+    ids=list(param_data.team_saki_test_case.keys()),
 )
 def test_team_check(input_args, player_name, player_list, competition_list, monkeypatch):
     """チーム名"""
@@ -86,7 +86,7 @@ def test_team_check(input_args, player_name, player_list, competition_list, monk
 @pytest.mark.parametrize(
     "input_args, player_name, replace_name",
     list(param_data.guest_test_case.values()),
-    ids=list(param_data.guest_test_case.keys())
+    ids=list(param_data.guest_test_case.keys()),
 )
 def test_guest_check(input_args, player_name, replace_name, monkeypatch):
     """ゲストチェック"""

@@ -38,19 +38,19 @@ def member_bp(adapter: "ServiceAdapter") -> Blueprint:
         if request.method == "POST":
             match request.form.get("action"):
                 case "add_member":
-                    if (name := request.form.get("member", "").strip()):
+                    if name := request.form.get("member", "").strip():
                         ret = member.append(name.split()[0:2])
                         data.update(result_msg=ret)
                 case "del_member":
-                    if (name := request.form.get("member", "").strip()):
+                    if name := request.form.get("member", "").strip():
                         ret = member.remove(name.split()[0:2])
                         data.update(result_msg=ret)
                 case "add_team":
-                    if (team_name := request.form.get("team", "").strip()):
+                    if team_name := request.form.get("team", "").strip():
                         ret = team.append(team_name.split()[0:2])
                         data.update(result_msg=ret)
                 case "del_team":
-                    if (team_name := request.form.get("team", "").strip()):
+                    if team_name := request.form.get("team", "").strip():
                         ret = team.remove(team_name.split()[0:2])
                         data.update(result_msg=ret)
                 case "delete_all_team":

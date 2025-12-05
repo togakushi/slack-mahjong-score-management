@@ -38,10 +38,7 @@ def test_minimal_config(monkeypatch):
     assert "delete" in g.cfg.alias.delete
 
 
-@pytest.mark.parametrize(
-    "input_args",
-    ["results", "graph", "ranking", "report"]
-)
+@pytest.mark.parametrize("input_args", ["results", "graph", "ranking", "report"])
 def test_subcommand_default(input_args, monkeypatch):
     """サブコマンドデフォルト値チェック"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])

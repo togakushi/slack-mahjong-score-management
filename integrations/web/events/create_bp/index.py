@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from integrations.web.adapter import ServiceAdapter
 
 
-def index_bp(adapter: "ServiceAdapter") -> Blueprint :
+def index_bp(adapter: "ServiceAdapter") -> Blueprint:
     """index用Blueprint
 
     Args:

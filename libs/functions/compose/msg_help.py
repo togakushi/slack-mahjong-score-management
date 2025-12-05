@@ -53,7 +53,7 @@ def event_message() -> str:
     if rule:
         msg += "\n\n*ルール識別子*\n"
         for key, val in rule.items():
-            msg += f"\t{key}：{val["first_time"]} ～ {val["last_time"]}\n"
+            msg += f"\t{key}：{val['first_time']} ～ {val['last_time']}\n"
 
     # メモ機能
     msg += textwrap.dedent(f"""\

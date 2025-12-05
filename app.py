@@ -30,15 +30,19 @@ if __name__ == "__main__":
     match g.selected_service:
         case "slack":
             import integrations.slack.events.handler as slack
+
             slack.main(cast("slack_adapter", g.adapter))
         case "discord":
             import integrations.discord.events.handler as discord
+
             discord.main(cast("discord_adapter", g.adapter))
         case "standard_io":
             import integrations.standard_io.events.handler as standard_io
+
             standard_io.main(cast("std_adapter", g.adapter))
         case "web":
             import integrations.web.events.handler as webapp
+
             webapp.main(cast("web_adapter", g.adapter))
         case _:
             sys.exit()

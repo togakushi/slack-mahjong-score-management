@@ -30,10 +30,7 @@ def create(argument: list) -> str:
             ret, msg = validator.check_namepattern(team_name, "team")
             if ret:
                 resultdb = dbutil.connection(g.cfg.setting.database_file)
-                resultdb.execute(
-                    "insert into team(name) values (?)",
-                    (team_name,)
-                )
+                resultdb.execute("insert into team(name) values (?)", (team_name,))
                 resultdb.commit()
                 resultdb.close()
                 g.team_list = lookup.db.get_team_list()
@@ -63,14 +60,8 @@ def delete(argument: list) -> str:
             msg = modify.db_backup()
             team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
             resultdb = dbutil.connection(g.cfg.setting.database_file)
-            resultdb.execute(
-                "delete from team where id = ?",
-                (team_id,)
-            )
-            resultdb.execute(
-                "update member set team_id = null where team_id = ?",
-                (team_id,)
-            )
+            resultdb.execute("delete from team where id = ?", (team_id,))
+            resultdb.execute("update member set team_id = null where team_id = ?", (team_id,))
             resultdb.commit()
             resultdb.close()
             g.team_list = lookup.db.get_team_list()
@@ -125,10 +116,7 @@ def append(argument: list) -> str:
 
         if registration_flg and team_id:  # 登録処理
             resultdb = dbutil.connection(g.cfg.setting.database_file)
-            resultdb.execute(
-                "update member set team_id = ? where name = ?",
-                (team_id, player_name)
-            )
+            resultdb.execute("update member set team_id = ? where name = ?", (team_id, player_name))
             resultdb.commit()
             resultdb.close()
             g.team_list = lookup.db.get_team_list()
@@ -177,10 +165,7 @@ def remove(argument: list) -> str:
 
         if registration_flg and team_id:  # 登録処理
             resultdb = dbutil.connection(g.cfg.setting.database_file)
-            resultdb.execute(
-                "update member set team_id = null where name = ?",
-                (player_name,)
-            )
+            resultdb.execute("update member set team_id = null where name = ?", (player_name,))
             resultdb.commit()
             resultdb.close()
             g.team_list = lookup.db.get_team_list()

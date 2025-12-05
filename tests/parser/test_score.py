@@ -66,10 +66,14 @@ def test_point_calc_seat(rpoint_list, point_dict, rank_dict):
         draw_split=False,
         return_point=g.cfg.mahjong.return_point,
         origin_point=g.cfg.mahjong.origin_point,
-        p1_name="東家", p1_str=rpoint_list[0],
-        p2_name="南家", p2_str=rpoint_list[1],
-        p3_name="西家", p3_str=rpoint_list[2],
-        p4_name="北家", p4_str=rpoint_list[3],
+        p1_name="東家",
+        p1_str=rpoint_list[0],
+        p2_name="南家",
+        p2_str=rpoint_list[1],
+        p3_name="西家",
+        p3_str=rpoint_list[2],
+        p4_name="北家",
+        p4_str=rpoint_list[3],
     )
     result.calc()
 
@@ -97,10 +101,14 @@ def test_point_calc_division(rpoint_list, point_dict, rank_dict):
         draw_split=True,
         return_point=g.cfg.mahjong.return_point,
         origin_point=g.cfg.mahjong.origin_point,
-        p1_name="東家", p1_str=rpoint_list[0],
-        p2_name="南家", p2_str=rpoint_list[1],
-        p3_name="西家", p3_str=rpoint_list[2],
-        p4_name="北家", p4_str=rpoint_list[3],
+        p1_name="東家",
+        p1_str=rpoint_list[0],
+        p2_name="南家",
+        p2_str=rpoint_list[1],
+        p3_name="西家",
+        p3_str=rpoint_list[2],
+        p4_name="北家",
+        p4_str=rpoint_list[3],
     )
     result.calc()
 

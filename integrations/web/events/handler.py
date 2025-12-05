@@ -57,8 +57,9 @@ def main(adapter: "ServiceAdapter"):
         if not os.path.exists(adapter.conf.private_key):
             raise FileNotFoundError("private key file not found")
         app.run(
-            host=adapter.conf.host, port=adapter.conf.port,
-            ssl_context=(adapter.conf.certificate, adapter.conf.private_key)
+            host=adapter.conf.host,
+            port=adapter.conf.port,
+            ssl_context=(adapter.conf.certificate, adapter.conf.private_key),
         )
     else:
         app.run(host=adapter.conf.host, port=adapter.conf.port)

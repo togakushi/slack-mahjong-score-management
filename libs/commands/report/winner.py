@@ -50,9 +50,9 @@ def plot(m: "MessageParserProtocol"):
             if v.isna()[f"point{x}"]:
                 results[v["collection"]][f"{x}位"] = "該当者なし"
             else:
-                results[v["collection"]][f"{x}位"] = "{} ({}pt)".format(  # pylint: disable=consider-using-f-string
+                results[v["collection"]][f"{x}位"] = "{} ({}pt)".format(
                     v[f"name{x}"],
-                    str("{:+}".format(v[f"point{x}"])).replace("-", "▲")  # pylint: disable=consider-using-f-string
+                    str("{:+}".format(v[f"point{x}"])).replace("-", "▲"),
                 )
 
     m.post.headline = {"成績上位者": message.header(game_info, m)}
@@ -92,11 +92,7 @@ def plot(m: "MessageParserProtocol"):
                 else:
                     cell_color.append([line_color2 for i in column_labels])
 
-            fig = plt.figure(
-                figsize=(6.5, (len(results) * 0.2) + 0.8),
-                dpi=200,
-                tight_layout=True
-            )
+            fig = plt.figure(figsize=(6.5, (len(results) * 0.2) + 0.8), dpi=200, tight_layout=True)
             ax_dummy = fig.add_subplot(111)
             ax_dummy.axis("off")
 
@@ -125,7 +121,8 @@ def plot(m: "MessageParserProtocol"):
             )
 
             fig.text(
-                0.01, 0.02,  # 表示位置(左下0,0 右下0,1)
+                0.01,
+                0.02,  # 表示位置(左下0,0 右下0,1)
                 add_text,
                 transform=fig.transFigure,
                 fontsize=6,

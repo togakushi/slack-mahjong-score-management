@@ -54,7 +54,8 @@ def arg_parser() -> argparse.Namespace:
     )
 
     p.add_argument(
-        "-c", "--config",
+        "-c",
+        "--config",
         default="config.ini",
         help="設定ファイル(default: %(default)s)",
     )
@@ -63,12 +64,15 @@ def arg_parser() -> argparse.Namespace:
         help=argparse.SUPPRESS,
     )
     p.add_argument(
-        "-s", "--service",
+        "-s",
+        "--service",
         choices=[
             "slack",
             "discord",
-            "standard_io", "std",
-            "web", "flask",
+            "standard_io",
+            "std",
+            "web",
+            "flask",
         ],
         default="slack",
         help="連携先サービス",
@@ -76,13 +80,15 @@ def arg_parser() -> argparse.Namespace:
 
     logging_group = p.add_argument_group("logging options")
     logging_group.add_argument(
-        "-d", "--debug",
+        "-d",
+        "--debug",
         action="count",
         default=0,
         help="デバッグレベル(-d, -dd)",
     )
     logging_group.add_argument(
-        "-v", "--verbose",
+        "-v",
+        "--verbose",
         action="count",
         default=0,
         help="動作ログ出力レベル(-v, -vv)",
@@ -171,7 +177,8 @@ def arg_parser() -> argparse.Namespace:
             )
         case "test.py":  # 動作テスト用オプション
             p.add_argument(
-                "-t", "--testcase",
+                "-t",
+                "--testcase",
                 dest="testcase",
             )
 
@@ -237,7 +244,10 @@ def setup():
     logging.info("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)
     logging.info(
         "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
-        g.cfg.mahjong.rule_version, g.cfg.mahjong.origin_point, g.cfg.mahjong.return_point, g.cfg.setting.time_adjust
+        g.cfg.mahjong.rule_version,
+        g.cfg.mahjong.origin_point,
+        g.cfg.mahjong.return_point,
+        g.cfg.setting.time_adjust,
     )
 
 

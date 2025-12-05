@@ -69,7 +69,9 @@ class SvcConfig(IntegrationsConfig):
             self._command_dispatcher.update({alias: comparison.main})
 
         # 個別コマンド登録
-        self._keyword_dispatcher.update({
-            self.comparison_word: comparison.main,
-            f"Reminder: {self.comparison_word}": comparison.main,
-        })
+        self._keyword_dispatcher.update(
+            {
+                self.comparison_word: comparison.main,
+                f"Reminder: {self.comparison_word}": comparison.main,
+            }
+        )

@@ -133,18 +133,12 @@ def query_modification(sql: str) -> str:
 
     # 直近N検索用（全範囲取得してから絞る）
     if g.params.get("target_count") != 0:
-        sql = sql.replace(
-            "and my.playtime between",
-            "-- and my.playtime between"
-        )
+        sql = sql.replace("and my.playtime between", "-- and my.playtime between")
 
     # プレイヤーリスト
     if g.params.get("player_name"):
         sql = sql.replace("--[player_name] ", "")
-        sql = sql.replace(
-            "<<player_list>>",
-            ":" + ", :".join(g.params["player_list"])
-        )
+        sql = sql.replace("<<player_list>>", ":" + ", :".join(g.params["player_list"]))
     sql = sql.replace("<<guest_mark>>", g.cfg.setting.guest_mark)
 
     # フラグの処理
@@ -164,8 +158,7 @@ def query_modification(sql: str) -> str:
             sql = sql.replace("<<Calculation Formula>>", ":interval")
         else:
             sql = sql.replace(
-                "<<Calculation Formula>>",
-                "(row_number() over (order by total_count desc) - 1) / :interval"
+                "<<Calculation Formula>>", "(row_number() over (order by total_count desc) - 1) / :interval"
             )
     if g.params.get("kind") is not None:
         if g.params.get("kind") == "yakuman":

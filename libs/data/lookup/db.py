@@ -131,14 +131,11 @@ def get_team_list() -> list["TeamDataDict"]:
                     team.id == member.team_id
                 group by
                     team.id
-            """)
+            """
+        )
 
         for row in rows.fetchall():
-            ret.append({
-                "id": int(row["id"]),
-                "team": str(row["team"]),
-                "member": str(row["member"]).split(",")
-            })
+            ret.append({"id": int(row["id"]), "team": str(row["team"]), "member": str(row["member"]).split(",")})
 
     return ret
 
@@ -194,7 +191,8 @@ def regulation_list(word_type: int = 0) -> list:
                 words
             where
                 type=?
-            """, (word_type,)
+            """,
+            (word_type,),
         ).fetchall()
 
     return ret
@@ -236,13 +234,11 @@ def first_record() -> datetime:
 
             if table_count:
                 if g.params.get("mixed"):
-                    record = conn.execute(
-                        "select min(playtime) from game_results;"
-                    ).fetchall()[0][0]
+                    record = conn.execute("select min(playtime) from game_results;").fetchall()[0][0]
                 else:
                     record = conn.execute(
                         "select min(playtime) from game_results where rule_version=?;",
-                        (g.params.get("rule_version", g.cfg.mahjong.rule_version), )
+                        (g.params.get("rule_version", g.cfg.mahjong.rule_version),),
                     ).fetchall()[0][0]
                 if record:
                     ret = datetime.fromisoformat(record)
@@ -269,7 +265,7 @@ def get_results_list(name: str, rule_version: str = "") -> pd.DataFrame:
         params={
             "rule_version": rule_version if rule_version else g.cfg.mahjong.rule_version,
             "player_name": name,
-        }
+        },
     )
 
     return ret_data

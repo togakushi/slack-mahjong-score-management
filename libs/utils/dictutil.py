@@ -54,9 +54,9 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     ret_dict.update({**(cast(dict, param.flags))})  # 上書き
 
     # ルールバージョン先行評価
-    if (rule_version := ret_dict.get("rule_version")):
+    if rule_version := ret_dict.get("rule_version"):
         g.params.update({"rule_version": rule_version})
-    if (mixed := ret_dict.get("mixed")):
+    if mixed := ret_dict.get("mixed"):
         g.params.update({"mixed": mixed})
 
     # 検索範囲取得
@@ -104,7 +104,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     ret_dict.update({"competition_list": competition_list})
 
     # 出力タイプ
-    if (format_type := ret_dict.get("format", "default")):
+    if format_type := ret_dict.get("format", "default"):
         if format_type == "text":
             ret_dict.update({"format": "txt"})
         else:

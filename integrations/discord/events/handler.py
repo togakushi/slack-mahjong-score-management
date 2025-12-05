@@ -62,7 +62,6 @@ def main(adapter: "ServiceAdapter"):
 
     @bot.event
     async def on_raw_message_edit(payload: discord.RawMessageUpdateEvent):
-
         channel = bot.get_channel(payload.channel_id)
         if channel is None or not isinstance(channel, discord.TextChannel):
             return

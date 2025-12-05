@@ -24,7 +24,12 @@ def by_keyword(m: "MessageParserProtocol"):
     logging.debug("keyword=%s, argument=%s", m.keyword, m.argument)
     logging.debug(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, keyword=%s, user_id=%s,",
-        m.data.status, m.data.event_ts, m.data.thread_ts, m.in_thread, m.keyword, m.data.user_id,
+        m.data.status,
+        m.data.event_ts,
+        m.data.thread_ts,
+        m.in_thread,
+        m.keyword,
+        m.data.user_id,
     )
 
     # 変更がないイベントは処理をスキップ

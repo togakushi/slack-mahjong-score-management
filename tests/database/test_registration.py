@@ -25,7 +25,7 @@ def test_guest_name():
 @pytest.mark.parametrize(
     "user_name, ret_meg, registered",
     list(param_data.user_add_case_01.values()),
-    ids=list(param_data.user_add_case_01.keys())
+    ids=list(param_data.user_add_case_01.keys()),
 )
 def test_member_add(user_name, ret_meg, registered):
     """ユーザ登録テスト"""
@@ -47,7 +47,7 @@ def test_member_add(user_name, ret_meg, registered):
 @pytest.mark.parametrize(
     "team_name, ret_meg, registered",
     list(param_data.team_add_case_01.values()),
-    ids=list(param_data.team_add_case_01.keys())
+    ids=list(param_data.team_add_case_01.keys()),
 )
 def test_team_create(team_name, ret_meg, registered):
     """チーム作成テスト"""
