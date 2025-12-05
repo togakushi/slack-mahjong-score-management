@@ -34,8 +34,7 @@ Examples:
 
 from datetime import datetime
 from functools import total_ordering
-from typing import (Callable, List, Literal, Optional, TypeAlias, TypedDict,
-                    Union, cast)
+from typing import Callable, List, Literal, Optional, TypeAlias, TypedDict, Union, cast
 
 from dateutil.relativedelta import relativedelta
 
@@ -50,7 +49,16 @@ class DateRangeSpec(TypedDict):
 
 
 FormatType: TypeAlias = Literal[
-    "ts", "y", "ym", "ymd", "ymdhm", "ymdhms", "hm", "hms", "sql", "ext",
+    "ts",
+    "y",
+    "ym",
+    "ymd",
+    "ymdhm",
+    "ymdhms",
+    "hm",
+    "hms",
+    "sql",
+    "ext",
 ]
 """フォーマット変換で指定する種類
 - **ts**: タイムスタンプ
@@ -65,9 +73,7 @@ FormatType: TypeAlias = Literal[
 - **ext**: ファイル拡張子用(%Y%m%d-%H%M%S)
 """
 
-DelimiterStyle: TypeAlias = Literal[
-    "slash", "/", "hyphen", "-", "ja", "number", "num", None
-]
+DelimiterStyle: TypeAlias = Literal["slash", "/", "hyphen", "-", "ja", "number", "num", None]
 """区切り記号
 - **slash** | **/**: スラッシュ(ex: %Y/%m/%d)
 - **hyphen** | **-**: ハイフン(ex: %Y-%m-%d)
@@ -141,15 +147,13 @@ DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
     },
     "last_day": {
         "keyword": ["最後"],
-        "range": lambda _: [
-            datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999)
-        ],
+        "range": lambda _: [datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999)],
     },
     "all": {
         "keyword": ["全部"],
         "range": lambda _: [
             lookup.db.first_record() + relativedelta(days=-1),
-            datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999)
+            datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
 }
@@ -462,12 +466,12 @@ class ExtendedDatetimeList(list):
     @property
     def start(self) -> ExtendedDatetime | None:
         """最小日付を返す。空ならNone。"""
-        return (min(self) if self else None)
+        return min(self) if self else None
 
     @property
     def end(self) -> ExtendedDatetime | None:
         """最大日付を返す。空ならNone。"""
-        return (max(self) if self else None)
+        return max(self) if self else None
 
     @property
     def period(self) -> List[ExtendedDatetime | None]:
@@ -506,4 +510,4 @@ class ExtendedDatetimeList(list):
         if not date_range:
             return {}
 
-        return ({"start": min(date_range).format(fmt, delimiter), "end": max(date_range).format(fmt, delimiter)})
+        return {"start": min(date_range).format(fmt, delimiter), "end": max(date_range).format(fmt, delimiter)}
