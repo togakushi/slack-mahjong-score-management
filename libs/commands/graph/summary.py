@@ -58,9 +58,7 @@ def point_plot(m: "MessageParserProtocol"):
     else:
         pivot_index = "playtime"
 
-    pivot = pd.pivot_table(
-        df, index=pivot_index, columns="name", values="point_sum"
-    ).ffill()
+    pivot = pd.pivot_table(df, index=pivot_index, columns="name", values="point_sum").ffill()
     pivot = pivot.reindex(  # 並び替え
         target_data["name"].to_list(), axis="columns"
     )
@@ -86,7 +84,8 @@ def point_plot(m: "MessageParserProtocol"):
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
     m.set_data(
-        file_title, save_file,
+        file_title,
+        save_file,
         StyleOptions(use_comment=True, header_hidden=True, key_title=False),
     )
 
@@ -113,9 +112,7 @@ def rank_plot(m: "MessageParserProtocol"):
         pivot_index = "playtime"
 
     # 集計
-    pivot = pd.pivot_table(
-        df, index=pivot_index, columns="name", values="point_sum"
-    ).ffill()
+    pivot = pd.pivot_table(df, index=pivot_index, columns="name", values="point_sum").ffill()
     pivot = pivot.reindex(  # 並び替え
         target_data["name"].to_list(), axis="columns"
     )
@@ -142,7 +139,8 @@ def rank_plot(m: "MessageParserProtocol"):
     file_title = graph_params.get("title_text", "").split()[0]
     m.post.headline = {f"{file_title}グラフ": message.header(game_info, m)}
     m.set_data(
-        file_title, save_file,
+        file_title,
+        save_file,
         StyleOptions(use_comment=True, header_hidden=True, key_title=False),
     )
 
@@ -170,9 +168,7 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
         target_data["game_count"] = df.groupby("name", as_index=False).max(numeric_only=True)["count"]
 
         # 足切り
-        target_list = list(
-            target_data.query("game_count >= @g.params['stipulated']")["name"]
-        )
+        target_list = list(target_data.query("game_count >= @g.params['stipulated']")["name"])
         _ = target_list  # ignore PEP8 F841
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
@@ -182,9 +178,7 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
             return (target_data, df)
 
         target_data["last_point"] = df.groupby("name").last()["point_sum"]
-        target_data["game_count"] = (
-            df.groupby("name").max(numeric_only=True)["count"]
-        )
+        target_data["game_count"] = df.groupby("name").max(numeric_only=True)["count"]
         target_data["name"] = target_data.index
         target_data = target_data.sort_values("last_point", ascending=False)
 
@@ -198,7 +192,10 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
 
     # 凡例用文字列生成
     target_data["legend"] = target_data.apply(
-        lambda x: f"{x["position"]}位： {x["name"]} ({x["last_point"]:+.1f}pt / {x["game_count"]:.0f}G)".replace("-", "▲"), axis=1
+        lambda x: f"{x['position']}位： {x['name']} ({x['last_point']:+.1f}pt / {x['game_count']:.0f}G)".replace(
+            "-", "▲"
+        ),
+        axis=1,
     )
 
     return (target_data.sort_values("position"), df)
@@ -406,52 +403,58 @@ def _graph_title(graph_params: GraphParams):
 
     if g.params.get("target_count"):
         kind = "ymd_o"
-        graph_params.update({"xlabel_text": f"集計日（{graph_params["total_game_count"]} ゲーム）"})
+        graph_params.update({"xlabel_text": f"集計日（{graph_params['total_game_count']} ゲーム）"})
         match graph_params.get("graph_type"):
             case "point":
-                graph_params.update({"title_text": f"ポイント推移 (直近 {g.params["target_count"]} ゲーム)"})
+                graph_params.update({"title_text": f"ポイント推移 (直近 {g.params['target_count']} ゲーム)"})
             case "rank":
-                graph_params.update({"title_text": f"順位変動 (直近 {g.params["target_count"]} ゲーム)"})
+                graph_params.update({"title_text": f"順位変動 (直近 {g.params['target_count']} ゲーム)"})
             case "point_hbar":
-                graph_params.update({"title_text": f"通算ポイント (直近 {g.params["target_count"]} ゲーム)"})
+                graph_params.update({"title_text": f"通算ポイント (直近 {g.params['target_count']} ゲーム)"})
     else:
         match g.params.get("collection"):
             case "daily":
                 kind = "ymd_o"
-                graph_params.update({"xlabel_text": f"集計日（{graph_params["total_game_count"]} ゲーム）"})
+                graph_params.update({"xlabel_text": f"集計日（{graph_params['total_game_count']} ゲーム）"})
             case "monthly":
                 kind = "jym_o"
-                graph_params.update({"xlabel_text": f"集計月（{graph_params["total_game_count"]} ゲーム）"})
+                graph_params.update({"xlabel_text": f"集計月（{graph_params['total_game_count']} ゲーム）"})
             case "yearly":
                 kind = "jy_o"
-                graph_params.update({"xlabel_text": f"集計年（{graph_params["total_game_count"]} ゲーム）"})
+                graph_params.update({"xlabel_text": f"集計年（{graph_params['total_game_count']} ゲーム）"})
             case "all":
                 kind = "ymdhm"
-                graph_params.update({"xlabel_text": f"ゲーム数：{graph_params["total_game_count"]} ゲーム"})
+                graph_params.update({"xlabel_text": f"ゲーム数：{graph_params['total_game_count']} ゲーム"})
             case _:
                 kind = "ymdhm"
                 if g.params.get("search_word"):
-                    graph_params.update({"xlabel_text": f"ゲーム数：{graph_params["total_game_count"]} ゲーム"})
+                    graph_params.update({"xlabel_text": f"ゲーム数：{graph_params['total_game_count']} ゲーム"})
                 else:
-                    graph_params.update({"xlabel_text": f"ゲーム終了日時（{graph_params["total_game_count"]} ゲーム）"})
+                    graph_params.update({"xlabel_text": f"ゲーム終了日時（{graph_params['total_game_count']} ゲーム）"})
 
     match graph_params.get("graph_type", "point"):
         case "point":
-            graph_params.update({
-                "ylabel_text": "通算ポイント",
-                "title_text": compose.text_item.date_range(kind, "通算ポイント", "ポイント推移"),
-            })
+            graph_params.update(
+                {
+                    "ylabel_text": "通算ポイント",
+                    "title_text": compose.text_item.date_range(kind, "通算ポイント", "ポイント推移"),
+                }
+            )
         case "rank":
-            graph_params.update({
-                "ylabel_text": "順位 (通算ポイント順)",
-                "title_text": compose.text_item.date_range(kind, "順位", "順位変動"),
-            })
+            graph_params.update(
+                {
+                    "ylabel_text": "順位 (通算ポイント順)",
+                    "title_text": compose.text_item.date_range(kind, "順位", "順位変動"),
+                }
+            )
         case "point_hbar":
-            graph_params.update({
-                "ylabel_text": None,
-                "title_text": compose.text_item.date_range(kind, "通算ポイント", "通算ポイント"),
-            })
+            graph_params.update(
+                {
+                    "ylabel_text": None,
+                    "title_text": compose.text_item.date_range(kind, "通算ポイント", "通算ポイント"),
+                }
+            )
             if graph_params["total_game_count"] == 1:
                 graph_params.update({"xlabel_text": "ポイント"})
             else:
-                graph_params.update({"xlabel_text": f"ポイント（ゲーム数：{graph_params["total_game_count"]} ゲーム）"})
+                graph_params.update({"xlabel_text": f"ポイント（ゲーム数：{graph_params['total_game_count']} ゲーム）"})

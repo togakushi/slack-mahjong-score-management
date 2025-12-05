@@ -57,7 +57,9 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
                         padding = "0.25em 0.75em"
                         msg = _conv_verbose(msg)
                     message += adapter.functions.to_styled_html(msg, padding, show_index)
-                    message = message.replace(f">{g.params["player_name"]}<", f"><div class='player_name'>{g.params["player_name"]}</div><")
+                    message = message.replace(
+                        f">{g.params['player_name']}<", f"><div class='player_name'>{g.params['player_name']}</div><"
+                    )
 
                 if isinstance(msg, str):
                     message += adapter.functions.to_text_html(msg)
@@ -82,12 +84,15 @@ def _conv_verbose(df: pd.DataFrame) -> pd.DataFrame:
 
     if not isinstance(df.columns, pd.MultiIndex):
         if not g.params.get("individual", True):  # チーム戦
-            df.rename(columns={
-                "東家 名前": "東家 チーム",
-                "南家 名前": "南家 チーム",
-                "西家 名前": "西家 チーム",
-                "北家 名前": "北家 チーム",
-            }, inplace=True)
+            df.rename(
+                columns={
+                    "東家 名前": "東家 チーム",
+                    "南家 名前": "南家 チーム",
+                    "西家 名前": "西家 チーム",
+                    "北家 名前": "北家 チーム",
+                },
+                inplace=True,
+            )
         new_columns = [tuple(col.split(" ")) if " " in col else ("", col) for col in df.columns]
         df.columns = pd.MultiIndex.from_tuples(new_columns, names=["座席", "項目"])
 

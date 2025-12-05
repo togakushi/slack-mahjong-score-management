@@ -32,8 +32,7 @@ class SvcFunctions(FunctionsInterface):
         """
 
         styled = (
-            df.style
-            .format(
+            df.style.format(
                 {
                     "通算": "{:+.1f}pt",
                     "ポイント": "{:+.1f}pt",
@@ -93,12 +92,22 @@ class SvcFunctions(FunctionsInterface):
                 na_rep="-----",
             )
             .set_table_attributes('class="data_table"')
-            .set_table_styles([
-                {"selector": "th", "props": [("color", "#ffffff"), ("background-color", "#000000"), ("text-align", "center"), ("padding", padding)]},
-                {"selector": "td", "props": [("text-align", "center"), ("padding", padding)]},
-                {"selector": "tr:nth-child(odd)", "props": [("background-color", "#f0f0f0f0")]},
-                {"selector": "tr:nth-child(even)", "props": [("background-color", "#dfdfdfdf")]},
-            ])
+            .set_table_styles(
+                [
+                    {
+                        "selector": "th",
+                        "props": [
+                            ("color", "#ffffff"),
+                            ("background-color", "#000000"),
+                            ("text-align", "center"),
+                            ("padding", padding),
+                        ],
+                    },
+                    {"selector": "td", "props": [("text-align", "center"), ("padding", padding)]},
+                    {"selector": "tr:nth-child(odd)", "props": [("background-color", "#f0f0f0f0")]},
+                    {"selector": "tr:nth-child(even)", "props": [("background-color", "#dfdfdfdf")]},
+                ]
+            )
         )
         if not index:
             styled = styled.hide(axis="index")
@@ -142,7 +151,7 @@ class SvcFunctions(FunctionsInterface):
             title, headline = next(iter(m.post.headline.items()))
             if not title.isnumeric() and title:
                 message = f"<h1>{title}</h1>\n"
-            message += f"<p>\n{headline.replace("\n", "<br>\n")}</p>\n"
+            message += f"<p>\n{headline.replace('\n', '<br>\n')}</p>\n"
 
         return message
 

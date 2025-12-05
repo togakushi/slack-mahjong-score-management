@@ -36,7 +36,11 @@ def divider(adapter: "ServiceAdapter") -> None:
         adapter (ServiceAdapter): アダプタインターフェース
     """
 
-    adapter.conf.tab_var["view"]["blocks"].append({"type": "divider", })
+    adapter.conf.tab_var["view"]["blocks"].append(
+        {
+            "type": "divider",
+        }
+    )
     adapter.conf.tab_var["no"] += 1
 
 
@@ -64,8 +68,15 @@ def button(adapter: "ServiceAdapter", text: str, action_id: str, style: str | bo
     """
 
     adapter.conf.tab_var["view"]["blocks"].append({"type": "actions", "elements": [{}]})
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["elements"][0] = {"type": "button", "text": {}, "action_id": action_id}
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["elements"][0]["text"] = {"type": "plain_text", "text": text}
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["elements"][0] = {
+        "type": "button",
+        "text": {},
+        "action_id": action_id,
+    }
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["elements"][0]["text"] = {
+        "type": "plain_text",
+        "text": text,
+    }
     if style:
         adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["elements"][0].update({"style": style})
 
@@ -86,8 +97,11 @@ def radio_buttons(adapter: "ServiceAdapter", id_suffix: str, title: str, flag: d
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["label"] = {"type": "plain_text", "text": title}
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["type"] = "radio_buttons"
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["action_id"] = f"aid-{id_suffix}"
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["initial_option"] = {  # 先頭の選択肢はチェック済みにする
-        "text": {"type": "plain_text", "text": flag[next(iter(flag))]}, "value": next(iter(flag))
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"][
+        "initial_option"
+    ] = {  # 先頭の選択肢はチェック済みにする
+        "text": {"type": "plain_text", "text": flag[next(iter(flag))]},
+        "value": next(iter(flag)),
     }
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"] = []
     for k, v in flag.items():
@@ -155,7 +169,10 @@ def user_select_pulldown(
     adapter.conf.tab_var["view"]["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["type"] = "static_select"
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["action_id"] = "player"
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["placeholder"] = {
+        "type": "plain_text",
+        "text": "Select an item",
+    }
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"] = []
 
     if add_list:
@@ -190,7 +207,10 @@ def multi_select_pulldown(
     adapter.conf.tab_var["view"]["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["type"] = "multi_static_select"
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["action_id"] = "player"
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["placeholder"] = {"type": "plain_text", "text": "Select an item"}
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["placeholder"] = {
+        "type": "plain_text",
+        "text": "Select an item",
+    }
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"] = []
 
     if add_list:
@@ -218,16 +238,22 @@ def input_ranked(adapter: "ServiceAdapter", block_id: str | bool = False) -> Non
     """
 
     if block_id:
-        adapter.conf.tab_var["view"]["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
+        adapter.conf.tab_var["view"]["blocks"].append(
+            {"type": "input", "block_id": block_id, "element": {}, "label": {}}
+        )
     else:
         adapter.conf.tab_var["view"]["blocks"].append({"type": "input", "element": {}, "label": {}})
 
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"type": "number_input"})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"is_decimal_allowed": True})
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"initial_value": str(g.cfg.ranking.ranked)})
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update(
+        {"initial_value": str(g.cfg.ranking.ranked)}
+    )
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"min_value": "1"})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"action_id": "aid-ranked"})
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["label"].update({"type": "plain_text", "text": "出力順位上限"})
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["label"].update(
+        {"type": "plain_text", "text": "出力順位上限"}
+    )
 
     adapter.conf.tab_var["no"] += 1
 
@@ -242,7 +268,7 @@ def modalperiod_selection(adapter: "ServiceAdapter") -> dict:
         dict: ブロック要素
     """
 
-    view: dict = {"type": "modal", "callback_id": f"{adapter.conf.tab_var["screen"]}_ModalPeriodSelection"}
+    view: dict = {"type": "modal", "callback_id": f"{adapter.conf.tab_var['screen']}_ModalPeriodSelection"}
     view["title"] = {"type": "plain_text", "text": "検索範囲指定"}
     view["submit"] = {"type": "plain_text", "text": "決定"}
     view["close"] = {"type": "plain_text", "text": "取消"}
@@ -304,7 +330,7 @@ def set_command_option(adapter: "ServiceAdapter", body: dict) -> tuple[list, lis
     if "bid-search_range" in search_options:
         match search_options["bid-search_range"]["aid-search_range"]["selected_option"]["value"]:
             case "指定":
-                app_msg.append(f"集計範囲：{adapter.conf.tab_var["sday"]} ～ {adapter.conf.tab_var["eday"]}")
+                app_msg.append(f"集計範囲：{adapter.conf.tab_var['sday']} ～ {adapter.conf.tab_var['eday']}")
                 argument.extend([adapter.conf.tab_var["sday"], adapter.conf.tab_var["eday"]])
             case "全部":
                 app_msg.append("集計範囲：全部")

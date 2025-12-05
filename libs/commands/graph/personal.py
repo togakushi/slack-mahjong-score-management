@@ -48,21 +48,22 @@ def plot(m: "MessageParserProtocol"):
         player = next(iter(mapping_dict.values()))
 
     # 最終値（凡例/ラベル追加用）
-    point_sum = f"{float(df["point_sum"].iloc[-1]):+.1f}".replace("-", "▲")
-    point_avg = f"{float(df["point_avg"].iloc[-1]):+.1f}".replace("-", "▲")
-    rank_avg = f"{float(df["rank_avg"].iloc[-1]):.2f}"
+    point_sum = f"{float(df['point_sum'].iloc[-1]):+.1f}".replace("-", "▲")
+    point_avg = f"{float(df['point_avg'].iloc[-1]):+.1f}".replace("-", "▲")
+    rank_avg = f"{float(df['rank_avg'].iloc[-1]):.2f}"
     total_game_count = int(df["count"].iloc[-1])
 
     title_text = f"『{player}』の成績"
     if g.params.get("target_count", 0) == 0:
-        title_range = f"({cast("ExtDt", g.params["starttime"]).format("ymdhm")} - {cast("ExtDt", g.params["endtime"]).format("ymdhm")}"
+        title_range = f"({cast('ExtDt', g.params['starttime']).format('ymdhm')} - {cast('ExtDt', g.params['endtime']).format('ymdhm')}"
     else:
         title_range = f"(直近 {len(df)} ゲーム)"
 
     m.post.headline = {title_text: message.header(game_info, m)}
     m.set_data(
-        "個人成績", formatter.df_rename(df.drop(columns=["count", "name"]), False),
-        StyleOptions(header_hidden=True, key_title=False)
+        "個人成績",
+        formatter.df_rename(df.drop(columns=["count", "name"]), False),
+        StyleOptions(header_hidden=True, key_title=False),
     )
 
     # --- グラフ生成
@@ -119,7 +120,8 @@ def plot(m: "MessageParserProtocol"):
 
             plt.savefig(save_file, bbox_inches="tight")
             m.set_data(
-                f"『{player}』の成績", save_file,
+                f"『{player}』の成績",
+                save_file,
                 StyleOptions(use_comment=True, header_hidden=True, key_title=False),
             )
 
@@ -162,7 +164,7 @@ def statistics_plot(m: "MessageParserProtocol"):
         mapping_dict = formatter.anonymous_mapping([g.params["player_name"]])
         player = next(iter(mapping_dict.values()))
 
-    title_text = f"『{player}』の成績 (検索範囲：{compose.text_item.date_range("ymd_o")})"
+    title_text = f"『{player}』の成績 (検索範囲：{compose.text_item.date_range('ymd_o')})"
 
     rpoint_df = get_data(player_df["rpoint"], g.params["interval"])
     point_sum_df = get_data(player_df["point"], g.params["interval"])
@@ -230,11 +232,11 @@ def statistics_plot(m: "MessageParserProtocol"):
     # テーブル用データ
     rank_table = pd.DataFrame()
     rank_table["ゲーム数"] = count_df["ゲーム数"].astype("int")
-    rank_table["1位"] = count_df.apply(lambda row: f"{row["1位(%)"]:.2%} ({row["1位"]:.0f})", axis=1)
-    rank_table["2位"] = count_df.apply(lambda row: f"{row["2位(%)"]:.2%} ({row["2位"]:.0f})", axis=1)
-    rank_table["3位"] = count_df.apply(lambda row: f"{row["3位(%)"]:.2%} ({row["3位"]:.0f})", axis=1)
-    rank_table["4位"] = count_df.apply(lambda row: f"{row["4位(%)"]:.2%} ({row["4位"]:.0f})", axis=1)
-    rank_table["平均順位"] = count_df.apply(lambda row: f"{row["平均順位"]:.2f}", axis=1)
+    rank_table["1位"] = count_df.apply(lambda row: f"{row['1位(%)']:.2%} ({row['1位']:.0f})", axis=1)
+    rank_table["2位"] = count_df.apply(lambda row: f"{row['2位(%)']:.2%} ({row['2位']:.0f})", axis=1)
+    rank_table["3位"] = count_df.apply(lambda row: f"{row['3位(%)']:.2%} ({row['3位']:.0f})", axis=1)
+    rank_table["4位"] = count_df.apply(lambda row: f"{row['4位(%)']:.2%} ({row['4位']:.0f})", axis=1)
+    rank_table["平均順位"] = count_df.apply(lambda row: f"{row['平均順位']:.2f}", axis=1)
 
     m.post.headline = {f"『{player}』の成績": message.header(game_info, m)}
 
@@ -331,9 +333,7 @@ def subplot_box(df: pd.DataFrame, ax: plt.Axes) -> None:
     # Y軸修正
     ylabs = ax.get_yticks()[1:-1]
     ax.set_yticks(ylabs)
-    ax.set_yticklabels(
-        [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
-    )
+    ax.set_yticklabels([str(int(ylab)).replace("-", "▲") for ylab in ylabs])
 
 
 def subplot_table(df: pd.DataFrame, ax: plt.Axes) -> None:
@@ -396,9 +396,7 @@ def subplot_point(df: pd.Series, ax: plt.Axes) -> None:
     # Y軸修正
     ylabs = ax.get_yticks()[1:-1]
     ax.set_yticks(ylabs)
-    ax.set_yticklabels(
-        [str(int(ylab)).replace("-", "▲") for ylab in ylabs]
-    )
+    ax.set_yticklabels([str(int(ylab)).replace("-", "▲") for ylab in ylabs])
 
 
 def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
