@@ -89,14 +89,25 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "Me
     if g.adapter.conf.plotting_backend == "plotly":
         return None
 
-    df = formatter.df_rename(df.filter(
-        items=[
-            "player", "team",
-            "game", "total_mix", "avg_mix", "rank_avg",
-            "1st_mix", "2nd_mix", "3rd_mix", "4th_mix", "rank_dist",
-            "flying_mix", "yakuman_mix",
-        ]
-    ))
+    df = formatter.df_rename(
+        df.filter(
+            items=[
+                "player",
+                "team",
+                "game",
+                "total_mix",
+                "avg_mix",
+                "rank_avg",
+                "1st_mix",
+                "2nd_mix",
+                "3rd_mix",
+                "4th_mix",
+                "rank_dist",
+                "flying_mix",
+                "yakuman_mix",
+            ]
+        )
+    )
 
     # フォント/色彩設定
     graphutil.setup()
@@ -122,10 +133,7 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "Me
         else:
             cell_color.append([line_color2] * len(df.columns))
 
-    fig = plt.figure(
-        figsize=(8, (len(df) * 0.2) + 0.8),
-        dpi=200, tight_layout=True
-    )
+    fig = plt.figure(figsize=(8, (len(df) * 0.2) + 0.8), dpi=200, tight_layout=True)
     ax_dummy = fig.add_subplot(111)
     ax_dummy.axis("off")
 
@@ -154,7 +162,8 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "Me
     )
 
     fig.text(
-        0.01, 0.01,  # 表示位置(左下0,0 右下0,1)
+        0.01,
+        0.01,  # 表示位置(左下0,0 右下0,1)
         add_text,
         transform=fig.transFigure,
         fontsize=6,
@@ -174,19 +183,30 @@ def text_generation(df: "pd.DataFrame") -> "MessageType":
         MessageType: 生成ファイルパス
     """
 
-    report_file_path = g.cfg.setting.work_dir / (f"{g.params["filename"]}.txt" if g.params.get("filename") else "report.txt")
+    report_file_path = g.cfg.setting.work_dir / (
+        f"{g.params['filename']}.txt" if g.params.get("filename") else "report.txt"
+    )
 
     df = df.filter(
         items=[
-            "player", "team",
-            "game", "point_sum", "point_avg",
-            "1st_count", "rank1_rate",
-            "2nd_count", "rank2_rate",
-            "3rd_count", "rank3_rate",
-            "4th_count", "rank4_rate",
+            "player",
+            "team",
+            "game",
+            "point_sum",
+            "point_avg",
+            "1st_count",
+            "rank1_rate",
+            "2nd_count",
+            "rank2_rate",
+            "3rd_count",
+            "rank3_rate",
+            "4th_count",
+            "rank4_rate",
             "rank_avg",
-            "flying_count", "flying_rate",
-            "yakuman_count", "yakuman_rate",
+            "flying_count",
+            "flying_rate",
+            "yakuman_count",
+            "yakuman_rate",
         ]
     )
     fmt = formatter.floatfmt_adjust(df, index=True)
@@ -206,19 +226,30 @@ def csv_generation(df: "pd.DataFrame") -> "MessageType":
         MessageType: 生成ファイルパス
     """
 
-    report_file_path = g.cfg.setting.work_dir / (f"{g.params["filename"]}.csv" if g.params.get("filename") else "report.csv")
+    report_file_path = g.cfg.setting.work_dir / (
+        f"{g.params['filename']}.csv" if g.params.get("filename") else "report.csv"
+    )
 
     df = df.filter(
         items=[
-            "player", "team",
-            "game", "point_sum", "point_avg",
-            "1st_count", "rank1_rate",
-            "2nd_count", "rank2_rate",
-            "3rd_count", "rank3_rate",
-            "4th_count", "rank4_rate",
+            "player",
+            "team",
+            "game",
+            "point_sum",
+            "point_avg",
+            "1st_count",
+            "rank1_rate",
+            "2nd_count",
+            "rank2_rate",
+            "3rd_count",
+            "rank3_rate",
+            "4th_count",
+            "rank4_rate",
             "rank_avg",
-            "flying_count", "flying_rate",
-            "yakuman_count", "yakuman_rate",
+            "flying_count",
+            "flying_rate",
+            "yakuman_count",
+            "yakuman_rate",
         ]
     )
 
@@ -248,15 +279,24 @@ def df_generation(df: "pd.DataFrame") -> "MessageType":
 
     df = df.filter(
         items=[
-            "player", "team",
-            "game", "point_sum", "point_avg",
-            "1st_count", "rank1_rate",
-            "2nd_count", "rank2_rate",
-            "3rd_count", "rank3_rate",
-            "4th_count", "rank4_rate",
+            "player",
+            "team",
+            "game",
+            "point_sum",
+            "point_avg",
+            "1st_count",
+            "rank1_rate",
+            "2nd_count",
+            "rank2_rate",
+            "3rd_count",
+            "rank3_rate",
+            "4th_count",
+            "rank4_rate",
             "rank_avg",
-            "flying_count", "flying_rate",
-            "yakuman_count", "yakuman_rate",
+            "flying_count",
+            "flying_rate",
+            "yakuman_count",
+            "yakuman_rate",
         ]
     )
 

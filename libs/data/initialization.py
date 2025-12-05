@@ -41,12 +41,17 @@ def initialization_resultdb() -> None:
         expected_cols = dbutil.table_info(memdb, table_name)
         for col_name, col_data in expected_cols.items():
             if col_name not in actual_cols:
-                if col_data["notnull"] and col_data["dflt_value"] is None:  # NOT NULL かつ DEFAULT 未指定だと追加できないので回避
-                    logging.warning("migration skip: table=%s, column=%s, reason='NOT NULL' and 'DEFAULT' unspecified", table_name, col_name)
+                # NOT NULL かつ DEFAULT 未指定だと追加できないので回避
+                if col_data["notnull"] and col_data["dflt_value"] is None:
+                    logging.warning(
+                        "migration skip: table=%s, column=%s, reason='NOT NULL' and 'DEFAULT' unspecified",
+                        table_name,
+                        col_name,
+                    )
                     continue
                 col_type = col_data["type"]
                 notnull = "NOT NULL" if col_data["notnull"] else ""
-                dflt = f"DEFAULT {col_data["dflt_value"]}" if col_data["dflt_value"] is not None else ""
+                dflt = f"DEFAULT {col_data['dflt_value']}" if col_data["dflt_value"] is not None else ""
                 resultdb.execute(f"alter table {table_name} add column {col_name} {col_type} {notnull} {dflt};")
                 logging.info("migration: table=%s, column=%s", table_name, col_name)
 
@@ -60,25 +65,22 @@ def initialization_resultdb() -> None:
                 case "yakuman_list":
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
-                        resultdb.execute(
-                            "insert into words(word, type, ex_point) values (?, 0, NULL);",
-                            (word,)
-                        )
+                        resultdb.execute("insert into words(word, type, ex_point) values (?, 0, NULL);", (word,))
                     logging.debug("regulations table(type0): %s", words_list)
                 case "word_list":
                     words_list = {x.strip() for x in v.split(",")}
                     for word in words_list:
-                        resultdb.execute(
-                            "insert into words(word, type, ex_point) values (?, 1, NULL);",
-                            (word,)
-                        )
+                        resultdb.execute("insert into words(word, type, ex_point) values (?, 1, NULL);", (word,))
                     logging.debug("regulations table(type1): %s", words_list)
                 case _:
                     word = k.strip()
                     ex_point = int(v)
                     resultdb.execute(
                         "insert into words(word, type, ex_point) values (?, 2, ?);",
-                        (word, ex_point,)
+                        (
+                            word,
+                            ex_point,
+                        ),
                     )
                     logging.debug("regulations table(type2): %s, %s", word, ex_point)
 
@@ -86,14 +88,17 @@ def initialization_resultdb() -> None:
         for k, v in cast("ConfigParser", getattr(g.cfg, "_parser")).items("regulations_them"):
             resultdb.execute(
                 "insert into words(word, type, ex_point) values (?, 3, ?);",
-                (k.strip(), int(v),)
+                (
+                    k.strip(),
+                    int(v),
+                ),
             )
             logging.debug("regulations table(type3): %s, %s", k.strip(), int(v))
 
     # VIEW
     rows = resultdb.execute("select name from sqlite_master where type = 'view';")
     for row in rows.fetchall():
-        resultdb.execute(f"drop view if exists '{row["name"]}';")
+        resultdb.execute(f"drop view if exists '{row['name']}';")
     resultdb.execute(dbutil.query("CREATE_VIEW_INDIVIDUAL_RESULTS"))
     resultdb.execute(dbutil.query("CREATE_VIEW_GAME_RESULTS"))
     resultdb.execute(dbutil.query("CREATE_VIEW_GAME_INFO"))

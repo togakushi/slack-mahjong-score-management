@@ -39,11 +39,14 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             try:
-                cur.execute(dbutil.query("RESULT_INSERT"), {
-                    "playtime": ExtDt(float(detection.ts)).format("sql"),
-                    "rpoint_sum": detection.rpoint_sum(),
-                    **detection.to_dict(),
-                })
+                cur.execute(
+                    dbutil.query("RESULT_INSERT"),
+                    {
+                        "playtime": ExtDt(float(detection.ts)).format("sql"),
+                        "rpoint_sum": detection.rpoint_sum(),
+                        **detection.to_dict(),
+                    },
+                )
                 changes = cur.total_changes
                 cur.commit()
             except sqlite3.IntegrityError as err:
@@ -75,11 +78,14 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> int:
 
     if m.check_updatable:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
-            cur.execute(dbutil.query("RESULT_UPDATE"), {
-                "playtime": ExtDt(float(detection.ts)).format("sql"),
-                "rpoint_sum": detection.rpoint_sum(),
-                **detection.to_dict(),
-            })
+            cur.execute(
+                dbutil.query("RESULT_UPDATE"),
+                {
+                    "playtime": ExtDt(float(detection.ts)).format("sql"),
+                    "rpoint_sum": detection.rpoint_sum(),
+                    **detection.to_dict(),
+                },
+            )
             changes = cur.total_changes
             cur.commit()
         logging.info("%s", detection.to_text("logging"))
@@ -104,13 +110,15 @@ def db_delete(m: "MessageParserProtocol"):
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             # ゲーム結果の削除
             cur.execute(dbutil.query("RESULT_DELETE"), (m.data.event_ts,))
-            if (delete_result := cur.execute("select changes();").fetchone()[0]):
+            if delete_result := cur.execute("select changes();").fetchone()[0]:
                 m.status.target_ts.append(m.data.event_ts)
                 logging.info("result: ts=%s, count=%s", m.data.event_ts, delete_result)
             # メモの削除
-            if (remark_list := cur.execute("select event_ts from remarks where thread_ts=?", (m.data.event_ts,)).fetchall()):
+            if remark_list := cur.execute(
+                "select event_ts from remarks where thread_ts=?", (m.data.event_ts,)
+            ).fetchall():
                 cur.execute(dbutil.query("REMARKS_DELETE_ALL"), (m.data.event_ts,))
-                if (delete_remark := cur.execute("select changes();").fetchone()[0]):
+                if delete_remark := cur.execute("select changes();").fetchone()[0]:
                     m.status.target_ts.extend([x.get("event_ts") for x in list(map(dict, remark_list))])
                     logging.info("remark: ts=%s, count=%s", m.data.event_ts, delete_remark)
             cur.commit()
@@ -198,7 +206,7 @@ def remarks_delete(m: "MessageParserProtocol"):
         with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
             cur.execute(dbutil.query("REMARKS_DELETE_ONE"), (m.data.event_ts,))
             cur.commit()
-            if (count := cur.execute("select changes();").fetchone()[0]):
+            if count := cur.execute("select changes();").fetchone()[0]:
                 m.status.target_ts.append(m.data.event_ts)
                 logging.info("ts=%s, count=%s", m.data.event_ts, count)
         # 後処理
@@ -279,7 +287,14 @@ def reprocessing_remarks(m: "MessageParserProtocol") -> None:
             m.data.text = str(cast(dict, msg[x]).get("text", ""))
             if m.data.text:
                 m.data.event_ts = str(cast(dict, msg[x]).get("ts"))
-                logging.debug("(%s/%s) thread_ts=%s, event_ts=%s, %s", x, reply_count, m.data.thread_ts, m.data.event_ts, m.data.text)
+                logging.debug(
+                    "(%s/%s) thread_ts=%s, event_ts=%s, %s",
+                    x,
+                    reply_count,
+                    m.data.thread_ts,
+                    m.data.event_ts,
+                    m.data.text,
+                )
                 if re.match(rf"^{g.cfg.setting.remarks_word}", m.keyword):
                     check_remarks(m)
 

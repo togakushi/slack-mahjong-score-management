@@ -37,17 +37,17 @@ def remarks(headword=False) -> str | list:
             else:
                 remark_list.append("チーム同卓時の結果を含む")
     if g.params["stipulated"] >= 2:
-        remark_list.append(f"規定打数 {g.params["stipulated"]} G以上")
+        remark_list.append(f"規定打数 {g.params['stipulated']} G以上")
     if g.params.get("command") in ["ranking"]:
-        remark_list.append(f"{int(g.params.get("ranked", g.cfg.ranking.ranked))}位まで表示")
+        remark_list.append(f"{int(g.params.get('ranked', g.cfg.ranking.ranked))}位まで表示")
     if g.params.get("rule_version") != g.cfg.mahjong.rule_version:
-        remark_list.append(f"集計対象ルール {g.params["rule_version"]}")
+        remark_list.append(f"集計対象ルール {g.params['rule_version']}")
     if g.params.get("mixed"):
         remark_list.append("集計対象ルール すべて")
 
     if headword:
         if remark_list:
-            return f"特記事項：{"、".join(remark_list)}"
+            return f"特記事項：{'、'.join(remark_list)}"
         return "特記事項：なし"
 
     return remark_list
@@ -63,10 +63,10 @@ def search_word(headword=False) -> str:
         str: 条件をまとめた文字列
     """
 
-    if (ret := str(g.params.get("search_word", "")).replace("%", "")):
+    if ret := str(g.params.get("search_word", "")).replace("%", ""):
         # 集約条件
         if g.params.get("group_length"):
-            ret += f"（{g.params["group_length"]}文字集約）"
+            ret += f"（{g.params['group_length']}文字集約）"
     else:
         ret = ""
 
@@ -106,7 +106,7 @@ def search_range(kind: Literal["str", "list"] = "str", time_pattern=None) -> lis
 
     match kind:
         case "list":
-            return ([starttime, endtime])
+            return [starttime, endtime]
         case "str":
             return f"{starttime} ～ {endtime}"
 
@@ -141,7 +141,7 @@ def aggregation_range(
 
     match kind:
         case "list":
-            return ([first, last])
+            return [first, last]
         case "str":
             return f"{first} ～ {last}"
 
@@ -184,7 +184,9 @@ def date_range(
         str_st = st.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
         str_et = et.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
 
-    if st.format(cast(ExtDt.FormatType, kind), delimiter="num") == ot.format(cast(ExtDt.FormatType, kind), delimiter="num"):
+    if st.format(cast(ExtDt.FormatType, kind), delimiter="num") == ot.format(
+        cast(ExtDt.FormatType, kind), delimiter="num"
+    ):
         if prefix_a and prefix_b:
             ret = f"{prefix_a} ({str_st})"
         else:

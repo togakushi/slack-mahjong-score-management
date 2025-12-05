@@ -71,12 +71,16 @@ def main(season_times: int = 1):
                     vs_score = score_simulator.simulate_game()
                     result = GameResult(
                         ts=str(dt),
-                        p1_name=member[0], p1_str=str(int(vs_score[0] / 100)),
-                        p2_name=member[1], p2_str=str(int(vs_score[1] / 100)),
-                        p3_name=member[2], p3_str=str(int(vs_score[2] / 100)),
-                        p4_name=member[3], p4_str=str(int(vs_score[3] / 100)),
+                        p1_name=member[0],
+                        p1_str=str(int(vs_score[0] / 100)),
+                        p2_name=member[1],
+                        p2_str=str(int(vs_score[1] / 100)),
+                        p3_name=member[2],
+                        p3_str=str(int(vs_score[2] / 100)),
+                        p4_name=member[3],
+                        p4_str=str(int(vs_score[3] / 100)),
                         comment=f"第{season:02d}期{count + 1:04d}試合_{position[idx]}戦",
-                        rule_version=g.cfg.mahjong.rule_version
+                        rule_version=g.cfg.mahjong.rule_version,
                     )
 
                     # データ投入
@@ -93,5 +97,7 @@ def main(season_times: int = 1):
         cur.commit()
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
-        rows = cur.execute("select name, round(sum(point), 1) as point from team_results group by name order by point desc;")
+        rows = cur.execute(
+            "select name, round(sum(point), 1) as point from team_results group by name order by point desc;"
+        )
         logging.info(dict(rows.fetchall()))

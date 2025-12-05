@@ -43,11 +43,7 @@ def aggregation(m: "MessageParserProtocol"):
         m.status.result = False
         return
 
-    df = pd.merge(
-        result_df, aggregate.ranking_record(),
-        on=["name", "name"],
-        suffixes=["", "_x"]
-    )
+    df = pd.merge(result_df, aggregate.ranking_record(), on=["name", "name"], suffixes=["", "_x"])
     df["rank"] = 0  # 順位表示用カラム
     df["total_count"] = game_info.count  # 集計ゲーム数
     df["participation_rate"] = df["game_count"] / df["total_count"]  # 参加率
@@ -63,7 +59,9 @@ def aggregation(m: "MessageParserProtocol"):
 
     # ゲーム参加率
     filter_item = ["rank", "name", "participation_rate", "game_count", "total_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["participation_rate", "game_count"], ascending=[False, False])
+    work_df = df.filter(items=filter_item).sort_values(
+        by=["participation_rate", "game_count"], ascending=[False, False]
+    )
     work_df["rank"] = df["participation_rate"].rank(ascending=False, method="dense").astype("int")
     data["ゲーム参加率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
