@@ -205,7 +205,7 @@ def _graph_generation(graph_params: GraphParams) -> "Path":
     """グラフ生成共通処理(matplotlib用)
 
     Args:
-        args (GraphParams): グラフ生成パラメータ
+        graph_params (GraphParams): グラフ生成パラメータ
 
     Returns:
         Path: 保存先ファイル名
@@ -301,7 +301,7 @@ def _graph_generation_plotly(graph_params: GraphParams) -> "Path":
     """グラフ生成共通処理(plotly用)
 
     Args:
-        args (GraphParams): グラフ生成パラメータ
+        graph_params (GraphParams): グラフ生成パラメータ
 
     Returns:
         Path: 保存先ファイル名
@@ -398,7 +398,7 @@ def _graph_title(graph_params: GraphParams):
     """グラフタイトル生成
 
     Args:
-        args (GraphParams): グラフ生成パラメータ
+        graph_params (GraphParams): グラフ生成パラメータ
     """
 
     if g.params.get("target_count"):

@@ -9,6 +9,7 @@ from slack_bolt import App
 
 class FakeBodyDict(TypedDict, total=False):
     """テスト用疑似Body"""
+
     command: str
     type: str
     event: dict[str, str]
@@ -24,7 +25,7 @@ FAKE_BODY: FakeBodyDict = {
         "type": "message",
         "ts": "1234567890.123456",
         "thread_ts": "1234567890.123456",
-    }
+    },
 }
 
 message_help: dict[str, tuple[Any, ...]] = {
@@ -40,15 +41,12 @@ message_event: dict[str, tuple[Any, ...]] = {
     "results: over ride 1": ("results", "commandword.ini", "麻雀成績の別名１"),
     "results: over ride 2": ("results", "commandword.ini", "麻雀成績の別名２"),
     "results: double word": ("results", "minimal.ini", "麻雀成績 未定義ワード"),
-
     "graph: default": ("graph", "minimal.ini", "麻雀グラフ"),
     "graph: over ride": ("graph", "commandword.ini", "麻雀グラフの別名"),
     "graph: double word": ("graph", "minimal.ini", "麻雀グラフ 未定義ワード"),
-
     "ranking: default": ("ranking", "minimal.ini", "麻雀ランキング"),
     "ranking: over ride": ("ranking", "commandword.ini", "麻雀ランキングの別名"),
     "ranking: double word": ("ranking", "minimal.ini", "麻雀ランキング 未定義ワード"),
-
     "report: default": ("report", "minimal.ini", "麻雀成績レポート"),
     "report: over ride": ("report", "commandword.ini", "麻雀成績レポートの別名"),
     "report: double word": ("report", "minimal.ini", "麻雀成績レポート 未定義ワード"),

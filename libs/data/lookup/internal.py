@@ -27,21 +27,21 @@ def get_team() -> list:
         list: チームリスト
     """
 
-    return ([x.get("team") for x in g.team_list])
+    return [x.get("team") for x in g.team_list]
 
 
 def get_teammates(team: str) -> list:
     """指定チームのチームメイト一覧を返す
 
     Args:
-        name (str): チェック対象のチーム名
+        team (str): チェック対象のチーム名
 
     Returns:
         list: メンバーリスト
     """
 
     member_list: list = []
-    if (team_data := [x for x in g.team_list if x["team"] == team]):
+    if team_data := [x for x in g.team_list if x["team"] == team]:
         if not (member_list := team_data[0]["member"]):
             member_list = ["未エントリー"]
 
