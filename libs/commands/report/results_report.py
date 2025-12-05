@@ -18,8 +18,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import (Image, LongTable, PageBreak, Paragraph,
-                                SimpleDocTemplate, Spacer, TableStyle)
+from reportlab.platypus import Image, LongTable, PageBreak, Paragraph, SimpleDocTemplate, Spacer, TableStyle
 
 import libs.global_value as g
 from libs.data import loader, lookup
@@ -58,12 +57,17 @@ def get_game_results() -> list:
             "ゲーム数",
             "通算\nポイント",
             "平均\nポイント",
-            "1位", "",
-            "2位", "",
-            "3位", "",
-            "4位", "",
+            "1位",
+            "",
+            "2位",
+            "",
+            "3位",
+            "",
+            "4位",
+            "",
             "平均\n順位",
-            "トビ", "",
+            "トビ",
+            "",
         ]
     ]
 
@@ -77,12 +81,17 @@ def get_game_results() -> list:
                 row["ゲーム数"],
                 str(row["通算ポイント"]).replace("-", "▲") + "pt",
                 str(row["平均ポイント"]).replace("-", "▲") + "pt",
-                row["1位"], f"{row["1位率"]:.2f}%",
-                row["2位"], f"{row["2位率"]:.2f}%",
-                row["3位"], f"{row["3位率"]:.2f}%",
-                row["4位"], f"{row["4位率"]:.2f}%",
-                f"{row["平均順位"]:.2f}",
-                row["トビ"], f"{row["トビ率"]:.2f}%",
+                row["1位"],
+                f"{row['1位率']:.2f}%",
+                row["2位"],
+                f"{row['2位率']:.2f}%",
+                row["3位"],
+                f"{row['3位率']:.2f}%",
+                row["4位"],
+                f"{row['4位率']:.2f}%",
+                f"{row['平均順位']:.2f}",
+                row["トビ"],
+                f"{row['トビ率']:.2f}%",
             ]
         )
     logging.debug("return record: %s", len(results))
@@ -119,12 +128,17 @@ def get_count_results(game_count: int) -> list:
             "ゲーム数",
             "通算\nポイント",
             "平均\nポイント",
-            "1位", "",
-            "2位", "",
-            "3位", "",
-            "4位", "",
+            "1位",
+            "",
+            "2位",
+            "",
+            "3位",
+            "",
+            "4位",
+            "",
             "平均\n順位",
-            "トビ", "",
+            "トビ",
+            "",
         ]
     ]
 
@@ -139,12 +153,17 @@ def get_count_results(game_count: int) -> list:
                 row["ゲーム数"],
                 str(row["通算ポイント"]).replace("-", "▲") + "pt",
                 str(row["平均ポイント"]).replace("-", "▲") + "pt",
-                row["1位"], f"{row["1位率"]:.2f}%",
-                row["2位"], f"{row["2位率"]:.2f}%",
-                row["3位"], f"{row["3位率"]:.2f}%",
-                row["4位"], f"{row["4位率"]:.2f}%",
-                f"{row["平均順位"]:.2f}",
-                row["トビ"], f"{row["トビ率"]:.2f}%",
+                row["1位"],
+                f"{row['1位率']:.2f}%",
+                row["2位"],
+                f"{row['2位率']:.2f}%",
+                row["3位"],
+                f"{row['3位率']:.2f}%",
+                row["4位"],
+                f"{row['4位率']:.2f}%",
+                f"{row['平均順位']:.2f}",
+                row["トビ"],
+                f"{row['トビ率']:.2f}%",
             ]
         )
     logging.debug("return record: %s", len(results))
@@ -270,14 +289,26 @@ def graphing_total_points(df: pd.DataFrame, title: str, whole: bool = False) -> 
             fontsize=14,
         )
         if len(df) > 50:
-            point_sum = df["point_sum"].rolling(40).mean().plot(
-                kind="line", label="移動平均(40ゲーム)",
-                ax=point_sum,
+            point_sum = (
+                df["point_sum"]
+                .rolling(40)
+                .mean()
+                .plot(
+                    kind="line",
+                    label="移動平均(40ゲーム)",
+                    ax=point_sum,
+                )
             )
         if len(df) > 100:
-            point_sum = df["point_sum"].rolling(80).mean().plot(
-                kind="line", label="移動平均(80ゲーム)",
-                ax=point_sum,
+            point_sum = (
+                df["point_sum"]
+                .rolling(80)
+                .mean()
+                .plot(
+                    kind="line",
+                    label="移動平均(80ゲーム)",
+                    ax=point_sum,
+                )
             )
         plt.legend()
 
@@ -370,7 +401,7 @@ def gen_pdf(m: "MessageParserProtocol"):
 
     # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)
-    pdf_path = g.cfg.setting.work_dir / (f"{g.params["filename"]}.pdf" if g.params.get("filename") else "results.pdf")
+    pdf_path = g.cfg.setting.work_dir / (f"{g.params['filename']}.pdf" if g.params.get("filename") else "results.pdf")
     pdfmetrics.registerFont(TTFont("ReportFont", font_path))
 
     doc = SimpleDocTemplate(
@@ -383,18 +414,10 @@ def gen_pdf(m: "MessageParserProtocol"):
     )
 
     style: dict = {}
-    style["Title"] = ParagraphStyle(
-        name="Title", fontName="ReportFont", fontSize=24
-    )
-    style["Normal"] = ParagraphStyle(
-        name="Normal", fontName="ReportFont", fontSize=14
-    )
-    style["Left"] = ParagraphStyle(
-        name="Left", fontName="ReportFont", fontSize=14, alignment=TA_LEFT
-    )
-    style["Right"] = ParagraphStyle(
-        name="Right", fontName="ReportFont", fontSize=14, alignment=TA_RIGHT
-    )
+    style["Title"] = ParagraphStyle(name="Title", fontName="ReportFont", fontSize=24)
+    style["Normal"] = ParagraphStyle(name="Normal", fontName="ReportFont", fontSize=14)
+    style["Left"] = ParagraphStyle(name="Left", fontName="ReportFont", fontSize=14, alignment=TA_LEFT)
+    style["Right"] = ParagraphStyle(name="Right", fontName="ReportFont", fontSize=14, alignment=TA_RIGHT)
 
     plt.rcParams.update(plt.rcParamsDefault)
     font_prop = fm.FontProperties(fname=font_path)
@@ -412,7 +435,8 @@ def gen_pdf(m: "MessageParserProtocol"):
     logging.debug("report generation: %s", g.params["player_name"])
 
     m.set_data(
-        f"成績レポート({g.params["player_name"]})", pdf_path,
+        f"成績レポート({g.params['player_name']})",
+        pdf_path,
         StyleOptions(use_comment=True, header_hidden=True),
     )
 
@@ -449,17 +473,12 @@ def cover_page(style: dict, target_info: dict) -> list:
     elements.append(Spacer(1, 10 * mm))
     elements.append(
         Paragraph(
-            f"集計期間：{first_game.strftime("%Y-%m-%d %H:%M")} - {last_game.strftime("%Y-%m-%d %H:%M")}",
-            style["Normal"]
+            f"集計期間：{first_game.strftime('%Y-%m-%d %H:%M')} - {last_game.strftime('%Y-%m-%d %H:%M')}",
+            style["Normal"],
         )
     )
     elements.append(Spacer(1, 100 * mm))
-    elements.append(
-        Paragraph(
-            f"作成日：{datetime.now().strftime('%Y-%m-%d')}",
-            style["Right"]
-        )
-    )
+    elements.append(Paragraph(f"作成日：{datetime.now().strftime('%Y-%m-%d')}", style["Right"]))
     elements.append(PageBreak())
 
     return elements
@@ -489,20 +508,24 @@ def entire_aggregate(style: dict) -> list:
     for _, val in enumerate(tmp_data):  # ゲーム数を除外
         data.append(val[1:])
     tt = LongTable(data, repeatRows=1)
-    tt.setStyle(TableStyle([
-        ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-        ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ('SPAN', (3, 0), (4, 0)),
-        ('SPAN', (5, 0), (6, 0)),
-        ('SPAN', (7, 0), (8, 0)),
-        ('SPAN', (9, 0), (10, 0)),
-        ('SPAN', (12, 0), (13, 0)),
-        # ヘッダ行
-        ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-    ]))
+    tt.setStyle(
+        TableStyle(
+            [
+                ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
+                ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("SPAN", (3, 0), (4, 0)),
+                ("SPAN", (5, 0), (6, 0)),
+                ("SPAN", (7, 0), (8, 0)),
+                ("SPAN", (9, 0), (10, 0)),
+                ("SPAN", (12, 0), (13, 0)),
+                # ヘッダ行
+                ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ]
+        )
+    )
     elements.append(tt)
 
     # 順位分布
@@ -515,7 +538,8 @@ def entire_aggregate(style: dict) -> list:
                 float(str(data[1][8]).replace("%", "")),
                 float(str(data[1][10]).replace("%", "")),
             ],
-        }, index=["1位率", "2位率", "3位率", "4位率"]
+        },
+        index=["1位率", "2位率", "3位率", "4位率"],
     )
     gdata.plot(
         kind="pie",
@@ -528,13 +552,7 @@ def entire_aggregate(style: dict) -> list:
     )
     plt.title("順位分布 （ 全期間 ）", fontsize=18)
     plt.ylabel("")
-    plt.legend(
-        list(gdata.index),
-        bbox_to_anchor=(0.5, -0.1),
-        loc="lower center",
-        ncol=4,
-        fontsize=12
-    )
+    plt.legend(list(gdata.index), bbox_to_anchor=(0.5, -0.1), loc="lower center", ncol=4, fontsize=12)
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
 
     elements.append(Spacer(1, 5 * mm))
@@ -590,20 +608,22 @@ def periodic_aggregation(style: dict) -> list:
             data.append(val[:15])
 
         tt = LongTable(data, repeatRows=1)
-        ts = TableStyle([
-            ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-            ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ('SPAN', (4, 0), (5, 0)),
-            ('SPAN', (6, 0), (7, 0)),
-            ('SPAN', (8, 0), (9, 0)),
-            ('SPAN', (10, 0), (11, 0)),
-            ('SPAN', (13, 0), (14, 0)),
-            # ヘッダ行
-            ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ])
+        ts = TableStyle(
+            [
+                ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
+                ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("SPAN", (4, 0), (5, 0)),
+                ("SPAN", (6, 0), (7, 0)),
+                ("SPAN", (8, 0), (9, 0)),
+                ("SPAN", (10, 0), (11, 0)),
+                ("SPAN", (13, 0), (14, 0)),
+                # ヘッダ行
+                ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ]
+        )
 
         if len(data) > 4:
             for i in range(len(data) - 2):
@@ -620,7 +640,8 @@ def periodic_aggregation(style: dict) -> list:
                 "2位率": [float(str(data[x + 1][7]).replace("%", "")) for x in range(len(data) - 1)],
                 "3位率": [float(str(data[x + 1][9]).replace("%", "")) for x in range(len(data) - 1)],
                 "4位率": [float(str(data[x + 1][11]).replace("%", "")) for x in range(len(data) - 1)],
-            }, index=[data[x + 1][0] for x in range(len(data) - 1)]
+            },
+            index=[data[x + 1][0] for x in range(len(data) - 1)],
         )
 
         imgdata = graphing_rank_distribution(df, graph_title)
@@ -663,20 +684,22 @@ def sectional_aggregate(style: dict, target_info: dict) -> list:
                 return []
 
             tt = LongTable(data, repeatRows=1)
-            ts = TableStyle([
-                ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
-                ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
-                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                ('SPAN', (5, 0), (6, 0)),
-                ('SPAN', (7, 0), (8, 0)),
-                ('SPAN', (9, 0), (10, 0)),
-                ('SPAN', (11, 0), (12, 0)),
-                ('SPAN', (14, 0), (15, 0)),
-                # ヘッダ行
-                ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ])
+            ts = TableStyle(
+                [
+                    ("FONT", (0, 0), (-1, -1), "ReportFont", 10),
+                    ("GRID", (0, 0), (-1, -1), 0.25, colors.black),
+                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                    ("SPAN", (5, 0), (6, 0)),
+                    ("SPAN", (7, 0), (8, 0)),
+                    ("SPAN", (9, 0), (10, 0)),
+                    ("SPAN", (11, 0), (12, 0)),
+                    ("SPAN", (14, 0), (15, 0)),
+                    # ヘッダ行
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.navy),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ]
+            )
             if len(data) > 4:
                 for i in range(len(data) - 2):
                     if i % 2 == 0:
@@ -691,7 +714,8 @@ def sectional_aggregate(style: dict, target_info: dict) -> list:
                     "2位率": [float(str(data[x + 1][8]).replace("%", "")) for x in range(len(data) - 1)],
                     "3位率": [float(str(data[x + 1][10]).replace("%", "")) for x in range(len(data) - 1)],
                     "4位率": [float(str(data[x + 1][12]).replace("%", "")) for x in range(len(data) - 1)],
-                }, index=[f"{str(data[x + 1][0])} - {str(data[x + 1][1])}" for x in range(len(data) - 1)]
+                },
+                index=[f"{str(data[x + 1][0])} - {str(data[x + 1][1])}" for x in range(len(data) - 1)],
             )
 
             imgdata = graphing_rank_distribution(df, f"順位分布 （ 区間 {title} ）")

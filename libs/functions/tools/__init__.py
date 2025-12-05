@@ -9,7 +9,6 @@ Exports:
 - `libs.functions.tools.gen_test_data`: テスト用データ生成ツール
 """
 
-from libs.functions.tools import (comparison, gen_test_data, member,
-                                  recalculation, unification, vacuum)
+from libs.functions.tools import comparison, gen_test_data, member, recalculation, unification, vacuum
 
 __all__ = ["comparison", "gen_test_data", "member", "recalculation", "unification", "vacuum"]

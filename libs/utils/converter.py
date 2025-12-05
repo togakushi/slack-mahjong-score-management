@@ -14,6 +14,7 @@ from libs.utils import formatter, textutil
 
 if TYPE_CHECKING:
     from pathlib import Path
+
     from libs.types import StyleOptions
 
 
@@ -215,19 +216,24 @@ def df_to_results_details(df: pd.DataFrame) -> dict:
 
     data_list: list = []
     for x in df.to_dict(orient="index").values():
-        work_df = pd.DataFrame({
-            "東家：": [v for k, v in cast(dict, x).items() if str(k).startswith("東家")],
-            "南家：": [v for k, v in cast(dict, x).items() if str(k).startswith("南家")],
-            "西家：": [v for k, v in cast(dict, x).items() if str(k).startswith("西家")],
-            "北家：": [v for k, v in cast(dict, x).items() if str(k).startswith("北家")],
-        }, index=["name", "rpoint", "rank", "point", "regulation"]).T
+        work_df = pd.DataFrame(
+            {
+                "東家：": [v for k, v in cast(dict, x).items() if str(k).startswith("東家")],
+                "南家：": [v for k, v in cast(dict, x).items() if str(k).startswith("南家")],
+                "西家：": [v for k, v in cast(dict, x).items() if str(k).startswith("西家")],
+                "北家：": [v for k, v in cast(dict, x).items() if str(k).startswith("北家")],
+            },
+            index=["name", "rpoint", "rank", "point", "regulation"],
+        ).T
 
-        work_df["rpoint"] = work_df.apply(lambda v: f"<>{v["rpoint"]:8d}点".replace("-", "▲"), axis=1)
-        work_df["point"] = work_df.apply(lambda v: f"(<>{v["point"]:7.1f}pt)".replace("-", "▲"), axis=1)
-        work_df["rank"] = work_df.apply(lambda v: f"{v["rank"]}位", axis=1)
-        data = work_df.to_markdown(tablefmt="tsv", headers=[], floatfmt=formatter.floatfmt_adjust(work_df)).replace("<>", "")
+        work_df["rpoint"] = work_df.apply(lambda v: f"<>{v['rpoint']:8d}点".replace("-", "▲"), axis=1)
+        work_df["point"] = work_df.apply(lambda v: f"(<>{v['point']:7.1f}pt)".replace("-", "▲"), axis=1)
+        work_df["rank"] = work_df.apply(lambda v: f"{v['rank']}位", axis=1)
+        data = work_df.to_markdown(tablefmt="tsv", headers=[], floatfmt=formatter.floatfmt_adjust(work_df)).replace(
+            "<>", ""
+        )
 
-        ret = f"{str(x["日時"]).replace("-", "/")} {x["備考"]}\n"
+        ret = f"{str(x['日時']).replace('-', '/')} {x['備考']}\n"
         ret += textwrap.indent(data, "\t") + "\n"
 
         data_list.append(ret)
@@ -251,8 +257,10 @@ def df_to_results_simple(df: pd.DataFrame) -> dict:
         if x["備考"] != "":
             vs_guest = f"({g.cfg.setting.guest_mark}) "
 
-        ret = f"\t{vs_guest}{str(x["日時"]).replace("-", "/")}  "
-        ret += f"{x["座席"]}\t{x["順位"]}位\t{x["素点"]:8d}点\t{x["獲得ポイント"]:7.1f}pt\t{x["メモ"]}".replace("-", "▲")
+        ret = f"\t{vs_guest}{str(x['日時']).replace('-', '/')}  "
+        ret += f"{x['座席']}\t{x['順位']}位\t{x['素点']:8d}点\t{x['獲得ポイント']:7.1f}pt\t{x['メモ']}".replace(
+            "-", "▲"
+        )
         data_list.append(ret)
 
     return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, 2500))}
@@ -277,130 +285,158 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
         case "ゲーム参加率":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.ゲーム参加率:>7.2%}",
-                    f"({x.ゲーム数:4d}G / {x.集計ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.ゲーム参加率:>7.2%}",
+                        f"({x.ゲーム数:4d}G / {x.集計ゲーム数:4d}G)",
+                    ]
+                )
         case "通算ポイント":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.通算ポイント:>+8.1f}pt".replace("-", "▲"),
-                    f"({x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.通算ポイント:>+8.1f}pt".replace("-", "▲"),
+                        f"({x.ゲーム数:4d}G)",
+                    ]
+                )
         case "平均ポイント":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.平均ポイント:>+8.1f}pt".replace("-", "▲"),
-                    f"({x.通算ポイント:>+8.1f}pt / {x.ゲーム数:4d}G)".replace("-", "▲"),
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.平均ポイント:>+8.1f}pt".replace("-", "▲"),
+                        f"({x.通算ポイント:>+8.1f}pt / {x.ゲーム数:4d}G)".replace("-", "▲"),
+                    ]
+                )
         case "平均収支":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.平均収支:>6.0f}点".replace("-", "▲"),
-                    f"({x.平均素点:>6.0f}点 / {x.ゲーム数:4d}G)".replace("-", "▲"),
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.平均収支:>6.0f}点".replace("-", "▲"),
+                        f"({x.平均素点:>6.0f}点 / {x.ゲーム数:4d}G)".replace("-", "▲"),
+                    ]
+                )
         case "トップ率":
             df = df.rename(columns={"1位率": "トップ率", "1位数": "トップ数"})
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.トップ率:>7.2%}",
-                    f"({x.トップ数:3d} / {x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.トップ率:>7.2%}",
+                        f"({x.トップ数:3d} / {x.ゲーム数:4d}G)",
+                    ]
+                )
         case "連対率":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.連対率:>7.2%}",
-                    f"({x.連対数:3d} / {x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.連対率:>7.2%}",
+                        f"({x.連対数:3d} / {x.ゲーム数:4d}G)",
+                    ]
+                )
         case "ラス回避率":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.ラス回避率:>7.2%}",
-                    f"({x.ラス回避数:3d} / {x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.ラス回避率:>7.2%}",
+                        f"({x.ラス回避数:3d} / {x.ゲーム数:4d}G)",
+                    ]
+                )
         case "トビ率":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.トビ率:>7.2%}",
-                    f"({x.トビ:3d} / {x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.トビ率:>7.2%}",
+                        f"({x.トビ:3d} / {x.ゲーム数:4d}G)",
+                    ]
+                )
         case "平均順位":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.平均順位:>4.2f}",
-                    f"({x.順位分布})",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.平均順位:>4.2f}",
+                        f"({x.順位分布})",
+                    ]
+                )
         case "役満和了率":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.役満和了率:>7.2%}",
-                    f"({x.役満和了数:3d} / {x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.役満和了率:>7.2%}",
+                        f"({x.役満和了数:3d} / {x.ゲーム数:4d}G)",
+                    ]
+                )
         case "最大素点":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.最大素点:>6.0f}点".replace("-", "▲"),
-                    f"({x.最大獲得ポイント:>+8.1f}pt)".replace("-", "▲"),
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.最大素点:>6.0f}点".replace("-", "▲"),
+                        f"({x.最大獲得ポイント:>+8.1f}pt)".replace("-", "▲"),
+                    ]
+                )
         case "連続トップ":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.連続トップ:>2d}連続",
-                    f"({x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.連続トップ:>2d}連続",
+                        f"({x.ゲーム数:4d}G)",
+                    ]
+                )
         case "連続連対":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.連続連対:>2d}連続",
-                    f"({x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.連続連対:>2d}連続",
+                        f"({x.ゲーム数:4d}G)",
+                    ]
+                )
         case "連続ラス回避":
             alignments = [Alignment.RIGHT, Alignment.LEFT, Alignment.RIGHT, Alignment.LEFT]
             for x in df.itertuples():
-                body.append([
-                    f"{x.順位}:",
-                    x.プレイヤー名,
-                    f"{x.連続ラス回避:>2d}連続",
-                    f"({x.ゲーム数:4d}G)",
-                ])
+                body.append(
+                    [
+                        f"{x.順位}:",
+                        x.プレイヤー名,
+                        f"{x.連続ラス回避:>2d}連続",
+                        f"({x.ゲーム数:4d}G)",
+                    ]
+                )
         case _:
             return {}
 
@@ -456,11 +492,11 @@ def df_to_remarks(df: pd.DataFrame) -> dict:
                 df["ポイント"] = df["ポイント"].map(lambda x: f"{x}pt".replace("-", "▲"))
 
     if "ポイント" in df.columns:
-        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["ポイント"]} {x["内容"]} （{x[key_name]}）", axis=1)
+        df["表示"] = df.apply(lambda x: f"{x['日時']} {x['ポイント']} {x['内容']} （{x[key_name]}）", axis=1)
     elif "和了役" in df.columns:
-        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["和了役"]} （{x[key_name]}）", axis=1)
+        df["表示"] = df.apply(lambda x: f"{x['日時']} {x['和了役']} （{x[key_name]}）", axis=1)
     else:
-        df["表示"] = df.apply(lambda x: f"{x["日時"]} {x["内容"]} （{x[key_name]}）", axis=1)
+        df["表示"] = df.apply(lambda x: f"{x['日時']} {x['内容']} （{x[key_name]}）", axis=1)
     tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
 
     return {"0": "\n".join(tbl)}
@@ -479,11 +515,13 @@ def df_to_count(df: pd.DataFrame, title: str, indent: int = 0) -> dict:
     """
     match title:
         case "役満和了":
-            df["表示"] = df.apply(lambda x: f"{x["和了役"]}： {x["回数"]} 回", axis=1)
+            df["表示"] = df.apply(lambda x: f"{x['和了役']}： {x['回数']} 回", axis=1)
         case "卓外清算":
-            df["表示"] = df.apply(lambda x: f"{x["内容"]}： {x["回数"]} 回 ({x["ポイント合計"]:.1f}pt)".replace("-", "▲"), axis=1)
+            df["表示"] = df.apply(
+                lambda x: f"{x['内容']}： {x['回数']} 回 ({x['ポイント合計']:.1f}pt)".replace("-", "▲"), axis=1
+            )
         case "その他":
-            df["表示"] = df.apply(lambda x: f"{x["内容"]}： {x["回数"]} 回", axis=1)
+            df["表示"] = df.apply(lambda x: f"{x['内容']}： {x['回数']} 回", axis=1)
 
     tbl = tabulate(df.filter(items=["表示"]).values, showindex=False).splitlines()[1:-1]
     return {"0": textwrap.indent("\n".join(tbl), "\t" * indent)}
@@ -501,21 +539,17 @@ def df_to_seat_data(df: pd.DataFrame, indent: int = 0) -> dict:
     """
 
     # 表示加工
-    df["順位分布(平均順位)"] = df.apply(lambda x: f"{x["順位分布"]} ({x["平均順位"]:.2f})", axis=1)
+    df["順位分布(平均順位)"] = df.apply(lambda x: f"{x['順位分布']} ({x['平均順位']:.2f})", axis=1)
     df.drop(columns=["順位分布", "平均順位"], inplace=True)
-    df["席"] = df.apply(lambda x: f"{x["席"]}：", axis=1)
+    df["席"] = df.apply(lambda x: f"{x['席']}：", axis=1)
     if "トビ" in df.columns:
-        df["トビ"] = df.apply(lambda x: f"/ {x["トビ"]:3d}", axis=1)
+        df["トビ"] = df.apply(lambda x: f"/ {x['トビ']:3d}", axis=1)
     if "役満和了" in df.columns:
-        df["役満和了"] = df.apply(lambda x: f"/ {x["役満和了"]:3d}", axis=1)
+        df["役満和了"] = df.apply(lambda x: f"/ {x['役満和了']:3d}", axis=1)
 
     #
     df = df.filter(items=["席", "順位分布(平均順位)", "トビ", "役満和了"]).rename(
-        columns={
-            "席": "# 席：",
-            "トビ": "/ トビ",
-            "役満和了": "/ 役満 #"
-        }
+        columns={"席": "# 席：", "トビ": "/ トビ", "役満和了": "/ 役満 #"}
     )
 
     tbl = df.to_markdown(tablefmt="tsv", index=False).replace("0.00", "-.--").replace(" \t", "")
