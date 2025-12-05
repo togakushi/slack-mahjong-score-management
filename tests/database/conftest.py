@@ -11,8 +11,8 @@ import pytest
 
 import libs.global_value as g
 from cls.config import AppConfig
-from libs.data import initialization
 from libs import configuration
+from libs.data import initialization
 from libs.utils import dbutil
 
 
@@ -48,7 +48,13 @@ def initialize_database(database_connection):  # pylint: disable=redefined-outer
         cur = conn.execute("select name from member where id != 0;")
         rows = cur.fetchall()
         for name in [dict(row).get("name") for row in rows]:
-            conn.execute("insert into alias(name, member) values (?, ?);", (name, name,))
+            conn.execute(
+                "insert into alias(name, member) values (?, ?);",
+                (
+                    name,
+                    name,
+                ),
+            )
         conn.commit()
 
     configuration.read_memberslist()

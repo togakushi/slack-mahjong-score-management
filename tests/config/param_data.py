@@ -4,7 +4,6 @@
 
 from typing import Any
 
-
 # チャンネル内呼び出しキーワードデフォルト値
 keyword_test: dict[str, tuple[Any, ...]] = {
     # parameter, config, word

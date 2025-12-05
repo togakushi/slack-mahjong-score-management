@@ -11,8 +11,8 @@ import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
-from libs.data import modify
 from libs import configuration
+from libs.data import modify
 from libs.utils import dbutil
 from tests.database import param_data
 
@@ -20,7 +20,7 @@ from tests.database import param_data
 @pytest.mark.parametrize(
     "draw_split, game_result, get_point, get_rank",
     list(param_data.score_insert_case_01.values()),
-    ids=list(param_data.score_insert_case_01.keys())
+    ids=list(param_data.score_insert_case_01.keys()),
 )
 def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch):
     """スコア登録テスト"""
