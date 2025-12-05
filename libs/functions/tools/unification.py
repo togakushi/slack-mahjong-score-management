@@ -94,7 +94,13 @@ def main():
                 if check == name:
                     continue
                 rows = db.execute(
-                    "select ts, p1_name, p2_name, p3_name, p4_name from result where ? in (p1_name, p2_name, p3_name, p4_name);",
+                    """
+                    select
+                        ts, p1_name, p2_name, p3_name, p4_name
+                    from
+                        result
+                    where ? in (p1_name, p2_name, p3_name, p4_name);
+                    """,
                     (check,),
                 )
                 for row in rows:
