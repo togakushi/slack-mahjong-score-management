@@ -26,6 +26,7 @@ dev = [
     "pdoc",
     "pytest",
     "mypy",
+    "ruff",
     "pylint",
     "pylint-pytest",
     "pandas-stubs",
