@@ -173,10 +173,12 @@
 </span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_command_dispatcher</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">})</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
 </span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>        <span class="c1"># 個別コマンド登録</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_keyword_dispatcher</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">comparison_word</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>            <span class="sa">f</span><span class="s2">&quot;Reminder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comparison_word</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>        <span class="p">})</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_keyword_dispatcher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>            <span class="p">{</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">comparison_word</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>                <span class="sa">f</span><span class="s2">&quot;Reminder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comparison_word</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>            <span class="p">}</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -254,10 +256,12 @@
 </span><span id="SvcConfig-70"><a href="#SvcConfig-70"><span class="linenos">70</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_command_dispatcher</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">})</span>
 </span><span id="SvcConfig-71"><a href="#SvcConfig-71"><span class="linenos">71</span></a>
 </span><span id="SvcConfig-72"><a href="#SvcConfig-72"><span class="linenos">72</span></a>        <span class="c1"># 個別コマンド登録</span>
-</span><span id="SvcConfig-73"><a href="#SvcConfig-73"><span class="linenos">73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_keyword_dispatcher</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-</span><span id="SvcConfig-74"><a href="#SvcConfig-74"><span class="linenos">74</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">comparison_word</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
-</span><span id="SvcConfig-75"><a href="#SvcConfig-75"><span class="linenos">75</span></a>            <span class="sa">f</span><span class="s2">&quot;Reminder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comparison_word</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
-</span><span id="SvcConfig-76"><a href="#SvcConfig-76"><span class="linenos">76</span></a>        <span class="p">})</span>
+</span><span id="SvcConfig-73"><a href="#SvcConfig-73"><span class="linenos">73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_keyword_dispatcher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+</span><span id="SvcConfig-74"><a href="#SvcConfig-74"><span class="linenos">74</span></a>            <span class="p">{</span>
+</span><span id="SvcConfig-75"><a href="#SvcConfig-75"><span class="linenos">75</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">comparison_word</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
+</span><span id="SvcConfig-76"><a href="#SvcConfig-76"><span class="linenos">76</span></a>                <span class="sa">f</span><span class="s2">&quot;Reminder: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comparison_word</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">comparison</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
+</span><span id="SvcConfig-77"><a href="#SvcConfig-77"><span class="linenos">77</span></a>            <span class="p">}</span>
+</span><span id="SvcConfig-78"><a href="#SvcConfig-78"><span class="linenos">78</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
