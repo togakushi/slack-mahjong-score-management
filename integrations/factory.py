@@ -17,35 +17,19 @@ if TYPE_CHECKING:
 
 
 @overload
-def select_adapter(
-    selected_service: Literal["slack"],
-    conf: "AppConfig"
-) -> slack_adapter:
-    ...
+def select_adapter(selected_service: Literal["slack"], conf: "AppConfig") -> slack_adapter: ...
 
 
 @overload
-def select_adapter(
-    selected_service: Literal["discord"],
-    conf: "AppConfig"
-) -> discord_adapter:
-    ...
+def select_adapter(selected_service: Literal["discord"], conf: "AppConfig") -> discord_adapter: ...
 
 
 @overload
-def select_adapter(
-    selected_service: Literal["web"],
-    conf: "AppConfig"
-) -> web_adapter:
-    ...
+def select_adapter(selected_service: Literal["web"], conf: "AppConfig") -> web_adapter: ...
 
 
 @overload
-def select_adapter(
-    selected_service: Literal["standard_io"],
-    conf: "AppConfig"
-) -> std_adapter:
-    ...
+def select_adapter(selected_service: Literal["standard_io"], conf: "AppConfig") -> std_adapter: ...
 
 
 def select_adapter(selected_service: str, conf: "AppConfig") -> "AdapterInterface":
