@@ -87,7 +87,7 @@ def main(season_times: int = 1):
                     param = {
                         "playtime": ExtDt(dt).format("sql"),
                     }
-                    param.update(cast(dict, result.to_dict()))
+                    param.update(result.to_dict())
                     cur.execute(dbutil.query("RESULT_INSERT"), param)
 
                     output = f"{position[idx]}: "

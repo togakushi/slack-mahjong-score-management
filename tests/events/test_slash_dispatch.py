@@ -147,7 +147,7 @@ def test_check(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -172,7 +172,7 @@ def test_download(config, keyword, monkeypatch):
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
 
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
@@ -196,7 +196,7 @@ def test_member_list(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -221,7 +221,7 @@ def test_member_add(config, keyword, monkeypatch):
         configuration.setup()
 
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -245,7 +245,7 @@ def test_member_del(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -269,7 +269,7 @@ def test_team_create(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -293,7 +293,7 @@ def test_team_del(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -317,7 +317,7 @@ def test_team_add(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -341,7 +341,7 @@ def test_team_remove(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -365,7 +365,7 @@ def test_team_list(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
@@ -389,7 +389,7 @@ def test_team_clear(config, keyword, monkeypatch):
         g.selected_service = "standard_io"
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
-        m = cast(MessageParser, adapter.parser())
+        m = adapter.parser()
         m.set_command_flag(True)
 
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")

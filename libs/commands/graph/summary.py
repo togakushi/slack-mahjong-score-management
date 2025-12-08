@@ -3,7 +3,7 @@ libs/commands/graph/summary.py
 """
 
 import logging
-from typing import TYPE_CHECKING, Literal, Optional, TypedDict, cast
+from typing import TYPE_CHECKING, Literal, Optional, TypedDict
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -308,7 +308,7 @@ def _graph_generation_plotly(graph_params: GraphParams) -> "Path":
     """
 
     save_file = textutil.save_file_path(graph_params["save_file"])
-    target_data = cast(pd.DataFrame, graph_params["target_data"])
+    target_data = graph_params["target_data"]
     df = graph_params["pivot"]
 
     if (all(df.count() == 1) or g.params["collection"] == "all") and graph_params["horizontal"]:

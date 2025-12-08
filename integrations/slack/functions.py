@@ -65,7 +65,7 @@ class SvcFunctions(FunctionsInterface):
         data: list["MessageParserProtocol"] = []
         for x in matches:
             if isinstance(x, dict):
-                work_m = g.adapter.parser()
+                work_m = cast("MessageParserProtocol", g.adapter.parser())
                 work_m.parser(x)
                 data.append(work_m)
 

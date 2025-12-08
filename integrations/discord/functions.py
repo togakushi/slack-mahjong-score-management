@@ -117,7 +117,7 @@ class SvcFunctions(FunctionsInterface):
                 before=ExtDt(float(m.data.event_ts), seconds=1).dt,
             ):
                 if str(msg.created_at.timestamp()) == m.data.event_ts:
-                    m.discord_msg = cast("Message", msg)
+                    m.discord_msg = msg
                     break
                 return  # 該当メッセージなし(削除済み)
 
