@@ -37,6 +37,22 @@ dev = [
 [tool.uv]
 default-groups = ["dev"]
 
+[tool.pyrefly]
+project-includes = [
+    "**/*.py",
+]
+
+[tool.pyrefly.errors]
+bad-param-name-override = false
+bad-argument-type = false
+bad-assignment = false
+bad-return = false
+unsupported-operation = false
+no-matching-overload = false
+missing-attribute = false
+missing-argument = false
+unbound-name = false
+
 [tool.ruff]
 line-length = 120
 indent-width = 4
