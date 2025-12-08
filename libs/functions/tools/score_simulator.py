@@ -51,7 +51,7 @@ def determine_point(is_parent: bool, is_tsumo: bool) -> int | tuple:
 
     rank = 1
     while rank < 15:
-        success_prob = max(0, 0.6 - 0.02 * rank)
+        success_prob = max([0, 0.6 - 0.02 * rank])
         if random.random() > success_prob:
             break
         rank += 1
