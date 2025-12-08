@@ -160,7 +160,7 @@ def check_remarks(results: ComparisonResults):
     db_remarks = search.for_db_remarks(float(results.after.format("ts")))
 
     # SLACK -> DATABASE
-    work_m = g.adapter.parser()
+    work_m = cast("MessageParserProtocol", g.adapter.parser())
 
     for remark in slack_remarks:
         if remark in db_remarks:

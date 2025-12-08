@@ -5,7 +5,7 @@ integrations/slack/events/handler.py
 import logging
 import os
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import libs.dispatcher
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -15,6 +15,7 @@ from integrations.slack.events.home_tab import home
 if TYPE_CHECKING:
     from slack_bolt import App
 
+    from integrations.protocols import MessageParserProtocol
     from integrations.slack.adapter import ServiceAdapter
 
 
@@ -63,7 +64,7 @@ def main(adapter: "ServiceAdapter"):
 def register_event_handlers(app: "App", adapter: "ServiceAdapter"):
     """イベントAPI"""
 
-    m = adapter.parser()
+    m = cast("MessageParserProtocol", adapter.parser())
 
     @app.event("message")
     def handle_message_events(body):

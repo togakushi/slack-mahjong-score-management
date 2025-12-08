@@ -3,6 +3,7 @@ integrations/slack/events/home_tab/summary.py
 """
 
 import logging
+from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
@@ -11,6 +12,9 @@ from integrations.slack.events.handler_registry import register
 from integrations.slack.events.home_tab import ui_parts
 from libs.commands import graph, ranking, results
 from libs.utils import dictutil
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def build_summary_menu(adapter: ServiceAdapter):
@@ -109,7 +113,7 @@ def register_summary_handlers(app, adapter: ServiceAdapter):
         ack()
         logging.trace(body)  # type: ignore
 
-        m = adapter.parser()
+        m = cast("MessageParserProtocol", adapter.parser())
 
         m.parser(body)
         add_argument, app_msg, update_flag = ui_parts.set_command_option(adapter, body)
