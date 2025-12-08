@@ -164,6 +164,7 @@ def df_to_text_table2(df: pd.DataFrame, style: "StyleOptions", limit: int = 2000
     start_block: int = 0
 
     safe_output: str = ""
+    output: str = ""
 
     for cur_block in range(len(df.columns)):
         chk_df = df.iloc[:, start_block:cur_block]
@@ -442,6 +443,7 @@ def df_to_ranking(df: pd.DataFrame, title: str, step: int = 40) -> dict:
 
     # 整形/分割
     ret: dict = {}
+    data: list = []
     if step:
         data = textutil.split_balanced(body, step)
         last_block = len(data)

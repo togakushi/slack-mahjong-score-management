@@ -60,7 +60,7 @@ def plot(m: "MessageParserProtocol"):
     # --- グラフ設定
     match g.adapter.conf.plotting_backend:
         case "plotly":
-            pass
+            report_file_path = textutil.save_file_path("report.html")
         case _:
             graphutil.setup()
             report_file_path = textutil.save_file_path("report.png")
