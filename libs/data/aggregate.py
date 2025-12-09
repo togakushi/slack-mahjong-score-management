@@ -139,12 +139,7 @@ def calculation_rating() -> pd.DataFrame:
                 df_ratings = df_ratings.copy()
 
         # 天鳳計算式 (https://tenhou.net/man/#RATING)
-        rank_list = (
-            x.p1_rank,
-            x.p2_rank,
-            x.p3_rank,
-            x.p4_rank,
-        )
+        rank_list = (x.p1_rank, x.p2_rank, x.p3_rank, x.p4_rank)
         rating_list = [last_ratings[player] for player in player_list]
         rating_avg = 1500.0 if np.mean(rating_list) < 1500.0 else np.mean(rating_list)
 
