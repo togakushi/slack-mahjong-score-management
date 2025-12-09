@@ -11,7 +11,6 @@ import pytest
 import libs.dispatcher
 import libs.global_value as g
 from integrations import factory
-from integrations.standard_io.parser import MessageParser
 from libs import configuration
 from tests.events import param_data
 

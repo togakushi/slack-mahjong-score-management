@@ -7,7 +7,6 @@ import logging
 import random
 from contextlib import closing
 from datetime import datetime
-from typing import cast
 
 from tqdm import tqdm
 
