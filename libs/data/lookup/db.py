@@ -58,7 +58,8 @@ def member_info(game_info: "GameInfo", name: str) -> dict:
         "endtime": cast("ExtendedDatetime", game_info.last_game).format("sql"),
     }
 
-    sql = loader.query_modification("""
+    sql = loader.query_modification(
+        """
         select
             count() as game_count,
             min(ts) as first_game,
@@ -72,7 +73,8 @@ def member_info(game_info: "GameInfo", name: str) -> dict:
             and results.playtime between :starttime and :endtime
             --[individual] and name = :name
             --[team] and team = :name
-    """)
+        """
+    )
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute(sql, params)
