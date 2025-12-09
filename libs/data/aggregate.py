@@ -130,7 +130,7 @@ def calculation_rating() -> pd.DataFrame:
     score_mapping = {"1": 30.0, "2": 10.0, "3": -10.0, "4": -30.0}
 
     for x in df_results.itertuples():
-        player_list = (x.p1_name, x.p2_name, x.p3_name, x.p4_name)
+        player_list = (str(x.p1_name), str(x.p2_name), str(x.p3_name), str(x.p4_name))
         for player in player_list:
             if player not in df_ratings.columns:
                 last_ratings[player] = 1500.0
