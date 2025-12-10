@@ -134,6 +134,13 @@ class PlaceholderDict(TypedDict, total=False):
     """区間集計範囲"""
     target_count: int
     """直近ゲーム数指定"""
+    source: str
+    """スコア入力元識別子"""
+    separate: bool
+    """スコア入力元識別子別集計フラグ
+    - *True*: 識別子別に集計
+    - *False*: すべて集計
+    """
 
     # 検索関連
     starttime: Union[str, "ExtendedDatetime", None]

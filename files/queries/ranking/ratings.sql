@@ -24,6 +24,7 @@ left join game_info on
 where
     results.rule_version = :rule_version
     and results.playtime between :starttime and :endtime
+    --[separate] and results.source = :source
     --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
     --[search_word] and game_info.comment like :search_word
 ;

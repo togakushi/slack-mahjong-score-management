@@ -4,7 +4,7 @@ libs/data/lookup/db.py
 
 from contextlib import closing
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, Optional
 
 import pandas as pd
 
@@ -14,9 +14,7 @@ from libs.data import loader
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
-    from cls.timekit import ExtendedDatetime
-    from libs.datamodels import GameInfo
-    from libs.types import TeamDataDict
+    from libs.types import PlaceholderDict, TeamDataDict
 
 
 def get_member_id(name: Optional[str] = None) -> dict:
@@ -38,26 +36,17 @@ def get_member_id(name: Optional[str] = None) -> dict:
     return id_list
 
 
-def member_info(game_info: "GameInfo", name: str) -> dict:
+def member_info(params: "PlaceholderDict") -> dict:
     """指定メンバーの記録情報を返す
 
     Args:
-        game_info (GameInfo): 集計範囲データ
-        name (str): 対象メンバー
+        params (PlaceholderDict): 対象メンバー
 
     Returns:
         dict: 記録情報
     """
 
     ret: dict = {}
-
-    params: dict = {
-        "name": name,
-        "rule_version": g.params.get("rule_version", g.cfg.mahjong.rule_version),
-        "starttime": cast("ExtendedDatetime", game_info.first_game).format("sql"),
-        "endtime": cast("ExtendedDatetime", game_info.last_game).format("sql"),
-    }
-
     sql = loader.query_modification(
         """
         select
@@ -67,16 +56,19 @@ def member_info(game_info: "GameInfo", name: str) -> dict:
             max(rpoint) as rpoint_max,
             min(rpoint) as rpoint_min
         from
-            individual_results as results
+            individual_results
         where
             rule_version = :rule_version
-            and results.playtime between :starttime and :endtime
-            --[individual] and name = :name
-            --[team] and team = :name
+            and playtime between :starttime and :endtime
+            --[separate] and source = :source
+            --[individual] and name = :player_name
+            --[team] and team = :player_name
         """
     )
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
+        params["starttime"] = params["starttime"].format("sql")
+        params["endtime"] = params["endtime"].format("sql")
         rows = conn.execute(sql, params)
         ret = dict(rows.fetchone())
 

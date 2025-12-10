@@ -54,7 +54,8 @@ class IntegrationsConfig(ABC):
     # 共通設定
     slash_command: str = field(default="")
     """スラッシュコマンド名"""
-
+    separate: Optional[bool] = field(default=None)
+    """スコア入力元識別子単位の集計"""
     badge_degree: bool = field(default=False)
     """プレイしたゲーム数に対して表示される称号
     - *True*: 表示する
@@ -123,6 +124,8 @@ class IntegrationsConfig(ABC):
                         value = self.config_file.get(selected_service, f.name)
                     elif f.type is list:
                         value = [x.strip() for x in self.config_file.get(selected_service, f.name).split(",")]
+                    elif f.type is Optional[bool]:
+                        value = self.config_file.getboolean(selected_service, f.name)
                     else:
                         raise TypeError(f"Unsupported type: {f.type}")
                     setattr(self, f.name, value)

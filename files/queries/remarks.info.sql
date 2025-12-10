@@ -20,6 +20,7 @@ left join team on
 where
     game_info.rule_version = :rule_version
     and playtime between :starttime and :endtime -- 検索範囲
+    --[separate] and game_info.source = :source
     --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
     --[individual] --[player_name] and remarks.name in (<<player_list>>) -- 対象プレイヤー
     --[team] --[friendly_fire] and game_info.same_team = 0

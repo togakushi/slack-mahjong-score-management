@@ -3,6 +3,7 @@ libs/utils/dictutil.py
 """
 
 import logging
+from types import NoneType
 from typing import TYPE_CHECKING, Any, cast
 
 import libs.global_value as g
@@ -39,6 +40,9 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     ret_dict.update({**g.cfg.mahjong.to_dict()})
     ret_dict.update({"guest_name": g.cfg.member.guest_name})
     ret_dict.update({"undefined_word": g.cfg.undefined_word})
+    ret_dict.update({"source": m.status.source})
+    if not isinstance(g.adapter.conf.separate, NoneType):
+        ret_dict.update({"separate": g.adapter.conf.separate})
 
     # デフォルト値の取り込み
     ret_dict.update({**subcom.to_dict()})

@@ -31,6 +31,7 @@ from (
             individual_results as results
         where
             rule_version = :rule_version
+            --[separate] and source = :source
             --[individual] and name = :player_name
             --[team] and team = :player_name
     )

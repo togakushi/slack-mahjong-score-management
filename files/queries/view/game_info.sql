@@ -16,7 +16,8 @@ create view if not exists game_info as
             else 0
         end as same_team,
         comment,
-        rule_version
+        rule_version,
+        source
     from
         result
     left join member as p1

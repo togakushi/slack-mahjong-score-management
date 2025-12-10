@@ -111,6 +111,10 @@ def query_modification(sql: str) -> str:
         sql = sql.replace("results.rule_version = :rule_version", "1 = 1")
         sql = sql.replace("rule_version = :rule_version", "1 = 1")
 
+    # スコア入力元識別子別集計
+    if g.params.get("separate"):
+        sql = sql.replace("--[separate] ", "")
+
     # コメント検索
     if g.params.get("search_word") or g.params.get("group_length"):
         sql = sql.replace("--[group_by] ", "")

@@ -25,6 +25,7 @@ join game_info on
 where
     results.rule_version = :rule_version
     and results.playtime between :starttime and :endtime
+    --[separate] and results.source = :source
     --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
     --[team] and game_info.same_team = 0
     --[team] and p1_team notnull and p2_team notnull and p3_team notnull and p4_team notnull

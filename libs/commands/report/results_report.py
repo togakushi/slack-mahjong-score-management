@@ -22,7 +22,6 @@ from reportlab.platypus import Image, LongTable, PageBreak, Paragraph, SimpleDoc
 
 import libs.global_value as g
 from libs.data import loader, lookup
-from libs.datamodels import GameInfo
 from libs.functions import message
 from libs.types import StyleOptions
 from libs.utils import dbutil, formatter
@@ -391,13 +390,13 @@ def gen_pdf(m: "MessageParserProtocol"):
         return
 
     # 対象メンバーの記録状況
-    game_info = GameInfo()
-    target_info = lookup.db.member_info(game_info, g.params["player_name"])
+    target_info = lookup.db.member_info(g.params)
     logging.debug(target_info)
 
-    if not target_info["game_count"] > 0:  # 記録なし
+    if not target_info["game_count"]:  # 記録なし
         m.post.headline = {"成績レポート": message.random_reply(m, "no_hits")}
         m.status.result = False
+        return
 
     # 書式設定
     font_path = os.path.join(os.path.realpath(os.path.curdir), g.cfg.setting.font_file)

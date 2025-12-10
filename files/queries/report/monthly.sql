@@ -12,6 +12,7 @@ from
 where
     rule_version = :rule_version
     and playtime between :starttime and :endtime
+    --[separate] and source = :source
     --[search_word] and comment like :search_word
 group by
     substr(collection_daily, 1, 7)

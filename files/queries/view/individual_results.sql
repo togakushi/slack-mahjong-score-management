@@ -88,7 +88,8 @@ select * from (
         --
         date(playtime, '-12 hours') as collection_daily,
         rule_version,
-        comment
+        comment,
+        source
     from
         result
     left join member
@@ -140,7 +141,8 @@ select * from (
         --
         date(playtime, '-12 hours'),
         rule_version,
-        comment
+        comment,
+        source
     from
         result
     left join member
@@ -192,7 +194,8 @@ select * from (
         --
         date(playtime, '-12 hours'),
         rule_version,
-        comment
+        comment,
+        source
     from
         result
     left join member
@@ -244,7 +247,8 @@ select * from (
         --
         date(playtime, '-12 hours'),
         rule_version,
-        comment
+        comment,
+        source
     from
         result
     left join member

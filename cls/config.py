@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from itertools import chain
 from math import ceil
 from pathlib import Path, PosixPath
-from types import NoneType, UnionType
+from types import NoneType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
 from libs.types import GradeTableDict
@@ -108,9 +108,8 @@ class BaseSection(CommonMethodMixin):
                             current_list.extend(v_list)
                         else:
                             setattr(self, k, v_list)
-                    case v_type if v_type is UnionType:  # 文字列 or None
-                        if set(v_type.__args__) == {str, type(None)}:
-                            setattr(self, k, self._section.get(k, fallback=self.get(k)))
+                    case v_type if v_type is Optional[str]:  # 文字列 or None(未定義)
+                        setattr(self, k, self._section.get(k, fallback=self.get(k)))
                     case v_type if v_type is PosixPath:
                         setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
                     case v_type if v_type is NoneType:
@@ -160,6 +159,11 @@ class MahjongSection(BaseSection):
         """同点時の順位点
         - *True*: 山分けにする
         - *False*: 席順で決める
+        """
+        self.separate: bool = False
+        """スコア入力元識別子別集計フラグ
+        - *True*: 識別子別に集計
+        - *False*: すべて集計
         """
         self.regulations_type2: list = []
         """メモで役満として扱う単語リスト(カンマ区切り)"""

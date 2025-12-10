@@ -22,6 +22,7 @@ from
 where
     rule_version = :rule_version
     and playtime between :starttime and :endtime
+    --[separate] and source = :source
     --[individual] and name = :player_name
     --[team] and team = :player_name
 <<group by>>

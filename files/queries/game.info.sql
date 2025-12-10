@@ -13,6 +13,7 @@ with game_data as (
     where
         game_info.rule_version = :rule_version
         and game_info.playtime between :starttime and :endtime -- 検索範囲
+        --[separate] and game_info.source = :source
         --[individual] --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)
         --[friendly_fire] and same_team = 0
         --[search_word] and game_info.comment like :search_word
