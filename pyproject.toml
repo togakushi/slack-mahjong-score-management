@@ -59,7 +59,7 @@ indent-width = 4
 # output-format = "github"
 
 [tool.ruff.lint]
-select =  ["N", "E", "W", "D", "F", "I"]
+select = ["N", "E", "W", "D", "F", "I"]
 ignore = [
     "N813",  # Camelcase `Xxx` imported as lowercase `xxx`
     "D102",  # Missing docstring in public method
@@ -72,7 +72,7 @@ ignore = [
     "D213",  # Multi-line docstring summary should start at the second line
     "D400",  # First line should end with a period
     "D403",  # First word of the docstring should be capitalized
-    "D413",  # Missing blank line after last section ("Returns")
+    "D413",  # Missing blank line after last section (`Returns`)
     "D415",  # First line should end with a period, question mark, or exclamation point
 ]
 
