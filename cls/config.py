@@ -143,7 +143,6 @@ class MahjongSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name):
         self._parser = outer._parser
 
-        # 初期値セット
         self.rule_version: str = ""
         """ルール判別識別子"""
         self.origin_point: int = 250
@@ -181,7 +180,6 @@ class SettingSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
-        # 初期値セット
         self.help: str = "麻雀成績ヘルプ"
         """ヘルプ表示キーワード"""
         self.keyword: str = "終局"
@@ -244,7 +242,6 @@ class MemberSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
-        # 初期値セット
         self.registration_limit: int = 255
         """登録メンバー上限数"""
         self.character_limit: int = 8
@@ -269,7 +266,6 @@ class TeamSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
-        # 初期値セット
         self.registration_limit: int = 255
         """登録チーム上限数"""
         self.character_limit: int = 16
@@ -294,7 +290,6 @@ class AliasSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
-        # 初期値セット
         self.results: list = ["成績"]
         self.graph: list = ["グラフ"]
         self.ranking: list = ["ランキング"]
@@ -329,7 +324,6 @@ class CommentSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
-        # 初期値セット
         self.group_length: int = 0
         """コメント検索時の集約文字数(固定指定)"""
         self.search_word: str = ""
@@ -391,7 +385,6 @@ class SubCommand(BaseSection):
         self._parser = outer._parser
         self.section = section_name
 
-        # 初期値セット
         self.section: str = ""
         self.commandword: list = []
         """呼び出しキーワード"""
