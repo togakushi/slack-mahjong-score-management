@@ -9,6 +9,7 @@ from cls.config import AppConfig
 from cls.score import GameResult
 from integrations import factory
 from libs import configuration
+from libs.utils import validator
 from tests.parser import param_data
 
 
@@ -28,7 +29,7 @@ def test_score_report(input_str, result_dict, get_point):
 
     result = GameResult(
         rule_version="test",
-        **m.get_score(g.cfg.setting.keyword),
+        **validator.check_score(m),
     )
     result.calc()
     chk_dict: dict = {}

@@ -206,9 +206,6 @@ class MessageParserProtocol(Protocol):
     def set_data(self, title: str, data: "MessageType", options: "StyleOptions"):
         """メッセージデータをセット"""
 
-    def get_score(self, keyword: str) -> dict:
-        """本文からスコアデータを取り出す"""
-
     def get_remarks(self, keyword: str) -> list:
         """本文からメモデータを取り出す"""
 

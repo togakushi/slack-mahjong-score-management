@@ -13,7 +13,7 @@ from cls.timekit import ExtendedDatetime as ExtDt
 from integrations import factory
 from libs import configuration
 from libs.data import modify
-from libs.utils import dbutil
+from libs.utils import dbutil, validator
 from tests.database import param_data
 
 
@@ -37,7 +37,7 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     score_data = GameResult(
         draw_split=draw_split,
         rule_version="test",
-        **m.get_score(g.cfg.setting.keyword),
+        **validator.check_score(m),
     )
     score_data.calc()
     assert score_data.has_valid_data()

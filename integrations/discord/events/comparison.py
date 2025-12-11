@@ -17,7 +17,7 @@ from libs.data import modify
 from libs.datamodels import ComparisonResults
 from libs.functions import search
 from libs.types import RemarkDict, StyleOptions
-from libs.utils import formatter
+from libs.utils import formatter, validator
 
 if TYPE_CHECKING:
     from integrations.discord.adapter import ServiceAdapter
@@ -110,7 +110,8 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
     for work_m in messages_list:
         if work_m.keyword in g.keyword_dispatcher:  # コマンドキーワードはスキップ
             continue
-        if score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
+        if detection := validator.check_score(work_m):
+            score = GameResult(**detection, **g.cfg.mahjong.to_dict())
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
@@ -165,7 +166,8 @@ async def check_remarks(results: ComparisonResults, messages_list: list["Message
     score_list: dict[str, GameResult] = {}
 
     for loop_m in messages_list:
-        if score := GameResult(**loop_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
+        if detection := validator.check_score(loop_m):
+            score = GameResult(**detection, **g.cfg.mahjong.to_dict())
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
@@ -224,7 +226,8 @@ async def check_total_score(results: ComparisonResults, messages_list: list["Mes
     """
 
     for work_m in messages_list:
-        if score := GameResult(**work_m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict()):
+        if detection := validator.check_score(work_m):
+            score = GameResult(**detection, **g.cfg.mahjong.to_dict())
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})

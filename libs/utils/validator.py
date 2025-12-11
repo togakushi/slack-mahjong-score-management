@@ -3,12 +3,15 @@ libs/utils/validator.py
 """
 
 import re
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import libs.global_value as g
 from cls.command import CommandParser
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.utils import formatter, textutil
+
+if TYPE_CHECKING:
+    from integrations.protocols import MessageParserProtocol
 
 
 def check_namepattern(name: str, kind: Literal["member", "team"]) -> tuple[bool, str]:
@@ -69,3 +72,108 @@ def check_namepattern(name: str, kind: Literal["member", "team"]) -> tuple[bool,
         ret_flg, ret_msg = False, "コマンドに使用される単語では登録できません。"
 
     return (ret_flg, ret_msg)
+
+
+def check_score(m: "MessageParserProtocol") -> dict:
+    """スコアチェック
+
+    Args:
+        m (MessageParserProtocol): メッセージデータ
+
+    Returns:
+        dict: 結果
+    """
+
+    text = m.data.text
+    ret: dict = {}
+
+    for keyword, config_file in g.cfg.keyword.rule.items():
+        # 記号を置換
+        replace_chr = [
+            (chr(0xFF0B), "+"),  # 全角プラス符号
+            (chr(0x2212), "-"),  # 全角マイナス符号
+            (chr(0xFF08), "("),  # 全角丸括弧
+            (chr(0xFF09), ")"),  # 全角丸括弧
+            (chr(0x2017), "_"),  # DOUBLE LOW LINE(半角)
+        ]
+        for z, h in replace_chr:
+            text = text.replace(z, h)
+
+        text = "".join(text.split())  # 改行削除
+
+        # パターンマッチング
+        pattern1 = re.compile(rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
+        pattern2 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$")
+        pattern3 = re.compile(rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
+        pattern4 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$")
+
+        # 情報取り出し
+        position: dict[str, int] = {}
+        match text:
+            case text if pattern1.findall(text):
+                msg = pattern1.findall(text)[0]
+                position = {
+                    "p1_name": 1,
+                    "p1_str": 2,
+                    "p2_name": 3,
+                    "p2_str": 4,
+                    "p3_name": 5,
+                    "p3_str": 6,
+                    "p4_name": 7,
+                    "p4_str": 8,
+                }
+                comment = None
+            case text if pattern2.findall(text):
+                msg = pattern2.findall(text)[0]
+                position = {
+                    "p1_name": 0,
+                    "p1_str": 1,
+                    "p2_name": 2,
+                    "p2_str": 3,
+                    "p3_name": 4,
+                    "p3_str": 5,
+                    "p4_name": 6,
+                    "p4_str": 7,
+                }
+                comment = None
+            case text if pattern3.findall(text):
+                msg = pattern3.findall(text)[0]
+                position = {
+                    "p1_name": 2,
+                    "p1_str": 3,
+                    "p2_name": 4,
+                    "p2_str": 5,
+                    "p3_name": 6,
+                    "p3_str": 7,
+                    "p4_name": 8,
+                    "p4_str": 9,
+                }
+                comment = str(msg[1])
+            case text if pattern4.findall(text):
+                msg = pattern4.findall(text)[0]
+                position = {
+                    "p1_name": 0,
+                    "p1_str": 1,
+                    "p2_name": 2,
+                    "p2_str": 3,
+                    "p3_name": 4,
+                    "p3_str": 5,
+                    "p4_name": 6,
+                    "p4_str": 7,
+                }
+                comment = str(msg[9])
+            case _:
+                continue
+
+        for k, p in position.items():
+            ret.update({k: str(msg[p])})
+
+        ret.update(comment=comment)
+        ret.update(source=m.status.source)
+        ret.update(ts=m.data.event_ts)
+        break
+
+    if ret:
+        g.cfg.overwrite(config_file, "mahjong")
+
+    return ret

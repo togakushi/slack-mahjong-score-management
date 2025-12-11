@@ -96,7 +96,6 @@ classDiagram
         MessageParserDataMixin : post
         MessageParserDataMixin : status
         MessageParserDataMixin : reset()
-        MessageParserDataMixin : get_score()
         MessageParserDataMixin : get_remarks()
 ```
 

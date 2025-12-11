@@ -12,7 +12,7 @@ from integrations import factory
 from libs.data import lookup, modify
 from libs.functions import message
 from libs.types import StyleOptions
-from libs.utils import formatter
+from libs.utils import formatter, validator
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -79,21 +79,19 @@ def other_words(word: str, m: "MessageParserProtocol"):
             modify.check_remarks(m)
     else:
         # スコア取り出し
-        detection = GameResult(**m.get_score(g.cfg.setting.keyword), **g.cfg.mahjong.to_dict())
-        if detection:  # 結果報告フォーマットに一致したポストの処理
+        if detection := validator.check_score(m):  # 結果報告フォーマットに一致するポストの処理
+            score = GameResult(**detection, **g.cfg.mahjong.to_dict())
             # 名前ブレ修正
-            g.params.update({"unregistered_replace": False})  # ゲスト無効
-            g.params.update({"individual": True})  # チーム戦オフ
-            for k, p in detection.to_dict().items():
+            for k, p in score.to_dict().items():
                 if str(k).endswith("_name"):
-                    detection.set(**{k: formatter.name_replace(str(p))})
+                    score.set(**{k: formatter.name_replace(str(p), not_replace=True)})
                     continue
 
             match m.data.status:
                 case "message_append":
-                    message_append(detection, m)
+                    message_append(score, m)
                 case "message_changed":
-                    message_changed(detection, m)
+                    message_changed(score, m)
         else:
             record_data = lookup.db.exsist_record(m.data.event_ts)
             if record_data and m.data.status == "message_changed":
