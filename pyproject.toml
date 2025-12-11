@@ -26,6 +26,7 @@ dev = [
     "pdoc",
     "pytest",
     "mypy",
+    "pyrefly",
     "ruff",
     "pandas-stubs",
     "types-python-dateutil",
