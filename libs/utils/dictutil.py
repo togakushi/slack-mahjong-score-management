@@ -41,11 +41,17 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     ret_dict.update({"guest_name": g.cfg.member.guest_name})
     ret_dict.update({"undefined_word": g.cfg.undefined_word})
     ret_dict.update({"source": m.status.source})
-    if not isinstance(g.adapter.conf.separate, NoneType):
-        ret_dict.update({"separate": g.adapter.conf.separate})
 
     # デフォルト値の取り込み
     ret_dict.update({**subcom.to_dict()})
+
+    # チャンネル個別設定取り込み(上書き)
+    if not isinstance(g.adapter.conf.separate, NoneType):
+        ret_dict.update({"separate": g.adapter.conf.separate})
+    if separate := lookup.internal.get_config_value(g.adapter.interface_type, f"{m.data.channel_id}_separate", bool):
+        ret_dict.update({"separate": separate})
+    if rule_version := lookup.internal.get_config_value(g.adapter.interface_type, f"{m.data.channel_id}_rule_version", str):
+        ret_dict.update({"rule_version": rule_version})
 
     # always_argumentの処理
     pre_param = parser.analysis_argument(subcom.always_argument)
