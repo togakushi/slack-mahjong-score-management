@@ -223,7 +223,7 @@ class GameResult:
                 ret_text += f"[供託 {self.deposit * 100}点] "
                 ret_text += f"[{self.comment if self.comment else None}]"
             case "logging":
-                ret_text += f"ts={self.ts}, deposit={self.deposit}, "
+                ret_text += f"ts={self.ts}, deposit={self.deposit}, rule_version={self.rule_version}, "
                 ret_text += (
                     f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
                 )

@@ -28,6 +28,7 @@ SubClassType: TypeAlias = Union[
     "DropItems",
     "BadgeDisplay",
     "SubCommand",
+    "KeywordMapping",
 ]
 
 
@@ -187,7 +188,7 @@ class SettingSection(BaseSection):
         self.help: str = "麻雀成績ヘルプ"
         """ヘルプ表示キーワード"""
         self.keyword: str = "終局"
-        """成績記録キーワード"""
+        """成績記録キーワード(プライマリ)"""
         self.remarks_word: str = "麻雀成績メモ"
         """メモ記録用キーワード"""
         self.time_adjust: int = 12
@@ -259,9 +260,7 @@ class MemberSection(BaseSection):
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [
-            x.strip() for x in self._parser.get("member", "commandword", fallback="メンバー一覧").split(",")
-        ]
+        self.commandword = [x.strip() for x in self._parser.get("member", "commandword", fallback="メンバー一覧").split(",")]
 
 
 class TeamSection(BaseSection):
@@ -283,9 +282,7 @@ class TeamSection(BaseSection):
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [
-            x.strip() for x in self._parser.get("team", "commandword", fallback="チーム一覧").split(",")
-        ]
+        self.commandword = [x.strip() for x in self._parser.get("team", "commandword", fallback="チーム一覧").split(",")]
 
 
 class AliasSection(BaseSection):
@@ -438,9 +435,7 @@ class SubCommand(BaseSection):
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [
-            x.strip() for x in self._parser.get(section_name, "commandword", fallback=default).split(",")
-        ]
+        self.commandword = [x.strip() for x in self._parser.get(section_name, "commandword", fallback=default).split(",")]
 
     def stipulated_calculation(self, game_count: int) -> int:
         """規定打数をゲーム数から計算
@@ -455,14 +450,29 @@ class SubCommand(BaseSection):
         return int(ceil(game_count * self.stipulated_rate) + 1)
 
 
+class KeywordMapping(BaseSection):
+    """secondary_keywordセクション初期値"""
+
+    def __init__(self, outer: "AppConfig", section_name: str):
+        self._parser = outer._parser
+        self.rule: dict[str, Union[Path, str]] = {}
+
+        # 設定値取り込み
+        for k, v in self._parser.items(section_name):
+            if (overwrite := Path(v)).exists():
+                self.rule.update({f"{k}": overwrite})
+            if v == "":
+                self.rule.update({f"{k}": outer.config_file})
+
+
 class AppConfig:
     """コンフィグ解析クラス"""
 
     def __init__(self, config_file: str):
-        _config = Path(config_file)
+        self.config_file = Path(config_file)
         try:
             self._parser = ConfigParser()
-            self._parser.read(_config, encoding="utf-8")
+            self._parser.read(self.config_file, encoding="utf-8")
         except Exception as err:
             raise RuntimeError(err) from err
 
@@ -484,6 +494,7 @@ class AppConfig:
             "comment",
             "regulations",
             "regulations_them",
+            "secondary_keyword",
         ]
         for x in option_sections:
             if x not in self._parser.sections():
@@ -492,7 +503,7 @@ class AppConfig:
         # set base directory
         self.script_dir = Path(sys.argv[0]).absolute().parent
         """スクリプトが保存されているディレクトリパス"""
-        self.config_dir = _config.absolute().parent
+        self.config_dir = self.config_file.absolute().parent
         """設定ファイルが保存されているディレクトリパス"""
 
         # 設定値取り込み
@@ -534,6 +545,13 @@ class AppConfig:
         - *None*: 未定義
         """
 
+        # 成績記録キーワード
+        self.keyword = KeywordMapping(self, "secondary_keyword")
+        if not self.keyword.rule:
+            self.keyword.rule = {self.setting.keyword: self.config_file}
+        if self.setting.keyword not in self.keyword.rule:
+            self.keyword.rule.update({self.setting.keyword: self.config_file})
+
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
 
@@ -542,7 +560,6 @@ class AppConfig:
         """
 
         words: list = [
-            [self.setting.keyword],
             [self.setting.remarks_word],
             self.results.commandword,
             self.graph.commandword,
@@ -555,7 +572,35 @@ class AppConfig:
                 words.append([k])
                 words.append(v)
 
+        for k in self.keyword.rule.keys():
+            words.append([k])
+
         words = list(set(chain.from_iterable(words)))  # 重複排除/平滑化
         words = [x for x in words if x != ""]  # 空文字削除
 
         return words
+
+    def overwrite(self, config_file: PosixPath, section_name: str):
+        """指定セクションを上書き
+
+        Args:
+            config_file (PosixPath): 設定ファイルパス
+            section_name (str): セクション名
+        """
+
+        try:
+            self._parser = ConfigParser()
+            self._parser.read(config_file, encoding="utf-8")
+        except Exception as err:
+            logging.error(err)
+            return
+
+        match section_name:
+            case "setting":
+                self.setting = SettingSection(self, section_name)
+            case "mahjong":
+                self.mahjong = MahjongSection(self, section_name)
+            case _:
+                return
+
+        logging.debug("%s: %s", section_name, config_file)

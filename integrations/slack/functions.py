@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
+from libs.utils import validator
 
 if TYPE_CHECKING:
     from slack_sdk.web import SlackResponse
@@ -293,16 +294,15 @@ class SvcFunctions(FunctionsInterface):
             list["MessageParserProtocol"]: 検索した結果
         """
 
-        score_matches: list["MessageParserProtocol"] = []
-
         # ゲーム結果の抽出
-        for match in self.get_messages(g.cfg.setting.keyword):
-            if match.get_score(g.cfg.setting.keyword):
-                if match.ignore_user:  # 除外ユーザからのポストは破棄
-                    logging.info("skip ignore user: %s", match.data.user_id)
-                    continue
-
-                score_matches.append(match)
+        score_matches: list["MessageParserProtocol"] = []
+        for keyword in g.cfg.keyword.rule.keys():
+            for match in self.get_messages(keyword):
+                if validator.check_score(match):
+                    if match.ignore_user:  # 除外ユーザからのポストは破棄
+                        logging.info("skip ignore user: %s", match.data.user_id)
+                        continue
+                    score_matches.append(match)
 
         # イベント詳細取得
         if score_matches:
