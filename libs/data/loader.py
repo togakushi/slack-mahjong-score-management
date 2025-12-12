@@ -161,9 +161,7 @@ def query_modification(sql: str) -> str:
         if g.params.get("interval") == 0:
             sql = sql.replace("<<Calculation Formula>>", ":interval")
         else:
-            sql = sql.replace(
-                "<<Calculation Formula>>", "(row_number() over (order by total_count desc) - 1) / :interval"
-            )
+            sql = sql.replace("<<Calculation Formula>>", "(row_number() over (order by total_count desc) - 1) / :interval")
     if g.params.get("kind") is not None:
         if g.params.get("kind") == "yakuman":
             if g.cfg.undefined_word == 0:

@@ -114,9 +114,7 @@ def db_delete(m: "MessageParserProtocol"):
                 m.status.target_ts.append(m.data.event_ts)
                 logging.info("result: ts=%s, count=%s", m.data.event_ts, delete_result)
             # メモの削除
-            if remark_list := cur.execute(
-                "select event_ts from remarks where thread_ts=?", (m.data.event_ts,)
-            ).fetchall():
+            if remark_list := cur.execute("select event_ts from remarks where thread_ts=?", (m.data.event_ts,)).fetchall():
                 cur.execute(dbutil.query("REMARKS_DELETE_ALL"), (m.data.event_ts,))
                 if delete_remark := cur.execute("select changes();").fetchone()[0]:
                     m.status.target_ts.extend([x.get("event_ts") for x in list(map(dict, remark_list))])

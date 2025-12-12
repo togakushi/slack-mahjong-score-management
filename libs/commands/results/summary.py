@@ -95,9 +95,7 @@ def aggregation(m: "MessageParserProtocol"):
         if g.params.get("individual"):  # 個人集計
             df_regulations = formatter.df_rename(df_remarks.query("type == 2").drop(columns=["type"]), kind=1)
         else:  # チーム集計
-            df_regulations = formatter.df_rename(
-                df_remarks.query("type == 2 or type == 3").drop(columns=["type"]), kind=1
-            )
+            df_regulations = formatter.df_rename(df_remarks.query("type == 2 or type == 3").drop(columns=["type"]), kind=1)
         if options.format_type == "default":
             options.codeblock = False
             data = df_regulations

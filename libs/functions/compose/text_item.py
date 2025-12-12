@@ -184,9 +184,7 @@ def date_range(
         str_st = st.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
         str_et = et.format(cast(ExtDt.FormatType, kind), delimiter=cast(ExtDt.DelimiterStyle, delimiter))
 
-    if st.format(cast(ExtDt.FormatType, kind), delimiter="num") == ot.format(
-        cast(ExtDt.FormatType, kind), delimiter="num"
-    ):
+    if st.format(cast(ExtDt.FormatType, kind), delimiter="num") == ot.format(cast(ExtDt.FormatType, kind), delimiter="num"):
         if prefix_a and prefix_b:
             ret = f"{prefix_a} ({str_st})"
         else:
