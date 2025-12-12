@@ -36,22 +36,36 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     g.params = {}
 
     # 設定周りのパラメータの取り込み
-    ret_dict.update({"command": subcom.section})
-    ret_dict.update({**g.cfg.mahjong.to_dict()})
-    ret_dict.update({"guest_name": g.cfg.member.guest_name})
-    ret_dict.update({"undefined_word": g.cfg.undefined_word})
-    ret_dict.update({"source": m.status.source})
-
-    # デフォルト値の取り込み
-    ret_dict.update({**subcom.to_dict()})
+    ret_dict.update(
+        {
+            "command": subcom.section,
+            "guest_name": g.cfg.member.guest_name,
+            "undefined_word": g.cfg.undefined_word,
+            "source": m.status.source,
+            **g.cfg.mahjong.to_dict(),  # 初期値
+            **subcom.to_dict(),  # デフォルト値
+        }
+    )
 
     # チャンネル個別設定取り込み(上書き)
     if not isinstance(g.adapter.conf.separate, NoneType):
         ret_dict.update({"separate": g.adapter.conf.separate})
-    if separate := lookup.internal.get_config_value(g.adapter.interface_type, f"{m.data.channel_id}_separate", bool):
-        ret_dict.update({"separate": separate})
-    if rule_version := lookup.internal.get_config_value(g.adapter.interface_type, f"{m.data.channel_id}_rule_version", str):
-        ret_dict.update({"rule_version": rule_version})
+    ret_dict.update(
+        {
+            "separate": lookup.internal.get_config_value(
+                section=g.adapter.interface_type,
+                name=f"{m.data.channel_id}_separate",
+                val_type=bool,
+                fallback=ret_dict["score_comparisons"],
+            ),
+            "rule_version": lookup.internal.get_config_value(
+                section=g.adapter.interface_type,
+                name=f"{m.data.channel_id}_rule_version",
+                val_type=str,
+                fallback=ret_dict["rule_version"],
+            ),
+        }
+    )
 
     # always_argumentの処理
     pre_param = parser.analysis_argument(subcom.always_argument)
@@ -78,9 +92,13 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     else:
         search_range = departure_time.range(subcom.aggregation_range)
 
-    ret_dict.update({"starttime": (departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).start})
-    ret_dict.update({"endtime": (departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).end})
-    ret_dict.update({"onday": departure_time.range(search_range).end})
+    ret_dict.update(
+        {
+            "starttime": (departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).start,
+            "endtime": (departure_time.range(search_range) + {"hours": g.cfg.setting.time_adjust}).end,
+            "onday": departure_time.range(search_range).end,
+        }
+    )
 
     # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
     player_name: str = str()
@@ -108,10 +126,14 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         if name != player_name:
             competition_list[f"competition_{idx}"] = name
 
-    ret_dict.update({"player_name": player_name})
-    ret_dict.update({"target_player": target_player})
-    ret_dict.update({"player_list": player_list})
-    ret_dict.update({"competition_list": competition_list})
+    ret_dict.update(
+        {
+            "player_name": player_name,
+            "target_player": target_player,
+            "player_list": player_list,
+            "competition_list": competition_list,
+        }
+    )
 
     # 出力タイプ
     if format_type := ret_dict.get("format", "default"):
