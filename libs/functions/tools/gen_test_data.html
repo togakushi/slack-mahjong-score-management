@@ -155,10 +155,8 @@
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="n">cur</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>            <span class="s2">&quot;select name, round(sum(point), 1) as point from team_results group by name order by point desc;&quot;</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="p">)</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()))</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select name, round(sum(point), 1) as point from team_results group by name order by point desc;&quot;</span><span class="p">)</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()))</span>
 </span></pre></div>
 
 
@@ -252,10 +250,8 @@
 </span><span id="main-97"><a href="#main-97"><span class="linenos"> 97</span></a>        <span class="n">cur</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </span><span id="main-98"><a href="#main-98"><span class="linenos"> 98</span></a>
 </span><span id="main-99"><a href="#main-99"><span class="linenos"> 99</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
-</span><span id="main-100"><a href="#main-100"><span class="linenos">100</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-</span><span id="main-101"><a href="#main-101"><span class="linenos">101</span></a>            <span class="s2">&quot;select name, round(sum(point), 1) as point from team_results group by name order by point desc;&quot;</span>
-</span><span id="main-102"><a href="#main-102"><span class="linenos">102</span></a>        <span class="p">)</span>
-</span><span id="main-103"><a href="#main-103"><span class="linenos">103</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()))</span>
+</span><span id="main-100"><a href="#main-100"><span class="linenos">100</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select name, round(sum(point), 1) as point from team_results group by name order by point desc;&quot;</span><span class="p">)</span>
+</span><span id="main-101"><a href="#main-101"><span class="linenos">101</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()))</span>
 </span></pre></div>
 
 
