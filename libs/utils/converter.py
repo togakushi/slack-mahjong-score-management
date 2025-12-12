@@ -230,9 +230,7 @@ def df_to_results_details(df: pd.DataFrame) -> dict:
         work_df["rpoint"] = work_df.apply(lambda v: f"<>{v['rpoint']:8d}点".replace("-", "▲"), axis=1)
         work_df["point"] = work_df.apply(lambda v: f"(<>{v['point']:7.1f}pt)".replace("-", "▲"), axis=1)
         work_df["rank"] = work_df.apply(lambda v: f"{v['rank']}位", axis=1)
-        data = work_df.to_markdown(tablefmt="tsv", headers=[], floatfmt=formatter.floatfmt_adjust(work_df)).replace(
-            "<>", ""
-        )
+        data = work_df.to_markdown(tablefmt="tsv", headers=[], floatfmt=formatter.floatfmt_adjust(work_df)).replace("<>", "")
 
         ret = f"{str(x['日時']).replace('-', '/')} {x['備考']}\n"
         ret += textwrap.indent(data, "\t") + "\n"
@@ -259,9 +257,7 @@ def df_to_results_simple(df: pd.DataFrame) -> dict:
             vs_guest = f"({g.cfg.setting.guest_mark}) "
 
         ret = f"\t{vs_guest}{str(x['日時']).replace('-', '/')}  "
-        ret += f"{x['座席']}\t{x['順位']}位\t{x['素点']:8d}点\t{x['獲得ポイント']:7.1f}pt\t{x['メモ']}".replace(
-            "-", "▲"
-        )
+        ret += f"{x['座席']}\t{x['順位']}位\t{x['素点']:8d}点\t{x['獲得ポイント']:7.1f}pt\t{x['メモ']}".replace("-", "▲")
         data_list.append(ret)
 
     return {str(idx): x for idx, x in enumerate(formatter.group_strings(data_list, 2500))}
@@ -519,9 +515,7 @@ def df_to_count(df: pd.DataFrame, title: str, indent: int = 0) -> dict:
         case "役満和了":
             df["表示"] = df.apply(lambda x: f"{x['和了役']}： {x['回数']} 回", axis=1)
         case "卓外清算":
-            df["表示"] = df.apply(
-                lambda x: f"{x['内容']}： {x['回数']} 回 ({x['ポイント合計']:.1f}pt)".replace("-", "▲"), axis=1
-            )
+            df["表示"] = df.apply(lambda x: f"{x['内容']}： {x['回数']} 回 ({x['ポイント合計']:.1f}pt)".replace("-", "▲"), axis=1)
         case "その他":
             df["表示"] = df.apply(lambda x: f"{x['内容']}： {x['回数']} 回", axis=1)
 
@@ -550,9 +544,7 @@ def df_to_seat_data(df: pd.DataFrame, indent: int = 0) -> dict:
         df["役満和了"] = df.apply(lambda x: f"/ {x['役満和了']:3d}", axis=1)
 
     #
-    df = df.filter(items=["席", "順位分布(平均順位)", "トビ", "役満和了"]).rename(
-        columns={"席": "# 席：", "トビ": "/ トビ", "役満和了": "/ 役満 #"}
-    )
+    df = df.filter(items=["席", "順位分布(平均順位)", "トビ", "役満和了"]).rename(columns={"席": "# 席：", "トビ": "/ トビ", "役満和了": "/ 役満 #"})
 
     tbl = df.to_markdown(tablefmt="tsv", index=False).replace("0.00", "-.--").replace(" \t", "")
     return {"0": textwrap.indent(tbl, "\t" * indent)}

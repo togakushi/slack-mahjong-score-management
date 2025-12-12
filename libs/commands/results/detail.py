@@ -116,9 +116,7 @@ def aggregation(m: "MessageParserProtocol"):
 
     # レギュレーション
     remarks_df = loader.read_data("REMARKS_INFO")
-    count_df = remarks_df.groupby("matter").agg(
-        matter_count=("matter", "count"), ex_total=("ex_point", "sum"), type=("type", "max")
-    )
+    count_df = remarks_df.groupby("matter").agg(matter_count=("matter", "count"), ex_total=("ex_point", "sum"), type=("type", "max"))
     count_df["matter"] = count_df.index
 
     if not g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
@@ -440,9 +438,7 @@ def get_results_simple(mapping_dict: dict) -> pd.DataFrame:
         df_data.loc[:, "備考"] = np.where(df_data["guest_count"] >= 2, "2ゲスト戦", "")
     else:
         df_data.loc[:, "備考"] = np.where(df_data["same_team"] == 1, "チーム同卓", "")
-    df_data = formatter.df_rename(
-        df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "remarks", "備考"]), short=False
-    )
+    df_data = formatter.df_rename(df_data.filter(items=["playtime", "seat", "rank", "rpoint", "point", "remarks", "備考"]), short=False)
 
     return df_data
 
@@ -457,7 +453,7 @@ def get_results_details(mapping_dict: dict) -> pd.DataFrame:
         pd.DataFrame: 戦績データ
     """
 
-    target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # pylint: disable=unused-variable  # noqa: F841
+    target_player = formatter.name_replace(g.params["target_player"][0], add_mark=True)  # noqa: F841
 
     df = loader.read_data("SUMMARY_DETAILS2").fillna(value="")
     if g.params.get("anonymous"):

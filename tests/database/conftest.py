@@ -28,7 +28,7 @@ def database_connection():
 
 
 @pytest.fixture(scope="package", autouse=True)
-def initialize_database(database_connection):  # pylint: disable=redefined-outer-name
+def initialize_database(database_connection):
     """DB初期化"""
     _ = database_connection  # pylint (W0613: Unused argument)
     initialization.initialization_resultdb()

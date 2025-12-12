@@ -104,11 +104,7 @@ class AdapterAPI(APIInterface):
                 header = ""
 
                 if isinstance(msg, PosixPath) and msg.exists():
-                    comment = (
-                        textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}")
-                        if style.use_comment
-                        else ""
-                    )
+                    comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if style.use_comment else ""
                     file = self.discord_file(
                         str(msg),
                         description=comment,
@@ -120,9 +116,7 @@ class AdapterAPI(APIInterface):
                         header = _header_text(title)
 
                     message_text = msg.rstrip().replace("<@>", f"<@{self.response.author.id}>")
-                    post_msg.append(
-                        f"{header}```\n{message_text}\n```\n" if style.codeblock else f"{header}{message_text}\n"
-                    )
+                    post_msg.append(f"{header}```\n{message_text}\n```\n" if style.codeblock else f"{header}{message_text}\n")
 
                 if isinstance(msg, pd.DataFrame):
                     if style.key_title and (title != header_title):

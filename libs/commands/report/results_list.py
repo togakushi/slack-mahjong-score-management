@@ -155,7 +155,7 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "Me
 
     # 追加テキスト
     remark_text = "".join(compose.text_item.remarks(True)) + compose.text_item.search_word(True)
-    add_text = "[検索範囲：{}] [総ゲーム数：{}] {}".format(  # pylint: disable=consider-using-f-string
+    add_text = "[検索範囲：{}] [総ゲーム数：{}] {}".format(
         compose.text_item.search_range(time_pattern="time"),
         game_info.count,
         f"[{remark_text}]" if remark_text else "",
@@ -183,9 +183,7 @@ def text_generation(df: "pd.DataFrame") -> "MessageType":
         MessageType: 生成ファイルパス
     """
 
-    report_file_path = g.cfg.setting.work_dir / (
-        f"{g.params['filename']}.txt" if g.params.get("filename") else "report.txt"
-    )
+    report_file_path = g.cfg.setting.work_dir / (f"{g.params['filename']}.txt" if g.params.get("filename") else "report.txt")
 
     df = df.filter(
         items=[
@@ -226,9 +224,7 @@ def csv_generation(df: "pd.DataFrame") -> "MessageType":
         MessageType: 生成ファイルパス
     """
 
-    report_file_path = g.cfg.setting.work_dir / (
-        f"{g.params['filename']}.csv" if g.params.get("filename") else "report.csv"
-    )
+    report_file_path = g.cfg.setting.work_dir / (f"{g.params['filename']}.csv" if g.params.get("filename") else "report.csv")
 
     df = df.filter(
         items=[

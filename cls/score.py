@@ -208,25 +208,15 @@ class GameResult:
                 ret_text += f"[{self.p4.name} {self.p4.r_str}] "
                 ret_text += f"[供託 {self.deposit}] [{self.comment if self.comment else None}]"
             case "detail":
-                ret_text += f"[{self.p1.rank}位 {self.p1.name} {self.p1.rpoint * 100}点 ({self.p1.point}pt)] ".replace(
-                    "-", "▲"
-                )
-                ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace(
-                    "-", "▲"
-                )
-                ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace(
-                    "-", "▲"
-                )
-                ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace(
-                    "-", "▲"
-                )
+                ret_text += f"[{self.p1.rank}位 {self.p1.name} {self.p1.rpoint * 100}点 ({self.p1.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace("-", "▲")
                 ret_text += f"[供託 {self.deposit * 100}点] "
                 ret_text += f"[{self.comment if self.comment else None}]"
             case "logging":
                 ret_text += f"ts={self.ts}, deposit={self.deposit}, rule_version={self.rule_version}, "
-                ret_text += (
-                    f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
-                )
+                ret_text += f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
                 ret_text += f"comment={self.comment if self.comment else None}, source={self.source}"
 
         return ret_text
@@ -280,9 +270,7 @@ class GameResult:
         if kwargs:
             self.set(**kwargs)
 
-        if all(
-            [self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]
-        ):
+        if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]):
             self.set(**self._calculation_point())
 
     def _calculation_point(self) -> dict:
@@ -311,7 +299,7 @@ class GameResult:
                     else:
                         normalized.append(token)
 
-            return eval("".join(normalized))  # pylint: disable=eval-used
+            return eval("".join(normalized))
 
         def point_split(point: list) -> list:
             """順位点を山分けする
@@ -332,9 +320,7 @@ class GameResult:
             return new_point
 
         # 計算用データフレーム
-        score_df = pd.DataFrame(
-            {"rpoint": [normalized_expression(str(x)) for x in self.to_list("str")]}, index=["p1", "p2", "p3", "p4"]
-        )
+        score_df = pd.DataFrame({"rpoint": [normalized_expression(str(x)) for x in self.to_list("str")]}, index=["p1", "p2", "p3", "p4"])
 
         work_rank_point = self.rank_point.copy()  # ウマ
         work_rank_point[0] += int((self.return_point - self.origin_point) / 10 * 4)  # オカ
@@ -390,9 +376,7 @@ class GameResult:
             )
             .astype("int")
         )
-        score_df["point"] = (score_df["rpoint"] - self.return_point) / 10 + score_df["position"].apply(
-            lambda p: work_rank_point[p - 1]
-        )
+        score_df["point"] = (score_df["rpoint"] - self.return_point) / 10 + score_df["position"].apply(lambda p: work_rank_point[p - 1])
         score_df["point"] = score_df["point"].apply(lambda p: float(f"{p:.1f}"))  # 桁ブレ修正
 
         # 返却値用辞書

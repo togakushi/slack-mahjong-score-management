@@ -105,7 +105,7 @@ def aggregation(m: "MessageParserProtocol"):
         short=False,
     )
 
-    namelist = list(cast(dict, g.params["competition_list"]).values())  # pylint: disable=unused-variable  # noqa: F841
+    namelist = list(cast(dict, g.params["competition_list"]).values())  # noqa: F841
     df_vs["対戦相手"] = df_vs["vs_name"].apply(lambda x: str(x).strip())
     df_vs["my_rpoint_avg"] = (df_vs["my_rpoint_avg"] * 100).astype("int")
     df_vs["vs_rpoint_avg"] = (df_vs["vs_rpoint_avg"] * 100).astype("int")

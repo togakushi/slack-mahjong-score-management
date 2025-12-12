@@ -97,17 +97,13 @@ def radio_buttons(adapter: "ServiceAdapter", id_suffix: str, title: str, flag: d
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["label"] = {"type": "plain_text", "text": title}
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["type"] = "radio_buttons"
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["action_id"] = f"aid-{id_suffix}"
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"][
-        "initial_option"
-    ] = {  # 先頭の選択肢はチェック済みにする
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["initial_option"] = {  # 先頭の選択肢はチェック済みにする
         "text": {"type": "plain_text", "text": flag[next(iter(flag))]},
         "value": next(iter(flag)),
     }
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"] = []
     for k, v in flag.items():
-        adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": v}, "value": k}
-        )
+        adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"].append({"text": {"type": "plain_text", "text": v}, "value": k})
     adapter.conf.tab_var["no"] += 1
 
 
@@ -142,9 +138,7 @@ def checkboxes(
         initial = []  # None -> list
 
     for k, v in flag.items():
-        adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"].append(
-            {"text": {"type": "plain_text", "text": v}, "value": k}
-        )
+        adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"].append({"text": {"type": "plain_text", "text": v}, "value": k})
         if k in initial:
             adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["initial_options"].append(
                 {"text": {"type": "plain_text", "text": v}, "value": k}
@@ -238,22 +232,16 @@ def input_ranked(adapter: "ServiceAdapter", block_id: str | bool = False) -> Non
     """
 
     if block_id:
-        adapter.conf.tab_var["view"]["blocks"].append(
-            {"type": "input", "block_id": block_id, "element": {}, "label": {}}
-        )
+        adapter.conf.tab_var["view"]["blocks"].append({"type": "input", "block_id": block_id, "element": {}, "label": {}})
     else:
         adapter.conf.tab_var["view"]["blocks"].append({"type": "input", "element": {}, "label": {}})
 
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"type": "number_input"})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"is_decimal_allowed": True})
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update(
-        {"initial_value": str(g.cfg.ranking.ranked)}
-    )
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"initial_value": str(g.cfg.ranking.ranked)})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"min_value": "1"})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"].update({"action_id": "aid-ranked"})
-    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["label"].update(
-        {"type": "plain_text", "text": "出力順位上限"}
-    )
+    adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["label"].update({"type": "plain_text", "text": "出力順位上限"})
 
     adapter.conf.tab_var["no"] += 1
 

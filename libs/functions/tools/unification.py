@@ -107,24 +107,16 @@ def main():
                     match check:
                         case check if check == row["p1_name"]:
                             logging.info("ts=%s, p1_name(%s -> %s)", row["ts"], check, name)
-                            db.execute(
-                                "update result set p1_name=? where p1_name=? and ts=?;", (name, check, row["ts"])
-                            )
+                            db.execute("update result set p1_name=? where p1_name=? and ts=?;", (name, check, row["ts"]))
                         case check if check == row["p2_name"]:
                             logging.info("ts=%s, p2_name(%s -> %s)", row["ts"], check, name)
-                            db.execute(
-                                "update result set p2_name=? where p2_name=? and ts=?;", (name, check, row["ts"])
-                            )
+                            db.execute("update result set p2_name=? where p2_name=? and ts=?;", (name, check, row["ts"]))
                         case check if check == row["p3_name"]:
                             logging.info("ts=%s, p3_name(%s -> %s)", row["ts"], check, name)
-                            db.execute(
-                                "update result set p3_name=? where p3_name=? and ts=?;", (name, check, row["ts"])
-                            )
+                            db.execute("update result set p3_name=? where p3_name=? and ts=?;", (name, check, row["ts"]))
                         case check if check == row["p4_name"]:
                             logging.info("ts=%s, p4_name(%s -> %s)", row["ts"], check, name)
-                            db.execute(
-                                "update result set p4_name=? where p4_name=? and ts=?;", (name, check, row["ts"])
-                            )
+                            db.execute("update result set p4_name=? where p4_name=? and ts=?;", (name, check, row["ts"]))
 
         db.commit()
         db.close()

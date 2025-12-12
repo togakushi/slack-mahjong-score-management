@@ -47,20 +47,20 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         }
     )
 
-    # チャンネル個別設定取り込み(上書き)
+    # 個別設定取り込み(上書き)
     if not isinstance(g.adapter.conf.separate, NoneType):
         ret_dict.update({"separate": g.adapter.conf.separate})
     ret_dict.update(
         {
             "separate": lookup.internal.get_config_value(
-                section=g.adapter.interface_type,
-                name=f"{m.data.channel_id}_separate",
+                section=m.status.source,
+                name="separate",
                 val_type=bool,
-                fallback=ret_dict["score_comparisons"],
+                fallback=ret_dict["separate"],
             ),
             "rule_version": lookup.internal.get_config_value(
-                section=g.adapter.interface_type,
-                name=f"{m.data.channel_id}_rule_version",
+                section=m.status.source,
+                name="rule_version",
                 val_type=str,
                 fallback=ret_dict["rule_version"],
             ),

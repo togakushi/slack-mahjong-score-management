@@ -220,9 +220,7 @@ def matrix_table() -> pd.DataFrame:
     df = loader.read_data("REPORT_MATRIX_TABLE").set_index("playtime")
 
     # 結果に含まれるプレイヤーのリスト
-    plist = sorted(
-        list(set(df["p1_name"].tolist() + df["p2_name"].tolist() + df["p3_name"].tolist() + df["p4_name"].tolist()))
-    )
+    plist = sorted(list(set(df["p1_name"].tolist() + df["p2_name"].tolist() + df["p3_name"].tolist() + df["p4_name"].tolist())))
 
     # 順位テーブルの作成
     l_data: dict = {}

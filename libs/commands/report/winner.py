@@ -115,7 +115,7 @@ def plot(m: "MessageParserProtocol"):
 
             # 追加テキスト
             remark_text = "".join(compose.text_item.remarks(True)) + compose.text_item.search_word(True)
-            add_text = "{} {}".format(  # pylint: disable=consider-using-f-string
+            add_text = "{} {}".format(
                 f"[検索範囲：{compose.text_item.search_range()}]",
                 f"[{remark_text}]" if remark_text else "",
             )

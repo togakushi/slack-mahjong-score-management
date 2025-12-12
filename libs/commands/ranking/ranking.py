@@ -55,13 +55,11 @@ def aggregation(m: "MessageParserProtocol"):
 
     # 集計
     data: dict[str, pd.DataFrame] = {}
-    ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # pylint: disable=unused-variable  # noqa: F841
+    ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # noqa: F841
 
     # ゲーム参加率
     filter_item = ["rank", "name", "participation_rate", "game_count", "total_count"]
-    work_df = df.filter(items=filter_item).sort_values(
-        by=["participation_rate", "game_count"], ascending=[False, False]
-    )
+    work_df = df.filter(items=filter_item).sort_values(by=["participation_rate", "game_count"], ascending=[False, False])
     work_df["rank"] = df["participation_rate"].rank(ascending=False, method="dense").astype("int")
     data["ゲーム参加率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 

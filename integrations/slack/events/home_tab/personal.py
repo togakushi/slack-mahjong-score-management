@@ -35,9 +35,7 @@ def build_personal_menu(adapter: ServiceAdapter):
     ui_parts.user_select_pulldown(adapter, text="対象プレイヤー")
 
     # 検索範囲設定
-    date_dict = {
-        x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]
-    }
+    date_dict = {x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
     ui_parts.divider(adapter)
     ui_parts.radio_buttons(
         adapter=adapter,
@@ -131,9 +129,7 @@ def register_personal_handlers(app, adapter: ServiceAdapter):
             if user_select is None:
                 return
 
-        adapter.api.appclient.views_update(
-            view_id=adapter.conf.tab_var["view_id"], view=ui_parts.plain_text(f"{chr(10).join(app_msg)}")
-        )
+        adapter.api.appclient.views_update(view_id=adapter.conf.tab_var["view_id"], view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"))
 
         app_msg.pop()
         app_msg.append("集計完了")

@@ -27,7 +27,8 @@ def for_db_score(first_ts: float) -> list[GameResult]:
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         curs = conn.cursor()
         rows = curs.execute(
-            "select * from result where ts >= ? and source like ?", (str(first_ts), f"{g.adapter.interface_type}_%")
+            "select * from result where ts >= ? and source like ?",
+            (str(first_ts), f"{g.adapter.interface_type}_%"),
         )
         for row in rows.fetchall():
             data.append(GameResult(**dict(row)))
@@ -48,7 +49,10 @@ def for_db_remarks(first_ts: float) -> list["RemarkDict"]:
     data: list["RemarkDict"] = []
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
         # 記録済みメモ内容
-        rows = cur.execute(dbutil.query("REMARKS_SELECT"), (str(first_ts), f"{g.adapter.interface_type}_%"))
+        rows = cur.execute(
+            dbutil.query("REMARKS_SELECT"),
+            (str(first_ts), f"{g.adapter.interface_type}_%"),
+        )
         for row in rows.fetchall():
             data.append(
                 {

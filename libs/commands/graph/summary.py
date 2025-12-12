@@ -192,9 +192,7 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
 
     # 凡例用文字列生成
     target_data["legend"] = target_data.apply(
-        lambda x: f"{x['position']}位： {x['name']} ({x['last_point']:+.1f}pt / {x['game_count']:.0f}G)".replace(
-            "-", "▲"
-        ),
+        lambda x: f"{x['position']}位： {x['name']} ({x['last_point']:+.1f}pt / {x['game_count']:.0f}G)".replace("-", "▲"),
         axis=1,
     )
 

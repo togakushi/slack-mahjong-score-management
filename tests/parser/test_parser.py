@@ -100,7 +100,9 @@ def test_command_date_range_str(input_args, expected_flags):
 
 
 @pytest.mark.parametrize(
-    "keyword, search_range", list(param_data.search_range.values()), ids=list(param_data.search_range.keys())
+    "keyword, search_range",
+    list(param_data.search_range.values()),
+    ids=list(param_data.search_range.keys()),
 )
 def test_search_range(keyword, search_range, monkeypatch):
     """検索範囲"""

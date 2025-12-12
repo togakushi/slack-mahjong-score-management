@@ -209,9 +209,7 @@ class CommandParser:
                 try_day = pd.to_datetime(check_word, errors="coerce").to_pydatetime()
                 if not pd.isna(try_day):
                     search_range.append(ExtDt(try_day))
-                    search_range.append(
-                        ExtDt(try_day) + {"hour": 23, "minute": 59, "second": 59, "microsecond": 999999}
-                    )
+                    search_range.append(ExtDt(try_day) + {"hour": 23, "minute": 59, "second": 59, "microsecond": 999999})
                 continue
 
             if check_word in ExtDt.valid_keywords():

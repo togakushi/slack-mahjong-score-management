@@ -56,15 +56,7 @@ def determine_point(is_parent: bool, is_tsumo: bool) -> int | tuple:
             break
         rank += 1
 
-    key = (
-        "tsumo_parent"
-        if is_parent and is_tsumo
-        else "tsumo_child"
-        if not is_parent and is_tsumo
-        else "ron_parent"
-        if is_parent
-        else "ron_child"
-    )
+    key = "tsumo_parent" if is_parent and is_tsumo else "tsumo_child" if not is_parent and is_tsumo else "ron_parent" if is_parent else "ron_child"
 
     return HAN_POINTS[rank][key]
 
@@ -86,9 +78,7 @@ def determine_winner(k: int) -> tuple[list[int], list[int]]:
     return (winners, losers)
 
 
-def should_renchan(
-    winners: list, parent: int, tenpai: list, total_rounds: int, renchan_count: int
-) -> tuple[int, int, int]:
+def should_renchan(winners: list, parent: int, tenpai: list, total_rounds: int, renchan_count: int) -> tuple[int, int, int]:
     """連チャンの判定を行う
 
     Args:

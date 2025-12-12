@@ -21,7 +21,7 @@ def get_members_list() -> str:
         for alias, name in g.member_list.items():
             if name == pname:
                 name_list.append(alias)
-        msg += "{}{}：{}\n".format(  # pylint: disable=consider-using-f-string
+        msg += "{}{}：{}\n".format(
             pname,
             " " * (padding - textutil.len_count(pname)),
             ", ".join(name_list),
