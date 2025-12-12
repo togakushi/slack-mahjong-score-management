@@ -66,7 +66,7 @@ def event_message() -> str:
     if words:
         msg += "\n\t*卓外清算ワード(個人)*\n"
         for word, ex_point in words:
-            msg += "\t\t{}：{}pt\n".format(  # pylint: disable=consider-using-f-string
+            msg += "\t\t{}：{}pt\n".format(
                 word,
                 str(f"{ex_point:.1f}").replace("-", "▲"),
             )
@@ -74,7 +74,7 @@ def event_message() -> str:
     if words:
         msg += "\n\t*卓外清算ワード(チーム)*\n"
         for word, ex_point in words:
-            msg += "\t\t{}：{}pt\n".format(  # pylint: disable=consider-using-f-string
+            msg += "\t\t{}：{}pt\n".format(
                 word,
                 str(f"{ex_point:.1f}").replace("-", "▲"),
             )

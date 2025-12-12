@@ -299,7 +299,7 @@ class GameResult:
                     else:
                         normalized.append(token)
 
-            return eval("".join(normalized))  # pylint: disable=eval-used
+            return eval("".join(normalized))
 
         def point_split(point: list) -> list:
             """順位点を山分けする

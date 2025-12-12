@@ -34,7 +34,7 @@ def aggregation(m: "MessageParserProtocol"):
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info = GameInfo()
-    ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # pylint: disable=unused-variable  # noqa: F841
+    ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # noqa: F841
 
     if not game_info.count:  # 検索結果が0件のとき
         m.post.headline = {"レーティング": message.random_reply(m, "no_hits")}
@@ -84,9 +84,7 @@ def aggregation(m: "MessageParserProtocol"):
 
     df["rank"] = df["rate"].rank(ascending=False, method="dense").astype("int")
     df = formatter.df_rename(
-        df.query("rank <= @ranked").filter(
-            items=["rank", "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"]
-        ),
+        df.query("rank <= @ranked").filter(items=["rank", "name", "rate", "rank_distr", "rank_avg", "rank_dev", "rpoint_avg", "point_dev", "grade"]),
         short=False,
     ).copy()
 
