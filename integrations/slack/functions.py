@@ -344,14 +344,14 @@ class SvcFunctions(FunctionsInterface):
 
         # リアクション文字
         reaction_ok = lookup.internal.get_config_value(
-            section=g.adapter.interface_type,
-            name=f"{m.data.channel_id}_reaction_ok",
+            section=m.status.source,
+            name="reaction_ok",
             val_type=str,
             fallback=self.conf.reaction_ok,
         )
         reaction_ng = lookup.internal.get_config_value(
-            section=g.adapter.interface_type,
-            name=f"{m.data.channel_id}_reaction_ng",
+            section=m.status.source,
+            name="reaction_ng",
             val_type=str,
             fallback=self.conf.reaction_ng,
         )
