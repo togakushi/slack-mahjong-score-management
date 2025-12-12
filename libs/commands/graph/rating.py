@@ -39,12 +39,7 @@ def plot(m: "MessageParserProtocol"):
         return
 
     # 足切り
-    df_count = (
-        loader.read_data("SUMMARY_GAMEDATA")
-        .filter(items=["name", "count"])
-        .set_index("name")
-        .query("count >= @g.params['stipulated']")
-    )
+    df_count = loader.read_data("SUMMARY_GAMEDATA").filter(items=["name", "count"]).set_index("name").query("count >= @g.params['stipulated']")
     df_dropped = df_ratings.filter(items=df_count.index.to_list())
 
     # 並び変え

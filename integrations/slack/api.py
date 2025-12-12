@@ -96,11 +96,7 @@ class AdapterAPI(APIInterface):
                 header = ""
 
                 if isinstance(msg, PosixPath) and msg.exists():
-                    comment = (
-                        textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}")
-                        if style.use_comment
-                        else ""
-                    )
+                    comment = textwrap.dedent(f"{_header_text(header_title)}{header_text.rstrip()}") if style.use_comment else ""
                     self._call_files_upload(
                         channel=m.data.channel_id,
                         title=title,
@@ -113,9 +109,7 @@ class AdapterAPI(APIInterface):
                 if isinstance(msg, str):
                     if style.key_title and (title != header_title):
                         header = _header_text(title)
-                    post_msg.append(
-                        f"{header}```\n{msg.rstrip()}\n```\n" if style.codeblock else f"{header}{msg.rstrip()}\n"
-                    )
+                    post_msg.append(f"{header}```\n{msg.rstrip()}\n```\n" if style.codeblock else f"{header}{msg.rstrip()}\n")
 
                 if isinstance(msg, pd.DataFrame):
                     if style.key_title and (title != header_title):

@@ -32,9 +32,7 @@ def build_versus_menu(adapter: ServiceAdapter):
     ui_parts.multi_select_pulldown(adapter, text="対戦相手", add_list=["全員"])
 
     # 検索範囲設定
-    date_dict = {
-        x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]
-    }
+    date_dict = {x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
     ui_parts.divider(adapter)
     ui_parts.radio_buttons(
         adapter=adapter,
@@ -131,9 +129,7 @@ def register_versus_handlers(app, adapter: ServiceAdapter):
             if len(search_options["bid-multi_select"]["player"]["selected_options"]) == 0:
                 return
 
-        adapter.api.appclient.views_update(
-            view_id=adapter.conf.tab_var["view_id"], view=ui_parts.plain_text(f"{chr(10).join(app_msg)}")
-        )
+        adapter.api.appclient.views_update(view_id=adapter.conf.tab_var["view_id"], view=ui_parts.plain_text(f"{chr(10).join(app_msg)}"))
 
         app_msg.pop()
         app_msg.append("集計完了")

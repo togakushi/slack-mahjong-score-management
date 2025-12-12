@@ -32,9 +32,7 @@ def build_ranking_menu(adapter: ServiceAdapter):
     ui_parts.header(adapter, text="【ランキング】")
 
     # 検索範囲設定
-    date_dict = {
-        x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]
-    }
+    date_dict = {x: ExtDt(hours=-g.cfg.setting.time_adjust).range(x).dict_format("ymd", "-") for x in ["今月", "先月", "全部"]}
     ui_parts.divider(adapter)
     ui_parts.radio_buttons(
         adapter=adapter,

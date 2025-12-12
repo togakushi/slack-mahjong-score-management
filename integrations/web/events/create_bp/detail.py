@@ -57,9 +57,7 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
                         padding = "0.25em 0.75em"
                         msg = _conv_verbose(msg)
                     message += adapter.functions.to_styled_html(msg, padding, show_index)
-                    message = message.replace(
-                        f">{g.params['player_name']}<", f"><div class='player_name'>{g.params['player_name']}</div><"
-                    )
+                    message = message.replace(f">{g.params['player_name']}<", f"><div class='player_name'>{g.params['player_name']}</div><")
 
                 if isinstance(msg, str):
                     message += adapter.functions.to_text_html(msg)
