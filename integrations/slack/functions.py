@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from integrations.base.interface import FunctionsInterface
+from libs.data import lookup
 from libs.utils import validator
 
 if TYPE_CHECKING:
@@ -57,9 +58,7 @@ class SvcFunctions(FunctionsInterface):
         response = self.api.webclient.search_messages(query=query, sort="timestamp", sort_dir="asc", count=100)
         matches = response["messages"]["matches"]  # 1ページ目
         for p in range(2, response["messages"]["paging"]["pages"] + 1):
-            response = self.api.webclient.search_messages(
-                query=query, sort="timestamp", sort_dir="asc", count=100, page=p
-            )
+            response = self.api.webclient.search_messages(query=query, sort="timestamp", sort_dir="asc", count=100, page=p)
             matches += response["messages"]["matches"]  # 2ページ目以降
 
         # 必要なデータだけ辞書に格納
@@ -343,6 +342,20 @@ class SvcFunctions(FunctionsInterface):
             m (MessageParserProtocol): メッセージデータ
         """
 
+        # リアクション文字
+        reaction_ok = lookup.internal.get_config_value(
+            section=g.adapter.interface_type,
+            name=f"{m.data.channel_id}_reaction_ok",
+            val_type=str,
+            fallback=self.conf.reaction_ok,
+        )
+        reaction_ng = lookup.internal.get_config_value(
+            section=g.adapter.interface_type,
+            name=f"{m.data.channel_id}_reaction_ng",
+            val_type=str,
+            fallback=self.conf.reaction_ng,
+        )
+
         # リアクション処理
         match m.status.action:
             case "nothing":
@@ -352,17 +365,17 @@ class SvcFunctions(FunctionsInterface):
                     reaction_data = self.reaction_status(ch=m.data.channel_id, ts=ts)
                     if m.status.reaction:  # NGを外してOKを付ける
                         if not reaction_data.get("ok"):
-                            self.reaction_append(icon=self.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
+                            self.reaction_append(icon=reaction_ok, ch=m.data.channel_id, ts=ts)
                         if reaction_data.get("ng"):
-                            self.reaction_remove(icon=self.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
+                            self.reaction_remove(icon=reaction_ng, ch=m.data.channel_id, ts=ts)
                     else:  # OKを外してNGを付ける
                         if reaction_data.get("ok"):
-                            self.reaction_remove(icon=self.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
+                            self.reaction_remove(icon=reaction_ok, ch=m.data.channel_id, ts=ts)
                         if not reaction_data.get("ng"):
-                            self.reaction_append(icon=self.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
+                            self.reaction_append(icon=reaction_ng, ch=m.data.channel_id, ts=ts)
                 m.status.reset()
             case "delete":
                 for ts in m.status.target_ts:
-                    self.reaction_remove(icon=self.conf.reaction_ok, ch=m.data.channel_id, ts=ts)
-                    self.reaction_remove(icon=self.conf.reaction_ng, ch=m.data.channel_id, ts=ts)
+                    self.reaction_remove(icon=reaction_ok, ch=m.data.channel_id, ts=ts)
+                    self.reaction_remove(icon=reaction_ng, ch=m.data.channel_id, ts=ts)
                 m.status.reset()
