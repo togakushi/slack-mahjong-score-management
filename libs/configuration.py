@@ -238,17 +238,21 @@ def setup():
     register()
 
     # 設定内容のロギング
-    logging.info("conf: %s", os.path.join(g.cfg.config_dir, g.args.config))
-    logging.info("font: %s", g.cfg.setting.font_file)
-    logging.info("database: %s", g.cfg.setting.database_file)
+    logging.info("conf: %s", g.cfg.config_file.absolute())
+    logging.info("font: %s", g.cfg.setting.font_file.absolute())
+    logging.info("database: %s", g.cfg.setting.database_file.absolute())
     logging.info("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)
-    logging.info(
-        "rule_version: %s, origin_point: %s, return_point: %s, time_adjust: %sh",
-        g.cfg.mahjong.rule_version,
-        g.cfg.mahjong.origin_point,
-        g.cfg.mahjong.return_point,
-        g.cfg.setting.time_adjust,
-    )
+    logging.info("primary keyword: %s, time_adjust: %sh", g.cfg.setting.keyword, g.cfg.setting.time_adjust)
+    for keyword, config in g.cfg.keyword.rule.items():
+        g.cfg.overwrite(config, "mahjong")
+        logging.info(
+            "keyword: %s, rule_version: %s, origin_point: %s, return_point: %s, draw_split: %s",
+            keyword,
+            g.cfg.mahjong.rule_version,
+            g.cfg.mahjong.origin_point,
+            g.cfg.mahjong.return_point,
+            g.cfg.mahjong.draw_split,
+        )
 
 
 def read_memberslist(log=True):
