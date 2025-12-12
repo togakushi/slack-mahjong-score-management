@@ -55,7 +55,7 @@ missing-argument = false
 unbound-name = false
 
 [tool.ruff]
-line-length = 120
+line-length = 160
 indent-width = 4
 # output-format = "github"
 
