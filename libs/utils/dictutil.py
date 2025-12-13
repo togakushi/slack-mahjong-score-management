@@ -66,6 +66,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             ),
         }
     )
+    ret_dict.update({"default_rule": ret_dict["rule_version"]})
 
     # always_argumentの処理
     pre_param = parser.analysis_argument(subcom.always_argument)
