@@ -382,7 +382,7 @@ class BadgeDisplay(BaseSection):
 class SubCommand(BaseSection):
     """サブコマンド共通クラス"""
 
-    def __init__(self, outer: "AppConfig", section_name: str, default: str):
+    def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
         self.section = section_name
 
@@ -435,7 +435,13 @@ class SubCommand(BaseSection):
         super().__init__(self, section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [x.strip() for x in self._parser.get(section_name, "commandword", fallback=default).split(",")]
+        default_word = {
+            "results": "麻雀成績",
+            "graph": "麻雀グラフ",
+            "ranking": "麻雀ランキング",
+            "report": "麻雀成績レポート",
+        }
+        self.commandword = [x.strip() for x in self._parser.get(section_name, "commandword", fallback=default_word[section_name]).split(",")]
 
     def stipulated_calculation(self, game_count: int) -> int:
         """規定打数をゲーム数から計算
@@ -525,13 +531,13 @@ class AppConfig:
         """バッジ設定"""
 
         # サブコマンド
-        self.results = SubCommand(self, "results", "麻雀成績")
+        self.results = SubCommand(self, "results")
         """resultsセクション設定値"""
-        self.graph = SubCommand(self, "graph", "麻雀グラフ")
+        self.graph = SubCommand(self, "graph")
         """graphセクション設定値"""
-        self.ranking = SubCommand(self, "ranking", "麻雀ランキング")
+        self.ranking = SubCommand(self, "ranking")
         """rankingセクション設定値"""
-        self.report = SubCommand(self, "report", "麻雀成績レポート")
+        self.report = SubCommand(self, "report")
         """reportセクション設定値"""
 
         # 共通設定値
@@ -588,6 +594,9 @@ class AppConfig:
             section_name (str): セクション名
         """
 
+        if not config_file.exists:
+            return
+
         try:
             self._parser = ConfigParser()
             self._parser.read(config_file, encoding="utf-8")
@@ -600,6 +609,14 @@ class AppConfig:
                 self.setting = SettingSection(self, section_name)
             case "mahjong":
                 self.mahjong = MahjongSection(self, section_name)
+            case "results":
+                self.results = SubCommand(self, section_name)
+            case "graph":
+                self.graph = SubCommand(self, section_name)
+            case "ranking":
+                self.ranking = SubCommand(self, section_name)
+            case "report":
+                self.report = SubCommand(self, section_name)
             case _:
                 return
 
