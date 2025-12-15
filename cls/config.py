@@ -273,7 +273,7 @@ class TeamSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
-        self.team_list: list["TeamDataDict"] = []
+        self.list: list["TeamDataDict"] = []
         """チームリスト"""
         self.registration_limit: int = 255
         """登録チーム上限数"""
