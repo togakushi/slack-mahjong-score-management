@@ -13,12 +13,12 @@ def get_members_list() -> str:
         str: メンバーリスト
     """
 
-    padding = textutil.count_padding(list(set(g.member_list.values())))
+    padding = textutil.count_padding(list(set(g.cfg.member.list.values())))
     msg = f"# 表示名{' ' * (padding - 8)}：登録されている名前 #\n"
 
-    for pname in set(g.member_list.values()):
+    for pname in set(g.cfg.member.list.values()):
         name_list = []
-        for alias, name in g.member_list.items():
+        for alias, name in g.cfg.member.list.items():
             if name == pname:
                 name_list.append(alias)
         msg += "{}{}：{}\n".format(

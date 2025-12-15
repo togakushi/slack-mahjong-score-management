@@ -18,6 +18,8 @@ from libs.types import GradeTableDict
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
+    from libs.types import TeamDataDict
+
 SubClassType: TypeAlias = Union[
     "MahjongSection",
     "SettingSection",
@@ -247,6 +249,8 @@ class MemberSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
+        self.list: dict[str, str] = {}
+        """メンバーリスト"""
         self.registration_limit: int = 255
         """登録メンバー上限数"""
         self.character_limit: int = 8
@@ -269,6 +273,8 @@ class TeamSection(BaseSection):
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
 
+        self.team_list: list["TeamDataDict"] = []
+        """チームリスト"""
         self.registration_limit: int = 255
         """登録チーム上限数"""
         self.character_limit: int = 16

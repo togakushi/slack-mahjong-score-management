@@ -111,8 +111,8 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pass
 
             case "member":
-                pprint(g.member_list)
-                pprint(g.team_list)
+                pprint(g.cfg.member.list)
+                pprint(g.cfg.team.list)
 
             case "help":
                 pprint(compose.msg_help.event_message(), width=200)
@@ -246,7 +246,7 @@ def main():
                     continue
                 case "target_player":
                     flag["target_team"].clear()
-                    choice_list = list(set(g.member_list.values()))
+                    choice_list = list(set(g.cfg.member.list.values()))
                     for x in range(int(value)):
                         if not choice_list:
                             break
@@ -256,7 +256,7 @@ def main():
                     continue
                 case "target_team":
                     flag["target_player"].clear()
-                    choice_list = [x["team"] for x in g.team_list]
+                    choice_list = [x["team"] for x in g.cfg.team.list]
                     for _ in range(int(value)):
                         if not choice_list:
                             break
