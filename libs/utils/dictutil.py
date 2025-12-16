@@ -42,6 +42,8 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             "guest_name": g.cfg.member.guest_name,
             "undefined_word": g.cfg.undefined_word,
             "source": m.status.source,
+            "search_word": g.cfg.setting.search_word,
+            "group_length": g.cfg.setting.group_length,
             **g.cfg.mahjong.to_dict(),  # 初期値
             **subcom.to_dict(),  # デフォルト値
         }

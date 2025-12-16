@@ -195,6 +195,10 @@ class SettingSection(BaseSection):
         """メモ記録用キーワード"""
         self.time_adjust: int = 12
         """日付変更後、集計範囲に含める追加時間"""
+        self.search_word: str = ""
+        """コメント固定(検索時の検索文字列)"""
+        self.group_length: int = 0
+        """コメント固定(検索時の集約文字数)"""
         self.guest_mark: str = "※"
         """ゲスト無効時に未登録メンバーに付与する印"""
         self.database_file: Union[Path, str] = Path("mahjong.db")
@@ -325,21 +329,6 @@ class AliasSection(BaseSection):
         self.delete.extend(list_data)
 
 
-class CommentSection(BaseSection):
-    """commentセクション初期値"""
-
-    def __init__(self, outer: "AppConfig", section_name: str):
-        self._parser = outer._parser
-
-        self.group_length: int = 0
-        """コメント検索時の集約文字数(固定指定)"""
-        self.search_word: str = ""
-        """コメント検索時の検索文字列(固定指定)"""
-
-        # 設定値取り込み
-        super().__init__(self, section_name)
-
-
 class DropItems(BaseSection):
     """非表示項目リスト"""
 
@@ -429,8 +418,6 @@ class SubCommand(BaseSection):
         self.versus_matrix: bool = False
         """対戦マトリックス表示"""
         self.collection: str = ""
-        self.search_word: str = ""
-        self.group_length: int = 0
         self.always_argument: list = []
         """オプションとして常に付与される文字列"""
         self.format: str = ""
@@ -503,7 +490,6 @@ class AppConfig:
             "alias",
             "member",
             "team",
-            "comment",
             "regulations",
             "regulations_them",
             "secondary_keyword",
@@ -529,8 +515,6 @@ class AppConfig:
         """teamセクション設定値"""
         self.alias = AliasSection(self, "alias")
         """aliasセクション設定値"""
-        self.comment = CommentSection(self, "comment")
-        """commentセクション設定値"""
         self.dropitems = DropItems(self)  # 非表示項目
         """非表示項目"""
         self.badge = BadgeDisplay(self)  # バッジ表示
