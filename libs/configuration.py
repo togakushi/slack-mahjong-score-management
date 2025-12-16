@@ -335,7 +335,6 @@ def register():
         # 呼び出しキーワード登録
         if hasattr(g.cfg, command):
             sub_command = cast("SubCommand", getattr(g.cfg, command))
-            print(">>>", command, sub_command)
             for alias in sub_command.commandword:
                 g.keyword_dispatcher.update({alias: ep})
         # スラッシュコマンド登録
