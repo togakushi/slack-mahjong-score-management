@@ -139,11 +139,9 @@ class BaseSection(CommonMethodMixin):
 
 
 class MahjongSection(BaseSection):
-    """mahjongセクション初期値"""
+    """mahjongセクション"""
 
-    def __init__(self, outer: "AppConfig", section_name):
-        self._parser = outer._parser
-
+    def __init__(self):
         self.rule_version: str = ""
         """ルール判別識別子"""
         self.origin_point: int = 250
@@ -170,22 +168,29 @@ class MahjongSection(BaseSection):
         self.regulations_type2: list = []
         """メモで役満として扱う単語リスト(カンマ区切り)"""
 
-        # 設定値取り込み
-        super().__init__(self, section_name)
+    def config_load(self, outer: "AppConfig"):
+        """設定値取り込み
+
+        Args:
+            outer (AppConfig): 設定クラスオブジェクト
+        """
+
+        _section_name: str = "mahjong"
+        self._parser = outer._parser
+        super().__init__(self, _section_name)
 
         # 順位点更新
         if not self.rank_point:
             self.rank_point = [30, 10, -10, -30]
+        self.rank_point = list(map(int, self.rank_point[:4]))  # 数値化
 
-        self.rank_point = list(map(int, self.rank_point))  # 数値化
+        logging.debug("%s: %s", _section_name, self)
 
 
 class SettingSection(BaseSection):
-    """settingセクション初期値"""
+    """settingセクション"""
 
-    def __init__(self, outer: "AppConfig", section_name: str):
-        self._parser = outer._parser
-
+    def __init__(self):
         self.help: str = "麻雀成績ヘルプ"
         """ヘルプ表示キーワード"""
         self.keyword: str = "終局"
@@ -210,8 +215,16 @@ class SettingSection(BaseSection):
         """グラフスタイル"""
         self.work_dir: Path = Path("work")
 
-        # 設定値取り込み
-        super().__init__(self, section_name)
+    def config_load(self, outer: "AppConfig"):
+        """設定値取り込み
+
+        Args:
+            outer (AppConfig): 設定クラスオブジェクト
+        """
+
+        _section_name: str = "setting"
+        self._parser = outer._parser
+        super().__init__(self, _section_name)
 
         # 作業用ディレクトリ作成
         if self.work_dir.is_dir():
@@ -245,13 +258,13 @@ class SettingSection(BaseSection):
             except FileExistsError as err:
                 sys.exit(str(err))
 
+        logging.debug("%s: %s", _section_name, self)
+
 
 class MemberSection(BaseSection):
-    """memberセクション初期値"""
+    """memberセクション"""
 
-    def __init__(self, outer: "AppConfig", section_name: str):
-        self._parser = outer._parser
-
+    def __init__(self):
         self.list: dict[str, str] = {}
         """メンバーリスト"""
         self.registration_limit: int = 255
@@ -263,19 +276,27 @@ class MemberSection(BaseSection):
         self.guest_name: str = "ゲスト"
         """未登録メンバー名称"""
 
-        # 設定値取り込み
-        super().__init__(self, section_name)
+    def config_load(self, outer: "AppConfig"):
+        """設定値取り込み
+
+        Args:
+            outer (AppConfig): 設定クラスオブジェクト
+        """
+
+        _section_name: str = "member"
+        self._parser = outer._parser
+        super().__init__(self, _section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [x.strip() for x in self._parser.get("member", "commandword", fallback="メンバー一覧").split(",")]
+        self.commandword = [x.strip() for x in self._parser.get(_section_name, "commandword", fallback="メンバー一覧").split(",")]
+
+        logging.debug("%s: %s", _section_name, self)
 
 
 class TeamSection(BaseSection):
-    """teamセクション初期値"""
+    """teamセクション"""
 
-    def __init__(self, outer: "AppConfig", section_name: str):
-        self._parser = outer._parser
-
+    def __init__(self):
         self.list: list["TeamDataDict"] = []
         """チームリスト"""
         self.registration_limit: int = 255
@@ -287,19 +308,27 @@ class TeamSection(BaseSection):
         self.friendly_fire: bool = True
         """チームメイトが同卓しているゲームを集計対象に含めるか"""
 
-        # 設定値取り込み
-        super().__init__(self, section_name)
+    def config_load(self, outer: "AppConfig"):
+        """設定値取り込み
+
+        Args:
+            outer (AppConfig): 設定クラスオブジェクト
+        """
+
+        _section_name: str = "team"
+        self._parser = outer._parser
+        super().__init__(self, _section_name)
 
         # 呼び出しキーワード取り込み
-        self.commandword = [x.strip() for x in self._parser.get("team", "commandword", fallback="チーム一覧").split(",")]
+        self.commandword = [x.strip() for x in self._parser.get(_section_name, "commandword", fallback="チーム一覧").split(",")]
+
+        logging.debug("%s: %s", _section_name, self)
 
 
 class AliasSection(BaseSection):
     """aliasセクション初期値"""
 
-    def __init__(self, outer: "AppConfig", section_name: str):
-        self._parser = outer._parser
-
+    def __init__(self):
         self.results: list = ["成績"]
         self.graph: list = ["グラフ"]
         self.ranking: list = ["ランキング"]
@@ -315,8 +344,16 @@ class AliasSection(BaseSection):
         self.team_list: list = []
         self.team_clear: list = []
 
-        # 設定値取り込み
-        super().__init__(self, section_name)
+    def config_load(self, outer: "AppConfig"):
+        """設定値取り込み
+
+        Args:
+            outer (AppConfig): 設定クラスオブジェクト
+        """
+
+        _section_name: str = "alias"
+        self._parser = outer._parser
+        super().__init__(self, _section_name)
 
         # デフォルト値として自身と同じ名前のコマンドを登録する #
         for k in self.to_dict():
@@ -326,6 +363,8 @@ class AliasSection(BaseSection):
         # delのエイリアス取り込み(設定ファイルに`delete`と書かれていない)
         list_data = [x.strip() for x in str(self._parser.get("alias", "del", fallback="")).split(",")]
         self.delete.extend(list_data)
+
+        logging.debug("%s: %s", _section_name, self)
 
 
 class DropItems(BaseSection):
@@ -374,13 +413,12 @@ class BadgeDisplay(BaseSection):
 
 
 class SubCommand(BaseSection):
-    """サブコマンド共通クラス"""
+    """サブコマンドセクション"""
 
-    def __init__(self, outer: "AppConfig", section_name: str):
-        self._parser = outer._parser
+    def __init__(self, section_name: str):
         self.section = section_name
+        """サブコマンドセクション名"""
 
-        self.section: str = ""
         self.commandword: list = []
         """呼び出しキーワード"""
         self.aggregation_range: str = "当日"
@@ -423,8 +461,15 @@ class SubCommand(BaseSection):
         self.filename: str = ""
         self.interval: int = 80
 
-        # 設定値取り込み
-        super().__init__(self, section_name)
+    def config_load(self, outer: "AppConfig"):
+        """設定値取り込み
+
+        Args:
+            outer (AppConfig): 設定クラスオブジェクト
+        """
+
+        self._parser = outer._parser
+        super().__init__(self, self.section)
 
         # 呼び出しキーワード取り込み
         default_word = {
@@ -433,7 +478,9 @@ class SubCommand(BaseSection):
             "ranking": "麻雀ランキング",
             "report": "麻雀成績レポート",
         }
-        self.commandword = [x.strip() for x in self._parser.get(section_name, "commandword", fallback=default_word[section_name]).split(",")]
+        self.commandword = [x.strip() for x in self._parser.get(self.section, "commandword", fallback=default_word[self.section]).split(",")]
+
+        logging.debug("%s: %s", self.section, self)
 
     def stipulated_calculation(self, game_count: int) -> int:
         """規定打数をゲーム数から計算
@@ -503,30 +550,33 @@ class AppConfig:
         self.config_dir = self.config_file.absolute().parent
         """設定ファイルが保存されているディレクトリパス"""
 
-        # 設定値取り込み
-        self.setting = SettingSection(self, "setting")
+        # 設定値
+        self.setting = SettingSection()
         """settingセクション設定値"""
-        self.mahjong = MahjongSection(self, "mahjong")
+        self.mahjong = MahjongSection()
         """mahjongセクション設定値"""
-        self.member = MemberSection(self, "member")
-        """memberセクション設定値"""
-        self.team = TeamSection(self, "team")
-        """teamセクション設定値"""
-        self.alias = AliasSection(self, "alias")
+        self.alias = AliasSection()
         """aliasセクション設定値"""
-        self.dropitems = DropItems(self)  # 非表示項目
+
+        self.member = MemberSection()
+        """memberセクション設定値"""
+        self.team = TeamSection()
+        """teamセクション設定値"""
+
+        self.dropitems = DropItems(self)
         """非表示項目"""
-        self.badge = BadgeDisplay(self)  # バッジ表示
+
+        self.badge = BadgeDisplay(self)
         """バッジ設定"""
 
         # サブコマンド
-        self.results = SubCommand(self, "results")
+        self.results = SubCommand("results")
         """resultsセクション設定値"""
-        self.graph = SubCommand(self, "graph")
+        self.graph = SubCommand("graph")
         """graphセクション設定値"""
-        self.ranking = SubCommand(self, "ranking")
+        self.ranking = SubCommand("ranking")
         """rankingセクション設定値"""
-        self.report = SubCommand(self, "report")
+        self.report = SubCommand("report")
         """reportセクション設定値"""
 
         # 共通設定値
@@ -546,6 +596,18 @@ class AppConfig:
             self.keyword.rule = {self.setting.keyword: self.config_file}
         if self.setting.keyword not in self.keyword.rule:
             self.keyword.rule.update({self.setting.keyword: self.config_file})
+
+        # 設定ファイル読み込み
+        self.setting.config_load(self)
+        self.mahjong.config_load(self)
+        self.alias.config_load(self)
+        self.member.config_load(self)
+        self.team.config_load(self)
+
+        self.results.config_load(self)
+        self.graph.config_load(self)
+        self.ranking.config_load(self)
+        self.report.config_load(self)
 
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
@@ -595,17 +657,17 @@ class AppConfig:
 
         match section_name:
             case "setting":
-                self.setting = SettingSection(self, section_name)
+                self.setting.config_load(self)
             case "mahjong":
-                self.mahjong = MahjongSection(self, section_name)
+                self.mahjong.config_load(self)
             case "results":
-                self.results = SubCommand(self, section_name)
+                self.results.config_load(self)
             case "graph":
-                self.graph = SubCommand(self, section_name)
+                self.graph.config_load(self)
             case "ranking":
-                self.ranking = SubCommand(self, section_name)
+                self.ranking.config_load(self)
             case "report":
-                self.report = SubCommand(self, section_name)
+                self.report.config_load(self)
             case _:
                 return
 
