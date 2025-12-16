@@ -26,7 +26,6 @@ SubClassType: TypeAlias = Union[
     "MemberSection",
     "TeamSection",
     "AliasSection",
-    "CommentSection",
     "DropItems",
     "BadgeDisplay",
     "SubCommand",
