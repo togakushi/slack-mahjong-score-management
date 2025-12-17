@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 if __name__ == "__main__":
     configuration.setup()
-    initialization.initialization_resultdb()
+    initialization.initialization_resultdb(g.cfg.setting.database_file)
     configuration.read_memberslist(log=False)
 
     match g.selected_service:

@@ -32,7 +32,7 @@ def database_connection():
 def initialize_database(database_connection):
     """DB初期化"""
     _ = database_connection  # pylint (W0613: Unused argument)
-    initialization.initialization_resultdb()
+    initialization.initialization_resultdb(g.cfg.setting.database_file)
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         pd.read_csv("tests/test_data/saki_member.csv").to_sql(
             name="member",

@@ -13,14 +13,19 @@ from libs.utils import dbutil
 
 if TYPE_CHECKING:
     from configparser import ConfigParser
+    from pathlib import Path
 
     from libs.types import GradeTableDict
 
 
-def initialization_resultdb() -> None:
-    """DB初期化 & マイグレーション"""
+def initialization_resultdb(database_file: str | "Path") -> None:
+    """DB初期化 & マイグレーション
 
-    resultdb = dbutil.connection(g.cfg.setting.database_file)
+    Args:
+        database_file (str | Path): データベース接続パス
+    """
+
+    resultdb = dbutil.connection(database_file)
     memdb = dbutil.connection(":memory:")
 
     table_list = {
