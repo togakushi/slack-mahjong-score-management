@@ -5,6 +5,7 @@ tests/database/conftest.py
 """
 
 from contextlib import closing
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -20,7 +21,7 @@ from libs.utils import dbutil
 def database_connection():
     """共有インメモリDBと接続"""
     configuration.set_loglevel()
-    g.cfg = AppConfig("tests/testdata/minimal.ini")
+    g.cfg = AppConfig(Path("tests/testdata/minimal.ini"))
     g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"
     conn = dbutil.connection(g.cfg.setting.database_file)
     yield conn

@@ -43,11 +43,11 @@ def check_namepattern(name: str, kind: Literal["member", "team"]) -> tuple[bool,
     ret_msg: str = "OK"
 
     # 名前チェック
-    check_list = _pattern_gen(list(g.member_list.keys()))  # メンバーチェック
+    check_list = _pattern_gen(list(g.cfg.member.list.keys()))  # メンバーチェック
     if ret_flg and any(x in check_list for x in check_pattern):
         ret_flg, ret_msg = False, f"「{name}」は存在するメンバーです。"
 
-    check_list = _pattern_gen([x["team"] for x in g.team_list])  # チームチェック
+    check_list = _pattern_gen([x["team"] for x in g.cfg.team.list])  # チームチェック
     if ret_flg and any(x in check_list for x in check_pattern):
         ret_flg, ret_msg = False, f"「{name}」は存在するチームです。"
 

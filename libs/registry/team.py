@@ -24,7 +24,7 @@ def create(argument: list) -> str:
 
     if len(argument) == 1:  # 新規追加
         team_name = textutil.str_conv(argument[0], "h2z")
-        if len(g.team_list) > g.cfg.team.registration_limit:
+        if len(g.cfg.team.list) > g.cfg.team.registration_limit:
             msg = "登録上限を超えています。"
         else:  # 登録処理
             ret, msg = validator.check_namepattern(team_name, "team")
@@ -36,7 +36,7 @@ def create(argument: list) -> str:
                 )
                 resultdb.commit()
                 resultdb.close()
-                g.team_list = lookup.db.get_team_list()
+                g.cfg.team.list = lookup.db.get_team_list()
                 msg = f"チーム「{team_name}」を登録しました。"
                 logging.info("add new team: %s", team_name)
 
@@ -57,11 +57,11 @@ def delete(argument: list) -> str:
 
     if len(argument) == 1:  # 新規追加
         team_name = textutil.str_conv(argument[0], "h2z")
-        if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
+        if team_name not in [x["team"] for x in g.cfg.team.list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
             msg = modify.db_backup()
-            team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
+            team_id = [x["id"] for x in g.cfg.team.list if x["team"] == team_name][0]
             resultdb = dbutil.connection(g.cfg.setting.database_file)
             resultdb.execute("delete from team where id = ?", (team_id,))
             resultdb.execute(
@@ -70,7 +70,7 @@ def delete(argument: list) -> str:
             )
             resultdb.commit()
             resultdb.close()
-            g.team_list = lookup.db.get_team_list()
+            g.cfg.team.list = lookup.db.get_team_list()
             msg += f"\nチーム「{team_name}」を削除しました。"
             logging.info("team delete: %s", team_name)
 
@@ -102,13 +102,13 @@ def append(argument: list) -> str:
         registration_flg = True
         team_id = None
 
-        if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
+        if team_name not in [x["team"] for x in g.cfg.team.list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」はまだ登録されていません。"
             registration_flg = False
         else:
-            team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
+            team_id = [x["id"] for x in g.cfg.team.list if x["team"] == team_name][0]
 
-        if player_name not in g.member_list:  # 未登録プレイヤーチェック
+        if player_name not in g.cfg.member.list:  # 未登録プレイヤーチェック
             msg = f"「{player_name}」はレギュラーメンバーではありません。"
             registration_flg = False
 
@@ -128,7 +128,7 @@ def append(argument: list) -> str:
             )
             resultdb.commit()
             resultdb.close()
-            g.team_list = lookup.db.get_team_list()
+            g.cfg.team.list = lookup.db.get_team_list()
             msg = f"チーム「{team_name}」に「{player_name}」を所属させました。"
             logging.info("team participation: %s -> %s", team_name, player_name)
 
@@ -162,13 +162,13 @@ def remove(argument: list) -> str:
         registration_flg = True
         team_id = None
 
-        if team_name not in [x["team"] for x in g.team_list]:  # 未登録チームチェック
+        if team_name not in [x["team"] for x in g.cfg.team.list]:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
             registration_flg = False
         else:
-            team_id = [x["id"] for x in g.team_list if x["team"] == team_name][0]
+            team_id = [x["id"] for x in g.cfg.team.list if x["team"] == team_name][0]
 
-        if player_name not in g.member_list:  # 未登録プレイヤーチェック
+        if player_name not in g.cfg.member.list:  # 未登録プレイヤーチェック
             msg = f"「{player_name}」はレギュラーメンバーではありません。"
             registration_flg = False
 
@@ -180,7 +180,7 @@ def remove(argument: list) -> str:
             )
             resultdb.commit()
             resultdb.close()
-            g.team_list = lookup.db.get_team_list()
+            g.cfg.team.list = lookup.db.get_team_list()
             msg = f"チーム「{team_name}」から「{player_name}」を離脱させました。"
             logging.info("team breakaway: %s -> %s", team_name, player_name)
 
@@ -204,7 +204,7 @@ def clear() -> str:
     resultdb.close()
 
     initialization.initialization_resultdb()
-    g.member_list = lookup.db.get_member_list()
-    g.team_list = lookup.db.get_team_list()
+    g.cfg.member.list = lookup.db.get_member_list()
+    g.cfg.team.list = lookup.db.get_team_list()
 
     return msg

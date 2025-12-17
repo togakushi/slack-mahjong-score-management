@@ -32,7 +32,7 @@ def aggregation(m: "MessageParserProtocol"):
 
     if g.params["player_name"] in lookup.internal.get_team():
         g.params.update({"individual": False})
-    elif g.params["player_name"] in g.member_list:
+    elif g.params["player_name"] in g.cfg.member.list:
         g.params.update({"individual": True})
 
     # --- データ収集
@@ -162,7 +162,7 @@ def comparison(m: "MessageParserProtocol"):
 
     if g.params["player_name"] in lookup.internal.get_team():
         g.params.update({"individual": False})
-    elif g.params["player_name"] in g.member_list:
+    elif g.params["player_name"] in g.cfg.member.list:
         g.params.update({"individual": True})
 
     # データ収集

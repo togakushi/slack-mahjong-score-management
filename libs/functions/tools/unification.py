@@ -83,7 +83,7 @@ def main():
         db.close()
     else:
         db = dbutil.connection(g.cfg.setting.database_file)
-        for alias, name in g.member_list.items():
+        for alias, name in g.cfg.member.list.items():
             check_list: list = [
                 textutil.str_conv(name, "k2h"),
                 textutil.str_conv(name, "h2k"),

@@ -108,7 +108,7 @@ def append(argument: list) -> str:
     resultdb.commit()
     resultdb.close()
 
-    g.member_list = lookup.db.get_member_list()
+    g.cfg.member.list = lookup.db.get_member_list()
     return msg
 
 
@@ -129,7 +129,7 @@ def remove(argument: list) -> str:
 
     if len(argument) == 1:  # メンバー削除
         new_name = textutil.str_conv(argument[0], "h2z")
-        if new_name in g.member_list:
+        if new_name in g.cfg.member.list:
             resultdb.execute(
                 "delete from member where name=?",
                 (new_name,),
@@ -146,7 +146,7 @@ def remove(argument: list) -> str:
     if len(argument) == 2:  # 別名削除
         new_name = textutil.str_conv(argument[0], "h2z")
         nic_name = textutil.str_conv(argument[1], "h2z")
-        if nic_name in g.member_list:
+        if nic_name in g.cfg.member.list:
             resultdb.execute(
                 "delete from alias where name=? and member=?",
                 (nic_name, new_name),
@@ -159,5 +159,5 @@ def remove(argument: list) -> str:
     resultdb.commit()
     resultdb.close()
 
-    g.member_list = lookup.db.get_member_list()
+    g.cfg.member.list = lookup.db.get_member_list()
     return msg

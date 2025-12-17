@@ -2,6 +2,8 @@
 tests/parser/test_score.py
 """
 
+from pathlib import Path
+
 import pytest
 
 import libs.global_value as g
@@ -21,7 +23,7 @@ from tests.parser import param_data
 def test_score_report(input_str, result_dict, get_point):
     """得点入力"""
     configuration.set_loglevel()
-    g.cfg = AppConfig("tests/testdata/minimal.ini")
+    g.cfg = AppConfig(Path("tests/testdata/minimal.ini"))
     adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
     m.data.text = input_str
@@ -59,7 +61,7 @@ def test_score_report(input_str, result_dict, get_point):
 def test_point_calc_seat(rpoint_list, point_dict, rank_dict):
     """ポイント計算 (同点席順)"""
     configuration.set_loglevel()
-    g.cfg = AppConfig("tests/testdata/minimal.ini")
+    g.cfg = AppConfig(Path("tests/testdata/minimal.ini"))
 
     result = GameResult(
         ts="1234567890.123456",
@@ -94,7 +96,7 @@ def test_point_calc_seat(rpoint_list, point_dict, rank_dict):
 def test_point_calc_division(rpoint_list, point_dict, rank_dict):
     """ポイント計算 (同点山分け)"""
     configuration.set_loglevel()
-    g.cfg = AppConfig("tests/testdata/minimal.ini")
+    g.cfg = AppConfig(Path("tests/testdata/minimal.ini"))
 
     result = GameResult(
         ts="1234567890.123456",

@@ -21,10 +21,6 @@ if TYPE_CHECKING:
 def by_keyword(m: "MessageParserProtocol"):
     """メイン処理"""
 
-    # 設定値再取り込み(初期化)
-    g.cfg.overwrite(g.cfg.config_file, "setting")
-    g.cfg.overwrite(g.cfg.config_file, "mahjong")
-
     logging.debug("keyword=%s, argument=%s", m.keyword, m.argument)
     logging.debug(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, keyword=%s, user_id=%s,",

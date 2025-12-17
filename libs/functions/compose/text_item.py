@@ -40,7 +40,7 @@ def remarks(headword=False) -> str | list:
         remark_list.append(f"規定打数 {g.params['stipulated']} G以上")
     if g.params.get("command") in ["ranking"]:
         remark_list.append(f"{int(g.params.get('ranked', g.cfg.ranking.ranked))}位まで表示")
-    if g.params.get("rule_version") != g.cfg.mahjong.rule_version:
+    if g.params.get("rule_version") != g.params.get("default_rule"):
         remark_list.append(f"集計対象ルール {g.params['rule_version']}")
     if g.params.get("mixed"):
         remark_list.append("集計対象ルール すべて")

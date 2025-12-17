@@ -4,7 +4,7 @@ libs/data/lookup/db.py
 
 from contextlib import closing
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, cast
 
 import pandas as pd
 
@@ -14,6 +14,7 @@ from libs.data import loader
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
+    from cls.timekit import ExtendedDatetime as ExtDt
     from libs.types import PlaceholderDict, TeamDataDict
 
 
@@ -67,8 +68,8 @@ def member_info(params: "PlaceholderDict") -> dict:
     )
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
-        params["starttime"] = params["starttime"].format("sql")
-        params["endtime"] = params["endtime"].format("sql")
+        params["starttime"] = cast("ExtDt", params["starttime"]).format("sql")
+        params["endtime"] = cast("ExtDt", params["endtime"]).format("sql")
         rows = conn.execute(sql, params)
         ret = dict(rows.fetchone())
 

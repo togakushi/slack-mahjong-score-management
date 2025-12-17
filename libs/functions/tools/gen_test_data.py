@@ -28,9 +28,9 @@ def main(season_times: int = 1):
     configuration.read_memberslist(log=False)
 
     # 対戦組み合わせ作成
-    teams: list = [x["team"] for x in g.team_list]
+    teams: list = [x["team"] for x in g.cfg.team.list]
     position: list = ["先鋒", "次鋒", "中堅", "副将", "大将"]
-    teams_data: dict = {x["team"]: x["member"] for x in g.team_list}
+    teams_data: dict = {x["team"]: x["member"] for x in g.cfg.team.list}
     matchup: list = list(itertools.combinations(teams, 4))
     teams_count: dict = {x: 0 for x in teams}
     total_count: int = 0

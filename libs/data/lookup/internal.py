@@ -17,7 +17,7 @@ def get_member() -> list:
         list: メンバーリスト
     """
 
-    return sorted(list(set(g.member_list.values())))
+    return sorted(list(set(g.cfg.member.list.values())))
 
 
 def get_team() -> list:
@@ -27,7 +27,7 @@ def get_team() -> list:
         list: チームリスト
     """
 
-    return [x.get("team") for x in g.team_list]
+    return [x.get("team") for x in g.cfg.team.list]
 
 
 def get_teammates(team: str) -> list:
@@ -41,7 +41,7 @@ def get_teammates(team: str) -> list:
     """
 
     member_list: list = []
-    if team_data := [x for x in g.team_list if x["team"] == team]:
+    if team_data := [x for x in g.cfg.team.list if x["team"] == team]:
         if not (member_list := team_data[0]["member"]):
             member_list = ["未エントリー"]
 
@@ -62,7 +62,7 @@ def which_team(name: str) -> str | None:
 
     team = None
 
-    for x in g.team_list:
+    for x in g.cfg.team.list:
         if x["member"]:
             if name in x["member"]:
                 team = x["team"]
@@ -73,7 +73,7 @@ def which_team(name: str) -> str | None:
 def get_config_value(
     section: str,
     name: str,
-    val_type: Union[int, float, bool, str, list, None] = None,
+    val_type: Union[type[int], type[float], type[bool], type[str], type[list], None] = None,
     fallback: Union[int, float, bool, str, list, None] = None,
 ) -> Union[int, float, bool, str, list, None]:
     """設定値取得

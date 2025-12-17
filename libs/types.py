@@ -148,13 +148,17 @@ class PlaceholderDict(TypedDict, total=False):
     endtime: Union[str, "ExtendedDatetime", None]
     """集計終了日時"""
     onday: Union[str, "ExtendedDatetime", None]
+    default_rule: str
+    """ルール識別子"""
     rule_version: str
-    """集計対象ルール識別子を指定"""
+    """集計対象ルール識別子"""
     mixed: bool
     """ルール識別子の扱い
     - *True*: ルール識別子を考慮しない
     - *False*: ルール識別子を区別する
     """
+    search_word: str
+    """コメント検索文字列"""
     group_length: int
     """コメント検索時に指定文字数でグループ化する"""
 

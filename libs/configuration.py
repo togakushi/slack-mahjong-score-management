@@ -7,6 +7,7 @@ import logging
 import os
 import sys
 from functools import partial
+from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 import libs.commands.graph.entry
@@ -233,14 +234,14 @@ def setup():
             else:
                 logging.basicConfig(level=logging.INFO, format=fmt)
 
-    g.cfg = AppConfig(g.args.config)
+    g.cfg = AppConfig(Path(str(g.args.config)))
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
     register()
 
     # 設定内容のロギング
     logging.info("conf: %s", g.cfg.config_file.absolute())
     logging.info("font: %s", g.cfg.setting.font_file.absolute())
-    logging.info("database: %s", g.cfg.setting.database_file.absolute())
+    logging.info("database: %s", cast(Path, g.cfg.setting.database_file).absolute())
     logging.info("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)
     logging.info("primary keyword: %s, time_adjust: %sh", g.cfg.setting.keyword, g.cfg.setting.time_adjust)
     for keyword, config in g.cfg.keyword.rule.items():
@@ -263,17 +264,25 @@ def read_memberslist(log=True):
     """
 
     g.cfg.member.guest_name = lookup.db.get_guest()
-    g.member_list = lookup.db.get_member_list()
-    g.team_list = lookup.db.get_team_list()
+    g.cfg.member.list = lookup.db.get_member_list()
+    g.cfg.team.list = lookup.db.get_team_list()
 
     if log:
         logging.info("guest_name: %s", g.cfg.member.guest_name)
-        logging.info("member_list: %s", sorted(set(g.member_list.values())))
-        logging.info("team_list: %s", [x["team"] for x in g.team_list])
+        logging.info("member_list: %s", sorted(set(g.cfg.member.list.values())))
+        logging.info("team_list: %s", [x["team"] for x in g.cfg.team.list])
 
 
 def register():
     """ディスパッチテーブル登録"""
+
+    def _switching(m: "MessageParserProtocol"):
+        g.cfg.initialization()
+        if g.cfg.main_parser.has_section(m.status.source):
+            if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
+                logging.debug("Channel override settings: %s", Path(channel_config).absolute())
+                g.cfg.overwrite(Path(channel_config), "setting")
+        read_memberslist(log=False)
 
     def dispatch_help(m: "MessageParserProtocol"):
         m.set_data("ヘルプ", compose.msg_help.event_message(), StyleOptions())
@@ -283,10 +292,12 @@ def register():
         m.set_data("成績記録DB", g.cfg.setting.database_file, StyleOptions())
 
     def dispatch_members_list(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), StyleOptions(codeblock=True))
         m.post.ts = m.data.event_ts
 
     def dispatch_team_list(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("登録済みチーム", lookup.textdata.get_team_list(), StyleOptions(codeblock=True))
         m.post.ts = m.data.event_ts
 
