@@ -627,6 +627,8 @@ class AppConfig:
     def initialization(self):
         """設定ファイル読み込み"""
 
+        self._parser = self.main_parser
+
         self.setting.config_load(self)
         self.mahjong.config_load(self)
         self.alias.config_load(self)
