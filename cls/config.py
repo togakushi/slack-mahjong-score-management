@@ -177,6 +177,7 @@ class MahjongSection(BaseSection):
 
         _section_name: str = "mahjong"
         self._parser = outer._parser
+        self.__init__()
         super().__init__(self, _section_name)
 
         # 順位点更新
@@ -224,6 +225,7 @@ class SettingSection(BaseSection):
 
         _section_name: str = "setting"
         self._parser = outer._parser
+        self.__init__()
         super().__init__(self, _section_name)
 
         # 作業用ディレクトリ作成
@@ -285,6 +287,7 @@ class MemberSection(BaseSection):
 
         _section_name: str = "member"
         self._parser = outer._parser
+        self.__init__()
         super().__init__(self, _section_name)
 
         # 呼び出しキーワード取り込み
@@ -317,6 +320,7 @@ class TeamSection(BaseSection):
 
         _section_name: str = "team"
         self._parser = outer._parser
+        self.__init__()
         super().__init__(self, _section_name)
 
         # 呼び出しキーワード取り込み
@@ -353,6 +357,7 @@ class AliasSection(BaseSection):
 
         _section_name: str = "alias"
         self._parser = outer._parser
+        self.__init__()
         super().__init__(self, _section_name)
 
         # デフォルト値として自身と同じ名前のコマンドを登録する #
@@ -469,6 +474,7 @@ class SubCommand(BaseSection):
         """
 
         self._parser = outer._parser
+        self.__init__(self.section)
         super().__init__(self, self.section)
 
         # 呼び出しキーワード取り込み
@@ -597,7 +603,11 @@ class AppConfig:
         if self.setting.keyword not in self.keyword.rule:
             self.keyword.rule.update({self.setting.keyword: self.config_file})
 
-        # 設定ファイル読み込み
+        self.initialization()
+
+    def initialization(self):
+        """設定ファイル読み込み"""
+
         self.setting.config_load(self)
         self.mahjong.config_load(self)
         self.alias.config_load(self)
@@ -657,17 +667,27 @@ class AppConfig:
 
         match section_name:
             case "setting":
+                protected_values = self.setting.help  # 上書き保護
                 self.setting.config_load(self)
+                self.setting.help = protected_values
             case "mahjong":
                 self.mahjong.config_load(self)
             case "results":
+                protected_values = self.results.commandword  # 上書き保護
                 self.results.config_load(self)
+                self.results.commandword = protected_values
             case "graph":
+                protected_values = self.graph.commandword  # 上書き保護
                 self.graph.config_load(self)
+                self.graph.commandword = protected_values
             case "ranking":
+                protected_values = self.ranking.commandword  # 上書き保護
                 self.ranking.config_load(self)
+                self.ranking.commandword = protected_values
             case "report":
+                protected_values = self.report.commandword  # 上書き保護
                 self.report.config_load(self)
+                self.report.commandword = protected_values
             case _:
                 return
 
