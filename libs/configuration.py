@@ -7,6 +7,7 @@ import logging
 import os
 import sys
 from functools import partial
+from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 import libs.commands.graph.entry
@@ -233,14 +234,14 @@ def setup():
             else:
                 logging.basicConfig(level=logging.INFO, format=fmt)
 
-    g.cfg = AppConfig(g.args.config)
+    g.cfg = AppConfig(Path(str(g.args.config)))
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
     register()
 
     # 設定内容のロギング
     logging.info("conf: %s", g.cfg.config_file.absolute())
     logging.info("font: %s", g.cfg.setting.font_file.absolute())
-    logging.info("database: %s", g.cfg.setting.database_file.absolute())
+    logging.info("database: %s", cast(Path, g.cfg.setting.database_file).absolute())
     logging.info("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)
     logging.info("primary keyword: %s, time_adjust: %sh", g.cfg.setting.keyword, g.cfg.setting.time_adjust)
     for keyword, config in g.cfg.keyword.rule.items():
