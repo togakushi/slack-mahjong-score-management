@@ -25,6 +25,7 @@ def initialization_resultdb(database_file: Union[str, "Path"]) -> None:
         database_file (Union[str, Path]): データベース接続パス
     """
 
+    logging.debug(database_file)
     resultdb = dbutil.connection(database_file)
     memdb = dbutil.connection(":memory:")
 

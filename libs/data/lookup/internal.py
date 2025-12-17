@@ -2,12 +2,13 @@
 libs/data/lookup/internal.py
 """
 
-from typing import TYPE_CHECKING, Union, cast
+from configparser import ConfigParser
+from typing import TYPE_CHECKING, Union
 
 import libs.global_value as g
 
 if TYPE_CHECKING:
-    from configparser import ConfigParser
+    from pathlib import Path
 
 
 def get_member() -> list:
@@ -71,6 +72,7 @@ def which_team(name: str) -> str | None:
 
 
 def get_config_value(
+    config_file: "Path",
     section: str,
     name: str,
     val_type: Union[type[int], type[float], type[bool], type[str], type[list], None] = None,
@@ -79,6 +81,7 @@ def get_config_value(
     """設定値取得
 
     Args:
+        config_file (Path): 設定ファイルパス
         section (str): セクション名
         name (str): 項目名
         val_type (Union[int, float, bool, str, list], optional): 取り込む値の型. Defaults to None
@@ -89,7 +92,8 @@ def get_config_value(
     """
 
     value: Union[int, float, bool, str, list, None] = fallback
-    parser = cast("ConfigParser", getattr(g.cfg, "_parser"))
+    parser = ConfigParser()
+    parser.read(config_file, encoding="utf-8")
 
     if parser.has_option(section, name):
         match val_type:
