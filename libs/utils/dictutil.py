@@ -37,16 +37,19 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
 
     # 設定周りのパラメータの取り込み
     ret_dict.update(
-        {
-            "command": subcom.section,
-            "guest_name": g.cfg.member.guest_name,
-            "undefined_word": g.cfg.undefined_word,
-            "source": m.status.source,
-            "search_word": g.cfg.setting.search_word,
-            "group_length": g.cfg.setting.group_length,
-            **g.cfg.mahjong.to_dict(),  # 初期値
-            **subcom.to_dict(),  # デフォルト値
-        }
+        cast(
+            "PlaceholderDict",
+            {
+                "command": subcom.section,
+                "guest_name": g.cfg.member.guest_name,
+                "undefined_word": g.cfg.undefined_word,
+                "source": m.status.source,
+                "search_word": g.cfg.setting.search_word,
+                "group_length": g.cfg.setting.group_length,
+                **g.cfg.mahjong.to_dict(),  # 初期値
+                **subcom.to_dict(),  # デフォルト値
+            },
+        )
     )
 
     # 個別設定取り込み(上書き)
@@ -54,20 +57,25 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         ret_dict.update({"separate": g.adapter.conf.separate})
     ret_dict.update(
         {
-            "separate": lookup.internal.get_config_value(
-                section=m.status.source,
-                name="separate",
-                val_type=bool,
-                fallback=ret_dict["separate"],
+            "separate": bool(
+                lookup.internal.get_config_value(
+                    section=m.status.source,
+                    name="separate",
+                    val_type=bool,
+                    fallback=ret_dict["separate"],
+                )
             ),
-            "rule_version": lookup.internal.get_config_value(
-                section=m.status.source,
-                name="rule_version",
-                val_type=str,
-                fallback=ret_dict["rule_version"],
+            "rule_version": str(
+                lookup.internal.get_config_value(
+                    section=m.status.source,
+                    name="rule_version",
+                    val_type=str,
+                    fallback=ret_dict["rule_version"],
+                )
             ),
-        }
+        },
     )
+
     ret_dict.update({"default_rule": ret_dict["rule_version"]})
 
     # always_argumentの処理
