@@ -3,6 +3,7 @@ libs/utils/dictutil.py
 """
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 import libs.global_value as g
@@ -32,8 +33,20 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
 
     # 初期化
     g.params = {}
+    g.cfg.initialization()
 
     # 設定周りのパラメータの取り込み
+    if g.cfg.main_parser.has_section(m.status.source):
+        if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
+            logging.debug("Channel override settings: %s", Path(channel_config).absolute())
+            g.cfg.overwrite(Path(channel_config), "setting")
+            g.cfg.overwrite(Path(channel_config), "mahjong")
+            g.cfg.overwrite(Path(channel_config), subcom.section)
+
+    g.cfg.member.guest_name = lookup.db.get_guest()
+    g.cfg.member.list = lookup.db.get_member_list()
+    g.cfg.team.list = lookup.db.get_team_list()
+
     ret_dict: "PlaceholderDict" = {
         "command": subcom.section,
         "guest_name": g.cfg.member.guest_name,
