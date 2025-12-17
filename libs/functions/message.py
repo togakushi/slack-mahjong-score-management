@@ -5,15 +5,15 @@ libs/functions/message.py
 import logging
 import random
 import textwrap
-from typing import TYPE_CHECKING, cast
+from configparser import ConfigParser
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
 from libs.functions import compose
 
 if TYPE_CHECKING:
-    from configparser import ConfigParser
-
     from integrations.protocols import MessageParserProtocol
     from libs.datamodels import GameInfo
 
@@ -28,6 +28,9 @@ def random_reply(m: "MessageParserProtocol", message_type: str) -> str:
     Returns:
         str: 応答メッセージ
     """
+
+    parser = ConfigParser()
+    parser.read(g.cfg.config_file, encoding="utf-8")
 
     correct_score = g.cfg.mahjong.origin_point * 4  # 配給原点
     rpoint_diff = abs(correct_score - m.status.rpoint_sum)
@@ -46,9 +49,13 @@ def random_reply(m: "MessageParserProtocol", message_type: str) -> str:
 
     msg = default_message_type.get(message_type, "invalid_argument")
 
-    if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("custom_message"):
+    if g.cfg.main_parser.has_section(m.status.source):
+        if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
+            parser.read(Path(channel_config), encoding="utf-8")
+
+    if parser.has_section("custom_message"):
         msg_list = []
-        for key, val in cast("ConfigParser", getattr(g.cfg, "_parser")).items("custom_message"):
+        for key, val in parser.items("custom_message"):
             if key.startswith(message_type):
                 msg_list.append(val)
         if msg_list:
