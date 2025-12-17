@@ -142,6 +142,9 @@ class MahjongSection(BaseSection):
     """mahjongセクション"""
 
     def __init__(self):
+        self._reset()
+
+    def _reset(self):
         self.rule_version: str = ""
         """ルール判別識別子"""
         self.origin_point: int = 250
@@ -177,7 +180,7 @@ class MahjongSection(BaseSection):
 
         _section_name: str = "mahjong"
         self._parser = outer._parser
-        self.__init__()
+        self._reset()
         super().__init__(self, _section_name)
 
         # 順位点更新
@@ -192,6 +195,9 @@ class SettingSection(BaseSection):
     """settingセクション"""
 
     def __init__(self):
+        self._reset()
+
+    def _reset(self):
         self.help: str = "麻雀成績ヘルプ"
         """ヘルプ表示キーワード"""
         self.keyword: str = "終局"
@@ -225,7 +231,7 @@ class SettingSection(BaseSection):
 
         _section_name: str = "setting"
         self._parser = outer._parser
-        self.__init__()
+        self._reset()
         super().__init__(self, _section_name)
 
         # 作業用ディレクトリ作成
@@ -267,6 +273,9 @@ class MemberSection(BaseSection):
     """memberセクション"""
 
     def __init__(self):
+        self._reset()
+
+    def _reset(self):
         self.list: dict[str, str] = {}
         """メンバーリスト"""
         self.registration_limit: int = 255
@@ -287,7 +296,7 @@ class MemberSection(BaseSection):
 
         _section_name: str = "member"
         self._parser = outer._parser
-        self.__init__()
+        self._reset()
         super().__init__(self, _section_name)
 
         # 呼び出しキーワード取り込み
@@ -300,6 +309,9 @@ class TeamSection(BaseSection):
     """teamセクション"""
 
     def __init__(self):
+        self._reset()
+
+    def _reset(self):
         self.list: list["TeamDataDict"] = []
         """チームリスト"""
         self.registration_limit: int = 255
@@ -320,7 +332,7 @@ class TeamSection(BaseSection):
 
         _section_name: str = "team"
         self._parser = outer._parser
-        self.__init__()
+        self._reset()
         super().__init__(self, _section_name)
 
         # 呼び出しキーワード取り込み
@@ -333,6 +345,9 @@ class AliasSection(BaseSection):
     """aliasセクション初期値"""
 
     def __init__(self):
+        self._reset()
+
+    def _reset(self):
         self.results: list = ["成績"]
         self.graph: list = ["グラフ"]
         self.ranking: list = ["ランキング"]
@@ -357,7 +372,7 @@ class AliasSection(BaseSection):
 
         _section_name: str = "alias"
         self._parser = outer._parser
-        self.__init__()
+        self._reset()
         super().__init__(self, _section_name)
 
         # デフォルト値として自身と同じ名前のコマンドを登録する #
@@ -421,7 +436,10 @@ class SubCommand(BaseSection):
     """サブコマンドセクション"""
 
     def __init__(self, section_name: str):
-        self.section = section_name
+        self._reset(section_name)
+
+    def _reset(self, section_name: str):
+        self.section: str = section_name
         """サブコマンドセクション名"""
 
         self.commandword: list = []
@@ -474,7 +492,7 @@ class SubCommand(BaseSection):
         """
 
         self._parser = outer._parser
-        self.__init__(self.section)
+        self._reset(self.section)
         super().__init__(self, self.section)
 
         # 呼び出しキーワード取り込み
@@ -506,7 +524,7 @@ class KeywordMapping(BaseSection):
 
     def __init__(self, outer: "AppConfig", section_name: str):
         self._parser = outer._parser
-        self.rule: dict[str, Union[Path, str]] = {}
+        self.rule: dict[str, Path] = {}
 
         # 設定値取り込み
         for k, v in self._parser.items(section_name):
@@ -519,11 +537,12 @@ class KeywordMapping(BaseSection):
 class AppConfig:
     """コンフィグ解析クラス"""
 
-    def __init__(self, config_file: str):
-        self.config_file = Path(config_file)
+    def __init__(self, config_file: Path):
+        self.config_file = config_file
         try:
-            self._parser = ConfigParser()
-            self._parser.read(self.config_file, encoding="utf-8")
+            self.main_parser = ConfigParser()
+            self.main_parser.read(self.config_file, encoding="utf-8")
+            self._parser = self.main_parser
         except Exception as err:
             raise RuntimeError(err) from err
 
@@ -647,24 +666,25 @@ class AppConfig:
 
         return words
 
-    def overwrite(self, config_file: PosixPath, section_name: str):
+    def overwrite(self, additional_config: Path, section_name: str):
         """指定セクションを上書き
 
         Args:
-            config_file (PosixPath): 設定ファイルパス
+            additional_config (Path): 追加設定ファイルパス
             section_name (str): セクション名
         """
 
-        if not config_file.exists:
+        if not additional_config.exists():
             return
 
         try:
             self._parser = ConfigParser()
-            self._parser.read(config_file, encoding="utf-8")
+            self._parser.read([self.config_file, additional_config], encoding="utf-8")
         except Exception as err:
             logging.error(err)
             return
 
+        protected_values: Union[str, list]
         match section_name:
             case "setting":
                 protected_values = self.setting.help  # 上書き保護
@@ -690,5 +710,3 @@ class AppConfig:
                 self.report.commandword = protected_values
             case _:
                 return
-
-        logging.debug("%s: %s", section_name, config_file)
