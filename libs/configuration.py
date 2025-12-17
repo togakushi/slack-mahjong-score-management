@@ -276,6 +276,14 @@ def read_memberslist(log=True):
 def register():
     """ディスパッチテーブル登録"""
 
+    def _switching(m: "MessageParserProtocol"):
+        g.cfg.initialization()
+        if g.cfg.main_parser.has_section(m.status.source):
+            if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
+                logging.debug("Channel override settings: %s", Path(channel_config).absolute())
+                g.cfg.overwrite(Path(channel_config), "setting")
+        read_memberslist(log=False)
+
     def dispatch_help(m: "MessageParserProtocol"):
         m.set_data("ヘルプ", compose.msg_help.event_message(), StyleOptions())
         m.post.ts = m.data.event_ts
@@ -284,10 +292,12 @@ def register():
         m.set_data("成績記録DB", g.cfg.setting.database_file, StyleOptions())
 
     def dispatch_members_list(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), StyleOptions(codeblock=True))
         m.post.ts = m.data.event_ts
 
     def dispatch_team_list(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("登録済みチーム", lookup.textdata.get_team_list(), StyleOptions(codeblock=True))
         m.post.ts = m.data.event_ts
 
