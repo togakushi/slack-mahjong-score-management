@@ -3,7 +3,6 @@ libs/utils/dictutil.py
 """
 
 import logging
-from types import NoneType
 from typing import TYPE_CHECKING, Any, cast
 
 import libs.global_value as g
@@ -30,51 +29,21 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     """
 
     parser = CommandParser()
-    ret_dict: "PlaceholderDict" = {}
 
     # 初期化
     g.params = {}
 
     # 設定周りのパラメータの取り込み
-    ret_dict.update(
-        cast(
-            "PlaceholderDict",
-            {
-                "command": subcom.section,
-                "guest_name": g.cfg.member.guest_name,
-                "undefined_word": g.cfg.undefined_word,
-                "source": m.status.source,
-                "search_word": g.cfg.setting.search_word,
-                "group_length": g.cfg.setting.group_length,
-                **g.cfg.mahjong.to_dict(),  # 初期値
-                **subcom.to_dict(),  # デフォルト値
-            },
-        )
-    )
-
-    # 個別設定取り込み(上書き)
-    if not isinstance(g.adapter.conf.separate, NoneType):
-        ret_dict.update({"separate": g.adapter.conf.separate})
-    ret_dict.update(
-        {
-            "separate": bool(
-                lookup.internal.get_config_value(
-                    section=m.status.source,
-                    name="separate",
-                    val_type=bool,
-                    fallback=ret_dict["separate"],
-                )
-            ),
-            "rule_version": str(
-                lookup.internal.get_config_value(
-                    section=m.status.source,
-                    name="rule_version",
-                    val_type=str,
-                    fallback=ret_dict["rule_version"],
-                )
-            ),
-        },
-    )
+    ret_dict: "PlaceholderDict" = {
+        "command": subcom.section,
+        "guest_name": g.cfg.member.guest_name,
+        "undefined_word": g.cfg.undefined_word,
+        "source": m.status.source,
+        "search_word": g.cfg.setting.search_word,
+        "group_length": g.cfg.setting.group_length,
+        **g.cfg.mahjong.to_dict(),  # 初期値
+        **subcom.to_dict(),  # デフォルト値
+    }
 
     ret_dict.update({"default_rule": ret_dict["rule_version"]})
 
