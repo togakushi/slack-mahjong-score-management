@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 if __name__ == "__main__":
     configuration.setup()
     initialization.initialization_resultdb()
-    configuration.read_memberslist()
+    configuration.read_memberslist(log=False)
 
     match g.selected_service:
         case "slack":
