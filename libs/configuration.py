@@ -17,7 +17,7 @@ import libs.commands.results.entry
 import libs.global_value as g
 from cls.config import AppConfig
 from integrations import factory
-from libs.data import lookup
+from libs.data import initialization, lookup
 from libs.functions import compose
 from libs.registry import member, team
 from libs.types import StyleOptions
@@ -238,16 +238,28 @@ def setup():
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
     register()
 
+    # DB初期化
+    initialization.initialization_resultdb(g.cfg.setting.database_file)
+    for section in g.cfg.main_parser.sections():
+        if str(section).startswith(f"{g.adapter.interface_type}_"):
+            if channel_config := g.cfg.main_parser[section].get("channel_config"):
+                others_db = lookup.internal.get_config_value(
+                    config_file=Path(channel_config),
+                    section="setting",
+                    name="database_file",
+                    val_type=str,
+                )
+                if others_db:
+                    initialization.initialization_resultdb(Path(others_db).absolute())
+
     # 設定内容のロギング
-    logging.info("conf: %s", g.cfg.config_file.absolute())
-    logging.info("font: %s", g.cfg.setting.font_file.absolute())
-    logging.info("database: %s", cast(Path, g.cfg.setting.database_file).absolute())
+    logging.info("config: %s", g.cfg.config_file.absolute())
     logging.info("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)
-    logging.info("primary keyword: %s, time_adjust: %sh", g.cfg.setting.keyword, g.cfg.setting.time_adjust)
+    logging.info("keyword: %s, time_adjust: %sh", g.cfg.setting.keyword, g.cfg.setting.time_adjust)
     for keyword, config in g.cfg.keyword.rule.items():
         g.cfg.overwrite(config, "mahjong")
         logging.info(
-            "keyword: %s, rule_version: %s, origin_point: %s, return_point: %s, draw_split: %s",
+            "secondary_keyword: %s, rule_version: %s, origin_point: %s, return_point: %s, draw_split: %s",
             keyword,
             g.cfg.mahjong.rule_version,
             g.cfg.mahjong.origin_point,

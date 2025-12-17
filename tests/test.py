@@ -223,7 +223,7 @@ def main():
 
     flag: dict = {}
 
-    initialization.initialization_resultdb()
+    initialization.initialization_resultdb(g.cfg.setting.database_file)
     configuration.read_memberslist(False)
 
     for sec in test_conf.sections():

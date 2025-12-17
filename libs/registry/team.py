@@ -203,7 +203,7 @@ def clear() -> str:
     resultdb.commit()
     resultdb.close()
 
-    initialization.initialization_resultdb()
+    initialization.initialization_resultdb(g.cfg.setting.database_file)
     g.cfg.member.list = lookup.db.get_member_list()
     g.cfg.team.list = lookup.db.get_team_list()
 

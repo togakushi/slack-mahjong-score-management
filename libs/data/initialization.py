@@ -6,21 +6,27 @@ import json
 import logging
 import os
 from importlib.resources import files
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Union, cast
 
 import libs.global_value as g
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
     from configparser import ConfigParser
+    from pathlib import Path
 
     from libs.types import GradeTableDict
 
 
-def initialization_resultdb() -> None:
-    """DB初期化 & マイグレーション"""
+def initialization_resultdb(database_file: Union[str, "Path"]) -> None:
+    """DB初期化 & マイグレーション
 
-    resultdb = dbutil.connection(g.cfg.setting.database_file)
+    Args:
+        database_file (Union[str, Path]): データベース接続パス
+    """
+
+    logging.debug(database_file)
+    resultdb = dbutil.connection(database_file)
     memdb = dbutil.connection(":memory:")
 
     table_list = {

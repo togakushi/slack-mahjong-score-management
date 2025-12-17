@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, cast
 
 import libs.global_value as g
 from libs import configuration
-from libs.data import initialization
 
 if TYPE_CHECKING:
     from integrations.discord.adapter import ServiceAdapter as discord_adapter
@@ -24,8 +23,6 @@ if TYPE_CHECKING:
 
 if __name__ == "__main__":
     configuration.setup()
-    initialization.initialization_resultdb()
-    configuration.read_memberslist(log=False)
 
     match g.selected_service:
         case "slack":
