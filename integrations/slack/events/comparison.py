@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, cast
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data import modify
+from libs.data import lookup, modify
 from libs.datamodels import ComparisonResults
 from libs.functions import search
 from libs.types import StyleOptions
@@ -28,6 +28,23 @@ def main(m: "MessageParserProtocol") -> None:
     """
 
     g.adapter = cast("ServiceAdapter", g.adapter)
+
+    if g.cfg.main_parser.has_section(m.status.source):
+        g.adapter.conf.search_channel = lookup.internal.get_config_value(
+            config_file=g.cfg.config_file,
+            section=m.status.source,
+            name="search_channel",
+            val_type=str,
+            fallback=g.adapter.conf.search_channel,
+        )
+        g.adapter.conf.search_after = lookup.internal.get_config_value(
+            config_file=g.cfg.config_file,
+            section=m.status.source,
+            name="search_after",
+            val_type=int,
+            fallback=g.adapter.conf.search_after,
+        )
+
     results = ComparisonResults(search_after=-g.adapter.conf.search_after)
 
     check_omission(results)
