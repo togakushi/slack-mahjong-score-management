@@ -157,6 +157,8 @@ class PlaceholderDict(TypedDict, total=False):
     - *True*: ルール識別子を考慮しない
     - *False*: ルール識別子を区別する
     """
+    search_word: str
+    """コメント検索文字列"""
     group_length: int
     """コメント検索時に指定文字数でグループ化する"""
 
