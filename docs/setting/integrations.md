@@ -47,7 +47,7 @@
 | reaction_ng    | 素点合計が誤っている場合に付けるリアクション | 文字列(絵文字)       | 引継   | `slack`セクションの設定を上書き                                                       |
 | search_channel | 突合処理時に検索されるチャンネル             | 文字列(チャンネル名) | 引継   | `slack`セクションの設定を上書き                                                       |
 | search_after   | データ突合開始日                             | 数値                 | 引継   | `slack`セクションの設定を上書き                                                       |
-| channel_config | 個別設定ファイル                             | 文字列(ファイルパス) | None   | `mahjong`、`setting`、`results`、`graph`、`ranking`、`report`セクションの設定を上書き |
+| channel_config | 個別設定ファイル                             | 文字列(ファイルパス) | None   | `mahjong`、`setting`、`results`、`graph`、`ranking`、`report`、`custom_message`セクションの設定を上書き |
 
 > [!TIP]
 > `channel_config`で設定されたセクションは、[設定ファイル](customize.md)で設定されているセクションとマージされる。
