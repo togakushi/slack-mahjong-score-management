@@ -6,7 +6,7 @@ import json
 import logging
 import os
 from importlib.resources import files
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Union, cast
 
 import libs.global_value as g
 from libs.utils import dbutil
@@ -18,11 +18,11 @@ if TYPE_CHECKING:
     from libs.types import GradeTableDict
 
 
-def initialization_resultdb(database_file: str | "Path") -> None:
+def initialization_resultdb(database_file: Union[str, "Path"]) -> None:
     """DB初期化 & マイグレーション
 
     Args:
-        database_file (str | Path): データベース接続パス
+        database_file (Union[str, Path]): データベース接続パス
     """
 
     resultdb = dbutil.connection(database_file)
