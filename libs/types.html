@@ -158,10 +158,16 @@
                                 <a class="variable" href="#PlaceholderDict.onday">onday</a>
                         </li>
                         <li>
+                                <a class="variable" href="#PlaceholderDict.default_rule">default_rule</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#PlaceholderDict.rule_version">rule_version</a>
                         </li>
                         <li>
                                 <a class="variable" href="#PlaceholderDict.mixed">mixed</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PlaceholderDict.search_word">search_word</a>
                         </li>
                         <li>
                                 <a class="variable" href="#PlaceholderDict.group_length">group_length</a>
@@ -441,96 +447,100 @@
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="n">endtime</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;ExtendedDatetime&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計終了日時&quot;&quot;&quot;</span>
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">onday</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;ExtendedDatetime&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">rule_version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計対象ルール識別子を指定&quot;&quot;&quot;</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">mixed</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子の扱い</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">    - *True*: ルール識別子を考慮しない</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">    - *False*: ルール識別子を区別する</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="n">group_length</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コメント検索時に指定文字数でグループ化する&quot;&quot;&quot;</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>    <span class="c1"># 出力関連</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="nb">format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">]</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;出力フォーマット指定&quot;&quot;&quot;</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;出力ファイル名&quot;&quot;&quot;</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>    <span class="c1"># 表示モード切替フラグ</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="n">score_comparisons</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコア比較モード&quot;&quot;&quot;</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>    <span class="n">game_results</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>    <span class="n">order</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;順位表示モード&quot;&quot;&quot;</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="n">versus_matrix</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;対戦結果表示モード&quot;&quot;&quot;</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="n">statistics</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;統計表示モード&quot;&quot;&quot;</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>    <span class="n">rating</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;レーティング表示モード&quot;&quot;&quot;</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;詳細表示モード&quot;&quot;&quot;</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="n">fourfold</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内部フラグ(縦持ちデータで集計)&quot;&quot;&quot;</span>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>    <span class="c1"># その他</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>    <span class="n">undefined_word</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;未登録ワードの扱い</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">    - *0*: 役満扱い</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">    - *1*: 卓外清算(個人清算)</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">    - *2*: カウントのみ</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">    - *3*: 卓外清算(チーム清算)</span>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">default_rule</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子&quot;&quot;&quot;</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">rule_version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計対象ルール識別子&quot;&quot;&quot;</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="n">mixed</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子の扱い</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">    - *True*: ルール識別子を考慮しない</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">    - *False*: ルール識別子を区別する</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="n">search_word</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コメント検索文字列&quot;&quot;&quot;</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="n">group_length</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コメント検索時に指定文字数でグループ化する&quot;&quot;&quot;</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="c1"># 出力関連</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>    <span class="nb">format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">]</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;出力フォーマット指定&quot;&quot;&quot;</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;出力ファイル名&quot;&quot;&quot;</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>    <span class="c1"># 表示モード切替フラグ</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>    <span class="n">score_comparisons</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコア比較モード&quot;&quot;&quot;</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="n">game_results</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="n">order</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;順位表示モード&quot;&quot;&quot;</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>    <span class="n">versus_matrix</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;対戦結果表示モード&quot;&quot;&quot;</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="n">statistics</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;統計表示モード&quot;&quot;&quot;</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="n">rating</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;レーティング表示モード&quot;&quot;&quot;</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;詳細表示モード&quot;&quot;&quot;</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>    <span class="n">fourfold</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内部フラグ(縦持ちデータで集計)&quot;&quot;&quot;</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="c1"># その他</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="n">undefined_word</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;未登録ワードの扱い</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">    - *0*: 役満扱い</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">    - *1*: 卓外清算(個人清算)</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="sd">    - *2*: カウントのみ</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">    - *3*: 卓外清算(チーム清算)</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
 </span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>
-</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>
-</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
-</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
-</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="sd">    - *False*: 降格しない</span>
-</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>
+</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>
+</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
+</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
+</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">    - *False*: 降格しない</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -938,48 +948,52 @@
 </span><span id="PlaceholderDict-149"><a href="#PlaceholderDict-149"><span class="linenos">149</span></a>    <span class="n">endtime</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;ExtendedDatetime&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 </span><span id="PlaceholderDict-150"><a href="#PlaceholderDict-150"><span class="linenos">150</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計終了日時&quot;&quot;&quot;</span>
 </span><span id="PlaceholderDict-151"><a href="#PlaceholderDict-151"><span class="linenos">151</span></a>    <span class="n">onday</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;ExtendedDatetime&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
-</span><span id="PlaceholderDict-152"><a href="#PlaceholderDict-152"><span class="linenos">152</span></a>    <span class="n">rule_version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PlaceholderDict-153"><a href="#PlaceholderDict-153"><span class="linenos">153</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計対象ルール識別子を指定&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-154"><a href="#PlaceholderDict-154"><span class="linenos">154</span></a>    <span class="n">mixed</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-155"><a href="#PlaceholderDict-155"><span class="linenos">155</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子の扱い</span>
-</span><span id="PlaceholderDict-156"><a href="#PlaceholderDict-156"><span class="linenos">156</span></a><span class="sd">    - *True*: ルール識別子を考慮しない</span>
-</span><span id="PlaceholderDict-157"><a href="#PlaceholderDict-157"><span class="linenos">157</span></a><span class="sd">    - *False*: ルール識別子を区別する</span>
-</span><span id="PlaceholderDict-158"><a href="#PlaceholderDict-158"><span class="linenos">158</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-159"><a href="#PlaceholderDict-159"><span class="linenos">159</span></a>    <span class="n">group_length</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="PlaceholderDict-160"><a href="#PlaceholderDict-160"><span class="linenos">160</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コメント検索時に指定文字数でグループ化する&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-161"><a href="#PlaceholderDict-161"><span class="linenos">161</span></a>
-</span><span id="PlaceholderDict-162"><a href="#PlaceholderDict-162"><span class="linenos">162</span></a>    <span class="c1"># 出力関連</span>
-</span><span id="PlaceholderDict-163"><a href="#PlaceholderDict-163"><span class="linenos">163</span></a>    <span class="nb">format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">]</span>
-</span><span id="PlaceholderDict-164"><a href="#PlaceholderDict-164"><span class="linenos">164</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;出力フォーマット指定&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-165"><a href="#PlaceholderDict-165"><span class="linenos">165</span></a>    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PlaceholderDict-166"><a href="#PlaceholderDict-166"><span class="linenos">166</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;出力ファイル名&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-167"><a href="#PlaceholderDict-167"><span class="linenos">167</span></a>
-</span><span id="PlaceholderDict-168"><a href="#PlaceholderDict-168"><span class="linenos">168</span></a>    <span class="c1"># 表示モード切替フラグ</span>
-</span><span id="PlaceholderDict-169"><a href="#PlaceholderDict-169"><span class="linenos">169</span></a>    <span class="n">score_comparisons</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-170"><a href="#PlaceholderDict-170"><span class="linenos">170</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコア比較モード&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-171"><a href="#PlaceholderDict-171"><span class="linenos">171</span></a>    <span class="n">game_results</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-172"><a href="#PlaceholderDict-172"><span class="linenos">172</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-173"><a href="#PlaceholderDict-173"><span class="linenos">173</span></a>    <span class="n">order</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-174"><a href="#PlaceholderDict-174"><span class="linenos">174</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;順位表示モード&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-175"><a href="#PlaceholderDict-175"><span class="linenos">175</span></a>    <span class="n">versus_matrix</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-176"><a href="#PlaceholderDict-176"><span class="linenos">176</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;対戦結果表示モード&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-177"><a href="#PlaceholderDict-177"><span class="linenos">177</span></a>    <span class="n">statistics</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-178"><a href="#PlaceholderDict-178"><span class="linenos">178</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;統計表示モード&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-179"><a href="#PlaceholderDict-179"><span class="linenos">179</span></a>    <span class="n">rating</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-180"><a href="#PlaceholderDict-180"><span class="linenos">180</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;レーティング表示モード&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-181"><a href="#PlaceholderDict-181"><span class="linenos">181</span></a>    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-182"><a href="#PlaceholderDict-182"><span class="linenos">182</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;詳細表示モード&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-183"><a href="#PlaceholderDict-183"><span class="linenos">183</span></a>    <span class="n">fourfold</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="PlaceholderDict-184"><a href="#PlaceholderDict-184"><span class="linenos">184</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内部フラグ(縦持ちデータで集計)&quot;&quot;&quot;</span>
-</span><span id="PlaceholderDict-185"><a href="#PlaceholderDict-185"><span class="linenos">185</span></a>
-</span><span id="PlaceholderDict-186"><a href="#PlaceholderDict-186"><span class="linenos">186</span></a>    <span class="c1"># その他</span>
-</span><span id="PlaceholderDict-187"><a href="#PlaceholderDict-187"><span class="linenos">187</span></a>    <span class="n">undefined_word</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="PlaceholderDict-188"><a href="#PlaceholderDict-188"><span class="linenos">188</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;未登録ワードの扱い</span>
-</span><span id="PlaceholderDict-189"><a href="#PlaceholderDict-189"><span class="linenos">189</span></a><span class="sd">    - *0*: 役満扱い</span>
-</span><span id="PlaceholderDict-190"><a href="#PlaceholderDict-190"><span class="linenos">190</span></a><span class="sd">    - *1*: 卓外清算(個人清算)</span>
-</span><span id="PlaceholderDict-191"><a href="#PlaceholderDict-191"><span class="linenos">191</span></a><span class="sd">    - *2*: カウントのみ</span>
-</span><span id="PlaceholderDict-192"><a href="#PlaceholderDict-192"><span class="linenos">192</span></a><span class="sd">    - *3*: 卓外清算(チーム清算)</span>
-</span><span id="PlaceholderDict-193"><a href="#PlaceholderDict-193"><span class="linenos">193</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-152"><a href="#PlaceholderDict-152"><span class="linenos">152</span></a>    <span class="n">default_rule</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PlaceholderDict-153"><a href="#PlaceholderDict-153"><span class="linenos">153</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-154"><a href="#PlaceholderDict-154"><span class="linenos">154</span></a>    <span class="n">rule_version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PlaceholderDict-155"><a href="#PlaceholderDict-155"><span class="linenos">155</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計対象ルール識別子&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-156"><a href="#PlaceholderDict-156"><span class="linenos">156</span></a>    <span class="n">mixed</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-157"><a href="#PlaceholderDict-157"><span class="linenos">157</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子の扱い</span>
+</span><span id="PlaceholderDict-158"><a href="#PlaceholderDict-158"><span class="linenos">158</span></a><span class="sd">    - *True*: ルール識別子を考慮しない</span>
+</span><span id="PlaceholderDict-159"><a href="#PlaceholderDict-159"><span class="linenos">159</span></a><span class="sd">    - *False*: ルール識別子を区別する</span>
+</span><span id="PlaceholderDict-160"><a href="#PlaceholderDict-160"><span class="linenos">160</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-161"><a href="#PlaceholderDict-161"><span class="linenos">161</span></a>    <span class="n">search_word</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PlaceholderDict-162"><a href="#PlaceholderDict-162"><span class="linenos">162</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コメント検索文字列&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-163"><a href="#PlaceholderDict-163"><span class="linenos">163</span></a>    <span class="n">group_length</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="PlaceholderDict-164"><a href="#PlaceholderDict-164"><span class="linenos">164</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;コメント検索時に指定文字数でグループ化する&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-165"><a href="#PlaceholderDict-165"><span class="linenos">165</span></a>
+</span><span id="PlaceholderDict-166"><a href="#PlaceholderDict-166"><span class="linenos">166</span></a>    <span class="c1"># 出力関連</span>
+</span><span id="PlaceholderDict-167"><a href="#PlaceholderDict-167"><span class="linenos">167</span></a>    <span class="nb">format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;txt&quot;</span><span class="p">]</span>
+</span><span id="PlaceholderDict-168"><a href="#PlaceholderDict-168"><span class="linenos">168</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;出力フォーマット指定&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-169"><a href="#PlaceholderDict-169"><span class="linenos">169</span></a>    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PlaceholderDict-170"><a href="#PlaceholderDict-170"><span class="linenos">170</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;出力ファイル名&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-171"><a href="#PlaceholderDict-171"><span class="linenos">171</span></a>
+</span><span id="PlaceholderDict-172"><a href="#PlaceholderDict-172"><span class="linenos">172</span></a>    <span class="c1"># 表示モード切替フラグ</span>
+</span><span id="PlaceholderDict-173"><a href="#PlaceholderDict-173"><span class="linenos">173</span></a>    <span class="n">score_comparisons</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-174"><a href="#PlaceholderDict-174"><span class="linenos">174</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコア比較モード&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-175"><a href="#PlaceholderDict-175"><span class="linenos">175</span></a>    <span class="n">game_results</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-176"><a href="#PlaceholderDict-176"><span class="linenos">176</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-177"><a href="#PlaceholderDict-177"><span class="linenos">177</span></a>    <span class="n">order</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-178"><a href="#PlaceholderDict-178"><span class="linenos">178</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;順位表示モード&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-179"><a href="#PlaceholderDict-179"><span class="linenos">179</span></a>    <span class="n">versus_matrix</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-180"><a href="#PlaceholderDict-180"><span class="linenos">180</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;対戦結果表示モード&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-181"><a href="#PlaceholderDict-181"><span class="linenos">181</span></a>    <span class="n">statistics</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-182"><a href="#PlaceholderDict-182"><span class="linenos">182</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;統計表示モード&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-183"><a href="#PlaceholderDict-183"><span class="linenos">183</span></a>    <span class="n">rating</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-184"><a href="#PlaceholderDict-184"><span class="linenos">184</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;レーティング表示モード&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-185"><a href="#PlaceholderDict-185"><span class="linenos">185</span></a>    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-186"><a href="#PlaceholderDict-186"><span class="linenos">186</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;詳細表示モード&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-187"><a href="#PlaceholderDict-187"><span class="linenos">187</span></a>    <span class="n">fourfold</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="PlaceholderDict-188"><a href="#PlaceholderDict-188"><span class="linenos">188</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内部フラグ(縦持ちデータで集計)&quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-189"><a href="#PlaceholderDict-189"><span class="linenos">189</span></a>
+</span><span id="PlaceholderDict-190"><a href="#PlaceholderDict-190"><span class="linenos">190</span></a>    <span class="c1"># その他</span>
+</span><span id="PlaceholderDict-191"><a href="#PlaceholderDict-191"><span class="linenos">191</span></a>    <span class="n">undefined_word</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="PlaceholderDict-192"><a href="#PlaceholderDict-192"><span class="linenos">192</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;未登録ワードの扱い</span>
+</span><span id="PlaceholderDict-193"><a href="#PlaceholderDict-193"><span class="linenos">193</span></a><span class="sd">    - *0*: 役満扱い</span>
+</span><span id="PlaceholderDict-194"><a href="#PlaceholderDict-194"><span class="linenos">194</span></a><span class="sd">    - *1*: 卓外清算(個人清算)</span>
+</span><span id="PlaceholderDict-195"><a href="#PlaceholderDict-195"><span class="linenos">195</span></a><span class="sd">    - *2*: カウントのみ</span>
+</span><span id="PlaceholderDict-196"><a href="#PlaceholderDict-196"><span class="linenos">196</span></a><span class="sd">    - *3*: 卓外清算(チーム清算)</span>
+</span><span id="PlaceholderDict-197"><a href="#PlaceholderDict-197"><span class="linenos">197</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1307,6 +1321,19 @@
     
 
                             </div>
+                            <div id="PlaceholderDict.default_rule" class="classattr">
+                                <div class="attr variable">
+            <span class="name">default_rule</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#PlaceholderDict.default_rule"></a>
+    
+            <div class="docstring"><p>ルール識別子</p>
+</div>
+
+
+                            </div>
                             <div id="PlaceholderDict.rule_version" class="classattr">
                                 <div class="attr variable">
             <span class="name">rule_version</span><span class="annotation">: str</span>
@@ -1315,7 +1342,7 @@
     </div>
     <a class="headerlink" href="#PlaceholderDict.rule_version"></a>
     
-            <div class="docstring"><p>集計対象ルール識別子を指定</p>
+            <div class="docstring"><p>集計対象ルール識別子</p>
 </div>
 
 
@@ -1334,6 +1361,19 @@
 <li><em>True</em>: ルール識別子を考慮しない</li>
 <li><em>False</em>: ルール識別子を区別する</li>
 </ul>
+</div>
+
+
+                            </div>
+                            <div id="PlaceholderDict.search_word" class="classattr">
+                                <div class="attr variable">
+            <span class="name">search_word</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#PlaceholderDict.search_word"></a>
+    
+            <div class="docstring"><p>コメント検索文字列</p>
 </div>
 
 
@@ -1511,13 +1551,13 @@
 
     </div>
     <a class="headerlink" href="#MessageTypeDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageTypeDict-196"><a href="#MessageTypeDict-196"><span class="linenos">196</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="MessageTypeDict-197"><a href="#MessageTypeDict-197"><span class="linenos">197</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
-</span><span id="MessageTypeDict-198"><a href="#MessageTypeDict-198"><span class="linenos">198</span></a>
-</span><span id="MessageTypeDict-199"><a href="#MessageTypeDict-199"><span class="linenos">199</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
-</span><span id="MessageTypeDict-200"><a href="#MessageTypeDict-200"><span class="linenos">200</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
-</span><span id="MessageTypeDict-201"><a href="#MessageTypeDict-201"><span class="linenos">201</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
-</span><span id="MessageTypeDict-202"><a href="#MessageTypeDict-202"><span class="linenos">202</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageTypeDict-200"><a href="#MessageTypeDict-200"><span class="linenos">200</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="MessageTypeDict-201"><a href="#MessageTypeDict-201"><span class="linenos">201</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
+</span><span id="MessageTypeDict-202"><a href="#MessageTypeDict-202"><span class="linenos">202</span></a>
+</span><span id="MessageTypeDict-203"><a href="#MessageTypeDict-203"><span class="linenos">203</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
+</span><span id="MessageTypeDict-204"><a href="#MessageTypeDict-204"><span class="linenos">204</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
+</span><span id="MessageTypeDict-205"><a href="#MessageTypeDict-205"><span class="linenos">205</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
+</span><span id="MessageTypeDict-206"><a href="#MessageTypeDict-206"><span class="linenos">206</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1563,16 +1603,16 @@
 
     </div>
     <a class="headerlink" href="#RemarkDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RemarkDict-205"><a href="#RemarkDict-205"><span class="linenos">205</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="RemarkDict-206"><a href="#RemarkDict-206"><span class="linenos">206</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-207"><a href="#RemarkDict-207"><span class="linenos">207</span></a>
-</span><span id="RemarkDict-208"><a href="#RemarkDict-208"><span class="linenos">208</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-209"><a href="#RemarkDict-209"><span class="linenos">209</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-210"><a href="#RemarkDict-210"><span class="linenos">210</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-211"><a href="#RemarkDict-211"><span class="linenos">211</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-212"><a href="#RemarkDict-212"><span class="linenos">212</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-213"><a href="#RemarkDict-213"><span class="linenos">213</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-214"><a href="#RemarkDict-214"><span class="linenos">214</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RemarkDict-209"><a href="#RemarkDict-209"><span class="linenos">209</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="RemarkDict-210"><a href="#RemarkDict-210"><span class="linenos">210</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-211"><a href="#RemarkDict-211"><span class="linenos">211</span></a>
+</span><span id="RemarkDict-212"><a href="#RemarkDict-212"><span class="linenos">212</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-213"><a href="#RemarkDict-213"><span class="linenos">213</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-214"><a href="#RemarkDict-214"><span class="linenos">214</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-215"><a href="#RemarkDict-215"><span class="linenos">215</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-216"><a href="#RemarkDict-216"><span class="linenos">216</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-217"><a href="#RemarkDict-217"><span class="linenos">217</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-218"><a href="#RemarkDict-218"><span class="linenos">218</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
 </span></pre></div>
 
 
@@ -1651,20 +1691,20 @@
 
     </div>
     <a class="headerlink" href="#RankTableDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RankTableDict-217"><a href="#RankTableDict-217"><span class="linenos">217</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="RankTableDict-218"><a href="#RankTableDict-218"><span class="linenos">218</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-219"><a href="#RankTableDict-219"><span class="linenos">219</span></a>
-</span><span id="RankTableDict-220"><a href="#RankTableDict-220"><span class="linenos">220</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RankTableDict-221"><a href="#RankTableDict-221"><span class="linenos">221</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-222"><a href="#RankTableDict-222"><span class="linenos">222</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="RankTableDict-223"><a href="#RankTableDict-223"><span class="linenos">223</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-224"><a href="#RankTableDict-224"><span class="linenos">224</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="RankTableDict-225"><a href="#RankTableDict-225"><span class="linenos">225</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-226"><a href="#RankTableDict-226"><span class="linenos">226</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="RankTableDict-227"><a href="#RankTableDict-227"><span class="linenos">227</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
-</span><span id="RankTableDict-228"><a href="#RankTableDict-228"><span class="linenos">228</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
-</span><span id="RankTableDict-229"><a href="#RankTableDict-229"><span class="linenos">229</span></a><span class="sd">    - *False*: 降格しない</span>
-</span><span id="RankTableDict-230"><a href="#RankTableDict-230"><span class="linenos">230</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RankTableDict-221"><a href="#RankTableDict-221"><span class="linenos">221</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="RankTableDict-222"><a href="#RankTableDict-222"><span class="linenos">222</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-223"><a href="#RankTableDict-223"><span class="linenos">223</span></a>
+</span><span id="RankTableDict-224"><a href="#RankTableDict-224"><span class="linenos">224</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RankTableDict-225"><a href="#RankTableDict-225"><span class="linenos">225</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-226"><a href="#RankTableDict-226"><span class="linenos">226</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RankTableDict-227"><a href="#RankTableDict-227"><span class="linenos">227</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-228"><a href="#RankTableDict-228"><span class="linenos">228</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RankTableDict-229"><a href="#RankTableDict-229"><span class="linenos">229</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-230"><a href="#RankTableDict-230"><span class="linenos">230</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="RankTableDict-231"><a href="#RankTableDict-231"><span class="linenos">231</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
+</span><span id="RankTableDict-232"><a href="#RankTableDict-232"><span class="linenos">232</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
+</span><span id="RankTableDict-233"><a href="#RankTableDict-233"><span class="linenos">233</span></a><span class="sd">    - *False*: 降格しない</span>
+</span><span id="RankTableDict-234"><a href="#RankTableDict-234"><span class="linenos">234</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1741,15 +1781,15 @@
 
     </div>
     <a class="headerlink" href="#GradeTableDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GradeTableDict-233"><a href="#GradeTableDict-233"><span class="linenos">233</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="GradeTableDict-234"><a href="#GradeTableDict-234"><span class="linenos">234</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-235"><a href="#GradeTableDict-235"><span class="linenos">235</span></a>
-</span><span id="GradeTableDict-236"><a href="#GradeTableDict-236"><span class="linenos">236</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GradeTableDict-237"><a href="#GradeTableDict-237"><span class="linenos">237</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-238"><a href="#GradeTableDict-238"><span class="linenos">238</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GradeTableDict-239"><a href="#GradeTableDict-239"><span class="linenos">239</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-240"><a href="#GradeTableDict-240"><span class="linenos">240</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
-</span><span id="GradeTableDict-241"><a href="#GradeTableDict-241"><span class="linenos">241</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GradeTableDict-237"><a href="#GradeTableDict-237"><span class="linenos">237</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="GradeTableDict-238"><a href="#GradeTableDict-238"><span class="linenos">238</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-239"><a href="#GradeTableDict-239"><span class="linenos">239</span></a>
+</span><span id="GradeTableDict-240"><a href="#GradeTableDict-240"><span class="linenos">240</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GradeTableDict-241"><a href="#GradeTableDict-241"><span class="linenos">241</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-242"><a href="#GradeTableDict-242"><span class="linenos">242</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GradeTableDict-243"><a href="#GradeTableDict-243"><span class="linenos">243</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-244"><a href="#GradeTableDict-244"><span class="linenos">244</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
+</span><span id="GradeTableDict-245"><a href="#GradeTableDict-245"><span class="linenos">245</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
