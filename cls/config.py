@@ -615,14 +615,12 @@ class AppConfig:
         - *None*: 未定義
         """
 
+        self.initialization()
+
         # 成績記録キーワード
         self.keyword = KeywordMapping(self, "secondary_keyword")
-        if not self.keyword.rule:
-            self.keyword.rule = {self.setting.keyword: self.config_file}
         if self.setting.keyword not in self.keyword.rule:
             self.keyword.rule.update({self.setting.keyword: self.config_file})
-
-        self.initialization()
 
     def initialization(self):
         """設定ファイル読み込み"""
