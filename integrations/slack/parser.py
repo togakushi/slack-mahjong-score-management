@@ -29,12 +29,14 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         if _body.get("command") == g.adapter.conf.slash_command:  # スラッシュコマンド
             self.status.command_flg = True
             self.status.command_name = g.adapter.conf.slash_command
+            self.data.user_id = str(_body.get("user_id", ""))
             if _body.get("channel_name") == "directmessage":
                 self.data.channel_type = "im"
                 self.data.status = "message_append"
                 self.data.channel_id = str(_body.get("channel_id", ""))
-            else:
-                self.data.channel_id = g.adapter.functions.get_dm_channel_id(_body.get("user_id", ""))
+            else:  # チャンネル内コマンド
+                self.data.channel_type = "im"
+                self.data.channel_id = g.adapter.functions.get_dm_channel_id(self.data.user_id)  # DM Open
         elif _body.get("container"):  # Homeタブ
             self.data.user_id = str(cast(dict, _body["user"]).get("id", ""))
             self.data.channel_id = g.adapter.functions.get_dm_channel_id(self.data.user_id)
