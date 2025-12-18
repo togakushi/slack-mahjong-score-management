@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 def by_keyword(m: "MessageParserProtocol"):
     """メイン処理"""
 
-    logging.debug("keyword=%s, argument=%s", m.keyword, m.argument)
+    logging.debug("keyword=%s, argument=%s, source=%s", m.keyword, m.argument, m.status.source)
     logging.debug(
         "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, is_command=%s, user_id=%s,",
         m.data.status,
