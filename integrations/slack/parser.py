@@ -29,12 +29,14 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         if _body.get("command") == g.adapter.conf.slash_command:  # スラッシュコマンド
             self.status.command_flg = True
             self.status.command_name = g.adapter.conf.slash_command
+            self.data.status = "message_append"
             self.data.user_id = str(_body.get("user_id", ""))
             if _body.get("channel_name") == "directmessage":
                 self.data.channel_type = "im"
-                self.data.status = "message_append"
                 self.data.channel_id = str(_body.get("channel_id", ""))
             else:  # チャンネル内コマンド
+                if channel_id := str(_body.get("channel_id")):
+                    self.status.source = f"slack_{channel_id}"
                 self.data.channel_type = "im"
                 self.data.channel_id = g.adapter.functions.get_dm_channel_id(self.data.user_id)  # DM Open
         elif _body.get("container"):  # Homeタブ
@@ -82,7 +84,8 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
         self.data.user_id = _event.get("user", self.data.user_id)
         self.data.event_ts = _event.get("ts", "0")
         self.data.thread_ts = _event.get("thread_ts", "0")
-        self.status.source = f"slack_{self.data.channel_id}"
+        if not self.status.source:
+            self.status.source = f"slack_{self.data.channel_id}"
 
         logging.debug(self.data)
 
