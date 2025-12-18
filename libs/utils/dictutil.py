@@ -52,14 +52,18 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         "guest_name": g.cfg.member.guest_name,
         "undefined_word": g.cfg.undefined_word,
         "source": m.status.source,
+        "separate": g.cfg.setting.separate,
         "search_word": g.cfg.setting.search_word,
         "group_length": g.cfg.setting.group_length,
-        "separate": g.cfg.setting.separate,
-        **g.cfg.mahjong.to_dict(),
-        **subcom.to_dict(),  # デフォルト値
     }
 
-    ret_dict.update({"default_rule": ret_dict["rule_version"]})
+    ret_dict.update(
+        {
+            "default_rule": ret_dict["rule_version"],
+            **g.cfg.mahjong.to_dict(),
+            **subcom.to_dict(),  # デフォルト値
+        }
+    )
 
     # always_argumentの処理
     pre_param = parser.analysis_argument(subcom.always_argument)

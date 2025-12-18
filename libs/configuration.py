@@ -248,7 +248,9 @@ def setup():
                     section="setting",
                     name="database_file",
                     val_type=str,
+                    fallback="",
                 )
+
                 if others_db:
                     initialization.initialization_resultdb(Path(others_db).absolute())
 
