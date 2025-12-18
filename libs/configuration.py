@@ -256,17 +256,22 @@ def setup():
 
     # 設定内容のロギング
     logging.info("config: %s", g.cfg.config_file.absolute())
-    logging.info("service: %s, graph_library: %s", g.selected_service, g.adapter.conf.plotting_backend)
-    logging.info("keyword: %s, time_adjust: %sh", g.cfg.setting.keyword, g.cfg.setting.time_adjust)
+    logging.info(
+        "service: %s, graph_library: %s, time_adjust: %sh",
+        g.selected_service,
+        g.adapter.conf.plotting_backend,
+        g.cfg.setting.time_adjust,
+    )
     for keyword, config in g.cfg.keyword.rule.items():
         g.cfg.overwrite(config, "mahjong")
         logging.info(
-            "secondary_keyword: %s, rule_version: %s, origin_point: %s, return_point: %s, draw_split: %s",
+            "keyword: %s, origin_point: %s, return_point: %s, rank_point: %s, draw_split: %s, rule_version: %s",
             keyword,
-            g.cfg.mahjong.rule_version,
             g.cfg.mahjong.origin_point,
             g.cfg.mahjong.return_point,
+            g.cfg.mahjong.rank_point,
             g.cfg.mahjong.draw_split,
+            g.cfg.mahjong.rule_version,
         )
 
 
