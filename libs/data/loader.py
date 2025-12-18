@@ -36,7 +36,7 @@ def read_data(keyword: str) -> pd.DataFrame:
     sql = query_modification(dbutil.query(keyword))
     if g.args.verbose > 0:
         print(f">>> {g.params=}")
-        print(f">>> SQL: {keyword}\n{named_query(sql)}")
+        print(f">>> SQL: {keyword} -> {g.cfg.setting.database_file}\n{named_query(sql)}")
 
     # プレイヤーリスト/対戦相手リスト
     player_list: dict = {}
