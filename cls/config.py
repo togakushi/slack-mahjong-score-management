@@ -163,11 +163,6 @@ class MahjongSection(BaseSection):
         - *True*: 山分けにする
         - *False*: 席順で決める
         """
-        self.separate: bool = False
-        """スコア入力元識別子別集計フラグ
-        - *True*: 識別子別に集計
-        - *False*: すべて集計
-        """
         self.regulations_type2: list = []
         """メモで役満として扱う単語リスト(カンマ区切り)"""
 
@@ -206,6 +201,11 @@ class SettingSection(BaseSection):
         """メモ記録用キーワード"""
         self.time_adjust: int = 12
         """日付変更後、集計範囲に含める追加時間"""
+        self.separate: bool = False
+        """スコア入力元識別子別集計フラグ
+        - *True*: 識別子別に集計
+        - *False*: すべて集計
+        """
         self.search_word: str = ""
         """コメント固定(検索時の検索文字列)"""
         self.group_length: int = 0

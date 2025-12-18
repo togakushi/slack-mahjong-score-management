@@ -297,10 +297,12 @@ def register():
         read_memberslist(log=False)
 
     def dispatch_help(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("ヘルプ", compose.msg_help.event_message(), StyleOptions())
         m.post.ts = m.data.event_ts
 
     def dispatch_download(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("成績記録DB", g.cfg.setting.database_file, StyleOptions())
 
     def dispatch_members_list(m: "MessageParserProtocol"):
@@ -314,24 +316,31 @@ def register():
         m.post.ts = m.data.event_ts
 
     def dispatch_member_append(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("メンバー追加", member.append(m.argument), StyleOptions(key_title=False))
 
     def dispatch_member_remove(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("メンバー削除", member.remove(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_create(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("チーム作成", team.create(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_delete(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("チーム削除", team.delete(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_append(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("チーム所属", team.append(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_remove(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("チーム脱退", team.remove(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_clear(m: "MessageParserProtocol"):
+        _switching(m)
         m.set_data("全チーム削除", team.clear(), StyleOptions(key_title=False))
 
     dispatch_table: dict = {

@@ -21,6 +21,8 @@ def setup():
             return
 
     plt.close()
+    plt.rcdefaults()
+
     use(backend="agg")
     mlogger = logging.getLogger("matplotlib")
     mlogger.setLevel(logging.WARNING)

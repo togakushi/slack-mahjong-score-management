@@ -6,7 +6,6 @@
 
 |       キー       |               内容               |      型       |                省略時                 |                        備考                         |
 | ---------------- | -------------------------------- | ------------- | ------------------------------------- | --------------------------------------------------- |
-| separate         | スコア入力元識別子単位の集計     | 真偽値 / None | None(mahjongセクションの設定値を継承) | [mahjongセクション](customize.md#mahjongセクション) |
 | badge_degree     | ゲーム数に応じて表示される称号   | 真偽値        | False                                 | [degreeセクション](customize.md#degreeセクション)   |
 | badge_status     | 勝利によって表示される調子バッヂ | 真偽値        | False                                 | [statusセクション](customize.md#statusセクション)   |
 | badge_grade      | 段位表示                         | 真偽値        | False                                 | [gradeセクション](customize.md#gradeセクション)     |
