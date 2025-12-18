@@ -59,7 +59,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
 
     ret_dict.update(
         {
-            "default_rule": ret_dict["rule_version"],
+            "default_rule": g.cfg.mahjong.rule_version,
             **g.cfg.mahjong.to_dict(),
             **subcom.to_dict(),  # デフォルト値
         }
