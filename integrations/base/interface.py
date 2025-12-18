@@ -54,8 +54,6 @@ class IntegrationsConfig(ABC):
     # 共通設定
     slash_command: str = field(default="")
     """スラッシュコマンド名"""
-    separate: Optional[bool] = field(default=None)
-    """スコア入力元識別子単位の集計"""
     badge_degree: bool = field(default=False)
     """プレイしたゲーム数に対して表示される称号
     - *True*: 表示する

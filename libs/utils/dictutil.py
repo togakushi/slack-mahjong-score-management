@@ -54,7 +54,8 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         "source": m.status.source,
         "search_word": g.cfg.setting.search_word,
         "group_length": g.cfg.setting.group_length,
-        **g.cfg.mahjong.to_dict(),  # 初期値
+        "separate": g.cfg.setting.separate,
+        **g.cfg.mahjong.to_dict(),
         **subcom.to_dict(),  # デフォルト値
     }
 
