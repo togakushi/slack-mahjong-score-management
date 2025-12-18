@@ -23,12 +23,12 @@ def by_keyword(m: "MessageParserProtocol"):
 
     logging.debug("keyword=%s, argument=%s", m.keyword, m.argument)
     logging.debug(
-        "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, keyword=%s, user_id=%s,",
+        "status=%s, event_ts=%s, thread_ts=%s, in_thread=%s, is_command=%s, user_id=%s,",
         m.data.status,
         m.data.event_ts,
         m.data.thread_ts,
         m.in_thread,
-        m.keyword,
+        m.is_command,
         m.data.user_id,
     )
 
@@ -49,18 +49,22 @@ def by_keyword(m: "MessageParserProtocol"):
     match m.keyword:
         # キーワード実行
         case word if word in g.keyword_dispatcher and not m.is_command:
+            logging.debug("dispatch keyword")
             if m.data.status == "message_append":
                 g.keyword_dispatcher[word](m)
         # コマンド実行
         case word if word in g.command_dispatcher and m.is_command:
+            logging.debug("dispatch command")
             if m.data.status == "message_append":
                 g.command_dispatcher[word](m)
         # リマインダ実行
         case "Reminder:":
+            logging.debug("dispatch keyword for reminder")
             if m.data.text in g.keyword_dispatcher and m.is_bot:
                 g.keyword_dispatcher[m.data.text](m)
         # その他(ディスパッチテーブルにない場合)
         case _ as word:
+            logging.debug("dispatch other words")
             other_words(word, m)
 
     g.adapter.api.post(m)
