@@ -24,12 +24,15 @@ def get_members_list() -> str:
             ],
         )
 
-    output = table2ascii(
-        header=["表示名", "登録されている名前"],
-        body=name_list,
-        alignments=[Alignment.LEFT, Alignment.LEFT],
-        style=PresetStyle.ascii_borderless,
-    )
+    if name_list:
+        output = table2ascii(
+            header=["表示名", "登録されている名前"],
+            body=name_list,
+            alignments=[Alignment.LEFT, Alignment.LEFT],
+            style=PresetStyle.ascii_borderless,
+        )
+    else:
+        output = "メンバーは登録されていません。"
 
     return output
 
