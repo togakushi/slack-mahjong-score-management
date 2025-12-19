@@ -20,7 +20,7 @@ from integrations import factory
 from libs.data import initialization, lookup
 from libs.functions import compose
 from libs.registry import member, team
-from libs.types import StyleOptions
+from libs.types import Args, StyleOptions
 
 if TYPE_CHECKING:
     from cls.config import SubCommand
@@ -42,11 +42,11 @@ def set_loglevel():
     logging.addLevelName(logging.TRACE, "TRACE")  # type: ignore
 
 
-def arg_parser() -> argparse.Namespace:
+def arg_parser() -> Args:
     """コマンドライン解析
 
     Returns:
-        argparse.Namespace: オブジェクト
+        Args : ArgumentParserオブジェクト
     """
 
     p = argparse.ArgumentParser(
@@ -57,7 +57,8 @@ def arg_parser() -> argparse.Namespace:
     p.add_argument(
         "-c",
         "--config",
-        default="config.ini",
+        type=Path,
+        default=Path("config.ini"),
         help="設定ファイル(default: %(default)s)",
     )
     p.add_argument(
@@ -75,6 +76,7 @@ def arg_parser() -> argparse.Namespace:
             "web",
             "flask",
         ],
+        type=str,
         default="slack",
         help="連携先サービス",
     )
@@ -136,6 +138,7 @@ def arg_parser() -> argparse.Namespace:
             )
             exclusive.add_argument(
                 "--unification",
+                type=Path,
                 nargs="?",
                 const="rename.ini",
                 help="ファイルの内容に従って記録済みのメンバー名を修正する(default: %(const)s)",
@@ -148,6 +151,7 @@ def arg_parser() -> argparse.Namespace:
             exclusive.add_argument(
                 "--export",
                 dest="export_data",
+                type=str,
                 nargs="?",
                 const="export",
                 metavar="PREFIX",
@@ -155,8 +159,9 @@ def arg_parser() -> argparse.Namespace:
             )
             exclusive.add_argument(
                 "--import",
-                nargs="?",
                 dest="import_data",
+                type=str,
+                nargs="?",
                 const="export",
                 metavar="PREFIX",
                 help="メンバー設定情報をインポート(default prefix: %(const)s)",
@@ -181,9 +186,10 @@ def arg_parser() -> argparse.Namespace:
                 "-t",
                 "--testcase",
                 dest="testcase",
+                type=bool,
             )
 
-    return p.parse_args()
+    return cast(Args, p.parse_args(namespace=Args))
 
 
 def setup():
@@ -207,7 +213,7 @@ def setup():
             sys.exit()
 
     if not hasattr(g.args, "testcase"):
-        g.args.testcase = False
+        g.args.testcase = None
     else:
         g.selected_service = "standard_io"
 
@@ -234,7 +240,7 @@ def setup():
             else:
                 logging.basicConfig(level=logging.INFO, format=fmt)
 
-    g.cfg = AppConfig(Path(str(g.args.config)))
+    g.cfg = AppConfig(g.args.config)
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
     register()
 

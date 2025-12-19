@@ -3,7 +3,7 @@ cls/types.py
 """
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, TypeAlias, TypedDict, Union
+from typing import TYPE_CHECKING, Literal, Optional, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -11,6 +11,37 @@ if TYPE_CHECKING:
     import pandas as pd
 
     from cls.timekit import ExtendedDatetime
+
+
+@dataclass
+class Args:
+    """コマンドラインオプション"""
+
+    service: str
+    config: "Path"
+
+    debug: int
+    verbose: int
+
+    moderate: bool
+    notime: bool
+
+    # Only allowed when --service=standard_io
+    text: str
+
+    # Only allowed when --service=web
+    host: str
+    port: int
+
+    # dbtools
+    compar: bool
+    unification: "Path"
+    recalculation: bool
+    export_data: str
+    import_data: str
+    vacuum: bool
+    gen_test_data: int
+    testcase: Optional["Path"]
 
 
 class TeamDataDict(TypedDict):

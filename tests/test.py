@@ -217,6 +217,9 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
 
 def main():
     """メイン処理"""
+    if not g.args.testcase:
+        return
+
     configuration.setup()
     test_conf = configparser.ConfigParser()
     test_conf.read(g.args.testcase, encoding="utf-8")
