@@ -2,8 +2,9 @@
 libs/data/lookup/textdata.py
 """
 
+from table2ascii import Alignment, PresetStyle, table2ascii
+
 import libs.global_value as g
-from libs.utils import dbutil, textutil
 
 
 def get_members_list() -> str:
@@ -13,21 +14,26 @@ def get_members_list() -> str:
         str: メンバーリスト
     """
 
-    padding = textutil.count_padding(list(set(g.cfg.member.list.values())))
-    msg = f"# 表示名{' ' * (padding - 8)}：登録されている名前 #\n"
-
+    name_list: list = []
     for pname in set(g.cfg.member.list.values()):
-        name_list = []
-        for alias, name in g.cfg.member.list.items():
-            if name == pname:
-                name_list.append(alias)
-        msg += "{}{}：{}\n".format(
-            pname,
-            " " * (padding - textutil.len_count(pname)),
-            ", ".join(name_list),
+        name_list.append(
+            [
+                pname,
+                ", ".join([k for k, v in g.cfg.member.list.items() if v == pname]),
+            ],
         )
 
-    return msg
+    if name_list:
+        output = table2ascii(
+            header=["表示名", "登録されている名前"],
+            body=name_list,
+            alignments=[Alignment.LEFT, Alignment.LEFT],
+            style=PresetStyle.ascii_borderless,
+        )
+    else:
+        output = "メンバーは登録されていません。"
+
+    return output
 
 
 def get_team_list() -> str:
@@ -37,31 +43,21 @@ def get_team_list() -> str:
         str: チームリスト
     """
 
-    resultdb = dbutil.connection(g.cfg.setting.database_file)
-    cur = resultdb.execute("""
-        select
-            team.name,
-            ifnull(
-                group_concat(member.name),
-                "未エントリー"
-            )
-        from
-            team
-        left join member on
-            team.id = member.team_id
-        group by
-            team.name
-    """)
-    team_data = dict(cur.fetchall())
+    team_list: list = []
+    for data in g.cfg.team.list:
+        if member := ", ".join(data["member"]):
+            team_list.append([data["team"], member])
+        else:
+            team_list.append([data["team"], "未エントリー"])
 
-    if len(team_data) == 0:
-        msg = "チームは登録されていません。"
+    if team_list:
+        output = table2ascii(
+            header=["チーム名", "所属メンバー"],
+            body=team_list,
+            alignments=[Alignment.LEFT, Alignment.LEFT],
+            style=PresetStyle.ascii_borderless,
+        )
     else:
-        msg = ""
-        for k, v in team_data.items():
-            msg += f"{k}\n"
-            for p in v.split(","):
-                msg += f"\t{p}\n"
-            msg += "\n"
+        output = "チームは登録されていません。"
 
-    return msg
+    return output
