@@ -354,14 +354,14 @@ class AliasSection(BaseSection):
         self.report: list = ["レポート"]
         self.download: list = ["ダウンロード"]
         self.member: list = ["userlist", "member_list"]
-        self.add: list = []
-        self.delete: list = ["del"]  # "del"はbuilt-inで使用
-        self.team_create: list = []
-        self.team_del: list = []
-        self.team_add: list = []
-        self.team_remove: list = []
-        self.team_list: list = []
-        self.team_clear: list = []
+        self.add: list = ["add"]
+        self.delete: list = ["del"]
+        self.team_create: list = ["team_create"]
+        self.team_del: list = ["team_del"]
+        self.team_add: list = ["team_add"]
+        self.team_remove: list = ["team_remove"]
+        self.team_list: list = ["team_list"]
+        self.team_clear: list = ["team_clear"]
 
     def config_load(self, outer: "AppConfig"):
         """設定値取り込み
@@ -375,11 +375,6 @@ class AliasSection(BaseSection):
         self._reset()
         super().__init__(self, _section_name)
 
-        # デフォルト値として自身と同じ名前のコマンドを登録する #
-        for k in self.to_dict():
-            current_list = getattr(self, k)
-            if isinstance(current_list, list):
-                current_list.append(k)
         # delのエイリアス取り込み(設定ファイルに`delete`と書かれていない)
         list_data = [x.strip() for x in str(self._parser.get("alias", "del", fallback="del")).split(",")]
         self.delete.extend(list_data)

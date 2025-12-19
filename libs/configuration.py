@@ -362,6 +362,7 @@ def register():
         "ranking": libs.commands.ranking.entry.main,
         "report": libs.commands.report.entry.main,
         "member": dispatch_members_list,
+        "team": dispatch_team_list,
         "team_list": dispatch_team_list,
         "download": dispatch_download,
         "add": dispatch_member_append,
@@ -383,8 +384,9 @@ def register():
             for alias in sub_command.commandword:
                 g.keyword_dispatcher.update({alias: ep})
         # スラッシュコマンド登録
-        for alias in cast(list, getattr(g.cfg.alias, command)):
-            g.command_dispatcher.update({alias: ep})
+        if hasattr(g.cfg.alias, command):
+            for alias in cast(list, getattr(g.cfg.alias, command)):
+                g.command_dispatcher.update({alias: ep})
 
     # サービス別コマンド登録
     g.command_dispatcher.update(g.adapter.conf.command_dispatcher)
