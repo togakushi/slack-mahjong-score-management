@@ -381,7 +381,7 @@ class AliasSection(BaseSection):
             if isinstance(current_list, list):
                 current_list.append(k)
         # delのエイリアス取り込み(設定ファイルに`delete`と書かれていない)
-        list_data = [x.strip() for x in str(self._parser.get("alias", "del", fallback="")).split(",")]
+        list_data = [x.strip() for x in str(self._parser.get("alias", "del", fallback="del")).split(",")]
         self.delete.extend(list_data)
 
         logging.debug("%s: %s", _section_name, self)
