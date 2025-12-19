@@ -7,13 +7,14 @@ from typing import TYPE_CHECKING, cast
 
 import numpy as np
 import pandas as pd
+from table2ascii import Alignment, PresetStyle, table2ascii
 
 import libs.global_value as g
 from libs.data import aggregate, loader, lookup
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.types import StyleOptions
-from libs.utils import converter, formatter, textutil
+from libs.utils import converter, formatter
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -490,7 +491,6 @@ def get_versus_matrix(mapping_dict: dict) -> str:
         str: 出力メッセージ
     """
 
-    ret: str = ""
     df = loader.read_data("SUMMARY_VERSUS_MATRIX")
 
     if g.params.get("anonymous"):
@@ -498,14 +498,19 @@ def get_versus_matrix(mapping_dict: dict) -> str:
         df["my_name"] = df["my_name"].replace(mapping_dict)
         df["vs_name"] = df["vs_name"].replace(mapping_dict)
 
-    max_len = textutil.count_padding(df["vs_name"].unique().tolist())
-
+    data_list: list = []
     for _, r in df.iterrows():
-        padding = max_len - textutil.len_count(r["vs_name"])
-        ret += f"\t{r['vs_name']}{' ' * padding} ："
-        ret += f"{r['game']:3d} 戦 {r['win']:3d} 勝 {r['lose']:3d} 敗 ({r['win%']:6.2f}%)\n"
+        data_list.append([r["vs_name"], f"{r['game']} 戦", f"{r['win']} 勝", f"{r['lose']} 敗", f"({r['win%']:6.2f}%)"])
 
-    return ret
+    output = table2ascii(
+        # header=["対戦相手", "ゲーム数", "勝", "負", "勝率"],
+        body=data_list,
+        alignments=[Alignment.LEFT, Alignment.RIGHT, Alignment.RIGHT, Alignment.RIGHT, Alignment.RIGHT],
+        style=PresetStyle.ascii_borderless,
+        cell_padding=0,
+    )
+
+    return output
 
 
 def message_build(data: dict) -> str:

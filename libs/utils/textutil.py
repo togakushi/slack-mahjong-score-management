@@ -3,7 +3,6 @@ libs/utils/textutil.py
 """
 
 import os
-import unicodedata
 from math import ceil, floor
 from typing import TYPE_CHECKING, Literal
 
@@ -11,26 +10,6 @@ import libs.global_value as g
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-
-def len_count(text: str) -> int:
-    """文字数をカウント(全角文字は2)
-
-    Args:
-        text (str): 判定文字列
-
-    Returns:
-        int: 文字数
-    """
-
-    count = 0
-    for c in text:
-        if unicodedata.east_asian_width(c) in "FWA":
-            count += 2
-        else:
-            count += 1
-
-    return count
 
 
 def str_conv(text: str, kind: Literal["h2z", "z2h", "h2k", "k2h"]) -> str:
@@ -66,32 +45,6 @@ def str_conv(text: str, kind: Literal["h2z", "z2h", "h2k", "k2h"]) -> str:
             return text
 
     return text.translate(trans_table)
-
-
-def count_padding(data):
-    """プレイヤー名一覧の中の最も長い名前の文字数を返す
-
-    Args:
-        data (list, dict): 対象プレイヤー名の一覧
-
-    Returns:
-        int: 文字数
-    """
-
-    name_list = []
-
-    if isinstance(data, list):
-        name_list = data
-
-    if isinstance(data, dict):
-        for i in data.keys():
-            for name in [data[i][x]["name"] for x in ("東家", "南家", "西家", "北家")]:
-                if name not in name_list:
-                    name_list.append(name)
-
-    if name_list:
-        return max(len_count(x) for x in name_list)
-    return 0
 
 
 def save_file_path(filename: str, delete: bool = False) -> "Path":
