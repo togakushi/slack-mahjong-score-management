@@ -2,8 +2,10 @@
 libs/data/lookup/textdata.py
 """
 
+from table2ascii import Alignment, PresetStyle, table2ascii
+
 import libs.global_value as g
-from libs.utils import dbutil, textutil
+from libs.utils import dbutil
 
 
 def get_members_list() -> str:
@@ -13,21 +15,23 @@ def get_members_list() -> str:
         str: メンバーリスト
     """
 
-    padding = textutil.count_padding(list(set(g.cfg.member.list.values())))
-    msg = f"# 表示名{' ' * (padding - 8)}：登録されている名前 #\n"
-
+    name_list: list = []
     for pname in set(g.cfg.member.list.values()):
-        name_list = []
-        for alias, name in g.cfg.member.list.items():
-            if name == pname:
-                name_list.append(alias)
-        msg += "{}{}：{}\n".format(
-            pname,
-            " " * (padding - textutil.len_count(pname)),
-            ", ".join(name_list),
+        name_list.append(
+            [
+                pname,
+                ", ".join([k for k, v in g.cfg.member.list.items() if v == pname]),
+            ],
         )
 
-    return msg
+    output = table2ascii(
+        header=["表示名", "登録されている名前"],
+        body=name_list,
+        alignments=[Alignment.LEFT, Alignment.LEFT],
+        style=PresetStyle.ascii_borderless,
+    )
+
+    return output
 
 
 def get_team_list() -> str:
