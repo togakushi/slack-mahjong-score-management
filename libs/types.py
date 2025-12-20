@@ -19,12 +19,17 @@ class Args:
 
     service: str
     config: "Path"
+    """設定ファイルパス"""
 
     debug: int
+    """デバッグ出力フラグ"""
     verbose: int
+    """詳細出力フラグ"""
 
     moderate: bool
+    """INFO以下のログレベル出力を抑止"""
     notime: bool
+    """ログに日付を付与しない"""
 
     # Only allowed when --service=standard_io
     text: str
@@ -48,8 +53,11 @@ class TeamDataDict(TypedDict):
     """チーム情報格納辞書"""
 
     id: int
+    """チームID"""
     team: str
+    """チーム名"""
     member: list[str]
+    """所属メンバーリスト"""
 
 
 MessageType: TypeAlias = Union[None, str, "Path", "pd.DataFrame"]
@@ -244,8 +252,11 @@ class RemarkDict(TypedDict, total=False):
     event_ts: str
     """メモ記録時間"""
     name: str
+    """記録対象プレイヤー名"""
     matter: str
+    """記録内容"""
     source: str
+    """データ入力元識別子"""
 
 
 class RankTableDict(TypedDict):
