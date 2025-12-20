@@ -34,7 +34,7 @@ def read_data(keyword: str) -> pd.DataFrame:
         g.params.update({"rule_version": g.cfg.mahjong.rule_version})
 
     sql = query_modification(dbutil.query(keyword))
-    if g.args.verbose > 0:
+    if g.args.verbose & 0x01:
         print(f">>> {g.params=}")
         print(f">>> SQL: {keyword} -> {g.cfg.setting.database_file}\n{named_query(sql)}")
 
@@ -53,7 +53,7 @@ def read_data(keyword: str) -> pd.DataFrame:
         params={**cast(dict, g.params), **player_list},
     )
 
-    if g.args.verbose > 1:
+    if g.args.verbose & 0x02:
         print("=" * 80)
         print(df.to_string())
 

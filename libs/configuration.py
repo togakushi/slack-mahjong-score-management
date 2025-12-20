@@ -94,7 +94,7 @@ def arg_parser() -> Args:
         "--verbose",
         action="count",
         default=0,
-        help="動作ログ出力レベル(-v, -vv)",
+        help="動作ログ出力レベル(-v, -vv, -vvv)",
     )
     logging_group.add_argument(
         "--moderate",
@@ -374,7 +374,7 @@ def register():
         "team_clear": dispatch_team_clear,
     }
 
-    # ヘルプ
+    # ヘルプ登録
     g.keyword_dispatcher.update({g.cfg.setting.help: dispatch_help})
 
     for command, ep in dispatch_table.items():
