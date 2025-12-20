@@ -15,6 +15,8 @@ from integrations.protocols import MsgData, PostData, StatusData
 from libs.types import MessageTypeDict, StyleOptions
 
 if TYPE_CHECKING:
+    from pathlib import Path  # noqa: F401
+
     from integrations.protocols import MessageParserProtocol
     from libs.types import MessageType
 
