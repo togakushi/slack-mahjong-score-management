@@ -105,8 +105,8 @@ def initialization_resultdb(database_file: Union[str, "Path"]) -> None:
     rows = resultdb.execute("select name from sqlite_master where type = 'view';")
     for row in rows.fetchall():
         resultdb.execute(f"drop view if exists '{row['name']}';")
-    resultdb.execute(dbutil.query("CREATE_VIEW_INDIVIDUAL_RESULTS"))
-    resultdb.execute(dbutil.query("CREATE_VIEW_GAME_RESULTS"))
+    resultdb.execute(dbutil.query("CREATE_VIEW_INDIVIDUAL_RESULTS").replace("<time_adjust>", str(g.cfg.setting.time_adjust)))
+    resultdb.execute(dbutil.query("CREATE_VIEW_GAME_RESULTS").replace("<time_adjust>", str(g.cfg.setting.time_adjust)))
     resultdb.execute(dbutil.query("CREATE_VIEW_GAME_INFO"))
     resultdb.execute(dbutil.query("CREATE_VIEW_REGULATIONS").format(undefined_word=g.cfg.undefined_word))
 

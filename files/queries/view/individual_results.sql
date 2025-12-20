@@ -86,7 +86,7 @@ select * from (
         p1_point + ifnull(them_regulation_table.ex_point, 0) as team_point,
         them_remarks_table.word as them_remarks,
         --
-        date(playtime, '-12 hours') as collection_daily,
+        date(playtime, '-<time_adjust> hours') as collection_daily,
         rule_version,
         comment,
         source
@@ -139,7 +139,7 @@ select * from (
         p2_point + ifnull(them_regulation_table.ex_point, 0),
         them_remarks_table.word,
         --
-        date(playtime, '-12 hours'),
+        date(playtime, '-<time_adjust> hours'),
         rule_version,
         comment,
         source
@@ -192,7 +192,7 @@ select * from (
         p3_point + ifnull(them_regulation_table.ex_point, 0),
         them_remarks_table.word,
         --
-        date(playtime, '-12 hours'),
+        date(playtime, '-<time_adjust> hours'),
         rule_version,
         comment,
         source
@@ -245,7 +245,7 @@ select * from (
         p4_point + ifnull(them_regulation_table.ex_point, 0),
         them_remarks_table.word,
         --
-        date(playtime, '-12 hours'),
+        date(playtime, '-<time_adjust> hours'),
         rule_version,
         comment,
         source
