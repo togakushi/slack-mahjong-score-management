@@ -165,7 +165,7 @@
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">,</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;動作ログ出力レベル(-v, -vv)&quot;</span><span class="p">,</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;動作ログ出力レベル(-v, -vv, -vvv)&quot;</span><span class="p">,</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="p">)</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">logging_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="s2">&quot;--moderate&quot;</span><span class="p">,</span>
@@ -445,7 +445,7 @@
 </span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>        <span class="s2">&quot;team_clear&quot;</span><span class="p">:</span> <span class="n">dispatch_team_clear</span><span class="p">,</span>
 </span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>    <span class="p">}</span>
 </span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>
-</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>    <span class="c1"># ヘルプ</span>
+</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>    <span class="c1"># ヘルプ登録</span>
 </span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">keyword_dispatcher</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">help</span><span class="p">:</span> <span class="n">dispatch_help</span><span class="p">})</span>
 </span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>
 </span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>    <span class="k">for</span> <span class="n">command</span><span class="p">,</span> <span class="n">ep</span> <span class="ow">in</span> <span class="n">dispatch_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -564,7 +564,7 @@
 </span><span id="arg_parser-95"><a href="#arg_parser-95"><span class="linenos"> 95</span></a>        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
 </span><span id="arg_parser-96"><a href="#arg_parser-96"><span class="linenos"> 96</span></a>        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;count&quot;</span><span class="p">,</span>
 </span><span id="arg_parser-97"><a href="#arg_parser-97"><span class="linenos"> 97</span></a>        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="arg_parser-98"><a href="#arg_parser-98"><span class="linenos"> 98</span></a>        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;動作ログ出力レベル(-v, -vv)&quot;</span><span class="p">,</span>
+</span><span id="arg_parser-98"><a href="#arg_parser-98"><span class="linenos"> 98</span></a>        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;動作ログ出力レベル(-v, -vv, -vvv)&quot;</span><span class="p">,</span>
 </span><span id="arg_parser-99"><a href="#arg_parser-99"><span class="linenos"> 99</span></a>    <span class="p">)</span>
 </span><span id="arg_parser-100"><a href="#arg_parser-100"><span class="linenos">100</span></a>    <span class="n">logging_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
 </span><span id="arg_parser-101"><a href="#arg_parser-101"><span class="linenos">101</span></a>        <span class="s2">&quot;--moderate&quot;</span><span class="p">,</span>
@@ -907,7 +907,7 @@
 </span><span id="register-375"><a href="#register-375"><span class="linenos">375</span></a>        <span class="s2">&quot;team_clear&quot;</span><span class="p">:</span> <span class="n">dispatch_team_clear</span><span class="p">,</span>
 </span><span id="register-376"><a href="#register-376"><span class="linenos">376</span></a>    <span class="p">}</span>
 </span><span id="register-377"><a href="#register-377"><span class="linenos">377</span></a>
-</span><span id="register-378"><a href="#register-378"><span class="linenos">378</span></a>    <span class="c1"># ヘルプ</span>
+</span><span id="register-378"><a href="#register-378"><span class="linenos">378</span></a>    <span class="c1"># ヘルプ登録</span>
 </span><span id="register-379"><a href="#register-379"><span class="linenos">379</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">keyword_dispatcher</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">help</span><span class="p">:</span> <span class="n">dispatch_help</span><span class="p">})</span>
 </span><span id="register-380"><a href="#register-380"><span class="linenos">380</span></a>
 </span><span id="register-381"><a href="#register-381"><span class="linenos">381</span></a>    <span class="k">for</span> <span class="n">command</span><span class="p">,</span> <span class="n">ep</span> <span class="ow">in</span> <span class="n">dispatch_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
