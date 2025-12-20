@@ -118,8 +118,7 @@ slash_member_add: dict[str, tuple[Any, ...]] = {
 
 slash_member_del: dict[str, tuple[Any, ...]] = {
     # config, keyword
-    "default 01": ("minimal.ini", "delete"),
-    "default 02": ("minimal.ini", "del"),
+    "default 01": ("minimal.ini", "del"),
     "alias 01": ("commandword.ini", "メンバー削除"),
     "alias 02": ("commandword.ini", "退部届"),
     "double word": ("minimal.ini", "del xxx"),

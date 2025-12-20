@@ -348,12 +348,12 @@ class AliasSection(BaseSection):
         self._reset()
 
     def _reset(self):
-        self.results: list = ["成績"]
-        self.graph: list = ["グラフ"]
-        self.ranking: list = ["ランキング"]
-        self.report: list = ["レポート"]
-        self.download: list = ["ダウンロード"]
-        self.member: list = ["userlist", "member_list"]
+        self.results: list = ["results", "成績"]
+        self.graph: list = ["graph", "グラフ"]
+        self.ranking: list = ["ranking", "ランキング"]
+        self.report: list = ["report", "レポート"]
+        self.download: list = ["download", "ダウンロード"]
+        self.member: list = ["member", "userlist", "member_list"]
         self.add: list = ["add"]
         self.delete: list = ["del"]
         self.team_create: list = ["team_create"]

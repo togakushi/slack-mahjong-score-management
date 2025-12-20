@@ -35,7 +35,7 @@ def test_minimal_config(monkeypatch):
     assert "download" in g.cfg.alias.download
     assert "member" in g.cfg.alias.member
     assert "add" in g.cfg.alias.add
-    assert "delete" in g.cfg.alias.delete
+    assert "del" in g.cfg.alias.delete
 
 
 @pytest.mark.parametrize("input_args", ["results", "graph", "ranking", "report"])
