@@ -1,11 +1,18 @@
-prospector:
-	@uv run prospector -W mccabe ..
+# --
+.PHONY: update
+update:
+	uv self update
+	uv sync --upgrade
+	uv lock --upgrade
 
 # --
 .PHONY: docs
 docs:
 	rm -rf docs/html
 	uv run pdoc -d google --output-dir docs/html --logo '' --logo-link '' *.py libs cls integrations tests
+
+prospector:
+	@uv run prospector -W mccabe ..
 
 # --
 config_file = ../config.ini

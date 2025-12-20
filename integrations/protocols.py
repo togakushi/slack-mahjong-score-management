@@ -6,6 +6,10 @@ from dataclasses import dataclass, field, fields, is_dataclass
 from typing import TYPE_CHECKING, Any, Literal, Protocol
 
 if TYPE_CHECKING:
+    from pathlib import Path  # noqa: F401
+
+    import pandas as pd  # noqa: F401
+
     from libs.types import MessageType, MessageTypeDict, StyleOptions
 
 
