@@ -212,7 +212,7 @@ class SettingSection(BaseSection):
         """コメント固定(検索時の集約文字数)"""
         self.guest_mark: str = "※"
         """ゲスト無効時に未登録メンバーに付与する印"""
-        self.database_file: Union[Path, str] = Path("mahjong.db")
+        self.database_file: Path = Path("mahjong.db")
         """成績管理データベースファイル名"""
         self.backup_dir: Optional[Path] = None
         """バックアップ先ディレクトリ"""
@@ -254,11 +254,8 @@ class SettingSection(BaseSection):
                 sys.exit(255)
 
         # データベース関連
-        for chk_dir in (outer.config_dir, outer.script_dir):
-            chk_file = chk_dir / str(self.database_file)
-            if chk_file.exists():
-                self.database_file = chk_file
-                break
+        if not self.database_file.exists():
+            self.database_file = outer.config_dir / str(self.database_file)
 
         if isinstance(self.backup_dir, PosixPath):
             try:
@@ -348,12 +345,12 @@ class AliasSection(BaseSection):
         self._reset()
 
     def _reset(self):
-        self.results: list = ["成績"]
-        self.graph: list = ["グラフ"]
-        self.ranking: list = ["ランキング"]
-        self.report: list = ["レポート"]
-        self.download: list = ["ダウンロード"]
-        self.member: list = ["userlist", "member_list"]
+        self.results: list = ["results", "成績"]
+        self.graph: list = ["graph", "グラフ"]
+        self.ranking: list = ["ranking", "ランキング"]
+        self.report: list = ["report", "レポート"]
+        self.download: list = ["download", "ダウンロード"]
+        self.member: list = ["member", "userlist", "member_list"]
         self.add: list = ["add"]
         self.delete: list = ["del"]
         self.team_create: list = ["team_create"]
