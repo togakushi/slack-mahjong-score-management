@@ -93,34 +93,33 @@ class BaseSection(CommonMethodMixin):
     def initialization(self):
         """設定ファイルから値の取り込み"""
         for k in self._section.keys():
-            if k in self.__dict__:
-                match type(self.__dict__.get(k)):
-                    case v_type if v_type is str:
-                        setattr(self, k, self._section.get(k, fallback=self.get(k)))
-                    case v_type if v_type is int:
-                        setattr(self, k, self._section.getint(k, fallback=self.get(k)))
-                    case v_type if v_type is float:
-                        setattr(self, k, self._section.getfloat(k, fallback=self.get(k)))
-                    case v_type if v_type is bool:
-                        setattr(self, k, self._section.getboolean(k, fallback=self.get(k)))
-                    case v_type if v_type is list:
-                        v_list = [x.strip() for x in self._section.get(k, fallback=self.get(k)).split(",")]
-                        current_list = getattr(self, k)
-                        if isinstance(current_list, list) and current_list:  # 設定済みリストは追加
-                            current_list.extend(v_list)
-                        else:
-                            setattr(self, k, v_list)
-                    case v_type if v_type is Optional[str]:  # 文字列 or None(未定義)
-                        setattr(self, k, self._section.get(k, fallback=self.get(k)))
-                    case v_type if v_type is PosixPath:
+            match type(self.__dict__.get(k)):
+                case v_type if k in self.__dict__ and v_type is str:
+                    setattr(self, k, self._section.get(k, fallback=self.get(k)))
+                case v_type if k in self.__dict__ and v_type is int:
+                    setattr(self, k, self._section.getint(k, fallback=self.get(k)))
+                case v_type if k in self.__dict__ and v_type is float:
+                    setattr(self, k, self._section.getfloat(k, fallback=self.get(k)))
+                case v_type if v_type is bool:
+                    setattr(self, k, self._section.getboolean(k, fallback=self.get(k)))
+                case v_type if k in self.__dict__ and v_type is list:
+                    v_list = [x.strip() for x in self._section.get(k, fallback=self.get(k)).split(",")]
+                    current_list = getattr(self, k)
+                    if isinstance(current_list, list) and current_list:  # 設定済みリストは追加
+                        current_list.extend(v_list)
+                    else:
+                        setattr(self, k, v_list)
+                case v_type if k in self.__dict__ and v_type is Optional[str]:  # 文字列 or None(未定義)
+                    setattr(self, k, self._section.get(k, fallback=self.get(k)))
+                case v_type if k in self.__dict__ and v_type is PosixPath:
+                    setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
+                case v_type if k in self.__dict__ and v_type is NoneType:
+                    if k in ["backup_dir"]:  # ディレクトリを指定する設定はPathで格納
                         setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
-                    case v_type if v_type is NoneType:
-                        if k in ["backup_dir"]:  # ディレクトリを指定する設定はPathで格納
-                            setattr(self, k, Path(self._section.get(k, fallback=self.get(k))))
-                        else:
-                            setattr(self, k, self._section.get(k, fallback=self.get(k)))
-                    case _:
-                        setattr(self, k, self.__dict__.get(k))
+                    else:
+                        setattr(self, k, self._section.get(k, fallback=self.get(k)))
+                case _:
+                    setattr(self, k, self.__dict__.get(k))
 
     def to_dict(self) -> dict:
         """必要なパラメータを辞書型で返す

@@ -146,7 +146,7 @@ class StatusData(DataMixin):
     message: Any = field(default=None)
     """汎用メッセージ"""
     source: str = field(default="")
-    """入力元識別子"""
+    """データ入力元識別子"""
 
 
 class MessageParserProtocol(Protocol):
