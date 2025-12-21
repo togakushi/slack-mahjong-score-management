@@ -86,10 +86,10 @@
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">    Args:</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">        text (str): 変換対象文字列</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">        kind (str): 変換種類</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">        - h2z: 半角文字を全角文字に変換(数字のみ)</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">        - z2h: 全角文字を半角文字に変換(数字のみ)</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">        - h2k: ひらがなをカタカナに変換</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">        - k2h: カタカナをひらがなに変換</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">            - h2z: 半角文字を全角文字に変換(数字のみ)</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">            - z2h: 全角文字を半角文字に変換(数字のみ)</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">            - h2k: ひらがなをカタカナに変換</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">            - k2h: カタカナをひらがなに変換</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    Returns:</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">        str: 変換後の文字列</span>
@@ -253,10 +253,10 @@
 </span><span id="str_conv-19"><a href="#str_conv-19"><span class="linenos">19</span></a><span class="sd">    Args:</span>
 </span><span id="str_conv-20"><a href="#str_conv-20"><span class="linenos">20</span></a><span class="sd">        text (str): 変換対象文字列</span>
 </span><span id="str_conv-21"><a href="#str_conv-21"><span class="linenos">21</span></a><span class="sd">        kind (str): 変換種類</span>
-</span><span id="str_conv-22"><a href="#str_conv-22"><span class="linenos">22</span></a><span class="sd">        - h2z: 半角文字を全角文字に変換(数字のみ)</span>
-</span><span id="str_conv-23"><a href="#str_conv-23"><span class="linenos">23</span></a><span class="sd">        - z2h: 全角文字を半角文字に変換(数字のみ)</span>
-</span><span id="str_conv-24"><a href="#str_conv-24"><span class="linenos">24</span></a><span class="sd">        - h2k: ひらがなをカタカナに変換</span>
-</span><span id="str_conv-25"><a href="#str_conv-25"><span class="linenos">25</span></a><span class="sd">        - k2h: カタカナをひらがなに変換</span>
+</span><span id="str_conv-22"><a href="#str_conv-22"><span class="linenos">22</span></a><span class="sd">            - h2z: 半角文字を全角文字に変換(数字のみ)</span>
+</span><span id="str_conv-23"><a href="#str_conv-23"><span class="linenos">23</span></a><span class="sd">            - z2h: 全角文字を半角文字に変換(数字のみ)</span>
+</span><span id="str_conv-24"><a href="#str_conv-24"><span class="linenos">24</span></a><span class="sd">            - h2k: ひらがなをカタカナに変換</span>
+</span><span id="str_conv-25"><a href="#str_conv-25"><span class="linenos">25</span></a><span class="sd">            - k2h: カタカナをひらがなに変換</span>
 </span><span id="str_conv-26"><a href="#str_conv-26"><span class="linenos">26</span></a>
 </span><span id="str_conv-27"><a href="#str_conv-27"><span class="linenos">27</span></a><span class="sd">    Returns:</span>
 </span><span id="str_conv-28"><a href="#str_conv-28"><span class="linenos">28</span></a><span class="sd">        str: 変換後の文字列</span>
@@ -289,11 +289,13 @@
 
 <ul>
 <li><strong>text (str):</strong>  変換対象文字列</li>
-<li><strong>kind (str):</strong>  変換種類</li>
-<li><strong>- h2z:</strong>  半角文字を全角文字に変換(数字のみ)</li>
-<li><strong>- z2h:</strong>  全角文字を半角文字に変換(数字のみ)</li>
-<li><strong>- h2k:</strong>  ひらがなをカタカナに変換</li>
-<li><strong>- k2h:</strong>  カタカナをひらがなに変換</li>
+<li><strong>kind (str):</strong>  変換種類
+<ul>
+<li>h2z: 半角文字を全角文字に変換(数字のみ)</li>
+<li>z2h: 全角文字を半角文字に変換(数字のみ)</li>
+<li>h2k: ひらがなをカタカナに変換</li>
+<li>k2h: カタカナをひらがなに変換</li>
+</ul></li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
