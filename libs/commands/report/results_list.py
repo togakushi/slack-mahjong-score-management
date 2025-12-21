@@ -14,8 +14,6 @@ from libs.types import StyleOptions
 from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     import pandas as pd
 
     from integrations.protocols import MessageParserProtocol
@@ -76,7 +74,7 @@ def main(m: "MessageParserProtocol"):
             m.set_data("", df_generation(df), StyleOptions())
 
 
-def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "Path":
+def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "MessageType":
     """グラフ生成処理
 
     Args:
@@ -85,7 +83,7 @@ def graph_generation(game_info: GameInfo, df: "pd.DataFrame", title: str) -> "Pa
         title (str): グラフタイトル
 
     Returns:
-        Path: 生成ファイルパス
+        MessageType: 生成ファイルパス
     """
 
     if g.adapter.conf.plotting_backend == "plotly":
