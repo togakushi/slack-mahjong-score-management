@@ -95,6 +95,15 @@ def check_score(m: "MessageParserProtocol") -> dict:
             ("\uff08", "("),  # 全角丸括弧
             ("\uff09", ")"),  # 全角丸括弧
             ("\u2017", "_"),  # DOUBLE LOW LINE(半角)
+            ("\u034f", " "),  # COMBINING GRAPHEME JOINER(結合文字の作成)
+            ("\u200b", " "),  # ZERO WIDTH SPACE(ゼロ幅スペース)
+            ("\u200c", " "),  # ZERO WIDTH NON-JOINER(ゼロ幅ノンジョイナー)
+            ("\u200d", " "),  # ZERO WIDTH JOINER(ゼロ幅ジョイナー)
+            ("\u200e", " "),  # LEFT-TO-RIGHT MARK(左から右へのマーク)
+            ("\u200f", " "),  # RIGHT-TO-LEFT MARK(右から左へのマーク)
+            ("\u2061", " "),  # FUNCTION APPLICATION(関数の適用)
+            ("\u2800", " "),  # BRAILLE PATTERN BLANK(点字パターンの空白)
+            ("\ufeff", " "),  # ZERO WIDTH NO-BREAK SPACE(ゼロ幅改行なしスペース)
         ]
         for z, h in replace_chr:
             text = text.replace(z, h)
