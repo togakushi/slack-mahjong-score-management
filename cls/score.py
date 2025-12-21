@@ -368,13 +368,7 @@ class GameResult:
             score_df["rank"] = score_df["rpoint"].rank(ascending=False, method="first").astype("int")
 
         # 獲得ポイントの計算 (素点-配給原点)/10+順位点
-        score_df["position"] = (
-            score_df["rpoint"]
-            .rank(  # 加算する順位点リストの位置
-                ascending=False, method="first"
-            )
-            .astype("int")
-        )
+        score_df["position"] = score_df["rpoint"].rank(ascending=False, method="first").astype("int")  # 加算する順位点リストの位置
         score_df["point"] = (score_df["rpoint"] - self.return_point) / 10 + score_df["position"].apply(lambda p: work_rank_point[p - 1])
         score_df["point"] = score_df["point"].apply(lambda p: float(f"{p:.1f}"))  # 桁ブレ修正
 
