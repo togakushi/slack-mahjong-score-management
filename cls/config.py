@@ -211,7 +211,7 @@ class SettingSection(BaseSection):
         """コメント固定(検索時の集約文字数)"""
         self.guest_mark: str = "※"
         """ゲスト無効時に未登録メンバーに付与する印"""
-        self.database_file: Path = Path("mahjong.db")
+        self.database_file: Union[str, Path] = Path("mahjong.db")
         """成績管理データベースファイル名"""
         self.backup_dir: Optional[Path] = None
         """バックアップ先ディレクトリ"""
@@ -253,7 +253,7 @@ class SettingSection(BaseSection):
                 sys.exit(255)
 
         # データベース関連
-        if not self.database_file.exists():
+        if isinstance(self.database_file, Path) and not self.database_file.exists():
             self.database_file = outer.config_dir / str(self.database_file)
 
         if isinstance(self.backup_dir, PosixPath):
