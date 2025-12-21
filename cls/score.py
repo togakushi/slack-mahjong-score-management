@@ -329,8 +329,7 @@ class GameResult:
             score_df["rank"] = score_df["rpoint"].rank(ascending=False, method="min").astype("int")
 
             # 順位点リストの更新
-            rank_sequence = "".join(score_df["rank"].sort_values().to_string(index=False).split())
-            match rank_sequence:
+            match "".join(score_df["rank"].sort_values().to_string(index=False).split()):
                 case "1111":
                     work_rank_point = point_split(work_rank_point)
                 case "1114":
