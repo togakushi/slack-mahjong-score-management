@@ -90,16 +90,16 @@ def check_score(m: "MessageParserProtocol") -> dict:
     for keyword, config_file in g.cfg.keyword.rule.items():
         # 記号を置換
         replace_chr = [
-            (chr(0xFF0B), "+"),  # 全角プラス符号
-            (chr(0x2212), "-"),  # 全角マイナス符号
-            (chr(0xFF08), "("),  # 全角丸括弧
-            (chr(0xFF09), ")"),  # 全角丸括弧
-            (chr(0x2017), "_"),  # DOUBLE LOW LINE(半角)
+            ("\uff0b", "+"),  # 全角プラス符号
+            ("\u2212", "-"),  # 全角マイナス符号
+            ("\uff08", "("),  # 全角丸括弧
+            ("\uff09", ")"),  # 全角丸括弧
+            ("\u2017", "_"),  # DOUBLE LOW LINE(半角)
         ]
         for z, h in replace_chr:
             text = text.replace(z, h)
 
-        text = "".join(text.split())  # 改行削除
+        text = "".join(text.split())  # 改行/空白削除
 
         # パターンマッチング
         pattern1 = re.compile(rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
