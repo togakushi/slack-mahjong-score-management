@@ -72,7 +72,7 @@ create view if not exists game_results as
         group_concat(case when x4_regulations.type in (0, 1, 2, 3) then x4_regulations.word else null end) as t4_remarks,
         -- 情報
         deposit,
-        date(result.playtime, '-12 hours') as collection_daily,
+        date(result.playtime, '-<time_adjust> hours') as collection_daily,
         result.comment,
         game_info.guest_count,
         game_info.same_team,
