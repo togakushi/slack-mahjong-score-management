@@ -83,7 +83,7 @@ def get_member_info() -> list["MemberDataDict"]:
     tmp: "MemberDataDict"
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
-        rows = conn.execute("select name, id from member;")
+        rows = conn.execute("select name, id from member where id != 0;")
         id_list = dict(rows.fetchall())
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
