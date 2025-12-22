@@ -5,70 +5,8 @@ libs/data/lookup/internal.py
 from configparser import ConfigParser
 from typing import TYPE_CHECKING, Union, overload
 
-import libs.global_value as g
-
 if TYPE_CHECKING:
     from pathlib import Path
-
-
-def get_member() -> list:
-    """メンバーリストを返す
-
-    Returns:
-        list: メンバーリスト
-    """
-
-    return sorted(list(set(g.cfg.member.list.values())))
-
-
-def get_team() -> list:
-    """チームリストを返す
-
-    Returns:
-        list: チームリスト
-    """
-
-    return [x.get("team") for x in g.cfg.team.list]
-
-
-def get_teammates(team: str) -> list:
-    """指定チームのチームメイト一覧を返す
-
-    Args:
-        team (str): チェック対象のチーム名
-
-    Returns:
-        list: メンバーリスト
-    """
-
-    member_list: list = []
-    if team_data := [x for x in g.cfg.team.list if x["team"] == team]:
-        if not (member_list := team_data[0]["member"]):
-            member_list = ["未エントリー"]
-
-    return member_list
-
-
-def which_team(name: str) -> str | None:
-    """指定メンバーの所属チームを返す
-
-    Args:
-        name (str): チェック対象のメンバー名
-
-    Returns:
-        Union[str, None]:
-        - str: 所属しているチーム名
-        - None: 未所属
-    """
-
-    team = None
-
-    for x in g.cfg.team.list:
-        if x["member"]:
-            if name in x["member"]:
-                team = x["team"]
-
-    return team
 
 
 @overload

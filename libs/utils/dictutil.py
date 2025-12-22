@@ -44,8 +44,8 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             g.cfg.overwrite(Path(channel_config), subcom.section)
 
     g.cfg.member.guest_name = lookup.db.get_guest()
-    g.cfg.member.list = lookup.db.get_member_list()
-    g.cfg.team.list = lookup.db.get_team_list()
+    g.cfg.member.info = lookup.db.get_member_info()
+    g.cfg.team.info = lookup.db.get_team_info()
 
     ret_dict: "PlaceholderDict" = {
         "command": subcom.section,
@@ -105,11 +105,11 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     check_list: list = param.unknown + pre_param.unknown
     if ret_dict.get("individual"):
         if ret_dict.get("all_player"):
-            check_list.extend(lookup.internal.get_member())
+            check_list.extend(g.cfg.member.list)
         target_player = _collect_member(check_list)
     else:
         if ret_dict.get("all_player"):
-            check_list.extend(lookup.internal.get_team())
+            check_list.extend(g.cfg.team.list)
         target_player = _collect_team(check_list)
 
     if target_player:
@@ -161,9 +161,8 @@ def _collect_member(target_list: list) -> list:
     ret_list: list = []
     g.params.update({"individual": True})
     for name in list(dict.fromkeys(target_list)):
-        if name in lookup.internal.get_team():
-            teammates = lookup.internal.get_teammates(name)
-            ret_list.extend(teammates)
+        if name in g.cfg.team.list:
+            ret_list.extend(g.cfg.team.member(name))
             continue
         if g.params.get("unregistered_replace", True):
             ret_list.append(name)
@@ -176,8 +175,8 @@ def _collect_member(target_list: list) -> list:
 def _collect_team(target_list: list) -> list:
     ret_list: list = []
     for team in list(dict.fromkeys(target_list)):
-        if team in lookup.internal.get_member():
-            name = lookup.internal.which_team(team)
+        if team in g.cfg.member.list:
+            name = g.cfg.team.which(team)
             if name:
                 ret_list.append(name)
         else:

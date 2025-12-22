@@ -15,11 +15,11 @@ def get_members_list() -> str:
     """
 
     name_list: list = []
-    for pname in set(g.cfg.member.list.values()):
+    for pname in g.cfg.member.list:
         name_list.append(
             [
                 pname,
-                ", ".join([k for k, v in g.cfg.member.list.items() if v == pname]),
+                ", ".join([k for k, v in g.cfg.member.info.items() if v == pname]),
             ],
         )
 
@@ -44,11 +44,11 @@ def get_team_list() -> str:
     """
 
     team_list: list = []
-    for data in g.cfg.team.list:
-        if member := ", ".join(data["member"]):
-            team_list.append([data["team"], member])
+    for team_name in g.cfg.team.list:
+        if member := ", ".join(g.cfg.team.member(team_name)):
+            team_list.append([team_name, member])
         else:
-            team_list.append([data["team"], "未エントリー"])
+            team_list.append([team_name, "未エントリー"])
 
     if team_list:
         output = table2ascii(

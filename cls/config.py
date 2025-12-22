@@ -272,8 +272,8 @@ class MemberSection(BaseSection):
         self._reset()
 
     def _reset(self):
-        self.list: dict[str, str] = {}
-        """メンバーリスト"""
+        self.info: dict[str, str] = {}
+        """メンバー情報"""
         self.registration_limit: int = 255
         """登録メンバー上限数"""
         self.character_limit: int = 8
@@ -300,6 +300,12 @@ class MemberSection(BaseSection):
 
         logging.debug("%s: %s", _section_name, self)
 
+    @property
+    def list(self) -> list[str]:
+        """メンバー名一覧をリストで返す"""
+
+        return sorted(list(set(self.info.values())))
+
 
 class TeamSection(BaseSection):
     """teamセクション"""
@@ -308,8 +314,8 @@ class TeamSection(BaseSection):
         self._reset()
 
     def _reset(self):
-        self.list: list["TeamDataDict"] = []
-        """チームリスト"""
+        self.info: list["TeamDataDict"] = []
+        """チーム情報"""
         self.registration_limit: int = 255
         """登録チーム上限数"""
         self.character_limit: int = 16
@@ -335,6 +341,45 @@ class TeamSection(BaseSection):
         self.commandword = [x.strip() for x in self._parser.get(_section_name, "commandword", fallback="チーム一覧").split(",")]
 
         logging.debug("%s: %s", _section_name, self)
+
+    def member(self, team: str) -> list[str]:
+        """チーム所属メンバーをリストで返す
+
+        Args:
+            team (str): チーム名
+
+        Returns:
+            list[str]: 所属メンバーリスト
+        """
+
+        for x in self.info:
+            if x.get("team") == team:
+                return x.get("member")
+        return []
+
+    def which(self, name: str) -> str | None:
+        """指定メンバーの所属チームを返す
+
+        Args:
+            name (str): チェック対象のメンバー名
+
+        Returns:
+            Union[str, None]:
+            - str: 所属しているチーム名
+            - None: 未所属
+        """
+
+        for team in self.list:
+            if name in self.member(team):
+                return team
+
+        return None
+
+    @property
+    def list(self) -> list[str]:
+        """チーム名一覧をリストで返す"""
+
+        return [x.get("team") for x in self.info]
 
 
 class AliasSection(BaseSection):

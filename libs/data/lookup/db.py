@@ -91,7 +91,7 @@ def get_guest() -> str:
     return guest_name
 
 
-def get_member_list() -> dict[str, str]:
+def get_member_info() -> dict[str, str]:
     """メンバー情報取得
 
     Returns:
@@ -105,7 +105,7 @@ def get_member_list() -> dict[str, str]:
     return member_list
 
 
-def get_team_list() -> list["TeamDataDict"]:
+def get_team_info() -> list["TeamDataDict"]:
     """チーム情報取得
 
     Returns:

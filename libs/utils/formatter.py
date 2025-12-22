@@ -128,15 +128,12 @@ def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) 
         str: 表記ブレ修正後のプレイヤー名
     """
 
-    check_list = list(set(g.cfg.member.list.keys()))  # 別名を含むリスト
-    check_team = lookup.internal.get_team()
-
     def _judge(check: str) -> str:
         if g.params.get("individual", True) or not_replace:
-            if check in check_list:
-                return g.cfg.member.list.get(check, check)
+            if check in list(set(g.cfg.member.info.keys())):  # 別名を含むリスト
+                return g.cfg.member.info.get(check, check)
         else:
-            if check in check_team:
+            if check in g.cfg.team.list:
                 return check
         return ""
 
@@ -199,7 +196,7 @@ def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
         id_list = lookup.db.get_member_id()
     else:
         prefix = "Team"
-        id_list = {x["team"]: x["id"] for x in g.cfg.team.list}
+        id_list = {x["team"]: x["id"] for x in g.cfg.team.info}
 
     if len(name_list) == 1:
         name = name_list[0]
