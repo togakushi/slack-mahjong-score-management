@@ -4,9 +4,12 @@ cls/score.py
 
 import re
 from dataclasses import dataclass, field
-from typing import Literal, Optional, cast
+from typing import TYPE_CHECKING, Literal, Optional, cast
 
 import pandas as pd
+
+if TYPE_CHECKING:
+    from libs.types import ScoreDict
 
 
 @dataclass
@@ -28,24 +31,26 @@ class Score:
         """有効なデータを持っているかチェック"""
         return self != Score()
 
-    def to_dict(self, prefix: Optional[str] = None) -> dict:
+    def to_dict(self, prefix: str) -> "ScoreDict":
         """データを辞書で返す
 
         Args:
-            prefix (Optional[str], optional): キーに付与する接頭辞. Defaults to None.
+            prefix (str): キーに付与する接頭辞
 
         Returns:
-            dict: 返却する辞書
+            ScoreDict: 返却する辞書
         """
 
-        ret_dict: dict = {}
-        prefix = "" if prefix is None else f"{prefix}_"
-        for k, v in self.__dict__.items():
-            if k == "r_str":
-                k = "str"
-            ret_dict[f"{prefix}{k}"] = v
-
-        return ret_dict
+        return cast(
+            "ScoreDict",
+            {
+                f"{prefix}_name": self.name,
+                f"{prefix}_str": self.r_str,
+                f"{prefix}_rpoint": self.rpoint,
+                f"{prefix}_point": self.point,
+                f"{prefix}_rank": self.rank,
+            },
+        )
 
 
 class GameResult:
@@ -167,11 +172,11 @@ class GameResult:
         if "source" in kwargs:
             self.source = kwargs["source"]
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> "ScoreDict":
         """データを辞書で返す
 
         Returns:
-            dict: スコアデータ
+            ScoreDict: スコアデータ
         """
 
         return {
@@ -216,7 +221,7 @@ class GameResult:
                 ret_text += f"[{self.comment if self.comment else None}]"
             case "logging":
                 ret_text += f"ts={self.ts}, deposit={self.deposit}, rule_version={self.rule_version}, "
-                ret_text += f"p1={self.p1.to_dict()}, p2={self.p2.to_dict()}, p3={self.p3.to_dict()}, p4={self.p4.to_dict()}, "
+                ret_text += f"p1={self.p1.to_dict('p1')}, p2={self.p2.to_dict('p2')}, p3={self.p3.to_dict('p3')}, p4={self.p4.to_dict('p4')}, "
                 ret_text += f"comment={self.comment if self.comment else None}, source={self.source}"
 
         return ret_text

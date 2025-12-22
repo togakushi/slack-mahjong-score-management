@@ -81,13 +81,12 @@ def other_words(word: str, m: "MessageParserProtocol"):
     if re.match(rf"^{g.cfg.setting.remarks_word}$", word) and m.in_thread:  # 追加メモ
         if lookup.db.exsist_record(m.data.thread_ts).has_valid_data():
             modify.check_remarks(m)
-    else:
-        # スコア取り出し
+    else:  # スコア登録
         if detection := validator.check_score(m):  # 結果報告フォーマットに一致するポストの処理
             score = GameResult(**detection, **g.cfg.mahjong.to_dict())
             # 名前ブレ修正
             for k, p in score.to_dict().items():
-                if str(k).endswith("_name"):
+                if k.endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(p), not_replace=True)})
                     continue
 

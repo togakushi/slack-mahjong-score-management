@@ -244,6 +244,36 @@ class MessageTypeDict(TypedDict):
     """表示オプション"""
 
 
+class ScoreDict(TypedDict, total=False):
+    """スコアデータ"""
+
+    ts: str
+    p1_name: str
+    p1_str: str
+    p1_rpoint: int
+    p1_point: float
+    p1_rank: int
+    p2_name: str
+    p2_str: str
+    p2_rpoint: int
+    p2_point: float
+    p2_rank: int
+    p3_name: str
+    p3_str: str
+    p3_rpoint: int
+    p3_point: float
+    p3_rank: int
+    p4_name: str
+    p4_str: str
+    p4_rpoint: int
+    p4_point: float
+    p4_rank: int
+    deposit: int
+    comment: Optional[str]
+    rule_version: str
+    source: Optional[str]
+
+
 class RemarkDict(TypedDict, total=False):
     """メモ格納用辞書"""
 
