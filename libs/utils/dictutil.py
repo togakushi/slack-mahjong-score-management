@@ -105,11 +105,11 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     check_list: list = param.unknown + pre_param.unknown
     if ret_dict.get("individual"):
         if ret_dict.get("all_player"):
-            check_list.extend(g.cfg.member.list)
+            check_list.extend(g.cfg.member.lists)
         target_player = _collect_member(check_list)
     else:
         if ret_dict.get("all_player"):
-            check_list.extend(g.cfg.team.list)
+            check_list.extend(g.cfg.team.lists)
         target_player = _collect_team(check_list)
 
     if target_player:
@@ -161,7 +161,7 @@ def _collect_member(target_list: list) -> list:
     ret_list: list = []
     g.params.update({"individual": True})
     for name in list(dict.fromkeys(target_list)):
-        if name in g.cfg.team.list:
+        if name in g.cfg.team.lists:
             ret_list.extend(g.cfg.team.member(name))
             continue
         if g.params.get("unregistered_replace", True):
@@ -175,7 +175,7 @@ def _collect_member(target_list: list) -> list:
 def _collect_team(target_list: list) -> list:
     ret_list: list = []
     for team in list(dict.fromkeys(target_list)):
-        if team in g.cfg.member.list:
+        if team in g.cfg.member.lists:
             name = g.cfg.team.which(team)
             if name:
                 ret_list.append(name)

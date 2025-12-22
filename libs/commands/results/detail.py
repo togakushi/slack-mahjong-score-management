@@ -31,9 +31,9 @@ def aggregation(m: "MessageParserProtocol"):
     # 検索動作を合わせる
     g.params.update({"guest_skip": g.params["guest_skip2"]})
 
-    if g.params["player_name"] in g.cfg.team.list:
+    if g.params["player_name"] in g.cfg.team.lists:
         g.params.update({"individual": False})
-    elif g.params["player_name"] in g.cfg.member.list:
+    elif g.params["player_name"] in g.cfg.member.lists:
         g.params.update({"individual": True})
 
     # --- データ収集
@@ -161,9 +161,9 @@ def comparison(m: "MessageParserProtocol"):
     # 検索動作を合わせる
     g.params.update({"guest_skip": g.params["guest_skip2"]})
 
-    if g.params["player_name"] in g.cfg.team.list:
+    if g.params["player_name"] in g.cfg.team.lists:
         g.params.update({"individual": False})
-    elif g.params["player_name"] in g.cfg.member.list:
+    elif g.params["player_name"] in g.cfg.member.lists:
         g.params.update({"individual": True})
 
     # データ収集

@@ -4,7 +4,7 @@ libs/data/lookup/db.py
 
 from contextlib import closing
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 
@@ -15,26 +15,7 @@ from libs.utils import dbutil
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime as ExtDt
-    from libs.types import PlaceholderDict, TeamDataDict
-
-
-def get_member_id(name: Optional[str] = None) -> dict:
-    """メンバーのIDを返す
-
-    Args:
-        name (Optional[str], optional): 指定メンバーのみ. Defaults to None.
-
-    Returns:
-        dict: メンバー名とIDのペア
-    """
-
-    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
-        rows = conn.execute("select name, id from member;")
-        id_list = dict(rows.fetchall())
-
-    if name in id_list:
-        return {name: id_list[name]}
-    return id_list
+    from libs.types import MemberDataDict, PlaceholderDict, TeamDataDict
 
 
 def member_info(params: "PlaceholderDict") -> dict:
@@ -91,25 +72,40 @@ def get_guest() -> str:
     return guest_name
 
 
-def get_member_info() -> dict[str, str]:
+def get_member_info() -> list["MemberDataDict"]:
     """メンバー情報取得
 
     Returns:
-        dict[str, str]: 別名, 表示名
+        list[MemberDataDict]: メンバー情報
     """
+
+    ret: list["MemberDataDict"] = []
+    tmp: "MemberDataDict"
+
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
+        rows = conn.execute("select name, id from member;")
+        id_list = dict(rows.fetchall())
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute("select name, member from alias")
-        member_list = dict(rows.fetchall())
+        alias_list = dict(rows.fetchall())
 
-    return member_list
+    for name, id in id_list.items():
+        tmp = {
+            "id": id,
+            "name": name,
+            "alias": [k for k, v in alias_list.items() if v == name],
+        }
+        ret.append(tmp)
+
+    return ret
 
 
 def get_team_info() -> list["TeamDataDict"]:
     """チーム情報取得
 
     Returns:
-        list["TeamDataDict"]: チーム情報
+        list[TeamDataDict]: チーム情報
     """
 
     ret: list["TeamDataDict"] = []

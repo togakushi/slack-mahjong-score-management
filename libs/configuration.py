@@ -294,8 +294,8 @@ def read_memberslist(log=True):
 
     if log:
         logging.info("guest_name: %s", g.cfg.member.guest_name)
-        logging.info("member_list: %s", g.cfg.member.list)
-        logging.info("team_list: %s", g.cfg.team.list)
+        logging.info("member_list: %s", g.cfg.member.lists)
+        logging.info("team_list: %s", g.cfg.team.lists)
 
 
 def register():

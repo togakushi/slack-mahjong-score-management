@@ -18,7 +18,7 @@ from libs.types import GradeTableDict
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
-    from libs.types import TeamDataDict
+    from libs.types import MemberDataDict, TeamDataDict
 
 SubClassType: TypeAlias = Union[
     "MahjongSection",
@@ -290,7 +290,7 @@ class SettingSection(BaseSection):
 class MemberSection(BaseSection):
     """memberセクション処理"""
 
-    info: dict[str, str]
+    info: list["MemberDataDict"]
     """メンバー情報"""
     registration_limit: int
     """登録メンバー上限数"""
@@ -305,7 +305,7 @@ class MemberSection(BaseSection):
         self._reset()
 
     def _reset(self):
-        self.info = {}
+        self.info = []
         self.registration_limit = int(255)
         self.character_limit = int(8)
         self.alias_limit = int(16)
@@ -328,11 +328,41 @@ class MemberSection(BaseSection):
 
         logging.debug("%s: %s", _section_name, self)
 
+    def alias(self, name: str) -> list[str]:
+        """指定メンバーの別名をリストで返す
+
+        Args:
+            name (str): メンバー名
+
+        Returns:
+            list[str]: 別名リスト
+        """
+
+        for x in self.info:
+            if x.get("name") == name:
+                return x.get("alias")
+        return []
+
     @property
-    def list(self) -> list[str]:
+    def lists(self) -> list[str]:
         """メンバー名一覧をリストで返す"""
 
-        return sorted(list(set(self.info.values())))
+        return [x.get("name") for x in self.info]
+
+    @property
+    def all_lists(self) -> list[str]:
+        """メンバー名、別名をすべてリストで返す
+
+        Returns:
+            list[str]: _description_
+        """
+
+        ret: list[str] = []
+        for name in self.lists:
+            ret.append(name)
+            ret.extend(self.alias(name))
+
+        return list(set(ret))
 
 
 class TeamSection(BaseSection):
@@ -403,14 +433,14 @@ class TeamSection(BaseSection):
             - None: 未所属
         """
 
-        for team in self.list:
+        for team in self.lists:
             if name in self.member(team):
                 return team
 
         return None
 
     @property
-    def list(self) -> list[str]:
+    def lists(self) -> list[str]:
         """チーム名一覧をリストで返す"""
 
         return [x.get("team") for x in self.info]
