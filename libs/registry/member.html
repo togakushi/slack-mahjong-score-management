@@ -170,7 +170,7 @@
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">member</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_member_list</span><span class="p">()</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">member</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_member_info</span><span class="p">()</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="k">return</span> <span class="n">msg</span>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
@@ -221,7 +221,7 @@
 </span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">member</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_member_list</span><span class="p">()</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">member</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_member_info</span><span class="p">()</span>
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="k">return</span> <span class="n">msg</span>
 </span></pre></div>
 
@@ -337,7 +337,7 @@
 </span><span id="append-109"><a href="#append-109"><span class="linenos">109</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </span><span id="append-110"><a href="#append-110"><span class="linenos">110</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="append-111"><a href="#append-111"><span class="linenos">111</span></a>
-</span><span id="append-112"><a href="#append-112"><span class="linenos">112</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">member</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_member_list</span><span class="p">()</span>
+</span><span id="append-112"><a href="#append-112"><span class="linenos">112</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">member</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_member_info</span><span class="p">()</span>
 </span><span id="append-113"><a href="#append-113"><span class="linenos">113</span></a>    <span class="k">return</span> <span class="n">msg</span>
 </span></pre></div>
 
@@ -421,7 +421,7 @@
 </span><span id="remove-160"><a href="#remove-160"><span class="linenos">160</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </span><span id="remove-161"><a href="#remove-161"><span class="linenos">161</span></a>    <span class="n">resultdb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </span><span id="remove-162"><a href="#remove-162"><span class="linenos">162</span></a>
-</span><span id="remove-163"><a href="#remove-163"><span class="linenos">163</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">member</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_member_list</span><span class="p">()</span>
+</span><span id="remove-163"><a href="#remove-163"><span class="linenos">163</span></a>    <span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">member</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get_member_info</span><span class="p">()</span>
 </span><span id="remove-164"><a href="#remove-164"><span class="linenos">164</span></a>    <span class="k">return</span> <span class="n">msg</span>
 </span></pre></div>
 

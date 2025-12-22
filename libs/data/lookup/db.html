@@ -41,10 +41,10 @@
                     <a class="function" href="#get_guest">get_guest</a>
             </li>
             <li>
-                    <a class="function" href="#get_member_list">get_member_list</a>
+                    <a class="function" href="#get_member_info">get_member_info</a>
             </li>
             <li>
-                    <a class="function" href="#get_team_list">get_team_list</a>
+                    <a class="function" href="#get_team_info">get_team_info</a>
             </li>
             <li>
                     <a class="function" href="#rule_version_range">rule_version_range</a>
@@ -177,7 +177,7 @@
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="k">return</span> <span class="n">guest_name</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_member_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_member_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メンバー情報取得</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">    Returns:</span>
@@ -191,7 +191,7 @@
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="k">return</span> <span class="n">member_list</span>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_team_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TeamDataDict&quot;</span><span class="p">]:</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_team_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TeamDataDict&quot;</span><span class="p">]:</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チーム情報取得</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    Returns:</span>
@@ -508,29 +508,29 @@
 
 
                 </section>
-                <section id="get_member_list">
-                            <input id="get_member_list-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="get_member_info">
+                            <input id="get_member_info-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_member_list</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>:</span></span>
+        <span class="name">get_member_info</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>:</span></span>
 
-                <label class="view-source-button" for="get_member_list-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="get_member_info-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#get_member_list"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_member_list-95"><a href="#get_member_list-95"><span class="linenos"> 95</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_member_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-</span><span id="get_member_list-96"><a href="#get_member_list-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メンバー情報取得</span>
-</span><span id="get_member_list-97"><a href="#get_member_list-97"><span class="linenos"> 97</span></a>
-</span><span id="get_member_list-98"><a href="#get_member_list-98"><span class="linenos"> 98</span></a><span class="sd">    Returns:</span>
-</span><span id="get_member_list-99"><a href="#get_member_list-99"><span class="linenos"> 99</span></a><span class="sd">        dict[str, str]: 別名, 表示名</span>
-</span><span id="get_member_list-100"><a href="#get_member_list-100"><span class="linenos">100</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get_member_list-101"><a href="#get_member_list-101"><span class="linenos">101</span></a>
-</span><span id="get_member_list-102"><a href="#get_member_list-102"><span class="linenos">102</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-</span><span id="get_member_list-103"><a href="#get_member_list-103"><span class="linenos">103</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select name, member from alias&quot;</span><span class="p">)</span>
-</span><span id="get_member_list-104"><a href="#get_member_list-104"><span class="linenos">104</span></a>        <span class="n">member_list</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">())</span>
-</span><span id="get_member_list-105"><a href="#get_member_list-105"><span class="linenos">105</span></a>
-</span><span id="get_member_list-106"><a href="#get_member_list-106"><span class="linenos">106</span></a>    <span class="k">return</span> <span class="n">member_list</span>
+    <a class="headerlink" href="#get_member_info"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_member_info-95"><a href="#get_member_info-95"><span class="linenos"> 95</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_member_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span id="get_member_info-96"><a href="#get_member_info-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メンバー情報取得</span>
+</span><span id="get_member_info-97"><a href="#get_member_info-97"><span class="linenos"> 97</span></a>
+</span><span id="get_member_info-98"><a href="#get_member_info-98"><span class="linenos"> 98</span></a><span class="sd">    Returns:</span>
+</span><span id="get_member_info-99"><a href="#get_member_info-99"><span class="linenos"> 99</span></a><span class="sd">        dict[str, str]: 別名, 表示名</span>
+</span><span id="get_member_info-100"><a href="#get_member_info-100"><span class="linenos">100</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_member_info-101"><a href="#get_member_info-101"><span class="linenos">101</span></a>
+</span><span id="get_member_info-102"><a href="#get_member_info-102"><span class="linenos">102</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+</span><span id="get_member_info-103"><a href="#get_member_info-103"><span class="linenos">103</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;select name, member from alias&quot;</span><span class="p">)</span>
+</span><span id="get_member_info-104"><a href="#get_member_info-104"><span class="linenos">104</span></a>        <span class="n">member_list</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">())</span>
+</span><span id="get_member_info-105"><a href="#get_member_info-105"><span class="linenos">105</span></a>
+</span><span id="get_member_info-106"><a href="#get_member_info-106"><span class="linenos">106</span></a>    <span class="k">return</span> <span class="n">member_list</span>
 </span></pre></div>
 
 
@@ -545,45 +545,45 @@
 
 
                 </section>
-                <section id="get_team_list">
-                            <input id="get_team_list-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="get_team_info">
+                            <input id="get_team_info-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_team_list</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="../../types.html#TeamDataDict">libs.types.TeamDataDict</a></span><span class="p">]</span>:</span></span>
+        <span class="name">get_team_info</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="n"><a href="../../types.html#TeamDataDict">libs.types.TeamDataDict</a></span><span class="p">]</span>:</span></span>
 
-                <label class="view-source-button" for="get_team_list-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="get_team_info-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#get_team_list"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_team_list-109"><a href="#get_team_list-109"><span class="linenos">109</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_team_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TeamDataDict&quot;</span><span class="p">]:</span>
-</span><span id="get_team_list-110"><a href="#get_team_list-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チーム情報取得</span>
-</span><span id="get_team_list-111"><a href="#get_team_list-111"><span class="linenos">111</span></a>
-</span><span id="get_team_list-112"><a href="#get_team_list-112"><span class="linenos">112</span></a><span class="sd">    Returns:</span>
-</span><span id="get_team_list-113"><a href="#get_team_list-113"><span class="linenos">113</span></a><span class="sd">        list[&quot;TeamDataDict&quot;]: チーム情報</span>
-</span><span id="get_team_list-114"><a href="#get_team_list-114"><span class="linenos">114</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get_team_list-115"><a href="#get_team_list-115"><span class="linenos">115</span></a>
-</span><span id="get_team_list-116"><a href="#get_team_list-116"><span class="linenos">116</span></a>    <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TeamDataDict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="get_team_list-117"><a href="#get_team_list-117"><span class="linenos">117</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-</span><span id="get_team_list-118"><a href="#get_team_list-118"><span class="linenos">118</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-</span><span id="get_team_list-119"><a href="#get_team_list-119"><span class="linenos">119</span></a><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="get_team_list-120"><a href="#get_team_list-120"><span class="linenos">120</span></a><span class="sd">                select</span>
-</span><span id="get_team_list-121"><a href="#get_team_list-121"><span class="linenos">121</span></a><span class="sd">                    team.id as id,</span>
-</span><span id="get_team_list-122"><a href="#get_team_list-122"><span class="linenos">122</span></a><span class="sd">                    team.name as team,</span>
-</span><span id="get_team_list-123"><a href="#get_team_list-123"><span class="linenos">123</span></a><span class="sd">                    group_concat(member.name) as member</span>
-</span><span id="get_team_list-124"><a href="#get_team_list-124"><span class="linenos">124</span></a><span class="sd">                from</span>
-</span><span id="get_team_list-125"><a href="#get_team_list-125"><span class="linenos">125</span></a><span class="sd">                    team</span>
-</span><span id="get_team_list-126"><a href="#get_team_list-126"><span class="linenos">126</span></a><span class="sd">                left join member on</span>
-</span><span id="get_team_list-127"><a href="#get_team_list-127"><span class="linenos">127</span></a><span class="sd">                    team.id == member.team_id</span>
-</span><span id="get_team_list-128"><a href="#get_team_list-128"><span class="linenos">128</span></a><span class="sd">                group by</span>
-</span><span id="get_team_list-129"><a href="#get_team_list-129"><span class="linenos">129</span></a><span class="sd">                    team.id</span>
-</span><span id="get_team_list-130"><a href="#get_team_list-130"><span class="linenos">130</span></a><span class="sd">            &quot;&quot;&quot;</span>
-</span><span id="get_team_list-131"><a href="#get_team_list-131"><span class="linenos">131</span></a>        <span class="p">)</span>
-</span><span id="get_team_list-132"><a href="#get_team_list-132"><span class="linenos">132</span></a>
-</span><span id="get_team_list-133"><a href="#get_team_list-133"><span class="linenos">133</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
-</span><span id="get_team_list-134"><a href="#get_team_list-134"><span class="linenos">134</span></a>            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span> <span class="s2">&quot;team&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;team&quot;</span><span class="p">]),</span> <span class="s2">&quot;member&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;member&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)})</span>
-</span><span id="get_team_list-135"><a href="#get_team_list-135"><span class="linenos">135</span></a>
-</span><span id="get_team_list-136"><a href="#get_team_list-136"><span class="linenos">136</span></a>    <span class="k">return</span> <span class="n">ret</span>
+    <a class="headerlink" href="#get_team_info"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_team_info-109"><a href="#get_team_info-109"><span class="linenos">109</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_team_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TeamDataDict&quot;</span><span class="p">]:</span>
+</span><span id="get_team_info-110"><a href="#get_team_info-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チーム情報取得</span>
+</span><span id="get_team_info-111"><a href="#get_team_info-111"><span class="linenos">111</span></a>
+</span><span id="get_team_info-112"><a href="#get_team_info-112"><span class="linenos">112</span></a><span class="sd">    Returns:</span>
+</span><span id="get_team_info-113"><a href="#get_team_info-113"><span class="linenos">113</span></a><span class="sd">        list[&quot;TeamDataDict&quot;]: チーム情報</span>
+</span><span id="get_team_info-114"><a href="#get_team_info-114"><span class="linenos">114</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_team_info-115"><a href="#get_team_info-115"><span class="linenos">115</span></a>
+</span><span id="get_team_info-116"><a href="#get_team_info-116"><span class="linenos">116</span></a>    <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TeamDataDict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="get_team_info-117"><a href="#get_team_info-117"><span class="linenos">117</span></a>    <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">dbutil</span><span class="o">.</span><span class="n">connection</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">setting</span><span class="o">.</span><span class="n">database_file</span><span class="p">))</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+</span><span id="get_team_info-118"><a href="#get_team_info-118"><span class="linenos">118</span></a>        <span class="n">rows</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+</span><span id="get_team_info-119"><a href="#get_team_info-119"><span class="linenos">119</span></a><span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_team_info-120"><a href="#get_team_info-120"><span class="linenos">120</span></a><span class="sd">                select</span>
+</span><span id="get_team_info-121"><a href="#get_team_info-121"><span class="linenos">121</span></a><span class="sd">                    team.id as id,</span>
+</span><span id="get_team_info-122"><a href="#get_team_info-122"><span class="linenos">122</span></a><span class="sd">                    team.name as team,</span>
+</span><span id="get_team_info-123"><a href="#get_team_info-123"><span class="linenos">123</span></a><span class="sd">                    group_concat(member.name) as member</span>
+</span><span id="get_team_info-124"><a href="#get_team_info-124"><span class="linenos">124</span></a><span class="sd">                from</span>
+</span><span id="get_team_info-125"><a href="#get_team_info-125"><span class="linenos">125</span></a><span class="sd">                    team</span>
+</span><span id="get_team_info-126"><a href="#get_team_info-126"><span class="linenos">126</span></a><span class="sd">                left join member on</span>
+</span><span id="get_team_info-127"><a href="#get_team_info-127"><span class="linenos">127</span></a><span class="sd">                    team.id == member.team_id</span>
+</span><span id="get_team_info-128"><a href="#get_team_info-128"><span class="linenos">128</span></a><span class="sd">                group by</span>
+</span><span id="get_team_info-129"><a href="#get_team_info-129"><span class="linenos">129</span></a><span class="sd">                    team.id</span>
+</span><span id="get_team_info-130"><a href="#get_team_info-130"><span class="linenos">130</span></a><span class="sd">            &quot;&quot;&quot;</span>
+</span><span id="get_team_info-131"><a href="#get_team_info-131"><span class="linenos">131</span></a>        <span class="p">)</span>
+</span><span id="get_team_info-132"><a href="#get_team_info-132"><span class="linenos">132</span></a>
+</span><span id="get_team_info-133"><a href="#get_team_info-133"><span class="linenos">133</span></a>        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+</span><span id="get_team_info-134"><a href="#get_team_info-134"><span class="linenos">134</span></a>            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span> <span class="s2">&quot;team&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;team&quot;</span><span class="p">]),</span> <span class="s2">&quot;member&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;member&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)})</span>
+</span><span id="get_team_info-135"><a href="#get_team_info-135"><span class="linenos">135</span></a>
+</span><span id="get_team_info-136"><a href="#get_team_info-136"><span class="linenos">136</span></a>    <span class="k">return</span> <span class="n">ret</span>
 </span></pre></div>
 
 
