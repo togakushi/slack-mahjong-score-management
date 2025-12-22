@@ -289,13 +289,13 @@ def read_memberslist(log=True):
     """
 
     g.cfg.member.guest_name = lookup.db.get_guest()
-    g.cfg.member.list = lookup.db.get_member_list()
-    g.cfg.team.list = lookup.db.get_team_list()
+    g.cfg.member.info = lookup.db.get_member_info()
+    g.cfg.team.info = lookup.db.get_team_info()
 
     if log:
         logging.info("guest_name: %s", g.cfg.member.guest_name)
-        logging.info("member_list: %s", sorted(set(g.cfg.member.list.values())))
-        logging.info("team_list: %s", [x["team"] for x in g.cfg.team.list])
+        logging.info("member_list: %s", g.cfg.member.list)
+        logging.info("team_list: %s", g.cfg.team.list)
 
 
 def register():

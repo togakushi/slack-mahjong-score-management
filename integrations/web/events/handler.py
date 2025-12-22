@@ -10,7 +10,6 @@ from flask_httpauth import HTTPBasicAuth  # type: ignore
 
 import libs.global_value as g
 from integrations.web.events import create_bp
-from libs.data import lookup
 
 if TYPE_CHECKING:
     from integrations.web.adapter import ServiceAdapter
@@ -26,7 +25,7 @@ def main(adapter: "ServiceAdapter"):
     )
 
     app.config["padding"] = "0.25em 1.5em"
-    app.config["players"] = lookup.internal.get_member()
+    app.config["players"] = g.cfg.member.list
     app.register_blueprint(create_bp.index_bp(adapter))
     app.register_blueprint(create_bp.summary_bp(adapter))
     app.register_blueprint(create_bp.graph_bp(adapter))

@@ -10,7 +10,7 @@ import pandas as pd
 from table2ascii import Alignment, PresetStyle, table2ascii
 
 import libs.global_value as g
-from libs.data import aggregate, loader, lookup
+from libs.data import aggregate, loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
 from libs.types import StyleOptions
@@ -31,7 +31,7 @@ def aggregation(m: "MessageParserProtocol"):
     # 検索動作を合わせる
     g.params.update({"guest_skip": g.params["guest_skip2"]})
 
-    if g.params["player_name"] in lookup.internal.get_team():
+    if g.params["player_name"] in g.cfg.team.list:
         g.params.update({"individual": False})
     elif g.params["player_name"] in g.cfg.member.list:
         g.params.update({"individual": True})
@@ -161,7 +161,7 @@ def comparison(m: "MessageParserProtocol"):
     # 検索動作を合わせる
     g.params.update({"guest_skip": g.params["guest_skip2"]})
 
-    if g.params["player_name"] in lookup.internal.get_team():
+    if g.params["player_name"] in g.cfg.team.list:
         g.params.update({"individual": False})
     elif g.params["player_name"] in g.cfg.member.list:
         g.params.update({"individual": True})
@@ -298,11 +298,11 @@ def get_headline(data: dict, game_info: GameInfo, player_name: str) -> dict:
 
     if g.params.get("individual"):
         ret["プレイヤー名"] = f"{player_name} {compose.badge.degree(data['ゲーム数'])}"
-        if team_list := lookup.internal.which_team(g.params["player_name"]):
-            ret["所属チーム"] = team_list
+        if team_name := g.cfg.team.which(g.params["player_name"]):
+            ret["所属チーム"] = team_name
     else:
         ret["チーム名"] = f"{g.params['player_name']} {compose.badge.degree(data['ゲーム数'])}"
-        ret["登録メンバー"] = "、".join(lookup.internal.get_teammates(g.params["player_name"]))
+        ret["登録メンバー"] = "、".join(g.cfg.team.member(g.params["player_name"]))
 
     badge_status = compose.badge.status(data["ゲーム数"], data["勝"])
     ret["検索範囲"] = compose.text_item.search_range(time_pattern="time")

@@ -10,7 +10,6 @@ from flask import Blueprint, abort, current_app, request
 
 import libs.dispatcher
 import libs.global_value as g
-from libs.data import lookup
 
 if TYPE_CHECKING:
     from integrations.web.adapter import ServiceAdapter
@@ -34,7 +33,7 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
             abort(403)
 
         padding = current_app.config["padding"]
-        players = lookup.internal.get_member()
+        players = g.cfg.member.list
 
         m = adapter.parser()
         cookie_data = adapter.functions.get_cookie(request)

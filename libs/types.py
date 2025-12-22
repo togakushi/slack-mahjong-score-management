@@ -244,6 +244,66 @@ class MessageTypeDict(TypedDict):
     """表示オプション"""
 
 
+class ScoreDict(TypedDict, total=False):
+    """スコアデータ格納用辞書"""
+
+    ts: str
+    """ゲーム終了時間"""
+
+    p1_name: str
+    """東家：プレイヤー名"""
+    p1_str: str
+    """東家：入力された素点情報(文字列)"""
+    p1_rpoint: int
+    """東家：素点(入力文字列評価後)"""
+    p1_point: float
+    """東家：獲得ポイント"""
+    p1_rank: int
+    """東家：獲得順位"""
+
+    p2_name: str
+    """南家：プレイヤー名"""
+    p2_str: str
+    """南家：入力された素点情報(文字列)"""
+    p2_rpoint: int
+    """南家：素点(入力文字列評価後)"""
+    p2_point: float
+    """東家：獲得ポイント"""
+    p2_rank: int
+    """南家：獲得順位"""
+
+    p3_name: str
+    """西家：プレイヤー名"""
+    p3_str: str
+    """西家：入力された素点情報(文字列)"""
+    p3_rpoint: int
+    """西家：素点(入力文字列評価後)"""
+    p3_point: float
+    """西家：獲得ポイント"""
+    p3_rank: int
+    """西家：獲得順位"""
+
+    p4_name: str
+    """北家：プレイヤー名"""
+    p4_str: str
+    """北家：入力された素点情報(文字列)"""
+    p4_rpoint: int
+    """北家：素点(入力文字列評価後)"""
+    p4_point: float
+    """北家：獲得ポイント"""
+    p4_rank: int
+    """北家：獲得順位"""
+
+    deposit: int
+    """配給原点合計 - 素点合計"""
+    comment: Optional[str]
+    """ゲームコメント"""
+    rule_version: str
+    """ルール識別子"""
+    source: Optional[str]
+    """データ入力元識別子"""
+
+
 class RemarkDict(TypedDict, total=False):
     """メモ格納用辞書"""
 
