@@ -14,6 +14,8 @@ from libs.types import StyleOptions
 from libs.utils import formatter, graphutil, textutil
 
 if TYPE_CHECKING:
+    from pathlib import Path  # noqa: F401
+
     import pandas as pd
 
     from integrations.protocols import MessageParserProtocol
