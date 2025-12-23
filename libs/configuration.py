@@ -261,6 +261,12 @@ def setup():
                 if others_db:
                     initialization.initialization_resultdb(Path(others_db).absolute())
 
+    # ルール情報取り込み
+    for keyword, config in g.cfg.keyword.rule.items():
+        g.cfg.overwrite(config, "mahjong")
+        g.cfg.rule.update({g.cfg.mahjong.rule_version: cast("RuleDict", {**g.cfg.mahjong.to_dict(drop_items=["section", "rule_version"])})})
+        g.cfg.keyword.mapping.update({keyword: g.cfg.mahjong.rule_version})
+
     logging.info("config: %s", g.cfg.config_file.absolute())
     logging.info(
         "service: %s, graph_library: %s, time_adjust: %sh",
@@ -268,12 +274,7 @@ def setup():
         g.adapter.conf.plotting_backend,
         g.cfg.setting.time_adjust,
     )
-
-    # ルール情報取り込み
-    for keyword, config in g.cfg.keyword.rule.items():
-        g.cfg.overwrite(config, "mahjong")
-        g.cfg.rule.update({g.cfg.mahjong.rule_version: cast("RuleDict", {**g.cfg.mahjong.to_dict(drop_items=["section", "rule_version"])})})
-        logging.info("keyword: %s, rule_version: %s", keyword, g.cfg.mahjong.rule_version)
+    logging.info("keyword_mapping: %s", g.cfg.keyword.mapping)
 
     for k, v in g.cfg.rule.items():
         logging.info("rule_version: %s, %s", k, v)

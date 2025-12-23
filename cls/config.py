@@ -684,6 +684,8 @@ class KeywordMapping(BaseSection):
         self._parser = outer._parser
         self.rule: dict[str, Path] = {}
         """追加キーワード"""
+        self.mapping: dict[str, str] = {}
+        """記録キーワードとルールバージョン識別子のマッピング"""
 
         # 設定値取り込み
         for k, v in self._parser.items(section_name):
