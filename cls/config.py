@@ -18,7 +18,7 @@ from libs.types import GradeTableDict
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
-    from libs.types import MemberDataDict, TeamDataDict
+    from libs.types import MemberDataDict, RuleDict, TeamDataDict
 
 SubClassType: TypeAlias = Union[
     "MahjongSection",
@@ -121,8 +121,11 @@ class BaseSection(CommonMethodMixin):
                 case _:
                     setattr(self, k, self.__dict__.get(k))
 
-    def to_dict(self) -> dict:
+    def to_dict(self, drop_items: Optional[list[str]] = None) -> dict:
         """必要なパラメータを辞書型で返す
+
+        Args:
+            drop_items (Optional[list[str]], optional): _description_. Defaults to None.
 
         Returns:
             dict: 返却値
@@ -133,6 +136,11 @@ class BaseSection(CommonMethodMixin):
             if key.startswith("_"):
                 continue
             ret_dict[key] = getattr(self, key)
+
+        if drop_items:
+            for item in drop_items:
+                if item in ret_dict:
+                    ret_dict.pop(item)
 
         return ret_dict
 
@@ -160,21 +168,18 @@ class MahjongSection(BaseSection):
     - *True*: 山分けにする
     - *False*: 席順で決める
     """
-    regulations_type2: list
-    """メモで役満として扱う単語リスト(カンマ区切り)"""
 
     def __init__(self):
         self._reset()
 
     def _reset(self):
-        self.mode = int(4)
+        self.mode = 4
         self.rule_version = str("")
         self.origin_point = int(250)
         self.return_point = int(300)
-        self.rank_point: list = [30, 10, -10, -30]
+        self.rank_point: list = []
         self.ignore_flying = bool(False)
         self.draw_split = bool(False)
-        self.regulations_type2 = []
 
     def config_load(self, outer: "AppConfig"):
         """設定値取り込み
@@ -189,9 +194,13 @@ class MahjongSection(BaseSection):
         super().__init__(self, _section_name)
 
         # 順位点更新
-        if not self.rank_point:
-            self.rank_point = [30, 10, -10, -30]
-        self.rank_point = list(map(int, self.rank_point[:4]))  # 数値化
+        match self.mode:
+            case 3 if 3 > len(self.rank_point):
+                self.rank_point = [30, 0, -30]
+            case 4 if 4 > len(self.rank_point):
+                self.rank_point = [30, 10, -10, -30]
+            case _:
+                self.rank_point = list(map(int, self.rank_point[: self.mode]))  # 数値化
 
         logging.debug("%s: %s", _section_name, self)
 
@@ -755,6 +764,8 @@ class AppConfig:
         """reportセクション設定値"""
 
         # 共通設定値
+        self.rule: dict[str, "RuleDict"] = {}
+        """ルール情報"""
         self.undefined_word: int = 0
         """レギュレーションワードテーブルに登録されていないワードの種別"""
         self.aggregate_unit: Literal["A", "M", "Y", None] = None
