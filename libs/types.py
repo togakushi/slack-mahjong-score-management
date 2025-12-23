@@ -49,6 +49,29 @@ class Args:
     testcase: Optional["Path"]
 
 
+class RuleDict:
+    """ルール情報格納辞書"""
+
+    mode: Literal[3, 4]
+    """ 集計モード切替(四人打ち/三人打ち)"""
+    origin_point: int
+    """配給原点"""
+    return_point: int
+    """返し点"""
+    rank_point: list
+    """順位点"""
+    ignore_flying: bool
+    """トビカウント
+    - *True*: なし
+    - *False*: あり
+    """
+    draw_split: bool
+    """同点時の順位点
+    - *True*: 山分けにする
+    - *False*: 席順で決める
+    """
+
+
 class MemberDataDict(TypedDict):
     """メンバー情報格納辞書"""
 
