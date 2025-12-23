@@ -140,6 +140,8 @@ class BaseSection(CommonMethodMixin):
 class MahjongSection(BaseSection):
     """mahjongセクション処理"""
 
+    mode: Literal[3, 4]
+    """ 集計モード切替(四人打ち/三人打ち)"""
     rule_version: str
     """ルール判別識別子"""
     origin_point: int
@@ -165,6 +167,7 @@ class MahjongSection(BaseSection):
         self._reset()
 
     def _reset(self):
+        self.mode = int(4)
         self.rule_version = str("")
         self.origin_point = int(250)
         self.return_point = int(300)
