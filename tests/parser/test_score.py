@@ -2,6 +2,7 @@
 tests/parser/test_score.py
 """
 
+import sys
 from pathlib import Path
 
 import pytest
@@ -20,20 +21,22 @@ from tests.parser import param_data
     list(param_data.score_pattern.values()),
     ids=list(param_data.score_pattern.keys()),
 )
-def test_score_report(input_str, result_dict, get_point):
+def test_score_report(input_str, result_dict, get_point, monkeypatch):
     """得点入力"""
-    configuration.set_loglevel()
-    g.cfg = AppConfig(Path("tests/testdata/minimal.ini"))
-    adapter = factory.select_adapter("standard_io", g.cfg)
-    m = adapter.parser()
+    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
+    configuration.setup()
+    g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
+    g.adapter = factory.select_adapter("standard_io", g.cfg)
+    g.selected_service = "standard_io"
+
+    m = g.adapter.parser()
     m.data.text = input_str
     m.data.event_ts = "1234567890.123456"
 
-    result = GameResult(
-        rule_version="test",
-        **validator.check_score(m),
-    )
+    result = GameResult(**validator.check_score(m))
+    result.set(rule_version="test")
     result.calc()
+    print(vars(result))
     chk_dict: dict = {}
     if result.has_valid_data():
         chk_dict.update({k: v for k, v in result.to_dict().items() if str(k).endswith("_name")})
@@ -58,10 +61,13 @@ def test_score_report(input_str, result_dict, get_point):
     list(param_data.point_calculation_pattern01.values()),
     ids=list(param_data.point_calculation_pattern01.keys()),
 )
-def test_point_calc_seat(rpoint_list, point_dict, rank_dict):
+def test_point_calc_seat(rpoint_list, point_dict, rank_dict, monkeypatch):
     """ポイント計算 (同点席順)"""
-    configuration.set_loglevel()
-    g.cfg = AppConfig(Path("tests/testdata/minimal.ini"))
+    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
+    configuration.setup()
+    g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
+    g.adapter = factory.select_adapter("standard_io", g.cfg)
+    g.selected_service = "standard_io"
 
     result = GameResult(
         ts="1234567890.123456",
@@ -93,10 +99,13 @@ def test_point_calc_seat(rpoint_list, point_dict, rank_dict):
     list(param_data.point_calculation_pattern02.values()),
     ids=list(param_data.point_calculation_pattern02.keys()),
 )
-def test_point_calc_division(rpoint_list, point_dict, rank_dict):
+def test_point_calc_division(rpoint_list, point_dict, rank_dict, monkeypatch):
     """ポイント計算 (同点山分け)"""
-    configuration.set_loglevel()
-    g.cfg = AppConfig(Path("tests/testdata/minimal.ini"))
+    monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
+    configuration.setup()
+    g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
+    g.adapter = factory.select_adapter("standard_io", g.cfg)
+    g.selected_service = "standard_io"
 
     result = GameResult(
         ts="1234567890.123456",

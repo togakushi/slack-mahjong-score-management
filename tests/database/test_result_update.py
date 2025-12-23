@@ -34,11 +34,8 @@ def test_score_insert(draw_split, game_result, get_point, get_rank, monkeypatch)
     m.data.text = game_result
     m.data.event_ts = ExtDt().format("ts")
 
-    score_data = GameResult(
-        draw_split=draw_split,
-        rule_version="test",
-        **validator.check_score(m),
-    )
+    score_data = GameResult(**validator.check_score(m))
+    score_data.set(rule_version="test", draw_split=draw_split)
     score_data.calc()
     assert score_data.has_valid_data()
     modify.db_insert(score_data, m)
