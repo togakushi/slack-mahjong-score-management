@@ -19,7 +19,7 @@ with target_data as (
         and regulations.type = 0
     where
         results.rule_version = :rule_version
-        and results.playtime between :starttime and :endtime -- 検索範囲
+        and results.playtime between :starttime and :endtime
         --[separate] and results.source = :source
         --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
         --[individual] --[guest_skip] and results.guest = 0 -- ゲストナシ
