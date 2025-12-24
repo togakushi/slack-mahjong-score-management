@@ -3,12 +3,10 @@ tests/parser/test_score.py
 """
 
 import sys
-from pathlib import Path
 
 import pytest
 
 import libs.global_value as g
-from cls.config import AppConfig
 from cls.score import GameResult
 from integrations import factory
 from libs import configuration
