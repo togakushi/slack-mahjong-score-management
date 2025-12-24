@@ -127,7 +127,7 @@ COMMANDS: CommandsDict = {
     # --- 出力オプション
     "format": {
         "match": [r"^(csv|text|txt)$"],
-        "action": lambda w: {"format": w},
+        "action": lambda w: {"format": w if w != "text" else "txt"},
         "type": "str",
     },
     "filename": {
