@@ -267,6 +267,7 @@ def setup():
         g.cfg.rule.update({g.cfg.mahjong.rule_version: cast("RuleDict", {**g.cfg.mahjong.to_dict(drop_items=["section", "rule_version"])})})
         g.cfg.keyword.mapping.update({keyword: g.cfg.mahjong.rule_version})
 
+    # 設定情報のロギング
     logging.info("config: %s", g.cfg.config_file.absolute())
     logging.info(
         "service: %s, graph_library: %s, time_adjust: %sh",
