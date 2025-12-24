@@ -43,6 +43,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             g.cfg.overwrite(Path(channel_config), "mahjong")
             g.cfg.overwrite(Path(channel_config), subcom.section)
 
+    # メンバー情報更新
     g.cfg.member.guest_name = lookup.db.get_guest()
     g.cfg.member.info = lookup.db.get_member_info()
     g.cfg.team.info = lookup.db.get_team_info()
@@ -55,11 +56,11 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         "separate": g.cfg.setting.separate,
         "search_word": g.cfg.setting.search_word,
         "group_length": g.cfg.setting.group_length,
+        "default_rule": g.cfg.mahjong.rule_version,
     }
 
     ret_dict.update(
         {
-            "default_rule": g.cfg.mahjong.rule_version,
             **g.cfg.mahjong.to_dict(),
             **subcom.to_dict(),  # デフォルト値
         }
@@ -145,12 +146,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     )
 
     # 出力タイプ
-    if format_type := ret_dict.get("format", "default"):
-        if format_type == "text":
-            ret_dict.update({"format": "txt"})
-        else:
-            ret_dict.update({"format": format_type})
-    else:
+    if not ret_dict.get("format"):
         ret_dict.update({"format": "default"})
 
     # 規定打数設定
