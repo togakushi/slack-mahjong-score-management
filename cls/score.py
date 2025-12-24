@@ -74,6 +74,8 @@ class GameResult:
         """供託"""
 
         # 付属情報
+        self.mode: Literal[3, 4] = 4
+        """集計モード(三人打ち/四人打ち)"""
         self.rule_version: str = ""
         """ルールバージョン"""
         self.origin_point: int = 250
@@ -153,6 +155,8 @@ class GameResult:
             if f"{prefix}_rank" in kwargs and isinstance(kwargs[f"{prefix}_rank"], int):
                 prefix_obj.rank = int(kwargs[f"{prefix}_rank"])
 
+        if "mode" in kwargs and isinstance(kwargs["mode"], int):
+            self.mode = kwargs["mode"]
         if "ts" in kwargs and isinstance(kwargs["ts"], str):
             self.ts = kwargs["ts"]
         if "rule_version" in kwargs and isinstance(kwargs["rule_version"], str):
