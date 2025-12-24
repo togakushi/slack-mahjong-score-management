@@ -175,8 +175,8 @@ class MahjongSection(BaseSection):
     def _reset(self):
         self.mode = 4
         self.rule_version = str("")
-        self.origin_point = int(250)
-        self.return_point = int(300)
+        self.origin_point = int(-1)
+        self.return_point = int(-1)
         self.rank_point: list = []
         self.ignore_flying = bool(False)
         self.draw_split = bool(False)
@@ -193,14 +193,24 @@ class MahjongSection(BaseSection):
         self._reset()
         super().__init__(self, _section_name)
 
-        # 順位点更新
+        # デフォルト値
         match self.mode:
-            case 3 if 3 > len(self.rank_point):
-                self.rank_point = [30, 0, -30]
-            case 4 if 4 > len(self.rank_point):
-                self.rank_point = [30, 10, -10, -30]
-            case _:
-                self.rank_point = list(map(int, self.rank_point[: self.mode]))  # 数値化
+            case 3:
+                if self.origin_point == -1:
+                    self.origin_point = 350
+                if self.return_point == -1:
+                    self.return_point = 400
+                if 3 > len(self.rank_point):
+                    self.rank_point = [30, 0, -30]
+            case 4:
+                if self.origin_point == -1:
+                    self.origin_point = 250
+                if self.return_point == -1:
+                    self.return_point = 300
+                if 3 > len(self.rank_point):
+                    self.rank_point = [30, 10, -10, -30]
+
+        self.rank_point = list(map(int, self.rank_point[: self.mode]))  # 数値化
 
         logging.debug("%s: %s", _section_name, self)
 
