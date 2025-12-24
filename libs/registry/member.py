@@ -129,7 +129,7 @@ def remove(argument: list) -> str:
 
     if len(argument) == 1:  # メンバー削除
         new_name = textutil.str_conv(argument[0], "h2z")
-        if new_name in g.cfg.member.list:
+        if new_name in g.cfg.member.lists:
             resultdb.execute(
                 "delete from member where name=?",
                 (new_name,),
@@ -146,7 +146,7 @@ def remove(argument: list) -> str:
     if len(argument) == 2:  # 別名削除
         new_name = textutil.str_conv(argument[0], "h2z")
         nic_name = textutil.str_conv(argument[1], "h2z")
-        if nic_name in g.cfg.member.list:
+        if nic_name in g.cfg.member.lists:
             resultdb.execute(
                 "delete from alias where name=? and member=?",
                 (nic_name, new_name),

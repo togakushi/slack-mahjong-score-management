@@ -43,6 +43,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             g.cfg.overwrite(Path(channel_config), "mahjong")
             g.cfg.overwrite(Path(channel_config), subcom.section)
 
+    # メンバー情報更新
     g.cfg.member.guest_name = lookup.db.get_guest()
     g.cfg.member.info = lookup.db.get_member_info()
     g.cfg.team.info = lookup.db.get_team_info()
@@ -55,11 +56,11 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         "separate": g.cfg.setting.separate,
         "search_word": g.cfg.setting.search_word,
         "group_length": g.cfg.setting.group_length,
+        "default_rule": g.cfg.mahjong.rule_version,
     }
 
     ret_dict.update(
         {
-            "default_rule": g.cfg.mahjong.rule_version,
             **g.cfg.mahjong.to_dict(),
             **subcom.to_dict(),  # デフォルト値
         }
@@ -105,12 +106,23 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     check_list: list = param.unknown + pre_param.unknown
     if ret_dict.get("individual"):
         if ret_dict.get("all_player"):
-            check_list.extend(g.cfg.member.list)
-        target_player = _collect_member(check_list)
+            check_list.extend(g.cfg.member.lists)
+        for name in check_list:
+            if name in g.cfg.team.lists:  # チーム名がある場合は所属メンバーに展開
+                target_player.extend(g.cfg.team.member(name))
+            else:
+                target_player.append(formatter.name_replace(name, not_replace=True))
     else:
         if ret_dict.get("all_player"):
-            check_list.extend(g.cfg.team.list)
-        target_player = _collect_team(check_list)
+            check_list.extend(g.cfg.team.lists)
+        for team in check_list:
+            if team in g.cfg.member.lists:
+                if team_name := g.cfg.team.which(team):  # プレイヤー名がある場合は所属チームを追加
+                    target_player.append(team_name)
+            else:
+                target_player.append(team)
+
+    target_player = sorted(set(target_player), key=target_player.index)  # 順序を維持したまま重複排除
 
     if target_player:
         player_name = target_player[0]
@@ -134,12 +146,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     )
 
     # 出力タイプ
-    if format_type := ret_dict.get("format", "default"):
-        if format_type == "text":
-            ret_dict.update({"format": "txt"})
-        else:
-            ret_dict.update({"format": format_type})
-    else:
+    if not ret_dict.get("format"):
         ret_dict.update({"format": "default"})
 
     # 規定打数設定
@@ -155,34 +162,6 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             ret_dict.update({"stipulated": 1})
 
     return ret_dict
-
-
-def _collect_member(target_list: list) -> list:
-    ret_list: list = []
-    g.params.update({"individual": True})
-    for name in list(dict.fromkeys(target_list)):
-        if name in g.cfg.team.list:
-            ret_list.extend(g.cfg.team.member(name))
-            continue
-        if g.params.get("unregistered_replace", True):
-            ret_list.append(name)
-        else:
-            ret_list.append(formatter.name_replace(name, not_replace=True))
-
-    return list(dict.fromkeys(ret_list))
-
-
-def _collect_team(target_list: list) -> list:
-    ret_list: list = []
-    for team in list(dict.fromkeys(target_list)):
-        if team in g.cfg.member.list:
-            name = g.cfg.team.which(team)
-            if name:
-                ret_list.append(name)
-        else:
-            ret_list.append(team)
-
-    return list(dict.fromkeys(ret_list))
 
 
 def merge_dicts(dict1: Any, dict2: Any) -> dict:

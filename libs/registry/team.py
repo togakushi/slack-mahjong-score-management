@@ -24,7 +24,7 @@ def create(argument: list) -> str:
 
     if len(argument) == 1:  # 新規追加
         team_name = textutil.str_conv(argument[0], "h2z")
-        if len(g.cfg.team.list) > g.cfg.team.registration_limit:
+        if len(g.cfg.team.lists) > g.cfg.team.registration_limit:
             msg = "登録上限を超えています。"
         else:  # 登録処理
             ret, msg = validator.check_namepattern(team_name, "team")
@@ -57,7 +57,7 @@ def delete(argument: list) -> str:
 
     if len(argument) == 1:  # 新規追加
         team_name = textutil.str_conv(argument[0], "h2z")
-        if team_name not in g.cfg.team.list:  # 未登録チームチェック
+        if team_name not in g.cfg.team.lists:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
         else:
             msg = modify.db_backup()
@@ -102,13 +102,13 @@ def append(argument: list) -> str:
         registration_flg = True
         team_id = None
 
-        if team_name not in g.cfg.team.list:  # 未登録チームチェック
+        if team_name not in g.cfg.team.lists:  # 未登録チームチェック
             msg = f"チーム「{team_name}」はまだ登録されていません。"
             registration_flg = False
         else:
             team_id = [x["id"] for x in g.cfg.team.info if x["team"] == team_name][0]
 
-        if player_name not in g.cfg.member.list:  # 未登録プレイヤーチェック
+        if player_name not in g.cfg.member.lists:  # 未登録プレイヤーチェック
             msg = f"「{player_name}」はレギュラーメンバーではありません。"
             registration_flg = False
 
@@ -162,13 +162,13 @@ def remove(argument: list) -> str:
         registration_flg = True
         team_id = None
 
-        if team_name not in g.cfg.team.list:  # 未登録チームチェック
+        if team_name not in g.cfg.team.lists:  # 未登録チームチェック
             msg = f"チーム「{team_name}」は登録されていません。"
             registration_flg = False
         else:
             team_id = [x["id"] for x in g.cfg.team.info if x["team"] == team_name][0]
 
-        if player_name not in g.cfg.member.list:  # 未登録プレイヤーチェック
+        if player_name not in g.cfg.member.lists:  # 未登録プレイヤーチェック
             msg = f"「{player_name}」はレギュラーメンバーではありません。"
             registration_flg = False
 

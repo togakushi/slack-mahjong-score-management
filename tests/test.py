@@ -249,7 +249,7 @@ def main():
                     continue
                 case "target_player":
                     flag["target_team"].clear()
-                    choice_list = g.cfg.member.list
+                    choice_list = g.cfg.member.lists
                     for x in range(int(value)):
                         if not choice_list:
                             break
@@ -259,7 +259,7 @@ def main():
                     continue
                 case "target_team":
                     flag["target_player"].clear()
-                    choice_list = g.cfg.team.list
+                    choice_list = g.cfg.team.lists
                     for _ in range(int(value)):
                         if not choice_list:
                             break

@@ -45,7 +45,7 @@ flag_test_case_02: dict[str, tuple[Any, ...]] = {
 
 # 文字列引数
 flag_test_case_03: dict[str, tuple[Any, ...]] = {
-    "format type (text)": ("text", {"format": "text"}),
+    "format type (text)": ("text", {"format": "txt"}),
     "format type (txt)": ("txt", {"format": "txt"}),
     "format type (CSV)": ("CSV", {"format": "csv"}),
     "filename (full)": ("ファイル名ほげ", {"filename": "ほげ"}),

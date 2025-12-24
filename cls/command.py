@@ -127,7 +127,7 @@ COMMANDS: CommandsDict = {
     # --- 出力オプション
     "format": {
         "match": [r"^(csv|text|txt)$"],
-        "action": lambda w: {"format": w},
+        "action": lambda w: {"format": w if w != "text" else "txt"},
         "type": "str",
     },
     "filename": {
@@ -234,12 +234,12 @@ class CommandParser:
 
         return ParsedCommand(flags=ret, arguments=args, unknown=unknown, search_range=search_range)
 
-    def _parse_match(self, cmd: CommandSpec, m: re.Match) -> dict:
+    def _parse_match(self, cmd: CommandSpec, obj: re.Match) -> dict:
         """コマンド名に一致したときの処理
 
         Args:
             cmd (CommandSpec): コマンドマップ
-            m (re.Match): Matchオブジェクト
+            obj (re.Match): Matchオブジェクト
 
         Returns:
             dict: 更新用辞書
@@ -264,13 +264,13 @@ class CommandParser:
                     case _:
                         ret.update({key: int(val) if val.isdigit() else val})
 
-        match len(m.groups()):
+        match len(obj.groups()):
             case 0:  # 完全一致: ^command$
-                ret.update(cmd["action"](m.group()))
+                ret.update(cmd["action"](obj.group()))
             case 1:  # 選択: ^(command1|command2|...)$
-                ret.update(cmd["action"](m.groups()[0]))
+                ret.update(cmd["action"](obj.groups()[0]))
             case 2:  # 引数あり: ^(command)(\d*)$
-                tmp = cmd["action"](m.groups())
+                tmp = cmd["action"](obj.groups())
                 if isinstance(tmp, dict):
                     for k, v in tmp.items():
                         if isinstance(v, tuple):  # 引数取り出し&セット

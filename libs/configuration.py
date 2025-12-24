@@ -25,6 +25,7 @@ from libs.types import Args, StyleOptions
 if TYPE_CHECKING:
     from cls.config import SubCommand
     from integrations.protocols import MessageParserProtocol
+    from libs.types import RuleDict
 
 
 def set_loglevel():
@@ -260,7 +261,13 @@ def setup():
                 if others_db:
                     initialization.initialization_resultdb(Path(others_db).absolute())
 
-    # 設定内容のロギング
+    # ルール情報取り込み
+    for keyword, config in g.cfg.keyword.rule.items():
+        g.cfg.overwrite(config, "mahjong")
+        g.cfg.rule.update({g.cfg.mahjong.rule_version: cast("RuleDict", {**g.cfg.mahjong.to_dict(drop_items=["section", "rule_version"])})})
+        g.cfg.keyword.mapping.update({keyword: g.cfg.mahjong.rule_version})
+
+    # 設定情報のロギング
     logging.info("config: %s", g.cfg.config_file.absolute())
     logging.info(
         "service: %s, graph_library: %s, time_adjust: %sh",
@@ -268,17 +275,10 @@ def setup():
         g.adapter.conf.plotting_backend,
         g.cfg.setting.time_adjust,
     )
-    for keyword, config in g.cfg.keyword.rule.items():
-        g.cfg.overwrite(config, "mahjong")
-        logging.info(
-            "keyword: %s, origin_point: %s, return_point: %s, rank_point: %s, draw_split: %s, rule_version: %s",
-            keyword,
-            g.cfg.mahjong.origin_point,
-            g.cfg.mahjong.return_point,
-            g.cfg.mahjong.rank_point,
-            g.cfg.mahjong.draw_split,
-            g.cfg.mahjong.rule_version,
-        )
+    logging.info("keyword_mapping: %s", g.cfg.keyword.mapping)
+
+    for k, v in g.cfg.rule.items():
+        logging.info("rule_version: %s, %s", k, v)
 
 
 def read_memberslist(log=True):
@@ -294,8 +294,8 @@ def read_memberslist(log=True):
 
     if log:
         logging.info("guest_name: %s", g.cfg.member.guest_name)
-        logging.info("member_list: %s", g.cfg.member.list)
-        logging.info("team_list: %s", g.cfg.team.list)
+        logging.info("member_list: %s", g.cfg.member.lists)
+        logging.info("team_list: %s", g.cfg.team.lists)
 
 
 def register():

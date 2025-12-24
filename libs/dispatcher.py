@@ -83,7 +83,7 @@ def other_words(word: str, m: "MessageParserProtocol"):
             modify.check_remarks(m)
     else:  # スコア登録
         if detection := validator.check_score(m):  # 結果報告フォーマットに一致するポストの処理
-            score = GameResult(**detection, **g.cfg.mahjong.to_dict())
+            score = GameResult(**detection)
             # 名前ブレ修正
             for k, p in score.to_dict().items():
                 if k.endswith("_name"):

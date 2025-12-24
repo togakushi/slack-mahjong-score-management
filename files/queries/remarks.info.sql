@@ -19,7 +19,7 @@ left join team on
     team.id = member.team_id
 where
     game_info.rule_version = :rule_version
-    and playtime between :starttime and :endtime -- 検索範囲
+    and playtime between :starttime and :endtime
     --[separate] and game_info.source = :source
     --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
     --[individual] --[player_name] and remarks.name in (<<player_list>>) -- 対象プレイヤー

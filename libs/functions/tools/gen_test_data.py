@@ -29,7 +29,7 @@ def main(season_times: int = 1):
     configuration.read_memberslist(log=False)
 
     # 対戦組み合わせ作成
-    teams: list = g.cfg.team.list
+    teams: list = g.cfg.team.lists
     position: list = ["先鋒", "次鋒", "中堅", "副将", "大将"]
     teams_data: dict = {x["team"]: x["member"] for x in g.cfg.team.info}
     matchup: list = list(itertools.combinations(teams, 4))

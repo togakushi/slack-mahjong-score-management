@@ -111,7 +111,7 @@ async def check_omission(results: ComparisonResults, messages_list: list["Messag
         if work_m.keyword in g.keyword_dispatcher:  # コマンドキーワードはスキップ
             continue
         if detection := validator.check_score(work_m):
-            score = GameResult(**detection, **g.cfg.mahjong.to_dict())
+            score = GameResult(**detection)
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
@@ -167,7 +167,7 @@ async def check_remarks(results: ComparisonResults, messages_list: list["Message
 
     for loop_m in messages_list:
         if detection := validator.check_score(loop_m):
-            score = GameResult(**detection, **g.cfg.mahjong.to_dict())
+            score = GameResult(**detection)
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})
@@ -227,7 +227,7 @@ async def check_total_score(results: ComparisonResults, messages_list: list["Mes
 
     for work_m in messages_list:
         if detection := validator.check_score(work_m):
-            score = GameResult(**detection, **g.cfg.mahjong.to_dict())
+            score = GameResult(**detection)
             for k, v in score.to_dict().items():  # 名前の正規化
                 if str(k).endswith("_name"):
                     score.set(**{k: formatter.name_replace(str(v), not_replace=True)})

@@ -25,7 +25,7 @@ def main(adapter: "ServiceAdapter"):
     )
 
     app.config["padding"] = "0.25em 1.5em"
-    app.config["players"] = g.cfg.member.list
+    app.config["players"] = g.cfg.member.lists
     app.register_blueprint(create_bp.index_bp(adapter))
     app.register_blueprint(create_bp.summary_bp(adapter))
     app.register_blueprint(create_bp.graph_bp(adapter))

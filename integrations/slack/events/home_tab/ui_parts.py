@@ -175,7 +175,7 @@ def user_select_pulldown(
                 {"text": {"type": "plain_text", "text": val}, "value": val}
             )
 
-    for name in g.cfg.member.list:
+    for name in g.cfg.member.lists:
         adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": name}, "value": name}
         )
@@ -213,7 +213,7 @@ def multi_select_pulldown(
                 {"text": {"type": "plain_text", "text": val}, "value": val}
             )
 
-    for name in g.cfg.member.list:
+    for name in g.cfg.member.lists:
         adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["options"].append(
             {"text": {"type": "plain_text", "text": name}, "value": name}
         )

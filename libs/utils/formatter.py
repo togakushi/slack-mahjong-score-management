@@ -8,7 +8,6 @@ import re
 import pandas as pd
 
 import libs.global_value as g
-from libs.data import lookup
 from libs.utils import textutil
 
 
@@ -130,10 +129,10 @@ def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) 
 
     def _judge(check: str) -> str:
         if g.params.get("individual", True) or not_replace:
-            if check in list(set(g.cfg.member.info.keys())):  # 別名を含むリスト
-                return g.cfg.member.info.get(check, check)
+            if check in g.cfg.member.all_lists:  # 別名を含むリスト
+                return check
         else:
-            if check in g.cfg.team.list:
+            if check in g.cfg.team.lists:
                 return check
         return ""
 
@@ -193,7 +192,7 @@ def anonymous_mapping(name_list: list, initial: int = 0) -> dict:
 
     if g.params.get("individual", True):
         prefix = "Player"
-        id_list = lookup.db.get_member_id()
+        id_list = {x["name"]: x["id"] for x in g.cfg.member.info}
     else:
         prefix = "Team"
         id_list = {x["team"]: x["id"] for x in g.cfg.team.info}

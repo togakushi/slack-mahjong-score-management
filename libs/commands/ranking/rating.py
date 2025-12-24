@@ -56,7 +56,7 @@ def aggregation(m: "MessageParserProtocol"):
     # 集計対象外データの削除
     if g.params.get("unregistered_replace"):  # 個人戦
         for player in df.itertuples():
-            if player.name not in g.cfg.member.list:
+            if player.name not in g.cfg.member.lists:
                 df = df.copy().drop(player.Index)
 
     if not g.params.get("individual"):  # チーム戦

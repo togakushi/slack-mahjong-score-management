@@ -33,7 +33,7 @@ def detail_bp(adapter: "ServiceAdapter") -> Blueprint:
             abort(403)
 
         padding = current_app.config["padding"]
-        players = g.cfg.member.list
+        players = g.cfg.member.lists
 
         m = adapter.parser()
         cookie_data = adapter.functions.get_cookie(request)

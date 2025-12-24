@@ -18,7 +18,7 @@ with point_table as (
         game_info.ts = results.ts
     where
         results.rule_version = :rule_version
-        and results.playtime between :starttime and :endtime -- 検索範囲
+        and results.playtime between :starttime and :endtime
         --[separate] and results.source = :source
         --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
         --[individual] --[guest_skip] and guest = 0 -- ゲストナシ

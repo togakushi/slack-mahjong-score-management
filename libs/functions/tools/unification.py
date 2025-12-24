@@ -19,7 +19,7 @@ def main():
 
     modify.db_backup()
     if "rename" in rename_conf.sections():
-        name_table: dict = {}
+        name_table: dict[str, list[str]] = {}
         for name, alias in rename_conf["rename"].items():
             name_table.setdefault(name, [x.strip() for x in alias.split(",")])
 
@@ -83,12 +83,10 @@ def main():
         db.close()
     else:
         db = dbutil.connection(g.cfg.setting.database_file)
-        for alias, name in g.cfg.member.info.items():
+        for name in g.cfg.member.all_lists:
             check_list: list = [
                 textutil.str_conv(name, "k2h"),
                 textutil.str_conv(name, "h2k"),
-                textutil.str_conv(alias, "k2h"),
-                textutil.str_conv(alias, "h2k"),
             ]
             for check in list(set(check_list)):
                 if check == name:
