@@ -908,7 +908,7 @@ class AppConfig:
         else:
             draw_split = False
 
-        ret: RuleDict = {
+        return {
             "mode": mode,
             "origin_point": origin_point,
             "return_point": return_point,
@@ -916,5 +916,3 @@ class AppConfig:
             "ignore_flying": ignore_flying,
             "draw_split": draw_split,
         }
-
-        return ret
