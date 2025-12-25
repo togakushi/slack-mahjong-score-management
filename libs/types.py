@@ -49,7 +49,7 @@ class Args:
     testcase: Optional["Path"]
 
 
-class RuleDict:
+class RuleDict(TypedDict):
     """ルール情報格納辞書"""
 
     mode: Literal[3, 4]
@@ -58,7 +58,7 @@ class RuleDict:
     """配給原点"""
     return_point: int
     """返し点"""
-    rank_point: list
+    rank_point: list[int]
     """順位点"""
     ignore_flying: bool
     """トビカウント

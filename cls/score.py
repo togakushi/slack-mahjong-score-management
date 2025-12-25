@@ -74,6 +74,8 @@ class GameResult:
         """供託"""
 
         # 付属情報
+        self.mode: Literal[3, 4] = 4
+        """集計モード(三人打ち/四人打ち)"""
         self.rule_version: str = ""
         """ルールバージョン"""
         self.origin_point: int = 250
@@ -153,6 +155,9 @@ class GameResult:
             if f"{prefix}_rank" in kwargs and isinstance(kwargs[f"{prefix}_rank"], int):
                 prefix_obj.rank = int(kwargs[f"{prefix}_rank"])
 
+        if "mode" in kwargs and isinstance(kwargs["mode"], int):
+            if kwargs["mode"] in (3, 4):
+                self.mode = kwargs["mode"]  # type: ignore[assignment]
         if "ts" in kwargs and isinstance(kwargs["ts"], str):
             self.ts = kwargs["ts"]
         if "rule_version" in kwargs and isinstance(kwargs["rule_version"], str):
@@ -335,34 +340,34 @@ class GameResult:
 
             # 順位点リストの更新
             match "".join(score_df["rank"].sort_values().to_string(index=False).split()):
-                case "1111":
+                case "1111":  # 2.5/2.5/2.5/2.5
                     work_rank_point = point_split(work_rank_point)
-                case "1114":
+                case "1114":  # 2/2/2/4
                     new_point = point_split(work_rank_point[0:3])
                     work_rank_point[0] = new_point[0]
                     work_rank_point[1] = new_point[1]
                     work_rank_point[2] = new_point[2]
-                case "1134":
+                case "1134":  # 1.5/1.5/3/4
                     new_point = point_split(work_rank_point[0:2])
                     work_rank_point[0] = new_point[0]
                     work_rank_point[1] = new_point[1]
-                case "1133":
+                case "1133":  # 1.5/1.5/3.5/3.5
                     new_point = point_split(work_rank_point[0:2])
                     work_rank_point[0] = new_point[0]
                     work_rank_point[1] = new_point[1]
                     new_point = point_split(work_rank_point[2:4])
                     work_rank_point[2] = new_point[0]
                     work_rank_point[3] = new_point[1]
-                case "1222":
+                case "1222":  # 1/3/3/3
                     new_point = point_split(work_rank_point[1:4])
                     work_rank_point[1] = new_point[0]
                     work_rank_point[2] = new_point[1]
                     work_rank_point[3] = new_point[2]
-                case "1224":
+                case "1224":  # 1/2.5/2.5/4
                     new_point = point_split(work_rank_point[1:3])
                     work_rank_point[1] = new_point[0]
                     work_rank_point[2] = new_point[1]
-                case "1233":
+                case "1233":  # 1/2/3.5/3.5
                     new_point = point_split(work_rank_point[2:4])
                     work_rank_point[2] = new_point[0]
                     work_rank_point[3] = new_point[1]

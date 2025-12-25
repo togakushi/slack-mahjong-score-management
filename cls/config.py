@@ -13,12 +13,12 @@ from pathlib import Path, PosixPath
 from types import NoneType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
-from libs.types import GradeTableDict
+from libs.types import GradeTableDict, RuleDict
 
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
-    from libs.types import MemberDataDict, RuleDict, TeamDataDict
+    from libs.types import MemberDataDict, TeamDataDict
 
 SubClassType: TypeAlias = Union[
     "MahjongSection",
@@ -29,7 +29,6 @@ SubClassType: TypeAlias = Union[
     "DropItems",
     "BadgeDisplay",
     "SubCommand",
-    "KeywordMapping",
 ]
 
 
@@ -148,38 +147,27 @@ class BaseSection(CommonMethodMixin):
 class MahjongSection(BaseSection):
     """mahjongセクション処理"""
 
-    mode: Literal[3, 4]
-    """ 集計モード切替(四人打ち/三人打ち)"""
-    rule_version: str
-    """ルール判別識別子"""
-    origin_point: int
-    """配給原点"""
-    return_point: int
-    """返し点"""
-    rank_point: list
-    """順位点"""
-    ignore_flying: bool
-    """トビカウント
-    - *True*: なし
-    - *False*: あり
-    """
-    draw_split: bool
-    """同点時の順位点
-    - *True*: 山分けにする
-    - *False*: 席順で決める
-    """
-
     def __init__(self):
-        self._reset()
-
-    def _reset(self):
-        self.mode = 4
-        self.rule_version = str("")
-        self.origin_point = int(250)
-        self.return_point = int(300)
+        self.mode: Literal[3, 4] = 4
+        """ 集計モード切替(四人打ち/三人打ち)"""
+        self.rule_version: str = str("default_rule")
+        """ルール判別識別子"""
+        self.origin_point: int = int(-1)
+        """配給原点"""
+        self.return_point: int = int(-1)
+        """返し点"""
         self.rank_point: list = []
-        self.ignore_flying = bool(False)
-        self.draw_split = bool(False)
+        """順位点"""
+        self.ignore_flying: bool = False
+        """トビカウント
+        - *True*: なし
+        - *False*: あり
+        """
+        self.draw_split: bool = False
+        """同点時の順位点
+        - *True*: 山分けにする
+        - *False*: 席順で決める
+        """
 
     def config_load(self, outer: "AppConfig"):
         """設定値取り込み
@@ -190,17 +178,20 @@ class MahjongSection(BaseSection):
 
         _section_name: str = "mahjong"
         self._parser = outer._parser
-        self._reset()
         super().__init__(self, _section_name)
 
-        # 順位点更新
+        # デフォルト値
         match self.mode:
-            case 3 if 3 > len(self.rank_point):
-                self.rank_point = [30, 0, -30]
-            case 4 if 4 > len(self.rank_point):
-                self.rank_point = [30, 10, -10, -30]
-            case _:
-                self.rank_point = list(map(int, self.rank_point[: self.mode]))  # 数値化
+            case 3:
+                if self.origin_point < 0:
+                    self.origin_point = 350
+                if self.return_point < 0:
+                    self.return_point = 400
+            case 4:
+                if self.origin_point < 0:
+                    self.origin_point = 250
+                if self.return_point < 0:
+                    self.return_point = 300
 
         logging.debug("%s: %s", _section_name, self)
 
@@ -210,7 +201,7 @@ class SettingSection(BaseSection):
 
     help: str
     """ヘルプ表示キーワード"""
-    keyword: str
+    keyword: Union[str, Path]
     """成績記録キーワード(プライマリ)"""
     remarks_word: str
     """メモ記録用キーワード"""
@@ -242,7 +233,7 @@ class SettingSection(BaseSection):
 
     def _reset(self):
         self.help = str("麻雀成績ヘルプ")
-        self.keyword = str("終局")
+        self.keyword = Path("files/default_rule.ini")
         self.remarks_word = str("麻雀成績メモ")
         self.time_adjust = int(12)
         self.separate = bool(False)
@@ -266,6 +257,10 @@ class SettingSection(BaseSection):
         self._parser = outer._parser
         self._reset()
         super().__init__(self, _section_name)
+
+        # 成績登録キーワード
+        if not (isinstance(self.keyword, Path) and self.keyword.exists()):
+            self.keyword = str(self.keyword)
 
         # 作業用ディレクトリ作成
         if self.work_dir.is_dir():
@@ -677,24 +672,6 @@ class SubCommand(BaseSection):
         return int(ceil(game_count * self.stipulated_rate) + 1)
 
 
-class KeywordMapping(BaseSection):
-    """secondary_keywordセクション処理"""
-
-    def __init__(self, outer: "AppConfig", section_name: str):
-        self._parser = outer._parser
-        self.rule: dict[str, Path] = {}
-        """追加キーワード"""
-        self.mapping: dict[str, str] = {}
-        """記録キーワードとルールバージョン識別子のマッピング"""
-
-        # 設定値取り込み
-        for k, v in self._parser.items(section_name):
-            if (overwrite := Path(v)).exists():
-                self.rule.update({f"{k}": overwrite})
-            if v == "":
-                self.rule.update({f"{k}": outer.config_file})
-
-
 class AppConfig:
     """コンフィグ解析クラス"""
 
@@ -724,7 +701,7 @@ class AppConfig:
             "team",
             "regulations",
             "regulations_them",
-            "secondary_keyword",
+            "keyword_mapping",
         ]
         for x in option_sections:
             if x not in self._parser.sections():
@@ -766,8 +743,10 @@ class AppConfig:
         """reportセクション設定値"""
 
         # 共通設定値
-        self.rule: dict[str, "RuleDict"] = {}
+        self.rule: dict[str, RuleDict] = {}
         """ルール情報"""
+        self.keyword_mapping: dict[str, str] = {}
+        """登録キーワードとルールバージョンのマッピング辞書"""
         self.undefined_word: int = 0
         """レギュレーションワードテーブルに登録されていないワードの種別"""
         self.aggregate_unit: Literal["A", "M", "Y", None] = None
@@ -779,11 +758,6 @@ class AppConfig:
         """
 
         self.initialization()
-
-        self.keyword = KeywordMapping(self, "secondary_keyword")
-        """成績登録キーワード"""
-        if self.setting.keyword not in self.keyword.rule:
-            self.keyword.rule.update({self.setting.keyword: self.config_file})
 
     def initialization(self):
         """設定ファイル読み込み"""
@@ -801,6 +775,27 @@ class AppConfig:
         self.ranking.config_load(self)
         self.report.config_load(self)
 
+        # ルール情報取り込み
+        self.rule.update({f"{self.mahjong.rule_version}": self._rule_set(self.mahjong.to_dict())})
+        if isinstance(self.setting.keyword, Path):
+            rule_parser = ConfigParser()
+            rule_parser.read(self.setting.keyword)
+            for section_name in rule_parser.sections():
+                self.rule.update({f"{section_name}": self._rule_set(dict(rule_parser[section_name]))})
+
+        # マッピング
+        if self.main_parser.has_section("keyword_mapping"):
+            for keyword, rule_version in dict(self.main_parser["keyword_mapping"]).items():
+                if not rule_version:
+                    self.keyword_mapping.update({keyword: self.mahjong.rule_version})
+                elif rule_version in self.rule:
+                    self.keyword_mapping.update({keyword: rule_version})
+        if not self.keyword_mapping:
+            if isinstance(self.setting.keyword, str):
+                self.keyword_mapping = {self.setting.keyword: self.mahjong.rule_version}
+            else:
+                self.keyword_mapping = {"終局": self.mahjong.rule_version}
+
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
 
@@ -809,6 +804,7 @@ class AppConfig:
         """
 
         words: list = [
+            list(self.keyword_mapping.keys()),
             [self.setting.remarks_word],
             self.results.commandword,
             self.graph.commandword,
@@ -820,9 +816,6 @@ class AppConfig:
             if isinstance(v, list):
                 words.append([k])
                 words.append(v)
-
-        for k in self.keyword.rule.keys():
-            words.append([k])
 
         words = list(set(chain.from_iterable(words)))  # 重複排除/平滑化
         words = [x for x in words if x != ""]  # 空文字削除
@@ -873,3 +866,55 @@ class AppConfig:
                 self.report.commandword = protected_values
             case _:
                 return
+
+    def _rule_set(self, rule: dict) -> RuleDict:
+        """ルール情報取り込み
+
+        Args:
+            rule (dict): 入力情報
+
+        Returns:
+            RuleDict: 確定値
+        """
+
+        mode = int(rule.get("mode", 4))
+
+        if rank_point := rule.get("rank_point", []):
+            if isinstance(rank_point, str):
+                rank_point = rank_point.split(",")
+        rank_point = list(map(int, map(float, rank_point[:mode])))
+
+        match mode:
+            case 3:
+                origin_point = int(rule.get("origin_point", 350))
+                return_point = int(rule.get("return_point", 400))
+                if not rank_point or len(rank_point) != mode:
+                    rank_point = [30, 0, -30]
+            case 4:
+                origin_point = int(rule.get("origin_point", 250))
+                return_point = int(rule.get("return_point", 300))
+                if not rank_point or len(rank_point) != mode:
+                    rank_point = [30, 10, -10, -30]
+            case _:
+                raise RuntimeError
+
+        if ignore_flying := rule.get("ignore_flying"):
+            ignore_flying = str(ignore_flying).lower() in {"1", "true", "yes", "on"}
+        else:
+            ignore_flying = False
+
+        if draw_split := rule.get("draw_split"):
+            draw_split = str(draw_split).lower() in {"1", "true", "yes", "on"}
+        else:
+            draw_split = False
+
+        ret: RuleDict = {
+            "mode": mode,
+            "origin_point": origin_point,
+            "return_point": return_point,
+            "rank_point": rank_point,
+            "ignore_flying": ignore_flying,
+            "draw_split": draw_split,
+        }
+
+        return ret

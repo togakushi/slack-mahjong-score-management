@@ -25,7 +25,6 @@ from libs.types import Args, StyleOptions
 if TYPE_CHECKING:
     from cls.config import SubCommand
     from integrations.protocols import MessageParserProtocol
-    from libs.types import RuleDict
 
 
 def set_loglevel():
@@ -261,12 +260,6 @@ def setup():
                 if others_db:
                     initialization.initialization_resultdb(Path(others_db).absolute())
 
-    # ルール情報取り込み
-    for keyword, config in g.cfg.keyword.rule.items():
-        g.cfg.overwrite(config, "mahjong")
-        g.cfg.rule.update({g.cfg.mahjong.rule_version: cast("RuleDict", {**g.cfg.mahjong.to_dict(drop_items=["section", "rule_version"])})})
-        g.cfg.keyword.mapping.update({keyword: g.cfg.mahjong.rule_version})
-
     # 設定情報のロギング
     logging.info("config: %s", g.cfg.config_file.absolute())
     logging.info(
@@ -275,10 +268,10 @@ def setup():
         g.adapter.conf.plotting_backend,
         g.cfg.setting.time_adjust,
     )
-    logging.info("keyword_mapping: %s", g.cfg.keyword.mapping)
+    logging.info("keyword_mapping: %s", g.cfg.keyword_mapping)
 
     for k, v in g.cfg.rule.items():
-        logging.info("rule_version: %s, %s", k, v)
+        logging.info("rule: %s, %s", k, v)
 
 
 def read_memberslist(log=True):

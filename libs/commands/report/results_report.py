@@ -244,7 +244,7 @@ def graphing_mean_rank(df: pd.DataFrame, title: str, whole: bool = False) -> Byt
     # Y軸設定
     plt.ylabel("平均順位", fontsize=14)
     plt.yticks([4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0])
-    for ax in plt.gcf().get_axes():  # 逆向きにする
+    for ax in plt.gcf().get_axes():  # type: ignore[not-callable]  # 逆向きにする
         ax.invert_yaxis()
 
     # X軸設定
@@ -358,7 +358,7 @@ def graphing_rank_distribution(df: pd.DataFrame, title: str) -> BytesIO:
     # Y軸設定
     plt.yticks([0, 25, 50, 75, 100])
     plt.ylabel("（％）", fontsize=14)
-    for ax in plt.gcf().get_axes():  # グリッド線を背後にまわす
+    for ax in plt.gcf().get_axes():  # type: ignore[not-callable]  # グリッド線を背後にまわす
         ax.set_axisbelow(True)
         plt.grid(axis="y")
 
@@ -551,7 +551,13 @@ def entire_aggregate(style: dict) -> list:
     )
     plt.title("順位分布 （ 全期間 ）", fontsize=18)
     plt.ylabel("")
-    plt.legend(list(gdata.index), bbox_to_anchor=(0.5, -0.1), loc="lower center", ncol=4, fontsize=12)
+    plt.legend(
+        handles=list(gdata.index),
+        bbox_to_anchor=(0.5, -0.1),
+        loc="lower center",
+        ncol=4,
+        fontsize=12,
+    )
     plt.savefig(imgdata, format="jpg", bbox_inches="tight")
 
     elements.append(Spacer(1, 5 * mm))
