@@ -528,7 +528,7 @@
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">testcase</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Path&quot;</span><span class="p">]</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RuleDict</span><span class="p">:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RuleDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール情報格納辞書&quot;&quot;&quot;</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
@@ -537,7 +537,7 @@
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;配給原点&quot;&quot;&quot;</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="n">return_point</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;返し点&quot;&quot;&quot;</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">rank_point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">rank_point</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 </span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;順位点&quot;&quot;&quot;</span>
 </span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">ignore_flying</span><span class="p">:</span> <span class="nb">bool</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;トビカウント</span>
@@ -1131,13 +1131,13 @@
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">RuleDict</span>:
+    <span class="name">RuleDict</span><wbr>(<span class="base">typing.TypedDict</span>):
 
                 <label class="view-source-button" for="RuleDict-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#RuleDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RuleDict-53"><a href="#RuleDict-53"><span class="linenos">53</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RuleDict</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RuleDict-53"><a href="#RuleDict-53"><span class="linenos">53</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RuleDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
 </span><span id="RuleDict-54"><a href="#RuleDict-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール情報格納辞書&quot;&quot;&quot;</span>
 </span><span id="RuleDict-55"><a href="#RuleDict-55"><span class="linenos">55</span></a>
 </span><span id="RuleDict-56"><a href="#RuleDict-56"><span class="linenos">56</span></a>    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
@@ -1146,7 +1146,7 @@
 </span><span id="RuleDict-59"><a href="#RuleDict-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;配給原点&quot;&quot;&quot;</span>
 </span><span id="RuleDict-60"><a href="#RuleDict-60"><span class="linenos">60</span></a>    <span class="n">return_point</span><span class="p">:</span> <span class="nb">int</span>
 </span><span id="RuleDict-61"><a href="#RuleDict-61"><span class="linenos">61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;返し点&quot;&quot;&quot;</span>
-</span><span id="RuleDict-62"><a href="#RuleDict-62"><span class="linenos">62</span></a>    <span class="n">rank_point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RuleDict-62"><a href="#RuleDict-62"><span class="linenos">62</span></a>    <span class="n">rank_point</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 </span><span id="RuleDict-63"><a href="#RuleDict-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;順位点&quot;&quot;&quot;</span>
 </span><span id="RuleDict-64"><a href="#RuleDict-64"><span class="linenos">64</span></a>    <span class="n">ignore_flying</span><span class="p">:</span> <span class="nb">bool</span>
 </span><span id="RuleDict-65"><a href="#RuleDict-65"><span class="linenos">65</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;トビカウント</span>
@@ -1206,7 +1206,7 @@
                             </div>
                             <div id="RuleDict.rank_point" class="classattr">
                                 <div class="attr variable">
-            <span class="name">rank_point</span><span class="annotation">: list</span>
+            <span class="name">rank_point</span><span class="annotation">: list[int]</span>
 
         
     </div>
