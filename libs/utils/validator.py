@@ -87,7 +87,7 @@ def check_score(m: "MessageParserProtocol") -> dict:
     text = m.data.text
     ret: dict = {}
 
-    for keyword, rule_version in g.cfg.keyword.mapping.items():
+    for keyword, rule_version in g.cfg.keyword_mapping.items():
         # 記号を置換
         replace_chr = [
             ("\uff0b", "+"),  # 全角プラス符号
