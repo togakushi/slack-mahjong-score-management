@@ -29,6 +29,7 @@ dev = [
     "pyrefly",
     "ruff",
     "pandas-stubs",
+    # "matplotlib-stubs",
     "types-python-dateutil",
     "types-tabulate",
     "types-reportlab",
@@ -53,6 +54,8 @@ no-matching-overload = false
 missing-attribute = false
 missing-argument = false
 unbound-name = false
+unexpected-keyword = false
+untyped-import = false
 
 [tool.ruff]
 line-length = 160
