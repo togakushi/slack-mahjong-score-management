@@ -879,10 +879,10 @@ class AppConfig:
 
         mode = int(rule.get("mode", 4))
 
-        if rank_point := rule.get("rank_point"):
+        if rank_point := rule.get("rank_point", []):
             if isinstance(rank_point, str):
                 rank_point = rank_point.split(",")
-            rank_point = list(map(int, map(float, rank_point[:mode])))
+        rank_point = list(map(int, map(float, rank_point[:mode])))
 
         match mode:
             case 3:
@@ -895,6 +895,8 @@ class AppConfig:
                 return_point = int(rule.get("return_point", 300))
                 if not rank_point or len(rank_point) != mode:
                     rank_point = [30, 10, -10, -30]
+            case _:
+                raise RuntimeError
 
         if ignore_flying := rule.get("ignore_flying"):
             ignore_flying = str(ignore_flying).lower() in {"1", "true", "yes", "on"}
@@ -906,7 +908,7 @@ class AppConfig:
         else:
             draw_split = False
 
-        return {
+        ret: RuleDict = {
             "mode": mode,
             "origin_point": origin_point,
             "return_point": return_point,
@@ -914,3 +916,5 @@ class AppConfig:
             "ignore_flying": ignore_flying,
             "draw_split": draw_split,
         }
+
+        return ret
