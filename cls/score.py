@@ -157,7 +157,7 @@ class GameResult:
 
         if "mode" in kwargs and isinstance(kwargs["mode"], int):
             if kwargs["mode"] in (3, 4):
-                self.mode = cast(Literal[3, 4], kwargs["mode"])
+                self.mode = kwargs["mode"]  # type: ignore[assignment]
         if "ts" in kwargs and isinstance(kwargs["ts"], str):
             self.ts = kwargs["ts"]
         if "rule_version" in kwargs and isinstance(kwargs["rule_version"], str):
