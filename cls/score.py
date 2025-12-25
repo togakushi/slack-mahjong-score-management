@@ -156,7 +156,8 @@ class GameResult:
                 prefix_obj.rank = int(kwargs[f"{prefix}_rank"])
 
         if "mode" in kwargs and isinstance(kwargs["mode"], int):
-            self.mode = kwargs["mode"]
+            if kwargs["mode"] in (3, 4):
+                self.mode = cast(Literal[3, 4], kwargs["mode"])
         if "ts" in kwargs and isinstance(kwargs["ts"], str):
             self.ts = kwargs["ts"]
         if "rule_version" in kwargs and isinstance(kwargs["rule_version"], str):
