@@ -13,9 +13,8 @@ from discord.channel import TextChannel
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data import modify
+from libs.data import modify, search
 from libs.datamodels import ComparisonResults
-from libs.functions import search
 from libs.types import RemarkDict, StyleOptions
 from libs.utils import formatter, validator
 
