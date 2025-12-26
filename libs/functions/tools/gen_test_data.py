@@ -14,7 +14,7 @@ from tqdm import tqdm
 import libs.global_value as g
 from cls.score import GameResult
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs import configuration
+from libs.data import lookup
 from libs.functions.tools import score_simulator
 from libs.utils import dbutil
 
@@ -26,7 +26,7 @@ def main(season_times: int = 1):
         season_times (int, optional): 総当たり回数. Defaults to 1.
     """
 
-    configuration.read_memberslist(log=False)
+    lookup.db.read_memberslist()
 
     # 対戦組み合わせ作成
     teams: list = g.cfg.team.lists

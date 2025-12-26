@@ -2,6 +2,7 @@
 libs/data/lookup/db.py
 """
 
+import logging
 from contextlib import closing
 from datetime import datetime
 from typing import TYPE_CHECKING, cast
@@ -260,3 +261,15 @@ def get_results_list(name: str, rule_version: str = "") -> pd.DataFrame:
     )
 
     return ret_data
+
+
+def read_memberslist():
+    """メンバー情報/チーム情報の読み込み"""
+
+    g.cfg.member.guest_name = get_guest()
+    g.cfg.member.info = get_member_info()
+    g.cfg.team.info = get_team_info()
+
+    logging.debug("guest_name: %s", g.cfg.member.guest_name)
+    logging.debug("member_list: %s", g.cfg.member.lists)
+    logging.debug("team_list: %s", g.cfg.team.lists)

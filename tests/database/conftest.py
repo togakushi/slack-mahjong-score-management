@@ -13,7 +13,7 @@ import pytest
 import libs.global_value as g
 from cls.config import AppConfig
 from libs import configuration
-from libs.data import initialization
+from libs.data import initialization, lookup
 from libs.utils import dbutil
 
 
@@ -58,4 +58,4 @@ def initialize_database(database_connection):
             )
         conn.commit()
 
-    configuration.read_memberslist()
+    lookup.db.read_memberslist()

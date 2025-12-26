@@ -11,7 +11,7 @@ from slack_sdk import WebClient
 import libs.global_value as g
 from integrations import factory
 from integrations.slack.events import comparison
-from libs import configuration
+from libs.data import lookup
 
 if TYPE_CHECKING:
     from integrations.slack.adapter import ServiceAdapter
@@ -25,7 +25,7 @@ def main():
         try:
             g.adapter = cast("ServiceAdapter", g.adapter)
             app = App(token=os.environ["SLACK_BOT_TOKEN"])
-            configuration.read_memberslist(False)
+            lookup.db.read_memberslist()
         except Exception as err:
             raise RuntimeError(err) from err
 

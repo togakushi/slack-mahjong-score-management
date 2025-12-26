@@ -274,23 +274,6 @@ def setup():
         logging.info("rule: %s, %s", k, v)
 
 
-def read_memberslist(log=True):
-    """メンバー/チームリスト読み込み
-
-    Args:
-        log (bool, optional): 読み込み時に内容をログに出力する. Defaults to True.
-    """
-
-    g.cfg.member.guest_name = lookup.db.get_guest()
-    g.cfg.member.info = lookup.db.get_member_info()
-    g.cfg.team.info = lookup.db.get_team_info()
-
-    if log:
-        logging.info("guest_name: %s", g.cfg.member.guest_name)
-        logging.info("member_list: %s", g.cfg.member.lists)
-        logging.info("team_list: %s", g.cfg.team.lists)
-
-
 def register():
     """ディスパッチテーブル登録"""
 
@@ -300,7 +283,8 @@ def register():
             if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
                 logging.debug("Channel override settings: %s", Path(channel_config).absolute())
                 g.cfg.overwrite(Path(channel_config), "setting")
-        read_memberslist(log=False)
+
+        lookup.db.read_memberslist()
 
     def dispatch_help(m: "MessageParserProtocol"):
         _switching(m)

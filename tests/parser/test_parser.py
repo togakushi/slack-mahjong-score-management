@@ -10,6 +10,7 @@ import libs.global_value as g
 from cls.command import CommandParser
 from integrations import factory
 from libs import configuration
+from libs.data import lookup
 from libs.utils import dictutil
 from tests.parser import param_data
 
@@ -71,7 +72,7 @@ def test_command_unknown_str(input_args, expected_flags, monkeypatch):
     """4. 不明なコマンド"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    configuration.read_memberslist()
+    lookup.db.read_memberslist()
 
     parser = CommandParser()
     g.params["unregistered_replace"] = False

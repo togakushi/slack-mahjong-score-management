@@ -6,8 +6,7 @@ import configparser
 import logging
 
 import libs.global_value as g
-from libs import configuration
-from libs.data import modify
+from libs.data import lookup, modify
 from libs.utils import dbutil, textutil, validator
 
 
@@ -15,7 +14,7 @@ def main():
     """ゲストメンバーの名前を統一する"""
     rename_conf = configparser.ConfigParser()
     rename_conf.read(g.args.unification, encoding="utf-8")
-    configuration.read_memberslist(False)
+    lookup.db.read_memberslist()
 
     modify.db_backup()
     if "rename" in rename_conf.sections():
