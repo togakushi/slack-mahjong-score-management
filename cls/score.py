@@ -127,9 +127,22 @@ class GameResult:
         # スコアデータ
         match self.mode:
             case 3:
-                score_data = all[self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data()]
+                score_data = all(
+                    [
+                        self.p1.has_valid_data(),
+                        self.p2.has_valid_data(),
+                        self.p3.has_valid_data(),
+                    ]
+                )
             case 4:
-                score_data = all[self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]
+                score_data = all(
+                    [
+                        self.p1.has_valid_data(),
+                        self.p2.has_valid_data(),
+                        self.p3.has_valid_data(),
+                        self.p4.has_valid_data(),
+                    ]
+                )
             case _:
                 score_data = False
 
