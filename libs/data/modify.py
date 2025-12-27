@@ -43,7 +43,7 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
                     dbutil.query("RESULT_INSERT"),
                     {
                         "playtime": ExtDt(float(detection.ts)).format("sql"),
-                        "rpoint_sum": detection.rpoint_sum(),
+                        "rpoint_sum": detection.rpoint_sum,
                         **detection.to_dict(),
                     },
                 )
@@ -82,7 +82,7 @@ def db_update(detection: "GameResult", m: "MessageParserProtocol") -> int:
                 dbutil.query("RESULT_UPDATE"),
                 {
                     "playtime": ExtDt(float(detection.ts)).format("sql"),
-                    "rpoint_sum": detection.rpoint_sum(),
+                    "rpoint_sum": detection.rpoint_sum,
                     **detection.to_dict(),
                 },
             )
@@ -315,7 +315,7 @@ def _score_check(detection: "GameResult", m: "MessageParserProtocol"):
     # 素点合計チェック
     if detection.deposit:
         m.status.reaction = False
-        m.status.rpoint_sum = detection.rpoint_sum()
+        m.status.rpoint_sum = detection.rpoint_sum
         m.set_data("0", message.random_reply(m, "invalid_score"), StyleOptions(key_title=False))
         m.post.ts = m.data.event_ts
 
