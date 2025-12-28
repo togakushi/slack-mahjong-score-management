@@ -116,7 +116,7 @@ def check_score(m: "MessageParserProtocol") -> dict:
         else:
             raise RuntimeError
 
-        xxx: dict[int, dict] = {
+        position_map: dict[int, dict] = {
             3: {
                 "position1": {"p1_name": 1, "p1_str": 2, "p2_name": 3, "p2_str": 4, "p3_name": 5, "p3_str": 6, "comment": None},
                 "position2": {"p1_name": 0, "p1_str": 1, "p2_name": 2, "p2_str": 3, "p3_name": 4, "p3_str": 5, "comment": None},
@@ -132,20 +132,20 @@ def check_score(m: "MessageParserProtocol") -> dict:
         }
 
         # 情報取り出し
-        position: dict[str, Optional[int]] = {}
+        position: dict[str, Optional[int]]
         match text:
             case text if pattern1.findall(text):
                 msg = pattern1.findall(text)[0]
-                position = xxx[mode]["position1"]
+                position = position_map["position1"]
             case text if pattern2.findall(text):
                 msg = pattern2.findall(text)[0]
-                position = xxx[mode]["position2"]
+                position = position_map[mode]["position2"]
             case text if pattern3.findall(text):
                 msg = pattern3.findall(text)[0]
-                position = xxx[mode]["position3"]
+                position = position_map[mode]["position3"]
             case text if pattern4.findall(text):
                 msg = pattern4.findall(text)[0]
-                position = xxx[mode]["position4"]
+                position = position_map[mode]["position4"]
             case _:
                 continue
 
