@@ -25,5 +25,6 @@ create table if not exists "result" (
     "rule_version"  TEXT,
     "comment"       TEXT,
     "source"        TEXT,
+    "mode"          INTEGER,
     PRIMARY KEY("ts")
 );
