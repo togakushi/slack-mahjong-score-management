@@ -96,10 +96,10 @@ class RuleSet:
         Args:
             version (str): ルールバージョン識別子
             mode (Literal[3, 4], optional): 四人打ち/三人打ち. Defaults to 四人打ち.
-            rule_data (Mapping): data
+            rule_data (Mapping, optional): 更新データ情報
 
         Returns:
-            bool: 登録結果
+            bool: 登録結果真偽
         """
 
         rule = RuleData()
