@@ -13,12 +13,12 @@ from pathlib import Path, PosixPath
 from types import NoneType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
+from cls.rule import RuleSet
 from libs.types import GradeTableDict
 
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
-    from cls.rule import RuleSet
     from libs.types import MemberDataDict, TeamDataDict
 
 SubClassType: TypeAlias = Union[
@@ -121,17 +121,17 @@ class BaseSection(CommonMethodMixin):
                 case _:
                     setattr(self, k, self.__dict__.get(k))
 
-    def to_dict(self, drop_items: Optional[list[str]] = None) -> dict:
+    def to_dict(self, drop_items: Optional[list[str]] = None) -> dict[str, str]:
         """必要なパラメータを辞書型で返す
 
         Args:
             drop_items (Optional[list[str]], optional): _description_. Defaults to None.
 
         Returns:
-            dict: 返却値
+             dict[str, str]: 返却値
         """
 
-        ret_dict: dict = {}
+        ret_dict: dict[str, str] = {}
         for key in vars(self):
             if key.startswith("_"):
                 continue
@@ -569,7 +569,7 @@ class SubCommand(BaseSection):
     section: str
     """サブコマンドセクション名"""
 
-    commandword: list
+    commandword: list[str]
     """呼び出しキーワード"""
     aggregation_range: str
     """検索範囲未指定時に使用される範囲"""
@@ -746,10 +746,8 @@ class AppConfig:
         """reportセクション設定値"""
 
         # 共通設定値
-        self.rule: "RuleSet"
+        self.rule: RuleSet = RuleSet(self.setting.keyword)  # type: ignore # todo: キーワードとパスの分離
         """ルール情報"""
-        self.keyword_mapping: dict[str, str] = {}
-        """登録キーワードとルールバージョンのマッピング辞書"""
         self.undefined_word: int = 0
         """レギュレーションワードテーブルに登録されていないワードの種別"""
         self.aggregate_unit: Literal["A", "M", "Y", None] = None
@@ -778,21 +776,23 @@ class AppConfig:
         self.ranking.config_load(self)
         self.report.config_load(self)
 
-    def word_list(self) -> list:
+    def word_list(self) -> list[str]:
         """設定されている値、キーワードをリスト化する
 
         Returns:
             list: リスト化されたキーワード
         """
 
-        words: list = [
-            list(self.keyword_mapping.keys()),
-            [self.setting.remarks_word],
-            self.results.commandword,
-            self.graph.commandword,
-            self.ranking.commandword,
-            self.report.commandword,
-        ]
+        words: list[str] = [self.setting.remarks_word]
+        words.extend(
+            self.results.commandword
+            + self.results.commandword
+            + self.results.commandword
+            + self.graph.commandword
+            + self.ranking.commandword
+            + self.report.commandword
+            + list(self.rule.keyword_mapping)
+        )
 
         for k, v in self.alias.to_dict().items():
             if isinstance(v, list):
