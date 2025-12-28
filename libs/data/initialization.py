@@ -119,7 +119,7 @@ def initialization_resultdb(database_file: Union[str, "Path"]) -> None:
         sql = "insert into member (id, name) values (0, ?);"
         resultdb.execute(sql, (g.cfg.member.guest_name,))
     elif data[0][1] != g.cfg.member.guest_name:
-        logging.info("ゲスト修正: %s -> %s", data[0][1], g.cfg.member.guest_name)
+        logging.warning("ゲスト修正: %s -> %s", data[0][1], g.cfg.member.guest_name)
         sql = "update member set name=? where id=0;"
         resultdb.execute(sql, (g.cfg.member.guest_name,))
 
