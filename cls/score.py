@@ -97,8 +97,10 @@ class GameResult:
     def __eq__(self, other):
         if not isinstance(other, GameResult):
             return NotImplemented
+
         return all(
             [
+                self.mode == other.mode,
                 self.ts == other.ts,
                 self.p1.name == other.p1.name,
                 self.p1.rpoint == other.p1.rpoint,
@@ -121,17 +123,30 @@ class GameResult:
 
     def has_valid_data(self) -> bool:
         """DB更新に必要なデータを持っているかチェック"""
-        return all(
-            [
-                self.ts,
-                isinstance(self.ts, str),
-                self.p1.has_valid_data(),
-                self.p2.has_valid_data(),
-                self.p3.has_valid_data(),
-                self.p4.has_valid_data(),
-                all(self.to_list("rank")),
-            ]
-        )
+
+        # スコアデータ
+        match self.mode:
+            case 3:
+                score_data = all(
+                    [
+                        self.p1.has_valid_data(),
+                        self.p2.has_valid_data(),
+                        self.p3.has_valid_data(),
+                    ]
+                )
+            case 4:
+                score_data = all(
+                    [
+                        self.p1.has_valid_data(),
+                        self.p2.has_valid_data(),
+                        self.p3.has_valid_data(),
+                        self.p4.has_valid_data(),
+                    ]
+                )
+            case _:
+                score_data = False
+
+        return all([self.ts, isinstance(self.ts, str), score_data, all(self.to_list("rank"))])
 
     def set(self, **kwargs) -> None:
         """テータ取り込み"""
@@ -215,18 +230,19 @@ class GameResult:
                 ret_text += f"[{self.p1.name} {self.p1.r_str}] "
                 ret_text += f"[{self.p2.name} {self.p2.r_str}] "
                 ret_text += f"[{self.p3.name} {self.p3.r_str}] "
-                ret_text += f"[{self.p4.name} {self.p4.r_str}] "
+                ret_text += f"[{self.p4.name} {self.p4.r_str}] " if self.mode == 4 else ""
                 ret_text += f"[供託 {self.deposit}] [{self.comment if self.comment else None}]"
             case "detail":
                 ret_text += f"[{self.p1.rank}位 {self.p1.name} {self.p1.rpoint * 100}点 ({self.p1.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p2.rank}位 {self.p2.name} {self.p2.rpoint * 100}点 ({self.p2.point}pt)] ".replace("-", "▲")
                 ret_text += f"[{self.p3.rank}位 {self.p3.name} {self.p3.rpoint * 100}点 ({self.p3.point}pt)] ".replace("-", "▲")
-                ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace("-", "▲")
+                ret_text += f"[{self.p4.rank}位 {self.p4.name} {self.p4.rpoint * 100}点 ({self.p4.point}pt)] ".replace("-", "▲") if self.mode == 4 else ""
                 ret_text += f"[供託 {self.deposit * 100}点] "
                 ret_text += f"[{self.comment if self.comment else None}]"
             case "logging":
                 ret_text += f"ts={self.ts}, deposit={self.deposit}, rule_version={self.rule_version}, "
-                ret_text += f"p1={self.p1.to_dict('p1')}, p2={self.p2.to_dict('p2')}, p3={self.p3.to_dict('p3')}, p4={self.p4.to_dict('p4')}, "
+                ret_text += f"p1={self.p1.to_dict('p1')}, p2={self.p2.to_dict('p2')}, p3={self.p3.to_dict('p3')}, "
+                ret_text += f"p4={self.p4.to_dict('p4')}, " if self.mode == 4 else ""
                 ret_text += f"comment={self.comment if self.comment else None}, source={self.source}"
 
         return ret_text
@@ -261,30 +277,34 @@ class GameResult:
             case "rank":
                 ret_list = [self.p1.rank, self.p2.rank, self.p3.rank, self.p4.rank]
 
-        return ret_list
-
-    def rpoint_sum(self) -> int:
-        """素点合計
-
-        Returns:
-            int: 素点合計
-        """
-
-        if not all(self.to_list("rank")):  # 順位が確定していない場合は先に計算
-            self.calc()
-
-        return sum(cast(list[int], self.to_list("rpoint")))
+        return ret_list[: self.mode]
 
     def calc(self, **kwargs):
         """獲得ポイント計算"""
+
         if kwargs:
             self.set(**kwargs)
 
-        if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]):
-            self.set(**self._calculation_point())
+        match self.mode:
+            case 3:
+                if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data()]):
+                    self.set(**self._calculation_point3())
+            case 4:
+                if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]):
+                    self.set(**self._calculation_point4())
+            case _:
+                raise RuntimeError
 
-    def _calculation_point(self) -> dict:
-        """獲得ポイントと順位を計算する
+    def _calculation_point3(self) -> dict:
+        """獲得ポイントと順位を計算する(三人打ち)
+
+        Returns:
+            dict: 更新用辞書(順位と獲得ポイントのデータ)
+        """
+        return {}
+
+    def _calculation_point4(self) -> dict:
+        """獲得ポイントと順位を計算する(四人打ち)
 
         Returns:
             dict: 更新用辞書(順位と獲得ポイントのデータ)
@@ -387,3 +407,16 @@ class GameResult:
         ret_dict.update(deposit=int(self.origin_point * 4 - score_df["rpoint"].sum()))
 
         return ret_dict
+
+    @property
+    def rpoint_sum(self) -> int:
+        """素点合計
+
+        Returns:
+            int: 素点合計
+        """
+
+        if not all(self.to_list("rank")):  # 順位が確定していない場合は先に計算
+            self.calc()
+
+        return sum(cast(list[int], self.to_list("rpoint")))

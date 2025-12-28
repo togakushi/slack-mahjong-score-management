@@ -13,11 +13,12 @@ from pathlib import Path, PosixPath
 from types import NoneType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
-from libs.types import GradeTableDict, RuleDict
+from libs.types import GradeTableDict
 
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
+    from cls.rule import RuleSet
     from libs.types import MemberDataDict, TeamDataDict
 
 SubClassType: TypeAlias = Union[
@@ -743,7 +744,7 @@ class AppConfig:
         """reportセクション設定値"""
 
         # 共通設定値
-        self.rule: dict[str, RuleDict] = {}
+        self.rule: "RuleSet"
         """ルール情報"""
         self.keyword_mapping: dict[str, str] = {}
         """登録キーワードとルールバージョンのマッピング辞書"""
@@ -774,27 +775,6 @@ class AppConfig:
         self.graph.config_load(self)
         self.ranking.config_load(self)
         self.report.config_load(self)
-
-        # ルール情報取り込み
-        self.rule.update({f"{self.mahjong.rule_version}": self._rule_set(self.mahjong.to_dict())})
-        if isinstance(self.setting.keyword, Path):
-            rule_parser = ConfigParser()
-            rule_parser.read(self.setting.keyword)
-            for section_name in rule_parser.sections():
-                self.rule.update({f"{section_name}": self._rule_set(dict(rule_parser[section_name]))})
-
-        # マッピング
-        if self.main_parser.has_section("keyword_mapping"):
-            for keyword, rule_version in dict(self.main_parser["keyword_mapping"]).items():
-                if not rule_version:
-                    self.keyword_mapping.update({keyword: self.mahjong.rule_version})
-                elif rule_version in self.rule:
-                    self.keyword_mapping.update({keyword: rule_version})
-        if not self.keyword_mapping:
-            if isinstance(self.setting.keyword, str):
-                self.keyword_mapping = {self.setting.keyword: self.mahjong.rule_version}
-            else:
-                self.keyword_mapping = {"終局": self.mahjong.rule_version}
 
     def word_list(self) -> list:
         """設定されている値、キーワードをリスト化する
@@ -866,55 +846,3 @@ class AppConfig:
                 self.report.commandword = protected_values
             case _:
                 return
-
-    def _rule_set(self, rule: dict) -> RuleDict:
-        """ルール情報取り込み
-
-        Args:
-            rule (dict): 入力情報
-
-        Returns:
-            RuleDict: 確定値
-        """
-
-        mode = int(rule.get("mode", 4))
-
-        if rank_point := rule.get("rank_point", []):
-            if isinstance(rank_point, str):
-                rank_point = rank_point.split(",")
-        rank_point = list(map(int, map(float, rank_point[:mode])))
-
-        match mode:
-            case 3:
-                origin_point = int(rule.get("origin_point", 350))
-                return_point = int(rule.get("return_point", 400))
-                if not rank_point or len(rank_point) != mode:
-                    rank_point = [30, 0, -30]
-            case 4:
-                origin_point = int(rule.get("origin_point", 250))
-                return_point = int(rule.get("return_point", 300))
-                if not rank_point or len(rank_point) != mode:
-                    rank_point = [30, 10, -10, -30]
-            case _:
-                raise RuntimeError
-
-        if ignore_flying := rule.get("ignore_flying"):
-            ignore_flying = str(ignore_flying).lower() in {"1", "true", "yes", "on"}
-        else:
-            ignore_flying = False
-
-        if draw_split := rule.get("draw_split"):
-            draw_split = str(draw_split).lower() in {"1", "true", "yes", "on"}
-        else:
-            draw_split = False
-
-        ret: RuleDict = {
-            "mode": mode,
-            "origin_point": origin_point,
-            "return_point": return_point,
-            "rank_point": rank_point,
-            "ignore_flying": ignore_flying,
-            "draw_split": draw_split,
-        }
-
-        return ret

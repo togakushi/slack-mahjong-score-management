@@ -7,6 +7,7 @@ import sys
 import pytest
 
 from libs import configuration
+from libs.data import lookup
 from libs.utils import validator
 from tests.name_check import param_data
 
@@ -22,7 +23,7 @@ def test_name_permit(input_args, expected_flags, monkeypatch):
     """メンバー登録テスト(OK)"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    configuration.read_memberslist()
+    lookup.db.read_memberslist()
 
     flg, reason = validator.check_namepattern(input_args, "member")
     print(" -->", flg, reason)
@@ -38,7 +39,7 @@ def test_name_refusal(input_args, expected_flags, monkeypatch):
     """メンバー登録テスト(NG)"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    configuration.read_memberslist()
+    lookup.db.read_memberslist()
 
     flg, _ = validator.check_namepattern(input_args, "member")
     assert flg == expected_flags

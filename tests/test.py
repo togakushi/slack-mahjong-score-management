@@ -13,7 +13,7 @@ from cls.command import CommandParser
 from integrations import factory
 from libs import configuration
 from libs.commands import graph, ranking, report, results
-from libs.data import initialization
+from libs.data import initialization, lookup
 from libs.functions import compose
 from libs.utils import dictutil
 
@@ -227,7 +227,7 @@ def main():
     flag: dict = {}
 
     initialization.initialization_resultdb(g.cfg.setting.database_file)
-    configuration.read_memberslist(False)
+    lookup.db.read_memberslist()
 
     for sec in test_conf.sections():
         print("=" * 120)

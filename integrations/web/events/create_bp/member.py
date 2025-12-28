@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING
 
 from flask import Blueprint, abort, current_app, render_template, request
 
-from libs.configuration import read_memberslist
-from libs.data import loader
+from libs.data import loader, lookup
 from libs.registry import member, team
 
 if TYPE_CHECKING:
@@ -57,7 +56,7 @@ def member_bp(adapter: "ServiceAdapter") -> Blueprint:
                     ret = team.clear()
                     data.update(result_msg=ret)
 
-            read_memberslist(log=False)
+            lookup.db.read_memberslist()
 
         member_df = loader.read_data("MEMBER_INFO")
         if member_df.empty:
