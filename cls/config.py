@@ -194,6 +194,8 @@ class MahjongSection(BaseSection):
                 if self.return_point < 0:
                     self.return_point = 300
 
+        self.rank_point = self.rank_point[: self.mode]
+
         logging.debug("%s: %s", _section_name, self)
 
 
