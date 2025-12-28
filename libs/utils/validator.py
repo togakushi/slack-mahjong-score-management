@@ -3,7 +3,7 @@ libs/utils/validator.py
 """
 
 import re
-from typing import TYPE_CHECKING, Literal, cast
+from typing import TYPE_CHECKING, Literal
 
 import libs.global_value as g
 from cls.command import CommandParser
@@ -87,7 +87,7 @@ def check_score(m: "MessageParserProtocol") -> dict:
     text = m.data.text
     ret: dict = {}
 
-    for keyword, rule_version in g.cfg.keyword_mapping.items():
+    for keyword, rule_version in g.cfg.rule.keyword_mapping.items():
         # 記号を置換
         replace_chr = [
             ("\uff0b", "+"),  # 全角プラス符号
@@ -178,8 +178,7 @@ def check_score(m: "MessageParserProtocol") -> dict:
             comment=comment,
             source=m.status.source,
             ts=m.data.event_ts,
-            rule_version=rule_version,
-            **(cast(dict, g.cfg.rule.get(rule_version, {}))),
+            **g.cfg.rule.to_dict(rule_version),
         )
         break
 

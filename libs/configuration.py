@@ -16,6 +16,7 @@ import libs.commands.report.entry
 import libs.commands.results.entry
 import libs.global_value as g
 from cls.config import AppConfig
+from cls.rule import RuleSet
 from integrations import factory
 from libs.data import initialization, lookup
 from libs.functions import compose
@@ -260,6 +261,24 @@ def setup():
                 if others_db:
                     initialization.initialization_resultdb(Path(others_db).absolute())
 
+    # ルールデータ取り込み
+    g.cfg.rule = RuleSet(g.cfg.setting.keyword)  # type: ignore # todo: キーワードとパスの分離
+    if g.cfg.mahjong.rule_version:
+        g.cfg.rule.data_set(g.cfg.mahjong.rule_version, rule_data=g.cfg.mahjong.to_dict())
+
+    if g.cfg.main_parser.has_section("keyword_mapping"):
+        for keyword, rule_version in dict(g.cfg.main_parser["keyword_mapping"]).items():
+            if not rule_version:
+                g.cfg.rule.keyword_mapping.update({keyword: g.cfg.mahjong.rule_version})
+            elif rule_version in g.cfg.rule.data:
+                g.cfg.rule.keyword_mapping.update({keyword: rule_version})
+
+    if not g.cfg.rule.keyword_mapping:
+        if isinstance(g.cfg.setting.keyword, str):
+            g.cfg.rule.keyword_mapping = {g.cfg.setting.keyword: g.cfg.mahjong.rule_version}
+        else:
+            g.cfg.rule.keyword_mapping = {"終局": g.cfg.mahjong.rule_version}
+
     # 設定情報のロギング
     logging.info("config: %s", g.cfg.config_file.absolute())
     logging.info(
@@ -268,10 +287,7 @@ def setup():
         g.adapter.conf.plotting_backend,
         g.cfg.setting.time_adjust,
     )
-    logging.info("keyword_mapping: %s", g.cfg.keyword_mapping)
-
-    for k, v in g.cfg.rule.items():
-        logging.info("rule: %s, %s", k, v)
+    g.cfg.rule.info()
 
 
 def register():

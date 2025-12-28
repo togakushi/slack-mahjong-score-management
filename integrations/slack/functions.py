@@ -295,7 +295,7 @@ class SvcFunctions(FunctionsInterface):
 
         # ゲーム結果の抽出
         score_matches: list["MessageParserProtocol"] = []
-        for keyword in g.cfg.keyword_mapping.keys():
+        for keyword in g.cfg.rule.keyword_mapping.keys():
             for match in self.get_messages(keyword):
                 if validator.check_score(match):
                     if match.ignore_user:  # 除外ユーザからのポストは破棄
