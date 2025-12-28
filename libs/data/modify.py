@@ -320,7 +320,7 @@ def _score_check(detection: "GameResult", m: "MessageParserProtocol"):
         m.post.ts = m.data.event_ts
 
     # プレイヤー名重複チェック
-    if len(set(detection.to_list())) != 4:
+    if len(set(detection.to_list())) != detection.mode:
         m.status.reaction = False
         m.set_data("1", message.random_reply(m, "same_player"), StyleOptions(key_title=False))
         m.post.ts = m.data.event_ts

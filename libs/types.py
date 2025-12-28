@@ -239,6 +239,8 @@ class PlaceholderDict(TypedDict, total=False):
     """内部フラグ(縦持ちデータで集計)"""
 
     # その他
+    mode: int
+    """集計モード"""
     undefined_word: int
     """未登録ワードの扱い
     - *0*: 役満扱い

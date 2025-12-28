@@ -3,7 +3,7 @@ libs/utils/validator.py
 """
 
 import re
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, Optional
 
 import libs.global_value as g
 from cls.command import CommandParser
@@ -87,95 +87,75 @@ def check_score(m: "MessageParserProtocol") -> dict:
     text = m.data.text
     ret: dict = {}
 
+    # 記号を置換
+    replace_chr = [
+        ("\uff0b", "+"),  # 全角プラス符号
+        ("\u2212", "-"),  # 全角マイナス符号
+        ("\uff08", "("),  # 全角丸括弧
+        ("\uff09", ")"),  # 全角丸括弧
+        ("\u2017", "_"),  # DOUBLE LOW LINE(半角)
+        ("\u200b", " "),  # ZERO WIDTH SPACE(ゼロ幅スペース)
+        ("\u200e", " "),  # LEFT-TO-RIGHT MARK(左から右へのマーク)
+        ("\u200f", " "),  # RIGHT-TO-LEFT MARK(右から左へのマーク)
+        ("\u2061", " "),  # FUNCTION APPLICATION(関数の適用)
+        ("\u2800", " "),  # BRAILLE PATTERN BLANK(点字パターンの空白)
+        ("\ufeff", " "),  # ZERO WIDTH NO-BREAK SPACE(ゼロ幅改行なしスペース)
+    ]
+    for z, h in replace_chr:
+        text = text.replace(z, h)
+
+    text = "".join(text.split())  # 改行/空白削除
+
     for keyword, rule_version in g.cfg.rule.keyword_mapping.items():
-        # 記号を置換
-        replace_chr = [
-            ("\uff0b", "+"),  # 全角プラス符号
-            ("\u2212", "-"),  # 全角マイナス符号
-            ("\uff08", "("),  # 全角丸括弧
-            ("\uff09", ")"),  # 全角丸括弧
-            ("\u2017", "_"),  # DOUBLE LOW LINE(半角)
-            ("\u200b", " "),  # ZERO WIDTH SPACE(ゼロ幅スペース)
-            ("\u200e", " "),  # LEFT-TO-RIGHT MARK(左から右へのマーク)
-            ("\u200f", " "),  # RIGHT-TO-LEFT MARK(右から左へのマーク)
-            ("\u2061", " "),  # FUNCTION APPLICATION(関数の適用)
-            ("\u2800", " "),  # BRAILLE PATTERN BLANK(点字パターンの空白)
-            ("\ufeff", " "),  # ZERO WIDTH NO-BREAK SPACE(ゼロ幅改行なしスペース)
-        ]
-        for z, h in replace_chr:
-            text = text.replace(z, h)
-
-        text = "".join(text.split())  # 改行/空白削除
-
         # パターンマッチング
-        pattern1 = re.compile(rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
-        pattern2 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})$")
-        pattern3 = re.compile(rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + r"$")
-        pattern4 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * 4 + rf"({keyword})\((.+?)\)$")
+        if mode := g.cfg.rule.to_dict(rule_version).get("mode"):
+            pattern1 = re.compile(rf"^({keyword})" + r"([^0-9()+-]+)([0-9+-]+)" * mode + r"$")
+            pattern2 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * mode + rf"({keyword})$")
+            pattern3 = re.compile(rf"^({keyword})\((.+?)\)" + r"([^0-9()+-]+)([0-9+-]+)" * mode + r"$")
+            pattern4 = re.compile(r"^" + r"([^0-9()+-]+)([0-9+-]+)" * mode + rf"({keyword})\((.+?)\)$")
+        else:
+            raise RuntimeError
+
+        xxx: dict[int, dict] = {
+            3: {
+                "position1": {"p1_name": 1, "p1_str": 2, "p2_name": 3, "p2_str": 4, "p3_name": 5, "p3_str": 6, "comment": None},
+                "position2": {"p1_name": 0, "p1_str": 1, "p2_name": 2, "p2_str": 3, "p3_name": 4, "p3_str": 5, "comment": None},
+                "position3": {"p1_name": 2, "p1_str": 3, "p2_name": 4, "p2_str": 5, "p3_name": 6, "p3_str": 7, "comment": 1},
+                "position4": {"p1_name": 0, "p1_str": 1, "p2_name": 2, "p2_str": 3, "p3_name": 4, "p3_str": 5, "comment": 7},
+            },
+            4: {
+                "position1": {"p1_name": 1, "p1_str": 2, "p2_name": 3, "p2_str": 4, "p3_name": 5, "p3_str": 6, "p4_name": 7, "p4_str": 8, "comment": None},
+                "position2": {"p1_name": 0, "p1_str": 1, "p2_name": 2, "p2_str": 3, "p3_name": 4, "p3_str": 5, "p4_name": 6, "p4_str": 7, "comment": None},
+                "position3": {"p1_name": 2, "p1_str": 3, "p2_name": 4, "p2_str": 5, "p3_name": 6, "p3_str": 7, "p4_name": 8, "p4_str": 9, "comment": 1},
+                "position4": {"p1_name": 0, "p1_str": 1, "p2_name": 2, "p2_str": 3, "p3_name": 4, "p3_str": 5, "p4_name": 6, "p4_str": 7, "comment": 9},
+            },
+        }
 
         # 情報取り出し
-        position: dict[str, int] = {}
+        position: dict[str, Optional[int]] = {}
         match text:
             case text if pattern1.findall(text):
                 msg = pattern1.findall(text)[0]
-                position = {
-                    "p1_name": 1,
-                    "p1_str": 2,
-                    "p2_name": 3,
-                    "p2_str": 4,
-                    "p3_name": 5,
-                    "p3_str": 6,
-                    "p4_name": 7,
-                    "p4_str": 8,
-                }
-                comment = None
+                position = xxx[mode]["position1"]
             case text if pattern2.findall(text):
                 msg = pattern2.findall(text)[0]
-                position = {
-                    "p1_name": 0,
-                    "p1_str": 1,
-                    "p2_name": 2,
-                    "p2_str": 3,
-                    "p3_name": 4,
-                    "p3_str": 5,
-                    "p4_name": 6,
-                    "p4_str": 7,
-                }
-                comment = None
+                position = xxx[mode]["position2"]
             case text if pattern3.findall(text):
                 msg = pattern3.findall(text)[0]
-                position = {
-                    "p1_name": 2,
-                    "p1_str": 3,
-                    "p2_name": 4,
-                    "p2_str": 5,
-                    "p3_name": 6,
-                    "p3_str": 7,
-                    "p4_name": 8,
-                    "p4_str": 9,
-                }
-                comment = str(msg[1])
+                position = xxx[mode]["position3"]
             case text if pattern4.findall(text):
                 msg = pattern4.findall(text)[0]
-                position = {
-                    "p1_name": 0,
-                    "p1_str": 1,
-                    "p2_name": 2,
-                    "p2_str": 3,
-                    "p3_name": 4,
-                    "p3_str": 5,
-                    "p4_name": 6,
-                    "p4_str": 7,
-                }
-                comment = str(msg[9])
+                position = xxx[mode]["position4"]
             case _:
                 continue
 
         for k, p in position.items():
-            ret.update({k: str(msg[p])})
+            if isinstance(p, int):
+                ret.update({k: str(msg[p])})
+            else:
+                ret.update({k: p})
 
         ret.update(
-            comment=comment,
             source=m.status.source,
             ts=m.data.event_ts,
             **g.cfg.rule.to_dict(rule_version),
