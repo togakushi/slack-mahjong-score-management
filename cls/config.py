@@ -787,16 +787,13 @@ class AppConfig:
             list: リスト化されたキーワード
         """
 
-        words: list[str] = [self.setting.remarks_word]
-        words.extend(
-            self.results.commandword
-            + self.results.commandword
-            + self.results.commandword
-            + self.graph.commandword
-            + self.ranking.commandword
-            + self.report.commandword
-            + list(self.rule.keyword_mapping)
-        )
+        words: list[str] = []
+        words.append(self.results.commandword)
+        words.append(self.graph.commandword)
+        words.append(self.ranking.commandword)
+        words.append(self.report.commandword)
+        words.append(self.rule.keyword_mapping)
+        words.append([self.setting.remarks_word])
 
         for k, v in self.alias.to_dict().items():
             if isinstance(v, list):
