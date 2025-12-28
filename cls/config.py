@@ -204,10 +204,12 @@ class SettingSection(BaseSection):
 
     help: str
     """ヘルプ表示キーワード"""
-    keyword: Union[str, Path]
+    keyword: str
     """成績記録キーワード(プライマリ)"""
     remarks_word: str
     """メモ記録用キーワード"""
+    rule_config: Path
+    """ルール設定ファイル"""
     time_adjust: int
     """日付変更後、集計範囲に含める追加時間"""
     separate: bool
@@ -236,8 +238,9 @@ class SettingSection(BaseSection):
 
     def _reset(self):
         self.help = str("麻雀成績ヘルプ")
-        self.keyword = Path("files/default_rule.ini")
+        self.keyword = str("終局")
         self.remarks_word = str("麻雀成績メモ")
+        self.rule_config = Path("files/default_rule.ini")
         self.time_adjust = int(12)
         self.separate = bool(False)
         self.search_word = str("")
@@ -746,8 +749,6 @@ class AppConfig:
         """reportセクション設定値"""
 
         # 共通設定値
-        self.rule: RuleSet = RuleSet(self.setting.keyword)  # type: ignore # todo: キーワードとパスの分離
-        """ルール情報"""
         self.undefined_word: int = 0
         """レギュレーションワードテーブルに登録されていないワードの種別"""
         self.aggregate_unit: Literal["A", "M", "Y", None] = None
@@ -759,6 +760,9 @@ class AppConfig:
         """
 
         self.initialization()
+
+        self.rule: RuleSet = RuleSet(self.setting.rule_config)
+        """ルール情報"""
 
     def initialization(self):
         """設定ファイル読み込み"""
