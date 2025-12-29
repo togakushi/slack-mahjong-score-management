@@ -610,6 +610,11 @@ class SubCommand(BaseSection):
     collection: str
     always_argument: list
     """オプションとして常に付与される文字列"""
+    target_mode: int
+    """集計対象モードの指定
+    - *0*: settingのデフォルトに従う
+    - *not 0*: 指定値でmodeを上書き
+    """
     format: str
     filename: str
     interval: int
@@ -639,6 +644,7 @@ class SubCommand(BaseSection):
         self.versus_matrix = bool(False)
         self.collection = str("")
         self.always_argument = []
+        self.target_mode = int(0)
         self.format = str("")
         self.filename = str("")
         self.interval = 80
