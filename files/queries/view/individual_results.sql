@@ -89,7 +89,8 @@ select * from (
         date(playtime, '-<time_adjust> hours') as collection_daily,
         rule_version,
         comment,
-        source
+        source,
+        mode
     from
         result
     left join member
@@ -142,7 +143,8 @@ select * from (
         date(playtime, '-<time_adjust> hours'),
         rule_version,
         comment,
-        source
+        source,
+        mode
     from
         result
     left join member
@@ -195,7 +197,8 @@ select * from (
         date(playtime, '-<time_adjust> hours'),
         rule_version,
         comment,
-        source
+        source,
+        mode
     from
         result
     left join member
@@ -248,7 +251,8 @@ select * from (
         date(playtime, '-<time_adjust> hours'),
         rule_version,
         comment,
-        source
+        source,
+        mode
     from
         result
     left join member
