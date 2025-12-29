@@ -241,6 +241,8 @@ class PlaceholderDict(TypedDict, total=False):
     # その他
     mode: int
     """集計モード"""
+    target_mode: int
+    """集計モード(オプション指定)"""
     undefined_word: int
     """未登録ワードの扱い
     - *0*: 役満扱い
