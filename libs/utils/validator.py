@@ -136,7 +136,7 @@ def check_score(m: "MessageParserProtocol") -> dict:
         match text:
             case text if pattern1.findall(text):
                 msg = pattern1.findall(text)[0]
-                position = position_map["position1"]
+                position = position_map[mode]["position1"]
             case text if pattern2.findall(text):
                 msg = pattern2.findall(text)[0]
                 position = position_map[mode]["position2"]
