@@ -153,6 +153,31 @@ class RuleSet:
 
         return {}
 
+    def get_version(self, mode: int, mapping: bool = True) -> list[str]:
+        """指定した条件のルールバージョン識別子をリストで返す
+
+        Args:
+            mode (int): 集計モード
+            mapping (bool, optional): Defaults to True.
+                - *True*: キーワードマッピングに登録されているルールのみ
+                - *False*: ルールとして定義されているものすべて
+
+        Returns:
+            list[str]: ルールバージョン識別子
+        """
+
+        ret: list[str] = []
+
+        for keyword, rule in self.data.items():
+            if rule.mode == mode:
+                if mapping:
+                    if keyword in self.keyword_mapping.values():
+                        ret.append(rule.rule_version)
+                else:
+                    ret.append(rule.rule_version)
+
+        return ret
+
     def info(self):
         """ルールデータをログに出力する"""
 
