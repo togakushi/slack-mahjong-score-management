@@ -7,7 +7,6 @@ import shutil
 import sys
 from configparser import ConfigParser
 from dataclasses import dataclass, field
-from itertools import chain
 from math import ceil
 from pathlib import Path, PosixPath
 from types import NoneType
@@ -794,20 +793,19 @@ class AppConfig:
         """
 
         words: list[str] = []
-        words.append(self.results.commandword)
-        words.append(self.graph.commandword)
-        words.append(self.ranking.commandword)
-        words.append(self.report.commandword)
-        words.append(self.rule.keyword_mapping)
-        words.append([self.setting.remarks_word])
+        words.extend(self.results.commandword)
+        words.extend(self.graph.commandword)
+        words.extend(self.ranking.commandword)
+        words.extend(self.report.commandword)
+        words.extend(list(self.rule.keyword_mapping.keys()))
+        words.extend([self.setting.remarks_word])
 
         for k, v in self.alias.to_dict().items():
             if isinstance(v, list):
-                words.append([k])
-                words.append(v)
+                words.append(k)
+                words.extend(v)
 
-        words = list(set(chain.from_iterable(words)))  # 重複排除/平滑化
-        words = [x for x in words if x != ""]  # 空文字削除
+        words = [x for x in set(words) if x != ""]  # 重複排除/空文字削除
 
         return words
 
