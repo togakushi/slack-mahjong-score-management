@@ -2,6 +2,7 @@
 libs/data/loader.py
 """
 
+import logging
 import re
 from datetime import datetime
 from typing import TYPE_CHECKING, cast
@@ -30,25 +31,26 @@ def read_data(keyword: str) -> pd.DataFrame:
     if "endtime" in g.params:
         g.params.update({"endtime": cast("ExtDt", g.params["endtime"]).format("sql")})
 
-    # ルールセット
-    if "rule_version" not in g.params:
-        g.params.update({"rule_version": g.cfg.mahjong.rule_version})
-
     sql = query_modification(dbutil.query(keyword))
     if g.args.verbose & 0x01:
         print(f">>> {g.params=}")
         print(f">>> SQL: {keyword} -> {g.cfg.setting.database_file}\n{named_query(sql)}")
 
-    df = pd.read_sql(
-        sql=sql,
-        con=dbutil.connection(g.cfg.setting.database_file),
-        params={
-            **cast(dict, g.params),
-            **g.params.get("rule_set", {}),
-            **g.params.get("player_list", {}),
-            **g.params.get("competition_list", {}),
-        },
-    )
+    try:
+        df = pd.read_sql(
+            sql=sql,
+            con=dbutil.connection(g.cfg.setting.database_file),
+            params={
+                **cast(dict, g.params),
+                **g.params.get("rule_set", {}),
+                **g.params.get("player_list", {}),
+                **g.params.get("competition_list", {}),
+            },
+        )
+    except pd.errors.DatabaseError:
+        logging.critical("SQL: %s, DATABASE: %s", keyword, g.cfg.setting.database_file)
+        logging.critical("params=%s", g.params)
+        logging.critical("query: %s", named_query(sql))
 
     if g.args.verbose & 0x02:
         print("=" * 80)
@@ -104,6 +106,7 @@ def query_modification(sql: str) -> str:
 
     # 集計対象ルール
     rule_list: list = []
+    g.params["mode"] = g.params.get("mode", 4)
     if target_mode := g.params.get("target_mode"):
         g.params["mode"] = target_mode
         rule_list.extend(g.cfg.rule.get_version(g.params["mode"], True))
@@ -111,6 +114,8 @@ def query_modification(sql: str) -> str:
         rule_list.extend(g.cfg.rule.get_version(g.params["mode"], False))
     if (rule_version := g.params.get("rule_version")) and g.cfg.rule.to_dict(rule_version):
         rule_list.append(rule_version)
+    if not rule_list:
+        rule_list = list(g.cfg.rule.keyword_mapping.values())
     g.params["rule_set"] = {f"rule_{idx}": name for idx, name in enumerate(set(rule_list))}
     sql = sql.replace("<<rule_list>>", ":" + ", :".join(g.params["rule_set"]))
 
