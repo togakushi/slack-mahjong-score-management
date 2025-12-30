@@ -74,12 +74,6 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     logging.debug("argument: %s", param)
     ret_dict.update({**(cast(dict, param.flags))})  # 上書き
 
-    # ルールバージョン先行評価
-    if rule_version := ret_dict.get("rule_version"):
-        g.params.update({"rule_version": rule_version})
-    if mixed := ret_dict.get("mixed"):
-        g.params.update({"mixed": mixed})
-
     # 検索範囲取得
     departure_time = ExtDt(hours=-g.cfg.setting.time_adjust)
     if param.search_range:
