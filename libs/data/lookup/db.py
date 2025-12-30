@@ -41,7 +41,8 @@ def member_info(params: "PlaceholderDict") -> dict:
         from
             individual_results
         where
-            rule_version = :rule_version
+            mode = :mode
+            and rule_version in (<<rule_list>>)
             and playtime between :starttime and :endtime
             --[separate] and source = :source
             --[individual] and name = :player_name
