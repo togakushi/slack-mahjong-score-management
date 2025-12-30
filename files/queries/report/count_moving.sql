@@ -22,7 +22,8 @@ from (
         from
             individual_results as results
         where
-            rule_version = :rule_version
+            mode = :mode
+            and rule_version in (<<rule_list>>)
             and results.playtime between :starttime and :endtime
             --[separate] and source = :source
             --[individual] and name = :player_name

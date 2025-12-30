@@ -8,7 +8,8 @@ with member_status as (
 from
     individual_results
 where
-    rule_version = :rule_version
+    mode = :mode
+    and rule_version in (<<rule_list>>)
     and guest = 0
 group by
     name

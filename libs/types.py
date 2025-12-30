@@ -200,14 +200,17 @@ class PlaceholderDict(TypedDict, total=False):
     endtime: Union[str, "ExtendedDatetime", None]
     """集計終了日時"""
     onday: Union[str, "ExtendedDatetime", None]
+
     default_rule: str
-    """ルール識別子"""
+    """ルール識別子(設定値)"""
     rule_version: str
+    """ルール識別子(指定値)"""
+    rule_set: dict[str, str]
     """集計対象ルール識別子"""
     mixed: bool
     """ルール識別子の扱い
-    - *True*: ルール識別子を考慮しない
-    - *False*: ルール識別子を区別する
+    - *True*: 定義済みすべてのルール識別子を含める
+    - *False*: ルール識別子を個別指定
     """
     search_word: str
     """コメント検索文字列"""
@@ -239,6 +242,10 @@ class PlaceholderDict(TypedDict, total=False):
     """内部フラグ(縦持ちデータで集計)"""
 
     # その他
+    mode: int
+    """集計モード"""
+    target_mode: int
+    """集計モード(オプション指定)"""
     undefined_word: int
     """未登録ワードの扱い
     - *0*: 役満扱い
@@ -315,6 +322,8 @@ class ScoreDict(TypedDict, total=False):
     """ルール識別子"""
     source: Optional[str]
     """データ入力元識別子"""
+    mode: Literal[3, 4]
+    """集計モード"""
 
 
 class RemarkDict(TypedDict, total=False):

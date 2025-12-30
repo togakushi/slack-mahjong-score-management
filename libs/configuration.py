@@ -16,7 +16,6 @@ import libs.commands.report.entry
 import libs.commands.results.entry
 import libs.global_value as g
 from cls.config import AppConfig
-from cls.rule import RuleSet
 from integrations import factory
 from libs.data import initialization, lookup
 from libs.functions import compose
@@ -262,7 +261,6 @@ def setup():
                     initialization.initialization_resultdb(Path(others_db).absolute())
 
     # ルールデータ取り込み
-    g.cfg.rule = RuleSet(g.cfg.setting.keyword)  # type: ignore # todo: キーワードとパスの分離
     if g.cfg.mahjong.rule_version:
         g.cfg.rule.data_set(g.cfg.mahjong.rule_version, rule_data=g.cfg.mahjong.to_dict())
 
@@ -293,60 +291,40 @@ def setup():
 def register():
     """ディスパッチテーブル登録"""
 
-    def _switching(m: "MessageParserProtocol"):
-        g.cfg.initialization()
-        if g.cfg.main_parser.has_section(m.status.source):
-            if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
-                logging.debug("Channel override settings: %s", Path(channel_config).absolute())
-                g.cfg.overwrite(Path(channel_config), "setting")
-
-        lookup.db.read_memberslist()
-
     def dispatch_help(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("ヘルプ", compose.msg_help.event_message(), StyleOptions())
         m.post.ts = m.data.event_ts
 
     def dispatch_download(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("成績記録DB", g.cfg.setting.database_file, StyleOptions())
 
     def dispatch_members_list(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), StyleOptions(codeblock=True))
         m.post.ts = m.data.event_ts
 
     def dispatch_team_list(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("登録済みチーム", lookup.textdata.get_team_list(), StyleOptions(codeblock=True))
         m.post.ts = m.data.event_ts
 
     def dispatch_member_append(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("メンバー追加", member.append(m.argument), StyleOptions(key_title=False))
 
     def dispatch_member_remove(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("メンバー削除", member.remove(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_create(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("チーム作成", team.create(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_delete(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("チーム削除", team.delete(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_append(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("チーム所属", team.append(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_remove(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("チーム脱退", team.remove(m.argument), StyleOptions(key_title=False))
 
     def dispatch_team_clear(m: "MessageParserProtocol"):
-        _switching(m)
         m.set_data("全チーム削除", team.clear(), StyleOptions(key_title=False))
 
     dispatch_table: dict = {

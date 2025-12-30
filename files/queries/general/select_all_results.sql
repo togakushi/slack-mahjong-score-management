@@ -4,6 +4,7 @@ select
 from
     individual_results
 where
-    rule_version = :rule_version
+    mode = :mode
+    and rule_version in (<<rule_list>>)
     and name = :player_name
 ;

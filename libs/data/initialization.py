@@ -61,6 +61,9 @@ def initialization_resultdb(database_file: Union[str, "Path"]) -> None:
                 resultdb.execute(f"alter table {table_name} add column {col_name} {col_type} {notnull} {dflt};")
                 logging.info("migration: table=%s, column=%s", table_name, col_name)
 
+    # 追加カラムデータ更新
+    resultdb.execute("update result set mode = 4 where mode isnull and p4_name != '' and p4_str != '';")
+
     # regulationsテーブル情報読み込み
     if cast("ConfigParser", getattr(g.cfg, "_parser")).has_section("regulations"):
         resultdb.execute("delete from words;")
@@ -119,7 +122,7 @@ def initialization_resultdb(database_file: Union[str, "Path"]) -> None:
         sql = "insert into member (id, name) values (0, ?);"
         resultdb.execute(sql, (g.cfg.member.guest_name,))
     elif data[0][1] != g.cfg.member.guest_name:
-        logging.info("ゲスト修正: %s -> %s", data[0][1], g.cfg.member.guest_name)
+        logging.warning("ゲスト修正: %s -> %s", data[0][1], g.cfg.member.guest_name)
         sql = "update member set name=? where id=0;"
         resultdb.execute(sql, (g.cfg.member.guest_name,))
 

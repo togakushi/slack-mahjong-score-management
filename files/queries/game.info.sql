@@ -11,7 +11,8 @@ with game_data as (
     join individual_results on
         individual_results.playtime = game_info.playtime
     where
-        game_info.rule_version = :rule_version
+        individual_results.mode = :mode
+        and game_info.rule_version in (<<rule_list>>)
         and game_info.playtime between :starttime and :endtime
         --[separate] and game_info.source = :source
         --[individual] --[guest_not_skip] and guest_count <= 1 -- ゲストあり(2ゲスト戦除外)

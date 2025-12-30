@@ -119,6 +119,14 @@ COMMANDS: CommandsDict = {
         "action": lambda w: {"rule_version": w, "mixed": False},
         "type": "str",
     },
+    "mode3": {
+        "match": [r"^ 三人打ち$", r"^三人打$", r"^サンマ$"],
+        "action": lambda _: {"target_mode": 3},
+    },
+    "mode4": {
+        "match": [r"^四人打ち$", r"^四人打$", r"^ヨンマ$"],
+        "action": lambda _: {"target_mode": 4},
+    },
     "most_recent": {"match": [r"^(直近)(\d*)$"], "action": lambda w: {"target_count": w}},
     "mixed": {
         "match": [r"^横断$", r"^mix$", r"^mixed$"],

@@ -4,18 +4,16 @@ libs/data/lookup/db.py
 
 import logging
 from contextlib import closing
-from datetime import datetime
 from typing import TYPE_CHECKING, cast
 
 import pandas as pd
 
 import libs.global_value as g
 from cls.score import GameResult
-from libs.data import loader
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
-    from cls.timekit import ExtendedDatetime as ExtDt
     from libs.types import MemberDataDict, PlaceholderDict, TeamDataDict
 
 
@@ -30,7 +28,7 @@ def member_info(params: "PlaceholderDict") -> dict:
     """
 
     ret: dict = {}
-    sql = loader.query_modification(
+    sql = dbutil.query_modification(
         """
         select
             count() as game_count,
@@ -41,7 +39,8 @@ def member_info(params: "PlaceholderDict") -> dict:
         from
             individual_results
         where
-            rule_version = :rule_version
+            mode = :mode
+            and rule_version in (<<rule_list>>)
             and playtime between :starttime and :endtime
             --[separate] and source = :source
             --[individual] and name = :player_name
@@ -210,14 +209,14 @@ def exsist_record(ts: str) -> GameResult:
     return result
 
 
-def first_record() -> datetime:
+def first_record() -> ExtDt:
     """最初のゲーム記録時間を返す
 
     Returns:
-        datetime: 最初のゲーム記録時間
+        ExtendedDatetime: 最初のゲーム記録時間
     """
 
-    ret = datetime.now()
+    ret = ExtDt()
     try:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
             table_count = conn.execute(
@@ -225,17 +224,12 @@ def first_record() -> datetime:
             ).fetchall()[0][0]
 
             if table_count:
-                if g.params.get("mixed"):
-                    record = conn.execute("select min(playtime) from game_results;").fetchall()[0][0]
-                else:
-                    record = conn.execute(
-                        "select min(playtime) from game_results where rule_version=?;",
-                        (g.params.get("rule_version", g.cfg.mahjong.rule_version),),
-                    ).fetchall()[0][0]
+                sql = dbutil.query_modification("select min(playtime) from game_results where rule_version in (<<rule_list>>);")
+                record = conn.execute(sql, g.params.get("rule_set", {})).fetchall()[0][0]
                 if record:
-                    ret = datetime.fromisoformat(record)
+                    ret = ExtDt(str(record))
     except AttributeError:
-        ret = datetime.now()
+        ret = ExtDt()
 
     return ret
 

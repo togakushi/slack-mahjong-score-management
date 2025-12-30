@@ -48,22 +48,20 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     g.cfg.member.info = lookup.db.get_member_info()
     g.cfg.team.info = lookup.db.get_team_info()
 
-    ret_dict: "PlaceholderDict" = {
-        "command": subcom.section,
-        "guest_name": g.cfg.member.guest_name,
-        "undefined_word": g.cfg.undefined_word,
-        "source": m.status.source,
-        "separate": g.cfg.setting.separate,
-        "search_word": g.cfg.setting.search_word,
-        "group_length": g.cfg.setting.group_length,
-        "default_rule": g.cfg.mahjong.rule_version,
-    }
-
-    ret_dict.update(
+    ret_dict: "PlaceholderDict" = cast(
+        "PlaceholderDict",
         {
+            "command": subcom.section,
+            "guest_name": g.cfg.member.guest_name,
+            "undefined_word": g.cfg.undefined_word,
+            "source": m.status.source,
+            "separate": g.cfg.setting.separate,
+            "search_word": g.cfg.setting.search_word,
+            "group_length": g.cfg.setting.group_length,
+            "default_rule": g.cfg.mahjong.rule_version,
             **g.cfg.mahjong.to_dict(),
             **subcom.to_dict(),  # デフォルト値
-        }
+        },
     )
 
     # always_argumentの処理
@@ -75,12 +73,6 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     param = parser.analysis_argument(m.argument)
     logging.debug("argument: %s", param)
     ret_dict.update({**(cast(dict, param.flags))})  # 上書き
-
-    # ルールバージョン先行評価
-    if rule_version := ret_dict.get("rule_version"):
-        g.params.update({"rule_version": rule_version})
-    if mixed := ret_dict.get("mixed"):
-        g.params.update({"mixed": mixed})
 
     # 検索範囲取得
     departure_time = ExtDt(hours=-g.cfg.setting.time_adjust)

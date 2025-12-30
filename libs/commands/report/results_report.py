@@ -21,7 +21,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, LongTable, PageBreak, Paragraph, SimpleDocTemplate, Spacer, TableStyle
 
 import libs.global_value as g
-from libs.data import loader, lookup
+from libs.data import lookup
 from libs.functions import message
 from libs.types import StyleOptions
 from libs.utils import dbutil, formatter
@@ -45,7 +45,7 @@ def get_game_results() -> list:
 
     resultdb = dbutil.connection(g.cfg.setting.database_file)
     rows = resultdb.execute(
-        loader.query_modification(dbutil.query("REPORT_PERSONAL_DATA")),
+        dbutil.query_modification(dbutil.query("REPORT_PERSONAL_DATA")),
         g.params,
     )
 
@@ -115,7 +115,7 @@ def get_count_results(game_count: int) -> list:
     g.params.update({"interval": game_count})
     resultdb = dbutil.connection(g.cfg.setting.database_file)
     rows = resultdb.execute(
-        loader.query_modification(dbutil.query("REPORT_COUNT_DATA")),
+        dbutil.query_modification(dbutil.query("REPORT_COUNT_DATA")),
         g.params,
     )
 
@@ -187,7 +187,7 @@ def get_count_moving(game_count: int) -> list:
     resultdb = dbutil.connection(g.cfg.setting.database_file)
     g.params.update({"interval": game_count})
     rows = resultdb.execute(
-        loader.query_modification(dbutil.query("REPORT_COUNT_MOVING")),
+        dbutil.query_modification(dbutil.query("REPORT_COUNT_MOVING")),
         g.params,
     )
 

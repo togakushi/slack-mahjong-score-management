@@ -77,7 +77,8 @@ create view if not exists game_results as
         game_info.guest_count,
         game_info.same_team,
         result.rule_version,
-        result.source
+        result.source,
+        result.mode
     from
         result
     join game_info

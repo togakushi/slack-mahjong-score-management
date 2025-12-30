@@ -209,6 +209,7 @@ class GameResult:
             "comment": self.comment,
             "rule_version": self.rule_version,
             "source": self.source,
+            "mode": self.mode,
         }
 
     def to_text(self, kind: Literal["simple", "detail", "logging"] = "simple") -> str:
@@ -289,11 +290,33 @@ class GameResult:
             case 3:
                 if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data()]):
                     self.set(**self._calculation_point3())
+                    self.p4 = Score()
             case 4:
                 if all([self.p1.has_valid_data(), self.p2.has_valid_data(), self.p3.has_valid_data(), self.p4.has_valid_data()]):
                     self.set(**self._calculation_point4())
             case _:
                 raise RuntimeError
+
+    def _normalized_expression(self, expr: str) -> int:
+        """入力文字列を式として評価し、計算結果を返す
+
+        Args:
+            expr (str): 入力式
+
+        Returns:
+            int: 計算結果
+        """
+
+        normalized: list = []
+
+        for token in re.findall(r"\d+|[+\-*/]", expr):
+            if isinstance(token, str):
+                if token.isnumeric():
+                    normalized.append(str(int(token)))
+                else:
+                    normalized.append(token)
+
+        return eval("".join(normalized))
 
     def _calculation_point3(self) -> dict:
         """獲得ポイントと順位を計算する(三人打ち)
@@ -301,7 +324,26 @@ class GameResult:
         Returns:
             dict: 更新用辞書(順位と獲得ポイントのデータ)
         """
-        return {}
+
+        # 計算用データフレーム
+        score_df = pd.DataFrame({"rpoint": [self._normalized_expression(str(x)) for x in self.to_list("str")]}, index=["p1", "p2", "p3"])
+
+        work_rank_point = self.rank_point.copy()  # ウマ
+        work_rank_point[0] += int((self.return_point - self.origin_point) / 10 * 3)  # オカ
+
+        # 席順
+        score_df["rank"] = score_df["rpoint"].rank(ascending=False, method="first").astype("int")
+
+        # 獲得ポイントの計算 (素点-配給原点)/10+順位点
+        score_df["position"] = score_df["rpoint"].rank(ascending=False, method="first").astype("int")  # 加算する順位点リストの位置
+        score_df["point"] = (score_df["rpoint"] - self.return_point) / 10 + score_df["position"].apply(lambda p: work_rank_point[p - 1])
+        score_df["point"] = score_df["point"].apply(lambda p: float(f"{p:.1f}"))  # 桁ブレ修正
+
+        # 返却値用辞書
+        ret_dict = {f"{k}_{x}": v for x in score_df.columns for k, v in score_df[x].to_dict().items()}
+        ret_dict.update(deposit=int(self.origin_point * 3 - score_df["rpoint"].sum()))
+
+        return ret_dict
 
     def _calculation_point4(self) -> dict:
         """獲得ポイントと順位を計算する(四人打ち)
@@ -309,27 +351,6 @@ class GameResult:
         Returns:
             dict: 更新用辞書(順位と獲得ポイントのデータ)
         """
-
-        def normalized_expression(expr: str) -> int:
-            """入力文字列を式として評価し、計算結果を返す
-
-            Args:
-                expr (str): 入力式
-
-            Returns:
-                int: 計算結果
-            """
-
-            normalized: list = []
-
-            for token in re.findall(r"\d+|[+\-*/]", expr):
-                if isinstance(token, str):
-                    if token.isnumeric():
-                        normalized.append(str(int(token)))
-                    else:
-                        normalized.append(token)
-
-            return eval("".join(normalized))
 
         def point_split(point: list) -> list:
             """順位点を山分けする
@@ -350,7 +371,7 @@ class GameResult:
             return new_point
 
         # 計算用データフレーム
-        score_df = pd.DataFrame({"rpoint": [normalized_expression(str(x)) for x in self.to_list("str")]}, index=["p1", "p2", "p3", "p4"])
+        score_df = pd.DataFrame({"rpoint": [self._normalized_expression(str(x)) for x in self.to_list("str")]}, index=["p1", "p2", "p3", "p4"])
 
         work_rank_point = self.rank_point.copy()  # ウマ
         work_rank_point[0] += int((self.return_point - self.origin_point) / 10 * 4)  # オカ

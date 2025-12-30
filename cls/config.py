@@ -7,18 +7,17 @@ import shutil
 import sys
 from configparser import ConfigParser
 from dataclasses import dataclass, field
-from itertools import chain
 from math import ceil
 from pathlib import Path, PosixPath
 from types import NoneType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
+from cls.rule import RuleSet
 from libs.types import GradeTableDict
 
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
-    from cls.rule import RuleSet
     from libs.types import MemberDataDict, TeamDataDict
 
 SubClassType: TypeAlias = Union[
@@ -121,17 +120,17 @@ class BaseSection(CommonMethodMixin):
                 case _:
                     setattr(self, k, self.__dict__.get(k))
 
-    def to_dict(self, drop_items: Optional[list[str]] = None) -> dict:
+    def to_dict(self, drop_items: Optional[list[str]] = None) -> dict[str, str]:
         """必要なパラメータを辞書型で返す
 
         Args:
             drop_items (Optional[list[str]], optional): _description_. Defaults to None.
 
         Returns:
-            dict: 返却値
+             dict[str, str]: 返却値
         """
 
-        ret_dict: dict = {}
+        ret_dict: dict[str, str] = {}
         for key in vars(self):
             if key.startswith("_"):
                 continue
@@ -194,6 +193,8 @@ class MahjongSection(BaseSection):
                 if self.return_point < 0:
                     self.return_point = 300
 
+        self.rank_point = self.rank_point[: self.mode]
+
         logging.debug("%s: %s", _section_name, self)
 
 
@@ -202,10 +203,12 @@ class SettingSection(BaseSection):
 
     help: str
     """ヘルプ表示キーワード"""
-    keyword: Union[str, Path]
+    keyword: str
     """成績記録キーワード(プライマリ)"""
     remarks_word: str
     """メモ記録用キーワード"""
+    rule_config: Path
+    """ルール設定ファイル"""
     time_adjust: int
     """日付変更後、集計範囲に含める追加時間"""
     separate: bool
@@ -234,8 +237,9 @@ class SettingSection(BaseSection):
 
     def _reset(self):
         self.help = str("麻雀成績ヘルプ")
-        self.keyword = Path("files/default_rule.ini")
+        self.keyword = str("終局")
         self.remarks_word = str("麻雀成績メモ")
+        self.rule_config = Path("files/default_rule.ini")
         self.time_adjust = int(12)
         self.separate = bool(False)
         self.search_word = str("")
@@ -567,7 +571,7 @@ class SubCommand(BaseSection):
     section: str
     """サブコマンドセクション名"""
 
-    commandword: list
+    commandword: list[str]
     """呼び出しキーワード"""
     aggregation_range: str
     """検索範囲未指定時に使用される範囲"""
@@ -605,6 +609,11 @@ class SubCommand(BaseSection):
     collection: str
     always_argument: list
     """オプションとして常に付与される文字列"""
+    target_mode: int
+    """集計対象モードの指定
+    - *0*: settingのデフォルトに従う
+    - *not 0*: 指定値でmodeを上書き
+    """
     format: str
     filename: str
     interval: int
@@ -634,6 +643,7 @@ class SubCommand(BaseSection):
         self.versus_matrix = bool(False)
         self.collection = str("")
         self.always_argument = []
+        self.target_mode = int(0)
         self.format = str("")
         self.filename = str("")
         self.interval = 80
@@ -744,10 +754,6 @@ class AppConfig:
         """reportセクション設定値"""
 
         # 共通設定値
-        self.rule: "RuleSet"
-        """ルール情報"""
-        self.keyword_mapping: dict[str, str] = {}
-        """登録キーワードとルールバージョンのマッピング辞書"""
         self.undefined_word: int = 0
         """レギュレーションワードテーブルに登録されていないワードの種別"""
         self.aggregate_unit: Literal["A", "M", "Y", None] = None
@@ -759,6 +765,9 @@ class AppConfig:
         """
 
         self.initialization()
+
+        self.rule: RuleSet = RuleSet(self.setting.rule_config)
+        """ルール情報"""
 
     def initialization(self):
         """設定ファイル読み込み"""
@@ -776,29 +785,27 @@ class AppConfig:
         self.ranking.config_load(self)
         self.report.config_load(self)
 
-    def word_list(self) -> list:
+    def word_list(self) -> list[str]:
         """設定されている値、キーワードをリスト化する
 
         Returns:
             list: リスト化されたキーワード
         """
 
-        words: list = [
-            list(self.keyword_mapping.keys()),
-            [self.setting.remarks_word],
-            self.results.commandword,
-            self.graph.commandword,
-            self.ranking.commandword,
-            self.report.commandword,
-        ]
+        words: list[str] = []
+        words.extend(self.results.commandword)
+        words.extend(self.graph.commandword)
+        words.extend(self.ranking.commandword)
+        words.extend(self.report.commandword)
+        words.extend(list(self.rule.keyword_mapping.keys()))
+        words.extend([self.setting.remarks_word])
 
         for k, v in self.alias.to_dict().items():
             if isinstance(v, list):
-                words.append([k])
-                words.append(v)
+                words.append(k)
+                words.extend(v)
 
-        words = list(set(chain.from_iterable(words)))  # 重複排除/平滑化
-        words = [x for x in words if x != ""]  # 空文字削除
+        words = [x for x in set(words) if x != ""]  # 重複排除/空文字削除
 
         return words
 
