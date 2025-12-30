@@ -18,7 +18,8 @@ left join member on
 left join team on
     team.id = member.team_id
 where
-    game_info.rule_version = :rule_version
+    game_info.mode = :mode
+    and game_info.rule_version in (<<rule_list>>)
     and playtime between :starttime and :endtime
     --[separate] and game_info.source = :source
     --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)

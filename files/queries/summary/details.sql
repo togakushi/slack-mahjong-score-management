@@ -26,7 +26,8 @@ from
 join game_info
     on game_info.ts = results.ts
 where
-    results.rule_version = :rule_version
+    results.mode = :mode
+    and results.rule_version in (<<rule_list>>)
     and results.playtime between :starttime and :endtime
     --[separate] and results.source = :source
     --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)

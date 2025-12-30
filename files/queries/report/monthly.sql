@@ -10,7 +10,8 @@ select
 from
     individual_results as results
 where
-    rule_version = :rule_version
+    mode = :mode
+    and rule_version in (<<rule_list>>)
     and playtime between :starttime and :endtime
     --[separate] and source = :source
     --[search_word] and comment like :search_word

@@ -18,7 +18,8 @@ with target_data as (
         and regulations.name = results.name
         and regulations.type = 0
     where
-        results.rule_version = :rule_version
+        results.mode = :mode
+        and results.rule_version in (<<rule_list>>)
         and results.playtime between :starttime and :endtime
         --[separate] and results.source = :source
         --[individual] --[guest_not_skip] and game_info.guest_count <= 1 -- ゲストアリ(2ゲスト戦除外)
