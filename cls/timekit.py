@@ -38,8 +38,6 @@ from typing import Callable, List, Literal, Optional, TypeAlias, TypedDict, Unio
 
 from dateutil.relativedelta import relativedelta
 
-from libs.data import lookup
-
 
 class DateRangeSpec(TypedDict):
     """日付範囲変換キーワード用辞書"""
@@ -142,7 +140,7 @@ DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
     "first_day": {
         "keyword": ["最初"],
         "range": lambda _: [
-            lookup.db.first_record() + relativedelta(days=-1),
+            datetime.now() + relativedelta(year=1900, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
         ],
     },
     "last_day": {
@@ -152,7 +150,7 @@ DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
     "all": {
         "keyword": ["全部"],
         "range": lambda _: [
-            lookup.db.first_record() + relativedelta(days=-1),
+            datetime.now() + relativedelta(year=1900, month=1, day=1, hour=0, minute=0, second=0, microsecond=0),
             datetime.now() + relativedelta(days=1, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
