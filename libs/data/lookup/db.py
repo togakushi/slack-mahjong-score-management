@@ -4,6 +4,7 @@ libs/data/lookup/db.py
 
 import logging
 from contextlib import closing
+from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 import pandas as pd
@@ -267,3 +268,29 @@ def read_memberslist():
     logging.debug("guest_name: %s", g.cfg.member.guest_name)
     logging.debug("member_list: %s", g.cfg.member.lists)
     logging.debug("team_list: %s", g.cfg.team.lists)
+
+
+def enumeration_all_members() -> list[str]:
+    """メンバーとチームをすべて列挙する
+
+    Returns:
+        list[str]: _description_
+    """
+
+    member_list: list["MemberDataDict"] = get_member_info()
+    team_list: list["TeamDataDict"] = get_team_info()
+    ret_list: list[str] = []
+
+    # チャンネル個別設定探索
+    for section_name in g.cfg.main_parser.sections():
+        if channel_config := g.cfg.main_parser[section_name].get("channel_config"):
+            g.cfg.overwrite(Path(channel_config), "setting")
+            member_list.extend(get_member_info())
+            team_list.extend(get_team_info())
+
+    for x in member_list:
+        ret_list.append(x.get("name"))
+        ret_list.extend(x.get("alias"))
+    ret_list.extend([x.get("team") for x in team_list])
+
+    return list(set(ret_list))

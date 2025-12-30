@@ -1,6 +1,7 @@
 """cls/rule.py"""
 
 import logging
+import sys
 from configparser import ConfigParser
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Literal, Mapping
@@ -129,6 +130,8 @@ class RuleSet:
         return True
 
     def read_config(self):
+        """設定ファイル読み込み"""
+
         rule_parser = ConfigParser()
         rule_parser.read(self.config)
 
@@ -193,3 +196,27 @@ class RuleSet:
                 rule.draw_split,
                 rule.ignore_flying,
             )
+
+    def check(self, chk_commands: set, chk_members: set):
+        """キーワード重複チェック
+
+        Args:
+            chk_commands (set): チェック対象コマンド名
+            chk_members (set): チェック対象メンバー名/チーム名
+
+        Raises:
+            RuntimeError: 重複あり
+        """
+
+        try:
+            if {x.rule_version for x in self.data.values()} & chk_commands:
+                raise RuntimeError("ルール識別子と定義済みコマンドに重複があります。")
+            if {x.rule_version for x in self.data.values()} & chk_members:
+                raise RuntimeError("ルール識別子と登録メンバー(チーム)に重複があります。")
+            if set(self.keyword_mapping.keys()) & chk_commands:
+                raise RuntimeError("成績登録ワードと定義済みコマンドに重複があります。")
+            if set(self.keyword_mapping.keys()) & chk_members:
+                raise RuntimeError("成績登録ワードと登録メンバー(チーム)に重複があります。")
+        except RuntimeError as err:
+            logging.critical("%s", err)
+            sys.exit(1)
