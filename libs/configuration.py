@@ -277,12 +277,6 @@ def setup():
         else:
             g.cfg.rule.keyword_mapping = {"終局": g.cfg.mahjong.rule_version}
 
-    # キーワード重複チェック
-    g.cfg.rule.check(
-        chk_commands=set(g.cfg.results.commandword + g.cfg.graph.commandword + g.cfg.ranking.commandword + g.cfg.report.commandword),
-        chk_members=set(lookup.db.enumeration_all_members()),
-    )
-
     # 設定情報のロギング
     logging.info("config: %s", g.cfg.config_file.absolute())
     logging.info(
@@ -292,6 +286,12 @@ def setup():
         g.cfg.setting.time_adjust,
     )
     g.cfg.rule.info()
+
+    # キーワード重複チェック
+    g.cfg.rule.check(
+        chk_commands=set(g.cfg.results.commandword + g.cfg.graph.commandword + g.cfg.ranking.commandword + g.cfg.report.commandword),
+        chk_members=set(lookup.db.enumeration_all_members()),
+    )
 
 
 def register():
