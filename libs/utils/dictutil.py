@@ -91,12 +91,19 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         }
     )
 
-    # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
+    # どのオプションにも該当しないキーワード
+    check_list: list = param.unknown + pre_param.unknown
+
+    for name in list(check_list):  # ルール識別子
+        if name in g.cfg.rule.keyword_mapping:
+            check_list.remove(name)
+            rule_version = g.cfg.rule.keyword_mapping[name]
+            ret_dict.update({"mode": int(g.cfg.rule.to_dict(rule_version).get("mode", 4))})
+            ret_dict.update({"rule_version": rule_version})
+
     player_name: str = str()
     target_player: list = []
-
-    check_list: list = param.unknown + pre_param.unknown
-    if ret_dict.get("individual"):
+    if ret_dict.get("individual"):  # プレイヤー名
         if ret_dict.get("all_player"):
             check_list.extend(g.cfg.member.lists)
         for name in check_list:
@@ -104,7 +111,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
                 target_player.extend(g.cfg.team.member(name))
             else:
                 target_player.append(formatter.name_replace(name, not_replace=True))
-    else:
+    else:  # チーム名
         if ret_dict.get("all_player"):
             check_list.extend(g.cfg.team.lists)
         for team in check_list:
