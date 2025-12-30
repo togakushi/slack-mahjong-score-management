@@ -89,6 +89,9 @@
                                 <a class="function" href="#RuleSet.to_dict">to_dict</a>
                         </li>
                         <li>
+                                <a class="function" href="#RuleSet.get_version">get_version</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#RuleSet.info">info</a>
                         </li>
                 </ul>
@@ -215,10 +218,10 @@
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        Args:</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">            version (str): ルールバージョン識別子</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">            mode (Literal[3, 4], optional): 四人打ち/三人打ち. Defaults to 四人打ち.</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">            rule_data (Mapping): data</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">            rule_data (Mapping, optional): 更新データ情報</span>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        Returns:</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">            bool: 登録結果</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">            bool: 登録結果真偽</span>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="n">rule</span> <span class="o">=</span> <span class="n">RuleData</span><span class="p">()</span>
@@ -272,21 +275,46 @@
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ルールデータをログに出力する&quot;&quot;&quot;</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;指定した条件のルールバージョン識別子をリストで返す</span>
 </span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;keyword_mapping: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="p">)</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: mode=</span><span class="si">%s</span><span class="s2">, origin_point=</span><span class="si">%s</span><span class="s2">, return_point=</span><span class="si">%s</span><span class="s2">, rank_point=</span><span class="si">%s</span><span class="s2">, draw_split=</span><span class="si">%s</span><span class="s2">, ignore_flying=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">,</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">origin_point</span><span class="p">,</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">return_point</span><span class="p">,</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rank_point</span><span class="p">,</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">draw_split</span><span class="p">,</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">ignore_flying</span><span class="p">,</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>            <span class="p">)</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">        Args:</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">            mode (int): 集計モード</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">            mapping (bool, optional): Defaults to True.</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">                - *True*: キーワードマッピングに登録されているルールのみ</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">                - *False*: ルールとして定義されているものすべて</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">        Returns:</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">            list[str]: ルールバージョン識別子</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>        <span class="k">for</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>            <span class="k">if</span> <span class="n">rule</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">mode</span><span class="p">:</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>                <span class="k">if</span> <span class="n">mapping</span><span class="p">:</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>                    <span class="k">if</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>                        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>                <span class="k">else</span><span class="p">:</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>                    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ルールデータをログに出力する&quot;&quot;&quot;</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;keyword_mapping: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="p">)</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: mode=</span><span class="si">%s</span><span class="s2">, origin_point=</span><span class="si">%s</span><span class="s2">, return_point=</span><span class="si">%s</span><span class="s2">, rank_point=</span><span class="si">%s</span><span class="s2">, draw_split=</span><span class="si">%s</span><span class="s2">, ignore_flying=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">,</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">origin_point</span><span class="p">,</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">return_point</span><span class="p">,</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rank_point</span><span class="p">,</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">draw_split</span><span class="p">,</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">ignore_flying</span><span class="p">,</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>            <span class="p">)</span>
 </span></pre></div>
 
 
@@ -587,10 +615,10 @@
 </span><span id="RuleSet-97"><a href="#RuleSet-97"><span class="linenos"> 97</span></a><span class="sd">        Args:</span>
 </span><span id="RuleSet-98"><a href="#RuleSet-98"><span class="linenos"> 98</span></a><span class="sd">            version (str): ルールバージョン識別子</span>
 </span><span id="RuleSet-99"><a href="#RuleSet-99"><span class="linenos"> 99</span></a><span class="sd">            mode (Literal[3, 4], optional): 四人打ち/三人打ち. Defaults to 四人打ち.</span>
-</span><span id="RuleSet-100"><a href="#RuleSet-100"><span class="linenos">100</span></a><span class="sd">            rule_data (Mapping): data</span>
+</span><span id="RuleSet-100"><a href="#RuleSet-100"><span class="linenos">100</span></a><span class="sd">            rule_data (Mapping, optional): 更新データ情報</span>
 </span><span id="RuleSet-101"><a href="#RuleSet-101"><span class="linenos">101</span></a>
 </span><span id="RuleSet-102"><a href="#RuleSet-102"><span class="linenos">102</span></a><span class="sd">        Returns:</span>
-</span><span id="RuleSet-103"><a href="#RuleSet-103"><span class="linenos">103</span></a><span class="sd">            bool: 登録結果</span>
+</span><span id="RuleSet-103"><a href="#RuleSet-103"><span class="linenos">103</span></a><span class="sd">            bool: 登録結果真偽</span>
 </span><span id="RuleSet-104"><a href="#RuleSet-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="RuleSet-105"><a href="#RuleSet-105"><span class="linenos">105</span></a>
 </span><span id="RuleSet-106"><a href="#RuleSet-106"><span class="linenos">106</span></a>        <span class="n">rule</span> <span class="o">=</span> <span class="n">RuleData</span><span class="p">()</span>
@@ -644,21 +672,46 @@
 </span><span id="RuleSet-154"><a href="#RuleSet-154"><span class="linenos">154</span></a>
 </span><span id="RuleSet-155"><a href="#RuleSet-155"><span class="linenos">155</span></a>        <span class="k">return</span> <span class="p">{}</span>
 </span><span id="RuleSet-156"><a href="#RuleSet-156"><span class="linenos">156</span></a>
-</span><span id="RuleSet-157"><a href="#RuleSet-157"><span class="linenos">157</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="RuleSet-158"><a href="#RuleSet-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ルールデータをログに出力する&quot;&quot;&quot;</span>
+</span><span id="RuleSet-157"><a href="#RuleSet-157"><span class="linenos">157</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="RuleSet-158"><a href="#RuleSet-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;指定した条件のルールバージョン識別子をリストで返す</span>
 </span><span id="RuleSet-159"><a href="#RuleSet-159"><span class="linenos">159</span></a>
-</span><span id="RuleSet-160"><a href="#RuleSet-160"><span class="linenos">160</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;keyword_mapping: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="p">)</span>
-</span><span id="RuleSet-161"><a href="#RuleSet-161"><span class="linenos">161</span></a>        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-</span><span id="RuleSet-162"><a href="#RuleSet-162"><span class="linenos">162</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-</span><span id="RuleSet-163"><a href="#RuleSet-163"><span class="linenos">163</span></a>                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: mode=</span><span class="si">%s</span><span class="s2">, origin_point=</span><span class="si">%s</span><span class="s2">, return_point=</span><span class="si">%s</span><span class="s2">, rank_point=</span><span class="si">%s</span><span class="s2">, draw_split=</span><span class="si">%s</span><span class="s2">, ignore_flying=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="RuleSet-164"><a href="#RuleSet-164"><span class="linenos">164</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">,</span>
-</span><span id="RuleSet-165"><a href="#RuleSet-165"><span class="linenos">165</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-</span><span id="RuleSet-166"><a href="#RuleSet-166"><span class="linenos">166</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">origin_point</span><span class="p">,</span>
-</span><span id="RuleSet-167"><a href="#RuleSet-167"><span class="linenos">167</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">return_point</span><span class="p">,</span>
-</span><span id="RuleSet-168"><a href="#RuleSet-168"><span class="linenos">168</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rank_point</span><span class="p">,</span>
-</span><span id="RuleSet-169"><a href="#RuleSet-169"><span class="linenos">169</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">draw_split</span><span class="p">,</span>
-</span><span id="RuleSet-170"><a href="#RuleSet-170"><span class="linenos">170</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">ignore_flying</span><span class="p">,</span>
-</span><span id="RuleSet-171"><a href="#RuleSet-171"><span class="linenos">171</span></a>            <span class="p">)</span>
+</span><span id="RuleSet-160"><a href="#RuleSet-160"><span class="linenos">160</span></a><span class="sd">        Args:</span>
+</span><span id="RuleSet-161"><a href="#RuleSet-161"><span class="linenos">161</span></a><span class="sd">            mode (int): 集計モード</span>
+</span><span id="RuleSet-162"><a href="#RuleSet-162"><span class="linenos">162</span></a><span class="sd">            mapping (bool, optional): Defaults to True.</span>
+</span><span id="RuleSet-163"><a href="#RuleSet-163"><span class="linenos">163</span></a><span class="sd">                - *True*: キーワードマッピングに登録されているルールのみ</span>
+</span><span id="RuleSet-164"><a href="#RuleSet-164"><span class="linenos">164</span></a><span class="sd">                - *False*: ルールとして定義されているものすべて</span>
+</span><span id="RuleSet-165"><a href="#RuleSet-165"><span class="linenos">165</span></a>
+</span><span id="RuleSet-166"><a href="#RuleSet-166"><span class="linenos">166</span></a><span class="sd">        Returns:</span>
+</span><span id="RuleSet-167"><a href="#RuleSet-167"><span class="linenos">167</span></a><span class="sd">            list[str]: ルールバージョン識別子</span>
+</span><span id="RuleSet-168"><a href="#RuleSet-168"><span class="linenos">168</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RuleSet-169"><a href="#RuleSet-169"><span class="linenos">169</span></a>
+</span><span id="RuleSet-170"><a href="#RuleSet-170"><span class="linenos">170</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="RuleSet-171"><a href="#RuleSet-171"><span class="linenos">171</span></a>
+</span><span id="RuleSet-172"><a href="#RuleSet-172"><span class="linenos">172</span></a>        <span class="k">for</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="RuleSet-173"><a href="#RuleSet-173"><span class="linenos">173</span></a>            <span class="k">if</span> <span class="n">rule</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">mode</span><span class="p">:</span>
+</span><span id="RuleSet-174"><a href="#RuleSet-174"><span class="linenos">174</span></a>                <span class="k">if</span> <span class="n">mapping</span><span class="p">:</span>
+</span><span id="RuleSet-175"><a href="#RuleSet-175"><span class="linenos">175</span></a>                    <span class="k">if</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="RuleSet-176"><a href="#RuleSet-176"><span class="linenos">176</span></a>                        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
+</span><span id="RuleSet-177"><a href="#RuleSet-177"><span class="linenos">177</span></a>                <span class="k">else</span><span class="p">:</span>
+</span><span id="RuleSet-178"><a href="#RuleSet-178"><span class="linenos">178</span></a>                    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
+</span><span id="RuleSet-179"><a href="#RuleSet-179"><span class="linenos">179</span></a>
+</span><span id="RuleSet-180"><a href="#RuleSet-180"><span class="linenos">180</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span><span id="RuleSet-181"><a href="#RuleSet-181"><span class="linenos">181</span></a>
+</span><span id="RuleSet-182"><a href="#RuleSet-182"><span class="linenos">182</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="RuleSet-183"><a href="#RuleSet-183"><span class="linenos">183</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ルールデータをログに出力する&quot;&quot;&quot;</span>
+</span><span id="RuleSet-184"><a href="#RuleSet-184"><span class="linenos">184</span></a>
+</span><span id="RuleSet-185"><a href="#RuleSet-185"><span class="linenos">185</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;keyword_mapping: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="p">)</span>
+</span><span id="RuleSet-186"><a href="#RuleSet-186"><span class="linenos">186</span></a>        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="RuleSet-187"><a href="#RuleSet-187"><span class="linenos">187</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+</span><span id="RuleSet-188"><a href="#RuleSet-188"><span class="linenos">188</span></a>                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: mode=</span><span class="si">%s</span><span class="s2">, origin_point=</span><span class="si">%s</span><span class="s2">, return_point=</span><span class="si">%s</span><span class="s2">, rank_point=</span><span class="si">%s</span><span class="s2">, draw_split=</span><span class="si">%s</span><span class="s2">, ignore_flying=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="RuleSet-189"><a href="#RuleSet-189"><span class="linenos">189</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">,</span>
+</span><span id="RuleSet-190"><a href="#RuleSet-190"><span class="linenos">190</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+</span><span id="RuleSet-191"><a href="#RuleSet-191"><span class="linenos">191</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">origin_point</span><span class="p">,</span>
+</span><span id="RuleSet-192"><a href="#RuleSet-192"><span class="linenos">192</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">return_point</span><span class="p">,</span>
+</span><span id="RuleSet-193"><a href="#RuleSet-193"><span class="linenos">193</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rank_point</span><span class="p">,</span>
+</span><span id="RuleSet-194"><a href="#RuleSet-194"><span class="linenos">194</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">draw_split</span><span class="p">,</span>
+</span><span id="RuleSet-195"><a href="#RuleSet-195"><span class="linenos">195</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">ignore_flying</span><span class="p">,</span>
+</span><span id="RuleSet-196"><a href="#RuleSet-196"><span class="linenos">196</span></a>            <span class="p">)</span>
 </span></pre></div>
 
 
@@ -752,10 +805,10 @@
 </span><span id="RuleSet.data_set-97"><a href="#RuleSet.data_set-97"><span class="linenos"> 97</span></a><span class="sd">        Args:</span>
 </span><span id="RuleSet.data_set-98"><a href="#RuleSet.data_set-98"><span class="linenos"> 98</span></a><span class="sd">            version (str): ルールバージョン識別子</span>
 </span><span id="RuleSet.data_set-99"><a href="#RuleSet.data_set-99"><span class="linenos"> 99</span></a><span class="sd">            mode (Literal[3, 4], optional): 四人打ち/三人打ち. Defaults to 四人打ち.</span>
-</span><span id="RuleSet.data_set-100"><a href="#RuleSet.data_set-100"><span class="linenos">100</span></a><span class="sd">            rule_data (Mapping): data</span>
+</span><span id="RuleSet.data_set-100"><a href="#RuleSet.data_set-100"><span class="linenos">100</span></a><span class="sd">            rule_data (Mapping, optional): 更新データ情報</span>
 </span><span id="RuleSet.data_set-101"><a href="#RuleSet.data_set-101"><span class="linenos">101</span></a>
 </span><span id="RuleSet.data_set-102"><a href="#RuleSet.data_set-102"><span class="linenos">102</span></a><span class="sd">        Returns:</span>
-</span><span id="RuleSet.data_set-103"><a href="#RuleSet.data_set-103"><span class="linenos">103</span></a><span class="sd">            bool: 登録結果</span>
+</span><span id="RuleSet.data_set-103"><a href="#RuleSet.data_set-103"><span class="linenos">103</span></a><span class="sd">            bool: 登録結果真偽</span>
 </span><span id="RuleSet.data_set-104"><a href="#RuleSet.data_set-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="RuleSet.data_set-105"><a href="#RuleSet.data_set-105"><span class="linenos">105</span></a>
 </span><span id="RuleSet.data_set-106"><a href="#RuleSet.data_set-106"><span class="linenos">106</span></a>        <span class="n">rule</span> <span class="o">=</span> <span class="n">RuleData</span><span class="p">()</span>
@@ -793,13 +846,13 @@
 <ul>
 <li><strong>version (str):</strong>  ルールバージョン識別子</li>
 <li><strong>mode (Literal[3, 4], optional):</strong>  四人打ち/三人打ち. Defaults to 四人打ち.</li>
-<li><strong>rule_data (Mapping):</strong>  data</li>
+<li><strong>rule_data (Mapping, optional):</strong>  更新データ情報</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>bool: 登録結果</p>
+  <p>bool: 登録結果真偽</p>
 </blockquote>
 </div>
 
@@ -876,6 +929,66 @@
 
 
                             </div>
+                            <div id="RuleSet.get_version" class="classattr">
+                                        <input id="RuleSet.get_version-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_version</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">mode</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">mapping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="RuleSet.get_version-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#RuleSet.get_version"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RuleSet.get_version-157"><a href="#RuleSet.get_version-157"><span class="linenos">157</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="RuleSet.get_version-158"><a href="#RuleSet.get_version-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;指定した条件のルールバージョン識別子をリストで返す</span>
+</span><span id="RuleSet.get_version-159"><a href="#RuleSet.get_version-159"><span class="linenos">159</span></a>
+</span><span id="RuleSet.get_version-160"><a href="#RuleSet.get_version-160"><span class="linenos">160</span></a><span class="sd">        Args:</span>
+</span><span id="RuleSet.get_version-161"><a href="#RuleSet.get_version-161"><span class="linenos">161</span></a><span class="sd">            mode (int): 集計モード</span>
+</span><span id="RuleSet.get_version-162"><a href="#RuleSet.get_version-162"><span class="linenos">162</span></a><span class="sd">            mapping (bool, optional): Defaults to True.</span>
+</span><span id="RuleSet.get_version-163"><a href="#RuleSet.get_version-163"><span class="linenos">163</span></a><span class="sd">                - *True*: キーワードマッピングに登録されているルールのみ</span>
+</span><span id="RuleSet.get_version-164"><a href="#RuleSet.get_version-164"><span class="linenos">164</span></a><span class="sd">                - *False*: ルールとして定義されているものすべて</span>
+</span><span id="RuleSet.get_version-165"><a href="#RuleSet.get_version-165"><span class="linenos">165</span></a>
+</span><span id="RuleSet.get_version-166"><a href="#RuleSet.get_version-166"><span class="linenos">166</span></a><span class="sd">        Returns:</span>
+</span><span id="RuleSet.get_version-167"><a href="#RuleSet.get_version-167"><span class="linenos">167</span></a><span class="sd">            list[str]: ルールバージョン識別子</span>
+</span><span id="RuleSet.get_version-168"><a href="#RuleSet.get_version-168"><span class="linenos">168</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RuleSet.get_version-169"><a href="#RuleSet.get_version-169"><span class="linenos">169</span></a>
+</span><span id="RuleSet.get_version-170"><a href="#RuleSet.get_version-170"><span class="linenos">170</span></a>        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="RuleSet.get_version-171"><a href="#RuleSet.get_version-171"><span class="linenos">171</span></a>
+</span><span id="RuleSet.get_version-172"><a href="#RuleSet.get_version-172"><span class="linenos">172</span></a>        <span class="k">for</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="RuleSet.get_version-173"><a href="#RuleSet.get_version-173"><span class="linenos">173</span></a>            <span class="k">if</span> <span class="n">rule</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="n">mode</span><span class="p">:</span>
+</span><span id="RuleSet.get_version-174"><a href="#RuleSet.get_version-174"><span class="linenos">174</span></a>                <span class="k">if</span> <span class="n">mapping</span><span class="p">:</span>
+</span><span id="RuleSet.get_version-175"><a href="#RuleSet.get_version-175"><span class="linenos">175</span></a>                    <span class="k">if</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="RuleSet.get_version-176"><a href="#RuleSet.get_version-176"><span class="linenos">176</span></a>                        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
+</span><span id="RuleSet.get_version-177"><a href="#RuleSet.get_version-177"><span class="linenos">177</span></a>                <span class="k">else</span><span class="p">:</span>
+</span><span id="RuleSet.get_version-178"><a href="#RuleSet.get_version-178"><span class="linenos">178</span></a>                    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">)</span>
+</span><span id="RuleSet.get_version-179"><a href="#RuleSet.get_version-179"><span class="linenos">179</span></a>
+</span><span id="RuleSet.get_version-180"><a href="#RuleSet.get_version-180"><span class="linenos">180</span></a>        <span class="k">return</span> <span class="n">ret</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>指定した条件のルールバージョン識別子をリストで返す</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>mode (int):</strong>  集計モード</li>
+<li><strong>mapping (bool, optional):</strong>  Defaults to True.
+<ul>
+<li><em>True</em>: キーワードマッピングに登録されているルールのみ</li>
+<li><em>False</em>: ルールとして定義されているものすべて</li>
+</ul></li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>list[str]: ルールバージョン識別子</p>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="RuleSet.info" class="classattr">
                                         <input id="RuleSet.info-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -887,21 +1000,21 @@
 
     </div>
     <a class="headerlink" href="#RuleSet.info"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RuleSet.info-157"><a href="#RuleSet.info-157"><span class="linenos">157</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="RuleSet.info-158"><a href="#RuleSet.info-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ルールデータをログに出力する&quot;&quot;&quot;</span>
-</span><span id="RuleSet.info-159"><a href="#RuleSet.info-159"><span class="linenos">159</span></a>
-</span><span id="RuleSet.info-160"><a href="#RuleSet.info-160"><span class="linenos">160</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;keyword_mapping: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="p">)</span>
-</span><span id="RuleSet.info-161"><a href="#RuleSet.info-161"><span class="linenos">161</span></a>        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-</span><span id="RuleSet.info-162"><a href="#RuleSet.info-162"><span class="linenos">162</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-</span><span id="RuleSet.info-163"><a href="#RuleSet.info-163"><span class="linenos">163</span></a>                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: mode=</span><span class="si">%s</span><span class="s2">, origin_point=</span><span class="si">%s</span><span class="s2">, return_point=</span><span class="si">%s</span><span class="s2">, rank_point=</span><span class="si">%s</span><span class="s2">, draw_split=</span><span class="si">%s</span><span class="s2">, ignore_flying=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="RuleSet.info-164"><a href="#RuleSet.info-164"><span class="linenos">164</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">,</span>
-</span><span id="RuleSet.info-165"><a href="#RuleSet.info-165"><span class="linenos">165</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-</span><span id="RuleSet.info-166"><a href="#RuleSet.info-166"><span class="linenos">166</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">origin_point</span><span class="p">,</span>
-</span><span id="RuleSet.info-167"><a href="#RuleSet.info-167"><span class="linenos">167</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">return_point</span><span class="p">,</span>
-</span><span id="RuleSet.info-168"><a href="#RuleSet.info-168"><span class="linenos">168</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rank_point</span><span class="p">,</span>
-</span><span id="RuleSet.info-169"><a href="#RuleSet.info-169"><span class="linenos">169</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">draw_split</span><span class="p">,</span>
-</span><span id="RuleSet.info-170"><a href="#RuleSet.info-170"><span class="linenos">170</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">ignore_flying</span><span class="p">,</span>
-</span><span id="RuleSet.info-171"><a href="#RuleSet.info-171"><span class="linenos">171</span></a>            <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RuleSet.info-182"><a href="#RuleSet.info-182"><span class="linenos">182</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="RuleSet.info-183"><a href="#RuleSet.info-183"><span class="linenos">183</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ルールデータをログに出力する&quot;&quot;&quot;</span>
+</span><span id="RuleSet.info-184"><a href="#RuleSet.info-184"><span class="linenos">184</span></a>
+</span><span id="RuleSet.info-185"><a href="#RuleSet.info-185"><span class="linenos">185</span></a>        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;keyword_mapping: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword_mapping</span><span class="p">)</span>
+</span><span id="RuleSet.info-186"><a href="#RuleSet.info-186"><span class="linenos">186</span></a>        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="RuleSet.info-187"><a href="#RuleSet.info-187"><span class="linenos">187</span></a>            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+</span><span id="RuleSet.info-188"><a href="#RuleSet.info-188"><span class="linenos">188</span></a>                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: mode=</span><span class="si">%s</span><span class="s2">, origin_point=</span><span class="si">%s</span><span class="s2">, return_point=</span><span class="si">%s</span><span class="s2">, rank_point=</span><span class="si">%s</span><span class="s2">, draw_split=</span><span class="si">%s</span><span class="s2">, ignore_flying=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="RuleSet.info-189"><a href="#RuleSet.info-189"><span class="linenos">189</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rule_version</span><span class="p">,</span>
+</span><span id="RuleSet.info-190"><a href="#RuleSet.info-190"><span class="linenos">190</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+</span><span id="RuleSet.info-191"><a href="#RuleSet.info-191"><span class="linenos">191</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">origin_point</span><span class="p">,</span>
+</span><span id="RuleSet.info-192"><a href="#RuleSet.info-192"><span class="linenos">192</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">return_point</span><span class="p">,</span>
+</span><span id="RuleSet.info-193"><a href="#RuleSet.info-193"><span class="linenos">193</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">rank_point</span><span class="p">,</span>
+</span><span id="RuleSet.info-194"><a href="#RuleSet.info-194"><span class="linenos">194</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">draw_split</span><span class="p">,</span>
+</span><span id="RuleSet.info-195"><a href="#RuleSet.info-195"><span class="linenos">195</span></a>                <span class="n">rule</span><span class="o">.</span><span class="n">ignore_flying</span><span class="p">,</span>
+</span><span id="RuleSet.info-196"><a href="#RuleSet.info-196"><span class="linenos">196</span></a>            <span class="p">)</span>
 </span></pre></div>
 
 
