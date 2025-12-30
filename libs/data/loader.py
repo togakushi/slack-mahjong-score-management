@@ -30,6 +30,7 @@ def read_data(keyword: str) -> pd.DataFrame:
     if "endtime" in g.params:
         g.params.update({"endtime": cast("ExtDt", g.params["endtime"]).format("sql")})
 
+    # ルールセット
     if "rule_version" not in g.params:
         g.params.update({"rule_version": g.cfg.mahjong.rule_version})
 
@@ -38,19 +39,15 @@ def read_data(keyword: str) -> pd.DataFrame:
         print(f">>> {g.params=}")
         print(f">>> SQL: {keyword} -> {g.cfg.setting.database_file}\n{named_query(sql)}")
 
-    # プレイヤーリスト/対戦相手リスト
-    player_list: dict = {}
-    if "player_list" in g.params:
-        for k, v in g.params["player_list"].items():
-            player_list[k] = v
-    if "competition_list" in g.params:
-        for k, v in g.params["competition_list"].items():
-            player_list[k] = v
-
     df = pd.read_sql(
         sql=sql,
         con=dbutil.connection(g.cfg.setting.database_file),
-        params={**cast(dict, g.params), **player_list},
+        params={
+            **cast(dict, g.params),
+            **g.params.get("rule_set", {}),
+            **g.params.get("player_list", {}),
+            **g.params.get("competition_list", {}),
+        },
     )
 
     if g.args.verbose & 0x02:
@@ -105,11 +102,17 @@ def query_modification(sql: str) -> str:
         case _:
             sql = sql.replace("--[not_collection] ", "")
 
-    # ルール横断集計
+    # 集計対象ルール
+    rule_list: list = []
+    if target_mode := g.params.get("target_mode"):
+        g.params["mode"] = target_mode
+        rule_list.extend(g.cfg.rule.get_version(g.params["mode"], True))
     if g.params.get("mixed"):
-        sql = sql.replace("game_info.rule_version = :rule_version", "1 = 1")
-        sql = sql.replace("results.rule_version = :rule_version", "1 = 1")
-        sql = sql.replace("rule_version = :rule_version", "1 = 1")
+        rule_list.extend(g.cfg.rule.get_version(g.params["mode"], False))
+    if (rule_version := g.params.get("rule_version")) and g.cfg.rule.to_dict(rule_version):
+        rule_list.append(rule_version)
+    g.params["rule_set"] = {f"rule_{idx}": name for idx, name in enumerate(set(rule_list))}
+    sql = sql.replace("<<rule_list>>", ":" + ", :".join(g.params["rule_set"]))
 
     # スコア入力元識別子別集計
     if g.params.get("separate"):
@@ -195,6 +198,12 @@ def named_query(query: str) -> str:
     """
 
     params: dict = cast(dict, g.params.copy())
+    params.update(
+        **g.params.get("rule_set", {}),
+        **g.params.get("player_list", {}),
+        **g.params.get("competition_list", {}),
+    )
+
     for k, v in params.items():
         if isinstance(v, datetime):
             params[k] = v.strftime("%Y-%m-%d %H:%M:%S")
