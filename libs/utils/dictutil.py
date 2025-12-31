@@ -75,11 +75,6 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     logging.debug("argument: %s", param)
     ret_dict.update({**(cast(dict, param.flags))})  # 上書き
 
-    # 集計モード変更
-    if mode := ret_dict.get("target_mode"):
-        for rule_version in g.cfg.rule.get_version(mode=mode, mapping=not (ret_dict.get("mixed", False))):
-            ret_dict["rule_set"].update({rule_version: g.cfg.rule.to_dict(rule_version)})
-
     # 検索範囲取得
     departure_time = ExtDt(hours=-g.cfg.setting.time_adjust)
     if param.search_range:
@@ -172,6 +167,14 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             ret_dict.update({"stipulated": 0})
         else:
             ret_dict.update({"stipulated": 1})
+
+    # 集計ルール更新
+    if mode := ret_dict.get("target_mode"):
+        for rule_version in g.cfg.rule.get_version(mode=mode, mapping=not (ret_dict.get("mixed", False))):
+            ret_dict["rule_set"].update({rule_version: g.cfg.rule.to_dict(rule_version)})
+    elif ret_dict.get("rule_set", {}):
+        if rule_version := ret_dict.get("rule_version"):
+            ret_dict.update({"rule_set": {rule_version: g.cfg.rule.to_dict(rule_version)}})
 
     return ret_dict
 
