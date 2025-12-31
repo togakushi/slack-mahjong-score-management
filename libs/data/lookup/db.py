@@ -233,7 +233,7 @@ def first_record(rule_list: list[str]) -> ExtDt:
                 sql = "select min(playtime) from game_results where rule_version in (<<rule_list>>);".replace("<<rule_list>>", ":" + ", :".join(rule_dict))
                 record = conn.execute(sql, rule_dict).fetchall()[0][0]
                 if record:
-                    ret = ExtDt(str(record))
+                    ret = ExtDt(str(record)) - {"hour": 0, "minute": 0, "second": 0, "microsecond": 0, "hours": g.cfg.setting.time_adjust}
     except AttributeError:
         ret = ExtDt()
 
