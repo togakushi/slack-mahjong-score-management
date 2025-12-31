@@ -32,7 +32,7 @@ def plot(m: "MessageParserProtocol"):
     # 情報ヘッダ
     title: str = "レーティング推移グラフ"
 
-    if g.params.get("mode") == 3:  # todo: 未実装
+    if g.params.get("mode") == 3 or g.params.get("target_mode") == 3:  # todo: 未実装
         m.post.headline = {title: message.random_reply(m, "not_implemented")}
         m.status.result = False
         return
