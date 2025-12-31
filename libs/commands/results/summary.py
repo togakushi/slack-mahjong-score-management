@@ -27,7 +27,7 @@ def aggregation(m: "MessageParserProtocol"):
     # --- データ収集
     data: "MessageType"
     game_info = GameInfo()
-    df_summary = aggregate.game_summary(drop_items=["rank_distr1"])
+    df_summary = aggregate.game_summary()
     df_game = loader.read_data("SUMMARY_DETAILS")
     df_remarks = loader.read_data("REMARKS_INFO")
 
@@ -125,7 +125,7 @@ def difference(m: "MessageParserProtocol"):
     # データ収集
     data: "MessageType"
     game_info = GameInfo()
-    df_summary = aggregate.game_summary(drop_items=["rank_distr1"])
+    df_summary = aggregate.game_summary()
     df_game = loader.read_data("SUMMARY_DETAILS")
 
     # インデックスの振りなおし

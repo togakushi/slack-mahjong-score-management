@@ -28,9 +28,22 @@ def aggregation(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    # 検索動作を合わせる
-    g.params.update({"guest_skip": g.params["guest_skip2"]})
+    # --- パラメータ更新
+    g.params.update({"guest_skip": g.params["guest_skip2"]})  # 検索動作を合わせる
 
+    if rule_version := g.params.get("rule_version"):
+        g.params.update(
+            {
+                "mode": int(g.cfg.rule.to_dict(rule_version).get("mode", 4)),
+                "rule_version": str(g.cfg.rule.to_dict(rule_version).get("rule_version", "")),
+                "origin_point": int(g.cfg.rule.to_dict(rule_version).get("origin_point", 250)),
+                "return_point": int(g.cfg.rule.to_dict(rule_version).get("return_point", 300)),
+            }
+        )
+        if (target_mode := g.params.get("target_mode")) and target_mode != g.cfg.rule.get_mode(rule_version):
+            m.post.headline = {"集計矛盾検出": message.random_reply(m, "rule_mismatch")}
+            m.status.result = False
+            return
     if g.params["player_name"] in g.cfg.team.lists:
         g.params.update({"individual": False})
     elif g.params["player_name"] in g.cfg.member.lists:
@@ -81,6 +94,7 @@ def aggregation(m: "MessageParserProtocol"):
     # --- 表示内容
     msg_data.update(get_headline(data, game_info, player_name))
     msg_data.update(get_totalization(data))
+    mode = g.params.get("mode", 4)
 
     # 統計
     seat_data = pd.DataFrame(
@@ -92,22 +106,36 @@ def aggregation(m: "MessageParserProtocol"):
             "役満和了": [v for k, v in data.items() if str(k).endswith("-役満和了")],
         }
     )
+
+    if mode == 3:
+        seat_data.drop(index=[3], inplace=True)
     if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.results & g.cfg.dropitems.flying:
         seat_data.drop(columns=["トビ"], inplace=True)
     if g.cfg.dropitems.results & g.cfg.dropitems.yakuman:
         seat_data.drop(columns=["役満和了"], inplace=True)
 
-    balance_data = textwrap.dedent(
-        f"""\
-        全体：{cast(float, result_df.at[0, "平均収支"]):+.1f}点
-        連対時：{cast(float, result_df.at[0, "連対収支"]):+.1f}点
-        逆連対時：{cast(float, result_df.at[0, "逆連対収支"]):+.1f}点
-        1着終了時：{cast(float, result_df.at[0, "1位収支"]):+.1f}点
-        2着終了時：{cast(float, result_df.at[0, "2位収支"]):+.1f}点
-        3着終了時：{cast(float, result_df.at[0, "3位収支"]):+.1f}点
-        4着終了時：{cast(float, result_df.at[0, "4位収支"]):+.1f}点
-        """
-    ).replace("-", "▲")
+    if mode == 3:
+        balance_data = textwrap.dedent(
+            f"""\
+            全体：{cast(float, result_df.at[0, "平均収支"]):+.1f}点
+            1着終了時：{cast(float, result_df.at[0, "1位収支"]):+.1f}点
+            2着終了時：{cast(float, result_df.at[0, "2位収支"]):+.1f}点
+            3着終了時：{cast(float, result_df.at[0, "3位収支"]):+.1f}点
+            """
+        ).replace("-", "▲")
+
+    else:
+        balance_data = textwrap.dedent(
+            f"""\
+            全体：{cast(float, result_df.at[0, "平均収支"]):+.1f}点
+            連対時：{cast(float, result_df.at[0, "連対収支"]):+.1f}点
+            逆連対時：{cast(float, result_df.at[0, "逆連対収支"]):+.1f}点
+            1着終了時：{cast(float, result_df.at[0, "1位収支"]):+.1f}点
+            2着終了時：{cast(float, result_df.at[0, "2位収支"]):+.1f}点
+            3着終了時：{cast(float, result_df.at[0, "3位収支"]):+.1f}点
+            4着終了時：{cast(float, result_df.at[0, "4位収支"]):+.1f}点
+            """
+        ).replace("-", "▲")
 
     if g.params.get("statistics"):
         m.set_data("座席データ", seat_data, StyleOptions())
@@ -337,7 +365,8 @@ def get_totalization(data: dict) -> dict:
     ret["1位"] = f"{data['1位']:2} 回 ({data['1位率']:6.2f}%)"
     ret["2位"] = f"{data['2位']:2} 回 ({data['2位率']:6.2f}%)"
     ret["3位"] = f"{data['3位']:2} 回 ({data['3位率']:6.2f}%)"
-    ret["4位"] = f"{data['4位']:2} 回 ({data['4位率']:6.2f}%)"
+    if g.params.get("mode", 4) == 4:
+        ret["4位"] = f"{data['4位']:2} 回 ({data['4位率']:6.2f}%)"
     ret["トビ"] = f"{data['トビ']:2} 回 ({data['トビ率']:6.2f}%)"
     ret["役満"] = f"{data['役満和了']:2} 回 ({data['役満和了率']:6.2f}%)"
 
@@ -470,9 +499,18 @@ def get_results_details(mapping_dict: dict) -> pd.DataFrame:
         df["p4_name"] = df["p4_name"].replace(mapping_dict)
         target_player = mapping_dict.get(target_player, target_player)
 
-    df_data = df.query(
-        "p1_name == @target_player or p2_name == @target_player or p3_name == @target_player or p4_name == @target_player"  # noqa: E501
-    )
+    match g.params.get("mode"):
+        case 3:
+            df.drop(columns=["p4_name", "p4_rpoint", "p4_rank", "p4_point", "p4_remarks"], inplace=True)
+            df_data = df.query(
+                "p1_name == @target_player or p2_name == @target_player or p3_name == @target_player"  # noqa: E501
+            )
+        case 4:
+            df_data = df.query(
+                "p1_name == @target_player or p2_name == @target_player or p3_name == @target_player or p4_name == @target_player"  # noqa: E501
+            )
+        case _:
+            return pd.DataFrame()
 
     pd.options.mode.copy_on_write = True
     if g.params.get("individual"):
@@ -492,6 +530,9 @@ def get_versus_matrix(mapping_dict: dict) -> str:
     """
 
     df = loader.read_data("SUMMARY_VERSUS_MATRIX")
+
+    if df.empty:
+        return ""
 
     if g.params.get("anonymous"):
         mapping_dict.update(formatter.anonymous_mapping(df["vs_name"].unique().tolist(), len(mapping_dict)))

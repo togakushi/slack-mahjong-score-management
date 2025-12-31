@@ -17,7 +17,7 @@ with point_table as (
     join game_info on
         game_info.ts = results.ts
     where
-        results.mode = :mode
+        results.mode = :mode and seat <= :mode
         and results.rule_version in (<<rule_list>>)
         and results.playtime between :starttime and :endtime
         --[separate] and results.source = :source
@@ -86,12 +86,6 @@ select
     round(cast(rank3 as real) / count * 100, 2) as rank3_rate,
     round(cast(rank4 as real) / count * 100, 2) as rank4_rate,
     round(cast(flying as real) / count * 100, 2) as flying_rate,
-    printf("%d-%d-%d-%d",
-        rank1,
-        rank2,
-        rank3,
-        rank4
-    ) as rank_distr1,
     printf("%d+%d+%d+%d=%d (%.2f)",
         rank1,
         rank2,
@@ -99,7 +93,14 @@ select
         rank4,
         count,
         rank_avg
-    ) as rank_distr2,
+    ) as rank_distr4, -- 順位分布(四人打用)
+    printf("%d+%d+%d=%d (%.2f)",
+        rank1,
+        rank2,
+        rank3,
+        count,
+        rank_avg
+    ) as rank_distr3, -- 順位分布(三人打用)
     case
         when prev_point is null then null
         else abs(round(total_point - prev_point, 1))
