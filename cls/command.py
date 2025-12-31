@@ -126,11 +126,6 @@ COMMANDS: CommandsDict = {
         "match": [r"^(集約)(\d*)$"],
         "action": lambda w: {"group_length": w},
     },
-    "rule_version": {
-        "match": [r"^(ルール|rule)(.*)$"],
-        "action": lambda w: {"rule_version": w, "mixed": False},
-        "type": "str",
-    },
     "mode3": {
         "match": [r"^ 三人打ち$", r"^三人打$", r"^サンマ$"],
         "action": lambda _: {"target_mode": 3},

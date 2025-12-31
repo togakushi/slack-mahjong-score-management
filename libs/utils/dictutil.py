@@ -59,6 +59,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             "search_word": g.cfg.setting.search_word,
             "group_length": g.cfg.setting.group_length,
             "default_rule": g.cfg.mahjong.rule_version,
+            "rule_set": {},
             **g.cfg.mahjong.to_dict(),
             **subcom.to_dict(),  # デフォルト値
         },
@@ -73,6 +74,11 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     param = parser.analysis_argument(m.argument)
     logging.debug("argument: %s", param)
     ret_dict.update({**(cast(dict, param.flags))})  # 上書き
+
+    # 集計モード変更
+    if mode := ret_dict.get("target_mode"):
+        for rule_version in g.cfg.rule.get_version(mode=mode, mapping=not (ret_dict.get("mixed", False))):
+            ret_dict["rule_set"].update({rule_version: g.cfg.rule.to_dict(rule_version)})
 
     # 検索範囲取得
     departure_time = ExtDt(hours=-g.cfg.setting.time_adjust)
@@ -92,14 +98,21 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     )
 
     # どのオプションにも該当しないキーワード
-    check_list: list = param.unknown + pre_param.unknown
+    check_list: list[str] = param.unknown + pre_param.unknown
+    rule_list: list[str] = [x.rule_version for x in g.cfg.rule.data.values()]
 
     for name in list(check_list):  # ルール識別子
         if name in g.cfg.rule.keyword_mapping:
             check_list.remove(name)
             rule_version = g.cfg.rule.keyword_mapping[name]
-            ret_dict.update({"mode": int(g.cfg.rule.to_dict(rule_version).get("mode", 4))})
+            ret_dict.update({"mode": g.cfg.rule.get_mode(rule_version)})
             ret_dict.update({"rule_version": rule_version})
+            ret_dict.update({"mixed": False})
+        if name in rule_list:
+            check_list.remove(name)
+            ret_dict.update({"mode": g.cfg.rule.get_mode(name)})
+            ret_dict.update({"rule_version": name})
+            ret_dict.update({"mixed": False})
 
     player_name: str = str()
     target_player: list = []
