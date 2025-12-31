@@ -177,7 +177,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         if rule_version := ret_dict.get("rule_version"):
             ret_dict.update({"rule_set": {rule_version: g.cfg.rule.to_dict(rule_version)}})
 
-    if departure_time.range(search_range).start.format("sql") == "1900-01-01 00:00:00.000000":
+    if departure_time.range(search_range).start == ExtDt("1900-01-01 00:00:00.000000"):
         ret_dict.update(
             {
                 "starttime": lookup.db.first_record(
