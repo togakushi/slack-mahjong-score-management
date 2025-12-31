@@ -126,7 +126,7 @@ class AdapterAPI(APIInterface):
                                     else:
                                         post_msg.extend(_table_data(converter.df_to_remarks(msg)))
                                 case "成績詳細比較":
-                                    post_msg.extend(_table_data(converter.df_to_text_table2(msg, style, 4000)))
+                                    post_msg.extend(_table_data(converter.df_to_text_table2(msg, style, 3800)))
                                 case "座席データ":
                                     post_msg.extend(_table_data(converter.df_to_seat_data(msg, 1)))
                                 case "戦績":
