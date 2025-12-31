@@ -34,13 +34,23 @@ select
         round(cast(count(rank = 4 or null) as real) / count() * 100, 2),
         count(rank = 4 or null)
     ) as 'rank4_rate-count',
-    printf("%d-%d-%d-%d (%.2f)",
-        count(rank = 1 or null),
-        count(rank = 2 or null),
-        count(rank = 3 or null),
-        count(rank = 4 or null),
-        round(avg(rank), 2)
-    ) as '順位分布',
+    case when mode = 3
+        then
+            printf("%d-%d-%d (%.2f)",
+                count(rank = 1 or null),
+                count(rank = 2 or null),
+                count(rank = 3 or null),
+                round(avg(rank), 2)
+            )
+        else
+            printf("%d-%d-%d-%d (%.2f)",
+                count(rank = 1 or null),
+                count(rank = 2 or null),
+                count(rank = 3 or null),
+                count(rank = 4 or null),
+                round(avg(rank), 2)
+            )
+    end as 順位分布,
     round(avg(rpoint) * 100, 1) as '平均最終素点',
     round(sum(point), 1) as '通算ポイント',
     round(avg(point), 1) as '平均ポイント',
@@ -87,13 +97,23 @@ select
     ifnull(round(avg(case when seat = 1 then rank end), 2), 0.0) as '東家-平均順位',
     ifnull(sum(case when seat = 1 then yakuman_count end), 0) as '東家-役満和了',
     count(seat = 1 and rpoint < 0 or null) as '東家-トビ',
-    printf("%d+%d+%d+%d=%d",
-        count(seat = 1 and rank = 1 or null),
-        count(seat = 1 and rank = 2 or null),
-        count(seat = 1 and rank = 3 or null),
-        count(seat = 1 and rank = 4 or null),
-        count(seat = 1 or null)
-    ) as '東家-順位分布',
+    case when mode = 3
+        then
+            printf("%d+%d+%d=%d",
+                count(seat = 1 and rank = 1 or null),
+                count(seat = 1 and rank = 2 or null),
+                count(seat = 1 and rank = 3 or null),
+                count(seat = 1 or null)
+            )
+        else
+            printf("%d+%d+%d+%d=%d",
+                count(seat = 1 and rank = 1 or null),
+                count(seat = 1 and rank = 2 or null),
+                count(seat = 1 and rank = 3 or null),
+                count(seat = 1 and rank = 4 or null),
+                count(seat = 1 or null)
+            )
+    end as '東家-順位分布',
     count(seat = 2 and rank = 1 or null) as '南家-1位',
     count(seat = 2 and rank = 2 or null) as '南家-2位',
     count(seat = 2 and rank = 3 or null) as '南家-3位',
@@ -101,13 +121,23 @@ select
     ifnull(round(avg(case when seat = 2 then rank end), 2), 0.0) as '南家-平均順位',
     ifnull(sum(case when seat = 2 then yakuman_count end), 0) as '南家-役満和了',
     count(seat = 2 and rpoint < 0 or null) as '南家-トビ',
-    printf("%d+%d+%d+%d=%d",
-        count(seat = 2 and rank = 1 or null),
-        count(seat = 2 and rank = 2 or null),
-        count(seat = 2 and rank = 3 or null),
-        count(seat = 2 and rank = 4 or null),
-        count(seat = 2 or null)
-    ) as '南家-順位分布',
+    case when mode = 3
+        then
+            printf("%d+%d+%d=%d",
+                count(seat = 2 and rank = 1 or null),
+                count(seat = 2 and rank = 2 or null),
+                count(seat = 2 and rank = 3 or null),
+                count(seat = 2 or null)
+            )
+        else
+            printf("%d+%d+%d+%d=%d",
+                count(seat = 2 and rank = 1 or null),
+                count(seat = 2 and rank = 2 or null),
+                count(seat = 2 and rank = 3 or null),
+                count(seat = 2 and rank = 4 or null),
+                count(seat = 2 or null)
+            )
+    end as '南家-順位分布',
     count(seat = 3 and rank = 1 or null) as '西家-1位',
     count(seat = 3 and rank = 2 or null) as '西家-2位',
     count(seat = 3 and rank = 3 or null) as '西家-3位',
@@ -115,13 +145,23 @@ select
     ifnull(round(avg(case when seat = 3 then rank end), 2), 0.0) as '西家-平均順位',
     ifnull(sum(case when seat = 3 then yakuman_count end), 0) as '西家-役満和了',
     count(seat = 3 and rpoint < 0 or null) as '西家-トビ',
-    printf("%d+%d+%d+%d=%d",
-        count(seat = 3 and rank = 1 or null),
-        count(seat = 3 and rank = 2 or null),
-        count(seat = 3 and rank = 3 or null),
-        count(seat = 3 and rank = 4 or null),
-        count(seat = 3 or null)
-    ) as '西家-順位分布',
+    case when mode = 3
+        then
+            printf("%d+%d+%d=%d",
+                count(seat = 3 and rank = 1 or null),
+                count(seat = 3 and rank = 2 or null),
+                count(seat = 3 and rank = 3 or null),
+                count(seat = 3 or null)
+            )
+        else
+            printf("%d+%d+%d+%d=%d",
+                count(seat = 3 and rank = 1 or null),
+                count(seat = 3 and rank = 2 or null),
+                count(seat = 3 and rank = 3 or null),
+                count(seat = 3 and rank = 4 or null),
+                count(seat = 3 or null)
+            )
+    end as '西家-順位分布',
     count(seat = 4 and rank = 1 or null) as '北家-1位',
     count(seat = 4 and rank = 2 or null) as '北家-2位',
     count(seat = 4 and rank = 3 or null) as '北家-3位',
@@ -150,7 +190,8 @@ from (
         --[team] team_point as point,
         seat,
         yakuman,
-        ifnull(count, 0) as yakuman_count
+        ifnull(count, 0) as yakuman_count,
+        results.mode
     from
         individual_results as results
     join game_info on

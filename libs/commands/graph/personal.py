@@ -2,7 +2,7 @@
 libs/commands/graph/personal.py
 """
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -12,6 +12,7 @@ from matplotlib import gridspec
 from plotly.subplots import make_subplots  # type: ignore
 
 import libs.global_value as g
+from cls.timekit import ExtendedDatetime as ExtDt
 from libs.data import loader
 from libs.datamodels import GameInfo
 from libs.functions import compose, message
@@ -21,7 +22,6 @@ from libs.utils import formatter, graphutil, textutil
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from cls.timekit import ExtendedDatetime as ExtDt
     from integrations.protocols import MessageParserProtocol
 
 
@@ -54,10 +54,10 @@ def plot(m: "MessageParserProtocol"):
     total_game_count = int(df["count"].iloc[-1])
 
     title_text = f"『{player}』の成績"
-    if g.params.get("target_count", 0) == 0:
-        title_range = f"({cast('ExtDt', g.params['starttime']).format('ymdhm')} - {cast('ExtDt', g.params['endtime']).format('ymdhm')}"  # noqa: E501
-    else:
+    if g.params.get("target_count", 0):
         title_range = f"(直近 {len(df)} ゲーム)"
+    else:
+        title_range = f"({ExtDt(g.params['starttime']).format('ymdhm')} - {ExtDt(g.params['endtime']).format('ymdhm')})"
 
     m.post.headline = {title_text: message.header(game_info, m)}
     m.set_data(
@@ -106,7 +106,8 @@ def plot(m: "MessageParserProtocol"):
 
             rank_ax.set_xlabel(graphutil.gen_xlabel(len(df)))
             rank_ax.set_xticks(**graphutil.xticks_parameter(df["playtime"].to_list()))
-            rank_ax.set_ylim(ymin=0.85, ymax=4.15)
+            rank_ax.set_yticks(list(range(1, g.params.get("mode", 4) + 1)))
+            rank_ax.set_ylim(ymin=0.85, ymax=g.params.get("mode", 4) + 0.15)
             rank_ax.invert_yaxis()
 
             rank_ax.legend(
@@ -116,7 +117,7 @@ def plot(m: "MessageParserProtocol"):
                 borderaxespad=0.5,
             )
 
-            rank_ax.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
+            rank_ax.axhline(y=(1 + g.params.get("mode", 4)) / 2, linewidth=0.5, ls="dashed", color="grey")
 
             plt.savefig(save_file, bbox_inches="tight")
             m.set_data(
@@ -418,17 +419,17 @@ def subplot_rank(df: pd.DataFrame, ax: plt.Axes, total_index: str) -> None:
         ax=ax_rank_avg,
         kind="line",
         ylabel="平均順位",
-        yticks=[1, 2, 3, 4],
-        ylim=[0.85, 4.15],
+        yticks=list(range(1, g.params.get("mode", 4) + 1)),
+        ylim=[0.85, g.params.get("mode", 4) + 0.15],
         marker="o",
         color="b",
         legend=False,
         grid=False,
     )
     ax_rank_avg.invert_yaxis()
-    ax_rank_avg.axhline(y=2.5, linewidth=0.5, ls="dashed", color="grey")
+    ax_rank_avg.axhline(y=(1 + g.params.get("mode", 4)) / 2, linewidth=0.5, ls="dashed", color="grey")
 
-    filter_items = ["1位(%)", "2位(%)", "3位(%)", "4位(%)"]
+    filter_items = ["1位(%)", "2位(%)", "3位(%)", "4位(%)"][: g.params.get("mode", 4)]
     df.filter(items=filter_items).drop(index=total_index).plot(
         ax=ax,
         kind="bar",
@@ -574,13 +575,13 @@ def plotly_rank(df: pd.DataFrame, title_range: str, total_game_count: int) -> "P
             "text": "順位",
             "font": {"size": 18, "color": "white"},
         },
-        range=[4.2, 0.8],
-        tickvals=[4, 3, 2, 1],
+        range=[g.params.get("mode", 4) + 0.2, 0.8],
+        tickvals=list(range(1, g.params.get("mode", 4) + 1))[::-1],
         zeroline=False,
     )
 
     fig.add_hline(
-        y=2.5,
+        y=(1 + g.params.get("mode", 4)) / 2,
         line_dash="dot",
         line_color="white",
         line_width=2,
