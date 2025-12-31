@@ -144,14 +144,14 @@ class RuleSet:
             if self.data_set(section_name, mode=int(rule.get("mode", 4))):  # type: ignore
                 self.data[section_name].update(rule)
 
-    def to_dict(self, version: str) -> dict:
+    def to_dict(self, version: str) -> dict[str, Any]:
         """指定ルールバージョン識別子の情報を辞書で返す
 
         Args:
             version (str): ルールバージョン識別子
 
         Returns:
-            dict: ルール情報
+            dict[str, Any]: ルール情報
         """
 
         if rule := self.data.get(version):
@@ -183,6 +183,18 @@ class RuleSet:
                     ret.append(rule.rule_version)
 
         return ret
+
+    def get_mode(self, version: str) -> int:
+        """指定ルールバージョン識別子の集計モードを返す
+
+        Args:
+            version (str): ルールバージョン識別子
+
+        Returns:
+            int: 集計モード
+        """
+
+        return int(self.to_dict(version).get("mode", 0))
 
     def info(self):
         """定義ルールをログに出力する"""
