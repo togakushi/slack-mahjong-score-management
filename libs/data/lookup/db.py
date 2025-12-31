@@ -210,14 +210,19 @@ def exsist_record(ts: str) -> GameResult:
     return result
 
 
-def first_record() -> ExtDt:
+def first_record(rule_list: list[str]) -> ExtDt:
     """最初のゲーム記録時間を返す
+
+    Args:
+        rule_list (list[str]): ルールバージョン識別子
 
     Returns:
         ExtendedDatetime: 最初のゲーム記録時間
     """
 
     ret = ExtDt()
+    g.params["rule_set"] = {f"rule_{idx}": name for idx, name in enumerate(set(rule_list))}
+
     try:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
             table_count = conn.execute(
@@ -226,7 +231,7 @@ def first_record() -> ExtDt:
 
             if table_count:
                 sql = dbutil.query_modification("select min(playtime) from game_results where rule_version in (<<rule_list>>);")
-                record = conn.execute(sql, g.params.get("rule_set", {})).fetchall()[0][0]
+                record = conn.execute(sql, g.params["rule_set"]).fetchall()[0][0]
                 if record:
                     ret = ExtDt(str(record))
     except AttributeError:
