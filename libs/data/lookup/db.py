@@ -221,7 +221,7 @@ def first_record(rule_list: list[str]) -> ExtDt:
     """
 
     ret = ExtDt()
-    g.params["rule_set"] = {f"rule_{idx}": name for idx, name in enumerate(set(rule_list))}
+    rule_dict = {f"rule_{idx}": name for idx, name in enumerate(set(rule_list))}
 
     try:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
@@ -230,8 +230,8 @@ def first_record(rule_list: list[str]) -> ExtDt:
             ).fetchall()[0][0]
 
             if table_count:
-                sql = dbutil.query_modification("select min(playtime) from game_results where rule_version in (<<rule_list>>);")
-                record = conn.execute(sql, g.params["rule_set"]).fetchall()[0][0]
+                sql = "select min(playtime) from game_results where rule_version in (<<rule_list>>);".replace("<<rule_list>>", ":" + ", :".join(rule_dict))
+                record = conn.execute(sql, rule_dict).fetchall()[0][0]
                 if record:
                     ret = ExtDt(str(record))
     except AttributeError:
