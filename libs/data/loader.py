@@ -29,8 +29,10 @@ def read_data(keyword: str) -> pd.DataFrame:
 
     sql = dbutil.query_modification(dbutil.query(keyword))
 
-    g.params.update({"starttime": cast("ExtDt", g.params["starttime"]).format("sql")})
-    g.params.update({"endtime": cast("ExtDt", g.params["endtime"]).format("sql")})
+    if starttime := g.params.get("starttime"):
+        g.params.update({"starttime": cast("ExtDt", starttime).format("sql")})
+    if endtime := g.params.get("endtime"):
+        g.params.update({"endtime": cast("ExtDt", endtime).format("sql")})
 
     if g.args.verbose & 0x01:
         print(f">>> {g.params=}")
