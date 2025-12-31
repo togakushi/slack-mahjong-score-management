@@ -78,7 +78,7 @@ def plot(m: "MessageParserProtocol"):
             save_file = _graph_generation_plotly(game_info, df_sorted, "rating.html")
 
     m.set_data(
-        "レーティング推移",
+        title,
         save_file,
         StyleOptions(use_comment=True, header_hidden=True, key_title=False),
     )
