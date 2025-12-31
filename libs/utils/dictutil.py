@@ -95,6 +95,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     # どのオプションにも該当しないキーワード
     check_list: list[str] = param.unknown + pre_param.unknown
     rule_list: list[str] = [x.rule_version for x in g.cfg.rule.data.values()]
+    rule_version: str | None
 
     for name in list(check_list):  # ルール識別子
         if name in g.cfg.rule.keyword_mapping:
