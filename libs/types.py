@@ -3,7 +3,7 @@ cls/types.py
 """
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, Optional, TypeAlias, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, TypedDict, Union
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -200,18 +200,8 @@ class PlaceholderDict(TypedDict, total=False):
     endtime: Union[str, "ExtendedDatetime", None]
     """集計終了日時"""
     onday: Union[str, "ExtendedDatetime", None]
+    """time_adjust修正を含まない日時"""
 
-    default_rule: str
-    """ルール識別子(設定値)"""
-    rule_version: str
-    """ルール識別子(指定値)"""
-    rule_set: dict[str, str]
-    """集計対象ルール識別子"""
-    mixed: bool
-    """ルール識別子の扱い
-    - *True*: 定義済みすべてのルール識別子を含める
-    - *False*: ルール識別子を個別指定
-    """
     search_word: str
     """コメント検索文字列"""
     group_length: int
@@ -241,11 +231,28 @@ class PlaceholderDict(TypedDict, total=False):
     fourfold: bool
     """内部フラグ(縦持ちデータで集計)"""
 
-    # その他
+    # ルール情報
     mode: int
     """集計モード"""
     target_mode: int
     """集計モード(オプション指定)"""
+    default_rule: str
+    """ルール識別子(設定値)"""
+    rule_version: str
+    """ルール識別子(指定値)"""
+    rule_set: dict[str, dict[str, Any]]
+    """集計対象ルール識別子"""
+    mixed: bool
+    """ルール識別子の扱い
+    - *True*: 定義済みすべてのルール識別子を含める
+    - *False*: ルール識別子を個別指定
+    """
+    origin_point: int
+    """配給原点"""
+    return_point: int
+    """返し点"""
+
+    # その他
     undefined_word: int
     """未登録ワードの扱い
     - *0*: 役満扱い
