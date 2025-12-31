@@ -29,6 +29,14 @@ def plot(m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
+    # 情報ヘッダ
+    title: str = "レーティング推移グラフ"
+
+    if g.params.get("mode") == 3:  # todo: 未実装
+        m.post.headline = {title: message.random_reply(m, "not_implemented")}
+        m.status.result = False
+        return
+
     # --- データ収集
     game_info = GameInfo()
     df_ratings = aggregate.calculation_rating()
@@ -62,7 +70,7 @@ def plot(m: "MessageParserProtocol"):
 
     # --- グラフ生成
     graphutil.setup()
-    m.post.headline = {"レーティング推移グラフ": message.header(game_info, m)}
+    m.post.headline = {title: message.header(game_info, m)}
     match g.adapter.conf.plotting_backend:
         case "matplotlib":
             save_file = _graph_generation(game_info, df_sorted, "rating.png")

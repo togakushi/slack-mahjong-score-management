@@ -31,13 +31,18 @@ def aggregation(m: "MessageParserProtocol"):
     title: str = "レーティング"
     add_text: str = ""
 
+    if g.params.get("mode") == 3:  # todo: 未実装
+        m.post.headline = {title: message.random_reply(m, "not_implemented")}
+        m.status.result = False
+        return
+
     # データ収集
     # g.params.update(guest_skip=False)  # 2ゲスト戦強制取り込み
     game_info = GameInfo()
     ranked = int(g.params.get("ranked", g.cfg.ranking.ranked))  # noqa: F841
 
     if not game_info.count:  # 検索結果が0件のとき
-        m.post.headline = {"レーティング": message.random_reply(m, "no_hits")}
+        m.post.headline = {title: message.random_reply(m, "no_hits")}
         m.status.result = False
         return
 
