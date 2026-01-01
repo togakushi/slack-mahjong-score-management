@@ -39,6 +39,7 @@
 | rule_version |             | TEXT      | ルールバージョンを示す文字列   |
 | comment      |             | TEXT      | ゲームコメント                 |
 | source       |             | TEXT      | スコア入力元識別子             |
+| mode         |             | INTEGER   | 集計モード                     |
 
 ## member
 
@@ -203,6 +204,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | guest_count      |                      | ゲーム内のゲストの合計人数                       |
 | same_team        |                      | `1`=チーム同卓あり                               |
 | rule_version     | result.rule_version  | ルールバージョンを示す文字列                     |
+| mode             | result.mode          | 集計モード                                       |
 
 ## individual_results
 
@@ -235,6 +237,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | collection_daily |                      | 集計対象年月日(YYYY-MM-DD)                     |
 | rule_version     | result.rule_version  | ルールバージョンを示す文字列                   |
 | comment          | result.comment       | ゲームコメント                                 |
+| mode             | result.mode          | 集計モード                                     |
 
 ## game_info
 
@@ -248,6 +251,7 @@ Python側で *{ name: member }* という辞書を生成するのに利用され
 | same_team    |                     | ゲーム内に同じチームのメンバーが存在すれば `1` |
 | rule_version | result.rule_version | ルールバージョンを示す文字列                   |
 | comment      | result.comment      | ゲームコメント                                 |
+| mode         | result.mode         | 集計モード                                     |
 
 ## regulations
 
