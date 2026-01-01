@@ -29,6 +29,13 @@ def game_summary(
     # データ収集
     df = loader.read_data("SUMMARY_TOTAL")
 
+    # 順位分布選択
+    match g.params.get("mode", 4):
+        case 3:
+            df = df.drop(columns=["rank_distr4"])
+        case 4:
+            df = df.drop(columns=["rank_distr3"])
+
     if isinstance(filter_items, list):
         df = df.filter(items=filter_items)
 

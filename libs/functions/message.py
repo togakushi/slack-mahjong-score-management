@@ -37,7 +37,7 @@ def random_reply(m: "MessageParserProtocol", message_type: str) -> str:
 
     default_message_type = {
         "invalid_argument": "使い方が間違っています。",
-        "no_hits": "{start} ～ {end} に≪{keyword}≫はありません。",
+        "no_hits": "{start} ～ {end} に成績記録ワードが見つかりません。",
         "no_target": "集計対象データがありません。",
         "invalid_score": "素点合計：{rpoint_sum}\n点数差分：{rpoint_diff}",
         "restricted_channel": "<@{user_id}> この投稿はデータベースに反映されません。",
@@ -45,6 +45,7 @@ def random_reply(m: "MessageParserProtocol", message_type: str) -> str:
         "same_player": "同名のプレイヤーがいます。",
         "not_implemented": "未実装",
         "access_denied": "アクセスが拒否されました。",
+        "rule_mismatch": "集計モード(四人打/三人打)の指定と集計対象ルールに矛盾があります。",
     }
 
     msg = default_message_type.get(message_type, "invalid_argument")

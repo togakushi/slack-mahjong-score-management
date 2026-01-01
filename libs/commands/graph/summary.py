@@ -158,11 +158,12 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
     g.params.update({"fourfold": True})  # 直近Nは4倍する(縦持ちなので4人分)
 
     target_data = pd.DataFrame()
-    if g.params.get("individual"):  # 個人集計
-        df = loader.read_data("SUMMARY_GAMEDATA")
-        if df.empty:
-            return (target_data, df)
 
+    df = loader.read_data("SUMMARY_GAMEDATA")
+    if df.empty:
+        return (target_data, df)
+
+    if g.params.get("individual"):  # 個人集計
         target_data["name"] = df.groupby("name", as_index=False).last()["name"]
         target_data["last_point"] = df.groupby("name", as_index=False).last()["point_sum"]
         target_data["game_count"] = df.groupby("name", as_index=False).max(numeric_only=True)["count"]
@@ -173,10 +174,6 @@ def _data_collection() -> tuple[pd.DataFrame, pd.DataFrame]:
         target_data = target_data.query("name == @target_list").copy()
         df = df.query("name == @target_list").copy()
     else:  # チーム集計
-        df = loader.read_data("SUMMARY_GAMEDATA")
-        if df.empty:
-            return (target_data, df)
-
         target_data["last_point"] = df.groupby("name").last()["point_sum"]
         target_data["game_count"] = df.groupby("name").max(numeric_only=True)["count"]
         target_data["name"] = target_data.index

@@ -92,8 +92,14 @@ COMMANDS: CommandsDict = {
         "match": [r"^(トップ|上位|top)(\d*)$"],
         "action": lambda w: {"ranked": w},
     },
-    "stipulated": {"match": [r"^(規定数|規定打数)(\d*)$"], "action": lambda w: {"stipulated": w}},
-    "interval": {"match": [r"^(期間|区間|区切リ?|interval)(\d*)$"], "action": lambda w: {"interval": w}},
+    "stipulated": {
+        "match": [r"^(規定数|規定打数)(\d*)$"],
+        "action": lambda w: {"stipulated": w},
+    },
+    "interval": {
+        "match": [r"^(期間|区間|区切リ?|interval)(\d*)$"],
+        "action": lambda w: {"interval": w},
+    },
     # --- 集約 / 検索条件
     "daily": {
         "match": [r"^daily$", r"^日次$", r"^デイリー$"],
@@ -107,17 +113,18 @@ COMMANDS: CommandsDict = {
         "match": [r"^yearly$", r"^年次$", r"^イヤーリー$"],
         "action": lambda _: {"collection": "yearly"},
     },
-    "collection": {"match": [r"^全体$"], "action": lambda _: {"collection": "all"}},
+    "collection": {
+        "match": [r"^全体$"],
+        "action": lambda _: {"collection": "all"},
+    },
     "comment": {
         "match": [r"^(コメント|comment)(.*)$"],
         "action": lambda w: {"search_word": w},
         "type": "sql",
     },
-    "grouping": {"match": [r"^(集約)(\d*)$"], "action": lambda w: {"group_length": w}},
-    "rule_version": {
-        "match": [r"^(ルール|rule)(.*)$"],
-        "action": lambda w: {"rule_version": w, "mixed": False},
-        "type": "str",
+    "grouping": {
+        "match": [r"^(集約)(\d*)$"],
+        "action": lambda w: {"group_length": w},
     },
     "mode3": {
         "match": [r"^ 三人打ち$", r"^三人打$", r"^サンマ$"],
@@ -127,7 +134,10 @@ COMMANDS: CommandsDict = {
         "match": [r"^四人打ち$", r"^四人打$", r"^ヨンマ$"],
         "action": lambda _: {"target_mode": 4},
     },
-    "most_recent": {"match": [r"^(直近)(\d*)$"], "action": lambda w: {"target_count": w}},
+    "most_recent": {
+        "match": [r"^(直近)(\d*)$"],
+        "action": lambda w: {"target_count": w},
+    },
     "mixed": {
         "match": [r"^横断$", r"^mix$", r"^mixed$"],
         "action": lambda _: {"mixed": True},

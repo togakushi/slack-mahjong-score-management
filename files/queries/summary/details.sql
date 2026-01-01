@@ -26,7 +26,7 @@ from
 join game_info
     on game_info.ts = results.ts
 where
-    results.mode = :mode
+    results.mode = :mode and seat <= :mode
     and results.rule_version in (<<rule_list>>)
     and results.playtime between :starttime and :endtime
     --[separate] and results.source = :source

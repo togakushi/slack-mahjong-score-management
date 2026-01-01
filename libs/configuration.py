@@ -287,6 +287,12 @@ def setup():
     )
     g.cfg.rule.info()
 
+    # キーワード重複チェック
+    g.cfg.rule.check(
+        chk_commands=set(g.cfg.results.commandword + g.cfg.graph.commandword + g.cfg.ranking.commandword + g.cfg.report.commandword),
+        chk_members=set(lookup.db.enumeration_all_members()),
+    )
+
 
 def register():
     """ディスパッチテーブル登録"""

@@ -8,7 +8,8 @@ with target_data as (
         --[team] team_point as point,
         rpoint,
         rank,
-        count as yakuman_count
+        count as yakuman_count,
+        results.mode
     from
         individual_results as results
     join game_info on
@@ -18,7 +19,7 @@ with target_data as (
         and regulations.name = results.name
         and regulations.type = 0
     where
-        results.mode = :mode
+        results.mode = :mode and seat <= :mode
         and results.rule_version in (<<rule_list>>)
         and results.playtime between :starttime and :endtime
         --[separate] and results.source = :source
@@ -46,13 +47,24 @@ select
     count(rank = 4 or null) as rank4,
     round(cast(count(rank = 4 or null) as real) / count(), 4) as rank4_rate,
     round(avg(rank), 2) as rank_avg,
-    printf("%d+%d+%d+%d=%d",
-        count(rank = 1 or null),
-        count(rank = 2 or null),
-        count(rank = 3 or null),
-        count(rank = 4 or null),
-        count()
-    ) as rank_distr,
+    case when mode = 3
+        then
+            printf("%d+%d+%d=%d",
+                count(rank = 1 or null),
+                count(rank = 2 or null),
+                count(rank = 3 or null),
+                count()
+            )
+        else
+            printf("%d+%d+%d+%d=%d",
+                count(rank = 1 or null),
+                count(rank = 2 or null),
+                count(rank = 3 or null),
+                count(rank = 4 or null),
+                count()
+            )
+
+    end as rank_distr,
 
     count(rpoint < 0 or null) as flying,
     round(cast(count(rpoint < 0 or null) as real) / count(), 4) as flying_rate,

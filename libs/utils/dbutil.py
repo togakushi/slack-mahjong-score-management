@@ -157,11 +157,19 @@ def query_modification(sql: str) -> str:
     if g.params.get("mixed"):
         rule_list.extend(g.cfg.rule.get_version(g.params["mode"], False))
     if (rule_version := g.params.get("rule_version")) and g.cfg.rule.to_dict(rule_version):
-        rule_list.append(rule_version)
+        if g.params["mode"] == g.cfg.rule.get_mode(rule_version):
+            rule_list.append(rule_version)
     if not rule_list:
         rule_list = list(g.cfg.rule.keyword_mapping.values())
     g.params["rule_set"] = {f"rule_{idx}": name for idx, name in enumerate(set(rule_list))}
     sql = sql.replace("<<rule_list>>", ":" + ", :".join(g.params["rule_set"]))
+
+    # 集計モード
+    match g.params.get("mode"):
+        case 3:
+            sql = sql.replace("--[mode3] ", "")
+        case 4:
+            sql = sql.replace("--[mode4] ", "")
 
     # スコア入力元識別子別集計
     if g.params.get("separate"):

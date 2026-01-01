@@ -51,7 +51,8 @@ class SvcFunctions(FunctionsInterface):
 
         # 検索クエリ
         after = ExtDt(days=-self.conf.search_after, hours=g.cfg.setting.time_adjust).format("ymd", "-")
-        query = f"{word} in:{self.conf.search_channel} after:{after}"
+        channel = " ".join([f"in:{x}" for x in self.conf.search_channel])
+        query = f"{word} {channel} after:{after}"
         logging.info("query=%s", query)
 
         # データ取得
@@ -301,7 +302,9 @@ class SvcFunctions(FunctionsInterface):
                     if match.ignore_user:  # 除外ユーザからのポストは破棄
                         logging.info("skip ignore user: %s", match.data.user_id)
                         continue
-                    score_matches.append(match)
+                    if match.data.text != match.data.text.replace(keyword, ""):  # 検索結果にキーワードが含まれているか
+                        score_matches.append(match)
+                        logging.debug("found: keyword=%s, %s", keyword, match.data)
 
         # イベント詳細取得
         if score_matches:

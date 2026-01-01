@@ -11,7 +11,6 @@ import pandas as pd
 
 import libs.global_value as g
 from cls.timekit import ExtendedDatetime as ExtDt
-from libs.data.lookup import db
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
@@ -30,13 +29,10 @@ def read_data(keyword: str) -> pd.DataFrame:
 
     sql = dbutil.query_modification(dbutil.query(keyword))
 
-    if "starttime" in g.params:
-        if "1900-01-01 12:00:00.000000" == cast("ExtDt", g.params["starttime"]).format("sql"):
-            g.params.update({"starttime": db.first_record().format("sql")})
-        else:
-            g.params.update({"starttime": cast("ExtDt", g.params["starttime"]).format("sql")})
-    if "endtime" in g.params:
-        g.params.update({"endtime": cast("ExtDt", g.params["endtime"]).format("sql")})
+    if starttime := g.params.get("starttime"):
+        g.params.update({"starttime": cast("ExtDt", starttime).format("sql")})
+    if endtime := g.params.get("endtime"):
+        g.params.update({"endtime": cast("ExtDt", endtime).format("sql")})
 
     if g.args.verbose & 0x01:
         print(f">>> {g.params=}")

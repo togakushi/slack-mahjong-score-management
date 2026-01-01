@@ -87,17 +87,24 @@ def aggregation(m: "MessageParserProtocol"):
     work_df["rank"] = work_df["rank1_rate"].rank(ascending=False, method="dense").astype("int")
     data["トップ率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
-    # 連対率
-    filter_item = ["rank", "name", "top2_rate", "top2", "game_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["top2_rate", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["top2_rate"].rank(ascending=False, method="dense").astype("int")
-    data["連対率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+    if g.params.get("mode") == 3:
+        # ラス回避率
+        filter_item = ["rank", "name", "top2_rate", "top2", "game_count"]
+        work_df = df.filter(items=filter_item).sort_values(by=["top2_rate", "game_count"], ascending=[False, False])
+        work_df["rank"] = work_df["top2_rate"].rank(ascending=False, method="dense").astype("int")
+        data["ラス回避率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+    else:
+        # 連対率
+        filter_item = ["rank", "name", "top2_rate", "top2", "game_count"]
+        work_df = df.filter(items=filter_item).sort_values(by=["top2_rate", "game_count"], ascending=[False, False])
+        work_df["rank"] = work_df["top2_rate"].rank(ascending=False, method="dense").astype("int")
+        data["連対率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
-    # ラス回避率
-    filter_item = ["rank", "name", "top3_rate", "top3", "game_count"]
-    work_df = df.filter(items=filter_item).sort_values(by=["top3_rate", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["top3_rate"].rank(ascending=False, method="dense").astype("int")
-    data["ラス回避率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+        # ラス回避率
+        filter_item = ["rank", "name", "top3_rate", "top3", "game_count"]
+        work_df = df.filter(items=filter_item).sort_values(by=["top3_rate", "game_count"], ascending=[False, False])
+        work_df["rank"] = work_df["top3_rate"].rank(ascending=False, method="dense").astype("int")
+        data["ラス回避率"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # トビ率
     filter_item = ["rank", "name", "flying_rate", "flying", "game_count"]
@@ -132,19 +139,27 @@ def aggregation(m: "MessageParserProtocol"):
     work_df["rank"] = work_df["max_top"].rank(ascending=False, method="dense").astype("int")
     data["連続トップ"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
-    # 連続連対
-    work_df = df.query("max_top2 > 1")
-    filter_item = ["rank", "name", "max_top2", "game_count"]
-    work_df = work_df.filter(items=filter_item).sort_values(by=["max_top2", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["max_top2"].rank(ascending=False, method="dense").astype("int")
-    data["連続連対"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+    if g.params.get("mode") == 3:
+        # 連続ラス回避
+        work_df = df.query("max_top2 > 1")
+        filter_item = ["rank", "name", "max_top2", "game_count"]
+        work_df = work_df.filter(items=filter_item).sort_values(by=["max_top2", "game_count"], ascending=[False, False])
+        work_df["rank"] = work_df["max_top2"].rank(ascending=False, method="dense").astype("int")
+        data["連続ラス回避"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+    else:
+        # 連続連対
+        work_df = df.query("max_top2 > 1")
+        filter_item = ["rank", "name", "max_top2", "game_count"]
+        work_df = work_df.filter(items=filter_item).sort_values(by=["max_top2", "game_count"], ascending=[False, False])
+        work_df["rank"] = work_df["max_top2"].rank(ascending=False, method="dense").astype("int")
+        data["連続連対"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
-    # 連続ラス回避
-    work_df = df.query("max_top3 > 1")
-    filter_item = ["rank", "name", "max_top3", "game_count"]
-    work_df = work_df.filter(items=filter_item).sort_values(by=["max_top3", "game_count"], ascending=[False, False])
-    work_df["rank"] = work_df["max_top3"].rank(ascending=False, method="dense").astype("int")
-    data["連続ラス回避"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
+        # 連続ラス回避
+        work_df = df.query("max_top3 > 1")
+        filter_item = ["rank", "name", "max_top3", "game_count"]
+        work_df = work_df.filter(items=filter_item).sort_values(by=["max_top3", "game_count"], ascending=[False, False])
+        work_df["rank"] = work_df["max_top3"].rank(ascending=False, method="dense").astype("int")
+        data["連続ラス回避"] = formatter.df_rename(work_df.query("rank <= @ranked"), short=False)
 
     # 項目整理
     if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.ranking & g.cfg.dropitems.flying:

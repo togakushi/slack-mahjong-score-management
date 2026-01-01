@@ -36,14 +36,25 @@ def remarks(headword=False) -> str | list:
                 remark_list.append("チーム同卓時の結果を含む(" + g.cfg.setting.guest_mark + ")")
             else:
                 remark_list.append("チーム同卓時の結果を含む")
+
     if g.params["stipulated"] >= 2:
         remark_list.append(f"規定打数 {g.params['stipulated']} G以上")
     if g.params.get("command") in ["ranking"]:
         remark_list.append(f"{int(g.params.get('ranked', g.cfg.ranking.ranked))}位まで表示")
-    if g.params.get("rule_version") != g.params.get("default_rule"):
-        remark_list.append(f"集計対象ルール {g.params['rule_version']}")
+
+    # 集計ルール
     if g.params.get("mixed"):
-        remark_list.append("集計対象ルール すべて")
+        match g.params.get("target_mode"):
+            case 3:
+                remark_list.append("集計対象ルール すべて(三人打)")
+            case 4:
+                remark_list.append("集計対象ルール すべて(四人打)")
+            case _:
+                remark_list.append("集計対象ルール すべて")
+    elif len(g.params.get("rule_set", {})) > 1:
+        remark_list.append(f"集計対象ルール {'、'.join(map(str, g.params['rule_set'].values()))}")
+    elif g.params.get("rule_version") != g.params.get("default_rule"):
+        remark_list.append(f"集計対象ルール {g.params['rule_version']}")
 
     if headword:
         if remark_list:

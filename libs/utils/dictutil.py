@@ -59,6 +59,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             "search_word": g.cfg.setting.search_word,
             "group_length": g.cfg.setting.group_length,
             "default_rule": g.cfg.mahjong.rule_version,
+            "rule_set": {},
             **g.cfg.mahjong.to_dict(),
             **subcom.to_dict(),  # デフォルト値
         },
@@ -91,12 +92,27 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
         }
     )
 
-    # どのオプションにも該当しないキーワードはプレイヤー名 or チーム名
+    # どのオプションにも該当しないキーワード
+    check_list: list[str] = param.unknown + pre_param.unknown
+    rule_list: list[str] = [x.rule_version for x in g.cfg.rule.data.values()]
+    rule_version: str | None
+
+    for name in list(check_list):  # ルール識別子
+        if name in g.cfg.rule.keyword_mapping:
+            check_list.remove(name)
+            rule_version = g.cfg.rule.keyword_mapping[name]
+            ret_dict.update({"mode": g.cfg.rule.get_mode(rule_version)})
+            ret_dict.update({"rule_version": rule_version})
+            ret_dict.update({"mixed": False})
+        if name in rule_list:
+            check_list.remove(name)
+            ret_dict.update({"mode": g.cfg.rule.get_mode(name)})
+            ret_dict.update({"rule_version": name})
+            ret_dict.update({"mixed": False})
+
     player_name: str = str()
     target_player: list = []
-
-    check_list: list = param.unknown + pre_param.unknown
-    if ret_dict.get("individual"):
+    if ret_dict.get("individual"):  # プレイヤー名
         if ret_dict.get("all_player"):
             check_list.extend(g.cfg.member.lists)
         for name in check_list:
@@ -104,7 +120,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
                 target_player.extend(g.cfg.team.member(name))
             else:
                 target_player.append(formatter.name_replace(name, not_replace=True))
-    else:
+    else:  # チーム名
         if ret_dict.get("all_player"):
             check_list.extend(g.cfg.team.lists)
         for team in check_list:
@@ -152,6 +168,26 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             ret_dict.update({"stipulated": 0})
         else:
             ret_dict.update({"stipulated": 1})
+
+    # 集計ルール更新
+    if mode := ret_dict.get("target_mode"):
+        for rule_version in g.cfg.rule.get_version(mode=mode, mapping=not (ret_dict.get("mixed", False))):
+            ret_dict["rule_set"].update({rule_version: g.cfg.rule.to_dict(rule_version)})
+    elif ret_dict.get("rule_set", {}):
+        if rule_version := ret_dict.get("rule_version"):
+            ret_dict.update({"rule_set": {rule_version: g.cfg.rule.to_dict(rule_version)}})
+
+    if departure_time.range(search_range).start == ExtDt("1900-01-01 00:00:00.000000"):
+        ret_dict.update(
+            {
+                "starttime": lookup.db.first_record(
+                    g.cfg.rule.get_version(
+                        mode=ret_dict.get("mode", 4),
+                        mapping=not (ret_dict.get("mixed", False)),
+                    )
+                )
+            }
+        )
 
     return ret_dict
 

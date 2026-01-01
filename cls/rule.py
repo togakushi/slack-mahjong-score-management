@@ -1,9 +1,13 @@
 """cls/rule.py"""
 
 import logging
+import sys
 from configparser import ConfigParser
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Literal, Mapping
+
+from cls.command import CommandParser
+from cls.timekit import ExtendedDatetime as ExtDt
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -91,7 +95,7 @@ class RuleSet:
         mode: Literal[3, 4] = 4,
         rule_data: Mapping[str, Any] | None = None,
     ) -> bool:
-        """デフォルト値のセット
+        """ルール登録
 
         Args:
             version (str): ルールバージョン識別子
@@ -129,6 +133,8 @@ class RuleSet:
         return True
 
     def read_config(self):
+        """設定ファイル読み込み"""
+
         rule_parser = ConfigParser()
         rule_parser.read(self.config)
 
@@ -138,14 +144,14 @@ class RuleSet:
             if self.data_set(section_name, mode=int(rule.get("mode", 4))):  # type: ignore
                 self.data[section_name].update(rule)
 
-    def to_dict(self, version: str) -> dict:
+    def to_dict(self, version: str) -> dict[str, Any]:
         """指定ルールバージョン識別子の情報を辞書で返す
 
         Args:
             version (str): ルールバージョン識別子
 
         Returns:
-            dict: ルールデータ
+            dict[str, Any]: ルール情報
         """
 
         if rule := self.data.get(version):
@@ -178,8 +184,20 @@ class RuleSet:
 
         return ret
 
+    def get_mode(self, version: str) -> int:
+        """指定ルールバージョン識別子の集計モードを返す
+
+        Args:
+            version (str): ルールバージョン識別子
+
+        Returns:
+            int: 集計モード
+        """
+
+        return int(self.to_dict(version).get("mode", 0))
+
     def info(self):
-        """ルールデータをログに出力する"""
+        """定義ルールをログに出力する"""
 
         logging.info("keyword_mapping: %s", self.keyword_mapping)
         for rule in self.data.values():
@@ -193,3 +211,41 @@ class RuleSet:
                 rule.draw_split,
                 rule.ignore_flying,
             )
+
+    def check(self, chk_commands: set, chk_members: set):
+        """キーワード重複チェック
+
+        Args:
+            chk_commands (set): チェック対象コマンド名
+            chk_members (set): チェック対象メンバー名/チーム名
+
+        Raises:
+            RuntimeError: 重複あり
+        """
+
+        chk_word: str | "RuleData"
+
+        try:
+            # ルール識別子チェック
+            for chk_word in self.data.values():
+                if CommandParser().is_valid_command(chk_word.rule_version):
+                    raise RuntimeError(f"ルール識別子にオプションに使用される単語が使用されています。({chk_word.rule_version})")
+                if chk_word.rule_version in ExtDt.valid_keywords():
+                    raise RuntimeError(f"ルール識別子に検索範囲指定に使用される単語が使用されています。({chk_word.rule_version})")
+                if chk_word.rule_version in chk_commands:
+                    raise RuntimeError(f"ルール識別子と定義済みコマンドに重複があります。({chk_word.rule_version})")
+                if chk_word.rule_version in chk_members:
+                    raise RuntimeError(f"ルール識別子と登録メンバー(チーム)に重複があります。({chk_word.rule_version})")
+            # 成績登録ワードチェック
+            for chk_word in self.keyword_mapping.keys():
+                if CommandParser().is_valid_command(chk_word):
+                    raise RuntimeError(f"成績登録ワードにオプションに使用される単語が使用されています。({chk_word})")
+                if chk_word in ExtDt.valid_keywords():
+                    raise RuntimeError(f"成績登録ワードに検索範囲指定に使用される単語が使用されています。({chk_word})")
+                if chk_word in chk_commands:
+                    raise RuntimeError(f"成績登録ワードと定義済みコマンドに重複があります。({chk_word})")
+                if chk_word in chk_members:
+                    raise RuntimeError(f"成績登録ワードと登録メンバー(チーム)に重複があります。({chk_word})")
+        except RuntimeError as err:
+            logging.critical("%s", err)
+            sys.exit(1)

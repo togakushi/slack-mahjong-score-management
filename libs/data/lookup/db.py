@@ -4,6 +4,7 @@ libs/data/lookup/db.py
 
 import logging
 from contextlib import closing
+from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 import pandas as pd
@@ -209,14 +210,19 @@ def exsist_record(ts: str) -> GameResult:
     return result
 
 
-def first_record() -> ExtDt:
+def first_record(rule_list: list[str]) -> ExtDt:
     """最初のゲーム記録時間を返す
+
+    Args:
+        rule_list (list[str]): ルールバージョン識別子
 
     Returns:
         ExtendedDatetime: 最初のゲーム記録時間
     """
 
     ret = ExtDt()
+    rule_dict = {f"rule_{idx}": name for idx, name in enumerate(set(rule_list))}
+
     try:
         with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
             table_count = conn.execute(
@@ -224,10 +230,10 @@ def first_record() -> ExtDt:
             ).fetchall()[0][0]
 
             if table_count:
-                sql = dbutil.query_modification("select min(playtime) from game_results where rule_version in (<<rule_list>>);")
-                record = conn.execute(sql, g.params.get("rule_set", {})).fetchall()[0][0]
+                sql = "select min(playtime) from game_results where rule_version in (<<rule_list>>);".replace("<<rule_list>>", ":" + ", :".join(rule_dict))
+                record = conn.execute(sql, rule_dict).fetchall()[0][0]
                 if record:
-                    ret = ExtDt(str(record))
+                    ret = ExtDt(str(record)) - {"hour": 0, "minute": 0, "second": 0, "microsecond": 0, "hours": g.cfg.setting.time_adjust}
     except AttributeError:
         ret = ExtDt()
 
@@ -267,3 +273,29 @@ def read_memberslist():
     logging.debug("guest_name: %s", g.cfg.member.guest_name)
     logging.debug("member_list: %s", g.cfg.member.lists)
     logging.debug("team_list: %s", g.cfg.team.lists)
+
+
+def enumeration_all_members() -> list[str]:
+    """メンバーとチームをすべて列挙する
+
+    Returns:
+        list[str]: _description_
+    """
+
+    member_list: list["MemberDataDict"] = get_member_info()
+    team_list: list["TeamDataDict"] = get_team_info()
+    ret_list: list[str] = []
+
+    # チャンネル個別設定探索
+    for section_name in g.cfg.main_parser.sections():
+        if channel_config := g.cfg.main_parser[section_name].get("channel_config"):
+            g.cfg.overwrite(Path(channel_config), "setting")
+            member_list.extend(get_member_info())
+            team_list.extend(get_team_info())
+
+    for x in member_list:
+        ret_list.append(x.get("name"))
+        ret_list.extend(x.get("alias"))
+    ret_list.extend([x.get("team") for x in team_list])
+
+    return list(set(ret_list))

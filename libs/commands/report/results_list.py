@@ -53,6 +53,9 @@ def main(m: "MessageParserProtocol"):
         title = "チーム成績一覧"
         df = df.rename(columns={"name": "team"})
 
+    if g.params.get("mode") == 3:
+        df.drop(columns=["4th_count", "rank4_rate", "4th_mix"], inplace=True)
+
     # 非表示項目
     if g.cfg.mahjong.ignore_flying or g.cfg.dropitems.report & g.cfg.dropitems.flying:
         df = df.drop(columns=["flying_mix", "flying_count", "flying_rate"])
