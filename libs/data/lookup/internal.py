@@ -3,80 +3,31 @@ libs/data/lookup/internal.py
 """
 
 from configparser import ConfigParser
-from typing import TYPE_CHECKING, Union, overload
+from typing import TYPE_CHECKING, Any, Union
 
 if TYPE_CHECKING:
     from pathlib import Path
 
 
-@overload
 def get_config_value(
     config_file: "Path",
     section: str,
     name: str,
-    val_type: type[bool],
-    fallback: bool,
-) -> bool: ...
-
-
-@overload
-def get_config_value(
-    config_file: "Path",
-    section: str,
-    name: str,
-    val_type: type[int],
-    fallback: int,
-) -> int: ...
-
-
-@overload
-def get_config_value(
-    config_file: "Path",
-    section: str,
-    name: str,
-    val_type: type[float],
-    fallback: float,
-) -> float: ...
-
-
-@overload
-def get_config_value(
-    config_file: "Path",
-    section: str,
-    name: str,
-    val_type: type[str],
-    fallback: str,
-) -> str: ...
-
-
-@overload
-def get_config_value(
-    config_file: "Path",
-    section: str,
-    name: str,
-    val_type: type[list],
-    fallback: list,
-) -> list: ...
-
-
-def get_config_value(
-    config_file: "Path",
-    section: str,
-    name: str,
-    val_type: Union[type[bool], type[int], type[float], type[str], type[list]],
+    val_type: type,
     fallback: Union[bool, int, float, str, list, None] = None,
-) -> Union[int, float, bool, str, list, None]:
+) -> Any:
     """設定値取得
 
     Args:
         config_file (Path): 設定ファイルパス
         section (str): セクション名
         name (str): 項目名
-        val_type (Union[bool, int, float, str, list]): 取り込む値の型
+        val_type (type): 取り込む値の型 (bool, int, float, str, list)
         fallback (Union[bool, int, float, str, list], optional): 項目が見つからない場合に返す値. Defaults to None
 
     Returns:
-        Union[int, float, bool, str, list, None]: 取得した値
+        Any: 取得した値
+            - 実際に返す型: Union[int, float, bool, str, list, None]
     """
 
     value: Union[int, float, bool, str, list, None] = fallback
