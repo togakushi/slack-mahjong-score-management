@@ -6,6 +6,7 @@ import logging
 from typing import TYPE_CHECKING, Optional
 
 import libs.global_value as g
+from libs.data.lookup.db import read_memberslist
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
@@ -160,6 +161,8 @@ def user_select_pulldown(
         add_list (Optional[list], optional): プレイヤーリスト. Defaults to None.
     """
 
+    read_memberslist()  # fixme: 最後にアクセスしたDBのメンバーリストが返る
+
     adapter.conf.tab_var["view"]["blocks"].append({"type": "input", "block_id": "bid-user_select", "element": {}})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["type"] = "static_select"
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["action_id"] = "player"
@@ -197,6 +200,8 @@ def multi_select_pulldown(
         text (str, optional): 表示テキスト. Defaults to "dummy".
         add_list (Optional[list], optional): プレイヤーリスト. Defaults to None.
     """
+
+    read_memberslist()  # fixme: 最後にアクセスしたDBのメンバーリストが返る
 
     adapter.conf.tab_var["view"]["blocks"].append({"type": "input", "block_id": "bid-multi_select", "element": {}})
     adapter.conf.tab_var["view"]["blocks"][adapter.conf.tab_var["no"]]["element"]["type"] = "multi_static_select"
