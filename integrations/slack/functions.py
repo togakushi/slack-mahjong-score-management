@@ -301,7 +301,9 @@ class SvcFunctions(FunctionsInterface):
                     if match.ignore_user:  # 除外ユーザからのポストは破棄
                         logging.info("skip ignore user: %s", match.data.user_id)
                         continue
-                    score_matches.append(match)
+                    if match.data.text != match.data.text.replace(keyword, ""):  # 検索結果にキーワードが含まれているか
+                        score_matches.append(match)
+                        logging.debug("found: channel=%s, keyword=%s, %s", self.conf.search_channel, keyword, vars(match))
 
         # イベント詳細取得
         if score_matches:
