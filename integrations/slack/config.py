@@ -20,8 +20,8 @@ class SvcConfig(IntegrationsConfig):
     comparison_alias: list = field(default_factory=list)
     """データ突合スラッシュコマンド別名(カンマ区切りで設定)"""
 
-    search_channel: str = field(default="")
-    """テータ突合時に成績記録ワードを検索するチャンネル名"""
+    search_channel: list = field(default_factory=list)
+    """テータ突合時に成績記録ワードを検索するチャンネル名(カンマ区切りで設定)"""
     search_after: int = field(default=7)
     """データ突合時対象にする日数"""
     search_wait: int = field(default=180)

@@ -51,7 +51,8 @@ class SvcFunctions(FunctionsInterface):
 
         # 検索クエリ
         after = ExtDt(days=-self.conf.search_after, hours=g.cfg.setting.time_adjust).format("ymd", "-")
-        query = f"{word} in:{self.conf.search_channel} after:{after}"
+        channel = " ".join([f"in:{x}" for x in self.conf.search_channel])
+        query = f"{word} {channel} after:{after}"
         logging.info("query=%s", query)
 
         # データ取得
@@ -303,7 +304,7 @@ class SvcFunctions(FunctionsInterface):
                         continue
                     if match.data.text != match.data.text.replace(keyword, ""):  # 検索結果にキーワードが含まれているか
                         score_matches.append(match)
-                        logging.debug("found: channel=%s, keyword=%s, %s", self.conf.search_channel, keyword, vars(match))
+                        logging.debug("found: keyword=%s, %s", keyword, match.data)
 
         # イベント詳細取得
         if score_matches:
