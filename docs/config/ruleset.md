@@ -1,6 +1,6 @@
 # ルール設定
 
-[settingセクション](customize.md#settingセクション)の`rule_config`で設定される。
+[settingセクション](mainconf.md#settingセクション)の`rule_config`で設定される。
 
 ## 設定内容
 
@@ -21,4 +21,4 @@ DEFAULTセクションでの定義がない場合は上記表の通りとなる�
 
 ## マッピング
 
-使用するルールセットと成績登録キーワードの紐付けは[keyword_mappingセクション](customize.md#keyword_mappingセクション)で行う。
+使用するルールセットと成績登録キーワードの紐付けは[keyword_mappingセクション](mainconf.md#keyword_mappingセクション)で行う。

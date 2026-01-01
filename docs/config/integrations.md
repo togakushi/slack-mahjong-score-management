@@ -6,9 +6,9 @@
 
 |       キー       |               内容               |      型       |                省略時                 |                        備考                         |
 | ---------------- | -------------------------------- | ------------- | ------------------------------------- | --------------------------------------------------- |
-| badge_degree     | ゲーム数に応じて表示される称号   | 真偽値        | False                                 | [degreeセクション](customize.md#degreeセクション)   |
-| badge_status     | 勝利によって表示される調子バッヂ | 真偽値        | False                                 | [statusセクション](customize.md#statusセクション)   |
-| badge_grade      | 段位表示                         | 真偽値        | False                                 | [gradeセクション](customize.md#gradeセクション)     |
+| badge_degree     | ゲーム数に応じて表示される称号   | 真偽値        | False                                 | [degreeセクション](mainconf.md#degreeセクション)   |
+| badge_status     | 勝利によって表示される調子バッヂ | 真偽値        | False                                 | [statusセクション](mainconf.md#statusセクション)   |
+| badge_grade      | 段位表示                         | 真偽値        | False                                 | [gradeセクション](mainconf.md#gradeセクション)     |
 | plotting_backend | グラフ生成ライブラリ選択         | 文字列        | matplotlib                            | `matplotlib` / `plotly` から選択                    |
 
 > [!CAUTION]
@@ -46,12 +46,12 @@
 | reaction_ng    | 素点合計が誤っている場合に付けるリアクション | 文字列(絵文字)       | 引継   | `slack`セクションの設定を上書き            |
 | search_channel | 突合処理時に検索されるチャンネル             | 文字列(チャンネル名) | 引継   | `slack`セクションの設定を上書き            |
 | search_after   | データ突合開始日                             | 数値                 | 引継   | `slack`セクションの設定を上書き            |
-| channel_config | 個別設定ファイル                             | 文字列(ファイルパス) | None   | [設定ファイル](customize.md)の設定とマージ |
+| channel_config | 個別設定ファイル                             | 文字列(ファイルパス) | None   | [設定ファイル](mainconf.md)の設定とマージ |
 
 > [!TIP]
 > `channel_config`で設定された`mahjong`、`setting`、`results`、`graph`、`ranking`、`report`セクションはマージされる。
 > `commandword`、`help`で指定されているキーワードは上書きできない。
-> `custom_message`が設定されていれば[設定ファイル](customize.md#メッセージカスタマイズオプション)の内容は無視される。
+> `custom_message`が設定されていれば[設定ファイル](mainconf.md#メッセージカスタマイズオプション)の内容は無視される。
 
 ## discordセクション
 
