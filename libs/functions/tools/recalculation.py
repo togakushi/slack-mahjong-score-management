@@ -8,33 +8,38 @@ from contextlib import closing
 import libs.global_value as g
 from cls.score import GameResult
 from libs.data import modify
-from libs.utils import dbutil
+from libs.utils import dbutil, dictutil
 
 
 def main():
     """ポイント再計算"""
-    modify.db_backup()
-    logging.info("rank_point=%s, draw_split= %s", g.cfg.mahjong.rank_point, g.cfg.mahjong.draw_split)
-    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
-        rows = cur.execute(
-            """
-            select
-                ts,
-                p1_name, p1_str,
-                p2_name, p2_str,
-                p3_name, p3_str,
-                p4_name, p4_str,
-                comment
-                from result where rule_version=?;
-            """,
-            (g.cfg.mahjong.rule_version,),
-        )
-        count = 0
 
-        for row in rows:
-            result = GameResult(**dict(row), **g.cfg.mahjong.to_dict())  # 現行ルールで上書き
-            cur.execute(dbutil.query("RESULT_UPDATE"), result.to_dict())
-            count += 1
+    modify.db_backup()
+
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:
+        for rule_version, rule_set in g.cfg.rule.data.items():
+            logging.info("%s", rule_set)
+            rows = cur.execute(
+                """
+                select
+                    ts,
+                    p1_name, p1_str,
+                    p2_name, p2_str,
+                    p3_name, p3_str,
+                    p4_name, p4_str,
+                    comment,
+                    rule_version
+                    from result where rule_version=?;
+                """,
+                (rule_version,),
+            )
+            count = 0
+
+            for row in rows:
+                dictutil.merge_dicts(dict(row), g.cfg.rule.to_dict(rule_version))
+                result = GameResult(**dictutil.merge_dicts(dict(row), g.cfg.rule.to_dict(rule_version)))
+                cur.execute(dbutil.query("RESULT_UPDATE"), result.to_dict())
+                count += 1
+            logging.info("recalculated: %s", count)
 
         cur.commit()
-    logging.info("recalculated: %s", count)
