@@ -127,11 +127,11 @@ COMMANDS: CommandsDict = {
         "action": lambda w: {"group_length": w},
     },
     "mode3": {
-        "match": [r"^ 三人打ち$", r"^三人打$", r"^サンマ$"],
+        "match": [r"^三人打ち$", r"^三人打$", r"^三麻$", r"^サンマ$"],
         "action": lambda _: {"target_mode": 3},
     },
     "mode4": {
-        "match": [r"^四人打ち$", r"^四人打$", r"^ヨンマ$"],
+        "match": [r"^四人打ち$", r"^四人打$", r"^四麻$", r"^ヨンマ$"],
         "action": lambda _: {"target_mode": 4},
     },
     "most_recent": {
