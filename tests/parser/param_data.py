@@ -171,7 +171,7 @@ search_range: dict[str, tuple[Any, ...]] = {
         "20250301 20250301 20250101",
         [ExtDt("2025-01-01 12:00:00.000000"), ExtDt("2025-03-02 11:59:59.999999")],
     ),
-    "mix words": ("20250101 今月", [ExtDt("2025-01-01 12:00:00.000000"), ExtDt().range("今月")[1] + {"hours": 12}]),
+    "mix words": ("20260101 今月", [ExtDt("2026-01-01 12:00:00.000000"), ExtDt().range("今月")[1] + {"hours": 12}]),
     "inclusive": ("今月 先月 今年", ExtDt(hours=-12).range("今年") + {"hours": 12}),
     "duplication": ("今月 先月 今月", (ExtDt(hours=-12).range("今月 先月") + {"hours": 12}).period),
 }
