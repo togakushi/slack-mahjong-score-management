@@ -7,9 +7,11 @@
 ### discord
 - [セットアップ方法](setting/for_discord/setup.md)
 - [デーモン化](setting/for_discord/daemon.md)
-### 設定ファイル内容説明
-- [共通設定](setting/customize.md)
-  - [個別設定](setting/integrations.md)
+## 設定ファイル内容説明
+- [共通設定](config/customize.md)
+  - [個別設定](config/integrations.md)
+- [ルール設定](config/ruleset.md)
+
 
 ## 機能
 ### 成績入力

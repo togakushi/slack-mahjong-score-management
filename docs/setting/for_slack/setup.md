@@ -2,9 +2,11 @@
 
 ## アプリの作成
 
-https://api.slack.com/
+Slack api のWebページから登録を行う。
 
-[Create an app] -> From scratch
+https://api.slack.com/apps
+
+[Create New App] -> From scratch
 
 - App Name (任意)
 - Pick a workspace to develop your app in: (ワークスペース選択)
