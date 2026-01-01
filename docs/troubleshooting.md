@@ -12,3 +12,12 @@ update result set ts = "修正したい時間", playtime = strftime("%Y-%m-%d %H
 
  > [!NOTE]
  > データベース突合処理を動かすとslackに記録されている時刻と異なるためデータベースの情報が更新される。
+
+## Slackのスラッシュコマンドが動かない
+
+Slackbotからの応答
+```
+/slash_command failed with the error "dispatch_failed"
+```
+
+アプリケーション設定（[スラッシュコマンド有効化](setting//for_slack/setup.md#スラッシュコマンド有効化)）と[設定ファイル](config/integrations.md#slackセクション)の`slash_command`が一致していない。
