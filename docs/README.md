@@ -8,9 +8,9 @@
 - [セットアップ方法](setting/for_discord/setup.md)
 - [デーモン化](setting/for_discord/daemon.md)
 ## 設定ファイル内容説明
-- [共通設定](config/mainconf.md)
-  - [個別設定](config/integrations.md)
-- [ルール設定](config/ruleset.md)
+- [メイン設定](config/mainconf.md)
+  - [サービス個別設定](config/integrations.md)
+- [ルールセット設定](config/ruleset.md)
 
 
 ## 機能
