@@ -156,7 +156,7 @@ class MahjongSection(BaseSection):
         """配給原点"""
         self.return_point: int = int(-1)
         """返し点"""
-        self.rank_point: list = [30, 10, -10, 30]
+        self.rank_point: list = [30, 10, -10, -30]
         """順位点"""
         self.ignore_flying: bool = False
         """トビカウント
