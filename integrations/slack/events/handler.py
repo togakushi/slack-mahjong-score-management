@@ -55,9 +55,7 @@ def main(adapter: "ServiceAdapter"):
         sys.exit()
 
     register_all(app, adapter)  # イベント遅延登録
-    handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
-
-    handler.start()
+    SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"]).start()
 
 
 @register

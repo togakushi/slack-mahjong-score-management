@@ -26,7 +26,7 @@
 | channel_limitations | SQLを発行できるチャンネルID(カンマ区切り)                  | 文字列(channel_id)   | None         | 空欄の場合はすべてのチャンネル                                 |
 | comparison_word     | 突合処理呼び出しキーワード                                 | 文字列               | 麻雀チェック |                                                                |
 | comparison_alias    | スラッシュコマンドエイリアス(突合処理呼び出しサブコマンド) | 文字列(カンマ区切り) | 空欄         | サブコマンド `check` の別名を追加登録                          |
-| search_channel      | 突合処理時に検索されるチャンネル                           | 文字列(チャンネル名) | *必須*       |                                                                |
+| search_channel      | 突合処理時に検索されるチャンネル名                         | 文字列(カンマ区切り) | 空リスト     | チャンネル名に先頭の**#**は必要                                |
 | search_after        | データ突合開始日                                           | 数値                 | 7            | 突合実行日時から指定日を引いた日                               |
 | search_wait         | 突合処理待ち時間(秒)                                       | 数値                 | 180          | イベント発生時刻から待ち時間以上経過したデータのみが突合の対象 |
 
@@ -49,8 +49,8 @@
 | channel_config | 個別設定ファイル                             | 文字列(ファイルパス) | None   | [設定ファイル](mainconf.md)の設定とマージ |
 
 > [!TIP]
-> `channel_config`で設定された`mahjong`、`setting`、`results`、`graph`、`ranking`、`report`セクションはマージされる。
-> `commandword`、`help`で指定されているキーワードは上書きできない。
+> `channel_config`で設定された`mahjong`、`setting`、`results`、`graph`、`ranking`、`report`セクションはマージされる。\
+> `commandword`、`help`で指定されているキーワードは上書きできない。\
 > `custom_message`が設定されていれば[設定ファイル](mainconf.md#メッセージカスタマイズオプション)の内容は無視される。
 
 ## discordセクション
@@ -64,7 +64,7 @@
 | search_after        | データ突合開始日                                           | 数値                 | 7            | 突合実行日時から指定日を引いた日                                     |
 
 > [!TIP]
-> botが参加してるチャンネルが複数ある場合、`channel_limitations`を指定することで成績登録ができるチャンネルを制限できる。
+> botが参加してるチャンネルが複数ある場合、`channel_limitations`を指定することで成績登録ができるチャンネルを制限できる。\
 > サマリやグラフなどは制限されない。
 
 ## webセクション
