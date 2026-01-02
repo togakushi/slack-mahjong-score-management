@@ -49,8 +49,8 @@
 | channel_config | 個別設定ファイル                             | 文字列(ファイルパス) | None   | [設定ファイル](mainconf.md)の設定とマージ |
 
 > [!TIP]
-> `channel_config`で設定された`mahjong`、`setting`、`results`、`graph`、`ranking`、`report`セクションはマージされる。
-> `commandword`、`help`で指定されているキーワードは上書きできない。
+> `channel_config`で設定された`mahjong`、`setting`、`results`、`graph`、`ranking`、`report`セクションはマージされる。\
+> `commandword`、`help`で指定されているキーワードは上書きできない。\
 > `custom_message`が設定されていれば[設定ファイル](mainconf.md#メッセージカスタマイズオプション)の内容は無視される。
 
 ## discordセクション
@@ -64,7 +64,7 @@
 | search_after        | データ突合開始日                                           | 数値                 | 7            | 突合実行日時から指定日を引いた日                                     |
 
 > [!TIP]
-> botが参加してるチャンネルが複数ある場合、`channel_limitations`を指定することで成績登録ができるチャンネルを制限できる。
+> botが参加してるチャンネルが複数ある場合、`channel_limitations`を指定することで成績登録ができるチャンネルを制限できる。\
 > サマリやグラフなどは制限されない。
 
 ## webセクション

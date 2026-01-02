@@ -1,21 +1,16 @@
 # slack-mahjong-score-management
-
 ## 概要
-
 麻雀のスコアを記録、集計するツール。
 
 ### セットアップ方法
-
 - [Slack](docs/setting/for_slack/README.md)
 - [Discord](docs/setting/for_discord/README.md)
 
 ## 主な機能
-
 ### スコア記録（[詳細](docs/functions/score_record.md)）
-
 以下のフォーマットに一致した投稿をデータベースに取り込む。
 ```
-<指定キーワード>
+<成績記録キーワード>
 東家プレイヤー名 東家素点
 南家プレイヤー名 南家素点
 西家プレイヤー名 西家素点

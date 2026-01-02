@@ -1,7 +1,5 @@
 # トラブルシューティング
-
 ## 登録したデータの時間を修正したい
-
 ゲーム結果のポストを誤って削除、あとから登録しなおした場合など。
 
 ```
@@ -14,7 +12,6 @@ update result set ts = "修正したい時間", playtime = strftime("%Y-%m-%d %H
  > データベース突合処理を動かすとslackに記録されている時刻と異なるためデータベースの情報が更新される。
 
 ## Slackのスラッシュコマンドが動かない
-
 Slackbotからの応答
 ```
 /slash_command failed with the error "dispatch_failed"

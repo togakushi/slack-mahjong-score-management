@@ -47,7 +47,8 @@
 | サンマ<br />三麻<br />三人打<br />三人打ち | `mode=3`が指定されているルールセットをすべて含める | マッピングされているルールセットのみ |
 | ヨンマ<br />四麻<br />四人打<br />四人打ち | `mode=4`が指定されているルールセットをすべて含める | マッピングされているルールセットのみ |
 
-参照：[keyword_mappingセクション](../config/mainconf.md#keyword_mappingセクション)、[ルールセット設定](../config/ruleset.md)
+> [!NOTE]
+> 参照：[keyword_mappingセクション](../config/mainconf.md#keyword_mappingセクション)、[ルールセット設定](../config/ruleset.md)
 
 ### フォーマット変更
 |  キーワード   |        内容        | 備考  |
