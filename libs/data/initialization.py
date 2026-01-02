@@ -6,6 +6,7 @@ import json
 import logging
 import os
 from importlib.resources import files
+from pathlib import Path
 from typing import TYPE_CHECKING, Union, cast
 
 import libs.global_value as g
@@ -13,19 +14,22 @@ from libs.utils import dbutil
 
 if TYPE_CHECKING:
     from configparser import ConfigParser
-    from pathlib import Path
 
     from libs.types import GradeTableDict
 
 
-def initialization_resultdb(database_file: Union[str, "Path"]) -> None:
+def initialization_resultdb(database_file: Union[str, Path]) -> None:
     """DB初期化 & マイグレーション
 
     Args:
         database_file (Union[str, Path]): データベース接続パス
     """
 
-    logging.debug(database_file)
+    if isinstance(database_file, Path):
+        logging.debug(database_file.absolute())
+    else:
+        logging.debug(database_file)
+
     resultdb = dbutil.connection(database_file)
     memdb = dbutil.connection(":memory:")
 
