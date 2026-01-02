@@ -2,6 +2,7 @@
 integrations/base/interface.py
 """
 
+import logging
 import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
@@ -129,6 +130,8 @@ class IntegrationsConfig(ABC):
                     else:
                         raise TypeError(f"Unsupported type: {f.type}")
                     setattr(self, f.name, value)
+
+        logging.debug("%s: %s", selected_service, self)
 
 
 class FunctionsInterface(ABC):
