@@ -50,8 +50,8 @@ def member_info(params: "PlaceholderDict") -> dict:
     )
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
-        params["starttime"] = cast("ExtDt", params["starttime"]).format("sql")
-        params["endtime"] = cast("ExtDt", params["endtime"]).format("sql")
+        params["starttime"] = cast(ExtDt, params["starttime"]).format("sql")
+        params["endtime"] = cast(ExtDt, params["endtime"]).format("sql")
         rows = conn.execute(sql, params)
         ret = dict(rows.fetchone())
 
@@ -132,35 +132,34 @@ def get_team_info() -> list["TeamDataDict"]:
     return ret
 
 
-def rule_version_range() -> dict:
-    """DBに記録されているルールバージョン毎の範囲を取得する
+def rule_status_update():
+    """ルールセットのステータスを更新する"""
 
-    Returns:
-        dict: 取得結果
-    """
-
-    rule: dict = {}
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         ret = conn.execute(
             """
             select
                 rule_version,
-                strftime("%Y/%m/%d %H:%M:%S", min(playtime)) as min,
-                strftime("%Y/%m/%d %H:%M:%S", max(playtime)) as max
+                min(ts) as first_time,
+                max(ts) as last_time,
+                count() as count
             from
                 result
             group by
                 rule_version
+            ;
             """
         )
 
-        for version, first_time, last_time in ret.fetchall():
-            rule[version] = {
-                "first_time": first_time,
-                "last_time": last_time,
-            }
-
-    return rule
+        for version, first_time, last_time, count in ret.fetchall():
+            g.cfg.rule.status_update(
+                version=version,
+                **dict(
+                    first_time=ExtDt(float(first_time)),
+                    last_time=ExtDt(float(last_time)),
+                    count=int(count),
+                ),
+            )
 
 
 def regulation_list(word_type: int = 0) -> list:
