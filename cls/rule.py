@@ -232,8 +232,7 @@ class RuleSet:
                 body=[
                     ["ルールバージョン", rule.rule_version],
                     ["集計モード", mode],
-                    ["配給原点", f"{rule.origin_point * 100}点"],
-                    ["返し点", f"{rule.return_point * 100}点"],
+                    ["点数", f"{rule.origin_point * 100}点持ち / {rule.return_point * 100}点返し"],
                     ["順位点", " / ".join([f"{pt}pt".replace("-", "▲") for pt in rule.rank_point])],
                     ["同点時", "順位点山分け" if rule.draw_split else "席順"],
                     ["成績登録キーワード", "、".join(keyword)],
