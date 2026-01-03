@@ -21,6 +21,8 @@ if TYPE_CHECKING:
 def main():
     """データ突合処理"""
 
+    g.cfg.initialization()
+
     if g.args.compar:
         try:
             g.adapter = cast("ServiceAdapter", g.adapter)

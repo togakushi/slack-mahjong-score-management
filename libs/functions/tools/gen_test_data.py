@@ -26,6 +26,7 @@ def main(season_times: int = 1):
         season_times (int, optional): 総当たり回数. Defaults to 1.
     """
 
+    g.cfg.initialization()
     lookup.db.read_memberslist()
 
     # 対戦組み合わせ作成

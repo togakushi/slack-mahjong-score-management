@@ -12,6 +12,9 @@ from libs.utils import dbutil, textutil, validator
 
 def main():
     """ゲストメンバーの名前を統一する"""
+
+    g.cfg.initialization()
+
     rename_conf = configparser.ConfigParser()
     rename_conf.read(g.args.unification, encoding="utf-8")
     lookup.db.read_memberslist()

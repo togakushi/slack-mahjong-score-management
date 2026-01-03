@@ -278,6 +278,7 @@ def setup():
             g.cfg.rule.keyword_mapping = {"終局": g.cfg.mahjong.rule_version}
 
     g.cfg.rule.status_update()
+    g.cfg.initialization()
 
     # 設定情報のロギング
     logging.info("config: %s", g.cfg.config_file.absolute())

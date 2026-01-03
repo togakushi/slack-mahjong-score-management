@@ -13,6 +13,9 @@ from libs.utils import dbutil
 
 def main():
     """vacuum実行"""
+
+    g.cfg.initialization()
+
     modify.db_backup()
     before_size = os.path.getsize(g.cfg.setting.database_file)
 
