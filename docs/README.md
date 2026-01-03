@@ -12,6 +12,8 @@
   - [サービス個別設定](config/integrations.md)
 - [ルールセット設定](config/ruleset.md)
 
+### サンプル
+- [設定事例集](config/example/README.md)
 
 ## 機能
 ### 成績入力
