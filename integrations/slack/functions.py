@@ -119,7 +119,7 @@ class SvcFunctions(FunctionsInterface):
             logging.trace(res.validate())  # type: ignore
             return cast(dict, res)
         except self.slack_api_error as err:
-            logging.error(err)
+            logging.error("slack_api_error: %s", err)
             return {}
 
     def get_reactions_list(self, msg: dict) -> tuple[list, list]:
@@ -171,7 +171,7 @@ class SvcFunctions(FunctionsInterface):
                 else:
                     channel_id = channel["id"]
         except self.slack_api_error as err:
-            logging.error(err)
+            logging.error("slack_api_error: %s", err)
 
         return channel_id
 
@@ -190,8 +190,8 @@ class SvcFunctions(FunctionsInterface):
         try:
             response = self.api.appclient.conversations_open(users=[user_id])
             channel_id = response["channel"]["id"]
-        except self.slack_api_error as e:
-            logging.error(e)
+        except self.slack_api_error as err:
+            logging.error("slack_api_error: %s", err)
 
         return channel_id
 
@@ -254,8 +254,8 @@ class SvcFunctions(FunctionsInterface):
                 case "already_reacted":
                     pass
                 case _:
-                    logging.critical(err)
-                    logging.critical("ts=%s, ch=%s, icon=%s", ts, ch, icon)
+                    logging.error("slack_api_error: %s", err)
+                    logging.error("ts=%s, ch=%s, icon=%s", ts, ch, icon)
 
     def reaction_remove(self, icon: str, ch: str, ts: str):
         """リアクション削除
@@ -284,8 +284,8 @@ class SvcFunctions(FunctionsInterface):
                 case "message_not_found":
                     pass
                 case _:
-                    logging.critical(err)
-                    logging.critical("ch=%s, ts=%s, icon=%s", ch, ts, icon)
+                    logging.error("slack_api_error: %s", err)
+                    logging.error("ch=%s, ts=%s, icon=%s", ch, ts, icon)
 
     def pickup_score(self) -> list["MessageParserProtocol"]:
         """過去ログからスコア記録を検索して返す

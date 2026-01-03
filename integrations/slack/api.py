@@ -165,7 +165,7 @@ class AdapterAPI(APIInterface):
         try:
             res = self.appclient.chat_postMessage(**kwargs)
         except self.slack_api_error as err:
-            logging.critical(err)
+            logging.error("slack_api_error: %s", err)
             logging.error("kwargs=%s", kwargs)
 
         return res
@@ -184,7 +184,7 @@ class AdapterAPI(APIInterface):
         try:
             res = self.appclient.files_upload_v2(**kwargs)
         except self.slack_api_error as err:
-            logging.critical(err)
+            logging.error("slack_api_error: %s", err)
             logging.error("kwargs=%s", kwargs)
 
         return res

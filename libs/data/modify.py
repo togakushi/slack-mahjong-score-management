@@ -50,7 +50,7 @@ def db_insert(detection: "GameResult", m: "MessageParserProtocol") -> int:
                 changes = cur.total_changes
                 cur.commit()
             except sqlite3.IntegrityError as err:
-                logging.error(err)
+                logging.error("IntegrityError: %s", err)
         logging.info("%s", detection.to_text("logging"))
         _score_check(detection, m)
     else:
@@ -144,9 +144,9 @@ def db_backup() -> str:
     if not os.path.isdir(g.cfg.setting.backup_dir):  # バックアップディレクトリ作成
         try:
             os.mkdir(g.cfg.setting.backup_dir)
-        except OSError as e:
-            logging.error(e, exc_info=True)
-            logging.error("Database backup directory creation failed !!!")
+        except OSError as err:
+            logging.warning(err, exc_info=True)
+            logging.warning("Database backup directory creation failed !!!")
             return "\nバックアップ用ディレクトリ作成の作成に失敗しました。"
 
     # バックアップディレクトリにコピー
@@ -154,9 +154,9 @@ def db_backup() -> str:
         shutil.copyfile(g.cfg.setting.database_file, bkfname)
         logging.info("database backup: %s", bkfname)
         return "\nデータベースをバックアップしました。"
-    except OSError as e:
-        logging.error(e, exc_info=True)
-        logging.error("Database backup failed !!!")
+    except OSError as err:
+        logging.warning(err, exc_info=True)
+        logging.warning("Database backup failed !!!")
         return "\nデータベースのバックアップに失敗しました。"
 
 

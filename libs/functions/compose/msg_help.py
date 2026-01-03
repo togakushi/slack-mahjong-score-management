@@ -21,6 +21,8 @@ def event_message(m: "MessageParserProtocol"):
         m (MessageParserProtocol): _description_
     """
 
+    g.cfg.rule.status_update()
+
     m.set_data(
         "機能呼び出し",
         "使い方：<呼び出しキーワード> [検索範囲] [対象メンバー] [オプション]",
@@ -73,11 +75,6 @@ def event_message(m: "MessageParserProtocol"):
     m.set_data(  # 検索範囲
         "検索範囲に指定できるキーワード",
         ExtDt.print_range(),
-        StyleOptions(indent=1),
-    )
-    m.set_data(  # ルールバージョン記録範囲
-        "ルールバージョン記録範囲",
-        "\n".join([f"{key}：{val['first_time']} ～ {val['last_time']}" for key, val in lookup.db.rule_version_range().items()]),
         StyleOptions(indent=1),
     )
     m.set_data(  # メモ機能

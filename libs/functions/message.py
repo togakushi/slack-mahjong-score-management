@@ -74,7 +74,7 @@ def random_reply(m: "MessageParserProtocol", message_type: str) -> str:
             )
         )
     except KeyError as e:
-        logging.error("[unknown keywords] %s: %s", e, msg)
+        logging.warning("[unknown keywords] %s: %s", e, msg)
         msg = msg.replace("{user_id}", m.data.user_id)
 
     return msg
