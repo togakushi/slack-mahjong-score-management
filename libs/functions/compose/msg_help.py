@@ -21,7 +21,7 @@ def event_message(m: "MessageParserProtocol"):
         m (MessageParserProtocol): _description_
     """
 
-    lookup.db.rule_status_update()
+    g.cfg.rule.status_update()
 
     m.set_data(
         "機能呼び出し",
