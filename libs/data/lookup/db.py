@@ -248,7 +248,7 @@ def enumeration_all_members() -> list[str]:
     """メンバーとチームをすべて列挙する
 
     Returns:
-        list[str]: _description_
+        list[str]: メンバー名(別名含む)/チーム名のリスト
     """
 
     member_list: list["MemberDataDict"] = get_member_info()
