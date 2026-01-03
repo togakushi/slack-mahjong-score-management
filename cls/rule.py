@@ -6,6 +6,8 @@ from configparser import ConfigParser
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Literal, Mapping
 
+from table2ascii import Alignment, PresetStyle, table2ascii
+
 from cls.command import CommandParser
 from cls.timekit import ExtendedDatetime as ExtDt
 
@@ -196,6 +198,52 @@ class RuleSet:
 
         return int(self.to_dict(version).get("mode", 0))
 
+    def print(self, version: str) -> str:
+        """指定ルールバージョン識別子の内容を出力する
+
+        Args:
+            version (str): ルールバージョン識別子
+
+        Returns:
+            str: 内容
+        """
+
+        ret: str = ""
+        keyword: list = []
+
+        if rule := self.data.get(version):
+            # マッピング情報
+            for k, v in self.keyword_mapping.items():
+                if v == version:
+                    keyword.append(k)
+            if not keyword:
+                keyword.append("---")
+
+            # 集計モード
+            match rule.mode:
+                case 3:
+                    mode = "三人打ち"
+                case 4:
+                    mode = "四人打ち"
+                case _:
+                    mode = "未定義"
+
+            ret = table2ascii(
+                body=[
+                    ["ルールバージョン", rule.rule_version],
+                    ["集計モード", mode],
+                    ["配給原点", f"{rule.origin_point * 100}点"],
+                    ["返し点", f"{rule.return_point * 100}点"],
+                    ["順位点", " / ".join([f"{pt}pt".replace("-", "▲") for pt in rule.rank_point])],
+                    ["同点時", "順位点山分け" if rule.draw_split else "席順"],
+                    ["成績登録キーワード", "、".join(keyword)],
+                ],
+                alignments=[Alignment.LEFT, Alignment.LEFT],
+                style=PresetStyle.plain,
+            )
+
+        return ret
+
     def info(self):
         """定義ルールをログに出力する"""
 
@@ -249,3 +297,13 @@ class RuleSet:
         except RuntimeError as err:
             logging.critical("%s", err)
             sys.exit(1)
+
+    @property
+    def rule_list(self) -> list[str]:
+        """ルールセットの列挙
+
+        Returns:
+            list[str]: ルールセット
+        """
+
+        return list(self.data.keys())
