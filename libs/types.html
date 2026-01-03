@@ -301,6 +301,9 @@
                         <li>
                                 <a class="variable" href="#PlaceholderDict.undefined_word">undefined_word</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#PlaceholderDict.channel_config">channel_config</a>
+                        </li>
                 </ul>
 
             </li>
@@ -746,119 +749,124 @@
 </span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a><span class="sd">    - *2*: カウントのみ</span>
 </span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a><span class="sd">    - *3*: 卓外清算(チーム清算)</span>
 </span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>    <span class="n">channel_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Path&quot;</span><span class="p">]</span>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チャンネル個別設定状況</span>
+</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a><span class="sd">    - *Path*: 読み込んだ追加設定</span>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a><span class="sd">    - *None*: 個別設定を利用していない</span>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
 </span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ScoreDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコアデータ格納用辞書&quot;&quot;&quot;</span>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>    <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>    <span class="n">p1_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>    <span class="n">p1_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
-</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>    <span class="n">p1_rpoint</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
-</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>    <span class="n">p1_point</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得ポイント&quot;&quot;&quot;</span>
-</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>    <span class="n">p1_rank</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得順位&quot;&quot;&quot;</span>
-</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>
-</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>    <span class="n">p2_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a>    <span class="n">p2_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
-</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a>    <span class="n">p2_rpoint</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
-</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a>    <span class="n">p2_point</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得ポイント&quot;&quot;&quot;</span>
-</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a>    <span class="n">p2_rank</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：獲得順位&quot;&quot;&quot;</span>
-</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a>
-</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>    <span class="n">p3_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>    <span class="n">p3_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
-</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>    <span class="n">p3_rpoint</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
-</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a>    <span class="n">p3_point</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：獲得ポイント&quot;&quot;&quot;</span>
-</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a>    <span class="n">p3_rank</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：獲得順位&quot;&quot;&quot;</span>
-</span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a>
-</span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a>    <span class="n">p4_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>    <span class="n">p4_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
-</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a>    <span class="n">p4_rpoint</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
-</span><span id="L-326"><a href="#L-326"><span class="linenos">326</span></a>    <span class="n">p4_point</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：獲得ポイント&quot;&quot;&quot;</span>
-</span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>    <span class="n">p4_rank</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：獲得順位&quot;&quot;&quot;</span>
-</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>
-</span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>    <span class="n">deposit</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;配給原点合計 - 素点合計&quot;&quot;&quot;</span>
-</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲームコメント&quot;&quot;&quot;</span>
-</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>    <span class="n">rule_version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子&quot;&quot;&quot;</span>
-</span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データ入力元識別子&quot;&quot;&quot;</span>
-</span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a>    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
-</span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計モード&quot;&quot;&quot;</span>
-</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a>
-</span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a>
-</span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
-</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>
-</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
-</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
-</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録対象プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録内容&quot;&quot;&quot;</span>
-</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データ入力元識別子&quot;&quot;&quot;</span>
-</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a>
-</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>
-</span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a>
-</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
-</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
-</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
-</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
-</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
-</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a><span class="sd">    - *False*: 降格しない</span>
-</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>
-</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>
-</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>
-</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
-</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
-</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
-</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
+</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
+</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
+</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
+</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
+</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>
+</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>
+</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ScoreDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコアデータ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>
+</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>    <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
+</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a>
+</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a>    <span class="n">p1_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a>    <span class="n">p1_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
+</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a>    <span class="n">p1_rpoint</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
+</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a>    <span class="n">p1_point</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得ポイント&quot;&quot;&quot;</span>
+</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a>    <span class="n">p1_rank</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得順位&quot;&quot;&quot;</span>
+</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a>
+</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a>    <span class="n">p2_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>    <span class="n">p2_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
+</span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a>    <span class="n">p2_rpoint</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
+</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>    <span class="n">p2_point</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得ポイント&quot;&quot;&quot;</span>
+</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>    <span class="n">p2_rank</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：獲得順位&quot;&quot;&quot;</span>
+</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>
+</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a>    <span class="n">p3_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a>    <span class="n">p3_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
+</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a>    <span class="n">p3_rpoint</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
+</span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a>    <span class="n">p3_point</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：獲得ポイント&quot;&quot;&quot;</span>
+</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>    <span class="n">p3_rank</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：獲得順位&quot;&quot;&quot;</span>
+</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a>
+</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>    <span class="n">p4_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-326"><a href="#L-326"><span class="linenos">326</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>    <span class="n">p4_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
+</span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>    <span class="n">p4_rpoint</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
+</span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>    <span class="n">p4_point</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：獲得ポイント&quot;&quot;&quot;</span>
+</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>    <span class="n">p4_rank</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：獲得順位&quot;&quot;&quot;</span>
+</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>
+</span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a>    <span class="n">deposit</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;配給原点合計 - 素点合計&quot;&quot;&quot;</span>
+</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a>    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲームコメント&quot;&quot;&quot;</span>
+</span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a>    <span class="n">rule_version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子&quot;&quot;&quot;</span>
+</span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データ入力元識別子&quot;&quot;&quot;</span>
+</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計モード&quot;&quot;&quot;</span>
+</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>
+</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>
+</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>
+</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
+</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
+</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録対象プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録内容&quot;&quot;&quot;</span>
+</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データ入力元識別子&quot;&quot;&quot;</span>
+</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a>
+</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a>
+</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>
+</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
+</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
+</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
+</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
+</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
+</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="sd">    - *False*: 降格しない</span>
+</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>
+</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>
+</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>
+</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
+</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
+</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -1707,6 +1715,11 @@
 </span><span id="PlaceholderDict-268"><a href="#PlaceholderDict-268"><span class="linenos">268</span></a><span class="sd">    - *2*: カウントのみ</span>
 </span><span id="PlaceholderDict-269"><a href="#PlaceholderDict-269"><span class="linenos">269</span></a><span class="sd">    - *3*: 卓外清算(チーム清算)</span>
 </span><span id="PlaceholderDict-270"><a href="#PlaceholderDict-270"><span class="linenos">270</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PlaceholderDict-271"><a href="#PlaceholderDict-271"><span class="linenos">271</span></a>    <span class="n">channel_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Path&quot;</span><span class="p">]</span>
+</span><span id="PlaceholderDict-272"><a href="#PlaceholderDict-272"><span class="linenos">272</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;チャンネル個別設定状況</span>
+</span><span id="PlaceholderDict-273"><a href="#PlaceholderDict-273"><span class="linenos">273</span></a><span class="sd">    - *Path*: 読み込んだ追加設定</span>
+</span><span id="PlaceholderDict-274"><a href="#PlaceholderDict-274"><span class="linenos">274</span></a><span class="sd">    - *None*: 個別設定を利用していない</span>
+</span><span id="PlaceholderDict-275"><a href="#PlaceholderDict-275"><span class="linenos">275</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -2319,6 +2332,24 @@
 
 
                             </div>
+                            <div id="PlaceholderDict.channel_config" class="classattr">
+                                <div class="attr variable">
+            <span class="name">channel_config</span><span class="annotation">: Optional[pathlib.Path]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#PlaceholderDict.channel_config"></a>
+    
+            <div class="docstring"><p>チャンネル個別設定状況</p>
+
+<ul>
+<li><em>Path</em>: 読み込んだ追加設定</li>
+<li><em>None</em>: 個別設定を利用していない</li>
+</ul>
+</div>
+
+
+                            </div>
                 </section>
                 <section id="MessageTypeDict">
                             <input id="MessageTypeDict-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -2331,13 +2362,13 @@
 
     </div>
     <a class="headerlink" href="#MessageTypeDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageTypeDict-273"><a href="#MessageTypeDict-273"><span class="linenos">273</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="MessageTypeDict-274"><a href="#MessageTypeDict-274"><span class="linenos">274</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
-</span><span id="MessageTypeDict-275"><a href="#MessageTypeDict-275"><span class="linenos">275</span></a>
-</span><span id="MessageTypeDict-276"><a href="#MessageTypeDict-276"><span class="linenos">276</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
-</span><span id="MessageTypeDict-277"><a href="#MessageTypeDict-277"><span class="linenos">277</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
-</span><span id="MessageTypeDict-278"><a href="#MessageTypeDict-278"><span class="linenos">278</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
-</span><span id="MessageTypeDict-279"><a href="#MessageTypeDict-279"><span class="linenos">279</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MessageTypeDict-278"><a href="#MessageTypeDict-278"><span class="linenos">278</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MessageTypeDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="MessageTypeDict-279"><a href="#MessageTypeDict-279"><span class="linenos">279</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メッセージ格納辞書&quot;&quot;&quot;</span>
+</span><span id="MessageTypeDict-280"><a href="#MessageTypeDict-280"><span class="linenos">280</span></a>
+</span><span id="MessageTypeDict-281"><a href="#MessageTypeDict-281"><span class="linenos">281</span></a>    <span class="n">data</span><span class="p">:</span> <span class="n">MessageType</span>
+</span><span id="MessageTypeDict-282"><a href="#MessageTypeDict-282"><span class="linenos">282</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;内容&quot;&quot;&quot;</span>
+</span><span id="MessageTypeDict-283"><a href="#MessageTypeDict-283"><span class="linenos">283</span></a>    <span class="n">options</span><span class="p">:</span> <span class="n">StyleOptions</span>
+</span><span id="MessageTypeDict-284"><a href="#MessageTypeDict-284"><span class="linenos">284</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;表示オプション&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -2383,66 +2414,66 @@
 
     </div>
     <a class="headerlink" href="#ScoreDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ScoreDict-282"><a href="#ScoreDict-282"><span class="linenos">282</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ScoreDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="ScoreDict-283"><a href="#ScoreDict-283"><span class="linenos">283</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコアデータ格納用辞書&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-284"><a href="#ScoreDict-284"><span class="linenos">284</span></a>
-</span><span id="ScoreDict-285"><a href="#ScoreDict-285"><span class="linenos">285</span></a>    <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-286"><a href="#ScoreDict-286"><span class="linenos">286</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-287"><a href="#ScoreDict-287"><span class="linenos">287</span></a>
-</span><span id="ScoreDict-288"><a href="#ScoreDict-288"><span class="linenos">288</span></a>    <span class="n">p1_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-289"><a href="#ScoreDict-289"><span class="linenos">289</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-290"><a href="#ScoreDict-290"><span class="linenos">290</span></a>    <span class="n">p1_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-291"><a href="#ScoreDict-291"><span class="linenos">291</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-292"><a href="#ScoreDict-292"><span class="linenos">292</span></a>    <span class="n">p1_rpoint</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-293"><a href="#ScoreDict-293"><span class="linenos">293</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-294"><a href="#ScoreDict-294"><span class="linenos">294</span></a>    <span class="n">p1_point</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="ScoreDict-295"><a href="#ScoreDict-295"><span class="linenos">295</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得ポイント&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-296"><a href="#ScoreDict-296"><span class="linenos">296</span></a>    <span class="n">p1_rank</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-297"><a href="#ScoreDict-297"><span class="linenos">297</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得順位&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-298"><a href="#ScoreDict-298"><span class="linenos">298</span></a>
-</span><span id="ScoreDict-299"><a href="#ScoreDict-299"><span class="linenos">299</span></a>    <span class="n">p2_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-300"><a href="#ScoreDict-300"><span class="linenos">300</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-301"><a href="#ScoreDict-301"><span class="linenos">301</span></a>    <span class="n">p2_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-302"><a href="#ScoreDict-302"><span class="linenos">302</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-303"><a href="#ScoreDict-303"><span class="linenos">303</span></a>    <span class="n">p2_rpoint</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-304"><a href="#ScoreDict-304"><span class="linenos">304</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-305"><a href="#ScoreDict-305"><span class="linenos">305</span></a>    <span class="n">p2_point</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="ScoreDict-306"><a href="#ScoreDict-306"><span class="linenos">306</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得ポイント&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-307"><a href="#ScoreDict-307"><span class="linenos">307</span></a>    <span class="n">p2_rank</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-308"><a href="#ScoreDict-308"><span class="linenos">308</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：獲得順位&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-309"><a href="#ScoreDict-309"><span class="linenos">309</span></a>
-</span><span id="ScoreDict-310"><a href="#ScoreDict-310"><span class="linenos">310</span></a>    <span class="n">p3_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-311"><a href="#ScoreDict-311"><span class="linenos">311</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-312"><a href="#ScoreDict-312"><span class="linenos">312</span></a>    <span class="n">p3_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-313"><a href="#ScoreDict-313"><span class="linenos">313</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-314"><a href="#ScoreDict-314"><span class="linenos">314</span></a>    <span class="n">p3_rpoint</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-315"><a href="#ScoreDict-315"><span class="linenos">315</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-316"><a href="#ScoreDict-316"><span class="linenos">316</span></a>    <span class="n">p3_point</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="ScoreDict-317"><a href="#ScoreDict-317"><span class="linenos">317</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：獲得ポイント&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-318"><a href="#ScoreDict-318"><span class="linenos">318</span></a>    <span class="n">p3_rank</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-319"><a href="#ScoreDict-319"><span class="linenos">319</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：獲得順位&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-320"><a href="#ScoreDict-320"><span class="linenos">320</span></a>
-</span><span id="ScoreDict-321"><a href="#ScoreDict-321"><span class="linenos">321</span></a>    <span class="n">p4_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-322"><a href="#ScoreDict-322"><span class="linenos">322</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-323"><a href="#ScoreDict-323"><span class="linenos">323</span></a>    <span class="n">p4_str</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-324"><a href="#ScoreDict-324"><span class="linenos">324</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-325"><a href="#ScoreDict-325"><span class="linenos">325</span></a>    <span class="n">p4_rpoint</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-326"><a href="#ScoreDict-326"><span class="linenos">326</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-327"><a href="#ScoreDict-327"><span class="linenos">327</span></a>    <span class="n">p4_point</span><span class="p">:</span> <span class="nb">float</span>
-</span><span id="ScoreDict-328"><a href="#ScoreDict-328"><span class="linenos">328</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：獲得ポイント&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-329"><a href="#ScoreDict-329"><span class="linenos">329</span></a>    <span class="n">p4_rank</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-330"><a href="#ScoreDict-330"><span class="linenos">330</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：獲得順位&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-331"><a href="#ScoreDict-331"><span class="linenos">331</span></a>
-</span><span id="ScoreDict-332"><a href="#ScoreDict-332"><span class="linenos">332</span></a>    <span class="n">deposit</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="ScoreDict-333"><a href="#ScoreDict-333"><span class="linenos">333</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;配給原点合計 - 素点合計&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-334"><a href="#ScoreDict-334"><span class="linenos">334</span></a>    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="ScoreDict-335"><a href="#ScoreDict-335"><span class="linenos">335</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲームコメント&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-336"><a href="#ScoreDict-336"><span class="linenos">336</span></a>    <span class="n">rule_version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ScoreDict-337"><a href="#ScoreDict-337"><span class="linenos">337</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-338"><a href="#ScoreDict-338"><span class="linenos">338</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-</span><span id="ScoreDict-339"><a href="#ScoreDict-339"><span class="linenos">339</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データ入力元識別子&quot;&quot;&quot;</span>
-</span><span id="ScoreDict-340"><a href="#ScoreDict-340"><span class="linenos">340</span></a>    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
-</span><span id="ScoreDict-341"><a href="#ScoreDict-341"><span class="linenos">341</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計モード&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ScoreDict-287"><a href="#ScoreDict-287"><span class="linenos">287</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ScoreDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="ScoreDict-288"><a href="#ScoreDict-288"><span class="linenos">288</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;スコアデータ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-289"><a href="#ScoreDict-289"><span class="linenos">289</span></a>
+</span><span id="ScoreDict-290"><a href="#ScoreDict-290"><span class="linenos">290</span></a>    <span class="n">ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-291"><a href="#ScoreDict-291"><span class="linenos">291</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-292"><a href="#ScoreDict-292"><span class="linenos">292</span></a>
+</span><span id="ScoreDict-293"><a href="#ScoreDict-293"><span class="linenos">293</span></a>    <span class="n">p1_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-294"><a href="#ScoreDict-294"><span class="linenos">294</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-295"><a href="#ScoreDict-295"><span class="linenos">295</span></a>    <span class="n">p1_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-296"><a href="#ScoreDict-296"><span class="linenos">296</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-297"><a href="#ScoreDict-297"><span class="linenos">297</span></a>    <span class="n">p1_rpoint</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-298"><a href="#ScoreDict-298"><span class="linenos">298</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-299"><a href="#ScoreDict-299"><span class="linenos">299</span></a>    <span class="n">p1_point</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="ScoreDict-300"><a href="#ScoreDict-300"><span class="linenos">300</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得ポイント&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-301"><a href="#ScoreDict-301"><span class="linenos">301</span></a>    <span class="n">p1_rank</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-302"><a href="#ScoreDict-302"><span class="linenos">302</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得順位&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-303"><a href="#ScoreDict-303"><span class="linenos">303</span></a>
+</span><span id="ScoreDict-304"><a href="#ScoreDict-304"><span class="linenos">304</span></a>    <span class="n">p2_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-305"><a href="#ScoreDict-305"><span class="linenos">305</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-306"><a href="#ScoreDict-306"><span class="linenos">306</span></a>    <span class="n">p2_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-307"><a href="#ScoreDict-307"><span class="linenos">307</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-308"><a href="#ScoreDict-308"><span class="linenos">308</span></a>    <span class="n">p2_rpoint</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-309"><a href="#ScoreDict-309"><span class="linenos">309</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-310"><a href="#ScoreDict-310"><span class="linenos">310</span></a>    <span class="n">p2_point</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="ScoreDict-311"><a href="#ScoreDict-311"><span class="linenos">311</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;東家：獲得ポイント&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-312"><a href="#ScoreDict-312"><span class="linenos">312</span></a>    <span class="n">p2_rank</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-313"><a href="#ScoreDict-313"><span class="linenos">313</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;南家：獲得順位&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-314"><a href="#ScoreDict-314"><span class="linenos">314</span></a>
+</span><span id="ScoreDict-315"><a href="#ScoreDict-315"><span class="linenos">315</span></a>    <span class="n">p3_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-316"><a href="#ScoreDict-316"><span class="linenos">316</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-317"><a href="#ScoreDict-317"><span class="linenos">317</span></a>    <span class="n">p3_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-318"><a href="#ScoreDict-318"><span class="linenos">318</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-319"><a href="#ScoreDict-319"><span class="linenos">319</span></a>    <span class="n">p3_rpoint</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-320"><a href="#ScoreDict-320"><span class="linenos">320</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-321"><a href="#ScoreDict-321"><span class="linenos">321</span></a>    <span class="n">p3_point</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="ScoreDict-322"><a href="#ScoreDict-322"><span class="linenos">322</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：獲得ポイント&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-323"><a href="#ScoreDict-323"><span class="linenos">323</span></a>    <span class="n">p3_rank</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-324"><a href="#ScoreDict-324"><span class="linenos">324</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;西家：獲得順位&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-325"><a href="#ScoreDict-325"><span class="linenos">325</span></a>
+</span><span id="ScoreDict-326"><a href="#ScoreDict-326"><span class="linenos">326</span></a>    <span class="n">p4_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-327"><a href="#ScoreDict-327"><span class="linenos">327</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-328"><a href="#ScoreDict-328"><span class="linenos">328</span></a>    <span class="n">p4_str</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-329"><a href="#ScoreDict-329"><span class="linenos">329</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：入力された素点情報(文字列)&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-330"><a href="#ScoreDict-330"><span class="linenos">330</span></a>    <span class="n">p4_rpoint</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-331"><a href="#ScoreDict-331"><span class="linenos">331</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：素点(入力文字列評価後)&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-332"><a href="#ScoreDict-332"><span class="linenos">332</span></a>    <span class="n">p4_point</span><span class="p">:</span> <span class="nb">float</span>
+</span><span id="ScoreDict-333"><a href="#ScoreDict-333"><span class="linenos">333</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：獲得ポイント&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-334"><a href="#ScoreDict-334"><span class="linenos">334</span></a>    <span class="n">p4_rank</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-335"><a href="#ScoreDict-335"><span class="linenos">335</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;北家：獲得順位&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-336"><a href="#ScoreDict-336"><span class="linenos">336</span></a>
+</span><span id="ScoreDict-337"><a href="#ScoreDict-337"><span class="linenos">337</span></a>    <span class="n">deposit</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="ScoreDict-338"><a href="#ScoreDict-338"><span class="linenos">338</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;配給原点合計 - 素点合計&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-339"><a href="#ScoreDict-339"><span class="linenos">339</span></a>    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="ScoreDict-340"><a href="#ScoreDict-340"><span class="linenos">340</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲームコメント&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-341"><a href="#ScoreDict-341"><span class="linenos">341</span></a>    <span class="n">rule_version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ScoreDict-342"><a href="#ScoreDict-342"><span class="linenos">342</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ルール識別子&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-343"><a href="#ScoreDict-343"><span class="linenos">343</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="ScoreDict-344"><a href="#ScoreDict-344"><span class="linenos">344</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データ入力元識別子&quot;&quot;&quot;</span>
+</span><span id="ScoreDict-345"><a href="#ScoreDict-345"><span class="linenos">345</span></a>    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+</span><span id="ScoreDict-346"><a href="#ScoreDict-346"><span class="linenos">346</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;集計モード&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -2800,19 +2831,19 @@
 
     </div>
     <a class="headerlink" href="#RemarkDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RemarkDict-344"><a href="#RemarkDict-344"><span class="linenos">344</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="RemarkDict-345"><a href="#RemarkDict-345"><span class="linenos">345</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-346"><a href="#RemarkDict-346"><span class="linenos">346</span></a>
-</span><span id="RemarkDict-347"><a href="#RemarkDict-347"><span class="linenos">347</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-348"><a href="#RemarkDict-348"><span class="linenos">348</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-349"><a href="#RemarkDict-349"><span class="linenos">349</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-350"><a href="#RemarkDict-350"><span class="linenos">350</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-351"><a href="#RemarkDict-351"><span class="linenos">351</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-352"><a href="#RemarkDict-352"><span class="linenos">352</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録対象プレイヤー名&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-353"><a href="#RemarkDict-353"><span class="linenos">353</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-354"><a href="#RemarkDict-354"><span class="linenos">354</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録内容&quot;&quot;&quot;</span>
-</span><span id="RemarkDict-355"><a href="#RemarkDict-355"><span class="linenos">355</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RemarkDict-356"><a href="#RemarkDict-356"><span class="linenos">356</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データ入力元識別子&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RemarkDict-349"><a href="#RemarkDict-349"><span class="linenos">349</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RemarkDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="RemarkDict-350"><a href="#RemarkDict-350"><span class="linenos">350</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ格納用辞書&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-351"><a href="#RemarkDict-351"><span class="linenos">351</span></a>
+</span><span id="RemarkDict-352"><a href="#RemarkDict-352"><span class="linenos">352</span></a>    <span class="n">thread_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-353"><a href="#RemarkDict-353"><span class="linenos">353</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ゲーム終了時間&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-354"><a href="#RemarkDict-354"><span class="linenos">354</span></a>    <span class="n">event_ts</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-355"><a href="#RemarkDict-355"><span class="linenos">355</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;メモ記録時間&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-356"><a href="#RemarkDict-356"><span class="linenos">356</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-357"><a href="#RemarkDict-357"><span class="linenos">357</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録対象プレイヤー名&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-358"><a href="#RemarkDict-358"><span class="linenos">358</span></a>    <span class="n">matter</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-359"><a href="#RemarkDict-359"><span class="linenos">359</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;記録内容&quot;&quot;&quot;</span>
+</span><span id="RemarkDict-360"><a href="#RemarkDict-360"><span class="linenos">360</span></a>    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RemarkDict-361"><a href="#RemarkDict-361"><span class="linenos">361</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;データ入力元識別子&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -2897,20 +2928,20 @@
 
     </div>
     <a class="headerlink" href="#RankTableDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RankTableDict-359"><a href="#RankTableDict-359"><span class="linenos">359</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
-</span><span id="RankTableDict-360"><a href="#RankTableDict-360"><span class="linenos">360</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-361"><a href="#RankTableDict-361"><span class="linenos">361</span></a>
-</span><span id="RankTableDict-362"><a href="#RankTableDict-362"><span class="linenos">362</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RankTableDict-363"><a href="#RankTableDict-363"><span class="linenos">363</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-364"><a href="#RankTableDict-364"><span class="linenos">364</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="RankTableDict-365"><a href="#RankTableDict-365"><span class="linenos">365</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-366"><a href="#RankTableDict-366"><span class="linenos">366</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
-</span><span id="RankTableDict-367"><a href="#RankTableDict-367"><span class="linenos">367</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
-</span><span id="RankTableDict-368"><a href="#RankTableDict-368"><span class="linenos">368</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
-</span><span id="RankTableDict-369"><a href="#RankTableDict-369"><span class="linenos">369</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
-</span><span id="RankTableDict-370"><a href="#RankTableDict-370"><span class="linenos">370</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
-</span><span id="RankTableDict-371"><a href="#RankTableDict-371"><span class="linenos">371</span></a><span class="sd">    - *False*: 降格しない</span>
-</span><span id="RankTableDict-372"><a href="#RankTableDict-372"><span class="linenos">372</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RankTableDict-364"><a href="#RankTableDict-364"><span class="linenos">364</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RankTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="RankTableDict-365"><a href="#RankTableDict-365"><span class="linenos">365</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-366"><a href="#RankTableDict-366"><span class="linenos">366</span></a>
+</span><span id="RankTableDict-367"><a href="#RankTableDict-367"><span class="linenos">367</span></a>    <span class="n">grade</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RankTableDict-368"><a href="#RankTableDict-368"><span class="linenos">368</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位名称&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-369"><a href="#RankTableDict-369"><span class="linenos">369</span></a>    <span class="n">point</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RankTableDict-370"><a href="#RankTableDict-370"><span class="linenos">370</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;初期ポイントと昇段に必要なポイント&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-371"><a href="#RankTableDict-371"><span class="linenos">371</span></a>    <span class="n">acquisition</span><span class="p">:</span> <span class="nb">list</span>
+</span><span id="RankTableDict-372"><a href="#RankTableDict-372"><span class="linenos">372</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;獲得ポイント(順位)&quot;&quot;&quot;</span>
+</span><span id="RankTableDict-373"><a href="#RankTableDict-373"><span class="linenos">373</span></a>    <span class="n">demote</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="RankTableDict-374"><a href="#RankTableDict-374"><span class="linenos">374</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;降格フラグ</span>
+</span><span id="RankTableDict-375"><a href="#RankTableDict-375"><span class="linenos">375</span></a><span class="sd">    - *True*: 降格する(省略時デフォルト)</span>
+</span><span id="RankTableDict-376"><a href="#RankTableDict-376"><span class="linenos">376</span></a><span class="sd">    - *False*: 降格しない</span>
+</span><span id="RankTableDict-377"><a href="#RankTableDict-377"><span class="linenos">377</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -2987,15 +3018,15 @@
 
     </div>
     <a class="headerlink" href="#GradeTableDict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GradeTableDict-375"><a href="#GradeTableDict-375"><span class="linenos">375</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="GradeTableDict-376"><a href="#GradeTableDict-376"><span class="linenos">376</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-377"><a href="#GradeTableDict-377"><span class="linenos">377</span></a>
-</span><span id="GradeTableDict-378"><a href="#GradeTableDict-378"><span class="linenos">378</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GradeTableDict-379"><a href="#GradeTableDict-379"><span class="linenos">379</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-380"><a href="#GradeTableDict-380"><span class="linenos">380</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="GradeTableDict-381"><a href="#GradeTableDict-381"><span class="linenos">381</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
-</span><span id="GradeTableDict-382"><a href="#GradeTableDict-382"><span class="linenos">382</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
-</span><span id="GradeTableDict-383"><a href="#GradeTableDict-383"><span class="linenos">383</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GradeTableDict-380"><a href="#GradeTableDict-380"><span class="linenos">380</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GradeTableDict</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="GradeTableDict-381"><a href="#GradeTableDict-381"><span class="linenos">381</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;段位テーブル用辞書&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-382"><a href="#GradeTableDict-382"><span class="linenos">382</span></a>
+</span><span id="GradeTableDict-383"><a href="#GradeTableDict-383"><span class="linenos">383</span></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GradeTableDict-384"><a href="#GradeTableDict-384"><span class="linenos">384</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;識別名&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-385"><a href="#GradeTableDict-385"><span class="linenos">385</span></a>    <span class="n">addition_expression</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="GradeTableDict-386"><a href="#GradeTableDict-386"><span class="linenos">386</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;素点評価式(昇段ポイントに加算)&quot;&quot;&quot;</span>
+</span><span id="GradeTableDict-387"><a href="#GradeTableDict-387"><span class="linenos">387</span></a>    <span class="n">table</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RankTableDict</span><span class="p">]</span>
+</span><span id="GradeTableDict-388"><a href="#GradeTableDict-388"><span class="linenos">388</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;昇段ポイント計算テーブル&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
