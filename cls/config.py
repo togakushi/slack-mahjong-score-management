@@ -10,9 +10,10 @@ from dataclasses import dataclass, field
 from math import ceil
 from pathlib import Path, PosixPath
 from types import NoneType
-from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
+from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union, cast
 
 from cls.rule import RuleSet
+from libs.data.lookup.db import read_memberslist
 from libs.types import GradeTableDict
 
 if TYPE_CHECKING:
@@ -857,3 +858,20 @@ class AppConfig:
                 self.report.commandword = protected_values
             case _:
                 return
+
+    def read_channel_config(self, section_name: str):
+        """チャンネル個別設定読み込み
+
+        Args:
+            section_name (str): セクション名
+        """
+
+        self.initialization()
+
+        if self.main_parser.has_section(section_name):
+            if channel_config := self.main_parser[section_name].get("channel_config"):
+                self.overwrite(Path(channel_config), "setting")
+                logging.info("channel_config: %s", Path(channel_config).absolute())
+                logging.info("database_file: %s", cast(Path, self.setting.database_file).absolute())
+
+        read_memberslist()
