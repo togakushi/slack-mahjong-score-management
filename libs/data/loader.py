@@ -4,8 +4,9 @@ libs/data/loader.py
 
 import logging
 import re
+from contextlib import closing
 from datetime import datetime
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import pandas as pd
 
@@ -14,6 +15,27 @@ from libs.utils import dbutil
 
 if TYPE_CHECKING:
     from cls.timekit import ExtendedDatetime as ExtDt
+
+
+def execute(sql: str) -> list[dict[str, Any]]:
+    """クエリ実行
+
+    Args:
+        sql (str): 実行クエリ
+
+    Returns:
+        list[dict[str, Any]]: 実行結果
+    """
+
+    ret: list[dict[str, Any]] = []
+
+    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
+        rows = conn.execute(dbutil.query_modification(sql), g.params)
+
+        for row in rows.fetchall():
+            ret.append(dict(row))
+
+    return ret
 
 
 def read_data(keyword: str) -> pd.DataFrame:
