@@ -21,6 +21,12 @@ def event_message(m: "MessageParserProtocol"):
         m (MessageParserProtocol): _description_
     """
 
+    g.params.update(
+        {
+            "source": m.status.source,
+            "separate": g.cfg.setting.separate,
+        }
+    )
     g.cfg.rule.status_update()
 
     m.set_data(
@@ -39,8 +45,8 @@ def event_message(m: "MessageParserProtocol"):
     m.set_data(
         "成績グラフ",
         textwrap.dedent(f"""\
-        呼び出しキーワード：{"、".join(g.cfg.results.commandword)}
-        検索範囲デフォルト：{g.cfg.results.aggregation_range}
+        呼び出しキーワード：{"、".join(g.cfg.graph.commandword)}
+        検索範囲デフォルト：{g.cfg.graph.aggregation_range}
         """),
         StyleOptions(indent=1),
     )
@@ -145,4 +151,20 @@ def event_message(m: "MessageParserProtocol"):
         "ルールセット",
         "\n \n".join(rule_set),
         StyleOptions(indent=1, keep_blank=True),
+    )
+
+    # その他
+    if g.params.get("channel_config"):
+        channel_config = g.params["channel_config"].name
+    else:
+        channel_config = "---"
+    m.set_data(
+        "チャンネル設定情報",
+        textwrap.dedent(f"""\
+        チャンネル個別設定：{channel_config}
+        チャンネルセパレート：{"有効" if g.params.get("separate", False) else "無効"}
+        データベースファイル：{g.cfg.setting.database_file}
+        チャンネル識別子：{g.params.get("source")}
+        """),
+        StyleOptions(indent=1),
     )
