@@ -302,6 +302,7 @@ def register():
     def dispatch_help(m: "MessageParserProtocol"):
         compose.msg_help.event_message(m)
         m.post.ts = m.data.event_ts
+        m.post.thread_title = "ヘルプメッセージ"
 
     def dispatch_download(m: "MessageParserProtocol"):
         m.set_data("成績記録DB", g.cfg.setting.database_file, StyleOptions())
