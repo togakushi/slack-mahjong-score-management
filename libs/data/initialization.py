@@ -26,9 +26,9 @@ def initialization_resultdb(database_file: Union[str, Path]) -> None:
     """
 
     if isinstance(database_file, Path):
-        logging.debug(database_file.absolute())
+        logging.info(database_file.absolute())
     else:
-        logging.debug(database_file)
+        logging.info(database_file)
 
     resultdb = dbutil.connection(database_file)
     memdb = dbutil.connection(":memory:")
