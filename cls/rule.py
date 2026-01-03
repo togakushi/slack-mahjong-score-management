@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 class RuleData:
     """ルールデータ"""
 
+    # ルール
     rule_version: str = ""
     """ルールバージョン識別子"""
     mode: Literal[3, 4] = 4
@@ -39,6 +40,14 @@ class RuleData:
     - *True*: 山分けにする
     - *False*: 席順で決める
     """
+
+    # ステータス
+    first_time: ExtDt = field(default=ExtDt("1900-01-01 00:00:00"))
+    """記録開始日時"""
+    last_time: ExtDt = field(default=ExtDt("1900-01-01 00:00:00"))
+    """最終記録日時"""
+    count: int = 0
+    """記録回数"""
 
     def update(self, rule_data: Mapping[str, Any]):
         """ルール更新
@@ -146,6 +155,22 @@ class RuleSet:
             if self.data_set(section_name, mode=int(rule.get("mode", 4))):  # type: ignore
                 self.data[section_name].update(rule)
 
+    def status_update(self, version: str, **kwargs):
+        """ステータス更新
+
+        Args:
+            version (str): ルールバージョン識別子
+            kwargs (dict): 更新情報
+        """
+
+        if self.data.get(version):
+            if "count" in kwargs and isinstance(kwargs["count"], int):
+                self.data[version].count = kwargs["count"]
+            if "first_time" in kwargs and isinstance(kwargs["first_time"], ExtDt):
+                self.data[version].first_time = kwargs["first_time"]
+            if "last_time" in kwargs and isinstance(kwargs["last_time"], ExtDt):
+                self.data[version].last_time = kwargs["last_time"]
+
     def to_dict(self, version: str) -> dict[str, Any]:
         """指定ルールバージョン識別子の情報を辞書で返す
 
@@ -157,7 +182,15 @@ class RuleSet:
         """
 
         if rule := self.data.get(version):
-            return rule.__dict__
+            return {
+                "rule_version": rule.rule_version,
+                "mode": rule.mode,
+                "origin_point": rule.origin_point,
+                "return_point": rule.return_point,
+                "rank_point": rule.rank_point,
+                "ignore_flying": rule.ignore_flying,
+                "draw_split": rule.draw_split,
+            }
 
         return {}
 
@@ -228,6 +261,12 @@ class RuleSet:
                 case _:
                     mode = "未定義"
 
+            # 記録時間
+            if rule.first_time == rule.last_time and rule.count == 0:
+                recording_range = "---"
+            else:
+                recording_range = f"{rule.first_time.format('ymdhm')} ～ {rule.last_time.format('ymdhm')} ({rule.count} G)"
+
             ret = table2ascii(
                 body=[
                     ["ルールバージョン", rule.rule_version],
@@ -236,6 +275,7 @@ class RuleSet:
                     ["順位点", " / ".join([f"{pt}pt".replace("-", "▲") for pt in rule.rank_point])],
                     ["同点時", "順位点山分け" if rule.draw_split else "席順"],
                     ["成績登録キーワード", "、".join(keyword)],
+                    ["記録範囲", recording_range],
                 ],
                 alignments=[Alignment.LEFT, Alignment.LEFT],
                 style=PresetStyle.plain,
