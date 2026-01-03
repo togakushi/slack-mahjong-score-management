@@ -1,5 +1,7 @@
 # チーム管理
 チームの管理はスラッシュコマンドで行う。
+> [!NOTE]
+> `/commandname`は[サービス個別設定](../config/integrations.md)の`slash_command`で定義したもの。
 
 ## チーム作成
 ```
@@ -10,7 +12,7 @@ or
 /commandname team_add <作成するチーム名>
 ```
 
-> [!TIP]
+> [!WARNING]
 > メンバー名と同一のチーム名は登録できない。
 
 ## チーム削除
@@ -33,7 +35,6 @@ or
 
 ## チーム情報削除
 全チームの削除、および全メンバーを未所属に変更する。
-
 ```
 /commandname team_clear
 ```
