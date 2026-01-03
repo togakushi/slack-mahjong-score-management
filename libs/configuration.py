@@ -298,7 +298,7 @@ def register():
     """ディスパッチテーブル登録"""
 
     def dispatch_help(m: "MessageParserProtocol"):
-        m.set_data("ヘルプ", compose.msg_help.event_message(), StyleOptions())
+        compose.msg_help.event_message(m)
         m.post.ts = m.data.event_ts
 
     def dispatch_download(m: "MessageParserProtocol"):
