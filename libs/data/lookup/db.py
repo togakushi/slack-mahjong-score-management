@@ -132,36 +132,6 @@ def get_team_info() -> list["TeamDataDict"]:
     return ret
 
 
-def rule_status_update():
-    """ルールセットのステータスを更新する"""
-
-    with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
-        ret = conn.execute(
-            """
-            select
-                rule_version,
-                min(ts) as first_time,
-                max(ts) as last_time,
-                count() as count
-            from
-                result
-            group by
-                rule_version
-            ;
-            """
-        )
-
-        for version, first_time, last_time, count in ret.fetchall():
-            g.cfg.rule.status_update(
-                version=version,
-                **dict(
-                    first_time=ExtDt(float(first_time)),
-                    last_time=ExtDt(float(last_time)),
-                    count=int(count),
-                ),
-            )
-
-
 def regulation_list(word_type: int = 0) -> list:
     """登録済みワードリストを取得する
 
