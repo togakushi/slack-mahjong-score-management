@@ -19,11 +19,12 @@ if TYPE_CHECKING:
 class AdapterAPI(APIInterface):
     """インターフェースAPI操作クラス"""
 
-    def _text_formatter(self, text: str) -> str:
+    def _text_formatter(self, text: str, style: StyleOptions) -> str:
         """テキスト整形
 
         Args:
             text (str): 対象テキスト
+            style (StyleOptions): 修飾オプション
 
         Returns:
             str: 整形済みテキスト
@@ -33,9 +34,9 @@ class AdapterAPI(APIInterface):
         for line in text.splitlines():
             line = line.replace("<@>", "")
             line = textwrap.dedent(line)
-            if line:
-                ret += f"{line}\n"
-        return ret.strip()
+            if line or style.keep_blank:
+                ret += textwrap.indent(f"{line}\n", "\t" * style.indent)
+        return ret.rstrip()
 
     def post(self, m: "MessageParserProtocol"):
         """メッセージ出力
@@ -64,7 +65,7 @@ class AdapterAPI(APIInterface):
 
                 match msg.get("data"):
                     case x if isinstance(x, str):
-                        print(self._text_formatter(x))
+                        print(self._text_formatter(x, style))
                     case x if isinstance(x, pd.DataFrame):
                         disp = x.to_markdown(
                             index=style.show_index,
