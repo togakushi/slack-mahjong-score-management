@@ -175,7 +175,7 @@ class RuleSet:
         )
 
         for status_data in status:
-            if rule_version := status_data.get("rule_version"):
+            if (rule_version := status_data.get("rule_version")) and self.data.get(rule_version):
                 if "count" in status_data:
                     self.data[rule_version].count = int(status_data["count"])
                 if "first_time" in status_data:
