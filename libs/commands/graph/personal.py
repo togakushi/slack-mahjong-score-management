@@ -106,7 +106,7 @@ def plot(m: "MessageParserProtocol"):
 
             rank_ax.set_xlabel(graphutil.gen_xlabel(len(df)))
             rank_ax.set_xticks(**graphutil.xticks_parameter(df["playtime"].to_list()))
-            rank_ax.set_yticks(list(range(1, g.params.get("mode", 4) + 1)))
+            rank_ax.set_yticks(list(range(1, g.params.get("mode", 4) + 1)))  # type: ignore[not-callable]
             rank_ax.set_ylim(ymin=0.85, ymax=g.params.get("mode", 4) + 0.15)
             rank_ax.invert_yaxis()
 

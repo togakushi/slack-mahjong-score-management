@@ -122,6 +122,13 @@ class StyleOptions:
     - *True*: 可能な限り複数の要素をひとつにまとめる
     - *False*: 要素単位でデータを処理する
     """
+    indent: int = 0
+    """インデント数(TAB)"""
+    keep_blank: bool = False
+    """空行の削除
+    - *True*: 削除しない
+    - *False*: 削除する
+    """
 
     @property
     def filename(self) -> str:
