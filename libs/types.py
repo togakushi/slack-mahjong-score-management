@@ -267,6 +267,11 @@ class PlaceholderDict(TypedDict, total=False):
     - *2*: カウントのみ
     - *3*: 卓外清算(チーム清算)
     """
+    channel_config: Optional["Path"]
+    """チャンネル個別設定状況
+    - *Path*: 読み込んだ追加設定
+    - *None*: 個別設定を利用していない
+    """
 
 
 class MessageTypeDict(TypedDict):

@@ -14,6 +14,8 @@ from libs.utils import dbutil, dictutil
 def main():
     """ポイント再計算"""
 
+    g.cfg.initialization()
+
     modify.db_backup()
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as cur:

@@ -4,7 +4,6 @@ libs/dispatcher.py
 
 import logging
 import re
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import libs.global_value as g
@@ -23,12 +22,7 @@ def by_keyword(m: "MessageParserProtocol"):
     """メイン処理"""
 
     # チャンネル個別設定切替
-    g.cfg.initialization()
-    if g.cfg.main_parser.has_section(m.status.source):
-        if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
-            logging.debug("Channel override settings: %s", Path(channel_config).absolute())
-            g.cfg.overwrite(Path(channel_config), "setting")
-    lookup.db.read_memberslist()
+    g.params.update({"channel_config": g.cfg.read_channel_config(m.status.source)})
 
     logging.debug("keyword=%s, argument=%s, source=%s", m.keyword, m.argument, m.status.source)
     logging.debug(

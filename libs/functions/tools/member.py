@@ -13,6 +13,9 @@ from libs.utils import dbutil
 
 def export_data():
     """メンバー情報エクスポート"""
+
+    g.cfg.initialization()
+
     if g.args.export_data:
         for table in ("member", "alias", "team"):
             csvfile = f"{g.args.export_data}_{table}.csv"
@@ -34,6 +37,9 @@ def export_data():
 
 def import_data():
     """メンバー情報インポート"""
+
+    g.cfg.initialization()
+
     if g.args.import_data:
         modify.db_backup()
         conn = dbutil.connection(g.cfg.setting.database_file)

@@ -93,6 +93,8 @@ class PostData(DataMixin):
     """スレッドに返す"""
     ts: str = field(default="undetermined")
     """指定タイムスタンプへの強制リプライ"""
+    thread_title: str = field(default="")
+    """スレッドに付けるタイトル"""
 
 
 @dataclass

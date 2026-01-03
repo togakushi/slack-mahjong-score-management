@@ -3,8 +3,6 @@
 app.py - 麻雀のスコアを記録し、集計して表示するツール
 
 help:
-
-    $ ./app.py --help
     usage: app.py [-h] ...
 
     options:

@@ -244,6 +244,15 @@ def setup():
     g.adapter = factory.select_adapter(g.selected_service, g.cfg)
     register()
 
+    # 設定情報
+    logging.info("config: %s", g.cfg.config_file.absolute())
+    logging.info(
+        "service: %s, graph_library: %s, time_adjust: %sh",
+        g.selected_service,
+        g.adapter.conf.plotting_backend,
+        g.cfg.setting.time_adjust,
+    )
+
     # DB初期化
     initialization.initialization_resultdb(g.cfg.setting.database_file)
     for section in g.cfg.main_parser.sections():
@@ -278,15 +287,6 @@ def setup():
             g.cfg.rule.keyword_mapping = {"終局": g.cfg.mahjong.rule_version}
 
     g.cfg.rule.status_update()
-
-    # 設定情報のロギング
-    logging.info("config: %s", g.cfg.config_file.absolute())
-    logging.info(
-        "service: %s, graph_library: %s, time_adjust: %sh",
-        g.selected_service,
-        g.adapter.conf.plotting_backend,
-        g.cfg.setting.time_adjust,
-    )
     g.cfg.rule.info()
 
     # キーワード重複チェック
@@ -302,6 +302,7 @@ def register():
     def dispatch_help(m: "MessageParserProtocol"):
         compose.msg_help.event_message(m)
         m.post.ts = m.data.event_ts
+        m.post.thread_title = "ヘルプメッセージ"
 
     def dispatch_download(m: "MessageParserProtocol"):
         m.set_data("成績記録DB", g.cfg.setting.database_file, StyleOptions())

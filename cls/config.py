@@ -10,9 +10,10 @@ from dataclasses import dataclass, field
 from math import ceil
 from pathlib import Path, PosixPath
 from types import NoneType
-from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
+from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union, cast
 
 from cls.rule import RuleSet
+from libs.data.lookup.db import read_memberslist
 from libs.types import GradeTableDict
 
 if TYPE_CHECKING:
@@ -857,3 +858,32 @@ class AppConfig:
                 self.report.commandword = protected_values
             case _:
                 return
+
+    def read_channel_config(self, section_name: str) -> Union[Path | None]:
+        """チャンネル個別設定読み込み
+
+        Args:
+            section_name (str): セクション名
+
+        Returns:
+            Union[Path | None]: 個別設定読み込み結果
+                - *Path*: 読み込んだ設定ファイルパス
+                - *None*: 読み込める設定ファイルがない
+        """
+
+        config_path: Union[Path | None] = None
+        self.initialization()
+
+        if self.main_parser.has_section(section_name):
+            if channel_config := self.main_parser[section_name].get("channel_config"):
+                config_path = Path(channel_config)
+                if config_path.exists():
+                    self.overwrite(config_path, "setting")
+                    logging.debug("channel_config: %s", config_path.absolute())
+                    logging.debug("database_file: %s", cast(Path, self.setting.database_file).absolute())
+                else:
+                    config_path = None
+
+        read_memberslist()
+
+        return config_path

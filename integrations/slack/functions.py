@@ -53,7 +53,7 @@ class SvcFunctions(FunctionsInterface):
         after = ExtDt(days=-self.conf.search_after, hours=g.cfg.setting.time_adjust).format("ymd", "-")
         channel = " ".join([f"in:{x}" for x in self.conf.search_channel])
         query = f"{word} {channel} after:{after}"
-        logging.info("query=%s", query)
+        logging.info("query=%s, check_db=%s", query, g.cfg.setting.database_file)
 
         # データ取得
         response = self.api.webclient.search_messages(query=query, sort="timestamp", sort_dir="asc", count=100)

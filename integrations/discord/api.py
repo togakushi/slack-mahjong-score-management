@@ -83,16 +83,20 @@ class AdapterAPI(APIInterface):
         # 見出しポスト
         header_title = ""
         header_text = ""
-        header_msg: Optional["Message"] = None
+        thread_msg: Optional["Message"] = None
 
         if m.post.headline:
             header_title, header_text = next(iter(m.post.headline.items()))
+            m.post.thread_title = header_title
             if not m.post.message:
-                header_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
+                thread_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
                 m.post.thread = True
             elif not all(v["options"].header_hidden for x in m.post.message for _, v in x.items()):
-                header_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
+                thread_msg = await self.response.reply(f"{_header_text(header_title)}{header_text.rstrip()}")
                 m.post.thread = True
+        elif m.post.thread_title:
+            thread_msg = self.response
+            m.post.thread = True
 
         # 本文
         post_msg: list[str] = []
@@ -153,11 +157,15 @@ class AdapterAPI(APIInterface):
             else:
                 post_msg = formatter.group_strings(post_msg, limit=1800)
 
-        if header_msg and m.post.thread:
+        if thread_msg and m.post.thread:
             date_suffix = ExtDt(float(m.data.event_ts)).format("ymdhm", delimiter="slash")
-            thread = await header_msg.create_thread(name=f"{header_title} - {date_suffix}")
-            for msg in post_msg:
-                await thread.send(msg)
+            if not m.post.thread_title.isnumeric() and m.post.thread_title:
+                thread = await thread_msg.create_thread(name=f"{m.post.thread_title} - {date_suffix}")
+                for msg in post_msg:
+                    await thread.send(msg)
+            else:  # 数字タイトルはスレッドにしない
+                for msg in post_msg:
+                    await self.response.reply(msg)
         else:
             for msg in post_msg:
                 await self.response.reply(msg)
