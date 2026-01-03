@@ -242,41 +242,46 @@ class RuleSet:
         """
 
         ret: str = ""
-        keyword: list = []
+        body_data: list = []
 
         if rule := self.data.get(version):
-            # マッピング情報
-            for k, v in self.keyword_mapping.items():
-                if v == version:
-                    keyword.append(k)
-            if not keyword:
-                keyword.append("---")
+            body_data.append(["ルールバージョン", rule.rule_version])
 
             # 集計モード
             match rule.mode:
                 case 3:
-                    mode = "三人打ち"
+                    body_data.append(["集計モード", "三人打ち"])
                 case 4:
-                    mode = "四人打ち"
+                    body_data.append(["集計モード", "四人打ち"])
                 case _:
-                    mode = "未定義"
+                    body_data.append(["集計モード", "未定義"])
 
-            # 記録時間
-            if rule.first_time == rule.last_time and rule.count == 0:
-                recording_range = "---"
-            else:
-                recording_range = f"{rule.first_time.format('ymdhm')} ～ {rule.last_time.format('ymdhm')} ({rule.count} G)"
-
-            ret = table2ascii(
-                body=[
-                    ["ルールバージョン", rule.rule_version],
-                    ["集計モード", mode],
+            body_data.extend(
+                [
                     ["点数", f"{rule.origin_point * 100}点持ち / {rule.return_point * 100}点返し"],
                     ["順位点", " / ".join([f"{pt}pt".replace("-", "▲") for pt in rule.rank_point])],
                     ["同点時", "順位点山分け" if rule.draw_split else "席順"],
-                    ["成績登録キーワード", "、".join(keyword)],
-                    ["記録範囲", recording_range],
-                ],
+                ]
+            )
+
+            # マッピング情報
+            if keyword := [word for word, rule_version in self.keyword_mapping.items() if rule_version == version]:
+                body_data.append(["成績登録キーワード", "、".join(keyword)])
+            else:
+                body_data.append(["成績登録キーワード", "---"])
+
+            # 記録時間
+            body_data.append(["記録数", f"{rule.count} ゲーム"])
+            if rule.count:
+                body_data.extend(
+                    [
+                        ["記録開始日時", rule.first_time.format("ymdhms")],
+                        ["最終記録日時", rule.last_time.format("ymdhms")],
+                    ]
+                )
+
+            ret = table2ascii(
+                body=body_data,
                 alignments=[Alignment.LEFT, Alignment.LEFT],
                 style=PresetStyle.plain,
             )
