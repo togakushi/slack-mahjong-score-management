@@ -115,7 +115,7 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
                 pprint(g.cfg.team.info)
 
             case "help":
-                pprint(compose.msg_help.event_message(), width=200)
+                pprint(compose.msg_help.event_message(m), width=200)
 
             case "summary":
                 g.cfg.results.always_argument = add_argument
