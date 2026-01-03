@@ -859,19 +859,31 @@ class AppConfig:
             case _:
                 return
 
-    def read_channel_config(self, section_name: str):
+    def read_channel_config(self, section_name: str) -> Union[Path | None]:
         """チャンネル個別設定読み込み
 
         Args:
             section_name (str): セクション名
+
+        Returns:
+            Union[Path | None]: 個別設定読み込み結果
+                - *Path*: 読み込んだ設定ファイルパス
+                - *None*: 読み込める設定ファイルがない
         """
 
+        config_path: Union[Path | None] = None
         self.initialization()
 
         if self.main_parser.has_section(section_name):
             if channel_config := self.main_parser[section_name].get("channel_config"):
-                self.overwrite(Path(channel_config), "setting")
-                logging.info("channel_config: %s", Path(channel_config).absolute())
-                logging.info("database_file: %s", cast(Path, self.setting.database_file).absolute())
+                config_path = Path(channel_config)
+                if config_path.exists():
+                    self.overwrite(config_path, "setting")
+                    logging.debug("channel_config: %s", config_path.absolute())
+                    logging.debug("database_file: %s", cast(Path, self.setting.database_file).absolute())
+                else:
+                    config_path = None
 
         read_memberslist()
+
+        return config_path
