@@ -155,7 +155,11 @@ class AdapterAPI(APIInterface):
 
         if header_msg and m.post.thread:
             date_suffix = ExtDt(float(m.data.event_ts)).format("ymdhm", delimiter="slash")
-            thread = await header_msg.create_thread(name=f"{header_title} - {date_suffix}")
+            if not header_title.isnumeric() and header_title:
+                thread = await header_msg.create_thread(name=f"{header_title} - {date_suffix}")
+            else:  # 数字タイトルはスレッドにしない
+                for msg in post_msg:
+                    await self.response.reply(msg)
             for msg in post_msg:
                 await thread.send(msg)
         else:
