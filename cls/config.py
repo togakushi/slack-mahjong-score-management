@@ -156,7 +156,7 @@ class MahjongSection(BaseSection):
         """配給原点"""
         self.return_point: int = int(-1)
         """返し点"""
-        self.rank_point: list = [30, 10, -10, -30]
+        self.rank_point: list = []
         """順位点"""
         self.ignore_flying: bool = False
         """トビカウント
@@ -187,11 +187,15 @@ class MahjongSection(BaseSection):
                     self.origin_point = 350
                 if self.return_point < 0:
                     self.return_point = 400
+                if not self.rank_point:
+                    self.rank_point = [30, 0, -30]
             case 4:
                 if self.origin_point < 0:
                     self.origin_point = 250
                 if self.return_point < 0:
                     self.return_point = 300
+                if not self.rank_point:
+                    self.rank_point = [30, 10, -10, -30]
 
         self.rank_point = self.rank_point[: self.mode]
 
