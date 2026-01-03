@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, cast
 import pandas as pd
 
 import libs.global_value as g
-from cls.timekit import ExtendedDatetime as ExtDt
 from libs.utils import dbutil
 
 if TYPE_CHECKING:
