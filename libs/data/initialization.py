@@ -156,11 +156,11 @@ def read_grade_table() -> None:
         try:
             tbl_data: "GradeTableDict" = json.load(f)
         except json.JSONDecodeError as err:
-            logging.error(err)
+            logging.warning("JSONDecodeError: %s", err)
             return
 
     if not isinstance(tbl_list := tbl_data.get("table"), list):
-        logging.error("undefined key [table]")
+        logging.warning("undefined key [table]")
         return
 
     for x in tbl_list:
@@ -172,16 +172,16 @@ def read_grade_table() -> None:
                     break
                 point = x.get("point")
                 if not isinstance(point, list) or len(point) != 2:
-                    logging.error("point is not match")
+                    logging.warning("point is not match")
                     tbl_data = {}
                     break
                 acquisition = x.get("acquisition")
                 if not isinstance(acquisition, list) or len(acquisition) != 4:
-                    logging.error("acquisition is not match")
+                    logging.warning("acquisition is not match")
                     tbl_data = {}
                     break
             else:
-                logging.error("undefined key [grade, point, acquisition]")
+                logging.warning("undefined key [grade, point, acquisition]")
                 tbl_data = {}
                 break
         else:

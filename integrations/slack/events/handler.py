@@ -51,7 +51,7 @@ def main(adapter: "ServiceAdapter"):
         log_filter()
         adapter.conf.bot_id = app.client.auth_test()["user_id"]
     except SlackApiError as err:
-        logging.error(err)
+        logging.critical(err)
         sys.exit()
 
     register_all(app, adapter)  # イベント遅延登録
