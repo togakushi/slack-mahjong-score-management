@@ -159,6 +159,12 @@ class RuleSet:
     def status_update(self):
         """ステータス更新"""
 
+        # ステータスリセット
+        for rule_version in self.rule_list:
+            self.data[rule_version].count = 0
+            self.data[rule_version].first_time.set("1900-01-01 00:00:00")
+            self.data[rule_version].last_time.set("1900-01-01 00:00:00")
+
         status = loader.execute(
             """
             select
@@ -168,14 +174,16 @@ class RuleSet:
                 count() as count
             from
                 result
+            --[separate] where source = :source
             group by
                 rule_version
             ;
             """
         )
 
+        # ステータス更新
         for status_data in status:
-            if (rule_version := status_data.get("rule_version")) and self.data.get(rule_version):
+            if (rule_version := str(status_data.get("rule_version", ""))) and self.data.get(rule_version):
                 if "count" in status_data:
                     self.data[rule_version].count = int(status_data["count"])
                 if "first_time" in status_data:
