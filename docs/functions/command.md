@@ -19,6 +19,9 @@
 /commandname team_clear                         チームデータをすべて削除
 ```
 
+> [!NOTE]
+> `/commandname`は[サービス個別設定](../config/integrations.md)の`slash_command`で定義したもの。
+
 ## 成績管理
 ### results
 
