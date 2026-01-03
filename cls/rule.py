@@ -10,6 +10,7 @@ from table2ascii import Alignment, PresetStyle, table2ascii
 
 from cls.command import CommandParser
 from cls.timekit import ExtendedDatetime as ExtDt
+from libs.data import loader
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -155,21 +156,32 @@ class RuleSet:
             if self.data_set(section_name, mode=int(rule.get("mode", 4))):  # type: ignore
                 self.data[section_name].update(rule)
 
-    def status_update(self, version: str, **kwargs):
-        """ステータス更新
+    def status_update(self):
+        """ステータス更新"""
 
-        Args:
-            version (str): ルールバージョン識別子
-            kwargs (dict): 更新情報
-        """
+        status = loader.execute(
+            """
+            select
+                rule_version,
+                min(ts) as first_time,
+                max(ts) as last_time,
+                count() as count
+            from
+                result
+            group by
+                rule_version
+            ;
+            """
+        )
 
-        if self.data.get(version):
-            if "count" in kwargs and isinstance(kwargs["count"], int):
-                self.data[version].count = kwargs["count"]
-            if "first_time" in kwargs and isinstance(kwargs["first_time"], ExtDt):
-                self.data[version].first_time = kwargs["first_time"]
-            if "last_time" in kwargs and isinstance(kwargs["last_time"], ExtDt):
-                self.data[version].last_time = kwargs["last_time"]
+        for status_data in status:
+            if rule_version := status_data.get("rule_version"):
+                if "count" in status_data:
+                    self.data[rule_version].count = int(status_data["count"])
+                if "first_time" in status_data:
+                    self.data[rule_version].first_time = ExtDt(float(status_data["first_time"]))
+                if "last_time" in status_data:
+                    self.data[rule_version].last_time = ExtDt(float(status_data["last_time"]))
 
     def to_dict(self, version: str) -> dict[str, Any]:
         """指定ルールバージョン識別子の情報を辞書で返す
