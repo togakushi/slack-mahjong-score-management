@@ -99,14 +99,14 @@ DATE_RANGE_MAP: dict[str, DateRangeSpec] = {
         "keyword": ["今週"],
         "range": lambda x: [
             x + relativedelta(weekday=MO(-1), hour=0, minute=0, second=0, microsecond=0),
-            x + relativedelta(weekday=SU(-1), hour=23, minute=59, second=59, microsecond=999999),
+            x + relativedelta(weekday=SU, hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "last_week": {
         "keyword": ["先週"],
         "range": lambda x: [
             x + relativedelta(weekday=MO(-2), hour=0, minute=0, second=0, microsecond=0),
-            x + relativedelta(weekday=SU(-2), hour=23, minute=59, second=59, microsecond=999999),
+            x + relativedelta(weekday=SU(-1), hour=23, minute=59, second=59, microsecond=999999),
         ],
     },
     "this_month": {
