@@ -364,10 +364,10 @@ class RuleSet:
 
     @property
     def rule_list(self) -> list[str]:
-        """ルールセットの列挙
+        """定義済みルールセットの列挙
 
         Returns:
-            list[str]: ルールセット
+            list[str]: ルールバージョン識別子
         """
 
-        return list(self.data.keys())
+        return [x.rule_version for x in self.data.values()]
