@@ -162,13 +162,16 @@ class AdapterAPI(APIInterface):
             if not m.post.thread_title.isnumeric() and m.post.thread_title:
                 thread = await thread_msg.create_thread(name=f"{m.post.thread_title} - {date_suffix}")
                 for msg in post_msg:
-                    await thread.send(msg)
+                    for split_msg in formatter.split_strings(msg, limit=1800):
+                        await thread.send(split_msg)
             else:  # 数字タイトルはスレッドにしない
                 for msg in post_msg:
-                    await self.response.reply(msg)
+                    for split_msg in formatter.split_strings(msg, limit=1800):
+                        await self.response.reply(split_msg)
         else:
             for msg in post_msg:
-                await self.response.reply(msg)
+                for split_msg in formatter.split_strings(msg, limit=1800):
+                    await self.response.reply(split_msg)
 
     async def command_respond(self, m: "MessageParserProtocol"):
         """スラッシュコマンド応答
