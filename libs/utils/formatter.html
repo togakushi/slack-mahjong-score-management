@@ -52,6 +52,9 @@
             <li>
                     <a class="function" href="#group_strings">group_strings</a>
             </li>
+            <li>
+                    <a class="function" href="#split_strings">split_strings</a>
+            </li>
     </ul>
 
 
@@ -518,6 +521,45 @@
 </span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
 </span><span id="L-442"><a href="#L-442"><span class="linenos">442</span></a>
 </span><span id="L-443"><a href="#L-443"><span class="linenos">443</span></a>    <span class="k">return</span> <span class="n">result</span>
+</span><span id="L-444"><a href="#L-444"><span class="linenos">444</span></a>
+</span><span id="L-445"><a href="#L-445"><span class="linenos">445</span></a>
+</span><span id="L-446"><a href="#L-446"><span class="linenos">446</span></a><span class="k">def</span><span class="w"> </span><span class="nf">split_strings</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-447"><a href="#L-447"><span class="linenos">447</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;指定文字数で分割</span>
+</span><span id="L-448"><a href="#L-448"><span class="linenos">448</span></a>
+</span><span id="L-449"><a href="#L-449"><span class="linenos">449</span></a><span class="sd">    Args:</span>
+</span><span id="L-450"><a href="#L-450"><span class="linenos">450</span></a><span class="sd">        msg (str): 分割対象</span>
+</span><span id="L-451"><a href="#L-451"><span class="linenos">451</span></a><span class="sd">        limit (int, optional): 分割文字数. Defaults to 3000.</span>
+</span><span id="L-452"><a href="#L-452"><span class="linenos">452</span></a>
+</span><span id="L-453"><a href="#L-453"><span class="linenos">453</span></a><span class="sd">    Returns:</span>
+</span><span id="L-454"><a href="#L-454"><span class="linenos">454</span></a><span class="sd">        list[str]: 分割結果</span>
+</span><span id="L-455"><a href="#L-455"><span class="linenos">455</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-456"><a href="#L-456"><span class="linenos">456</span></a>
+</span><span id="L-457"><a href="#L-457"><span class="linenos">457</span></a>    <span class="n">result</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-458"><a href="#L-458"><span class="linenos">458</span></a>    <span class="n">buffer</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-459"><a href="#L-459"><span class="linenos">459</span></a>    <span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a>
+</span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(</span><span class="n">keepends</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a>        <span class="c1"># 仮に追加したときの文字列長を計算</span>
+</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a>        <span class="n">temp</span> <span class="o">=</span> <span class="n">buffer</span> <span class="o">+</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+</span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a>        <span class="n">total_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp</span><span class="p">))</span>
+</span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a>
+</span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>        <span class="k">if</span> <span class="n">total_len</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">:</span>
+</span><span id="L-467"><a href="#L-467"><span class="linenos">467</span></a>            <span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span><span id="L-468"><a href="#L-468"><span class="linenos">468</span></a>            <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>  <span class="c1"># 1行でopen/closeされる想定ではない</span>
+</span><span id="L-469"><a href="#L-469"><span class="linenos">469</span></a>                <span class="n">codeblock</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">codeblock</span><span class="p">)</span>
+</span><span id="L-470"><a href="#L-470"><span class="linenos">470</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-471"><a href="#L-471"><span class="linenos">471</span></a>            <span class="k">if</span> <span class="n">buffer</span><span class="p">:</span>
+</span><span id="L-472"><a href="#L-472"><span class="linenos">472</span></a>                <span class="k">if</span> <span class="n">codeblock</span><span class="p">:</span>  <span class="c1"># codeblock open状態</span>
+</span><span id="L-473"><a href="#L-473"><span class="linenos">473</span></a>                    <span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;```</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-474"><a href="#L-474"><span class="linenos">474</span></a>                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buffer</span><span class="p">))</span>
+</span><span id="L-475"><a href="#L-475"><span class="linenos">475</span></a>                    <span class="n">buffer</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;```</span><span class="se">\n</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+</span><span id="L-476"><a href="#L-476"><span class="linenos">476</span></a>                <span class="k">else</span><span class="p">:</span>
+</span><span id="L-477"><a href="#L-477"><span class="linenos">477</span></a>                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buffer</span><span class="p">))</span>
+</span><span id="L-478"><a href="#L-478"><span class="linenos">478</span></a>                    <span class="n">buffer</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+</span><span id="L-479"><a href="#L-479"><span class="linenos">479</span></a>
+</span><span id="L-480"><a href="#L-480"><span class="linenos">480</span></a>    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+</span><span id="L-481"><a href="#L-481"><span class="linenos">481</span></a>        <span class="k">return</span> <span class="n">result</span>
+</span><span id="L-482"><a href="#L-482"><span class="linenos">482</span></a>    <span class="k">return</span> <span class="p">[</span><span class="n">msg</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -1165,6 +1207,75 @@
 
 <blockquote>
   <p>list[str]: 連結結果</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="split_strings">
+                            <input id="split_strings-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">split_strings</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="split_strings-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#split_strings"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="split_strings-447"><a href="#split_strings-447"><span class="linenos">447</span></a><span class="k">def</span><span class="w"> </span><span class="nf">split_strings</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="split_strings-448"><a href="#split_strings-448"><span class="linenos">448</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;指定文字数で分割</span>
+</span><span id="split_strings-449"><a href="#split_strings-449"><span class="linenos">449</span></a>
+</span><span id="split_strings-450"><a href="#split_strings-450"><span class="linenos">450</span></a><span class="sd">    Args:</span>
+</span><span id="split_strings-451"><a href="#split_strings-451"><span class="linenos">451</span></a><span class="sd">        msg (str): 分割対象</span>
+</span><span id="split_strings-452"><a href="#split_strings-452"><span class="linenos">452</span></a><span class="sd">        limit (int, optional): 分割文字数. Defaults to 3000.</span>
+</span><span id="split_strings-453"><a href="#split_strings-453"><span class="linenos">453</span></a>
+</span><span id="split_strings-454"><a href="#split_strings-454"><span class="linenos">454</span></a><span class="sd">    Returns:</span>
+</span><span id="split_strings-455"><a href="#split_strings-455"><span class="linenos">455</span></a><span class="sd">        list[str]: 分割結果</span>
+</span><span id="split_strings-456"><a href="#split_strings-456"><span class="linenos">456</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="split_strings-457"><a href="#split_strings-457"><span class="linenos">457</span></a>
+</span><span id="split_strings-458"><a href="#split_strings-458"><span class="linenos">458</span></a>    <span class="n">result</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="split_strings-459"><a href="#split_strings-459"><span class="linenos">459</span></a>    <span class="n">buffer</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="split_strings-460"><a href="#split_strings-460"><span class="linenos">460</span></a>    <span class="n">codeblock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="split_strings-461"><a href="#split_strings-461"><span class="linenos">461</span></a>
+</span><span id="split_strings-462"><a href="#split_strings-462"><span class="linenos">462</span></a>    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(</span><span class="n">keepends</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span id="split_strings-463"><a href="#split_strings-463"><span class="linenos">463</span></a>        <span class="c1"># 仮に追加したときの文字列長を計算</span>
+</span><span id="split_strings-464"><a href="#split_strings-464"><span class="linenos">464</span></a>        <span class="n">temp</span> <span class="o">=</span> <span class="n">buffer</span> <span class="o">+</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+</span><span id="split_strings-465"><a href="#split_strings-465"><span class="linenos">465</span></a>        <span class="n">total_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp</span><span class="p">))</span>
+</span><span id="split_strings-466"><a href="#split_strings-466"><span class="linenos">466</span></a>
+</span><span id="split_strings-467"><a href="#split_strings-467"><span class="linenos">467</span></a>        <span class="k">if</span> <span class="n">total_len</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">:</span>
+</span><span id="split_strings-468"><a href="#split_strings-468"><span class="linenos">468</span></a>            <span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span><span id="split_strings-469"><a href="#split_strings-469"><span class="linenos">469</span></a>            <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>  <span class="c1"># 1行でopen/closeされる想定ではない</span>
+</span><span id="split_strings-470"><a href="#split_strings-470"><span class="linenos">470</span></a>                <span class="n">codeblock</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">codeblock</span><span class="p">)</span>
+</span><span id="split_strings-471"><a href="#split_strings-471"><span class="linenos">471</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="split_strings-472"><a href="#split_strings-472"><span class="linenos">472</span></a>            <span class="k">if</span> <span class="n">buffer</span><span class="p">:</span>
+</span><span id="split_strings-473"><a href="#split_strings-473"><span class="linenos">473</span></a>                <span class="k">if</span> <span class="n">codeblock</span><span class="p">:</span>  <span class="c1"># codeblock open状態</span>
+</span><span id="split_strings-474"><a href="#split_strings-474"><span class="linenos">474</span></a>                    <span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;```</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="split_strings-475"><a href="#split_strings-475"><span class="linenos">475</span></a>                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buffer</span><span class="p">))</span>
+</span><span id="split_strings-476"><a href="#split_strings-476"><span class="linenos">476</span></a>                    <span class="n">buffer</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;```</span><span class="se">\n</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+</span><span id="split_strings-477"><a href="#split_strings-477"><span class="linenos">477</span></a>                <span class="k">else</span><span class="p">:</span>
+</span><span id="split_strings-478"><a href="#split_strings-478"><span class="linenos">478</span></a>                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buffer</span><span class="p">))</span>
+</span><span id="split_strings-479"><a href="#split_strings-479"><span class="linenos">479</span></a>                    <span class="n">buffer</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+</span><span id="split_strings-480"><a href="#split_strings-480"><span class="linenos">480</span></a>
+</span><span id="split_strings-481"><a href="#split_strings-481"><span class="linenos">481</span></a>    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+</span><span id="split_strings-482"><a href="#split_strings-482"><span class="linenos">482</span></a>        <span class="k">return</span> <span class="n">result</span>
+</span><span id="split_strings-483"><a href="#split_strings-483"><span class="linenos">483</span></a>    <span class="k">return</span> <span class="p">[</span><span class="n">msg</span><span class="p">]</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>指定文字数で分割</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>msg (str):</strong>  分割対象</li>
+<li><strong>limit (int, optional):</strong>  分割文字数. Defaults to 3000.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>list[str]: 分割結果</p>
 </blockquote>
 </div>
 
