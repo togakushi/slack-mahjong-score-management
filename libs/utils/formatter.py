@@ -477,4 +477,6 @@ def split_strings(msg: str, limit: int = 3000) -> list[str]:
                     result.append("".join(buffer))
                     buffer = [line]
 
-    return result
+    if result:
+        return result
+    return [msg]
