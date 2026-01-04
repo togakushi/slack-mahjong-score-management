@@ -18,7 +18,6 @@ from libs.types import GradeTableDict
 
 if TYPE_CHECKING:
     from configparser import SectionProxy
-    from typing import ItemsView
 
     from libs.types import MemberDataDict, TeamDataDict
 
@@ -55,11 +54,11 @@ class CommonMethodMixin:
         """真偽値の取得"""
         return self._section.getboolean(key, fallback)
 
-    def getlist(self, key: str) -> list:
+    def getlist(self, key: str) -> list[str]:
         """リストの取得"""
         return [x.strip() for x in self._section.get(key, "").split(",")]
 
-    def keys(self) -> list:
+    def keys(self) -> list[str]:
         """キーリストの返却"""
         return list(self._section.keys())
 
@@ -67,9 +66,9 @@ class CommonMethodMixin:
         """値リストの返却"""
         return list(self._section.values())
 
-    def items(self) -> "ItemsView"[str, str]:
+    def items(self) -> list[tuple]:
         """ItemsViewを返却"""
-        return self._section.items()
+        return list(self._section.items())
 
 
 class BaseSection(CommonMethodMixin):
@@ -213,6 +212,8 @@ class SettingSection(BaseSection):
     """ルール設定ファイル"""
     time_adjust: int
     """日付変更後、集計範囲に含める追加時間"""
+    default_rule: str
+    """ルールバージョン未指定時に使用される識別子"""
     separate: bool
     """スコア入力元識別子別集計フラグ
     - *True*: 識別子別に集計
@@ -243,6 +244,7 @@ class SettingSection(BaseSection):
         self.remarks_word = str("麻雀成績メモ")
         self.rule_config = Path("files/default_rule.ini")
         self.time_adjust = int(12)
+        self.default_rule = str("")
         self.separate = bool(False)
         self.search_word = str("")
         self.group_length = int(0)
