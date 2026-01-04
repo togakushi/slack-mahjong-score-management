@@ -18,6 +18,7 @@ from libs.types import GradeTableDict
 
 if TYPE_CHECKING:
     from configparser import SectionProxy
+    from typing import ItemsView
 
     from libs.types import MemberDataDict, TeamDataDict
 
@@ -66,7 +67,7 @@ class CommonMethodMixin:
         """値リストの返却"""
         return list(self._section.values())
 
-    def items(self):
+    def items(self) -> "ItemsView"[str, str]:
         """ItemsViewを返却"""
         return self._section.items()
 
