@@ -789,6 +789,11 @@ class AppConfig:
         self.ranking.config_load(self)
         self.report.config_load(self)
 
+        # 未定義時に別のセクションから値を取り込むパラメータ
+        if not self.setting.default_rule:
+            logging.debug("update_parameter: setting.default_rule -> %s", self.mahjong.rule_version)
+            self.setting.default_rule = self.mahjong.rule_version
+
     def word_list(self) -> list[str]:
         """設定されている値、キーワードをリスト化する
 
