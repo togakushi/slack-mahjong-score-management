@@ -210,8 +210,6 @@ class SettingSection(BaseSection):
     """メモ記録用キーワード"""
     rule_config: Path
     """ルール設定ファイル"""
-    time_adjust: int
-    """日付変更後、集計範囲に含める追加時間"""
     default_rule: str
     """ルールバージョン未指定時に使用される識別子"""
     separate: bool
@@ -219,6 +217,8 @@ class SettingSection(BaseSection):
     - *True*: 識別子別に集計
     - *False*: すべて集計
     """
+    time_adjust: int
+    """日付変更後、集計範囲に含める追加時間"""
     search_word: str
     """コメント固定(検索時の検索文字列)"""
     group_length: int
