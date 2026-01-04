@@ -289,10 +289,13 @@ def setup():
     g.cfg.rule.status_update()
     g.cfg.rule.info()
 
+    g.cfg.initialization()
+
     # キーワード重複チェック
     g.cfg.rule.check(
         chk_commands=set(g.cfg.results.commandword + g.cfg.graph.commandword + g.cfg.ranking.commandword + g.cfg.report.commandword),
         chk_members=set(lookup.db.enumeration_all_members()),
+        default_rule=g.cfg.setting.default_rule,
     )
 
 

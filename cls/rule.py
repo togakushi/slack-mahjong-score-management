@@ -324,12 +324,13 @@ class RuleSet:
                 rule.ignore_flying,
             )
 
-    def check(self, chk_commands: set, chk_members: set):
+    def check(self, chk_commands: set, chk_members: set, default_rule: str):
         """キーワード重複チェック
 
         Args:
             chk_commands (set): チェック対象コマンド名
             chk_members (set): チェック対象メンバー名/チーム名
+            default_rule (str): デフォルトルールバージョン
 
         Raises:
             RuntimeError: 重複あり
@@ -358,6 +359,9 @@ class RuleSet:
                     raise RuntimeError(f"成績登録ワードと定義済みコマンドに重複があります。({chk_word})")
                 if chk_word in chk_members:
                     raise RuntimeError(f"成績登録ワードと登録メンバー(チーム)に重複があります。({chk_word})")
+            # デフォルトルールバージョンチェック
+            if default_rule not in self.rule_list:
+                raise RuntimeError(f"デフォルトルールバージョンに指定されているルールセットが見つかりません。({default_rule})")
         except RuntimeError as err:
             logging.critical("%s", err)
             sys.exit(1)
