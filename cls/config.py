@@ -841,8 +841,6 @@ class AppConfig:
                 protected_values = self.setting.help  # 上書き保護
                 self.setting.config_load(self)
                 self.setting.help = protected_values
-            case "mahjong":
-                self.mahjong.config_load(self)
             case "results":
                 protected_values = self.results.commandword  # 上書き保護
                 self.results.config_load(self)
@@ -881,9 +879,12 @@ class AppConfig:
             if channel_config := self.main_parser[section_name].get("channel_config"):
                 config_path = Path(channel_config)
                 if config_path.exists():
+                    logging.debug("Override: %s", config_path.absolute())
                     self.overwrite(config_path, "setting")
-                    logging.debug("channel_config: %s", config_path.absolute())
-                    logging.debug("database_file: %s", cast(Path, self.setting.database_file).absolute())
+                    self.overwrite(config_path, "results")
+                    self.overwrite(config_path, "graph")
+                    self.overwrite(config_path, "ranking")
+                    self.overwrite(config_path, "report")
                 else:
                     config_path = None
 

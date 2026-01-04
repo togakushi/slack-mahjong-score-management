@@ -37,11 +37,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     rule_version: str | None
 
     # 設定周りのパラメータの取り込み
-    if g.cfg.main_parser.has_section(m.status.source):
-        if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
-            logging.debug("Channel override settings: %s", Path(channel_config).absolute())
-            g.cfg.overwrite(Path(channel_config), "setting")
-            g.cfg.overwrite(Path(channel_config), subcom.section)
+    g.cfg.read_channel_config(m.status.source)
 
     # メンバー情報更新
     g.cfg.member.guest_name = lookup.db.get_guest()
