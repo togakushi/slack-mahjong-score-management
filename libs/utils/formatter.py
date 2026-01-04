@@ -441,3 +441,42 @@ def group_strings(lines: list[str], limit: int = 3000) -> list[str]:
     result = [str(x).replace("\n```\n\n```\n", "\n```\n```\n") for x in result]
 
     return result
+
+
+def split_strings(msg: str, limit: int = 3000) -> list[str]:
+    """指定文字数で分割
+
+    Args:
+        msg (str): 分割対象
+        limit (int, optional): 分割文字数. Defaults to 3000.
+
+    Returns:
+        list[str]: 分割結果
+    """
+
+    result: list = []
+    buffer: list = []
+    codeblock: bool = False
+
+    for line in msg.splitlines(keepends=True):
+        # 仮に追加したときの文字列長を計算
+        temp = buffer + [line]
+        total_len = len("".join(temp))
+
+        if total_len < limit:
+            buffer.append(line)
+            if line != line.replace("```", ""):  # 1行でopen/closeされる想定ではない
+                codeblock = not (codeblock)
+        else:
+            if buffer:
+                if codeblock:  # codeblock open状態
+                    buffer.append("```\n")
+                    result.append("".join(buffer))
+                    buffer = [f"```\n{line}"]
+                else:
+                    result.append("".join(buffer))
+                    buffer = [line]
+
+    if result:
+        return result
+    return [msg]
