@@ -70,10 +70,6 @@ class CommonMethodMixin:
         """ItemsViewを返却"""
         return self._section.items()
 
-    def to_dict(self) -> dict[str, str]:
-        """辞書型に変換"""
-        return dict(self._section.items())
-
 
 class BaseSection(CommonMethodMixin):
     """共通処理"""
