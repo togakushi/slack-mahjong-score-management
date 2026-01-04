@@ -271,6 +271,10 @@ class SettingSection(BaseSection):
         if not (isinstance(self.keyword, Path) and self.keyword.exists()):
             self.keyword = str(self.keyword)
 
+        # デフォルトルールバージョン
+        if not self.default_rule:
+            self.default_rule = outer.mahjong.rule_version
+
         # 作業用ディレクトリ作成
         if self.work_dir.is_dir():
             shutil.rmtree(self.work_dir)
@@ -778,8 +782,8 @@ class AppConfig:
 
         self._parser = self.main_parser
 
-        self.setting.config_load(self)
         self.mahjong.config_load(self)
+        self.setting.config_load(self)
         self.alias.config_load(self)
         self.member.config_load(self)
         self.team.config_load(self)
@@ -788,11 +792,6 @@ class AppConfig:
         self.graph.config_load(self)
         self.ranking.config_load(self)
         self.report.config_load(self)
-
-        # 未定義時に別のセクションから値を取り込むパラメータ
-        if not self.setting.default_rule:
-            logging.debug("update_parameter: setting.default_rule -> %s", self.mahjong.rule_version)
-            self.setting.default_rule = self.mahjong.rule_version
 
     def word_list(self) -> list[str]:
         """設定されている値、キーワードをリスト化する
