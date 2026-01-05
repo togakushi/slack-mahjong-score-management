@@ -15,7 +15,7 @@ from integrations.protocols import MsgData, PostData, StatusData
 from libs.types import MessageTypeDict, StyleOptions
 
 if TYPE_CHECKING:
-    from pathlib import Path  # noqa: F401
+    from pathlib import Path
 
     from integrations.protocols import MessageParserProtocol
     from libs.types import MessageType
@@ -52,10 +52,15 @@ class IntegrationsConfig(ABC):
     _command_dispatcher: dict = field(default_factory=dict)
     _keyword_dispatcher: dict = field(default_factory=dict)
 
+    # 共通設定
     main_conf: Optional[ConfigParser] = field(default=None)
     """設定ファイル"""
+    channel_config: Optional["Path"] = field(default=None)
+    """チャンネル個別設定状況
+    - *Path*: チャンネル個別設定ファイルパス
+    - *None*: 個別設定を利用していない
+    """
 
-    # 共通設定
     slash_command: str = field(default="")
     """スラッシュコマンド名"""
     badge_degree: bool = field(default=False)
