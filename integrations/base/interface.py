@@ -2,13 +2,12 @@
 integrations/base/interface.py
 """
 
-import logging
 import re
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field
 from types import NoneType
-from typing import TYPE_CHECKING, Any, Generic, Literal, Optional, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, Literal, Optional, Type, TypeVar
 
 import pandas as pd
 
@@ -46,6 +45,8 @@ class AdapterInterface(ABC, Generic[ConfigT, ApiT, FunctionsT, ParserT]):
 @dataclass
 class IntegrationsConfig(ABC):
     """個別設定値"""
+
+    _parser: Optional[ConfigParser] = field(default=None)
 
     # ディスパッチテーブル用
     _command_dispatcher: dict = field(default_factory=dict)
@@ -95,43 +96,6 @@ class IntegrationsConfig(ABC):
         """
 
         return self._keyword_dispatcher
-
-    def read_file(self, selected_service: str):
-        """設定値取り込み
-
-        Args:
-            selected_service (str): セクション
-
-        Raises:
-            TypeError: 無効な型が指定されている場合
-        """
-
-        if self.config_file is None:
-            raise TypeError("Configuration file not specified.")
-
-        value: Union[int, float, bool, str, list]
-        if self.config_file.has_section(selected_service):
-            for f in fields(self):
-                if f.name.startswith("_"):
-                    continue
-                if self.config_file.has_option(selected_service, f.name):
-                    if f.type is int:
-                        value = self.config_file.getint(selected_service, f.name)
-                    elif f.type is float:
-                        value = self.config_file.getfloat(selected_service, f.name)
-                    elif f.type is bool:
-                        value = self.config_file.getboolean(selected_service, f.name)
-                    elif f.type is str:
-                        value = self.config_file.get(selected_service, f.name)
-                    elif f.type is list:
-                        value = [x.strip() for x in self.config_file.get(selected_service, f.name).split(",")]
-                    elif f.type is Optional[bool]:
-                        value = self.config_file.getboolean(selected_service, f.name)
-                    else:
-                        raise TypeError(f"Unsupported type: {f.type}")
-                    setattr(self, f.name, value)
-
-        logging.debug("%s: %s", selected_service, self)
 
 
 class FunctionsInterface(ABC):
