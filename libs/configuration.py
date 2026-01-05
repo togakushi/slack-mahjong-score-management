@@ -199,24 +199,6 @@ def setup():
 
     g.args = arg_parser()
 
-    # 連携サービス
-    match g.args.service:
-        case "slack":
-            g.selected_service = "slack"
-        case "discord":
-            g.selected_service = "discord"
-        case "standard_io" | "std":
-            g.selected_service = "standard_io"
-        case "web" | "flask":
-            g.selected_service = "web"
-        case _:
-            sys.exit()
-
-    if not hasattr(g.args, "testcase"):
-        g.args.testcase = None
-    else:
-        g.selected_service = "standard_io"
-
     # ログフォーマット
     if g.args.notime:
         fmt = ""
@@ -232,7 +214,7 @@ def setup():
         case 2:
             fmt += "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
             logging.basicConfig(level=logging.TRACE, format=fmt)  # type: ignore
-            logging.info("DEBUG MODE(verbose)")
+            logging.info("TRACE MODE")
         case _:
             fmt += "[%(levelname)s][%(module)s:%(funcName)s] %(message)s"
             if g.args.moderate:
@@ -241,14 +223,33 @@ def setup():
                 logging.basicConfig(level=logging.INFO, format=fmt)
 
     g.cfg = AppConfig(g.args.config)
-    g.adapter = factory.select_adapter(g.selected_service, g.cfg)
+
+    # 連携サービス
+    match g.args.service:
+        case "slack":
+            g.cfg.selected_service = "slack"
+        case "discord":
+            g.cfg.selected_service = "discord"
+        case "standard_io" | "std":
+            g.cfg.selected_service = "standard_io"
+        case "web" | "flask":
+            g.cfg.selected_service = "web"
+        case _:
+            sys.exit()
+
+    if not hasattr(g.args, "testcase"):
+        g.args.testcase = None
+    else:
+        g.cfg.selected_service = "standard_io"
+
+    g.adapter = factory.select_adapter(g.cfg.selected_service, g.cfg)
     register()
 
     # 設定情報
     logging.info("config: %s", g.cfg.config_file.absolute())
     logging.info(
         "service: %s, graph_library: %s, time_adjust: %sh",
-        g.selected_service,
+        g.cfg.selected_service,
         g.adapter.conf.plotting_backend,
         g.cfg.setting.time_adjust,
     )

@@ -736,11 +736,13 @@ class AppConfig:
             if x not in self._parser.sections():
                 self._parser.add_section(x)
 
-        # set base directory
+        # 基本設定
         self.script_dir = Path(sys.argv[0]).absolute().parent
         """スクリプトが保存されているディレクトリパス"""
         self.config_dir = self.config_file.absolute().parent
         """設定ファイルが保存されているディレクトリパス"""
+        self.selected_service: Literal["slack", "discord", "web", "standard_io"] = "slack"
+        """連携先サービス"""
 
         # 設定値
         self.setting = SettingSection()

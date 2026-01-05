@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 if __name__ == "__main__":
     configuration.setup()
 
-    match g.selected_service:
+    match g.cfg.selected_service:
         case "slack":
             import integrations.slack.events.handler as slack
 

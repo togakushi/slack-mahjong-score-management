@@ -25,7 +25,7 @@ def test_score_report(input_str, result_dict, get_point, monkeypatch):
     configuration.setup()
     g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.adapter = factory.select_adapter("standard_io", g.cfg)
-    g.selected_service = "standard_io"
+    g.cfg.selected_service = "standard_io"
 
     m = g.adapter.parser()
     m.data.text = input_str
@@ -65,7 +65,7 @@ def test_point_calc_seat(rpoint_list, point_dict, rank_dict, monkeypatch):
     configuration.setup()
     g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.adapter = factory.select_adapter("standard_io", g.cfg)
-    g.selected_service = "standard_io"
+    g.cfg.selected_service = "standard_io"
 
     result = GameResult(
         ts="1234567890.123456",
@@ -103,7 +103,7 @@ def test_point_calc_division(rpoint_list, point_dict, rank_dict, monkeypatch):
     configuration.setup()
     g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
     g.adapter = factory.select_adapter("standard_io", g.cfg)
-    g.selected_service = "standard_io"
+    g.cfg.selected_service = "standard_io"
 
     result = GameResult(
         ts="1234567890.123456",
