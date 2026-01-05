@@ -3,7 +3,6 @@ libs/utils/dictutil.py
 """
 
 import logging
-from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 import libs.global_value as g
@@ -50,9 +49,10 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             "command": subcom.section,
             "guest_name": g.cfg.member.guest_name,
             "undefined_word": g.cfg.undefined_word,
-            "source": m.status.source,
+            "source": g.cfg.resolve_channel_id(m.status.source),
+            "separate": g.cfg.resolve_separate_flag(m.status.source),
             "rule_set": {},
-            **g.cfg.setting.to_dict(),
+            **g.cfg.setting.to_dict(drop_items=["separate"]),
             **subcom.to_dict(),  # デフォルト値
         },
     )

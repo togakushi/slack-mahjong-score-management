@@ -227,6 +227,8 @@ class SettingSection(BaseSection):
     - *True*: 識別子別に集計
     - *False*: すべて集計
     """
+    channel_id: Optional[str]
+    """チャンネルIDを上書きする"""
     time_adjust: int
     """日付変更後、集計範囲に含める追加時間"""
     search_word: str
@@ -256,6 +258,7 @@ class SettingSection(BaseSection):
         self.time_adjust = int(12)
         self.default_rule = str("")
         self.separate = bool(False)
+        self.channel_id = None
         self.search_word = str("")
         self.group_length = int(0)
         self.guest_mark = str("※")
@@ -872,19 +875,19 @@ class AppConfig:
             case _:
                 return
 
-    def read_channel_config(self, section_name: str) -> Union[Path | None]:
+    def read_channel_config(self, section_name: str) -> Optional[Path]:
         """チャンネル個別設定読み込み
 
         Args:
             section_name (str): セクション名
 
         Returns:
-            Union[Path | None]: 個別設定読み込み結果
+            Optional[Path]: 個別設定読み込み結果
                 - *Path*: 読み込んだ設定ファイルパス
                 - *None*: 読み込める設定ファイルがない
         """
 
-        config_path: Union[Path | None] = None
+        config_path: Optional[Path] = None
         self.initialization()
 
         if self.main_parser.has_section(section_name):
@@ -903,3 +906,39 @@ class AppConfig:
         read_memberslist()
 
         return config_path
+
+    def resolve_channel_id(self, section_name: Optional[str] = None) -> str:
+        """メイン設定から優先度の高いチャンネルIDを取得する
+
+        Args:
+            section_name (Optional[str]): チャンネル個別設定セクション名
+
+        Returns:
+            str: チャンネルID
+        """
+
+        for section in (section_name, self.selected_service, "setting"):
+            if section and self.main_parser.has_section(section):
+                if channel_id := self.main_parser[section].get("channel_id"):
+                    return channel_id
+
+        if section_name:
+            return section_name
+        return ""
+
+    def resolve_separate_flag(self, section_name: Optional[str] = None) -> bool:
+        """メイン設定から優先度の高いセパレート設定フラグを取得する
+
+        Args:
+            section_name (Optional[str]): チャンネル個別設定セクション名
+
+        Returns:
+            bool: セパレート設定フラグ
+        """
+
+        for section in (section_name, self.selected_service, "setting"):
+            if section and self.main_parser.has_section(section):
+                if separate_flg := self.main_parser[section].getboolean("separate", False):
+                    return separate_flg
+
+        return False
