@@ -127,30 +127,33 @@ def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) 
         str: 表記ブレ修正後のプレイヤー名
     """
 
-    def _judge(check: str) -> str:
+    chk_pattern = [
+        pname,  # 無加工
+        textutil.str_conv(pname, "h2z"),  # 半角数字 -> 全角数字
+        textutil.str_conv(pname, "k2h"),  # カタカナ -> ひらがな
+        textutil.str_conv(pname, "h2k"),  # ひらがな -> カタカナ
+        honor_remove(pname),  # 敬称削除
+        honor_remove(textutil.str_conv(pname, "h2z")),
+        honor_remove(textutil.str_conv(pname, "k2h")),
+        honor_remove(textutil.str_conv(pname, "h2k")),
+    ]
+
+    for name in chk_pattern:
+        if name in g.cfg.member.lists:
+            return name
+
+    for name in chk_pattern:
+        ret_name = ""
         if g.params.get("individual", True) or not_replace:
-            if check in g.cfg.member.all_lists:  # 別名を含むリスト
-                return check
+            if name in g.cfg.member.all_lists:  # 別名を含むリスト
+                if ret_name := g.cfg.member.resolve_name(name):
+                    return ret_name
         else:
-            if check in g.cfg.team.lists:
-                return check
-        return ""
-
-    if ret_name := _judge(textutil.str_conv(pname, "h2z")):  # 半角数字 -> 全角数字
-        return ret_name
-
-    pname = honor_remove(pname)  # 敬称削除
-
-    if ret_name := _judge(pname):
-        return ret_name
-
-    if ret_name := _judge(textutil.str_conv(pname, "k2h")):  # カタカナ -> ひらがな
-        return ret_name
-
-    if ret_name := _judge(textutil.str_conv(pname, "h2k")):  # ひらがな -> カタカナ
-        return ret_name
+            if name in g.cfg.team.lists:  # チーム名リスト
+                return name
 
     # メンバーリストに見つからない場合
+    pname = honor_remove(pname)
     if g.params.get("unregistered_replace", True) and not not_replace:
         pname = g.cfg.member.guest_name
     if pname != g.cfg.member.guest_name and add_mark:
