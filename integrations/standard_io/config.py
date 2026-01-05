@@ -14,7 +14,7 @@ class SvcConfig(BaseSection, IntegrationsConfig):
     """標準出力用個別設定値"""
 
     def __post_init__(self):
-        assert self.config_file
-        self._parser = self.config_file
+        assert self.main_conf
+        self._parser = self.main_conf
         super().__init__(self, "standard_io")
         logging.debug("standard_io: %s", self)

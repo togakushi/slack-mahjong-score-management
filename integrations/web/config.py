@@ -58,8 +58,8 @@ class SvcConfig(BaseSection, IntegrationsConfig):
     plotting_backend: Literal["matplotlib", "plotly"] = field(default="plotly")
 
     def __post_init__(self):
-        assert self.config_file
-        self._parser = self.config_file
+        assert self.main_conf
+        self._parser = self.main_conf
         super().__init__(self, "web")
         logging.debug("web: %s", self)
 

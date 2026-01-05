@@ -42,8 +42,8 @@ class SvcConfig(BaseSection, IntegrationsConfig):
     """ボットの名前"""
 
     def __post_init__(self):
-        assert self.config_file
-        self._parser = self.config_file
+        assert self.main_conf
+        self._parser = self.main_conf
         super().__init__(self, "discord")
         logging.debug("discord: %s", self)
 

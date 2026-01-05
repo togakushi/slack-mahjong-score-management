@@ -52,7 +52,7 @@ class IntegrationsConfig(ABC):
     _command_dispatcher: dict = field(default_factory=dict)
     _keyword_dispatcher: dict = field(default_factory=dict)
 
-    config_file: Optional[ConfigParser] = field(default=None)
+    main_conf: Optional[ConfigParser] = field(default=None)
     """設定ファイル"""
 
     # 共通設定

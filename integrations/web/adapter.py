@@ -21,7 +21,7 @@ class ServiceAdapter(AdapterInterface[SvcConfig, AdapterAPI, SvcFunctions, Messa
     interface_type = "web"
 
     def __init__(self, parser: "ConfigParser"):
-        self.conf = SvcConfig(config_file=parser)
+        self.conf = SvcConfig(main_conf=parser)
         self.api = AdapterAPI()
         self.functions = SvcFunctions()
         self.parser = MessageParser
