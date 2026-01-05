@@ -126,6 +126,8 @@ class MessageParser(MessageParserDataMixin, MessageParserInterface):
                     ret = False
                 case "search_messages":
                     ret = True
+                case _:
+                    pass
 
         return ret
 

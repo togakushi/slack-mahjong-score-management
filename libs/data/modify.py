@@ -265,6 +265,8 @@ def check_remarks(m: "MessageParserProtocol") -> None:
                 remarks_append(m, remarks)
             case "message_deleted":
                 remarks_delete(m)
+            case _:
+                pass
 
 
 def reprocessing_remarks(m: "MessageParserProtocol") -> None:

@@ -104,6 +104,8 @@ def other_words(word: str, m: "MessageParserProtocol"):
                     message_append(score, m)
                 case "message_changed":
                     message_changed(score, m)
+                case _:
+                    pass
         else:
             record_data = lookup.db.exsist_record(m.data.event_ts)
             if record_data and m.data.status == "message_changed":

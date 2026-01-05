@@ -19,6 +19,8 @@ def setup():
     match g.adapter.conf.plotting_backend:
         case "plotly":
             return
+        case _:
+            pass  # 以下に処理をベタ書き
 
     plt.close()
     plt.rcdefaults()
