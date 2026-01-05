@@ -58,7 +58,7 @@ INIファイル内の設定を変更することで、動作変更が可能。
 | rule_config   | ルールセット定義ファイルを指定                     | 文字列(ファイルパス)   | `files/default_rule.ini`         | キーを省略すると`files/default_rule.ini`がセットされる                                |
 | default_rule  | ルールバージョン未指定に使用するデフォルト値       | 文字列                 | 基本ルールセットの`rule_version` | [mahjongセクション](#mahjongセクション)の`rule_version`                               |
 | separate      | スコア入力元(チャンネル識別子)単位の集計           | 真偽値                 | False                            | `True` : 集計条件にチャンネル識別子を追加                                             |
-| channel_id    | チャンネル識別子を上書きする                       | 文字列                 | None                             | チャンネル識別子を固定値に変更する                                                    |
+| channel_id    | チャンネル識別子を上書きする                       | 文字列                 | None                             | 指定した文字列に変更する                                                              |
 | keyword       | 成績記録キーワード                                 | 文字列                 | 終局                             |                                                                                       |
 | remarks_word  | ゲーム結果にメモを残す場合に付けるキーワード       | 文字列                 | 麻雀成績メモ                     |                                                                                       |
 | guest_mark    | ゲストに付ける記号                                 | 文字列                 | ※                                |                                                                                       |
