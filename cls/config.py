@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from math import ceil
 from pathlib import Path, PosixPath
 from types import NoneType
-from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union, cast
+from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
 from cls.rule import RuleSet
 from libs.data.lookup.db import read_memberslist
@@ -19,6 +19,10 @@ from libs.types import GradeTableDict
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
+    from integrations.discord.config import SvcConfig as DiscordConfig
+    from integrations.slack.config import SvcConfig as SlackConfig
+    from integrations.standard_io.config import SvcConfig as StdConfig
+    from integrations.web.config import SvcConfig as WebConfig
     from libs.types import MemberDataDict, TeamDataDict
 
 SubClassType: TypeAlias = Union[
@@ -30,6 +34,11 @@ SubClassType: TypeAlias = Union[
     "DropItems",
     "BadgeDisplay",
     "SubCommand",
+    # サービス個別設定
+    "SlackConfig",
+    "DiscordConfig",
+    "WebConfig",
+    "StdConfig",
 ]
 
 
@@ -76,6 +85,7 @@ class BaseSection(CommonMethodMixin):
 
     def __init__(self, outer: SubClassType, section_name: str):
         parser = outer._parser
+        assert parser
         if section_name not in parser:
             return
         self._section = parser[section_name]
