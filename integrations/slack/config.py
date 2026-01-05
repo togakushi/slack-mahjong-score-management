@@ -2,14 +2,16 @@
 integrations/slack/config.py
 """
 
+import logging
 from dataclasses import dataclass, field
 
+from cls.config import BaseSection
 from integrations.base.interface import IntegrationsConfig
 from integrations.slack.events import comparison, slash
 
 
 @dataclass
-class SvcConfig(IntegrationsConfig):
+class SvcConfig(BaseSection, IntegrationsConfig):
     """slack用個別設定値"""
 
     slash_command: str = field(default="/mahjong")
@@ -56,7 +58,10 @@ class SvcConfig(IntegrationsConfig):
     """ホームタブ用初期値"""
 
     def __post_init__(self):
-        self.read_file("slack")
+        assert self.config_file
+        self._parser = self.config_file
+        super().__init__(self, "slack")
+        logging.debug("slack: %s", self)
 
         # スラッシュコマンドはスラッシュ始まり
         if not self.slash_command.startswith("/"):

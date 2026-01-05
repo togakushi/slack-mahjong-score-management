@@ -2,16 +2,18 @@
 integrations/web/config.py
 """
 
+import logging
 import os
 from dataclasses import dataclass, field
 from typing import Literal
 
 import libs.global_value as g
+from cls.config import BaseSection
 from integrations.base.interface import IntegrationsConfig
 
 
 @dataclass
-class SvcConfig(IntegrationsConfig):
+class SvcConfig(BaseSection, IntegrationsConfig):
     """WebUI用個別設定値"""
 
     host: str = field(default="")
@@ -56,7 +58,10 @@ class SvcConfig(IntegrationsConfig):
     plotting_backend: Literal["matplotlib", "plotly"] = field(default="plotly")
 
     def __post_init__(self):
-        self.read_file("web")
+        assert self.config_file
+        self._parser = self.config_file
+        super().__init__(self, "web")
+        logging.debug("web: %s", self)
 
         if not self.host:
             self.host = g.args.host

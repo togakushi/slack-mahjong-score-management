@@ -2,9 +2,11 @@
 integrations/discord/config.py
 """
 
+import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
+from cls.config import BaseSection
 from integrations.base.interface import IntegrationsConfig
 from integrations.discord.events import comparison
 
@@ -13,7 +15,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class SvcConfig(IntegrationsConfig):
+class SvcConfig(BaseSection, IntegrationsConfig):
     """discord用個別設定値"""
 
     slash_command: str = field(default="mahjong")
@@ -40,7 +42,10 @@ class SvcConfig(IntegrationsConfig):
     """ボットの名前"""
 
     def __post_init__(self):
-        self.read_file("discord")
+        assert self.config_file
+        self._parser = self.config_file
+        super().__init__(self, "discord")
+        logging.debug("discord: %s", self)
 
         # 先頭にスラッシュが付いている場合は除去
         if self.slash_command.startswith("/"):
