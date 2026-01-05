@@ -291,6 +291,7 @@ def setup():
     g.cfg.rule.info()
 
     g.cfg.initialization()
+    lookup.db.read_memberslist()
 
     # キーワード重複チェック
     g.cfg.rule.check(
