@@ -4,9 +4,13 @@ integrations/standard_io/config.py
 
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from cls.config import BaseSection
 from integrations.base.interface import IntegrationsConfig
+
+if TYPE_CHECKING:
+    from pathlib import Path  # noqa: F401
 
 
 @dataclass

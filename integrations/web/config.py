@@ -5,11 +5,14 @@ integrations/web/config.py
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import libs.global_value as g
 from cls.config import BaseSection
 from integrations.base.interface import IntegrationsConfig
+
+if TYPE_CHECKING:
+    from pathlib import Path  # noqa: F401
 
 
 @dataclass
