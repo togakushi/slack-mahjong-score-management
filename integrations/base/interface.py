@@ -74,6 +74,14 @@ class IntegrationsConfig(ABC):
     - *False*: 表示しない
     """
 
+    separate: bool = field(default=False)
+    """スコア入力元識別子別集計フラグ
+    - *True*: 識別子別に集計
+    - *False*: すべて集計
+    """
+    channel_id: Optional[str] = field(default=None)
+    """チャンネルIDを上書きする"""
+
     plotting_backend: Literal["matplotlib", "plotly"] = field(default="matplotlib")
     """グラフ描写ライブラリ"""
 
