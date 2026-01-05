@@ -156,7 +156,7 @@ def check_score(m: "MessageParserProtocol") -> dict:
                 ret.update({k: p})
 
         ret.update(
-            source=m.status.source,
+            source=g.cfg.resolve_channel_id(m.status.source),
             ts=m.data.event_ts,
             **g.cfg.rule.to_dict(rule_version),
         )

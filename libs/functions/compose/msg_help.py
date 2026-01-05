@@ -23,8 +23,8 @@ def event_message(m: "MessageParserProtocol"):
 
     g.params.update(
         {
-            "source": m.status.source,
-            "separate": g.cfg.setting.separate,
+            "source": g.cfg.resolve_channel_id(m.status.source),
+            "separate": g.cfg.resolve_separate_flag(m.status.source),
         }
     )
     g.cfg.rule.status_update()

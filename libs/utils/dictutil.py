@@ -3,7 +3,6 @@ libs/utils/dictutil.py
 """
 
 import logging
-from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 import libs.global_value as g
@@ -34,14 +33,10 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     # 初期化
     g.params = {}
     g.cfg.initialization()
+    rule_version: str | None
 
     # 設定周りのパラメータの取り込み
-    if g.cfg.main_parser.has_section(m.status.source):
-        if channel_config := g.cfg.main_parser[m.status.source].get("channel_config"):
-            logging.debug("Channel override settings: %s", Path(channel_config).absolute())
-            g.cfg.overwrite(Path(channel_config), "setting")
-            g.cfg.overwrite(Path(channel_config), "mahjong")
-            g.cfg.overwrite(Path(channel_config), subcom.section)
+    g.cfg.read_channel_config(m.status.source)
 
     # メンバー情報更新
     g.cfg.member.guest_name = lookup.db.get_guest()
@@ -54,16 +49,17 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
             "command": subcom.section,
             "guest_name": g.cfg.member.guest_name,
             "undefined_word": g.cfg.undefined_word,
-            "source": m.status.source,
-            "separate": g.cfg.setting.separate,
-            "search_word": g.cfg.setting.search_word,
-            "group_length": g.cfg.setting.group_length,
-            "default_rule": g.cfg.mahjong.rule_version,
+            "source": g.cfg.resolve_channel_id(m.status.source),
+            "separate": g.cfg.resolve_separate_flag(m.status.source),
             "rule_set": {},
-            **g.cfg.mahjong.to_dict(),
+            **g.cfg.setting.to_dict(drop_items=["separate"]),
             **subcom.to_dict(),  # デフォルト値
         },
     )
+    if rule_version := ret_dict.get("default_rule"):
+        ret_dict.update({"rule_version": rule_version})
+    else:
+        ret_dict.update({"rule_version": g.cfg.mahjong.rule_version})
 
     # always_argumentの処理
     pre_param = parser.analysis_argument(subcom.always_argument)
@@ -94,21 +90,24 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
 
     # どのオプションにも該当しないキーワード
     check_list: list[str] = param.unknown + pre_param.unknown
-    rule_list: list[str] = [x.rule_version for x in g.cfg.rule.data.values()]
-    rule_version: str | None
 
     for name in list(check_list):  # ルール識別子
+        rule_version = None
         if name in g.cfg.rule.keyword_mapping:
             check_list.remove(name)
             rule_version = g.cfg.rule.keyword_mapping[name]
-            ret_dict.update({"mode": g.cfg.rule.get_mode(rule_version)})
-            ret_dict.update({"rule_version": rule_version})
-            ret_dict.update({"mixed": False})
-        if name in rule_list:
+        elif name in g.cfg.rule.rule_list:
             check_list.remove(name)
-            ret_dict.update({"mode": g.cfg.rule.get_mode(name)})
-            ret_dict.update({"rule_version": name})
-            ret_dict.update({"mixed": False})
+            rule_version = name
+
+        if rule_version:
+            ret_dict.update(
+                {
+                    "mode": g.cfg.rule.get_mode(rule_version),
+                    "rule_version": rule_version,
+                    "mixed": False,
+                }
+            )
 
     player_name: str = str()
     target_player: list = []

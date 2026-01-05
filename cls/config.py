@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from math import ceil
 from pathlib import Path, PosixPath
 from types import NoneType
-from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union, cast
+from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
 from cls.rule import RuleSet
 from libs.data.lookup.db import read_memberslist
@@ -19,6 +19,10 @@ from libs.types import GradeTableDict
 if TYPE_CHECKING:
     from configparser import SectionProxy
 
+    from integrations.discord.config import SvcConfig as DiscordConfig
+    from integrations.slack.config import SvcConfig as SlackConfig
+    from integrations.standard_io.config import SvcConfig as StdConfig
+    from integrations.web.config import SvcConfig as WebConfig
     from libs.types import MemberDataDict, TeamDataDict
 
 SubClassType: TypeAlias = Union[
@@ -30,6 +34,11 @@ SubClassType: TypeAlias = Union[
     "DropItems",
     "BadgeDisplay",
     "SubCommand",
+    # サービス個別設定
+    "SlackConfig",
+    "DiscordConfig",
+    "WebConfig",
+    "StdConfig",
 ]
 
 
@@ -54,11 +63,11 @@ class CommonMethodMixin:
         """真偽値の取得"""
         return self._section.getboolean(key, fallback)
 
-    def getlist(self, key: str) -> list:
+    def getlist(self, key: str) -> list[str]:
         """リストの取得"""
         return [x.strip() for x in self._section.get(key, "").split(",")]
 
-    def keys(self) -> list:
+    def keys(self) -> list[str]:
         """キーリストの返却"""
         return list(self._section.keys())
 
@@ -66,13 +75,9 @@ class CommonMethodMixin:
         """値リストの返却"""
         return list(self._section.values())
 
-    def items(self):
+    def items(self) -> list[tuple]:
         """ItemsViewを返却"""
-        return self._section.items()
-
-    def to_dict(self) -> dict[str, str]:
-        """辞書型に変換"""
-        return dict(self._section.items())
+        return list(self._section.items())
 
 
 class BaseSection(CommonMethodMixin):
@@ -80,6 +85,7 @@ class BaseSection(CommonMethodMixin):
 
     def __init__(self, outer: SubClassType, section_name: str):
         parser = outer._parser
+        assert parser
         if section_name not in parser:
             return
         self._section = parser[section_name]
@@ -214,13 +220,17 @@ class SettingSection(BaseSection):
     """メモ記録用キーワード"""
     rule_config: Path
     """ルール設定ファイル"""
-    time_adjust: int
-    """日付変更後、集計範囲に含める追加時間"""
+    default_rule: str
+    """ルールバージョン未指定時に使用される識別子"""
     separate: bool
     """スコア入力元識別子別集計フラグ
     - *True*: 識別子別に集計
     - *False*: すべて集計
     """
+    channel_id: Optional[str]
+    """チャンネルIDを上書きする"""
+    time_adjust: int
+    """日付変更後、集計範囲に含める追加時間"""
     search_word: str
     """コメント固定(検索時の検索文字列)"""
     group_length: int
@@ -246,7 +256,9 @@ class SettingSection(BaseSection):
         self.remarks_word = str("麻雀成績メモ")
         self.rule_config = Path("files/default_rule.ini")
         self.time_adjust = int(12)
+        self.default_rule = str("")
         self.separate = bool(False)
+        self.channel_id = None
         self.search_word = str("")
         self.group_length = int(0)
         self.guest_mark = str("※")
@@ -271,6 +283,10 @@ class SettingSection(BaseSection):
         # 成績登録キーワード
         if not (isinstance(self.keyword, Path) and self.keyword.exists()):
             self.keyword = str(self.keyword)
+
+        # デフォルトルールバージョン
+        if not self.default_rule:
+            self.default_rule = outer.mahjong.rule_version
 
         # 作業用ディレクトリ作成
         if self.work_dir.is_dir():
@@ -723,11 +739,13 @@ class AppConfig:
             if x not in self._parser.sections():
                 self._parser.add_section(x)
 
-        # set base directory
+        # 基本設定
         self.script_dir = Path(sys.argv[0]).absolute().parent
         """スクリプトが保存されているディレクトリパス"""
         self.config_dir = self.config_file.absolute().parent
         """設定ファイルが保存されているディレクトリパス"""
+        self.selected_service: Literal["slack", "discord", "web", "standard_io"] = "slack"
+        """連携先サービス"""
 
         # 設定値
         self.setting = SettingSection()
@@ -779,8 +797,8 @@ class AppConfig:
 
         self._parser = self.main_parser
 
-        self.setting.config_load(self)
         self.mahjong.config_load(self)
+        self.setting.config_load(self)
         self.alias.config_load(self)
         self.member.config_load(self)
         self.team.config_load(self)
@@ -838,8 +856,6 @@ class AppConfig:
                 protected_values = self.setting.help  # 上書き保護
                 self.setting.config_load(self)
                 self.setting.help = protected_values
-            case "mahjong":
-                self.mahjong.config_load(self)
             case "results":
                 protected_values = self.results.commandword  # 上書き保護
                 self.results.config_load(self)
@@ -859,31 +875,70 @@ class AppConfig:
             case _:
                 return
 
-    def read_channel_config(self, section_name: str) -> Union[Path | None]:
+    def read_channel_config(self, section_name: str) -> Optional[Path]:
         """チャンネル個別設定読み込み
 
         Args:
             section_name (str): セクション名
 
         Returns:
-            Union[Path | None]: 個別設定読み込み結果
+            Optional[Path]: 個別設定読み込み結果
                 - *Path*: 読み込んだ設定ファイルパス
                 - *None*: 読み込める設定ファイルがない
         """
 
-        config_path: Union[Path | None] = None
+        config_path: Optional[Path] = None
         self.initialization()
 
         if self.main_parser.has_section(section_name):
             if channel_config := self.main_parser[section_name].get("channel_config"):
                 config_path = Path(channel_config)
                 if config_path.exists():
+                    logging.debug("Override: %s", config_path.absolute())
                     self.overwrite(config_path, "setting")
-                    logging.debug("channel_config: %s", config_path.absolute())
-                    logging.debug("database_file: %s", cast(Path, self.setting.database_file).absolute())
+                    self.overwrite(config_path, "results")
+                    self.overwrite(config_path, "graph")
+                    self.overwrite(config_path, "ranking")
+                    self.overwrite(config_path, "report")
                 else:
                     config_path = None
 
         read_memberslist()
 
         return config_path
+
+    def resolve_channel_id(self, section_name: Optional[str] = None) -> str:
+        """メイン設定から優先度の高いチャンネルIDを取得する
+
+        Args:
+            section_name (Optional[str]): チャンネル個別設定セクション名
+
+        Returns:
+            str: チャンネルID
+        """
+
+        for section in (section_name, self.selected_service, "setting"):
+            if section and self.main_parser.has_section(section):
+                if channel_id := self.main_parser[section].get("channel_id"):
+                    return channel_id
+
+        if section_name:
+            return section_name
+        return ""
+
+    def resolve_separate_flag(self, section_name: Optional[str] = None) -> bool:
+        """メイン設定から優先度の高いセパレート設定フラグを取得する
+
+        Args:
+            section_name (Optional[str]): チャンネル個別設定セクション名
+
+        Returns:
+            bool: セパレート設定フラグ
+        """
+
+        for section in (section_name, self.selected_service, "setting"):
+            if section and self.main_parser.has_section(section):
+                if separate_flg := self.main_parser[section].getboolean("separate", False):
+                    return separate_flg
+
+        return False

@@ -1,6 +1,6 @@
 """モジュール間データ共有用"""
 
-from typing import TYPE_CHECKING, Any, Callable, Literal, Union
+from typing import TYPE_CHECKING, Any, Callable, Union
 
 if TYPE_CHECKING:
     from cls.config import AppConfig
@@ -11,8 +11,6 @@ if TYPE_CHECKING:
     from libs.types import Args, PlaceholderDict
 
 # --- グローバル変数 ---
-selected_service: Literal["slack", "discord", "web", "standard_io"] = "slack"
-"""連携先サービス"""
 adapter: Union["slack_adapter", "discord_adapter", "web_adapter", "std_adapter"]
 """インターフェースアダプタ"""
 
