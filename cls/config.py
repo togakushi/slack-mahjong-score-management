@@ -403,7 +403,7 @@ class MemberSection(BaseSection):
         """メンバー名、別名をすべてリストで返す
 
         Returns:
-            list[str]: _description_
+            list[str]: メンバー名、別名のリスト
         """
 
         ret: list[str] = []
@@ -490,7 +490,11 @@ class TeamSection(BaseSection):
 
     @property
     def lists(self) -> list[str]:
-        """チーム名一覧をリストで返す"""
+        """チーム名一覧をリストで返す
+
+        Returns:
+            list[str]: チーム名一覧
+        """
 
         return [x.get("team") for x in self.info]
 
