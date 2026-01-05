@@ -113,11 +113,11 @@ def column_alignment(df: pd.DataFrame, header: bool = False, index: bool = False
     return fmt
 
 
-def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) -> str:
+def name_replace(target: str, add_mark: bool = False, not_replace: bool = False) -> str:
     """表記ブレ修正(正規化)
 
     Args:
-        pname (str): 対象プレイヤー名
+        target (str): 対象プレイヤー名
         add_mark (bool, optional): ゲストマークを付与する. Defaults to False.
         not_replace (bool, optional): ゲスト置換なし(強制/個人戦) Defaults to False.
           - *True*: ゲストを置換しない
@@ -128,38 +128,37 @@ def name_replace(pname: str, add_mark: bool = False, not_replace: bool = False) 
     """
 
     chk_pattern = [
-        pname,  # 無加工
-        textutil.str_conv(pname, "h2z"),  # 半角数字 -> 全角数字
-        textutil.str_conv(pname, "k2h"),  # カタカナ -> ひらがな
-        textutil.str_conv(pname, "h2k"),  # ひらがな -> カタカナ
-        honor_remove(pname),  # 敬称削除
-        honor_remove(textutil.str_conv(pname, "h2z")),
-        honor_remove(textutil.str_conv(pname, "k2h")),
-        honor_remove(textutil.str_conv(pname, "h2k")),
+        target,  # 無加工
+        textutil.str_conv(target, "h2z"),  # 半角数字 -> 全角数字
+        textutil.str_conv(target, "k2h"),  # カタカナ -> ひらがな
+        textutil.str_conv(target, "h2k"),  # ひらがな -> カタカナ
+        honor_remove(target),  # 敬称削除
+        honor_remove(textutil.str_conv(target, "h2z")),
+        honor_remove(textutil.str_conv(target, "k2h")),
+        honor_remove(textutil.str_conv(target, "h2k")),
     ]
+    chk_pattern = sorted(set(chk_pattern), key=chk_pattern.index)  # 順序を維持したまま重複排除
 
-    for name in chk_pattern:
-        if name in g.cfg.member.lists:
-            return name
-
-    for name in chk_pattern:
-        ret_name = ""
-        if g.params.get("individual", True) or not_replace:
+    if g.params.get("individual", True) or not_replace:
+        for name in chk_pattern:
+            if name in g.cfg.member.lists:  # メンバーリスト
+                return name
             if name in g.cfg.member.all_lists:  # 別名を含むリスト
                 if ret_name := g.cfg.member.resolve_name(name):
                     return ret_name
-        else:
-            if name in g.cfg.team.lists:  # チーム名リスト
-                return name
+    else:
+        for team in chk_pattern:
+            if team in g.cfg.team.lists:  # チームリスト
+                return team
 
-    # メンバーリストに見つからない場合
-    pname = honor_remove(pname)
+    # リストに見つからない場合
+    name = honor_remove(target)
     if g.params.get("unregistered_replace", True) and not not_replace:
-        pname = g.cfg.member.guest_name
-    if pname != g.cfg.member.guest_name and add_mark:
-        pname = f"{pname}({g.cfg.setting.guest_mark})"
+        name = g.cfg.member.guest_name
+    if name != g.cfg.member.guest_name and add_mark:
+        name = f"{name}({g.cfg.setting.guest_mark})"
 
-    return pname
+    return name
 
 
 def honor_remove(name: str) -> str:
