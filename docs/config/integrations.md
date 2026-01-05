@@ -15,20 +15,20 @@
 > [!CAUTION]
 > `plotting_backend`は実装状況によってはデフォルト値から変更するとエラーとなる。
 
-> [!TIP]
-> `channel_config`で指定した設定ファイルに`setting`、`results`、`graph`、`ranking`、`report`、`custom_message`のセクションかあればメイン設定のパラメータとマージする。\
-> `custom_message`セクション以外の各セクションで設定された値は以下の順でマージされるため、未定義の設定はメイン設定の値を引き継ぐ。
-> 1. メイン設定セクション読み込み
-> 1. チャンネル個別設定セクション読み込み
+### channel_config について
+`channel_config`で指定した設定ファイルに`setting`、`results`、`graph`、`ranking`、`report`、`custom_message`のセクションかあればメイン設定のパラメータとマージする。\
+`custom_message`セクション以外の各セクションで設定された値は以下の順でマージされるため、未定義の設定はメイン設定の値を引き継ぐ。
+1. メイン設定セクション読み込み
+1. チャンネル個別設定セクション読み込み
+
+[`custom_message`](./mainconf.md#メッセージカスタマイズオプション)セクションのみメイン設定の値を完全上書きする。\
+`custom_message`セクション未定義時はメイン設定の値が引き継がれる。
 
 > [!IMPORTANT]
 > メイン設定の`commandword`、`help`で指定されているキーワードは上書きできない。
 
-> [!TIP]
-> `channel_config`でメイン設定の`database_file`が再定義できるため、別のDBファイルに情報を蓄積することが可能となる。\
-> \
-> [`custom_message`](./mainconf.md#メッセージカスタマイズオプション)セクションのみメイン設定の値を完全上書きする。\
-> `custom_message`セクション未定義時はメイン設定の値が引き継がれる。
+#### データベースファイル切替
+`channel_config`でメイン設定の`database_file`が再定義できるため、別のDBファイルに情報を蓄積することが可能となる。
 
 > [!WARNING]
 > 以下の機能はDB切替実装が完了していため、メイン設定にある`database_file`が利用される。
@@ -36,7 +36,7 @@
 > - [dbtools.py](../dbtools.md)によるDBメンテナンス
 
 ### channel_id / separate について
-`channel_id` / `separate` は複数個所で設定できる。\
+`channel_id` / `separate` は複数個所で定義できる。\
 以下の順序で探索し、最初に未定義時の状態から変更されたものが設定値として採用される。
 
 | 優先度 | 設定ファイル |              記述セクション               |                    設定が有効になる範囲                    |
