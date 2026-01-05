@@ -361,6 +361,22 @@ class MemberSection(BaseSection):
 
         logging.debug("%s: %s", _section_name, self)
 
+    def resolve_name(self, name: str) -> str:
+        """別名からメンバー名を逆引き
+
+        Args:
+            name (str): 変換する名前
+
+        Returns:
+            str: メンバー名(見つからない場合は空欄)
+        """
+
+        for x in self.info:
+            if name in x["alias"]:
+                return x["name"]
+
+        return ""
+
     def alias(self, name: str) -> list[str]:
         """指定メンバーの別名をリストで返す
 
