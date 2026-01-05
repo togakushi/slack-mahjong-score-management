@@ -2,7 +2,6 @@
 integrations/slack/adapter.py
 """
 
-import logging
 from typing import TYPE_CHECKING
 
 from integrations.base.interface import AdapterInterface
@@ -25,5 +24,3 @@ class ServiceAdapter(AdapterInterface[SvcConfig, AdapterAPI, SvcFunctions, Messa
         self.api = AdapterAPI()
         self.functions = SvcFunctions(api=self.api, conf=self.conf)
         self.parser = MessageParser
-
-        logging.debug(self.conf)
