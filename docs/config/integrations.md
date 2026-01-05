@@ -16,7 +16,7 @@
 > `plotting_backend`は実装状況によってはデフォルト値から変更するとエラーとなる。
 
 ### channel_config について
-`channel_config`で指定した設定ファイルに`setting`、`results`、`graph`、`ranking`、`report`、`custom_message`のセクションかあればメイン設定のパラメータとマージする。\
+`channel_config`で指定した設定ファイルの`setting`、`results`、`graph`、`ranking`、`report`、`custom_message`のセクションをメイン設定のパラメータとマージする。\
 [`custom_messageセクション`](./mainconf.md#メッセージカスタマイズオプション)以外の各セクションで設定された値は以下の順でマージされるため、未定義の設定はメイン設定の値を引き継ぐ。
 1. メイン設定セクション読み込み
 1. チャンネル個別設定セクション読み込み
