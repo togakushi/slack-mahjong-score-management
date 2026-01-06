@@ -24,7 +24,7 @@ def test_help_event(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["progname", "--service=std", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.configuration.compose.msg_help.event_message") as mock_help_event,
+        patch("libs.configuration.compose.msg_print.help_message") as mock_help_event,
     ):
         configuration.setup()
         adapter = factory.select_adapter("standard_io", g.cfg)
