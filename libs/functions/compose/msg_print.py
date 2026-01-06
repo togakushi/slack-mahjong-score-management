@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol
 
 
-def event_message(m: "MessageParserProtocol"):
+def help_message(m: "MessageParserProtocol"):
     """チャンネル内呼び出しキーワード用ヘルプ
 
     Args:

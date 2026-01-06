@@ -305,7 +305,7 @@ def register():
     """ディスパッチテーブル登録"""
 
     def dispatch_help(m: "MessageParserProtocol"):
-        compose.msg_help.event_message(m)
+        compose.msg_print.help_message(m)
         m.post.ts = m.data.event_ts
         m.post.thread_title = "ヘルプメッセージ"
 
