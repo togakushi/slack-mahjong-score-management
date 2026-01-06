@@ -2,15 +2,15 @@
 ## 共通設定
 各サービスのセクションで設定できる共通設定。
 
-|       キー       |               内容               |          型          |  未定義時  |                        備考                        |
-| ---------------- | -------------------------------- | -------------------- | ---------- | -------------------------------------------------- |
-| channel_config   | チャンネル個別設定ファイル       | 文字列(ファイルパス) | None       | [メイン設定](./mainconf.md)とマージ                |
-| badge_degree     | ゲーム数に応じて表示される称号   | 真偽値               | False      | [degreeセクション](./mainconf.md#degreeセクション) |
-| badge_status     | 勝利によって表示される調子バッヂ | 真偽値               | False      | [statusセクション](./mainconf.md#statusセクション) |
-| badge_grade      | 段位表示                         | 真偽値               | False      | [gradeセクション](./mainconf.md#gradeセクション)   |
-| channel_id       | チャンネル識別子を上書きする     | 文字列               | None       | チャンネル個別設定のセクション名変わらない [^1]    |
-| separate         | スコア入力元識別子単位の集計     | 真偽値               | False      |                                                    |
-| plotting_backend | グラフ生成ライブラリ選択         | 文字列               | matplotlib | `matplotlib` / `plotly` から選択                   |
+|       キー       |                   内容                   |          型          |  未定義時  |                        備考                        |
+| ---------------- | ---------------------------------------- | -------------------- | ---------- | -------------------------------------------------- |
+| channel_config   | チャンネル個別設定ファイル               | 文字列(ファイルパス) | None       | [メイン設定](./mainconf.md)とマージ                |
+| badge_degree     | ゲーム数に応じて表示される称号           | 真偽値               | False      | [degreeセクション](./mainconf.md#degreeセクション) |
+| badge_status     | 勝利によって表示される調子バッヂ         | 真偽値               | False      | [statusセクション](./mainconf.md#statusセクション) |
+| badge_grade      | 段位表示                                 | 真偽値               | False      | [gradeセクション](./mainconf.md#gradeセクション)   |
+| channel_id       | チャンネル識別子を上書きする             | 文字列               | None       | チャンネル個別設定のセクション名変わらない [^1]    |
+| separate         | スコア入力元(チャンネル識別子)単位の集計 | 真偽値               | False      | `True` : 集計条件にチャンネル識別子を追加          |
+| plotting_backend | グラフ生成ライブラリ選択                 | 文字列               | matplotlib | `matplotlib` / `plotly` から選択                   |
 
 > [!CAUTION]
 > `plotting_backend`は実装状況によってはデフォルト値から変更するとエラーとなる。

@@ -11,6 +11,8 @@ from integrations.base.interface import IntegrationsConfig
 from integrations.discord.events import comparison
 
 if TYPE_CHECKING:
+    from pathlib import Path  # noqa: F401
+
     from discord import ClientUser
 
 

@@ -140,6 +140,8 @@ class AdapterAPI(APIInterface):
                             post_msg.extend(_table_data(converter.df_to_text_table(msg, step=20)))
                         case "ranking":
                             post_msg.extend(_table_data(converter.df_to_ranking(msg, title, step=50)))
+                        case _:
+                            pass
 
         if style.summarize:
             post_msg = formatter.group_strings(post_msg)
