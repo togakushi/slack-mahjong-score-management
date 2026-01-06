@@ -81,7 +81,6 @@ def get_member_info() -> list["MemberDataDict"]:
     """
 
     ret: list["MemberDataDict"] = []
-    tmp: "MemberDataDict"
 
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute("select name, id from member where id != 0;")
@@ -92,12 +91,13 @@ def get_member_info() -> list["MemberDataDict"]:
         alias_list = dict(rows.fetchall())
 
     for name, id in id_list.items():
-        tmp = {
-            "id": id,
-            "name": name,
-            "alias": [k for k, v in alias_list.items() if v == name],
-        }
-        ret.append(tmp)
+        ret.append(
+            {
+                "id": id,
+                "name": name,
+                "alias": [k for k, v in alias_list.items() if v == name],
+            }
+        )
 
     return ret
 
@@ -110,6 +110,7 @@ def get_team_info() -> list["TeamDataDict"]:
     """
 
     ret: list["TeamDataDict"] = []
+
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         rows = conn.execute(
             """
@@ -127,7 +128,13 @@ def get_team_info() -> list["TeamDataDict"]:
         )
 
         for row in rows.fetchall():
-            ret.append({"id": int(row["id"]), "team": str(row["team"]), "member": str(row["member"]).split(",")})
+            ret.append(
+                {
+                    "id": int(row["id"]),
+                    "team": str(row["team"]),
+                    "member": str(row["member"]).split(","),
+                }
+            )
 
     return ret
 
@@ -170,6 +177,7 @@ def exsist_record(ts: str) -> GameResult:
     """
 
     result = GameResult()
+
     with closing(dbutil.connection(g.cfg.setting.database_file)) as conn:
         row = conn.execute(dbutil.query("SELECT_GAME_RESULTS"), {"ts": ts}).fetchone()
 
@@ -262,9 +270,9 @@ def enumeration_all_members() -> list[str]:
             member_list.extend(get_member_info())
             team_list.extend(get_team_info())
 
-    for x in member_list:
-        ret_list.append(x.get("name"))
-        ret_list.extend(x.get("alias"))
-    ret_list.extend([x.get("team") for x in team_list])
+    for member in member_list:
+        ret_list.append(member.get("name"))
+        ret_list.extend(member.get("alias"))
+    ret_list.extend([team.get("team") for team in team_list])
 
     return list(set(ret_list))
