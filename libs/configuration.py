@@ -313,12 +313,12 @@ def register():
         m.set_data("成績記録DB", g.cfg.setting.database_file, StyleOptions())
 
     def dispatch_members_list(m: "MessageParserProtocol"):
-        m.set_data("登録済みメンバー", lookup.textdata.get_members_list(), StyleOptions(codeblock=True))
+        m.set_data("登録済みメンバー", compose.msg_print.get_members_list(), StyleOptions(codeblock=True))
         m.post.ts = m.data.event_ts
         m.post.thread_title = "登録済みメンバー"
 
     def dispatch_team_list(m: "MessageParserProtocol"):
-        m.set_data("登録済みチーム", lookup.textdata.get_team_list(), StyleOptions(codeblock=True))
+        m.set_data("登録済みチーム", compose.msg_print.get_team_list(), StyleOptions(codeblock=True))
         m.post.ts = m.data.event_ts
         m.post.thread_title = "登録済みチーム"
 
