@@ -162,7 +162,7 @@ def help_message(m: "MessageParserProtocol"):
         textwrap.dedent(f"""\
         チャンネル識別子：{g.params.get("source")}
         チャンネル個別設定：{channel_config.name if channel_config else "---"}
-        チャンネルセパレート：{"有効" if g.params.get("separate", False) else "無効"}
+        セパレート機能：{"有効" if g.params.get("separate", False) else "無効"}
         データベースファイル：{g.cfg.setting.database_file}
         """),
         StyleOptions(indent=1),
