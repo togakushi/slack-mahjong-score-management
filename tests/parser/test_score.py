@@ -22,8 +22,9 @@ from tests.parser import param_data
 def test_score_report(input_str, result_dict, get_point, monkeypatch):
     """得点入力"""
     monkeypatch.setattr(sys, "argv", ["progname", "--config=tests/testdata/minimal.ini"])
-    configuration.setup()
+    configuration.setup(init_db=False)
     g.cfg.setting.database_file = "memdb1?mode=memory&cache=shared"  # DB差し替え
+    configuration.initialization.initialization_resultdb(g.cfg.setting.database_file)
     g.adapter = factory.select_adapter("standard_io", g.cfg)
     g.cfg.selected_service = "standard_io"
 
