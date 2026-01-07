@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 def test_keyword(parameter, config, word, monkeypatch):
     """呼び出しキーワード取り込みチェック"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    configuration.setup()
+    configuration.setup(init_db=False)
 
     conf = cast("SubCommand", getattr(g.cfg, parameter, ""))
     assert word in conf.commandword
@@ -37,6 +37,6 @@ def test_keyword(parameter, config, word, monkeypatch):
 def test_help(config, word, monkeypatch):
     """ヘルプキーワード取り込みチェック"""
     monkeypatch.setattr(sys, "argv", ["progname", f"--config=tests/testdata/{config}"])
-    configuration.setup()
+    configuration.setup(init_db=False)
 
     assert g.cfg.setting.help == word
