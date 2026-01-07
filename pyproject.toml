@@ -25,6 +25,7 @@ dependencies = [
 dev = [
     "pdoc",
     "pytest",
+    "pytest-cov",
     "mypy",
     "pyrefly",
     "ruff",
@@ -35,6 +36,9 @@ dev = [
     "types-reportlab",
     "types-tqdm",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = "."
 
 [tool.uv]
 default-groups = ["dev"]
