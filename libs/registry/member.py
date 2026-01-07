@@ -108,7 +108,7 @@ def append(argument: list) -> str:
     resultdb.commit()
     resultdb.close()
 
-    g.cfg.member.info = lookup.db.get_member_info()
+    g.cfg.member.info = lookup.get_member_info()
     return msg
 
 
@@ -159,5 +159,5 @@ def remove(argument: list) -> str:
     resultdb.commit()
     resultdb.close()
 
-    g.cfg.member.info = lookup.db.get_member_info()
+    g.cfg.member.info = lookup.get_member_info()
     return msg

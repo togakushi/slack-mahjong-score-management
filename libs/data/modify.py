@@ -243,7 +243,7 @@ def check_remarks(m: "MessageParserProtocol") -> None:
 
     """
 
-    game_result = lookup.db.exsist_record(m.data.thread_ts)
+    game_result = lookup.exsist_record(m.data.thread_ts)
     if game_result.has_valid_data():  # ゲーム結果のスレッドになっているか
         remarks: list["RemarkDict"] = []
         for name, matter in zip(m.argument[0::2], m.argument[1::2]):

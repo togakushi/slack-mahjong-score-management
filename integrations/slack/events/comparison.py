@@ -29,14 +29,14 @@ def main(m: "MessageParserProtocol") -> None:
     g.adapter = cast("ServiceAdapter", g.adapter)
 
     if g.cfg.main_parser.has_section(m.status.source):
-        g.adapter.conf.search_channel = lookup.internal.get_config_value(
+        g.adapter.conf.search_channel = lookup.get_config_value(
             config_file=g.cfg.config_file,
             section=m.status.source,
             name="search_channel",
             val_type=str,
             fallback=g.adapter.conf.search_channel,
         )
-        g.adapter.conf.search_after = lookup.internal.get_config_value(
+        g.adapter.conf.search_after = lookup.get_config_value(
             config_file=g.cfg.config_file,
             section=m.status.source,
             name="search_after",

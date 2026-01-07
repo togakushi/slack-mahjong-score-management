@@ -56,7 +56,7 @@ def member_bp(adapter: "ServiceAdapter") -> Blueprint:
                     ret = team.clear()
                     data.update(result_msg=ret)
 
-            lookup.db.read_memberslist()
+            lookup.read_memberslist()
 
         member_df = loader.read_data("MEMBER_INFO")
         if member_df.empty:

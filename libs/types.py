@@ -48,6 +48,9 @@ class Args:
     gen_test_data: int
     testcase: Optional["Path"]
 
+    # 動作テスト用オプション
+    testcase: "Path"
+
 
 class MemberDataDict(TypedDict):
     """メンバー情報格納辞書"""

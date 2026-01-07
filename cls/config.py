@@ -13,7 +13,7 @@ from types import NoneType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeAlias, Union
 
 from cls.rule import RuleSet
-from libs.data.lookup.db import read_memberslist
+from libs.data.lookup import read_memberslist
 from libs.types import GradeTableDict
 
 if TYPE_CHECKING:

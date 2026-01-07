@@ -95,7 +95,7 @@ def help_message(m: "MessageParserProtocol"):
     )
 
     # レギュレーション
-    if words := lookup.db.regulation_list(2):
+    if words := lookup.regulation_list(2):
         m.set_data(
             "卓外清算ワード(個人)",
             "\n".join(
@@ -110,7 +110,7 @@ def help_message(m: "MessageParserProtocol"):
             StyleOptions(indent=1),
         )
 
-    if words := lookup.db.regulation_list(3):
+    if words := lookup.regulation_list(3):
         m.set_data(
             "卓外清算ワード(チーム)",
             "\n".join(
@@ -125,7 +125,7 @@ def help_message(m: "MessageParserProtocol"):
             StyleOptions(indent=1),
         )
 
-    words = [word for word, _ in lookup.db.regulation_list(1)]
+    words = [word for word, _ in lookup.regulation_list(1)]
     if g.cfg.undefined_word == 1:
         words.append("未登録ワードのすべてを個別にカウント")
     if words:
@@ -135,7 +135,7 @@ def help_message(m: "MessageParserProtocol"):
             StyleOptions(indent=1),
         )
 
-    words = [word for word, _ in lookup.db.regulation_list(0)]
+    words = [word for word, _ in lookup.regulation_list(0)]
     if g.cfg.undefined_word == 0:
         words.append("未登録ワードのすべてを役満としてカウント")
     if words:

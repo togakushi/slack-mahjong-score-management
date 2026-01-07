@@ -58,4 +58,4 @@ def initialize_database(database_connection):
             )
         conn.commit()
 
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
