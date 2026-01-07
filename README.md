@@ -1,4 +1,4 @@
-# slack-mahjong-score-management
+# mahjong-score-management
 ## 概要
 麻雀のスコアを記録、集計するツール。
 

@@ -1,5 +1,5 @@
 [project]
-name = "slack-mahjong-score-management"
+name = "mahjong-score-management"
 version = "0.9.0"
 description = "Mahjong score management tool"
 readme = "README.md"
