@@ -186,7 +186,7 @@ def arg_parser() -> Args:
                 "-t",
                 "--testcase",
                 dest="testcase",
-                type=bool,
+                type=Path,
             )
 
     return cast(Args, p.parse_args(namespace=Args))

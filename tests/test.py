@@ -13,7 +13,8 @@ from cls.command import CommandParser
 from integrations import factory
 from libs import configuration
 from libs.commands import graph, ranking, report, results
-from libs.data import initialization, lookup
+from libs.configuration import arg_parser
+from libs.data import initialization
 from libs.functions import compose
 from libs.utils import dictutil
 
@@ -217,7 +218,10 @@ def test_pattern(flag: dict, test_case: str, sec: str, pattern: str, argument: s
 
 def main():
     """メイン処理"""
-    if not g.args.testcase:
+
+    g.args = arg_parser()
+
+    if not g.args.testcase.exists():
         return
 
     configuration.setup()
@@ -227,7 +231,6 @@ def main():
     flag: dict = {}
 
     initialization.initialization_resultdb(g.cfg.setting.database_file)
-    lookup.read_memberslist()
 
     for sec in test_conf.sections():
         print("=" * 120)
