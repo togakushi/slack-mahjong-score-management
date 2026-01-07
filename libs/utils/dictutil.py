@@ -39,9 +39,9 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     g.cfg.read_channel_config(m.status.source)
 
     # メンバー情報更新
-    g.cfg.member.guest_name = lookup.db.get_guest()
-    g.cfg.member.info = lookup.db.get_member_info()
-    g.cfg.team.info = lookup.db.get_team_info()
+    g.cfg.member.guest_name = lookup.get_guest()
+    g.cfg.member.info = lookup.get_member_info()
+    g.cfg.team.info = lookup.get_team_info()
 
     ret_dict: "PlaceholderDict" = cast(
         "PlaceholderDict",
@@ -179,7 +179,7 @@ def placeholder(subcom: "SubCommand", m: "MessageParserProtocol") -> "Placeholde
     if departure_time.range(search_range).start == ExtDt("1900-01-01 00:00:00.000000"):
         ret_dict.update(
             {
-                "starttime": lookup.db.first_record(
+                "starttime": lookup.first_record(
                     g.cfg.rule.get_version(
                         mode=ret_dict.get("mode", 4),
                         mapping=not (ret_dict.get("mixed", False)),

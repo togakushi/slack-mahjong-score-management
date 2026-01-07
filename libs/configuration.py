@@ -264,7 +264,7 @@ def setup(init_db: bool = True):
         for section in g.cfg.main_parser.sections():
             if str(section).startswith(f"{g.adapter.interface_type}_"):
                 if channel_config := g.cfg.main_parser[section].get("channel_config"):
-                    others_db = lookup.internal.get_config_value(
+                    others_db = lookup.get_config_value(
                         config_file=Path(channel_config),
                         section="setting",
                         name="database_file",
@@ -295,12 +295,12 @@ def setup(init_db: bool = True):
     g.cfg.rule.info()
 
     g.cfg.initialization()
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
 
     # キーワード重複チェック
     g.cfg.rule.check(
         chk_commands=set(g.cfg.results.commandword + g.cfg.graph.commandword + g.cfg.ranking.commandword + g.cfg.report.commandword),
-        chk_members=set(lookup.db.enumeration_all_members()),
+        chk_members=set(lookup.enumeration_all_members()),
         default_rule=g.cfg.setting.default_rule,
     )
 

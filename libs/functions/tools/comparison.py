@@ -72,7 +72,7 @@ def slack_comparison(m: "MessageParserProtocol"):
     g.adapter.conf.bot_id = app.client.auth_test()["user_id"]
     m.data.channel_id = g.adapter.functions.get_channel_id()
 
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
     comparison.main(m)
 
 

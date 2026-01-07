@@ -346,14 +346,14 @@ class SvcFunctions(FunctionsInterface):
         """
 
         # リアクション文字
-        reaction_ok = lookup.internal.get_config_value(
+        reaction_ok = lookup.get_config_value(
             config_file=g.cfg.config_file,
             section=m.status.source,
             name="reaction_ok",
             val_type=str,
             fallback=self.conf.reaction_ok,
         )
-        reaction_ng = lookup.internal.get_config_value(
+        reaction_ng = lookup.get_config_value(
             config_file=g.cfg.config_file,
             section=m.status.source,
             name="reaction_ng",

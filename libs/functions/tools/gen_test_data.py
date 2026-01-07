@@ -27,7 +27,7 @@ def main(season_times: int = 1):
     """
 
     g.cfg.initialization()
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
 
     # 対戦組み合わせ作成
     teams: list = g.cfg.team.lists

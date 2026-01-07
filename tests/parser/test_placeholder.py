@@ -25,7 +25,7 @@ def test_command_check(input_args, player_name, player_list, competition_list, m
     """コマンド認識状態チェック"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
 
     adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
@@ -47,7 +47,7 @@ def test_player_check(input_args, player_name, player_list, competition_list, mo
     """プレイヤー名"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
 
     adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
@@ -70,7 +70,7 @@ def test_team_check(input_args, player_name, player_list, competition_list, monk
     """チーム名"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
 
     adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()
@@ -93,7 +93,7 @@ def test_guest_check(input_args, player_name, replace_name, monkeypatch):
     """ゲストチェック"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
     configuration.setup()
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
 
     adapter = factory.select_adapter("standard_io", g.cfg)
     m = adapter.parser()

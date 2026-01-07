@@ -88,7 +88,7 @@ def other_words(word: str, m: "MessageParserProtocol"):
     """
 
     if re.match(rf"^{g.cfg.setting.remarks_word}$", word) and m.in_thread:  # 追加メモ
-        if lookup.db.exsist_record(m.data.thread_ts).has_valid_data():
+        if lookup.exsist_record(m.data.thread_ts).has_valid_data():
             modify.check_remarks(m)
     else:  # スコア登録
         if detection := validator.check_score(m):  # 結果報告フォーマットに一致するポストの処理
@@ -107,7 +107,7 @@ def other_words(word: str, m: "MessageParserProtocol"):
                 case _:
                     pass
         else:
-            record_data = lookup.db.exsist_record(m.data.event_ts)
+            record_data = lookup.exsist_record(m.data.event_ts)
             if record_data and m.data.status == "message_changed":
                 message_deleted(m)
 
@@ -136,7 +136,7 @@ def message_changed(detection: GameResult, m: "MessageParserProtocol"):
         m (MessageParserProtocol): メッセージデータ
     """
 
-    record_data = lookup.db.exsist_record(m.data.event_ts)
+    record_data = lookup.exsist_record(m.data.event_ts)
 
     if detection.to_dict() == record_data.to_dict():  # スコア比較
         return  # 変更箇所がなければ何もしない

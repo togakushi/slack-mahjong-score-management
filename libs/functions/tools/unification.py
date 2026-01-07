@@ -17,7 +17,7 @@ def main():
 
     rename_conf = configparser.ConfigParser()
     rename_conf.read(g.args.unification, encoding="utf-8")
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
 
     modify.db_backup()
     if "rename" in rename_conf.sections():

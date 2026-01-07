@@ -227,7 +227,7 @@ def main():
     flag: dict = {}
 
     initialization.initialization_resultdb(g.cfg.setting.database_file)
-    lookup.db.read_memberslist()
+    lookup.read_memberslist()
 
     for sec in test_conf.sections():
         print("=" * 120)

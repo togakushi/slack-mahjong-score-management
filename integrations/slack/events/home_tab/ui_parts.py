@@ -6,7 +6,7 @@ import logging
 from typing import TYPE_CHECKING, Optional
 
 import libs.global_value as g
-from libs.data.lookup.db import read_memberslist
+from libs.data.lookup import read_memberslist
 
 if TYPE_CHECKING:
     from integrations.protocols import MessageParserProtocol

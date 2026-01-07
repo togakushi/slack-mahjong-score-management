@@ -390,7 +390,7 @@ def gen_pdf(m: "MessageParserProtocol"):
         return
 
     # 対象メンバーの記録状況
-    target_info = lookup.db.member_info(g.params)
+    target_info = lookup.member_info(g.params)
     logging.debug(target_info)
 
     if not target_info["game_count"]:  # 記録なし
