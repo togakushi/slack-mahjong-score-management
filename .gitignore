@@ -14,6 +14,7 @@ uv.lock
 .*
 .*/
 work/
+backup/
 *.ini
 *.pem
 *.json
@@ -23,7 +24,8 @@ work/
 *.ttf
 *.png
 *.css
-html/
+docs/html/
+docs/cov/
 
 !requirements.txt
 !files/**
