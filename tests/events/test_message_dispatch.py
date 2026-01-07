@@ -14,6 +14,16 @@ from libs import configuration
 from tests.events import param_data
 
 
+def _init():
+    """初期化処理"""
+    configuration.setup(init_db=False)
+    adapter = factory.select_adapter("standard_io", g.cfg)
+    m = adapter.parser()
+    m.set_command_flag(True)
+
+    return m
+
+
 @pytest.mark.parametrize(
     "config, keyword",
     list(param_data.message_help.values()),
@@ -26,10 +36,7 @@ def test_help_event(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.compose.msg_print.help_message") as mock_help_event,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-
-        m = adapter.parser()
+        m = _init()
         m.data.text = keyword
         m.data.status = "message_append"
         m.set_command_flag(False)
@@ -50,13 +57,10 @@ def test_keyword_event(module, config, keyword, monkeypatch):
     with (
         patch(f"libs.configuration.libs.commands.{module}.entry.main") as mock_keyword_event,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-
-        m = adapter.parser()
+        m = _init()
+        m.data.text = keyword
         m.data.status = "message_append"
         m.set_command_flag(False)
-        m.data.text = keyword
 
         libs.dispatcher.by_keyword(m)
         mock_keyword_event.assert_called_once()
