@@ -192,8 +192,12 @@ def arg_parser() -> Args:
     return cast(Args, p.parse_args(namespace=Args))
 
 
-def setup():
-    """設定ファイル読み込み"""
+def setup(init_db: bool = True):
+    """設定ファイル読み込み
+
+    Args:
+        init_db (bool, optional): resultdbの初期化処理を行う Defaults to True.
+    """
 
     set_loglevel()
 
@@ -255,20 +259,20 @@ def setup():
     )
 
     # DB初期化
-    initialization.initialization_resultdb(g.cfg.setting.database_file)
-    for section in g.cfg.main_parser.sections():
-        if str(section).startswith(f"{g.adapter.interface_type}_"):
-            if channel_config := g.cfg.main_parser[section].get("channel_config"):
-                others_db = lookup.internal.get_config_value(
-                    config_file=Path(channel_config),
-                    section="setting",
-                    name="database_file",
-                    val_type=str,
-                    fallback="",
-                )
-
-                if others_db:
-                    initialization.initialization_resultdb(Path(others_db).absolute())
+    if init_db:
+        initialization.initialization_resultdb(g.cfg.setting.database_file)
+        for section in g.cfg.main_parser.sections():
+            if str(section).startswith(f"{g.adapter.interface_type}_"):
+                if channel_config := g.cfg.main_parser[section].get("channel_config"):
+                    others_db = lookup.internal.get_config_value(
+                        config_file=Path(channel_config),
+                        section="setting",
+                        name="database_file",
+                        val_type=str,
+                        fallback="",
+                    )
+                    if others_db:
+                        initialization.initialization_resultdb(Path(others_db).absolute())
 
     # ルールデータ取り込み
     if g.cfg.mahjong.rule_version:
