@@ -29,7 +29,7 @@ def client(request):
     """Flask テストクライアント"""
     config_path = request.param
     sys.argv = ["app.py", "--service=web", f"--config=tests/testdata/{config_path}"]
-    configuration.setup()
+    configuration.setup(init_db=False)
 
     adapter = factory.select_adapter("web", g.cfg)
 

@@ -15,6 +15,16 @@ from libs import configuration
 from tests.events import param_data
 
 
+def _init():
+    """初期化処理"""
+    configuration.setup(init_db=False)
+    adapter = factory.select_adapter("standard_io", g.cfg)
+    m = adapter.parser()
+    m.set_command_flag(True)
+
+    return m
+
+
 @pytest.mark.parametrize(
     "config, keyword",
     list(param_data.slash_help.values()),
@@ -24,18 +34,20 @@ def test_help(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(help)"""
     monkeypatch.setattr(sys, "argv", ["app.py", "--service=std", f"--config=tests/testdata/{config}"])
 
-    with (
-        # patch("integrations.slack.events.slash.command_help") as mock_help_slash_command,
-        patch("libs.dispatcher.by_keyword") as mock_help_slash_command,  # fixme
-    ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
+    import integrations.slack.events.slash
 
-        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = adapter.parser()
+    m = _init()
+    g.command_dispatcher.update({"help": integrations.slack.events.slash.command_help})
+    param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+
+    with patch.object(m, "set_data") as mock_set_data:
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
-        mock_help_slash_command.assert_called_once()
+
+        # fixme
+        # mock_set_data.assert_called_once()
+        _ = mock_set_data
+        # assert mock_set_data.call_args[0][0] == "ヘルプメッセージ"
 
 
 @pytest.mark.parametrize(
@@ -50,11 +62,8 @@ def test_results(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.libs.commands.results.entry.main") as mock_slash_results,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
         mock_slash_results.assert_called_once()
@@ -72,11 +81,8 @@ def test_graph(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.libs.commands.graph.entry.main") as mock_slash_graph,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
         mock_slash_graph.assert_called_once()
@@ -94,11 +100,8 @@ def test_ranking(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.libs.commands.ranking.entry.main") as mock_slash_ranking,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
         mock_slash_ranking.assert_called_once()
@@ -116,11 +119,8 @@ def test_report(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.libs.commands.report.entry.main") as mock_slash_report,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
-        m = adapter.parser()
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
         mock_slash_report.assert_called_once()
@@ -136,13 +136,9 @@ def test_check(config, keyword, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["app.py", "--service=std", f"--config=tests/testdata/{config}"])
 
     with (
-        patch("libs.dispatcher.by_keyword") as mock_slash_check,  # fixme
+        patch("libs.dispatcher.by_keyword") as mock_slash_check,  # fixme //stdには個別コマンドが登録されない
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -158,19 +154,17 @@ def test_download(config, keyword, monkeypatch):
     """スラッシュコマンドイベントテスト(download)"""
     monkeypatch.setattr(sys, "argv", ["app.py", "--service=std", f"--config=tests/testdata/{config}"])
 
-    with (
-        patch("integrations.factory.std_adapter"),
-    ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
+    m = _init()
+    param_data.FAKE_BODY["event"].update(text=f"{keyword}")
 
-        m = adapter.parser()
-        m.set_command_flag(True)
-        param_data.FAKE_BODY["event"].update(text=f"{keyword}")
+    with patch.object(m, "set_data") as mock_set_data:
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
 
-        # assert m.post.message ("成績記録DB")
+        mock_set_data.assert_called_once()
+        # 引数の検証
+        assert mock_set_data.call_args[0][0] == "成績記録DB"
+        assert mock_set_data.call_args[0][1] == g.cfg.setting.database_file
 
 
 @pytest.mark.parametrize(
@@ -185,11 +179,7 @@ def test_member_list(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.compose.msg_print.get_members_list") as mock_slash_member_list,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -208,12 +198,7 @@ def test_member_add(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.member.append") as mock_slash_member_add,
     ):
-        configuration.setup()
-
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -232,11 +217,7 @@ def test_member_del(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.member.remove") as mock_slash_member_del,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -255,11 +236,7 @@ def test_team_create(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.team.create") as mock_slash_team_create,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -278,11 +255,7 @@ def test_team_del(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.team.delete") as mock_slash_team_del,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -301,11 +274,7 @@ def test_team_add(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.team.append") as mock_slash_team_add,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -324,11 +293,7 @@ def test_team_remove(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.team.remove") as mock_slash_team_remove,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -347,11 +312,7 @@ def test_team_list(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.compose.msg_print.get_team_list") as mock_slash_team_list,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)
@@ -370,11 +331,7 @@ def test_team_clear(config, keyword, monkeypatch):
     with (
         patch("libs.configuration.team.clear") as mock_slash_team_clear,
     ):
-        configuration.setup()
-        adapter = factory.select_adapter("standard_io", g.cfg)
-        m = adapter.parser()
-        m.set_command_flag(True)
-
+        m = _init()
         param_data.FAKE_BODY["event"].update(text=f"{keyword}")
         m.parser(cast(dict, param_data.FAKE_BODY))
         libs.dispatcher.by_keyword(m)

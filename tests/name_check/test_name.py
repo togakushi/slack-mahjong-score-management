@@ -22,7 +22,7 @@ TEST_ARGS = ["progname", "--config=tests/test_data/saki.ini"]
 def test_name_permit(input_args, expected_flags, monkeypatch):
     """メンバー登録テスト(OK)"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
-    configuration.setup()
+    configuration.setup(init_db=False)
     lookup.db.read_memberslist()
 
     flg, reason = validator.check_namepattern(input_args, "member")
@@ -38,7 +38,7 @@ def test_name_permit(input_args, expected_flags, monkeypatch):
 def test_name_refusal(input_args, expected_flags, monkeypatch):
     """メンバー登録テスト(NG)"""
     monkeypatch.setattr(sys, "argv", TEST_ARGS)
-    configuration.setup()
+    configuration.setup(init_db=False)
     lookup.db.read_memberslist()
 
     flg, _ = validator.check_namepattern(input_args, "member")
