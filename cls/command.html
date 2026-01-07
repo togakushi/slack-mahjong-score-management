@@ -423,7 +423,7 @@
                 <section id="CommandResult">
                     <div class="attr variable">
             <span class="name">CommandResult</span>        =
-<span class="default_value">collections.abc.Mapping[str, typing.Union[str, int, bool, tuple[str, ...]]]</span>
+<span class="default_value">collections.abc.Mapping[str, str | int | bool | tuple[str, ...]]</span>
 
         
     </div>
@@ -436,7 +436,7 @@
                     <div class="attr variable">
             <span class="name">CommandAction</span>        =
 <input id="CommandAction-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="CommandAction-view-value"></label><span class="default_value">typing.Callable[[typing.Union[str, tuple[str, ...]]], collections.abc.Mapping[str, typing.Union[str, int, bool, tuple[str, ...]]]]</span>
+            <label class="view-value-button pdoc-button" for="CommandAction-view-value"></label><span class="default_value">typing.Callable[[str | tuple[str, ...]], collections.abc.Mapping[str, str | int | bool | tuple[str, ...]]]</span>
 
         
     </div>
@@ -482,7 +482,7 @@
                             </div>
                             <div id="CommandSpec.action" class="classattr">
                                 <div class="attr variable">
-            <span class="name">action</span><span class="annotation">: Callable[[Union[str, tuple[str, ...]]], Mapping[str, Union[str, int, bool, tuple[str, ...]]]]</span>
+            <span class="name">action</span><span class="annotation">: Callable[[str | tuple[str, ...]], Mapping[str, str | int | bool | tuple[str, ...]]]</span>
 
         
     </div>

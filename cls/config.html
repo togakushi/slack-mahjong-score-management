@@ -1512,7 +1512,7 @@
                     <div class="attr variable">
             <span class="name">SubClassType</span><span class="annotation">: TypeAlias</span>        =
 <input id="SubClassType-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="SubClassType-view-value"></label><span class="default_value">Union[ForwardRef(&#39;MahjongSection&#39;), ForwardRef(&#39;SettingSection&#39;), ForwardRef(&#39;MemberSection&#39;), ForwardRef(&#39;TeamSection&#39;), ForwardRef(&#39;AliasSection&#39;), ForwardRef(&#39;DropItems&#39;), ForwardRef(&#39;BadgeDisplay&#39;), ForwardRef(&#39;SubCommand&#39;), ForwardRef(&#39;SlackConfig&#39;), ForwardRef(&#39;DiscordConfig&#39;), ForwardRef(&#39;WebConfig&#39;), ForwardRef(&#39;StdConfig&#39;)]</span>
+            <label class="view-value-button pdoc-button" for="SubClassType-view-value"></label><span class="default_value">ForwardRef(&#39;MahjongSection&#39;) | ForwardRef(&#39;SettingSection&#39;) | ForwardRef(&#39;MemberSection&#39;) | ForwardRef(&#39;TeamSection&#39;) | ForwardRef(&#39;AliasSection&#39;) | ForwardRef(&#39;DropItems&#39;) | ForwardRef(&#39;BadgeDisplay&#39;) | ForwardRef(&#39;SubCommand&#39;) | ForwardRef(&#39;SlackConfig&#39;) | ForwardRef(&#39;DiscordConfig&#39;) | ForwardRef(&#39;WebConfig&#39;) | ForwardRef(&#39;StdConfig&#39;)</span>
 
         
     </div>
@@ -1843,7 +1843,7 @@
                                         <input id="BaseSection.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">BaseSection</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">outer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="bp"><a href="#MahjongSection">MahjongSection</a></span><span class="p">,</span> <span class="bp"><a href="#SettingSection">SettingSection</a></span><span class="p">,</span> <span class="bp"><a href="#MemberSection">MemberSection</a></span><span class="p">,</span> <span class="bp"><a href="#TeamSection">TeamSection</a></span><span class="p">,</span> <span class="bp"><a href="#AliasSection">AliasSection</a></span><span class="p">,</span> <span class="bp"><a href="#DropItems">DropItems</a></span><span class="p">,</span> <span class="bp"><a href="#BadgeDisplay">BadgeDisplay</a></span><span class="p">,</span> <span class="bp"><a href="#SubCommand">SubCommand</a></span><span class="p">,</span> <span class="n"><a href="../integrations/slack/config.html#SvcConfig">integrations.slack.config.SvcConfig</a></span><span class="p">,</span> <span class="n"><a href="../integrations/discord/config.html#SvcConfig">integrations.discord.config.SvcConfig</a></span><span class="p">,</span> <span class="n"><a href="../integrations/web/config.html#SvcConfig">integrations.web.config.SvcConfig</a></span><span class="p">,</span> <span class="n"><a href="../integrations/standard_io/config.html#SvcConfig">integrations.standard_io.config.SvcConfig</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
+        <span class="name">BaseSection</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">outer</span><span class="p">:</span> <span class="bp"><a href="#MahjongSection">MahjongSection</a></span> <span class="o">|</span> <span class="bp"><a href="#SettingSection">SettingSection</a></span> <span class="o">|</span> <span class="bp"><a href="#MemberSection">MemberSection</a></span> <span class="o">|</span> <span class="bp"><a href="#TeamSection">TeamSection</a></span> <span class="o">|</span> <span class="bp"><a href="#AliasSection">AliasSection</a></span> <span class="o">|</span> <span class="bp"><a href="#DropItems">DropItems</a></span> <span class="o">|</span> <span class="bp"><a href="#BadgeDisplay">BadgeDisplay</a></span> <span class="o">|</span> <span class="bp"><a href="#SubCommand">SubCommand</a></span> <span class="o">|</span> <span class="n"><a href="../integrations/slack/config.html#SvcConfig">integrations.slack.config.SvcConfig</a></span> <span class="o">|</span> <span class="n"><a href="../integrations/discord/config.html#SvcConfig">integrations.discord.config.SvcConfig</a></span> <span class="o">|</span> <span class="n"><a href="../integrations/web/config.html#SvcConfig">integrations.web.config.SvcConfig</a></span> <span class="o">|</span> <span class="n"><a href="../integrations/standard_io/config.html#SvcConfig">integrations.standard_io.config.SvcConfig</a></span>,</span><span class="param">	<span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
 
                 <label class="view-source-button" for="BaseSection.__init__-view-source"><span>View Source</span></label>
 
@@ -1929,7 +1929,7 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">to_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">drop_items</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>:</span></span>
+        <span class="name">to_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">drop_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="BaseSection.to_dict-view-source"><span>View Source</span></label>
 
@@ -2460,7 +2460,7 @@
                             </div>
                             <div id="SettingSection.channel_id" class="classattr">
                                 <div class="attr variable">
-            <span class="name">channel_id</span><span class="annotation">: Optional[str]</span>
+            <span class="name">channel_id</span><span class="annotation">: str | None</span>
 
         
     </div>
@@ -2525,7 +2525,7 @@
                             </div>
                             <div id="SettingSection.database_file" class="classattr">
                                 <div class="attr variable">
-            <span class="name">database_file</span><span class="annotation">: Union[str, pathlib.Path]</span>
+            <span class="name">database_file</span><span class="annotation">: str | pathlib.Path</span>
 
         
     </div>
@@ -2538,7 +2538,7 @@
                             </div>
                             <div id="SettingSection.backup_dir" class="classattr">
                                 <div class="attr variable">
-            <span class="name">backup_dir</span><span class="annotation">: Optional[pathlib.Path]</span>
+            <span class="name">backup_dir</span><span class="annotation">: pathlib.Path | None</span>
 
         
     </div>
@@ -5417,7 +5417,7 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">read_channel_config</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span>:</span></span>
+        <span class="name">read_channel_config</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="AppConfig.read_channel_config-view-source"><span>View Source</span></label>
 
@@ -5481,7 +5481,7 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">resolve_channel_id</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">section_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">resolve_channel_id</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="AppConfig.resolve_channel_id-view-source"><span>View Source</span></label>
 
@@ -5530,7 +5530,7 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">resolve_separate_flag</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">section_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+        <span class="name">resolve_separate_flag</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">section_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
 
                 <label class="view-source-button" for="AppConfig.resolve_separate_flag-view-source"><span>View Source</span></label>
 

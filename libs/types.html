@@ -1279,7 +1279,7 @@
                 <section id="MessageType">
                     <div class="attr variable">
             <span class="name">MessageType</span><span class="annotation">: TypeAlias</span>        =
-<span class="default_value">Union[NoneType, str, ForwardRef(&#39;Path&#39;), ForwardRef(&#39;pd.DataFrame&#39;)]</span>
+<span class="default_value">None | str | ForwardRef(&#39;Path&#39;) | ForwardRef(&#39;pd.DataFrame&#39;)</span>
 
         
     </div>
@@ -2018,7 +2018,7 @@
                             </div>
                             <div id="PlaceholderDict.starttime" class="classattr">
                                 <div class="attr variable">
-            <span class="name">starttime</span><span class="annotation">: Union[str, <a href="../cls/timekit.html#ExtendedDatetime">cls.timekit.ExtendedDatetime</a>, NoneType]</span>
+            <span class="name">starttime</span><span class="annotation">: str | <a href="../cls/timekit.html#ExtendedDatetime">cls.timekit.ExtendedDatetime</a> | None</span>
 
         
     </div>
@@ -2031,7 +2031,7 @@
                             </div>
                             <div id="PlaceholderDict.endtime" class="classattr">
                                 <div class="attr variable">
-            <span class="name">endtime</span><span class="annotation">: Union[str, <a href="../cls/timekit.html#ExtendedDatetime">cls.timekit.ExtendedDatetime</a>, NoneType]</span>
+            <span class="name">endtime</span><span class="annotation">: str | <a href="../cls/timekit.html#ExtendedDatetime">cls.timekit.ExtendedDatetime</a> | None</span>
 
         
     </div>
@@ -2044,7 +2044,7 @@
                             </div>
                             <div id="PlaceholderDict.onday" class="classattr">
                                 <div class="attr variable">
-            <span class="name">onday</span><span class="annotation">: Union[str, <a href="../cls/timekit.html#ExtendedDatetime">cls.timekit.ExtendedDatetime</a>, NoneType]</span>
+            <span class="name">onday</span><span class="annotation">: str | <a href="../cls/timekit.html#ExtendedDatetime">cls.timekit.ExtendedDatetime</a> | None</span>
 
         
     </div>
@@ -2340,7 +2340,7 @@
                             </div>
                             <div id="PlaceholderDict.channel_config" class="classattr">
                                 <div class="attr variable">
-            <span class="name">channel_config</span><span class="annotation">: Optional[pathlib.Path]</span>
+            <span class="name">channel_config</span><span class="annotation">: pathlib.Path | None</span>
 
         
     </div>
@@ -2384,7 +2384,7 @@
 
                             <div id="MessageTypeDict.data" class="classattr">
                                 <div class="attr variable">
-            <span class="name">data</span><span class="annotation">: Union[NoneType, str, pathlib.Path, pandas.core.frame.DataFrame]</span>
+            <span class="name">data</span><span class="annotation">: None | str | pathlib.Path | pandas.core.frame.DataFrame</span>
 
         
     </div>
@@ -2775,7 +2775,7 @@
                             </div>
                             <div id="ScoreDict.comment" class="classattr">
                                 <div class="attr variable">
-            <span class="name">comment</span><span class="annotation">: Optional[str]</span>
+            <span class="name">comment</span><span class="annotation">: str | None</span>
 
         
     </div>
@@ -2801,7 +2801,7 @@
                             </div>
                             <div id="ScoreDict.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Optional[str]</span>
+            <span class="name">source</span><span class="annotation">: str | None</span>
 
         
     </div>
