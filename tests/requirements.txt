@@ -1,5 +1,6 @@
 pdoc
 pytest
+pytest-cov
 mypy
 pylint
 pylint-pytest
