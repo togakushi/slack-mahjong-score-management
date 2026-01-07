@@ -12,10 +12,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version-file: "pyproject.toml"
 
       - name: Install dependencies
         run: |
@@ -23,10 +26,13 @@ jobs:
           pip install -U -r requirements.txt
           pip install -U -r tests/requirements.txt
 
+      - name: Install the project
+        run: uv sync --all-extras --dev
+
       - name: Generate documentation
         run: |
           rm -rf temp_docs
-          pdoc -d google --logo https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEig6avYSN3Ds4H-e_Hib-mB6bYwDH71xSD7vn22M6QVjtzMei0d6T29PZYPOQadAs6AqUe4dzFo4lLhN6gpKCJHugZd5rQdF8m5oXt2BL1gZAv11YQey7bds63cuhP0gFqQwk4hF9yV28sE/s128/ma-jan_pai.png --logo-link '' --output-dir temp_docs *.py libs cls integrations
+          uv run pdoc -d google --logo https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEig6avYSN3Ds4H-e_Hib-mB6bYwDH71xSD7vn22M6QVjtzMei0d6T29PZYPOQadAs6AqUe4dzFo4lLhN6gpKCJHugZd5rQdF8m5oXt2BL1gZAv11YQey7bds63cuhP0gFqQwk4hF9yV28sE/s128/ma-jan_pai.png --logo-link '' --output-dir temp_docs *.py libs cls integrations
           touch temp_docs/.nojekyll
 
         env:

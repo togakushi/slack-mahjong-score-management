@@ -32,3 +32,4 @@ html/
 !tests/test_data/*.csv
 !tests/test_data/*.ini
 !.gitignore
+!.github/**
