@@ -14,7 +14,6 @@ from integrations import factory
 from libs import configuration
 from libs.commands import graph, ranking, report, results
 from libs.configuration import arg_parser
-from libs.data import initialization
 from libs.functions import compose
 from libs.utils import dictutil
 
@@ -229,8 +228,6 @@ def main():
     test_conf.read(g.args.testcase, encoding="utf-8")
 
     flag: dict = {}
-
-    initialization.initialization_resultdb(g.cfg.setting.database_file)
 
     for sec in test_conf.sections():
         print("=" * 120)
